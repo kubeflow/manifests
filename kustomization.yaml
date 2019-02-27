@@ -1,0 +1,5 @@
+bases:
+  - ambassador/base
+  - argo/base
+commonLabels:
+  app: kubeflow
