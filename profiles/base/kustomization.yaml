@@ -1,0 +1,10 @@
+resources:
+- profiles-composite-controller-quotas.yaml
+- profiles-deployment.yaml
+- profiles-composite-controller-rbac.yaml
+- profiles-role.yaml
+- profiles-config-map.yaml
+- profiles-service.yaml
+- profiles-crd.yaml
+commonLabels:
+  kustomize.component: profiles

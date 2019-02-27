@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+  labels:
+    app: jupyter
+  name: jupyter-0
+  namespace: default
+spec:
+  clusterIP: None
+  ports:
+  - name: hub
+    port: 8000
+  selector:
+    app: jupyter

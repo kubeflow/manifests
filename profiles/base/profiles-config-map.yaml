@@ -1,0 +1,369 @@
+apiVersion: v1
+data:
+  sync-permission.jsonnet: |
+    // Controller for resource: permissions
+    // Creates 2 child resources
+    // - Role
+    // - RoleBinding
+    function(request) {
+      local apiVersion = "kubeflow.org/v1alpha1",
+      local template = request.parent.spec.template,
+      local children = [
+        {
+          apiVersion: "rbac.authorization.k8s.io/v1",
+          kind: "Role",
+          metadata: {
+            name: "edit",
+            namespace: request.parent.metadata.namespace,
+          },
+          rules: [
+            {
+              apiGroups: [
+                "metacontroller.k8s.io",
+              ],
+              resources: [
+                "compositecontrollers",
+                "decoratecontrollers",
+              ],
+              verbs: [
+                "create",
+                "delete",
+                "get",
+                "list",
+                "patch",
+                "update",
+                "watch",
+              ],
+            },
+            {
+              apiGroups: [
+                "kubeflow.org",
+              ],
+              resources: [
+                "profiles",
+                "permissions",
+                "notebooks",
+              ],
+              verbs: [
+                "create",
+                "delete",
+                "get",
+                "list",
+                "patch",
+                "update",
+                "watch",
+              ],
+            },
+            {
+              apiGroups: [
+                "app.k8s.io",
+              ],
+              resources: [
+                "applications",
+                "apps",
+              ],
+              verbs: [
+                "create",
+                "delete",
+                "deletecollection",
+                "get",
+                "list",
+                "patch",
+                "update",
+                "watch",
+              ],
+            },
+            {
+              apiGroups: [
+                "",
+              ],
+              resources: [
+                "pods",
+                "pods/attach",
+                "pods/exec",
+                "pods/portforward",
+                "pods/proxy",
+              ],
+              verbs: [
+                "create",
+                "delete",
+                "deletecollection",
+                "get",
+                "list",
+                "patch",
+                "update",
+                "watch",
+              ],
+            },
+            {
+              apiGroups: [
+                "",
+              ],
+              resources: [
+                "configmaps",
+                "endpoints",
+                "persistentvolumeclaims",
+                "replicationcontrollers",
+                "replicationcontrollers/scale",
+                "secrets",
+                "serviceaccounts",
+                "services",
+                "services/proxy",
+              ],
+              verbs: [
+                "create",
+                "delete",
+                "deletecollection",
+                "get",
+                "list",
+                "patch",
+                "update",
+                "watch",
+              ],
+            },
+            {
+              apiGroups: [
+                "",
+              ],
+              resources: [
+                "bindings",
+                "events",
+                "limitranges",
+                "pods/log",
+                "pods/status",
+                "replicationcontrollers/status",
+                "resourcequotas",
+                "resourcequotas/status",
+              ],
+              verbs: [
+                "get",
+                "list",
+                "watch",
+              ],
+            },
+            {
+              apiGroups: [
+                "",
+              ],
+              resources: [
+                "serviceaccounts",
+              ],
+              verbs: [
+                "impersonate",
+              ],
+            },
+            {
+              apiGroups: [
+                "apps",
+              ],
+              resources: [
+                "daemonsets",
+                "deployments",
+                "deployments/rollback",
+                "deployments/scale",
+                "replicasets",
+                "replicasets/scale",
+                "statefulsets",
+              ],
+              verbs: [
+                "create",
+                "delete",
+                "deletecollection",
+                "get",
+                "list",
+                "patch",
+                "update",
+                "watch",
+              ],
+            },
+            {
+              apiGroups: [
+                "autoscaling",
+              ],
+              resources: [
+                "horizontalpodautoscalers",
+              ],
+              verbs: [
+                "create",
+                "delete",
+                "deletecollection",
+                "get",
+                "list",
+                "patch",
+                "update",
+                "watch",
+              ],
+            },
+            {
+              apiGroups: [
+                "batch",
+              ],
+              resources: [
+                "cronjobs",
+                "jobs",
+              ],
+              verbs: [
+                "create",
+                "delete",
+                "deletecollection",
+                "get",
+                "list",
+                "patch",
+                "update",
+                "watch",
+              ],
+            },
+            {
+              apiGroups: [
+                "extensions",
+              ],
+              resources: [
+                "daemonsets",
+                "deployments",
+                "deployments/rollback",
+                "deployments/scale",
+                "ingresses",
+                "networkpolicies",
+                "replicasets",
+                "replicasets/scale",
+                "replicationcontrollers/scale",
+              ],
+              verbs: [
+                "create",
+                "delete",
+                "deletecollection",
+                "get",
+                "list",
+                "patch",
+                "update",
+                "watch",
+              ],
+            },
+            {
+              apiGroups: [
+                "policy",
+              ],
+              resources: [
+                "poddisruptionbudgets",
+              ],
+              verbs: [
+                "create",
+                "delete",
+                "deletecollection",
+                "get",
+                "list",
+                "patch",
+                "update",
+                "watch",
+              ],
+            },
+            {
+              apiGroups: [
+                "networking.k8s.io",
+              ],
+              resources: [
+                "networkpolicies",
+              ],
+              verbs: [
+                "create",
+                "delete",
+                "deletecollection",
+                "get",
+                "list",
+                "patch",
+                "update",
+                "watch",
+              ],
+            },
+          ],
+        },
+        {
+          apiVersion: "rbac.authorization.k8s.io/v1",
+          kind: "RoleBinding",
+          metadata: {
+            name: "default",
+            namespace: request.parent.metadata.namespace,
+          },
+          roleRef: {
+            apiGroup: "rbac.authorization.k8s.io",
+            kind: "Role",
+            name: "edit",
+          },
+          subjects: [
+            request.parent.spec.owner,
+          ],
+        },
+      ],
+      children: children,
+      status: {
+        phase: "Active",
+        conditions: [{
+          type: "Ready",
+        }],
+        created: true,
+      },
+    }
+  sync-profile.jsonnet: |
+    // Controller for resource: profiles
+    // Creates 3 child resources
+    // - Namespace
+    // - ResourceQuota
+    // - Permission
+    function(request) {
+      local apiVersion = "kubeflow.org/v1alpha1",
+      local template = request.parent.spec.template,
+      local requestsCpu = "requests.cpu",
+      local requestsMemory = "requests.memory",
+      local requestsGpu = "requests.nvidia.com/gpu",
+      local limitsCpu = "limits.cpu",
+      local limitsMemory = "limits.memory",
+      local children = [
+        {
+          apiVersion: "v1",
+          kind: "Namespace",
+          metadata: {
+            name: template.metadata.namespace,
+          },
+        },
+        {
+          apiVersion: "v1",
+          kind: "ResourceQuota",
+          metadata: {
+            name: template.metadata.quota.name,
+            namespace: template.metadata.namespace,
+          },
+          spec: {
+            hard: {
+              [requestsCpu]: template.metadata.quota.requests.cpu,
+              [requestsMemory]: template.metadata.quota.requests.memory,
+              [requestsGpu]: template.metadata.quota.requests.gpu,
+              [limitsCpu]: template.metadata.quota.limits.cpu,
+              [limitsMemory]: template.metadata.quota.limits.memory,
+            },
+          },
+        },
+        {
+          apiVersion: "kubeflow.org/v1alpha1",
+          kind: "Permission",
+          metadata: {
+            name: "default",
+            namespace: template.metadata.namespace,
+          },
+          spec: {
+            owner: template.spec.owner,
+          },
+        },
+      ],
+      children: children,
+      status: {
+        phase: "Active",
+        conditions: [{
+          type: "Ready",
+        }],
+        created: true,
+      },
+    }
+kind: ConfigMap
+metadata:
+  name: profiles
+  namespace: default
