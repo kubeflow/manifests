@@ -5,6 +5,16 @@ A repository for Kustomize manifests
 
 `go get -u github.com/kubernetes-sigs/kustomize`
 
+## List of Kubeflow components available
+
+* Ambassador
+
+* Argo
+
+* Jupyter
+
+* Profiles
+
 ## Basic Usage
 
 ```bash

@@ -1,5 +1,7 @@
 bases:
   - ambassador/base
   - argo/base
+  - jupyter/base
+  - profiles/base
 commonLabels:
   app: kubeflow
