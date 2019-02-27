@@ -3,5 +3,7 @@ bases:
   - argo/base
   - jupyter/base
   - profiles/base
+  - tf-training/base
+  - pytorch-operator/base
 commonLabels:
   app: kubeflow

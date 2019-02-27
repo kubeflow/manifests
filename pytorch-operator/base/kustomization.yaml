@@ -1,0 +1,9 @@
+resources:
+- pytorch-operator-crd.yaml
+- pytorch-operator-cluster-role.yaml
+- pytorch-operator-deployment.yaml
+- pytorch-operator-cluster-rolebinding.yaml
+- pytorch-operator-service-account.yaml
+- pytorch-operator-configmap.yaml
+commonLabels:
+  kustomize.component: pytorch-operator

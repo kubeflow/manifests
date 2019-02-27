@@ -1,0 +1,21 @@
+apiVersion: kubeflow.org/v1beta1
+kind: PyTorchJob
+metadata:
+  name: pytorch-job
+  namespace: kubeflow
+spec:
+  pytorchReplicaSpecs:
+    Master:
+      replicas: 1
+      template:
+        spec:
+          containers:
+          - image: gcr.io/kubeflow-examples/pytorch-dist-mnist:v20180702-a57993c
+            name: pytorch
+    Worker:
+      replicas: 1
+      template:
+        spec:
+          containers:
+          - image: gcr.io/kubeflow-examples/pytorch-dist-mnist:v20180702-a57993c
+            name: pytorch

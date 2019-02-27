@@ -1,0 +1,14 @@
+resources:
+- tf-job-dashboard-service-account.yaml
+- tf-job-configmap.yaml
+- tf-job-dashboard-service.yaml
+- tf-job-crd.yaml
+- tf-job-operator-cluster-role-binding.yaml
+- tf-job-dashboard-cluster-role.yaml
+- tf-job-operator-cluster-role.yaml
+- tf-job-dashboard-cluster-rolebinding.yaml
+- tf-job-operator-deployment.yaml
+- tf-job-dashboard-deployment.yaml
+- tf-job-operator-service-account.yaml
+commonLabels:
+  kustomize.component: tf-job-operator
