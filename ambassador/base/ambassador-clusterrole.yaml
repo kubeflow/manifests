@@ -1,8 +1,6 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  labels:
-    ksonnet.io/component: ambassador
   name: ambassador
 rules:
 - apiGroups:

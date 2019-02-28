@@ -3,7 +3,6 @@ kind: ClusterRole
 metadata:
   labels:
     app: argo
-    ksonnet.io/component: argo
   name: argo
 rules:
 - apiGroups:
