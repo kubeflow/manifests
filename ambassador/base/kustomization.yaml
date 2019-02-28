@@ -1,0 +1,9 @@
+resources:
+- ambassador-admin-service.yaml
+- ambassador-service.yaml
+- ambassador-clusterrole.yaml
+- ambassador-serviceaccount.yaml
+- ambassador-clusterrolebinding.yaml
+- ambassador-deployment.yaml
+commonLabels:
+  kustomize.component: ambassador
