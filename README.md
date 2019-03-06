@@ -5,14 +5,12 @@ A repository for Kustomize manifests
 
 `go get -u github.com/kubernetes-sigs/kustomize`
 
-
 ## Basic Usage
 
 ```bash
 git clone https://github.com/kubeflow/manifests
 kustomize build | kubectl apply -f
 ```
-
 ### Bridging kustomize and ksonnet
 
 Equivalent to parameters in ksonnet, kustomize has vars. But the customizable objects are limited to [this list](https://github.com/kubernetes-sigs/kustomize/blob/master/pkg/transformers/config/defaultconfig/varreference.go)
