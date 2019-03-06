@@ -1,0 +1,9 @@
+bases:
+- ../../base
+patchesJson6902:
+- target:
+    group: extensions
+    version: v1beta1
+    kind: Deployment
+    name: ambassador
+  path: ambassador-deployment-patch.yaml

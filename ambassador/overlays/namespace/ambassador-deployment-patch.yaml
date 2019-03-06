@@ -1,0 +1,3 @@
+- op: replace
+  path: "/spec/template/metadata/namespace"
+  value: "kubeflow"
