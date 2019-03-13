@@ -5,7 +5,6 @@ A repository for Kustomize manifests
 
 `go get -u github.com/kubernetes-sigs/kustomize`
 
-
 ## Basic Usage
 
 ```bash
