@@ -1,0 +1,12 @@
+namePrefix: jupyter-web-app-
+
+resources:
+- cluster-role.yaml
+- service-account.yaml
+- cluster-role-binding.yaml
+- config-map.yaml
+- service.yaml
+- deployment.yaml
+
+commonLabels:
+  kustomize.component: jupyter-web-app
