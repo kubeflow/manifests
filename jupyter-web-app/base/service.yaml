@@ -10,7 +10,7 @@ metadata:
       prefix: /jupyter/
       service: jupyter-web-app.kubeflow
       add_request_headers:
-       x-forwarded-prefix: /jupyter
+        x-forwarded-prefix: /jupyter
   labels:
     run: jupyter-web-app
   name: jupyter-web-app
