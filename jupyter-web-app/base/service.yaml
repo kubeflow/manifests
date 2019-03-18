@@ -2,9 +2,15 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    getambassador.io/config: "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:
-      \ webapp_mapping\nprefix: /jupyter/\nservice: jupyter-web-app.kubeflow\nadd_request_headers:
-      \n  x-forwarded-prefix: /jupyter"
+    getambassador.io/config: |-
+      ---
+      apiVersion: ambassador/v0
+      kind:  Mapping
+      name: webapp_mapping
+      prefix: /jupyter/
+      service: jupyter-web-app.kubeflow
+      add_request_headers:
+       x-forwarded-prefix: /jupyter
   labels:
     run: jupyter-web-app
   name: jupyter-web-app
