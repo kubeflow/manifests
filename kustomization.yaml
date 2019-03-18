@@ -2,6 +2,7 @@ bases:
 - ambassador/base
 - argo/base
 - jupyter-web-app/base
+- notebook-controller/base
 #- github.com/swiftdiaries/kubeflow//components/profile-controller/config/default?ref=profiles-controller
 commonLabels:
   app: kubeflow
