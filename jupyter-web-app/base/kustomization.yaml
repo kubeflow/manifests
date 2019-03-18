@@ -1,0 +1,18 @@
+namePrefix: jupyter-web-app-
+
+resources:
+- cluster-role.yaml
+- service-account.yaml
+- cluster-role-binding.yaml
+- config-map.yaml
+- service.yaml
+- deployment.yaml
+
+commonLabels:
+  kustomize.component: jupyter-web-app
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+images:
+- name: gcr.io/kubeflow-images-public/jupyter-web-app
+  newTag: v20190215-v0.4.0-rc.1-138-g1f61e52d
