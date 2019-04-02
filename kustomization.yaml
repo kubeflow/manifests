@@ -4,6 +4,7 @@ bases:
 - jupyter-web-app/base
 - notebook-controller/base
 #- github.com/swiftdiaries/kubeflow//components/profile-controller/config/default?ref=profiles-controller
+- katib/v1alpha1/base
 commonLabels:
   app: kubeflow
 
