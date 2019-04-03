@@ -1,0 +1,4 @@
+resources:
+- clusterrole-binding.yaml
+- clusterrole.yaml
+- sa.yaml

@@ -1,0 +1,6 @@
+resources:
+- resources.yaml
+- deployment.yaml
+- role-binding.yaml
+- role.yaml
+- sa.yaml
