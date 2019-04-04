@@ -1,8 +1,9 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
-labels:
-  app: workflow-controller
 metadata:
+  labels:
+    app: workflow-controller
+    ksonnet.io/component: argo
   name: workflow-controller
   namespace: kubeflow
 spec:
