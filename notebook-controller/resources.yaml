@@ -1,0 +1,110 @@
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    ksonnet.io/component: notebook-controller
+  name: notebooks.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    kind: Notebook
+    plural: notebooks
+    singular: notebook
+  scope: Namespaced
+  subresources:
+    status: {}
+  version: v1alpha1
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    ksonnet.io/component: notebook-controller
+  name: notebooks-controller
+rules:
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  - deployments
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - pods
+  verbs:
+  - '*'
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - notebooks
+  - notebooks/status
+  verbs:
+  - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    ksonnet.io/component: notebook-controller
+  name: notebooks-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: notebooks-controller
+subjects:
+- kind: ServiceAccount
+  name: notebook-controller
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: notebook-controller
+    ksonnet.io/component: notebook-controller
+  name: notebook-controller
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    ksonnet.io/component: notebook-controller
+  name: notebooks-controller
+spec:
+  ports:
+  - port: 443
+  selector:
+    app: notebooks-controller
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    ksonnet.io/component: notebook-controller
+  name: notebooks-controller
+spec:
+  selector:
+    matchLabels:
+      app: notebooks-controller
+  template:
+    metadata:
+      labels:
+        app: notebooks-controller
+    spec:
+      containers:
+      - command:
+        - /manager
+        env: []
+        image: gcr.io/kubeflow-images-public/notebook-controller:v20190401-v0.4.0-rc.1-308-g33618cc9-e3b0c4
+        imagePullPolicy: Always
+        name: manager
+      serviceAccountName: notebook-controller
