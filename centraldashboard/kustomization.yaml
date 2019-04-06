@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- resources.yaml
+commonLabels:
+  kustomize.component: centraldashboard
+images:
+  - name: gcr.io/kubeflow-images-public/centraldashboard
+    newName: gcr.io/kubeflow-images-public/centraldashboard
+    newTag: 0.5.0
+

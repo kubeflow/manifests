@@ -1,0 +1,125 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: centraldashboard
+    ksonnet.io/component: centraldashboard
+  name: centraldashboard
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - events
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: centraldashboard
+    ksonnet.io/component: centraldashboard
+  name: centraldashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: centraldashboard
+subjects:
+- kind: ServiceAccount
+  name: centraldashboard
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    ksonnet.io/component: centraldashboard
+  name: centraldashboard
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  labels:
+    app: centraldashboard
+    ksonnet.io/component: centraldashboard
+  name: centraldashboard
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/exec
+  - pods/log
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  labels:
+    app: centraldashboard
+    ksonnet.io/component: centraldashboard
+  name: centraldashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: centraldashboard
+subjects:
+- kind: ServiceAccount
+  name: centraldashboard
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    getambassador.io/config: |-
+      ---
+      apiVersion: ambassador/v0
+      kind:  Mapping
+      name: centralui-mapping
+      prefix: /
+      rewrite: /
+      service: centraldashboard.kubeflow
+  labels:
+    app: centraldashboard
+    ksonnet.io/component: centraldashboard
+  name: centraldashboard
+spec:
+  ports:
+  - port: 80
+    targetPort: 8082
+  selector:
+    app: centraldashboard
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: centraldashboard
+    ksonnet.io/component: centraldashboard
+  name: centraldashboard
+spec:
+  template:
+    metadata:
+      labels:
+        app: centraldashboard
+    spec:
+      containers:
+      - image: gcr.io/kubeflow-images-public/centraldashboard:v0.5.0
+        name: centraldashboard
+        ports:
+        - containerPort: 8082
+      serviceAccountName: centraldashboard
