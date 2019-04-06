@@ -1,0 +1,4 @@
+- op: replace
+  name: replicas
+  path: /spec/replicas
+  value: 3

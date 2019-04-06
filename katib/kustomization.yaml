@@ -1,0 +1,34 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- resources.yaml
+commonLabels:
+  kustomize.component: katib
+images:
+  - name: gcr.io/kubeflow-images-public/katib/suggestion-random
+    newName: gcr.io/kubeflow-images-public/katib/suggestion-random
+    newTag: v0.1.2-alpha-156-g4ab3dbd
+  - name: gcr.io/kubeflow-images-public/katib/suggestion-grid
+    newName: gcr.io/kubeflow-images-public/katib/suggestion-grid
+    newTag: v0.1.2-alpha-156-g4ab3dbd
+  - name: gcr.io/kubeflow-images-public/katib/suggestion-hyperband
+    newName: gcr.io/kubeflow-images-public/katib/suggestion-hyperband
+    newTag: v0.1.2-alpha-156-g4ab3dbd
+  - name: gcr.io/kubeflow-images-public/katib/suggestion-bayesianoptimization
+    newName: gcr.io/kubeflow-images-public/katib/suggestion-bayesianoptimization
+    newTag: v0.1.2-alpha-156-g4ab3dbd
+  - name: gcr.io/kubeflow-images-public/katib/vizier-core
+    newName: gcr.io/kubeflow-images-public/katib/vizier-core
+    newTag: v0.1.2-alpha-156-g4ab3dbd
+  - name: gcr.io/kubeflow-images-public/katib/vizier-core-rest
+    newName: gcr.io/kubeflow-images-public/katib/vizier-core-rest
+    newTag: v0.1.2-alpha-156-g4ab3dbd
+  - name: mysql
+    newName: mysql
+    newTag: 8.0.3
+  - name: gcr.io/kubeflow-images-public/katib/studyjob-controller
+    newName: gcr.io/kubeflow-images-public/katib/studyjob-controller
+    newTag: v0.1.2-alpha-156-g4ab3dbd
+  - name: gcr.io/kubeflow-images-public/katib/metrics-collector
+    newName: gcr.io/kubeflow-images-public/katib/metrics-collector
+    newTag: v0.1.2-alpha-156-g4ab3dbd

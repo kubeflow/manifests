@@ -1,0 +1,4 @@
+- op: replace
+  name: ambassadorServiceType
+  path: /spec/type
+  value: ClusterIP

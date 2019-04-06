@@ -1,0 +1,61 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    getambassador.io/config: |-
+      ---
+      apiVersion: ambassador/v0
+      kind:  Mapping
+      name: tb-mapping-tensorboard-get
+      prefix: /tensorboard/ tensorboard/
+      rewrite: /
+      method: GET
+      service: tensorboard.kubeflow:9000
+  labels:
+    app: tensorboard
+    ksonnet.io/component: tensorboard
+  name: tensorboard
+  namespace: kubeflow
+spec:
+  ports:
+  - name: tb
+    port: 9000
+    targetPort: 6006
+  selector:
+    app: tensorboard
+  type: ClusterIP
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: tensorboard
+    ksonnet.io/component: tensorboard
+  name: tensorboard
+  namespace: kubeflow
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: tensorboard
+    spec:
+      containers:
+      - args:
+        - --logdir=logs
+        - --port=6006
+        command:
+        - /usr/local/bin/tensorboard
+        image: tensorflow/tensorflow:1.8.0
+        imagePullPolicy: IfNotPresent
+        name: tensorboard
+        ports:
+        - containerPort: 6006
+        resources:
+          limits:
+            cpu: "4"
+            memory: 4Gi
+          requests:
+            cpu: "1"
+            memory: 1Gi
