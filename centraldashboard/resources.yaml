@@ -90,7 +90,7 @@ metadata:
       name: centralui-mapping
       prefix: /
       rewrite: /
-      service: centraldashboard.kubeflow
+      service: centraldashboard.$(namespace)
   labels:
     app: centraldashboard
     ksonnet.io/component: centraldashboard

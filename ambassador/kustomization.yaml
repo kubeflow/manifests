@@ -8,6 +8,11 @@ images:
   - name: quay.io/datawire/ambassador
     newName: quay.io/datawire/ambassador
     newTag: 0.37.0
+configMapGenerator:
+- name: ambassador-parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
 patchesJson6902:
 - target:
     group: apps
@@ -15,8 +20,13 @@ patchesJson6902:
     kind: Deployment
     name: ambassador
   path: deployment-ambassador.yaml
-- target:
-    version: v1
-    kind: Service
-    name: ambassador
-  path: service-ambassador.yaml
+vars:
+- name: ambassadorServiceType
+  objref:
+    kind: ConfigMap
+    name: ambassador-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ambassadorServiceType
+configurations:
+- params.yaml

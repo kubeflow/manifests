@@ -1,7 +1,7 @@
 varReference:
-- path: spec/template/spec/containers/env/0
+- path: spec/template/spec/containers/0/env/0
   kind: Deployment
-- path: spec/template/spec/containers/env/1
+- path: spec/template/spec/containers/0/env/1
   kind: Deployment
 - path: spec/template/spec/containers/imagePullPolicy
   kind: Deployment
