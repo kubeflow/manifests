@@ -805,6 +805,8 @@ spec:
       - name: sa-key
         secret:
           secretName: admin-gcp-sa
+  # Workaround for https://github.com/kubernetes-sigs/kustomize/issues/677
+  volumeClaimTemplates: []
 ---
 apiVersion: batch/v1
 kind: Job
