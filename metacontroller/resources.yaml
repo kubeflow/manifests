@@ -114,3 +114,5 @@ spec:
           allowPrivilegeEscalation: true
           privileged: true
       serviceAccountName: meta-controller-service
+  # Workaround for https://github.com/kubernetes-sigs/kustomize/issues/677
+  volumeClaimTemplates: []
