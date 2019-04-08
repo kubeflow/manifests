@@ -7,12 +7,7 @@ commonLabels:
 images:
   - name: gcr.io/google-containers/pause
     newName: gcr.io/google-containers/pause
-    newTag: 2.0
+    newTag: "2.0"
   - name: cos-nvidia-installer
     newName: cos-nvidia-installer
     newTag: fixed
-configMapGenerator:
-- name: gpu-driver-parameters
-  env: params.env
-generatorOptions:
-  disableNameSuffixHash: true

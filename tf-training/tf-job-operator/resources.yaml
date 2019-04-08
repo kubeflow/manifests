@@ -204,7 +204,6 @@ metadata:
   labels:
     ksonnet.io/component: tf-job-operator
   name: tf-job-operator-config
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -213,7 +212,6 @@ metadata:
     app: tf-job-dashboard
     ksonnet.io/component: tf-job-operator
   name: tf-job-dashboard
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -222,7 +220,6 @@ metadata:
     app: tf-job-operator
     ksonnet.io/component: tf-job-operator
   name: tf-job-operator
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: Service
@@ -239,7 +236,6 @@ metadata:
   labels:
     ksonnet.io/component: tf-job-operator
   name: tf-job-dashboard
-  namespace: kubeflow
 spec:
   ports:
   - port: 80
@@ -254,7 +250,6 @@ metadata:
   labels:
     ksonnet.io/component: tf-job-operator
   name: tf-job-dashboard
-  namespace: kubeflow
 spec:
   template:
     metadata:
@@ -281,7 +276,6 @@ metadata:
   labels:
     ksonnet.io/component: tf-job-operator
   name: tf-job-operator
-  namespace: kubeflow
 spec:
   replicas: 1
   template:
