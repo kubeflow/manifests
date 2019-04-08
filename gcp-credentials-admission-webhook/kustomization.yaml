@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- resources.yaml
+commonLabels:
+  kustomize.component: gcp-credentials-admission-webhook
+images:
+  - name: gcr.io/kubeflow-images-public/gcp-admission-webhook
+    newName: gcr.io/kubeflow-images-public/gcp-admission-webhook
+    newTag: v20190401-v0.4.0-rc.1-309-g4014fa2e-dirty-be6212
+  - name: gcr.io/kubeflow-images-public/ingress-setup
+    newName: gcr.io/kubeflow-images-public/ingress-setup
+    newTag: latest
