@@ -258,3 +258,5 @@ spec:
       - configMap:
           name: webhook-bootstrap-config
         name: webhook-config
+  # Workaround for https://github.com/kubernetes-sigs/kustomize/issues/677
+  volumeClaimTemplates: []
