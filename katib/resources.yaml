@@ -233,7 +233,6 @@ metadata:
   labels:
     ksonnet.io/component: katib
   name: vizier-db-secrets
-  namespace: kubeflow
 type: Opaque
 ---
 apiVersion: v1
@@ -277,7 +276,6 @@ metadata:
   labels:
     ksonnet.io/component: katib
   name: metricscollector-template
-  namespace: kubeflow
 ---
 apiVersion: v1
 data:
@@ -346,7 +344,6 @@ metadata:
   labels:
     ksonnet.io/component: katib
   name: worker-template
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -355,7 +352,6 @@ metadata:
     app: katib
     ksonnet.io/component: katib
   name: katib-mysql
-  namespace: kubeflow
 spec:
   accessModes:
   - ReadWriteOnce
@@ -369,7 +365,6 @@ metadata:
   labels:
     ksonnet.io/component: katib
   name: katib-ui
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -377,7 +372,6 @@ metadata:
   labels:
     ksonnet.io/component: katib
   name: metrics-collector
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -385,7 +379,6 @@ metadata:
   labels:
     ksonnet.io/component: katib
   name: studyjob-controller
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -393,7 +386,6 @@ metadata:
   labels:
     ksonnet.io/component: katib
   name: vizier-core
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: Service
@@ -412,7 +404,6 @@ metadata:
     component: ui
     ksonnet.io/component: katib
   name: katib-ui
-  namespace: kubeflow
 spec:
   ports:
   - name: ui
@@ -429,7 +420,6 @@ metadata:
   labels:
     ksonnet.io/component: katib
   name: studyjob-controller
-  namespace: kubeflow
 spec:
   ports:
   - port: 443
@@ -445,7 +435,6 @@ metadata:
     component: core
     ksonnet.io/component: katib
   name: vizier-core
-  namespace: kubeflow
 spec:
   ports:
   - name: api
@@ -464,7 +453,6 @@ metadata:
     component: core-rest
     ksonnet.io/component: katib
   name: vizier-core-rest
-  namespace: kubeflow
 spec:
   ports:
   - name: api
@@ -483,7 +471,6 @@ metadata:
     component: db
     ksonnet.io/component: katib
   name: vizier-db
-  namespace: kubeflow
 spec:
   ports:
   - name: dbapi
@@ -502,7 +489,6 @@ metadata:
     component: suggestion-bayesianoptimization
     ksonnet.io/component: katib
   name: vizier-suggestion-bayesianoptimization
-  namespace: kubeflow
 spec:
   ports:
   - name: api
@@ -521,7 +507,6 @@ metadata:
     component: suggestion-grid
     ksonnet.io/component: katib
   name: vizier-suggestion-grid
-  namespace: kubeflow
 spec:
   ports:
   - name: api
@@ -540,7 +525,6 @@ metadata:
     component: suggestion-hyperband
     ksonnet.io/component: katib
   name: vizier-suggestion-hyperband
-  namespace: kubeflow
 spec:
   ports:
   - name: api
@@ -559,7 +543,6 @@ metadata:
     component: suggestion-random
     ksonnet.io/component: katib
   name: vizier-suggestion-random
-  namespace: kubeflow
 spec:
   ports:
   - name: api
@@ -578,7 +561,6 @@ metadata:
     component: ui
     ksonnet.io/component: katib
   name: katib-ui
-  namespace: kubeflow
 spec:
   replicas: 1
   template:
@@ -605,7 +587,6 @@ metadata:
     app: studyjob-controller
     ksonnet.io/component: katib
   name: studyjob-controller
-  namespace: kubeflow
 spec:
   replicas: 1
   selector:
@@ -638,7 +619,6 @@ metadata:
     component: core
     ksonnet.io/component: katib
   name: vizier-core
-  namespace: kubeflow
 spec:
   replicas: 1
   template:
@@ -684,7 +664,6 @@ metadata:
     component: core-rest
     ksonnet.io/component: katib
   name: vizier-core-rest
-  namespace: kubeflow
 spec:
   replicas: 1
   template:
@@ -711,7 +690,6 @@ metadata:
     component: db
     ksonnet.io/component: katib
   name: vizier-db
-  namespace: kubeflow
 spec:
   replicas: 1
   template:
@@ -765,7 +743,6 @@ metadata:
     component: suggestion-bayesianoptimization
     ksonnet.io/component: katib
   name: vizier-suggestion-bayesianoptimization
-  namespace: kubeflow
 spec:
   replicas: 1
   template:
@@ -790,7 +767,6 @@ metadata:
     component: suggestion-grid
     ksonnet.io/component: katib
   name: vizier-suggestion-grid
-  namespace: kubeflow
 spec:
   replicas: 1
   template:
@@ -815,7 +791,6 @@ metadata:
     component: suggestion-hyperband
     ksonnet.io/component: katib
   name: vizier-suggestion-hyperband
-  namespace: kubeflow
 spec:
   replicas: 1
   template:
@@ -840,7 +815,6 @@ metadata:
     component: suggestion-random
     ksonnet.io/component: katib
   name: vizier-suggestion-random
-  namespace: kubeflow
 spec:
   replicas: 1
   template:

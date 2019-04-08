@@ -243,7 +243,6 @@ metadata:
   labels:
     ksonnet.io/component: pipeline
   name: mlpipeline-minio-artifact
-  namespace: kubeflow
 type: Opaque
 ---
 apiVersion: v1
@@ -252,7 +251,6 @@ metadata:
   labels:
     ksonnet.io/component: pipeline
   name: minio-pvc
-  namespace: kubeflow
 spec:
   accessModes:
   - ReadWriteOnce
@@ -266,7 +264,6 @@ metadata:
   labels:
     ksonnet.io/component: pipeline
   name: mysql-pv-claim
-  namespace: kubeflow
 spec:
   accessModes:
   - ReadWriteOnce
@@ -280,7 +277,6 @@ metadata:
   labels:
     ksonnet.io/component: pipeline
   name: ml-pipeline
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -288,7 +284,6 @@ metadata:
   labels:
     ksonnet.io/component: pipeline
   name: ml-pipeline-persistenceagent
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -296,7 +291,6 @@ metadata:
   labels:
     ksonnet.io/component: pipeline
   name: ml-pipeline-scheduledworkflow
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -304,7 +298,6 @@ metadata:
   labels:
     ksonnet.io/component: pipeline
   name: ml-pipeline-ui
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -312,7 +305,6 @@ metadata:
   labels:
     ksonnet.io/component: pipeline
   name: ml-pipeline-viewer-crd-service-account
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -320,7 +312,6 @@ metadata:
   labels:
     ksonnet.io/component: pipeline
   name: pipeline-runner
-  namespace: kubeflow
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
@@ -329,7 +320,6 @@ metadata:
     app: ml-pipeline
     ksonnet.io/component: pipeline
   name: ml-pipeline
-  namespace: kubeflow
 rules:
 - apiGroups:
   - argoproj.io
@@ -362,7 +352,6 @@ metadata:
     app: ml-pipeline-scheduledworkflow
     ksonnet.io/component: pipeline
   name: ml-pipeline-scheduledworkflow
-  namespace: kubeflow
 rules:
 - apiGroups:
   - argoproj.io
@@ -396,7 +385,6 @@ metadata:
     app: ml-pipeline-ui
     ksonnet.io/component: pipeline
   name: ml-pipeline-ui
-  namespace: kubeflow
 rules:
 - apiGroups:
   - ""
@@ -415,7 +403,6 @@ metadata:
     app: ml-pipeline
     ksonnet.io/component: pipeline
   name: ml-pipeline
-  namespace: kubeflow
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -423,7 +410,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: ml-pipeline
-  namespace: kubeflow
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
@@ -432,7 +418,6 @@ metadata:
     app: ml-pipeline-ui
     ksonnet.io/component: pipeline
   name: ml-pipeline-ui
-  namespace: kubeflow
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -448,7 +433,6 @@ metadata:
   labels:
     ksonnet.io/component: pipeline
   name: minio-service
-  namespace: kubeflow
 spec:
   ports:
   - port: 9000
@@ -464,7 +448,6 @@ metadata:
     app: ml-pipeline
     ksonnet.io/component: pipeline
   name: ml-pipeline
-  namespace: kubeflow
 spec:
   ports:
   - name: http
@@ -496,7 +479,6 @@ metadata:
     app: ml-pipeline-tensorboard-ui
     ksonnet.io/component: pipeline
   name: ml-pipeline-tensorboard-ui
-  namespace: kubeflow
 spec:
   ports:
   - port: 80
@@ -522,7 +504,6 @@ metadata:
     app: ml-pipeline-ui
     ksonnet.io/component: pipeline
   name: ml-pipeline-ui
-  namespace: kubeflow
 spec:
   ports:
   - port: 80
@@ -536,7 +517,6 @@ metadata:
   labels:
     ksonnet.io/component: pipeline
   name: mysql
-  namespace: kubeflow
 spec:
   ports:
   - port: 3306
@@ -549,7 +529,6 @@ metadata:
   labels:
     ksonnet.io/component: pipeline
   name: minio
-  namespace: kubeflow
 spec:
   selector:
     matchLabels:
@@ -590,7 +569,6 @@ metadata:
     app: ml-pipeline
     ksonnet.io/component: pipeline
   name: ml-pipeline
-  namespace: kubeflow
 spec:
   selector:
     matchLabels:
@@ -621,7 +599,6 @@ metadata:
     app: ml-pipeline-persistenceagent
     ksonnet.io/component: pipeline
   name: ml-pipeline-persistenceagent
-  namespace: kubeflow
 spec:
   selector:
     matchLabels:
@@ -649,7 +626,6 @@ metadata:
     app: ml-pipeline-scheduledworkflow
     ksonnet.io/component: pipeline
   name: ml-pipeline-scheduledworkflow
-  namespace: kubeflow
 spec:
   selector:
     matchLabels:
@@ -677,7 +653,6 @@ metadata:
     app: ml-pipeline-ui
     ksonnet.io/component: pipeline
   name: ml-pipeline-ui
-  namespace: kubeflow
 spec:
   selector:
     matchLabels:
@@ -702,7 +677,6 @@ metadata:
     app: ml-pipeline-viewer-crd
     ksonnet.io/component: pipeline
   name: ml-pipeline-viewer-controller-deployment
-  namespace: kubeflow
 spec:
   selector:
     matchLabels:
@@ -729,7 +703,6 @@ metadata:
   labels:
     ksonnet.io/component: pipeline
   name: mysql
-  namespace: kubeflow
 spec:
   selector:
     matchLabels:

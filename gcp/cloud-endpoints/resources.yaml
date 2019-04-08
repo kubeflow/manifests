@@ -84,7 +84,6 @@ metadata:
   labels:
     ksonnet.io/component: cloud-endpoints
   name: cloud-endpoints-controller
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: Service
@@ -92,7 +91,6 @@ metadata:
   labels:
     ksonnet.io/component: cloud-endpoints
   name: cloud-endpoints-controller
-  namespace: kubeflow
 spec:
   ports:
   - name: http
@@ -107,7 +105,6 @@ metadata:
   labels:
     ksonnet.io/component: cloud-endpoints
   name: cloud-endpoints-controller
-  namespace: kubeflow
 spec:
   replicas: 1
   template:
