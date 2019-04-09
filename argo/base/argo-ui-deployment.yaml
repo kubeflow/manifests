@@ -40,11 +40,11 @@ spec:
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8001
       dnsPolicy: ClusterFirst
-      readinessProbe:
-        httpGet:
-          path: /
-          port: 8001
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
