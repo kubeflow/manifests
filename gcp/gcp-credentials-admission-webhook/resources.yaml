@@ -232,6 +232,7 @@ metadata:
     ksonnet.io/component: gcp-credentials-admission-webhook
   name: webhook-bootstrap
 spec:
+  serviceName: gcp-cred-webhook
   selector:
     matchLabels:
       service: webhook-bootstrap
