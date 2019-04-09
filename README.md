@@ -9,6 +9,7 @@ A repository for Kustomize manifests
 
 ```bash
 git clone https://github.com/kubeflow/manifests
+cd manifests
 kustomize build | kubectl apply -f
 ```
 
@@ -30,6 +31,10 @@ kustomize edit set namespace kubeflow-dev
 
 * Ambassador
 
+* CentralDashboard
+
 * Argo
 
 * Profiles
+
+* Katib
