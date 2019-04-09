@@ -770,6 +770,7 @@ metadata:
     service: backend-updater
   name: backend-updater
 spec:
+  serviceName: backend-updater
   selector:
     matchLabels:
       service: backend-updater
