@@ -1,0 +1,11 @@
+bases:
+- ../base
+images:
+  - name: gcr.io/kubeflow-images-public/centraldashboard
+    newTag: v0.5.0
+patchesStrategicMerge:
+- add_service_annotation.yaml
+# when customize namespace, please also update suffix of service field
+# in add_service_annotation.yaml. Saying if namespace is nonkubeflow,
+# update it to 'service: centraldashboard.nonkubeflow' in add_service_annotation.yaml.
+namespace: kubeflow
