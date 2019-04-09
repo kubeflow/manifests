@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   labels:
     app: ml-pipeline-persistenceagent
-    ksonnet.io/component: pipeline
   name: ml-pipeline-persistenceagent
   namespace: kubeflow
 spec:

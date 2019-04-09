@@ -3,7 +3,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: pipeline-runner
-    ksonnet.io/component: pipeline
   name: pipeline-runner
 roleRef:
   apiGroup: rbac.authorization.k8s.io

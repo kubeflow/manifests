@@ -3,7 +3,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: ml-pipeline-viewer-crd
-    ksonnet.io/component: pipeline
   name: ml-pipeline-viewer-crd-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io

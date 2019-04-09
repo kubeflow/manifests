@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   labels:
     app: ml-pipeline
-    ksonnet.io/component: pipeline
   name: ml-pipeline
   namespace: kubeflow
 spec:

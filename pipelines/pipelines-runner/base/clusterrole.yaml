@@ -2,8 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   labels:
-    app: pipeline-runner
-    ksonnet.io/component: pipeline
+    app: pipeline-runnergcr.io
   name: pipeline-runner
 rules:
 - apiGroups:

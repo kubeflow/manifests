@@ -1,8 +1,6 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: minio
   namespace: kubeflow
 spec:

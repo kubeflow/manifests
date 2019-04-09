@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   labels:
     app: ml-pipeline-viewer-crd
-    ksonnet.io/component: pipeline
   name: ml-pipeline-viewer-controller-deployment
   namespace: kubeflow
 spec:

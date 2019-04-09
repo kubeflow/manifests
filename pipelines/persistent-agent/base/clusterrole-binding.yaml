@@ -3,7 +3,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: ml-pipeline-persistenceagent
-    ksonnet.io/component: pipeline
   name: ml-pipeline-persistenceagent
 roleRef:
   apiGroup: rbac.authorization.k8s.io

@@ -14,7 +14,6 @@ metadata:
       use_websocket: true
   labels:
     app: ml-pipeline-tensorboard-ui
-    ksonnet.io/component: pipeline
   name: ml-pipeline-tensorboard-ui
   namespace: kubeflow
 spec:

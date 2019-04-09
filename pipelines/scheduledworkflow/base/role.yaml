@@ -3,7 +3,6 @@ kind: Role
 metadata:
   labels:
     app: ml-pipeline-scheduledworkflow
-    ksonnet.io/component: pipeline
   name: ml-pipeline-scheduledworkflow
   namespace: kubeflow
 rules:

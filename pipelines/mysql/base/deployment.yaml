@@ -1,8 +1,6 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: mysql
   namespace: kubeflow
 spec:
