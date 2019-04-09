@@ -3,3 +3,7 @@ resources:
 - clusterrole.yaml
 - deployment.yaml
 - sa.yaml
+
+images:
+- name: gcr.io/ml-pipeline/persistenceagent
+  newTag: '0.1.14'

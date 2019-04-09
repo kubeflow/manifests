@@ -4,3 +4,7 @@ resources:
 - role.yaml
 - sa.yaml
 - service.yaml
+
+images:
+- name: gcr.io/ml-pipeline/frontend
+  newTag: '0.1.14'
