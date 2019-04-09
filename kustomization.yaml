@@ -1,5 +1,6 @@
 bases:
 - ambassador/base
+- centraldashboard/overlay
 - argo/base
 - jupyter-web-app/base
 - notebook-controller/base

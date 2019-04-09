@@ -1,0 +1,8 @@
+resources:
+- serviceaccount.yaml
+- role.yaml
+- deployment.yaml
+- rolebinding.yaml
+- service.yaml
+commonLabels:
+  kustomize.component: centraldashboard

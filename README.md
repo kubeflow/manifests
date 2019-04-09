@@ -31,6 +31,8 @@ kustomize edit set namespace kubeflow-dev
 
 * Ambassador
 
+* CentralDashboard
+
 * Argo
 
 * Profiles
