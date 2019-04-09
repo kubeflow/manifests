@@ -1,0 +1,10 @@
+resources:
+- resources.yaml
+- deployment.yaml
+- role-binding.yaml
+- role.yaml
+- sa.yaml
+
+images:
+- name: gcr.io/ml-pipeline/scheduledworkflow
+  newTag: '0.1.14'
