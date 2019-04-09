@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   labels:
     app: workflow-controller
-    ksonnet.io/component: argo
   name: workflow-controller
   namespace: kubeflow
 spec:
