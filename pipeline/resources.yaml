@@ -184,7 +184,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: ml-pipeline-persistenceagent
-  namespace: kubeflow
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -200,7 +199,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: ml-pipeline-scheduledworkflow
-  namespace: kubeflow
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -216,7 +214,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: ml-pipeline-viewer-crd-service-account
-  namespace: kubeflow
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -232,7 +229,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: pipeline-runner
-  namespace: kubeflow
 ---
 apiVersion: v1
 data:
@@ -425,7 +421,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: ml-pipeline-ui
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: Service

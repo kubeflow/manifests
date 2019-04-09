@@ -5,7 +5,6 @@ metadata:
   labels:
     ksonnet.io/component: kubebench-dashboard
   name: kubebench-dashboard
-  namespace: kubeflow
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
@@ -14,7 +13,6 @@ metadata:
     app: kubebench-dashboard
     ksonnet.io/component: kubebench-dashboard
   name: kubebench-dashboard
-  namespace: kubeflow
 rules:
 - apiGroups:
   - ""
@@ -40,7 +38,6 @@ metadata:
     app: kubebench-dashboard
     ksonnet.io/component: kubebench-dashboard
   name: kubebench-dashboard
-  namespace: kubeflow
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -48,7 +45,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kubebench-dashboard
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: Service
@@ -65,7 +61,6 @@ metadata:
   labels:
     ksonnet.io/component: kubebench-dashboard
   name: kubebench-dashboard
-  namespace: kubeflow
 spec:
   ports:
   - port: 80
@@ -80,7 +75,6 @@ metadata:
     app: kubebench-dashboard
     ksonnet.io/component: kubebench-dashboard
   name: kubebench-dashboard
-  namespace: kubeflow
 spec:
   template:
     metadata:
@@ -166,7 +160,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -174,7 +167,6 @@ metadata:
   labels:
     ksonnet.io/component: kubebench-operator
   name: default
-  namespace: kubeflow
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -182,7 +174,6 @@ metadata:
   labels:
     ksonnet.io/component: kubebench-operator
   name: kubebench-operator
-  namespace: kubeflow
 spec:
   selector:
     matchLabels:
@@ -203,7 +194,6 @@ metadata:
   labels:
     ksonnet.io/component: kubebench-job
   name: kubebench-user-kubebench-job
-  namespace: kubeflow
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
@@ -211,7 +201,6 @@ metadata:
   labels:
     ksonnet.io/component: kubebench-job
   name: kubebench-user-kubebench-job
-  namespace: kubeflow
 rules:
 - apiGroups:
   - kubeflow.org
@@ -266,7 +255,6 @@ metadata:
   labels:
     ksonnet.io/component: kubebench-job
   name: kubebench-user-kubebench-job
-  namespace: kubeflow
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -274,7 +262,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kubebench-user-kubebench-job
-  namespace: kubeflow
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
@@ -282,7 +269,6 @@ metadata:
   labels:
     ksonnet.io/component: kubebench-job
   name: kubebench-job
-  namespace: kubeflow
 spec:
   entrypoint: kubebench-workflow
   serviceAccountName: kubebench-user-kubebench-job

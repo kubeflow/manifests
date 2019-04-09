@@ -63,7 +63,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: meta-controller-service
-  namespace: kubeflow
 ---
 apiVersion: v1
 kind: ServiceAccount
