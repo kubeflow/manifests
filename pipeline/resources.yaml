@@ -2,8 +2,6 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: scheduledworkflows.kubeflow.org
 spec:
   group: kubeflow.org
@@ -23,8 +21,6 @@ spec:
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: viewers.kubeflow.org
 spec:
   group: kubeflow.org
@@ -46,7 +42,6 @@ kind: ClusterRole
 metadata:
   labels:
     app: ml-pipeline-persistenceagent
-    ksonnet.io/component: pipeline
   name: ml-pipeline-persistenceagent
 rules:
 - apiGroups:
@@ -71,7 +66,6 @@ kind: ClusterRole
 metadata:
   labels:
     app: ml-pipeline-viewer-crd
-    ksonnet.io/component: pipeline
   name: ml-pipeline-viewer-controller-role
 rules:
 - apiGroups:
@@ -105,7 +99,6 @@ kind: ClusterRole
 metadata:
   labels:
     app: pipeline-runner
-    ksonnet.io/component: pipeline
   name: pipeline-runner
 rules:
 - apiGroups:
@@ -175,7 +168,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: ml-pipeline-persistenceagent
-    ksonnet.io/component: pipeline
   name: ml-pipeline-persistenceagent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -190,7 +182,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: ml-pipeline-scheduledworkflow
-    ksonnet.io/component: pipeline
   name: ml-pipeline-scheduledworkflow
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -205,7 +196,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: ml-pipeline-viewer-crd
-    ksonnet.io/component: pipeline
   name: ml-pipeline-viewer-crd-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -220,7 +210,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: pipeline-runner
-    ksonnet.io/component: pipeline
   name: pipeline-runner
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -236,16 +225,12 @@ data:
   secretkey: bWluaW8xMjM=
 kind: Secret
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: mlpipeline-minio-artifact
 type: Opaque
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: minio-pvc
 spec:
   accessModes:
@@ -257,8 +242,6 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: mysql-pv-claim
 spec:
   accessModes:
@@ -270,43 +253,31 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: ml-pipeline
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: ml-pipeline-persistenceagent
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: ml-pipeline-scheduledworkflow
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: ml-pipeline-ui
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: ml-pipeline-viewer-crd-service-account
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: pipeline-runner
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -314,7 +285,6 @@ kind: Role
 metadata:
   labels:
     app: ml-pipeline
-    ksonnet.io/component: pipeline
   name: ml-pipeline
 rules:
 - apiGroups:
@@ -346,7 +316,6 @@ kind: Role
 metadata:
   labels:
     app: ml-pipeline-scheduledworkflow
-    ksonnet.io/component: pipeline
   name: ml-pipeline-scheduledworkflow
 rules:
 - apiGroups:
@@ -379,7 +348,6 @@ kind: Role
 metadata:
   labels:
     app: ml-pipeline-ui
-    ksonnet.io/component: pipeline
   name: ml-pipeline-ui
 rules:
 - apiGroups:
@@ -397,7 +365,6 @@ kind: RoleBinding
 metadata:
   labels:
     app: ml-pipeline
-    ksonnet.io/component: pipeline
   name: ml-pipeline
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -412,7 +379,6 @@ kind: RoleBinding
 metadata:
   labels:
     app: ml-pipeline-ui
-    ksonnet.io/component: pipeline
   name: ml-pipeline-ui
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -425,8 +391,6 @@ subjects:
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: minio-service
 spec:
   ports:
@@ -441,7 +405,6 @@ kind: Service
 metadata:
   labels:
     app: ml-pipeline
-    ksonnet.io/component: pipeline
   name: ml-pipeline
 spec:
   ports:
@@ -472,7 +435,6 @@ metadata:
       use_websocket: true
   labels:
     app: ml-pipeline-tensorboard-ui
-    ksonnet.io/component: pipeline
   name: ml-pipeline-tensorboard-ui
 spec:
   ports:
@@ -497,7 +459,6 @@ metadata:
       use_websocket: true
   labels:
     app: ml-pipeline-ui
-    ksonnet.io/component: pipeline
   name: ml-pipeline-ui
 spec:
   ports:
@@ -509,8 +470,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: mysql
 spec:
   ports:
@@ -521,8 +480,6 @@ spec:
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: minio
 spec:
   selector:
@@ -562,7 +519,6 @@ kind: Deployment
 metadata:
   labels:
     app: ml-pipeline
-    ksonnet.io/component: pipeline
   name: ml-pipeline
 spec:
   selector:
@@ -592,7 +548,6 @@ kind: Deployment
 metadata:
   labels:
     app: ml-pipeline-persistenceagent
-    ksonnet.io/component: pipeline
   name: ml-pipeline-persistenceagent
 spec:
   selector:
@@ -619,7 +574,6 @@ kind: Deployment
 metadata:
   labels:
     app: ml-pipeline-scheduledworkflow
-    ksonnet.io/component: pipeline
   name: ml-pipeline-scheduledworkflow
 spec:
   selector:
@@ -646,7 +600,6 @@ kind: Deployment
 metadata:
   labels:
     app: ml-pipeline-ui
-    ksonnet.io/component: pipeline
   name: ml-pipeline-ui
 spec:
   selector:
@@ -670,7 +623,6 @@ kind: Deployment
 metadata:
   labels:
     app: ml-pipeline-viewer-crd
-    ksonnet.io/component: pipeline
   name: ml-pipeline-viewer-controller-deployment
 spec:
   selector:
@@ -695,8 +647,6 @@ spec:
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  labels:
-    ksonnet.io/component: pipeline
   name: mysql
 spec:
   selector:

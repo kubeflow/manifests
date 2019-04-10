@@ -4,7 +4,6 @@ kind: ClusterRole
 metadata:
   labels:
     app: centraldashboard
-    ksonnet.io/component: centraldashboard
   name: centraldashboard
 rules:
 - apiGroups:
@@ -22,7 +21,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: centraldashboard
-    ksonnet.io/component: centraldashboard
   name: centraldashboard
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -35,8 +33,6 @@ subjects:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    ksonnet.io/component: centraldashboard
   name: centraldashboard
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -44,7 +40,6 @@ kind: Role
 metadata:
   labels:
     app: centraldashboard
-    ksonnet.io/component: centraldashboard
   name: centraldashboard
 rules:
 - apiGroups:
@@ -69,7 +64,6 @@ kind: RoleBinding
 metadata:
   labels:
     app: centraldashboard
-    ksonnet.io/component: centraldashboard
   name: centraldashboard
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -93,7 +87,6 @@ metadata:
       service: centraldashboard.$(namespace)
   labels:
     app: centraldashboard
-    ksonnet.io/component: centraldashboard
   name: centraldashboard
 spec:
   ports:
@@ -109,7 +102,6 @@ kind: Deployment
 metadata:
   labels:
     app: centraldashboard
-    ksonnet.io/component: centraldashboard
   name: centraldashboard
 spec:
   template:

@@ -2,8 +2,6 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  labels:
-    ksonnet.io/component: gcp-credentials-admission-webhook
   name: webhook-bootstrap
 rules:
 - apiGroups:
@@ -22,8 +20,6 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  labels:
-    ksonnet.io/component: gcp-credentials-admission-webhook
   name: webhook-bootstrap
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -36,8 +32,6 @@ subjects:
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: MutatingWebhookConfiguration
 metadata:
-  labels:
-    ksonnet.io/component: gcp-credentials-admission-webhook
   name: gcp-cred-webhook
 webhooks:
 - clientConfig:
@@ -177,15 +171,11 @@ data:
     done
 kind: ConfigMap
 metadata:
-  labels:
-    ksonnet.io/component: gcp-credentials-admission-webhook
   name: webhook-bootstrap-config
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    ksonnet.io/component: gcp-credentials-admission-webhook
   name: webhook-bootstrap
 ---
 apiVersion: v1
@@ -193,7 +183,6 @@ kind: Service
 metadata:
   labels:
     app: gcp-cred-webhook
-    ksonnet.io/component: gcp-credentials-admission-webhook
   name: gcp-cred-webhook
 spec:
   ports:
@@ -205,8 +194,6 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  labels:
-    ksonnet.io/component: gcp-credentials-admission-webhook
   name: gcp-cred-webhook
 spec:
   template:
@@ -229,8 +216,6 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  labels:
-    ksonnet.io/component: gcp-credentials-admission-webhook
   name: webhook-bootstrap
 spec:
   serviceName: gcp-cred-webhook

@@ -2,8 +2,6 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  labels:
-    ksonnet.io/component: iap-ingress
   name: envoy
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -497,8 +495,6 @@ data:
     sleep 3600
 kind: ConfigMap
 metadata:
-  labels:
-    ksonnet.io/component: iap-ingress
   name: envoy-config
 ---
 apiVersion: v1
@@ -527,22 +523,16 @@ data:
     echo "Done"
 kind: ConfigMap
 metadata:
-  labels:
-    ksonnet.io/component: iap-ingress
   name: ingress-bootstrap-config
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    ksonnet.io/component: iap-ingress
   name: envoy
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  labels:
-    ksonnet.io/component: iap-ingress
   name: envoy
 rules:
 - apiGroups:
@@ -572,7 +562,6 @@ metadata:
   annotations:
     beta.cloud.google.com/backend-config: '{"ports": {"envoy":"iap-backendconfig"}}'
   labels:
-    ksonnet.io/component: iap-ingress
     service: envoy
   name: envoy
 spec:
@@ -589,7 +578,6 @@ kind: Service
 metadata:
   labels:
     app: whoami
-    ksonnet.io/component: iap-ingress
   name: whoami-app
 spec:
   ports:
@@ -602,8 +590,6 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  labels:
-    ksonnet.io/component: iap-ingress
   name: envoy
 spec:
   replicas: 3
@@ -688,8 +674,6 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  labels:
-    ksonnet.io/component: iap-ingress
   name: iap-enabler
 spec:
   replicas: 1
@@ -734,8 +718,6 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  labels:
-    ksonnet.io/component: iap-ingress
   name: whoami-app
 spec:
   replicas: 1
@@ -766,7 +748,6 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    ksonnet.io/component: iap-ingress
     service: backend-updater
   name: backend-updater
 spec:
@@ -812,8 +793,6 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  labels:
-    ksonnet.io/component: iap-ingress
   name: ingress-bootstrap
 spec:
   template:
@@ -851,8 +830,6 @@ metadata:
     ingress.kubernetes.io/ssl-redirect: "true"
     kubernetes.io/ingress.global-static-ip-name: kubeflow-ip
     kubernetes.io/tls-acme: "true"
-  labels:
-    ksonnet.io/component: iap-ingress
   name: envoy-ingress
 spec:
   rules:
@@ -867,8 +844,6 @@ spec:
 apiVersion: cloud.google.com/v1beta1
 kind: BackendConfig
 metadata:
-  labels:
-    ksonnet.io/component: iap-ingress
   name: iap-backendconfig
 spec:
   iap:
@@ -879,8 +854,6 @@ spec:
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
-  labels:
-    ksonnet.io/component: iap-ingress
   name: envoy-ingress-tls
 spec:
   acme:
@@ -900,8 +873,6 @@ spec:
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
 metadata:
-  labels:
-    ksonnet.io/component: iap-ingress
   name: kubeflow
 spec:
   project: constant-cubist-173123

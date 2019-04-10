@@ -2,8 +2,6 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  labels:
-    ksonnet.io/component: jupyter-web-app
   name: jupyter-web-app-cluster-role
 rules:
 - apiGroups:
@@ -51,8 +49,6 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  labels:
-    ksonnet.io/component: jupyter-web-app
   name: jupyter-web-app-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -185,15 +181,11 @@ data:
         value: "{{}}"
 kind: ConfigMap
 metadata:
-  labels:
-    ksonnet.io/component: jupyter-web-app
   name: jupyter-web-app-config
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    ksonnet.io/component: jupyter-web-app
   name: jupyter-notebook
 ---
 apiVersion: v1
@@ -201,14 +193,11 @@ kind: ServiceAccount
 metadata:
   labels:
     app: jupyter-web-app
-    ksonnet.io/component: jupyter-web-app
   name: jupyter-web-app
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  labels:
-    ksonnet.io/component: jupyter-web-app
   name: jupyter-notebook-role
 rules:
 - apiGroups:
@@ -245,8 +234,6 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  labels:
-    ksonnet.io/component: jupyter-web-app
   name: jupyter-notebook-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -264,7 +251,6 @@ metadata:
       \ webapp_mapping\nprefix: /$(prefix)/\nservice: jupyter-web-app.kubeflow\nadd_request_headers:
       \n  x-forwarded-prefix: /jupyter"
   labels:
-    ksonnet.io/component: jupyter-web-app
     run: jupyter-web-app
   name: jupyter-web-app
 spec:
@@ -282,7 +268,6 @@ kind: Deployment
 metadata:
   labels:
     app: jupyter-web-app
-    ksonnet.io/component: jupyter-web-app
   name: jupyter-web-app
 spec:
   replicas: 1
