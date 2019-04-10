@@ -2,8 +2,6 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: studyjobs.kubeflow.org
 spec:
   additionalPrinterColumns:
@@ -24,8 +22,6 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: katib-ui
 rules:
 - apiGroups:
@@ -44,8 +40,6 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: metrics-collector
 rules:
 - apiGroups:
@@ -66,8 +60,6 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: studyjob-controller
 rules:
 - apiGroups:
@@ -123,8 +115,6 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: vizier-core
 rules:
 - apiGroups:
@@ -168,8 +158,6 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: katib-ui
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -182,8 +170,6 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: metrics-collector
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -196,8 +182,6 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: studyjob-controller
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -210,8 +194,6 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: vizier-core
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -226,8 +208,6 @@ data:
   MYSQL_ROOT_PASSWORD: dGVzdA==
 kind: Secret
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: vizier-db-secrets
 type: Opaque
 ---
@@ -269,8 +249,6 @@ data:
               restartPolicy: Never
 kind: ConfigMap
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: metricscollector-template
 ---
 apiVersion: v1
@@ -337,8 +315,6 @@ data:
           restartPolicy: Never
 kind: ConfigMap
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: worker-template
 ---
 apiVersion: v1
@@ -346,7 +322,6 @@ kind: PersistentVolumeClaim
 metadata:
   labels:
     app: katib
-    ksonnet.io/component: katib
   name: katib-mysql
 spec:
   accessModes:
@@ -358,29 +333,21 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: katib-ui
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: metrics-collector
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: studyjob-controller
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: vizier-core
 ---
 apiVersion: v1
@@ -398,7 +365,6 @@ metadata:
   labels:
     app: vizier
     component: ui
-    ksonnet.io/component: katib
   name: katib-ui
 spec:
   ports:
@@ -413,8 +379,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    ksonnet.io/component: katib
   name: studyjob-controller
 spec:
   ports:
@@ -429,7 +393,6 @@ metadata:
   labels:
     app: vizier
     component: core
-    ksonnet.io/component: katib
   name: vizier-core
 spec:
   ports:
@@ -447,7 +410,6 @@ metadata:
   labels:
     app: vizier
     component: core-rest
-    ksonnet.io/component: katib
   name: vizier-core-rest
 spec:
   ports:
@@ -465,7 +427,6 @@ metadata:
   labels:
     app: vizier
     component: db
-    ksonnet.io/component: katib
   name: vizier-db
 spec:
   ports:
@@ -483,7 +444,6 @@ metadata:
   labels:
     app: vizier
     component: suggestion-bayesianoptimization
-    ksonnet.io/component: katib
   name: vizier-suggestion-bayesianoptimization
 spec:
   ports:
@@ -501,7 +461,6 @@ metadata:
   labels:
     app: vizier
     component: suggestion-grid
-    ksonnet.io/component: katib
   name: vizier-suggestion-grid
 spec:
   ports:
@@ -519,7 +478,6 @@ metadata:
   labels:
     app: vizier
     component: suggestion-hyperband
-    ksonnet.io/component: katib
   name: vizier-suggestion-hyperband
 spec:
   ports:
@@ -537,7 +495,6 @@ metadata:
   labels:
     app: vizier
     component: suggestion-random
-    ksonnet.io/component: katib
   name: vizier-suggestion-random
 spec:
   ports:
@@ -555,7 +512,6 @@ metadata:
   labels:
     app: vizier
     component: ui
-    ksonnet.io/component: katib
   name: katib-ui
 spec:
   replicas: 1
@@ -581,7 +537,6 @@ kind: Deployment
 metadata:
   labels:
     app: studyjob-controller
-    ksonnet.io/component: katib
   name: studyjob-controller
 spec:
   replicas: 1
@@ -613,7 +568,6 @@ metadata:
   labels:
     app: vizier
     component: core
-    ksonnet.io/component: katib
   name: vizier-core
 spec:
   replicas: 1
@@ -658,7 +612,6 @@ metadata:
   labels:
     app: vizier
     component: core-rest
-    ksonnet.io/component: katib
   name: vizier-core-rest
 spec:
   replicas: 1
@@ -684,7 +637,6 @@ metadata:
   labels:
     app: vizier
     component: db
-    ksonnet.io/component: katib
   name: vizier-db
 spec:
   replicas: 1
@@ -737,7 +689,6 @@ metadata:
   labels:
     app: vizier
     component: suggestion-bayesianoptimization
-    ksonnet.io/component: katib
   name: vizier-suggestion-bayesianoptimization
 spec:
   replicas: 1
@@ -761,7 +712,6 @@ metadata:
   labels:
     app: vizier
     component: suggestion-grid
-    ksonnet.io/component: katib
   name: vizier-suggestion-grid
 spec:
   replicas: 1
@@ -785,7 +735,6 @@ metadata:
   labels:
     app: vizier
     component: suggestion-hyperband
-    ksonnet.io/component: katib
   name: vizier-suggestion-hyperband
 spec:
   replicas: 1
@@ -809,7 +758,6 @@ metadata:
   labels:
     app: vizier
     component: suggestion-random
-    ksonnet.io/component: katib
   name: vizier-suggestion-random
 spec:
   replicas: 1

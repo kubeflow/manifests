@@ -2,8 +2,6 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    ksonnet.io/component: argo
   name: workflows.argoproj.io
 spec:
   group: argoproj.io
@@ -22,7 +20,6 @@ kind: ClusterRole
 metadata:
   labels:
     app: argo
-    ksonnet.io/component: argo
   name: argo
 rules:
 - apiGroups:
@@ -68,7 +65,6 @@ kind: ClusterRole
 metadata:
   labels:
     app: argo
-    ksonnet.io/component: argo
   name: argo-ui
 rules:
 - apiGroups:
@@ -101,7 +97,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: argo
-    ksonnet.io/component: argo
   name: argo
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -116,7 +111,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: argo-ui
-    ksonnet.io/component: argo
   name: argo-ui
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -151,22 +145,16 @@ data:
     }
 kind: ConfigMap
 metadata:
-  labels:
-    ksonnet.io/component: argo
   name: workflow-controller-configmap
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    ksonnet.io/component: argo
   name: argo
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    ksonnet.io/component: argo
   name: argo-ui
 ---
 apiVersion: v1
@@ -182,7 +170,6 @@ metadata:
       service: argo-ui.kubeflow
   labels:
     app: argo-ui
-    ksonnet.io/component: argo
   name: argo-ui
 spec:
   ports:
@@ -198,7 +185,6 @@ kind: Deployment
 metadata:
   labels:
     app: argo-ui
-    ksonnet.io/component: argo
   name: argo-ui
 spec:
   progressDeadlineSeconds: 600
@@ -252,7 +238,6 @@ kind: Deployment
 metadata:
   labels:
     app: workflow-controller
-    ksonnet.io/component: argo
   name: workflow-controller
 spec:
   progressDeadlineSeconds: 600

@@ -4,7 +4,6 @@ kind: DaemonSet
 metadata:
   labels:
     k8s-app: nvidia-driver-installer
-    ksonnet.io/component: gpu-driver
   name: nvidia-driver-installer
   namespace: kube-system
 spec:

@@ -14,7 +14,6 @@ metadata:
       service: tensorboard.kubeflow:9000
   labels:
     app: tensorboard
-    ksonnet.io/component: tensorboard
   name: tensorboard
 spec:
   ports:
@@ -30,7 +29,6 @@ kind: Deployment
 metadata:
   labels:
     app: tensorboard
-    ksonnet.io/component: tensorboard
   name: tensorboard
 spec:
   replicas: 1

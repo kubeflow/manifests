@@ -2,8 +2,6 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    ksonnet.io/component: tf-job-operator
   name: tfjobs.kubeflow.org
 spec:
   additionalPrinterColumns:
@@ -58,7 +56,6 @@ kind: ClusterRole
 metadata:
   labels:
     app: tf-job-dashboard
-    ksonnet.io/component: tf-job-operator
   name: tf-job-dashboard
 rules:
 - apiGroups:
@@ -113,7 +110,6 @@ kind: ClusterRole
 metadata:
   labels:
     app: tf-job-operator
-    ksonnet.io/component: tf-job-operator
   name: tf-job-operator
 rules:
 - apiGroups:
@@ -166,7 +162,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: tf-job-dashboard
-    ksonnet.io/component: tf-job-operator
   name: tf-job-dashboard
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -181,7 +176,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: tf-job-operator
-    ksonnet.io/component: tf-job-operator
   name: tf-job-operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -199,8 +193,6 @@ data:
     }
 kind: ConfigMap
 metadata:
-  labels:
-    ksonnet.io/component: tf-job-operator
   name: tf-job-operator-config
 ---
 apiVersion: v1
@@ -208,7 +200,6 @@ kind: ServiceAccount
 metadata:
   labels:
     app: tf-job-dashboard
-    ksonnet.io/component: tf-job-operator
   name: tf-job-dashboard
 ---
 apiVersion: v1
@@ -216,7 +207,6 @@ kind: ServiceAccount
 metadata:
   labels:
     app: tf-job-operator
-    ksonnet.io/component: tf-job-operator
   name: tf-job-operator
 ---
 apiVersion: v1
@@ -231,8 +221,6 @@ metadata:
       prefix: /tfjobs/
       rewrite: /tfjobs/
       service: tf-job-dashboard.kubeflow
-  labels:
-    ksonnet.io/component: tf-job-operator
   name: tf-job-dashboard
 spec:
   ports:
@@ -245,8 +233,6 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  labels:
-    ksonnet.io/component: tf-job-operator
   name: tf-job-dashboard
 spec:
   template:
@@ -271,8 +257,6 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  labels:
-    ksonnet.io/component: tf-job-operator
   name: tf-job-operator
 spec:
   replicas: 1

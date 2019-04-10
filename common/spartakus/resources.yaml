@@ -4,7 +4,6 @@ kind: ClusterRole
 metadata:
   labels:
     app: spartakus
-    ksonnet.io/component: spartakus
   name: spartakus
 rules:
 - apiGroups:
@@ -20,7 +19,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: spartakus
-    ksonnet.io/component: spartakus
   name: spartakus
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -35,7 +33,6 @@ kind: ServiceAccount
 metadata:
   labels:
     app: spartakus
-    ksonnet.io/component: spartakus
   name: spartakus
 ---
 apiVersion: extensions/v1beta1
@@ -43,7 +40,6 @@ kind: Deployment
 metadata:
   labels:
     app: spartakus
-    ksonnet.io/component: spartakus
   name: spartakus-volunteer
 spec:
   replicas: 1
