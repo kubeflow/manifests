@@ -1,5 +1,5 @@
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: ambassador
@@ -52,6 +52,7 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
+  labels:
     service: ambassador
   name: ambassador
 spec:
@@ -66,6 +67,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  labels:
     service: ambassador-admin
   name: ambassador-admin
 spec:

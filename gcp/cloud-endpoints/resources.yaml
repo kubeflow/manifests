@@ -74,18 +74,6 @@ kind: ServiceAccount
 metadata:
   name: cloud-endpoints-controller
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: cloud-endpoints-controller
-spec:
-  ports:
-  - name: http
-    port: 80
-  selector:
-    app: cloud-endpoints-controller
-  type: ClusterIP
----
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
@@ -123,3 +111,15 @@ spec:
       - name: sa-key
         secret:
           secretName: $(secretName)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloud-endpoints-controller
+spec:
+  ports:
+  - name: http
+    port: 80
+  selector:
+    app: cloud-endpoints-controller
+  type: ClusterIP
