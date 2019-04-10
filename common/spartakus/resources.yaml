@@ -51,7 +51,7 @@ spec:
       containers:
       - args:
         - volunteer
-        - --cluster-id=3.6201665953019827e+18
+        - --cluster-id=$(usageId)
         - --database=https://stats-collector.kubeflow.org
         image: gcr.io/google_containers/spartakus-amd64:v1.1.0
         name: volunteer
