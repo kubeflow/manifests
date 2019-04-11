@@ -1,0 +1,10 @@
+resources:
+- clusterrolebinding.yaml
+- crd.yaml
+- deployment.yaml
+- rolebinding.yaml
+- role.yaml
+- serivce.yaml
+- serviceaccount.yaml
+commonLabels:
+  kustomize.component: profiles

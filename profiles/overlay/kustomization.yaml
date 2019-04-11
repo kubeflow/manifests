@@ -1,0 +1,5 @@
+bases:
+- ../base
+images:
+  - name: gcr.io/kubeflow-images-public/profile-controller
+    newTag: v20190228-v0.4.0-rc.1-192-g1a802656-dirty-f95773
