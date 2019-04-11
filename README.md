@@ -1,5 +1,43 @@
 # manifests
-A repository for Kustomize manifests
+A repository of kustomize components for kubeflow
+
+## Organization
+
+### Groupings
+
+The groupings of components is the same as the earlier ksonnet packages. 
+
+```
+argo          ⇲
+common        ⇲
+              ⎹→ambassador
+              ⎹→basic-auth
+              ⎹→centraldashboard
+              ⎹→echo-server
+              ⎹→spartakus
+gcp           ⇲                                   
+              ⎹→cert-manager
+              ⎹→cloud-endpoints
+              ⎹→gcp-credentials-admission-webhook
+              ⎹→gpu-driver
+              ⎹→iap-ingress
+              ⎹→metric-collector
+              ⎹→prometheus
+jupyter        ⇲                                   
+              ⎹→jupyter-web-app
+              ⎹→notebook-controller
+katib         ⇲                                   
+kubebench     ⇲                                   
+metacontroller⇲                                   
+pipelines     ⇲                                   
+              ⎹→minio
+              ⎹→mysql
+              ⎹→persistent-agent
+              ⎹→pipelines-runner
+              ⎹→pipelines-ui
+              ⎹→pipelines-viewer
+              ⎹→scheduledworkflow
+```
 
 ## Install Kustomize
 
