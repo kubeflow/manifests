@@ -4,7 +4,6 @@ metadata:
   labels:
     app: ml-pipeline-scheduledworkflow
   name: ml-pipeline-scheduledworkflow
-  namespace: kubeflow
 rules:
 - apiGroups:
   - argoproj.io

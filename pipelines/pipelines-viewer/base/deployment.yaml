@@ -4,7 +4,6 @@ metadata:
   labels:
     app: ml-pipeline-viewer-crd
   name: ml-pipeline-viewer-controller-deployment
-  namespace: kubeflow
 spec:
   selector:
     matchLabels:
