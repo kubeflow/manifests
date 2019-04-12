@@ -15,7 +15,7 @@ metadata:
     run: jupyter-web-app
   name: jupyter-web-app
   spec:
-  ports:
+ports:
   - name: http
     port: 80
     protocol: TCP
