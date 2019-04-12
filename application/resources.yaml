@@ -2,15 +2,15 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
+  creationTimestamp: null
   labels:
-    api: default
+    controller-tools.k8s.io: "1.0"
   name: applications.app.k8s.io
 spec:
   group: app.k8s.io
   names:
     kind: Application
     plural: applications
-    singular: application
   scope: Namespaced
   validation:
     openAPIV3Schema:
@@ -190,11 +190,54 @@ spec:
           type: object
         status:
           properties:
+            components:
+              items:
+                properties:
+                  group:
+                    type: string
+                  kind:
+                    type: string
+                  link:
+                    type: string
+                  name:
+                    type: string
+                  status:
+                    type: string
+                type: object
+              type: array
+            conditions:
+              items:
+                properties:
+                  lastTransitionTime:
+                    format: date-time
+                    type: string
+                  lastUpdateTime:
+                    format: date-time
+                    type: string
+                  message:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - status
+                type: object
+              type: array
             observedGeneration:
               format: int64
               type: integer
           type: object
   version: v1beta1
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
 ---
 apiVersion: app.k8s.io/v1beta1
 kind: Application
