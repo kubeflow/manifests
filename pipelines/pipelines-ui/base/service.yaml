@@ -15,7 +15,6 @@ metadata:
   labels:
     app: ml-pipeline-ui
   name: ml-pipeline-ui
-  namespace: kubeflow
 spec:
   ports:
   - port: 80

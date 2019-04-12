@@ -4,7 +4,6 @@ metadata:
   labels:
     app: ml-pipeline
   name: ml-pipeline
-  namespace: kubeflow
 spec:
   ports:
   - name: http

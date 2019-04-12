@@ -11,4 +11,3 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: ml-pipeline-persistenceagent
-  namespace: kubeflow
