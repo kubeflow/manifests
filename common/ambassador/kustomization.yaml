@@ -1,7 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- resources.yaml
+- base/ambassador-admin-service.yaml
+- base/ambassador-clusterrole.yaml
+- base/ambassador-clusterrolebinding.yaml
+- base/ambassador-deployment.yaml
+- base/ambassador-service.yaml
+- base/ambassador-serviceaccount.yaml
 commonLabels:
   kustomize.component: ambassador
 images:
