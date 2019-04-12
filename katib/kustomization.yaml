@@ -1,7 +1,35 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- resources.yaml
+- v1alpha1/base/katib-db-pvc.yaml
+- v1alpha1/base/katib-ui-deployment.yaml
+- v1alpha1/base/katib-ui-rbac.yaml
+- v1alpha1/base/katib-ui-service.yaml
+- v1alpha1/base/metrics-collector-rbac.yaml
+- v1alpha1/base/metrics-collector-template-configmap.yaml
+- v1alpha1/base/studyjob-controller-deployment.yaml
+- v1alpha1/base/studyjob-crd.yaml
+- v1alpha1/base/studyjob-rbac.yaml
+- v1alpha1/base/studyjob-service.yaml
+- v1alpha1/base/suggestion-bayesianoptimization-deployment.yaml
+- v1alpha1/base/suggestion-bayesianoptimization-service.yaml
+- v1alpha1/base/suggestion-grid-deployment.yaml
+- v1alpha1/base/suggestion-grid-service.yaml
+- v1alpha1/base/suggestion-hyperband-deployment.yaml
+- v1alpha1/base/suggestion-hyperband-service.yaml
+- v1alpha1/base/suggestion-nasrl-deployment.yaml
+- v1alpha1/base/suggestion-nasrl-service.yaml
+- v1alpha1/base/suggestion-random-deployment.yaml
+- v1alpha1/base/suggestion-random-service.yaml
+- v1alpha1/base/vizier-core-deployment.yaml
+- v1alpha1/base/vizier-core-rbac.yaml
+- v1alpha1/base/vizier-core-rest-deployment.yaml
+- v1alpha1/base/vizier-core-rest-service.yaml
+- v1alpha1/base/vizier-core-service.yaml
+- v1alpha1/base/vizier-db-deployment.yaml
+- v1alpha1/base/vizier-db-secret.yaml
+- v1alpha1/base/vizier-db-service.yaml
+- v1alpha1/base/worker-template.yaml
 commonLabels:
   kustomize.component: katib
 images:
