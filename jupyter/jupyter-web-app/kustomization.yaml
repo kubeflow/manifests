@@ -8,44 +8,32 @@ resources:
 - base/service.yaml
 - base/deployment.yaml
 commonLabels:
+  app: jupyter-web-app
   kustomize.component: jupyter-web-app
+namePrefix: jupyter-web-app-
 images:
   - name: gcr.io/kubeflow-images-public/jupyter-web-app
     newName: gcr.io/kubeflow-images-public/jupyter-web-app
     newTag: v0.5.0
 configMapGenerator:
-- name: jupyter-web-app-parameters
+- name: parameters
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- name: ui
-  objref:
-    kind: ConfigMap
-    name: jupyter-web-app-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.ui
 - name: policy
   objref:
     kind: ConfigMap
-    name: jupyter-web-app-parameters
+    name: parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.policy
 - name: prefix
   objref:
     kind: ConfigMap
-    name: jupyter-web-app-parameters
+    name: parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.prefix
-- name: rokSecretName
-  objref:
-    kind: ConfigMap
-    name: jupyter-web-app-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.rokSecretName
 configurations:
 - params.yaml

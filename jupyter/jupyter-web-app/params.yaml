@@ -1,8 +1,4 @@
 varReference:
-- path: spec/template/spec/containers/0/env/0
-  kind: Deployment
-- path: spec/template/spec/containers/0/env/1
-  kind: Deployment
 - path: spec/template/spec/containers/imagePullPolicy
   kind: Deployment
 - path: metadata/annotations/getambassador.io\/config
