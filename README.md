@@ -29,7 +29,7 @@ jupyter        ⇲
 katib         ⇲                                   
 kubebench     ⇲                                   
 metacontroller⇲                                   
-pipelines     ⇲                                   
+pipeline      ⇲                                   
               ⎹→minio
               ⎹→mysql
               ⎹→persistent-agent
