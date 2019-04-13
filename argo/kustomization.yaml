@@ -1,17 +1,17 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- base/argo-clusterrole-binding.yaml		
-- base/argo-ui-deployment.yaml
-- base/argo-clusterrole.yaml			
-- base/argo-ui-sa.yaml
-- base/argo-crd.yaml				
-- base/argo-ui-service.yaml
-- base/argo-sa.yaml				
-- base/argo-wfc-configmap.yaml
-- base/argo-ui-clusterrole-binding.yaml	
-- base/argo-wfc-deployment.yaml
+- base/argo-clusterrole-binding.yaml
+- base/argo-clusterrole.yaml
+- base/argo-crd.yaml
+- base/argo-sa.yaml
+- base/argo-ui-clusterrole-binding.yaml
 - base/argo-ui-clusterrole.yaml
+- base/argo-ui-deployment.yaml
+- base/argo-ui-sa.yaml
+- base/argo-ui-service.yaml
+- base/argo-wfc-configmap.yaml
+- base/argo-wfc-deployment.yaml
 commonLabels:
   kustomize.component: argo
 images:
