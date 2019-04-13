@@ -1,12 +1,11 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: notebooks-controller
+  name: role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: notebooks-controller
+  name: role
 subjects:
 - kind: ServiceAccount
-  name: notebook-controller
-  namespace: kubeflow
+  name: service-account

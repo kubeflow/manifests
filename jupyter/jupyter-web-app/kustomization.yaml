@@ -9,10 +9,10 @@ resources:
 - base/role.yaml
 - base/service-account.yaml
 - base/service.yaml
+namePrefix: jupyter-web-app-
 commonLabels:
   app: jupyter-web-app
   kustomize.component: jupyter-web-app
-namePrefix: jupyter-web-app-
 images:
   - name: gcr.io/kubeflow-images-public/jupyter-web-app
     newName: gcr.io/kubeflow-images-public/jupyter-web-app
@@ -37,5 +37,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.prefix
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 configurations:
 - params.yaml
