@@ -4,13 +4,7 @@ metadata:
   name: deployment
 spec:
   replicas: 1
-  selector:
-    matchLabels:
-      app: jupyter-web-app
   template:
-    metadata:
-      labels:
-        app: jupyter-web-app
     spec:
       containers:
       - env:
@@ -18,12 +12,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               name: parameters
-              key: rokSecretName
+              key: ROK_SECRET_NAME
         - name: UI
           valueFrom:
             configMapKeyRef:
               name: parameters
-              key: ui
+              key: UI
         image: gcr.io/kubeflow-images-public/jupyter-web-app:v0.5.0
         imagePullPolicy: $(policy)
         name: jupyter-web-app

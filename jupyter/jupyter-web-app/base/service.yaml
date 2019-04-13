@@ -20,6 +20,4 @@ spec:
     port: 80
     protocol: TCP
     targetPort: 5000
-  selector:
-    app: jupyter-web-app
   type: ClusterIP
