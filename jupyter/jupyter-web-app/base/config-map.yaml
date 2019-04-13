@@ -119,4 +119,4 @@ data:
         value: "{{}}"
 kind: ConfigMap
 metadata:
-  name: jupyter-web-app-config
+  name: config

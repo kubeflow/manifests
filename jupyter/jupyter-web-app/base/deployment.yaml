@@ -1,9 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: jupyter-web-app
-  name: jupyter-web-app
+  name: deployment
 spec:
   replicas: 1
   selector:
@@ -17,9 +15,15 @@ spec:
       containers:
       - env:
         - name: ROK_SECRET_NAME
-          value: $(rokSecretName)
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: rokSecretName
         - name: UI
-          value: $(ui)
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: ui
         image: gcr.io/kubeflow-images-public/jupyter-web-app:v0.5.0
         imagePullPolicy: $(policy)
         name: jupyter-web-app
@@ -28,8 +32,8 @@ spec:
         volumeMounts:
         - mountPath: /etc/config
           name: config-volume
-      serviceAccountName: jupyter-web-app
+      serviceAccountName: service-account
       volumes:
       - configMap:
-          name: jupyter-web-app-config
+          name: config
         name: config-volume
