@@ -11,3 +11,18 @@ images:
   - name: gcr.io/kubeflow-images-public/ingress-setup
     newName: gcr.io/kubeflow-images-public/ingress-setup
     newTag: latest
+configMapGenerator:
+- name: gcp-credentials-admission-webhook-parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: gcp-credentials-admission-webhook-parameters 
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
+configurations:
+- params.yaml

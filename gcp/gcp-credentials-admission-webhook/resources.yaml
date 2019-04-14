@@ -38,6 +38,7 @@ webhooks:
     caBundle: ""
     service:
       name: gcp-cred-webhook
+      namespace: $(namespace)
       path: /add-cred
   name: gcp-cred-webhook.kubeflow.org
   rules:
