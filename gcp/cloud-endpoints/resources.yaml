@@ -58,12 +58,12 @@ spec:
     service:
       caBundle: '...'
       name: cloud-endpoints-controller
-      namespace: kubeflow
+      namespace: $(namespace)
   generateSelector: true
   hooks:
     sync:
       webhook:
-        url: http://cloud-endpoints-controller.kubeflow/sync
+        url: http://cloud-endpoints-controller.$(namespace)/sync
   parentResource:
     apiVersion: ctl.isla.solutions/v1
     resource: cloudendpoints

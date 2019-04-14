@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - resources.yaml
 commonLabels:
+  app: cloud-endpoints-controller
   kustomize.component: cloud-endpoints
 images:
   - name: gcr.io/cloud-solutions-group/cloud-endpoints-controller
@@ -21,5 +22,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.secretName
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: cloud-endpoints-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 configurations:
 - params.yaml
