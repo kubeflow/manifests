@@ -10,11 +10,11 @@ spec:
         command:
         - /manager
       - env:
-        - name: POD_LABELS
-          valueFrom:
-            configMapKeyRef:
-              name: parameters
-              key: POD_LABELS
+          - name: POD_LABELS
+            valueFrom:
+              configMapKeyRef:
+                name: parameters
+                key: POD_LABELS
         image: gcr.io/kubeflow-images-public/notebook-controller:v20190401-v0.4.0-rc.1-308-g33618cc9-e3b0c4
         imagePullPolicy: Always
         name: manager
