@@ -1,4 +1,18 @@
 ---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: applications.app.k8s.io
+spec:
+  group: app.k8s.io
+  names:
+    kind: Application
+    listKind: ApplicationList
+    plural: applications
+    singular: application
+  scope: Namespaced
+  version: v1beta1
+---
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
