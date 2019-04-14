@@ -1,5 +1,0 @@
-- op: add
-  path: /spec/template/spec/containers/0/env
-  value: 
-  - name: POD_LABELS
-    value: gcp-cred-secret=user-gcp-sa,gcp-cred-secret-filename=user-gcp-sa.json
