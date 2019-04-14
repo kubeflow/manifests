@@ -6,7 +6,8 @@ spec:
   template:
     spec:
       containers:
-      - command:
+      - name: notebook-controller
+        command:
         - /manager
       - env:
         - name: POD_LABELS
