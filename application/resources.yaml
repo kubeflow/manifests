@@ -4,3 +4,7 @@ kind: Application
 metadata:
   name: kubeflow
 spec:
+  componentKinds: []
+  assemblyPhase: "Pending"
+  descriptor:
+    type: "kubeflow"
