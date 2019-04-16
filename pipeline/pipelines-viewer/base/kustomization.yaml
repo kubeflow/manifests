@@ -1,11 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
 resources:
-- service.yaml
+- crd.yaml
 - clusterrole-binding.yaml
 - clusterrole.yaml
 - deployment.yaml
 - sa.yaml
-- resources.yaml
-
+- service.yaml
 images:
 - name: gcr.io/ml-pipeline/viewer-crd-controller
   newTag: '0.1.14'
