@@ -11,3 +11,18 @@ bases:
 - persistent-agent/base
 commonLabels:
   kustomize.component: pipeline
+configMapGenerator:
+- name: parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: name
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.name
+configurations:
+- params.yaml
