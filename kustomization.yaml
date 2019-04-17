@@ -5,7 +5,7 @@ bases:
 - jupyter-web-app/base
 - notebook-controller/base
 - katib/v1alpha1/base
-- profiles/overlay
+- profiles/base
 commonLabels:
   app: kubeflow
 
