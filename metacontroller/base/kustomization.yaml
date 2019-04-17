@@ -1,0 +1,5 @@
+resources:
+- clusterrolebinding.yaml
+- crd.yaml
+- serviceaccount.yaml
+- statefulset.yaml 

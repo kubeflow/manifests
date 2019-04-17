@@ -6,6 +6,7 @@ bases:
 - notebook-controller/base
 - katib/v1alpha1/base
 - profiles/base
+- metacontroller/base
 commonLabels:
   app: kubeflow
 

@@ -38,3 +38,5 @@ kustomize edit set namespace kubeflow-dev
 * Profiles
 
 * Katib
+
+* MetaController
