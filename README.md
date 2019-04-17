@@ -82,7 +82,7 @@ cd manifests/<target>/base
 kustomize build | tee <output file>
 ```
 
-Kustomize inputs to kfctl based on app.yaml (see [kfctl_default.yaml](https://github.com/kubeflow/kubeflow/blob/master/bootstrap/config/kfctl_default.yaml)):
+Kustomize inputs to kfctl based on app.yaml which is derived from files under config/ such as [kfctl_default.yaml](https://github.com/kubeflow/kubeflow/blob/master/bootstrap/config/kfctl_default.yaml)):
 
 ```
 apiVersion: kfdef.apps.kubeflow.org/v1alpha1
