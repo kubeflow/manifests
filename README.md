@@ -84,7 +84,61 @@ kustomize build | tee <output file>
 
 Kustomize inputs to kfctl based on app.yaml (see [kfctl_default.yaml](https://github.com/kubeflow/kubeflow/blob/master/bootstrap/config/kfctl_default.yaml)):
 
-Outputs from kfctl (no platform):
+```
+apiVersion: kfdef.apps.kubeflow.org/v1alpha1
+kind: KfDef
+metadata:
+  creationTimestamp: null
+  name: kubeflow
+  namespace: kubeflow
+spec:
+  appdir: /Users/kdkasrav/kubeflow
+  componentParams:
+    ambassador:
+    - name: ambassadorServiceType
+      value: NodePort
+  components:
+  - metacontroller
+  - ambassador
+  - argo
+  - centraldashboard
+  - jupyter-web-app
+  - katib
+  - notebook-controller
+  - pipeline
+  - profiles
+  - pytorch-operator
+  - tensorboard
+  - tf-job-operator
+  - application
+  manifestsRepo: /Users/kdkasrav/kubeflow/.cache/manifests/pull/13/head
+  packageManager: kustomize@pull/13
+  packages:
+  - application
+  - argo
+  - common
+  - examples
+  - gcp
+  - jupyter
+  - katib
+  - metacontroller
+  - modeldb
+  - mpi-job
+  - pipeline
+  - profiles
+  - pytorch-job
+  - seldon
+  - tensorboard
+  - tf-serving
+  - tf-training
+  repo: /Users/kdkasrav/kubeflow/.cache/kubeflow/pull/2971/head/kubeflow
+  useBasicAuth: false
+  useIstio: false
+  version: pull/2971
+```
+
+Outputs from kfctl (no platform specified):
+```
 <deployment>  ⇲
               ⎹→kustomize
                         ⎹→ambassador.yaml
@@ -99,12 +153,12 @@ Outputs from kfctl (no platform):
                         ⎹→pytorch-operator.yaml
                         ⎹→tensorboard.yaml
                         ⎹→tf-job-operator.yaml
-
+```
 
 ## Best practices for kustomize targets
 
 - use name prefixes if possible for the set of resources bundled by a target
-- do not set namespace in the resources, this will be done by a higher level target
+- do not set namespace in the resources, this should be done by a higher level target
 
 
 ### Bridging kustomize and ksonnet
