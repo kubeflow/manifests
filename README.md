@@ -2,17 +2,19 @@
 This repo is a [bespoke configuration](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#bespoke-configuration) of kustomize targets used by kubeflow. These targets are traversed by kubeflow's CLI `kfctl`. Each target is compatible with the kustomize CLI and can be processed indendently by kubectl or the kustomize command. 
 
 ## Organization
-Each directory leaf node within the repo contains a kustomize target (base or overlay). Currently overlays hold platform resources, so an overlay subdirectory is one of "gcp|minikube". These targets are processed by kfctl during generate and apply phases and is detailed in [Kfctl Processing](#kfctl_processing), however generating yaml output for any target can be done in the following way:
+Each directory leaf node within the repo contains a kustomize target (base or overlay). Currently overlays hold platform resources where platform is one of "gcp|minikube". These targets are processed by kfctl during generate and apply phases and is detailed in [Kfctl Processing](#kfctl-processing), however generating yaml output for any target can be done in the following way:
 
-### Install Kustomize
+### Install kustomize
 
 `go get -u github.com/kubernetes-sigs/kustomize`
 
-### Kustomize CLI Usage
+### Run kustomize
+
+#### Example
 
 ```bash
 git clone https://github.com/kubeflow/manifests
-cd manifests
+cd manifests/<target>/base
 kustomize build | kubectl apply -f
 ```
 
@@ -40,7 +42,6 @@ namespace:
 ```
 - **component parameters** 
   - are applied to a component's params.env file. There must be an entry whose key matches the component parameter. The params.env file is used to generate a ConfigMap. Entries in params.env are resolved as kustomize vars or referenced in a deployment or statefulset env section in which case no var definition is needed.
-
 
 Kustomize inputs to kfctl based on app.yaml (see [kfctl_default.yaml](https://github.com/kubeflow/kubeflow/blob/master/bootstrap/config/kfctl_default.yaml)):
 
