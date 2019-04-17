@@ -7,9 +7,9 @@ resources:
 - service-account.yaml
 - service.yaml
 - stateful-set.yaml
-namePrefix: jupyter-web-app-
 commonLabels:
   kustomize.component: jupyter
+  app: jupyter
 images:
   - name: gcr.io/kubeflow/jupyterhub-k8s
     newName: gcr.io/kubeflow/jupyterhub-k8s

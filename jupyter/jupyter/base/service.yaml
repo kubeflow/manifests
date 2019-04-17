@@ -4,16 +4,12 @@ kind: Service
 metadata:
   annotations:
     prometheus.io/scrape: "true"
-  labels:
-    app: jupyter
   name: jupyter-0
 spec:
   clusterIP: None
   ports:
   - name: hub
     port: 8000
-  selector:
-    app: jupyter
 ---
 apiVersion: v1
 kind: Service
@@ -46,6 +42,4 @@ spec:
   - name: hub
     port: 80
     targetPort: 8000
-  selector:
-    app: jupyter
   type: $(serviceType)
