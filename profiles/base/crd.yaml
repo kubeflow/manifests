@@ -1,0 +1,53 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    app.kubernetes.io/name: kfapp
+  name: profiles.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    kind: Profile
+    listKind: ProfileList
+    plural: profiles
+    shortNames:
+    - prf
+    singular: profile
+  scope: Cluster
+  validation:
+    openAPIV3Schema:
+      properties:
+        apiVersion:
+          type: string
+        kind:
+          type: string
+        metadata:
+          type: object
+        spec:
+          properties:
+            namespace:
+              type: string
+            owner:
+              properties:
+                apiGroup:
+                  type: string
+                kind:
+                  enum:
+                  - ServiceAccount
+                  - User
+                name:
+                  type: string
+                namespace:
+                  type: string
+              required:
+              - kind
+              - name
+              type: object
+          type: object
+        status:
+          properties:
+            observedGeneration:
+              format: int64
+              type: integer
+          type: object
+  version: v1alpha1
