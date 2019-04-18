@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: profiles
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: profiles
+subjects:
+- kind: ServiceAccount
+  name: profiles
+  namespace: kubeflow

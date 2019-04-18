@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- cluster-role-binding.yaml
+- cluster-role.yaml
+- config-map.yaml
+- crd.yaml
+- deployment.yaml
+- service-account.yaml
+commonLabels:
+  kustomize.component: pytorch-operator
+images:
+  - name: gcr.io/kubeflow-images-public/pytorch-operator
+    newName: gcr.io/kubeflow-images-public/pytorch-operator
+    newTag: v0.5.0

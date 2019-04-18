@@ -1,0 +1,8 @@
+apiVersion: ctl.isla.solutions/v1
+kind: CloudEndpoint
+metadata:
+  name: kubeflow
+spec:
+  project: constant-cubist-173123
+  targetIngress:
+    name: envoy-ingress

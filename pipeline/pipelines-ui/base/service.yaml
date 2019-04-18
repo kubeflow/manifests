@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    getambassador.io/config: |-
+      ---
+      apiVersion: ambassador/v0
+      kind:  Mapping
+      name: pipelineui-mapping
+      prefix: /pipeline
+      rewrite: /pipeline
+      timeout_ms: 300000
+      service: ml-pipeline-ui.kubeflow
+      use_websocket: true
+  labels:
+    app: ml-pipeline-ui
+  name: ml-pipeline-ui
+spec:
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    app: ml-pipeline-ui

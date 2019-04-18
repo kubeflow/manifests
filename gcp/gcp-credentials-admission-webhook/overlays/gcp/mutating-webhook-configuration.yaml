@@ -1,0 +1,21 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: gcp-cred-webhook
+webhooks:
+- clientConfig:
+    caBundle: ""
+    service:
+      name: gcp-cred-webhook
+      namespace: $(namespace)
+      path: /add-cred
+  name: gcp-cred-webhook.kubeflow.org
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    resources:
+    - pods
