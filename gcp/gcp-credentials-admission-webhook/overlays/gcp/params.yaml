@@ -1,0 +1,3 @@
+varReference:
+- path: webhooks/clientConfig/service/namespace
+  kind: MutatingWebhookConfiguration
