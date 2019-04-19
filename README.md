@@ -27,7 +27,7 @@ Various subdirectories within the repo contain a kustomize target (base or overl
                  ⎹→🗳 jupyter/🎯base
                  ⎹→🗳 jupyter-web-app/🎯base
                  ⎹→🗳 notebook-controller/🎯base
-📦 katib         ⇲                                   
+📦 katib         ⇲ 🗳 base
 📦 kubebench     ⇲ 🗳 base
 📦 metacontroller⇲ 🗳 base
 📦 pipeline      ⇲ 
@@ -51,7 +51,7 @@ Kfctl will traverse these directories to find and build kustomize targets based 
   - otherwise a component is a sub-directory 
   - in all cases a component's name in app.yaml must match the directory name.
   - components are output as `<component>.yaml` under the kustomize subdirectory during `kfctl generate...`. 
-  - in order to output a component a synthetic kustomization.yaml is created under manifests that sets common parameters and labels that looks like 
+  - in order to output a component, a synthetic kustomization.yaml is created under manifests that sets common parameters and labels that looks like
 ```
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -146,6 +146,7 @@ Outputs from kfctl (no platform specified):
                         ⎹→argo.yaml
                         ⎹→centraldashboard.yaml
                         ⎹→jupyter-web-app.yaml
+                        ⎹→katib.yaml
                         ⎹→metacontroller.yaml
                         ⎹→notebook-controller.yaml
                         ⎹→pipeline.yaml
