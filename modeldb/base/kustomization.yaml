@@ -1,0 +1,12 @@
+namePrefix: modeldb-
+
+resources:
+- cluster-role.yaml
+- service-account.yaml
+- cluster-role-binding.yaml
+- config-map.yaml
+- service.yaml
+- deployment.yaml
+
+commonLabels:
+  kustomize.component: modeldb
