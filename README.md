@@ -38,6 +38,7 @@ Various subdirectories within the repo contain a kustomize target (base or overl
                  ⎹→🗳 pipelines-ui/🎯base
                  ⎹→🗳 pipelines-viewer/🎯base
                  ⎹→🗳 scheduledworkflow/🎯base
+📦 profiles      ⇲ 🗳 base
 ```
 
 ## Kfctl Processing 
