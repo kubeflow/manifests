@@ -8,6 +8,7 @@ resources:
 - role.yaml
 - service-account.yaml
 - service.yaml
+namePrefix: profiles-
 commonLabels:
   kustomize.component: profiles
 images:
