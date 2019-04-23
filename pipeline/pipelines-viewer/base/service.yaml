@@ -10,7 +10,7 @@ metadata:
       prefix: /data
       rewrite: /data
       timeout_ms: 300000
-      service: ml-pipeline-ui.kubeflow
+      service: ml-pipeline-tensorboard-ui.$(namespace)
       use_websocket: true
   labels:
     app: ml-pipeline-tensorboard-ui

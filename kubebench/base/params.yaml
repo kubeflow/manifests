@@ -1,7 +1,3 @@
 varReference:
-- path: data/config
-  kind: ConfigMap
-- path: data/config
-  kind: Deployment
 - path: metadata/annotations/getambassador.io\/config
   kind: Service

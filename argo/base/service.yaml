@@ -8,7 +8,7 @@ metadata:
       kind:  Mapping
       name: argo-ui-mapping
       prefix: /argo/
-      service: argo-ui.kubeflow
+      service: argo-ui.$(namespace)
   labels:
     app: argo-ui
   name: argo-ui

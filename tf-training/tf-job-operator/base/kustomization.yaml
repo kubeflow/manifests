@@ -10,3 +10,13 @@ resources:
 - service.yaml
 commonLabels:
   kustomize.component: tf-job-operator
+vars:
+- name: namespace
+  objref:
+    kind: Service
+    name: tf-job-dashboard
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.namespace
+configurations:
+- params.yaml

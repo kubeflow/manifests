@@ -6,3 +6,13 @@ resources:
 - service.yaml
 commonLabels:
   kustomize.component: tensorboard
+vars:
+- name: namespace
+  objref:
+    kind: Service
+    name: tensorboard
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.namespace
+configurations:
+- params.yaml

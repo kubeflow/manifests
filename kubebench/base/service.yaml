@@ -9,7 +9,7 @@ metadata:
       name: kubebench-dashboard-ui-mapping
       prefix: /dashboard/
       rewrite: /dashboard/
-      service: kubebench-dashboard.kubeflow
+      service: kubebench-dashboard.$(namespace)
   name: kubebench-dashboard
 spec:
   ports:

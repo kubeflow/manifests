@@ -25,3 +25,13 @@ images:
   - name: gcr.io/kubeflow-images-public/kubebench/kubebench-example-tf-cnn-post-processor
     newName: gcr.io/kubeflow-images-public/kubebench/kubebench-example-tf-cnn-post-processor
     newTag: v0.4.0-13-g262c593
+vars:
+- name: namespace
+  objref:
+    kind: Service
+    name: kubebench-dashboard
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.namespace
+configurations:
+- params.yaml

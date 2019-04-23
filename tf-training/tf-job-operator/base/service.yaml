@@ -9,7 +9,7 @@ metadata:
       name: tfjobs-ui-mapping
       prefix: /tfjobs/
       rewrite: /tfjobs/
-      service: tf-job-dashboard.kubeflow
+      service: tf-job-dashboard.$(namespace)
   name: tf-job-dashboard
 spec:
   ports:
