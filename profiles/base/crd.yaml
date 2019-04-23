@@ -33,6 +33,7 @@ spec:
                   enum:
                   - ServiceAccount
                   - User
+                  - Group
                 name:
                   type: string
                 namespace:
