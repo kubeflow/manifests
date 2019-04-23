@@ -11,7 +11,7 @@ spec:
     shortNames:
     - prf
     singular: profile
-  scope: Cluster
+  scope: Namespaced
   validation:
     openAPIV3Schema:
       properties:
