@@ -11,6 +11,7 @@ resources:
 - application.yaml
 namePrefix: profiles-
 commonLabels:
+  app.kubernetes.io/name: profiles-application
   kustomize.component: profiles
 images:
   - name: gcr.io/kubeflow-images-public/profile-controller
