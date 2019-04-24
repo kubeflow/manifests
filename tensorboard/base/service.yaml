@@ -10,7 +10,7 @@ metadata:
       prefix: /tensorboard/ tensorboard/
       rewrite: /
       method: GET
-      service: tensorboard.kubeflow:9000
+      service: tensorboard.$(namespace):9000
   labels:
     app: tensorboard
   name: tensorboard

@@ -29,10 +29,10 @@ vars:
     fieldpath: data.serviceType
 - name: namespace
   objref:
-    kind: ConfigMap
-    name: parameters
+    kind: Service
+    name: jupyter-lb
     apiVersion: v1
   fieldref:
-    fieldpath: data.namespace
+    fieldpath: metadata.namespace
 configurations:
 - params.yaml

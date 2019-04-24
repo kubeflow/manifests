@@ -8,7 +8,7 @@ metadata:
       kind:  Mapping
       name: webapp_mapping
       prefix: /$(prefix)/
-      service: jupyter-web-app.$(namespace)
+      service: jupyter-web-app-service.$(namespace)
       add_request_headers:
         x-forwarded-prefix: /jupyter
   labels:
