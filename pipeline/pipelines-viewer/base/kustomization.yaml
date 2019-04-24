@@ -10,3 +10,13 @@ resources:
 images:
 - name: gcr.io/ml-pipeline/viewer-crd-controller
   newTag: '0.1.14'
+vars:
+- name: namespace
+  objref:
+    kind: Service
+    name: ml-pipeline-tensorboard-ui
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.namespace
+configurations:
+- params.yaml

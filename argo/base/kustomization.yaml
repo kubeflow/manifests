@@ -86,5 +86,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.artifactRepositorySecretKeySecretKey
+vars:
+- name: namespace
+  objref:
+    kind: Service
+    name: argo-ui
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.namespace
 configurations:
 - params.yaml

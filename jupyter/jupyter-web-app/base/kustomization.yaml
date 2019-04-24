@@ -39,10 +39,10 @@ vars:
     fieldpath: data.prefix
 - name: namespace
   objref:
-    kind: ConfigMap
-    name: parameters
+    kind: Service
+    name: service
     apiVersion: v1
   fieldref:
-    fieldpath: data.namespace
+    fieldpath: metadata.namespace
 configurations:
 - params.yaml
