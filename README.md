@@ -7,38 +7,46 @@ Various subdirectories within the repo contain a kustomize target (base or overl
 
 ### Kustomize targets (🎯)
 ```
-📦 application   ⇲ 🗳 base
-📦 argo          ⇲ 🗳 base
-📦 common        ⇲
-                 ⎹→🗳 ambassador/🎯base
-                 ⎹→🗳 basic-auth/🎯base
-                 ⎹→🗳 centraldashboard/🎯base
-                 ⎹→🗳 echo-server/🎯base
-                 ⎹→🗳 spartakus/🎯base
-📦 gcp           ⇲                                   
-                 ⎹→🗳 cert-manager/overlay/🎯gcp
-                 ⎹→🗳 cloud-endpoints/overlay/🎯gcp
-                 ⎹→🗳 gcp-credentials-admission-webhook/overlay/🎯gcp
-                 ⎹→🗳 gpu-driver/overlay/🎯gcp
-                 ⎹→🗳 iap-ingress/overlay/🎯gcp
-                 ⎹→🗳 metric-collector/overlay/🎯gcp
-                 ⎹→🗳 prometheus/overlay/🎯gcp
-📦 jupyter        ⇲                                   
-                 ⎹→🗳 jupyter/🎯base
-                 ⎹→🗳 jupyter-web-app/🎯base
-                 ⎹→🗳 notebook-controller/🎯base
-📦 katib         ⇲ 🗳 base
-📦 kubebench     ⇲ 🗳 base
-📦 metacontroller⇲ 🗳 base
-📦 pipeline      ⇲ 
-                 ⎹→🗳 minio/🎯base
-                 ⎹→🗳 mysql/🎯base
-                 ⎹→🗳 persistent-agent/🎯base
-                 ⎹→🗳 pipelines-runner/🎯base
-                 ⎹→🗳 pipelines-ui/🎯base
-                 ⎹→🗳 pipelines-viewer/🎯base
-                 ⎹→🗳 scheduledworkflow/🎯base
-📦 profiles      ⇲ 🗳 base
+📦  application       ⎹→🗳  base(🎯)
+📦  argo              ⎹→🗳  base(🎯)
+📦  common            ⇲     
+                      ⎹→🗳  common/ambassador/base(🎯)
+                      ⎹→🗳  common/centraldashboard/base(🎯)
+                      ⎹→🗳  common/spartakus/base(🎯)
+📦  gcp               ⇲     
+                      ⎹→🗳  gcp/cert-manager/overlays/gcp(🎯)
+                      ⎹→🗳  gcp/cloud-endpoints/overlays/gcp(🎯)
+                      ⎹→🗳  gcp/gcp-credentials-admission-webhook/overlays/gcp(🎯)
+                      ⎹→🗳  gcp/gpu-driver/overlays/gcp(🎯)
+                      ⎹→🗳  gcp/iap-ingress/overlays/gcp(🎯)
+📦  jupyter           ⇲     
+                      ⎹→🗳  jupyter/jupyter-web-app/base(🎯)
+                      ⎹→🗳  jupyter/jupyter/base(🎯)
+                      ⎹→🗳  jupyter/jupyter/overlays/minikube(🎯)
+                      ⎹→🗳  jupyter/notebook-controller/base(🎯)
+📦  katib             ⎹→🗳  base(🎯)
+📦  kubebench         ⎹→🗳  base(🎯)
+📦  metacontroller    ⎹→🗳  base(🎯)
+📦  modeldb           ⎹→🗳  base(🎯)
+📦  mutating-webhook  ⎹→🗳  base(🎯)
+                      ⎹→🗳  mutating-webhook/overlays/add-label(🎯)
+📦  pipeline          ⇲     
+                      ⎹→🗳  pipeline/api-service/base(🎯)
+                      ⎹→🗳  pipeline/minio/base(🎯)
+                      ⎹→🗳  pipeline/mysql/base(🎯)
+                      ⎹→🗳  pipeline/persistent-agent/base(🎯)
+                      ⎹→🗳  pipeline/pipelines-runner/base(🎯)
+                      ⎹→🗳  pipeline/pipelines-ui/base(🎯)
+                      ⎹→🗳  pipeline/pipelines-viewer/base(🎯)
+                      ⎹→🗳  pipeline/scheduledworkflow/base(🎯)
+📦  profiles          ⎹→🗳  base(🎯)
+                      ⎹→🗳  profiles/overlays/debug(🎯)
+                      ⎹→🗳  profiles/overlays/devices(🎯)
+📦  pytorch-job       ⇲     
+                      ⎹→🗳  pytorch-job/pytorch-operator/base(🎯)
+📦  tensorboard       ⎹→🗳  base(🎯)
+📦  tf-training       ⇲     
+                      ⎹→🗳  tf-training/tf-job-operator/base(🎯)
 ```
 
 ## Kfctl Processing 

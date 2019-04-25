@@ -8,7 +8,6 @@ resources:
 - role-binding.yaml
 - service.yaml
 - deployment.yaml
-- application.yaml
 namePrefix: profiles-
 commonLabels:
   app.kubernetes.io/name: profiles-application
