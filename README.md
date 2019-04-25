@@ -47,7 +47,6 @@ Various subdirectories within the repo contain a kustomize target (base or overl
 📦  tensorboard       ⎹→🗳  base(🎯)
 📦  tf-training       ⇲     
                       ⎹→🗳  tf-training/tf-job-operator/base(🎯)
->>>>>>> 9f03849... update README.md
 ```
 
 ## Kfctl Processing 
