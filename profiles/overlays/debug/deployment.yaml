@@ -1,0 +1,14 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+spec:
+  template:
+    spec:
+      containers:
+      - name: manager
+        command: ["/go/bin/dlv"]
+        args: ["--listen=:5432", "--headless=true", "--api-version=2", "exec", "/go/src/github.com/kubeflow/kubeflow/components/profile-controller/manager"]
+        image: gcr.io/constant-cubist-173123/gcr.io/constant-cubist-173123/profile-controller:latest
+        securityContext:
+          privileged: true
