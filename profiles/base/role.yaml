@@ -1,24 +1,21 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: profiles
+  name: role
 rules:
 - apiGroups:
   - ""
   resources:
   - namespaces
-  verbs:
-  - '*'
+  verbs: ['get', 'list']
 - apiGroups:
   - rbac.authorization.k8s.io
   resources:
   - roles
   - rolebindings
-  verbs:
-  - '*'
+  verbs: ['get', 'list']
 - apiGroups:
   - kubeflow.org
   resources:
   - profiles
-  verbs:
-  - '*'
+  verbs: ['*']

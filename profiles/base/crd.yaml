@@ -1,8 +1,6 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    app.kubernetes.io/name: kfapp
   name: profiles.kubeflow.org
 spec:
   group: kubeflow.org
@@ -13,7 +11,7 @@ spec:
     shortNames:
     - prf
     singular: profile
-  scope: Cluster
+  scope: Namespaced
   validation:
     openAPIV3Schema:
       properties:
@@ -35,6 +33,7 @@ spec:
                   enum:
                   - ServiceAccount
                   - User
+                  - Group
                 name:
                   type: string
                 namespace:
