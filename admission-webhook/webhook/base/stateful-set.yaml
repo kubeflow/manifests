@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: webhook-bootstrap
+  name: admission-webhook-bootstrap
 spec:
-  serviceName: gcp-cred-webhook
+  serviceName: admission-webhook
   selector:
     matchLabels:
-      service: webhook-bootstrap
+      service: admission-webhook-bootstrap
   template:
     metadata:
       labels:
-        service: webhook-bootstrap
+        service: admission-webhook-bootstrap
     spec:
       containers:
       - command:
@@ -20,15 +20,15 @@ spec:
         - name: NAMESPACE
           value: kubeflow
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
-        name: bootstrap
+        name: admission-webhook-bootstrap
         volumeMounts:
         - mountPath: /var/webhook-config/
-          name: webhook-config
+          name: admission-webhook-config
       restartPolicy: Always
-      serviceAccountName: webhook-bootstrap
+      serviceAccountName: admission-webhook-bootstrap-sa
       volumes:
       - configMap:
           name: webhook-bootstrap-config
-        name: webhook-config
+        name: admission-webhook-config
   # Workaround for https://github.com/kubernetes-sigs/kustomize/issues/677
   volumeClaimTemplates: []

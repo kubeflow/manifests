@@ -1,11 +1,11 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: webhook-bootstrap
+  name: admission-webhook-bootstrap-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: webhook-bootstrap
+  name: admission-webhook-bootstrap-role
 subjects:
 - kind: ServiceAccount
-  name: webhook-bootstrap
+  name: admission-webhook-bootstrap-sa
