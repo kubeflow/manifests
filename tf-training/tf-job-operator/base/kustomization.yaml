@@ -1,22 +1,31 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- cluster-role-binding.yaml
-- cluster-role.yaml
 - config-map.yaml
 - crd.yaml
 - deployment.yaml
 - service-account.yaml
 - service.yaml
+namePrefix: tf-job-operator-
 commonLabels:
+  app.kubernetes.io/name: tf-job-operator-application
   kustomize.component: tf-job-operator
+images:
+  - name: gcr.io/kubeflow-images-public/tf_operator
+    newName: gcr.io/kubeflow-images-public/tf_operator
+    newTag: v0.5.0
+configMapGenerator:
+- name: parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
 vars:
 - name: namespace
   objref:
-    kind: Service
-    name: tf-job-dashboard
+    kind: ConfigMap
+    name: parameters
     apiVersion: v1
   fieldref:
-    fieldpath: metadata.namespace
+    fieldpath: data.namespace
 configurations:
 - params.yaml
