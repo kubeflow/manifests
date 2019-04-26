@@ -1,10 +1,12 @@
 kind: Service
 apiVersion: v1
 metadata:
+  labels:
+    app: metadata
   name: metadata-service
 spec:
   selector:
-    deployment: metadata
+    app: metadata
   type: LoadBalancer
   ports:
   - protocol: TCP
