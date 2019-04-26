@@ -16,7 +16,6 @@ Various subdirectories within the repo contain a kustomize target (base or overl
 📦  gcp               ⇲     
                       ⎹→🗳  gcp/cert-manager/overlays/gcp(🎯)
                       ⎹→🗳  gcp/cloud-endpoints/overlays/gcp(🎯)
-                      ⎹→🗳  gcp/gcp-credentials-admission-webhook/overlays/gcp(🎯)
                       ⎹→🗳  gcp/gpu-driver/overlays/gcp(🎯)
                       ⎹→🗳  gcp/iap-ingress/overlays/gcp(🎯)
 📦  jupyter           ⇲     
