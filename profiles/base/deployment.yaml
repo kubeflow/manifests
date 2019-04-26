@@ -1,15 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: profiles
+  name: deployment
 spec:
-  selector:
-    matchLabels:
-      app: profiles
   template:
-    metadata:
-      labels:
-        app: profiles
     spec:
       containers:
       - command:
@@ -17,4 +11,4 @@ spec:
         image: gcr.io/kubeflow-images-public/profile-controller:v20190228-v0.4.0-rc.1-192-g1a802656-dirty-f95773
         imagePullPolicy: Always
         name: manager
-      serviceAccountName: profiles
+      serviceAccountName: service-account
