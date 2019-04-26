@@ -1,10 +1,8 @@
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRole
+kind: Role
 metadata:
-  labels:
-    app: tf-job-dashboard
-  name: tf-job-dashboard
+  name: dashboard-role
 rules:
 - apiGroups:
   - tensorflow.org
@@ -54,11 +52,9 @@ rules:
   - '*'
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRole
+kind: Role
 metadata:
-  labels:
-    app: tf-job-operator
-  name: tf-job-operator
+  name: role
 rules:
 - apiGroups:
   - tensorflow.org
