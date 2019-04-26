@@ -6,4 +6,4 @@ data:
     }
 kind: ConfigMap
 metadata:
-  name: tf-job-operator-config
+  name: config-map

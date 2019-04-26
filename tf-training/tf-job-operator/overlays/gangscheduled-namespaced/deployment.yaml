@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deployment
+spec:
+  template:
+    metadata:
+    spec:
+      containers:
+      - name: container
+        args:
+        - --enable-gang-scheduling

@@ -1,0 +1,36 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: dashboard-deployment
+spec:
+  template:
+    metadata:
+    spec:
+      containers:
+      - name: dashboard-container
+        env:
+        - name: MY_POD_NAMESPACE
+          value: $(namespace)
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deployment
+spec:
+  template:
+    spec:
+      containers:
+      - name: container
+        args:
+        - --namespace=$(namespace)
+        env:
+        - name: MY_POD_NAMESPACE
+          value: $(namespace)
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
