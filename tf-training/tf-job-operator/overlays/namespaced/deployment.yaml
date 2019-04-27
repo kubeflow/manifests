@@ -26,6 +26,8 @@ spec:
       containers:
       - name: container
         args:
+        - --alsologtostderr
+        - -v=1
         - --namespace=$(namespace)
         env:
         - name: MY_POD_NAMESPACE

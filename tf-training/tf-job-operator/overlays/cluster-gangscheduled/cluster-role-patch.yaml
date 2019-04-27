@@ -1,0 +1,9 @@
+- op: add
+  path: /rules/-
+  value: 
+    apiGroups:
+    - scheduling.incubator.k8s.io
+    resources:
+    - podgroups
+    verbs:
+    - '*'

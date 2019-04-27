@@ -4,9 +4,10 @@ metadata:
   name: deployment
 spec:
   template:
-    metadata:
     spec:
       containers:
       - name: container
         args:
+        - --alsologtostderr
+        - -v=1
         - --enable-gang-scheduling

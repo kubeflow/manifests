@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../cluster
+patchesJson6902:
+- target:
+    group: rbac.authorization.k8s.io
+    version: v1beta1
+    kind: ClusterRole
+    name: cluster-role
+  path: cluster-role-patch.yaml
+- target:
+    group: extensions
+    version: v1beta1
+    kind: Deployment
+    name: deployment
+  path: deployment-patch.yaml
