@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source hack/utils.sh
+
 kebab-case-2-PascalCase()
 {
   local a=$1 b='' array
@@ -14,9 +16,9 @@ kebab-case-2-PascalCase()
 
 gen-target-start()
 {
-  local dir=$(dirname $1) target fname
+  local dir=$(get-target $1) target fname
   fname=/manifests${dir##*/manifests}
-  target=$(kebab-case-2-PascalCase $(basename $dir))
+  target=$(kebab-case-2-PascalCase $(get-target-name $1))
 
   echo 'package kustomize_test'
   echo ''
@@ -97,9 +99,9 @@ gen-expected()
 
 gen-test-case()
 {
-  local base=$(basename $1) dir=$(dirname $1) target fname
-  fname=/manifests${dir##*/manifests}/$base
-  target=$(kebab-case-2-PascalCase $(basename $dir))
+  local base=$(get-target-name $1) dir=$(get-target $1) target fname
+  fname=/manifests${dir##*/manifests}/$(get-target-dirname $1)
+  target=$(kebab-case-2-PascalCase $base)
 
   gen-target $1
   echo ''
