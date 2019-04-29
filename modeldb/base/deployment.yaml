@@ -1,0 +1,173 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: modeldb
+  name: modeldb-artifact-store
+spec:
+  selector:
+    matchLabels:
+      app: modeldb
+      tier: artifact-store
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: modeldb
+        tier: artifact-store
+    spec:
+      containers:
+      - env:
+        - name: VERTA_ARTIFACT_CONFIG
+          value: /config/config.yaml
+        image: vertaaiofficial/modeldb-artifact-store:kubeflow
+        imagePullPolicy: Always
+        name: modeldb-artifact-store
+        ports:
+        - containerPort: 8086
+        volumeMounts:
+        - mountPath: /config
+          name: modeldb-artifact-store-config
+          readOnly: true
+      volumes:
+      - configMap:
+          name: modeldb-artifact-store-config
+        name: modeldb-artifact-store-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: modeldb
+  name: modeldb-backend
+spec:
+  selector:
+    matchLabels:
+      app: modeldb
+      tier: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: modeldb
+        tier: backend
+    spec:
+      containers:
+      - env:
+        - name: VERTA_MODELDB_CONFIG
+          value: /config-backend/config.yaml
+        image: vertaaiofficial/modeldb-backend:kubeflow
+        imagePullPolicy: Always
+        name: modeldb-backend
+        ports:
+        - containerPort: 8085
+        volumeMounts:
+        - mountPath: /config-backend
+          name: modeldb-backend-secret-volume
+          readOnly: true
+      volumes:
+      - name: modeldb-backend-secret-volume
+        secret:
+          secretName: modeldb-backend-config-secret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: modeldb
+  name: modeldb-mysql-backend
+spec:
+  selector:
+    matchLabels:
+      app: modeldb
+      tier: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: modeldb
+        tier: mysql
+    spec:
+      containers:
+      - args:
+        - --ignore-db-dir=lost+found
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: root
+        image: mysql:5.7
+        imagePullPolicy: Always
+        name: modeldb-mysql-backend
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: modeldb-mysql-persistent-storage
+      volumes:
+      - name: modeldb-mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: modeldb-mysql-pv-claim
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: modeldb
+  name: modeldb-backend-proxy
+spec:
+  selector:
+    matchLabels:
+      app: modeldb
+      tier: backend-proxy
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: modeldb
+        tier: backend-proxy
+    spec:
+      containers:
+      - args:
+        - -project_endpoint
+        - modeldb-backend:8085
+        - -experiment_endpoint
+        - modeldb-backend:8085
+        - -experiment_run_endpoint
+        - modeldb-backend:8085
+        command:
+        - /go/bin/proxy
+        image: vertaaiofficial/modeldb-backend-proxy:kubeflow
+        imagePullPolicy: Always
+        name: modeldb-backend-proxy
+        ports:
+        - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: modeldb
+  name: modeldb-webapp
+spec:
+  selector:
+    matchLabels:
+      app: modeldb
+      tier: webapp
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: modeldb
+        tier: webapp
+    spec:
+      containers:
+      - image: vertaaiofficial/modeldb-frontend:kubeflow
+        imagePullPolicy: Always
+        name: modeldb-webapp
+        ports:
+        - containerPort: 3000

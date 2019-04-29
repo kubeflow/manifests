@@ -1,12 +1,12 @@
-namePrefix: modeldb-
-
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
 resources:
-- cluster-role.yaml
-- service-account.yaml
-- cluster-role-binding.yaml
 - config-map.yaml
-- service.yaml
 - deployment.yaml
-
+- persistent-volume-claim.yaml
+- secret.yaml
+- service.yaml
+namePrefix: modeldb-
 commonLabels:
   kustomize.component: modeldb
