@@ -96,11 +96,11 @@ data:
 
     cat ${tmpdir}/self_ca.crt
     # -a means base64 encode
-    caBundle=`cat ${tmpdir}/self_ca.crt | openssl enc -a -A`
+    caBundle=$(cat ${tmpdir}/self_ca.crt | openssl enc -a -A)
     echo ${caBundle}
 
     patchString='[{"op": "replace", "path": "/webhooks/0/clientConfig/caBundle", "value":"{{CA_BUNDLE}}"}]'
-    patchString=`echo ${patchString} | sed "s|{{CA_BUNDLE}}|${caBundle}|g"`
+    patchString=$(echo ${patchString} | sed "s|{{CA_BUNDLE}}|${caBundle}|g")
     echo ${patchString}
 
     checkWebhookConfig() {
