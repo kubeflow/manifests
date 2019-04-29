@@ -1,0 +1,74 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: modeldb
+  name: modeldb-artifact-store
+spec:
+  ports:
+  - port: 8086
+    targetPort: 8086
+  selector:
+    app: modeldb
+    tier: artifact-store
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: modeldb
+  name: modeldb-backend
+spec:
+  ports:
+  - port: 8085
+  selector:
+    app: modeldb
+    tier: backend
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: modeldb
+  name: modeldb-webapp
+spec:
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    app: modeldb
+    tier: webapp
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: modeldb
+  name: modeldb-backend-proxy
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: modeldb
+    tier: backend-proxy
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: modeldb
+  name: modeldb-mysql-backend
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+  selector:
+    app: modeldb
+    tier: mysql
+  type: ClusterIP
