@@ -3,6 +3,6 @@ kind: Kustomization
 commonLabels:
   kustomize.component: metadata
 resources:
-- deployment.yaml
-- service.yaml
+- metadata-deployment.yaml
+- metadata-service.yaml
 
