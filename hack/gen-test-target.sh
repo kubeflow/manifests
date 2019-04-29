@@ -38,21 +38,23 @@ gen-target()
 {
   local directory=$1
   gen-target-start $1
-  for i in $(ls $directory); do
-    file=$(basename $i)
-    case $file in
-      "kustomization.yaml")
-        gen-target-kustomization $file $directory
-        ;;
-      *.yaml)
-        gen-target-resource $file $directory
-        ;;
-      params.env)
-        gen-target-resource $file $directory
-        ;;
-      *)
-        ;;
-    esac
+  for i in $(echo $(cat $directory/kustomization.yaml | grep '^- .*yaml$'|sed 's/^- //') params.env kustomization.yaml); do
+    file=$i
+    if [[ -f $directory/$file ]]; then
+      case $file in
+        "kustomization.yaml")
+          gen-target-kustomization $file $directory
+          ;;
+        *.yaml)
+          gen-target-resource $file $directory
+          ;;
+        params.env)
+          gen-target-resource $file $directory
+          ;;
+        *)
+          ;;
+      esac
+    fi
   done
   gen-target-end
 }
