@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: metadata
+  name: deployment
   labels:
     app: metadata
 spec:
@@ -12,7 +12,7 @@ spec:
         app: metadata
     spec:
       containers:
-      - name: metadata-container
+      - name: container
         image: gcr.io/kubeflow-images-public/metadata:v0.1.0
         command: ["./server/server",
                   "--http_port=8080"]
