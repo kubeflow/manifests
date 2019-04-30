@@ -10,7 +10,7 @@ spec:
       - name: dashboard-container
         env:
         - name: MY_POD_NAMESPACE
-          value: $(namespace)
+          value: $(deploymentNamespace)
         - name: MY_POD_NAME
           valueFrom:
             fieldRef:
@@ -28,10 +28,10 @@ spec:
         args:
         - --alsologtostderr
         - -v=1
-        - --namespace=$(namespace)
+        - --namespace=$(deploymentNamespace)
         env:
         - name: MY_POD_NAMESPACE
-          value: $(namespace)
+          value: $(deploymentNamespace)
         - name: MY_POD_NAME
           valueFrom:
             fieldRef:
