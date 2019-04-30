@@ -1,0 +1,36 @@
+# Labels to add to all resources and selectors.
+commonLabels:
+  app: seldon-cluster-manager-server
+  app.kubernetes.io/component: seldon-core-operator
+  app.kubernetes.io/name: seldon-core
+  component: seldon-core
+
+# Images modify the tags for images without
+# creating patches.
+images:
+- name: seldonio/cluster-manager
+  newTag: 0.2.7
+
+# Value of this field is prepended to the
+# names of all resources
+namePrefix: seldon
+
+#crds:
+#- seldon-deployment-v1alpha2-crd.json
+
+# List of resource files that kustomize reads, modifies
+# and emits as a YAML string
+resources:
+# The full spec needs the bugfix https://github.com/kubernetes-sigs/kustomize/pull/911 to be released
+#- machinelearning_v1alpha2_seldondeployment_full.yaml
+- machinelearning_v1alpha2_seldondeployment.yaml
+- seldon-core-seldon-cluster-manager-deploy.yaml
+- seldon-local-role.yaml
+- seldon-rb.yaml
+- seldon-sa.yaml
+
+configMapGenerator:
+- name: seldon-config
+  literals:
+    - engine.image=seldonio/engine:0.2.7    
+                
