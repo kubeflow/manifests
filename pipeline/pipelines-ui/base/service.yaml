@@ -10,7 +10,7 @@ metadata:
       prefix: /pipeline
       rewrite: /pipeline
       timeout_ms: 300000
-      service: ml-pipeline-ui.$(namespace)
+      service: ml-pipeline-ui.$(ui-namespace)
       use_websocket: true
   labels:
     app: ml-pipeline-ui
