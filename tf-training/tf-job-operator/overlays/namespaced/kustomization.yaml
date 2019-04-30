@@ -7,3 +7,18 @@ resources:
 - role-binding.yaml
 patchesStrategicMerge:
 - deployment.yaml
+configMapGenerator:
+- name: parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: deploymentNamespace
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.deploymentNamespace
+configurations:
+- params.yaml
