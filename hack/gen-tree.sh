@@ -7,4 +7,4 @@ fi
 
 source hack/utils.sh
 
-manifests-tree
+manifests-tree $@

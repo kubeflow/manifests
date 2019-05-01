@@ -1,12 +1,11 @@
 manifests-tree()
 {
-   find * -type d  | egrep -v 'tests|hack' | tree --fromfile -C | sed 's/─ base/🎯base/g' | sed 's/─ gcp/🎯gcp/g' | sed 's/─ \(cluster*\)/─ 🎯\1/g' | sed 's/─ \(namespaced*\)/─ 🎯\1/g'
-#  find * -type d  | egrep -v 'tests|hack' | awk '!/\.$/ { \
-#    for (i=1; i<NF; i++) { \
-#        printf("%12s", "╬            ") \
-#    } \
-#    print "╬⊳🗳  "$NF"🎯"  \
-#}' FS='/'
+   local dir='*'
+   if (( $# >= 1 )); then
+     dir=$1
+     shift
+   fi
+   find $dir -type d  | egrep -v 'tests|hack' | tree $@ --fromfile | sed 's/─ base/🎯base/g' | sed 's/─ gcp/🎯gcp/g' | sed 's/─ \(cluster*\)/─ 🎯\1/g' | sed 's/─ \(namespaced*\)/─ 🎯\1/g'
 }
 
 get-target()
