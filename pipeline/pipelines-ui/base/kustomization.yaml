@@ -10,7 +10,7 @@ images:
   newTag: '0.1.14'
 
 vars:
-- name: namespace
+- name: ui-namespace
   objref:
     kind: Service
     name: ml-pipeline-ui

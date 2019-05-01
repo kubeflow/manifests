@@ -10,7 +10,7 @@ metadata:
       prefix: /data
       rewrite: /data
       timeout_ms: 300000
-      service: ml-pipeline-tensorboard-ui.$(namespace)
+      service: ml-pipeline-tensorboard-ui.$(viewer-namespace)
       use_websocket: true
   labels:
     app: ml-pipeline-tensorboard-ui

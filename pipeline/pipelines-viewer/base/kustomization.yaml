@@ -11,7 +11,7 @@ images:
 - name: gcr.io/ml-pipeline/viewer-crd-controller
   newTag: '0.1.14'
 vars:
-- name: namespace
+- name: viewer-namespace
   objref:
     kind: Service
     name: ml-pipeline-tensorboard-ui
