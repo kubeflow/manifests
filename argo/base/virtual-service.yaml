@@ -18,6 +18,6 @@ spec:
       uri: /
     route:
     - destination:
-        host: argo-ui.$(namespace).svc.$(cluster_domain)
+        host: argo-ui.$(namespace).svc.$(clusterDomain)
         port:
           number: 80
