@@ -8,7 +8,7 @@ spec:
       containers:
       - name: manager
         command: ["/go/bin/dlv"]
-        args: ["--listen=:5432", "--headless=true", "--api-version=2", "exec", "/go/src/github.com/kubeflow/kubeflow/components/profile-controller/manager"]
+        args: ["--listen=:2345", "--headless=true", "--api-version=2", "exec", "/go/src/github.com/kubeflow/kubeflow/components/profile-controller/manager"]
         image: gcr.io/constant-cubist-173123/profile-controller:latest
         ports:
         - containerPort: 2345
