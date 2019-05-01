@@ -26,13 +26,16 @@ spec:
           valueFrom:
             configMapKeyRef:
               name: seldon-config
-              key: engine.image
+              key: engineImage
         - name: ENGINE_CONTAINER_IMAGE_PULL_POLICY
           value: IfNotPresent
         - name: ENGINE_CONTAINER_SERVICE_ACCOUNT_NAME
           value: default
         - name: SELDON_CLUSTER_MANAGER_SINGLE_NAMESPACE
-          value: "true"
+          valueFrom:
+            configMapKeyRef:
+              name: seldon-config
+              key: singleNamespace
         - name: ENGINE_CONTAINER_USER
           value: "8888"
         - name: PREDICTIVE_UNIT_SERVICE_PORT
