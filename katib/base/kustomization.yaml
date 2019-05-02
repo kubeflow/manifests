@@ -3,6 +3,7 @@ resources:
 - katib-ui-deployment.yaml
 - katib-ui-rbac.yaml
 - katib-ui-service.yaml
+- katib-ui-virtual-service.yaml
 - metrics-collector-rbac.yaml
 - metrics-collector-template-configmap.yaml
 - studyjob-controller-deployment.yaml
@@ -28,6 +29,11 @@ resources:
 - vizier-db-secret.yaml
 - vizier-db-service.yaml
 - worker-template.yaml
+configMapGenerator:
+- name: parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
 images:
   - name: gcr.io/kubeflow-images-public/katib/vizier-core
     newTag: v0.1.2-alpha-157-g3d4cd04
@@ -51,3 +57,20 @@ images:
     newTag: v0.1.2-alpha-157-g3d4cd04
   - name: gcr.io/kubeflow-images-public/katib/suggestion-nasrl
     newTag: v0.1.2-alpha-157-g3d4cd04
+vars:
+- name: clusterDomain
+  objref:
+    kind: ConfigMap
+    name: workflow-controller-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.clusterDomain
+- name: namespace
+  objref:
+    kind: Service
+    name: katib-ui
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.namespace
+configurations:
+- params.yaml
