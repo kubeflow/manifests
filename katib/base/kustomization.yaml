@@ -61,7 +61,7 @@ vars:
 - name: clusterDomain
   objref:
     kind: ConfigMap
-    name: workflow-controller-parameters
+    name: parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
