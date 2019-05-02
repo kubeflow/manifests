@@ -1,9 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  labels:
-    app: pipeline-runnergcr.io
-  name: pipeline-runner
+  name: cluster-role
 rules:
 - apiGroups:
   - ""
