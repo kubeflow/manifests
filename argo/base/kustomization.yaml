@@ -94,7 +94,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
-vars:
 - name: namespace
   objref:
     kind: Service
