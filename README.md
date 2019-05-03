@@ -115,28 +115,68 @@ namespace:
 - **component parameters** 
   - are applied to a component's params.env file. There must be an entry whose key matches the component parameter. The params.env file is used to generate a ConfigMap. Entries in params.env are resolved as kustomize vars or referenced in a deployment or statefulset env section in which case no var definition is needed.
 
-### multiple overlays
+Multiple overlays -
 
-The profiles target is an example where multiple overlays are valuable. Within this target the user may want to include both debug and device overlays. The profile hierarchy is shown below:
+Kfctl has the capability to combine more than one overlay during `kfctl generate ...`. An example is shown below where the profiles target in [manifests](https://github.com/kkasravi/manifests/tree/multiple_overlays/profiles) can include either debug changes in the Deployment or Device information in the Namespace (the devices overlay is not fully integrated with the Profile-controller at this point in time and is intended as an example) or **both**. 
+
 ```
 profiles
 ├── base
-│   └── kustomization.yaml
+│   └── kustomization.yaml
 └── overlays
     ├── debug
-    │   └── kustomization.yaml
+    │   └── kustomization.yaml
     └── devices
         └── kustomization.yaml
 ```
 
-Normally kustomize provides the ability to overlay a 'base' set of resources with changes 
-that are merged into the base from resources that are located under an overlays directory.
-Kustomize doesn't provide for an easy way to combine more than one overlay as shown in profiles.
-The ability to combine more than one overlay is key to handling components so that various 
-featurues can be 'mixed-in' - devices, info, etc.
+#### What are Multiple Overlays?
 
-Merging multiple overlays
-Since the devices and debug overlays reference ../base as their base - including both overlays will result in kustomize complaining that it recursed in profiles/base. In order to allow multiple overlays we create a profiles/kustomization.yaml that includes profiles/base under its bases and pulls in the attributes of profiles/overlays/devices/kustomization.yaml and profiles/overlays/debug/kustomization.yaml. Moving attributes includes correcting paths and propogating the behavior of configMapGenerator, secretMapGenerator that are copied from each overlay's kustomization.yaml.
+Normally kustomize provides the ability to overlay a 'base' set of resources with changes that are merged into the base from resources that are located under an overlays subdirectory. For example
+if the kustomize [target](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#target) is named foo there will be a foo/base and possibly one or more overlays such as foo/overlays/bar. A kustomization.yaml file is found in both foo/base and foo/overlays/bar. Running `kustomize build` in foo/base will generate resources as defined in kustomization.yaml. Running `kustomize build` in foo/overlays/bar will generate resources - some of which will overlay the resources in foo/base.
+
+Kustomize doesn't provide for an easy way to combine more than one overlay for example foo/overlays/bar, foo/overlays/baz. However this is an open feature request in kustomize [issues](https://github.com/kubernetes-sigs/kustomize/issues/759). The ability to combine more than one overlay is key to handling components like tf-job-operator which has several types of overlays that can 'mix-in' whether a TFJob is submitted to a namespace or cluster-wide and whether the TFJob uses gang-scheduling.
+
+#### Merging multiple overlays
+
+Since each overlay includes '../../base' as its base set of resources - combining several overlays where each includes '../../base' will cause `kustomize build` to abort, complaining that it recursed on base. The approach is to create a kustomization.yaml at the target level that includes base and the contents of each overlay's kustomization file. This requires some path corrections and some awareness of the behavior of configMapGenerator, secretMapGenerator and how they are copied from each overlay. This kustomization.yaml can be constructed manually, but is integrated within kfctl via the app.yaml file. Using tf-job-operator as an example, if its componentParams has the following
+```
+  componentParams:
+    tf-job-operator:
+    - name: overlay
+       value: cluster
+    - name: overlay
+    - value: gangscheduled
+```
+
+Then the result will be to combine these overlays eg 'mixin' an overlays in the kustomization.yaml file.
+
+#### Merging multiple overlays to generate app.yaml
+
+Normally when `kfctl init ...` is called it will download the kubeflow repo under `<deployment>/.cache` and read one of the config files under `.cache/kubeflow/<version>/bootstrap/config`. These config files define packages, components and component parameters (among other things). Each config file is a compatible k8 resource of kind *KfDef*. The various config files are:
+- kfctl_default.yaml
+- kfctl_basic_auth.yaml
+- kfctl_iap.yaml
+
+Both kfctl_basic_auth.yaml and kfctl_iap.yaml contain the contents of kfctl_default.yaml plus some additional changes specific to using basic_auth when the cluster is created and platform specific resources if the platform is **gcp**. This PR corrects this redundancy by using kustomize to combine a **gcp** overlay and/or a **basic_auth** overlay. Additionally, due to pipeline refactoring, the kustomize package manager has split the bundled pipeline component in ksonnet to a set of individual pipeline targets. This results in the following:
+
+```
+config
+├── base
+│   └── kustomization.yaml
+└── overlays
+    ├── basic_auth
+    │   └── kustomization.yaml
+    ├── gcp
+    │   └── kustomization.yaml
+    ├── ksonnet
+    │   └── kustomization.yaml
+    └── kustomize
+        └── kustomization.yaml
+```
+
+Based on the cli args to `kfctl init...`, the correct overlays will be merged to produce an app.yaml.
+The original files have been left as is until UI integration can be completed in a separate PR
 
 ### Using kustomize 
 
