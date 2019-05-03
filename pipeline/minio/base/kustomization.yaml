@@ -7,7 +7,6 @@ resources:
 - deployment.yaml
 - secret.yaml
 - service.yaml
-
 images:
 - name: minio/minio
   newTag: RELEASE.2018-02-09T22-40-05Z

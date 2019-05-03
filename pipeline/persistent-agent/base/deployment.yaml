@@ -6,12 +6,12 @@ spec:
   template:
     spec:
       containers:
-      - name: ml-pipeline-persistent-agent-container
+      - name: container
         env:
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: gcr.io/ml-pipeline/persistenceagent:0.1.14
+        image: gcr.io/ml-pipeline/persistenceagent:0.1.18
         imagePullPolicy: IfNotPresent
       serviceAccountName: service-account
