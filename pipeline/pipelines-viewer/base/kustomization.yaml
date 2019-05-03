@@ -7,6 +7,7 @@ resources:
 - deployment.yaml
 - sa.yaml
 - service.yaml
+- virtual-service.yaml
 images:
 - name: gcr.io/ml-pipeline/viewer-crd-controller
   newTag: '0.1.14'
