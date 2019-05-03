@@ -1,9 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-nameprefix: pipeline-runner-
+namespace: kubeflow
+nameprefix: ml-pipeline-runner-
 commonLabels:
-  app: pipeline-runner
+  app: ml-pipeline-runner
 resources:
-- clusterrole-binding.yaml
-- clusterrole.yaml
+- cluster-role-binding.yaml
+- cluster-role.yaml
 - service-account.yaml
