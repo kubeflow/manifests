@@ -8,7 +8,7 @@ webhooks:
     service:
       name: admission-webhook
       namespace: $(namespace)
-      path: /add-cred
+      path: /apply-podpreset
   name: admission-webhook.kubeflow.org
   rules:
   - apiGroups:
