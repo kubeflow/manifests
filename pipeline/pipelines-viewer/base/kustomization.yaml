@@ -10,6 +10,9 @@ resources:
 images:
 - name: gcr.io/ml-pipeline/viewer-crd-controller
   newTag: '0.1.14'
+configMapGenerator:
+- name: viewer-parameters
+  env: params.env
 vars:
 - name: viewer-namespace
   objref:
@@ -18,5 +21,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
+- name: viewer-clusterDomain
+  objref:
+    kind: ConfigMap
+    name: viewer-parameters
+    version: v1
+  fieldref:
+    fieldpath: data.viewerClusterDomain
 configurations:
 - params.yaml

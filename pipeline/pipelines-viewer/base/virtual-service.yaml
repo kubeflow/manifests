@@ -15,7 +15,7 @@ spec:
       uri: /data
     route:
     - destination:
-        host: ml-pipeline-ui.$(namespace).svc.$(viewer-clusterDomain)
+        host: ml-pipeline-ui.$(viewer-namespace).svc.$(viewer-clusterDomain)
         port:
           number: 80
     timeout: 300s
