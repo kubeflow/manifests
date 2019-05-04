@@ -4,13 +4,6 @@ metadata:
   name: role
 rules:
 - apiGroups:
-  - rbac.authorization.k8s.io
-  resources:
-  - roles
-  - rolebindings
-  verbs: 
-  - list
-- apiGroups:
   - kubeflow.org
   resources:
   - profiles
