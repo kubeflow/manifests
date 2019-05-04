@@ -4,3 +4,18 @@ bases:
 - ../../base
 patchesStrategicMerge:
 - deployment.yaml
+configMapGenerator:
+- name: parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: project
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.project
+configurations:
+- params.yaml
