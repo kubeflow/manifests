@@ -9,7 +9,6 @@ rules:
   - roles
   - rolebindings
   verbs: 
-  - get
   - list
 - apiGroups:
   - kubeflow.org
@@ -17,4 +16,3 @@ rules:
   - profiles
   verbs: 
   - create
-  - list
