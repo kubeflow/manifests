@@ -12,7 +12,7 @@ metadata:
       timeout_ms: 300000
       service: basic-auth-login.$(service-namespace)
       use_websocket: true
-  name: basic-auth-logins
+  name: basic-auth-login
 spec:
   ports:
   - port: 80

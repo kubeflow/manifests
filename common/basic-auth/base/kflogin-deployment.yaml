@@ -3,6 +3,9 @@ kind: Deployment
 metadata:
   name: basic-auth-login
 spec:
+  selector:
+    matchLabels:
+      app: basic-auth-login
   replicas: 1
   strategy:
     type: RollingUpdate
@@ -11,8 +14,8 @@ spec:
       labels:
         app: basic-auth-login
     spec:
+      name: app
       containers:
       - image: gcr.io/kubeflow-images-public/kflogin-ui:v20190123-v0.4.0-rc.1-73-g38ad5f77
-        name: app
         ports:
         - containerPort: 5000
