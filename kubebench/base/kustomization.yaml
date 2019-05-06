@@ -9,9 +9,13 @@ resources:
 - role.yaml
 - service-account.yaml
 - service.yaml
+- virtual-service.yaml
 - workflow.yaml
 commonLabels:
   kustomize.component: kubebench
+configMapGenerator:
+- name: parameters
+  env: params.env
 images:
   - name: gcr.io/kubeflow-images-public/kubebench/kubebench-dashboard
     newName: gcr.io/kubeflow-images-public/kubebench/kubebench-dashboard
@@ -33,5 +37,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
+- name: clusterDomain
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.clusterDomain
 configurations:
 - params.yaml
