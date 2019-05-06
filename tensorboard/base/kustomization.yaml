@@ -6,6 +6,9 @@ resources:
 - service.yaml
 commonLabels:
   kustomize.component: tensorboard
+configMapGenerator:
+- name: parameters
+  env: params.env
 vars:
 - name: namespace
   objref:
@@ -14,5 +17,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
+- name: clusterDomain
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.clusterDomain
 configurations:
 - params.yaml
