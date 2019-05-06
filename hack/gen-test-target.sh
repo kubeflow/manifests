@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+#
+# gen-test-target will generate a golang testcase using the 
+# kustomize test-harness that is used from kerbernetes-sigs/kustomize/pkg/target/kusttestharness_test.go
+# The unittest compares the collection of resource files with what kustomize build would produce (actual vs expected)
+#
 source hack/utils.sh
 
 kebab-case-2-PascalCase()
