@@ -3,3 +3,5 @@ varReference:
   kind: Deployment
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
+- path: spec/http/route/destination/host
+  kind: VirtualService
