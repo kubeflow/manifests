@@ -9,3 +9,5 @@ rules:
   - profiles
   verbs: 
   - create
+  - list
+  - get
