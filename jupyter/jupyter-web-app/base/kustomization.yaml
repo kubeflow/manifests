@@ -9,6 +9,7 @@ resources:
 - role.yaml
 - service-account.yaml
 - service.yaml
+- virtual-service.yaml
 namePrefix: jupyter-web-app-
 commonLabels:
   app: jupyter-web-app
@@ -37,6 +38,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.prefix
+- name: clusterDomain
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.clusterDomain
 - name: namespace
   objref:
     kind: Service
