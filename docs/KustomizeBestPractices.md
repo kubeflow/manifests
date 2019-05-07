@@ -4,7 +4,7 @@
 
 ## 1. Identify the resources that encompass a kustomize target
 
-  In most cases these resources are being move from ksonnet, and per ksonnet component, often include resources like:
+  In most cases these resources are being moved from ksonnet, and per ksonnet component, often include resources like:
   - CustomResourceDefinition
   - ClusterRole, ClusterRoleBinding or Role, RoleBinding
   - ConfigMap
@@ -13,8 +13,8 @@
   - ServiceAccount
   - VirtualService 
 
-  In most cases the collection of resources will have a component name from ksonnet or a name identifying its purpose.
-  This collection of resources will be moved under `manifests/<component>/base`. 
+  This collection of resources will have a component name if from ksonnet or a name identifying its purpose if new.
+  These resources should be moved to a new directory under `manifests/<component>/base`. 
   
 
 ### 1a. Resource grouping
