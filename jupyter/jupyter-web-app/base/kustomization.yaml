@@ -11,6 +11,7 @@ resources:
 - service.yaml
 - virtual-service.yaml
 namePrefix: jupyter-web-app-
+namespace: kubeflow
 commonLabels:
   app: jupyter-web-app
   kustomize.component: jupyter-web-app

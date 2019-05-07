@@ -1,3 +1,4 @@
+namespace: kubeflow
 resources:
 - katib-db-pvc.yaml
 - katib-ui-deployment.yaml
