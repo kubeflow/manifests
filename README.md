@@ -91,7 +91,7 @@ Various subdirectories within the repo contain a kustomize target (base or overl
 ```
 
 ## Kfctl Processing 
-Kfctl traverses directories under manifests to find and build kustomize targets based on the configuration file `app.yaml`. App.yaml is derived from a file in the kubeflow [config](https://github.com/kubeflow/kubeflow/tree/master/bootstrap/config) directory. Each target processed by kfctl will result in an output yaml file. The output file is generated via kustomize's API. The kustomize package manager in kfctl will read app.yaml and apply the packages, components and componentParams to kustomize in the following way:
+Kfctl traverses directories under manifests to find and build kustomize targets based on the configuration file `app.yaml`. The contents of app.yaml is the result of running kustomize on the base and specific overlays in the kubeflow [config](https://github.com/kubeflow/kubeflow/tree/master/bootstrap/config) directory. The overlays reflect what options are chosen when calling `kfctl init...`.  The kustomize package manager in kfctl will then read app.yaml and apply the packages, components and componentParams to kustomize in the following way:
 
 - **packages** 
   - are always top-level directories under the manifests repo
@@ -117,7 +117,7 @@ namespace:
 
 Multiple overlays -
 
-Kfctl has the capability to combine more than one overlay during `kfctl generate ...`. An example is shown below where the profiles target in [manifests](https://github.com/kkasravi/manifests/tree/multiple_overlays/profiles) can include either debug changes in the Deployment or Device information in the Namespace (the devices overlay is not fully integrated with the Profile-controller at this point in time and is intended as an example) or **both**. 
+Kfctl has the capability to combine more than one overlay during `kfctl generate ...`. An example is shown below where the profiles target in [manifests](https://github.com/kubeflow/manifests/tree/master/profiles) can include either debug changes in the Deployment or Device information in the Namespace (the devices overlay is not fully integrated with the Profile-controller at this point in time and is intended as an example) or **both**. 
 
 ```
 profiles
