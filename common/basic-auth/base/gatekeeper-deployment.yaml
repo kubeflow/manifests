@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: basic-auth
+spec:
+  selector:
+    matchLabels:
+      app: basic-auth-login
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: basic-auth
+    spec:
+      name: app
+      containers:
+      - args:
+        - --username=$(USERNAME)
+        - --pwhash=$(PASSWORDHASH)
+        command:
+        - /opt/kubeflow/gatekeeper
+        env:
+        - name: USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: kubeflow-login
+        - name: PASSWORDHASH
+          valueFrom:
+            secretKeyRef:
+              key: passwordhash
+              name: kubeflow-login
+        image: gcr.io/kubeflow-images-public/gatekeeper:v20190211-v0.4.0-rc.1-119-g5098995b-e3b0c4
+        ports:
+        - containerPort: 8085
+        workingDir: /opt/kubeflow
