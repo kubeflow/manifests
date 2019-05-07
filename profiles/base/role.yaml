@@ -4,18 +4,10 @@ metadata:
   name: role
 rules:
 - apiGroups:
-  - ""
-  resources:
-  - namespaces
-  verbs: ['get', 'list']
-- apiGroups:
-  - rbac.authorization.k8s.io
-  resources:
-  - roles
-  - rolebindings
-  verbs: ['get', 'list']
-- apiGroups:
   - kubeflow.org
   resources:
   - profiles
-  verbs: ['*']
+  verbs: 
+  - create
+  - list
+  - get
