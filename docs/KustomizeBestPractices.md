@@ -2,7 +2,7 @@
 
   How to utilize kustomize processing directives to minimize errors and produce simple targets
 
-## Identify the resources that encompass a kustomize target
+## 1. Identify the resources that encompass a kustomize target
 
   In most cases these resources are being move from ksonnet, and per ksonnet component, often include resources like:
   - CustomResourceDefinition
@@ -14,17 +14,55 @@
   - VirtualService 
 
   In most cases the collection of resources will have a component name from ksonnet or a name identifying its purpose.
-  Move the collection of resources under manifests/<component>/base. 
+  This collection of resources will be moved under `manifests/<component>/base`. 
   
 
-### Resource naming
+### 1a. Resource naming
 
-  Resources should be organized by kind, where the file name is the plural form of the Resource kind. A Deployment would go in a file named deployment.yaml. If there is a need to separate multiple deployments across 'deployment' files, you should add a prefix of the name to the filename. EG the file name would be `<kind plural>-<name>.yaml`. The naming should map capital letters to lower with dashes eg the file name for the ClusterRoleMapping resource would be cluster-rol-mapping.yaml.
+  Resources should be organized by kind, where the file name the resource is in is the lower-case hyphenized form of the Resource kind. EG: A Deployment would go in a file named deployment.yaml. A ClusterRoleBinding would go in a file called cluster-role-binding.yaml. If there are multiple resources within a kustomize target eg more than one deployment, you may want to retain a single resource per file and add a prefix|suffix of the resource name to the filename. EG the file name would be `<kind>-<name>.yaml`. The naming should map capital letters to lower hyphenized.
+
+> example: /manifests/profiles
+
+```
+profiles
+└── base
+    ├── README.md
+    ├── cluster-role-binding.yaml
+    ├── crd.yaml
+    ├── deployment.yaml
+    ├── kustomization.yaml
+    ├── role-binding.yaml
+    ├── role.yaml
+    ├── service-account.yaml
+    └── service.yaml
+```
 
 
 ### Shared attributes across resources
 
-  Look for common, repeated attributes across resources. These are often labels, namespace, a common prefix used for each resource. Move these into the kustomization.yaml file as commonLabels, namespace and nameprefix respectively.
+  There are often repeated attributes across resources. These are often labels, namespace, or perhaps a common prefix used for each resource. You can move these into the kustomization.yaml file and make adjustments within each resource.
+
+> example: /manifests/profiles
+
+```
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- crd.yaml
+- service-account.yaml
+- cluster-role-binding.yaml
+- role.yaml
+- role-binding.yaml
+- service.yaml
+- deployment.yaml
+**namePrefix: profiles-**
+**commonLabels:**
+**  kustomize.component: profiles**
+images:
+  - name: gcr.io/kubeflow-images-public/profile-controller
+    newName: gcr.io/kubeflow-images-public/profile-controller
+    newTag: v20190228-v0.4.0-rc.1-192-g1a802656-dirty-f95773
+```
 
 
 ### Identify common overlays
