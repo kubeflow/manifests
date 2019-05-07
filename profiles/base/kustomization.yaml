@@ -9,6 +9,7 @@ resources:
 - service.yaml
 - deployment.yaml
 namePrefix: profiles-
+namespace: kubeflow
 commonLabels:
   kustomize.component: profiles
 images:
