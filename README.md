@@ -4,90 +4,8 @@ This repo is a [bespoke configuration](https://github.com/kubernetes-sigs/kustom
 ## Organization
 Various subdirectories within the repo contain a kustomize target (base or overlay subdirectory). Overlays are used for a variety of purposes such as platform resources. Both base and overlay targets are processed by kfctl during generate and apply phases and is detailed in [Kfctl Processing](#kfctl-processing).
 
-### Kustomize targets (🎯)
-```
-.
-├── application
-│   └─🎯base
-├── argo
-│   └─🎯base
-├── common
-│   ├── ambassador
-│   │   └─🎯base
-│   ├── centraldashboard
-│   │   └─🎯base
-│   └── spartakus
-│       └─🎯base
-├─🎯gcp
-│   ├── cert-manager
-│   │   └── overlays
-│   │       └─🎯gcp
-│   ├── cloud-endpoints
-│   │   └── overlays
-│   │       └─🎯gcp
-│   ├─🎯gcp-credentials-admission-webhook
-│   │   └── overlays
-│   │       └─🎯gcp
-│   ├── gpu-driver
-│   │   └── overlays
-│   │       └─🎯gcp
-│   └── iap-ingress
-│       └── overlays
-│           └─🎯gcp
-├── jupyter
-│   ├── jupyter
-│   │   ├─🎯base
-│   │   └── overlays
-│   │       └── minikube
-│   ├── jupyter-web-app
-│   │   └─🎯base
-│   └── notebook-controller
-│       └─🎯base
-├── katib
-│   └─🎯base
-├── kubebench
-│   └─🎯base
-├── metacontroller
-│   └─🎯base
-├── modeldb
-│   └─🎯base
-├── mutating-webhook
-│   ├─🎯base
-│   └── overlays
-│       └── add-label
-├── pipeline
-│   ├── api-service
-│   │   └─🎯base
-│   ├── minio
-│   │   └─🎯base
-│   ├── mysql
-│   │   └─🎯base
-│   ├── persistent-agent
-│   │   └─🎯base
-│   ├── pipelines-runner
-│   │   └─🎯base
-│   ├── pipelines-ui
-│   │   └─🎯base
-│   ├── pipelines-viewer
-│   │   └─🎯base
-│   └── scheduledworkflow
-│       └─🎯base
-├── profiles
-│   └─🎯base
-├── pytorch-job
-│   └── pytorch-operator
-│       └─🎯base
-├── tensorboard
-│   └─🎯base
-└── tf-training
-    └── tf-job-operator
-        ├─🎯base
-        └── overlays
-            ├── 🎯cluster
-            ├── 🎯cluster-gangscheduled
-            ├── 🎯namespaced
-            └── 🎯namespaced-gangscheduled
-```
+See [Best Practices](./docs/KustomizeBestPractices.md) for details on how kustomize targets are created.
+
 
 ## Kfctl Processing
 Kfctl traverses directories under manifests to find and build kustomize targets based on the configuration file `app.yaml`. The contents of app.yaml is the result of running kustomize on the base and specific overlays in the kubeflow [config](https://github.com/kubeflow/kubeflow/tree/master/bootstrap/config) directory. The overlays reflect what options are chosen when calling `kfctl init...`.  The kustomize package manager in kfctl will then read app.yaml and apply the packages, components and componentParams to kustomize in the following way:
@@ -259,7 +177,7 @@ Outputs from kfctl (no platform specified):
                         ⎹→argo.yaml
                         ⎹→centraldashboard.yaml
                         ⎹→jupyter-web-app.yaml
-                        ⎹→katib.yaml
+                        →katib.yaml
                         ⎹→metacontroller.yaml
                         ⎹→notebook-controller.yaml
                         ⎹→pipeline.yaml
