@@ -4,7 +4,7 @@
 
 ## 1. Identify the resources that encompass a kustomize target
 
-  In most cases these resources are being moved from ksonnet, and per ksonnet component, often include resources like:
+  In most cases resources are being moved from ksonnet, and per ksonnet component (a .jsonnet file under `<component>/prototypes`), often include resources like:
   - CustomResourceDefinition
   - ClusterRole, ClusterRoleBinding or Role, RoleBinding
   - ConfigMap
@@ -18,12 +18,12 @@
 
   If moving from ksonnet, the easiest way to capture the collection of resources is to:
 
-  > use `kfctl init` to create a kubeflow application 
-  > make sure the ksonnet prototype is listed in the generated app.yaml
-  > cd <application>/ksonnet
-  > ks show <component> | tee resources.yaml
+  > use `kfctl init` to create a kubeflow application <br/>
+  > make sure the ksonnet prototype is listed in the generated app.yaml<br/>
+  > cd <application>/ksonnet<br/>
+  > ks show <component> | tee resources.yaml<br/>
   
-  The individual resources can then be broken out as described in the next section.
+  The individual resources can then be broken out into separate files as described in the next section.
 
 ### 1a. Resource grouping
 
