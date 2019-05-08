@@ -126,16 +126,118 @@ spec:
 
 ### 1c. Parameters
 
-  There are 3 types of kustomize parameters that can be leveraged for a new component or to port ksonnet parameters.
+  There are 3 types of kustomize parameters that can be leveraged when building a kustomize target. The vars, patchesStrategicMerge and patchesJson6209 are described in detail in the [kustomization.yaml file](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/kustomization.yaml).
 
   1. [vars](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/kustomization.yaml#L226)<br/> 
      Kustomize vars should be used whenever a simple text replacement is needed. The text must be a string, for example you cannot use kustomize vars for deployment.spec.replicas which takes a int. You will need to use a Json Patch for this.  Kustomize vars require a section within the kustomization.yaml under `vars:` that identifies the variable name, its object reference and optionally its field reference in the object. This uniquely identifies the source of the variable. A configuration yaml may also be needed to identify those resources referencing the variable. In many cases the variable will reference a ConfigMap that is generated in the kustomization.yaml file using values contained in a params.env file. The configuration yaml will then list resources and their json paths where the variable is used eg $(varname). See [ambassador](https://github.com/kubeflow/manifests/tree/master/common/ambassador/base) for an example of using a var named [ambassadorServiceType](https://github.com/kubeflow/manifests/blob/master/common/ambassador/base/kustomization.yaml#L28) that is generated from a [configMapGenerator](https://github.com/kubeflow/manifests/blob/master/common/ambassador/base/kustomization.yaml#L15) which reads this value from [params.env](https://github.com/kubeflow/manifests/blob/master/common/ambassador/base/params.env#L1). In order to use ambassadorServiceType, you need to list which [resource](https://github.com/kubeflow/manifests/blob/master/common/ambassador/base/params.yaml#L1) uses it in params.yaml and finally, actually use the [variable](https://github.com/kubeflow/manifests/blob/master/common/ambassador/base/service.yaml#L30).
   2. [patchesStrategicMerge](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/kustomization.yaml#L149)<br/>
      This contains a list of resources which have one or more changes from the base resource. Only the changes and enough information to uniquely describe the resource should be in this resource file. This should not be used if you're changing an array in the base resource. For this you should use a Json Patch.
   3. [patchesJson6902](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/kustomization.yaml#L167)<br/>
-     Json Patches are the most versatile, having the ability to add, replace or remove array entries in resources (eg `deployment/spec/template/spec/containers/env/[-+]`) as well as other sections that may be parts of the schema or integers. [Ambassador]'s kustomization.yaml also contains an example of a [json patch](https://github.com/kubeflow/manifests/blob/master/common/ambassador/base/kustomization.yaml#L20) that replaces an integer using the patch found in deployment-amabassador-patch.yaml in the ambassador [base directory]((https://github.com/kubeflow/manifests/tree/master/common/ambassador/base).
+     Json Patches are the most versatile, having the ability to add, replace or remove array entries in resources (eg `deployment/spec/template/spec/containers/env/[-+]`) as well as other sections that may be parts of the schema or integers. [Ambassador]'s kustomization.yaml also contains an example of a [json patch](https://github.com/kubeflow/manifests/blob/master/common/ambassador/base/kustomization.yaml#L20) that replaces an integer using the patch found in deployment-amabassador-patch.yaml in the ambassador [base directory](https://github.com/kubeflow/manifests/tree/master/common/ambassador/base).
 
 ### 1d. Overlays
 
-  Certain resources or resource modifications can be further grouped by a particular concept that cuts across kustomize base targets such as platform type, an Istio service, basic-auth, etc. There are a number of examples where base targets are changed by specific overlays and can be referenced to port a ksonnet component or add a new target and overlay. One example of an overlay is under [profiles debug overlay](https://github.com/kubeflow/manifests/tree/master/profiles/overlays/debug). In this case, there is a need to debug the profile-controller using dlv/GoLand. This requires replacing the deployment command with '/go/bin/dlv' and adding args required by dlv. It also requires replacing the image with one that has been modified and matches with the debugger source code.
+  Certain resources or resource modifications can be further grouped by a particular concept that cuts across kustomize base targets such as platform type, an Istio service, basic-auth, etc. There are a number of examples where base targets are changed by specific overlays and can be used as a reference when adding a new target or overlay. One example of an overlay is under [profiles debug overlay](https://github.com/kubeflow/manifests/tree/master/profiles/overlays/debug). In this case, there is a need to debug the profile-controller using dlv/GoLand. This requires replacing the deployment command with '/go/bin/dlv' and adding args required by dlv. It also requires replacing the image with one that has been modified and matches with the debugger source code.
+
+#### - Invoking overlays
+
+  Overlays can be used directly by running `kustomize build` at the overlay subdirectory. In most cases overlays are invoked by kfctl by specifying the overlay to call within the app.yaml. An example of invoking the debug overlay is shown below:
+
+```
+apiVersion: kfdef.apps.kubeflow.org/v1alpha1
+kind: KfDef
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: experiments
+  name: experiments
+  namespace: experiments
+spec:
+  appdir: /Users/kdkasrav/experiments
+  componentParams:
+    profiles:
+    - name: overlay
+      value: debug
+    - name: project
+  components:
+  - profiles
+  manifestsRepo: /Users/kdkasrav/experiments/.cache/manifests/pull/31/head
+  packageManager: kustomize@pull/31
+  packages:
+  - profiles
+  project: constant-cubist-173123
+  repo: /Users/kdkasrav/experiments/.cache/kubeflow/pull/3108/head/kubeflow
+  useBasicAuth: false
+  useIstio: false
+  version: pull/3108
+status: {}
+```
+
+  Calling `kfctl generate all` will produce the profiles resources with a modified Deployment that allows remotely attach to dlv running the profile-controller .
+
+#### - Invoking multiple overlays
+
+  Using profiles as the use case 
+
+```
+profiles
+├── base
+│   └── kustomization.yaml
+└── overlays
+    ├── debug
+    │   └── kustomization.yaml
+    └── devices
+        └── kustomization.yaml
+```
+
+  Normally kustomize provides the ability to overlay a 'base' set of resources with changes that are merged into the base from resources that are located under an overlays directory. Kustomize doesn't provide for an easy way to combine more than one overlay for example debug and devices. However kustomize has several feature requests to allow this and combining overlays is possible if one were to create a kustomization.yaml under profiles that included base and the kustomization directives in debug and devices. This requires some path corrections and some constraints within each kustomization but allows 'mixins' to be used in the manner described above. In order to 'mixin' debug and devices the app.yaml would add both overlays in the profiles componentParams as shown below
+
+```
+  componentParams:
+    profiles:
+    - name: overlay
+      value: debug
+    - name: overlay
+      value: devices
+```
+
+  The kustomization.yaml generated in .cache/manifests/master/profiles/ looks like 
+
+```
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- base
+commonLabels:
+  app.kubernetes.io/name: experiments
+configMapGenerator:
+- env: overlays/debug/params.env
+  name: parameters
+configurations:
+- overlays/debug/params.yaml
+generatorOptions:
+  disableNameSuffixHash: true
+namespace: experiments
+patchesStrategicMerge:
+- overlays/debug/deployment.yaml
+- overlays/devices/deployment.yaml
+vars:
+- fieldref:
+    fieldPath: data.project
+  name: project
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: parameters
+- fieldref:
+    fieldPath: data.namespace
+  name: namespace
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: parameters
+```
+
+
+
 
