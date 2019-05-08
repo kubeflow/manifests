@@ -1,10 +1,10 @@
 # Kustomize Best Practices
 
-  How to utilize kustomize processing directives to minimize errors and produce simple targets
+  How to utilize kustomize processing directives to minimize yaml errors and simplify yaml resources.
 
 ## 1. Identify the resources that encompass a kustomize target
 
-  In most cases resources are being moved from ksonnet, and per ksonnet component (a .jsonnet file under `<component>/prototypes`), often include resources like:
+  In many cases resources are being moved from ksonnet and per ksonnet component (a .jsonnet file under `<component>/prototypes`), often include resources like:
   - CustomResourceDefinition
   - ClusterRole, ClusterRoleBinding or Role, RoleBinding
   - ConfigMap
