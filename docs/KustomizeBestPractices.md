@@ -128,7 +128,7 @@ spec:
 
   There are 3 types of kustomize parameters that can be leveraged for a new component or to port ksonnet parameters.
 
-  1. [vars](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/kustomization.yaml#L226)
+  1. [vars](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/kustomization.yaml#L226) 
      Kustomize vars should be used whenever a simple text replacement is needed. The text must be a string, for example you cannot use kustomize vars for Deployment.spec.replicas which takes a int. You will need to use a Json Patch for this.  Kustomize vars require a section within the kustomization.yaml that identifies the variable name, its object reference and optionally its field reference in the object. This uniquely identifies the source of the variable. A configuration yaml may also be needed to identify those resources referencing the variable. In many cases the variable will reference a ConfigMap that is generated in the kustomisation.yaml file using values contained in a params.env file. The configuration yaml will then list resources and their json paths where the variable is used eg $(varname).
   2. [patchesStrategicMerge](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/kustomization.yaml#L149)
      This contains a list of resources which have one or more changes from the base resource. Only the changes and enough information to uniquely describe the resource should be in this resource file. This should not be used if you're changing an array in the base resource. For this you should use a Json Patch.
