@@ -20,10 +20,10 @@
 
   > use `kfctl init <appName>` to create a kubeflow application <br/>
   > cd `<appName>`<br/>
-  > make sure the ksonnet prototype is listed in the app.yaml created from `kfctl init`<br/>
+  > make sure the ksonnet prototype is listed in the app.yaml under components created from `kfctl init`<br/>
   > run `kfctl generate all` to install the ksonnet packages and generate the ksonnet components <br/>
   > cd <application>/ksonnet<br/>
-  > ks show <component> | tee resources.yaml<br/>
+  > run `ks show <component> | tee resources.yaml`<br/>
   
   The individual resources in the resources.yaml can then be broken out into separate files as described in the next section.
 
