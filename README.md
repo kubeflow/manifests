@@ -2,59 +2,104 @@
 This repo is a [bespoke configuration](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#bespoke-configuration) of kustomize targets used by kubeflow. These targets are traversed by kubeflow's CLI `kfctl`. Each target is compatible with the kustomize CLI and can be processed indendently by kubectl or the kustomize command. 
 
 ## Organization
-Various subdirectories within the repo contain a kustomize target (base or overlay subdirectory). Currently overlays hold platform resources where platform is one of "gcp|minikube". These targets are processed by kfctl during generate and apply phases and is detailed in [Kfctl Processing](#kfctl-processing). 
+Various subdirectories within the repo contain a kustomize target (base or overlay subdirectory). Currently overlays hold platform resources where platform is one of "gcp|minikube". These targets are processed by kfctl during generate and apply phases and are detailed in [Kfctl Processing](#kfctl-processing). 
 
+
+See [Best Practices](./docs/KustomizeBestPractices.md) for details on how kustomize targets are created.
 
 ### Kustomize targets (🎯)
 ```
-📦  application       ⎹→🗳  base(🎯)
-📦  argo              ⎹→🗳  base(🎯)
-📦  common            ⇲     
-                      ⎹→🗳  common/ambassador/base(🎯)
-                      ⎹→🗳  common/centraldashboard/base(🎯)
-                      ⎹→🗳  common/spartakus/base(🎯)
-📦  gcp               ⇲     
-                      ⎹→🗳  gcp/cert-manager/overlays/gcp(🎯)
-                      ⎹→🗳  gcp/cloud-endpoints/overlays/gcp(🎯)
-                      ⎹→🗳  gcp/gcp-credentials-admission-webhook/overlays/gcp(🎯)
-                      ⎹→🗳  gcp/gpu-driver/overlays/gcp(🎯)
-                      ⎹→🗳  gcp/iap-ingress/overlays/gcp(🎯)
-📦  jupyter           ⇲     
-                      ⎹→🗳  jupyter/jupyter-web-app/base(🎯)
-                      ⎹→🗳  jupyter/jupyter/base(🎯)
-                      ⎹→🗳  jupyter/jupyter/overlays/minikube(🎯)
-                      ⎹→🗳  jupyter/notebook-controller/base(🎯)
-📦  katib             ⎹→🗳  base(🎯)
-📦  kubebench         ⎹→🗳  base(🎯)
-📦  metacontroller    ⎹→🗳  base(🎯)
-📦  modeldb           ⎹→🗳  base(🎯)
-📦  mutating-webhook  ⎹→🗳  base(🎯)
-                      ⎹→🗳  mutating-webhook/overlays/add-label(🎯)
-📦  pipeline          ⇲     
-                      ⎹→🗳  pipeline/api-service/base(🎯)
-                      ⎹→🗳  pipeline/minio/base(🎯)
-                      ⎹→🗳  pipeline/mysql/base(🎯)
-                      ⎹→🗳  pipeline/persistent-agent/base(🎯)
-                      ⎹→🗳  pipeline/pipelines-runner/base(🎯)
-                      ⎹→🗳  pipeline/pipelines-ui/base(🎯)
-                      ⎹→🗳  pipeline/pipelines-viewer/base(🎯)
-                      ⎹→🗳  pipeline/scheduledworkflow/base(🎯)
-📦  profiles          ⎹→🗳  base(🎯)
-                      ⎹→🗳  profiles/overlays/debug(🎯)
-                      ⎹→🗳  profiles/overlays/devices(🎯)
-📦  pytorch-job       ⇲     
-                      ⎹→🗳  pytorch-job/pytorch-operator/base(🎯)
-📦  tensorboard       ⎹→🗳  base(🎯)
-📦  tf-training       ⇲     
-                      ⎹→🗳  tf-training/tf-job-operator/base(🎯)
+ ── manifests
+    ├── application
+    │   └── 🎯base
+    ├── argo
+    │   └── 🎯base
+    ├── common
+    │   ├── ambassador
+    │   │   └── 🎯base
+    │   ├── basic-auth
+    │   │   └── 🎯base
+    │   ├── centraldashboard
+    │   │   └── 🎯base
+    │   └── spartakus
+    │       └── 🎯base
+    ├── gcp
+    │   ├── cert-manager
+    │   │   └── overlays
+    │   │       └── 🎯gcp
+    │   ├── cloud-endpoints
+    │   │   └── overlays
+    │   │       └── 🎯gcp
+    │   ├── gcp-credentials-admission-webhook
+    │   │   └── overlays
+    │   │       └── 🎯gcp
+    │   ├── gpu-driver
+    │   │   └── overlays
+    │   │       └── 🎯gcp
+    │   └── iap-ingress
+    │       └── overlays
+    │           └── 🎯gcp
+    ├── jupyter
+    │   ├── jupyter
+    │   │   ├── overlays
+    │   │   │   └── 🎯minikube
+    │   │   └── 🎯base
+    │   ├── jupyter-web-app
+    │   │   └── 🎯base
+    │   └── notebook-controller
+    │       └── 🎯base
+    ├── katib
+    │   └── 🎯base
+    ├── kubebench
+    │   └── 🎯base
+    ├── metacontroller
+    │   └── 🎯base
+    ├── metadata
+    │   └── 🎯base
+    ├── modeldb
+    │   └── 🎯base
+    ├── mutating-webhook
+    │   ├── overlays
+    │   │   └── 🎯add-label
+    │   └── 🎯base
+    ├── pipeline
+    │   ├── api-service
+    │   │   └── 🎯base
+    │   ├── minio
+    │   │   └── 🎯base
+    │   ├── mysql
+    │   │   └── 🎯base
+    │   ├── persistent-agent
+    │   │   └── 🎯base
+    │   ├── pipelines-runner
+    │   │   └── 🎯base
+    │   ├── pipelines-ui
+    │   │   └── 🎯base
+    │   ├── pipelines-viewer
+    │   │   └── 🎯base
+    │   └── scheduledworkflow
+    │       └── 🎯base
+    ├── profiles
+    │   ├── overlays
+    │   │   ├── 🎯debug
+    │   │   └── 🎯devices
+    │   └── 🎯base
+    ├── pytorch-job
+    │   └── pytorch-operator
+    │       └── 🎯base
+    ├── tensorboard
+    │   └── 🎯base
+    └── tf-training
+        └── tf-job-operator
+            └── 🎯base
 ```
 
 ## Kfctl Processing 
 Kfctl will traverse these directories to find and build kustomize targets based on the configuration file `app.yaml`. App.yaml is derived from a file in the kubeflow [config](https://github.com/kubeflow/kubeflow/tree/master/bootstrap/config) directory. Each target processed by kfctl will result in an output yaml file. The output file is generated by calling kustomize's API.  The kustomize package manager in kfctl will read app.yaml and apply the packages, components and componentParams to kustomize in the following way:
 
-- **📦 packages** 
+- **packages** 
   - are always top-level directories under the manifests repo
-- **🗳 components** 
+- **components** 
   - are also directories but may be a subdirectory in a package.
   - components may also be a top-level directory if there is a base or overlay in that directory in which case the component name is equal to the package name. 
   - otherwise a component is a sub-directory 
