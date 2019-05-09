@@ -32,4 +32,4 @@ test: generate
 	@GO111MODULE=on $(GO) test -v .
 
 clean:
-	@rm -f $$(ls *_test.go | egrep -v 'kusttestharness_test.go|go.mod|go.sum') && rm -rf /tmp/v2 
+	@rm -f $$(ls *_test.go | egrep -v 'kusttestharness_test.go|go.mod|go.sum') && rm -rf /tmp/v2

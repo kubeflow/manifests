@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# gen-test-targets will generate units tests under tests/ for all directories that 
+# gen-test-targets will generate units tests under tests/ for all directories that
 # have a kustomization.yaml. This script first finds all directories and then calls
 # gen-test-target to generate each golang unit test.
 # The script is based on kusttestharness_test.go from kubernetes-sigs/kustomize/pkg/target

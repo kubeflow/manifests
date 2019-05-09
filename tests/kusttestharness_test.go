@@ -20,13 +20,13 @@ package kustomize_test
 
 import (
 	"fmt"
-	"path/filepath"
-	"strings"
-	"testing"
 	"log"
+	"path/filepath"
 	"sigs.k8s.io/kustomize/pkg/fs"
 	"sigs.k8s.io/kustomize/pkg/ifc"
 	"sigs.k8s.io/kustomize/pkg/loader"
+	"strings"
+	"testing"
 
 	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/k8sdeps/transformer"

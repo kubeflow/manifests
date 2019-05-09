@@ -809,7 +809,6 @@ data:
 
     SERVICE_ACCOUNT_SECRET_MOUNT = '/var/run/secrets/sa'
 
-
     class KubeFormSpawner(KubeSpawner):
       """Implement a custom Spawner to spawn pods in a Kubernetes Cluster."""
 

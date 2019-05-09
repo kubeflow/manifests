@@ -27,7 +27,7 @@ vars:
 - name: namespace
   objref:
     kind: ConfigMap
-    name: gcp-credentials-admission-webhook-parameters 
+    name: gcp-credentials-admission-webhook-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.namespace
