@@ -5,7 +5,7 @@ resources:
 - sa.yaml
 - service.yaml
 - virtual-service.yaml
-
+namespace: kubeflow
 configMapGenerator:
 - name: ui-parameters
   env: params.env
