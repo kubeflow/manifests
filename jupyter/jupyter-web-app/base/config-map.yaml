@@ -5,9 +5,9 @@ data:
     # Each key corresponds to a JupyterHub Spawner UI option
     # If a key is missing, the respective Spawner UI option will be left untouched
     #
-    # Each Spawner UI option is configured by two keys: `value` and `readOnly`
-    # - The `value` key contains the default value
-    # - The `readOnly` key determines if the option will be available to users
+    # Each Spawner UI option is configured by two keys: 'value' and 'readOnly'
+    # - The 'value' key contains the default value
+    # - The 'readOnly' key determines if the option will be available to users
     #
     # If the 'readOnly' key is present and set to 'true', the respective option
     # will be disabled for users and only set by the admin

@@ -11,6 +11,7 @@ resources:
 - service.yaml
 - virtual-service.yaml
 - workflow.yaml
+namespace: kubeflow
 commonLabels:
   kustomize.component: kubebench
 configMapGenerator:
