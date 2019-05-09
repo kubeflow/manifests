@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: basic-auth-login
+      app: basic-auth
   replicas: 1
   strategy:
     type: RollingUpdate
@@ -26,12 +26,12 @@ spec:
           valueFrom:
             secretKeyRef:
               key: username
-              name: kubeflow-login
+              name: $(authSecretName)
         - name: PASSWORDHASH
           valueFrom:
             secretKeyRef:
               key: passwordhash
-              name: kubeflow-login
+              name: $(authSecretName)
         image: gcr.io/kubeflow-images-public/gatekeeper:v20190211-v0.4.0-rc.1-119-g5098995b-e3b0c4
         ports:
         - containerPort: 8085
