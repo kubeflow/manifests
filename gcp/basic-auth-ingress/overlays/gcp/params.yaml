@@ -15,5 +15,7 @@ varReference:
   kind: Certificate
 - path: spec/acme/config/0/domains/0
   kind: Certificate
-- path: metadata/annotations/kubernetes.io\/certmanager.k8s.io\/issuer
+- path: metadata/name
+  kind: Ingress
+- path: metadata/annotations/certmanager.k8s.io\/issuer
   kind: Ingress
