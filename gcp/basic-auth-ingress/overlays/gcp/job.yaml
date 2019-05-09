@@ -17,7 +17,10 @@ spec:
         - name: TLS_SECRET_NAME
           value: $(secretName)
         - name: TLS_HOST_NAME
-          value: $(hostname)
+          valueFrom:
+            configMapKeyRef:
+              name: basic-auth-ingress-parameters
+              key: data.hostname
         - name: INGRESS_NAME
           value: $(ingressName)
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
