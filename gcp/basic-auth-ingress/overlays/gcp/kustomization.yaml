@@ -1,0 +1,56 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- certificate.yaml
+- cloud-endpoint.yaml
+- cluster-role-binding.yaml
+- cluster-role.yaml
+- config-map.yaml
+- deployment.yaml
+- ingress.yaml
+- job.yaml
+- service-account.yaml
+- service.yaml
+- stateful-set.yaml
+commonLabels:
+  kustomize.component: basic-auth-ingress
+images:
+  - name: gcr.io/kubeflow-images-public/ingress-setup:latest
+    newName: gcr.io/kubeflow-images-public/ingress-setup:latest
+    newTag: latest
+configMapGenerator:
+- name: basic-auth-ingress-parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: secretName
+  objref:
+    kind: ConfigMap
+    name: basic-auth-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.secretName
+- name: hostname
+  objref:
+    kind: ConfigMap
+    name: basic-auth-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.hostname
+- name: ipName
+  objref:
+    kind: ConfigMap
+    name: basic-auth-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ipName
+- name: ingressName
+  objref:
+    kind: ConfigMap
+    name: basic-auth-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ingressName
+configurations:
+- params.yaml
