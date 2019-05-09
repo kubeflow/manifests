@@ -69,8 +69,6 @@ data:
     sleep 3600
 kind: ConfigMap
 metadata:
-  labels:
-    ksonnet.io/component: basic-auth-ingress
   name: envoy-config
 ---
 apiVersion: v1
