@@ -19,6 +19,9 @@ images:
   - name: gcr.io/kubeflow-images-public/ingress-setup:latest
     newName: gcr.io/kubeflow-images-public/ingress-setup:latest
     newTag: latest
+  - name: gcr.io/cloud-solutions-group/esp-sample-app
+    newName: gcr.io/cloud-solutions-group/esp-sample-app
+    newTag: 1.0.0
 configMapGenerator:
 - name: basic-auth-ingress-parameters
   env: params.env
@@ -60,5 +63,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.ingressName
+- name: issuer
+  objref:
+    kind: ConfigMap
+    name: basic-auth-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.issuer
 configurations:
 - params.yaml
