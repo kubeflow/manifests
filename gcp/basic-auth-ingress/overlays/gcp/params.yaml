@@ -1,6 +1,8 @@
 varReference:
 - path: metadata/name
   kind: Certificate
+- path: metadata/annotations/getambassador.io\/config
+  kind: Service
 - path: spec/dnsNames
   kind: Certificate
 - path: spec/issuerRef/name
