@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+apiVersion: apps/v1beta2
 kind: StatefulSet
 metadata:
   labels:
@@ -50,3 +50,5 @@ spec:
       - name: sa-key
         secret:
           secretName: admin-gcp-sa
+  # Workaround for https://github.com/kubernetes-sigs/kustomize/issues/677
+  volumeClaimTemplates: []
