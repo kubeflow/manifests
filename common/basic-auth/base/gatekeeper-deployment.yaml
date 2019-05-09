@@ -14,9 +14,9 @@ spec:
       labels:
         app: basic-auth
     spec:
-      name: app
       containers:
-      - args:
+      - name: app
+        args:
         - --username=$(USERNAME)
         - --pwhash=$(PASSWORDHASH)
         command:
