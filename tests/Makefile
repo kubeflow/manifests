@@ -22,14 +22,11 @@ export GO = go
 
 all: test
 
-/tmp/v2:
-	@[ ! -d /tmp/v2 ] && unzip -q -d /tmp ../hack/v2.zip
-
-generate: clean #/tmp/v2
+generate: clean
 	@cd .. && hack/gen-test-targets.sh && rm tests/$(EXCLUDE)
 
 test: generate
 	@GO111MODULE=on $(GO) test -v .
 
 clean:
-	@rm -f $$(ls *_test.go | egrep -v 'kusttestharness_test.go|go.mod|go.sum') && rm -rf /tmp/v2
+	@rm -f $$(ls *_test.go | egrep -v 'kusttestharness_test.go|go.mod|go.sum')
