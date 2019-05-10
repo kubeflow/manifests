@@ -8,6 +8,7 @@ resources:
 - deployment.yaml
 - service-account.yaml
 - service.yaml
+- virtual-service.yaml
 commonLabels:
   kustomize.component: argo
 images:
@@ -86,7 +87,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.artifactRepositorySecretKeySecretKey
-vars:
+- name: clusterDomain
+  objref:
+    kind: ConfigMap
+    name: workflow-controller-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.clusterDomain
 - name: namespace
   objref:
     kind: Service

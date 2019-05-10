@@ -13,7 +13,7 @@ data:
     components.
 
     Note that this file is also responsible for importing the UI-specific Spawner
-    class from <ui-dir>/spawner.py, and setting the `spawner_class` configuration
+    class from <ui-dir>/spawner.py, and setting the 'spawner_class' configuration
     option.
     """
 
@@ -917,7 +917,7 @@ data:
         if self._default_config_contains('workspaceVolume'):
           ws_volume_readonly =           form_defaults['workspaceVolume'].get('readOnly', False)
 
-          # The Workspace Volume is specified in `config.yaml`
+          # The Workspace Volume is specified in 'config.yaml'
           default_ws_volume = form_defaults['workspaceVolume']['value']
 
           # Get and set the default values from the YAML configuration file,
@@ -1126,7 +1126,7 @@ data:
       def _list_pvcs_in_namespace(self, namespace):
         """
         Return a list with all non-failed PVCs in a K8s namespace.
-        Each list entry is a dict with `name`, `size` and `access_modes` keys.
+        Each list entry is a dict with 'name', 'size' and 'access_modes' keys.
         """
         existing_pvcs = []
 
@@ -1243,9 +1243,9 @@ data:
     # Each key corresponds to a JupyterHub Spawner UI option
     # If a key is missing, the respective Spawner UI option will be left untouched
     #
-    # Each Spawner UI option is configured by two keys: `value` and `readOnly`
-    # - The `value` key contains the default value
-    # - The `readOnly` key determines if the option will be available to users
+    # Each Spawner UI option is configured by two keys: 'value' and 'readOnly'
+    # - The 'value' key contains the default value
+    # - The 'readOnly' key determines if the option will be available to users
     #
     # If the 'readOnly' key is present and set to 'true', the respective option
     # will be disabled for users and only set by the admin
