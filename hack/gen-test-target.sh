@@ -37,8 +37,9 @@ gen-target-end() {
 
 gen-target() {
   local directory=$1
-  gen-target-start $1
-  for i in $(echo $(cat $directory/kustomization.yaml | grep '^- .*yaml$' | sed 's/^- //') $(cat $directory/kustomization.yaml | grep '  path: ' | sed 's/^.*: \(.*\)$/\1/') params.env kustomization.yaml | sed 's/ /\n/g' | sort | uniq); do
+  gen-target-start $directory
+
+  for i in $(echo $(cat $directory/kustomization.yaml | grep '^- .*yaml$' | sed 's/^- //') $(cat $directory/kustomization.yaml | grep '  path: ' | sed 's/^.*: \(.*\)$/\1/') params.env kustomization.yaml | sed 's/ /\\n/g' | sort | uniq | awk '{gsub(/\\n/,"\n")}1'); do
     file=$i
     if [[ -f $directory/$file ]]; then
       case $file in
