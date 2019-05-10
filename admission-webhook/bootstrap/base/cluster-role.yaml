@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: admission-webhook-bootstrap-role
+  name: role
 rules:
 - apiGroups:
   - admissionregistration.k8s.io

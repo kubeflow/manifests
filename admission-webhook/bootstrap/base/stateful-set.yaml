@@ -1,31 +1,22 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: admission-webhook-bootstrap
+  name: statefulset
 spec:
-  serviceName: admission-webhook
-  selector:
-    matchLabels:
-      service: admission-webhook-bootstrap
+  serviceName: service
   template:
-    metadata:
-      labels:
-        service: admission-webhook-bootstrap
     spec:
       containers:
       - command:
         - sh
-        - /var/webhook-config/create_ca.sh
-        env:
-        - name: NAMESPACE
-          value: kubeflow
+        - /var/webhook-config/create_ca.sh 
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
-        name: admission-webhook-bootstrap
+        name: bootstrap
         volumeMounts:
         - mountPath: /var/webhook-config/
           name: admission-webhook-config
       restartPolicy: Always
-      serviceAccountName: admission-webhook-bootstrap-sa
+      serviceAccountName: service-account
       volumes:
       - configMap:
           name: webhook-bootstrap-config

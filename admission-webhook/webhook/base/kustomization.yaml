@@ -1,26 +1,21 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- bootstrap-cluster-role-binding.yaml
-- bootstrap-cluster-role.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
-- config-map.yaml
 - deployment.yaml
 - mutating-webhook-configuration.yaml
 - service-account.yaml
-- bootstrap-service-account.yaml
 - service.yaml
-- stateful-set.yaml
+- crd.yaml  
 commonLabels:
   kustomize.component: admission-webhook
+  app: admission-webhook
+namePrefix: admission-webhook- 
 images:
   - name: gcr.io/kubeflow-images-public/admission-webhook
     newName: gcr.io/kubeflow-images-public/admission-webhook
     newTag: v20190502-v0-88-gb5732ba0-dirty-2759ff
-  - name: gcr.io/kubeflow-images-public/ingress-setup
-    newName: gcr.io/kubeflow-images-public/ingress-setup
-    newTag: latest
 configMapGenerator:
 - name: admission-webhook-parameters
   env: params.env
@@ -34,5 +29,26 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.namespace
+- name: serviceName
+  objref:
+    kind: Service
+    name: service
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.name
+- name: deploymentName
+  objref:
+    kind: Deployment
+    name: deployment
+    apiVersion: extensions/v1beta1
+  fieldref:
+    fieldpath: metadata.name
+- name: mutatingWebhookConfig
+  objref: 
+    kind: MutatingWebhookConfiguration
+    name: mutating-webhook-config
+    apiVersion: admissionregistration.k8s.io/v1beta1
+  fieldref:
+    fieldPath: metadata.name  
 configurations:
 - params.yaml

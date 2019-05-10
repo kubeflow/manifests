@@ -1,15 +1,15 @@
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: MutatingWebhookConfiguration
 metadata:
-  name: admission-webhook
+  name: mutating-webhook-config
 webhooks:
 - clientConfig:
     caBundle: ""
     service:
-      name: admission-webhook
+      name: $(serviceName)
       namespace: $(namespace)
       path: /apply-podpreset
-  name: admission-webhook.kubeflow.org
+  name: $(deploymentName).kubeflow.org
   rules:
   - apiGroups:
     - ""

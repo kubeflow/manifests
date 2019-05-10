@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: admission-webhook-role
+  name: role
 rules:
 - apiGroups:
   - kubeflow.org
