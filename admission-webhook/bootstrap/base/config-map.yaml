@@ -45,7 +45,7 @@ data:
     done
 
     [ -z ${service} ] && service=$(serviceName)
-    [ -z ${secret} ] && secret=gcp-cred-webhook-certs
+    [ -z ${secret} ] && secret=webhook-certs
     [ -z ${namespace} ] && namespace=$(namespace)
     [ -z ${namespace} ] && namespace=default
 
@@ -121,7 +121,7 @@ data:
     while true; do
       if ! checkWebhookConfig; then
         echo "patching ca bundle for webhook configuration..."
-        kubectl patch mutatingwebhookconfiguration ${mutatingWebhookName} \
+        kubectl patch mutatingwebhookconfiguration ${mutatingWebhookConfigName} \
             --type='json' -p="${patchString}"
       fi
       sleep 10

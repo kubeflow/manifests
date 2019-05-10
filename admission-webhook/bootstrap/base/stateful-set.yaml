@@ -16,7 +16,7 @@ spec:
         - mountPath: /var/webhook-config/
           name: admission-webhook-config
       restartPolicy: Always
-      serviceAccountName: service-account-bs
+      serviceAccountName: bootstrap-service-account
       volumes:
       - configMap:
           name: webhook-bootstrap-config
