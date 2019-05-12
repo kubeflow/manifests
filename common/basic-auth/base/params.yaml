@@ -3,3 +3,5 @@ varReference:
   kind: Service
 - path: spec/http/route/destination/host
   kind: VirtualService
+- path: spec/template/spec/containers/env/valueFrom/secretKeyRef/name
+  kind: Deployment
