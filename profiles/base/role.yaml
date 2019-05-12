@@ -7,7 +7,7 @@ rules:
   - kubeflow.org
   resources:
   - profiles
-  verbs: 
+  verbs:
   - create
   - list
   - get

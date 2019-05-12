@@ -1,9 +1,8 @@
 # Manifests
-This repo is a [bespoke configuration](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#bespoke-configuration) of kustomize targets used by kubeflow. These targets are traversed by kubeflow's CLI `kfctl`. Each target is compatible with the kustomize CLI and can be processed indendently by kubectl or the kustomize command. 
+This repo is a [bespoke configuration](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#bespoke-configuration) of kustomize targets used by kubeflow. These targets are traversed by kubeflow's CLI `kfctl`. Each target is compatible with the kustomize CLI and can be processed indendently by kubectl or the kustomize command.
 
 ## Organization
-Various subdirectories within the repo contain a kustomize target (base or overlay subdirectory). Overlays are used for a variety of purposes such as platform resources. Both base and overlay targets are processed by kfctl during generate and apply phases and is detailed in [Kfctl Processing](#kfctl-processing). 
-
+Various subdirectories within the repo contain a kustomize target (base or overlay subdirectory). Overlays are used for a variety of purposes such as platform resources. Both base and overlay targets are processed by kfctl during generate and apply phases and is detailed in [Kfctl Processing](#kfctl-processing).
 
 ### Kustomize targets (🎯)
 ```
@@ -90,17 +89,17 @@ Various subdirectories within the repo contain a kustomize target (base or overl
             └── 🎯namespaced-gangscheduled
 ```
 
-## Kfctl Processing 
+## Kfctl Processing
 Kfctl traverses directories under manifests to find and build kustomize targets based on the configuration file `app.yaml`. The contents of app.yaml is the result of running kustomize on the base and specific overlays in the kubeflow [config](https://github.com/kubeflow/kubeflow/tree/master/bootstrap/config) directory. The overlays reflect what options are chosen when calling `kfctl init...`.  The kustomize package manager in kfctl will then read app.yaml and apply the packages, components and componentParams to kustomize in the following way:
 
-- **packages** 
+- **packages**
   - are always top-level directories under the manifests repo
-- **components** 
+- **components**
   - are also directories but may be a subdirectory in a package.
   - a component may also be a package if there is a base or overlay in the top level directory.
-  - otherwise a component is a sub-directory under the package directory. 
+  - otherwise a component is a sub-directory under the package directory.
   - in all cases a component's name in app.yaml must match the directory name.
-  - components are output as `<component>.yaml` under the kustomize subdirectory during `kfctl generate...`. 
+  - components are output as `<component>.yaml` under the kustomize subdirectory during `kfctl generate...`.
   - in order to output a component, a kustomization.yaml is created above the base or overlay directory and inherits common parameters, namespace and labels of the base or overlay. Additionally it adds the namespace and an application label.
 ```
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -112,12 +111,12 @@ commonLabels:
 namespace:
   <namespace>
 ```
-- **component parameters** 
+- **component parameters**
   - are applied to a component's params.env file. There must be an entry whose key matches the component parameter. The params.env file is used to generate a ConfigMap. Entries in params.env are resolved as kustomize vars or referenced in a deployment or statefulset env section in which case no var definition is needed.
 
 Multiple overlays -
 
-Kfctl has the capability to combine more than one overlay during `kfctl generate ...`. An example is shown below where the profiles target in [manifests](https://github.com/kubeflow/manifests/tree/master/profiles) can include either debug changes in the Deployment or Device information in the Namespace (the devices overlay is not fully integrated with the Profile-controller at this point in time and is intended as an example) or **both**. 
+Kfctl has the capability to combine more than one overlay during `kfctl generate ...`. An example is shown below where the profiles target in [manifests](https://github.com/kubeflow/manifests/tree/master/profiles) can include either debug changes in the Deployment or Device information in the Namespace (the devices overlay is not fully integrated with the Profile-controller at this point in time and is intended as an example) or **both**.
 
 ```
 profiles
@@ -178,7 +177,7 @@ config
 Based on the cli args to `kfctl init...`, the correct overlays will be merged to produce an app.yaml.
 The original files have been left as is until UI integration can be completed in a separate PR
 
-### Using kustomize 
+### Using kustomize
 
 Generating yaml output for any target can be done using kustomize in the following way:
 
@@ -274,7 +273,6 @@ Outputs from kfctl (no platform specified):
 
 - use name prefixes if possible for the set of resources bundled by a target
 - do not set namespace in the resources, this should be done by a higher level target
-
 
 ### Bridging kustomize and ksonnet
 

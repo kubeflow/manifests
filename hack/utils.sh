@@ -1,34 +1,32 @@
 #
 # utils.sh has common scripts used the gen-test-targets, get-test-target and gen-tree.
-# 
+#
 
 #
-# manifests-tree will produce a listing that can be included in the README.md that shows 
-# what directories hold kustomization.yamls. 
+# manifests-tree will produce a listing that can be included in the README.md that shows
+# what directories hold kustomization.yamls.
 #
 tmpfile=""
-cleanup()
-{
+cleanup() {
   if [[ -f $tmpfile ]]; then
     rm -f $tmpfile
   fi
 }
 trap cleanup EXIT
 
-manifests-tree()
-{
-   local dir='*'
-   if (( $# >= 1 )); then
-     dir=$1
-     shift
-   fi
-   tmpfile=$(mktemp -q -t tree)
-   for i in $(find * -type d -exec sh -c '(ls -p "{}"|grep />/dev/null)||echo "{}"' \; | egrep -v 'docs|tests|hack'); do
-     d=$(dirname $i) 
-     b=$(basename $i)
-     echo /manifests/$d/🎯$b >> $tmpfile
-   done
-   cat $tmpfile | tree $@ -N --fromfile --noreport
+manifests-tree() {
+  local dir='*'
+  if (($# >= 1)); then
+    dir=$1
+    shift
+  fi
+  tmpfile=$(mktemp -q -t tree)
+  for i in $(find * -type d -exec sh -c '(ls -p "{}"|grep />/dev/null)||echo "{}"' \; | egrep -v 'docs|tests|hack'); do
+    d=$(dirname $i)
+    b=$(basename $i)
+    echo /manifests/$d/🎯$b >> $tmpfile
+  done
+  cat $tmpfile | tree $@ -N --fromfile --noreport
 }
 
 #
@@ -49,8 +47,7 @@ manifests-tree()
 # Given the path /manifests/tf-training/tf-job-operator/base
 # gen-target will return /manifests/tf-training/tf-job-operator
 #
-get-target()
-{
+get-target() {
   local b=$(basename $1)
   case $b in
     base)
@@ -80,8 +77,7 @@ get-target()
 # Given the path /manifests/tf-training/tf-job-operator/base
 # gen-target will return tf-job-operator
 #
-get-target-name()
-{
+get-target-name() {
   local b=$(basename $1)
   case $b in
     base)
@@ -111,8 +107,7 @@ get-target-name()
 # Given the path /manifests/tf-training/tf-job-operator/base
 # gen-target will return base
 #
-get-target-dirname()
-{
+get-target-dirname() {
   local b=$(basename $1)
   case $b in
     base)
