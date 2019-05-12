@@ -14,22 +14,20 @@
 #
 GOLANG_VERSION ?= 1.12
 GOPATH ?= $(HOME)/go
+
+# Comma seperated items within {} for more than one file
 EXCLUDE ?= gcp-credentials-admission-webhook_test.go
-# use {} for more than one file
-#EXCLUDE ?= {x_test.go,y_test.go,z_test.go}
+
 export GO111MODULE = on
 export GO = go
 
 all: test
 
-/tmp/v2:
-	@[ ! -d /tmp/v2 ] && unzip -q -d /tmp ../hack/v2.zip
-
-generate: clean /tmp/v2
+generate: clean
 	@cd .. && hack/gen-test-targets.sh && rm tests/$(EXCLUDE)
 
 test: generate
 	@GO111MODULE=on $(GO) test -v .
 
 clean:
-	@rm -f $$(ls *_test.go | egrep -v 'kusttestharness_test.go|go.mod|go.sum') && rm -rf /tmp/v2 
+	@rm -f $$(ls *_test.go | egrep -v 'kusttestharness_test.go|go.mod|go.sum')

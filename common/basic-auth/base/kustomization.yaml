@@ -30,6 +30,6 @@ vars:
     name: parameters
     apiVersion: v1
   fieldref:
-fieldpath: data.clusterDomain
+    fieldpath: data.clusterDomain
 configurations:
 - params.yaml

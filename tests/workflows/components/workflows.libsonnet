@@ -14,7 +14,6 @@
       )
     else [],
 
-
   // default parameters.
   defaultParams:: {
     project:: "kubeflow-ci",
