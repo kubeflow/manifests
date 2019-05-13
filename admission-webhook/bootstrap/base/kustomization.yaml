@@ -17,3 +17,23 @@ generatorOptions:
   disableNameSuffixHash: true
 configurations:
 - params.yaml
+namespace: kubeflow
+configMapGenerator:
+- name: config-map
+  behavior: merge
+  env: params.env
+vars:
+- name: webhookNamePrefix
+  objref:
+    kind: ConfigMap
+    name: config-map
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.webhookNamePrefix
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: config-map 
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace    

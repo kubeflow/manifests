@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: statefulset
+  name: stateful-set
 spec:
   serviceName: service
   template:
@@ -16,10 +16,10 @@ spec:
         - mountPath: /var/webhook-config/
           name: admission-webhook-config
       restartPolicy: Always
-      serviceAccountName: bootstrap-service-account
+      serviceAccountName: service-account
       volumes:
       - configMap:
-          name: webhook-bootstrap-config
+          name: config-map
         name: admission-webhook-config
   # Workaround for https://github.com/kubernetes-sigs/kustomize/issues/677
   volumeClaimTemplates: []
