@@ -10,6 +10,7 @@ resources:
 - deployment.yaml
 - ingress.yaml
 - job.yaml
+- jwt-policy.yaml
 - service-account.yaml
 - service.yaml
 - stateful-set.yaml
