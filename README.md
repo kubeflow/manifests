@@ -75,7 +75,7 @@ Normally when `kfctl init ...` is called it will download the kubeflow repo unde
 - kfctl_basic_auth.yaml
 - kfctl_iap.yaml
 
-Both kfctl_basic_auth.yaml and kfctl_iap.yaml contain the contents of kfctl_default.yaml plus some additional changes specific to using basic_auth when the cluster is created and platform specific resources if the platform is **gcp**. This PR corrects this redundancy by using kustomize to combine a **gcp** overlay and/or a **basic_auth** overlay. Additionally, due to pipeline refactoring, the kustomize package manager has split the bundled pipeline component in ksonnet to a set of individual pipeline targets. This results in the following:
+Both kfctl_basic_auth.yaml and kfctl_iap.yaml contain the contents of kfctl_default.yaml plus some additional changes specific to using basic_auth when the cluster is created and platform specific resources if the platform is **gcp**. This redundancy is eliminated by using kustomize to combine a **gcp** overlay and/or a **basic_auth** overlay. Additionally, due to pipeline refactoring, the kustomize package manager has split the bundled pipeline component in ksonnet to a set of individual pipeline targets. This results in the following:
 
 ```
 config
@@ -83,8 +83,6 @@ config
 │   └── kustomization.yaml
 └── overlays
     ├── basic_auth
-    │   └── kustomization.yaml
-    ├── gcp
     │   └── kustomization.yaml
     ├── ksonnet
     │   └── kustomization.yaml
