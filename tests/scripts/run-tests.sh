@@ -22,6 +22,4 @@ set -o pipefail
 
 cd tests
 
-set +o errexit # when "make all" can work, remove this line
 make all
-exit 0 # when "make all" can work, remove this line
