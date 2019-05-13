@@ -22,6 +22,7 @@ set -o pipefail
 
 cd tests
 
-set +o errexit # when "make all" can work, remove this line
+# the tests depend on kustomize
+export PATH=${GOPATH}/bin:/usr/local/go/bin:${PATH}
+go get sigs.k8s.io/kustomize
 make all
-exit 0 # when "make all" can work, remove this line
