@@ -20,22 +20,22 @@ package kustomize_test
 
 import (
 	"fmt"
+	"log"
 	"path/filepath"
+	"sigs.k8s.io/kustomize/pkg/fs"
+	"sigs.k8s.io/kustomize/pkg/ifc"
+	"sigs.k8s.io/kustomize/pkg/loader"
 	"strings"
 	"testing"
-	"log"
-	"sigs.k8s.io/kustomize/v2/pkg/fs"
-	"sigs.k8s.io/kustomize/v2/pkg/ifc"
-	"sigs.k8s.io/kustomize/v2/pkg/loader"
 
-	"sigs.k8s.io/kustomize/v2/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/v2/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/v2/pkg/constants"
-	"sigs.k8s.io/kustomize/v2/pkg/resmap"
-	"sigs.k8s.io/kustomize/v2/pkg/resource"
-	. "sigs.k8s.io/kustomize/v2/pkg/target"
-	"sigs.k8s.io/kustomize/v2/pkg/transformers/config/defaultconfig"
-	"sigs.k8s.io/kustomize/v2/pkg/types"
+	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/pkg/constants"
+	"sigs.k8s.io/kustomize/pkg/resmap"
+	"sigs.k8s.io/kustomize/pkg/resource"
+	. "sigs.k8s.io/kustomize/pkg/target"
+	"sigs.k8s.io/kustomize/pkg/transformers/config/defaultconfig"
+	"sigs.k8s.io/kustomize/pkg/types"
 )
 
 // FakeLoader encapsulates the delegate Loader and the fake file system.
