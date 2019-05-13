@@ -2,7 +2,7 @@
 This repo is a [bespoke configuration](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#bespoke-configuration) of kustomize targets used by kubeflow. These targets are traversed by kubeflow's CLI `kfctl`. Each target is compatible with the kustomize CLI and can be processed indendently by kubectl or the kustomize command.
 
 ## Organization
-Various subdirectories within the repo contain a kustomize target (base or overlay subdirectory). Overlays are used for a variety of purposes such as platform resources. Both base and overlay targets are processed by kfctl during generate and apply phases and is detailed in [Kfctl Processing](#kfctl-processing).
+Subdirectories within the repo hold kustomize targets (base or overlay subdirectory). Overlays contain additional functionality and multiple overlays may be mixed into the base (described below). Both base and overlay targets are processed by kfctl during generate and apply phases and is detailed in [Kfctl Processing](#kfctl-processing).
 
 See [Best Practices](./docs/KustomizeBestPractices.md) for details on how kustomize targets are created.
 
@@ -34,7 +34,7 @@ namespace:
 
 Multiple overlays -
 
-Kfctl has the capability to combine more than one overlay during `kfctl generate ...`. An example is shown below where the profiles target in [manifests](https://github.com/kubeflow/manifests/tree/master/profiles) can include either debug changes in the Deployment or Device information in the Namespace (the devices overlay is not fully integrated with the Profile-controller at this point in time and is intended as an example) or **both**.
+Kfctl may combine more than one overlay during `kfctl generate ...`. An example is shown below where the profiles target in [manifests](https://github.com/kubeflow/manifests/tree/master/profiles) can include either debug changes in the Deployment or Device information in the Namespace (the devices overlay is not fully integrated with the Profile-controller at this point in time and is intended as an example) or **both**.
 
 ```
 profiles
@@ -168,21 +168,25 @@ spec:
 
 Outputs from kfctl (no platform specified):
 ```
-<deployment>  ⇲
-              ⎹→kustomize
-                        ⎹→ambassador.yaml
-                        ⎹→application.yaml
-                        ⎹→argo.yaml
-                        ⎹→centraldashboard.yaml
-                        ⎹→jupyter-web-app.yaml
-                        →katib.yaml
-                        ⎹→metacontroller.yaml
-                        ⎹→notebook-controller.yaml
-                        ⎹→pipeline.yaml
-                        ⎹→profiles.yaml
-                        ⎹→pytorch-operator.yaml
-                        ⎹→tensorboard.yaml
-                        ⎹→tf-job-operator.yaml
+kustomize/
+├── ambassador.yaml
+├── api-service.yaml
+├── argo.yaml
+├── centraldashboard.yaml
+├── jupyter-web-app.yaml
+├── katib.yaml
+├── metacontroller.yaml
+├── minio.yaml
+├── mysql.yaml
+├── notebook-controller.yaml
+├── persistent-agent.yaml
+├── pipelines-runner.yaml
+├── pipelines-ui.yaml
+├── pipelines-viewer.yaml
+├── pytorch-operator.yaml
+├── scheduledworkflow.yaml
+├── tensorboard.yaml
+└── tf-job-operator.yaml
 ```
 
 ## Best practices for kustomize targets
