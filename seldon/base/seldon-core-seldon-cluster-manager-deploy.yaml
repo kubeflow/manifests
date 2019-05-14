@@ -4,19 +4,7 @@ metadata:
   name: seldon-core-seldon-cluster-manager
 spec:
   replicas: 1
-  selector:
-    matchLabels:
-      app: seldon-cluster-manager-server
-      app.kubernetes.io/component: seldon-core-operator
-      app.kubernetes.io/name: seldon-core
-      component: seldon-core
   template:
-    metadata:
-      labels:
-        app: seldon-cluster-manager-server
-        app.kubernetes.io/component: seldon-core-operator
-        app.kubernetes.io/name: seldon-core
-        component: seldon-core
     spec:
       containers:
       - env:
