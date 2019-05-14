@@ -16,7 +16,7 @@ GOLANG_VERSION ?= 1.12
 GOPATH ?= $(HOME)/go
 
 # Comma seperated items within {} for more than one file
-EXCLUDE ?=
+EXCLUDE ?= jupyter_test.go
 
 export GO111MODULE = on
 export GO = go
