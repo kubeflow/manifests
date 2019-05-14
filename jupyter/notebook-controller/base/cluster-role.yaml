@@ -14,11 +14,13 @@ rules:
   - ""
   resources:
   - services
+  - pods
   verbs:
   - '*'
 - apiGroups:
   - kubeflow.org
   resources:
   - notebooks
+  - notebooks/status
   verbs:
   - '*'
