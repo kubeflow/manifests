@@ -16,7 +16,7 @@ GOLANG_VERSION ?= 1.12
 GOPATH ?= $(HOME)/go
 
 # Comma seperated items within {} for more than one file
-EXCLUDE ?= gcp-credentials-admission-webhook_test.go
+EXCLUDE ?=
 
 export GO111MODULE = on
 export GO = go
@@ -24,7 +24,8 @@ export GO = go
 all: test
 
 generate: clean
-	@cd .. && hack/gen-test-targets.sh && rm tests/$(EXCLUDE)
+	@cd .. && hack/gen-test-targets.sh && [ -f tests/$(EXCLUDE) ] && rm -f tests/$(EXCLUDE) || cd -
+
 
 test: generate
 	@GO111MODULE=on $(GO) test -v .

@@ -7,7 +7,7 @@ resources:
 - mutating-webhook-configuration.yaml
 - service-account.yaml
 - service.yaml
-- crd.yaml  
+- crd.yaml
 commonLabels:
   kustomize.component: admission-webhook
   app: admission-webhook
