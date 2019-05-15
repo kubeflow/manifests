@@ -24,7 +24,7 @@ export GO = go
 all: test
 
 generate: clean
-	@cd .. && hack/gen-test-targets.sh && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE)
+	@cd .. && hack/gen-test-targets.sh && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE) && rm -f tests/webhook-base.go && rm -f tests/bootstrap-base.go
 
 test: generate
 	@GO111MODULE=on $(GO) test -v .
