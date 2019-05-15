@@ -7,7 +7,7 @@ resources:
 - persistent-volume.yaml
 - persistent-volume-claim.yaml
 configMapGenerator:
-- name: parameters
+- name: minio-parameters
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
@@ -15,7 +15,9 @@ vars:
 - name: minioPd
   objref:
     kind: ConfigMap
-    name: parameters
+    name: minio-parameters
     apiVersion: v1
   fieldref:
       fieldpath: data.minioPd
+configurations:
+- params.yaml
