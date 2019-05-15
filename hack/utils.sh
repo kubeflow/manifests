@@ -1,5 +1,5 @@
 #
-# utils.sh has common scripts used the gen-test-targets, get-test-target and gen-tree.
+# utils.sh has common scripts used by the gen-test-targets, gen-test-target and gen-tree.
 #
 
 #
@@ -42,10 +42,10 @@ manifests-tree() {
 #     └── namespaced-gangscheduled
 #
 # Given the path /manifests/tf-training/tf-job-operator/overlays/namespaced-gangscheduled
-# gen-target will return /manifests/tf-training/tf-job-operator
+# get-target will return /manifests/tf-training/tf-job-operator
 #
 # Given the path /manifests/tf-training/tf-job-operator/base
-# gen-target will return /manifests/tf-training/tf-job-operator
+# get-target will return /manifests/tf-training/tf-job-operator
 #
 get-target() {
   local b=$(basename $1)
@@ -60,7 +60,7 @@ get-target() {
 }
 
 #
-# get-target will return the basename of the manifest given the full path to where the kustomization.yaml is.
+# get-target-name will return the basename of the manifest given the full path to where the kustomization.yaml is.
 # For example
 #
 # tf-job-operator
@@ -71,20 +71,20 @@ get-target() {
 #     ├── namespaced
 #     └── namespaced-gangscheduled
 #
-# Given the path /manifests/tf-training/tf-job-operator/overlays/namespaced-gangscheduled
-# gen-target will return tf-job-operator
-#
 # Given the path /manifests/tf-training/tf-job-operator/base
-# gen-target will return tf-job-operator
+# get-target-name will return tf-job-operator-base
+#
+# Given the path /manifests/tf-training/tf-job-operator/overlays/namespaced-gangscheduled
+# get-target-name will return tf-job-operator-namespaced-gangscheduled
 #
 get-target-name() {
   local b=$(basename $1)
   case $b in
     base)
-      echo $(basename $(dirname $1))
+      echo $(basename $(dirname $1))-$b
       ;;
     *)
-      echo $(basename $(dirname $(dirname $1)))
+      echo $(basename $(dirname $(dirname $1)))-$b
       ;;
   esac
 }
@@ -102,10 +102,10 @@ get-target-name() {
 #     └── namespaced-gangscheduled
 #
 # Given the path /manifests/tf-training/tf-job-operator/overlays/namespaced-gangscheduled
-# gen-target-dirname will return overlays/namespaced-gangscheduled
+# get-target-dirname will return overlays/namespaced-gangscheduled
 #
 # Given the path /manifests/tf-training/tf-job-operator/base
-# gen-target will return base
+# get-target-dirname will return base
 #
 get-target-dirname() {
   local b=$(basename $1)
