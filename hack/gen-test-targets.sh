@@ -13,7 +13,8 @@ fi
 source hack/utils.sh
 rm -f $(ls tests/*_test.go | grep -v kusttestharness_test.go)
 for i in $(find * -type d -exec sh -c '(ls -p "{}"|grep />/dev/null)||echo "{}"' \; | egrep -v 'docs|tests|hack'); do
-  absdir=$(pwd)/$i
+  rootdir=$(pwd)
+  absdir=$rootdir/$i
   testname=$(get-target-name $absdir)_test.go
   echo generating $testname from $absdir
   ./hack/gen-test-target.sh $absdir > tests/$testname
