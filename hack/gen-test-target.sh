@@ -31,13 +31,8 @@ gen-target-start() {
   echo 'func write'$target'(th *KustTestHarness) {'
 }
 
-gen-target-end() {
-  echo '}'
-}
-
-gen-target() {
+gen-target-middle() {
   local directory=$1
-  gen-target-start $directory
 
   for i in $(echo $(cat $directory/kustomization.yaml | grep '^- .*yaml$' | sed 's/^- //') $(cat $directory/kustomization.yaml | grep '  path: ' | sed 's/^.*: \(.*\)$/\1/') params.env kustomization.yaml | sed 's/ /\\n/g' | sort | uniq | awk '{gsub(/\\n/,"\n")}1'); do
     file=$i
@@ -57,17 +52,38 @@ gen-target() {
       esac
     fi
   done
+}
+
+gen-target-end() {
+  echo '}'
+}
+
+gen-target() {
+  local directory=$1
+  gen-target-start $directory
+  gen-target-middle $directory
   gen-target-end
 }
 
+gen-target-base() {
+  echo '  th.writeK("'$kname'", `'
+  cat $dir/$file | sed 'sx- ../../basex- '$basedir'x'
+  echo '`)'
+}
+
 gen-target-kustomization() {
-  local file=$1 dir=$2 fname kname
+  local file=$1 dir=$2 fname kname basedir
   fname=/manifests${dir##*/manifests}
   kname=${fname%/kustomization.yaml}
   echo '  th.writeK("'$kname'", `'
-  cat $dir/$file
+  cat $dir/$file 
   echo '`)'
-
+  if [[ $(get-target-dirname $dir) != "base" ]]; then
+    basedir=$(get-target $dir)/base
+    if [[ -f $basedir/kustomization.yaml ]]; then
+      gen-target-middle $basedir
+    fi
+  fi
 }
 
 gen-target-resource() {

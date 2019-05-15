@@ -2,92 +2,10 @@
 This repo is a [bespoke configuration](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#bespoke-configuration) of kustomize targets used by kubeflow. These targets are traversed by kubeflow's CLI `kfctl`. Each target is compatible with the kustomize CLI and can be processed indendently by kubectl or the kustomize command.
 
 ## Organization
-Various subdirectories within the repo contain a kustomize target (base or overlay subdirectory). Overlays are used for a variety of purposes such as platform resources. Both base and overlay targets are processed by kfctl during generate and apply phases and is detailed in [Kfctl Processing](#kfctl-processing).
+Subdirectories within the repo hold kustomize targets (base or overlay subdirectory). Overlays contain additional functionality and multiple overlays may be mixed into the base (described below). Both base and overlay targets are processed by kfctl during generate and apply phases and is detailed in [Kfctl Processing](#kfctl-processing).
 
-### Kustomize targets (🎯)
-```
-.
-├── application
-│   └─🎯base
-├── argo
-│   └─🎯base
-├── common
-│   ├── ambassador
-│   │   └─🎯base
-│   ├── centraldashboard
-│   │   └─🎯base
-│   └── spartakus
-│       └─🎯base
-├─🎯gcp
-│   ├── cert-manager
-│   │   └── overlays
-│   │       └─🎯gcp
-│   ├── cloud-endpoints
-│   │   └── overlays
-│   │       └─🎯gcp
-│   ├─🎯gcp-credentials-admission-webhook
-│   │   └── overlays
-│   │       └─🎯gcp
-│   ├── gpu-driver
-│   │   └── overlays
-│   │       └─🎯gcp
-│   └── iap-ingress
-│       └── overlays
-│           └─🎯gcp
-├── jupyter
-│   ├── jupyter
-│   │   ├─🎯base
-│   │   └── overlays
-│   │       └── minikube
-│   ├── jupyter-web-app
-│   │   └─🎯base
-│   └── notebook-controller
-│       └─🎯base
-├── katib
-│   └─🎯base
-├── kubebench
-│   └─🎯base
-├── metacontroller
-│   └─🎯base
-├── modeldb
-│   └─🎯base
-├── mutating-webhook
-│   ├─🎯base
-│   └── overlays
-│       └── add-label
-├── pipeline
-│   ├── api-service
-│   │   └─🎯base
-│   ├── minio
-│   │   └─🎯base
-│   ├── mysql
-│   │   └─🎯base
-│   ├── persistent-agent
-│   │   └─🎯base
-│   ├── pipelines-runner
-│   │   └─🎯base
-│   ├── pipelines-ui
-│   │   └─🎯base
-│   ├── pipelines-viewer
-│   │   └─🎯base
-│   └── scheduledworkflow
-│       └─🎯base
-├── profiles
-│   └─🎯base
-├── pytorch-job
-│   └── pytorch-operator
-│       └─🎯base
-├── tensorboard
-│   └─🎯base
-└── tf-training
-    └── tf-job-operator
-        ├─🎯base
-        └── overlays
-            ├── 🎯cluster
-            ├── 🎯cluster-gangscheduled
-            ├── 🎯namespaced
-            └── 🎯namespaced-gangscheduled
-```
+See [Best Practices](./docs/KustomizeBestPractices.md) for details on how kustomize targets are created.
+
 
 ## Kfctl Processing
 Kfctl traverses directories under manifests to find and build kustomize targets based on the configuration file `app.yaml`. The contents of app.yaml is the result of running kustomize on the base and specific overlays in the kubeflow [config](https://github.com/kubeflow/kubeflow/tree/master/bootstrap/config) directory. The overlays reflect what options are chosen when calling `kfctl init...`.  The kustomize package manager in kfctl will then read app.yaml and apply the packages, components and componentParams to kustomize in the following way:
@@ -116,7 +34,7 @@ namespace:
 
 Multiple overlays -
 
-Kfctl has the capability to combine more than one overlay during `kfctl generate ...`. An example is shown below where the profiles target in [manifests](https://github.com/kubeflow/manifests/tree/master/profiles) can include either debug changes in the Deployment or Device information in the Namespace (the devices overlay is not fully integrated with the Profile-controller at this point in time and is intended as an example) or **both**.
+Kfctl may combine more than one overlay during `kfctl generate ...`. An example is shown below where the profiles target in [manifests](https://github.com/kubeflow/manifests/tree/master/profiles) can include either debug changes in the Deployment or Device information in the Namespace (the devices overlay is not fully integrated with the Profile-controller at this point in time and is intended as an example) or **both**.
 
 ```
 profiles
@@ -152,27 +70,40 @@ Then the result will be to combine these overlays eg 'mixin' an overlays in the 
 
 #### Merging multiple overlays to generate app.yaml
 
-Normally when `kfctl init ...` is called it will download the kubeflow repo under `<deployment>/.cache` and read one of the config files under `.cache/kubeflow/<version>/bootstrap/config`. These config files define packages, components and component parameters (among other things). Each config file is a compatible k8 resource of kind *KfDef*. The various config files are:
+In the past when `kfctl init ...` was called it would download the kubeflow repo under `<deployment>/.cache` and read one of the config files under `.cache/kubeflow/<version>/bootstrap/config`. These config files define packages, components and component parameters (among other things). Each config file is a compatible k8 resource of kind *KfDef*. The config files are:
+
 - kfctl_default.yaml
 - kfctl_basic_auth.yaml
 - kfctl_iap.yaml
 
-Both kfctl_basic_auth.yaml and kfctl_iap.yaml contain the contents of kfctl_default.yaml plus some additional changes specific to using basic_auth when the cluster is created and platform specific resources if the platform is **gcp**. This PR corrects this redundancy by using kustomize to combine a **gcp** overlay and/or a **basic_auth** overlay. Additionally, due to pipeline refactoring, the kustomize package manager has split the bundled pipeline component in ksonnet to a set of individual pipeline targets. This results in the following:
+Both kfctl_basic_auth.yaml and kfctl_iap.yaml contained the contents of kfctl_default.yaml plus additional changes specific to using kfctl_basic_auth.yaml when --use_basic_auth is passed in or kfctl_iap.yaml when --platform gcp is passed in . This has been refactored to use kustomize where the config/base holds kfctl_default and additional overlays add to the base. The directory now looks like:
 
 ```
-config
-├── base
-│   └── kustomization.yaml
-└── overlays
-    ├── basic_auth
+.
+└── config
+    ├── base
+    │   ├── kfctl_default.yaml
     │   └── kustomization.yaml
-    ├── gcp
-    │   └── kustomization.yaml
-    ├── ksonnet
-    │   └── kustomization.yaml
-    └── kustomize
-        └── kustomization.yaml
+    └── overlays
+        ├── basic_auth
+        │   ├── kfctl_default-patch.yaml
+        │   ├── kfctl_default.yaml
+        │   └── kustomization.yaml
+        ├── gcp
+        │   ├── kfctl_default-patch.yaml
+        │   ├── kfctl_default.yaml
+        │   └── kustomization.yaml
+        ├── ksonnet
+        │   ├── kfctl_default-patch.yaml
+        │   ├── kfctl_default.yaml
+        │   └── kustomization.yaml
+        └── kustomize
+            ├── kfctl_default-patch.yaml
+            ├── kfctl_default.yaml
+            └── kustomization.yaml
 ```
+
+Where ksonnet and kustomize hold differing ways of handling the pipeline manifest.
 
 Based on the cli args to `kfctl init...`, the correct overlays will be merged to produce an app.yaml.
 The original files have been left as is until UI integration can be completed in a separate PR
@@ -252,36 +183,24 @@ spec:
 
 Outputs from kfctl (no platform specified):
 ```
-<deployment>  ⇲
-              ⎹→kustomize
-                        ⎹→ambassador.yaml
-                        ⎹→application.yaml
-                        ⎹→argo.yaml
-                        ⎹→centraldashboard.yaml
-                        ⎹→jupyter-web-app.yaml
-                        ⎹→katib.yaml
-                        ⎹→metacontroller.yaml
-                        ⎹→notebook-controller.yaml
-                        ⎹→pipeline.yaml
-                        ⎹→profiles.yaml
-                        ⎹→pytorch-operator.yaml
-                        ⎹→tensorboard.yaml
-                        ⎹→tf-job-operator.yaml
+kustomize/
+├── ambassador.yaml
+├── api-service.yaml
+├── argo.yaml
+├── centraldashboard.yaml
+├── jupyter-web-app.yaml
+├── katib.yaml
+├── metacontroller.yaml
+├── minio.yaml
+├── mysql.yaml
+├── notebook-controller.yaml
+├── persistent-agent.yaml
+├── pipelines-runner.yaml
+├── pipelines-ui.yaml
+├── pipelines-viewer.yaml
+├── pytorch-operator.yaml
+├── scheduledworkflow.yaml
+├── tensorboard.yaml
+└── tf-job-operator.yaml
 ```
 
-## Best practices for kustomize targets
-
-- use name prefixes if possible for the set of resources bundled by a target
-- do not set namespace in the resources, this should be done by a higher level target
-
-### Bridging kustomize and ksonnet
-
-Equivalent to parameters in ksonnet, kustomize has vars. But the customizable objects are limited to [this list](https://github.com/kubernetes-sigs/kustomize/blob/master/pkg/transformers/config/defaultconfig/varreference.go)
-
-### Installing to a custom namespace
-
-For example, to install in `kubeflow-dev`. From the root of the repo run:
-
-```bash
-kustomize edit set namespace kubeflow-dev
-```
