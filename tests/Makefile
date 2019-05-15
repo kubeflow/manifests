@@ -24,7 +24,7 @@ export GO = go
 all: test
 
 generate: clean
-	@cd .. && hack/gen-test-targets.sh && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE) && rm -f tests/jupyter_test.go && rm -f tests/profiles_test.go || cd -
+	@cd .. && hack/gen-test-targets.sh && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE)
 
 test: generate
 	@GO111MODULE=on $(GO) test -v .
