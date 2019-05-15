@@ -483,7 +483,7 @@ data:
     sleep 3600
 kind: ConfigMap
 metadata:
-  name: envoy-config
+  name: envoy-config-map
 ---
 apiVersion: v1
 data:
@@ -511,4 +511,4 @@ data:
     echo "Done"
 kind: ConfigMap
 metadata:
-  name: ingress-bootstrap-config
+  name: bootstrap-config-map
