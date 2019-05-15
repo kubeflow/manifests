@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: ingress-bootstrap
+  name: bootstrap-job
 spec:
   template:
     spec:
@@ -10,22 +10,22 @@ spec:
         - /var/ingress-config/ingress_bootstrap.sh
         env:
         - name: NAMESPACE
-          value: kubeflow
+          value: $(namespace)
         - name: TLS_SECRET_NAME
-          value: envoy-ingress-tls
+          value: $(secretName)
         - name: TLS_HOST_NAME
-          value: kubeflow.endpoints.constant-cubist-173123.cloud.goog
+          value: $(hostname)
         - name: INGRESS_NAME
-          value: envoy-ingress
+          value: $(ingressName)
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
         name: bootstrap
         volumeMounts:
         - mountPath: /var/ingress-config/
           name: ingress-config
       restartPolicy: OnFailure
-      serviceAccountName: envoy
+      serviceAccountName: envoy-service-account
       volumes:
       - configMap:
           defaultMode: 493
-          name: ingress-bootstrap-config
+          name: bootstrap-config-map
         name: ingress-config

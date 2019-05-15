@@ -2,14 +2,14 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   annotations:
-    certmanager.k8s.io/issuer: letsencrypt-prod
+    certmanager.k8s.io/issuer: $(issuer)
     ingress.kubernetes.io/ssl-redirect: "true"
-    kubernetes.io/ingress.global-static-ip-name: kubeflow-ip
+    kubernetes.io/ingress.global-static-ip-name: $(ipName)
     kubernetes.io/tls-acme: "true"
-  name: envoy-ingress
+  name: $(ingressName)
 spec:
   rules:
-  - host: kubeflow.endpoints.constant-cubist-173123.cloud.goog
+  - host: $(hostname)
     http:
       paths:
       - backend:

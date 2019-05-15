@@ -6,7 +6,7 @@ metadata:
     beta.cloud.google.com/backend-config: '{"ports": {"envoy":"iap-backendconfig"}}'
   labels:
     service: envoy
-  name: envoy
+  name: envoy-service
 spec:
   ports:
   - name: envoy

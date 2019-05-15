@@ -1,8 +1,8 @@
 apiVersion: authentication.istio.io/v1alpha1
 kind: Policy
 metadata:
-  name: ingress-jwt
-  namespace: istio-system
+  name: jwt-policy
+  namespace: $(istioNamespace)
 spec:
   targets:
   - name: istio-ingressgateway

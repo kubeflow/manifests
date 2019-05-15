@@ -33,13 +33,13 @@ spec:
         - mountPath: /var/run/secrets/sa
           name: sa-key
           readOnly: true
-      serviceAccountName: envoy
+      serviceAccountName: envoy-service-account
       volumes:
       - configMap:
-          name: envoy-config
+          name: envoy-config-map
         name: config-volume
       - name: sa-key
         secret:
-          secretName: admin-gcp-sa
+          secretName: $(secretName)
   # Workaround for https://github.com/kubernetes-sigs/kustomize/issues/677
   volumeClaimTemplates: []
