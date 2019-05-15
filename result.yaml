@@ -1,0 +1,346 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    app: admission-webhook
+    app.kubernetes.io/name: admission-webhook-component
+    kustomize.component: admission-webhook
+  name: podpresets.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    kind: PodPreset
+    plural: podpresets
+    singular: podpreset
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      properties:
+        apiVersion:
+          type: string
+        kind:
+          type: string
+        metadata:
+          type: object
+        spec:
+          properties:
+            desc:
+              type: string
+            env:
+              items:
+                type: object
+              type: array
+            envFrom:
+              items:
+                type: object
+              type: array
+            selector:
+              type: object
+            serviceAccountName:
+              type: string
+            volumeMounts:
+              items:
+                type: object
+              type: array
+            volumes:
+              items:
+                type: object
+              type: array
+          required:
+          - selector
+          type: object
+        status:
+          type: object
+      type: object
+  version: v1alpha1
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  labels:
+    app: admission-webhook
+    app.kubernetes.io/name: admission-webhook-component
+    kustomize.component: admission-webhook
+  name: admission-webhook-mutating-webhook-config
+  namespace: kubeflow
+webhooks:
+- clientConfig:
+    caBundle: ""
+    service:
+      name: admission-webhook-service
+      namespace: kubeflow
+      path: /apply-podpreset
+  name: admission-webhook-deployment.kubeflow.org
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    resources:
+    - pods
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/name: admission-webhook-component
+    kustomize.component: admission-webhook-bootstrap
+  name: admission-webhook-bootstrap-bootstrap-service-account
+  namespace: kubeflow
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: admission-webhook
+    app.kubernetes.io/name: admission-webhook-component
+    kustomize.component: admission-webhook
+  name: admission-webhook-service-account
+  namespace: kubeflow
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: admission-webhook
+    app.kubernetes.io/name: admission-webhook-component
+    kustomize.component: admission-webhook
+  name: admission-webhook-role
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - podpresets
+  verbs:
+  - get
+  - watch
+  - list
+  - update
+  - create
+  - patch
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: admission-webhook-component
+    kustomize.component: admission-webhook-bootstrap
+  name: admission-webhook-bootstrap-bootstrap-role
+rules:
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - mutatingwebhookconfigurations
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - list
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: admission-webhook
+    app.kubernetes.io/name: admission-webhook-component
+    kustomize.component: admission-webhook
+  name: admission-webhook-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admission-webhook-role
+subjects:
+- kind: ServiceAccount
+  name: admission-webhook-service-account
+  namespace: kubeflow
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/name: admission-webhook-component
+    kustomize.component: admission-webhook-bootstrap
+  name: admission-webhook-bootstrap-bootstrap-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admission-webhook-bootstrap-bootstrap-role
+subjects:
+- kind: ServiceAccount
+  name: admission-webhook-bootstrap-bootstrap-service-account
+  namespace: kubeflow
+---
+apiVersion: v1
+data:
+  create_ca.sh: "#!/bin/bash\n\nset -e\n\nusage() {\n    cat <<EOF\nGenerate certificate
+    suitable for use with an sidecar-injector webhook service.\nThis script uses k8s'
+    CertificateSigningRequest API to a generate a\ncertificate signed by k8s CA suitable
+    for use with sidecar-injector webhook\nservices. This requires permissions to
+    create and approve CSR. See\nhttps://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster
+    for\ndetailed explantion and additional instructions.\nThe server key/cert k8s
+    CA cert are stored in a k8s secret.\nusage: ${0} [OPTIONS]\nThe following flags
+    are required.\n       --service          Service name of webhook.\n       --namespace
+    \       Namespace where webhook service and secret reside.\n       --secret           Secret
+    name for CA certificate and server certificate/key pair.\nEOF\n    exit 1\n}\n\nwhile
+    [[ $# -gt 0 ]]; do\n    case ${1} in\n        --service)\n            service=\"$2\"\n
+    \           shift\n            ;;\n        --secret)\n            secret=\"$2\"\n
+    \           shift\n            ;;\n        --namespace)\n            namespace=\"$2\"\n
+    \           shift\n            ;;\n        *)\n            usage\n            ;;\n
+    \   esac\n    shift\ndone\n\n[ -z ${service} ] && service=admission-webhook-service\n[
+    -z ${secret} ] && secret=webhook-certs\n[ -z ${namespace} ] && namespace=kubeflow\n[
+    -z ${namespace} ] && namespace=default\n\nwebhookDeploymentName=admission-webhook-deployment\nmutatingWebhookConfigName=admission-webhook-mutating-webhook-config\necho
+    ${service}\necho ${namespace}\necho ${secret}\necho ${webhookDeploymentName}\necho
+    ${mutatingWebhookconfigName}\nif [ ! -x \"$(command -v openssl)\" ]; then\n    echo
+    \"openssl not found\"\n    exit 1\nfi\ncsrName=${service}.${namespace}\ntmpdir=$(mktemp
+    -d)\necho \"creating certs in tmpdir ${tmpdir} \"\n\n# x509 outputs a self signed
+    certificate instead of certificate request, later used as self signed root CA\nopenssl
+    req -x509 -newkey rsa:2048 -keyout ${tmpdir}/self_ca.key -out ${tmpdir}/self_ca.crt
+    -days 365 -nodes -subj /C=/ST=/L=/O=/OU=/CN=test-certificate-authority\n\ncat
+    <<EOF >> ${tmpdir}/csr.conf\n[req]\nreq_extensions = v3_req\ndistinguished_name
+    = req_distinguished_name\n[req_distinguished_name]\n[ v3_req ]\nbasicConstraints
+    = CA:FALSE\nkeyUsage = nonRepudiation, digitalSignature, keyEncipherment\nextendedKeyUsage
+    = serverAuth\nsubjectAltName = @alt_names\n[alt_names]\nDNS.1 = ${service}\nDNS.2
+    = ${service}.${namespace}\nDNS.3 = ${service}.${namespace}.svc\nEOF\n\nopenssl
+    genrsa -out ${tmpdir}/server-key.pem 2048\nopenssl req -new -key ${tmpdir}/server-key.pem
+    -subj \"/CN=${service}.${namespace}.svc\" -out ${tmpdir}/server.csr -config ${tmpdir}/csr.conf\n\n#
+    Self sign\nopenssl x509 -req -days 365 -in ${tmpdir}/server.csr -CA ${tmpdir}/self_ca.crt
+    -CAkey ${tmpdir}/self_ca.key -CAcreateserial -out ${tmpdir}/server-cert.pem\n\n#
+    create the secret with CA cert and server cert/key\nkubectl create secret generic
+    ${secret} \\\n        --from-file=key.pem=${tmpdir}/server-key.pem \\\n        --from-file=cert.pem=${tmpdir}/server-cert.pem
+    \\\n        --dry-run -o yaml |\n    kubectl -n ${namespace} apply -f -\n\n# Webhook
+    pod needs to be restarted so that the service reload the secret\n# http://github.com/kueflow/kubeflow/issues/3227\t\nwebhookPod=$(kubectl
+    get pods -n ${namespace} |grep ${webhookDeploymentName} |awk '{print $1;}')\n#
+    ignore error if webhook pod does not exist\nkubectl delete pod ${webhookPod} 2>/dev/null
+    || true\necho \"webhook ${webhookPod} is restarted to utilize the new secret\"\n\ncat
+    ${tmpdir}/self_ca.crt\n\n# -a means base64 encode\ncaBundle=`cat ${tmpdir}/self_ca.crt
+    | openssl enc -a -A`\necho ${caBundle}\n\npatchString='[{\"op\": \"replace\",
+    \"path\": \"/webhooks/0/clientConfig/caBundle\", \"value\":\"{{CA_BUNDLE}}\"}]'\npatchString=`echo
+    ${patchString} | sed \"s|{{CA_BUNDLE}}|${caBundle}|g\"`\necho ${patchString}\n\ncheckWebhookConfig()
+    {\n  currentBundle=$(kubectl get mutatingwebhookconfigurations -n ${namespace}
+    ${mutatingWebhookConfigName} -o jsonpath='{.webhooks[0].clientConfig.caBundle}')\n
+    \ [[ \"$currentBundle\" == \"$caBundle\" ]]\n}\n\nwhile true; do\n  if ! checkWebhookConfig;
+    then\n    echo \"patching ca bundle for webhook configuration...\"\n    kubectl
+    patch mutatingwebhookconfiguration ${mutatingWebhookConfigName} \\\n        --type='json'
+    -p=\"${patchString}\"\n  fi\n  sleep 10\ndone\n"
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/name: admission-webhook-component
+    kustomize.component: admission-webhook-bootstrap
+  name: admission-webhook-bootstrap-webhook-bootstrap-config
+  namespace: kubeflow
+---
+apiVersion: v1
+data:
+  namespace: kubeflow
+kind: ConfigMap
+metadata:
+  labels:
+    app: admission-webhook
+    app.kubernetes.io/name: admission-webhook-component
+    kustomize.component: admission-webhook
+  name: admission-webhook-admission-webhook-parameters
+  namespace: kubeflow
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: admission-webhook
+    app.kubernetes.io/name: admission-webhook-component
+    kustomize.component: admission-webhook
+  name: admission-webhook-service
+  namespace: kubeflow
+spec:
+  ports:
+  - port: 443
+    targetPort: 443
+  selector:
+    app: admission-webhook
+    app.kubernetes.io/name: admission-webhook-component
+    kustomize.component: admission-webhook
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: admission-webhook
+    app.kubernetes.io/name: admission-webhook-component
+    kustomize.component: admission-webhook
+  name: admission-webhook-deployment
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: admission-webhook
+      app.kubernetes.io/name: admission-webhook-component
+      kustomize.component: admission-webhook
+  template:
+    metadata:
+      labels:
+        app: admission-webhook
+        app.kubernetes.io/name: admission-webhook-component
+        kustomize.component: admission-webhook
+    spec:
+      containers:
+      - image: gcr.io/kubeflow-images-public/admission-webhook:v20190502-v0-88-gb5732ba0-dirty-2759ff
+        name: admission-webhook
+        volumeMounts:
+        - mountPath: /etc/webhook/certs
+          name: webhook-cert
+          readOnly: true
+      serviceAccountName: admission-webhook-service-account
+      volumes:
+      - name: webhook-cert
+        secret:
+          secretName: webhook-certs
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app.kubernetes.io/name: admission-webhook-component
+    kustomize.component: admission-webhook-bootstrap
+  name: admission-webhook-bootstrap-statefulset
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: admission-webhook-component
+      kustomize.component: admission-webhook-bootstrap
+  serviceName: service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: admission-webhook-component
+        kustomize.component: admission-webhook-bootstrap
+    spec:
+      containers:
+      - command:
+        - sh
+        - /var/webhook-config/create_ca.sh
+        image: gcr.io/kubeflow-images-public/ingress-setup:latest
+        name: bootstrap
+        volumeMounts:
+        - mountPath: /var/webhook-config/
+          name: admission-webhook-config
+      restartPolicy: Always
+      serviceAccountName: admission-webhook-bootstrap-bootstrap-service-account
+      volumes:
+      - configMap:
+          name: admission-webhook-bootstrap-webhook-bootstrap-config
+        name: admission-webhook-config
+  volumeClaimTemplates: []

@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+  - admission-webhook/webhook/base
+  - admission-webhook/bootstrap/base  
+commonLabels:
+  app.kubernetes.io/name: admission-webhook-component
+namespace:
+  kubeflow
+
