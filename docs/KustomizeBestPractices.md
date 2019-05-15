@@ -4,7 +4,7 @@
 
 ## 1. Identify the resources that encompass a kustomize target
 
-  In many cases resources are being moved from ksonnet and per ksonnet component (a .jsonnet file under `<component>/prototypes`), often include resources like:
+  In many cases there are resources along what is below:
   - CustomResourceDefinition
   - ClusterRole, ClusterRoleBinding or Role, RoleBinding
   - ConfigMap
@@ -13,21 +13,10 @@
   - ServiceAccount
   - VirtualService 
 
-  This collection of resources will have a component name if from ksonnet or a name identifying its purpose if new.
-  These resources should be moved to a new directory under `manifests/<component>/base`. 
+  This collection of resources should by grouped under a particular parent folder (eg tf-job-operator, etc), 
+  within a subfolder 'base'.
 
-  If moving from ksonnet, the easiest way to capture the collection of resources is to:
-
-  > use `kfctl init <appName>` to create a kubeflow application <br/>
-  > cd `<appName>`<br/>
-  > make sure the ksonnet prototype is listed in the app.yaml under components created from `kfctl init`<br/>
-  > run `kfctl generate all` to install the ksonnet packages and generate the ksonnet components <br/>
-  > cd <application>/ksonnet<br/>
-  > run `ks show <component> | tee resources.yaml`<br/>
-  
-  The individual resources in the resources.yaml can then be broken out into separate files as described in the next section.
-
-### 1a. Resource grouping
+### 1a. Resource file naming
 
   Resources should be organized by kind, where the resource is in a file that is the lower-case hyphenized form of the Resource kind. For example: a Deployment would go in a file named deployment.yaml. A ClusterRoleBinding would go in a file called cluster-role-binding.yaml. If there are multiple resources within a kustomize target (eg more than one deployment), you may want to maintain a single resource per file and add a prefix|suffix of the resource name to the filename. For example the file name would be `<kind>-<name>.yaml`. See below for an example.
 
