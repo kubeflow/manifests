@@ -70,25 +70,40 @@ Then the result will be to combine these overlays eg 'mixin' an overlays in the 
 
 #### Merging multiple overlays to generate app.yaml
 
-Normally when `kfctl init ...` is called it will download the kubeflow repo under `<deployment>/.cache` and read one of the config files under `.cache/kubeflow/<version>/bootstrap/config`. These config files define packages, components and component parameters (among other things). Each config file is a compatible k8 resource of kind *KfDef*. The various config files are:
+In the past when `kfctl init ...` was called it would download the kubeflow repo under `<deployment>/.cache` and read one of the config files under `.cache/kubeflow/<version>/bootstrap/config`. These config files define packages, components and component parameters (among other things). Each config file is a compatible k8 resource of kind *KfDef*. The config files are:
+
 - kfctl_default.yaml
 - kfctl_basic_auth.yaml
 - kfctl_iap.yaml
 
-Both kfctl_basic_auth.yaml and kfctl_iap.yaml contain the contents of kfctl_default.yaml plus some additional changes specific to using basic_auth when the cluster is created and platform specific resources if the platform is **gcp**. This redundancy is eliminated by using kustomize to combine a **gcp** overlay and/or a **basic_auth** overlay. Additionally, due to pipeline refactoring, the kustomize package manager has split the bundled pipeline component in ksonnet to a set of individual pipeline targets. This results in the following:
+Both kfctl_basic_auth.yaml and kfctl_iap.yaml contained the contents of kfctl_default.yaml plus additional changes specific to using kfctl_basic_auth.yaml when --use_basic_auth is passed in or kfctl_iap.yaml when --platform gcp is passed in . This has been refactored to use kustomize where the config/base holds kfctl_default and additional overlays add to the base. The directory now looks like:
 
 ```
-config
-├── base
-│   └── kustomization.yaml
-└── overlays
-    ├── basic_auth
+.
+└── config
+    ├── base
+    │   ├── kfctl_default.yaml
     │   └── kustomization.yaml
-    ├── ksonnet
-    │   └── kustomization.yaml
-    └── kustomize
-        └── kustomization.yaml
+    └── overlays
+        ├── basic_auth
+        │   ├── kfctl_default-patch.yaml
+        │   ├── kfctl_default.yaml
+        │   └── kustomization.yaml
+        ├── gcp
+        │   ├── kfctl_default-patch.yaml
+        │   ├── kfctl_default.yaml
+        │   └── kustomization.yaml
+        ├── ksonnet
+        │   ├── kfctl_default-patch.yaml
+        │   ├── kfctl_default.yaml
+        │   └── kustomization.yaml
+        └── kustomize
+            ├── kfctl_default-patch.yaml
+            ├── kfctl_default.yaml
+            └── kustomization.yaml
 ```
+
+Where ksonnet and kustomize hold differing ways of handling the pipeline manifest.
 
 Based on the cli args to `kfctl init...`, the correct overlays will be merged to produce an app.yaml.
 The original files have been left as is until UI integration can be completed in a separate PR
@@ -189,19 +204,3 @@ kustomize/
 └── tf-job-operator.yaml
 ```
 
-## Best practices for kustomize targets
-
-- use name prefixes if possible for the set of resources bundled by a target
-- do not set namespace in the resources, this should be done by a higher level target
-
-### Bridging kustomize and ksonnet
-
-Equivalent to parameters in ksonnet, kustomize has vars. But the customizable objects are limited to [this list](https://github.com/kubernetes-sigs/kustomize/blob/master/pkg/transformers/config/defaultconfig/varreference.go)
-
-### Installing to a custom namespace
-
-For example, to install in `kubeflow-dev`. From the root of the repo run:
-
-```bash
-kustomize edit set namespace kubeflow-dev
-```
