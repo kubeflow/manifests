@@ -31,3 +31,6 @@ test: generate
 
 clean:
 	@rm -f $$(ls *_test.go | egrep -v 'kusttestharness_test.go|go.mod|go.sum')
+
+run-plugin:
+	cd .. && XDG_CONFIG_HOME=$$(pwd)/hack kustomize --enable_alpha_goplugins_accept_panic_risk build profiles/overlays/test
