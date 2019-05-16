@@ -10,4 +10,4 @@ rules:
   verbs:
   - create
   - watch
-  - get
+  - list
