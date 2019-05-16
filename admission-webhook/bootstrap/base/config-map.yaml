@@ -44,20 +44,22 @@ data:
         shift
     done
 
-    [ -z ${service} ] && service=gcp-cred-webhook
-    [ -z ${secret} ] && secret=gcp-cred-webhook-certs
-    [ -z ${namespace} ] && namespace=${NAMESPACE}
+    [ -z ${service} ] && service=$(webhookNamePrefix)service
+    [ -z ${secret} ] && secret=webhook-certs
+    [ -z ${namespace} ] && namespace=$(namespace)
     [ -z ${namespace} ] && namespace=default
 
+    webhookDeploymentName=$(webhookNamePrefix)deployment
+    mutatingWebhookConfigName=$(webhookNamePrefix)mutating-webhook-configuration
     echo ${service}
     echo ${namespace}
     echo ${secret}
-
+    echo ${webhookDeploymentName}
+    echo ${mutatingWebhookconfigName}
     if [ ! -x "$(command -v openssl)" ]; then
         echo "openssl not found"
         exit 1
     fi
-
     csrName=${service}.${namespace}
     tmpdir=$(mktemp -d)
     echo "creating certs in tmpdir ${tmpdir} "
@@ -94,7 +96,15 @@ data:
             --dry-run -o yaml |
         kubectl -n ${namespace} apply -f -
 
+    # Webhook pod needs to be restarted so that the service reload the secret
+    # http://github.com/kueflow/kubeflow/issues/3227	
+    webhookPod=$(kubectl get pods -n ${namespace} |grep ${webhookDeploymentName} |awk '{print $1;}')
+    # ignore error if webhook pod does not exist
+    kubectl delete pod ${webhookPod} 2>/dev/null || true
+    echo "webhook ${webhookPod} is restarted to utilize the new secret"
+    
     cat ${tmpdir}/self_ca.crt
+    
     # -a means base64 encode
     caBundle=$(cat ${tmpdir}/self_ca.crt | openssl enc -a -A)
     echo ${caBundle}
@@ -104,18 +114,18 @@ data:
     echo ${patchString}
 
     checkWebhookConfig() {
-      currentBundle=$(kubectl get mutatingwebhookconfigurations -n ${namespace} gcp-cred-webhook -o jsonpath='{.webhooks[0].clientConfig.caBundle}')
+      currentBundle=$(kubectl get mutatingwebhookconfigurations -n ${namespace} ${mutatingWebhookConfigName} -o jsonpath='{.webhooks[0].clientConfig.caBundle}')
       [[ "$currentBundle" == "$caBundle" ]]
     }
 
     while true; do
       if ! checkWebhookConfig; then
         echo "patching ca bundle for webhook configuration..."
-        kubectl patch mutatingwebhookconfiguration gcp-cred-webhook \
+        kubectl patch mutatingwebhookconfiguration ${mutatingWebhookConfigName} \
             --type='json' -p="${patchString}"
       fi
       sleep 10
     done
 kind: ConfigMap
 metadata:
-  name: webhook-bootstrap-config
+  name: config-map
