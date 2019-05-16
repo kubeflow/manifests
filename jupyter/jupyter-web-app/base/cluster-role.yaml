@@ -16,6 +16,7 @@ rules:
   - kubeflow.org
   resources:
   - notebooks
+  - podpresets  
   verbs:
   - get
   - list

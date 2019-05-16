@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: webhook-bootstrap
+  name: cluster-role
 rules:
 - apiGroups:
   - admissionregistration.k8s.io
@@ -15,3 +15,11 @@ rules:
   - secrets
   verbs:
   - '*'
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - list
+  - delete  
+    
