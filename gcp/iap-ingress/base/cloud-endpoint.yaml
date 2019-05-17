@@ -1,8 +1,10 @@
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
 metadata:
-  name: cloud-endpoint
+  name: $(appName)
+  namespace: $(istioNamespace)
 spec:
   project: $(project)
   targetIngress:
     name: $(ingressName)
+    namespace: $(istioNamespace)

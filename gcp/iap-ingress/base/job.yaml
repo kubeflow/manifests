@@ -1,7 +1,8 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: bootstrap-job
+  name: ingress-bootstrap
+  namespace: $(istioNamespace)
 spec:
   template:
     spec:
@@ -10,22 +11,34 @@ spec:
         - /var/ingress-config/ingress_bootstrap.sh
         env:
         - name: NAMESPACE
-          value: $(namespace)
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: istioNamespace
         - name: TLS_SECRET_NAME
-          value: $(secretName)
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: secretName
         - name: TLS_HOST_NAME
-          value: $(hostname)
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: hostname
         - name: INGRESS_NAME
-          value: $(ingressName)
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: ingressName
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
         name: bootstrap
         volumeMounts:
         - mountPath: /var/ingress-config/
           name: ingress-config
       restartPolicy: OnFailure
-      serviceAccountName: envoy-service-account
+      serviceAccountName: envoy
       volumes:
       - configMap:
           defaultMode: 493
-          name: bootstrap-config-map
+          name: ingress-bootstrap-config
         name: ingress-config
