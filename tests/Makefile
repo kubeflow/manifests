@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-GOLANG_VERSION ?= 1.12
+GOLANG_VERSION ?= 1.12.4
 GOPATH ?= $(HOME)/go
 
 # Comma seperated items within {} for more than one file
-EXCLUDE ?= {webhook-base_test.go,jupyter-base_test.go}
+EXCLUDE ?= 
 
 export GO111MODULE = on
 export GO = go
@@ -24,10 +24,13 @@ export GO = go
 all: test
 
 generate: clean
-	@cd .. && hack/gen-test-targets.sh && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE) && rm -f tests/webhook-base_test.go && rm -f tests/bootstrap-base_test.go
+	@cd .. && hack/gen-test-targets.sh && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE) || echo done
 
-test: generate
+test: 
 	@GO111MODULE=on $(GO) test -v .
 
 clean:
 	@rm -f $$(ls *_test.go | egrep -v 'kusttestharness_test.go|go.mod|go.sum')
+
+run-plugin:
+	cd .. && XDG_CONFIG_HOME=$$(pwd)/hack kustomize --enable_alpha_goplugins_accept_panic_risk build profiles/overlays/test
