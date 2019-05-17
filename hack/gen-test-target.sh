@@ -22,9 +22,16 @@ gen-target-start() {
   fname=/manifests${dir##*/manifests}
   target=$(kebab-case-2-PascalCase $(get-target-name $1))
 
-  echo 'package kustomize_test'
+  echo 'package tests_test'
   echo ''
   echo 'import ('
+  echo '  "sigs.k8s.io/kustomize/k8sdeps/kunstruct"'
+  echo '  "sigs.k8s.io/kustomize/k8sdeps/transformer"'
+  echo '  "sigs.k8s.io/kustomize/pkg/fs"'
+  echo '  "sigs.k8s.io/kustomize/pkg/loader"'
+  echo '  "sigs.k8s.io/kustomize/pkg/resmap"'
+  echo '  "sigs.k8s.io/kustomize/pkg/resource"'
+  echo '  "sigs.k8s.io/kustomize/pkg/target"'
   echo '  "testing"'
   echo ')'
   echo ''
@@ -95,22 +102,6 @@ gen-target-resource() {
   echo '`)'
 }
 
-gen-expected-start() {
-  echo '  th.assertActualEqualsExpected(m, `'
-}
-
-gen-expected-end() {
-  echo '`)'
-}
-
-gen-expected() {
-  gen-expected-start
-  cd $1
-  kustomize build
-  cd - > /dev/null
-  gen-expected-end
-}
-
 gen-test-case() {
   local base=$(get-target-name $1) dir=$(get-target $1) target fname
   fname=/manifests${dir##*/manifests}/$(get-target-dirname $1)
@@ -125,7 +116,24 @@ gen-test-case() {
   echo '  if err != nil {'
   echo '    t.Fatalf("Err: %v", err)'
   echo '  }'
-  gen-expected $1
+  echo '  targetPath := "'$1'"'
+
+  echo '  fsys := fs.MakeRealFS()'
+  echo '    _loader, loaderErr := loader.NewLoader(targetPath, fsys)'
+  echo '    if loaderErr != nil {'
+  echo '      t.Fatalf("could not load kustomize loader: %v", loaderErr)'
+  echo '    }'
+  echo '    rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))'
+  echo '    kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())'
+  echo '    if err != nil {'
+  echo '      th.t.Fatalf("Unexpected construction error %v", err)'
+  echo '    }'
+  echo '  n, err := kt.MakeCustomizedResMap()'
+  echo '  if err != nil {'
+  echo '    t.Fatalf("Err: %v", err)'
+  echo '  }'
+  echo '  expected, err := n.EncodeAsYaml()'
+  echo '  th.assertActualEqualsExpected(m, string(expected))'
   echo '}'
 }
 

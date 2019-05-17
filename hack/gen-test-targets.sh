@@ -15,7 +15,9 @@ rm -f $(ls tests/*_test.go | grep -v kusttestharness_test.go)
 for i in $(find * -type d -exec sh -c '(ls -p "{}"|grep />/dev/null)||echo "{}"' \; | egrep -v 'docs|tests|hack'); do
   rootdir=$(pwd)
   absdir=$rootdir/$i
-  testname=$(get-target-name $absdir)_test.go
-  echo generating $testname from $absdir
-  ./hack/gen-test-target.sh $absdir > tests/$testname
+  if [[ ! $absdir  =~ overlays/test$ ]]; then
+    testname=$(get-target-name $absdir)_test.go
+    echo generating $testname from /manifests/${absdir#*manifests/}
+    ./hack/gen-test-target.sh $absdir > tests/$testname
+  fi
 done
