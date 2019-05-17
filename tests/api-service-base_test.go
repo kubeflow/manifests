@@ -137,7 +137,7 @@ func TestApiServiceBase(t *testing.T) {
   if err != nil {
     t.Fatalf("Err: %v", err)
   }
-  targetPath := "/Users/kdkasrav/go/src/github.com/kubeflow/manifests/pipeline/api-service/base"
+  targetPath := "../pipeline/api-service/base"
   fsys := fs.MakeRealFS()
     _loader, loaderErr := loader.NewLoader(targetPath, fsys)
     if loaderErr != nil {

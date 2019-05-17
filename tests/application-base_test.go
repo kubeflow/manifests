@@ -40,7 +40,7 @@ func TestApplicationBase(t *testing.T) {
   if err != nil {
     t.Fatalf("Err: %v", err)
   }
-  targetPath := "/Users/kdkasrav/go/src/github.com/kubeflow/manifests/application/base"
+  targetPath := "../application/base"
   fsys := fs.MakeRealFS()
     _loader, loaderErr := loader.NewLoader(targetPath, fsys)
     if loaderErr != nil {

@@ -164,7 +164,7 @@ func TestProfilesBase(t *testing.T) {
   if err != nil {
     t.Fatalf("Err: %v", err)
   }
-  targetPath := "/Users/kdkasrav/go/src/github.com/kubeflow/manifests/profiles/base"
+  targetPath := "../profiles/base"
   fsys := fs.MakeRealFS()
     _loader, loaderErr := loader.NewLoader(targetPath, fsys)
     if loaderErr != nil {

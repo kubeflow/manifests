@@ -179,7 +179,7 @@ func TestPipelinesUiBase(t *testing.T) {
   if err != nil {
     t.Fatalf("Err: %v", err)
   }
-  targetPath := "/Users/kdkasrav/go/src/github.com/kubeflow/manifests/pipeline/pipelines-ui/base"
+  targetPath := "../pipeline/pipelines-ui/base"
   fsys := fs.MakeRealFS()
     _loader, loaderErr := loader.NewLoader(targetPath, fsys)
     if loaderErr != nil {
