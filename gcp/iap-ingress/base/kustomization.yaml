@@ -10,11 +10,10 @@ resources:
 - deployment.yaml
 - ingress.yaml
 - job.yaml
-- jwt-policy.yaml
+- policy.yaml
 - service-account.yaml
 - service.yaml
 - stateful-set.yaml
-namespace: kubeflow
 nameprefix: iap-ingress-
 commonLabels:
   kustomize.component: iap-ingress
@@ -34,20 +33,13 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- name: secretName
+- name: appName
   objref:
     kind: ConfigMap
     name: parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.secretName
-- name: namespace
-  objref:
-    kind: ConfigMap
-    name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.namespace
+    fieldpath: data.appName
 - name: hostname
   objref:
     kind: ConfigMap
@@ -55,6 +47,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.hostname
+- name: istioNamespace
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.istioNamespace
 - name: ipName
   objref:
     kind: ConfigMap
@@ -76,6 +75,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.issuer
+- name: oauthSecretName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ipName
 - name: project
   objref:
     kind: ConfigMap
@@ -83,5 +89,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.project
+- name: secretName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.secretName
 configurations:
 - params.yaml

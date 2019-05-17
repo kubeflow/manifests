@@ -2,135 +2,8 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: envoy-deployment
-spec:
-  replicas: 3
-  template:
-    metadata:
-      labels:
-        service: envoy
-    spec:
-      containers:
-      - command:
-        - /usr/local/bin/envoy
-        - -c
-        - /etc/envoy/envoy-config.json
-        - --log-level
-        - info
-        - --base-id
-        - "27000"
-        image: gcr.io/kubeflow-images-public/envoy:v20180309-0fb4886b463698702b6a08955045731903a18738
-        imagePullPolicy: Always
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 30
-        name: envoy
-        ports:
-        - containerPort: 8080
-        - containerPort: 8001
-        - containerPort: 8025
-        readinessProbe:
-          httpGet:
-            path: /healthz
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 30
-        resources:
-          limits:
-            cpu: 1
-            memory: 400Mi
-          requests:
-            cpu: 200m
-            memory: 100Mi
-        volumeMounts:
-        - mountPath: /etc/envoy
-          name: shared
-      - command:
-        - sh
-        - /var/envoy-config/configure_envoy_for_iap.sh
-        env:
-        - name: NAMESPACE
-          value: kubeflow
-        - name: SERVICE
-          value: envoy
-        - name: ENVOY_ADMIN
-          value: http://localhost:8001
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
-        image: gcr.io/kubeflow-images-public/ingress-setup:latest
-        name: iap
-        volumeMounts:
-        - mountPath: /var/envoy-config/
-          name: config-volume
-        - mountPath: /var/shared/
-          name: shared
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
-      restartPolicy: Always
-      serviceAccountName: envoy-service-account
-      volumes:
-      - configMap:
-          name: envoy-config-map
-        name: config-volume
-      - emptyDir:
-          medium: Memory
-        name: shared
-      - name: sa-key
-        secret:
-          secretName: $(secretName)
----
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: enabler-deployment
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        service: iap-enabler
-    spec:
-      containers:
-      - command:
-        - bash
-        - /var/envoy-config/setup_backend.sh
-        env:
-        - name: NAMESPACE
-          value: kubeflow
-        - name: SERVICE
-          value: envoy
-        - name: INGRESS_NAME
-          value: envoy-ingress
-        - name: ENVOY_ADMIN
-          value: http://localhost:8001
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
-        image: gcr.io/kubeflow-images-public/ingress-setup:latest
-        name: iap
-        volumeMounts:
-        - mountPath: /var/envoy-config/
-          name: config-volume
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
-      restartPolicy: Always
-      serviceAccountName: envoy-service-account
-      volumes:
-      - configMap:
-          name: envoy-config-map
-        name: config-volume
-      - name: sa-key
-        secret:
-          secretName: $(secretName)
----
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
   name: whoami-app
+  namespace: $(istioNamespace)
 spec:
   replicas: 1
   template:
@@ -155,3 +28,50 @@ spec:
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 5
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: iap-enabler
+  namespace: $(istioNamespace)
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        service: iap-enabler
+    spec:
+      containers:
+      - command:
+        - bash
+        - /var/envoy-config/setup_backend.sh
+        env:
+        - name: NAMESPACE
+          value: $(istioNamespace)
+        - name: SERVICE
+          value: istio-ingressgateway
+        - name: INGRESS_NAME
+          value: $(ingressName)
+        - name: ENVOY_ADMIN
+          value: http://localhost:8001
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/run/secrets/sa/admin-gcp-sa.json
+        - name: USE_ISTIO
+          value: "true"
+        image: gcr.io/kubeflow-images-public/ingress-setup:latest
+        name: iap
+        volumeMounts:
+        - mountPath: /var/envoy-config/
+          name: config-volume
+        - mountPath: /var/run/secrets/sa
+          name: sa-key
+          readOnly: true
+      restartPolicy: Always
+      serviceAccountName: envoy
+      volumes:
+      - configMap:
+          name: envoy-config
+        name: config-volume
+      - name: sa-key
+        secret:
+          secretName: $(secretName)

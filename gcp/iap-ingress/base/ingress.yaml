@@ -6,13 +6,14 @@ metadata:
     ingress.kubernetes.io/ssl-redirect: "true"
     kubernetes.io/ingress.global-static-ip-name: $(ipName)
     kubernetes.io/tls-acme: "true"
-  name: $(ingressName)
+  name: envoy-ingress
+  namespace: $(istioNamespace)
 spec:
   rules:
   - host: $(hostname)
     http:
       paths:
       - backend:
-          serviceName: envoy
-          servicePort: 8080
+          serviceName: istio-ingressgateway
+          servicePort: 80
         path: /*

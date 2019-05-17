@@ -4,6 +4,7 @@ metadata:
   labels:
     service: backend-updater
   name: backend-updater
+  namespace: $(istioNamespace)
 spec:
   serviceName: backend-updater
   selector:
@@ -20,11 +21,15 @@ spec:
         - /var/envoy-config/update_backend.sh
         env:
         - name: NAMESPACE
-          value: kubeflow
+          value: $(istioNamespace)
         - name: SERVICE
-          value: envoy
+          value: istio-ingressgateway
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /var/run/secrets/sa/admin-gcp-sa.json
+        - name: INGRESS_NAME
+          value: $(ingressName)
+        - name: USE_ISTIO
+          value: "true"
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
         name: backend-updater
         volumeMounts:
@@ -33,13 +38,11 @@ spec:
         - mountPath: /var/run/secrets/sa
           name: sa-key
           readOnly: true
-      serviceAccountName: envoy-service-account
+      serviceAccountName: envoy
       volumes:
       - configMap:
-          name: envoy-config-map
+          name: envoy-config
         name: config-volume
       - name: sa-key
         secret:
-          secretName: $(secretName)
-  # Workaround for https://github.com/kubernetes-sigs/kustomize/issues/677
-  volumeClaimTemplates: []
+          secretName: admin-gcp-sa
