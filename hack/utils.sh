@@ -75,7 +75,7 @@ get-target() {
 # get-target-name will return tf-job-operator-base
 #
 # Given the path /manifests/tf-training/tf-job-operator/overlays/namespaced-gangscheduled
-# get-target-name will return tf-job-operator-namespaced-gangscheduled
+# get-target-name will return tf-job-operator-overlays-namespaced-gangscheduled
 #
 get-target-name() {
   local b=$(basename $1)
@@ -84,7 +84,9 @@ get-target-name() {
       echo $(basename $(dirname $1))-$b
       ;;
     *)
-      echo $(basename $(dirname $(dirname $1)))-$b
+      overlaydir=$(dirname $1)
+      overlay=$(basename $overlaydir)
+      echo $(basename $(dirname $overlaydir))-$overlay-$b
       ;;
   esac
 }

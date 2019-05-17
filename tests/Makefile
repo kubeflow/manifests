@@ -12,11 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-GOLANG_VERSION ?= 1.12
+GOLANG_VERSION ?= 1.12.4
 GOPATH ?= $(HOME)/go
 
 # Comma seperated items within {} for more than one file
-#EXCLUDE ?= {webhook-base_test.go,jupyter-base_test.go}
 EXCLUDE ?= 
 
 export GO111MODULE = on
@@ -25,9 +24,9 @@ export GO = go
 all: test
 
 generate: clean
-	@cd .. && hack/gen-test-targets.sh && [ -n "$(EXCLUDE)" ] || echo done
+	@cd .. && hack/gen-test-targets.sh && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE) || echo done
 
-test: generate
+test: 
 	@GO111MODULE=on $(GO) test -v .
 
 clean:
