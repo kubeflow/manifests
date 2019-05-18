@@ -45,30 +45,6 @@ data:
           protocol: HTTP
         hosts:
         - "*"
-  jwt-policy-template.yaml: |
-    apiVersion: authentication.istio.io/v1alpha1
-    kind: Policy
-    metadata:
-      name: ingress-jwt
-      namespace: $(istioNamespace)
-    spec:
-      targets:
-      - name: istio-ingressgateway
-        ports:
-        - number: 80
-      origins:
-      - jwt:
-          issuer: https://cloud.google.com/iap
-          jwksUri: https://www.gstatic.com/iap/verify/public_key-jwk
-          audiences:
-          - {{JWT_AUDIENCE}}
-          jwtHeaders:
-          - x-goog-iap-jwt-assertion
-          trigger_rules:
-          - excluded_paths:
-            - exact: /healthz
-            - prefix: /.well-known/acme-challenge
-      principalBinding: USE_ORIGIN
   setup_backend.sh: |
     #!/usr/bin/env bash
     #
@@ -94,7 +70,7 @@ data:
     # Print out the config for debugging
     gcloud config list
 
-    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[0].nodePort}')
+    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[?(@.name=="http2")}.nodePort')
     echo "node port is ${NODE_PORT}"
 
     while [[ -z ${BACKEND_NAME} ]]; do
@@ -126,9 +102,9 @@ data:
       kubectl get configmap -n ${NAMESPACE} envoy-config -o jsonpath='{.data.envoy-config\.json}' |
         sed -e "s|{{JWT_AUDIENCE}}|${JWT_AUDIENCE}|g" > /var/shared/envoy-config.json
     else
-      # Apply the jwt validation policy
-      cat /var/envoy-config/jwt-policy-template.yaml | sed -e "s|{{JWT_AUDIENCE}}|${JWT_AUDIENCE}|g" > /var/shared/jwt-policy.yaml
-      kubectl apply -f /var/shared/jwt-policy.yaml
+      # Use kubectl patch.
+       echo patch JWT audience: ${JWT_AUDIENCE}
+       kubectl -n ${NAMESPACE} patch policy ingress-jwt --type json -p '[{"op": "replace", "path": "/spec/origins/0/jwt/audiences/0", "value": "'${JWT_AUDIENCE}'"}]'
     fi
 
     echo "Clearing lock on service annotation"
@@ -172,7 +148,7 @@ data:
     # Activate the service account, allow 5 retries
     for i in {1..5}; do gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS} && break || sleep 10; done
 
-    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[0].nodePort}')
+    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
     echo node port is ${NODE_PORT}
 
     while [[ -z ${BACKEND_NAME} ]]; do
