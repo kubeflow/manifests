@@ -17,7 +17,7 @@ for i in $(find * -type d -exec sh -c '(ls -p "{}"|grep />/dev/null)||echo "{}"'
   absdir=$rootdir/$i
   if [[ ! $absdir  =~ overlays/test$ ]]; then
     testname=$(get-target-name $absdir)_test.go
-    echo generating $testname from /manifests/${absdir#*manifests/}
+    echo generating $testname from manifests/${absdir#*manifests/}
     ./hack/gen-test-target.sh $absdir > tests/$testname
   fi
 done

@@ -106,6 +106,7 @@ gen-test-case() {
   local base=$(get-target-name $1) dir=$(get-target $1) target fname
   fname=/manifests${dir##*/manifests}/$(get-target-dirname $1)
   target=$(kebab-case-2-PascalCase $base)
+  targetPath=..${1#*/manifests}
 
   gen-target $1
   echo ''
@@ -116,7 +117,7 @@ gen-test-case() {
   echo '  if err != nil {'
   echo '    t.Fatalf("Err: %v", err)'
   echo '  }'
-  echo '  targetPath := "'$1'"'
+  echo '  targetPath := "'$targetPath'"'
 
   echo '  fsys := fs.MakeRealFS()'
   echo '    _loader, loaderErr := loader.NewLoader(targetPath, fsys)'
