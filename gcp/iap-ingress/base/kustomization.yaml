@@ -14,6 +14,7 @@ resources:
 - service-account.yaml
 - service.yaml
 - stateful-set.yaml
+namespace: kubeflow
 nameprefix: iap-ingress-
 commonLabels:
   kustomize.component: iap-ingress
@@ -33,6 +34,13 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 vars:
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 - name: appName
   objref:
     kind: ConfigMap

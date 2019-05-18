@@ -594,6 +594,8 @@ spec:
 varReference:
 - path: metadata/name
   kind: Certificate
+- path: spec/origins/jwt/issuer
+  kind: Policy
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
 - path: spec/dnsNames
@@ -630,8 +632,37 @@ varReference:
   kind: CloudEndpoint
 - path: spec/iap/oauthclientCredentials/secretName
   kind: BackendConfig
+- path: metadata/namespace
+  kind: BackendConfig
+- path: metadata/namespace
+  kind: Certificate
+- path: metadata/namespace
+  kind: CloudEndpoint
+- path: metadata/namespace
+  kind: ClusterRoleBinding
+- path: metadata/namespace
+  kind: ClusterRole
+- path: metadata/namespace
+  kind: ConfigMap
+- path: metadata/namespace
+  kind: Deployment
+- path: metadata/namespace
+  kind: Ingress
+- path: metadata/namespace
+  kind: Job
+- path: metadata/namespace
+  kind: Policy
+- path: metadata/namespace
+  kind: ServiceAccount
+- path: metadata/namespace
+  kind: Service
+- path: metadata/namespace
+  kind: StatefulSet
+- path: data/healthcheck_route.yaml
+  kind: ConfigMap
 `)
   th.writeF("/manifests/gcp/iap-ingress/base/params.env", `
+namespace=kubeflow
 appName=kubeflow
 hostname=
 ingressName=envoy-ingress
@@ -659,6 +690,7 @@ resources:
 - service-account.yaml
 - service.yaml
 - stateful-set.yaml
+namespace: kubeflow
 nameprefix: iap-ingress-
 commonLabels:
   kustomize.component: iap-ingress
@@ -678,6 +710,13 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 vars:
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 - name: appName
   objref:
     kind: ConfigMap
