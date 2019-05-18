@@ -21,15 +21,15 @@ spec:
   acme:
     config:
     - domains:
-      - dls-kf.endpoints.constant-cubist-173123.cloud.goog
+      - $(hostname)
       http01:
         ingress: envoy-ingress
-  commonName: dls-kf.endpoints.constant-cubist-173123.cloud.goog
+  commonName: $(hostname)
   dnsNames:
   - $(hostname)
   issuerRef:
     kind: ClusterIssuer
-    name: letsencrypt-prod
+    name: $(issuer)
   secretName: $(secretName)
 `)
   th.writeF("/manifests/gcp/basic-auth-ingress/base/cloud-endpoint.yaml", `
@@ -38,10 +38,9 @@ kind: CloudEndpoint
 metadata:
   name: cloud-endpoint
 spec:
-  project: constant-cubist-173123
+  project: $(project)
   targetIngress:
-    name: envoy-ingress
-    namespace: kubeflow
+    name: $(ingressName)
 `)
   th.writeF("/manifests/gcp/basic-auth-ingress/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
