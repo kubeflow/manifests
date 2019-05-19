@@ -7,8 +7,6 @@ patchesStrategicMerge:
 configMapGenerator:
 - name: application-controller-parameters
   env: params.env
-generatorOptions:
-  disableNameSuffixHash: true
 vars:
 - name: project
   objref:
