@@ -5,3 +5,5 @@ bases:
 #generators:
 resources:
 - application.yaml
+commonLabels:
+  app.kubernetes.io/name: jupyter-web-app-application
