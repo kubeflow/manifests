@@ -4,7 +4,3 @@ bases:
 - ../../base
 generators:
 - application.yaml
-namePrefix: jupyter-web-app-
-namespace: kubeflow
-commonLabels:
-  app.kubernetes.io/name: jupyter-web-app-application
