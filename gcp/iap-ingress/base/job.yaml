@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: ingress-bootstrap
+  namespace: $(istioNamespace)
 spec:
   template:
     spec:
@@ -10,13 +11,25 @@ spec:
         - /var/ingress-config/ingress_bootstrap.sh
         env:
         - name: NAMESPACE
-          value: kubeflow
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: istioNamespace
         - name: TLS_SECRET_NAME
-          value: envoy-ingress-tls
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: secretName
         - name: TLS_HOST_NAME
-          value: kubeflow.endpoints.constant-cubist-173123.cloud.goog
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: hostname
         - name: INGRESS_NAME
-          value: envoy-ingress
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: ingressName
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
         name: bootstrap
         volumeMounts:

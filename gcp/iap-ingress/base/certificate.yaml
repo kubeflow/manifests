@@ -1,18 +1,19 @@
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
-  name: envoy-ingress-tls
+  name: $(secretName)
+  namespace: $(istioNamespace)
 spec:
   acme:
     config:
     - domains:
-      - kubeflow.endpoints.constant-cubist-173123.cloud.goog
+      - $(hostname)
       http01:
-        ingress: envoy-ingress
-  commonName: kubeflow.endpoints.constant-cubist-173123.cloud.goog
+        ingress: $(ingressName)
+  commonName: $(hostname)
   dnsNames:
-  - kubeflow.endpoints.constant-cubist-173123.cloud.goog
+  - $(hostname)
   issuerRef:
     kind: ClusterIssuer
-    name: letsencrypt-prod
-  secretName: envoy-ingress-tls
+    name: $(issuer)
+  secretName: $(secretName)

@@ -10,10 +10,12 @@ resources:
 - deployment.yaml
 - ingress.yaml
 - job.yaml
-- jwt-policy.yaml
+- policy.yaml
 - service-account.yaml
 - service.yaml
 - stateful-set.yaml
+namespace: kubeflow
+nameprefix: iap-ingress-
 commonLabels:
   kustomize.component: iap-ingress
 images:
@@ -26,3 +28,81 @@ images:
   - name: gcr.io/cloud-solutions-group/esp-sample-app
     newName: gcr.io/cloud-solutions-group/esp-sample-app
     newTag: 1.0.0
+configMapGenerator:
+- name: parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
+- name: appName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.appName
+- name: hostname
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.hostname
+- name: istioNamespace
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.istioNamespace
+- name: ipName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ipName
+- name: ingressName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ingressName
+- name: issuer
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.issuer
+- name: oauthSecretName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ipName
+- name: project
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.project
+- name: secretName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.secretName
+configurations:
+- params.yaml
