@@ -1,18 +1,18 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/pkg/fs"
-  "sigs.k8s.io/kustomize/pkg/loader"
-  "sigs.k8s.io/kustomize/pkg/resmap"
-  "sigs.k8s.io/kustomize/pkg/resource"
-  "sigs.k8s.io/kustomize/pkg/target"
-  "testing"
+	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/pkg/fs"
+	"sigs.k8s.io/kustomize/pkg/loader"
+	"sigs.k8s.io/kustomize/pkg/resmap"
+	"sigs.k8s.io/kustomize/pkg/resource"
+	"sigs.k8s.io/kustomize/pkg/target"
+	"testing"
 )
 
 func writeBasicAuthBase(th *KustTestHarness) {
-  th.writeF("/manifests/common/basic-auth/base/kflogin-deployment.yaml", `
+	th.writeF("/manifests/common/basic-auth/base/kflogin-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -35,7 +35,7 @@ spec:
         ports:
         - containerPort: 5000
 `)
-  th.writeF("/manifests/common/basic-auth/base/gatekeeper-deployment.yaml", `
+	th.writeF("/manifests/common/basic-auth/base/gatekeeper-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -75,7 +75,7 @@ spec:
         - containerPort: 8085
         workingDir: /opt/kubeflow
 `)
-  th.writeF("/manifests/common/basic-auth/base/gatekeeper-service.yaml", `
+	th.writeF("/manifests/common/basic-auth/base/gatekeeper-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -99,7 +99,7 @@ spec:
     app: basic-auth
   type: ClusterIP
 `)
-  th.writeF("/manifests/common/basic-auth/base/kflogin-service.yaml", `
+	th.writeF("/manifests/common/basic-auth/base/kflogin-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -125,7 +125,7 @@ spec:
     app: basic-auth-login
   type: ClusterIP
 `)
-  th.writeF("/manifests/common/basic-auth/base/kflogin-virtual-service.yaml", `
+	th.writeF("/manifests/common/basic-auth/base/kflogin-virtual-service.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
@@ -147,7 +147,7 @@ spec:
         port:
           number: 8085
 `)
-  th.writeF("/manifests/common/basic-auth/base/params.yaml", `
+	th.writeF("/manifests/common/basic-auth/base/params.yaml", `
 varReference:
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
@@ -156,11 +156,11 @@ varReference:
 - path: spec/template/spec/containers/env/valueFrom/secretKeyRef/name
   kind: Deployment
 `)
-  th.writeF("/manifests/common/basic-auth/base/params.env", `
+	th.writeF("/manifests/common/basic-auth/base/params.env", `
 authSecretName=kubeflow-login
 clusterDomain=cluster.local
 `)
-  th.writeK("/manifests/common/basic-auth/base", `
+	th.writeK("/manifests/common/basic-auth/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -213,27 +213,27 @@ configurations:
 }
 
 func TestBasicAuthBase(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/common/basic-auth/base")
-  writeBasicAuthBase(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "../common/basic-auth/base"
-  fsys := fs.MakeRealFS()
-    _loader, loaderErr := loader.NewLoader(targetPath, fsys)
-    if loaderErr != nil {
-      t.Fatalf("could not load kustomize loader: %v", loaderErr)
-    }
-    rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-    kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-    if err != nil {
-      th.t.Fatalf("Unexpected construction error %v", err)
-    }
-  n, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := n.EncodeAsYaml()
-  th.assertActualEqualsExpected(m, string(expected))
+	th := NewKustTestHarness(t, "/manifests/common/basic-auth/base")
+	writeBasicAuthBase(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../common/basic-auth/base"
+	fsys := fs.MakeRealFS()
+	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	n, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := n.EncodeAsYaml()
+	th.assertActualEqualsExpected(m, string(expected))
 }

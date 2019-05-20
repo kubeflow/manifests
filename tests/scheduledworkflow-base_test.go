@@ -1,18 +1,18 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/pkg/fs"
-  "sigs.k8s.io/kustomize/pkg/loader"
-  "sigs.k8s.io/kustomize/pkg/resmap"
-  "sigs.k8s.io/kustomize/pkg/resource"
-  "sigs.k8s.io/kustomize/pkg/target"
-  "testing"
+	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/pkg/fs"
+	"sigs.k8s.io/kustomize/pkg/loader"
+	"sigs.k8s.io/kustomize/pkg/resmap"
+	"sigs.k8s.io/kustomize/pkg/resource"
+	"sigs.k8s.io/kustomize/pkg/target"
+	"testing"
 )
 
 func writeScheduledworkflowBase(th *KustTestHarness) {
-  th.writeF("/manifests/pipeline/scheduledworkflow/base/crd.yaml", `
+	th.writeF("/manifests/pipeline/scheduledworkflow/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -32,7 +32,7 @@ spec:
     served: true
     storage: true
 `)
-  th.writeF("/manifests/pipeline/scheduledworkflow/base/deployment.yaml", `
+	th.writeF("/manifests/pipeline/scheduledworkflow/base/deployment.yaml", `
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
@@ -59,7 +59,7 @@ spec:
         name: ml-pipeline-scheduledworkflow
       serviceAccountName: ml-pipeline-scheduledworkflow
 `)
-  th.writeF("/manifests/pipeline/scheduledworkflow/base/role-binding.yaml", `
+	th.writeF("/manifests/pipeline/scheduledworkflow/base/role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -74,7 +74,7 @@ subjects:
 - kind: ServiceAccount
   name: ml-pipeline-scheduledworkflow
 `)
-  th.writeF("/manifests/pipeline/scheduledworkflow/base/role.yaml", `
+	th.writeF("/manifests/pipeline/scheduledworkflow/base/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
@@ -107,13 +107,13 @@ rules:
   - patch
   - delete
 `)
-  th.writeF("/manifests/pipeline/scheduledworkflow/base/sa.yaml", `
+	th.writeF("/manifests/pipeline/scheduledworkflow/base/sa.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: ml-pipeline-scheduledworkflow
 `)
-  th.writeK("/manifests/pipeline/scheduledworkflow/base", `
+	th.writeK("/manifests/pipeline/scheduledworkflow/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -129,27 +129,27 @@ images:
 }
 
 func TestScheduledworkflowBase(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/pipeline/scheduledworkflow/base")
-  writeScheduledworkflowBase(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "../pipeline/scheduledworkflow/base"
-  fsys := fs.MakeRealFS()
-    _loader, loaderErr := loader.NewLoader(targetPath, fsys)
-    if loaderErr != nil {
-      t.Fatalf("could not load kustomize loader: %v", loaderErr)
-    }
-    rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-    kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-    if err != nil {
-      th.t.Fatalf("Unexpected construction error %v", err)
-    }
-  n, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := n.EncodeAsYaml()
-  th.assertActualEqualsExpected(m, string(expected))
+	th := NewKustTestHarness(t, "/manifests/pipeline/scheduledworkflow/base")
+	writeScheduledworkflowBase(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../pipeline/scheduledworkflow/base"
+	fsys := fs.MakeRealFS()
+	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	n, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := n.EncodeAsYaml()
+	th.assertActualEqualsExpected(m, string(expected))
 }

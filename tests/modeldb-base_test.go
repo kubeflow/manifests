@@ -1,18 +1,18 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/pkg/fs"
-  "sigs.k8s.io/kustomize/pkg/loader"
-  "sigs.k8s.io/kustomize/pkg/resmap"
-  "sigs.k8s.io/kustomize/pkg/resource"
-  "sigs.k8s.io/kustomize/pkg/target"
-  "testing"
+	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/pkg/fs"
+	"sigs.k8s.io/kustomize/pkg/loader"
+	"sigs.k8s.io/kustomize/pkg/resmap"
+	"sigs.k8s.io/kustomize/pkg/resource"
+	"sigs.k8s.io/kustomize/pkg/target"
+	"testing"
 )
 
 func writeModeldbBase(th *KustTestHarness) {
-  th.writeF("/manifests/modeldb/base/artifact-store-deployment.yaml", `
+	th.writeF("/manifests/modeldb/base/artifact-store-deployment.yaml", `
 
 apiVersion: apps/v1
 kind: Deployment
@@ -51,7 +51,7 @@ spec:
           name: modeldb-artifact-store-config
         name: modeldb-artifact-store-config
 `)
-  th.writeF("/manifests/modeldb/base/artifact-store-service.yaml", `
+	th.writeF("/manifests/modeldb/base/artifact-store-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -67,7 +67,7 @@ spec:
     tier: artifact-store
   type: ClusterIP
 `)
-  th.writeF("/manifests/modeldb/base/backend-deployment.yaml", `
+	th.writeF("/manifests/modeldb/base/backend-deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -105,7 +105,7 @@ spec:
         secret:
           secretName: modeldb-backend-config-secret
 `)
-  th.writeF("/manifests/modeldb/base/backend-proxy-service.yaml", `
+	th.writeF("/manifests/modeldb/base/backend-proxy-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -121,7 +121,7 @@ spec:
     tier: backend-proxy
   type: LoadBalancer
 `)
-  th.writeF("/manifests/modeldb/base/backend-service.yaml", `
+	th.writeF("/manifests/modeldb/base/backend-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -136,7 +136,7 @@ spec:
     tier: backend
   type: LoadBalancer
 `)
-  th.writeF("/manifests/modeldb/base/configmap.yaml", `
+	th.writeF("/manifests/modeldb/base/configmap.yaml", `
 apiVersion: v1
 data:
   config.yaml: |-
@@ -155,7 +155,7 @@ metadata:
   name: modeldb-artifact-store-config
 type: Opaque
 `)
-  th.writeF("/manifests/modeldb/base/mysql-backend-deployment.yaml", `
+	th.writeF("/manifests/modeldb/base/mysql-backend-deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -194,7 +194,7 @@ spec:
         persistentVolumeClaim:
           claimName: modeldb-mysql-pv-claim
 `)
-  th.writeF("/manifests/modeldb/base/mysql-service.yaml", `
+	th.writeF("/manifests/modeldb/base/mysql-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -210,7 +210,7 @@ spec:
     tier: mysql
   type: ClusterIP
 `)
-  th.writeF("/manifests/modeldb/base/persistent-volume-claim.yaml", `
+	th.writeF("/manifests/modeldb/base/persistent-volume-claim.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -224,7 +224,7 @@ spec:
     requests:
       storage: 20Gi
 `)
-  th.writeF("/manifests/modeldb/base/proxy-deployment.yaml", `
+	th.writeF("/manifests/modeldb/base/proxy-deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -260,7 +260,7 @@ spec:
         ports:
         - containerPort: 8080
 `)
-  th.writeF("/manifests/modeldb/base/secret.yaml", `
+	th.writeF("/manifests/modeldb/base/secret.yaml", `
 apiVersion: v1
 kind: Secret
 metadata:
@@ -302,7 +302,7 @@ stringData:
       port: #50051
 type: Opaque
 `)
-  th.writeF("/manifests/modeldb/base/webapp-deplyment.yaml", `
+	th.writeF("/manifests/modeldb/base/webapp-deplyment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -329,7 +329,7 @@ spec:
         ports:
         - containerPort: 3000
 `)
-  th.writeF("/manifests/modeldb/base/webapp-service.yaml", `
+	th.writeF("/manifests/modeldb/base/webapp-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -345,7 +345,7 @@ spec:
     tier: webapp
   type: LoadBalancer
 `)
-  th.writeK("/manifests/modeldb/base", `
+	th.writeK("/manifests/modeldb/base", `
 namePrefix: modeldb-
 
 resources:
@@ -369,27 +369,27 @@ commonLabels:
 }
 
 func TestModeldbBase(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/modeldb/base")
-  writeModeldbBase(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "../modeldb/base"
-  fsys := fs.MakeRealFS()
-    _loader, loaderErr := loader.NewLoader(targetPath, fsys)
-    if loaderErr != nil {
-      t.Fatalf("could not load kustomize loader: %v", loaderErr)
-    }
-    rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-    kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-    if err != nil {
-      th.t.Fatalf("Unexpected construction error %v", err)
-    }
-  n, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := n.EncodeAsYaml()
-  th.assertActualEqualsExpected(m, string(expected))
+	th := NewKustTestHarness(t, "/manifests/modeldb/base")
+	writeModeldbBase(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../modeldb/base"
+	fsys := fs.MakeRealFS()
+	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	n, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := n.EncodeAsYaml()
+	th.assertActualEqualsExpected(m, string(expected))
 }

@@ -1,18 +1,18 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/pkg/fs"
-  "sigs.k8s.io/kustomize/pkg/loader"
-  "sigs.k8s.io/kustomize/pkg/resmap"
-  "sigs.k8s.io/kustomize/pkg/resource"
-  "sigs.k8s.io/kustomize/pkg/target"
-  "testing"
+	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/pkg/fs"
+	"sigs.k8s.io/kustomize/pkg/loader"
+	"sigs.k8s.io/kustomize/pkg/resmap"
+	"sigs.k8s.io/kustomize/pkg/resource"
+	"sigs.k8s.io/kustomize/pkg/target"
+	"testing"
 )
 
 func writeTensorboardBase(th *KustTestHarness) {
-  th.writeF("/manifests/tensorboard/base/deployment.yaml", `
+	th.writeF("/manifests/tensorboard/base/deployment.yaml", `
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
@@ -45,7 +45,7 @@ spec:
             cpu: "1"
             memory: 1Gi
 `)
-  th.writeF("/manifests/tensorboard/base/service.yaml", `
+	th.writeF("/manifests/tensorboard/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -71,7 +71,7 @@ spec:
     app: tensorboard
   type: ClusterIP
 `)
-  th.writeF("/manifests/tensorboard/base/virtual-service.yaml", `
+	th.writeF("/manifests/tensorboard/base/virtual-service.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
@@ -93,14 +93,14 @@ spec:
         port:
           number: 9000
 `)
-  th.writeF("/manifests/tensorboard/base/params.yaml", `
+	th.writeF("/manifests/tensorboard/base/params.yaml", `
 varReference:
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
 - path: spec/http/route/destination/host
   kind: VirtualService
 `)
-  th.writeF("/manifests/tensorboard/base/params.env", `
+	th.writeF("/manifests/tensorboard/base/params.env", `
 # GCP
 # @optionalParam logDir string logs Name of the log directory holding the TF events file
 # @optionalParam targetPort number 6006 Name of the targetPort
@@ -129,7 +129,7 @@ varReference:
 
 clusterDomain=cluster.local
 `)
-  th.writeK("/manifests/tensorboard/base", `
+	th.writeK("/manifests/tensorboard/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
@@ -163,27 +163,27 @@ configurations:
 }
 
 func TestTensorboardBase(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/tensorboard/base")
-  writeTensorboardBase(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "../tensorboard/base"
-  fsys := fs.MakeRealFS()
-    _loader, loaderErr := loader.NewLoader(targetPath, fsys)
-    if loaderErr != nil {
-      t.Fatalf("could not load kustomize loader: %v", loaderErr)
-    }
-    rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-    kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-    if err != nil {
-      th.t.Fatalf("Unexpected construction error %v", err)
-    }
-  n, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := n.EncodeAsYaml()
-  th.assertActualEqualsExpected(m, string(expected))
+	th := NewKustTestHarness(t, "/manifests/tensorboard/base")
+	writeTensorboardBase(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../tensorboard/base"
+	fsys := fs.MakeRealFS()
+	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	n, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := n.EncodeAsYaml()
+	th.assertActualEqualsExpected(m, string(expected))
 }
