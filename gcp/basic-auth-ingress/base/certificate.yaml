@@ -6,13 +6,13 @@ spec:
   acme:
     config:
     - domains:
-      - dls-kf.endpoints.constant-cubist-173123.cloud.goog
+      - $(hostname)
       http01:
         ingress: envoy-ingress
-  commonName: dls-kf.endpoints.constant-cubist-173123.cloud.goog
+  commonName: $(hostname)
   dnsNames:
   - $(hostname)
   issuerRef:
     kind: ClusterIssuer
-    name: letsencrypt-prod
+    name: $(issuer)
   secretName: $(secretName)

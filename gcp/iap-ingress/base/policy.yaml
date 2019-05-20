@@ -2,18 +2,14 @@ apiVersion: authentication.istio.io/v1alpha1
 kind: Policy
 metadata:
   name: ingress-jwt
-  namespace: istio-system
+  namespace: $(istioNamespace)
 spec:
-  targets:
-  - name: istio-ingressgateway
-    ports:
-    - number: 80
   origins:
   - jwt:
-      issuer: https://cloud.google.com/iap
-      jwksUri: https://www.gstatic.com/iap/verify/public_key-jwk
       audiences:
       - TO_BE_PATCHED
+      issuer: $(issuer)
+      jwksUri: https://www.gstatic.com/iap/verify/public_key-jwk
       jwtHeaders:
       - x-goog-iap-jwt-assertion
       trigger_rules:
@@ -21,3 +17,7 @@ spec:
         - exact: /healthz
         - prefix: /.well-known/acme-challenge
   principalBinding: USE_ORIGIN
+  targets:
+  - name: istio-ingressgateway
+    ports:
+    - number: 80

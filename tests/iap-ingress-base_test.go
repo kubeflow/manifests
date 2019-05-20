@@ -17,41 +17,45 @@ apiVersion: cloud.google.com/v1beta1
 kind: BackendConfig
 metadata:
   name: iap-backendconfig
+  namespace: $(istioNamespace)
 spec:
   iap:
     enabled: true
     oauthclientCredentials:
-      secretName: kubeflow-oauth
+      secretName: $(oauthSecretName)
 `)
   th.writeF("/manifests/gcp/iap-ingress/base/certificate.yaml", `
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
-  name: envoy-ingress-tls
+  name: $(secretName)
+  namespace: $(istioNamespace)
 spec:
   acme:
     config:
     - domains:
-      - kubeflow.endpoints.constant-cubist-173123.cloud.goog
+      - $(hostname)
       http01:
-        ingress: envoy-ingress
-  commonName: kubeflow.endpoints.constant-cubist-173123.cloud.goog
+        ingress: $(ingressName)
+  commonName: $(hostname)
   dnsNames:
-  - kubeflow.endpoints.constant-cubist-173123.cloud.goog
+  - $(hostname)
   issuerRef:
     kind: ClusterIssuer
-    name: letsencrypt-prod
-  secretName: envoy-ingress-tls
+    name: $(issuer)
+  secretName: $(secretName)
 `)
   th.writeF("/manifests/gcp/iap-ingress/base/cloud-endpoint.yaml", `
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
 metadata:
-  name: kubeflow
+  name: $(appName)
+  namespace: $(istioNamespace)
 spec:
-  project: constant-cubist-173123
+  project: $(project)
   targetIngress:
-    name: envoy-ingress
+    name: $(ingressName)
+    namespace: $(istioNamespace)
 `)
   th.writeF("/manifests/gcp/iap-ingress/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -71,6 +75,7 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: envoy
+  namespace: $(istioNamespace)
 rules:
 - apiGroups:
   - ""
@@ -92,354 +97,68 @@ rules:
   - list
   - update
   - patch
+- apiGroups:
+  - authentication.istio.io
+  resources:
+  - policies
+  verbs:
+  - '*'
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - gateways
+  - virtualservices
+  verbs:
+  - '*'
 `)
   th.writeF("/manifests/gcp/iap-ingress/base/config-map.yaml", `
 ---
 apiVersion: v1
 data:
-  configure_envoy_for_iap.sh: |
-    #!/usr/bin/env bash
-    #
-    # A script to modify envoy config to perform JWT validation
-    # given the information for the service.
-    # Script executed by the iap container to configure IAP. When finished, the envoy config is created with the JWT audience.
-
-    [ -z ${NAMESPACE} ] && echo Error NAMESPACE must be set && exit 1
-    [ -z ${SERVICE} ] && echo Error SERVICE must be set && exit 1
-
-    PROJECT=$(curl -s -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/project/project-id)
-    if [ -z ${PROJECT} ]; then
-      echo Error unable to fetch PROJECT from compute metadata
-      exit 1
-    fi
-
-    PROJECT_NUM=$(curl -s -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/project/numeric-project-id)
-    if [ -z ${PROJECT_NUM} ]; then
-      echo Error unable to fetch PROJECT_NUM from compute metadata
-      exit 1
-    fi
-
-    checkIAP() {
-      # created by init container.
-      . /var/shared/healthz.env
-
-      # If node port or backend id change, so does the JWT audience.
-      CURR_NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[0].nodePort}')
-      CURR_BACKEND_ID=$(gcloud compute --project=${PROJECT} backend-services list --filter=name~k8s-be-${CURR_NODE_PORT}- --format='value(id)')
-      [ "$BACKEND_ID" == "$CURR_BACKEND_ID" ]
-    }
-
-    # Activate the service account
-    for i in $(seq 1 10); do
-      gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS} && break || sleep 10
-    done
-
-    # Print out the config for debugging
-    gcloud config list
-
-    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[0].nodePort}')
-    while [[ -z ${BACKEND_ID} ]]; do
-      BACKEND_ID=$(gcloud compute --project=${PROJECT} backend-services list --filter=name~k8s-be-${NODE_PORT}- --format='value(id)')
-      echo "Waiting for backend id PROJECT=${PROJECT} NAMESPACE=${NAMESPACE} SERVICE=${SERVICE} filter=name~k8s-be-${NODE_PORT}-..."
-      sleep 2
-    done
-    echo BACKEND_ID=${BACKEND_ID}
-
-    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[0].nodePort}')
-    BACKEND_SERVICE=$(gcloud --project=${PROJECT} compute backend-services list --filter=name~k8s-be-${NODE_PORT}- --uri)
-
-    JWT_AUDIENCE="/projects/${PROJECT_NUM}/global/backendServices/${BACKEND_ID}"
-
-    # For healthcheck compare.
-    echo "JWT_AUDIENCE=${JWT_AUDIENCE}" > /var/shared/healthz.env
-    echo "NODE_PORT=${NODE_PORT}" >> /var/shared/healthz.env
-    echo "BACKEND_ID=${BACKEND_ID}" >> /var/shared/healthz.env
-
-    kubectl get configmap -n ${NAMESPACE} envoy-config -o jsonpath='{.data.envoy-config\.json}' |
-      sed -e "s|{{JWT_AUDIENCE}}|${JWT_AUDIENCE}|g" >/var/shared/envoy-config.json
-
-    echo "Restarting envoy"
-    curl -s ${ENVOY_ADMIN}/quitquitquit
-
-    # Verify IAP every 10 seconds.
-    while true; do
-      if ! checkIAP; then
-        echo "$(date) WARN: IAP check failed, restarting container."
-        exit 1
-      fi
-      sleep 10
-    done
-  envoy-config.json: |-
-    {
-        "admin": {
-            "access_log_path": "/tmp/admin_access_log",
-            "address": "tcp://0.0.0.0:8001"
-        },
-        "cluster_manager": {
-            "clusters": [
-                {
-                    "connect_timeout_ms": 3000,
-                    "hosts": [
-                        {
-                            "url": "tcp://127.0.0.1:8001"
-                        }
-                    ],
-                    "lb_type": "round_robin",
-                    "name": "cluster_healthz",
-                    "type": "strict_dns"
-                },
-                {
-                    "circuit_breakers": {
-                        "default": {
-                            "max_pending_requests": 10000,
-                            "max_requests": 10000
-                        }
-                    },
-                    "connect_timeout_ms": 5000,
-                    "hosts": [
-                        {
-                            "url": "tcp://www.gstatic.com:80"
-                        }
-                    ],
-                    "lb_type": "round_robin",
-                    "name": "iap_issuer",
-                    "type": "strict_dns"
-                },
-                {
-                    "connect_timeout_ms": 3000,
-                    "hosts": [
-                        {
-                            "url": "tcp://whoami-app.kubeflow:80"
-                        }
-                    ],
-                    "lb_type": "round_robin",
-                    "name": "cluster_iap_app",
-                    "type": "strict_dns"
-                },
-                {
-                    "connect_timeout_ms": 3000,
-                    "hosts": [
-                        {
-                            "url": "tcp://jupyter-lb.kubeflow:80"
-                        }
-                    ],
-                    "lb_type": "round_robin",
-                    "name": "cluster_jupyter",
-                    "type": "strict_dns"
-                },
-                {
-                    "connect_timeout_ms": 3000,
-                    "hosts": [
-                        {
-                            "url": "tcp://tf-job-dashboard.kubeflow:80"
-                        }
-                    ],
-                    "lb_type": "round_robin",
-                    "name": "cluster_tfjobs",
-                    "type": "strict_dns"
-                },
-                {
-                    "connect_timeout_ms": 3000,
-                    "hosts": [
-                        {
-                            "url": "tcp://istio-ingressgateway.istio-system:80"
-                        }
-                    ],
-                    "lb_type": "round_robin",
-                    "name": "cluster_istiogateway",
-                    "type": "strict_dns"
-                },
-                {
-                    "connect_timeout_ms": 3000,
-                    "hosts": [
-                        {
-                            "url": "tcp://ambassador.kubeflow:80"
-                        }
-                    ],
-                    "lb_type": "round_robin",
-                    "name": "cluster_ambassador",
-                    "type": "strict_dns"
-                }
-            ]
-        },
-        "listeners": [
-            {
-                "address": "tcp://0.0.0.0:8080",
-                "filters": [
-                    {
-                        "config": {
-                            "access_log": [
-                                {
-                                    "format": "ACCESS [%START_TIME%] \"%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%\" %RESPONSE_CODE% %RESPONSE_FLAGS% %BYTES_RECEIVED% %BYTES_SENT% %DURATION% %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% \"%REQ(X-FORWARDED-FOR)%\" \"%REQ(USER-AGENT)%\" \"%REQ(X-REQUEST-ID)%\" \"%REQ(:AUTHORITY)%\" \"%UPSTREAM_HOST%\"\n",
-                                    "path": "/dev/fd/1"
-                                }
-                            ],
-                            "codec_type": "auto",
-                            "filters": [
-                                {
-                                    "config": {
-                                        "bypass_jwt": [
-                                            {
-                                                "http_method": "GET",
-                                                "path_exact": "/healthz"
-                                            },
-                                            {
-                                                "http_method": "GET",
-                                                "path_exact": "/noiap/whoami"
-                                            }
-                                        ],
-                                        "jwts": [
-                                            {
-                                                "audiences": "{{JWT_AUDIENCE}}",
-                                                "issuer": "https://cloud.google.com/iap",
-                                                "jwks_uri": "https://www.gstatic.com/iap/verify/public_key-jwk",
-                                                "jwks_uri_envoy_cluster": "iap_issuer",
-                                                "jwt_headers": [
-                                                    "x-goog-iap-jwt-assertion"
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    "name": "jwt-auth",
-                                    "type": "decoder"
-                                },
-                                {
-                                    "config": {
-
-                                    },
-                                    "name": "router",
-                                    "type": "decoder"
-                                }
-                            ],
-                            "route_config": {
-                                "virtual_hosts": [
-                                    {
-                                        "domains": [
-                                            "*"
-                                        ],
-                                        "name": "backend",
-                                        "routes": [
-                                            {
-                                                "path": "/healthz",
-                                                "prefix_rewrite": "/server_info",
-                                                "timeout_ms": 10000,
-                                                "weighted_clusters": {
-                                                    "clusters": [
-                                                        {
-                                                            "name": "cluster_healthz",
-                                                            "weight": 100
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                "prefix": "/noiap/whoami",
-                                                "prefix_rewrite": "/",
-                                                "timeout_ms": 10000,
-                                                "weighted_clusters": {
-                                                    "clusters": [
-                                                        {
-                                                            "name": "cluster_iap_app",
-                                                            "weight": 100
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                "prefix": "/whoami",
-                                                "prefix_rewrite": "/",
-                                                "timeout_ms": 10000,
-                                                "weighted_clusters": {
-                                                    "clusters": [
-                                                        {
-                                                            "name": "cluster_iap_app",
-                                                            "weight": 100
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                "prefix": "/hub",
-                                                "prefix_rewrite": "/hub",
-                                                "timeout_ms": 600000,
-                                                "use_websocket": true,
-                                                "weighted_clusters": {
-                                                    "clusters": [
-                                                        {
-                                                            "name": "cluster_jupyter",
-                                                            "weight": 100
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                "prefix": "/user",
-                                                "prefix_rewrite": "/user",
-                                                "timeout_ms": 600000,
-                                                "use_websocket": true,
-                                                "weighted_clusters": {
-                                                    "clusters": [
-                                                        {
-                                                            "name": "cluster_jupyter",
-                                                            "weight": 100
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                "prefix": "/tfjobs",
-                                                "prefix_rewrite": "/tfjobs",
-                                                "timeout_ms": 10000,
-                                                "weighted_clusters": {
-                                                    "clusters": [
-                                                        {
-                                                            "name": "cluster_tfjobs",
-                                                            "weight": 100
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                "prefix": "/istio",
-                                                "timeout_ms": 10000,
-                                                "weighted_clusters": {
-                                                    "clusters": [
-                                                        {
-                                                            "name": "cluster_istiogateway",
-                                                            "weight": 100
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                "prefix": "/",
-                                                "prefix_rewrite": "/",
-                                                "timeout_ms": 10000,
-                                                "use_websocket": true,
-                                                "weighted_clusters": {
-                                                    "clusters": [
-                                                        {
-                                                            "name": "cluster_ambassador",
-                                                            "weight": 100
-                                                        }
-                                                    ]
-                                                }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            "stat_prefix": "ingress_http"
-                        },
-                        "name": "http_connection_manager",
-                        "type": "read"
-                    }
-                ]
-            }
-        ],
-        "stats_flush_interval_ms": 1000,
-        "statsd_udp_ip_address": "127.0.0.1:8025"
-    }
+  healthcheck_route.yaml: |
+    apiVersion: networking.istio.io/v1alpha3
+    kind: VirtualService
+    metadata:
+      name: default-routes
+      namespace: $(namespace)
+    spec:
+      hosts:
+      - "*"
+      gateways:
+      - kubeflow-gateway
+      http:
+      - match:
+        - uri:
+            exact: /healthz
+        route:
+        - destination:
+            port:
+              number: 80
+            host: whoami-app.kubeflow.svc.cluster.local
+      - match:
+        - uri:
+            exact: /whoami
+        route:
+        - destination:
+            port:
+              number: 80
+            host: whoami-app.kubeflow.svc.cluster.local
+    ---
+    apiVersion: networking.istio.io/v1alpha3
+    kind: Gateway
+    metadata:
+      name: kubeflow-gateway
+      namespace: $(namespace)
+    spec:
+      selector:
+        istio: ingressgateway
+      servers:
+      - port:
+          number: 80
+          name: http
+          protocol: HTTP
+        hosts:
+        - "*"
   setup_backend.sh: |
     #!/usr/bin/env bash
     #
@@ -465,7 +184,7 @@ data:
     # Print out the config for debugging
     gcloud config list
 
-    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[0].nodePort}')
+    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[?(@.name=="http2")}.nodePort')
     echo "node port is ${NODE_PORT}"
 
     while [[ -z ${BACKEND_NAME} ]]; do
@@ -497,9 +216,9 @@ data:
       kubectl get configmap -n ${NAMESPACE} envoy-config -o jsonpath='{.data.envoy-config\.json}' |
         sed -e "s|{{JWT_AUDIENCE}}|${JWT_AUDIENCE}|g" > /var/shared/envoy-config.json
     else
-      # Apply the jwt validation policy
-      cat /var/envoy-config/jwt-policy-template.yaml | sed -e "s|{{JWT_AUDIENCE}}|${JWT_AUDIENCE}|g" > /var/shared/jwt-policy.yaml
-      kubectl apply -f /var/shared/jwt-policy.yaml
+      # Use kubectl patch.
+       echo patch JWT audience: ${JWT_AUDIENCE}
+       kubectl -n ${NAMESPACE} patch policy ingress-jwt --type json -p '[{"op": "replace", "path": "/spec/origins/0/jwt/audiences/0", "value": "'${JWT_AUDIENCE}'"}]'
     fi
 
     echo "Clearing lock on service annotation"
@@ -532,6 +251,7 @@ data:
 
     [ -z ${NAMESPACE} ] && echo Error NAMESPACE must be set && exit 1
     [ -z ${SERVICE} ] && echo Error SERVICE must be set && exit 1
+    [ -z ${INGRESS_NAME} ] && echo Error INGRESS_NAME must be set && exit 1
 
     PROJECT=$(curl -s -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/project/project-id)
     if [ -z ${PROJECT} ]; then
@@ -542,7 +262,17 @@ data:
     # Activate the service account, allow 5 retries
     for i in {1..5}; do gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS} && break || sleep 10; done
 
-    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[0].nodePort}')
+    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+    echo node port is ${NODE_PORT}
+
+    while [[ -z ${BACKEND_NAME} ]]; do
+      BACKENDS=$(kubectl --namespace=${NAMESPACE} get ingress ${INGRESS_NAME} -o jsonpath='{.metadata.annotations.ingress\.kubernetes\.io/backends}')
+      echo "fetching backends info with ${INGRESS_NAME}: ${BACKENDS}"
+      BACKEND_NAME=$(echo $BACKENDS | grep -o "k8s-be-${NODE_PORT}--[0-9a-z]\+")
+      echo "backend name is ${BACKEND_NAME}"
+      sleep 2
+    done
+
     while [[ -z ${BACKEND_SERVICE} ]];
     do BACKEND_SERVICE=$(gcloud --project=${PROJECT} compute backend-services list --filter=name~k8s-be-${NODE_PORT}- --uri);
     echo "Waiting for the backend-services resource PROJECT=${PROJECT} NODEPORT=${NODE_PORT} SERVICE=${SERVICE}...";
@@ -550,10 +280,12 @@ data:
     done
 
     while [[ -z ${HEALTH_CHECK_URI} ]];
-    do HEALTH_CHECK_URI=$(gcloud compute --project=${PROJECT} health-checks list --filter=name~k8s-be-${NODE_PORT}- --uri);
+    do HEALTH_CHECK_URI=$(gcloud compute --project=${PROJECT} health-checks list --filter=name~${BACKEND_NAME} --uri);
     echo "Waiting for the healthcheck resource PROJECT=${PROJECT} NODEPORT=${NODE_PORT} SERVICE=${SERVICE}...";
     sleep 2;
     done
+
+    echo health check URI is ${HEALTH_CHECK_URI}
 
     # Since we create the envoy-ingress ingress object before creating the envoy
     # deployment object, healthcheck will not be configured correctly in the GCP
@@ -561,8 +293,10 @@ data:
     # / instead of the intended /healthz.
     # Manually update the healthcheck request path to /healthz
     if [[ ${HEALTHCHECK_PATH} ]]; then
+      echo Running health checks update ${HEALTH_CHECK_URI} with ${HEALTHCHECK_PATH}
       gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=${HEALTHCHECK_PATH}
     else
+      echo Running health checks update ${HEALTH_CHECK_URI} with /healthz
       gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=/healthz
     fi
 
@@ -580,6 +314,7 @@ data:
 kind: ConfigMap
 metadata:
   name: envoy-config
+  namespace: $(istioNamespace)
 ---
 apiVersion: v1
 data:
@@ -608,141 +343,16 @@ data:
 kind: ConfigMap
 metadata:
   name: ingress-bootstrap-config
+  namespace: $(istioNamespace)
+---
 `)
   th.writeF("/manifests/gcp/iap-ingress/base/deployment.yaml", `
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: envoy
-spec:
-  replicas: 3
-  template:
-    metadata:
-      labels:
-        service: envoy
-    spec:
-      containers:
-      - command:
-        - /usr/local/bin/envoy
-        - -c
-        - /etc/envoy/envoy-config.json
-        - --log-level
-        - info
-        - --base-id
-        - "27000"
-        image: gcr.io/kubeflow-images-public/envoy:v20180309-0fb4886b463698702b6a08955045731903a18738
-        imagePullPolicy: Always
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 30
-        name: envoy
-        ports:
-        - containerPort: 8080
-        - containerPort: 8001
-        - containerPort: 8025
-        readinessProbe:
-          httpGet:
-            path: /healthz
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 30
-        resources:
-          limits:
-            cpu: 1
-            memory: 400Mi
-          requests:
-            cpu: 200m
-            memory: 100Mi
-        volumeMounts:
-        - mountPath: /etc/envoy
-          name: shared
-      - command:
-        - sh
-        - /var/envoy-config/configure_envoy_for_iap.sh
-        env:
-        - name: NAMESPACE
-          value: kubeflow
-        - name: SERVICE
-          value: envoy
-        - name: ENVOY_ADMIN
-          value: http://localhost:8001
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
-        image: gcr.io/kubeflow-images-public/ingress-setup:latest
-        name: iap
-        volumeMounts:
-        - mountPath: /var/envoy-config/
-          name: config-volume
-        - mountPath: /var/shared/
-          name: shared
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
-      restartPolicy: Always
-      serviceAccountName: envoy
-      volumes:
-      - configMap:
-          name: envoy-config
-        name: config-volume
-      - emptyDir:
-          medium: Memory
-        name: shared
-      - name: sa-key
-        secret:
-          secretName: admin-gcp-sa
----
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: iap-enabler
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        service: iap-enabler
-    spec:
-      containers:
-      - command:
-        - bash
-        - /var/envoy-config/setup_backend.sh
-        env:
-        - name: NAMESPACE
-          value: kubeflow
-        - name: SERVICE
-          value: envoy
-        - name: INGRESS_NAME
-          value: envoy-ingress
-        - name: ENVOY_ADMIN
-          value: http://localhost:8001
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
-        image: gcr.io/kubeflow-images-public/ingress-setup:latest
-        name: iap
-        volumeMounts:
-        - mountPath: /var/envoy-config/
-          name: config-volume
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
-      restartPolicy: Always
-      serviceAccountName: envoy
-      volumes:
-      - configMap:
-          name: envoy-config
-        name: config-volume
-      - name: sa-key
-        secret:
-          secretName: admin-gcp-sa
----
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
   name: whoami-app
+  namespace: $(istioNamespace)
 spec:
   replicas: 1
   template:
@@ -767,25 +377,73 @@ spec:
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 5
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: iap-enabler
+  namespace: $(istioNamespace)
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        service: iap-enabler
+    spec:
+      containers:
+      - command:
+        - bash
+        - /var/envoy-config/setup_backend.sh
+        env:
+        - name: NAMESPACE
+          value: $(istioNamespace)
+        - name: SERVICE
+          value: istio-ingressgateway
+        - name: INGRESS_NAME
+          value: $(ingressName)
+        - name: ENVOY_ADMIN
+          value: http://localhost:8001
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/run/secrets/sa/admin-gcp-sa.json
+        - name: USE_ISTIO
+          value: "true"
+        image: gcr.io/kubeflow-images-public/ingress-setup:latest
+        name: iap
+        volumeMounts:
+        - mountPath: /var/envoy-config/
+          name: config-volume
+        - mountPath: /var/run/secrets/sa
+          name: sa-key
+          readOnly: true
+      restartPolicy: Always
+      serviceAccountName: envoy
+      volumes:
+      - configMap:
+          name: envoy-config
+        name: config-volume
+      - name: sa-key
+        secret:
+          secretName: $(secretName)
 `)
   th.writeF("/manifests/gcp/iap-ingress/base/ingress.yaml", `
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   annotations:
-    certmanager.k8s.io/issuer: letsencrypt-prod
+    certmanager.k8s.io/issuer: $(issuer)
     ingress.kubernetes.io/ssl-redirect: "true"
-    kubernetes.io/ingress.global-static-ip-name: kubeflow-ip
+    kubernetes.io/ingress.global-static-ip-name: $(ipName)
     kubernetes.io/tls-acme: "true"
   name: envoy-ingress
+  namespace: $(istioNamespace)
 spec:
   rules:
-  - host: kubeflow.endpoints.constant-cubist-173123.cloud.goog
+  - host: $(hostname)
     http:
       paths:
       - backend:
-          serviceName: envoy
-          servicePort: 8080
+          serviceName: istio-ingressgateway
+          servicePort: 80
         path: /*
 `)
   th.writeF("/manifests/gcp/iap-ingress/base/job.yaml", `
@@ -793,6 +451,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: ingress-bootstrap
+  namespace: $(istioNamespace)
 spec:
   template:
     spec:
@@ -801,13 +460,25 @@ spec:
         - /var/ingress-config/ingress_bootstrap.sh
         env:
         - name: NAMESPACE
-          value: kubeflow
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: istioNamespace
         - name: TLS_SECRET_NAME
-          value: envoy-ingress-tls
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: secretName
         - name: TLS_HOST_NAME
-          value: kubeflow.endpoints.constant-cubist-173123.cloud.goog
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: hostname
         - name: INGRESS_NAME
-          value: envoy-ingress
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: ingressName
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
         name: bootstrap
         volumeMounts:
@@ -821,23 +492,19 @@ spec:
           name: ingress-bootstrap-config
         name: ingress-config
 `)
-  th.writeF("/manifests/gcp/iap-ingress/base/jwt-policy.yaml", `
+  th.writeF("/manifests/gcp/iap-ingress/base/policy.yaml", `
 apiVersion: authentication.istio.io/v1alpha1
 kind: Policy
 metadata:
   name: ingress-jwt
-  namespace: istio-system
+  namespace: $(istioNamespace)
 spec:
-  targets:
-  - name: istio-ingressgateway
-    ports:
-    - number: 80
   origins:
   - jwt:
-      issuer: https://cloud.google.com/iap
-      jwksUri: https://www.gstatic.com/iap/verify/public_key-jwk
       audiences:
       - TO_BE_PATCHED
+      issuer: $(issuer)
+      jwksUri: https://www.gstatic.com/iap/verify/public_key-jwk
       jwtHeaders:
       - x-goog-iap-jwt-assertion
       trigger_rules:
@@ -845,38 +512,26 @@ spec:
         - exact: /healthz
         - prefix: /.well-known/acme-challenge
   principalBinding: USE_ORIGIN
+  targets:
+  - name: istio-ingressgateway
+    ports:
+    - number: 80
 `)
   th.writeF("/manifests/gcp/iap-ingress/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: envoy
+  namespace: $(istioNamespace)
 `)
   th.writeF("/manifests/gcp/iap-ingress/base/service.yaml", `
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    beta.cloud.google.com/backend-config: '{"ports": {"envoy":"iap-backendconfig"}}'
-  labels:
-    service: envoy
-  name: envoy
-spec:
-  ports:
-  - name: envoy
-    port: 8080
-    targetPort: 8080
-  selector:
-    service: envoy
-  type: NodePort
----
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     app: whoami
   name: whoami-app
+  namespace: $(istioNamespace)
 spec:
   ports:
   - port: 80
@@ -892,6 +547,7 @@ metadata:
   labels:
     service: backend-updater
   name: backend-updater
+  namespace: $(istioNamespace)
 spec:
   serviceName: backend-updater
   selector:
@@ -908,11 +564,15 @@ spec:
         - /var/envoy-config/update_backend.sh
         env:
         - name: NAMESPACE
-          value: kubeflow
+          value: $(istioNamespace)
         - name: SERVICE
-          value: envoy
+          value: istio-ingressgateway
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /var/run/secrets/sa/admin-gcp-sa.json
+        - name: INGRESS_NAME
+          value: $(ingressName)
+        - name: USE_ISTIO
+          value: "true"
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
         name: backend-updater
         volumeMounts:
@@ -929,8 +589,89 @@ spec:
       - name: sa-key
         secret:
           secretName: admin-gcp-sa
-  # Workaround for https://github.com/kubernetes-sigs/kustomize/issues/677
-  volumeClaimTemplates: []
+`)
+  th.writeF("/manifests/gcp/iap-ingress/base/params.yaml", `
+varReference:
+- path: metadata/name
+  kind: Certificate
+- path: spec/origins/jwt/issuer
+  kind: Policy
+- path: metadata/annotations/getambassador.io\/config
+  kind: Service
+- path: spec/dnsNames
+  kind: Certificate
+- path: spec/issuerRef/name
+  kind: Certificate
+- path: metadata/annotations/kubernetes.io\/ingress.global-static-ip-name
+  kind: Ingress
+- path: spec/commonName
+  kind: Certificate
+- path: spec/secretName
+  kind: Certificate
+- path: spec/acme/config/domains
+  kind: Certificate
+- path: spec/acme/config/http01/ingress
+  kind: Certificate
+- path: metadata/name
+  kind: Ingress
+- path: spec/rules/host
+  kind: Ingress
+- path: metadata/annotations/certmanager.k8s.io\/issuer
+  kind: Ingress
+- path: spec/template/spec/volumes/secret/secretName
+  kind: Deployment
+- path: spec/template/spec/volumes/secret/secretName
+  kind: StatefulSet
+- path: metadata/name
+  kind: CloudEndpoint
+- path: spec/project
+  kind: CloudEndpoint
+- path: spec/targetIngress/name
+  kind: CloudEndpoint
+- path: spec/targetIngress/namespace
+  kind: CloudEndpoint
+- path: spec/iap/oauthclientCredentials/secretName
+  kind: BackendConfig
+- path: metadata/namespace
+  kind: BackendConfig
+- path: metadata/namespace
+  kind: Certificate
+- path: metadata/namespace
+  kind: CloudEndpoint
+- path: metadata/namespace
+  kind: ClusterRoleBinding
+- path: metadata/namespace
+  kind: ClusterRole
+- path: metadata/namespace
+  kind: ConfigMap
+- path: metadata/namespace
+  kind: Deployment
+- path: metadata/namespace
+  kind: Ingress
+- path: metadata/namespace
+  kind: Job
+- path: metadata/namespace
+  kind: Policy
+- path: metadata/namespace
+  kind: ServiceAccount
+- path: metadata/namespace
+  kind: Service
+- path: metadata/namespace
+  kind: StatefulSet
+- path: data/healthcheck_route.yaml
+  kind: ConfigMap
+`)
+  th.writeF("/manifests/gcp/iap-ingress/base/params.env", `
+namespace=kubeflow
+appName=kubeflow
+hostname=
+ingressName=envoy-ingress
+ipName=
+issuer=letsencrypt-prod
+istioNamespace=istio-system
+oauthSecretName=kubeflow-oauth
+project=
+secretName=envoy-ingress-tls
 `)
   th.writeK("/manifests/gcp/iap-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -945,10 +686,12 @@ resources:
 - deployment.yaml
 - ingress.yaml
 - job.yaml
-- jwt-policy.yaml
+- policy.yaml
 - service-account.yaml
 - service.yaml
 - stateful-set.yaml
+namespace: kubeflow
+nameprefix: iap-ingress-
 commonLabels:
   kustomize.component: iap-ingress
 images:
@@ -961,6 +704,84 @@ images:
   - name: gcr.io/cloud-solutions-group/esp-sample-app
     newName: gcr.io/cloud-solutions-group/esp-sample-app
     newTag: 1.0.0
+configMapGenerator:
+- name: parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
+- name: appName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.appName
+- name: hostname
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.hostname
+- name: istioNamespace
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.istioNamespace
+- name: ipName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ipName
+- name: ingressName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ingressName
+- name: issuer
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.issuer
+- name: oauthSecretName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ipName
+- name: project
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.project
+- name: secretName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.secretName
+configurations:
+- params.yaml
 `)
 }
 
