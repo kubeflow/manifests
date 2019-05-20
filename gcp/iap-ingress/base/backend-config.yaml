@@ -2,8 +2,9 @@ apiVersion: cloud.google.com/v1beta1
 kind: BackendConfig
 metadata:
   name: iap-backendconfig
+  namespace: $(istioNamespace)
 spec:
   iap:
     enabled: true
     oauthclientCredentials:
-      secretName: kubeflow-oauth
+      secretName: $(oauthSecretName)
