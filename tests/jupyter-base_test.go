@@ -1944,15 +1944,15 @@ func TestJupyterBase(t *testing.T) {
   }
   targetPath := "../jupyter/jupyter/base"
   fsys := fs.MakeRealFS()
-  _loader, loaderErr := loader.NewLoader(targetPath, fsys)
-  if loaderErr != nil {
-    t.Fatalf("could not load kustomize loader: %v", loaderErr)
-  }
-  rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-  kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-  if err != nil {
-    th.t.Fatalf("Unexpected construction error %v", err)
-  }
+    _loader, loaderErr := loader.NewLoader(targetPath, fsys)
+    if loaderErr != nil {
+      t.Fatalf("could not load kustomize loader: %v", loaderErr)
+    }
+    rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
+    kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
+    if err != nil {
+      th.t.Fatalf("Unexpected construction error %v", err)
+    }
   n, err := kt.MakeCustomizedResMap()
   if err != nil {
     t.Fatalf("Err: %v", err)
