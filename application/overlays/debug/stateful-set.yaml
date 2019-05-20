@@ -12,7 +12,10 @@ spec:
         image: gcr.io/$(project)/application-controller:latest
         env:
         - name: project
-          value: $(project)
+          valueFrom:
+            configMapKeyRef:
+              name: application-controller-parameters
+              key: project
         ports:
         - containerPort: 2345
         securityContext:
