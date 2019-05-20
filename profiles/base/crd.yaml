@@ -10,7 +10,7 @@ spec:
   names:
     kind: Profile
     plural: profiles
-  scope: Cluster
+  scope: Namespaced
   validation:
     openAPIV3Schema:
       properties:
