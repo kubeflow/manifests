@@ -78,7 +78,7 @@ metadata:
       prefix: /pipeline
       rewrite: /pipeline
       timeout_ms: 300000
-      service: $(service).$(namespace)
+      service: $(service).$(ui-namespace)
       use_websocket: true
 spec:
   ports:
@@ -98,7 +98,7 @@ metadata:
       prefix: /data
       rewrite: /data
       timeout_ms: 300000
-      service: $(tensorboard-service).$(namespace)
+      service: $(tensorboard-service).$(ui-namespace)
       use_websocket: true
 spec:
   ports:
@@ -159,7 +159,7 @@ images:
 - name: gcr.io/ml-pipeline/frontend
   newTag: '0.1.18'
 vars:
-- name: namespace
+- name: ui-namespace
   objref:
     kind: Service
     name: service
