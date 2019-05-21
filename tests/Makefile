@@ -16,7 +16,7 @@ GOLANG_VERSION ?= 1.12.4
 GOPATH ?= $(HOME)/go
 
 # Comma seperated items within {} for more than one file
-EXCLUDE ?= 
+EXCLUDE ?=
 
 export GO111MODULE = on
 export GO = go
@@ -25,8 +25,9 @@ all: test
 
 generate: clean
 	@cd .. && hack/gen-test-targets.sh && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE) || echo done
+	$(GO) fmt ./...
 
-test: 
+test:
 	@GO111MODULE=on $(GO) test -v .
 
 clean:

@@ -1,18 +1,18 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/pkg/fs"
-  "sigs.k8s.io/kustomize/pkg/loader"
-  "sigs.k8s.io/kustomize/pkg/resmap"
-  "sigs.k8s.io/kustomize/pkg/resource"
-  "sigs.k8s.io/kustomize/pkg/target"
-  "testing"
+	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/pkg/fs"
+	"sigs.k8s.io/kustomize/pkg/loader"
+	"sigs.k8s.io/kustomize/pkg/resmap"
+	"sigs.k8s.io/kustomize/pkg/resource"
+	"sigs.k8s.io/kustomize/pkg/target"
+	"testing"
 )
 
 func writeBasicAuthIngressBase(th *KustTestHarness) {
-  th.writeF("/manifests/gcp/basic-auth-ingress/base/certificate.yaml", `
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/certificate.yaml", `
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
@@ -32,7 +32,7 @@ spec:
     name: $(issuer)
   secretName: $(secretName)
 `)
-  th.writeF("/manifests/gcp/basic-auth-ingress/base/cloud-endpoint.yaml", `
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/cloud-endpoint.yaml", `
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
 metadata:
@@ -42,7 +42,7 @@ spec:
   targetIngress:
     name: $(ingressName)
 `)
-  th.writeF("/manifests/gcp/basic-auth-ingress/base/cluster-role-binding.yaml", `
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -56,7 +56,7 @@ subjects:
   name: envoy
   namespace: kubeflow
 `)
-  th.writeF("/manifests/gcp/basic-auth-ingress/base/cluster-role.yaml", `
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
@@ -83,7 +83,7 @@ rules:
   - update
   - patch
 `)
-  th.writeF("/manifests/gcp/basic-auth-ingress/base/config-map.yaml", `
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/config-map.yaml", `
 apiVersion: v1
 data:
   update_backend.sh: |
@@ -188,7 +188,7 @@ metadata:
   name: ingress-bootstrap-config
 ---
 `)
-  th.writeF("/manifests/gcp/basic-auth-ingress/base/deployment.yaml", `
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -218,7 +218,7 @@ spec:
           successThreshold: 1
           timeoutSeconds: 5
 `)
-  th.writeF("/manifests/gcp/basic-auth-ingress/base/ingress.yaml", `
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/ingress.yaml", `
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -238,7 +238,7 @@ spec:
           servicePort: 80
         path: /*
 `)
-  th.writeF("/manifests/gcp/basic-auth-ingress/base/job.yaml", `
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/job.yaml", `
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -277,13 +277,13 @@ spec:
           name: ingress-bootstrap-config
         name: ingress-config
 `)
-  th.writeF("/manifests/gcp/basic-auth-ingress/base/service-account.yaml", `
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: envoy
 `)
-  th.writeF("/manifests/gcp/basic-auth-ingress/base/service.yaml", `
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -307,7 +307,7 @@ spec:
     app: whoami
   type: ClusterIP
 `)
-  th.writeF("/manifests/gcp/basic-auth-ingress/base/stateful-set.yaml", `
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/stateful-set.yaml", `
 apiVersion: apps/v1beta2
 kind: StatefulSet
 metadata:
@@ -363,7 +363,7 @@ spec:
   # Workaround for https://github.com/kubernetes-sigs/kustomize/issues/677
   volumeClaimTemplates: []
 `)
-  th.writeF("/manifests/gcp/basic-auth-ingress/base/params.yaml", `
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/params.yaml", `
 varReference:
 - path: metadata/name
   kind: Certificate
@@ -386,7 +386,7 @@ varReference:
 - path: metadata/annotations/certmanager.k8s.io\/issuer
   kind: Ingress
 `)
-  th.writeF("/manifests/gcp/basic-auth-ingress/base/params.env", `
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/params.env", `
 namespace=
 hostname=
 project=
@@ -396,7 +396,7 @@ privateGKECluster=false
 ingressName=envoy-ingress
 issuer=letsencrypt-prod
 `)
-  th.writeK("/manifests/gcp/basic-auth-ingress/base", `
+	th.writeK("/manifests/gcp/basic-auth-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -475,27 +475,27 @@ configurations:
 }
 
 func TestBasicAuthIngressBase(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/gcp/basic-auth-ingress/base")
-  writeBasicAuthIngressBase(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "../gcp/basic-auth-ingress/base"
-  fsys := fs.MakeRealFS()
-    _loader, loaderErr := loader.NewLoader(targetPath, fsys)
-    if loaderErr != nil {
-      t.Fatalf("could not load kustomize loader: %v", loaderErr)
-    }
-    rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-    kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-    if err != nil {
-      th.t.Fatalf("Unexpected construction error %v", err)
-    }
-  n, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := n.EncodeAsYaml()
-  th.assertActualEqualsExpected(m, string(expected))
+	th := NewKustTestHarness(t, "/manifests/gcp/basic-auth-ingress/base")
+	writeBasicAuthIngressBase(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../gcp/basic-auth-ingress/base"
+	fsys := fs.MakeRealFS()
+	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	n, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := n.EncodeAsYaml()
+	th.assertActualEqualsExpected(m, string(expected))
 }

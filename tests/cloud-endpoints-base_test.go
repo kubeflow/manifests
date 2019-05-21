@@ -1,18 +1,18 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/pkg/fs"
-  "sigs.k8s.io/kustomize/pkg/loader"
-  "sigs.k8s.io/kustomize/pkg/resmap"
-  "sigs.k8s.io/kustomize/pkg/resource"
-  "sigs.k8s.io/kustomize/pkg/target"
-  "testing"
+	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/pkg/fs"
+	"sigs.k8s.io/kustomize/pkg/loader"
+	"sigs.k8s.io/kustomize/pkg/resmap"
+	"sigs.k8s.io/kustomize/pkg/resource"
+	"sigs.k8s.io/kustomize/pkg/target"
+	"testing"
 )
 
 func writeCloudEndpointsBase(th *KustTestHarness) {
-  th.writeF("/manifests/gcp/cloud-endpoints/base/cluster-role-binding.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -25,7 +25,7 @@ subjects:
 - kind: ServiceAccount
   name: cloud-endpoints-controller
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/cluster-role.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
@@ -47,7 +47,7 @@ rules:
   - get
   - list
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/composite-controller.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/composite-controller.yaml", `
 apiVersion: metacontroller.k8s.io/v1alpha1
 kind: CompositeController
 metadata:
@@ -69,7 +69,7 @@ spec:
     resource: cloudendpoints
   resyncPeriodSeconds: 2
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/crd.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -86,7 +86,7 @@ spec:
   scope: Namespaced
   version: v1
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/deployment.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/deployment.yaml", `
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
@@ -125,13 +125,13 @@ spec:
         secret:
           secretName: $(secretName)
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/service-account.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: cloud-endpoints-controller
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/service.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -144,7 +144,7 @@ spec:
     app: cloud-endpoints-controller
   type: ClusterIP
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/params.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/params.yaml", `
 varReference:
 - path: spec/template/spec/volumes/secret/secretName
   kind: Deployment
@@ -153,11 +153,11 @@ varReference:
 - path: spec/hooks/sync/webhook/url
   kind: CompositeController
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/params.env", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/params.env", `
 namespace=kubeflow
 secretName=foo
 `)
-  th.writeK("/manifests/gcp/cloud-endpoints/base", `
+	th.writeK("/manifests/gcp/cloud-endpoints/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -201,27 +201,27 @@ configurations:
 }
 
 func TestCloudEndpointsBase(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/gcp/cloud-endpoints/base")
-  writeCloudEndpointsBase(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "../gcp/cloud-endpoints/base"
-  fsys := fs.MakeRealFS()
-    _loader, loaderErr := loader.NewLoader(targetPath, fsys)
-    if loaderErr != nil {
-      t.Fatalf("could not load kustomize loader: %v", loaderErr)
-    }
-    rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-    kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-    if err != nil {
-      th.t.Fatalf("Unexpected construction error %v", err)
-    }
-  n, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := n.EncodeAsYaml()
-  th.assertActualEqualsExpected(m, string(expected))
+	th := NewKustTestHarness(t, "/manifests/gcp/cloud-endpoints/base")
+	writeCloudEndpointsBase(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../gcp/cloud-endpoints/base"
+	fsys := fs.MakeRealFS()
+	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	n, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := n.EncodeAsYaml()
+	th.assertActualEqualsExpected(m, string(expected))
 }
