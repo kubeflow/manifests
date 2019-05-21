@@ -1,18 +1,18 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/pkg/fs"
-  "sigs.k8s.io/kustomize/pkg/loader"
-  "sigs.k8s.io/kustomize/pkg/resmap"
-  "sigs.k8s.io/kustomize/pkg/resource"
-  "sigs.k8s.io/kustomize/pkg/target"
-  "testing"
+	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/pkg/fs"
+	"sigs.k8s.io/kustomize/pkg/loader"
+	"sigs.k8s.io/kustomize/pkg/resmap"
+	"sigs.k8s.io/kustomize/pkg/resource"
+	"sigs.k8s.io/kustomize/pkg/target"
+	"testing"
 )
 
 func writeJupyterOverlaysMinikube(th *KustTestHarness) {
-  th.writeF("/manifests/jupyter/jupyter/overlays/minikube/persistent-volume.yaml", `
+	th.writeF("/manifests/jupyter/jupyter/overlays/minikube/persistent-volume.yaml", `
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -37,7 +37,7 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: local-storage
 `)
-  th.writeF("/manifests/jupyter/jupyter/overlays/minikube/persistent-volume-claim.yaml", `
+	th.writeF("/manifests/jupyter/jupyter/overlays/minikube/persistent-volume-claim.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -51,7 +51,7 @@ spec:
   storageClassName: local-storage
   volumeName: local-volume
 `)
-  th.writeF("/manifests/jupyter/jupyter/overlays/minikube/stateful-set.yaml", `
+	th.writeF("/manifests/jupyter/jupyter/overlays/minikube/stateful-set.yaml", `
 apiVersion: apps/v1beta2
 kind: StatefulSet
 metadata:
@@ -83,12 +83,12 @@ spec:
               name: parameters
               key: ACCESS_LOCAL_FS
 `)
-  th.writeF("/manifests/jupyter/jupyter/overlays/minikube/params.env", `
+	th.writeF("/manifests/jupyter/jupyter/overlays/minikube/params.env", `
 NOTEBOOK_UID=-1
 NOTEBOOK_GID=-1
 ACCESS_LOCAL_FS=true
 `)
-  th.writeK("/manifests/jupyter/jupyter/overlays/minikube", `
+	th.writeK("/manifests/jupyter/jupyter/overlays/minikube", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -105,7 +105,7 @@ generatorOptions:
 patchesStrategicMerge:
 - stateful-set.yaml
 `)
-  th.writeF("/manifests/jupyter/jupyter/base/config-map.yaml", `
+	th.writeF("/manifests/jupyter/jupyter/base/config-map.yaml", `
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -1769,7 +1769,7 @@ data:
       {% endif %}
     {% endblock %}
 `)
-  th.writeF("/manifests/jupyter/jupyter/base/role-binding.yaml", `
+	th.writeF("/manifests/jupyter/jupyter/base/role-binding.yaml", `
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
@@ -1795,7 +1795,7 @@ subjects:
 - kind: ServiceAccount
   name: jupyter
 `)
-  th.writeF("/manifests/jupyter/jupyter/base/role.yaml", `
+	th.writeF("/manifests/jupyter/jupyter/base/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
@@ -1858,7 +1858,7 @@ rules:
   - watch
   - list
 `)
-  th.writeF("/manifests/jupyter/jupyter/base/service-account.yaml", `
+	th.writeF("/manifests/jupyter/jupyter/base/service-account.yaml", `
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -1870,7 +1870,7 @@ kind: ServiceAccount
 metadata:
   name: jupyter-notebook
 `)
-  th.writeF("/manifests/jupyter/jupyter/base/service.yaml", `
+	th.writeF("/manifests/jupyter/jupyter/base/service.yaml", `
 ---
 apiVersion: v1
 kind: Service
@@ -1917,7 +1917,7 @@ spec:
     targetPort: 8000
   type: $(serviceType)
 `)
-  th.writeF("/manifests/jupyter/jupyter/base/stateful-set.yaml", `
+	th.writeF("/manifests/jupyter/jupyter/base/stateful-set.yaml", `
 apiVersion: apps/v1beta2
 kind: StatefulSet
 metadata:
@@ -1973,7 +1973,7 @@ spec:
     type: RollingUpdate
   volumeClaimTemplates: []
 `)
-  th.writeF("/manifests/jupyter/jupyter/base/params.yaml", `
+	th.writeF("/manifests/jupyter/jupyter/base/params.yaml", `
 varReference:
 - path: spec/template/spec/containers/imagePullPolicy
   kind: Deployment
@@ -1982,13 +1982,13 @@ varReference:
 - path: spec/type
   kind: Service
 `)
-  th.writeF("/manifests/jupyter/jupyter/base/params.env", `
+	th.writeF("/manifests/jupyter/jupyter/base/params.env", `
 STORAGE_CLASS=null
 KF_AUTHENTICATOR=null
 DEFAULT_JUPYTERLAB=false
 serviceType=ClusterIP
 `)
-  th.writeK("/manifests/jupyter/jupyter/base", `
+	th.writeK("/manifests/jupyter/jupyter/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -2032,27 +2032,27 @@ configurations:
 }
 
 func TestJupyterOverlaysMinikube(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/jupyter/jupyter/overlays/minikube")
-  writeJupyterOverlaysMinikube(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "../jupyter/jupyter/overlays/minikube"
-  fsys := fs.MakeRealFS()
-    _loader, loaderErr := loader.NewLoader(targetPath, fsys)
-    if loaderErr != nil {
-      t.Fatalf("could not load kustomize loader: %v", loaderErr)
-    }
-    rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-    kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-    if err != nil {
-      th.t.Fatalf("Unexpected construction error %v", err)
-    }
-  n, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := n.EncodeAsYaml()
-  th.assertActualEqualsExpected(m, string(expected))
+	th := NewKustTestHarness(t, "/manifests/jupyter/jupyter/overlays/minikube")
+	writeJupyterOverlaysMinikube(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../jupyter/jupyter/overlays/minikube"
+	fsys := fs.MakeRealFS()
+	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	n, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := n.EncodeAsYaml()
+	th.assertActualEqualsExpected(m, string(expected))
 }
