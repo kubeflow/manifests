@@ -597,7 +597,7 @@ varReference:
   kind: Certificate
 - path: spec/origins/jwt/issuer
   kind: Policy
-- path: metadata/annotations/getambassador.io/config
+- path: metadata/annotations/getambassador.io\/config
   kind: Service
 - path: spec/dnsNames
   kind: Certificate
