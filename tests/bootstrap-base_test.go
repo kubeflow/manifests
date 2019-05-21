@@ -225,7 +225,7 @@ spec:
   th.writeF("/manifests/admission-webhook/bootstrap/base/params.yaml", `
 varReference:
 - path: data/create_ca.sh
-  kind: ConfigMap 
+  kind: ConfigMap
 `)
   th.writeF("/manifests/admission-webhook/bootstrap/base/params.env", `
 namespace=kubeflow

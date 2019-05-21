@@ -16,55 +16,42 @@ func writeApiServiceBase(th *KustTestHarness) {
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  labels:
-    app: ml-pipeline
-  name: ml-pipeline
+  name: deployment
 spec:
-  selector:
-    matchLabels:
-      app: ml-pipeline
   template:
-    metadata:
-      labels:
-        app: ml-pipeline
     spec:
       containers:
-      - env:
+      - name: api-server
+        env:
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: gcr.io/ml-pipeline/api-server:0.1.14
+        image: gcr.io/ml-pipeline/api-server:0.1.18
         imagePullPolicy: IfNotPresent
-        name: ml-pipeline-api-server
         ports:
         - containerPort: 8888
         - containerPort: 8887
-      serviceAccountName: ml-pipeline
+      serviceAccountName: service-account
 `)
   th.writeF("/manifests/pipeline/api-service/base/role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  labels:
-    app: ml-pipeline
-  name: ml-pipeline
+  name: role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: ml-pipeline
+  name: role
 subjects:
 - kind: ServiceAccount
-  name: ml-pipeline
-  namespace: kubeflow
+  name: service-account
 `)
   th.writeF("/manifests/pipeline/api-service/base/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  labels:
-    app: ml-pipeline
-  name: ml-pipeline
+  name: role
 rules:
 - apiGroups:
   - argoproj.io
@@ -90,19 +77,17 @@ rules:
   - patch
   - delete
 `)
-  th.writeF("/manifests/pipeline/api-service/base/sa.yaml", `
+  th.writeF("/manifests/pipeline/api-service/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: ml-pipeline
+  name: service-account
 `)
   th.writeF("/manifests/pipeline/api-service/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    app: ml-pipeline
-  name: ml-pipeline
+  name: service
 spec:
   ports:
   - name: http
@@ -113,20 +98,22 @@ spec:
     port: 8887
     protocol: TCP
     targetPort: 8887
-  selector:
-    app: ml-pipeline
 `)
   th.writeK("/manifests/pipeline/api-service/base", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+nameprefix: ml-pipeline-
+commonLabels:
+  app: ml-pipeline
 resources:
 - deployment.yaml
 - role-binding.yaml
 - role.yaml
-- sa.yaml
+- service-account.yaml
 - service.yaml
-
 images:
 - name: gcr.io/ml-pipeline/api-server
-  newTag: '0.1.14'
+  newTag: '0.1.18'
 `)
 }
 
