@@ -589,6 +589,7 @@ spec:
       - name: sa-key
         secret:
           secretName: admin-gcp-sa
+  volumeClaimTemplates: []
 `)
   th.writeF("/manifests/gcp/iap-ingress/base/params.yaml", `
 varReference:

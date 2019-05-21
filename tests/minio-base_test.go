@@ -16,20 +16,15 @@ func writeMinioBase(th *KustTestHarness) {
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: minio
+  name: deployment
 spec:
-  selector:
-    matchLabels:
-      app: minio
   strategy:
     type: Recreate
   template:
-    metadata:
-      labels:
-        app: minio
     spec:
       containers:
-      - args:
+      - name: minio
+        args:
         - server
         - /data
         env:
@@ -38,7 +33,6 @@ spec:
         - name: MINIO_SECRET_KEY
           value: minio123
         image: minio/minio:RELEASE.2018-02-09T22-40-05Z
-        name: minio
         ports:
         - containerPort: 9000
         volumeMounts:
@@ -57,14 +51,14 @@ data:
   secretkey: bWluaW8xMjM=
 kind: Secret
 metadata:
-  name: mlpipeline-minio-artifact
+  name: artifact
 type: Opaque
 `)
   th.writeF("/manifests/pipeline/minio/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
-  name: minio-service
+  name: service
 spec:
   ports:
   - port: 9000
@@ -74,11 +68,15 @@ spec:
     app: minio
 `)
   th.writeK("/manifests/pipeline/minio/base", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+nameprefix: minio-
+commonLabels:
+  app: minio
 resources:
 - deployment.yaml
 - secret.yaml
 - service.yaml
-
 images:
 - name: minio/minio
   newTag: RELEASE.2018-02-09T22-40-05Z

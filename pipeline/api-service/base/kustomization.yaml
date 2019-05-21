@@ -11,4 +11,4 @@ resources:
 - service.yaml
 images:
 - name: gcr.io/ml-pipeline/api-server
-  newTag: '0.1.18'
+  newTag: '0.1.20'
