@@ -41,6 +41,14 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
   - services
   verbs:
   - '*'
@@ -48,6 +56,7 @@ rules:
   - kubeflow.org
   resources:
   - notebooks
+  - notebooks/status
   verbs:
   - '*'
 - apiGroups:

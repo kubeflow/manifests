@@ -80,7 +80,7 @@ spec:
   names:
     kind: Profile
     plural: profiles
-  scope: Cluster
+  scope: Namespaced
   validation:
     openAPIV3Schema:
       properties:
@@ -149,8 +149,8 @@ rules:
   - profiles
   verbs:
   - create
+  - watch
   - list
-  - get
 `)
   th.writeF("/manifests/profiles/base/role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
