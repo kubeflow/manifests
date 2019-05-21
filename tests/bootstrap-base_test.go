@@ -1,18 +1,18 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/pkg/fs"
-  "sigs.k8s.io/kustomize/pkg/loader"
-  "sigs.k8s.io/kustomize/pkg/resmap"
-  "sigs.k8s.io/kustomize/pkg/resource"
-  "sigs.k8s.io/kustomize/pkg/target"
-  "testing"
+	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/pkg/fs"
+	"sigs.k8s.io/kustomize/pkg/loader"
+	"sigs.k8s.io/kustomize/pkg/resmap"
+	"sigs.k8s.io/kustomize/pkg/resource"
+	"sigs.k8s.io/kustomize/pkg/target"
+	"testing"
 )
 
 func writeBootstrapBase(th *KustTestHarness) {
-  th.writeF("/manifests/admission-webhook/bootstrap/base/cluster-role-binding.yaml", `
+	th.writeF("/manifests/admission-webhook/bootstrap/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -25,7 +25,7 @@ subjects:
 - kind: ServiceAccount
   name: service-account
 `)
-  th.writeF("/manifests/admission-webhook/bootstrap/base/cluster-role.yaml", `
+	th.writeF("/manifests/admission-webhook/bootstrap/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
@@ -52,7 +52,7 @@ rules:
   - delete  
     
 `)
-  th.writeF("/manifests/admission-webhook/bootstrap/base/config-map.yaml", `
+	th.writeF("/manifests/admission-webhook/bootstrap/base/config-map.yaml", `
 apiVersion: v1
 data:
   create_ca.sh: |
@@ -185,13 +185,13 @@ kind: ConfigMap
 metadata:
   name: config-map
 `)
-  th.writeF("/manifests/admission-webhook/bootstrap/base/service-account.yaml", `
+	th.writeF("/manifests/admission-webhook/bootstrap/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: service-account
 `)
-  th.writeF("/manifests/admission-webhook/bootstrap/base/stateful-set.yaml", `
+	th.writeF("/manifests/admission-webhook/bootstrap/base/stateful-set.yaml", `
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -218,16 +218,16 @@ spec:
   # Workaround for https://github.com/kubernetes-sigs/kustomize/issues/677
   volumeClaimTemplates: []
 `)
-  th.writeF("/manifests/admission-webhook/bootstrap/base/params.yaml", `
+	th.writeF("/manifests/admission-webhook/bootstrap/base/params.yaml", `
 varReference:
 - path: data/create_ca.sh
   kind: ConfigMap 
 `)
-  th.writeF("/manifests/admission-webhook/bootstrap/base/params.env", `
+	th.writeF("/manifests/admission-webhook/bootstrap/base/params.env", `
 namespace=kubeflow
 webhookNamePrefix=admission-webhook-
 `)
-  th.writeK("/manifests/admission-webhook/bootstrap/base", `
+	th.writeK("/manifests/admission-webhook/bootstrap/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -271,27 +271,27 @@ vars:
 }
 
 func TestBootstrapBase(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/admission-webhook/bootstrap/base")
-  writeBootstrapBase(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "../admission-webhook/bootstrap/base"
-  fsys := fs.MakeRealFS()
-    _loader, loaderErr := loader.NewLoader(targetPath, fsys)
-    if loaderErr != nil {
-      t.Fatalf("could not load kustomize loader: %v", loaderErr)
-    }
-    rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-    kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-    if err != nil {
-      th.t.Fatalf("Unexpected construction error %v", err)
-    }
-  n, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := n.EncodeAsYaml()
-  th.assertActualEqualsExpected(m, string(expected))
+	th := NewKustTestHarness(t, "/manifests/admission-webhook/bootstrap/base")
+	writeBootstrapBase(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../admission-webhook/bootstrap/base"
+	fsys := fs.MakeRealFS()
+	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	n, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := n.EncodeAsYaml()
+	th.assertActualEqualsExpected(m, string(expected))
 }

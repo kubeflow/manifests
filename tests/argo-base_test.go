@@ -1,18 +1,18 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/pkg/fs"
-  "sigs.k8s.io/kustomize/pkg/loader"
-  "sigs.k8s.io/kustomize/pkg/resmap"
-  "sigs.k8s.io/kustomize/pkg/resource"
-  "sigs.k8s.io/kustomize/pkg/target"
-  "testing"
+	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/pkg/fs"
+	"sigs.k8s.io/kustomize/pkg/loader"
+	"sigs.k8s.io/kustomize/pkg/resmap"
+	"sigs.k8s.io/kustomize/pkg/resource"
+	"sigs.k8s.io/kustomize/pkg/target"
+	"testing"
 )
 
 func writeArgoBase(th *KustTestHarness) {
-  th.writeF("/manifests/argo/base/cluster-role-binding.yaml", `
+	th.writeF("/manifests/argo/base/cluster-role-binding.yaml", `
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -43,7 +43,7 @@ subjects:
 - kind: ServiceAccount
   name: argo-ui
 `)
-  th.writeF("/manifests/argo/base/cluster-role.yaml", `
+	th.writeF("/manifests/argo/base/cluster-role.yaml", `
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
@@ -122,7 +122,7 @@ rules:
   - list
   - watch
 `)
-  th.writeF("/manifests/argo/base/config-map.yaml", `
+	th.writeF("/manifests/argo/base/config-map.yaml", `
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -151,7 +151,7 @@ data:
     }
     }
 `)
-  th.writeF("/manifests/argo/base/crd.yaml", `
+	th.writeF("/manifests/argo/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -168,7 +168,7 @@ spec:
   scope: Namespaced
   version: v1alpha1
 `)
-  th.writeF("/manifests/argo/base/deployment.yaml", `
+	th.writeF("/manifests/argo/base/deployment.yaml", `
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -275,7 +275,7 @@ spec:
       serviceAccountName: argo
       terminationGracePeriodSeconds: 30
 `)
-  th.writeF("/manifests/argo/base/service-account.yaml", `
+	th.writeF("/manifests/argo/base/service-account.yaml", `
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -288,7 +288,7 @@ metadata:
   name: argo-ui
   namespace: kubeflow
 `)
-  th.writeF("/manifests/argo/base/service.yaml", `
+	th.writeF("/manifests/argo/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -313,7 +313,7 @@ spec:
   sessionAffinity: None
   type: NodePort
 `)
-  th.writeF("/manifests/argo/base/virtual-service.yaml", `
+	th.writeF("/manifests/argo/base/virtual-service.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
@@ -335,7 +335,7 @@ spec:
         port:
           number: 80
 `)
-  th.writeF("/manifests/argo/base/params.yaml", `
+	th.writeF("/manifests/argo/base/params.yaml", `
 varReference:
 - path: data/config
   kind: ConfigMap
@@ -346,19 +346,19 @@ varReference:
 - path: spec/http/route/destination/host
   kind: VirtualService
 `)
-  th.writeF("/manifests/argo/base/params.env", `
+	th.writeF("/manifests/argo/base/params.env", `
 executorImage=argoproj/argoexec:v2.2.0
 artifactRepositoryBucket=mlpipeline
 artifactRepositoryKeyPrefix=artifacts
 artifactRepositoryEndpoint=minio-service.kubeflow:9000
 artifactRepositoryInsecure=true
-artifactRepositoryAccessKeySecretName=mlpipeline-minio-artifact
+artifactRepositoryAccessKeySecretName=minio-artifact
 artifactRepositoryAccessKeySecretKey=accesskey
-artifactRepositorySecretKeySecretName=mlpipeline-minio-artifact
+artifactRepositorySecretKeySecretName=minio-artifact
 artifactRepositorySecretKeySecretKey=secretkey
 clusterDomain=cluster.local
 `)
-  th.writeK("/manifests/argo/base", `
+	th.writeK("/manifests/argo/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -468,27 +468,27 @@ configurations:
 }
 
 func TestArgoBase(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/argo/base")
-  writeArgoBase(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "../argo/base"
-  fsys := fs.MakeRealFS()
-    _loader, loaderErr := loader.NewLoader(targetPath, fsys)
-    if loaderErr != nil {
-      t.Fatalf("could not load kustomize loader: %v", loaderErr)
-    }
-    rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-    kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-    if err != nil {
-      th.t.Fatalf("Unexpected construction error %v", err)
-    }
-  n, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := n.EncodeAsYaml()
-  th.assertActualEqualsExpected(m, string(expected))
+	th := NewKustTestHarness(t, "/manifests/argo/base")
+	writeArgoBase(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../argo/base"
+	fsys := fs.MakeRealFS()
+	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	n, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := n.EncodeAsYaml()
+	th.assertActualEqualsExpected(m, string(expected))
 }
