@@ -1884,7 +1884,7 @@ spec:
 varReference:
 - path: spec/template/spec/containers/imagePullPolicy
   kind: Deployment
-- path: metadata/annotations/getambassador.io/config
+- path: metadata/annotations/getambassador.io\/config
   kind: Service
 - path: spec/type
   kind: Service
