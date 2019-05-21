@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: service
+  name: controller-service
 spec:
   ports:
   - port: 443

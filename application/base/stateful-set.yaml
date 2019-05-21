@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: stateful-set
 spec:
-  serviceName: service
+  serviceName: controller-service
   template:
     spec:
       containers:
@@ -17,4 +17,5 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
+      serviceAccountName: controller-service-account
   volumeClaimTemplates: []

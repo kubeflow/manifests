@@ -257,7 +257,7 @@ status:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: cluster-role
+  name: controller-cluster-role
 rules:
 - apiGroups:
   - '*'
@@ -280,26 +280,26 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: cluster-role-binding
+  name: controller-cluster-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: cluster-role
+  name: controller-cluster-role
 subjects:
 - kind: ServiceAccount
-  name: service-account
+  name: controller-service-account
 `)
 	th.writeF("/manifests/application/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: service-account
+  name: controller-service-account
 `)
 	th.writeF("/manifests/application/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
-  name: service
+  name: controller-service
 spec:
   ports:
   - port: 443
@@ -310,7 +310,7 @@ kind: StatefulSet
 metadata:
   name: stateful-set
 spec:
-  serviceName: service
+  serviceName: controller-service
   template:
     spec:
       containers:
@@ -324,6 +324,7 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
+      serviceAccountName: controller-service-account
   volumeClaimTemplates: []
 `)
 	th.writeK("/manifests/application/base", `
