@@ -11,7 +11,62 @@ import (
   "testing"
 )
 
-func writeApplicationBase(th *KustTestHarness) {
+func writeApplicationOverlaysDebug(th *KustTestHarness) {
+  th.writeF("/manifests/application/overlays/debug/stateful-set.yaml", `
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: stateful-set
+spec:
+  template:
+    spec:
+      containers:
+      - name: manager
+        command: ["/go/bin/dlv"]
+        args: ["--listen=:2345", "--headless=true", "--api-version=2", "exec", "/go/src/github.com/kubernetes-sigs/application/manager"]
+        image: gcr.io/$(project)/application-controller:latest
+        env:
+        - name: project
+          valueFrom:
+            configMapKeyRef:
+              name: application-controller-parameters
+              key: project
+        ports:
+        - containerPort: 2345
+        securityContext:
+          privileged: true
+`)
+  th.writeF("/manifests/application/overlays/debug/params.yaml", `
+varReference:
+- path: spec/template/spec/containers/image
+  kind: StatefulSet
+`)
+  th.writeF("/manifests/application/overlays/debug/params.env", `
+project=
+`)
+  th.writeK("/manifests/application/overlays/debug", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+patchesStrategicMerge:
+- stateful-set.yaml
+configMapGenerator:
+- name: application-controller-parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: project
+  objref:
+    kind: ConfigMap
+    name: application-controller-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.project
+configurations:
+- params.yaml
+`)
   th.writeF("/manifests/application/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -343,14 +398,14 @@ commonLabels:
 `)
 }
 
-func TestApplicationBase(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/application/base")
-  writeApplicationBase(th)
+func TestApplicationOverlaysDebug(t *testing.T) {
+  th := NewKustTestHarness(t, "/manifests/application/overlays/debug")
+  writeApplicationOverlaysDebug(th)
   m, err := th.makeKustTarget().MakeCustomizedResMap()
   if err != nil {
     t.Fatalf("Err: %v", err)
   }
-  targetPath := "../application/base"
+  targetPath := "../application/overlays/debug"
   fsys := fs.MakeRealFS()
     _loader, loaderErr := loader.NewLoader(targetPath, fsys)
     if loaderErr != nil {
