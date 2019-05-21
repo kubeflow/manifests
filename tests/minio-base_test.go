@@ -1,18 +1,18 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/pkg/fs"
-  "sigs.k8s.io/kustomize/pkg/loader"
-  "sigs.k8s.io/kustomize/pkg/resmap"
-  "sigs.k8s.io/kustomize/pkg/resource"
-  "sigs.k8s.io/kustomize/pkg/target"
-  "testing"
+	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/pkg/fs"
+	"sigs.k8s.io/kustomize/pkg/loader"
+	"sigs.k8s.io/kustomize/pkg/resmap"
+	"sigs.k8s.io/kustomize/pkg/resource"
+	"sigs.k8s.io/kustomize/pkg/target"
+	"testing"
 )
 
 func writeMinioBase(th *KustTestHarness) {
-  th.writeF("/manifests/pipeline/minio/base/deployment.yaml", `
+	th.writeF("/manifests/pipeline/minio/base/deployment.yaml", `
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
@@ -44,7 +44,7 @@ spec:
         persistentVolumeClaim:
           claimName: minio-pvc
 `)
-  th.writeF("/manifests/pipeline/minio/base/secret.yaml", `
+	th.writeF("/manifests/pipeline/minio/base/secret.yaml", `
 apiVersion: v1
 data:
   accesskey: bWluaW8=
@@ -54,7 +54,7 @@ metadata:
   name: artifact
 type: Opaque
 `)
-  th.writeF("/manifests/pipeline/minio/base/service.yaml", `
+	th.writeF("/manifests/pipeline/minio/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -67,7 +67,7 @@ spec:
   selector:
     app: minio
 `)
-  th.writeK("/manifests/pipeline/minio/base", `
+	th.writeK("/manifests/pipeline/minio/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 nameprefix: minio-
@@ -84,27 +84,27 @@ images:
 }
 
 func TestMinioBase(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/pipeline/minio/base")
-  writeMinioBase(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "../pipeline/minio/base"
-  fsys := fs.MakeRealFS()
-    _loader, loaderErr := loader.NewLoader(targetPath, fsys)
-    if loaderErr != nil {
-      t.Fatalf("could not load kustomize loader: %v", loaderErr)
-    }
-    rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-    kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-    if err != nil {
-      th.t.Fatalf("Unexpected construction error %v", err)
-    }
-  n, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := n.EncodeAsYaml()
-  th.assertActualEqualsExpected(m, string(expected))
+	th := NewKustTestHarness(t, "/manifests/pipeline/minio/base")
+	writeMinioBase(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../pipeline/minio/base"
+	fsys := fs.MakeRealFS()
+	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	n, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := n.EncodeAsYaml()
+	th.assertActualEqualsExpected(m, string(expected))
 }
