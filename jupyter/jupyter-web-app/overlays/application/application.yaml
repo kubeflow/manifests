@@ -4,6 +4,18 @@ metadata:
   name: application
 spec:
   componentKinds:
+  - group: core
+    kind: ConfigMap
+  - group: apps
+    kind: Deployment
+  - group: rbac.authorization.k8s.io
+    kind: RoleBinding
+  - group: rbac.authorization.k8s.io
+    kind: Role
+  - group: core
+    kind: ServiceAccount
+  - group: networking.istio.io
+    kind: VirtualService
   descriptor:
     type: kubeflow
     version: ""

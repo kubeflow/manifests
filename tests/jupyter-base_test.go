@@ -1936,27 +1936,27 @@ configurations:
 }
 
 func TestJupyterBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/jupyter/jupyter/base")
-	writeJupyterBase(th)
-	m, err := th.makeKustTarget().MakeCustomizedResMap()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	targetPath := "../jupyter/jupyter/base"
-	fsys := fs.MakeRealFS()
-	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	n, err := kt.MakeCustomizedResMap()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+  th := NewKustTestHarness(t, "/manifests/jupyter/jupyter/base")
+  writeJupyterBase(th)
+  m, err := th.makeKustTarget().MakeCustomizedResMap()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  targetPath := "../jupyter/jupyter/base"
+  fsys := fs.MakeRealFS()
+  _loader, loaderErr := loader.NewLoader(targetPath, fsys)
+  if loaderErr != nil {
+    t.Fatalf("could not load kustomize loader: %v", loaderErr)
+  }
+  rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
+  kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
+  if err != nil {
+    th.t.Fatalf("Unexpected construction error %v", err)
+  }
+  n, err := kt.MakeCustomizedResMap()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  expected, err := n.EncodeAsYaml()
+  th.assertActualEqualsExpected(m, string(expected))
 }
