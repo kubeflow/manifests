@@ -1,18 +1,18 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/pkg/fs"
-  "sigs.k8s.io/kustomize/pkg/loader"
-  "sigs.k8s.io/kustomize/pkg/resmap"
-  "sigs.k8s.io/kustomize/pkg/resource"
-  "sigs.k8s.io/kustomize/pkg/target"
-  "testing"
+	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/pkg/fs"
+	"sigs.k8s.io/kustomize/pkg/loader"
+	"sigs.k8s.io/kustomize/pkg/resmap"
+	"sigs.k8s.io/kustomize/pkg/resource"
+	"sigs.k8s.io/kustomize/pkg/target"
+	"testing"
 )
 
 func writeProfilesOverlaysDevices(th *KustTestHarness) {
-  th.writeF("/manifests/profiles/overlays/devices/deployment.yaml", `
+	th.writeF("/manifests/profiles/overlays/devices/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -30,7 +30,7 @@ spec:
             memory: "128Mi"
             cpu: "500m"
 `)
-  th.writeK("/manifests/profiles/overlays/devices", `
+	th.writeK("/manifests/profiles/overlays/devices", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -38,7 +38,7 @@ bases:
 patchesStrategicMerge:
 - deployment.yaml
 `)
-  th.writeF("/manifests/profiles/base/crd.yaml", `
+	th.writeF("/manifests/profiles/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -83,7 +83,7 @@ status:
   conditions: []
   storedVersions: []
 `)
-  th.writeF("/manifests/profiles/base/service-account.yaml", `
+	th.writeF("/manifests/profiles/base/service-account.yaml", `
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -95,7 +95,7 @@ kind: ServiceAccount
 metadata:
   name: service-account
 `)
-  th.writeF("/manifests/profiles/base/cluster-role-binding.yaml", `
+	th.writeF("/manifests/profiles/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -108,7 +108,7 @@ subjects:
 - kind: ServiceAccount
   name: controller-service-account
 `)
-  th.writeF("/manifests/profiles/base/role.yaml", `
+	th.writeF("/manifests/profiles/base/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -123,7 +123,7 @@ rules:
   - list
   - get
 `)
-  th.writeF("/manifests/profiles/base/role-binding.yaml", `
+	th.writeF("/manifests/profiles/base/role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -136,7 +136,7 @@ subjects:
 - kind: ServiceAccount
   name: service-account
 `)
-  th.writeF("/manifests/profiles/base/service.yaml", `
+	th.writeF("/manifests/profiles/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -145,7 +145,7 @@ spec:
   ports:
   - port: 443
 `)
-  th.writeF("/manifests/profiles/base/deployment.yaml", `
+	th.writeF("/manifests/profiles/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -161,7 +161,7 @@ spec:
         name: manager
       serviceAccountName: controller-service-account
 `)
-  th.writeK("/manifests/profiles/base", `
+	th.writeK("/manifests/profiles/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -184,27 +184,27 @@ images:
 }
 
 func TestProfilesOverlaysDevices(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/profiles/overlays/devices")
-  writeProfilesOverlaysDevices(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "../profiles/overlays/devices"
-  fsys := fs.MakeRealFS()
-    _loader, loaderErr := loader.NewLoader(targetPath, fsys)
-    if loaderErr != nil {
-      t.Fatalf("could not load kustomize loader: %v", loaderErr)
-    }
-    rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-    kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-    if err != nil {
-      th.t.Fatalf("Unexpected construction error %v", err)
-    }
-  n, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := n.EncodeAsYaml()
-  th.assertActualEqualsExpected(m, string(expected))
+	th := NewKustTestHarness(t, "/manifests/profiles/overlays/devices")
+	writeProfilesOverlaysDevices(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../profiles/overlays/devices"
+	fsys := fs.MakeRealFS()
+	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	n, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := n.EncodeAsYaml()
+	th.assertActualEqualsExpected(m, string(expected))
 }

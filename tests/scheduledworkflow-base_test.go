@@ -1,18 +1,18 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/pkg/fs"
-  "sigs.k8s.io/kustomize/pkg/loader"
-  "sigs.k8s.io/kustomize/pkg/resmap"
-  "sigs.k8s.io/kustomize/pkg/resource"
-  "sigs.k8s.io/kustomize/pkg/target"
-  "testing"
+	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/pkg/fs"
+	"sigs.k8s.io/kustomize/pkg/loader"
+	"sigs.k8s.io/kustomize/pkg/resmap"
+	"sigs.k8s.io/kustomize/pkg/resource"
+	"sigs.k8s.io/kustomize/pkg/target"
+	"testing"
 )
 
 func writeScheduledworkflowBase(th *KustTestHarness) {
-  th.writeF("/manifests/pipeline/scheduledworkflow/base/crd.yaml", `
+	th.writeF("/manifests/pipeline/scheduledworkflow/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -32,55 +32,43 @@ spec:
     served: true
     storage: true
 `)
-  th.writeF("/manifests/pipeline/scheduledworkflow/base/deployment.yaml", `
+	th.writeF("/manifests/pipeline/scheduledworkflow/base/deployment.yaml", `
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  labels:
-    app: ml-pipeline-scheduledworkflow
-  name: ml-pipeline-scheduledworkflow
+  name: deployment
 spec:
-  selector:
-    matchLabels:
-      app: ml-pipeline-scheduledworkflow
   template:
-    metadata:
-      labels:
-        app: ml-pipeline-scheduledworkflow
     spec:
       containers:
-      - env:
+      - name: container
+        env:
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: gcr.io/ml-pipeline/scheduledworkflow:0.1.14
+        image: gcr.io/ml-pipeline/scheduledworkflow:0.1.18
         imagePullPolicy: IfNotPresent
-        name: ml-pipeline-scheduledworkflow
-      serviceAccountName: ml-pipeline-scheduledworkflow
+      serviceAccountName: service-account
 `)
-  th.writeF("/manifests/pipeline/scheduledworkflow/base/role-binding.yaml", `
+	th.writeF("/manifests/pipeline/scheduledworkflow/base/role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  labels:
-    app: ml-pipeline-scheduledworkflow
-  name: ml-pipeline-scheduledworkflow
+  name: cluter-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cluster-admin
 subjects:
 - kind: ServiceAccount
-  name: ml-pipeline-scheduledworkflow
+  name: service-account
 `)
-  th.writeF("/manifests/pipeline/scheduledworkflow/base/role.yaml", `
+	th.writeF("/manifests/pipeline/scheduledworkflow/base/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  labels:
-    app: ml-pipeline-scheduledworkflow
-  name: ml-pipeline-scheduledworkflow
+  name: role
 rules:
 - apiGroups:
   - argoproj.io
@@ -107,49 +95,53 @@ rules:
   - patch
   - delete
 `)
-  th.writeF("/manifests/pipeline/scheduledworkflow/base/sa.yaml", `
+	th.writeF("/manifests/pipeline/scheduledworkflow/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: ml-pipeline-scheduledworkflow
+  name: service-account
 `)
-  th.writeK("/manifests/pipeline/scheduledworkflow/base", `
+	th.writeK("/manifests/pipeline/scheduledworkflow/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: kubeflow
+nameprefix: ml-pipeline-scheduledworkflow-
+commonLabels:
+  app: ml-pipeline-scheduledworkflow
 resources:
 - crd.yaml
 - deployment.yaml
 - role-binding.yaml
 - role.yaml
-- sa.yaml
+- service-account.yaml
 images:
 - name: gcr.io/ml-pipeline/scheduledworkflow
-  newTag: '0.1.14'
+  newTag: '0.1.18'
 `)
 }
 
 func TestScheduledworkflowBase(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/pipeline/scheduledworkflow/base")
-  writeScheduledworkflowBase(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "../pipeline/scheduledworkflow/base"
-  fsys := fs.MakeRealFS()
-    _loader, loaderErr := loader.NewLoader(targetPath, fsys)
-    if loaderErr != nil {
-      t.Fatalf("could not load kustomize loader: %v", loaderErr)
-    }
-    rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-    kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-    if err != nil {
-      th.t.Fatalf("Unexpected construction error %v", err)
-    }
-  n, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := n.EncodeAsYaml()
-  th.assertActualEqualsExpected(m, string(expected))
+	th := NewKustTestHarness(t, "/manifests/pipeline/scheduledworkflow/base")
+	writeScheduledworkflowBase(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../pipeline/scheduledworkflow/base"
+	fsys := fs.MakeRealFS()
+	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	n, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := n.EncodeAsYaml()
+	th.assertActualEqualsExpected(m, string(expected))
 }
