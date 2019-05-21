@@ -11,68 +11,7 @@ import (
 	"testing"
 )
 
-func writeMinioOverlaysMinioPd(th *KustTestHarness) {
-	th.writeF("/manifests/pipeline/minio/overlays/minioPd/persistent-volume.yaml", `
-apiVersion: v1
-kind: PersistentVolume
-metadata: 
-  name: persistent-volume
-spec:
-  capacity:
-    storage: 20Gi
-  accessModes: 
-  - ReadWriteOnce
-  gcePersistentDisk:
-    pdName: $(minioPd)
-    fsType: ext4
-`)
-	th.writeF("/manifests/pipeline/minio/overlays/minioPd/persistent-volume-claim.yaml", `
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: persistent-volume-claim
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 20Gi
-      storageClassName: ""
-      volumeName: persistent-volume-claim
-`)
-	th.writeF("/manifests/pipeline/minio/overlays/minioPd/params.yaml", `
-varReference:
-- path: spec/gcePersistentDisk/pdName
-  kind: PersistentVolume
-`)
-	th.writeF("/manifests/pipeline/minio/overlays/minioPd/params.env", `
-minioPd=dls-kf-storage-artifact-store
-`)
-	th.writeK("/manifests/pipeline/minio/overlays/minioPd", `
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-nameprefix: minio-
-bases:
-- ../../base
-resources:
-- persistent-volume.yaml
-- persistent-volume-claim.yaml
-configMapGenerator:
-- name: minio-parameters
-  env: params.env
-generatorOptions:
-  disableNameSuffixHash: true
-vars:
-- name: minioPd
-  objref:
-    kind: ConfigMap
-    name: minio-parameters
-    apiVersion: v1
-  fieldref:
-      fieldpath: data.minioPd
-configurations:
-- params.yaml
-`)
+func writeMinioBase(th *KustTestHarness) {
 	th.writeF("/manifests/pipeline/minio/base/deployment.yaml", `
 apiVersion: apps/v1beta1
 kind: Deployment
@@ -144,14 +83,14 @@ images:
 `)
 }
 
-func TestMinioOverlaysMinioPd(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/pipeline/minio/overlays/minioPd")
-	writeMinioOverlaysMinioPd(th)
+func TestMinioBase(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/pipeline/minio/base")
+	writeMinioBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../pipeline/minio/overlays/minioPd"
+	targetPath := "../pipeline/minio/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

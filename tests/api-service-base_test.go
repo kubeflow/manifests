@@ -27,7 +27,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: gcr.io/ml-pipeline/api-server:0.1.18
+        image: gcr.io/ml-pipeline/api-server:0.1.20
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8888
@@ -113,7 +113,7 @@ resources:
 - service.yaml
 images:
 - name: gcr.io/ml-pipeline/api-server
-  newTag: '0.1.18'
+  newTag: '0.1.20'
 `)
 }
 
