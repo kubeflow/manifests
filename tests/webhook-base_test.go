@@ -34,7 +34,7 @@ rules:
 - apiGroups:
   - kubeflow.org
   resources:
-  - podpresets
+  - poddefaults
   verbs:
   - get
   - watch
@@ -76,7 +76,7 @@ webhooks:
     service:
       name: $(serviceName)
       namespace: $(namespace)
-      path: /apply-podpreset
+      path: /apply-poddefault
   name: $(deploymentName).kubeflow.org
   rules:
   - apiGroups:
@@ -108,13 +108,13 @@ spec:
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  name: podpresets.kubeflow.org
+  name: poddefaults.kubeflow.org
 spec:
   group: kubeflow.org
   names:
-    kind: PodPreset
-    plural: podpresets
-    singular: podpreset
+    kind: PodDefault
+    plural: poddefaults
+    singular: poddefault
   scope: Namespaced
   version: v1alpha1
   validation:
