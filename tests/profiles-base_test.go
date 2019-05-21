@@ -67,7 +67,7 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: service-account
+  name: default-service-account
 `)
   th.writeF("/manifests/profiles/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
@@ -86,7 +86,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: role
+  name: default-role
 rules:
 - apiGroups:
   - kubeflow.org
@@ -101,14 +101,14 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: role-binding
+  name: default-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: role
+  name: default-role
 subjects:
 - kind: ServiceAccount
-  name: service-account
+  name: default-service-account
 `)
   th.writeF("/manifests/profiles/base/service.yaml", `
 apiVersion: v1
