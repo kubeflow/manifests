@@ -101,7 +101,7 @@ spec:
         name: kubebench-dashboard
         ports:
         - containerPort: 8084
-      seviceAccountName: kubebench-dashboard
+      serviceAccountName: kubebench-dashboard
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -119,7 +119,7 @@ spec:
       containers:
       - image: gcr.io/kubeflow-images-public/kubebench/kubebench-operator:v0.4.0-13-g262c593
         name: kubebench-operator
-      seviceAccountName: kubebench-operator
+      serviceAccountName: kubebench-operator
 `)
   th.writeF("/manifests/kubebench/base/role-binding.yaml", `
 ---
