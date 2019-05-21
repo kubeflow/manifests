@@ -207,12 +207,12 @@ spec:
                       type: integer
   version: v1
   versions:
-  - name: v1beta2
-    served: true
-    storage: false
   - name: v1
     served: true
     storage: true
+  - name: v1beta2
+    served: true
+    storage: false
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/deployment.yaml", `
 apiVersion: extensions/v1beta1
