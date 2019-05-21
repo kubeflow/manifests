@@ -32,28 +32,24 @@ spec:
     served: true
     storage: true
 `)
-	th.writeF("/manifests/pipeline/pipelines-viewer/base/clusterrole-binding.yaml", `
+	th.writeF("/manifests/pipeline/pipelines-viewer/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  labels:
-    app: ml-pipeline-viewer-crd
-  name: ml-pipeline-viewer-crd-role-binding
+  name: role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: ml-pipeline-viewer-controller-role
+  name: role
 subjects:
 - kind: ServiceAccount
-  name: ml-pipeline-viewer-crd-service-account
+  name: service-account
 `)
-	th.writeF("/manifests/pipeline/pipelines-viewer/base/clusterrole.yaml", `
+	th.writeF("/manifests/pipeline/pipelines-viewer/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  labels:
-    app: ml-pipeline-viewer-crd
-  name: ml-pipeline-viewer-controller-role
+  name: role
 rules:
 - apiGroups:
   - '*'
@@ -85,34 +81,20 @@ rules:
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  labels:
-    app: ml-pipeline-viewer-crd
-  name: ml-pipeline-viewer-controller-deployment
+  name: deployment
 spec:
-  selector:
-    matchLabels:
-      app: ml-pipeline-viewer-crd
   template:
-    metadata:
-      labels:
-        app: ml-pipeline-viewer-crd
     spec:
       containers:
-      - env:
+      - name: container
+        env:
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: gcr.io/ml-pipeline/viewer-crd-controller:0.1.14
+        image: gcr.io/ml-pipeline/viewer-crd-controller:0.1.18
         imagePullPolicy: Always
-        name: ml-pipeline-viewer-controller
-      serviceAccountName: ml-pipeline-viewer-crd-service-account
-`)
-	th.writeF("/manifests/pipeline/pipelines-viewer/base/sa.yaml", `
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: ml-pipeline-viewer-crd-service-account
+      serviceAccountName: service-account
 `)
 	th.writeF("/manifests/pipeline/pipelines-viewer/base/service.yaml", `
 apiVersion: v1
@@ -138,6 +120,12 @@ spec:
     targetPort: 3000
   selector:
     app: ml-pipeline-tensorboard-ui
+`)
+	th.writeF("/manifests/pipeline/pipelines-viewer/base/service-account.yaml", `
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: service-account
 `)
 	th.writeF("/manifests/pipeline/pipelines-viewer/base/virtual-service.yaml", `
 apiVersion: networking.istio.io/v1alpha3
@@ -176,17 +164,20 @@ viewerClusterDomain=cluster.local
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
+nameprefix: ml-pipeline-viewer- 
+commonLabels:
+  app: ml-pipeline-viewer
 resources:
 - crd.yaml
-- clusterrole-binding.yaml
-- clusterrole.yaml
+- cluster-role-binding.yaml
+- cluster-role.yaml
 - deployment.yaml
-- sa.yaml
 - service.yaml
+- service-account.yaml
 - virtual-service.yaml
 images:
 - name: gcr.io/ml-pipeline/viewer-crd-controller
-  newTag: '0.1.14'
+  newTag: '0.1.18'
 configMapGenerator:
 - name: viewer-parameters
   env: params.env

@@ -21,13 +21,11 @@ EXCLUDE ?=
 export GO111MODULE = on
 export GO = go
 
-fmt:
-	$(GO) fmt ./...
-
-all: fmt test
+all: test
 
 generate: clean
 	@cd .. && hack/gen-test-targets.sh && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE) || echo done
+	$(GO) fmt ./...
 
 test:
 	@GO111MODULE=on $(GO) test -v .

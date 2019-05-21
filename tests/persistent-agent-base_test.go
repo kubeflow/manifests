@@ -16,24 +16,20 @@ func writePersistentAgentBase(th *KustTestHarness) {
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  labels:
-    app: ml-pipeline-persistenceagent
-  name: ml-pipeline-persistenceagent
+  name: cluster-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cluster-admin
 subjects:
 - kind: ServiceAccount
-  name: ml-pipeline-persistenceagent
+  name: service-account
 `)
 	th.writeF("/manifests/pipeline/persistent-agent/base/clusterrole.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  labels:
-    app: ml-pipeline-persistenceagent
-  name: ml-pipeline-persistenceagent
+  name: cluster-role
 rules:
 - apiGroups:
   - argoproj.io
@@ -56,45 +52,41 @@ rules:
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  labels:
-    app: ml-pipeline-persistenceagent
-  name: ml-pipeline-persistenceagent
+  name: deployment
 spec:
-  selector:
-    matchLabels:
-      app: ml-pipeline-persistenceagent
   template:
-    metadata:
-      labels:
-        app: ml-pipeline-persistenceagent
     spec:
       containers:
-      - env:
+      - name: container
+        env:
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: gcr.io/ml-pipeline/persistenceagent:0.1.14
+        image: gcr.io/ml-pipeline/persistenceagent:0.1.18
         imagePullPolicy: IfNotPresent
-        name: ml-pipeline-persistenceagent
-      serviceAccountName: ml-pipeline-persistenceagent
+      serviceAccountName: service-account
 `)
-	th.writeF("/manifests/pipeline/persistent-agent/base/sa.yaml", `
+	th.writeF("/manifests/pipeline/persistent-agent/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: ml-pipeline-persistenceagent
+  name: service-account
 `)
 	th.writeK("/manifests/pipeline/persistent-agent/base", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+nameprefix: ml-pipeline-persistent-agent-
+commonLabels:
+  app: ml-pipeline-persistent-agent
 resources:
 - clusterrole-binding.yaml
 - clusterrole.yaml
 - deployment.yaml
-- sa.yaml
-
+- service-account.yaml
 images:
 - name: gcr.io/ml-pipeline/persistenceagent
-  newTag: '0.1.14'
+  newTag: '0.1.18'
 `)
 }
 

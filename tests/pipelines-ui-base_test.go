@@ -16,49 +16,36 @@ func writePipelinesUiBase(th *KustTestHarness) {
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  labels:
-    app: ml-pipeline-ui
-  name: ml-pipeline-ui
+  name: deployment
 spec:
-  selector:
-    matchLabels:
-      app: ml-pipeline-ui
   template:
-    metadata:
-      labels:
-        app: ml-pipeline-ui
     spec:
       containers:
-      - image: gcr.io/ml-pipeline/frontend:0.1.14
+      - name: deployment
+        image: gcr.io/ml-pipeline/frontend:0.1.18
         imagePullPolicy: IfNotPresent
-        name: ml-pipeline-ui
         ports:
         - containerPort: 3000
-      serviceAccountName: ml-pipeline-ui
+      serviceAccountName: service-account
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  labels:
-    app: ml-pipeline-ui
-  name: ml-pipeline-ui
+  name: role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: ml-pipeline-ui
+  name: role
 subjects:
 - kind: ServiceAccount
-  name: ml-pipeline-ui
-  namespace: kubeflow
+  name: service-account
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  labels:
-    app: ml-pipeline-ui
-  name: ml-pipeline-ui
+  name: role
 rules:
 - apiGroups:
   - ""
@@ -70,36 +57,53 @@ rules:
   - get
   - list
 `)
-	th.writeF("/manifests/pipeline/pipelines-ui/base/sa.yaml", `
+	th.writeF("/manifests/pipeline/pipelines-ui/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: ml-pipeline-ui
+  name: service-account
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/service.yaml", `
+---
 apiVersion: v1
 kind: Service
 metadata:
+  name: service
   annotations:
     getambassador.io/config: |-
       ---
       apiVersion: ambassador/v0
       kind:  Mapping
-      name: pipelineui-mapping
+      name: ml-pipeline-ui-service-mapping
       prefix: /pipeline
       rewrite: /pipeline
       timeout_ms: 300000
-      service: ml-pipeline-ui.$(ui-namespace)
+      service: $(service).$(namespace)
       use_websocket: true
-  labels:
-    app: ml-pipeline-ui
-  name: ml-pipeline-ui
 spec:
   ports:
   - port: 80
     targetPort: 3000
-  selector:
-    app: ml-pipeline-ui
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tensorboard-service
+  annotations:
+    getambassador.io/config: |-
+      ---
+      apiVersion: ambassador/v0
+      kind:  Mapping
+      name: ml-pipeline-ui-tensorboard-service-mapping
+      prefix: /data
+      rewrite: /data
+      timeout_ms: 300000
+      service: $(tensorboard-service).$(namespace)
+      use_websocket: true
+spec:
+  ports:
+  - port: 80
+    targetPort: 3000
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/virtual-service.yaml", `
 apiVersion: networking.istio.io/v1alpha3
@@ -135,27 +139,30 @@ varReference:
 uiClusterDomain=cluster.local
 `)
 	th.writeK("/manifests/pipeline/pipelines-ui/base", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+nameprefix: ml-pipeline-ui-
+commonLabels:
+  app: ml-pipeline-ui
 resources:
 - deployment.yaml
 - role-binding.yaml
 - role.yaml
-- sa.yaml
+- service-account.yaml
 - service.yaml
 - virtual-service.yaml
-namespace: kubeflow
 configMapGenerator:
 - name: ui-parameters
   env: params.env
-
 images:
 - name: gcr.io/ml-pipeline/frontend
-  newTag: '0.1.14'
-
+  newTag: '0.1.18'
 vars:
-- name: ui-namespace
+- name: namespace
   objref:
     kind: Service
-    name: ml-pipeline-ui
+    name: service
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
@@ -166,7 +173,20 @@ vars:
     version: v1
   fieldref:
     fieldpath: data.uiClusterDomain
-
+- name: service
+  objref:
+    kind: Service
+    name: service
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.name
+- name: tensorboard-service
+  objref:
+    kind: Service
+    name: tensorboard-service
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.name
 configurations:
 - params.yaml
 `)

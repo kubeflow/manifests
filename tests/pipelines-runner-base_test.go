@@ -12,28 +12,24 @@ import (
 )
 
 func writePipelinesRunnerBase(th *KustTestHarness) {
-	th.writeF("/manifests/pipeline/pipelines-runner/base/clusterrole-binding.yaml", `
+	th.writeF("/manifests/pipeline/pipelines-runner/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  labels:
-    app: pipeline-runner
-  name: pipeline-runner
+  name: cluster-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: pipeline-runner
+  name: cluster-role
 subjects:
 - kind: ServiceAccount
-  name: pipeline-runner
+  name: service-account
 `)
-	th.writeF("/manifests/pipeline/pipelines-runner/base/clusterrole.yaml", `
+	th.writeF("/manifests/pipeline/pipelines-runner/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  labels:
-    app: pipeline-runnergcr.io
-  name: pipeline-runner
+  name: cluster-role
 rules:
 - apiGroups:
   - ""
@@ -97,17 +93,23 @@ rules:
   verbs:
   - '*'
 `)
-	th.writeF("/manifests/pipeline/pipelines-runner/base/sa.yaml", `
+	th.writeF("/manifests/pipeline/pipelines-runner/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: pipeline-runner
+  name: service-account
 `)
 	th.writeK("/manifests/pipeline/pipelines-runner/base", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+nameprefix: ml-pipeline-runner-
+commonLabels:
+  app: ml-pipeline-runner
 resources:
-- clusterrole-binding.yaml
-- clusterrole.yaml
-- sa.yaml
+- cluster-role-binding.yaml
+- cluster-role.yaml
+- service-account.yaml
 `)
 }
 

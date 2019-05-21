@@ -36,51 +36,39 @@ spec:
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  labels:
-    app: ml-pipeline-scheduledworkflow
-  name: ml-pipeline-scheduledworkflow
+  name: deployment
 spec:
-  selector:
-    matchLabels:
-      app: ml-pipeline-scheduledworkflow
   template:
-    metadata:
-      labels:
-        app: ml-pipeline-scheduledworkflow
     spec:
       containers:
-      - env:
+      - name: container
+        env:
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: gcr.io/ml-pipeline/scheduledworkflow:0.1.14
+        image: gcr.io/ml-pipeline/scheduledworkflow:0.1.18
         imagePullPolicy: IfNotPresent
-        name: ml-pipeline-scheduledworkflow
-      serviceAccountName: ml-pipeline-scheduledworkflow
+      serviceAccountName: service-account
 `)
 	th.writeF("/manifests/pipeline/scheduledworkflow/base/role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  labels:
-    app: ml-pipeline-scheduledworkflow
-  name: ml-pipeline-scheduledworkflow
+  name: cluter-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cluster-admin
 subjects:
 - kind: ServiceAccount
-  name: ml-pipeline-scheduledworkflow
+  name: service-account
 `)
 	th.writeF("/manifests/pipeline/scheduledworkflow/base/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  labels:
-    app: ml-pipeline-scheduledworkflow
-  name: ml-pipeline-scheduledworkflow
+  name: role
 rules:
 - apiGroups:
   - argoproj.io
@@ -107,24 +95,28 @@ rules:
   - patch
   - delete
 `)
-	th.writeF("/manifests/pipeline/scheduledworkflow/base/sa.yaml", `
+	th.writeF("/manifests/pipeline/scheduledworkflow/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: ml-pipeline-scheduledworkflow
+  name: service-account
 `)
 	th.writeK("/manifests/pipeline/scheduledworkflow/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: kubeflow
+nameprefix: ml-pipeline-scheduledworkflow-
+commonLabels:
+  app: ml-pipeline-scheduledworkflow
 resources:
 - crd.yaml
 - deployment.yaml
 - role-binding.yaml
 - role.yaml
-- sa.yaml
+- service-account.yaml
 images:
 - name: gcr.io/ml-pipeline/scheduledworkflow
-  newTag: '0.1.14'
+  newTag: '0.1.18'
 `)
 }
 
