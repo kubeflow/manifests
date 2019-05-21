@@ -23,11 +23,14 @@ spec:
       containers:
       - name: manager
         command: ["/go/bin/dlv"]
-        args: ["--listen=:2345", "--headless=true", "--api-version=2", "exec", "/go/src/github.com/kubeflow/kubeflow/components/profile-controller/manager"]
+        args: ["--listen=:2345", "--headless=true", "--api-version=2", "exec", "/go/src/github.com/kubernetes-sigs/application/manager"]
         image: gcr.io/$(project)/application-controller:latest
         env:
         - name: project
-          value: $(project)
+          valueFrom:
+            configMapKeyRef:
+              name: application-controller-parameters
+              key: project
         ports:
         - containerPort: 2345
         securityContext:
@@ -51,6 +54,8 @@ patchesStrategicMerge:
 configMapGenerator:
 - name: application-controller-parameters
   env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
 vars:
 - name: project
   objref:
@@ -374,13 +379,6 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
-        resources:
-          limits:
-            cpu: 100m
-            memory: 30Mi
-          requests:
-            cpu: 100m
-            memory: 20Mi
   volumeClaimTemplates: []
 `)
 	th.writeK("/manifests/application/base", `

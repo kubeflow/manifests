@@ -324,13 +324,6 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
-        resources:
-          limits:
-            cpu: 100m
-            memory: 30Mi
-          requests:
-            cpu: 100m
-            memory: 20Mi
   volumeClaimTemplates: []
 `)
 	th.writeK("/manifests/application/base", `
