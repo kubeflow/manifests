@@ -4,7 +4,6 @@ metadata:
   labels:
     service: backend-updater
   name: backend-updater
-  namespace: $(istioNamespace)
 spec:
   serviceName: backend-updater
   selector:
