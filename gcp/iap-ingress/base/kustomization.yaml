@@ -104,5 +104,19 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.secretName
+- name: adminSaSecretName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.adminSaSecretName
+- name: tlsSecretName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.tlsSecretName
 configurations:
 - params.yaml
