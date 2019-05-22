@@ -11,7 +11,47 @@ import (
 	"testing"
 )
 
-func writeTfJobOperatorBase(th *KustTestHarness) {
+func writeTfJobOperatorOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/tf-training/tf-job-operator/overlays/istio/virtual-service.yaml", `
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: tf-job-dashboard
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /tfjobs/
+    rewrite:
+      uri: /tfjobs/
+    route:
+    - destination:
+        host: tf-job-dashboard.$(namespace).svc.$(clusterDomain)
+        port:
+          number: 80
+`)
+	th.writeF("/manifests/tf-training/tf-job-operator/overlays/istio/params.yaml", `
+varReference:
+- path: spec/http/route/destination/host
+  kind: VirtualService
+`)
+	th.writeK("/manifests/tf-training/tf-job-operator/overlays/istio", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+bases:
+- ../../base
+resources:
+- virtual-service.yaml
+commonLabels:
+  kustomize.component: tf-job-operator
+configurations:
+- params.yaml
+`)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/cluster-role-binding.yaml", `
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -359,14 +399,14 @@ configurations:
 `)
 }
 
-func TestTfJobOperatorBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/tf-training/tf-job-operator/base")
-	writeTfJobOperatorBase(th)
+func TestTfJobOperatorOverlaysIstio(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/tf-training/tf-job-operator/overlays/istio")
+	writeTfJobOperatorOverlaysIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../tf-training/tf-job-operator/base"
+	targetPath := "../tf-training/tf-job-operator/overlays/istio"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

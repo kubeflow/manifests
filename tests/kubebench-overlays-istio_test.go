@@ -11,7 +11,46 @@ import (
 	"testing"
 )
 
-func writeKubebenchBase(th *KustTestHarness) {
+func writeKubebenchOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/kubebench/overlays/istio/virtual-service.yaml", `
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: kubebench-dashboard
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /dashboard/
+    rewrite:
+      uri: /dashboard/
+    route:
+    - destination:
+        host: kubebench-dashboard.$(namespace).svc.$(clusterDomain)
+        port:
+          number: 80
+`)
+	th.writeF("/manifests/kubebench/overlays/istio/params.yaml", `
+varReference:
+- path: spec/http/route/destination/host
+  kind: VirtualService
+`)
+	th.writeK("/manifests/kubebench/overlays/istio", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- virtual-service.yaml
+commonLabels:
+  kustomize.component: kubebench
+configurations:
+- params.yaml
+`)
 	th.writeF("/manifests/kubebench/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -499,14 +538,14 @@ configurations:
 `)
 }
 
-func TestKubebenchBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/kubebench/base")
-	writeKubebenchBase(th)
+func TestKubebenchOverlaysIstio(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/kubebench/overlays/istio")
+	writeKubebenchOverlaysIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../kubebench/base"
+	targetPath := "../kubebench/overlays/istio"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

@@ -11,7 +11,48 @@ import (
 	"testing"
 )
 
-func writePipelinesViewerBase(th *KustTestHarness) {
+func writePipelinesViewerOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/pipeline/pipelines-viewer/overlays/istio/virtual-service.yaml", `
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ml-pipeline-tensorboard-ui
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /data
+    rewrite:
+      uri: /data
+    route:
+    - destination:
+        host: ml-pipeline-ui.$(namespace).svc.$(clusterDomain)
+        port:
+          number: 80
+    timeout: 300s
+`)
+	th.writeF("/manifests/pipeline/pipelines-viewer/overlays/istio/params.yaml", `
+varReference:
+- path: spec/http/route/destination/host
+  kind: VirtualService
+`)
+	th.writeK("/manifests/pipeline/pipelines-viewer/overlays/istio", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+nameprefix: ml-pipeline-viewer- 
+commonLabels:
+  app: ml-pipeline-viewer
+bases:
+- ../../base
+resources:
+- virtual-service.yaml
+configurations:
+- params.yaml
+`)
 	th.writeF("/manifests/pipeline/pipelines-viewer/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -150,14 +191,14 @@ configurations:
 `)
 }
 
-func TestPipelinesViewerBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/pipeline/pipelines-viewer/base")
-	writePipelinesViewerBase(th)
+func TestPipelinesViewerOverlaysIstio(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/pipeline/pipelines-viewer/overlays/istio")
+	writePipelinesViewerOverlaysIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../pipeline/pipelines-viewer/base"
+	targetPath := "../pipeline/pipelines-viewer/overlays/istio"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

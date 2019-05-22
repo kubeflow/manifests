@@ -17,7 +17,6 @@ apiVersion: cloud.google.com/v1beta1
 kind: BackendConfig
 metadata:
   name: iap-backendconfig
-  namespace: $(istioNamespace)
 spec:
   iap:
     enabled: true
@@ -28,8 +27,7 @@ spec:
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
-  name: $(tlsSecretName)
-  namespace: $(istioNamespace)
+  name: $(secretName)
 spec:
   acme:
     config:
@@ -50,12 +48,10 @@ apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
 metadata:
   name: $(appName)
-  namespace: $(istioNamespace)
 spec:
   project: $(project)
   targetIngress:
     name: $(ingressName)
-    namespace: $(istioNamespace)
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -75,7 +71,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: envoy
-  namespace: $(istioNamespace)
 rules:
 - apiGroups:
   - ""
@@ -314,7 +309,6 @@ data:
 kind: ConfigMap
 metadata:
   name: envoy-config
-  namespace: $(istioNamespace)
 ---
 apiVersion: v1
 data:
@@ -343,7 +337,6 @@ data:
 kind: ConfigMap
 metadata:
   name: ingress-bootstrap-config
-  namespace: $(istioNamespace)
 ---
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/deployment.yaml", `
@@ -352,7 +345,6 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: whoami-app
-  namespace: $(istioNamespace)
 spec:
   replicas: 1
   template:
@@ -382,7 +374,6 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: iap-enabler
-  namespace: $(istioNamespace)
 spec:
   replicas: 1
   template:
@@ -435,7 +426,6 @@ metadata:
     kubernetes.io/ingress.global-static-ip-name: $(ipName)
     kubernetes.io/tls-acme: "true"
   name: envoy-ingress
-  namespace: $(istioNamespace)
 spec:
   rules:
   - host: $(hostname)
@@ -451,7 +441,6 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: ingress-bootstrap
-  namespace: $(istioNamespace)
 spec:
   template:
     spec:
@@ -497,7 +486,6 @@ apiVersion: authentication.istio.io/v1alpha1
 kind: Policy
 metadata:
   name: ingress-jwt
-  namespace: $(istioNamespace)
 spec:
   origins:
   - jwt:
@@ -522,7 +510,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: envoy
-  namespace: $(istioNamespace)
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/service.yaml", `
 apiVersion: v1
@@ -531,7 +518,6 @@ metadata:
   labels:
     app: whoami
   name: whoami-app
-  namespace: $(istioNamespace)
 spec:
   ports:
   - port: 80
@@ -547,7 +533,6 @@ metadata:
   labels:
     service: backend-updater
   name: backend-updater
-  namespace: $(istioNamespace)
 spec:
   serviceName: backend-updater
   selector:
@@ -633,32 +618,6 @@ varReference:
   kind: CloudEndpoint
 - path: spec/iap/oauthclientCredentials/secretName
   kind: BackendConfig
-- path: metadata/namespace
-  kind: BackendConfig
-- path: metadata/namespace
-  kind: Certificate
-- path: metadata/namespace
-  kind: CloudEndpoint
-- path: metadata/namespace
-  kind: ClusterRoleBinding
-- path: metadata/namespace
-  kind: ClusterRole
-- path: metadata/namespace
-  kind: ConfigMap
-- path: metadata/namespace
-  kind: Deployment
-- path: metadata/namespace
-  kind: Ingress
-- path: metadata/namespace
-  kind: Job
-- path: metadata/namespace
-  kind: Policy
-- path: metadata/namespace
-  kind: ServiceAccount
-- path: metadata/namespace
-  kind: Service
-- path: metadata/namespace
-  kind: StatefulSet
 - path: data/healthcheck_route.yaml
   kind: ConfigMap
 `)
@@ -669,7 +628,6 @@ hostname=
 ingressName=envoy-ingress
 ipName=
 issuer=letsencrypt-prod
-istioNamespace=istio-system
 oauthSecretName=kubeflow-oauth
 project=
 adminSaSecretName=admin-gcp-sa
@@ -733,13 +691,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.hostname
-- name: istioNamespace
-  objref:
-    kind: ConfigMap
-    name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.istioNamespace
 - name: ipName
   objref:
     kind: ConfigMap

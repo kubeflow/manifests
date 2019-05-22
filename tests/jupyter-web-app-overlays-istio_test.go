@@ -11,7 +11,51 @@ import (
 	"testing"
 )
 
-func writeJupyterWebAppBase(th *KustTestHarness) {
+func writeJupyterWebAppOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/jupyter/jupyter-web-app/overlays/istio/virtual-service.yaml", `
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: jupyter-web-app
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - headers:
+      request:
+        add:
+          x-forwarded-prefix: /jupyter
+    match:
+    - uri:
+        prefix: /jupyter/
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: jupyter-web-app.$(namespace).svc.$(clusterDomain)
+        port:
+          number: 80
+`)
+	th.writeF("/manifests/jupyter/jupyter-web-app/overlays/istio/params.yaml", `
+varReference:
+- path: spec/http/route/destination/host
+  kind: VirtualService
+`)
+	th.writeK("/manifests/jupyter/jupyter-web-app/overlays/istio", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- virtual-service.yaml
+namePrefix: jupyter-web-app-
+namespace: kubeflow
+commonLabels:
+  app: jupyter-web-app
+  kustomize.component: jupyter-web-app
+configurations:
+- params.yaml
+`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -421,14 +465,14 @@ configurations:
 `)
 }
 
-func TestJupyterWebAppBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/jupyter/jupyter-web-app/base")
-	writeJupyterWebAppBase(th)
+func TestJupyterWebAppOverlaysIstio(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/jupyter/jupyter-web-app/overlays/istio")
+	writeJupyterWebAppOverlaysIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../jupyter/jupyter-web-app/base"
+	targetPath := "../jupyter/jupyter-web-app/overlays/istio"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
