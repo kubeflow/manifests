@@ -4,7 +4,6 @@ namespace: kubeflow
 resources:
 - deployment.yaml
 - service.yaml
-- virtual-service.yaml
 commonLabels:
   kustomize.component: tensorboard
 configMapGenerator:

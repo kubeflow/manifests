@@ -7,9 +7,8 @@ resources:
 - role.yaml
 - service-account.yaml
 - service.yaml
-- virtual-service.yaml
 configMapGenerator:
-- name: ui-parameters
+- name: parameters
   env: params.env
 images:
 - name: gcr.io/ml-pipeline/frontend
@@ -22,13 +21,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
-- name: ui-clusterDomain
+- name: clusterDomain
   objref:
     kind: ConfigMap
-    name: ui-parameters
+    name: parameters
     version: v1
   fieldref:
-    fieldpath: data.uiClusterDomain
+    fieldpath: data.clusterDomain
 - name: service
   objref:
     kind: Service

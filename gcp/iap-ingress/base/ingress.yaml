@@ -7,7 +7,6 @@ metadata:
     kubernetes.io/ingress.global-static-ip-name: $(ipName)
     kubernetes.io/tls-acme: "true"
   name: envoy-ingress
-  namespace: $(istioNamespace)
 spec:
   rules:
   - host: $(hostname)
