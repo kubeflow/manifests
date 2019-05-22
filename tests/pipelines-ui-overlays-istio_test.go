@@ -11,7 +11,70 @@ import (
 	"testing"
 )
 
-func writePipelinesUiBase(th *KustTestHarness) {
+func writePipelinesUiOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/pipeline/pipelines-ui/overlays/istio/virtual-service.yaml", `
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ml-pipeline-tensorboard-ui
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /data
+    rewrite:
+      uri: /data
+    route:
+    - destination:
+        host: $(service).$(namespace).svc.$(clusterDomain)
+        port:
+          number: 80
+    timeout: 300s
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ml-pipeline-ui
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /pipeline
+    rewrite:
+      uri: /pipeline
+    route:
+    - destination:
+        host: ml-pipeline-ui.$(namespace).svc.$(clusterDomain)
+        port:
+          number: 80
+    timeout: 300s
+`)
+	th.writeF("/manifests/pipeline/pipelines-ui/overlays/istio/params.yaml", `
+varReference:
+- path: spec/http/route/destination/host
+  kind: VirtualService
+`)
+	th.writeK("/manifests/pipeline/pipelines-ui/overlays/istio", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- virtual-service.yaml
+nameprefix: ml-pipeline-ui-
+commonLabels:
+  app: ml-pipeline-ui
+configurations:
+- params.yaml
+`)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/deployment.yaml", `
 apiVersion: apps/v1beta2
 kind: Deployment
@@ -183,14 +246,14 @@ configurations:
 `)
 }
 
-func TestPipelinesUiBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/pipeline/pipelines-ui/base")
-	writePipelinesUiBase(th)
+func TestPipelinesUiOverlaysIstio(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/pipeline/pipelines-ui/overlays/istio")
+	writePipelinesUiOverlaysIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../pipeline/pipelines-ui/base"
+	targetPath := "../pipeline/pipelines-ui/overlays/istio"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

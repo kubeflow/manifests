@@ -98,7 +98,7 @@ gen-target-resource() {
   fname=/manifests${dir##*/manifests}/$file
 
   echo '  th.writeF("'$fname'", `'
-  cat $dir/$file
+  cat $dir/$file | sed 's/`/U+0060/g'
   echo '`)'
 }
 

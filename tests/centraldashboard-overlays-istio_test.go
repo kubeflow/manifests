@@ -11,7 +11,47 @@ import (
 	"testing"
 )
 
-func writeCentraldashboardBase(th *KustTestHarness) {
+func writeCentraldashboardOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/common/centraldashboard/overlays/istio/virtual-service.yaml", `
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: centraldashboard
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: centraldashboard.$(namespace).svc.$(clusterDomain)
+        port:
+          number: 80
+`)
+	th.writeF("/manifests/common/centraldashboard/overlays/istio/params.yaml", `
+varReference:
+- path: spec/http/route/destination/host
+  kind: VirtualService
+`)
+	th.writeK("/manifests/common/centraldashboard/overlays/istio", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- virtual-service.yaml
+commonLabels:
+  kustomize.component: centraldashboard
+configurations:
+- params.yaml
+
+`)
 	th.writeF("/manifests/common/centraldashboard/base/deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -165,14 +205,14 @@ configurations:
 `)
 }
 
-func TestCentraldashboardBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/common/centraldashboard/base")
-	writeCentraldashboardBase(th)
+func TestCentraldashboardOverlaysIstio(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/common/centraldashboard/overlays/istio")
+	writeCentraldashboardOverlaysIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../common/centraldashboard/base"
+	targetPath := "../common/centraldashboard/overlays/istio"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
