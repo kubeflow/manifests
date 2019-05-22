@@ -6,7 +6,7 @@ rules:
 - apiGroups:
   - kubeflow.org
   resources:
-  - podpresets
+  - poddefaults
   verbs:
   - get
   - watch
