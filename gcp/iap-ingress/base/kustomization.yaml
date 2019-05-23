@@ -97,13 +97,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.project
-- name: secretName
-  objref:
-    kind: ConfigMap
-    name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.secretName
 - name: adminSaSecretName
   objref:
     kind: ConfigMap
