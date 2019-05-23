@@ -6,7 +6,7 @@ resources:
 - persistent-volume.yaml
 - persistent-volume-claim.yaml
 configMapGenerator:
-- name: overlayParams
+- name: overlay-params
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
@@ -14,14 +14,14 @@ vars:
 - name: mysqlPd
   objref:
     kind: ConfigMap
-    name: overlayParams
+    name: overlay-params
     apiVersion: v1
   fieldref:
     fieldpath: data.mysqlPd
 - name: mysqlPvName
   objref:
     kind: ConfigMap
-    name: overlayParams
+    name: overlay-params
     apiVersion: v1
   fieldref:
     fieldpath: data.mysqlPvName
