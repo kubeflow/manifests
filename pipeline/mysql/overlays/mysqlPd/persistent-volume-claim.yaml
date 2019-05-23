@@ -9,4 +9,4 @@ spec:
     requests:
       storage: 20Gi
     storageClassName: ""
-    volumeName: persistent-volume
+    volumeName: $(mysqlVolumeName)
