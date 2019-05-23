@@ -19,7 +19,7 @@ spec:
           valueFrom:
             configMapKeyRef:
               name: parameters
-              key: secretName
+              key: tlsSecretName
         - name: TLS_HOST_NAME
           valueFrom:
             configMapKeyRef:
