@@ -155,7 +155,7 @@ varReference:
 `)
 	th.writeF("/manifests/gcp/cloud-endpoints/base/params.env", `
 namespace=kubeflow
-secretName=foo
+secretName=admin-gcp-sa
 `)
 	th.writeK("/manifests/gcp/cloud-endpoints/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1

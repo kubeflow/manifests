@@ -28,7 +28,7 @@ spec:
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
-  name: $(secretName)
+  name: $(tlsSecretName)
   namespace: $(istioNamespace)
 spec:
   acme:
@@ -43,7 +43,7 @@ spec:
   issuerRef:
     kind: ClusterIssuer
     name: $(issuer)
-  secretName: $(secretName)
+  secretName: $(tlsSecretName)
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/cloud-endpoint.yaml", `
 apiVersion: ctl.isla.solutions/v1
@@ -423,7 +423,7 @@ spec:
         name: config-volume
       - name: sa-key
         secret:
-          secretName: $(secretName)
+          secretName: $(adminSaSecretName)
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/ingress.yaml", `
 apiVersion: extensions/v1beta1
@@ -468,7 +468,7 @@ spec:
           valueFrom:
             configMapKeyRef:
               name: parameters
-              key: secretName
+              key: tlsSecretName
         - name: TLS_HOST_NAME
           valueFrom:
             configMapKeyRef:
@@ -672,7 +672,8 @@ issuer=letsencrypt-prod
 istioNamespace=istio-system
 oauthSecretName=kubeflow-oauth
 project=
-secretName=envoy-ingress-tls
+adminSaSecretName=admin-gcp-sa
+tlsSecretName=envoy-ingress-tls
 `)
 	th.writeK("/manifests/gcp/iap-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -774,13 +775,20 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.project
-- name: secretName
+- name: adminSaSecretName
   objref:
     kind: ConfigMap
     name: parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.secretName
+    fieldpath: data.adminSaSecretName
+- name: tlsSecretName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.tlsSecretName
 configurations:
 - params.yaml
 `)
