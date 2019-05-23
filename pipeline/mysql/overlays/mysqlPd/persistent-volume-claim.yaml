@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: persistent-volume-claim
+  name: $(mysqlPvcName)
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
       storage: 20Gi
-      storageClassName: ""
-      volumeName: persistent-volume
+    storageClassName: ""
+    volumeName: persistent-volume

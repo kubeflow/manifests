@@ -19,5 +19,19 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.mysqlPd
+- name: mysqlPvName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.mysqlPvName
+- name: mysqlPvcName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.mysqlPvcName
 configurations:
 - params.yaml
