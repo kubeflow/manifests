@@ -1,7 +1,7 @@
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
-  name: $(secretName)
+  name: $(tlsSecretName)
   namespace: $(istioNamespace)
 spec:
   acme:
@@ -16,4 +16,4 @@ spec:
   issuerRef:
     kind: ClusterIssuer
     name: $(issuer)
-  secretName: $(secretName)
+  secretName: $(tlsSecretName)
