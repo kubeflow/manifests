@@ -3,7 +3,7 @@ varReference:
   kind: PersistentVolume
 - path: metadata/name
   kind: PersistentVolume
-- path: spec/resources/requests/volumeName
+- path: spec/volumeName
   kind: PersistentVolumeClaim
 - path: metadata/name
   kind: PersistentVolumeClaim
