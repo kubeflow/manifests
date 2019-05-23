@@ -8,5 +8,5 @@ spec:
   resources:
     requests:
       storage: 20Gi
-    storageClassName: ""
-    volumeName: $(mysqlPvName)
+  storageClassName: ""
+  volumeName: $(mysqlPvName)
