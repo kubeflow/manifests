@@ -1,0 +1,3 @@
+varReference:
+- path: spec/template/spec/volumes/persistentVolumeClaim/claimName
+  kind: PersistentVolume
