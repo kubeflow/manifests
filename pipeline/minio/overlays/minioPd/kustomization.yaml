@@ -19,5 +19,19 @@ vars:
     apiVersion: v1
   fieldref:
       fieldpath: data.minioPd
+- name: minioPvName
+  objref:
+    kind: ConfigMap
+    name: minio-parameters
+    apiVersion: v1
+  fieldref:
+      fieldpath: data.minioPvName
+- name: minioPvcName
+  objref:
+    kind: ConfigMap
+    name: minio-parameters
+    apiVersion: v1
+  fieldref:
+      fieldpath: data.minioPvcName
 configurations:
 - params.yaml

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: persistent-volume-claim
+  name: $(minioPvcName)
 spec:
   accessModes:
   - ReadWriteOnce
@@ -9,4 +9,4 @@ spec:
     requests:
       storage: 20Gi
       storageClassName: ""
-      volumeName: persistent-volume-claim
+      volumeName: $(minioPvName)
