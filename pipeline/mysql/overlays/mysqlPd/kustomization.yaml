@@ -33,12 +33,5 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.mysqlPvcName
-- name: mysqlVolumeName
-  objref:
-    kind: ConfigMap
-    name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.mysqlVolumeName
 configurations:
 - params.yaml
