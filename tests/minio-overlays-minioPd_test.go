@@ -15,12 +15,12 @@ func writeMinioOverlaysMinioPd(th *KustTestHarness) {
 	th.writeF("/manifests/pipeline/minio/overlays/minioPd/persistent-volume.yaml", `
 apiVersion: v1
 kind: PersistentVolume
-metadata: 
-  name: persistent-volume
+metadata:
+  name: $(minioPvName)
 spec:
   capacity:
     storage: 20Gi
-  accessModes: 
+  accessModes:
   - ReadWriteOnce
   gcePersistentDisk:
     pdName: $(minioPd)
@@ -30,28 +30,35 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: persistent-volume-claim
+  name: $(minioPvcName)
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
       storage: 20Gi
-      storageClassName: ""
-      volumeName: persistent-volume-claim
+  storageClassName: ""
+  volumeName: $(minioPvName)
 `)
 	th.writeF("/manifests/pipeline/minio/overlays/minioPd/params.yaml", `
 varReference:
 - path: spec/gcePersistentDisk/pdName
   kind: PersistentVolume
+- path: metadata/name
+  kind: PersistentVolume
+- path: spec/volumeName
+  kind: PersistentVolumeClaim
+- path: metadata/name
+  kind: PersistentVolumeClaim
 `)
 	th.writeF("/manifests/pipeline/minio/overlays/minioPd/params.env", `
 minioPd=dls-kf-storage-artifact-store
+minioPvName=
+minioPvcName=
 `)
 	th.writeK("/manifests/pipeline/minio/overlays/minioPd", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-nameprefix: minio-
 bases:
 - ../../base
 resources:
@@ -70,6 +77,20 @@ vars:
     apiVersion: v1
   fieldref:
       fieldpath: data.minioPd
+- name: minioPvName
+  objref:
+    kind: ConfigMap
+    name: minio-parameters
+    apiVersion: v1
+  fieldref:
+      fieldpath: data.minioPvName
+- name: minioPvcName
+  objref:
+    kind: ConfigMap
+    name: minio-parameters
+    apiVersion: v1
+  fieldref:
+      fieldpath: data.minioPvcName
 configurations:
 - params.yaml
 `)

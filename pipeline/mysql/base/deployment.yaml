@@ -8,7 +8,7 @@ spec:
   template:
     spec:
       containers:
-      - name: container
+      - name: mysql
         env:
         - name: MYSQL_ALLOW_EMPTY_PASSWORD
           value: "true"
@@ -18,8 +18,8 @@ spec:
           name: mysql
         volumeMounts:
         - mountPath: /var/lib/mysql
-          name: persistent-storage
+          name: mysql-persistent-storage
       volumes:
-      - name: persistent-storage
+      - name: mysql-persistent-storage
         persistentVolumeClaim:
-          claimName: ml-pipeline-mysql-persistent-volume-claim
+          claimName: $(mysqlPvcName)
