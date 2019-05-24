@@ -34,7 +34,11 @@ metadata:
       timeout_ms: 300000
       service: $(service).$(ui-namespace)
       use_websocket: true
+  labels:
+    app: ml-pipeline-tensorboard-ui
 spec:
   ports:
   - port: 80
     targetPort: 3000
+  selector:
+    app: ml-pipeline-tensorboard-ui
