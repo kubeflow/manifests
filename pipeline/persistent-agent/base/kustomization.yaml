@@ -21,7 +21,7 @@ vars:
     kind: Deployment
     name: ml-pipeline-persistenceagent
     apiVersion: v1beta1
-    fieldref:
-      fieldpath: metadata.namespace
+  fieldref:
+    fieldpath: metadata.namespace
 configurations:
 - params.yaml
