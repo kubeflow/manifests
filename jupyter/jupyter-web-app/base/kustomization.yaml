@@ -10,6 +10,7 @@ resources:
 - service-account.yaml
 - service.yaml
 - virtual-service.yaml
+- application.yaml  
 namePrefix: jupyter-web-app-
 namespace: kubeflow
 commonLabels:
