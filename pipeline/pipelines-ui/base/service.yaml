@@ -32,7 +32,7 @@ metadata:
       prefix: /data
       rewrite: /data
       timeout_ms: 300000
-      service: $(tensorboard-service).$(ui-namespace)
+      service: $(service).$(ui-namespace)
       use_websocket: true
 spec:
   ports:
