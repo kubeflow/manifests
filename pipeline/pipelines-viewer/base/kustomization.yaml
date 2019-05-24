@@ -17,13 +17,6 @@ configMapGenerator:
 - name: viewer-parameters
   env: params.env
 vars:
-- name: viewer-namespace
-  objref:
-    kind: Service
-    name: ml-pipeline-tensorboard-ui
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.namespace
 - name: viewer-clusterDomain
   objref:
     kind: ConfigMap
