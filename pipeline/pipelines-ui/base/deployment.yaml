@@ -5,7 +5,13 @@ metadata:
     app: ml-pipeline-ui
   name: ml-pipeline-ui
 spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-ui
   template:
+    metadata:
+      labels:
+        app: ml-pipeline-ui
     spec:
       containers:
       - name: ml-pipeline-ui

@@ -20,6 +20,8 @@ spec:
   ports:
   - port: 80
     targetPort: 3000
+  selector:
+    app: ml-pipeline-ui
 ---
 apiVersion: v1
 kind: Service
@@ -42,3 +44,5 @@ spec:
   ports:
   - port: 80
     targetPort: 3000
+  selector:
+    app: ml-pipeline-tensorboard-ui
