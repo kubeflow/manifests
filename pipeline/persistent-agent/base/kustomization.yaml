@@ -12,16 +12,3 @@ resources:
 images:
 - name: gcr.io/ml-pipeline/persistenceagent
   newTag: '0.1.18'
-configMapGenerator:
-- name: persistenceagent-parameters
-  env: params.env
-vars:
-- name: persistenceagent-namespace
-  objref:
-    kind: Deployment
-    name: ml-pipeline-persistenceagent
-    apiVersion: v1beta1
-  fieldref:
-    fieldpath: metadata.namespace
-configurations:
-- params.yaml
