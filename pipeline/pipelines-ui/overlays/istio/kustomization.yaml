@@ -4,8 +4,5 @@ bases:
 - ../../base
 resources:
 - virtual-service.yaml
-nameprefix: ml-pipeline-ui-
-commonLabels:
-  app: ml-pipeline-ui
 configurations:
 - params.yaml

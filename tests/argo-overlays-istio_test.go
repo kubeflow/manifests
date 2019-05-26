@@ -36,119 +36,16 @@ spec:
 `)
 	th.writeF("/manifests/argo/overlays/istio/params.yaml", `
 varReference:
-- path: data/config
-  kind: ConfigMap
-- path: data/config
-  kind: Deployment
-- path: metadata/annotations/getambassador.io\/config
-  kind: Service
 - path: spec/http/route/destination/host
   kind: VirtualService
 `)
 	th.writeK("/manifests/argo/overlays/istio", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+bases:
+- ../../base
 resources:
-- cluster-role-binding.yaml
-- cluster-role.yaml
-- config-map.yaml
-- crd.yaml
-- deployment.yaml
-- service-account.yaml
-- service.yaml
 - virtual-service.yaml
-commonLabels:
-  kustomize.component: argo
-images:
-  - name: argoproj/argoui
-    newName: argoproj/argoui
-    newTag: v2.2.0
-  - name: argoproj/workflow-controller
-    newName: argoproj/workflow-controller
-    newTag: v2.2.0
-configMapGenerator:
-- name: workflow-controller-parameters
-  env: params.env
-generatorOptions:
-  disableNameSuffixHash: true
-vars:
-- name: executorImage
-  objref:
-    kind: ConfigMap
-    name: workflow-controller-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.executorImage
-- name: artifactRepositoryBucket
-  objref:
-    kind: ConfigMap
-    name: workflow-controller-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.artifactRepositoryBucket
-- name: artifactRepositoryKeyPrefix
-  objref:
-    kind: ConfigMap
-    name: workflow-controller-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.artifactRepositoryKeyPrefix
-- name: artifactRepositoryEndpoint
-  objref:
-    kind: ConfigMap
-    name: workflow-controller-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.artifactRepositoryEndpoint
-- name: artifactRepositoryInsecure
-  objref:
-    kind: ConfigMap
-    name: workflow-controller-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.artifactRepositoryInsecure
-- name: artifactRepositoryAccessKeySecretName
-  objref:
-    kind: ConfigMap
-    name: workflow-controller-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.artifactRepositoryAccessKeySecretName
-- name: artifactRepositoryAccessKeySecretKey
-  objref:
-    kind: ConfigMap
-    name: workflow-controller-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.artifactRepositoryAccessKeySecretKey
-- name: artifactRepositorySecretKeySecretName
-  objref:
-    kind: ConfigMap
-    name: workflow-controller-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.artifactRepositorySecretKeySecretName
-- name: artifactRepositorySecretKeySecretKey
-  objref:
-    kind: ConfigMap
-    name: workflow-controller-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.artifactRepositorySecretKeySecretKey
-- name: clusterDomain
-  objref:
-    kind: ConfigMap
-    name: workflow-controller-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.clusterDomain
-- name: namespace
-  objref:
-    kind: Service
-    name: argo-ui
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.namespace
 configurations:
 - params.yaml
 `)
@@ -564,13 +461,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.artifactRepositorySecretKeySecretKey
-- name: clusterDomain
-  objref:
-    kind: ConfigMap
-    name: workflow-controller-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.clusterDomain
 - name: namespace
   objref:
     kind: Service

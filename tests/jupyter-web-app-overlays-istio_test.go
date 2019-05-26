@@ -48,11 +48,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - virtual-service.yaml
-namePrefix: jupyter-web-app-
-namespace: kubeflow
-commonLabels:
-  app: jupyter-web-app
-  kustomize.component: jupyter-web-app
 configurations:
 - params.yaml
 `)

@@ -42,13 +42,10 @@ varReference:
 	th.writeK("/manifests/tf-training/tf-job-operator/overlays/istio", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: kubeflow
 bases:
 - ../../base
 resources:
 - virtual-service.yaml
-commonLabels:
-  kustomize.component: tf-job-operator
 configurations:
 - params.yaml
 `)

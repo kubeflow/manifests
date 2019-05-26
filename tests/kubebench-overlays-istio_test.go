@@ -46,8 +46,6 @@ bases:
 - ../../base
 resources:
 - virtual-service.yaml
-commonLabels:
-  kustomize.component: kubebench
 configurations:
 - params.yaml
 `)

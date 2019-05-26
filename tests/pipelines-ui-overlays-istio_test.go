@@ -69,9 +69,6 @@ bases:
 - ../../base
 resources:
 - virtual-service.yaml
-nameprefix: ml-pipeline-ui-
-commonLabels:
-  app: ml-pipeline-ui
 configurations:
 - params.yaml
 `)
@@ -153,7 +150,7 @@ metadata:
       prefix: /pipeline
       rewrite: /pipeline
       timeout_ms: 300000
-      service: $(service).$(ui-namespace)
+      service: $(service).$(namespace)
       use_websocket: true
   labels:
     app: ml-pipeline-ui
@@ -177,7 +174,7 @@ metadata:
       prefix: /data
       rewrite: /data
       timeout_ms: 300000
-      service: $(service).$(ui-namespace)
+      service: $(service).$(namespace)
       use_websocket: true
   labels:
     app: ml-pipeline-tensorboard-ui
@@ -213,7 +210,7 @@ images:
 - name: gcr.io/ml-pipeline/frontend
   newTag: '0.1.18'
 vars:
-- name: ui-namespace
+- name: namespace
   objref:
     kind: Service
     name: ml-pipeline-ui
