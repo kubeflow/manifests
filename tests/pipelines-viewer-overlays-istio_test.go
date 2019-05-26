@@ -43,9 +43,6 @@ varReference:
 	th.writeK("/manifests/pipeline/pipelines-viewer/overlays/istio", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-nameprefix: ml-pipeline-viewer- 
-commonLabels:
-  app: ml-pipeline-viewer
 bases:
 - ../../base
 resources:

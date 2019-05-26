@@ -14,7 +14,7 @@ images:
 - name: gcr.io/ml-pipeline/frontend
   newTag: '0.1.18'
 vars:
-- name: ui-namespace
+- name: namespace
   objref:
     kind: Service
     name: ml-pipeline-ui
