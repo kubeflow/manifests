@@ -90,7 +90,7 @@ configurations:
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: deployment
+  name: mysql
 spec:
   strategy:
     type: Recreate
@@ -117,7 +117,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service
+  name: mysql
 spec:
   ports:
   - port: 3306
@@ -133,7 +133,8 @@ mysqlPvcName=
 	th.writeK("/manifests/pipeline/mysql/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-nameprefix: ml-pipeline-mysql-
+commonLabels:
+  app: mysql
 resources:
 - deployment.yaml
 - service.yaml

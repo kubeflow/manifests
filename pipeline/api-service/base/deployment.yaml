@@ -1,12 +1,12 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: deployment
+  name: ml-pipeline
 spec:
   template:
     spec:
       containers:
-      - name: api-server
+      - name: ml-pipeline-api-server
         env:
         - name: POD_NAMESPACE
           valueFrom:
@@ -17,4 +17,4 @@ spec:
         ports:
         - containerPort: 8888
         - containerPort: 8887
-      serviceAccountName: service-account
+      serviceAccountName: ml-pipeline

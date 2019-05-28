@@ -16,36 +16,48 @@ func writePipelinesUiBase(th *KustTestHarness) {
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: deployment
+  labels:
+    app: ml-pipeline-ui
+  name: ml-pipeline-ui
 spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-ui
   template:
+    metadata:
+      labels:
+        app: ml-pipeline-ui
     spec:
       containers:
-      - name: deployment
+      - name: ml-pipeline-ui
         image: gcr.io/ml-pipeline/frontend:0.1.18
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
-      serviceAccountName: service-account
+      serviceAccountName: ml-pipeline-ui
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  name: role-binding
+  labels:
+    app: ml-pipeline-ui
+  name: ml-pipeline-ui
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: role
+  name: ml-pipeline-ui
 subjects:
 - kind: ServiceAccount
-  name: service-account
+  name: ml-pipeline-ui
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  name: role
+  labels:
+    app: ml-pipeline-ui
+  name: ml-pipeline-ui
 rules:
 - apiGroups:
   - ""
@@ -61,51 +73,81 @@ rules:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: service-account
+  name: ml-pipeline-ui
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/service.yaml", `
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: service
+  name: ml-pipeline-ui
   annotations:
     getambassador.io/config: |-
       ---
       apiVersion: ambassador/v0
       kind:  Mapping
-      name: ml-pipeline-ui-service-mapping
+      name: pipelineui-mapping
       prefix: /pipeline
       rewrite: /pipeline
       timeout_ms: 300000
       service: $(service).$(ui-namespace)
       use_websocket: true
+  labels:
+    app: ml-pipeline-ui
 spec:
   ports:
   - port: 80
     targetPort: 3000
+  selector:
+    app: ml-pipeline-ui
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: tensorboard-service
+  name: ml-pipeline-tensorboard-ui
   annotations:
     getambassador.io/config: |-
       ---
       apiVersion: ambassador/v0
       kind:  Mapping
-      name: ml-pipeline-ui-tensorboard-service-mapping
+      name: pipeline-tensorboard-ui-mapping
       prefix: /data
       rewrite: /data
       timeout_ms: 300000
-      service: $(tensorboard-service).$(ui-namespace)
+      service: $(service).$(ui-namespace)
       use_websocket: true
+  labels:
+    app: ml-pipeline-tensorboard-ui
 spec:
   ports:
   - port: 80
     targetPort: 3000
+  selector:
+    app: ml-pipeline-tensorboard-ui
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/virtual-service.yaml", `
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ml-pipeline-tensorboard-ui
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /data
+    rewrite:
+      uri: /data
+    route:
+    - destination:
+        host: $(service).$(ui-namespace).svc.$(ui-clusterDomain)
+        port:
+          number: 80
+    timeout: 300s
+---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
@@ -123,7 +165,7 @@ spec:
       uri: /pipeline
     route:
     - destination:
-        host: ml-pipeline-ui.$(ui-namespace).svc.$(ui-clusterDomain)
+        host: $(service).$(ui-namespace).svc.$(ui-clusterDomain)
         port:
           number: 80
     timeout: 300s
@@ -142,9 +184,6 @@ uiClusterDomain=cluster.local
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
-nameprefix: ml-pipeline-ui-
-commonLabels:
-  app: ml-pipeline-ui
 resources:
 - deployment.yaml
 - role-binding.yaml
@@ -162,7 +201,7 @@ vars:
 - name: ui-namespace
   objref:
     kind: Service
-    name: service
+    name: ml-pipeline-ui
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
@@ -176,14 +215,14 @@ vars:
 - name: service
   objref:
     kind: Service
-    name: service
+    name: ml-pipeline-ui
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name
 - name: tensorboard-service
   objref:
     kind: Service
-    name: tensorboard-service
+    name: ml-pipeline-tensorboard-ui
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name

@@ -36,20 +36,20 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: role-binding
+  name: crd-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: role
+  name: controller-role
 subjects:
 - kind: ServiceAccount
-  name: service-account
+  name: crd-service-account
 `)
 	th.writeF("/manifests/pipeline/pipelines-viewer/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: role
+  name: controller-role
 rules:
 - apiGroups:
   - '*'
@@ -81,74 +81,26 @@ rules:
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: deployment
+  name: controller-deployment
 spec:
   template:
     spec:
       containers:
-      - name: container
-        env:
+      - env:
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
         image: gcr.io/ml-pipeline/viewer-crd-controller:0.1.18
         imagePullPolicy: Always
-      serviceAccountName: service-account
-`)
-	th.writeF("/manifests/pipeline/pipelines-viewer/base/service.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name: pipeline-tensorboard-ui-mapping
-      prefix: /data
-      rewrite: /data
-      timeout_ms: 300000
-      service: ml-pipeline-tensorboard-ui.$(viewer-namespace)
-      use_websocket: true
-  labels:
-    app: ml-pipeline-tensorboard-ui
-  name: ml-pipeline-tensorboard-ui
-spec:
-  ports:
-  - port: 80
-    targetPort: 3000
-  selector:
-    app: ml-pipeline-tensorboard-ui
+        name: ml-pipeline-viewer-controller
+      serviceAccountName: crd-service-account
 `)
 	th.writeF("/manifests/pipeline/pipelines-viewer/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: service-account
-`)
-	th.writeF("/manifests/pipeline/pipelines-viewer/base/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: ml-pipeline-tensorboard-ui
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /data
-    rewrite:
-      uri: /data
-    route:
-    - destination:
-        host: ml-pipeline-ui.$(viewer-namespace).svc.$(viewer-clusterDomain)
-        port:
-          number: 80
-    timeout: 300s
+  name: crd-service-account
 `)
 	th.writeF("/manifests/pipeline/pipelines-viewer/base/params.yaml", `
 varReference:
@@ -164,17 +116,15 @@ viewerClusterDomain=cluster.local
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
-nameprefix: ml-pipeline-viewer- 
+nameprefix: ml-pipeline-viewer-
 commonLabels:
-  app: ml-pipeline-viewer
+  app: ml-pipeline-viewer-crd
 resources:
 - crd.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - deployment.yaml
-- service.yaml
 - service-account.yaml
-- virtual-service.yaml
 images:
 - name: gcr.io/ml-pipeline/viewer-crd-controller
   newTag: '0.1.18'
@@ -182,13 +132,6 @@ configMapGenerator:
 - name: viewer-parameters
   env: params.env
 vars:
-- name: viewer-namespace
-  objref:
-    kind: Service
-    name: ml-pipeline-tensorboard-ui
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.namespace
 - name: viewer-clusterDomain
   objref:
     kind: ConfigMap

@@ -1,7 +1,7 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: deployment
+  name: minio
 spec:
   strategy:
     type: Recreate
@@ -27,4 +27,4 @@ spec:
       volumes:
       - name: data
         persistentVolumeClaim:
-          claimName: minio-pvc
+          claimName: minio-pv-claim
