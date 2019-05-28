@@ -16308,8 +16308,6 @@ spec:
       istio: mixer
       istio-mixer-type: telemetry
 ---
-
----
 # Source: istio/charts/pilot/templates/poddisruptionbudget.yaml
 
 apiVersion: policy/v1beta1
@@ -16332,7 +16330,6 @@ spec:
       istio: pilot
 
 ---
-
 apiVersion: "config.istio.io/v1alpha2"
 kind: attributemanifest
 metadata:
