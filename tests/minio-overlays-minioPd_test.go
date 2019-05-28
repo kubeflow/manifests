@@ -98,7 +98,7 @@ configurations:
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: deployment
+  name: minio
 spec:
   strategy:
     type: Recreate
@@ -124,7 +124,7 @@ spec:
       volumes:
       - name: data
         persistentVolumeClaim:
-          claimName: minio-pvc
+          claimName: minio-pv-claim
 `)
 	th.writeF("/manifests/pipeline/minio/base/secret.yaml", `
 apiVersion: v1
@@ -133,14 +133,14 @@ data:
   secretkey: bWluaW8xMjM=
 kind: Secret
 metadata:
-  name: artifact
+  name: mlpipeline-minio-artifact
 type: Opaque
 `)
 	th.writeF("/manifests/pipeline/minio/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
-  name: service
+  name: minio-service
 spec:
   ports:
   - port: 9000
@@ -152,7 +152,6 @@ spec:
 	th.writeK("/manifests/pipeline/minio/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-nameprefix: minio-
 commonLabels:
   app: minio
 resources:

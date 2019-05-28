@@ -16,20 +16,20 @@ func writePersistentAgentBase(th *KustTestHarness) {
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: cluster-role-binding
+  name: persistenceagent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cluster-admin
 subjects:
 - kind: ServiceAccount
-  name: service-account
+  name: persistenceagent
 `)
 	th.writeF("/manifests/pipeline/persistent-agent/base/clusterrole.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: cluster-role
+  name: persistenceagent
 rules:
 - apiGroups:
   - argoproj.io
@@ -52,12 +52,12 @@ rules:
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: deployment
+  name: persistenceagent
 spec:
   template:
     spec:
       containers:
-      - name: container
+      - name: ml-pipeline-persistenceagent
         env:
         - name: POD_NAMESPACE
           valueFrom:
@@ -65,20 +65,20 @@ spec:
               fieldPath: metadata.namespace
         image: gcr.io/ml-pipeline/persistenceagent:0.1.18
         imagePullPolicy: IfNotPresent
-      serviceAccountName: service-account
+      serviceAccountName: ml-pipeline-persistenceagent
 `)
 	th.writeF("/manifests/pipeline/persistent-agent/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: service-account
+  name: persistenceagent
 `)
 	th.writeK("/manifests/pipeline/persistent-agent/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-nameprefix: ml-pipeline-persistent-agent-
+nameprefix: ml-pipeline-
 commonLabels:
-  app: ml-pipeline-persistent-agent
+  app: ml-pipeline-persistenceagent
 resources:
 - clusterrole-binding.yaml
 - clusterrole.yaml
