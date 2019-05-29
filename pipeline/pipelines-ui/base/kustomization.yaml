@@ -1,9 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
-nameprefix: ml-pipeline-ui-
-commonLabels:
-  app: ml-pipeline-ui
 resources:
 - deployment.yaml
 - role-binding.yaml
@@ -18,10 +15,10 @@ images:
 - name: gcr.io/ml-pipeline/frontend
   newTag: '0.1.18'
 vars:
-- name: namespace
+- name: ui-namespace
   objref:
     kind: Service
-    name: service
+    name: ml-pipeline-ui
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
@@ -35,14 +32,14 @@ vars:
 - name: service
   objref:
     kind: Service
-    name: service
+    name: ml-pipeline-ui
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name
 - name: tensorboard-service
   objref:
     kind: Service
-    name: tensorboard-service
+    name: ml-pipeline-tensorboard-ui
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name

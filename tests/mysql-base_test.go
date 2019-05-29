@@ -16,14 +16,14 @@ func writeMysqlBase(th *KustTestHarness) {
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: deployment
+  name: mysql
 spec:
   strategy:
     type: Recreate
   template:
     spec:
       containers:
-      - name: container
+      - name: mysql
         env:
         - name: MYSQL_ALLOW_EMPTY_PASSWORD
           value: "true"
@@ -33,31 +33,53 @@ spec:
           name: mysql
         volumeMounts:
         - mountPath: /var/lib/mysql
-          name: persistent-storage
+          name: mysql-persistent-storage
       volumes:
-      - name: persistent-storage
+      - name: mysql-persistent-storage
         persistentVolumeClaim:
-          claimName: ml-pipeline-mysql-persistent-volume-claim
+          claimName: $(mysqlPvcName)
 `)
 	th.writeF("/manifests/pipeline/mysql/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
-  name: service
+  name: mysql
 spec:
   ports:
   - port: 3306
 `)
+	th.writeF("/manifests/pipeline/mysql/base/params.yaml", `
+varReference:
+- path: spec/template/spec/volumes/persistentVolumeClaim/claimName
+  kind: Deployment
+`)
+	th.writeF("/manifests/pipeline/mysql/base/params.env", `
+mysqlPvcName=
+`)
 	th.writeK("/manifests/pipeline/mysql/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-nameprefix: ml-pipeline-mysql-
+commonLabels:
+  app: mysql
 resources:
 - deployment.yaml
 - service.yaml
+configMapGenerator:
+- name: parameters
+  env: params.env
+vars:
+- name: mysqlPvcName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.mysqlPvcName
 images:
 - name: mysql
   newTag: '5.6'
+configurations:
+- params.yaml
 `)
 }
 

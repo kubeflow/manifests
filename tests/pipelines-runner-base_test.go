@@ -16,20 +16,20 @@ func writePipelinesRunnerBase(th *KustTestHarness) {
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: cluster-role-binding
+  name: pipeline-runner
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: cluster-role
+  name: pipeline-runner
 subjects:
 - kind: ServiceAccount
-  name: service-account
+  name: pipeline-runner
 `)
 	th.writeF("/manifests/pipeline/pipelines-runner/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: cluster-role
+  name: pipeline-runner
 rules:
 - apiGroups:
   - ""
@@ -97,15 +97,14 @@ rules:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: service-account
+  name: pipeline-runner
 `)
 	th.writeK("/manifests/pipeline/pipelines-runner/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
-nameprefix: ml-pipeline-runner-
 commonLabels:
-  app: ml-pipeline-runner
+  app: pipeline-runner
 resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml

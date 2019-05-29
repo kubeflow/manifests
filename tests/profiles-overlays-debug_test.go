@@ -80,7 +80,7 @@ spec:
   names:
     kind: Profile
     plural: profiles
-  scope: Cluster
+  scope: Namespaced
   validation:
     openAPIV3Schema:
       properties:
@@ -122,7 +122,7 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: service-account
+  name: default-service-account
 `)
 	th.writeF("/manifests/profiles/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
@@ -141,7 +141,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: role
+  name: default-role
 rules:
 - apiGroups:
   - kubeflow.org
@@ -149,21 +149,21 @@ rules:
   - profiles
   verbs:
   - create
+  - watch
   - list
-  - get
 `)
 	th.writeF("/manifests/profiles/base/role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: role-binding
+  name: default-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: role
+  name: default-role
 subjects:
 - kind: ServiceAccount
-  name: service-account
+  name: default-service-account
 `)
 	th.writeF("/manifests/profiles/base/service.yaml", `
 apiVersion: v1

@@ -1,13 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-nameprefix: ml-pipeline-mysql-
 bases:
 - ../../base
 resources:
 - persistent-volume.yaml
 - persistent-volume-claim.yaml
 configMapGenerator:
-- name: parameters
+- name: overlay-params
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
@@ -15,9 +14,16 @@ vars:
 - name: mysqlPd
   objref:
     kind: ConfigMap
-    name: parameters
+    name: overlay-params
     apiVersion: v1
   fieldref:
     fieldpath: data.mysqlPd
+- name: mysqlPvName
+  objref:
+    kind: ConfigMap
+    name: overlay-params
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.mysqlPvName
 configurations:
 - params.yaml

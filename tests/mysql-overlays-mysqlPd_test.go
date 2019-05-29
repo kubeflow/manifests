@@ -15,12 +15,12 @@ func writeMysqlOverlaysMysqlPd(th *KustTestHarness) {
 	th.writeF("/manifests/pipeline/mysql/overlays/mysqlPd/persistent-volume.yaml", `
 apiVersion: v1
 kind: PersistentVolume
-metadata: 
-  name: persistent-volume
+metadata:
+  name: $(mysqlPvName)
 spec:
   capacity:
     storage: 20Gi
-  accessModes: 
+  accessModes:
   - ReadWriteOnce
   gcePersistentDisk:
     pdName: $(mysqlPd)
@@ -30,35 +30,41 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: persistent-volume-claim
+  name: $(mysqlPvcName)
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
       storage: 20Gi
-      storageClassName: ""
-      volumeName: persistent-volume
+  storageClassName: ""
+  volumeName: $(mysqlPvName)
 `)
 	th.writeF("/manifests/pipeline/mysql/overlays/mysqlPd/params.yaml", `
 varReference:
 - path: spec/gcePersistentDisk/pdName
   kind: PersistentVolume
+- path: metadata/name
+  kind: PersistentVolume
+- path: metadata/name
+  kind: PersistentVolumeClaim
+- path: spec/volumeName
+  kind: PersistentVolumeClaim
 `)
 	th.writeF("/manifests/pipeline/mysql/overlays/mysqlPd/params.env", `
 mysqlPd=dls-kf-storage-metadata-store
+mysqlPvName=
 `)
 	th.writeK("/manifests/pipeline/mysql/overlays/mysqlPd", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-nameprefix: ml-pipeline-mysql-
 bases:
 - ../../base
 resources:
 - persistent-volume.yaml
 - persistent-volume-claim.yaml
 configMapGenerator:
-- name: parameters
+- name: overlay-params
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
@@ -66,10 +72,17 @@ vars:
 - name: mysqlPd
   objref:
     kind: ConfigMap
-    name: parameters
+    name: overlay-params
     apiVersion: v1
   fieldref:
     fieldpath: data.mysqlPd
+- name: mysqlPvName
+  objref:
+    kind: ConfigMap
+    name: overlay-params
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.mysqlPvName
 configurations:
 - params.yaml
 `)
@@ -77,14 +90,14 @@ configurations:
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: deployment
+  name: mysql
 spec:
   strategy:
     type: Recreate
   template:
     spec:
       containers:
-      - name: container
+      - name: mysql
         env:
         - name: MYSQL_ALLOW_EMPTY_PASSWORD
           value: "true"
@@ -94,31 +107,53 @@ spec:
           name: mysql
         volumeMounts:
         - mountPath: /var/lib/mysql
-          name: persistent-storage
+          name: mysql-persistent-storage
       volumes:
-      - name: persistent-storage
+      - name: mysql-persistent-storage
         persistentVolumeClaim:
-          claimName: ml-pipeline-mysql-persistent-volume-claim
+          claimName: $(mysqlPvcName)
 `)
 	th.writeF("/manifests/pipeline/mysql/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
-  name: service
+  name: mysql
 spec:
   ports:
   - port: 3306
 `)
+	th.writeF("/manifests/pipeline/mysql/base/params.yaml", `
+varReference:
+- path: spec/template/spec/volumes/persistentVolumeClaim/claimName
+  kind: Deployment
+`)
+	th.writeF("/manifests/pipeline/mysql/base/params.env", `
+mysqlPvcName=
+`)
 	th.writeK("/manifests/pipeline/mysql/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-nameprefix: ml-pipeline-mysql-
+commonLabels:
+  app: mysql
 resources:
 - deployment.yaml
 - service.yaml
+configMapGenerator:
+- name: parameters
+  env: params.env
+vars:
+- name: mysqlPvcName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.mysqlPvcName
 images:
 - name: mysql
   newTag: '5.6'
+configurations:
+- params.yaml
 `)
 }
 

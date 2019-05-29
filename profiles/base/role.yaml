@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: role
+  name: default-role
 rules:
 - apiGroups:
   - kubeflow.org
@@ -9,5 +9,5 @@ rules:
   - profiles
   verbs:
   - create
+  - watch
   - list
-  - get

@@ -44,7 +44,7 @@ rules:
   - kubeflow.org
   resources:
   - notebooks
-  - podpresets  
+  - poddefaults  
   verbs:
   - get
   - list
@@ -66,7 +66,8 @@ rules:
   verbs:
   - get
   - list
-  - watch`)
+  - watch
+`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/config-map.yaml", `
 apiVersion: v1
 data:

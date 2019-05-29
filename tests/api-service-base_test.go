@@ -16,42 +16,42 @@ func writeApiServiceBase(th *KustTestHarness) {
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: deployment
+  name: ml-pipeline
 spec:
   template:
     spec:
       containers:
-      - name: api-server
+      - name: ml-pipeline-api-server
         env:
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: gcr.io/ml-pipeline/api-server:0.1.18
+        image: gcr.io/ml-pipeline/api-server:0.1.20
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8888
         - containerPort: 8887
-      serviceAccountName: service-account
+      serviceAccountName: ml-pipeline
 `)
 	th.writeF("/manifests/pipeline/api-service/base/role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  name: role-binding
+  name: ml-pipeline
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: role
+  name: ml-pipeline
 subjects:
 - kind: ServiceAccount
-  name: service-account
+  name: ml-pipeline
 `)
 	th.writeF("/manifests/pipeline/api-service/base/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  name: role
+  name: ml-pipeline
 rules:
 - apiGroups:
   - argoproj.io
@@ -81,13 +81,13 @@ rules:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: service-account
+  name: ml-pipeline
 `)
 	th.writeF("/manifests/pipeline/api-service/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
-  name: service
+  name: ml-pipeline
 spec:
   ports:
   - name: http
@@ -102,7 +102,6 @@ spec:
 	th.writeK("/manifests/pipeline/api-service/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-nameprefix: ml-pipeline-
 commonLabels:
   app: ml-pipeline
 resources:
@@ -113,7 +112,7 @@ resources:
 - service.yaml
 images:
 - name: gcr.io/ml-pipeline/api-server
-  newTag: '0.1.18'
+  newTag: '0.1.20'
 `)
 }
 
