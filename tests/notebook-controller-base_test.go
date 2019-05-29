@@ -119,6 +119,36 @@ spec:
   ports:
   - port: 443
 `)
+	th.writeF("/manifests/jupyter/notebook-controller/base/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: "application"
+spec:
+  type: "notebook-controller"
+  componentKinds:
+    - group: core
+      kind: Service
+    - group: apps
+      kind: Deployment
+  version: "v1alpha1"
+  description: "Notebooks controller allows users to create a custom resource \"Notebook\" (jupyter notebook)."
+  icons:
+  maintainers:
+    - name: Lun-kai Hsu
+      email: lunkai@google.com
+  owners:
+    - name: Lun-kai Hsu
+      email: lunkai@gogle.com
+  keywords:
+   - "jupyter"
+   - "notebook"
+   - "notebook-controller"
+   - "jupyterhub"  
+  links:
+    - description: About
+      url: "https://github.com/kubeflow/kubeflow/tree/master/components/notebook-controller"
+`)
 	th.writeF("/manifests/jupyter/notebook-controller/base/params.env", `
 POD_LABELS=gcp-cred-secret=user-gcp-sa,gcp-cred-secret-filename=user-gcp-sa.json
 `)
@@ -132,6 +162,7 @@ resources:
 - deployment.yaml
 - service-account.yaml
 - service.yaml
+- application.yaml
 namePrefix: notebook-controller-
 commonLabels:
   app: notebook-controller
