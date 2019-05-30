@@ -27,7 +27,7 @@ spec:
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
-  name: $(secretName)
+  name: $(tlsSecretName)
 spec:
   acme:
     config:

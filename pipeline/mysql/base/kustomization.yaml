@@ -17,6 +17,20 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.mysqlPvcName
+- name: mysqlPd
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.mysqlPd
+- name: mysqlPvName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.mysqlPvName
 images:
 - name: mysql
   newTag: '5.6'
