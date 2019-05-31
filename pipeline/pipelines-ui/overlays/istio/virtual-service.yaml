@@ -15,7 +15,7 @@ spec:
       uri: /data
     route:
     - destination:
-        host: $(service).$(namespace).svc.$(clusterDomain)
+        host: $(service).$(ui-namespace).svc.$(ui-clusterDomain)
         port:
           number: 80
     timeout: 300s
@@ -37,7 +37,7 @@ spec:
       uri: /pipeline
     route:
     - destination:
-        host: ml-pipeline-ui.$(namespace).svc.$(clusterDomain)
+        host: $(service).$(ui-namespace).svc.$(ui-clusterDomain)
         port:
           number: 80
     timeout: 300s

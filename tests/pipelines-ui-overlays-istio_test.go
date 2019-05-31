@@ -30,7 +30,7 @@ spec:
       uri: /data
     route:
     - destination:
-        host: $(service).$(namespace).svc.$(clusterDomain)
+        host: $(service).$(ui-namespace).svc.$(ui-clusterDomain)
         port:
           number: 80
     timeout: 300s
@@ -52,7 +52,7 @@ spec:
       uri: /pipeline
     route:
     - destination:
-        host: ml-pipeline-ui.$(namespace).svc.$(clusterDomain)
+        host: $(service).$(ui-namespace).svc.$(ui-clusterDomain)
         port:
           number: 80
     timeout: 300s
@@ -150,7 +150,7 @@ metadata:
       prefix: /pipeline
       rewrite: /pipeline
       timeout_ms: 300000
-      service: $(service).$(namespace)
+      service: $(service).$(ui-namespace)
       use_websocket: true
   labels:
     app: ml-pipeline-ui
@@ -174,7 +174,7 @@ metadata:
       prefix: /data
       rewrite: /data
       timeout_ms: 300000
-      service: $(service).$(namespace)
+      service: $(service).$(ui-namespace)
       use_websocket: true
   labels:
     app: ml-pipeline-tensorboard-ui
@@ -191,7 +191,7 @@ varReference:
   kind: Service
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/params.env", `
-clusterDomain=cluster.local
+uiClusterDomain=cluster.local
 `)
 	th.writeK("/manifests/pipeline/pipelines-ui/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -204,26 +204,26 @@ resources:
 - service-account.yaml
 - service.yaml
 configMapGenerator:
-- name: parameters
+- name: ui-parameters
   env: params.env
 images:
 - name: gcr.io/ml-pipeline/frontend
   newTag: '0.1.18'
 vars:
-- name: namespace
+- name: ui-namespace
   objref:
     kind: Service
     name: ml-pipeline-ui
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
-- name: clusterDomain
+- name: ui-clusterDomain
   objref:
     kind: ConfigMap
-    name: parameters
+    name: ui-parameters
     version: v1
   fieldref:
-    fieldpath: data.clusterDomain
+    fieldpath: data.uiClusterDomain
 - name: service
   objref:
     kind: Service

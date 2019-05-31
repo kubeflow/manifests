@@ -8,26 +8,26 @@ resources:
 - service-account.yaml
 - service.yaml
 configMapGenerator:
-- name: parameters
+- name: ui-parameters
   env: params.env
 images:
 - name: gcr.io/ml-pipeline/frontend
   newTag: '0.1.18'
 vars:
-- name: namespace
+- name: ui-namespace
   objref:
     kind: Service
     name: ml-pipeline-ui
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
-- name: clusterDomain
+- name: ui-clusterDomain
   objref:
     kind: ConfigMap
-    name: parameters
+    name: ui-parameters
     version: v1
   fieldref:
-    fieldpath: data.clusterDomain
+    fieldpath: data.uiClusterDomain
 - name: service
   objref:
     kind: Service
