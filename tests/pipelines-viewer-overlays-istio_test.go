@@ -146,8 +146,7 @@ varReference:
   kind: Service
 `)
 	th.writeF("/manifests/pipeline/pipelines-viewer/base/params.env", `
-namespace=kubeflow
-clusterDomain=cluster.local
+viewerClusterDomain=cluster.local
 `)
 	th.writeK("/manifests/pipeline/pipelines-viewer/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -166,23 +165,16 @@ images:
 - name: gcr.io/ml-pipeline/viewer-crd-controller
   newTag: '0.1.18'
 configMapGenerator:
-- name: parameters
+- name: viewer-parameters
   env: params.env
 vars:
-- name: namespace
+- name: viewer-clusterDomain
   objref:
     kind: ConfigMap
-    name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.namespace
-- name: clusterDomain
-  objref:
-    kind: ConfigMap
-    name: parameters
+    name: viewer-parameters
     version: v1
   fieldref:
-    fieldpath: data.clusterDomain
+    fieldpath: data.viewerClusterDomain
 configurations:
 - params.yaml
 `)

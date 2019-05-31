@@ -51,6 +51,10 @@ varReference:
 - path: spec/volumeName
   kind: PersistentVolumeClaim
 `)
+	th.writeF("/manifests/pipeline/mysql/overlays/mysqlPd/params.env", `
+mysqlPd=dls-kf-storage-metadata-store
+mysqlPvName=
+`)
 	th.writeK("/manifests/pipeline/mysql/overlays/mysqlPd", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -59,6 +63,26 @@ bases:
 resources:
 - persistent-volume.yaml
 - persistent-volume-claim.yaml
+configMapGenerator:
+- name: overlay-params
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: mysqlPd
+  objref:
+    kind: ConfigMap
+    name: overlay-params
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.mysqlPd
+- name: mysqlPvName
+  objref:
+    kind: ConfigMap
+    name: overlay-params
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.mysqlPvName
 configurations:
 - params.yaml
 `)
@@ -66,7 +90,7 @@ configurations:
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: deployment
+  name: mysql
 spec:
   strategy:
     type: Recreate
@@ -93,7 +117,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service
+  name: mysql
 spec:
   ports:
   - port: 3306
@@ -104,14 +128,11 @@ varReference:
   kind: Deployment
 `)
 	th.writeF("/manifests/pipeline/mysql/base/params.env", `
-mysqlPd=dls-kf-storage-metadata-store
 mysqlPvcName=
-mysqlPvName=
 `)
 	th.writeK("/manifests/pipeline/mysql/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-nameprefix: ml-pipeline-mysql-
 commonLabels:
   app: mysql
 resources:
@@ -128,20 +149,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.mysqlPvcName
-- name: mysqlPd
-  objref:
-    kind: ConfigMap
-    name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.mysqlPd
-- name: mysqlPvName
-  objref:
-    kind: ConfigMap
-    name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.mysqlPvName
 images:
 - name: mysql
   newTag: '5.6'
