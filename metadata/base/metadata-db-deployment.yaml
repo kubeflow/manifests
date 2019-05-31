@@ -27,7 +27,7 @@ spec:
           - name: MYSQL_ALLOW_EMPTY_PASSWORD
             value: "true"
           - name: MYSQL_DATABASE
-            value: "metadata-database"
+            value: "metadb"
         ports:
         - name: dbapi
           containerPort: 3306
