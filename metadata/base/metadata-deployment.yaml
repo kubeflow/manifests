@@ -14,11 +14,20 @@ spec:
       containers:
       - name: container
         image: gcr.io/kubeflow-images-public/metadata:v0.1.1
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: metadata-db-secrets
+                key: MYSQL_ROOT_PASSWORD
+          - name: MYSQL_DATABASE
+            value: "metadata-database"
         command: ["./server/server",
                   "--http_port=8080",
                   "--mysql_service_host=metadata-db.default",
                   "--mysql_service_port=3306",
-                  "--mysql_service_user=guest",
-                  "--mlmd_db_name=metadb"]
+                  "--mysql_service_user=root",
+                  "--mysql_service_password=$(MYSQL_ROOT_PASSWORD)",
+                  "--mlmd_db_name=$(MYSQL_DATABASE)"]
         ports:
         - containerPort: 8080
