@@ -1,20 +1,31 @@
-apiVersion: apps/v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: deployment
   labels:
-    app: metadata
+    component: server
 spec:
   replicas: 3
   template:
     metadata:
       labels:
-        app: metadata
+        component: server
     spec:
       containers:
       - name: container
-        image: gcr.io/kubeflow-images-public/metadata:v0.1.0
+        image: gcr.io/kubeflow-images-public/metadata:v0.1.2
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: metadata-db-secrets
+                key: MYSQL_ROOT_PASSWORD
         command: ["./server/server",
-                  "--http_port=8080"]
+                  "--http_port=8080",
+                  "--mysql_service_host=metadata-db.default",
+                  "--mysql_service_port=3306",
+                  "--mysql_service_user=root",
+                  "--mysql_service_password=$(MYSQL_ROOT_PASSWORD)",
+                  "--mlmd_db_name=metadb"]
         ports:
         - containerPort: 8080

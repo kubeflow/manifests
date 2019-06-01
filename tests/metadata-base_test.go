@@ -12,25 +12,124 @@ import (
 )
 
 func writeMetadataBase(th *KustTestHarness) {
+	th.writeF("/manifests/metadata/base/metadata-db-pvc.yaml", `
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+`)
+	th.writeF("/manifests/metadata/base/metadata-db-secret.yaml", `
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: db-secrets
+data:
+  MYSQL_ROOT_PASSWORD: dGVzdA== # "test"
+`)
+	th.writeF("/manifests/metadata/base/metadata-db-deployment.yaml", `
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: db
+  labels:
+    component: db
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: db
+      labels:
+        component: db
+    spec:
+      containers:
+      - name: db-container
+        image: mysql:8.0.3
+        args:
+        - --datadir
+        - /var/lib/mysql/datadir
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: metadata-db-secrets
+                key: MYSQL_ROOT_PASSWORD
+          - name: MYSQL_ALLOW_EMPTY_PASSWORD
+            value: "true"
+          - name: MYSQL_DATABASE
+            value: "metadb"
+        ports:
+        - name: dbapi
+          containerPort: 3306
+        readinessProbe:
+          exec:
+            command:
+            - "/bin/bash"
+            - "-c"
+            - "mysql -D $$MYSQL_DATABASE -p$$MYSQL_ROOT_PASSWORD -e 'SELECT 1'"
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 1
+        volumeMounts:
+        - name: metadata-mysql
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: metadata-mysql
+        persistentVolumeClaim:
+          claimName: metadata-mysql
+`)
+	th.writeF("/manifests/metadata/base/metadata-db-service.yaml", `
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  labels:
+    component: db
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3306
+      protocol: TCP
+      name: dbapi
+  selector:
+    component: db
+`)
 	th.writeF("/manifests/metadata/base/metadata-deployment.yaml", `
-apiVersion: apps/v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: deployment
   labels:
-    app: metadata
+    component: server
 spec:
   replicas: 3
   template:
     metadata:
       labels:
-        app: metadata
+        component: server
     spec:
       containers:
       - name: container
-        image: gcr.io/kubeflow-images-public/metadata:v0.1.0
+        image: gcr.io/kubeflow-images-public/metadata:v0.1.2
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: metadata-db-secrets
+                key: MYSQL_ROOT_PASSWORD
         command: ["./server/server",
-                  "--http_port=8080"]
+                  "--http_port=8080",
+                  "--mysql_service_host=metadata-db.default",
+                  "--mysql_service_port=3306",
+                  "--mysql_service_user=root",
+                  "--mysql_service_password=$(MYSQL_ROOT_PASSWORD)",
+                  "--mlmd_db_name=metadb"]
         ports:
         - containerPort: 8080
 `)
@@ -58,6 +157,10 @@ kind: Kustomization
 commonLabels:
   kustomize.component: metadata
 resources:
+- metadata-db-pvc.yaml
+- metadata-db-secret.yaml
+- metadata-db-deployment.yaml
+- metadata-db-service.yaml
 - metadata-deployment.yaml
 - metadata-service.yaml
 
