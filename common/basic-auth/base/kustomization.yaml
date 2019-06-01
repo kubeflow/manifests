@@ -5,8 +5,6 @@ resources:
 - gatekeeper-deployment.yaml
 - gatekeeper-service.yaml
 - kflogin-service.yaml
-- kflogin-virtual-service.yaml
-
 commonLabels:
   kustomize.component: basic-auth
 namespace: kubeflow
