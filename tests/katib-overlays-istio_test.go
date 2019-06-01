@@ -11,7 +11,44 @@ import (
 	"testing"
 )
 
-func writeKatibBase(th *KustTestHarness) {
+func writeKatibOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/katib/overlays/istio/katib-ui-virtual-service.yaml", `
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: katib-ui
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /katib/
+    rewrite:
+      uri: /katib/
+    route:
+    - destination:
+        host: katib-ui.$(namespace).svc.$(clusterDomain)
+        port:
+          number: 80
+`)
+	th.writeF("/manifests/katib/overlays/istio/params.yaml", `
+varReference:
+- path: spec/http/route/destination/host
+  kind: VirtualService
+`)
+	th.writeK("/manifests/katib/overlays/istio", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- katib-ui-virtual-service.yaml
+configurations:
+- params.yaml
+`)
 	th.writeF("/manifests/katib/base/katib-db-pvc.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -818,14 +855,14 @@ vars:
 `)
 }
 
-func TestKatibBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib/base")
-	writeKatibBase(th)
+func TestKatibOverlaysIstio(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/katib/overlays/istio")
+	writeKatibOverlaysIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib/base"
+	targetPath := "../katib/overlays/istio"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

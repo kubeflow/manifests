@@ -11,7 +11,44 @@ import (
 	"testing"
 )
 
-func writeBasicAuthBase(th *KustTestHarness) {
+func writeBasicAuthOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/common/basic-auth/overlays/istio/kflogin-virtual-service.yaml", `
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: basic-auth-login
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /kflogin
+    rewrite:
+      uri: /kflogin
+    route:
+    - destination:
+        host: basic-auth-login.$(service-namespace).svc.$(clusterDomain)
+        port:
+          number: 8085
+`)
+	th.writeF("/manifests/common/basic-auth/overlays/istio/params.yaml", `
+varReference:
+- path: spec/http/route/destination/host
+  kind: VirtualService
+`)
+	th.writeK("/manifests/common/basic-auth/overlays/istio", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- kflogin-virtual-service.yaml
+configurations:
+- params.yaml
+`)
 	th.writeF("/manifests/common/basic-auth/base/kflogin-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -186,14 +223,14 @@ configurations:
 `)
 }
 
-func TestBasicAuthBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/common/basic-auth/base")
-	writeBasicAuthBase(th)
+func TestBasicAuthOverlaysIstio(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/common/basic-auth/overlays/istio")
+	writeBasicAuthOverlaysIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../common/basic-auth/base"
+	targetPath := "../common/basic-auth/overlays/istio"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
