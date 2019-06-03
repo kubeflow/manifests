@@ -1,6 +1,8 @@
 package tests_test
 
 import (
+	"testing"
+
 	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/pkg/fs"
@@ -8,7 +10,6 @@ import (
 	"sigs.k8s.io/kustomize/pkg/resmap"
 	"sigs.k8s.io/kustomize/pkg/resource"
 	"sigs.k8s.io/kustomize/pkg/target"
-	"testing"
 )
 
 func writeArgoBase(th *KustTestHarness) {
@@ -206,7 +207,7 @@ spec:
           value: "true"
         - name: BASE_HREF
           value: /argo/
-        image: argoproj/argoui:v2.2.0
+        image: argoproj/argoui:v2.3.0
         imagePullPolicy: IfNotPresent
         name: argo-ui
         resources: {}
@@ -261,7 +262,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: metadata.namespace
-        image: argoproj/workflow-controller:v2.2.0
+        image: argoproj/workflow-controller:v2.3.0
         imagePullPolicy: IfNotPresent
         name: workflow-controller
         resources: {}
@@ -347,7 +348,7 @@ varReference:
   kind: VirtualService
 `)
 	th.writeF("/manifests/argo/base/params.env", `
-executorImage=argoproj/argoexec:v2.2.0
+executorImage=argoproj/argoexec:v2.3.0
 artifactRepositoryBucket=mlpipeline
 artifactRepositoryKeyPrefix=artifacts
 artifactRepositoryEndpoint=minio-service.kubeflow:9000
@@ -375,10 +376,10 @@ commonLabels:
 images:
   - name: argoproj/argoui
     newName: argoproj/argoui
-    newTag: v2.2.0
+    newTag: v2.3.0
   - name: argoproj/workflow-controller
     newName: argoproj/workflow-controller
-    newTag: v2.2.0
+    newTag: v2.3.0
 configMapGenerator:
 - name: workflow-controller-parameters
   env: params.env
