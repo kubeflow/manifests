@@ -233,7 +233,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: gcr.io/kubeflow-images-public/tf_operator:kubeflow-tf-operator-postsubmit-v1-63de5cb-2948-fd60
+        image: gcr.io/kubeflow-images-public/tf_operator:v0.5.3
         name: tf-job-dashboard
         ports:
         - containerPort: 8080
@@ -245,8 +245,16 @@ metadata:
   name: tf-job-operator
 spec:
   replicas: 1
+  ports:
+    name: monitoring-port
+    port: 8443
+    targetPort: 8443
   template:
     metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: 8443
       labels:
         name: tf-job-operator
     spec:
@@ -255,6 +263,7 @@ spec:
         - /opt/kubeflow/tf-operator.v1
         - --alsologtostderr
         - -v=1
+	- --monitoring-port=8443
         env:
         - name: MY_POD_NAMESPACE
           valueFrom:
@@ -264,7 +273,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: gcr.io/kubeflow-images-public/tf_operator:kubeflow-tf-operator-postsubmit-v1-63de5cb-2948-fd60
+        image: gcr.io/kubeflow-images-public/tf_operator:v0.5.3
         name: tf-job-operator
         volumeMounts:
         - mountPath: /etc/config
