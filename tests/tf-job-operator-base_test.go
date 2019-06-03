@@ -263,7 +263,7 @@ spec:
         - /opt/kubeflow/tf-operator.v1
         - --alsologtostderr
         - -v=1
-	- --monitoring-port=8443
+        - --monitoring-port=8443
         env:
         - name: MY_POD_NAMESPACE
           valueFrom:
