@@ -81,6 +81,25 @@ spec:
   subresources:
     status: {}
   version: v1alpha1
+  validation:
+    openAPIV3Schema:
+      properties:
+        apiVersion:
+          type: string
+        kind:
+          type: string
+        metadata:
+          type: object
+        spec:
+          properties:
+            template:
+              type: object
+          required:
+          - template
+          type: object
+        status:
+          type: object
+      type: object
 `)
 	th.writeF("/manifests/jupyter/notebook-controller/base/deployment.yaml", `
 apiVersion: apps/v1beta1
