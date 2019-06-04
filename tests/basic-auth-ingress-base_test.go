@@ -416,8 +416,8 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: basic-auth-ingress
 images:
-  - name: gcr.io/kubeflow-images-public/ingress-setup:latest
-    newName: gcr.io/kubeflow-images-public/ingress-setup:latest
+  - name: gcr.io/kubeflow-images-public/ingress-setup
+    newName: gcr.io/kubeflow-images-public/ingress-setup
     newTag: latest
   - name: gcr.io/cloud-solutions-group/esp-sample-app
     newName: gcr.io/cloud-solutions-group/esp-sample-app
