@@ -255,10 +255,7 @@ spec:
         - name: TLS_SECRET_NAME
           value: $(secretName)
         - name: TLS_HOST_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: basic-auth-ingress-parameters
-              key: data.hostname
+          value: $(hostname)
         - name: INGRESS_NAME
           value: $(ingressName)
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
@@ -335,10 +332,7 @@ spec:
         - name: HEALTHCHECK_PATH
           value: /whoami
         - name: INGRESS_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: basic-auth-ingress-parameters
-              key: data.ingressName
+          value: $(ingressName)
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
         name: backend-updater
         volumeMounts:

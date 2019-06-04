@@ -28,10 +28,7 @@ spec:
         - name: HEALTHCHECK_PATH
           value: /whoami
         - name: INGRESS_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: basic-auth-ingress-parameters
-              key: data.ingressName
+          value: $(ingressName)
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
         name: backend-updater
         volumeMounts:
