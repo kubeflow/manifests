@@ -11,7 +11,41 @@ import (
 	"testing"
 )
 
-func writeNotebookControllerBase(th *KustTestHarness) {
+func writeNotebookControllerOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/jupyter/notebook-controller/overlays/istio/deployment.yaml", `
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: deployment
+spec:
+  template:
+    spec:
+      containers:
+      - name: manager
+        env:
+          - name: USE_ISTIO
+            valueFrom:
+              configMapKeyRef:
+                name: parameters
+                key: USE_ISTIO
+`)
+	th.writeF("/manifests/jupyter/notebook-controller/overlays/istio/params.env", `
+USE_ISTIO="true"
+`)
+	th.writeK("/manifests/jupyter/notebook-controller/overlays/istio", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+patchesStrategicMerge:
+- deployment.yaml
+configMapGenerator:
+- name: parameters
+  behavior: merge
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+`)
 	th.writeF("/manifests/jupyter/notebook-controller/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -181,14 +215,14 @@ generatorOptions:
 `)
 }
 
-func TestNotebookControllerBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/jupyter/notebook-controller/base")
-	writeNotebookControllerBase(th)
+func TestNotebookControllerOverlaysIstio(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/jupyter/notebook-controller/overlays/istio")
+	writeNotebookControllerOverlaysIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../jupyter/notebook-controller/base"
+	targetPath := "../jupyter/notebook-controller/overlays/istio"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
