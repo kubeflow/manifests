@@ -10,10 +10,7 @@ spec:
         - /var/ingress-config/ingress_bootstrap.sh
         env:
         - name: NAMESPACE
-          valueFrom:
-            configMapKeyRef:
-              name: basic-auth-ingress-parameters
-              key: metadata.namespace
+          value: $(namespace)
         - name: TLS_SECRET_NAME
           value: $(secretName)
         - name: TLS_HOST_NAME

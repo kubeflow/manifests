@@ -251,10 +251,7 @@ spec:
         - /var/ingress-config/ingress_bootstrap.sh
         env:
         - name: NAMESPACE
-          valueFrom:
-            configMapKeyRef:
-              name: envoy-config
-              key: metadata.namespace
+          value: $(namespace)
         - name: TLS_SECRET_NAME
           value: $(secretName)
         - name: TLS_HOST_NAME
@@ -329,10 +326,7 @@ spec:
         - /var/envoy-config/update_backend.sh
         env:
         - name: NAMESPACE
-          valueFrom:
-            configMapKeyRef:
-              name: envoy-config
-              key: metadata.namespace
+          value: $(namespace)
         - name: SERVICE
           value: ambassador
         - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -387,7 +381,7 @@ varReference:
   kind: Ingress
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/params.env", `
-namespace=
+namespace=kubeflow
 hostname=
 project=
 ipName=

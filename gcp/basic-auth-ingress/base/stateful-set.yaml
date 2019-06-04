@@ -19,10 +19,7 @@ spec:
         - /var/envoy-config/update_backend.sh
         env:
         - name: NAMESPACE
-          valueFrom:
-            configMapKeyRef:
-              name: basic-auth-ingress-parameter
-              key: metadata.namespace
+          value: $(namespace)
         - name: SERVICE
           value: ambassador
         - name: GOOGLE_APPLICATION_CREDENTIALS
