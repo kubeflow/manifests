@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: katib-suggestion-nasrl
+  labels:
+    app: katib
+    component: suggestion-nasrl
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: katib-suggestion-nasrl
+      labels:
+        app: katib
+        component: suggestion-nasrl
+    spec:
+      containers:
+      - name: katib-suggestion-nasrl
+        image: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-nasrl:v0.1.2-alpha-280-gb0e0dd5
+        ports:
+        - name: api
+          containerPort: 6789

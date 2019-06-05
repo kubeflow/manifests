@@ -12,7 +12,7 @@ import (
 )
 
 func writeKatibBase(th *KustTestHarness) {
-	th.writeF("/manifests/katib/base/katib-db-pvc.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/katib-db-pvc.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -24,7 +24,7 @@ spec:
     requests:
       storage: 10Gi
 `)
-	th.writeF("/manifests/katib/base/katib-ui-deployment.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/katib-ui-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -49,7 +49,7 @@ spec:
           containerPort: 80
       serviceAccountName: katib-ui
 `)
-	th.writeF("/manifests/katib/base/katib-ui-rbac.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/katib-ui-rbac.yaml", `
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -85,7 +85,7 @@ subjects:
 - kind: ServiceAccount
   name: katib-ui
 `)
-	th.writeF("/manifests/katib/base/katib-ui-service.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/katib-ui-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -101,7 +101,7 @@ spec:
   selector:
     component: ui
 `)
-	th.writeF("/manifests/katib/base/katib-ui-virtual-service.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/katib-ui-virtual-service.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
@@ -123,7 +123,7 @@ spec:
         port:
           number: 80
 `)
-	th.writeF("/manifests/katib/base/metrics-collector-rbac.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/metrics-collector-rbac.yaml", `
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -161,7 +161,7 @@ subjects:
 - kind: ServiceAccount
   name: metrics-collector
 `)
-	th.writeF("/manifests/katib/base/metrics-collector-template-configmap.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/metrics-collector-template-configmap.yaml", `
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -202,7 +202,7 @@ data:
                 - "{{.ManagerSerivce}}"
               restartPolicy: Never
 `)
-	th.writeF("/manifests/katib/base/studyjob-controller-deployment.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/studyjob-controller-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -234,7 +234,7 @@ spec:
             fieldRef:
               fieldPath: metadata.namespace
 `)
-	th.writeF("/manifests/katib/base/studyjob-crd.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/studyjob-crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -255,7 +255,7 @@ spec:
     name: Age
     type: date
 `)
-	th.writeF("/manifests/katib/base/studyjob-rbac.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/studyjob-rbac.yaml", `
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -328,7 +328,7 @@ subjects:
 - kind: ServiceAccount
   name: studyjob-controller
 `)
-	th.writeF("/manifests/katib/base/studyjob-service.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/studyjob-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -341,7 +341,7 @@ spec:
   selector:
     app: studyjob-controller
 `)
-	th.writeF("/manifests/katib/base/suggestion-bayesianoptimization-deployment.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/suggestion-bayesianoptimization-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -363,7 +363,7 @@ spec:
         - name: api
           containerPort: 6789
 `)
-	th.writeF("/manifests/katib/base/suggestion-bayesianoptimization-service.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/suggestion-bayesianoptimization-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -379,7 +379,7 @@ spec:
   selector:
     component: suggestion-bayesianoptimization
 `)
-	th.writeF("/manifests/katib/base/suggestion-grid-deployment.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/suggestion-grid-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -401,7 +401,7 @@ spec:
         - name: api
           containerPort: 6789
 `)
-	th.writeF("/manifests/katib/base/suggestion-grid-service.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/suggestion-grid-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -417,7 +417,7 @@ spec:
   selector:
     component: suggestion-grid
 `)
-	th.writeF("/manifests/katib/base/suggestion-hyperband-deployment.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/suggestion-hyperband-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -439,7 +439,7 @@ spec:
         - name: api
           containerPort: 6789
 `)
-	th.writeF("/manifests/katib/base/suggestion-hyperband-service.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/suggestion-hyperband-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -455,7 +455,7 @@ spec:
   selector:
     component: suggestion-hyperband
 `)
-	th.writeF("/manifests/katib/base/suggestion-nasrl-deployment.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/suggestion-nasrl-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -477,7 +477,7 @@ spec:
         - name: api
           containerPort: 6789
 `)
-	th.writeF("/manifests/katib/base/suggestion-nasrl-service.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/suggestion-nasrl-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -493,7 +493,7 @@ spec:
   selector:
     component: suggestion-nasrl
 `)
-	th.writeF("/manifests/katib/base/suggestion-random-deployment.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/suggestion-random-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -515,7 +515,7 @@ spec:
         - name: api
           containerPort: 6789
 `)
-	th.writeF("/manifests/katib/base/suggestion-random-service.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/suggestion-random-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -531,7 +531,7 @@ spec:
   selector:
     component: suggestion-random
 `)
-	th.writeF("/manifests/katib/base/vizier-core-deployment.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/vizier-core-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -570,7 +570,7 @@ spec:
             command: ["/bin/grpc_health_probe", "-addr=:6789"]
           initialDelaySeconds: 10
 `)
-	th.writeF("/manifests/katib/base/vizier-core-rbac.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/vizier-core-rbac.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -606,7 +606,7 @@ kind: ServiceAccount
 metadata:
   name: vizier-core
 `)
-	th.writeF("/manifests/katib/base/vizier-core-rest-deployment.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/vizier-core-rest-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -630,7 +630,7 @@ spec:
         - name: api
           containerPort: 80
 `)
-	th.writeF("/manifests/katib/base/vizier-core-rest-service.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/vizier-core-rest-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -646,7 +646,7 @@ spec:
   selector:
     component: core-rest
 `)
-	th.writeF("/manifests/katib/base/vizier-core-service.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/vizier-core-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -663,7 +663,7 @@ spec:
   selector:
     component: core
 `)
-	th.writeF("/manifests/katib/base/vizier-db-deployment.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/vizier-db-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -714,7 +714,7 @@ spec:
         persistentVolumeClaim:
           claimName: katib-mysql
 `)
-	th.writeF("/manifests/katib/base/vizier-db-secret.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/vizier-db-secret.yaml", `
 apiVersion: v1
 kind: Secret
 type: Opaque
@@ -723,7 +723,7 @@ metadata:
 data:
   MYSQL_ROOT_PASSWORD: dGVzdA== # "test"
 `)
-	th.writeF("/manifests/katib/base/vizier-db-service.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/vizier-db-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -739,7 +739,7 @@ spec:
   selector:
     component: db
 `)
-	th.writeF("/manifests/katib/base/worker-template.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/worker-template.yaml", `
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -759,15 +759,15 @@ data:
             image: alpine
           restartPolicy: Never
 `)
-	th.writeF("/manifests/katib/base/params.yaml", `
+	th.writeF("/manifests/katib/v1alpha1/base/params.yaml", `
 varReference:
 - path: spec/http/route/destination/host
   kind: VirtualService
 `)
-	th.writeF("/manifests/katib/base/params.env", `
+	th.writeF("/manifests/katib/v1alpha1/base/params.env", `
 clusterDomain=cluster.local
 `)
-	th.writeK("/manifests/katib/base", `
+	th.writeK("/manifests/katib/v1alpha1/base", `
 namespace: kubeflow
 resources:
 - katib-db-pvc.yaml
@@ -848,14 +848,14 @@ configurations:
 `)
 }
 
-func TestKatibBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib/base")
+func TestKatibV1Alpha1Base(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/katib/v1alpha1/base")
 	writeKatibBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib/base"
+	targetPath := "../katib/v1alpha1/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
