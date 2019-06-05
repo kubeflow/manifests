@@ -318,6 +318,7 @@ spec:
   selector:
     matchLabels:
       service: backend-updater
+  serviceName: "backend-updater"
   template:
     metadata:
       labels:

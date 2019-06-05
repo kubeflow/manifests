@@ -57,6 +57,11 @@ kind: StatefulSet
 metadata:
   name: jupyter
 spec:
+  selector:
+    matchLabels:
+      k8s-app: jupyter
+  replicas: 1
+  serviceName: ""
   template:
     spec:
       containers:
@@ -1918,6 +1923,9 @@ kind: StatefulSet
 metadata:
   name: jupyter
 spec:
+  selector:
+    matchLabels:
+      k8s-app: jupyter
   replicas: 1
   serviceName: ""
   template:
