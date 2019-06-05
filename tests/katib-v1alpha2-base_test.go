@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func writeKatibBase(th *KustTestHarness) {
+func writeKatibV1Alpha2Base(th *KustTestHarness) {
 	th.writeF("/manifests/katib/v1alpha2/base/katib-db-pv.yaml", `
 apiVersion: v1
 kind: PersistentVolume
@@ -909,7 +909,7 @@ configurations:
 
 func TestKatibV1Alpha2Base(t *testing.T) {
 	th := NewKustTestHarness(t, "/manifests/katib/v1alpha2/base")
-	writeKatibBase(th)
+	writeKatibV1Alpha2Base(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
