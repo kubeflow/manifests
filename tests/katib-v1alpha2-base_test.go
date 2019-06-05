@@ -702,25 +702,6 @@ spec:
     component: manager-rest
   type: ClusterIP
 `)
-	th.writeF("/manifests/katib/v1alpha2/base/katib-manager-test-service.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: katib
-    component: manager-rest
-  name: katib-manager-rest
-  namespace: kubeflow
-spec:
-  ports:
-  - name: api
-    port: 80
-    protocol: TCP
-  selector:
-    app: katib
-    component: manager-rest
-  type: ClusterIP
-`)
 	th.writeF("/manifests/katib/v1alpha2/base/katib-db-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
