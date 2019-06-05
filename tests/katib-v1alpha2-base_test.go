@@ -412,6 +412,13 @@ subjects:
   name: katib-controller
   namespace: kubeflow
 `)
+	th.writeF("/manifests/katib/v1alpha2/base/katib-controller-secret.yaml", `
+apiVersion: v1
+kind: Secret
+metadata:
+  name: katib-controller
+  namespace: kubeflow
+`)
 	th.writeF("/manifests/katib/v1alpha2/base/katib-controller-service.yaml", `
 apiVersion: v1
 kind: Service
