@@ -642,17 +642,17 @@ kind: Service
 metadata:
   labels:
     app: katib
-    component: manager-rest
-  name: katib-manager-rest
+    component: manager
+  name: katib-manager
   namespace: kubeflow
 spec:
   ports:
   - name: api
-    port: 80
+    port: 6789
     protocol: TCP
   selector:
     app: katib
-    component: manager-rest
+    component: manager
   type: ClusterIP
 `)
 	th.writeF("/manifests/katib/v1alpha2/base/katib-manager-rest-deployment.yaml", `
