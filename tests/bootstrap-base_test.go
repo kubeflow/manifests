@@ -197,13 +197,17 @@ kind: StatefulSet
 metadata:
   name: stateful-set
 spec:
+  selector:
+    matchLabels:
+      k8s-app: admission-webhook
+  replicas: 1
   serviceName: service
   template:
     spec:
       containers:
       - command:
         - sh
-        - /var/webhook-config/create_ca.sh 
+        - /var/webhook-config/create_ca.sh
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
         name: bootstrap
         volumeMounts:
@@ -221,7 +225,7 @@ spec:
 	th.writeF("/manifests/admission-webhook/bootstrap/base/params.yaml", `
 varReference:
 - path: data/create_ca.sh
-  kind: ConfigMap 
+  kind: ConfigMap
 `)
 	th.writeF("/manifests/admission-webhook/bootstrap/base/params.env", `
 namespace=kubeflow
