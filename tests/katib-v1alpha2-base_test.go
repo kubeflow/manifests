@@ -129,28 +129,6 @@ spec:
     component: ui
   type: ClusterIP
 `)
-	th.writeF("/manifests/katib/v1alpha2/base/katib-ui-virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: katib-ui
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /katib/
-    rewrite:
-      uri: /katib/
-    route:
-    - destination:
-        host: katib-ui.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 80
-`)
 	th.writeF("/manifests/katib/v1alpha2/base/metrics-collector-rbac.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -677,7 +655,6 @@ spec:
     component: manager-rest
   type: ClusterIP
 `)
-
 	th.writeF("/manifests/katib/v1alpha2/base/katib-manager-rest-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -705,6 +682,25 @@ spec:
         ports:
         - containerPort: 80
           name: api
+`)
+	th.writeF("/manifests/katib/v1alpha2/base/katib-manager-rest-service.yaml", `
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: katib
+    component: manager-rest
+  name: katib-manager-rest
+  namespace: kubeflow
+spec:
+  ports:
+  - name: api
+    port: 80
+    protocol: TCP
+  selector:
+    app: katib
+    component: manager-rest
+  type: ClusterIP
 `)
 	th.writeF("/manifests/katib/v1alpha2/base/katib-manager-test-service.yaml", `
 apiVersion: v1
