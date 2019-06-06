@@ -24,10 +24,7 @@ spec:
       - name: manager
         env:
           - name: USE_ISTIO
-            valueFrom:
-              configMapKeyRef:
-                name: parameters
-                key: USE_ISTIO
+            value: $(USE_ISTIO)
 `)
 	th.writeF("/manifests/jupyter/notebook-controller/overlays/istio/params.env", `
 USE_ISTIO="true"

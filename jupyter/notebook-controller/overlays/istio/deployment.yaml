@@ -9,7 +9,4 @@ spec:
       - name: manager
         env:
           - name: USE_ISTIO
-            valueFrom:
-              configMapKeyRef:
-                name: parameters
-                key: USE_ISTIO
+            value: $(USE_ISTIO)
