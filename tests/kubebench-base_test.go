@@ -103,7 +103,7 @@ spec:
         - containerPort: 8084
       seviceAccountName: kubebench-dashboard
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1alpha2
 kind: Deployment
 metadata:
   name: kubebench-operator
@@ -117,9 +117,10 @@ spec:
         app: kubebench-operator
     spec:
       containers:
-      - image: gcr.io/kubeflow-images-public/kubebench/kubebench-operator:v0.4.0-13-g262c593
+      - image: gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2:v0.5.0-11-gea53ad5
         name: kubebench-operator
       seviceAccountName: kubebench-operator
+
 `)
 	th.writeF("/manifests/kubebench/base/role-binding.yaml", `
 ---
@@ -251,9 +252,9 @@ images:
   - name: gcr.io/kubeflow-images-public/kubebench/kubebench-dashboard
     newName: gcr.io/kubeflow-images-public/kubebench/kubebench-dashboard
     newTag: v0.4.0-13-g262c593
-  - name: gcr.io/kubeflow-images-public/kubebench/kubebench-operator
-    newName: gcr.io/kubeflow-images-public/kubebench/kubebench-operator
-    newTag: v0.4.0-13-g262c593
+  - name: gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2
+    newName: gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2
+    newTag: v0.5.0-11-gea53ad5
   - name: gcr.io/kubeflow-images-public/kubebench/kubebench-controller
     newName: gcr.io/kubeflow-images-public/kubebench/kubebench-controller
     newTag: v0.4.0-13-g262c593
