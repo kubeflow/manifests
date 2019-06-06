@@ -6,7 +6,6 @@ resources:
 - katib-controller-secret.yaml
 - katib-controller-service.yaml
 - katib-db-deployment.yaml
-- katib-db-pv.yaml
 - katib-db-pvc.yaml
 - katib-db-secret.yaml
 - katib-db-service.yaml

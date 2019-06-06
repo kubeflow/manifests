@@ -11,24 +11,6 @@ import (
 	"testing"
 )
 
-func writeKatibV1Alpha2Base(th *KustTestHarness) {
-	th.writeF("/manifests/katib/v1alpha2/base/katib-db-pv.yaml", `
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  labels:
-    app: katib
-    type: local
-  name: katib-mysql
-spec:
-  accessModes:
-  - ReadWriteOnce
-  capacity:
-    storage: 10Gi
-  hostPath:
-    path: /tmp/katib
-  storageClassName: katib
-`)
 	th.writeF("/manifests/katib/v1alpha2/base/katib-db-pvc.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -822,7 +804,6 @@ resources:
 - katib-controller-secret.yaml
 - katib-controller-service.yaml
 - katib-db-deployment.yaml
-- katib-db-pv.yaml
 - katib-db-pvc.yaml
 - katib-db-secret.yaml
 - katib-db-service.yaml
