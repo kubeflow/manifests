@@ -11,6 +11,7 @@ import (
 	"testing"
 )
 
+func writeKatibV1Alpha2Base(th *KustTestHarness) {
 	th.writeF("/manifests/katib/v1alpha2/base/katib-db-pvc.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
