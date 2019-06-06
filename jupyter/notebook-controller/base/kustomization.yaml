@@ -7,7 +7,6 @@ resources:
 - deployment.yaml
 - service-account.yaml
 - service.yaml
-- application.yaml
 namePrefix: notebook-controller-
 commonLabels:
   app: notebook-controller
