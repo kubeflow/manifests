@@ -245,16 +245,8 @@ metadata:
   name: tf-job-operator
 spec:
   replicas: 1
-  ports:
-    name: monitoring-port
-    port: 8443
-    targetPort: 8443
   template:
     metadata:
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/path: "/metrics"
-        prometheus.io/port: 8443
       labels:
         name: tf-job-operator
     spec:
@@ -320,6 +312,28 @@ spec:
     targetPort: 8080
   selector:
     name: tf-job-dashboard
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/path: /metrics
+    prometheus.io/port: "8443"
+    prometheus.io/scrape: "true"
+  labels:
+    app: tf-job-operator
+    kustomize.component: tf-job-operator
+  name: tf-job-operator
+  namespace: kubeflow
+spec:
+  ports:
+  - name: monitoring-port
+    port: 8443
+    targetPort: 8443
+  selector:
+    kustomize.component: tf-job-operator
+    name: tf-job-operator
   type: ClusterIP
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/virtual-service.yaml", `

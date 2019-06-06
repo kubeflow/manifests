@@ -28,16 +28,8 @@ metadata:
   name: tf-job-operator
 spec:
   replicas: 1
-  ports:
-    name: monitoring-port
-    port: 8443
-    targetPort: 8443
   template:
     metadata:
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/path: "/metrics"
-        prometheus.io/port: 8443
       labels:
         name: tf-job-operator
     spec:
