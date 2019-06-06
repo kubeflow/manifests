@@ -97,6 +97,9 @@ metadata:
   name: pytorch-operator
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      name: jupyter-web-app
   template:
     metadata:
       labels:
