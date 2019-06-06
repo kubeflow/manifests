@@ -18,7 +18,7 @@ spec:
         - containerPort: 8084
       seviceAccountName: kubebench-dashboard
 ---
-apiVersion: extensions/v1alpha2
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: kubebench-operator
