@@ -99,7 +99,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      name: jupyter-web-app
+      name: pytorch-operator
   template:
     metadata:
       labels:
