@@ -113,28 +113,6 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 `)
-	th.writeF("/manifests/common/centraldashboard/base/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: centraldashboard
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /
-    rewrite:
-      uri: /
-    route:
-    - destination:
-        host: centraldashboard.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 80
-`)
 	th.writeF("/manifests/common/centraldashboard/base/params.yaml", `
 varReference:
 - path: metadata/annotations/getambassador.io\/config
@@ -154,7 +132,6 @@ resources:
 - role.yaml
 - service-account.yaml
 - service.yaml
-- virtual-service.yaml
 namespace: kubeflow
 commonLabels:
   kustomize.component: centraldashboard
@@ -162,11 +139,11 @@ images:
   - name: gcr.io/kubeflow-images-public/centraldashboard
     newName: gcr.io/kubeflow-images-public/centraldashboard
     newTag: latest
-generatorOptions:
-  disableNameSuffixHash: true
 configMapGenerator:
 - name: parameters
   env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
 vars:
 - name: namespace
   objref:

@@ -4,7 +4,6 @@ metadata:
   labels:
     app: whoami
   name: whoami-app
-  namespace: $(istioNamespace)
 spec:
   ports:
   - port: 80

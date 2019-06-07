@@ -125,57 +125,10 @@ spec:
   selector:
     app: ml-pipeline-tensorboard-ui
 `)
-	th.writeF("/manifests/pipeline/pipelines-ui/base/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: ml-pipeline-tensorboard-ui
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /data
-    rewrite:
-      uri: /data
-    route:
-    - destination:
-        host: $(service).$(ui-namespace).svc.$(ui-clusterDomain)
-        port:
-          number: 80
-    timeout: 300s
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: ml-pipeline-ui
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /pipeline
-    rewrite:
-      uri: /pipeline
-    route:
-    - destination:
-        host: $(service).$(ui-namespace).svc.$(ui-clusterDomain)
-        port:
-          number: 80
-    timeout: 300s
-`)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/params.yaml", `
 varReference:
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
-- path: spec/http/route/destination/host
-  kind: VirtualService
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/params.env", `
 uiClusterDomain=cluster.local
@@ -190,7 +143,6 @@ resources:
 - role.yaml
 - service-account.yaml
 - service.yaml
-- virtual-service.yaml
 configMapGenerator:
 - name: ui-parameters
   env: params.env

@@ -125,34 +125,10 @@ spec:
     app: basic-auth-login
   type: ClusterIP
 `)
-	th.writeF("/manifests/common/basic-auth/base/kflogin-virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: basic-auth-login
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /kflogin
-    rewrite:
-      uri: /kflogin
-    route:
-    - destination:
-        host: basic-auth-login.$(service-namespace).svc.$(clusterDomain)
-        port:
-          number: 8085
-`)
 	th.writeF("/manifests/common/basic-auth/base/params.yaml", `
 varReference:
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
-- path: spec/http/route/destination/host
-  kind: VirtualService
 - path: spec/template/spec/containers/env/valueFrom/secretKeyRef/name
   kind: Deployment
 `)
@@ -168,8 +144,6 @@ resources:
 - gatekeeper-deployment.yaml
 - gatekeeper-service.yaml
 - kflogin-service.yaml
-- kflogin-virtual-service.yaml
-
 commonLabels:
   kustomize.component: basic-auth
 namespace: kubeflow

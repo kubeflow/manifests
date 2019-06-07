@@ -1,8 +1,6 @@
 package tests_test
 
 import (
-	"testing"
-
 	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/pkg/fs"
@@ -10,6 +8,7 @@ import (
 	"sigs.k8s.io/kustomize/pkg/resmap"
 	"sigs.k8s.io/kustomize/pkg/resource"
 	"sigs.k8s.io/kustomize/pkg/target"
+	"testing"
 )
 
 func writeArgoBase(th *KustTestHarness) {
@@ -314,28 +313,6 @@ spec:
   sessionAffinity: None
   type: NodePort
 `)
-	th.writeF("/manifests/argo/base/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: argo-ui
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /argo/
-    rewrite:
-      uri: /
-    route:
-    - destination:
-        host: argo-ui.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 80
-`)
 	th.writeF("/manifests/argo/base/params.yaml", `
 varReference:
 - path: data/config
@@ -344,10 +321,9 @@ varReference:
   kind: Deployment
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
-- path: spec/http/route/destination/host
-  kind: VirtualService
 `)
 	th.writeF("/manifests/argo/base/params.env", `
+namespace=
 executorImage=argoproj/argoexec:v2.3.0
 artifactRepositoryBucket=mlpipeline
 artifactRepositoryKeyPrefix=artifacts
@@ -370,7 +346,6 @@ resources:
 - deployment.yaml
 - service-account.yaml
 - service.yaml
-- virtual-service.yaml
 commonLabels:
   kustomize.component: argo
 images:
@@ -449,6 +424,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.artifactRepositorySecretKeySecretKey
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: workflow-controller-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 - name: clusterDomain
   objref:
     kind: ConfigMap
@@ -456,13 +438,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
-- name: namespace
-  objref:
-    kind: Service
-    name: argo-ui
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.namespace
 configurations:
 - params.yaml
 `)

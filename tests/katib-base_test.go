@@ -101,28 +101,6 @@ spec:
   selector:
     component: ui
 `)
-	th.writeF("/manifests/katib/base/katib-ui-virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: katib-ui
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /katib/
-    rewrite:
-      uri: /katib/
-    route:
-    - destination:
-        host: katib-ui.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 80
-`)
 	th.writeF("/manifests/katib/base/metrics-collector-rbac.yaml", `
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -759,11 +737,6 @@ data:
             image: alpine
           restartPolicy: Never
 `)
-	th.writeF("/manifests/katib/base/params.yaml", `
-varReference:
-- path: spec/http/route/destination/host
-  kind: VirtualService
-`)
 	th.writeF("/manifests/katib/base/params.env", `
 clusterDomain=cluster.local
 `)
@@ -774,7 +747,6 @@ resources:
 - katib-ui-deployment.yaml
 - katib-ui-rbac.yaml
 - katib-ui-service.yaml
-- katib-ui-virtual-service.yaml
 - metrics-collector-rbac.yaml
 - metrics-collector-template-configmap.yaml
 - studyjob-controller-deployment.yaml
@@ -801,7 +773,7 @@ resources:
 - vizier-db-service.yaml
 - worker-template.yaml
 configMapGenerator:
-- name: parameters
+- name: katib-parameters
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
@@ -832,7 +804,7 @@ vars:
 - name: clusterDomain
   objref:
     kind: ConfigMap
-    name: parameters
+    name: katib-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
@@ -843,8 +815,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
-configurations:
-- params.yaml
 `)
 }
 

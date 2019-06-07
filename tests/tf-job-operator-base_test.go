@@ -319,53 +319,27 @@ kind: Service
 metadata:
   annotations:
     prometheus.io/path: /metrics
-    prometheus.io/port: "8443"
     prometheus.io/scrape: "true"
+    prometheus.io/port: "8443"
   labels:
     app: tf-job-operator
-    kustomize.component: tf-job-operator
   name: tf-job-operator
-  namespace: kubeflow
 spec:
   ports:
   - name: monitoring-port
     port: 8443
     targetPort: 8443
   selector:
-    kustomize.component: tf-job-operator
     name: tf-job-operator
   type: ClusterIP
-`)
-	th.writeF("/manifests/tf-training/tf-job-operator/base/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: tf-job-dashboard
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /tfjobs/
-    rewrite:
-      uri: /tfjobs/
-    route:
-    - destination:
-        host: tf-job-dashboard.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 80
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/params.yaml", `
 varReference:
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
-- path: spec/http/route/destination/host
-  kind: VirtualService
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/params.env", `
+namespace=
 clusterDomain=cluster.local
 `)
 	th.writeK("/manifests/tf-training/tf-job-operator/base", `
@@ -380,7 +354,6 @@ resources:
 - deployment.yaml
 - service-account.yaml
 - service.yaml
-- virtual-service.yaml
 commonLabels:
   kustomize.component: tf-job-operator
 configMapGenerator:
