@@ -79,7 +79,7 @@ rules:
   - kubeflow.org
   resources:
   - notebooks
-  - podpresets  
+  - poddefaults  
   verbs:
   - get
   - list
@@ -101,7 +101,8 @@ rules:
   verbs:
   - get
   - list
-  - watch`)
+  - watch
+`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/config-map.yaml", `
 apiVersion: v1
 data:
@@ -373,6 +374,39 @@ spec:
         port:
           number: 80
 `)
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: "application"
+spec:
+  type: "jupyter-web-app"
+  componentKinds:
+    - group: core
+      kind: Service
+    - group: apps
+      kind: Deployment
+    - group: core
+      kind: ConfigMap
+  version: "v1alpha1"
+  description: "Replaces JupyterHub Spawner UI with a new Jupyter UI whcih enables to create/conect/delete jupyter notebooks."
+  icons:
+  maintainers:
+    - name: Kimonas Sotirchos
+      email: kimwnasptd@arrikto.com
+  owners:
+    - name: Kimonas Sotirchos
+      email: kimwnasptd@arrikto.com
+  keywords:
+   - "jupyterhub"
+   - "jupyter ui"
+   - "notebooks"  
+  links:
+    - description: About
+      url: "https://github.com/kubeflow/kubeflow/tree/master/components/jupyter-web-app"
+    - description: Docs
+      url: "https://www.kubeflow.org/docs/notebooks" 
+`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.yaml", `
 varReference:
 - path: spec/template/spec/containers/imagePullPolicy
@@ -402,6 +436,7 @@ resources:
 - service-account.yaml
 - service.yaml
 - virtual-service.yaml
+- application.yaml
 namePrefix: jupyter-web-app-
 namespace: kubeflow
 commonLabels:
