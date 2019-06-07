@@ -144,6 +144,21 @@ configMapGenerator:
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
+vars:
+- name: POD_LABELS
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.POD_LABELS
+- name: USE_ISTIO
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.USE_ISTIO
 `)
 }
 

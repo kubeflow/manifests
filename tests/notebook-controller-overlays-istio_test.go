@@ -27,7 +27,7 @@ spec:
             value: $(USE_ISTIO)
 `)
 	th.writeF("/manifests/jupyter/notebook-controller/overlays/istio/params.env", `
-USE_ISTIO="true"
+USE_ISTIO=true
 `)
 	th.writeK("/manifests/jupyter/notebook-controller/overlays/istio", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -175,6 +175,21 @@ configMapGenerator:
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
+vars:
+- name: POD_LABELS
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.POD_LABELS
+- name: USE_ISTIO
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.USE_ISTIO
 `)
 }
 
