@@ -130,10 +130,7 @@ spec:
           - name: USE_ISTIO
             value: "false"
           - name: POD_LABELS
-            valueFrom:
-              configMapKeyRef:
-                name: parameters
-                key: POD_LABELS
+            value: $(POD_LABELS)
         imagePullPolicy: Always
       serviceAccountName: service-account
 `)
