@@ -38,9 +38,9 @@ spec:
                       type: integer
   version: v1beta2
   versions:
-  - name: v1
-    served: true
-    storage: true
   - name: v1beta2
     served: true
     storage: false
+  - name: v1
+    served: true
+    storage: true

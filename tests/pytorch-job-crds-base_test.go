@@ -53,12 +53,12 @@ spec:
                       type: integer
   version: v1beta2
   versions:
-  - name: v1
-    served: true
-    storage: true
   - name: v1beta2
     served: true
     storage: false
+  - name: v1
+    served: true
+    storage: true
 `)
 	th.writeK("/manifests/pytorch-job/pytorch-job-crds/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
