@@ -251,17 +251,11 @@ spec:
         - /var/ingress-config/ingress_bootstrap.sh
         env:
         - name: NAMESPACE
-          valueFrom:
-            configMapKeyRef:
-              name: envoy-config
-              key: metadata.namespace
+          value: $(namespace)
         - name: TLS_SECRET_NAME
           value: $(secretName)
         - name: TLS_HOST_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: basic-auth-ingress-parameters
-              key: data.hostname
+          value: $(hostname)
         - name: INGRESS_NAME
           value: $(ingressName)
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
@@ -330,10 +324,7 @@ spec:
         - /var/envoy-config/update_backend.sh
         env:
         - name: NAMESPACE
-          valueFrom:
-            configMapKeyRef:
-              name: envoy-config
-              key: metadata.namespace
+          value: $(namespace)
         - name: SERVICE
           value: ambassador
         - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -341,10 +332,7 @@ spec:
         - name: HEALTHCHECK_PATH
           value: /whoami
         - name: INGRESS_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: basic-auth-ingress-parameters
-              key: data.ingressName
+          value: $(ingressName)
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
         name: backend-updater
         volumeMounts:
@@ -388,7 +376,7 @@ varReference:
   kind: Ingress
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/params.env", `
-namespace=
+namespace=kubeflow
 hostname=
 project=
 ipName=
@@ -416,8 +404,8 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: basic-auth-ingress
 images:
-  - name: gcr.io/kubeflow-images-public/ingress-setup:latest
-    newName: gcr.io/kubeflow-images-public/ingress-setup:latest
+  - name: gcr.io/kubeflow-images-public/ingress-setup
+    newName: gcr.io/kubeflow-images-public/ingress-setup
     newTag: latest
   - name: gcr.io/cloud-solutions-group/esp-sample-app
     newName: gcr.io/cloud-solutions-group/esp-sample-app

@@ -90,54 +90,6 @@ kind: ConfigMap
 metadata:
   name: pytorch-operator-config
 `)
-	th.writeF("/manifests/pytorch-job/pytorch-operator/base/crd.yaml", `
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  name: pytorchjobs.kubeflow.org
-spec:
-  additionalPrinterColumns:
-  - JSONPath: .status.conditions[-1:].type
-    name: State
-    type: string
-  - JSONPath: .metadata.creationTimestamp
-    name: Age
-    type: date
-  group: kubeflow.org
-  names:
-    kind: PyTorchJob
-    plural: pytorchjobs
-    singular: pytorchjob
-  scope: Namespaced
-  subresources:
-    status: {}
-  validation:
-    openAPIV3Schema:
-      properties:
-        spec:
-          properties:
-            pytorchReplicaSpecs:
-              properties:
-                Master:
-                  properties:
-                    replicas:
-                      maximum: 1
-                      minimum: 1
-                      type: integer
-                Worker:
-                  properties:
-                    replicas:
-                      minimum: 1
-                      type: integer
-  version: v1beta2
-  versions:
-  - name: v1beta2
-    served: true
-    storage: true
-  - name: v1beta1
-    served: true
-    storage: false
-`)
 	th.writeF("/manifests/pytorch-job/pytorch-operator/base/deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -145,6 +97,9 @@ metadata:
   name: pytorch-operator
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      name: pytorch-operator
   template:
     metadata:
       labels:
@@ -195,7 +150,6 @@ resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - config-map.yaml
-- crd.yaml
 - deployment.yaml
 - service-account.yaml
 commonLabels:
@@ -203,7 +157,7 @@ commonLabels:
 images:
   - name: gcr.io/kubeflow-images-public/pytorch-operator
     newName: gcr.io/kubeflow-images-public/pytorch-operator
-    newTag: v0.5.0
+    newTag: v0.5.0-7-g6d7ed35
 `)
 }
 

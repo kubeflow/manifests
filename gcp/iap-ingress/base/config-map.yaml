@@ -200,7 +200,6 @@ data:
 kind: ConfigMap
 metadata:
   name: envoy-config
-  namespace: $(istioNamespace)
 ---
 apiVersion: v1
 data:
@@ -229,5 +228,4 @@ data:
 kind: ConfigMap
 metadata:
   name: ingress-bootstrap-config
-  namespace: $(istioNamespace)
 ---

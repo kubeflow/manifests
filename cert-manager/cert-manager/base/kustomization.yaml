@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml
-- crd.yaml
 - deployment.yaml
 - service-account.yaml
 commonLabels:

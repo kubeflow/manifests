@@ -79,7 +79,7 @@ rules:
   - kubeflow.org
   resources:
   - notebooks
-  - podpresets  
+  - poddefaults  
   verbs:
   - get
   - list
@@ -101,7 +101,8 @@ rules:
   verbs:
   - get
   - list
-  - watch`)
+  - watch
+`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/config-map.yaml", `
 apiVersion: v1
 data:
@@ -347,40 +348,12 @@ spec:
     targetPort: 5000
   type: ClusterIP
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: jupyter-web-app
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - headers:
-      request:
-        add:
-          x-forwarded-prefix: /jupyter
-    match:
-    - uri:
-        prefix: /jupyter/
-    rewrite:
-      uri: /
-    route:
-    - destination:
-        host: jupyter-web-app.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 80
-`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.yaml", `
 varReference:
 - path: spec/template/spec/containers/imagePullPolicy
   kind: Deployment
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
-- path: spec/http/route/destination/host
-  kind: VirtualService
 `)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.env", `
 UI=default
@@ -401,7 +374,6 @@ resources:
 - role.yaml
 - service-account.yaml
 - service.yaml
-- virtual-service.yaml
 namePrefix: jupyter-web-app-
 namespace: kubeflow
 commonLabels:

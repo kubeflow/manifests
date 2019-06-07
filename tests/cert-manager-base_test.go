@@ -12,7 +12,7 @@ import (
 )
 
 func writeCertManagerBase(th *KustTestHarness) {
-	th.writeF("/manifests/cert-manager/base/cluster-role-binding.yaml", `
+	th.writeF("/manifests/cert-manager/cert-manager/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -37,7 +37,7 @@ spec:
       name: letsencrypt-prod-secret
     server: $(acmeUrl)
 `)
-	th.writeF("/manifests/cert-manager/base/cluster-role.yaml", `
+	th.writeF("/manifests/cert-manager/cert-manager/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
@@ -69,45 +69,7 @@ rules:
   verbs:
   - '*'
 `)
-	th.writeF("/manifests/cert-manager/base/crd.yaml", `
----
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  name: certificates.certmanager.k8s.io
-spec:
-  group: certmanager.k8s.io
-  names:
-    kind: Certificate
-    plural: certificates
-  scope: Namespaced
-  version: v1alpha1
----
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  name: clusterissuers.certmanager.k8s.io
-spec:
-  group: certmanager.k8s.io
-  names:
-    kind: ClusterIssuer
-    plural: clusterissuers
-  scope: Cluster
-  version: v1alpha1
----
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  name: issuers.certmanager.k8s.io
-spec:
-  group: certmanager.k8s.io
-  names:
-    kind: Issuer
-    plural: issuers
-  scope: Namespaced
-  version: v1alpha1
-`)
-	th.writeF("/manifests/cert-manager/base/deployment.yaml", `
+	th.writeF("/manifests/cert-manager/cert-manager/base/deployment.yaml", `
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
@@ -130,30 +92,29 @@ spec:
         name: cert-manager
       serviceAccountName: cert-manager
 `)
-	th.writeF("/manifests/cert-manager/base/service-account.yaml", `
+	th.writeF("/manifests/cert-manager/cert-manager/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: cert-manager
 `)
-	th.writeF("/manifests/cert-manager/base/params.yaml", `
+	th.writeF("/manifests/cert-manager/cert-manager/base/params.yaml", `
 varReference:
 - path: spec/acme/email
   kind: ClusterIssuer
 - path: spec/acme/server
   kind: ClusterIssuer
 `)
-	th.writeF("/manifests/cert-manager/base/params.env", `
+	th.writeF("/manifests/cert-manager/cert-manager/base/params.env", `
 acmeEmail=
 acmeUrl=https://acme-v02.api.letsencrypt.org/directory
 `)
-	th.writeK("/manifests/cert-manager/base", `
+	th.writeK("/manifests/cert-manager/cert-manager/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml
-- crd.yaml
 - deployment.yaml
 - service-account.yaml
 commonLabels:
@@ -188,13 +149,13 @@ configurations:
 }
 
 func TestCertManagerBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/cert-manager/base")
+	th := NewKustTestHarness(t, "/manifests/cert-manager/cert-manager/base")
 	writeCertManagerBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../cert-manager/base"
+	targetPath := "../cert-manager/cert-manager/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

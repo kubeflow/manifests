@@ -265,28 +265,6 @@ spec:
   selector:
     app: kubebench-dashboard
 `)
-	th.writeF("/manifests/kubebench/base/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: kubebench-dashboard
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /dashboard/
-    rewrite:
-      uri: /dashboard/
-    route:
-    - destination:
-        host: kubebench-dashboard.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 80
-`)
 	th.writeF("/manifests/kubebench/base/workflow.yaml", `
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
@@ -464,10 +442,9 @@ spec:
 varReference:
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
-- path: spec/http/route/destination/host
-  kind: VirtualService
 `)
 	th.writeF("/manifests/kubebench/base/params.env", `
+namespace=
 clusterDomain=cluster.local
 `)
 	th.writeK("/manifests/kubebench/base", `
@@ -482,7 +459,6 @@ resources:
 - role.yaml
 - service-account.yaml
 - service.yaml
-- virtual-service.yaml
 - workflow.yaml
 namespace: kubeflow
 commonLabels:

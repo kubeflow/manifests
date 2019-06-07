@@ -7,7 +7,6 @@ resources:
 - role.yaml
 - service-account.yaml
 - service.yaml
-- virtual-service.yaml
 configMapGenerator:
 - name: ui-parameters
   env: params.env

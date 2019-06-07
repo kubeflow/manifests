@@ -3,7 +3,6 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: whoami-app
-  namespace: $(istioNamespace)
 spec:
   replicas: 1
   template:
@@ -33,7 +32,6 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: iap-enabler
-  namespace: $(istioNamespace)
 spec:
   replicas: 1
   template:
