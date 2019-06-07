@@ -69,6 +69,27 @@ rules:
   verbs:
   - '*'
 `)
+  th.writeF("/manifests/kubebench/base/config-map.yaml", `
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubebench-config
+data:
+  kubebenchconfig.yaml: |
+    """
+    defaultWorkflowAgent:
+      container:
+        name: kubebench-workflow-agent
+        image: ciscoai/kubebench-workflow-agent:latest
+    defaultManagedVolumes:
+      experimentVolume:
+        name: kubebench-experiment-volume
+        emptyDir: {}
+      workflowVolume:
+        name: kubebench-workflow-volume
+        emptyDir: {}
+    """
+`)
 	th.writeF("/manifests/kubebench/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
