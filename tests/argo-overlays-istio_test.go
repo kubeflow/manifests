@@ -463,11 +463,18 @@ vars:
     fieldpath: data.artifactRepositorySecretKeySecretKey
 - name: namespace
   objref:
-    kind: Service
-    name: argo-ui
+    kind: ConfigMap
+    name: workflow-controller-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: metadata.namespace
+    fieldpath: data.namespace
+- name: clusterDomain
+  objref:
+    kind: ConfigMap
+    name: workflow-controller-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.clusterDomain
 configurations:
 - params.yaml
 `)
