@@ -80,7 +80,7 @@ data:
     defaultWorkflowAgent:
       container:
         name: kubebench-workflow-agent
-        image: ciscoai/kubebench-workflow-agent:latest
+        image: gcr.io/kubeflow-images-public/kubebench/workflow-agent:v0.5.0-11-gea53ad5
     defaultManagedVolumes:
       experimentVolume:
         name: kubebench-experiment-volume
@@ -104,26 +104,6 @@ spec:
   version: v1
 `)
 	th.writeF("/manifests/kubebench/base/deployment.yaml", `
----
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  labels:
-    app: kubebench-dashboard
-  name: kubebench-dashboard
-spec:
-  template:
-    metadata:
-      labels:
-        app: kubebench-dashboard
-    spec:
-      containers:
-      - image: gcr.io/kubeflow-images-public/kubebench/kubebench-dashboard:v0.4.0-13-g262c593
-        name: kubebench-dashboard
-        ports:
-        - containerPort: 8084
-      serviceAccountName: kubebench-dashboard
----
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -142,101 +122,12 @@ spec:
         name: kubebench-operator
       serviceAccountName: kubebench-operator
 `)
-	th.writeF("/manifests/kubebench/base/role-binding.yaml", `
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: RoleBinding
-metadata:
-  labels:
-    app: kubebench-dashboard
-  name: kubebench-dashboard
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: kubebench-dashboard
-subjects:
-- kind: ServiceAccount
-  name: kubebench-dashboard
-`)
-	th.writeF("/manifests/kubebench/base/role.yaml", `
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: Role
-metadata:
-  labels:
-    app: kubebench-dashboard
-  name: kubebench-dashboard
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  - pods/exec
-  - pods/log
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - get`)
 	th.writeF("/manifests/kubebench/base/service-account.yaml", `
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: kubebench-dashboard
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
   name: default
-`)
-	th.writeF("/manifests/kubebench/base/service.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name: kubebench-dashboard-ui-mapping
-      prefix: /dashboard/
-      rewrite: /dashboard/
-      service: kubebench-dashboard.$(namespace)
-  name: kubebench-dashboard
-spec:
-  ports:
-  - port: 80
-    targetPort: 9303
-  selector:
-    app: kubebench-dashboard
-`)
-	th.writeF("/manifests/kubebench/base/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: kubebench-dashboard
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /dashboard/
-    rewrite:
-      uri: /dashboard/
-    route:
-    - destination:
-        host: kubebench-dashboard.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 80
 `)
 	th.writeF("/manifests/kubebench/base/params.yaml", `
 varReference:
@@ -257,11 +148,7 @@ resources:
 - config-map.yaml
 - crd.yaml
 - deployment.yaml
-- role-binding.yaml
-- role.yaml
 - service-account.yaml
-- service.yaml
-- virtual-service.yaml
 namespace: kubeflow
 commonLabels:
   kustomize.component: kubebench
@@ -269,12 +156,9 @@ configMapGenerator:
 - name: parameters
   env: params.env
 images:
-  - name: gcr.io/kubeflow-images-public/kubebench/kubebench-dashboard
-    newName: gcr.io/kubeflow-images-public/kubebench/kubebench-dashboard
-    newTag: v0.4.0-13-g262c593
-  - name: gcr.io/kubeflow-images-public/kubebench/kubebench-operator
-    newName: gcr.io/kubeflow-images-public/kubebench/kubebench-operator
-    newTag: v0.4.0-13-g262c593
+  - name:  gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2
+    newName: gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2
+    newTag: v0.5.0-11-gea53ad5
   - name: gcr.io/kubeflow-images-public/kubebench/kubebench-controller
     newName: gcr.io/kubeflow-images-public/kubebench/kubebench-controller
     newTag: v0.4.0-13-g262c593
@@ -282,13 +166,6 @@ images:
     newName: gcr.io/kubeflow-images-public/kubebench/kubebench-example-tf-cnn-post-processor
     newTag: v0.4.0-13-g262c593
 vars:
-- name: namespace
-  objref:
-    kind: Service
-    name: kubebench-dashboard
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.namespace
 - name: clusterDomain
   objref:
     kind: ConfigMap
