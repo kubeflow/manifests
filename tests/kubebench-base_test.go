@@ -112,6 +112,10 @@ spec:
   selector:
     matchLabels:
       app: kubebench-operator
+  volumes:
+    - name: kubebench-config
+      configMap:
+        name: kubebench-config
   template:
     metadata:
       labels:
