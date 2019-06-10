@@ -55,13 +55,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.hostname
-- name: istioNamespace
-  objref:
-    kind: ConfigMap
-    name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.istioNamespace
 - name: ipName
   objref:
     kind: ConfigMap

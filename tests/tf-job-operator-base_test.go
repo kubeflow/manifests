@@ -233,7 +233,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: gcr.io/kubeflow-images-public/tf_operator:kubeflow-tf-operator-postsubmit-v1-63de5cb-2948-fd60
+        image: gcr.io/kubeflow-images-public/tf_operator:v0.5.3
         name: tf-job-dashboard
         ports:
         - containerPort: 8080
@@ -255,6 +255,7 @@ spec:
         - /opt/kubeflow/tf-operator.v1
         - --alsologtostderr
         - -v=1
+        - --monitoring-port=8443
         env:
         - name: MY_POD_NAMESPACE
           valueFrom:
@@ -264,7 +265,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: gcr.io/kubeflow-images-public/tf_operator:kubeflow-tf-operator-postsubmit-v1-63de5cb-2948-fd60
+        image: gcr.io/kubeflow-images-public/tf_operator:v0.5.3
         name: tf-job-operator
         volumeMounts:
         - mountPath: /etc/config
@@ -312,37 +313,33 @@ spec:
   selector:
     name: tf-job-dashboard
   type: ClusterIP
-`)
-	th.writeF("/manifests/tf-training/tf-job-operator/base/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
+---
+apiVersion: v1
+kind: Service
 metadata:
-  name: tf-job-dashboard
+  annotations:
+    prometheus.io/path: /metrics
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8443"
+  labels:
+    app: tf-job-operator
+  name: tf-job-operator
 spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /tfjobs/
-    rewrite:
-      uri: /tfjobs/
-    route:
-    - destination:
-        host: tf-job-dashboard.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 80
+  ports:
+  - name: monitoring-port
+    port: 8443
+    targetPort: 8443
+  selector:
+    name: tf-job-operator
+  type: ClusterIP
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/params.yaml", `
 varReference:
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
-- path: spec/http/route/destination/host
-  kind: VirtualService
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/params.env", `
+namespace=
 clusterDomain=cluster.local
 `)
 	th.writeK("/manifests/tf-training/tf-job-operator/base", `
@@ -357,7 +354,6 @@ resources:
 - deployment.yaml
 - service-account.yaml
 - service.yaml
-- virtual-service.yaml
 commonLabels:
   kustomize.component: tf-job-operator
 configMapGenerator:

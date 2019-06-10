@@ -9,7 +9,6 @@ resources:
 - deployment.yaml
 - service-account.yaml
 - service.yaml
-- virtual-service.yaml
 commonLabels:
   kustomize.component: tf-job-operator
 configMapGenerator:

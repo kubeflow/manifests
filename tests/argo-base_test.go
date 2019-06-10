@@ -206,7 +206,7 @@ spec:
           value: "true"
         - name: BASE_HREF
           value: /argo/
-        image: argoproj/argoui:v2.2.0
+        image: argoproj/argoui:v2.3.0
         imagePullPolicy: IfNotPresent
         name: argo-ui
         resources: {}
@@ -261,7 +261,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: metadata.namespace
-        image: argoproj/workflow-controller:v2.2.0
+        image: argoproj/workflow-controller:v2.3.0
         imagePullPolicy: IfNotPresent
         name: workflow-controller
         resources: {}
@@ -313,28 +313,6 @@ spec:
   sessionAffinity: None
   type: NodePort
 `)
-	th.writeF("/manifests/argo/base/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: argo-ui
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /argo/
-    rewrite:
-      uri: /
-    route:
-    - destination:
-        host: argo-ui.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 80
-`)
 	th.writeF("/manifests/argo/base/params.yaml", `
 varReference:
 - path: data/config
@@ -343,11 +321,10 @@ varReference:
   kind: Deployment
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
-- path: spec/http/route/destination/host
-  kind: VirtualService
 `)
 	th.writeF("/manifests/argo/base/params.env", `
-executorImage=argoproj/argoexec:v2.2.0
+namespace=
+executorImage=argoproj/argoexec:v2.3.0
 artifactRepositoryBucket=mlpipeline
 artifactRepositoryKeyPrefix=artifacts
 artifactRepositoryEndpoint=minio-service.kubeflow:9000
@@ -369,16 +346,15 @@ resources:
 - deployment.yaml
 - service-account.yaml
 - service.yaml
-- virtual-service.yaml
 commonLabels:
   kustomize.component: argo
 images:
   - name: argoproj/argoui
     newName: argoproj/argoui
-    newTag: v2.2.0
+    newTag: v2.3.0
   - name: argoproj/workflow-controller
     newName: argoproj/workflow-controller
-    newTag: v2.2.0
+    newTag: v2.3.0
 configMapGenerator:
 - name: workflow-controller-parameters
   env: params.env
@@ -448,6 +424,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.artifactRepositorySecretKeySecretKey
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: workflow-controller-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 - name: clusterDomain
   objref:
     kind: ConfigMap
@@ -455,13 +438,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
-- name: namespace
-  objref:
-    kind: Service
-    name: argo-ui
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.namespace
 configurations:
 - params.yaml
 `)

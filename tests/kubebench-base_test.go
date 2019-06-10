@@ -137,10 +137,9 @@ metadata:
 varReference:
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
-- path: spec/http/route/destination/host
-  kind: VirtualService
 `)
 	th.writeF("/manifests/kubebench/base/params.env", `
+namespace=
 clusterDomain=cluster.local
 `)
 	th.writeK("/manifests/kubebench/base", `
