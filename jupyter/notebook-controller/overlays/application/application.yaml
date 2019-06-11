@@ -1,16 +1,16 @@
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: "application"
+  name: notebook-controller-application
 spec:
-  type: "notebook-controller"
+  type: notebook-controller
   componentKinds:
     - group: core
       kind: Service
     - group: apps
       kind: Deployment
-  version: "v1alpha1"
-  description: "Notebooks controller allows users to create a custom resource \"Notebook\" (jupyter notebook)."
+  version: v1alpha1
+  description: Notebooks controller allows users to create a custom resource \"Notebook\" (jupyter notebook).
   icons:
   maintainers:
     - name: Lun-kai Hsu
@@ -19,10 +19,10 @@ spec:
     - name: Lun-kai Hsu
       email: lunkai@gogle.com
   keywords:
-   - "jupyter"
-   - "notebook"
-   - "notebook-controller"
-   - "jupyterhub"  
+   - jupyter
+   - notebook
+   - notebook-controller
+   - jupyterhub  
   links:
     - description: About
       url: "https://github.com/kubeflow/kubeflow/tree/master/components/notebook-controller"
