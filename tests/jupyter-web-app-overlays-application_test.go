@@ -18,6 +18,7 @@ kind: Application
 metadata:
   name: jupyter-web-app-application
 spec:
+  type: jupyter-web-app
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -31,10 +32,24 @@ spec:
     kind: ServiceAccount
   - group: networking.istio.io
     kind: VirtualService
-  descriptor:
-    type: kubeflow
-    version: ""
-    assemblyPhase: "Pending"
+  version: v1alpha1
+  description: Replaces JupyterHub Spawner UI with a new Jupyter UI whcih enables to create/conect/delete jupyter notebooks.
+  icons:
+  maintainers:
+    - name: Kimonas Sotirchos
+      email: kimwnasptd@arrikto.com
+  owners:
+    - name: Kimonas Sotirchos
+      email: kimwnasptd@arrikto.com
+  keywords:
+   - jupyterhub
+   - jupyter ui
+   - notebooks  
+  links:
+    - description: About
+      url: https://github.com/kubeflow/kubeflow/tree/master/components/jupyter-web-app
+    - description: Docs
+      url: https://www.kubeflow.org/docs/notebooks 
 `)
 	th.writeK("/manifests/jupyter/jupyter-web-app/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
