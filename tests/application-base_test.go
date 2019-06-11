@@ -257,7 +257,7 @@ status:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: controller-cluster-role
+  name: cluster-role
 rules:
 - apiGroups:
   - '*'
@@ -280,26 +280,26 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: controller-cluster-role-binding
+  name: cluster-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: controller-cluster-role
+  name: cluster-role
 subjects:
 - kind: ServiceAccount
-  name: controller-service-account
+  name: service-account
 `)
 	th.writeF("/manifests/application/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: controller-service-account
+  name: service-account
 `)
 	th.writeF("/manifests/application/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
-  name: controller-service
+  name: service
 spec:
   ports:
   - port: 443
@@ -310,22 +310,28 @@ kind: StatefulSet
 metadata:
   name: stateful-set
 spec:
-  serviceName: controller-service
+  serviceName: service
   template:
     spec:
       containers:
       - name: manager
         command:
-        - /root/manager
-        image: controller:latest
+        - /go/src/github.com/kubernetes-sigs/application/manager
+        image: gcr.io/$(project)/application-controller:latest
         imagePullPolicy: Always
         env:
-          - name: POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-      serviceAccountName: controller-service-account
+        - name: project
+          value: $(project)
+      serviceAccountName: service-account
   volumeClaimTemplates: []
+`)
+	th.writeF("/manifests/application/base/params.yaml", `
+varReference:
+- path: spec/template/spec/containers/image
+  kind: StatefulSet
+`)
+	th.writeF("/manifests/application/base/params.env", `
+project=
 `)
 	th.writeK("/manifests/application/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -339,8 +345,21 @@ resources:
 - stateful-set.yaml
 namespace: kubeflow
 nameprefix: application-controller-
-commonLabels:
-  kustomize-component: application-controller
+configMapGenerator:
+- name: parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: project
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.project
+configurations:
+- params.yaml
 `)
 }
 
