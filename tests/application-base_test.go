@@ -345,6 +345,8 @@ resources:
 - stateful-set.yaml
 namespace: kubeflow
 nameprefix: application-controller-
+commonLabels:
+  app.kubernetes.io/name: kubeflow-application
 configMapGenerator:
 - name: parameters
   env: params.env
