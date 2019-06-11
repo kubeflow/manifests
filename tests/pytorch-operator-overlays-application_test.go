@@ -41,6 +41,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: pytorch-operator-application
+  app.kubernetes.io/instance: pytorch-operator
+  app.kubernetes.io/version: v0.6.0
+  app.kubernetes.io/component: pytorch
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/managed-by: kfctl
 `)
 	th.writeF("/manifests/pytorch-job/pytorch-operator/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
