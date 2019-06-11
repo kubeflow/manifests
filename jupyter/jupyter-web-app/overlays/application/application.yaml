@@ -18,7 +18,7 @@ spec:
   - group: networking.istio.io
     kind: VirtualService
   version: v1alpha1
-  description: "Replaces JupyterHub Spawner UI with a new Jupyter UI whcih enables to create/conect/delete jupyter notebooks."
+  description: Replaces JupyterHub Spawner UI with a new Jupyter UI whcih enables to create/conect/delete jupyter notebooks.
   icons:
   maintainers:
     - name: Kimonas Sotirchos
