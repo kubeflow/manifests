@@ -6,7 +6,6 @@ resources:
 - config-map.yaml
 - crd.yaml
 - deployment.yaml
-- service-account.yaml
 namespace: kubeflow
 commonLabels:
   kustomize.component: kubebench

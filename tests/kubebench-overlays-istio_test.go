@@ -163,13 +163,6 @@ spec:
         name: kubebench-operator
       serviceAccountName: kubebench-operator
 `)
-	th.writeF("/manifests/kubebench/base/service-account.yaml", `
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: default
-`)
 	th.writeF("/manifests/kubebench/base/params.yaml", `
 varReference:
 - path: metadata/annotations/getambassador.io\/config
@@ -188,7 +181,6 @@ resources:
 - config-map.yaml
 - crd.yaml
 - deployment.yaml
-- service-account.yaml
 namespace: kubeflow
 commonLabels:
   kustomize.component: kubebench
