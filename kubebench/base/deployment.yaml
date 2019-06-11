@@ -1,23 +1,3 @@
----
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  labels:
-    app: kubebench-dashboard
-  name: kubebench-dashboard
-spec:
-  template:
-    metadata:
-      labels:
-        app: kubebench-dashboard
-    spec:
-      containers:
-      - image: gcr.io/kubeflow-images-public/kubebench/kubebench-dashboard:v0.4.0-13-g262c593
-        name: kubebench-dashboard
-        ports:
-        - containerPort: 8084
-      serviceAccountName: kubebench-dashboard
----
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -26,12 +6,16 @@ spec:
   selector:
     matchLabels:
       app: kubebench-operator
+  volumes:
+    - name: kubebench-config
+      configMap:
+        name: kubebench-config
   template:
     metadata:
       labels:
         app: kubebench-operator
     spec:
       containers:
-      - image: gcr.io/kubeflow-images-public/kubebench/kubebench-operator:v0.4.0-13-g262c593
+      - image: gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2:v0.5.0-11-gea53ad5
         name: kubebench-operator
       serviceAccountName: kubebench-operator
