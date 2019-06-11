@@ -107,9 +107,10 @@ spec:
     spec:
       containers:
       - command:
-        - /pytorch-operator.v1beta2
+        - /pytorch-operator.v1
         - --alsologtostderr
         - -v=1
+        - --monitoring-port=8443
         env:
         - name: MY_POD_NAMESPACE
           valueFrom:
@@ -119,7 +120,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: gcr.io/kubeflow-images-public/pytorch-operator:v0.5.0
+        image: gcr.io/kubeflow-images-public/pytorch-operator@sha256:67cf6445c855
         name: pytorch-operator
         volumeMounts:
         - mountPath: /etc/config

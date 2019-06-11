@@ -36,7 +36,6 @@ spec:
                     replicas:
                       minimum: 1
                       type: integer
-  version: v1beta2
   versions:
   - name: v1beta2
     served: true
