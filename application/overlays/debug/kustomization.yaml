@@ -4,18 +4,3 @@ bases:
 - ../../base
 patchesStrategicMerge:
 - stateful-set.yaml
-configMapGenerator:
-- name: application-controller-parameters
-  env: params.env
-generatorOptions:
-  disableNameSuffixHash: true
-vars:
-- name: project
-  objref:
-    kind: ConfigMap
-    name: application-controller-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.project
-configurations:
-- params.yaml

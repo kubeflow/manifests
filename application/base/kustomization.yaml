@@ -9,5 +9,18 @@ resources:
 - stateful-set.yaml
 namespace: kubeflow
 nameprefix: application-controller-
-commonLabels:
-  kustomize-component: application-controller
+configMapGenerator:
+- name: parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: project
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.project
+configurations:
+- params.yaml
