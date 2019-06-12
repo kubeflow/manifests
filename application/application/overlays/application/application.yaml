@@ -5,10 +5,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: kubeflow
-      app.kubernetes.io/instance: kubeflow
       app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: kubeflow
       app.kubernetes.io/part-of: kubeflow
       app.kubernetes.io/version: v0.6
   componentKinds:
@@ -16,7 +13,7 @@ spec:
       kind: Application
   descriptor: 
     type: kubeflow
-    version: v1beta1
+    version: v1alpha1
     description: application that aggregates all kubeflow applications
     maintainers:
     - name: Jeremy Lewi
