@@ -10,7 +10,7 @@ spec:
       - name: manager
         command:
         - /go/src/github.com/kubernetes-sigs/application/manager
-        image: gcr.io/$(project)/application-controller:latest
+        image: gcr.io/kubeflow-images-public/kubernetes-sigs/application
         imagePullPolicy: Always
         env:
         - name: project

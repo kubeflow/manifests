@@ -317,7 +317,7 @@ spec:
       - name: manager
         command:
         - /go/src/github.com/kubernetes-sigs/application/manager
-        image: gcr.io/$(project)/application-controller:latest
+        image: gcr.io/kubeflow-images-public/kubernetes-sigs/application
         imagePullPolicy: Always
         env:
         - name: project
@@ -352,6 +352,10 @@ configMapGenerator:
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
+images:
+  - name: gcr.io/kubeflow-images-public/kubernetes-sigs/application
+    newName: gcr.io/kubeflow-images-public/kubernetes-sigs/application
+    newTag: 1.0-beta
 vars:
 - name: project
   objref:

@@ -16,9 +16,8 @@ func writeJupyterWebAppOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: jupyter-web-app-application
+  name: application
 spec:
-  type: jupyter-web-app
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -32,20 +31,22 @@ spec:
     kind: ServiceAccount
   - group: networking.istio.io
     kind: VirtualService
-  version: v1alpha1
-  description: Replaces JupyterHub Spawner UI with a new Jupyter UI whcih enables to create/conect/delete jupyter notebooks.
-  icons:
-  maintainers:
+  descriptor:
+    type: jupyter-web-app
+    version: v1alpha1
+    description: Replaces JupyterHub Spawner UI with a new Jupyter UI whcih enables to create/conect/delete jupyter notebooks.
+    icons:
+    maintainers:
     - name: Kimonas Sotirchos
       email: kimwnasptd@arrikto.com
-  owners:
+    owners:
     - name: Kimonas Sotirchos
       email: kimwnasptd@arrikto.com
-  keywords:
-   - jupyterhub
-   - jupyter ui
-   - notebooks  
-  links:
+    keywords:
+     - jupyterhub
+     - jupyter ui
+     - notebooks  
+    links:
     - description: About
       url: https://github.com/kubeflow/kubeflow/tree/master/components/jupyter-web-app
     - description: Docs
@@ -56,11 +57,15 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
-#generators:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: jupyter-web-app-application
+  app.kubernetes.io/name: jupyter-web-app
+  app.kubernetes.io/instance: jupyter-web-app
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: jupyter
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.6
 `)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1

@@ -16,29 +16,32 @@ func writeNotebookControllerOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: notebook-controller-application
+  name: application
 spec:
-  type: notebook-controller
   componentKinds:
     - group: core
       kind: Service
     - group: apps
       kind: Deployment
-  version: v1alpha1
-  description: Notebooks controller allows users to create a custom resource \"Notebook\" (jupyter notebook).
-  icons:
-  maintainers:
+    - group: core
+      kind: ServiceAccount
+  descriptor: 
+    type: notebook-controller
+    version: v1alpha1
+    description: Notebooks controller allows users to create a custom resource \"Notebook\" (jupyter notebook).
+    icons:
+    maintainers:
     - name: Lun-kai Hsu
       email: lunkai@google.com
-  owners:
+    owners:
     - name: Lun-kai Hsu
       email: lunkai@gogle.com
-  keywords:
-   - jupyter
-   - notebook
-   - notebook-controller
-   - jupyterhub  
-  links:
+    keywords:
+     - jupyter
+     - notebook
+     - notebook-controller
+     - jupyterhub  
+    links:
     - description: About
       url: "https://github.com/kubeflow/kubeflow/tree/master/components/notebook-controller"
 `)
@@ -47,11 +50,15 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
-#generators:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: notebook-controller-application
+  app.kubernetes.io/name: notebook-controller
+  app.kubernetes.io/instance: notebook-controller
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: notebook
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.6
 `)
 	th.writeF("/manifests/jupyter/notebook-controller/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
