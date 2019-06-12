@@ -33,7 +33,7 @@ spec:
       containers:
       - command:
         - ./katib-ui
-        image: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-ui:v0.1.2-alpha-280-gb0e0dd5
+        image: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-ui:v0.1.2-alpha-289-g14dad8b
         imagePullPolicy: IfNotPresent
         name: katib-ui
         ports:
@@ -115,7 +115,7 @@ generatorOptions:
   disableNameSuffixHash: true
 images:
   - name: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-ui
-    newTag: v0.1.2-alpha-280-gb0e0dd5
+    newTag: v0.1.2-alpha-289-g14dad8b
 vars:
 - name: clusterDomain
   objref:

@@ -73,7 +73,7 @@ data:
               serviceAccountName: metrics-collector
               containers:
               - name: {{.Trial}}
-                image: gcr.io/kubeflow-images-public/katib/v1alpha2/metrics-collector:v0.1.2-alpha-280-gb0e0dd5
+                image: gcr.io/kubeflow-images-public/katib/v1alpha2/metrics-collector:v0.1.2-alpha-289-g14dad8b
                 imagePullPolicy: IfNotPresent
                 command: ["./metricscollector"]
                 args:
@@ -104,7 +104,7 @@ generatorOptions:
   disableNameSuffixHash: true
 images:
   - name: gcr.io/kubeflow-images-public/katib/v1alpha2/metrics-collector
-    newTag: v0.1.2-alpha-280-gb0e0dd5
+    newTag: v0.1.2-alpha-289-g14dad8b
 `)
 }
 

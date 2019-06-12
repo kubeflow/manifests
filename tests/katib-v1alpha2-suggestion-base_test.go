@@ -31,7 +31,7 @@ spec:
       name: katib-suggestion-bayesianoptimization
     spec:
       containers:
-      - image: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-bayesianoptimization:v0.1.2-alpha-280-gb0e0dd5
+      - image: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-bayesianoptimization:v0.1.2-alpha-289-g14dad8b
         imagePullPolicy: IfNotPresent
         name: katib-suggestion-bayesianoptimization
         ports:
@@ -76,7 +76,7 @@ spec:
       name: katib-suggestion-hyperband
     spec:
       containers:
-      - image: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-hyperband:v0.1.2-alpha-280-gb0e0dd5
+      - image: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-hyperband:v0.1.2-alpha-289-g14dad8b
         imagePullPolicy: IfNotPresent
         name: katib-suggestion-hyperband
         ports:
@@ -121,7 +121,7 @@ spec:
       name: katib-suggestion-grid
     spec:
       containers:
-      - image: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-grid:v0.1.2-alpha-280-gb0e0dd5
+      - image: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-grid:v0.1.2-alpha-289-g14dad8b
         imagePullPolicy: IfNotPresent
         name: katib-suggestion-grid
         ports:
@@ -166,7 +166,7 @@ spec:
       name: katib-suggestion-nasrl
     spec:
       containers:
-      - image: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-nasrl:v0.1.2-alpha-280-gb0e0dd5
+      - image: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-nasrl:v0.1.2-alpha-289-g14dad8b
         name: katib-suggestion-nasrl
         ports:
         - containerPort: 6789
@@ -210,7 +210,7 @@ spec:
       name: katib-suggestion-random
     spec:
       containers:
-      - image: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-random:v0.1.2-alpha-280-gb0e0dd5
+      - image: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-random:v0.1.2-alpha-289-g14dad8b
         imagePullPolicy: IfNotPresent
         name: katib-suggestion-random
         ports:
@@ -253,15 +253,15 @@ generatorOptions:
   disableNameSuffixHash: true
 images:
   - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-bayesianoptimization
-    newTag: v0.1.2-alpha-280-gb0e0dd5
+    newTag: v0.1.2-alpha-289-g14dad8b
   - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-hyperband
-    newTag: v0.1.2-alpha-280-gb0e0dd5
+    newTag: v0.1.2-alpha-289-g14dad8b
   - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-grid
-    newTag: v0.1.2-alpha-280-gb0e0dd5
+    newTag: v0.1.2-alpha-289-g14dad8b
   - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-random
-    newTag: v0.1.2-alpha-280-gb0e0dd5
+    newTag: v0.1.2-alpha-289-g14dad8b
   - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-nasrl
-    newTag: v0.1.2-alpha-280-gb0e0dd5
+    newTag: v0.1.2-alpha-289-g14dad8b
 `)
 }
 

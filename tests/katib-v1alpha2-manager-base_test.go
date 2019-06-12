@@ -39,7 +39,7 @@ spec:
             secretKeyRef:
               key: MYSQL_ROOT_PASSWORD
               name: katib-db-secrets
-        image: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-manager:v0.1.2-alpha-280-gb0e0dd5
+        image: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-manager:v0.1.2-alpha-289-g14dad8b
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
@@ -98,7 +98,7 @@ spec:
       containers:
       - command:
         - ./katib-manager-rest
-        image: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-manager-rest:v0.1.2-alpha-280-gb0e0dd5
+        image: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-manager-rest:v0.1.2-alpha-289-g14dad8b
         imagePullPolicy: IfNotPresent
         name: katib-manager-rest
         ports:
@@ -135,9 +135,9 @@ generatorOptions:
   disableNameSuffixHash: true
 images:
   - name: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-manager
-    newTag: v0.1.2-alpha-280-gb0e0dd5
+    newTag: v0.1.2-alpha-289-g14dad8b
   - name: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-manager-rest
-    newTag: v0.1.2-alpha-280-gb0e0dd5
+    newTag: v0.1.2-alpha-289-g14dad8b
 `)
 }
 
