@@ -144,7 +144,7 @@ spec:
   selector:
     component: core
 `)
-	th.writeK("/manifests/katib-v1alpha1/vizier-core/base/", `
+	th.writeK("/manifests/katib-v1alpha1/vizier-core/base", `
 namespace: kubeflow
 resources:
 - vizier-core-deployment.yaml
@@ -163,13 +163,13 @@ images:
 }
 
 func TestKatibV1Alpha1VizierCore(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib-v1alpha1/vizier-core/base/")
+	th := NewKustTestHarness(t, "/manifests/katib-v1alpha1/vizier-core/base")
 	writeKatibV1Alpha1VizierCore(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha1/vizier-core/base/"
+	targetPath := "../katib-v1alpha1/vizier-core/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

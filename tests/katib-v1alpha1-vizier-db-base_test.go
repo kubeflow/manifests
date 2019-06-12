@@ -107,7 +107,6 @@ resources:
 - vizier-db-pvc.yaml
 - vizier-db-secret.yaml
 - vizier-db-service.yaml
-- worker-template.yaml
 generatorOptions:
   disableNameSuffixHash: true
 images:
