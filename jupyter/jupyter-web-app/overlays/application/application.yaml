@@ -3,6 +3,14 @@ kind: Application
 metadata:
   name: jupyter-web-app
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: jupyter-web-app
+      app.kubernetes.io/instance: jupyter-web-app
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: jupyter
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.6
   componentKinds:
   - group: core
     kind: ConfigMap
