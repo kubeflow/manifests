@@ -16,7 +16,7 @@ func writeJupyterWebAppOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: application
+  name: jupyter-web-app
 spec:
   componentKinds:
   - group: core

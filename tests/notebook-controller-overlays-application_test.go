@@ -16,7 +16,7 @@ func writeNotebookControllerOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: application
+  name: notebook-controller
 spec:
   componentKinds:
     - group: core

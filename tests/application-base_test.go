@@ -316,7 +316,7 @@ spec:
       containers:
       - name: manager
         command:
-        - /go/src/github.com/kubernetes-sigs/application/manager
+        - /root/manager
         image: gcr.io/kubeflow-images-public/kubernetes-sigs/application
         imagePullPolicy: Always
         env:

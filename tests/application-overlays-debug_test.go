@@ -22,6 +22,7 @@ spec:
     spec:
       containers:
       - name: manager
+        image: gcr.io/$(project)/application-controller:latest
         command: 
         - /go/bin/dlv
         args: 
@@ -347,7 +348,7 @@ spec:
       containers:
       - name: manager
         command:
-        - /go/src/github.com/kubernetes-sigs/application/manager
+        - /root/manager
         image: gcr.io/kubeflow-images-public/kubernetes-sigs/application
         imagePullPolicy: Always
         env:
