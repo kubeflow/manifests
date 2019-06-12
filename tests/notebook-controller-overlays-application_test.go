@@ -44,6 +44,7 @@ spec:
     links:
     - description: About
       url: "https://github.com/kubeflow/kubeflow/tree/master/components/notebook-controller"
+  addOwnerRef: true
 `)
 	th.writeK("/manifests/jupyter/notebook-controller/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1

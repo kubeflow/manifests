@@ -34,7 +34,7 @@ spec:
   descriptor:
     type: jupyter-web-app
     version: v1alpha1
-    description: Replaces JupyterHub Spawner UI with a new Jupyter UI whcih enables to create/conect/delete jupyter notebooks.
+    description: Provides a UI which allows the user to create/conect/delete jupyter notebooks.
     icons:
     maintainers:
     - name: Kimonas Sotirchos
@@ -51,6 +51,8 @@ spec:
       url: https://github.com/kubeflow/kubeflow/tree/master/components/jupyter-web-app
     - description: Docs
       url: https://www.kubeflow.org/docs/notebooks 
+  addOwnerRef: true
+
 `)
 	th.writeK("/manifests/jupyter/jupyter-web-app/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
