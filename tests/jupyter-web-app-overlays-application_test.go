@@ -35,7 +35,6 @@ spec:
     type: jupyter-web-app
     version: v1alpha1
     description: Provides a UI which allows the user to create/conect/delete jupyter notebooks.
-    icons:
     maintainers:
     - name: Kimonas Sotirchos
       email: kimwnasptd@arrikto.com
