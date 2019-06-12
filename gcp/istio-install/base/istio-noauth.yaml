@@ -14036,7 +14036,7 @@ kind: Service
 metadata:
   name: istio-ingressgateway
   annotations:
-    beta.cloud.google.com/backend-config: '{"ports": {"http2":"iap-backendconfig"}}'
+    beta.cloud.google.com/backend-config: '{"ports": {"http2":"iap-ingress-iap-backendconfig"}}'
   labels:
     chart: gateways
     heritage: Tiller
