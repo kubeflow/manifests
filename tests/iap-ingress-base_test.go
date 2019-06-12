@@ -651,7 +651,6 @@ resources:
 - service.yaml
 - stateful-set.yaml
 namespace: kubeflow
-nameprefix: iap-ingress-
 commonLabels:
   kustomize.component: iap-ingress
 images:
@@ -718,7 +717,7 @@ vars:
     name: parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.ipName
+    fieldpath: data.oauthSecretName
 - name: project
   objref:
     kind: ConfigMap
