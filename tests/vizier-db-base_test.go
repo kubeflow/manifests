@@ -11,19 +11,7 @@ import (
 	"testing"
 )
 
-func writeKatibV1Alpha1VizierDbBase(th *KustTestHarness) {
-	th.writeF("/manifests/katib-v1alpha1/vizier-db/base/vizier-db-pvc.yaml", `
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: katib-mysql
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
-`)
+func writeVizierDbBase(th *KustTestHarness) {
 	th.writeF("/manifests/katib-v1alpha1/vizier-db/base/vizier-db-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -75,6 +63,18 @@ spec:
         persistentVolumeClaim:
           claimName: katib-mysql
 `)
+	th.writeF("/manifests/katib-v1alpha1/vizier-db/base/vizier-db-pvc.yaml", `
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: katib-mysql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+`)
 	th.writeF("/manifests/katib-v1alpha1/vizier-db/base/vizier-db-secret.yaml", `
 apiVersion: v1
 kind: Secret
@@ -115,9 +115,9 @@ images:
 `)
 }
 
-func TestKatibV1Alpha1VizierDbBase(t *testing.T) {
+func TestVizierDbBase(t *testing.T) {
 	th := NewKustTestHarness(t, "/manifests/katib-v1alpha1/vizier-db/base")
-	writeKatibV1Alpha1VizierDbBase(th)
+	writeVizierDbBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
