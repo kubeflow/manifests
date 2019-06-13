@@ -180,7 +180,7 @@ data:
     # Print out the config for debugging
     gcloud config list
 
-    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[?(@.name=="http2")}.nodePort')
+    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
     echo "node port is ${NODE_PORT}"
 
     while [[ -z ${BACKEND_NAME} ]]; do
@@ -289,16 +289,15 @@ data:
     # / instead of the intended /healthz.
     # Manually update the healthcheck request path to /healthz
     if [[ ${HEALTHCHECK_PATH} ]]; then
+      # This is basic auth
       echo Running health checks update ${HEALTH_CHECK_URI} with ${HEALTHCHECK_PATH}
       gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=${HEALTHCHECK_PATH}
     else
-      echo Running health checks update ${HEALTH_CHECK_URI} with /healthz
-      gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=/healthz
-    fi
-
-    if [[ ${USE_ISTIO} ]]; then
-      # Create the route so healthcheck can pass
-      kubectl apply -f /var/envoy-config/healthcheck_route.yaml
+      # /healthz/ready is the health check path for istio-ingressgateway
+      echo Running health checks update ${HEALTH_CHECK_URI} with /healthz/ready
+      gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=/healthz/ready
+      # 15020 is istio-ingressgateway status port
+      gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --port=15020
     fi
 
     # Since JupyterHub uses websockets we want to increase the backend timeout
