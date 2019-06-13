@@ -741,6 +741,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.tlsSecretName
+- name: istioNamespace
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.istioNamespace
 configurations:
 - params.yaml
 `)
