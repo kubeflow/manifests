@@ -26,7 +26,7 @@ spec:
     kind: VirtualService
   descriptor:
     type: jupyter-web-app
-    version: v1alpha1
+    version: v1beta1
     description: Provides a UI which allows the user to create/conect/delete jupyter notebooks.
     maintainers:
     - name: Kimonas Sotirchos

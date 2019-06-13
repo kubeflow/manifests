@@ -35,7 +35,7 @@ spec:
       kind: ServiceAccount
   descriptor: 
     type: notebook-controller
-    version: v1alpha1
+    version: v1beta1
     description: Notebooks controller allows users to create a custom resource \"Notebook\" (jupyter notebook).
     maintainers:
     - name: Lun-kai Hsu

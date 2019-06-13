@@ -28,7 +28,7 @@ spec:
       kind: Application
   descriptor: 
     type: kubeflow
-    version: v1alpha1
+    version: v1beta1
     description: application that aggregates all kubeflow applications
     maintainers:
     - name: Jeremy Lewi
