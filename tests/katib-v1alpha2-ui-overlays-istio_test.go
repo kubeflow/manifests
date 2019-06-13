@@ -49,7 +49,7 @@ resources:
 configurations:
 - params.yaml
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-ui/overlays/istio/katib-ui-deployment.yaml", `
+	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/katib-ui-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -78,7 +78,7 @@ spec:
           name: ui
       serviceAccountName: katib-ui
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-ui/overlays/istio/katib-ui-rbac.yaml", `
+	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/katib-ui-rbac.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -117,7 +117,7 @@ subjects:
   name: katib-ui
   namespace: kubeflow
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-ui/overlays/istio/katib-ui-service.yaml", `
+	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/katib-ui-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -136,10 +136,10 @@ spec:
     component: ui
   type: ClusterIP
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-ui/overlays/istio/params.env", `
+	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/params.env", `
 clusterDomain=cluster.local
 `)
-	th.writeK("/manifests/katib-v1alpha2/katib-ui/overlays/istio", `
+	th.writeK("/manifests/katib-v1alpha2/katib-ui/base", `
 namespace: kubeflow
 resources:
 - katib-ui-deployment.yaml
