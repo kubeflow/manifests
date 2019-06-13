@@ -109,7 +109,7 @@ resources:
 - katib-ui-rbac.yaml
 - katib-ui-service.yaml
 configMapGenerator:
-- name: parameters
+- name: katib-parameters
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
@@ -120,7 +120,7 @@ vars:
 - name: clusterDomain
   objref:
     kind: ConfigMap
-    name: parameters
+    name: katib-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain

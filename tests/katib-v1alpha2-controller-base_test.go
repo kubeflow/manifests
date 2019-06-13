@@ -242,9 +242,6 @@ resources:
 - katib-controller-service.yaml
 - trial-crd.yaml
 - trial-template.yaml
-configMapGenerator:
-- name: parameters
-  env: params.env
 generatorOptions:
   disableNameSuffixHash: true
 images:

@@ -157,7 +157,7 @@ vars:
 - name: clusterDomain
   objref:
     kind: ConfigMap
-    name: parameters
+    name: katib-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
