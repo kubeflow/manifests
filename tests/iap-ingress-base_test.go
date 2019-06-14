@@ -52,6 +52,7 @@ spec:
   project: $(project)
   targetIngress:
     name: $(ingressName)
+    namespace: $(istioNamespace)
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -179,7 +180,7 @@ data:
     # Print out the config for debugging
     gcloud config list
 
-    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[?(@.name=="http2")}.nodePort')
+    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
     echo "node port is ${NODE_PORT}"
 
     while [[ -z ${BACKEND_NAME} ]]; do
@@ -288,16 +289,16 @@ data:
     # / instead of the intended /healthz.
     # Manually update the healthcheck request path to /healthz
     if [[ ${HEALTHCHECK_PATH} ]]; then
+      # This is basic auth
       echo Running health checks update ${HEALTH_CHECK_URI} with ${HEALTHCHECK_PATH}
       gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=${HEALTHCHECK_PATH}
     else
-      echo Running health checks update ${HEALTH_CHECK_URI} with /healthz
-      gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=/healthz
-    fi
-
-    if [[ ${USE_ISTIO} ]]; then
-      # Create the route so healthcheck can pass
-      kubectl apply -f /var/envoy-config/healthcheck_route.yaml
+      # /healthz/ready is the health check path for istio-ingressgateway
+      echo Running health checks update ${HEALTH_CHECK_URI} with /healthz/ready
+      gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=/healthz/ready
+      # We need the nodeport for istio-ingressgateway status-port
+      STATUS_NODE_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="status-port")].nodePort}')
+      gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --port=${STATUS_NODE_PORT}
     fi
 
     # Since JupyterHub uses websockets we want to increase the backend timeout
@@ -632,6 +633,7 @@ oauthSecretName=kubeflow-oauth
 project=
 adminSaSecretName=admin-gcp-sa
 tlsSecretName=envoy-ingress-tls
+istioNamespace=istio-system
 `)
 	th.writeK("/manifests/gcp/iap-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -651,7 +653,6 @@ resources:
 - service.yaml
 - stateful-set.yaml
 namespace: kubeflow
-nameprefix: iap-ingress-
 commonLabels:
   kustomize.component: iap-ingress
 images:
@@ -718,7 +719,7 @@ vars:
     name: parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.ipName
+    fieldpath: data.oauthSecretName
 - name: project
   objref:
     kind: ConfigMap
@@ -740,6 +741,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.tlsSecretName
+- name: istioNamespace
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.istioNamespace
 configurations:
 - params.yaml
 `)
