@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func writeKatibV1Alpha1UIOverlaysIstio(th *KustTestHarness) {
+func writeKatibUiOverlaysIstio(th *KustTestHarness) {
 	th.writeF("/manifests/katib-v1alpha1/katib-ui/overlays/istio/katib-ui-virtual-service.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -161,14 +161,14 @@ vars:
 `)
 }
 
-func TestKatibV1Alpha1UIOverlaysIstio(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib-v1alpha1/katib-ui/base")
-	writeKatibV1Alpha1UIOverlaysIstio(th)
+func TestKatibUiOverlaysIstio(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/katib-v1alpha1/katib-ui/overlays/istio")
+	writeKatibUiOverlaysIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha1/katib-ui/base"
+	targetPath := "../katib-v1alpha1/katib-ui/overlays/istio"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
