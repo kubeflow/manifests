@@ -197,9 +197,6 @@ kind: StatefulSet
 metadata:
   name: stateful-set
 spec:
-  selector:
-    matchLabels:
-      k8s-app: admission-webhook
   replicas: 1
   serviceName: service
   template:
