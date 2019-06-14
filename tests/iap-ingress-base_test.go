@@ -298,7 +298,7 @@ data:
       gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=/healthz/ready
       # We need the nodeport for istio-ingressgateway status-port
       STATUS_NODE_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="status-port")].nodePort}')
-      gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --port=STATUS_NODE_PORT
+      gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --port=${STATUS_NODE_PORT}
     fi
 
     # Since JupyterHub uses websockets we want to increase the backend timeout
