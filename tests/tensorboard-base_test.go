@@ -71,34 +71,10 @@ spec:
     app: tensorboard
   type: ClusterIP
 `)
-	th.writeF("/manifests/tensorboard/base/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: tensorboard
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /tensorboard/tensorboard/
-    rewrite:
-      uri: /
-    route:
-    - destination:
-        host: tensorboard.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 9000
-`)
 	th.writeF("/manifests/tensorboard/base/params.yaml", `
 varReference:
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
-- path: spec/http/route/destination/host
-  kind: VirtualService
 `)
 	th.writeF("/manifests/tensorboard/base/params.env", `
 # GCP
@@ -126,7 +102,7 @@ varReference:
 # @optionalParam efsPvcName string null Name of the Persistent Volume Claim used for EFS
 # @optionalParam efsVolumeName string null Name of the Volume to mount to the pod
 # @optionalParam efsMountPath string null Where to mount the EFS Volume
-
+namespace=
 clusterDomain=cluster.local
 `)
 	th.writeK("/manifests/tensorboard/base", `
@@ -136,7 +112,6 @@ namespace: kubeflow
 resources:
 - deployment.yaml
 - service.yaml
-- virtual-service.yaml
 commonLabels:
   kustomize.component: tensorboard
 configMapGenerator:

@@ -16,7 +16,7 @@ GOLANG_VERSION ?= 1.12.4
 GOPATH ?= $(HOME)/go
 
 # Comma seperated items within {} for more than one file
-EXCLUDE ?=
+EXCLUDE ?= istio-install-base_test.go
 
 export GO111MODULE = on
 export GO = go
@@ -33,5 +33,8 @@ test:
 clean:
 	@rm -f $$(ls *_test.go | egrep -v 'kusttestharness_test.go|go.mod|go.sum')
 
-run-plugin:
-	cd .. && XDG_CONFIG_HOME=$$(pwd)/hack kustomize --enable_alpha_goplugins_accept_panic_risk build profiles/overlays/test
+run-unittest-plugin:
+	cd .. && XDG_CONFIG_HOME=$$(pwd)/plugins kustomize --enable_alpha_goplugins_accept_panic_risk build profiles/overlays/test
+
+run-application-plugin:
+	cd .. && XDG_CONFIG_HOME=$$(pwd)/plugins kustomize --enable_alpha_goplugins_accept_panic_risk build jupyter/jupyter-web-app/overlays/application

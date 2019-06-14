@@ -106,8 +106,6 @@ metadata:
 varReference:
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
-- path: spec/http/route/destination/host
-  kind: VirtualService
 `)
 	th.writeF("/manifests/pipeline/pipelines-viewer/base/params.env", `
 viewerClusterDomain=cluster.local

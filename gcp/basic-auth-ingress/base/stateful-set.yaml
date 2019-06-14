@@ -8,6 +8,7 @@ spec:
   selector:
     matchLabels:
       service: backend-updater
+  serviceName: "backend-updater"
   template:
     metadata:
       labels:
@@ -19,10 +20,7 @@ spec:
         - /var/envoy-config/update_backend.sh
         env:
         - name: NAMESPACE
-          valueFrom:
-            configMapKeyRef:
-              name: envoy-config
-              key: metadata.namespace
+          value: $(namespace)
         - name: SERVICE
           value: ambassador
         - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -30,10 +28,7 @@ spec:
         - name: HEALTHCHECK_PATH
           value: /whoami
         - name: INGRESS_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: basic-auth-ingress-parameters
-              key: data.ingressName
+          value: $(ingressName)
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
         name: backend-updater
         volumeMounts:

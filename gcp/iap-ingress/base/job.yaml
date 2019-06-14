@@ -2,7 +2,6 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: ingress-bootstrap
-  namespace: $(istioNamespace)
 spec:
   template:
     spec:

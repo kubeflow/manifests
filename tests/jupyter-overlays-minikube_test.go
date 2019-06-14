@@ -57,6 +57,11 @@ kind: StatefulSet
 metadata:
   name: jupyter
 spec:
+  selector:
+    matchLabels:
+      k8s-app: jupyter
+  replicas: 1
+  serviceName: ""
   template:
     spec:
       containers:
@@ -1918,6 +1923,9 @@ kind: StatefulSet
 metadata:
   name: jupyter
 spec:
+  selector:
+    matchLabels:
+      k8s-app: jupyter
   replicas: 1
   serviceName: ""
   template:
@@ -1965,36 +1973,6 @@ spec:
     type: RollingUpdate
   volumeClaimTemplates: []
 `)
-	th.writeF("/manifests/jupyter/jupyter/base/application.yaml", `
-apiVersion: app.k8s.io/v1beta1
-kind: Application
-metadata:
-  name: "jupyter"
-spec:
-  type: "Notebook"
-  componentKinds:
-    - group: core
-      kind: Service
-    - group: apps
-      kind: StatefulSet
-    - group: kubeflow.org
-      kind: Notebook  
-  version: "v1alpha1"
-  description: "Jupyter server whcih enables users to create jupyter notebooks on Kubeflow cluster"
-  icons:
-  maintainers:
-    - name: Zahra Abbasi
-      email: zahraabbasi@google.com
-  owners:
-    - name: Zahra Abbasi
-      email: zahraabbasi@gogle.com
-  keywords:
-   - "jupyter"
-   - "notebook"
-  links:
-    - description: Docs
-      url: "https://www.kubeflow.org/docs/notebooks"
-`)
 	th.writeF("/manifests/jupyter/jupyter/base/params.yaml", `
 varReference:
 - path: spec/template/spec/containers/imagePullPolicy
@@ -2020,7 +1998,6 @@ resources:
 - service-account.yaml
 - service.yaml
 - stateful-set.yaml
-- application.yaml
 namespace: kubeflow
 commonLabels:
   kustomize.component: jupyter

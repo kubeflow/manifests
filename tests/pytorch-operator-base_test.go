@@ -90,54 +90,6 @@ kind: ConfigMap
 metadata:
   name: pytorch-operator-config
 `)
-	th.writeF("/manifests/pytorch-job/pytorch-operator/base/crd.yaml", `
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  name: pytorchjobs.kubeflow.org
-spec:
-  additionalPrinterColumns:
-  - JSONPath: .status.conditions[-1:].type
-    name: State
-    type: string
-  - JSONPath: .metadata.creationTimestamp
-    name: Age
-    type: date
-  group: kubeflow.org
-  names:
-    kind: PyTorchJob
-    plural: pytorchjobs
-    singular: pytorchjob
-  scope: Namespaced
-  subresources:
-    status: {}
-  validation:
-    openAPIV3Schema:
-      properties:
-        spec:
-          properties:
-            pytorchReplicaSpecs:
-              properties:
-                Master:
-                  properties:
-                    replicas:
-                      maximum: 1
-                      minimum: 1
-                      type: integer
-                Worker:
-                  properties:
-                    replicas:
-                      minimum: 1
-                      type: integer
-  version: v1beta2
-  versions:
-  - name: v1beta2
-    served: true
-    storage: true
-  - name: v1beta1
-    served: true
-    storage: false
-`)
 	th.writeF("/manifests/pytorch-job/pytorch-operator/base/deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -145,6 +97,9 @@ metadata:
   name: pytorch-operator
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      name: pytorch-operator
   template:
     metadata:
       labels:
@@ -152,9 +107,10 @@ spec:
     spec:
       containers:
       - command:
-        - /pytorch-operator.v1beta2
+        - /pytorch-operator.v1
         - --alsologtostderr
         - -v=1
+        - --monitoring-port=8443
         env:
         - name: MY_POD_NAMESPACE
           valueFrom:
@@ -164,7 +120,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: gcr.io/kubeflow-images-public/pytorch-operator:v0.5.0
+        image: gcr.io/kubeflow-images-public/pytorch-operator:v0.5.1-5-ge775742
         name: pytorch-operator
         volumeMounts:
         - mountPath: /etc/config
@@ -183,6 +139,27 @@ metadata:
     app: pytorch-operator
   name: pytorch-operator
 `)
+	th.writeF("/manifests/pytorch-job/pytorch-operator/base/service.yaml", `
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/path: /metrics
+    prometheus.io/port: "8443"
+    prometheus.io/scrape: "true"
+  labels:
+    app: pytorch-operator
+  name: pytorch-operator
+spec:
+  ports:
+  - name: monitoring-port
+    port: 8443
+    targetPort: 8443
+  selector:
+    name: pytorch-operator
+  type: ClusterIP
+
+`)
 	th.writeF("/manifests/pytorch-job/pytorch-operator/base/params.env", `
 pytorchDefaultImage=null
 deploymentScope=cluster
@@ -191,19 +168,20 @@ deploymentNamespace=null
 	th.writeK("/manifests/pytorch-job/pytorch-operator/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: kubeflow
 resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - config-map.yaml
-- crd.yaml
 - deployment.yaml
 - service-account.yaml
+- service.yaml
 commonLabels:
   kustomize.component: pytorch-operator
 images:
   - name: gcr.io/kubeflow-images-public/pytorch-operator
     newName: gcr.io/kubeflow-images-public/pytorch-operator
-    newTag: v0.5.0
+    #newTag: v0.5.0-7-g6d7ed35
 `)
 }
 
