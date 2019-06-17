@@ -7,7 +7,7 @@ spec:
   - jwt:
       audiences:
       - TO_BE_PATCHED
-      issuer: $(issuer)
+      issuer: https://cloud.google.com/iap
       jwksUri: https://www.gstatic.com/iap/verify/public_key-jwk
       jwtHeaders:
       - x-goog-iap-jwt-assertion
