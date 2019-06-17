@@ -6,3 +6,13 @@ workflows:
     name: e2e
     job_types:
       - presubmit
+  # Run kfctl E2E
+  - app_dir: kubeflow/kubeflow/testing/workflows
+    component: kfctl_go_test
+    name: kfctl-go
+    job_types:
+      - postsubmit
+    params:
+      platform: gke
+      gkeApiVersion: v1
+      workflowName: kfctl-go
