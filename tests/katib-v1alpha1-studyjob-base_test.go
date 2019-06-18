@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func writeStudyjobBase(th *KustTestHarness) {
+func writeKatibV1Alpha1StudyJobBase(th *KustTestHarness) {
 	th.writeF("/manifests/katib-v1alpha1/studyjob/base/studyjob-controller-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -187,9 +187,9 @@ images:
 `)
 }
 
-func TestStudyjobBase(t *testing.T) {
+func TestKatibV1Alpha1StudyJobBase(t *testing.T) {
 	th := NewKustTestHarness(t, "/manifests/katib-v1alpha1/studyjob/base")
-	writeStudyjobBase(th)
+	writeKatibV1Alpha1StudyJobBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
