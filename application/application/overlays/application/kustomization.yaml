@@ -5,9 +5,9 @@ bases:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: jupyter-web-app
-  app.kubernetes.io/instance: jupyter-web-app
+  app.kubernetes.io/name: kubeflow
+  app.kubernetes.io/instance: kubeflow
   app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: jupyter
+  app.kubernetes.io/component: kubeflow
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.6
