@@ -5,6 +5,7 @@ commonLabels:
 resources:
 - deployment.yaml
 - service.yaml
+- persistent-volume-claim.yaml
 configMapGenerator:
 - name: parameters
   env: params.env

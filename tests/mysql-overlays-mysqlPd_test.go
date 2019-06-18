@@ -26,17 +26,12 @@ spec:
     pdName: $(mysqlPd)
     fsType: ext4
 `)
-	th.writeF("/manifests/pipeline/mysql/overlays/mysqlPd/persistent-volume-claim.yaml", `
+	th.writeF("/manifests/pipeline/mysql/overlays/mysqlPd/persistent-volume-claim-patch.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: $(mysqlPvcName)
 spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 20Gi
   storageClassName: ""
   volumeName: $(mysqlPvName)
 `)
@@ -62,7 +57,8 @@ bases:
 - ../../base
 resources:
 - persistent-volume.yaml
-- persistent-volume-claim.yaml
+patchesStrategicMerge:
+- persistent-volume-claim-patch.yaml
 configMapGenerator:
 - name: overlay-params
   env: params.env
@@ -122,11 +118,23 @@ spec:
   ports:
   - port: 3306
 `)
+	th.writeF("/manifests/pipeline/mysql/base/persistent-volume-claim.yaml", `
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: $(mysqlPvcName)
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi`)
 	th.writeF("/manifests/pipeline/mysql/base/params.yaml", `
 varReference:
 - path: spec/template/spec/volumes/persistentVolumeClaim/claimName
   kind: Deployment
-`)
+- path: metadata/name
+  kind: PersistentVolumeClaim`)
 	th.writeF("/manifests/pipeline/mysql/base/params.env", `
 mysqlPvcName=
 `)
@@ -138,6 +146,7 @@ commonLabels:
 resources:
 - deployment.yaml
 - service.yaml
+- persistent-volume-claim.yaml
 configMapGenerator:
 - name: parameters
   env: params.env
