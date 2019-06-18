@@ -1,0 +1,4 @@
+varReference:
+- path: spec/template/spec/containers/1/args/1
+  kind: Deployment
+
