@@ -67,6 +67,20 @@ spec:
   selector:
     app: minio
 `)
+	th.writeF("/manifests/pipeline/minio/base/persistent-volume-claim.yaml", `
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: $(minioPvcName)
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+`)
+	th.writeF("/manifests/pipeline/minio/base/params.env", `
+minioPvcName=`)
 	th.writeK("/manifests/pipeline/minio/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -76,6 +90,18 @@ resources:
 - deployment.yaml
 - secret.yaml
 - service.yaml
+- persistent-volume-claim.yaml
+configMapGenerator:
+- name: parameters
+  env: params.env
+vars:
+- name: minioPvcName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.minioPvcName
 images:
 - name: minio/minio
   newTag: RELEASE.2018-02-09T22-40-05Z
