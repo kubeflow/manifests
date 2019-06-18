@@ -4,7 +4,8 @@ bases:
 - ../../base
 resources:
 - persistent-volume.yaml
-- persistent-volume-claim.yaml
+patchesStrategicMerge:
+- persistent-volume-claim-patch.yaml
 configMapGenerator:
 - name: minio-parameters
   env: params.env
@@ -25,12 +26,5 @@ vars:
     apiVersion: v1
   fieldref:
       fieldpath: data.minioPvName
-- name: minioPvcName
-  objref:
-    kind: ConfigMap
-    name: minio-parameters
-    apiVersion: v1
-  fieldref:
-      fieldpath: data.minioPvcName
 configurations:
 - params.yaml
