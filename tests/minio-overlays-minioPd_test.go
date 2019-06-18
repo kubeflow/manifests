@@ -26,7 +26,7 @@ spec:
     pdName: $(minioPd)
     fsType: ext4
 `)
-	th.writeF("/manifests/pipeline/minio/overlays/minioPd/persistent-volume-claim-patch.yaml", `
+	th.writeF("/manifests/pipeline/minio/overlays/minioPd/persistent-volume-claim.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -57,7 +57,7 @@ bases:
 resources:
 - persistent-volume.yaml
 patchesStrategicMerge:
-- persistent-volume-claim-patch.yaml
+- persistent-volume-claim.yaml
 configMapGenerator:
 - name: minio-parameters
   env: params.env

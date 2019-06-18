@@ -5,7 +5,7 @@ bases:
 resources:
 - persistent-volume.yaml
 patchesStrategicMerge:
-- persistent-volume-claim-patch.yaml
+- persistent-volume-claim.yaml
 configMapGenerator:
 - name: overlay-params
   env: params.env

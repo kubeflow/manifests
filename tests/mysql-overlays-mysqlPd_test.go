@@ -26,7 +26,7 @@ spec:
     pdName: $(mysqlPd)
     fsType: ext4
 `)
-	th.writeF("/manifests/pipeline/mysql/overlays/mysqlPd/persistent-volume-claim-patch.yaml", `
+	th.writeF("/manifests/pipeline/mysql/overlays/mysqlPd/persistent-volume-claim.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -58,7 +58,7 @@ bases:
 resources:
 - persistent-volume.yaml
 patchesStrategicMerge:
-- persistent-volume-claim-patch.yaml
+- persistent-volume-claim.yaml
 configMapGenerator:
 - name: overlay-params
   env: params.env
