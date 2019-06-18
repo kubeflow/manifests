@@ -26,7 +26,7 @@ spec:
     pdName: $(mysqlPd)
     fsType: ext4
 `)
-	th.writeF("/manifests/pipeline/mysql/overlays/mysqlPd/persistent-volume-claim-patch.yaml", `
+	th.writeF("/manifests/pipeline/mysql/overlays/mysqlPd/persistent-volume-claim.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -58,9 +58,10 @@ bases:
 resources:
 - persistent-volume.yaml
 patchesStrategicMerge:
-- persistent-volume-claim-patch.yaml
+- persistent-volume-claim.yaml
 configMapGenerator:
-- name: overlay-params
+- name: pipeline-mysql-parameters
+  behavior: merge
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
@@ -68,14 +69,14 @@ vars:
 - name: mysqlPd
   objref:
     kind: ConfigMap
-    name: overlay-params
+    name: pipeline-mysql-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.mysqlPd
 - name: mysqlPvName
   objref:
     kind: ConfigMap
-    name: overlay-params
+    name: pipeline-mysql-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.mysqlPvName
@@ -148,13 +149,15 @@ resources:
 - service.yaml
 - persistent-volume-claim.yaml
 configMapGenerator:
-- name: parameters
+- name: pipeline-mysql-parameters
   env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
 vars:
 - name: mysqlPvcName
   objref:
     kind: ConfigMap
-    name: parameters
+    name: pipeline-mysql-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.mysqlPvcName
