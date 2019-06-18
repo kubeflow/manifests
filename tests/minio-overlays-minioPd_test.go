@@ -59,7 +59,8 @@ resources:
 patchesStrategicMerge:
 - persistent-volume-claim.yaml
 configMapGenerator:
-- name: minio-parameters
+- name: pipeline-minio-parameters
+  behavior: merge
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
@@ -67,14 +68,14 @@ vars:
 - name: minioPd
   objref:
     kind: ConfigMap
-    name: minio-parameters
+    name: pipeline-minio-parameters
     apiVersion: v1
   fieldref:
       fieldpath: data.minioPd
 - name: minioPvName
   objref:
     kind: ConfigMap
-    name: minio-parameters
+    name: pipeline-minio-parameters
     apiVersion: v1
   fieldref:
       fieldpath: data.minioPvName
@@ -167,13 +168,15 @@ resources:
 - service.yaml
 - persistent-volume-claim.yaml
 configMapGenerator:
-- name: parameters
+- name: pipeline-minio-parameters
   env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
 vars:
 - name: minioPvcName
   objref:
     kind: ConfigMap
-    name: parameters
+    name: pipeline-minio-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.minioPvcName

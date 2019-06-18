@@ -98,13 +98,15 @@ resources:
 - service.yaml
 - persistent-volume-claim.yaml
 configMapGenerator:
-- name: parameters
+- name: pipeline-minio-parameters
   env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
 vars:
 - name: minioPvcName
   objref:
     kind: ConfigMap
-    name: parameters
+    name: pipeline-minio-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.minioPvcName
