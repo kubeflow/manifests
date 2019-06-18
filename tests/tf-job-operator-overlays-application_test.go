@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func writeTfJobOperatorOverlaysIstio(th *KustTestHarness) {
+func writeTfJobOperatorOverlaysApplication(th *KustTestHarness) {
 	th.writeF("/manifests/tf-training/tf-job-operator/overlays/application/application.yaml", `
 apiVersion: app.k8s.io/v1beta1
 kind: Application
