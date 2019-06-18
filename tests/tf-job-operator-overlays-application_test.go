@@ -11,7 +11,68 @@ import (
 	"testing"
 )
 
-func writeTfJobOperatorBase(th *KustTestHarness) {
+func writeTfJobOperatorOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/tf-training/tf-job-operator/overlays/application/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: "application"
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: tf-job-operator
+      app.kubernetes.io/instance: tf-job-operator
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: tfjob
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.6 
+  componentKinds:
+  - group: core
+    kind: Service
+  - group: apps
+    kind: Deployment
+  - group: core
+    kind: ConfigMap
+  - group: core
+    kind: ServiceAccount
+  - group: kubeflow.org
+    kind: TFJob
+  descriptor:
+    type: "tf-job-operator"
+    version: "v1"
+    description: "Tf-operator allows users to create and manage the \"TFJob\" custom resource."
+    maintainers:
+    - name: Richard Liu
+      email: ricliu@google.com
+    owners:
+    - name: Richard Liu
+      email: ricliu@google.com
+    keywords:
+    - "tfjob"
+    - "tf-operator"
+    - "tf-training"
+    links:
+    - description: About
+      url: "https://github.com/kubeflow/tf-operator"
+    - description: Docs
+      url: "https://www.kubeflow.org/docs/reference/tfjob/v1/tensorflow/"
+  addOwnerRef: true
+`)
+	th.writeK("/manifests/tf-training/tf-job-operator/overlays/application", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- application.yaml
+commonLabels:
+  app.kubernetes.io/name: tf-job-operator 
+  app.kubernetes.io/instance: tf-job-operator
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: tfjob
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.6
+`)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/cluster-role-binding.yaml", `
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -342,6 +403,41 @@ varReference:
 namespace=
 clusterDomain=cluster.local
 `)
+	th.writeF("/manifests/tf-training/tf-job-operator/base/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: "application"
+spec:
+  type: "tf-job-operator"
+  componentKinds:
+    - group: core
+      kind: Service
+    - group: apps
+      kind: Deployment
+    - group: core
+      kind: ConfigMap
+    - group: kubeflow.org
+      kind: TFJob
+  version: "v1"
+  description: "Tf-operator allows users to create and manage the \"TFJob\" custom resource."
+  icons:
+  maintainers:
+    - name: Richard Liu
+      email: ricliu@google.com
+  owners:
+    - name: Richard Liu
+      email: ricliu@google.com
+  keywords:
+   - "tfjob"
+   - "tf-operator"
+   - "tf-training"
+  links:
+    - description: About
+      url: "https://github.com/kubeflow/tf-operator"
+    - description: Docs
+      url: "https://www.kubeflow.org/docs/reference/tfjob/v1/tensorflow/"
+`)
 	th.writeK("/manifests/tf-training/tf-job-operator/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -354,6 +450,7 @@ resources:
 - deployment.yaml
 - service-account.yaml
 - service.yaml
+- application.yaml
 commonLabels:
   kustomize.component: tf-job-operator
 configMapGenerator:
@@ -379,14 +476,14 @@ configurations:
 `)
 }
 
-func TestTfJobOperatorBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/tf-training/tf-job-operator/base")
-	writeTfJobOperatorBase(th)
+func TestTfJobOperatorOverlaysApplication(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/tf-training/tf-job-operator/overlays/application")
+	writeTfJobOperatorOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../tf-training/tf-job-operator/base"
+	targetPath := "../tf-training/tf-job-operator/overlays/application"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
