@@ -379,6 +379,41 @@ varReference:
 namespace=
 clusterDomain=cluster.local
 `)
+	th.writeF("/manifests/tf-training/tf-job-operator/base/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: "application"
+spec:
+  type: "tf-job-operator"
+  componentKinds:
+    - group: core
+      kind: Service
+    - group: apps
+      kind: Deployment
+    - group: core
+      kind: ConfigMap
+    - group: kubeflow.org
+      kind: TFJob
+  version: "v1"
+  description: "Tf-operator allows users to create and manage the `\"TFJob\" custom resource."
+  icons:
+  maintainers:
+    - name: Richard Liu
+      email: ricliu@google.com
+  owners:
+    - name: Richard Liu
+      email: ricliu@google.com
+  keywords:
+   - "tfjob"
+   - "tf-operator"
+   - "tf-training"
+  links:
+    - description: About
+      url: "https://github.com/kubeflow/tf-operator"
+    - description: Docs
+      url: "https://www.kubeflow.org/docs/reference/tfjob/v1/tensorflow/"
+`)
 	th.writeK("/manifests/tf-training/tf-job-operator/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -391,6 +426,7 @@ resources:
 - deployment.yaml
 - service-account.yaml
 - service.yaml
+- application.yaml
 commonLabels:
   kustomize.component: tf-job-operator
 configMapGenerator:
