@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func writeSuggestionBase(th *KustTestHarness) {
+func writeKatibV1Alpha1Suggestion(th *KustTestHarness) {
 	th.writeF("/manifests/katib-v1alpha1/suggestion/base/suggestion-bayesianoptimization-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -231,9 +231,9 @@ images:
 `)
 }
 
-func TestSuggestionBase(t *testing.T) {
+func TestKatibV1Alpha1Suggestion(t *testing.T) {
 	th := NewKustTestHarness(t, "/manifests/katib-v1alpha1/suggestion/base")
-	writeSuggestionBase(th)
+	writeKatibV1Alpha1Suggestion(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
