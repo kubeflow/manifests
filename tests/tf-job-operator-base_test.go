@@ -359,7 +359,7 @@ spec:
     - group: kubeflow.org
       kind: TFJob
   version: "v1"
-  description: "Tf-operator allows users to create and manage the `\"TFJob\" custom resource."
+  description: "Tf-operator allows users to create and manage the \"TFJob\" custom resource."
   icons:
   maintainers:
     - name: Richard Liu
