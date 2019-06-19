@@ -27,5 +27,12 @@ vars:
       apiVersion: v1
     fieldref:
       fieldpath: data.admin
+  - name: namespace
+    objref:
+      kind: Service
+      name: kfam
+      apiVersion: v1
+    fieldref:
+      fieldpath: metadata.namespace
 configurations:
 - params.yaml
