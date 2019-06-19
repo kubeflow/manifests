@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func writeKatibUiBase(th *KustTestHarness) {
+func writeKatibV1Alpha1UIBase(th *KustTestHarness) {
 	th.writeF("/manifests/katib-v1alpha1/katib-ui/base/katib-ui-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -124,9 +124,9 @@ vars:
 `)
 }
 
-func TestKatibUiBase(t *testing.T) {
+func TestKatibV1Alpha1UIBase(t *testing.T) {
 	th := NewKustTestHarness(t, "/manifests/katib-v1alpha1/katib-ui/base")
-	writeKatibUiBase(th)
+	writeKatibV1Alpha1UIBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
