@@ -34,7 +34,7 @@ spec:
       uri: /
     route:
     - destination:
-        host: jupyter-web-app.$(namespace).svc.$(clusterDomain)
+        host: jupyter-web-app-service.$(namespace).svc.$(clusterDomain)
         port:
           number: 80
 `)
