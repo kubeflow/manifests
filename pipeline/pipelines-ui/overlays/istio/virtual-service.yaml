@@ -15,7 +15,7 @@ spec:
       uri: /data
     route:
     - destination:
-        host: $(service).$(ui-namespace).svc.$(ui-clusterDomain)
+        host: $(tensorboard-service).$(ui-namespace).svc.$(ui-clusterDomain)
         port:
           number: 80
     timeout: 300s
