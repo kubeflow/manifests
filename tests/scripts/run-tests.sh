@@ -24,5 +24,6 @@ cd tests
 
 # the tests depend on kustomize
 export PATH=${GOPATH}/bin:/usr/local/go/bin:${PATH}
+export GO111MODULE=on
 go get sigs.k8s.io/kustomize
 make test
