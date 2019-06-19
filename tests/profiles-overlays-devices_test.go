@@ -51,7 +51,7 @@ spec:
   names:
     kind: Profile
     plural: profiles
-  scope: Namespaced
+  scope: Cluster
   validation:
     openAPIV3Schema:
       properties:
@@ -74,6 +74,14 @@ spec:
               type: object
           type: object
         status:
+          properties:
+            message:
+              type: string
+            status:
+              description: 'INSERT ADDITIONAL STATUS FIELD - define observed state
+                of cluster Important: Run "make" to regenerate code after modifying
+                this file'
+              type: string
           type: object
   version: v1alpha1
 status:
