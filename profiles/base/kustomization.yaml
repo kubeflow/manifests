@@ -28,4 +28,4 @@ vars:
     fieldref:
       fieldpath: data.admin
 configurations:
-  - params.yaml
+- params.yaml
