@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func writeMetricsCollectorBase(th *KustTestHarness) {
+func writeKatibV1Alpha1MetricsCollectorBase(th *KustTestHarness) {
 	th.writeF("/manifests/katib-v1alpha1/metrics-collector/base/metrics-collector-rbac.yaml", `
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -104,9 +104,9 @@ images:
 `)
 }
 
-func TestMetricsCollectorBase(t *testing.T) {
+func TestKatibV1Alpha1MetricsCollectorBase(t *testing.T) {
 	th := NewKustTestHarness(t, "/manifests/katib-v1alpha1/metrics-collector/base")
-	writeMetricsCollectorBase(th)
+	writeKatibV1Alpha1MetricsCollectorBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
