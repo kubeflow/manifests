@@ -3,5 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: $(mysqlPvcName)
 spec:
-  storageClassName: ""
-  volumeName: $(mysqlPvName)
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi

@@ -11,38 +11,54 @@ import (
 	"testing"
 )
 
-func writeApplicationOverlaysDebug(th *KustTestHarness) {
-	th.writeF("/manifests/application/application/overlays/debug/stateful-set.yaml", `
-apiVersion: apps/v1
-kind: StatefulSet
+func writeApplicationOverlaysApplication(th *KustTestHarness) {
+	th.writeF("/manifests/application/application/overlays/application/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
 metadata:
-  name: stateful-set
+  name: kubeflow
 spec:
-  template:
-    spec:
-      containers:
-      - name: manager
-        image: gcr.io/$(project)/application-controller:latest
-        command: 
-        - /go/bin/dlv
-        args: 
-        - --listen=:2345
-        - --headless=true
-        - --api-version=2
-        - exec
-        - /go/src/github.com/kubernetes-sigs/application/manager
-        ports:
-        - containerPort: 2345
-        securityContext:
-          privileged: true
+  selector:
+    matchLabels:
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.6
+  componentKinds:
+    - group: app.k8s.io
+      kind: Application
+  descriptor: 
+    type: kubeflow
+    version: v1beta1
+    description: application that aggregates all kubeflow applications
+    maintainers:
+    - name: Jeremy Lewi
+      email: jlewi@google.com
+    - name: Kam Kasravi
+      email: kam.d.kasravi@intel.com
+    owners:
+    - name: Jeremy Lewi
+      email: jlewi@google.com
+    keywords:
+     - kubeflow
+    links:
+    - description: About
+      url: "https://kubeflow.org"
+  addOwnerRef: true
 `)
-	th.writeK("/manifests/application/application/overlays/debug", `
+	th.writeK("/manifests/application/application/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
-patchesStrategicMerge:
-- stateful-set.yaml
+resources:
+- application.yaml
+commonLabels:
+  app.kubernetes.io/name: kubeflow
+  app.kubernetes.io/instance: kubeflow
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: kubeflow
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.6
 `)
 	th.writeF("/manifests/application/application/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
@@ -157,14 +173,14 @@ configurations:
 `)
 }
 
-func TestApplicationOverlaysDebug(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/application/application/overlays/debug")
-	writeApplicationOverlaysDebug(th)
+func TestApplicationOverlaysApplication(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/application/application/overlays/application")
+	writeApplicationOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../application/application/overlays/debug"
+	targetPath := "../application/application/overlays/application"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

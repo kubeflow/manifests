@@ -27,4 +27,4 @@ spec:
       volumes:
       - name: data
         persistentVolumeClaim:
-          claimName: minio-pv-claim
+          claimName: $(minioPvcName)

@@ -42,7 +42,7 @@ spec:
       volumes:
       - name: data
         persistentVolumeClaim:
-          claimName: minio-pv-claim
+          claimName: $(minioPvcName)
 `)
 	th.writeF("/manifests/pipeline/minio/base/secret.yaml", `
 apiVersion: v1
@@ -67,6 +67,26 @@ spec:
   selector:
     app: minio
 `)
+	th.writeF("/manifests/pipeline/minio/base/persistent-volume-claim.yaml", `
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: $(minioPvcName)
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+`)
+	th.writeF("/manifests/pipeline/minio/base/params.yaml", `
+varReference:
+- path: spec/template/spec/volumes/persistentVolumeClaim/claimName
+  kind: Deployment
+- path: metadata/name
+  kind: PersistentVolumeClaim`)
+	th.writeF("/manifests/pipeline/minio/base/params.env", `
+minioPvcName=`)
 	th.writeK("/manifests/pipeline/minio/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -76,9 +96,25 @@ resources:
 - deployment.yaml
 - secret.yaml
 - service.yaml
+- persistent-volume-claim.yaml
+configMapGenerator:
+- name: pipeline-minio-parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: minioPvcName
+  objref:
+    kind: ConfigMap
+    name: pipeline-minio-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.minioPvcName
 images:
 - name: minio/minio
   newTag: RELEASE.2018-02-09T22-40-05Z
+configurations:
+- params.yaml
 `)
 }
 

@@ -11,7 +11,63 @@ import (
 	"testing"
 )
 
-func writeNotebookControllerBase(th *KustTestHarness) {
+func writeNotebookControllerOverlaysApplication(th *KustTestHarness) {
+	th.writeF("/manifests/jupyter/notebook-controller/overlays/application/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: notebook-controller
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: notebook-controller
+      app.kubernetes.io/instance: notebook-controller
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: notebook
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.6
+  componentKinds:
+    - group: core
+      kind: Service
+    - group: apps
+      kind: Deployment
+    - group: core
+      kind: ServiceAccount
+  descriptor: 
+    type: notebook-controller
+    version: v1beta1
+    description: Notebooks controller allows users to create a custom resource \"Notebook\" (jupyter notebook).
+    maintainers:
+    - name: Lun-kai Hsu
+      email: lunkai@google.com
+    owners:
+    - name: Lun-kai Hsu
+      email: lunkai@gogle.com
+    keywords:
+     - jupyter
+     - notebook
+     - notebook-controller
+     - jupyterhub  
+    links:
+    - description: About
+      url: "https://github.com/kubeflow/kubeflow/tree/master/components/notebook-controller"
+  addOwnerRef: true
+`)
+	th.writeK("/manifests/jupyter/notebook-controller/overlays/application", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- application.yaml
+commonLabels:
+  app.kubernetes.io/name: notebook-controller
+  app.kubernetes.io/instance: notebook-controller
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: notebook
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.6
+`)
 	th.writeF("/manifests/jupyter/notebook-controller/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -211,14 +267,14 @@ vars:
 `)
 }
 
-func TestNotebookControllerBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/jupyter/notebook-controller/base")
-	writeNotebookControllerBase(th)
+func TestNotebookControllerOverlaysApplication(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/jupyter/notebook-controller/overlays/application")
+	writeNotebookControllerOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../jupyter/notebook-controller/base"
+	targetPath := "../jupyter/notebook-controller/overlays/application"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

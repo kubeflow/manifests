@@ -3,19 +3,17 @@ kind: StatefulSet
 metadata:
   name: stateful-set
 spec:
-  serviceName: controller-service
+  serviceName: service
   template:
     spec:
       containers:
       - name: manager
         command:
         - /root/manager
-        image: controller:latest
+        image: gcr.io/kubeflow-images-public/kubernetes-sigs/application
         imagePullPolicy: Always
         env:
-          - name: POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-      serviceAccountName: controller-service-account
+        - name: project
+          value: $(project)
+      serviceAccountName: service-account
   volumeClaimTemplates: []

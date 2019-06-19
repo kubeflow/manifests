@@ -3,5 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: $(minioPvcName)
 spec:
-  volumeName: $(minioPvName)
-  storageClassName: ""
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi

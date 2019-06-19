@@ -169,10 +169,10 @@ subjects:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service
+  name: kfam
 spec:
   ports:
-  - port: 443
+  - port: 8081
 `)
 	th.writeF("/manifests/profiles/base/deployment.yaml", `
 apiVersion: apps/v1
@@ -188,7 +188,23 @@ spec:
         image: gcr.io/kubeflow-images-public/profile-controller:v20190228-v0.4.0-rc.1-192-g1a802656-dirty-f95773
         imagePullPolicy: Always
         name: manager
+      - command:
+        - /opt/kubeflow/access-management
+        args:
+        - "-cluster-admin"
+        - $(admin)
+        image: gcr.io/kubeflow-images-public/kfam:v20190612-v0-170-ga06cdb79-dirty-a33ee4
+        imagePullPolicy: Always
+        name: kfam
       serviceAccountName: controller-service-account
+`)
+	th.writeF("/manifests/profiles/base/params.yaml", `
+varReference:
+- path: spec/template/spec/containers/1/args/1
+  kind: Deployment
+`)
+	th.writeF("/manifests/profiles/base/params.env", `
+admin=
 `)
 	th.writeK("/manifests/profiles/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -205,10 +221,23 @@ namePrefix: profiles-
 namespace: kubeflow
 commonLabels:
   kustomize.component: profiles
+configMapGenerator:
+  - name: profiles-parameters
+    env: params.env
 images:
   - name: gcr.io/kubeflow-images-public/profile-controller
     newName: gcr.io/kubeflow-images-public/profile-controller
     newTag: v20190228-v0.4.0-rc.1-192-g1a802656-dirty-f95773
+vars:
+  - name: admin
+    objref:
+      kind: ConfigMap
+      name: profiles-parameters
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.admin
+configurations:
+- params.yaml
 `)
 }
 

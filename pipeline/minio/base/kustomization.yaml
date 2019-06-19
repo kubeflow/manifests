@@ -6,6 +6,22 @@ resources:
 - deployment.yaml
 - secret.yaml
 - service.yaml
+- persistent-volume-claim.yaml
+configMapGenerator:
+- name: pipeline-minio-parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: minioPvcName
+  objref:
+    kind: ConfigMap
+    name: pipeline-minio-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.minioPvcName
 images:
 - name: minio/minio
   newTag: RELEASE.2018-02-09T22-40-05Z
+configurations:
+- params.yaml
