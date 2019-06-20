@@ -1,0 +1,26 @@
+# Labels to add to all resources and selectors.
+commonLabels:
+  app.kubernetes.io/instance: seldon-core-operator
+  app.kubernetes.io/managed-by: Tiller
+  app.kubernetes.io/name: seldon-core-operator
+  helm.sh/chart: seldon-core-operator-0.3.1-SNAPSHOT
+
+# Value of this field is prepended to the
+# names of all resources
+namePrefix: seldon
+
+# List of resource files that kustomize reads, modifies
+# and emits as a YAML string
+resources:
+- seldon-manager-sa.yaml
+- seldon-operator-controller-manager-service-svc.yaml
+- seldon-operator-controller-manager-statefulset.yaml
+- seldon-operator-manager-role-clusterrole.yaml
+- seldon-operator-manager-rolebinding-crb.yaml
+- seldondeployments.machinelearning.seldon.io-crd.yaml
+
+# Each entry in this list results in the creation of
+# one Secret resource (it's a generator of n secrets).
+secretGenerator:
+- name: seldon-operator-webhook-server-secret
+  type: Opaque

@@ -1,12 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: seldon-default
+  name: seldon-operator-manager-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: seldon-crd-default
+  name: seldon-operator-manager-role
 subjects:
 - kind: ServiceAccount
-  name: seldon
+  name: seldon-manager
   namespace: default
