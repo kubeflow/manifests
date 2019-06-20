@@ -1,0 +1,4 @@
+namespace: istio-system
+resources:
+- crds.yaml
+

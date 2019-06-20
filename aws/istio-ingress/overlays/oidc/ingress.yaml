@@ -1,0 +1,9 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: istio-ingress
+  annotations:
+    alb.ingress.kubernetes.io/auth-type: oidc
+    alb.ingress.kubernetes.io/auth-idp-cognito: '{"Issuer":"'+ params.OidcIssuer + '","AuthorizationEndpoint":"'+ params.OidcAuthorizationEndpoint + '","TokenEndpoint":"'+ params.OidcTokenEndpoint +'","UserInfoEndpoint":"'+ params.OidcUserInfoEndpoint + '","SecretName":"istio-oidc-secret"}'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-west-2:348134392524:certificate/c7a9eb05-0975-4fc8-bb79-374197e4031c
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'

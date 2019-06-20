@@ -1,0 +1,8 @@
+namespace: istio-system
+resources:
+- ingress.yaml
+- istio-gateway.yaml
+- istio-virtual-service.yaml
+commonLabels:
+  kustomize.component: istio-ingress
+

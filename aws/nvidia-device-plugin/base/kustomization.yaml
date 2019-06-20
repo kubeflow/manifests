@@ -1,0 +1,11 @@
+namespace: kube-system
+resources:
+- daemon-set.yaml
+commonLabels:
+  kustomize.component: nvidia-device-plugin
+images:
+  - name: nvidia/k8s-device-plugin
+    newName: nvidia/k8s-device-plugin
+    newTag: :1.0.0-beta
+
+
