@@ -68,7 +68,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: gcr.io/kubeflow-images-public/kflogin-ui:v20190123-v0.4.0-rc.1-73-g38ad5f77
+        image: gcr.io/kubeflow-images-public/kflogin-ui:v0.5.0
         ports:
         - containerPort: 5000
 `)
@@ -107,7 +107,7 @@ spec:
             secretKeyRef:
               key: passwordhash
               name: $(authSecretName)
-        image: gcr.io/kubeflow-images-public/gatekeeper:v20190211-v0.4.0-rc.1-119-g5098995b-e3b0c4
+        image: gcr.io/kubeflow-images-public/gatekeeper:v0.5.0
         ports:
         - containerPort: 8085
         workingDir: /opt/kubeflow

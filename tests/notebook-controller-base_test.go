@@ -140,7 +140,7 @@ spec:
     spec:
       containers:
       - name: manager
-        image: gcr.io/kubeflow-images-public/notebook-controller:v20190401-v0.4.0-rc.1-308-g33618cc9-e3b0c4
+        image: gcr.io/kubeflow-images-public/notebook-controller:v20190614-v0-160-g386f2749-e3b0c4
         command:
           - /manager
         env:
