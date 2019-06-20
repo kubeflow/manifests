@@ -282,11 +282,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: service-account
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: notebook-service-account
 `)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/service.yaml", `
 apiVersion: v1
