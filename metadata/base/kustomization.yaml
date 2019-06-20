@@ -11,4 +11,8 @@ resources:
 - metadata-db-service.yaml
 - metadata-deployment.yaml
 - metadata-service.yaml
-
+- metadata-ui-deployment.yaml
+- metadata-ui-role.yaml
+- metadata-ui-rolebinding.yaml
+- metadata-ui-sa.yaml
+- metadata-ui-service.yaml

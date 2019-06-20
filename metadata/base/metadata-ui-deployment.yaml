@@ -1,0 +1,24 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  labels:
+    app: metadata-ui
+  name: metadata-ui
+spec:
+  selector:
+    matchLabels:
+      app: metadata-ui
+  template:
+    metadata:
+      labels:
+        app: metadata-ui
+    spec:
+      containers:
+      # TODO(rjbauer): Change this to something like gcr.io/metadata/frontend:0.0.1
+      - image: gcr.io/rjbauer-ml-pipelines/metadata/frontend:6-26-v1
+        imagePullPolicy: IfNotPresent
+        name: metadata-ui
+        ports:
+        - containerPort: 3000
+      serviceAccountName: metadata-ui
+
