@@ -7,7 +7,9 @@ metadata:
 rules:
 - apiGroups:
   - ""
+  - "app.k8s.io"
   resources:
+  - applications
   - pods
   - pods/exec
   - pods/log

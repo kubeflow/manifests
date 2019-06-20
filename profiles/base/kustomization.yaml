@@ -9,10 +9,30 @@ resources:
 - service.yaml
 - deployment.yaml
 namePrefix: profiles-
+namespace: kubeflow
 commonLabels:
-  app.kubernetes.io/name: profiles-application
   kustomize.component: profiles
+configMapGenerator:
+  - name: profiles-parameters
+    env: params.env
 images:
   - name: gcr.io/kubeflow-images-public/profile-controller
     newName: gcr.io/kubeflow-images-public/profile-controller
     newTag: v20190228-v0.4.0-rc.1-192-g1a802656-dirty-f95773
+vars:
+  - name: admin
+    objref:
+      kind: ConfigMap
+      name: profiles-parameters
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.admin
+  - name: namespace
+    objref:
+      kind: Service
+      name: kfam
+      apiVersion: v1
+    fieldref:
+      fieldpath: metadata.namespace
+configurations:
+- params.yaml

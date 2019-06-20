@@ -6,12 +6,16 @@ resources:
 - role.yaml
 - service-account.yaml
 - service.yaml
+namespace: kubeflow
 commonLabels:
   kustomize.component: centraldashboard
 images:
   - name: gcr.io/kubeflow-images-public/centraldashboard
     newName: gcr.io/kubeflow-images-public/centraldashboard
     newTag: latest
+configMapGenerator:
+- name: parameters
+  env: params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:
@@ -22,6 +26,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
+- name: clusterDomain
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.clusterDomain
 configurations:
 - params.yaml
 

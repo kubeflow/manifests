@@ -14,9 +14,9 @@ spec:
         app: ml-pipeline-ui
     spec:
       containers:
-      - image: gcr.io/ml-pipeline/frontend:0.1.14
+      - name: ml-pipeline-ui
+        image: gcr.io/ml-pipeline/frontend:0.1.18
         imagePullPolicy: IfNotPresent
-        name: ml-pipeline-ui
         ports:
         - containerPort: 3000
       serviceAccountName: ml-pipeline-ui

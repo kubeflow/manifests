@@ -1,8 +1,13 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/v1beta2
 kind: StatefulSet
 metadata:
   name: jupyter
 spec:
+  selector:
+    matchLabels:
+      k8s-app: jupyter
+  replicas: 1
+  serviceName: ""
   template:
     spec:
       containers:

@@ -23,7 +23,7 @@ patchesJson6902:
     version: v1beta1
     kind: Deployment
     name: ambassador
-  path: deployment-ambassador.yaml
+  path: deployment-ambassador-patch.yaml
 vars:
 - name: ambassadorServiceType
   objref:

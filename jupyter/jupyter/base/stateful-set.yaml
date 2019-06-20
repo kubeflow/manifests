@@ -3,6 +3,9 @@ kind: StatefulSet
 metadata:
   name: jupyter
 spec:
+  selector:
+    matchLabels:
+      k8s-app: jupyter
   replicas: 1
   serviceName: ""
   template:
@@ -30,7 +33,7 @@ spec:
           valueFrom:
             configMapKeyRef:
               name: parameters
-              key: DEFAULT_JUPYTERLAB
+              key: STORAGE_CLASS
         - name: ROK_SECRET_NAME
           value: secret-rok-{username}
         image: gcr.io/kubeflow/jupyterhub-k8s:v20180531-3bb991b1

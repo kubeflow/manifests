@@ -1,22 +1,28 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: kubeflow
+nameprefix: ml-pipeline-viewer-
+commonLabels:
+  app: ml-pipeline-viewer-crd
 resources:
 - crd.yaml
-- clusterrole-binding.yaml
-- clusterrole.yaml
+- cluster-role-binding.yaml
+- cluster-role.yaml
 - deployment.yaml
-- sa.yaml
-- service.yaml
+- service-account.yaml
 images:
 - name: gcr.io/ml-pipeline/viewer-crd-controller
-  newTag: '0.1.14'
+  newTag: '0.1.18'
+configMapGenerator:
+- name: viewer-parameters
+  env: params.env
 vars:
-- name: namespace
+- name: viewer-clusterDomain
   objref:
-    kind: Service
-    name: ml-pipeline-tensorboard-ui
-    apiVersion: v1
+    kind: ConfigMap
+    name: viewer-parameters
+    version: v1
   fieldref:
-    fieldpath: metadata.namespace
+    fieldpath: data.viewerClusterDomain
 configurations:
 - params.yaml

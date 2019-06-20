@@ -3,22 +3,19 @@ kind: Kustomization
 resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml
+- config-map.yaml
 - crd.yaml
 - deployment.yaml
-- role-binding.yaml
-- role.yaml
-- service-account.yaml
-- service.yaml
-- workflow.yaml
+namespace: kubeflow
 commonLabels:
   kustomize.component: kubebench
+configMapGenerator:
+- name: parameters
+  env: params.env
 images:
-  - name: gcr.io/kubeflow-images-public/kubebench/kubebench-dashboard
-    newName: gcr.io/kubeflow-images-public/kubebench/kubebench-dashboard
-    newTag: v0.4.0-13-g262c593
-  - name: gcr.io/kubeflow-images-public/kubebench/kubebench-operator
-    newName: gcr.io/kubeflow-images-public/kubebench/kubebench-operator
-    newTag: v0.4.0-13-g262c593
+  - name:  gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2
+    newName: gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2
+    newTag: v0.5.0-11-gea53ad5
   - name: gcr.io/kubeflow-images-public/kubebench/kubebench-controller
     newName: gcr.io/kubeflow-images-public/kubebench/kubebench-controller
     newTag: v0.4.0-13-g262c593
@@ -26,12 +23,12 @@ images:
     newName: gcr.io/kubeflow-images-public/kubebench/kubebench-example-tf-cnn-post-processor
     newTag: v0.4.0-13-g262c593
 vars:
-- name: namespace
+- name: clusterDomain
   objref:
-    kind: Service
-    name: kubebench-dashboard
+    kind: ConfigMap
+    name: parameters
     apiVersion: v1
   fieldref:
-    fieldpath: metadata.namespace
+    fieldpath: data.clusterDomain
 configurations:
 - params.yaml

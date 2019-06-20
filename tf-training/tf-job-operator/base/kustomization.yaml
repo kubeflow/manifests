@@ -1,5 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: kubeflow
 resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml
@@ -10,6 +11,9 @@ resources:
 - service.yaml
 commonLabels:
   kustomize.component: tf-job-operator
+configMapGenerator:
+- name: parameters
+  env: params.env
 vars:
 - name: namespace
   objref:
@@ -18,5 +22,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
+- name: clusterDomain
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.clusterDomain
 configurations:
 - params.yaml

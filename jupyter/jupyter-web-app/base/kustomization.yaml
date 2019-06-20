@@ -10,13 +10,14 @@ resources:
 - service-account.yaml
 - service.yaml
 namePrefix: jupyter-web-app-
+namespace: kubeflow
 commonLabels:
   app: jupyter-web-app
   kustomize.component: jupyter-web-app
 images:
   - name: gcr.io/kubeflow-images-public/jupyter-web-app
     newName: gcr.io/kubeflow-images-public/jupyter-web-app
-    newTag: v0.5.0
+    newTag: f6aa1dc
 configMapGenerator:
 - name: parameters
   env: params.env
@@ -37,6 +38,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.prefix
+- name: clusterDomain
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.clusterDomain
 - name: namespace
   objref:
     kind: Service

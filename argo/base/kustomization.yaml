@@ -13,10 +13,10 @@ commonLabels:
 images:
   - name: argoproj/argoui
     newName: argoproj/argoui
-    newTag: v2.2.0
+    newTag: v2.3.0
   - name: argoproj/workflow-controller
     newName: argoproj/workflow-controller
-    newTag: v2.2.0
+    newTag: v2.3.0
 configMapGenerator:
 - name: workflow-controller-parameters
   env: params.env
@@ -86,13 +86,19 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.artifactRepositorySecretKeySecretKey
-vars:
 - name: namespace
   objref:
-    kind: Service
-    name: argo-ui
+    kind: ConfigMap
+    name: workflow-controller-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: metadata.namespace
+    fieldpath: data.namespace
+- name: clusterDomain
+  objref:
+    kind: ConfigMap
+    name: workflow-controller-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.clusterDomain
 configurations:
 - params.yaml

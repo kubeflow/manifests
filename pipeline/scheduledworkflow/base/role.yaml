@@ -1,8 +1,6 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  labels:
-    app: ml-pipeline-scheduledworkflow
   name: ml-pipeline-scheduledworkflow
 rules:
 - apiGroups:

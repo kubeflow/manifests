@@ -1,9 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  labels:
-    app: ml-pipeline-persistenceagent
-  name: ml-pipeline-persistenceagent
+  name: persistenceagent
 rules:
 - apiGroups:
   - argoproj.io
