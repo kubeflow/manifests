@@ -50,6 +50,41 @@ configurations:
 - params.yaml
 
 `)
+	th.writeF("/manifests/common/centraldashboard/base/clusterrole-binding.yaml", `
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: centraldashboard
+  name: centraldashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: centraldashboard
+subjects:
+- kind: ServiceAccount
+  name: centraldashboard
+  namespace: $(namespace)
+`)
+	th.writeF("/manifests/common/centraldashboard/base/clusterrole.yaml", `
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: centraldashboard
+  name: centraldashboard
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  - namespaces
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+`)
 	th.writeF("/manifests/common/centraldashboard/base/deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -165,6 +200,8 @@ clusterDomain=cluster.local
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+- clusterrole-binding.yaml
+- clusterrole.yaml
 - deployment.yaml
 - role-binding.yaml
 - role.yaml
