@@ -6,7 +6,7 @@ engine:
     port: 5001
   image:
     pullPolicy: IfNotPresent
-    registry: 
+    registry: docker.io
     repository: seldonio/engine
     tag: 0.3.0
   port: 8000
@@ -20,7 +20,7 @@ engine:
   user: 8888
 image:
   pullPolicy: Always
-  registry: 
+  registry: docker.io
   repository: seldonio/seldon-core-operator
   tag: 0.3.0
 istio:

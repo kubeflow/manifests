@@ -5,7 +5,7 @@ metadata:
     control-plane: controller-manager
     controller-tools.k8s.io: "1.0"
   name: seldon-operator-controller-manager-service
-  namespace: default
+  namespace: kubeflow
 spec:
   ports:
   - port: 443

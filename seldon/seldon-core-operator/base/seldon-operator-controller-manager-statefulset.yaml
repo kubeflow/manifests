@@ -5,7 +5,7 @@ metadata:
     control-plane: controller-manager
     controller-tools.k8s.io: "1.0"
   name: seldon-operator-controller-manager
-  namespace: default
+  namespace: kubeflow
 spec:
   selector:
     matchLabels:
@@ -39,7 +39,7 @@ spec:
         - name: AMBASSADOR_SINGLE_NAMESPACE
           value: "false"
         - name: ENGINE_CONTAINER_IMAGE_AND_VERSION
-          value: /seldonio/engine:0.3.0
+          value: docker.io/seldonio/engine:0.3.0
         - name: ENGINE_CONTAINER_IMAGE_PULL_POLICY
           value: IfNotPresent
         - name: ENGINE_CONTAINER_SERVICE_ACCOUNT_NAME
@@ -58,7 +58,7 @@ spec:
           value: "true"
         - name: ISTIO_GATEWAY
           value: kubeflow-gateway
-        image: /seldonio/seldon-core-operator:0.3.0
+        image: docker.io/seldonio/seldon-core-operator:0.3.0
         imagePullPolicy: Always
         name: manager
         ports:
