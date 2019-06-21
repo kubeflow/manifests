@@ -11,76 +11,38 @@ import (
 	"testing"
 )
 
-func writeKatibV1Alpha2OverlaysIstio(th *KustTestHarness) {
-	th.writeF("/manifests/katib-v1alpha2/katib-ui/overlays/istio/katib-ui-virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: katib-ui
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /katib/
-    rewrite:
-      uri: /katib/
-    route:
-    - destination:
-        host: katib-ui.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 80
-`)
-	th.writeF("/manifests/katib-v1alpha2/katib-ui/overlays/istio/params.yaml", `
-varReference:
-- path: spec/http/route/destination/host
-  kind: VirtualService
-`)
-	th.writeK("/manifests/katib-v1alpha2/katib-ui/overlays/istio", `
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-bases:
-- ../../base
-resources:
-- katib-ui-virtual-service.yaml
-configurations:
-- params.yaml
-`)
+func writeKatibUiBase(th *KustTestHarness) {
 	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/katib-ui-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
+  name: katib-ui
   labels:
     app: katib
     component: ui
-  name: katib-ui
-  namespace: kubeflow
 spec:
   replicas: 1
   template:
     metadata:
+      name: katib-ui
       labels:
         app: katib
         component: ui
-      name: katib-ui
     spec:
       containers:
-      - command:
-        - ./katib-ui
+      - name: katib-ui
         image: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-ui:v0.1.2-alpha-289-g14dad8b
         imagePullPolicy: IfNotPresent
-        name: katib-ui
+        command:
+          - './katib-ui'
         ports:
-        - containerPort: 80
-          name: ui
+        - name: ui
+          containerPort: 80
       serviceAccountName: katib-ui
 `)
 	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/katib-ui-rbac.yaml", `
-apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: katib-ui
 rules:
@@ -89,23 +51,22 @@ rules:
   resources:
   - configmaps
   verbs:
-  - '*'
+  - "*"
 - apiGroups:
   - kubeflow.org
   resources:
   - experiments
   - trials
   verbs:
-  - '*'
+  - "*"
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: katib-ui
-  namespace: kubeflow
 ---
-apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: katib-ui
 roleRef:
@@ -115,26 +76,24 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: katib-ui
-  namespace: kubeflow
 `)
 	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/katib-ui-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
+  name: katib-ui
   labels:
     app: katib
     component: ui
-  name: katib-ui
-  namespace: kubeflow
 spec:
+  type: ClusterIP
   ports:
-  - name: ui
-    port: 80
-    protocol: TCP
+    - port: 80
+      protocol: TCP
+      name: ui
   selector:
     app: katib
     component: ui
-  type: ClusterIP
 `)
 	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/params.yaml", `
 varReference:
@@ -182,14 +141,14 @@ configurations:
 `)
 }
 
-func TestKatibV1Alpha2OverlaysIstio(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/katib-ui/overlays/istio")
-	writeKatibV1Alpha2OverlaysIstio(th)
+func TestKatibUiBase(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/katib-ui/base")
+	writeKatibUiBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha2/katib-ui/overlays/istio"
+	targetPath := "../katib-v1alpha2/katib-ui/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
