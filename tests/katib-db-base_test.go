@@ -11,36 +11,26 @@ import (
 	"testing"
 )
 
-func writeKatibV1Alpha1VizierDbBase(th *KustTestHarness) {
-	th.writeF("/manifests/katib-v1alpha1/vizier-db/base/vizier-db-pvc.yaml", `
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: katib-mysql
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
-`)
-	th.writeF("/manifests/katib-v1alpha1/vizier-db/base/vizier-db-deployment.yaml", `
+func writeKatibDbBase(th *KustTestHarness) {
+	th.writeF("/manifests/katib-v1alpha2/katib-db/base/katib-db-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: vizier-db
+  name: katib-db
   labels:
+    app: katib
     component: db
 spec:
   replicas: 1
   template:
     metadata:
-      name: vizier-db
+      name: katib-db
       labels:
+        app: katib
         component: db
     spec:
       containers:
-      - name: vizier-db
+      - name: katib-db
         image: mysql:8.0.3
         args:
         - --datadir
@@ -49,12 +39,12 @@ spec:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: vizier-db-secrets
+                name: katib-db-secrets
                 key: MYSQL_ROOT_PASSWORD
           - name: MYSQL_ALLOW_EMPTY_PASSWORD
             value: "true"
           - name: MYSQL_DATABASE
-            value: "vizier"
+            value: "katib"
         ports:
         - name: dbapi
           containerPort: 3306
@@ -75,21 +65,34 @@ spec:
         persistentVolumeClaim:
           claimName: katib-mysql
 `)
-	th.writeF("/manifests/katib-v1alpha1/vizier-db/base/vizier-db-secret.yaml", `
+	th.writeF("/manifests/katib-v1alpha2/katib-db/base/katib-db-pvc.yaml", `
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: katib-mysql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+`)
+	th.writeF("/manifests/katib-v1alpha2/katib-db/base/katib-db-secret.yaml", `
 apiVersion: v1
 kind: Secret
 type: Opaque
 metadata:
-  name: vizier-db-secrets
+  name: katib-db-secrets
 data:
   MYSQL_ROOT_PASSWORD: dGVzdA== # "test"
 `)
-	th.writeF("/manifests/katib-v1alpha1/vizier-db/base/vizier-db-service.yaml", `
+	th.writeF("/manifests/katib-v1alpha2/katib-db/base/katib-db-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
-  name: vizier-db
+  name: katib-db
   labels:
+    app: katib
     component: db
 spec:
   type: ClusterIP
@@ -98,15 +101,16 @@ spec:
       protocol: TCP
       name: dbapi
   selector:
+    app: katib
     component: db
 `)
-	th.writeK("/manifests/katib-v1alpha1/vizier-db/base", `
+	th.writeK("/manifests/katib-v1alpha2/katib-db/base", `
 namespace: kubeflow
 resources:
-- vizier-db-deployment.yaml
-- vizier-db-pvc.yaml
-- vizier-db-secret.yaml
-- vizier-db-service.yaml
+- katib-db-deployment.yaml
+- katib-db-pvc.yaml
+- katib-db-secret.yaml
+- katib-db-service.yaml
 generatorOptions:
   disableNameSuffixHash: true
 images:
@@ -115,14 +119,14 @@ images:
 `)
 }
 
-func TestKatibV1Alpha1VizierDbBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib-v1alpha1/vizier-db/base")
-	writeKatibV1Alpha1VizierDbBase(th)
+func TestKatibDbBase(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/katib-db/base")
+	writeKatibDbBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha1/vizier-db/base"
+	targetPath := "../katib-v1alpha2/katib-db/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
