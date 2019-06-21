@@ -1,6 +1,8 @@
 package tests_test
 
 import (
+	"testing"
+
 	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/pkg/fs"
@@ -8,7 +10,6 @@ import (
 	"sigs.k8s.io/kustomize/pkg/resmap"
 	"sigs.k8s.io/kustomize/pkg/resource"
 	"sigs.k8s.io/kustomize/pkg/target"
-	"testing"
 )
 
 func writeMetadataBase(th *KustTestHarness) {
@@ -116,7 +117,7 @@ spec:
     spec:
       containers:
       - name: container
-        image: gcr.io/kubeflow-images-public/metadata:v0.1.4
+        image: gcr.io/kubeflow-images-public/metadata:v0.1.5
         env:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
