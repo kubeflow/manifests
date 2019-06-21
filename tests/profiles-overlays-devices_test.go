@@ -151,7 +151,8 @@ metadata:
   name: kfam
 spec:
   ports:
-    - port: 8081`)
+    - port: 8081
+`)
 	th.writeF("/manifests/profiles/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -206,7 +207,7 @@ configMapGenerator:
 images:
   - name: gcr.io/kubeflow-images-public/profile-controller
     newName: gcr.io/kubeflow-images-public/profile-controller
-    newTag: v20190228-v0.4.0-rc.1-192-g1a802656-dirty-f95773
+    newTag: v20190619-v0-219-gbd3daa8c-dirty-1ced0e
 vars:
   - name: admin
     objref:
