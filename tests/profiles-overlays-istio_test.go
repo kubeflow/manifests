@@ -11,7 +11,48 @@ import (
 	"testing"
 )
 
-func writeProfilesBase(th *KustTestHarness) {
+func writeProfilesOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/profiles/overlays/istio/virtual-service.yaml", `
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: kfam
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - headers:
+      request:
+        add:
+          x-forwarded-prefix: /kfam
+    match:
+    - uri:
+        prefix: /kfam/
+    rewrite:
+      uri: /kfam/
+    route:
+    - destination:
+        host: profiles-kfam.$(namespace).svc.cluster.local
+        port:
+          number: 8081
+`)
+	th.writeF("/manifests/profiles/overlays/istio/params.yaml", `
+varReference:
+- path: spec/http/route/destination/host
+  kind: VirtualService
+`)
+	th.writeK("/manifests/profiles/overlays/istio", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- virtual-service.yaml
+configurations:
+- params.yaml
+`)
 	th.writeF("/manifests/profiles/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -201,14 +242,14 @@ configurations:
 `)
 }
 
-func TestProfilesBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/profiles/base")
-	writeProfilesBase(th)
+func TestProfilesOverlaysIstio(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/profiles/overlays/istio")
+	writeProfilesOverlaysIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../profiles/base"
+	targetPath := "../profiles/overlays/istio"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

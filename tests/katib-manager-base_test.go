@@ -11,118 +11,110 @@ import (
 	"testing"
 )
 
-func writeKatibV1Alpha2ManagerBase(th *KustTestHarness) {
+func writeKatibManagerBase(th *KustTestHarness) {
 	th.writeF("/manifests/katib-v1alpha2/katib-manager/base/katib-manager-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
+  name: katib-manager
   labels:
     app: katib
     component: manager
-  name: katib-manager
-  namespace: kubeflow
 spec:
   replicas: 1
   template:
     metadata:
+      name: katib-manager
       labels:
         app: katib
         component: manager
-      name: katib-manager
     spec:
       containers:
-      - command:
-        - ./katib-manager
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: MYSQL_ROOT_PASSWORD
-              name: katib-db-secrets
+      - name: katib-manager
         image: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-manager:v0.1.2-alpha-289-g14dad8b
         imagePullPolicy: IfNotPresent
-        livenessProbe:
-          exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:6789
-          initialDelaySeconds: 10
-        name: katib-manager
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: katib-db-secrets
+                key: MYSQL_ROOT_PASSWORD
+        command:
+          - './katib-manager'
         ports:
-        - containerPort: 6789
-          name: api
+        - name: api
+          containerPort: 6789
         readinessProbe:
           exec:
-            command:
-            - /bin/grpc_health_probe
-            - -addr=:6789
+            command: ["/bin/grpc_health_probe", "-addr=:6789"]
           initialDelaySeconds: 5
-`)
-	th.writeF("/manifests/katib-v1alpha2/katib-manager/base/katib-manager-service.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: katib
-    component: manager
-  name: katib-manager
-  namespace: kubeflow
-spec:
-  ports:
-  - name: api
-    port: 6789
-    protocol: TCP
-  selector:
-    app: katib
-    component: manager
-  type: ClusterIP
+        livenessProbe:
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:6789"]
+          initialDelaySeconds: 10
 `)
 	th.writeF("/manifests/katib-v1alpha2/katib-manager/base/katib-manager-rest-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
+  name: katib-manager-rest
   labels:
     app: katib
     component: manager-rest
-  name: katib-manager-rest
-  namespace: kubeflow
 spec:
   replicas: 1
   template:
     metadata:
+      name: katib-manager-rest
       labels:
         app: katib
         component: manager-rest
-      name: katib-manager-rest
     spec:
       containers:
-      - command:
-        - ./katib-manager-rest
+      - name: katib-manager-rest
         image: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-manager-rest:v0.1.2-alpha-289-g14dad8b
         imagePullPolicy: IfNotPresent
-        name: katib-manager-rest
+        command:
+          - './katib-manager-rest'
         ports:
-        - containerPort: 80
-          name: api
+        - name: api
+          containerPort: 80
 `)
 	th.writeF("/manifests/katib-v1alpha2/katib-manager/base/katib-manager-rest-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
+  name: katib-manager-rest
   labels:
     app: katib
     component: manager-rest
-  name: katib-manager-rest
-  namespace: kubeflow
 spec:
+  type: ClusterIP
   ports:
-  - name: api
-    port: 80
-    protocol: TCP
+    - port: 80
+      protocol: TCP
+      name: api
   selector:
     app: katib
     component: manager-rest
+`)
+	th.writeF("/manifests/katib-v1alpha2/katib-manager/base/katib-manager-service.yaml", `
+apiVersion: v1
+kind: Service
+metadata:
+  name: katib-manager
+  labels:
+    app: katib
+    component: manager
+spec:
   type: ClusterIP
+  ports:
+    - port: 6789
+      protocol: TCP
+      name: api
+  selector:
+    app: katib
+    component: manager
 `)
 	th.writeK("/manifests/katib-v1alpha2/katib-manager/base", `
 namespace: kubeflow
@@ -141,9 +133,9 @@ images:
 `)
 }
 
-func TestKatibV1Alpha2ManagerBase(t *testing.T) {
+func TestKatibManagerBase(t *testing.T) {
 	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/katib-manager/base")
-	writeKatibV1Alpha2ManagerBase(th)
+	writeKatibManagerBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
