@@ -102,14 +102,6 @@ kind: ServiceAccount
 metadata:
   name: crd-service-account
 `)
-	th.writeF("/manifests/pipeline/pipelines-viewer/base/params.yaml", `
-varReference:
-- path: metadata/annotations/getambassador.io\/config
-  kind: Service
-`)
-	th.writeF("/manifests/pipeline/pipelines-viewer/base/params.env", `
-viewerClusterDomain=cluster.local
-`)
 	th.writeK("/manifests/pipeline/pipelines-viewer/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -126,19 +118,6 @@ resources:
 images:
 - name: gcr.io/ml-pipeline/viewer-crd-controller
   newTag: '0.1.18'
-configMapGenerator:
-- name: viewer-parameters
-  env: params.env
-vars:
-- name: viewer-clusterDomain
-  objref:
-    kind: ConfigMap
-    name: viewer-parameters
-    version: v1
-  fieldref:
-    fieldpath: data.viewerClusterDomain
-configurations:
-- params.yaml
 `)
 }
 
