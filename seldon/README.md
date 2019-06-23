@@ -2,8 +2,11 @@
 
 ## Install Seldon Operator
 
+ * The yaml assumes you will install in kubeflow namespace
+ * You need to have installed istio first
+
 ```
-kustomize build seldon-core-operator/base | kubectl apply -f -
+kustomize build seldon-core-operator/base | kubectl apply -n kubeflow -f -
 ```
 
 ## Updating
