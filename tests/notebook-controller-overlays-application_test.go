@@ -237,6 +237,7 @@ resources:
 - service-account.yaml
 - service.yaml
 namePrefix: notebook-controller-
+namespace: kubeflow
 commonLabels:
   app: notebook-controller
   kustomize.component: notebook-controller
