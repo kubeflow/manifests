@@ -1,8 +1,6 @@
 package tests_test
 
 import (
-	"testing"
-
 	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/pkg/fs"
@@ -10,6 +8,7 @@ import (
 	"sigs.k8s.io/kustomize/pkg/resmap"
 	"sigs.k8s.io/kustomize/pkg/resource"
 	"sigs.k8s.io/kustomize/pkg/target"
+	"testing"
 )
 
 func writeMetadataBase(th *KustTestHarness) {
@@ -125,14 +124,15 @@ spec:
                 name: metadata-db-secrets
                 key: MYSQL_ROOT_PASSWORD
         command: ["./server/server",
-                  "--http_port=8080",
+                  "--http_port=8182",
                   "--mysql_service_host=metadata-db.kubeflow",
                   "--mysql_service_port=3306",
                   "--mysql_service_user=root",
                   "--mysql_service_password=$(MYSQL_ROOT_PASSWORD)",
                   "--mlmd_db_name=metadb"]
         ports:
-        - containerPort: 8080
+        - name: backendapi
+          containerPort: 8080
 `)
 	th.writeF("/manifests/metadata/base/metadata-service.yaml", `
 kind: Service
@@ -143,12 +143,12 @@ metadata:
   name: service
 spec:
   selector:
-    app: metadata
-  type: LoadBalancer
+    component: server
+  type: ClusterIP
   ports:
-  - protocol: TCP
-    port: 8666
-    targetPort: 8080
+  - port: 8080
+    protocol: TCP
+    name: backendapi
 `)
 	th.writeK("/manifests/metadata/base", `
 namePrefix: metadata-
