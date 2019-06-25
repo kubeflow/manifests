@@ -1,5 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
 # Labels to add to all resources and selectors.
 commonLabels:
+  kustomize.component: spark-operator
   app.kubernetes.io/instance: spark-operator
   app.kubernetes.io/managed-by: Tiller
   app.kubernetes.io/name: sparkoperator
