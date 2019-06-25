@@ -1,0 +1,26 @@
+# Labels to add to all resources and selectors.
+commonLabels:
+  app.kubernetes.io/instance: spark-operator
+  app.kubernetes.io/managed-by: Tiller
+  app.kubernetes.io/name: sparkoperator
+  helm.sh/chart: sparkoperator-0.2.4
+
+# Images modify the tags for images without
+# creating patches.
+images:
+- name: gcr.io/spark-operator/spark-operator
+  newTag: v2.4.0-v1beta1-0.8.2
+
+# Value of this field is prepended to the
+# names of all resources
+namePrefix: spark-operator-spark
+
+# List of resource files that kustomize reads, modifies
+# and emits as a YAML string
+resources:
+- spark-operator-spark-sa.yaml
+- spark-operator-sparkoperator-cr-clusterrole.yaml
+- spark-operator-sparkoperator-crb-crb.yaml
+- spark-operator-sparkoperator-crd-cleanup-job.yaml
+- spark-operator-sparkoperator-deploy.yaml
+- spark-operator-sparkoperator-sa.yaml
