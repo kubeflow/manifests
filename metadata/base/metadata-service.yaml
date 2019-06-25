@@ -6,9 +6,9 @@ metadata:
   name: service
 spec:
   selector:
-    app: metadata
-  type: LoadBalancer
+    component: server
+  type: ClusterIP
   ports:
-  - protocol: TCP
-    port: 8666
-    targetPort: 8080
+  - port: 8080
+    protocol: TCP
+    name: backendapi
