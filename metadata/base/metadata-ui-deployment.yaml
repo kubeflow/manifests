@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: metadata-ui
-  name: metadata-ui
+  name: ui
 spec:
   selector:
     matchLabels:
@@ -20,5 +20,5 @@ spec:
         name: metadata-ui
         ports:
         - containerPort: 3000
-      serviceAccountName: metadata-ui
+      serviceAccountName: ui
 

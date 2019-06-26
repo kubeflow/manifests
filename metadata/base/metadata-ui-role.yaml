@@ -3,7 +3,7 @@ kind: Role
 metadata:
   labels:
     app: metadata-ui
-  name: metadata-ui
+  name: ui
 rules:
 - apiGroups:
   - ""
