@@ -10,9 +10,9 @@ spec:
   http:
   - match:
     - uri:
-        prefix: /metadata/
+        prefix: /metadata
     rewrite:
-      uri: /metadata/
+      uri: /metadata
     route:
     - destination:
         host: $(service).$(ui-namespace).svc.$(ui-clusterDomain)
