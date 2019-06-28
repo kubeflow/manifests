@@ -1,0 +1,8 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: my-deployment
+spec:
+  template:
+    spec:
+      restartPolicy: Always

@@ -1,0 +1,19 @@
+apiVersion: kfdef.apps.kubeflow.org/v1alpha1
+kind: KfDef
+metadata:
+  name: demo
+  namespace: kubeflow
+spec:
+  componentParams:
+    mixin:
+    - name: overlay
+      value: dns
+    - name: overlay
+      value: probe
+    - name: overlay
+      value: restart
+  components:
+  - mixin
+  packageManager: kustomize@pull/153
+  packages:
+  - mixin

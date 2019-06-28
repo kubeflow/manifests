@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: my-deployment
+spec:
+  template:
+    spec:
+      containers:
+      - name: my-deployment
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
