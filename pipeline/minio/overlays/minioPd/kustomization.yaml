@@ -4,9 +4,11 @@ bases:
 - ../../base
 resources:
 - persistent-volume.yaml
+patchesStrategicMerge:
 - persistent-volume-claim.yaml
 configMapGenerator:
-- name: minio-parameters
+- name: pipeline-minio-parameters
+  behavior: merge
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
@@ -14,23 +16,16 @@ vars:
 - name: minioPd
   objref:
     kind: ConfigMap
-    name: minio-parameters
+    name: pipeline-minio-parameters
     apiVersion: v1
   fieldref:
       fieldpath: data.minioPd
 - name: minioPvName
   objref:
     kind: ConfigMap
-    name: minio-parameters
+    name: pipeline-minio-parameters
     apiVersion: v1
   fieldref:
       fieldpath: data.minioPvName
-- name: minioPvcName
-  objref:
-    kind: ConfigMap
-    name: minio-parameters
-    apiVersion: v1
-  fieldref:
-      fieldpath: data.minioPvcName
 configurations:
 - params.yaml

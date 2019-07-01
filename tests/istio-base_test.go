@@ -116,6 +116,13 @@ spec:
         port:
           number: 443
       weight: 100
+---
+apiVersion: rbac.istio.io/v1alpha1
+kind: ClusterRbacConfig
+metadata:
+  name: default
+spec:
+  mode: "ON"
 `)
 	th.writeK("/manifests/gcp/istio/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1

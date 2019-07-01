@@ -12,7 +12,7 @@ import (
 )
 
 func writeKatibUiOverlaysIstio(th *KustTestHarness) {
-	th.writeF("/manifests/katib-v1alpha1/katib-ui/overlays/istio/katib-ui-virtual-service.yaml", `
+	th.writeF("/manifests/katib-v1alpha2/katib-ui/overlays/istio/katib-ui-virtual-service.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
@@ -34,12 +34,12 @@ spec:
         port:
           number: 80
 `)
-	th.writeF("/manifests/katib-v1alpha1/katib-ui/overlays/istio/params.yaml", `
+	th.writeF("/manifests/katib-v1alpha2/katib-ui/overlays/istio/params.yaml", `
 varReference:
 - path: spec/http/route/destination/host
   kind: VirtualService
 `)
-	th.writeK("/manifests/katib-v1alpha1/katib-ui/overlays/istio", `
+	th.writeK("/manifests/katib-v1alpha2/katib-ui/overlays/istio", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -49,12 +49,13 @@ resources:
 configurations:
 - params.yaml
 `)
-	th.writeF("/manifests/katib-v1alpha1/katib-ui/base/katib-ui-deployment.yaml", `
+	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/katib-ui-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: katib-ui
   labels:
+    app: katib
     component: ui
 spec:
   replicas: 1
@@ -62,11 +63,13 @@ spec:
     metadata:
       name: katib-ui
       labels:
+        app: katib
         component: ui
     spec:
       containers:
       - name: katib-ui
-        image: gcr.io/kubeflow-images-public/katib/katib-ui:v0.1.2-alpha-156-g4ab3dbd
+        image: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-ui:v0.1.2-alpha-289-g14dad8b
+        imagePullPolicy: IfNotPresent
         command:
           - './katib-ui'
         ports:
@@ -74,7 +77,7 @@ spec:
           containerPort: 80
       serviceAccountName: katib-ui
 `)
-	th.writeF("/manifests/katib-v1alpha1/katib-ui/base/katib-ui-rbac.yaml", `
+	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/katib-ui-rbac.yaml", `
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -89,7 +92,8 @@ rules:
 - apiGroups:
   - kubeflow.org
   resources:
-  - studyjobs
+  - experiments
+  - trials
   verbs:
   - "*"
 ---
@@ -110,12 +114,13 @@ subjects:
 - kind: ServiceAccount
   name: katib-ui
 `)
-	th.writeF("/manifests/katib-v1alpha1/katib-ui/base/katib-ui-service.yaml", `
+	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/katib-ui-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
   name: katib-ui
   labels:
+    app: katib
     component: ui
 spec:
   type: ClusterIP
@@ -124,12 +129,22 @@ spec:
       protocol: TCP
       name: ui
   selector:
+    app: katib
     component: ui
 `)
-	th.writeF("/manifests/katib-v1alpha1/katib-ui/base/params.env", `
+	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/params.yaml", `
+varReference:
+- path: data/config
+  kind: ConfigMap
+- path: data/config
+  kind: Deployment
+- path: metadata/annotations/getambassador.io\/config
+  kind: Service
+`)
+	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/params.env", `
 clusterDomain=cluster.local
 `)
-	th.writeK("/manifests/katib-v1alpha1/katib-ui/base", `
+	th.writeK("/manifests/katib-v1alpha2/katib-ui/base", `
 namespace: kubeflow
 resources:
 - katib-ui-deployment.yaml
@@ -141,8 +156,8 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-  - name: gcr.io/kubeflow-images-public/katib/katib-ui
-    newTag: v0.1.2-alpha-157-g3d4cd04
+  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-ui
+    newTag: v0.1.2-alpha-289-g14dad8b
 vars:
 - name: clusterDomain
   objref:
@@ -158,17 +173,19 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
+configurations:
+- params.yaml
 `)
 }
 
 func TestKatibUiOverlaysIstio(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib-v1alpha1/katib-ui/overlays/istio")
+	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/katib-ui/overlays/istio")
 	writeKatibUiOverlaysIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha1/katib-ui/overlays/istio"
+	targetPath := "../katib-v1alpha2/katib-ui/overlays/istio"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

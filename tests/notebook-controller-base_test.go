@@ -81,6 +81,54 @@ spec:
   subresources:
     status: {}
   version: v1alpha1
+  validation:
+    openAPIV3Schema:
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          properties:
+            template:
+              description: 'INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
+                Important: Run "make" to regenerate code after modifying this file'
+              properties:
+                spec:
+                  type: object
+              type: object
+          type: object
+        status:
+          properties:
+            conditions:
+              description: Conditions is an array of current conditions
+              items:
+                properties:
+                  type:
+                    description: Type of the confition/
+                    type: string
+                required:
+                - type
+                type: object
+              type: array
+          required:
+          - conditions
+          type: object
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+
 `)
 	th.writeF("/manifests/jupyter/notebook-controller/base/deployment.yaml", `
 apiVersion: apps/v1beta1
@@ -92,7 +140,7 @@ spec:
     spec:
       containers:
       - name: manager
-        image: gcr.io/kubeflow-images-public/notebook-controller:v20190401-v0.4.0-rc.1-308-g33618cc9-e3b0c4
+        image: gcr.io/kubeflow-images-public/notebook-controller:v20190614-v0-160-g386f2749-e3b0c4
         command:
           - /manager
         env:
@@ -133,6 +181,7 @@ resources:
 - service-account.yaml
 - service.yaml
 namePrefix: notebook-controller-
+namespace: kubeflow
 commonLabels:
   app: notebook-controller
   kustomize.component: notebook-controller

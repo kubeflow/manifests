@@ -116,7 +116,7 @@ spec:
     spec:
       containers:
       - name: container
-        image: gcr.io/kubeflow-images-public/metadata:v0.1.2
+        image: gcr.io/kubeflow-images-public/metadata:v0.1.5
         env:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
@@ -125,13 +125,14 @@ spec:
                 key: MYSQL_ROOT_PASSWORD
         command: ["./server/server",
                   "--http_port=8080",
-                  "--mysql_service_host=metadata-db.default",
+                  "--mysql_service_host=metadata-db.kubeflow",
                   "--mysql_service_port=3306",
                   "--mysql_service_user=root",
                   "--mysql_service_password=$(MYSQL_ROOT_PASSWORD)",
                   "--mlmd_db_name=metadb"]
         ports:
-        - containerPort: 8080
+        - name: backendapi
+          containerPort: 8080
 `)
 	th.writeF("/manifests/metadata/base/metadata-service.yaml", `
 kind: Service
@@ -142,12 +143,12 @@ metadata:
   name: service
 spec:
   selector:
-    app: metadata
-  type: LoadBalancer
+    component: server
+  type: ClusterIP
   ports:
-  - protocol: TCP
-    port: 8666
-    targetPort: 8080
+  - port: 8080
+    protocol: TCP
+    name: backendapi
 `)
 	th.writeK("/manifests/metadata/base", `
 namePrefix: metadata-
