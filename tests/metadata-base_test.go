@@ -168,8 +168,7 @@ spec:
         app: metadata-ui
     spec:
       containers:
-      # TODO(rjbauer): Change this to something like gcr.io/metadata/frontend:0.0.1
-      - image: gcr.io/kubeflow-images-public/metadata-frontend:v0.0.1
+      - image: gcr.io/kubeflow-images-public/metadata-frontend:v0.1.8
         imagePullPolicy: IfNotPresent
         name: metadata-ui
         ports:
