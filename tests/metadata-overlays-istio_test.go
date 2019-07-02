@@ -11,7 +11,45 @@ import (
 	"testing"
 )
 
-func writeMetadataBase(th *KustTestHarness) {
+func writeMetadataOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/metadata/overlays/istio/virtual-service.yaml", `
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ui
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /metadata
+    rewrite:
+      uri: /metadata
+    route:
+    - destination:
+        host: $(service).$(ui-namespace).svc.$(ui-clusterDomain)
+        port:
+          number: 80
+    timeout: 300s
+`)
+	th.writeF("/manifests/metadata/overlays/istio/params.yaml", `
+varReference:
+- path: spec/http/route/destination/host
+  kind: VirtualService
+`)
+	th.writeK("/manifests/metadata/overlays/istio", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- virtual-service.yaml
+configurations:
+- params.yaml
+`)
 	th.writeF("/manifests/metadata/base/metadata-db-pvc.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -290,14 +328,14 @@ vars:
     fieldpath: metadata.name`)
 }
 
-func TestMetadataBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/metadata/base")
-	writeMetadataBase(th)
+func TestMetadataOverlaysIstio(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/metadata/overlays/istio")
+	writeMetadataOverlaysIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../metadata/base"
+	targetPath := "../metadata/overlays/istio"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
