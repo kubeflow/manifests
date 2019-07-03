@@ -366,9 +366,9 @@ artifactRepositoryBucket=mlpipeline
 artifactRepositoryKeyPrefix=artifacts
 artifactRepositoryEndpoint=minio-service.kubeflow:9000
 artifactRepositoryInsecure=true
-artifactRepositoryAccessKeySecretName=minio-artifact
+artifactRepositoryAccessKeySecretName=mlpipeline-minio-artifact
 artifactRepositoryAccessKeySecretKey=accesskey
-artifactRepositorySecretKeySecretName=minio-artifact
+artifactRepositorySecretKeySecretName=mlpipeline-minio-artifact
 artifactRepositorySecretKeySecretKey=secretkey
 clusterDomain=cluster.local
 `)
