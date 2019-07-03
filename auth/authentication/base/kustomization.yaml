@@ -1,0 +1,6 @@
+commonLabels:
+  role: authentication
+bases:
+- ./ldap
+- ./dex
+- ./dex-k8s-authenticator
