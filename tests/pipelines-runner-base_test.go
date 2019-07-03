@@ -48,11 +48,10 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - persistentvolumes
   - persistentvolumeclaims
   verbs:
-  - create
-  - delete
-  - get
+  - '*'
 - apiGroups:
   - snapshot.storage.k8s.io
   resources:
