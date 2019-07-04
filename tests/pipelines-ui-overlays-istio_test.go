@@ -128,6 +128,16 @@ rules:
   - create
   - get
   - list
+- apiGroups:
+  - "kubeflow.org"
+  resources:
+  - viewers
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - delete  
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/service-account.yaml", `
 apiVersion: v1
