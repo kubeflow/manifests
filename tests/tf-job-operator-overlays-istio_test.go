@@ -270,7 +270,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: gcr.io/kubeflow-images-public/tf_operator:v0.5.3
+        image: gcr.io/kubeflow-images-public/tf_operator:v0.6.0.rc0
         name: tf-job-dashboard
         ports:
         - containerPort: 8080
@@ -302,7 +302,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: gcr.io/kubeflow-images-public/tf_operator:v0.5.3
+        image: gcr.io/kubeflow-images-public/tf_operator:v0.6.0.rc0
         name: tf-job-operator
         volumeMounts:
         - mountPath: /etc/config

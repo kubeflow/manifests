@@ -239,7 +239,7 @@ generatorOptions:
   disableNameSuffixHash: true
 images:
   - name: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-controller
-    newTag: v0.1.2-alpha-289-g14dad8b
+    newTag: v0.6.0-rc.0
 `)
 }
 
