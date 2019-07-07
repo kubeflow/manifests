@@ -289,13 +289,7 @@ spec:
 	th.writeF("/manifests/gcp/prometheus/base/params.env", `
 projectId=
 clusterName=
-zone=
-`)
-	th.writeF("/manifests/gcp/prometheus/base/params.yaml", `
-varReference:
-- path: data/prometheus.yml
-  kind: ConfigMap
-`)
+zone=`)
 	th.writeK("/manifests/gcp/prometheus/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization

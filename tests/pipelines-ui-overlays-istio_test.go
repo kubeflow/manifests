@@ -137,7 +137,7 @@ rules:
   - get
   - list
   - watch
-  - delete  
+  - delete
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/service-account.yaml", `
 apiVersion: v1
