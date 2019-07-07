@@ -116,7 +116,7 @@ spec:
     spec:
       containers:
       - name: container
-        image: gcr.io/kubeflow-images-public/metadata:v0.1.2
+        image: gcr.io/kubeflow-images-public/metadata:v0.1.7
         env:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
@@ -125,13 +125,14 @@ spec:
                 key: MYSQL_ROOT_PASSWORD
         command: ["./server/server",
                   "--http_port=8080",
-                  "--mysql_service_host=metadata-db.default",
+                  "--mysql_service_host=metadata-db.kubeflow",
                   "--mysql_service_port=3306",
                   "--mysql_service_user=root",
                   "--mysql_service_password=$(MYSQL_ROOT_PASSWORD)",
                   "--mlmd_db_name=metadb"]
         ports:
-        - containerPort: 8080
+        - name: backendapi
+          containerPort: 8080
 `)
 	th.writeF("/manifests/metadata/base/metadata-service.yaml", `
 kind: Service
@@ -142,20 +143,115 @@ metadata:
   name: service
 spec:
   selector:
-    app: metadata
-  type: LoadBalancer
+    component: server
+  type: ClusterIP
   ports:
-  - protocol: TCP
-    port: 8666
-    targetPort: 8080
+  - port: 8080
+    protocol: TCP
+    name: backendapi
+`)
+	th.writeF("/manifests/metadata/base/metadata-ui-deployment.yaml", `
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: ui
+  labels:
+    app: metadata-ui
+spec:
+  selector:
+    matchLabels:
+      app: metadata-ui
+  template:
+    metadata:
+      name: ui
+      labels:
+        app: metadata-ui
+    spec:
+      containers:
+      - image: gcr.io/kubeflow-images-public/metadata-frontend:v0.1.8
+        imagePullPolicy: IfNotPresent
+        name: metadata-ui
+        ports:
+        - containerPort: 3000
+      serviceAccountName: ui
+
+`)
+	th.writeF("/manifests/metadata/base/metadata-ui-role.yaml", `
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  labels:
+    app: metadata-ui
+  name: ui
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/log
+  verbs:
+  - create
+  - get
+  - list
+- apiGroups:
+  - "kubeflow.org"
+  resources:
+  - viewers
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - delete
+`)
+	th.writeF("/manifests/metadata/base/metadata-ui-rolebinding.yaml", `
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  labels:
+    app: metadata-ui
+  name: ui
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ui
+subjects:
+- kind: ServiceAccount
+  name: ui
+  namespace: kubeflow
+`)
+	th.writeF("/manifests/metadata/base/metadata-ui-sa.yaml", `
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ui
+`)
+	th.writeF("/manifests/metadata/base/metadata-ui-service.yaml", `
+apiVersion: v1
+kind: Service
+metadata:
+  name: ui
+  labels:
+    app: metadata-ui
+spec:
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    app: metadata-ui
+`)
+	th.writeF("/manifests/metadata/base/params.env", `
+uiClusterDomain=cluster.local
 `)
 	th.writeK("/manifests/metadata/base", `
 namePrefix: metadata-
-
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 commonLabels:
   kustomize.component: metadata
+configMapGenerator:
+- name: ui-parameters
+  env: params.env
 resources:
 - metadata-db-pvc.yaml
 - metadata-db-secret.yaml
@@ -163,8 +259,34 @@ resources:
 - metadata-db-service.yaml
 - metadata-deployment.yaml
 - metadata-service.yaml
-
-`)
+- metadata-ui-deployment.yaml
+- metadata-ui-role.yaml
+- metadata-ui-rolebinding.yaml
+- metadata-ui-sa.yaml
+- metadata-ui-service.yaml
+namespace: kubeflow
+vars:
+- name: ui-namespace
+  objref:
+    kind: Service
+    name: ui
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.namespace
+- name: ui-clusterDomain
+  objref:
+    kind: ConfigMap
+    name: ui-parameters
+    version: v1
+  fieldref:
+    fieldpath: data.uiClusterDomain
+- name: service
+  objref:
+    kind: Service
+    name: ui
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.name`)
 }
 
 func TestMetadataBase(t *testing.T) {

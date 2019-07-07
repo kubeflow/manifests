@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func writeKatibV1Alpha2ControllerBase(th *KustTestHarness) {
+func writeKatibControllerBase(th *KustTestHarness) {
 	th.writeF("/manifests/katib-v1alpha2/katib-controller/base/experiment-crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -26,27 +26,26 @@ spec:
     name: Age
     type: date
   group: kubeflow.org
+  version: v1alpha2
+  scope: Namespaced
+  subresources:
+    status: {}
   names:
+    kind: Experiment
+    singular: experiment
+    plural: experiments
     categories:
     - all
     - kubeflow
     - katib
-    kind: Experiment
-    plural: experiments
-    singular: experiment
-  scope: Namespaced
-  subresources:
-    status: {}
-  version: v1alpha2
 `)
 	th.writeF("/manifests/katib-v1alpha2/katib-controller/base/katib-controller-deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: katib-controller
   labels:
     app: katib-controller
-  name: katib-controller
-  namespace: kubeflow
 spec:
   replicas: 1
   selector:
@@ -57,26 +56,25 @@ spec:
       labels:
         app: katib-controller
     spec:
+      serviceAccountName: katib-controller
       containers:
-      - command:
-        - ./katib-controller
+      - name: katib-controller
+        image: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-controller:v0.1.2-alpha-289-g14dad8b
+        imagePullPolicy: IfNotPresent
+        command: ["./katib-controller"]
+        ports:
+        - containerPort: 443
+          name: webhook
+          protocol: TCP
         env:
         - name: KATIB_CORE_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-controller:v0.1.2-alpha-289-g14dad8b
-        imagePullPolicy: IfNotPresent
-        name: katib-controller
-        ports:
-        - containerPort: 443
-          name: webhook
-          protocol: TCP
         volumeMounts:
         - mountPath: /tmp/cert
           name: cert
           readOnly: true
-      serviceAccountName: katib-controller
       volumes:
       - name: cert
         secret:
@@ -84,8 +82,8 @@ spec:
           secretName: katib-controller
 `)
 	th.writeF("/manifests/katib-v1alpha2/katib-controller/base/katib-controller-rbac.yaml", `
-apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: katib-controller
 rules:
@@ -97,7 +95,7 @@ rules:
   - services
   - secrets
   verbs:
-  - '*'
+  - "*"
 - apiGroups:
   - ""
   resources:
@@ -105,14 +103,14 @@ rules:
   - pods/log
   - pods/status
   verbs:
-  - '*'
+  - "*"
 - apiGroups:
   - batch
   resources:
   - jobs
   - cronjobs
   verbs:
-  - '*'
+  - "*"
 - apiGroups:
   - apiextensions.k8s.io
   resources:
@@ -135,23 +133,22 @@ rules:
   - trials
   - trials/status
   verbs:
-  - '*'
+  - "*"
 - apiGroups:
   - kubeflow.org
   resources:
   - tfjobs
   - pytorchjobs
   verbs:
-  - '*'
+  - "*"
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: katib-controller
-  namespace: kubeflow
 ---
-apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: katib-controller
 roleRef:
@@ -161,21 +158,18 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: katib-controller
-  namespace: kubeflow
 `)
 	th.writeF("/manifests/katib-v1alpha2/katib-controller/base/katib-controller-secret.yaml", `
 apiVersion: v1
 kind: Secret
 metadata:
   name: katib-controller
-  namespace: kubeflow
 `)
 	th.writeF("/manifests/katib-v1alpha2/katib-controller/base/katib-controller-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
   name: katib-controller
-  namespace: kubeflow
 spec:
   ports:
   - port: 443
@@ -198,23 +192,26 @@ spec:
     name: Age
     type: date
   group: kubeflow.org
+  version: v1alpha2
+  scope: Namespaced
+  subresources:
+    status: {}
   names:
+    kind: Trial
+    singular: trial
+    plural: trials
     categories:
     - all
     - kubeflow
     - katib
-    kind: Trial
-    plural: trials
-    singular: trial
-  scope: Namespaced
-  subresources:
-    status: {}
-  version: v1alpha2
 `)
 	th.writeF("/manifests/katib-v1alpha2/katib-controller/base/trial-template.yaml", `
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trial-template
 data:
-  defaultTrialTemplate.yaml: |-
+  defaultTrialTemplate.yaml : |-
     apiVersion: batch/v1
     kind: Job
     metadata:
@@ -227,10 +224,6 @@ data:
           - name: {{.Trial}}
             image: alpine
           restartPolicy: Never
-kind: ConfigMap
-metadata:
-  name: trial-template
-  namespace: kubeflow
 `)
 	th.writeK("/manifests/katib-v1alpha2/katib-controller/base", `
 namespace: kubeflow
@@ -246,13 +239,13 @@ generatorOptions:
   disableNameSuffixHash: true
 images:
   - name: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-controller
-    newTag: v0.1.2-alpha-289-g14dad8b
+    newTag: v0.6.0-rc.0
 `)
 }
 
-func TestKatibV1Alpha2ControllerBase(t *testing.T) {
+func TestKatibControllerBase(t *testing.T) {
 	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/katib-controller/base")
-	writeKatibV1Alpha2ControllerBase(th)
+	writeKatibControllerBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)

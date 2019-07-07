@@ -111,60 +111,60 @@ rules:
 apiVersion: v1
 data:
   spawner_ui_config.yaml: |
-    # Configuration file for the default JupyterHub Spawner UI
-    # Each key corresponds to a JupyterHub Spawner UI option
-    # If a key is missing, the respective Spawner UI option will be left untouched
+    # Configuration file for the Jupyter UI.
     #
-    # Each Spawner UI option is configured by two keys: 'value' and 'readOnly'
+    # Each Jupyter UI option is configured by two keys: 'value' and 'readOnly'
     # - The 'value' key contains the default value
     # - The 'readOnly' key determines if the option will be available to users
     #
     # If the 'readOnly' key is present and set to 'true', the respective option
-    # will be disabled for users and only set by the admin
+    # will be disabled for users and only set by the admin. Also when a
+    # Notebook is POSTED to the API if a necessary field is not present then
+    # the value from the config will be used.
+    #
     # If the 'readOnly' key is missing (defaults to 'false'), the respective option
-    # will be available for users
+    # will be available for users to edit.
     #
-    # Please note that some values (e.g. {username}) may be templated
-    # and expanded according to KubeSpawner's rules
-    #
-    # For more information regarding JupyterHub KubeSpawner and its configuration:
-    # https://jupyterhub-kubespawner.readthedocs.io/en/latest/spawner.html
-
+    # Note that some values can be templated. Such values are the names of the
+    # Volumes as well as their StorageClass
     spawnerFormDefaults:
       image:
         # The container Image for the user's Jupyter Notebook
         # If readonly, this value must be a member of the list below
-        value: gcr.io/kubeflow-images-public/tensorflow-1.10.1-notebook-cpu:v0.4.0
+        value: gcr.io/kubeflow-images-public/tensorflow-1.13.1-notebook-cpu:v0.5.0
         # The list of available standard container Images
         options:
-          - gcr.io/kubeflow-images-public/tensorflow-1.4.1-notebook-cpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.4.1-notebook-gpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.5.1-notebook-cpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.5.1-notebook-gpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.6.0-notebook-cpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.6.0-notebook-gpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.7.0-notebook-cpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.7.0-notebook-gpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.8.0-notebook-cpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.8.0-notebook-gpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.9.0-notebook-cpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.9.0-notebook-gpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.10.1-notebook-cpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.10.1-notebook-gpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.11.0-notebook-cpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.11.0-notebook-gpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.12.0-notebook-cpu:v0.4.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.12.0-notebook-gpu:v0.4.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.5.1-notebook-cpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.5.1-notebook-gpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.6.0-notebook-cpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.6.0-notebook-gpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.7.0-notebook-cpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.7.0-notebook-gpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.8.0-notebook-cpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.8.0-notebook-gpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.9.0-notebook-cpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.9.0-notebook-gpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.10.1-notebook-cpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.10.1-notebook-gpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.11.0-notebook-cpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.11.0-notebook-gpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.12.0-notebook-cpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.12.0-notebook-gpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.13.1-notebook-cpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.13.1-notebook-gpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-2.0.0a-notebook-cpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-2.0.0a-notebook-gpu:v0.5.0
         # By default, custom container Images are allowed
         # Uncomment the following line to only enable standard container Images
         readOnly: false
       cpu:
         # CPU for user's Notebook
         value: '0.5'
-        # readOnly: true
+        readOnly: false
       memory:
         # Memory for user's Notebook
         value: 1.0Gi
+        readOnly: false
       workspaceVolume:
         # Workspace Volume to be attached to user's Notebook
         # Each Workspace Volume is declared with the following attributes:
@@ -176,20 +176,26 @@ data:
             value: New
           name:
             # The Name of the Workspace Volume
-            # Note that this is a templated value
-            # value: {username}-workspace
-            value: {username}-workspace
+            # Note that this is a templated value. Special values:
+            # {notebook-name}: Replaced with the name of the Notebook. The frontend
+            #                  will replace this value as the user types the name
+            value: 'workspace-{notebook-name}'
           size:
             # The Size of the Workspace Volume (in Gi)
-            value: '10'
+            value: '10Gi'
           mountPath:
             # The Path that the Workspace Volume will be mounted
-            readOnly: true
             value: /home/jovyan
           accessModes:
             # The Access Mode of the Workspace Volume
             # Supported values: 'ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'
             value: ReadWriteOnce
+          class:
+            # The StrageClass the PVC will use if type is New. Special values are:
+            # {none}: default StorageClass
+            # {empty}: empty string ""
+            value: '{none}'
+        readOnly: false
       dataVolumes:
         # List of additional Data Volumes to be attached to the user's Notebook
         value: []
@@ -197,36 +203,51 @@ data:
         # Type, Name, Size, MountPath and Access Mode
         #
         # For example, a list with 2 Data Volumes:
-        #value:
-        #  - value:
-        #      type:
-        #        value: New
-        #      name:
-        #        value: {username}-vol-1
-        #      size:
-        #        value: '10'
-        #      mountPath:
-        #        value: /home/jovyan/{username}-vol-1
-        #      accessModes:
-        #        value: ReadWriteOnce
-        #  - value:
-        #      type:
-        #        value: New
-        #      name:
-        #        value: {username}-vol-2
-        #      size:
-        #        value: '5'
-        #      mountPath:
-        #        value: /home/jovyan/{username}-vol-2
-        #      accessModes:
-        #        value: ReadWriteOnce
-        #
-        # Uncomment the following line to make the Data Volumes list readonly
-        #readOnly: true
+        # value:
+        #   - value:
+        #       type:
+        #         value: New
+        #       name:
+        #         value: '{notebook-name}-vol-1'
+        #       size:
+        #         value: '10Gi'
+        #       class:
+        #         value: standard
+        #       mountPath:
+        #         value: /home/jovyan/vol-1
+        #       accessModes:
+        #         value: ReadWriteOnce
+        #       class:
+        #         value: {none}
+        #   - value:
+        #       type:
+        #         value: New
+        #       name:
+        #         value: '{notebook-name}-vol-2'
+        #       size:
+        #         value: '10Gi'
+        #       mountPath:
+        #         value: /home/jovyan/vol-2
+        #       accessModes:
+        #         value: ReadWriteMany
+        #       class:
+        #         value: {none}
+        readOnly: false
       extraResources:
         # Extra Resource Limits for user's Notebook
-        # Note that braces are escaped
-        value: "{{}}"
+        # e.x. "{'nvidia.com/gpu': 2}"
+        value: "{}"
+        readOnly: false
+      shm:
+        value: true
+        readOnly: false
+      configurations:
+        # List of labels to be selected, these are the labels from PodDefaults
+        # value:
+        #   - add-gcp-secret
+        #   - default-editor
+        value: []
+        readOnly: false
 kind: ConfigMap
 metadata:
   name: config
@@ -381,7 +402,7 @@ commonLabels:
 images:
   - name: gcr.io/kubeflow-images-public/jupyter-web-app
     newName: gcr.io/kubeflow-images-public/jupyter-web-app
-    newTag: f6aa1dc
+    newTag: 6f790f8
 configMapGenerator:
 - name: parameters
   env: params.env

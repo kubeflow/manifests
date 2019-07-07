@@ -90,7 +90,7 @@ spec:
     spec:
       containers:
       - name: ml-pipeline-ui
-        image: gcr.io/ml-pipeline/frontend:0.1.18
+        image: gcr.io/ml-pipeline/frontend:0.1.23
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
@@ -128,6 +128,16 @@ rules:
   - create
   - get
   - list
+- apiGroups:
+  - "kubeflow.org"
+  resources:
+  - viewers
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - delete  
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/service-account.yaml", `
 apiVersion: v1
@@ -208,7 +218,7 @@ configMapGenerator:
   env: params.env
 images:
 - name: gcr.io/ml-pipeline/frontend
-  newTag: '0.1.18'
+  newTag: '0.1.23'
 vars:
 - name: ui-namespace
   objref:

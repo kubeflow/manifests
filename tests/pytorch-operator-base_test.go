@@ -181,7 +181,7 @@ commonLabels:
 images:
   - name: gcr.io/kubeflow-images-public/pytorch-operator
     newName: gcr.io/kubeflow-images-public/pytorch-operator
-    #newTag: v0.5.0-7-g6d7ed35
+    newTag: v1.0.0-rc.0
 `)
 }
 

@@ -1,6 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+- clusterrole-binding.yaml
+- clusterrole.yaml
 - deployment.yaml
 - role-binding.yaml
 - role.yaml
@@ -12,7 +14,7 @@ commonLabels:
 images:
   - name: gcr.io/kubeflow-images-public/centraldashboard
     newName: gcr.io/kubeflow-images-public/centraldashboard
-    newTag: latest
+    newTag: v0.6.0-rc2
 configMapGenerator:
 - name: parameters
   env: params.env
