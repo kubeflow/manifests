@@ -286,6 +286,12 @@ spec:
             name: prometheus
           name: config-volume
 `)
+	th.writeF("/manifests/gcp/prometheus/base/params.yaml", `
+varReference:
+- path: data/prometheus.yml
+  kind: ConfigMap
+
+`)
 	th.writeF("/manifests/gcp/prometheus/base/params.env", `
 projectId=
 clusterName=
@@ -327,7 +333,7 @@ vars:
     fieldref:
       fieldpath: data.zone
 configurations:
-  - params.yaml
+- params.yaml
 `)
 }
 
