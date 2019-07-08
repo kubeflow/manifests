@@ -34,4 +34,4 @@ vars:
     fieldref:
       fieldpath: data.zone
 configurations:
-  - params.yaml
+- params.yaml

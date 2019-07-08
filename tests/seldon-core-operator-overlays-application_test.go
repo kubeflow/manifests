@@ -2652,6 +2652,7 @@ spec:
         secret:
           defaultMode: 420
           secretName: seldon-operator-webhook-server-secret
+  volumeClaimTemplates: []
 `)
 	th.writeK("/manifests/seldon/seldon-core-operator/base", `
 resources:
