@@ -49,6 +49,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.hostname
+- name: project
+  objref:
+    kind: ConfigMap
+    name: basic-auth-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.project
 - name: ipName
   objref:
     kind: ConfigMap
