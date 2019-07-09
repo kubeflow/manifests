@@ -12,7 +12,7 @@ import (
 )
 
 func writeIstioBase(th *KustTestHarness) {
-	th.writeF("/manifests/gcp/istio/base/kf-istio-resources.yaml", `
+	th.writeF("/manifests/istio/istio/base/kf-istio-resources.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -124,7 +124,7 @@ metadata:
 spec:
   mode: "ON"
 `)
-	th.writeK("/manifests/gcp/istio/base", `
+	th.writeK("/manifests/istio/istio/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -134,13 +134,13 @@ namespace: kubeflow
 }
 
 func TestIstioBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/gcp/istio/base")
+	th := NewKustTestHarness(t, "/manifests/istio/istio/base")
 	writeIstioBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../gcp/istio/base"
+	targetPath := "../istio/istio/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
