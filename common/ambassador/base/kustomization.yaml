@@ -8,6 +8,7 @@ resources:
 - service.yaml
 commonLabels:
   kustomize.component: ambassador
+namespace: istio-system
 images:
   - name: quay.io/datawire/ambassador
     newName: quay.io/datawire/ambassador

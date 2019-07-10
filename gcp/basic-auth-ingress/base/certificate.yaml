@@ -8,7 +8,7 @@ spec:
     - domains:
       - $(hostname)
       http01:
-        ingress: envoy-ingress
+        ingress: $(ingressName)
   commonName: $(hostname)
   dnsNames:
   - $(hostname)
