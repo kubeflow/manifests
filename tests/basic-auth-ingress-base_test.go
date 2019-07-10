@@ -23,7 +23,7 @@ spec:
     - domains:
       - $(hostname)
       http01:
-        ingress: envoy-ingress
+        ingress: $(ingressName)
   commonName: $(hostname)
   dnsNames:
   - $(hostname)
@@ -368,12 +368,18 @@ varReference:
   kind: Certificate
 - path: spec/secretName
   kind: Certificate
-- path: spec/acme/config/0/domains/0
+- path: spec/acme/config/domains
+  kind: Certificate
+- path: spec/acme/config/http01/ingress
   kind: Certificate
 - path: metadata/name
   kind: Ingress
 - path: metadata/annotations/certmanager.k8s.io\/issuer
   kind: Ingress
+- path: spec/project
+  kind: CloudEndpoint
+- path: spec/targetIngress/name
+  kind: CloudEndpoint
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/params.env", `
 namespace=kubeflow
@@ -437,6 +443,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.hostname
+- name: project
+  objref:
+    kind: ConfigMap
+    name: basic-auth-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.project
 - name: ipName
   objref:
     kind: ConfigMap
