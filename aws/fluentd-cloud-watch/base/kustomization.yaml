@@ -11,7 +11,7 @@ generatorOptions:
 images:
   - name: fluent/fluentd-kubernetes-daemonset
     newName: fluent/fluentd-kubernetes-daemonset
-    newTag: :v1.1-debian-cloudwatch
+    newTag: v1.1-debian-cloudwatch
 vars:
   - name: REGION
     objref:
