@@ -125,6 +125,16 @@ spec:
         secret:
           secretName: $(secretName)
 `)
+	th.writeF("/manifests/gcp/cloud-endpoints/base/profile.yaml", `
+apiVersion: kubeflow.org/v1alpha1
+kind: Profile
+metadata:
+  name: kubeflow-admin
+spec:
+  owner:
+    kind: User
+    name: $(email)
+`)
 	th.writeF("/manifests/gcp/cloud-endpoints/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
@@ -152,10 +162,13 @@ varReference:
   kind: CompositeController
 - path: spec/hooks/sync/webhook/url
   kind: CompositeController
+- path: spec/owner/name
+  kind: Profile
 `)
 	th.writeF("/manifests/gcp/cloud-endpoints/base/params.env", `
 namespace=kubeflow
 secretName=admin-gcp-sa
+email=
 `)
 	th.writeK("/manifests/gcp/cloud-endpoints/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -166,6 +179,7 @@ resources:
 - composite-controller.yaml
 - crd.yaml
 - deployment.yaml
+- profile.yaml
 - service-account.yaml
 - service.yaml
 commonLabels:
@@ -195,6 +209,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.namespace
+- name: email
+  objref:
+    kind: ConfigMap
+    name: cloud-endpoints-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.email
 configurations:
 - params.yaml
 `)

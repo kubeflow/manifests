@@ -11,7 +11,6 @@ resources:
 - ingress.yaml
 - job.yaml
 - policy.yaml
-- profile.yaml
 - service-account.yaml
 - service.yaml
 - stateful-set.yaml
@@ -48,13 +47,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.appName
-- name: email
-  objref:
-    kind: ConfigMap
-    name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.email
 - name: hostname
   objref:
     kind: ConfigMap

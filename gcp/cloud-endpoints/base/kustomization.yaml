@@ -6,6 +6,7 @@ resources:
 - composite-controller.yaml
 - crd.yaml
 - deployment.yaml
+- profile.yaml
 - service-account.yaml
 - service.yaml
 commonLabels:
@@ -35,5 +36,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.namespace
+- name: email
+  objref:
+    kind: ConfigMap
+    name: cloud-endpoints-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.email
 configurations:
 - params.yaml
