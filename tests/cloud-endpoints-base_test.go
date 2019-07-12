@@ -133,7 +133,7 @@ metadata:
 spec:
   owner:
     kind: User
-    name: $(email)
+    name: kubeflow-$(email)
 `)
 	th.writeF("/manifests/gcp/cloud-endpoints/base/service-account.yaml", `
 apiVersion: v1

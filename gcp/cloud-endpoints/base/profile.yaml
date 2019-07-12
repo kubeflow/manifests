@@ -5,4 +5,4 @@ metadata:
 spec:
   owner:
     kind: User
-    name: $(email)
+    name: kubeflow-$(email)
