@@ -506,6 +506,16 @@ spec:
     ports:
     - number: 80
 `)
+	th.writeF("/manifests/gcp/iap-ingress/base/profile.yaml", `
+apiVersion: kubeflow.org/v1alpha1
+kind: Profile
+metadata:
+  name: kubeflow-admin
+spec:
+  owner:
+    kind: User
+    name: $(email)
+`)
 	th.writeF("/manifests/gcp/iap-ingress/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
@@ -621,10 +631,13 @@ varReference:
   kind: BackendConfig
 - path: data/healthcheck_route.yaml
   kind: ConfigMap
+- path: spec/owner/name
+  kind: Profile
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/params.env", `
 namespace=kubeflow
 appName=kubeflow
+email=
 hostname=
 ingressName=envoy-ingress
 ipName=
@@ -649,6 +662,7 @@ resources:
 - ingress.yaml
 - job.yaml
 - policy.yaml
+- profile.yaml
 - service-account.yaml
 - service.yaml
 - stateful-set.yaml
@@ -685,6 +699,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.appName
+- name: email
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.email
 - name: hostname
   objref:
     kind: ConfigMap

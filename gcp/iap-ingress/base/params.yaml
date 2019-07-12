@@ -41,3 +41,5 @@ varReference:
   kind: BackendConfig
 - path: data/healthcheck_route.yaml
   kind: ConfigMap
+- path: spec/owner/name
+  kind: Profile
