@@ -107,4 +107,4 @@ kind: ClusterRbacConfig
 metadata:
   name: default
 spec:
-  mode: "ON"
+  mode: $(clusterRbacConfig)
