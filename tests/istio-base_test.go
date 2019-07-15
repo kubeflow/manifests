@@ -122,7 +122,15 @@ kind: ClusterRbacConfig
 metadata:
   name: default
 spec:
-  mode: "ON"
+  mode: $(clusterRbacConfig)
+`)
+	th.writeF("/manifests/istio/istio/base/params.env", `
+clusterRbacConfig=ON
+`)
+	th.writeF("/manifests/istio/istio/base/params.yaml", `
+varReference:
+- path: spec/mode
+  kind: ClusterRbacConfig
 `)
 	th.writeK("/manifests/istio/istio/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -130,6 +138,19 @@ kind: Kustomization
 resources:
 - kf-istio-resources.yaml
 namespace: kubeflow
+configMapGenerator:
+- name: istio-parameters
+  env: params.env
+vars:
+- name: clusterRbacConfig
+  objref:
+    kind: ConfigMap
+    name: istio-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.clusterRbacConfig
+configurations:
+ - params.yaml
 `)
 }
 
