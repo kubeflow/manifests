@@ -11,11 +11,11 @@ resources:
 commonLabels:
   kustomize.component: argo
 images:
-  - name: argoproj/argoui
-    newName: argoproj/argoui
+  - name: gcr.io/ml-pipeline/argoui
+    newName: gcr.io/ml-pipeline/argoui
     newTag: v2.3.0
-  - name: argoproj/workflow-controller
-    newName: argoproj/workflow-controller
+  - name: gcr.io/ml-pipeline/workflow-controller
+    newName: gcr.io/ml-pipeline/workflow-controller
     newTag: v2.3.0
 configMapGenerator:
 - name: workflow-controller-parameters

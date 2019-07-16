@@ -98,7 +98,7 @@ spec:
         env:
         - name: MYSQL_ALLOW_EMPTY_PASSWORD
           value: "true"
-        image: mysql:5.6
+        image: gcr.io/ml-pipeline/mysql:5.6
         ports:
         - containerPort: 3306
           name: mysql
@@ -164,7 +164,7 @@ vars:
   fieldref:
     fieldpath: data.mysqlPvcName
 images:
-- name: mysql
+- name: gcr.io/ml-pipeline/mysql
   newTag: '5.6'
 configurations:
 - params.yaml

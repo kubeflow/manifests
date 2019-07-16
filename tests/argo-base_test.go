@@ -206,7 +206,7 @@ spec:
           value: "true"
         - name: BASE_HREF
           value: /argo/
-        image: argoproj/argoui:v2.3.0
+        image: gcr.io/ml-pipeline/argoui:v2.3.0
         imagePullPolicy: IfNotPresent
         name: argo-ui
         resources: {}
@@ -261,7 +261,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: metadata.namespace
-        image: argoproj/workflow-controller:v2.3.0
+        image: gcr.io/ml-pipeline/workflow-controller:v2.3.0
         imagePullPolicy: IfNotPresent
         name: workflow-controller
         resources: {}
@@ -324,7 +324,7 @@ varReference:
 `)
 	th.writeF("/manifests/argo/base/params.env", `
 namespace=
-executorImage=argoproj/argoexec:v2.3.0
+executorImage=gcr.io/ml-pipeline/argoexec:v2.3.0
 artifactRepositoryBucket=mlpipeline
 artifactRepositoryKeyPrefix=artifacts
 artifactRepositoryEndpoint=minio-service.kubeflow:9000
@@ -349,11 +349,11 @@ resources:
 commonLabels:
   kustomize.component: argo
 images:
-  - name: argoproj/argoui
-    newName: argoproj/argoui
+  - name: gcr.io/ml-pipeline/argoui
+    newName: gcr.io/ml-pipeline/argoui
     newTag: v2.3.0
-  - name: argoproj/workflow-controller
-    newName: argoproj/workflow-controller
+  - name: gcr.io/ml-pipeline/workflow-controller
+    newName: gcr.io/ml-pipeline/workflow-controller
     newTag: v2.3.0
 configMapGenerator:
 - name: workflow-controller-parameters
