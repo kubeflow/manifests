@@ -23,7 +23,7 @@ Authentication through OIDC in Kubernetes does work with self signed certificate
 
 Though Istio's authentication policy parameter `jwksUri` for [End User Authentication](https://istio.io/docs/ops/security/end-user-auth/) does [not allow self signed certificates](https://github.com/istio/istio/issues/7290#issuecomment-420748056).
 
-Please generate certificates with a trusted authority for enabling this example or follow this [work-around](#self-signed-work-around).
+Please generate certificates with a trusted authority for enabling this example or follow this [work-around](#work-around-a-way-to-use-self-signed-certificates).
 
 ## Authentication Server Setup
 
@@ -44,6 +44,8 @@ Follow instructions [here](authentication/overlays/README.md) to edit Kustomize 
 `kustomize build authentication/overlays/prototype | kubectl apply -f -`
 
 ## Create Users and Groups in LDAP server
+
+Follow instructions [here](authentication/base/ldap/README.md).
 
 ## Setup Kubernetes OIDC Authentication
 
@@ -94,3 +96,40 @@ cd authorization/Istio
 kubectl create -f .
 cd ../..
 ```
+
+## Work-around: A way to use Self-Signed Certificates
+
+* Change the following three entries in *[alt_names]* section in `certs/gencert.sh` file to reflect your own domains:
+  * dex.example.org
+  * login.example.org
+  * ldap-admin.example.org
+
+
+* Execute `certs/gencert.sh` on your terminal and it should create a folder `ssl` containing all required self signed certificates.
+
+* Copy the JWKS keys from `https://dex.example.com/keys` and host these keys in a public repository as a file. This public repository should have a verified a https SSL certificate (for e.g. github).
+
+* Copy the file url from the public repository in the `jwksUri` field of Istio Authentication Policy config:
+
+```
+apiVersion: "authentication.istio.io/v1alpha1"
+kind: "Policy"
+metadata:
+  name: "pipelines-auth-policy"
+spec:
+  targets:
+  - name: ml-pipeline
+  peers:
+  - mtls: {}
+  origins:
+  - jwt:
+      audiences:
+        - "ldapdexapp"
+      issuer: "https://org.example.com:32000"
+      jwksUri: "https://raw.githubusercontent.com/example-organisation/jwks/master/auth-jwks.json"
+  principalBinding: USE_ORIGIN
+  targets:
+  - name: ml-pipeline
+```
+
+* Note that this is just a work around and JWKS keys are rotated by the Authentication Server. These JWKS keys will become invalid after the rotation period and you will have to re-upload the new keys back to your public repository.
