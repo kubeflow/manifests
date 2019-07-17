@@ -1,11 +1,11 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  name: kubebenchjobs.kubebench.operator
+  name: kubebenchjobs.kubeflow.org
 spec:
-  group: kubebench.operator
+  group: kubeflow.org
   names:
     kind: KubebenchJob
     plural: kubebenchjobs
   scope: Namespaced
-  version: v1
+  version: v1alpha2
