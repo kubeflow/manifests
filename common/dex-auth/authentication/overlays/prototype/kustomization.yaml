@@ -1,5 +1,0 @@
-bases:
-- ../../base
-patchesStrategicMerge:
-- dex.yaml
-- dex-k8s-authenticator.yaml

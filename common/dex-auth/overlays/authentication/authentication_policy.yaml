@@ -1,0 +1,12 @@
+---
+apiVersion: authentication.istio.io/v1alpha1
+kind: Policy
+metadata:
+  name: pipelines-auth-policy
+spec:
+  origins:
+  - jwt:
+      audiences:
+        - "ldapdexapp"
+      issuer: "https://org.example.com:32000"
+      jwksUri: "https://org.example.com:32000/keys"

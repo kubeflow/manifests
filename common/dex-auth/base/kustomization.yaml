@@ -4,3 +4,4 @@ bases:
 - ./ldap
 - ./dex
 - ./dex-k8s-authenticator
+- ./istio-auth
