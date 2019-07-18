@@ -1,0 +1,6 @@
+bases:
+- ../../base
+patchesStrategicMerge:
+- dex.yaml
+- dex_k8s_authenticator.yaml
+- authentication_policy.yaml

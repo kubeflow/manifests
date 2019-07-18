@@ -1,7 +1,7 @@
-apiVersion: "authentication.istio.io/v1alpha1"
-kind: "Policy"
+apiVersion: authentication.istio.io/v1alpha1
+kind: Policy
 metadata:
-  name: "pipelines-auth-policy"
+  name: pipelines-auth-policy
 spec:
   targets:
   - name: ml-pipeline
