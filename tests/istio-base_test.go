@@ -1,6 +1,8 @@
 package tests_test
 
 import (
+	"testing"
+
 	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/pkg/fs"
@@ -8,7 +10,6 @@ import (
 	"sigs.k8s.io/kustomize/pkg/resmap"
 	"sigs.k8s.io/kustomize/pkg/resource"
 	"sigs.k8s.io/kustomize/pkg/target"
-	"testing"
 )
 
 func writeIstioBase(th *KustTestHarness) {
@@ -126,6 +127,11 @@ spec:
 `)
 	th.writeF("/manifests/istio/istio/base/params.env", `
 clusterRbacConfig=ON
+`)
+	th.writeF("/manifests/istio/istio/base/params.yaml", `
+varReference:
+- path: spec/mode
+  kind: ClusterRbacConfig
 `)
 	th.writeK("/manifests/istio/istio/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
