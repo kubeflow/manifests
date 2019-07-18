@@ -10,9 +10,9 @@ spec:
           args:
             # AWS VPC ID this ingress controller will use to create AWS resources.
             # If unspecified, it will be discovered from ec2metadata.
-            - --aws-vpc-id=vpc-xxxxxx
+            - --aws-vpc-id=$(VPC_ID)
 
             # AWS region this ingress controller will operate in.
             # If unspecified, it will be discovered from ec2metadata.
             # List of regions: http://docs.aws.amazon.com/general/latest/gr/rande.html#vpc_region
-            - --aws-region=us-west-1
+            - --aws-region=$(REGION)

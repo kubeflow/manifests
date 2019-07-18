@@ -8,7 +8,7 @@ resources:
   - csi-controller-sa.yaml
   - csi-node-cluster-role.yaml
   - csi-node-cluster-role-binding.yaml
-  - csi-node-daemon-set.yaml
+  - csi-node-daemonset.yaml
   - csi-node-sa.yaml
   - csi-provisioner-cluster-role.yaml
   - csi-provisioner-cluster-role-binding.yaml

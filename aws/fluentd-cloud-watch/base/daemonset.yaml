@@ -2,7 +2,6 @@ apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
   name: fluentd-cloudwatch
-  namespace: kube-system
   labels:
     k8s-app: fluentd-cloudwatch
 spec:

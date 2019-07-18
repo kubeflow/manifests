@@ -35,7 +35,7 @@ spec:
             # by the ALB Ingress Controller, providing distinction between
             # clusters.
 #            - --cluster-name=$(CLUSTER_NAME)
-            - --cluster-name=hehe
+            - --cluster-name=$(CLUSTER_NAME)
 
             # AWS VPC ID this ingress controller will use to create AWS resources.
             # If unspecified, it will be discovered from ec2metadata.
@@ -47,6 +47,5 @@ spec:
             # - --aws-region=us-west-1
           # Repository location of the ALB Ingress Controller.
           image: docker.io/amazon/aws-alb-ingress-controller:v1.1.2
-          dnsPolicy: ClusterFirst
           imagePullPolicy: Always
       serviceAccountName: alb-ingress-controller

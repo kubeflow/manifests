@@ -2,7 +2,6 @@ kind: StatefulSet
 apiVersion: apps/v1beta1
 metadata:
   name: efs-csi-controller
-  namespace: kube-system
 spec:
   serviceName: efs-csi-controller
   replicas: 1

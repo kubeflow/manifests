@@ -5,7 +5,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: fsx-csi-controller-sa
-    namespace: kube-system
+    namespace: kubeflow
 roleRef:
   kind: ClusterRole
   name: fsx-external-provisioner-clusterrole

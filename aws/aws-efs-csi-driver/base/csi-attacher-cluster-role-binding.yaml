@@ -5,7 +5,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: efs-csi-controller-sa
-    namespace: kube-system
+    namespace: kubeflow
 roleRef:
   kind: ClusterRole
   name: efs-csi-external-attacher-clusterrole

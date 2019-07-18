@@ -2,11 +2,10 @@ kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: fsx-csi-node-clusterrole-binding
-  namespace: default
 subjects:
   - kind: ServiceAccount
     name: fsx-csi-node-sa
-    namespace: default
+    namespace: kubeflow
 roleRef:
   kind: ClusterRole
   name: fsx-csi-node-clusterrole

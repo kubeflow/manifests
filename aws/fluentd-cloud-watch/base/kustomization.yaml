@@ -2,7 +2,8 @@ namespace: kube-system
 resources:
   - cluster-role.yaml
   - cluster-role-binding.yaml
-  - daemon-set.yaml
+  - configmap.yaml
+  - daemonset.yaml
   - service-account.yaml
 commonLabels:
   kustomize.component: fluentd-cloud-watch
@@ -12,19 +13,21 @@ images:
   - name: fluent/fluentd-kubernetes-daemonset
     newName: fluent/fluentd-kubernetes-daemonset
     newTag: v1.1-debian-cloudwatch
+configMapGenerator:
+  - name: fluentd-cloud-watch-parameters
+    env: params.env
 vars:
-  - name: REGION
-    objref:
-      kind: Service
-      name: wordpress
-      apiVersion: v1
-      fieldref:
-        fieldpath: metadata.name
   - name: CLUSTER_NAME
     objref:
-      kind: Service
-      name: wordpress
+      kind: ConfigMap
+      name: fluentd-cloud-watch-parameters
       apiVersion: v1
-      fieldref:
-        fieldpath: metadata.name
-
+    fieldref:
+      fieldpath: data.clusterName
+  - name: REGION
+    objref:
+      kind: ConfigMap
+      name: fluentd-cloud-watch-parameters
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.region
