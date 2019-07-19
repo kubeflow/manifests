@@ -16,7 +16,7 @@ func writeTfJobOperatorOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: "application"
+  name: tf-job-operator
 spec:
   selector:
     matchLabels:
