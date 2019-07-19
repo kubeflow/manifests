@@ -35,7 +35,7 @@ spec:
         - mountPath: /var/ingress-config/
           name: ingress-config
       restartPolicy: OnFailure
-      serviceAccountName: envoy
+      serviceAccountName: kf-admin
       volumes:
       - configMap:
           defaultMode: 493

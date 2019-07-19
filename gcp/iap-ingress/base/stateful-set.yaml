@@ -23,8 +23,6 @@ spec:
           value: $(istioNamespace)
         - name: SERVICE
           value: istio-ingressgateway
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
         - name: INGRESS_NAME
           value: $(ingressName)
         - name: USE_ISTIO
@@ -34,15 +32,9 @@ spec:
         volumeMounts:
         - mountPath: /var/envoy-config/
           name: config-volume
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
-      serviceAccountName: envoy
+      serviceAccountName: kf-admin
       volumes:
       - configMap:
           name: envoy-config
         name: config-volume
-      - name: sa-key
-        secret:
-          secretName: admin-gcp-sa
   volumeClaimTemplates: []

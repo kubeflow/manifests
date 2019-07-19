@@ -11,8 +11,6 @@ spec:
     spec:
       containers:
       - env:
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
         image: gcr.io/cloud-solutions-group/cloud-endpoints-controller:0.2.1
         imagePullPolicy: Always
         name: cloud-endpoints-controller
@@ -25,13 +23,5 @@ spec:
           periodSeconds: 5
           successThreshold: 1
           timeoutSeconds: 5
-        volumeMounts:
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
-      serviceAccountName: cloud-endpoints-controller
+      serviceAccountName: kf-admin
       terminationGracePeriodSeconds: 5
-      volumes:
-      - name: sa-key
-        secret:
-          secretName: $(secretName)

@@ -1,11 +1,11 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: cloud-endpoints-controller
+  name: kf-admin
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: cloud-endpoints-controller
+  name: kf-admin
 subjects:
 - kind: ServiceAccount
-  name: cloud-endpoints-controller
+  name: kf-admin
