@@ -1,0 +1,36 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: suggestion
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: suggestion 
+      app.kubernetes.io/instance: suggestion 
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: katib
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.6
+  componentKinds:
+  - group: core
+    kind: Service
+  - group: apps
+    kind: Deployment
+  descriptor:
+    type: "suggestion"
+    version: "v1alpha2"
+    description: "Katib suggestion provides various algorithms to AutoML jobs."
+    maintainers:
+    - name: Zhongxuan Wu
+      email: wuzhongxuan@caicloud.io
+    owners:
+    - name: Zhongxuan Wu
+      email: wuzhongxuan@caicloud.io
+    keywords:
+    - katib
+    - suggestion
+    - AutoML
+    links:
+    - description: About
+      url: "https://github.com/kubeflow/katib"
+  addOwnerRef: true
