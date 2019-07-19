@@ -225,7 +225,7 @@ data:
       . /var/shared/healthz.env
 
       # If node port or backend id change, so does the JWT audience.
-      CURR_NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[0].nodePort}')
+      CURR_NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
       read -ra toks <<<"$(gcloud compute --project=${PROJECT} backend-services list --filter=name~k8s-be-${CURR_NODE_PORT}- --format='value(id,timeoutSec)')"
       CURR_BACKEND_ID="${toks[0]}"
       CURR_BACKEND_TIMEOUT="${toks[1]}"
