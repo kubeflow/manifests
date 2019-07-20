@@ -46,13 +46,31 @@ spec:
     maintainers:
     - name: Zhongxuan Wu
       email: wuzhongxuan@caicloud.io
+    - name: Ce Gao
+      email: gaoce@caicloud.io
+    - name: Johnu George
+      email: johnugeo@cisco.com
+    - name: Hougang Liu
+      email: liuhougang6@126.com
+    - name: Richard Liu
+      email: ricliu@google.com
+    - name: YujiOshima
+      email: yuji.oshima0x3fd@gmail.com
     owners:
-    - name: Zhongxuan Wu
-      email: wuzhongxuan@caicloud.io
+    - name: Ce Gao
+      email: gaoce@caicloud.io
+    - name: Johnu George
+      email: johnugeo@cisco.com
+    - name: Hougang Liu
+      email: liuhougang6@126.com
+    - name: Richard Liu
+      email: ricliu@google.com
+    - name: YujiOshima
+      email: yuji.oshima0x3fd@gmail.com
     keywords:
     - katib
     - katib-controller
-    - AutoML
+    - hyperparameter tuning
     links:
     - description: About
       url: "https://github.com/kubeflow/katib"
