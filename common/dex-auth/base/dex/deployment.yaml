@@ -33,4 +33,4 @@ spec:
             path: config.yaml
       - name: tls
         secret:
-          secretName: dex.example.com.tls
+          secretName: $(dex_domain).tls

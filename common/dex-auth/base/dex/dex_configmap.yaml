@@ -4,7 +4,7 @@ metadata:
   name: dex
 data:
   config.yaml: |
-    issuer: https://dex.example.org:32000
+    issuer: $(issuer)
     storage:
       type: kubernetes
       config:
@@ -28,7 +28,7 @@ data:
           # If the port is not supplied, it will be guessed based on "insecureNoSSL",
           # and "startTLS" flags. 389 for insecure or StartTLS connections, 636
           # otherwise.
-          host: ldap.example.com:389
+          host: $(ldap_host)
 
           # Following field is required if the LDAP host is not using TLS (port 389).
           # Because this option inherently leaks passwords to anyone on the same network
@@ -92,8 +92,7 @@ data:
       skipApprovalScreen: true
 
     staticClients:
-    - id: ldapdexapp
-      redirectURIs:
-      - 'http://login.example.org:5555/callback/onprem-cluster'
-      name: 'LDAP Dex Application'
-      secret: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
+    - id: $(dex_client_id)
+      redirectURIs: $(oidc_redirect_uris)
+      name: 'Dex Login Application'
+      secret: $(dex_application_secret)

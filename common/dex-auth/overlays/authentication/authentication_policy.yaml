@@ -8,5 +8,5 @@ spec:
   - jwt:
       audiences:
         - "ldapdexapp"
-      issuer: "https://org.example.com:32000"
-      jwksUri: "https://org.example.com:32000/keys"
+      issuer: "https://dex.example.com:32000"
+      jwksUri: "https://dex.example.com:32000/keys"
