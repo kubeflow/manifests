@@ -10,9 +10,9 @@ spec:
   origins:
   - jwt:
       audiences:
-        - "ldapdexapp"
-      issuer: "https://org.example.com:32000"
-      jwksUri: "https://org.example.com:32000/keys"
+        - $(dex_client_id)
+      issuer: $(issuer)
+      jwksUri: $(jwks_uri)
   principalBinding: USE_ORIGIN
   targets:
   - name: ml-pipeline

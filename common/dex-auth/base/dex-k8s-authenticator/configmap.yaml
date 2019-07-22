@@ -8,7 +8,7 @@ data:
   config.yaml: |-
     clusters:
       # Specify 1 or more clusters
-      - name: onprem-cluster
+      - name: $(cluster_name)
 
         # Descriptions used in the WebUI
         short_description: "Example Cluster"
@@ -17,20 +17,20 @@ data:
         # Redirect Url pointing to dex-k8s-authenticator callback for this cluster
         # This should be configured in Dex as part of the staticClients
         # redirectURIs option
-        redirect_uri: https://login.example.com/callback/onprem-cluster
+        redirect_uri: dex_client_redirect_uri
 
         # Client Secret - should match value in Dex
-        client_secret: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
+        client_secret: $(dex_application_secret)
 
         # Client ID - should match value in Dex
-        client_id: ldapdexapp
+        client_id: $(dex_client_id)
 
         # Dex Issuer - Must be resolvable
-        issuer:  https://dex.example.com:32000
+        issuer: $(issuer)
 
         # Url to k8s API endpoint - used in WebUI instructions for generating
         # kubeconfig
-        k8s_master_uri: https://k8s.example.com:443
+        k8s_master_uri: $(k8s_master_uri)
 
         # don't use username for context
         static_context_name: false
@@ -83,7 +83,7 @@ data:
 
 
     # Which address to listen on (set to https if tls configured)
-    listen: http://127.0.0.1:5555
+    listen: $(dex_client_listen_addr)
 
     # A path-prefix from which to serve requests and assets
     web_path_prefix: /
