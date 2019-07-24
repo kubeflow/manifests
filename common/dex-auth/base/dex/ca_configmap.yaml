@@ -3,7 +3,4 @@ kind: ConfigMap
 metadata:
   name: ca
 data:
-  ca.pem: |
-    -----BEGIN CERTIFICATE-----
-    YOUR CERTIFICATE CONTENTS
-    -----END CERTIFICATE-----
+  ca.pem: $(dex_ca_contents)

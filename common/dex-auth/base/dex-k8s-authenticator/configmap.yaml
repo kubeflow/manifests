@@ -17,7 +17,7 @@ data:
         # Redirect Url pointing to dex-k8s-authenticator callback for this cluster
         # This should be configured in Dex as part of the staticClients
         # redirectURIs option
-        redirect_uri: dex_client_redirect_uri
+        redirect_uri: $(dex_client_redirect_uri)
 
         # Client Secret - should match value in Dex
         client_secret: $(dex_application_secret)
@@ -49,9 +49,8 @@ data:
         #   ...
         #   -----END CERTIFICATE-----
         k8s_ca_pem: |
-          -----BEGIN CERTIFICATE-----
-          YOUR K8S CERTIFICATE AUTHORITY FILE CONTENTS
-          -----END CERTIFICATE-----
+        $(k8s_ca_contents)
+
     # Specify multiple extra root CA files to be loaded
     # trusted_root_ca:
     #   -|
@@ -77,10 +76,7 @@ data:
     #   ...
     #   -----END CERTIFICATE-----
     idp_ca_pem: |
-      -----BEGIN CERTIFICATE-----
-      YOUR IdP CERTIFICATE AUTHORITY FILE CONTENTS
-      -----END CERTIFICATE-----
-
+    $(idp_ca_contents)
 
     # Which address to listen on (set to https if tls configured)
     listen: $(dex_client_listen_addr)
