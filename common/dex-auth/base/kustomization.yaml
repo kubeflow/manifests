@@ -9,9 +9,35 @@ bases:
 - ./istio-auth
 
 configMapGenerator:
+- name: dex-certs
+  files:
+  - dex_ca_contents.pem
+  - k8s_ca_contents.pem
+  - idp_ca_contents.pem
 - name: dex-parameters
   env: dex_params.env
 vars:
+- name: dex_ca_contents
+  objref:
+    kind: ConfigMap
+    name: dex-certs
+    apiVersion: v1
+  fieldref:
+    fieldpath: data["dex_ca_contents.pem"]
+- name: k8s_ca_contents
+  objref:
+    kind: ConfigMap
+    name: dex-certs
+    apiVersion: v1
+  fieldref:
+    fieldpath: data["k8s_ca_contents.pem"]
+- name: idp_ca_contents
+  objref:
+    kind: ConfigMap
+    name: dex-certs
+    apiVersion: v1
+  fieldref:
+    fieldpath: data["idp_ca_contents.pem"]
 - name: dex_domain
   objref:
     kind: ConfigMap
