@@ -15,4 +15,4 @@ vars:
   fieldref:
     fieldpath: data.clusterRbacConfig
 configurations:
- - params.yaml
+- params.yaml
