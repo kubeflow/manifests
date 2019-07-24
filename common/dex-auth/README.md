@@ -39,9 +39,29 @@ Please generate certificates with a trusted authority for enabling this example 
 
 Replace `dex.example.com.tls` with your own domain.
 
-#### Editing Overlay File Values
+#### Parameterizing the setup
 
-Follow instructions [here](overlays/README.md) to edit Kustomize overlays in `overlays/authentication` to setup:
+##### Fill in variables in [dex_params environment file](base/dex_params.env):
+ - dex_domain: Domain for your dex server
+ - issuer: Issuer URL for dex server
+ - ldap_host: URL for LDAP server for dex to connect to
+ - dex_client_id: ID for the dex client application
+ - oidc_redirect_uris: Redirect URIs for OIDC client callback
+ - dex_application_secret: Application secret for dex client
+ - jwks_uri: URL pointing to the hosted JWKS keys
+ - cluster_name: Name for your Kubernetes Cluster for dex to refer to
+ - dex_client_redirect_uri: Single redirect URI for OIDC client callback
+ - k8s_master_uri: Kubernetes API master server's URI
+ - dex_client_listen_addr: Listen address for dex client to login
+
+
+##### Certificate files:
+
+- [dex_ca_contents.pem](base/dex_ca_contents.pem): CA cert generated for dex.
+- [idp_ca_contents.pem](base/idp_ca_contents.pem): CA cert generated for dex, minding the required indentation as this is substituted in a string.
+- [k8s_ca_contents.pem](base/k8s_ca_contents.pem): CA cert for your Kubernetes cluster.
+
+##### This kustomize configs sets up:
  - A Dex server with LDAP IdP and a client application (dex-k8s-authenticator) for issuing keys for Dex.
  - Istio authentication policy for ML Pipelines service
 
@@ -101,27 +121,10 @@ cd ../..
 
 * Copy the JWKS keys from `https://dex.example.com/keys` and host these keys in a public repository as a file. This public repository should have a verified a https SSL certificate (for e.g. github).
 
-* Copy the file url from the public repository in the `jwksUri` field of [Istio Authentication Policy overlay](overlays/authentication/authentication_policy.yaml) config:
+* Copy the file url from the public repository in the `jwks_uri` parameter for [Istio Authentication Policy](base/dex_params.env) config:
 
 ```
-apiVersion: "authentication.istio.io/v1alpha1"
-kind: "Policy"
-metadata:
-  name: "pipelines-auth-policy"
-spec:
-  targets:
-  - name: ml-pipeline
-  peers:
-  - mtls: {}
-  origins:
-  - jwt:
-      audiences:
-        - "ldapdexapp"
-      issuer: "https://org.example.com:32000"
-      jwksUri: "https://raw.githubusercontent.com/example-organisation/jwks/master/auth-jwks.json"
-  principalBinding: USE_ORIGIN
-  targets:
-  - name: ml-pipeline
+jwks_uri="https://raw.githubusercontent.com/example-organisation/jwks/master/auth-jwks.json"
 ```
 
 * Note that this is just a work around and JWKS keys are rotated by the Authentication Server. These JWKS keys will become invalid after the rotation period and you will have to re-upload the new keys back to your public repository.
