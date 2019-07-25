@@ -46,21 +46,21 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: envoy
+  name: kf-admin-basic-auth
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: envoy
+  name: kf-admin-basic-auth
 subjects:
 - kind: ServiceAccount
-  name: envoy
+  name: kf-admin
   namespace: kubeflow
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: envoy
+  name: kf-admin-basic-auth
 rules:
 - apiGroups:
   - ""
@@ -264,7 +264,7 @@ spec:
         - mountPath: /var/ingress-config/
           name: ingress-config
       restartPolicy: OnFailure
-      serviceAccountName: envoy
+      serviceAccountName: kf-admin
       volumes:
       - configMap:
           defaultMode: 493
@@ -275,7 +275,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: envoy
+  name: kf-admin
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/service.yaml", `
 apiVersion: v1
@@ -327,8 +327,6 @@ spec:
           value: $(namespace)
         - name: SERVICE
           value: ambassador
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
         - name: HEALTHCHECK_PATH
           value: /whoami
         - name: INGRESS_NAME
@@ -338,17 +336,11 @@ spec:
         volumeMounts:
         - mountPath: /var/envoy-config/
           name: config-volume
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
-      serviceAccountName: envoy
+      serviceAccountName: kf-admin
       volumes:
       - configMap:
           name: envoy-config
         name: config-volume
-      - name: sa-key
-        secret:
-          secretName: admin-gcp-sa
   # Workaround for https://github.com/kubernetes-sigs/kustomize/issues/677
   volumeClaimTemplates: []
 `)
@@ -380,6 +372,28 @@ varReference:
   kind: CloudEndpoint
 - path: spec/targetIngress/name
   kind: CloudEndpoint
+`)
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/gcp-credentials.yaml", `
+apiVersion: apps/v1beta2
+kind: StatefulSet
+metadata:
+  name: backend-updater
+spec:
+  template:
+    spec:
+      containers:
+      - name: backend-updater
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/run/secrets/sa/admin-gcp-sa.json
+        volumeMounts:
+        - mountPath: /var/run/secrets/sa
+          name: sa-key
+          readOnly: true
+      volumes:
+      - name: sa-key
+        secret:
+          secretName: admin-gcp-sa
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/params.env", `
 namespace=kubeflow
@@ -473,7 +487,8 @@ vars:
     fieldpath: data.issuer
 configurations:
 - params.yaml
-`)
+patches:
+- gcp-credentials.yaml`)
 }
 
 func TestBasicAuthIngressBase(t *testing.T) {
