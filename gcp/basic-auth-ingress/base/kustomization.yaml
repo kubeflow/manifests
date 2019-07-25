@@ -79,3 +79,5 @@ vars:
     fieldpath: data.issuer
 configurations:
 - params.yaml
+patches:
+- gcp-credentials.yaml
