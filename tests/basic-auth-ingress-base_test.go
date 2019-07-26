@@ -41,6 +41,7 @@ spec:
   project: $(project)
   targetIngress:
     name: $(ingressName)
+    namespace: $(istioNamespace)
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -380,6 +381,8 @@ varReference:
   kind: CloudEndpoint
 - path: spec/targetIngress/name
   kind: CloudEndpoint
+- path: spec/targetIngress/namespace
+  kind: CloudEndpoint
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/params.env", `
 namespace=kubeflow
@@ -390,6 +393,7 @@ secretName=envoy-ingress-tls
 privateGKECluster=false
 ingressName=envoy-ingress
 issuer=letsencrypt-prod
+istioNamespace=istio-system
 `)
 	th.writeK("/manifests/gcp/basic-auth-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -471,6 +475,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.issuer
+- name: istioNamespace
+  objref:
+    kind: ConfigMap
+    name: basic-auth-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.istioNamespace
 configurations:
 - params.yaml
 `)
