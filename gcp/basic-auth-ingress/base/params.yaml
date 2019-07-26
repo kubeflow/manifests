@@ -25,3 +25,5 @@ varReference:
   kind: CloudEndpoint
 - path: spec/targetIngress/name
   kind: CloudEndpoint
+- path: spec/targetIngress/namespace
+  kind: CloudEndpoint
