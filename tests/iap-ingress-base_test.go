@@ -606,7 +606,8 @@ varReference:
 - path: data/healthcheck_route.yaml
   kind: ConfigMap
 `)
-	th.writeF("/manifests/gcp/iap-ingress/base/gcp-credentials.yaml", `
+	th.writeF("/manifests/gcp/iap-ingress/base/gcp-credentials-patch.yaml", `
+# Patch the env/volumes/volumeMounts for GCP credentials
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -778,7 +779,7 @@ vars:
 configurations:
 - params.yaml
 patches:
-- gcp-credentials.yaml`)
+- gcp-credentials-patch.yaml`)
 }
 
 func TestIapIngressBase(t *testing.T) {

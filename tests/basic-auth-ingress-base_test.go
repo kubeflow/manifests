@@ -373,7 +373,8 @@ varReference:
 - path: spec/targetIngress/name
   kind: CloudEndpoint
 `)
-	th.writeF("/manifests/gcp/basic-auth-ingress/base/gcp-credentials.yaml", `
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/gcp-credentials-patch.yaml", `
+# Patch the env/volumes/volumeMounts for GCP credentials
 apiVersion: apps/v1beta2
 kind: StatefulSet
 metadata:
@@ -488,7 +489,7 @@ vars:
 configurations:
 - params.yaml
 patches:
-- gcp-credentials.yaml`)
+- gcp-credentials-patch.yaml`)
 }
 
 func TestBasicAuthIngressBase(t *testing.T) {
