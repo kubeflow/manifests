@@ -80,4 +80,4 @@ vars:
 configurations:
 - params.yaml
 patches:
-- gcp-credentials.yaml
+- gcp-credentials-patch.yaml
