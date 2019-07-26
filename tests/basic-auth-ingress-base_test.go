@@ -36,7 +36,7 @@ spec:
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
 metadata:
-  name: cloud-endpoint
+  name: $(appName)
 spec:
   project: $(project)
   targetIngress:
@@ -377,6 +377,8 @@ varReference:
   kind: Ingress
 - path: metadata/annotations/certmanager.k8s.io\/issuer
   kind: Ingress
+- path: metadata/name
+  kind: CloudEndpoint
 - path: spec/project
   kind: CloudEndpoint
 - path: spec/targetIngress/name
@@ -385,6 +387,7 @@ varReference:
   kind: CloudEndpoint
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/params.env", `
+appName=kubeflow
 namespace=kubeflow
 hostname=
 project=
@@ -433,6 +436,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.secretName
+- name: appName
+  objref:
+    kind: ConfigMap
+    name: basic-auth-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.appName
 - name: namespace
   objref:
     kind: ConfigMap

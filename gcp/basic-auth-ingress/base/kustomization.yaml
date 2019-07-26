@@ -35,6 +35,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.secretName
+- name: appName
+  objref:
+    kind: ConfigMap
+    name: basic-auth-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.appName
 - name: namespace
   objref:
     kind: ConfigMap
