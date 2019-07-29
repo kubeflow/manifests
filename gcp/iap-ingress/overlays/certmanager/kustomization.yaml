@@ -5,3 +5,6 @@ bases:
 resources:
 - job.yaml
 - certificate.yaml
+namespace: kubeflow
+commonLabels:
+  kustomize.component: iap-ingress
