@@ -112,5 +112,3 @@ vars:
     fieldpath: data.istioNamespace
 configurations:
 - params.yaml
-patches:
-- gcp-credentials-patch.yaml
