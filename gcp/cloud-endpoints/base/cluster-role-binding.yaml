@@ -8,4 +8,4 @@ roleRef:
   name: cloud-endpoints-controller
 subjects:
 - kind: ServiceAccount
-  name: cloud-endpoints-controller
+  name: kf-admin

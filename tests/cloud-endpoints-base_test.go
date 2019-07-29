@@ -23,13 +23,13 @@ roleRef:
   name: cloud-endpoints-controller
 subjects:
 - kind: ServiceAccount
-  name: cloud-endpoints-controller
+  name: kf-admin
 `)
 	th.writeF("/manifests/gcp/cloud-endpoints/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: cloud-endpoints-controller
+  name: kf-admin
 rules:
 - apiGroups:
   - ""
@@ -99,10 +99,7 @@ spec:
         app: cloud-endpoints-controller
     spec:
       containers:
-      - env:
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
-        image: gcr.io/cloud-solutions-group/cloud-endpoints-controller:0.2.1
+      - image: gcr.io/cloud-solutions-group/cloud-endpoints-controller:0.2.1
         imagePullPolicy: Always
         name: cloud-endpoints-controller
         readinessProbe:
@@ -114,22 +111,14 @@ spec:
           periodSeconds: 5
           successThreshold: 1
           timeoutSeconds: 5
-        volumeMounts:
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
-      serviceAccountName: cloud-endpoints-controller
+      serviceAccountName: kf-admin
       terminationGracePeriodSeconds: 5
-      volumes:
-      - name: sa-key
-        secret:
-          secretName: $(secretName)
 `)
 	th.writeF("/manifests/gcp/cloud-endpoints/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: cloud-endpoints-controller
+  name: kf-admin
 `)
 	th.writeF("/manifests/gcp/cloud-endpoints/base/service.yaml", `
 apiVersion: v1
@@ -152,6 +141,29 @@ varReference:
   kind: CompositeController
 - path: spec/hooks/sync/webhook/url
   kind: CompositeController
+`)
+	th.writeF("/manifests/gcp/cloud-endpoints/base/gcp-credentials-patch.yaml", `
+# Patch the env/volumes/volumeMounts for GCP credentials
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: cloud-endpoints-controller
+spec:
+  template:
+    spec:
+      containers:
+      - name: cloud-endpoints-controller
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/run/secrets/sa/admin-gcp-sa.json
+        volumeMounts:
+        - mountPath: /var/run/secrets/sa
+          name: sa-key
+          readOnly: true
+      volumes:
+      - name: sa-key
+        secret:
+          secretName: admin-gcp-sa
 `)
 	th.writeF("/manifests/gcp/cloud-endpoints/base/params.env", `
 namespace=kubeflow
@@ -197,6 +209,8 @@ vars:
     fieldpath: data.namespace
 configurations:
 - params.yaml
+patches:
+- gcp-credentials-patch.yaml
 `)
 }
 

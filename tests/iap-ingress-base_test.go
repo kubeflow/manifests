@@ -58,20 +58,20 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: envoy
+  name: kf-admin-iap
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: envoy
+  name: kf-admin-iap
 subjects:
 - kind: ServiceAccount
-  name: envoy
+  name: kf-admin
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: envoy
+  name: kf-admin-iap
 rules:
 - apiGroups:
   - ""
@@ -395,8 +395,6 @@ spec:
           value: $(ingressName)
         - name: ENVOY_ADMIN
           value: http://localhost:8001
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
         - name: USE_ISTIO
           value: "true"
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
@@ -404,18 +402,12 @@ spec:
         volumeMounts:
         - mountPath: /var/envoy-config/
           name: config-volume
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
       restartPolicy: Always
-      serviceAccountName: envoy
+      serviceAccountName: kf-admin
       volumes:
       - configMap:
           name: envoy-config
         name: config-volume
-      - name: sa-key
-        secret:
-          secretName: $(adminSaSecretName)
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/ingress.yaml", `
 apiVersion: extensions/v1beta1
@@ -475,7 +467,7 @@ spec:
         - mountPath: /var/ingress-config/
           name: ingress-config
       restartPolicy: OnFailure
-      serviceAccountName: envoy
+      serviceAccountName: kf-admin
       volumes:
       - configMap:
           defaultMode: 493
@@ -510,7 +502,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: envoy
+  name: kf-admin
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/service.yaml", `
 apiVersion: v1
@@ -553,8 +545,6 @@ spec:
           value: $(istioNamespace)
         - name: SERVICE
           value: istio-ingressgateway
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
         - name: INGRESS_NAME
           value: $(ingressName)
         - name: USE_ISTIO
@@ -564,17 +554,11 @@ spec:
         volumeMounts:
         - mountPath: /var/envoy-config/
           name: config-volume
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
-      serviceAccountName: envoy
+      serviceAccountName: kf-admin
       volumes:
       - configMap:
           name: envoy-config
         name: config-volume
-      - name: sa-key
-        secret:
-          secretName: admin-gcp-sa
   volumeClaimTemplates: []
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/params.yaml", `
@@ -621,6 +605,50 @@ varReference:
   kind: BackendConfig
 - path: data/healthcheck_route.yaml
   kind: ConfigMap
+`)
+	th.writeF("/manifests/gcp/iap-ingress/base/gcp-credentials-patch.yaml", `
+# Patch the env/volumes/volumeMounts for GCP credentials
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: iap-enabler
+spec:
+  template:
+    spec:
+      containers:
+      - name: iap
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/run/secrets/sa/admin-gcp-sa.json
+        volumeMounts:
+        - mountPath: /var/run/secrets/sa
+          name: sa-key
+          readOnly: true
+      volumes:
+      - name: sa-key
+        secret:
+          secretName: admin-gcp-sa
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: backend-updater
+spec:
+  template:
+    spec:
+      containers:
+      - name: backend-updater
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/run/secrets/sa/admin-gcp-sa.json
+        volumeMounts:
+        - mountPath: /var/run/secrets/sa
+          name: sa-key
+          readOnly: true
+      volumes:
+      - name: sa-key
+        secret:
+          secretName: admin-gcp-sa
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/params.env", `
 namespace=kubeflow
@@ -750,7 +778,8 @@ vars:
     fieldpath: data.istioNamespace
 configurations:
 - params.yaml
-`)
+patches:
+- gcp-credentials-patch.yaml`)
 }
 
 func TestIapIngressBase(t *testing.T) {
