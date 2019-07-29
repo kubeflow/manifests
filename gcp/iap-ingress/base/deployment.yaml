@@ -52,8 +52,6 @@ spec:
           value: $(ingressName)
         - name: ENVOY_ADMIN
           value: http://localhost:8001
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
         - name: USE_ISTIO
           value: "true"
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
@@ -61,15 +59,9 @@ spec:
         volumeMounts:
         - mountPath: /var/envoy-config/
           name: config-volume
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
       restartPolicy: Always
-      serviceAccountName: envoy
+      serviceAccountName: kf-admin
       volumes:
       - configMap:
           name: envoy-config
         name: config-volume
-      - name: sa-key
-        secret:
-          secretName: $(adminSaSecretName)
