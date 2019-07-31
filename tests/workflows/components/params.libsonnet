@@ -21,6 +21,7 @@
       workflowName: "kfctl-go",
       useBasicAuth: "false",
       useIstio: "true",
+      configPath: "bootstrap/config/kfctl_gcp_iap_master.yaml",
     },
   },
 }
