@@ -163,8 +163,7 @@ spec:
       volumes:
       - name: sa-key
         secret:
-          secretName: admin-gcp-sa
-`)
+          secretName: admin-gcp-sa`)
 	th.writeF("/manifests/gcp/cloud-endpoints/base/params.env", `
 namespace=kubeflow
 secretName=admin-gcp-sa

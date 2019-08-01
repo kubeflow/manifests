@@ -399,8 +399,7 @@ spec:
       volumes:
       - name: sa-key
         secret:
-          secretName: admin-gcp-sa
-`)
+          secretName: admin-gcp-sa`)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/params.env", `
 appName=kubeflow
 namespace=kubeflow
