@@ -24,7 +24,7 @@ namePrefix: spark-operator-spark
 resources:
 - spark-operator-spark-sa.yaml
 - spark-operator-sparkoperator-cr-clusterrole.yaml
-- spark-operator-sparkoperator-crb-crb.yaml
+- spark-operator-sparkoperator-crd-crd.yaml
 - spark-operator-sparkoperator-crd-cleanup-job.yaml
 - spark-operator-sparkoperator-deploy.yaml
 - spark-operator-sparkoperator-sa.yaml
