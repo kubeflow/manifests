@@ -1,0 +1,75 @@
+namespace: kubeflow
+resources:
+- katib-controller-deployment.yaml
+- katib-controller-rbac.yaml
+- katib-controller-secret.yaml
+- katib-controller-service.yaml
+- katib-db-deployment.yaml
+- katib-db-pvc.yaml
+- katib-db-secret.yaml
+- katib-db-service.yaml
+- katib-manager-deployment.yaml
+- katib-manager-rest-deployment.yaml
+- katib-manager-rest-service.yaml
+- katib-manager-service.yaml
+- katib-ui-deployment.yaml
+- katib-ui-rbac.yaml
+- katib-ui-service.yaml
+- metrics-collector-rbac.yaml
+- metrics-collector-template-configmap.yaml
+- suggestion-bayesianoptimization-deployment.yaml
+- suggestion-bayesianoptimization-service.yaml
+- suggestion-grid-deployment.yaml
+- suggestion-grid-service.yaml
+- suggestion-hyperband-deployment.yaml
+- suggestion-hyperband-service.yaml
+- suggestion-nasrl-deployment.yaml
+- suggestion-nasrl-service.yaml
+- suggestion-random-deployment.yaml
+- suggestion-random-service.yaml
+- trial-template.yaml
+configMapGenerator:
+- name: katib-parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+images:
+  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-controller
+    newTag: v0.6.0-rc.0
+  - name: mysql
+    newTag: 8.0.3
+  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-manager
+    newTag: v0.6.0-rc.0
+  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-manager-rest
+    newTag: v0.6.0-rc.0
+  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-ui
+    newTag: v0.6.0-rc.0
+  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/metrics-collector
+    newTag: v0.6.0-rc.0
+  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-hyperband
+    newTag: v0.6.0-rc.0
+  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-bayesianoptimization
+    newTag: v0.6.0-rc.0
+  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-grid
+    newTag: v0.6.0-rc.0
+  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-random
+    newTag: v0.6.0-rc.0
+  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-nasrl
+    newTag: v0.6.0-rc.0
+vars:
+- name: clusterDomain
+  objref:
+    kind: ConfigMap
+    name: katib-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.clusterDomain
+- name: namespace
+  objref:
+    kind: Service
+    name: katib-ui
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.namespace
+configurations:
+- params.yaml

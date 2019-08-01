@@ -1,0 +1,55 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: katib-crds
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: katib-crds
+      app.kubernetes.io/instance: katib-crds 
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: katib
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.6
+  componentKinds:
+  - group: kubeflow.org
+    kind: Experiment
+  - group: kubeflow.org
+    kind: Trial
+  descriptor:
+    type: "katib-crds"
+    version: "v1alpha2"
+    description: "Katib-crds contains \"Experiment\" and \"Trial\" CRDs which are used by katib."
+    maintainers:
+    - name: Zhongxuan Wu
+      email: wuzhongxuan@caicloud.io
+    - name: Ce Gao
+      email: gaoce@caicloud.io
+    - name: Johnu George
+      email: johnugeo@cisco.com
+    - name: Hougang Liu
+      email: liuhougang6@126.com
+    - name: Richard Liu
+      email: ricliu@google.com
+    - name: YujiOshima
+      email: yuji.oshima0x3fd@gmail.com
+    owners:
+    - name: Ce Gao
+      email: gaoce@caicloud.io
+    - name: Johnu George
+      email: johnugeo@cisco.com
+    - name: Hougang Liu
+      email: liuhougang6@126.com
+    - name: Richard Liu
+      email: ricliu@google.com
+    - name: YujiOshima
+      email: yuji.oshima0x3fd@gmail.com
+    keywords:
+    - katib
+    - katib-crds
+    - hyperparameter tuning
+    - neural architecture search
+    links:
+    - description: About
+      url: "https://github.com/kubeflow/katib"
+  addOwnerRef: true

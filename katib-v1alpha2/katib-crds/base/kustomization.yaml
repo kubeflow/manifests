@@ -1,0 +1,6 @@
+namespace: kubeflow
+resources:
+- experiment-crd.yaml
+- trial-crd.yaml
+generatorOptions:
+  disableNameSuffixHash: true
