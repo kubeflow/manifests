@@ -11,7 +11,37 @@ import (
 	"testing"
 )
 
-func writeBasicAuthIngressBase(th *KustTestHarness) {
+func writeBasicAuthIngressOverlaysGcpCredentials(th *KustTestHarness) {
+	th.writeF("/manifests/gcp/basic-auth-ingress/overlays/gcp-credentials/gcp-credentials-patch.yaml", `
+# Patch the env/volumes/volumeMounts for GCP credentials
+apiVersion: apps/v1beta2
+kind: StatefulSet
+metadata:
+  name: backend-updater
+spec:
+  template:
+    spec:
+      containers:
+      - name: backend-updater
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/run/secrets/sa/admin-gcp-sa.json
+        volumeMounts:
+        - mountPath: /var/run/secrets/sa
+          name: sa-key
+          readOnly: true
+      volumes:
+      - name: sa-key
+        secret:
+          secretName: admin-gcp-sa
+`)
+	th.writeK("/manifests/gcp/basic-auth-ingress/overlays/gcp-credentials", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+patches:
+- gcp-credentials-patch.yaml`)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/certificate.yaml", `
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
@@ -489,14 +519,14 @@ configurations:
 `)
 }
 
-func TestBasicAuthIngressBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/gcp/basic-auth-ingress/base")
-	writeBasicAuthIngressBase(th)
+func TestBasicAuthIngressOverlaysGcpCredentials(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/gcp/basic-auth-ingress/overlays/gcp-credentials")
+	writeBasicAuthIngressOverlaysGcpCredentials(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../gcp/basic-auth-ingress/base"
+	targetPath := "../gcp/basic-auth-ingress/overlays/gcp-credentials"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
