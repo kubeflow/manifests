@@ -32,7 +32,7 @@ spec:
           value: minio
         - name: MINIO_SECRET_KEY
           value: minio123
-        image: gcr.io/ml-pipeline/minio:RELEASE.2018-02-09T22-40-05Z
+        image: minio/minio:RELEASE.2018-02-09T22-40-05Z
         ports:
         - containerPort: 9000
         volumeMounts:
@@ -113,7 +113,7 @@ vars:
   fieldref:
     fieldpath: data.minioPvcName
 images:
-- name: gcr.io/ml-pipeline/minio
+- name: minio/minio
   newTag: RELEASE.2018-02-09T22-40-05Z
 configurations:
 - params.yaml
