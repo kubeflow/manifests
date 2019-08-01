@@ -16,21 +16,47 @@ func writePytorchOperatorOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: pytorch-operator-application
+  name: pytorch-operator
 spec:
-  type: pytorch-operator
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: pytorch-operator
+      app.kubernetes.io/instance: pytorch-operator
+      app.kubernetes.io/version: v0.6.0
+      app.kubernetes.io/component: pytorch
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/managed-by: kfctl
   componentKinds:
   - group: core
-    kind: ConfigMap
+    kind: Service
   - group: apps
     kind: Deployment
   - group: core
+    kind: ConfigMap
+  - group: core
     kind: ServiceAccount
-  description: pytorch-operator allows users to create a custom resource \"PyTorchJob\".
-  keywords:
-   - pytorch-job
-   - pytorch-operator
-  version: v1alpha1
+  - group: kubeflow.org
+    kind: PyTorchJob
+  descriptor:
+    type: "pytorch-operator"
+    version: "v1"
+    description: "Pytorch-operator allows users to create and manage the \"PyTorchJob\" custom resource."
+    maintainers:
+    - name: Johnu George
+      email: johnugeo@cisco.com
+    owners:
+    - name: Johnu George
+      email: johnugeo@cisco.com
+    keywords:
+    - "pytorchjob"
+    - "pytorch-operator"
+    - "pytorch-training"
+    links:
+    - description: About
+      url: "https://github.com/kubeflow/pytorch-operator"
+    - description: Docs
+      url: "https://www.kubeflow.org/docs/reference/pytorchjob/v1/pytorch/"
+  addOwnerRef: true
 `)
 	th.writeK("/manifests/pytorch-job/pytorch-operator/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -40,7 +66,7 @@ bases:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: pytorch-operator-application
+  app.kubernetes.io/name: pytorch-operator
   app.kubernetes.io/instance: pytorch-operator
   app.kubernetes.io/version: v0.6.0
   app.kubernetes.io/component: pytorch
