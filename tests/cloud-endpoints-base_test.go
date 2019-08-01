@@ -29,7 +29,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: kf-admin
+  name: cloud-endpoints-controller
 rules:
 - apiGroups:
   - ""
