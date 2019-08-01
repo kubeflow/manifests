@@ -131,7 +131,7 @@ metadata:
 data:
   config: |
     {
-    executorImage: $(executorImage),
+    executorImage: $(registry)/$(executorImage),
     artifactRepository:
     {
         s3: {
@@ -206,7 +206,7 @@ spec:
           value: "true"
         - name: BASE_HREF
           value: /argo/
-        image: argoproj/argoui:v2.3.0
+        image: $(registry)/argoui:v2.3.0
         imagePullPolicy: IfNotPresent
         name: argo-ui
         resources: {}
@@ -261,7 +261,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: metadata.namespace
-        image: argoproj/workflow-controller:v2.3.0
+        image: $(registry)/workflow-controller:v2.3.0
         imagePullPolicy: IfNotPresent
         name: workflow-controller
         resources: {}
@@ -321,10 +321,13 @@ varReference:
   kind: Deployment
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
+- path: spec/template/spec/containers/image
+  kind: Deployment
 `)
 	th.writeF("/manifests/argo/base/params.env", `
 namespace=
-executorImage=argoproj/argoexec:v2.3.0
+registry=argoproj
+executorImage=argoexec:v2.3.0
 artifactRepositoryBucket=mlpipeline
 artifactRepositoryKeyPrefix=artifacts
 artifactRepositoryEndpoint=minio-service.kubeflow:9000
@@ -348,19 +351,19 @@ resources:
 - service.yaml
 commonLabels:
   kustomize.component: argo
-images:
-  - name: argoproj/argoui
-    newName: argoproj/argoui
-    newTag: v2.3.0
-  - name: argoproj/workflow-controller
-    newName: argoproj/workflow-controller
-    newTag: v2.3.0
 configMapGenerator:
 - name: workflow-controller-parameters
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:
+- name: registry
+  objref:
+    kind: ConfigMap
+    name: workflow-controller-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.registry
 - name: executorImage
   objref:
     kind: ConfigMap
