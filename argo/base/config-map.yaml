@@ -6,7 +6,7 @@ metadata:
 data:
   config: |
     {
-    executorImage: $(executorImage),
+    executorImage: $(registry)/$(executorImage),
     artifactRepository:
     {
         s3: {
