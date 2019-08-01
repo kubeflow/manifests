@@ -12,7 +12,7 @@ import (
 )
 
 func writeMetricsCollectorBase(th *KustTestHarness) {
-	th.writeF("/manifests/katib-v1alpha2/metrics-collector/base/metrics-collector-rbac.yaml", `
+	th.writeF("/manifests/katib-v1alpha1/metrics-collector/base/metrics-collector-rbac.yaml", `
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -50,17 +50,17 @@ subjects:
 - kind: ServiceAccount
   name: metrics-collector
 `)
-	th.writeF("/manifests/katib-v1alpha2/metrics-collector/base/metrics-collector-template-configmap.yaml", `
+	th.writeF("/manifests/katib-v1alpha1/metrics-collector/base/metrics-collector-template-configmap.yaml", `
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: metrics-collector-template
+  name: metricscollector-template
 data:
   defaultMetricsCollectorTemplate.yaml : |-
     apiVersion: batch/v1beta1
     kind: CronJob
     metadata:
-      name: {{.Trial}}
+      name: {{.WorkerID}}
       namespace: {{.NameSpace}}
     spec:
       schedule: "*/1 * * * *"
@@ -73,26 +73,25 @@ data:
             spec:
               serviceAccountName: metrics-collector
               containers:
-              - name: {{.Trial}}
-                image: gcr.io/kubeflow-images-public/katib/v1alpha2/metrics-collector:v0.1.2-alpha-289-g14dad8b
-                imagePullPolicy: IfNotPresent
-                command: ["./metricscollector"]
+              - name: {{.WorkerID}}
+                image: gcr.io/kubeflow-images-public/katib/metrics-collector:v0.1.2-alpha-156-g4ab3dbd
                 args:
-                - "-e"
-                - "{{.Experiment}}"
+                - "./metricscollector"
+                - "-s"
+                - "{{.StudyID}}"
                 - "-t"
-                - "{{.Trial}}"
+                - "{{.TrialID}}"
+                - "-w"
+                - "{{.WorkerID}}"
                 - "-k"
-                - "{{.JobKind}}"
+                - "{{.WorkerKind}}"
                 - "-n"
                 - "{{.NameSpace}}"
                 - "-m"
-                - "{{.ManagerService}}"
-                - "-mn"
-                - "{{.MetricNames}}"
+                - "{{.ManagerSerivce}}"
               restartPolicy: Never
 `)
-	th.writeK("/manifests/katib-v1alpha2/metrics-collector/base", `
+	th.writeK("/manifests/katib-v1alpha1/metrics-collector/base", `
 namespace: kubeflow
 resources:
 - metrics-collector-rbac.yaml
@@ -100,19 +99,19 @@ resources:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/metrics-collector
-    newTag: v0.6.0-rc.0
+  - name: gcr.io/kubeflow-images-public/katib/metrics-collector
+    newTag: v0.1.2-alpha-157-g3d4cd04
 `)
 }
 
 func TestMetricsCollectorBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/metrics-collector/base")
+	th := NewKustTestHarness(t, "/manifests/katib-v1alpha1/metrics-collector/base")
 	writeMetricsCollectorBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha2/metrics-collector/base"
+	targetPath := "../katib-v1alpha1/metrics-collector/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
