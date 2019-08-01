@@ -11,7 +11,37 @@ import (
 	"testing"
 )
 
-func writeCloudEndpointsBase(th *KustTestHarness) {
+func writeCloudEndpointsOverlaysGcpCredentials(th *KustTestHarness) {
+	th.writeF("/manifests/gcp/cloud-endpoints/overlays/gcp-credentials/gcp-credentials-patch.yaml", `
+# Patch the env/volumes/volumeMounts for GCP credentials
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: cloud-endpoints-controller
+spec:
+  template:
+    spec:
+      containers:
+      - name: cloud-endpoints-controller
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/run/secrets/sa/admin-gcp-sa.json
+        volumeMounts:
+        - mountPath: /var/run/secrets/sa
+          name: sa-key
+          readOnly: true
+      volumes:
+      - name: sa-key
+        secret:
+          secretName: admin-gcp-sa
+`)
+	th.writeK("/manifests/gcp/cloud-endpoints/overlays/gcp-credentials", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+patches:
+- gcp-credentials-patch.yaml`)
 	th.writeF("/manifests/gcp/cloud-endpoints/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -189,14 +219,14 @@ configurations:
 `)
 }
 
-func TestCloudEndpointsBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/gcp/cloud-endpoints/base")
-	writeCloudEndpointsBase(th)
+func TestCloudEndpointsOverlaysGcpCredentials(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/gcp/cloud-endpoints/overlays/gcp-credentials")
+	writeCloudEndpointsOverlaysGcpCredentials(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../gcp/cloud-endpoints/base"
+	targetPath := "../gcp/cloud-endpoints/overlays/gcp-credentials"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
