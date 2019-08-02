@@ -564,50 +564,6 @@ varReference:
 - path: spec/domains
   kind: ManagedCertificate
 `)
-	th.writeF("/manifests/gcp/iap-ingress/base/gcp-credentials-patch.yaml", `
-# Patch the env/volumes/volumeMounts for GCP credentials
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: iap-enabler
-spec:
-  template:
-    spec:
-      containers:
-      - name: iap
-        env:
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
-        volumeMounts:
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
-      volumes:
-      - name: sa-key
-        secret:
-          secretName: admin-gcp-sa
----
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: backend-updater
-spec:
-  template:
-    spec:
-      containers:
-      - name: backend-updater
-        env:
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
-        volumeMounts:
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
-      volumes:
-      - name: sa-key
-        secret:
-          secretName: admin-gcp-sa
-`)
 	th.writeF("/manifests/gcp/iap-ingress/base/params.env", `
 namespace=kubeflow
 appName=kubeflow
@@ -733,9 +689,7 @@ vars:
   fieldref:
     fieldpath: data.istioNamespace
 configurations:
-- params.yaml
-patches:
-- gcp-credentials-patch.yaml`)
+- params.yaml`)
 }
 
 func TestIapIngressOverlaysManagedCert(t *testing.T) {
