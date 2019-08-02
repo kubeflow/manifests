@@ -326,7 +326,7 @@ varReference:
 `)
 	th.writeF("/manifests/argo/base/params.env", `
 namespace=
-registry=kubeflowpipeline
+registry=argoproj
 executorImage=argoexec:v2.3.0
 artifactRepositoryBucket=mlpipeline
 artifactRepositoryKeyPrefix=artifacts
