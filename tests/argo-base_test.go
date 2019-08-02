@@ -326,7 +326,7 @@ varReference:
 `)
 	th.writeF("/manifests/argo/base/params.env", `
 namespace=
-registry=argoproj
+registry=kubeflowpipeline
 executorImage=argoexec:v2.3.0
 artifactRepositoryBucket=mlpipeline
 artifactRepositoryKeyPrefix=artifacts
@@ -351,6 +351,13 @@ resources:
 - service.yaml
 commonLabels:
   kustomize.component: argo
+images:
+  - name: $(registry)/argoui
+    newName: $(registry)/argoui
+    newTag: v2.3.0
+  - name: $(registry)/workflow-controller
+    newName: $(registry)/workflow-controller
+    newTag: v2.3.0
 configMapGenerator:
 - name: workflow-controller-parameters
   env: params.env
