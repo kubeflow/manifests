@@ -10,6 +10,13 @@ resources:
 - service.yaml
 commonLabels:
   kustomize.component: argo
+images:
+  - name: $(registry)/argoui
+    newName: $(registry)/argoui
+    newTag: v2.3.0
+  - name: $(registry)/workflow-controller
+    newName: $(registry)/workflow-controller
+    newTag: v2.3.0
 configMapGenerator:
 - name: workflow-controller-parameters
   env: params.env
