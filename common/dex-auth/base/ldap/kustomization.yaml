@@ -1,5 +1,0 @@
-namespace: auth
-resources:
-- deployment.yaml
-- service.yaml
-- admin_service.yaml

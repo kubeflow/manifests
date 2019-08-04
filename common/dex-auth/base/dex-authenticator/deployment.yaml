@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dex-k8s-authenticator
+  name: dex-authenticator
   labels:
-    app: dex-k8s-authenticator
+    app: dex-authenticator
     env: dev
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dex-k8s-authenticator
+      app: dex-authenticator
   template:
     metadata:
       labels:
-        app: dex-k8s-authenticator
+        app: dex-authenticator
     spec:
       containers:
       - name: dex-k8s-authenticator
@@ -42,4 +42,4 @@ spec:
       volumes:
       - name: config
         configMap:
-          name: dex-k8s-authenticator-cm
+          name: dex-authenticator-cm

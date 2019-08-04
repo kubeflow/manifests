@@ -1,5 +1,0 @@
-namespace: auth
-resources:
-- configmap.yaml
-- deployment.yaml
-- service.yaml

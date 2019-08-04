@@ -1,3 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ca
+data:
+  ca.pem: $(dex_ca_contents)
+
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -92,7 +101,7 @@ data:
       skipApprovalScreen: true
 
     staticClients:
-    - id: $(dex_client_id)
+    - id: $(client_id)
       redirectURIs: $(oidc_redirect_uris)
       name: 'Dex Login Application'
-      secret: $(dex_application_secret)
+      secret: $(application_secret)

@@ -1,7 +1,0 @@
-namespace: auth
-resources:
-- ca_configmap.yaml
-- dex_configmap.yaml
-- crd.yaml
-- deployment.yaml
-- service.yaml

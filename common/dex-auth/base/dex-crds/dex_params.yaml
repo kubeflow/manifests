@@ -5,9 +5,3 @@ varReference:
   kind: Deployment
 - path: data/config.yaml
   kind: ConfigMap
-- path: spec/origins/jwt/audiences
-  kind: Policy
-- path: spec/origins/jwt/issuer
-  kind: Policy
-- path: spec/origins/jwt/jwksUri
-  kind: Policy

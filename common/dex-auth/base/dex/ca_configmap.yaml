@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: ca
-data:
-  ca.pem: $(dex_ca_contents)

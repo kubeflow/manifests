@@ -1,29 +1,21 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-commonLabels:
-  role: authentication
-bases:
-- ./ldap
-- ./dex
-- ./dex-k8s-authenticator
-- ./istio-auth
+namespace: auth
+
+resources:
+- config-map.yaml
+- deployment.yaml
+- service.yaml
 
 configMapGenerator:
 - name: dex-certs
   files:
-  - dex_ca_contents.pem
   - k8s_ca_contents.pem
   - idp_ca_contents.pem
 - name: dex-parameters
   env: dex_params.env
+
 vars:
-- name: dex_ca_contents
-  objref:
-    kind: ConfigMap
-    name: dex-certs
-    apiVersion: v1
-  fieldref:
-    fieldpath: data["dex_ca_contents.pem"]
 - name: k8s_ca_contents
   objref:
     kind: ConfigMap
@@ -38,13 +30,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data["idp_ca_contents.pem"]
-- name: dex_domain
-  objref:
-    kind: ConfigMap
-    name: dex-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.dex_domain
 - name: issuer
   objref:
     kind: ConfigMap
@@ -52,41 +37,20 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.issuer
-- name: ldap_host
+- name: client_id
   objref:
     kind: ConfigMap
     name: dex-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.ldap_host
-- name: dex_client_id
+    fieldpath: data.client_id
+- name: application_secret
   objref:
     kind: ConfigMap
     name: dex-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.dex_client_id
-- name: oidc_redirect_uris
-  objref:
-    kind: ConfigMap
-    name: dex-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.oidc_redirect_uris
-- name: dex_application_secret
-  objref:
-    kind: ConfigMap
-    name: dex-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.dex_application_secret
-- name: jwks_uri
-  objref:
-    kind: ConfigMap
-    name: dex-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.jwks_uri
+    fieldpath: data.application_secret
 - name: cluster_name
   objref:
     kind: ConfigMap
@@ -101,20 +65,20 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.k8s_master_uri
-- name: dex_client_redirect_uri
+- name: client_redirect_uri
   objref:
     kind: ConfigMap
     name: dex-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.dex_client_redirect_uri
-- name: dex_client_listen_addr
+    fieldpath: data.client_redirect_uri
+- name: client_listen_addr
   objref:
     kind: ConfigMap
     name: dex-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.dex_client_listen_addr
+    fieldpath: data.client_listen_addr
 
 configurations:
  - dex_params.yaml

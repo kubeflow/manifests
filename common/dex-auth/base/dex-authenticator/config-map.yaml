@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: dex-k8s-authenticator-cm
+  name: dex-authenticator-cm
   labels:
-    app: dex-k8s-authenticator
+    app: dex-authenticator
 data:
   config.yaml: |-
     clusters:
@@ -17,13 +17,13 @@ data:
         # Redirect Url pointing to dex-k8s-authenticator callback for this cluster
         # This should be configured in Dex as part of the staticClients
         # redirectURIs option
-        redirect_uri: $(dex_client_redirect_uri)
+        redirect_uri: $(client_redirect_uri)
 
         # Client Secret - should match value in Dex
-        client_secret: $(dex_application_secret)
+        client_secret: $(application_secret)
 
         # Client ID - should match value in Dex
-        client_id: $(dex_client_id)
+        client_id: $(client_id)
 
         # Dex Issuer - Must be resolvable
         issuer: $(issuer)
@@ -79,7 +79,7 @@ data:
     $(idp_ca_contents)
 
     # Which address to listen on (set to https if tls configured)
-    listen: $(dex_client_listen_addr)
+    listen: $(client_listen_addr)
 
     # A path-prefix from which to serve requests and assets
     web_path_prefix: /

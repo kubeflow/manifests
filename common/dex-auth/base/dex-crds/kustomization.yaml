@@ -1,0 +1,71 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: auth
+
+resources:
+- config-map.yaml
+- crds.yaml
+- deployment.yaml
+- service.yaml
+
+configMapGenerator:
+- name: dex-certs
+  files:
+  - dex_ca_contents.pem
+
+- name: dex-parameters
+  env: dex_params.env
+
+vars:
+- name: dex_ca_contents
+  objref:
+    kind: ConfigMap
+    name: dex-certs
+    apiVersion: v1
+  fieldref:
+    fieldpath: data["dex_ca_contents.pem"]
+- name: dex_domain
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.dex_domain
+- name: issuer
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.issuer
+- name: ldap_host
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ldap_host
+- name: client_id
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.client_id
+- name: oidc_redirect_uris
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.oidc_redirect_uris
+- name: dex_application_secret
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.application_secret
+
+configurations:
+ - dex_params.yaml

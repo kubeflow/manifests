@@ -14,5 +14,3 @@ spec:
       issuer: $(issuer)
       jwksUri: $(jwks_uri)
   principalBinding: USE_ORIGIN
-  targets:
-  - name: ml-pipeline
