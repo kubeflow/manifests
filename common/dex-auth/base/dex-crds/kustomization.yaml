@@ -59,7 +59,7 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.oidc_redirect_uris
-- name: dex_application_secret
+- name: application_secret
   objref:
     kind: ConfigMap
     name: dex-parameters
