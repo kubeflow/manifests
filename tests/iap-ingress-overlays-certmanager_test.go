@@ -11,7 +11,84 @@ import (
 	"testing"
 )
 
-func writeIapIngressBase(th *KustTestHarness) {
+func writeIapIngressOverlaysCertmanager(th *KustTestHarness) {
+	th.writeF("/manifests/gcp/iap-ingress/overlays/certmanager/job.yaml", `
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ingress-bootstrap
+spec:
+  template:
+    spec:
+      containers:
+      - command:
+        - /var/ingress-config/ingress_bootstrap.sh
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: istioNamespace
+        - name: TLS_SECRET_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: tlsSecretName
+        - name: TLS_HOST_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: hostname
+        - name: INGRESS_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: ingressName
+        image: gcr.io/kubeflow-images-public/ingress-setup:latest
+        name: bootstrap
+        volumeMounts:
+        - mountPath: /var/ingress-config/
+          name: ingress-config
+      restartPolicy: OnFailure
+      serviceAccountName: kf-admin
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: ingress-bootstrap-config
+        name: ingress-config
+`)
+	th.writeF("/manifests/gcp/iap-ingress/overlays/certmanager/certificate.yaml", `
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: $(tlsSecretName)
+spec:
+  acme:
+    config:
+    - domains:
+      - $(hostname)
+      http01:
+        ingress: $(ingressName)
+  commonName: $(hostname)
+  dnsNames:
+  - $(hostname)
+  issuerRef:
+    kind: ClusterIssuer
+    name: $(issuer)
+  secretName: $(tlsSecretName)
+`)
+	th.writeK("/manifests/gcp/iap-ingress/overlays/certmanager", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- job.yaml
+- certificate.yaml
+namespace: kubeflow
+commonLabels:
+  kustomize.component: iap-ingress
+`)
 	th.writeF("/manifests/gcp/iap-ingress/base/backend-config.yaml", `
 apiVersion: cloud.google.com/v1beta1
 kind: BackendConfig
@@ -672,14 +749,14 @@ configurations:
 - params.yaml`)
 }
 
-func TestIapIngressBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/gcp/iap-ingress/base")
-	writeIapIngressBase(th)
+func TestIapIngressOverlaysCertmanager(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/gcp/iap-ingress/overlays/certmanager")
+	writeIapIngressOverlaysCertmanager(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../gcp/iap-ingress/base"
+	targetPath := "../gcp/iap-ingress/overlays/certmanager"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
