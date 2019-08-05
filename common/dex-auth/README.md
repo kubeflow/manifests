@@ -41,7 +41,7 @@ Replace `dex.example.com.tls` with your own domain.
 
 #### Parameterizing the setup
 
-##### Fill in variables in [dex_params environment file](base/dex_params.env):
+##### Variables in params environment files [dex-authenticator](dex-authenticator/params.env) and [dex-crds](dex-crds/params.env):
  - dex_domain: Domain for your dex server
  - issuer: Issuer URL for dex server
  - ldap_host: URL for LDAP server for dex to connect to
@@ -63,15 +63,10 @@ Replace `dex.example.com.tls` with your own domain.
 
 ##### This kustomize configs sets up:
  - A Dex server with LDAP IdP and a client application (dex-k8s-authenticator) for issuing keys for Dex.
- - Istio authentication policy for ML Pipelines service
 
 #### Apply Kustomize Configs
 
 `kustomize build overlays/authentication | kubectl apply -f -`
-
-### Create Users and Groups in LDAP server
-
-Follow instructions [here](base/ldap/README.md).
 
 ### Setup Kubernetes OIDC Authentication
 
@@ -94,7 +89,7 @@ When you have added these flags, Kubernetes should restart kube-apiserver pod. I
 ### Setup Kubernetes RBAC
 
 ```
-cd authorization/Kubernetes
+cd examples/authorization/Kubernetes
 kubectl create -f .
 ```
 
@@ -104,24 +99,24 @@ Currently, the only service authenticated and authorized supported is ml-pipelin
 This example allows for authentication and authorization only for requests within the Kubernetes cluster. Istio version 1.3 will allow for application of RBAC rules to ingress requests to the cluster.
 
 ```
-cd authorization/Istio
+cd examples/authorization/Istio
 kubectl create -f .
 cd ../..
 ```
 
 ## Work-around: A way to use Self-Signed Certificates
 
-* Change the following three entries in *[alt_names]* section in `certs/gencert.sh` file to reflect your own domains:
+* Change the following three entries in *[alt_names]* section in `examples/gencert.sh` file to reflect your own domains:
   * dex.example.org
   * login.example.org
   * ldap-admin.example.org
 
 
-* Execute `certs/gencert.sh` on your terminal and it should create a folder `ssl` containing all required self signed certificates.
+* Execute `examples/gencert.sh` on your terminal and it should create a folder `ssl` containing all required self signed certificates.
 
 * Copy the JWKS keys from `https://dex.example.com/keys` and host these keys in a public repository as a file. This public repository should have a verified a https SSL certificate (for e.g. github).
 
-* Copy the file url from the public repository in the `jwks_uri` parameter for [Istio Authentication Policy](base/dex_params.env) config:
+* Copy the file url from the public repository in the `jwks_uri` parameter for [Istio Authentication Policy](examples/authentication/Istio/dex_params.env) config:
 
 ```
 jwks_uri="https://raw.githubusercontent.com/example-organisation/jwks/master/auth-jwks.json"

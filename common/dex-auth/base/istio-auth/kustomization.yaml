@@ -1,3 +1,0 @@
-namespace: auth
-resources:
-- authentication_policy.yaml

@@ -8,74 +8,74 @@ resources:
 - service.yaml
 
 configMapGenerator:
-- name: dex-certs
+- name: dex-authn-certs
   files:
   - k8s_ca_contents.pem
   - idp_ca_contents.pem
-- name: dex-parameters
+- name: dex-authn-parameters
   env: params.env
 
 vars:
 - name: k8s_ca_contents
   objref:
     kind: ConfigMap
-    name: dex-certs
+    name: dex-authn-certs
     apiVersion: v1
   fieldref:
     fieldpath: data["k8s_ca_contents.pem"]
 - name: idp_ca_contents
   objref:
     kind: ConfigMap
-    name: dex-certs
+    name: dex-authn-certs
     apiVersion: v1
   fieldref:
     fieldpath: data["idp_ca_contents.pem"]
 - name: issuer
   objref:
     kind: ConfigMap
-    name: dex-parameters
+    name: dex-authn-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.issuer
 - name: client_id
   objref:
     kind: ConfigMap
-    name: dex-parameters
+    name: dex-authn-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.client_id
 - name: application_secret
   objref:
     kind: ConfigMap
-    name: dex-parameters
+    name: dex-authn-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.application_secret
 - name: cluster_name
   objref:
     kind: ConfigMap
-    name: dex-parameters
+    name: dex-authn-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.cluster_name
 - name: k8s_master_uri
   objref:
     kind: ConfigMap
-    name: dex-parameters
+    name: dex-authn-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.k8s_master_uri
 - name: client_redirect_uri
   objref:
     kind: ConfigMap
-    name: dex-parameters
+    name: dex-authn-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.client_redirect_uri
 - name: client_listen_addr
   objref:
     kind: ConfigMap
-    name: dex-parameters
+    name: dex-authn-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.client_listen_addr

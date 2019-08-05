@@ -1,7 +1,7 @@
 apiVersion: authentication.istio.io/v1alpha1
 kind: Policy
 metadata:
-  name: pipelines-auth-policy
+  name: auth-policy
 spec:
   targets:
   - name: ml-pipeline
@@ -10,7 +10,7 @@ spec:
   origins:
   - jwt:
       audiences:
-        - $(dex_client_id)
+        - $(client_id)
       issuer: $(issuer)
       jwksUri: $(jwks_uri)
   principalBinding: USE_ORIGIN
