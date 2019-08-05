@@ -13,7 +13,7 @@ configMapGenerator:
   - k8s_ca_contents.pem
   - idp_ca_contents.pem
 - name: dex-parameters
-  env: dex_params.env
+  env: params.env
 
 vars:
 - name: k8s_ca_contents
@@ -81,4 +81,4 @@ vars:
     fieldpath: data.client_listen_addr
 
 configurations:
- - dex_params.yaml
+ - params.yaml

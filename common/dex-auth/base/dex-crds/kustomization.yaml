@@ -14,7 +14,7 @@ configMapGenerator:
   - dex_ca_contents.pem
 
 - name: dex-parameters
-  env: dex_params.env
+  env: params.env
 
 vars:
 - name: dex_ca_contents
@@ -68,4 +68,4 @@ vars:
     fieldpath: data.application_secret
 
 configurations:
- - dex_params.yaml
+ - params.yaml
