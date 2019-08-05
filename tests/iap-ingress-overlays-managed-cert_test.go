@@ -11,7 +11,27 @@ import (
 	"testing"
 )
 
-func writeIapIngressBase(th *KustTestHarness) {
+func writeIapIngressOverlaysManagedCert(th *KustTestHarness) {
+	th.writeF("/manifests/gcp/iap-ingress/overlays/managed-cert/cert.yaml", `
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: gke-certificate
+spec:
+  domains:
+  - $(hostname)
+`)
+	th.writeK("/manifests/gcp/iap-ingress/overlays/managed-cert", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- cert.yaml
+namespace: kubeflow
+commonLabels:
+  kustomize.component: iap-ingress
+`)
 	th.writeF("/manifests/gcp/iap-ingress/base/backend-config.yaml", `
 apiVersion: cloud.google.com/v1beta1
 kind: BackendConfig
@@ -672,14 +692,14 @@ configurations:
 - params.yaml`)
 }
 
-func TestIapIngressBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/gcp/iap-ingress/base")
-	writeIapIngressBase(th)
+func TestIapIngressOverlaysManagedCert(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/gcp/iap-ingress/overlays/managed-cert")
+	writeIapIngressOverlaysManagedCert(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../gcp/iap-ingress/base"
+	targetPath := "../gcp/iap-ingress/overlays/managed-cert"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
