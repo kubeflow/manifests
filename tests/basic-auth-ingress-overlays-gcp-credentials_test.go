@@ -269,6 +269,34 @@ spec:
           servicePort: 80
         path: /*
 `)
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/istio-mapping-svc.yaml", `
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    getambassador.io/config: |-
+      ---
+      apiVersion: ambassador/v0
+      kind:  Mapping
+      name: istio-mapping
+      prefix_regex: true
+      prefix: /(?!whoami|kflogin).*
+      rewrite: ""
+      service: istio-ingressgateway.istio-system
+      precedence: 1
+  labels:
+    app: istioMappingSvc
+    ksonnet.io/component: basic-auth-ingress
+  name: istio-mapping-service
+  namespace: istio-system
+spec:
+  ports:
+    - port: 80
+      targetPort: 8081
+  selector:
+    app: istioMappingSvc
+  type: ClusterIP
+`)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/job.yaml", `
 apiVersion: batch/v1
 kind: Job
@@ -431,6 +459,7 @@ resources:
 - config-map.yaml
 - deployment.yaml
 - ingress.yaml
+- istio-mapping-svc.yaml
 - job.yaml
 - service-account.yaml
 - service.yaml
