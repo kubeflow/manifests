@@ -33,7 +33,7 @@ Please generate certificates with a trusted authority for enabling this example 
 
 #### Setup Post Certificate Creation
 
-`kubectl create ns auth`
+*TODO*(krishnadurai): Make this a part of kfctl
 
 `kubectl create secret tls dex.example.com.tls --cert=ssl/cert.pem --key=ssl/key.pem -n auth`
 
@@ -66,7 +66,26 @@ Replace `dex.example.com.tls` with your own domain.
 
 #### Apply Kustomize Configs
 
-`kustomize build overlays/authentication | kubectl apply -f -`
+**Dex Authentication Client**
+
+```
+cd dex-authenticator
+kustomize build base | kubectl apply -f -
+```
+
+**Dex**
+
+```
+cd dex-crd
+kustomize build base | kubectl apply -f -
+```
+
+**LDAP**
+
+```
+cd dex-ldap
+kustomize build base | kubectl apply -f -
+```
 
 ### Setup Kubernetes OIDC Authentication
 
@@ -86,23 +105,6 @@ When you have added these flags, Kubernetes should restart kube-apiserver pod. I
 
 `kubectl describe pod kube-apiserver -n kube-system`
 
-### Setup Kubernetes RBAC
-
-```
-cd examples/authorization/Kubernetes
-kubectl create -f .
-```
-
-### Setup Istio RBAC
-
-Currently, the only service authenticated and authorized supported is ml-pipeline service.
-This example allows for authentication and authorization only for requests within the Kubernetes cluster. Istio version 1.3 will allow for application of RBAC rules to ingress requests to the cluster.
-
-```
-cd examples/authorization/Istio
-kubectl create -f .
-cd ../..
-```
 
 ## Work-around: A way to use Self-Signed Certificates
 
