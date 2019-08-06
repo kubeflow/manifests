@@ -27,3 +27,5 @@ spec:
   - port: 80
     targetPort: 80
     nodePort: 32006
+  selector:
+    app: ldap

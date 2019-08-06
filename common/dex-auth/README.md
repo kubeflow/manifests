@@ -66,25 +66,25 @@ Replace `dex.example.com.tls` with your own domain.
 
 #### Apply Kustomize Configs
 
-**Dex Authentication Client**
+**LDAP**
 
 ```
-cd dex-authenticator
-kustomize build base | kubectl apply -f -
+cd dex-ldap
+kustomize build . | kubectl apply -f -
 ```
 
 **Dex**
 
 ```
 cd dex-crds
-kustomize build base | kubectl apply -f -
+kustomize build . | kubectl apply -f -
 ```
 
-**LDAP**
+**Dex Authentication Client**
 
 ```
-cd dex-ldap
-kustomize build base | kubectl apply -f -
+cd dex-authenticator
+kustomize build . | kubectl apply -f -
 ```
 
 ### Setup Kubernetes OIDC Authentication

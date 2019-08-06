@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: auth
 
 resources:
+- namespace.yaml
 - config-map.yaml
 - crds.yaml
 - deployment.yaml

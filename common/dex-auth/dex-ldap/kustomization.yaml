@@ -3,5 +3,6 @@ kind: Kustomization
 namespace: auth
 
 resources:
+- namespace.yaml
 - deployment.yaml
 - service.yaml
