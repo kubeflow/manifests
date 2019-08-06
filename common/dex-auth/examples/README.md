@@ -2,7 +2,7 @@
 
 This guide helps in setting up RBAC for Kubeflow.
 
-The RBAC rules here assume 3 groups: kfadmin, kfds (datascientist) and kfvalidator as sample groups for operating on Kubeflow.
+The RBAC rules here assume 3 groups: admin, datascience and validator as sample groups for operating on Kubeflow.
 
 ## Setup Kubernetes RBAC
 

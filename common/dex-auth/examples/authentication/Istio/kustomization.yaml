@@ -24,6 +24,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.jwks_uri
+- name: client_id
+  objref:
+    kind: ConfigMap
+    name: auth-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.client_id
 
 configurations:
  - params.yaml
