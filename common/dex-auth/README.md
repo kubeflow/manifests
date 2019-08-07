@@ -5,7 +5,7 @@ This implementation's target platforms are Kubernetes clusters with access to mo
 **Note**: This setup assumes Kubeflow Pipelines is setup in namespace kubeflow and Istio is already setup in the Kubernetes cluster.
 
 ## High Level Diagram
-![Authentication and Authorization in Kubeflow](assets/auth-istio.png)
+![Authentication and Authorization in Kubeflow](/docs/dex-auth/assets/auth-istio.png)
 
 
 ## Create SSL Certificates
@@ -41,7 +41,7 @@ Replace `dex.example.com.tls` with your own domain.
 
 #### Parameterizing the setup
 
-##### Variables in params environment files [dex-authenticator](dex-authenticator/params.env), [dex-crds](dex-crds/params.env) and [istio](examples/authentication/Istio):
+##### Variables in params environment files [dex-authenticator](dex-authenticator/params.env), [dex-crds](dex-crds/params.env) and [istio](/docs/dex-auth/examples/authentication/Istio):
  - dex_domain: Domain for your dex server
  - issuer: Issuer URL for dex server
  - ldap_host: URL for LDAP server for dex to connect to
