@@ -25,8 +25,8 @@ kind: ConfigMap
 metadata:
   name: ca
 data:
-  ca.pem: $(dex_ca_contents)
-
+  ca.pem: |
+    $(dex_ca_contents)
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -46,7 +46,6 @@ data:
     logger:
       level: "debug"
       format: text
-
     connectors:
       - type: ldap
         # Required field for connector id.
@@ -59,7 +58,6 @@ data:
           # and "startTLS" flags. 389 for insecure or StartTLS connections, 636
           # otherwise.
           host: $(ldap_host)
-
           # Following field is required if the LDAP host is not using TLS (port 389).
           # Because this option inherently leaks passwords to anyone on the same network
           # as dex, THIS OPTION MAY BE REMOVED WITHOUT WARNING IN A FUTURE RELEASE.
@@ -81,11 +79,10 @@ data:
           # The DN and password for an application service account. The connector uses
           # these credentials to search for users and groups. Not required if the LDAP
           # server provides access for anonymous auth.
-          # Please note that if the bind password contains a U+0060$U+0060, it has to be saved in an
-          # environment variable which should be given as the value to U+0060bindPWU+0060.
+          # Please note that if the bind password contains a '$', it has to be saved in an
+          # environment variable which should be given as the value to 'bindPW'.
           bindDN: cn=admin,dc=example,dc=org
           bindPW: admin
-
           # User search maps a username and password entered by a user to a LDAP entry.
           userSearch:
             # BaseDN to start the search from. It will translate to the query
@@ -120,7 +117,6 @@ data:
             nameAttr: cn
     oauth2:
       skipApprovalScreen: true
-
     staticClients:
     - id: $(client_id)
       redirectURIs: $(oidc_redirect_uris)
@@ -128,6 +124,7 @@ data:
       secret: $(application_secret)
 `)
 	th.writeF("/manifests/common/dex-auth/dex-crds/base/crds.yaml", `
+---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -141,7 +138,6 @@ spec:
     singular: authcode
   scope: Namespaced
   version: v1
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
@@ -154,7 +150,6 @@ rules:
 - apiGroups: ["apiextensions.k8s.io"]
   resources: ["customresourcedefinitions"]
   verbs: ["create"] # To manage its own resources identity must be able to create customresourcedefinitions.
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -168,7 +163,6 @@ subjects:
 - kind: ServiceAccount
   name: dex                 # Service account assigned to the dex pod.
   namespace: auth           # The namespace dex is running in.
-
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -239,8 +233,7 @@ varReference:
 - path: data/config.yaml
   kind: ConfigMap
 `)
-	th.writeF("/manifests/common/dex-auth/dex-crds/base/dex_ca_contents.pem", `
------BEGIN CERTIFICATE-----
+	th.writeF("/manifests/common/dex-auth/dex-crds/base/dex_ca_contents.pem", `-----BEGIN CERTIFICATE-----
 YOUR CERTIFICATE CONTENTS
 -----END CERTIFICATE-----
 `)
@@ -257,22 +250,20 @@ application_secret=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: auth
-
 resources:
 - namespace.yaml
 - config-map.yaml
 - crds.yaml
 - deployment.yaml
 - service.yaml
-
 configMapGenerator:
 - name: dex-certs
   files:
   - dex_ca_contents.pem
-
 - name: dex-parameters
   env: params.env
-
+generatorOptions:
+  disableNameSuffixHash: true
 vars:
 - name: dex_ca_contents
   objref:
@@ -323,7 +314,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.application_secret
-
 configurations:
 - params.yaml
 `)

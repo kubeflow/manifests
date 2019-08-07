@@ -186,13 +186,11 @@ varReference:
 - path: data/config.yaml
   kind: ConfigMap
 `)
-	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/idp_ca_contents.pem", `
-  -----BEGIN CERTIFICATE-----
+	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/idp_ca_contents.pem", `  -----BEGIN CERTIFICATE-----
   YOUR CERTIFICATE CONTENTS
   -----END CERTIFICATE-----
 `)
-	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/k8s_ca_contents.pem", `
-  -----BEGIN CERTIFICATE-----
+	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/k8s_ca_contents.pem", `  -----BEGIN CERTIFICATE-----
       YOUR CERTIFICATE CONTENTS
       -----END CERTIFICATE-----
 `)
@@ -210,13 +208,11 @@ client_listen_addr=http://127.0.0.1:5555 # Set to HTTPS if TLS is configured
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: auth
-
 resources:
 - namespace.yaml
 - config-map.yaml
 - deployment.yaml
 - service.yaml
-
 configMapGenerator:
 - name: dex-authn-certs
   files:
@@ -224,7 +220,6 @@ configMapGenerator:
   - k8s_ca_contents.pem
 - name: dex-authn-parameters
   env: params.env
-
 vars:
 - name: k8s_ca_contents
   objref:
@@ -289,7 +284,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.client_listen_addr
-
 configurations:
 - params.yaml
 `)

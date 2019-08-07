@@ -54,8 +54,10 @@ gen-target-middle() {
           gen-target-resource $file $directory
           ;;
         secrets.env)
-        *.pem)
           gen-target-resource $file $directory
+          ;;
+        *.pem)
+          gen-target-resource $file $directory '-n'
           ;;
         *) ;;
 
@@ -97,11 +99,13 @@ gen-target-kustomization() {
 }
 
 gen-target-resource() {
-  local file=$1 dir=$2 fname
+  local file=$1 dir=$2 echooptions='' fname
   fname=/manifests${dir##*/manifests}/$file
-
-  echo '  th.writeF("'$fname'", `'
-  cat $dir/$file | sed 's/`/U+0060/g'
+  if (( $# == 3 )); then
+    echooptions=$3
+  fi
+  echo $echooptions '  th.writeF("'$fname'", `'
+  cat $dir/$file | sed 's/`/U+0060/g' 
   echo '`)'
 }
 
