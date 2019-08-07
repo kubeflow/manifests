@@ -41,7 +41,7 @@ Replace `dex.example.com.tls` with your own domain.
 
 #### Parameterizing the setup
 
-##### Variables in params environment files [dex-authenticator](dex-authenticator/params.env), [dex-crds](dex-crds/params.env) and [istio](/docs/dex-auth/examples/authentication/Istio):
+##### Variables in params environment files [dex-authenticator](dex-authenticator/base/params.env), [dex-crds](dex-crds/base/params.env) and [istio](/docs/dex-auth/examples/authentication/Istio):
  - dex_domain: Domain for your dex server
  - issuer: Issuer URL for dex server
  - ldap_host: URL for LDAP server for dex to connect to
@@ -57,9 +57,9 @@ Replace `dex.example.com.tls` with your own domain.
 
 ##### Certificate files:
 
-- [dex_ca_contents.pem](dex-crds/dex_ca_contents.pem): CA cert generated for dex.
-- [idp_ca_contents.pem](dex-authenticator/idp_ca_contents.pem): CA cert generated for dex, minding the required indentation as this is substituted in a string.
-- [k8s_ca_contents.pem](dex-authenticator/k8s_ca_contents.pem): CA cert for your Kubernetes cluster.
+- [dex_ca_contents.pem](dex-crds/base/dex_ca_contents.pem): CA cert generated for dex.
+- [idp_ca_contents.pem](dex-authenticator/base/idp_ca_contents.pem): CA cert generated for dex, minding the required indentation as this is substituted in a string.
+- [k8s_ca_contents.pem](dex-authenticator/base/k8s_ca_contents.pem): CA cert for your Kubernetes cluster.
 
 ##### This kustomize configs sets up:
  - A Dex server with LDAP IdP and a client application (dex-k8s-authenticator) for issuing keys for Dex.
@@ -108,7 +108,7 @@ When you have added these flags, Kubernetes should restart kube-apiserver pod. I
 
 ## Work-around: A way to use Self-Signed Certificates
 
-* Change the following three entries in *[alt_names]* section in `examples/gencert.sh` file to reflect your own domains:
+* Change the following three entries in *[alt_names]* section in `/docs/dex-auth/examples/gencert.sh` file to reflect your own domains:
   * dex.example.org
   * login.example.org
   * ldap-admin.example.org
@@ -118,7 +118,7 @@ When you have added these flags, Kubernetes should restart kube-apiserver pod. I
 
 * Copy the JWKS keys from `https://dex.example.com/keys` and host these keys in a public repository as a file. This public repository should have a verified a https SSL certificate (for e.g. github).
 
-* Copy the file url from the public repository in the `jwks_uri` parameter for [Istio Authentication Policy](examples/authentication/Istio/params.env) config:
+* Copy the file url from the public repository in the `jwks_uri` parameter for [Istio Authentication Policy](/docs/dex-auth/examples/authentication/Istio/params.env) config:
 
 ```
 jwks_uri="https://raw.githubusercontent.com/example-organisation/jwks/master/auth-jwks.json"
