@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # TODO(krishnadurai): Remove this file as soon as cert tooling is introduced in kfctl
+# Tracking issue: https://github.com/kubeflow/kfctl/issues/6
 
 mkdir -p ssl
 
