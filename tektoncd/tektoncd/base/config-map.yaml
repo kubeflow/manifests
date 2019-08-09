@@ -25,7 +25,7 @@ data:
     # This block is not actually functional configuration,
     # but serves to illustrate the available configuration
     # options and document them in a way that is accessible
-    # to users that `kubectl edit` this config map.
+    # to users that 'kubectl edit' this config map.
     #
     # These sample configuration options may be copied out of
     # this example block and unindented to be in the data block
