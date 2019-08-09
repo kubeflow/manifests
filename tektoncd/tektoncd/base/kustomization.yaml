@@ -9,3 +9,21 @@ resources:
 - service-account.yaml
 - service.yaml
 namespace: kubeflow
+configMapGenerator:
+- name: tektoncd-parameters
+  env: params.env
+vars:
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: tektoncd-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
+- name: clusterDomain
+  objref:
+    kind: ConfigMap
+    name: tektoncd-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.clusterDomain
