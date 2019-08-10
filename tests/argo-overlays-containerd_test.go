@@ -11,7 +11,33 @@ import (
 	"testing"
 )
 
-func writeArgoBase(th *KustTestHarness) {
+func writeArgoOverlaysContainerd(th *KustTestHarness) {
+	th.writeF("/manifests/argo/overlays/containerd/params.env", `
+namespace=
+criExecutor=pns
+executorImage=argoproj/argoexec:v2.3.0
+artifactRepositoryBucket=mlpipeline
+artifactRepositoryKeyPrefix=artifacts
+artifactRepositoryEndpoint=minio-service.kubeflow:9000
+artifactRepositoryInsecure=true
+artifactRepositoryAccessKeySecretName=mlpipeline-minio-artifact
+artifactRepositoryAccessKeySecretKey=accesskey
+artifactRepositorySecretKeySecretName=mlpipeline-minio-artifact
+artifactRepositorySecretKeySecretKey=secretkey
+clusterDomain=cluster.local
+`)
+	th.writeK("/manifests/argo/overlays/containerd", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+configMapGenerator:
+- name: workflow-controller-parameters
+  behavior: replace
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+`)
 	th.writeF("/manifests/argo/base/cluster-role-binding.yaml", `
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -451,14 +477,14 @@ configurations:
 `)
 }
 
-func TestArgoBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/argo/base")
-	writeArgoBase(th)
+func TestArgoOverlaysContainerd(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/argo/overlays/containerd")
+	writeArgoOverlaysContainerd(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../argo/base"
+	targetPath := "../argo/overlays/containerd"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

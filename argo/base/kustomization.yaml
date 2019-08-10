@@ -23,6 +23,13 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 vars:
+- name: criExecutor
+  objref:
+    kind: ConfigMap
+    name: workflow-controller-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.criExecutor
 - name: executorImage
   objref:
     kind: ConfigMap

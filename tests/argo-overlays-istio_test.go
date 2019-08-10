@@ -361,6 +361,7 @@ varReference:
 `)
 	th.writeF("/manifests/argo/base/params.env", `
 namespace=
+criExecutor=docker
 executorImage=argoproj/argoexec:v2.3.0
 artifactRepositoryBucket=mlpipeline
 artifactRepositoryKeyPrefix=artifacts
@@ -398,6 +399,13 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 vars:
+- name: criExecutor
+  objref:
+    kind: ConfigMap
+    name: workflow-controller-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.criExecutor
 - name: executorImage
   objref:
     kind: ConfigMap
