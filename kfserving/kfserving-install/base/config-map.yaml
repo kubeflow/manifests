@@ -1,0 +1,34 @@
+apiVersion: v1
+data:
+  credentials: |-
+    {
+       "gcs" : {
+           "gcsCredentialFileName": "gcloud-application-credentials.json"
+       },
+       "s3" : {
+           "s3AccessKeyIDName": "awsAccessKeyID",
+           "s3SecretAccessKeyName": "awsSecretAccessKey"
+       }
+    }
+  frameworks: |-
+    {
+        "tensorflow": {
+            "image": "tensorflow/serving"
+        },
+        "sklearn": {
+            "image": "gcr.io/kfserving/sklearnserver"
+        },
+        "pytorch": {
+            "image": "gcr.io/kfserving/pytorchserver"
+        },
+        "xgboost": {
+            "image": "gcr.io/kfserving/xgbserver"
+        },
+        "tensorrt": {
+            "image": "nvcr.io/nvidia/tensorrtserver"
+        }
+    }
+kind: ConfigMap
+metadata:
+  name: kfservice-config
+  namespace: kfserving-system
