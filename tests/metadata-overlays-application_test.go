@@ -166,6 +166,9 @@ metadata:
     component: server
 spec:
   replicas: 3
+  selector:
+    matchLabels:
+      component: server
   template:
     metadata:
       labels:
