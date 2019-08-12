@@ -11,8 +11,8 @@ data:
       - name: $(cluster_name)
 
         # Descriptions used in the WebUI
-        short_description: "Example Cluster"
-        description: "Example Cluster Long Description..."
+        short_description: "Dex Cluster"
+        description: "Dex Server for Kubeflow"
 
         # Redirect Url pointing to dex-k8s-authenticator callback for this cluster
         # This should be configured in Dex as part of the staticClients
@@ -48,8 +48,7 @@ data:
         #   -----BEGIN CERTIFICATE-----
         #   ...
         #   -----END CERTIFICATE-----
-        k8s_ca_pem: |
-        $(k8s_ca_contents)
+        k8s_ca_pem: /app/k8s_ca.pem
 
     # Specify multiple extra root CA files to be loaded
     # trusted_root_ca:
@@ -57,8 +56,7 @@ data:
     #     -----BEGIN CERTIFICATE-----
     #     ...
     #     -----END CERTIFICATE-----
-    trusted_root_ca: |
-    $(idp_ca_contents)
+    trusted_root_ca_file: /app/idp_ca.pem
 
     # Specify path to tls_cert and tls_key - if enabled, set liten to use https
     # tls_cert: /path/to/dex-client.crt
@@ -77,8 +75,7 @@ data:
     #   -----BEGIN CERTIFICATE-----
     #   ...
     #   -----END CERTIFICATE-----
-    idp_ca_pem: |
-    $(idp_ca_contents)
+    idp_ca_pem_file: /app/idp_ca.pem
 
     # Which address to listen on (set to https if tls configured)
     listen: $(client_listen_addr)

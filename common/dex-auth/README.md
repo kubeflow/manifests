@@ -58,8 +58,24 @@ Replace `dex.example.com.tls` with your own domain.
 ##### Certificate files:
 
 - [dex_ca_contents.pem](dex-crds/base/dex_ca_contents.pem): CA cert generated for dex.
-- [idp_ca_contents.pem](dex-authenticator/base/idp_ca_contents.pem): CA cert generated for dex, minding the required indentation as this is substituted in a string.
-- [k8s_ca_contents.pem](dex-authenticator/base/k8s_ca_contents.pem): CA cert for your Kubernetes cluster.
+
+**These CA files need to be pushed to ConfigMaps:**
+
+*Identity Provider CA file:*
+
+This is the CA cert generated for Dex.
+
+```
+kubectl create configmap idp-ca --from-file=idp_ca.pem -n auth
+```
+
+*Kubernetes API Server CA file:*
+
+This is the CA cert for your Kubernetes cluster generated while installing Kubernetes.
+
+```
+kubectl create configmap k8s-ca --from-file=k8s_ca.pem -n auth
+```
 
 ##### This kustomize configs sets up:
  - A Dex server with LDAP IdP and a client application (dex-k8s-authenticator) for issuing keys for Dex.

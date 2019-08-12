@@ -32,8 +32,8 @@ data:
       - name: $(cluster_name)
 
         # Descriptions used in the WebUI
-        short_description: "Example Cluster"
-        description: "Example Cluster Long Description..."
+        short_description: "Dex Cluster"
+        description: "Dex Server for Kubeflow"
 
         # Redirect Url pointing to dex-k8s-authenticator callback for this cluster
         # This should be configured in Dex as part of the staticClients
@@ -69,8 +69,7 @@ data:
         #   -----BEGIN CERTIFICATE-----
         #   ...
         #   -----END CERTIFICATE-----
-        k8s_ca_pem: |
-        $(k8s_ca_contents)
+        k8s_ca_pem_file: /app/k8s_ca.pem
 
     # Specify multiple extra root CA files to be loaded
     # trusted_root_ca:
@@ -78,8 +77,7 @@ data:
     #     -----BEGIN CERTIFICATE-----
     #     ...
     #     -----END CERTIFICATE-----
-    trusted_root_ca: |
-    $(idp_ca_contents)
+    trusted_root_ca_file: /app/idp_ca.pem
 
     # Specify path to tls_cert and tls_key - if enabled, set liten to use https
     # tls_cert: /path/to/dex-client.crt
@@ -98,8 +96,7 @@ data:
     #   -----BEGIN CERTIFICATE-----
     #   ...
     #   -----END CERTIFICATE-----
-    idp_ca_pem: |
-    $(idp_ca_contents)
+    idp_ca_pem: /app/idp_ca.pem
 
     # Which address to listen on (set to https if tls configured)
     listen: $(client_listen_addr)
@@ -136,7 +133,7 @@ spec:
     spec:
       containers:
       - name: dex-k8s-authenticator
-        image: "mintel/dex-k8s-authenticator:1.1.0"
+        image: "mintel/dex-k8s-authenticator:latest"
         imagePullPolicy: Always
         args: [ "--config", "config.yaml" ]
         ports:
@@ -155,6 +152,12 @@ spec:
         - name: config
           subPath: config.yaml
           mountPath: /app/config.yaml
+        - name: idp-ca
+          subPath: idp_ca.pem
+          mountPath: /app/idp_ca.pem
+        - name: k8s-ca
+          subPath: k8s_ca.pem
+          mountPath: /app/k8s_ca.pem
         resources:
           {}
 
@@ -162,6 +165,12 @@ spec:
       - name: config
         configMap:
           name: dex-authenticator-cm
+      - name: idp-ca
+        configMap:
+          name: idp-ca
+      - name: k8s-ca
+        configMap:
+          name: k8s-ca
 `)
 	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/service.yaml", `
 apiVersion: v1
@@ -186,14 +195,6 @@ varReference:
 - path: data/config.yaml
   kind: ConfigMap
 `)
-	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/idp_ca_contents.pem", `  -----BEGIN CERTIFICATE-----
-  YOUR CERTIFICATE CONTENTS
-  -----END CERTIFICATE-----
-`)
-	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/k8s_ca_contents.pem", `  -----BEGIN CERTIFICATE-----
-      YOUR CERTIFICATE CONTENTS
-      -----END CERTIFICATE-----
-`)
 	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/params.env", `
 # Dex Server Parameters (some params are shared with client)
 issuer=https://dex.example.com:32000
@@ -214,27 +215,9 @@ resources:
 - deployment.yaml
 - service.yaml
 configMapGenerator:
-- name: dex-authn-certs
-  files:
-  - idp_ca_contents.pem
-  - k8s_ca_contents.pem
 - name: dex-authn-parameters
   env: params.env
 vars:
-- name: k8s_ca_contents
-  objref:
-    kind: ConfigMap
-    name: dex-authn-certs
-    apiVersion: v1
-  fieldref:
-    fieldpath: data["k8s_ca_contents.pem"]
-- name: idp_ca_contents
-  objref:
-    kind: ConfigMap
-    name: dex-authn-certs
-    apiVersion: v1
-  fieldref:
-    fieldpath: data["idp_ca_contents.pem"]
 - name: issuer
   objref:
     kind: ConfigMap

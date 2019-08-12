@@ -7,27 +7,9 @@ resources:
 - deployment.yaml
 - service.yaml
 configMapGenerator:
-- name: dex-authn-certs
-  files:
-  - idp_ca_contents.pem
-  - k8s_ca_contents.pem
 - name: dex-authn-parameters
   env: params.env
 vars:
-- name: k8s_ca_contents
-  objref:
-    kind: ConfigMap
-    name: dex-authn-certs
-    apiVersion: v1
-  fieldref:
-    fieldpath: data["k8s_ca_contents.pem"]
-- name: idp_ca_contents
-  objref:
-    kind: ConfigMap
-    name: dex-authn-certs
-    apiVersion: v1
-  fieldref:
-    fieldpath: data["idp_ca_contents.pem"]
 - name: issuer
   objref:
     kind: ConfigMap
