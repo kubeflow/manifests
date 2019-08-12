@@ -8,6 +8,7 @@ resources:
 - config-map.yaml
 - deployment.yaml
 - ingress.yaml
+- istio-mapping-svc.yaml
 - job.yaml
 - service-account.yaml
 - service.yaml
