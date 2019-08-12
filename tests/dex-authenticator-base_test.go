@@ -96,7 +96,7 @@ data:
     #   -----BEGIN CERTIFICATE-----
     #   ...
     #   -----END CERTIFICATE-----
-    idp_ca_pem: /app/idp_ca.pem
+    idp_ca_pem_file: /app/idp_ca.pem
 
     # Which address to listen on (set to https if tls configured)
     listen: $(client_listen_addr)

@@ -48,7 +48,7 @@ data:
         #   -----BEGIN CERTIFICATE-----
         #   ...
         #   -----END CERTIFICATE-----
-        k8s_ca_pem: /app/k8s_ca.pem
+        k8s_ca_pem_file: /app/k8s_ca.pem
 
     # Specify multiple extra root CA files to be loaded
     # trusted_root_ca:
