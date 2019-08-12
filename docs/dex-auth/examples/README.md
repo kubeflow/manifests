@@ -4,28 +4,14 @@ This guide helps in setting up RBAC for Kubeflow.
 
 The RBAC rules here assume 3 groups: admin, datascience and validator as sample groups for operating on Kubeflow.
 
-## Setup Kubernetes RBAC
+## Setup
 
 ```
-cd authorization/Kubernetes
-kubectl create -f .
-cd ../..
+./apply_example.sh --issuer https://dex.example.com:32000 --jwks-uri https://dex.example.com:32000/keys --client-id ldapdexapp
 ```
 
-## Setup Istio Authentication
+### Note Regarding Istio RBAC
 
-```
-cd authentication/Istio
-kustomize build base
-```
-
-## Setup Istio RBAC
-
-Currently, the only service authenticated and authorized supported is ml-pipeline service.
+Currently, the only service authenticated and authorized supported in this example is ml-pipeline service.
+Support for authorization in Pipelines is being discussed in this [issue](https://github.com/kubeflow/pipelines/issues/1223).
 This example allows for authentication and authorization only for requests within the Kubernetes cluster.
-
-```
-cd authorization/Istio
-kubectl create -f .
-cd ../..
-```

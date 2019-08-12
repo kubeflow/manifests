@@ -122,12 +122,6 @@ When you have added these flags, Kubernetes should restart kube-apiserver pod. I
 
 ## Work-around: A way to use Self-Signed Certificates
 
-* Change the following three entries in *[alt_names]* section in `/docs/dex-auth/examples/gencert.sh` file to reflect your own domains:
-  * dex.example.org
-  * login.example.org
-  * ldap-admin.example.org
-
-
 * Execute `examples/gencert.sh` on your terminal and it should create a folder `ssl` containing all required self signed certificates.
 
 * Copy the JWKS keys from `https://dex.example.com/keys` and host these keys in a public repository as a file. This public repository should have a verified a https SSL certificate (for e.g. github).
