@@ -8,21 +8,11 @@ resources:
 - deployment.yaml
 - service.yaml
 configMapGenerator:
-- name: dex-certs
-  files:
-  - dex_ca_contents.pem
 - name: dex-parameters
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- name: dex_ca_contents
-  objref:
-    kind: ConfigMap
-    name: dex-certs
-    apiVersion: v1
-  fieldref:
-    fieldpath: data["dex_ca_contents.pem"]
 - name: dex_domain
   objref:
     kind: ConfigMap

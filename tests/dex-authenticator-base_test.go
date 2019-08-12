@@ -153,7 +153,7 @@ spec:
           subPath: config.yaml
           mountPath: /app/config.yaml
         - name: idp-ca
-          subPath: idp_ca.pem
+          subPath: ca.pem
           mountPath: /app/idp_ca.pem
         - name: k8s-ca
           subPath: k8s_ca.pem
@@ -167,7 +167,7 @@ spec:
           name: dex-authenticator-cm
       - name: idp-ca
         configMap:
-          name: idp-ca
+          name: ca
       - name: k8s-ca
         configMap:
           name: k8s-ca

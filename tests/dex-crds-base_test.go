@@ -23,14 +23,6 @@ metadata:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: ca
-data:
-  ca.pem: |
-    $(dex_ca_contents)
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
   name: dex
 data:
   config.yaml: |
@@ -226,16 +218,10 @@ spec:
 `)
 	th.writeF("/manifests/common/dex-auth/dex-crds/base/params.yaml", `
 varReference:
-- path: data/ca.pem
-  kind: ConfigMap
 - path: spec/template/spec/volumes/secret/secretName
   kind: Deployment
 - path: data/config.yaml
   kind: ConfigMap
-`)
-	th.writeF("/manifests/common/dex-auth/dex-crds/base/dex_ca_contents.pem", `-----BEGIN CERTIFICATE-----
-YOUR CERTIFICATE CONTENTS
------END CERTIFICATE-----
 `)
 	th.writeF("/manifests/common/dex-auth/dex-crds/base/params.env", `
 # Dex Server Parameters (some params are shared with client)
@@ -257,21 +243,11 @@ resources:
 - deployment.yaml
 - service.yaml
 configMapGenerator:
-- name: dex-certs
-  files:
-  - dex_ca_contents.pem
 - name: dex-parameters
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- name: dex_ca_contents
-  objref:
-    kind: ConfigMap
-    name: dex-certs
-    apiVersion: v1
-  fieldref:
-    fieldpath: data["dex_ca_contents.pem"]
 - name: dex_domain
   objref:
     kind: ConfigMap

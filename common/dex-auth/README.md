@@ -57,16 +57,12 @@ Replace `dex.example.com.tls` with your own domain.
 
 ##### Certificate files:
 
-- [dex_ca_contents.pem](dex-crds/base/dex_ca_contents.pem): CA cert generated for dex.
-
-**These CA files need to be pushed to ConfigMaps:**
-
-*Identity Provider CA file:*
+*Identity Provider (Dex) CA file:*
 
 This is the CA cert generated for Dex.
 
 ```
-kubectl create configmap idp-ca --from-file=idp_ca.pem -n auth
+kubectl create configmap ca --from-file=ca.pem -n auth
 ```
 
 *Kubernetes API Server CA file:*

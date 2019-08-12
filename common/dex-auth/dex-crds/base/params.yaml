@@ -1,6 +1,4 @@
 varReference:
-- path: data/ca.pem
-  kind: ConfigMap
 - path: spec/template/spec/volumes/secret/secretName
   kind: Deployment
 - path: data/config.yaml
