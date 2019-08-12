@@ -5,6 +5,35 @@
 
 mkdir -p ssl
 
+while [[ $# -gt 0 ]]
+do
+  key="$1"
+
+  case $key in
+      -d|--dex-domain)
+      DEX_DOMAIN="$2"
+      shift
+      shift
+      ;;
+      -h|--help)
+      echo "Use -d|--dex-domain to supply domain name for dex server"
+      exit
+      shift
+      shift
+      ;;
+      *)    # unknown option
+      echo "Invalid option -$2" >&2
+      exit
+      ;;
+  esac
+done
+
+if [ -z "$DEX_DOMAIN" ];
+then
+  echo "Enter -d|--dex-domain to supply domain name for dex server"
+  exit
+fi
+
 cat << EOF > ssl/req.cnf
 [req]
 req_extensions = v3_req
@@ -18,9 +47,9 @@ keyUsage = nonRepudiation, digitalSignature, keyEncipherment
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = dex.example.com
-DNS.2 = login.example.com
-DNS.3 = ldap-admin.example.com
+DNS.1 = dex.$DEX_DOMAIN
+DNS.2 = login.$DEX_DOMAIN
+DNS.3 = ldap-admin.$DEX_DOMAIN
 EOF
 
 openssl genrsa -out ssl/ca-key.pem 2048

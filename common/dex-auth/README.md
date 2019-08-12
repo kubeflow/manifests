@@ -35,6 +35,8 @@ Please generate certificates with a trusted authority for enabling this example 
 
 *TODO*(krishnadurai): Make this a part of kfctl
 
+`kubectl create namespace auth`
+
 `kubectl create secret tls dex.example.com.tls --cert=ssl/cert.pem --key=ssl/key.pem -n auth`
 
 Replace `dex.example.com.tls` with your own domain.
@@ -82,21 +84,21 @@ kubectl create configmap k8s-ca --from-file=k8s_ca.pem -n auth
 
 ```
 cd dex-ldap
-kustomize build . | kubectl apply -f -
+kustomize build base | kubectl apply -f -
 ```
 
 **Dex**
 
 ```
 cd dex-crds
-kustomize build . | kubectl apply -f -
+kustomize build base | kubectl apply -f -
 ```
 
 **Dex Authentication Client**
 
 ```
 cd dex-authenticator
-kustomize build . | kubectl apply -f -
+kustomize build base | kubectl apply -f -
 ```
 
 ### Setup Kubernetes OIDC Authentication
