@@ -11,37 +11,26 @@ import (
 	"testing"
 )
 
-func writeBasicAuthIngressOverlaysGcpCredentials(th *KustTestHarness) {
-	th.writeF("/manifests/gcp/basic-auth-ingress/overlays/gcp-credentials/gcp-credentials-patch.yaml", `
-# Patch the env/volumes/volumeMounts for GCP credentials
-apiVersion: apps/v1beta2
-kind: StatefulSet
+func writeBasicAuthIngressOverlaysManagedCert(th *KustTestHarness) {
+	th.writeF("/manifests/gcp/basic-auth-ingress/overlays/managed-cert/cert.yaml", `
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
 metadata:
-  name: backend-updater
+  name: gke-certificate
 spec:
-  template:
-    spec:
-      containers:
-      - name: backend-updater
-        env:
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
-        volumeMounts:
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
-      volumes:
-      - name: sa-key
-        secret:
-          secretName: admin-gcp-sa
+  domains:
+  - $(hostname)
 `)
-	th.writeK("/manifests/gcp/basic-auth-ingress/overlays/gcp-credentials", `
+	th.writeK("/manifests/gcp/basic-auth-ingress/overlays/managed-cert", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
-patches:
-- gcp-credentials-patch.yaml`)
+resources:
+- cert.yaml
+namespace: kubeflow
+commonLabels:
+  kustomize.component: basic-auth-ingress`)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cloud-endpoint.yaml", `
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
@@ -496,14 +485,14 @@ configurations:
 `)
 }
 
-func TestBasicAuthIngressOverlaysGcpCredentials(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/gcp/basic-auth-ingress/overlays/gcp-credentials")
-	writeBasicAuthIngressOverlaysGcpCredentials(th)
+func TestBasicAuthIngressOverlaysManagedCert(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/gcp/basic-auth-ingress/overlays/managed-cert")
+	writeBasicAuthIngressOverlaysManagedCert(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../gcp/basic-auth-ingress/overlays/gcp-credentials"
+	targetPath := "../gcp/basic-auth-ingress/overlays/managed-cert"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
