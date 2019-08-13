@@ -29,6 +29,8 @@ data:
       https: 0.0.0.0:5556
       tlsCert: /etc/dex/tls/tls.crt
       tlsKey: /etc/dex/tls/tls.key
+      # For HTTP configuration remove tls configs and add
+      #http: 0.0.0.0:5556
     logger:
       level: "debug"
       format: text
@@ -116,8 +118,13 @@ varReference:
 `)
 	th.writeF("/manifests/common/dex-auth/dex-crds/overlays/ldap/params.env", `
 # Dex Server Parameters (some params are shared with client)
+dex_domain=dex.example.com
 issuer=https://dex.example.com:32000
 ldap_host=ldap.auth.svc.cluster.local:389
+ldap_bind_dn=cn=admin,dc=example,dc=org
+ldap_bind_pw=admin
+ldap_user_base_dn=ou=People,dc=example,dc=org
+ldap_group_base_dn=ou=Groups,dc=example,dc=org
 client_id=ldapdexapp
 oidc_redirect_uris=['http://login.example.org:5555/callback/onprem-cluster']
 application_secret=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
@@ -146,6 +153,34 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.ldap_host
+- name: ldap_bind_dn
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ldap_bind_dn
+- name: ldap_bind_pw
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ldap_bind_pw
+- name: ldap_user_base_dn
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ldap_user_base_dn
+- name: ldap_group_base_dn
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ldap_group_base_dn
 configurations:
 - params.yaml
 `)

@@ -21,5 +21,33 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.ldap_host
+- name: ldap_bind_dn
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ldap_bind_dn
+- name: ldap_bind_pw
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ldap_bind_pw
+- name: ldap_user_base_dn
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ldap_user_base_dn
+- name: ldap_group_base_dn
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ldap_group_base_dn
 configurations:
 - params.yaml

@@ -51,6 +51,10 @@ Replace `dex.example.com.tls` with your own domain.
  - static_user_id: User id for staticPasswords configuration
  - static_username: Username for for staticPasswords configuration
  - ldap_host: URL for LDAP server for dex to connect to
+ - ldap_bind_dn: LDAP Overlay's bind distinguished name (DN)
+ - ldap_bind_pw: LDAP Overlay's bind password for the above account
+ - ldap_user_base_dn: LDAP Server's user base DN
+ - ldap_group_base_dn: LDAP Server's group base DN
  - dex_client_id: ID for the dex client application
  - oidc_redirect_uris: Redirect URIs for OIDC client callback
  - dex_application_secret: Application secret for dex client
@@ -93,9 +97,16 @@ kustomize build base | kubectl apply -f -
 
 **Dex**
 
+*For staticPassword configuration:*
 ```
 cd dex-crds
 kustomize build base | kubectl apply -f -
+```
+
+*For LDAP configuration:*
+```
+cd dex-crds
+kustomize build overlays/ldap | kubectl apply -f -
 ```
 
 **Dex Authentication Client**

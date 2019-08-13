@@ -133,7 +133,7 @@ spec:
     spec:
       containers:
       - name: dex-k8s-authenticator
-        image: "mintel/dex-k8s-authenticator:latest"
+        image: "mintel/dex-k8s-authenticator:1.2.0"
         imagePullPolicy: Always
         args: [ "--config", "config.yaml" ]
         ports:
