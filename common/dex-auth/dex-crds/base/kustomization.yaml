@@ -27,13 +27,34 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.issuer
-- name: ldap_host
+- name: static_email
   objref:
     kind: ConfigMap
     name: dex-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.ldap_host
+    fieldpath: data.static_email
+- name: static_password_hash
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.static_password_hash
+- name: static_username
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.static_username
+- name: static_user_id
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.static_user_id
 - name: client_id
   objref:
     kind: ConfigMap

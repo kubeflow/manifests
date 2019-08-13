@@ -46,6 +46,10 @@ Replace `dex.example.com.tls` with your own domain.
 ##### Variables in params environment files [dex-authenticator](dex-authenticator/base/params.env), [dex-crds](dex-crds/base/params.env) and [istio](/docs/dex-auth/examples/authentication/Istio):
  - dex_domain: Domain for your dex server
  - issuer: Issuer URL for dex server
+ - static_email: User Email for staticPasswords configuration
+ - static_password_hash: User's password for staticPasswords configuration
+ - static_user_id: User id for staticPasswords configuration
+ - static_username: Username for for staticPasswords configuration
  - ldap_host: URL for LDAP server for dex to connect to
  - dex_client_id: ID for the dex client application
  - oidc_redirect_uris: Redirect URIs for OIDC client callback

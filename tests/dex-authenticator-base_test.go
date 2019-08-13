@@ -197,7 +197,8 @@ varReference:
 `)
 	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/params.env", `
 # Dex Server Parameters (some params are shared with client)
-issuer=https://dex.example.com:32000
+# Set issuer to https if tls is enabled
+issuer=http://dex.example.com:32000
 client_id=ldapdexapp
 application_secret=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
 cluster_name=onprem-cluster
