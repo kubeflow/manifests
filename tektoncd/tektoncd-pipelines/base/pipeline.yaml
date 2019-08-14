@@ -1,0 +1,52 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: kfctl-build-apply
+spec:
+  resources:
+    - name: source-repo
+      type: git
+    - name: web-image
+      type: image
+  tasks:
+    - name: kfctl-build-push
+      taskRef:
+        name: build-kfctl-image-from-git-source
+      params:
+        - name: pathToDockerFile
+          value: /workspace/docker-source/Dockerfile
+        - name: pathToContext
+          value: /workspace/docker-source
+      resources:
+        inputs:
+          - name: docker-source
+            resource: source-repo
+        outputs:
+          - name: builtImage
+            resource: web-image
+    - name: kfctl-init-generate-apply
+      taskRef:
+        name: deploy-using-kfctl
+      resources:
+        inputs:
+          - name: image
+            resource: web-image
+            from:
+              - kfctl-build-push
+      params:
+        - name: app_dir
+          value: /kubeflow/dls-kf
+        - name: platform
+          value: gke
+        - name: useIstio
+          value: "true"
+        - name: version
+          value: master
+        - name: project
+          value: $(project)
+        - name: configPath
+          value: bootstrap/config/kfctl_gcp_iap.yaml
+        - name: disable_usage_report
+          value: "false"
+        - name: skip-init-gcp-project
+          value: "false"
