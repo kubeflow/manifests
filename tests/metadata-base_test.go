@@ -109,6 +109,9 @@ metadata:
     component: server
 spec:
   replicas: 3
+  selector:
+    matchLabels:
+      component: server
   template:
     metadata:
       labels:
@@ -116,7 +119,7 @@ spec:
     spec:
       containers:
       - name: container
-        image: gcr.io/kubeflow-images-public/metadata:v0.1.7
+        image: gcr.io/kubeflow-images-public/metadata:v0.1.8
         env:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:

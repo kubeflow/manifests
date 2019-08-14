@@ -12,7 +12,7 @@ import (
 )
 
 func writeIstioCrdsBase(th *KustTestHarness) {
-	th.writeF("/manifests/gcp/istio-crds/base/crds.yaml", `
+	th.writeF("/manifests/istio/istio-crds/base/crds.yaml", `
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -1549,7 +1549,7 @@ spec:
     plural: challenges
   scope: Namespaced
 `)
-	th.writeK("/manifests/gcp/istio-crds/base", `
+	th.writeK("/manifests/istio/istio-crds/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -1559,13 +1559,13 @@ namespace: kubeflow
 }
 
 func TestIstioCrdsBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/gcp/istio-crds/base")
+	th := NewKustTestHarness(t, "/manifests/istio/istio-crds/base")
 	writeIstioCrdsBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../gcp/istio-crds/base"
+	targetPath := "../istio/istio-crds/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

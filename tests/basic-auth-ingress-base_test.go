@@ -12,55 +12,36 @@ import (
 )
 
 func writeBasicAuthIngressBase(th *KustTestHarness) {
-	th.writeF("/manifests/gcp/basic-auth-ingress/base/certificate.yaml", `
-apiVersion: certmanager.k8s.io/v1alpha1
-kind: Certificate
-metadata:
-  name: $(secretName)
-spec:
-  acme:
-    config:
-    - domains:
-      - $(hostname)
-      http01:
-        ingress: envoy-ingress
-  commonName: $(hostname)
-  dnsNames:
-  - $(hostname)
-  issuerRef:
-    kind: ClusterIssuer
-    name: $(issuer)
-  secretName: $(secretName)
-`)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cloud-endpoint.yaml", `
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
 metadata:
-  name: cloud-endpoint
+  name: $(appName)
 spec:
   project: $(project)
   targetIngress:
     name: $(ingressName)
+    namespace: $(istioNamespace)
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: envoy
+  name: kf-admin-basic-auth
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: envoy
+  name: kf-admin-basic-auth
 subjects:
 - kind: ServiceAccount
-  name: envoy
+  name: kf-admin
   namespace: kubeflow
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: envoy
+  name: kf-admin-basic-auth
 rules:
 - apiGroups:
   - ""
@@ -227,6 +208,7 @@ metadata:
     ingress.kubernetes.io/ssl-redirect: "true"
     kubernetes.io/ingress.global-static-ip-name: $(ipName)
     kubernetes.io/tls-acme: "true"
+    networking.gke.io/managed-certificates: gke-certificate
   name: $(ingressName)
 spec:
   rules:
@@ -238,44 +220,39 @@ spec:
           servicePort: 80
         path: /*
 `)
-	th.writeF("/manifests/gcp/basic-auth-ingress/base/job.yaml", `
-apiVersion: batch/v1
-kind: Job
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/istio-mapping-svc.yaml", `
+apiVersion: v1
+kind: Service
 metadata:
-  name: ingress-bootstrap
+  annotations:
+    getambassador.io/config: |-
+      ---
+      apiVersion: ambassador/v0
+      kind:  Mapping
+      name: istio-mapping
+      prefix_regex: true
+      prefix: /(?!whoami|kflogin).*
+      rewrite: ""
+      service: istio-ingressgateway.istio-system
+      precedence: 1
+  labels:
+    app: istioMappingSvc
+    ksonnet.io/component: basic-auth-ingress
+  name: istio-mapping-service
+  namespace: istio-system
 spec:
-  template:
-    spec:
-      containers:
-      - command:
-        - /var/ingress-config/ingress_bootstrap.sh
-        env:
-        - name: NAMESPACE
-          value: $(namespace)
-        - name: TLS_SECRET_NAME
-          value: $(secretName)
-        - name: TLS_HOST_NAME
-          value: $(hostname)
-        - name: INGRESS_NAME
-          value: $(ingressName)
-        image: gcr.io/kubeflow-images-public/ingress-setup:latest
-        name: bootstrap
-        volumeMounts:
-        - mountPath: /var/ingress-config/
-          name: ingress-config
-      restartPolicy: OnFailure
-      serviceAccountName: envoy
-      volumes:
-      - configMap:
-          defaultMode: 493
-          name: ingress-bootstrap-config
-        name: ingress-config
+  ports:
+    - port: 80
+      targetPort: 8081
+  selector:
+    app: istioMappingSvc
+  type: ClusterIP
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: envoy
+  name: kf-admin
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/service.yaml", `
 apiVersion: v1
@@ -327,8 +304,6 @@ spec:
           value: $(namespace)
         - name: SERVICE
           value: ambassador
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
         - name: HEALTHCHECK_PATH
           value: /whoami
         - name: INGRESS_NAME
@@ -338,17 +313,11 @@ spec:
         volumeMounts:
         - mountPath: /var/envoy-config/
           name: config-volume
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
-      serviceAccountName: envoy
+      serviceAccountName: kf-admin
       volumes:
       - configMap:
           name: envoy-config
         name: config-volume
-      - name: sa-key
-        secret:
-          secretName: admin-gcp-sa
   # Workaround for https://github.com/kubernetes-sigs/kustomize/issues/677
   volumeClaimTemplates: []
 `)
@@ -368,14 +337,27 @@ varReference:
   kind: Certificate
 - path: spec/secretName
   kind: Certificate
-- path: spec/acme/config/0/domains/0
+- path: spec/acme/config/domains
+  kind: Certificate
+- path: spec/acme/config/http01/ingress
   kind: Certificate
 - path: metadata/name
   kind: Ingress
 - path: metadata/annotations/certmanager.k8s.io\/issuer
   kind: Ingress
+- path: metadata/name
+  kind: CloudEndpoint
+- path: spec/project
+  kind: CloudEndpoint
+- path: spec/targetIngress/name
+  kind: CloudEndpoint
+- path: spec/targetIngress/namespace
+  kind: CloudEndpoint
+- path: spec/domains
+  kind: ManagedCertificate
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/params.env", `
+appName=kubeflow
 namespace=kubeflow
 hostname=
 project=
@@ -384,19 +366,19 @@ secretName=envoy-ingress-tls
 privateGKECluster=false
 ingressName=envoy-ingress
 issuer=letsencrypt-prod
+istioNamespace=istio-system
 `)
 	th.writeK("/manifests/gcp/basic-auth-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- certificate.yaml
 - cloud-endpoint.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - config-map.yaml
 - deployment.yaml
 - ingress.yaml
-- job.yaml
+- istio-mapping-svc.yaml
 - service-account.yaml
 - service.yaml
 - stateful-set.yaml
@@ -423,6 +405,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.secretName
+- name: appName
+  objref:
+    kind: ConfigMap
+    name: basic-auth-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.appName
 - name: namespace
   objref:
     kind: ConfigMap
@@ -437,6 +426,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.hostname
+- name: project
+  objref:
+    kind: ConfigMap
+    name: basic-auth-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.project
 - name: ipName
   objref:
     kind: ConfigMap
@@ -458,6 +454,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.issuer
+- name: istioNamespace
+  objref:
+    kind: ConfigMap
+    name: basic-auth-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.istioNamespace
 configurations:
 - params.yaml
 `)

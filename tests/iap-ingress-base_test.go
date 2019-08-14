@@ -23,26 +23,6 @@ spec:
     oauthclientCredentials:
       secretName: $(oauthSecretName)
 `)
-	th.writeF("/manifests/gcp/iap-ingress/base/certificate.yaml", `
-apiVersion: certmanager.k8s.io/v1alpha1
-kind: Certificate
-metadata:
-  name: $(tlsSecretName)
-spec:
-  acme:
-    config:
-    - domains:
-      - $(hostname)
-      http01:
-        ingress: $(ingressName)
-  commonName: $(hostname)
-  dnsNames:
-  - $(hostname)
-  issuerRef:
-    kind: ClusterIssuer
-    name: $(issuer)
-  secretName: $(tlsSecretName)
-`)
 	th.writeF("/manifests/gcp/iap-ingress/base/cloud-endpoint.yaml", `
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
@@ -58,20 +38,20 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: envoy
+  name: kf-admin-iap
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: envoy
+  name: kf-admin-iap
 subjects:
 - kind: ServiceAccount
-  name: envoy
+  name: kf-admin
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: envoy
+  name: kf-admin-iap
 rules:
 - apiGroups:
   - ""
@@ -225,7 +205,7 @@ data:
       . /var/shared/healthz.env
 
       # If node port or backend id change, so does the JWT audience.
-      CURR_NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[0].nodePort}')
+      CURR_NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
       read -ra toks <<<"$(gcloud compute --project=${PROJECT} backend-services list --filter=name~k8s-be-${CURR_NODE_PORT}- --format='value(id,timeoutSec)')"
       CURR_BACKEND_ID="${toks[0]}"
       CURR_BACKEND_TIMEOUT="${toks[1]}"
@@ -395,8 +375,6 @@ spec:
           value: $(ingressName)
         - name: ENVOY_ADMIN
           value: http://localhost:8001
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
         - name: USE_ISTIO
           value: "true"
         image: gcr.io/kubeflow-images-public/ingress-setup:latest
@@ -404,18 +382,12 @@ spec:
         volumeMounts:
         - mountPath: /var/envoy-config/
           name: config-volume
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
       restartPolicy: Always
-      serviceAccountName: envoy
+      serviceAccountName: kf-admin
       volumes:
       - configMap:
           name: envoy-config
         name: config-volume
-      - name: sa-key
-        secret:
-          secretName: $(adminSaSecretName)
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/ingress.yaml", `
 apiVersion: extensions/v1beta1
@@ -426,6 +398,7 @@ metadata:
     ingress.kubernetes.io/ssl-redirect: "true"
     kubernetes.io/ingress.global-static-ip-name: $(ipName)
     kubernetes.io/tls-acme: "true"
+    networking.gke.io/managed-certificates: gke-certificate
   name: envoy-ingress
 spec:
   rules:
@@ -436,51 +409,6 @@ spec:
           serviceName: istio-ingressgateway
           servicePort: 80
         path: /*
-`)
-	th.writeF("/manifests/gcp/iap-ingress/base/job.yaml", `
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: ingress-bootstrap
-spec:
-  template:
-    spec:
-      containers:
-      - command:
-        - /var/ingress-config/ingress_bootstrap.sh
-        env:
-        - name: NAMESPACE
-          valueFrom:
-            configMapKeyRef:
-              name: parameters
-              key: istioNamespace
-        - name: TLS_SECRET_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: parameters
-              key: tlsSecretName
-        - name: TLS_HOST_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: parameters
-              key: hostname
-        - name: INGRESS_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: parameters
-              key: ingressName
-        image: gcr.io/kubeflow-images-public/ingress-setup:latest
-        name: bootstrap
-        volumeMounts:
-        - mountPath: /var/ingress-config/
-          name: ingress-config
-      restartPolicy: OnFailure
-      serviceAccountName: envoy
-      volumes:
-      - configMap:
-          defaultMode: 493
-          name: ingress-bootstrap-config
-        name: ingress-config
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/policy.yaml", `
 apiVersion: authentication.istio.io/v1alpha1
@@ -510,7 +438,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: envoy
+  name: kf-admin
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/service.yaml", `
 apiVersion: v1
@@ -553,8 +481,6 @@ spec:
           value: $(istioNamespace)
         - name: SERVICE
           value: istio-ingressgateway
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
         - name: INGRESS_NAME
           value: $(ingressName)
         - name: USE_ISTIO
@@ -564,17 +490,11 @@ spec:
         volumeMounts:
         - mountPath: /var/envoy-config/
           name: config-volume
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
-      serviceAccountName: envoy
+      serviceAccountName: kf-admin
       volumes:
       - configMap:
           name: envoy-config
         name: config-volume
-      - name: sa-key
-        secret:
-          secretName: admin-gcp-sa
   volumeClaimTemplates: []
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/params.yaml", `
@@ -621,7 +541,8 @@ varReference:
   kind: BackendConfig
 - path: data/healthcheck_route.yaml
   kind: ConfigMap
-`)
+- path: spec/domains
+  kind: ManagedCertificate`)
 	th.writeF("/manifests/gcp/iap-ingress/base/params.env", `
 namespace=kubeflow
 appName=kubeflow
@@ -633,21 +554,18 @@ oauthSecretName=kubeflow-oauth
 project=
 adminSaSecretName=admin-gcp-sa
 tlsSecretName=envoy-ingress-tls
-istioNamespace=istio-system
-`)
+istioNamespace=istio-system`)
 	th.writeK("/manifests/gcp/iap-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - backend-config.yaml
-- certificate.yaml
 - cloud-endpoint.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - config-map.yaml
 - deployment.yaml
 - ingress.yaml
-- job.yaml
 - policy.yaml
 - service-account.yaml
 - service.yaml
@@ -749,8 +667,7 @@ vars:
   fieldref:
     fieldpath: data.istioNamespace
 configurations:
-- params.yaml
-`)
+- params.yaml`)
 }
 
 func TestIapIngressBase(t *testing.T) {

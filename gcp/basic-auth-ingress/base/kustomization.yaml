@@ -1,14 +1,13 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- certificate.yaml
 - cloud-endpoint.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - config-map.yaml
 - deployment.yaml
 - ingress.yaml
-- job.yaml
+- istio-mapping-svc.yaml
 - service-account.yaml
 - service.yaml
 - stateful-set.yaml
@@ -35,6 +34,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.secretName
+- name: appName
+  objref:
+    kind: ConfigMap
+    name: basic-auth-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.appName
 - name: namespace
   objref:
     kind: ConfigMap
@@ -49,6 +55,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.hostname
+- name: project
+  objref:
+    kind: ConfigMap
+    name: basic-auth-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.project
 - name: ipName
   objref:
     kind: ConfigMap
@@ -70,5 +83,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.issuer
+- name: istioNamespace
+  objref:
+    kind: ConfigMap
+    name: basic-auth-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.istioNamespace
 configurations:
 - params.yaml

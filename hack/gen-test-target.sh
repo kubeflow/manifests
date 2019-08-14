@@ -41,7 +41,7 @@ gen-target-start() {
 gen-target-middle() {
   local directory=$1
 
-  for i in $(echo $(cat $directory/kustomization.yaml | grep '^- .*yaml$' | sed 's/^- //') $(cat $directory/kustomization.yaml | grep '  path: ' | sed 's/^.*: \(.*\)$/\1/') params.env kustomization.yaml | sed 's/ /\\n/g' | sort | uniq | awk '{gsub(/\\n/,"\n")}1'); do
+  for i in $(echo $(cat $directory/kustomization.yaml | grep '^- .*yaml$' | sed 's/^- //') $(cat $directory/kustomization.yaml | grep '  path: ' | sed 's/^.*: \(.*\)$/\1/') params.env secrets.env kustomization.yaml | sed 's/ /\\n/g' | sort | uniq | awk '{gsub(/\\n/,"\n")}1'); do
     file=$i
     if [[ -f $directory/$file ]]; then
       case $file in
@@ -52,6 +52,9 @@ gen-target-middle() {
           gen-target-resource $file $directory
           ;;
         params.env)
+          gen-target-resource $file $directory
+          ;;
+        secrets.env)
           gen-target-resource $file $directory
           ;;
         *) ;;

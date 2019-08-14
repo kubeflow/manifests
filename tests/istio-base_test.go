@@ -12,7 +12,7 @@ import (
 )
 
 func writeIstioBase(th *KustTestHarness) {
-	th.writeF("/manifests/gcp/istio/base/kf-istio-resources.yaml", `
+	th.writeF("/manifests/istio/istio/base/kf-istio-resources.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -122,25 +122,46 @@ kind: ClusterRbacConfig
 metadata:
   name: default
 spec:
-  mode: "ON"
+  mode: $(clusterRbacConfig)
 `)
-	th.writeK("/manifests/gcp/istio/base", `
+	th.writeF("/manifests/istio/istio/base/params.yaml", `
+varReference:
+- path: spec/mode
+  kind: ClusterRbacConfig
+`)
+	th.writeF("/manifests/istio/istio/base/params.env", `
+clusterRbacConfig=ON
+`)
+	th.writeK("/manifests/istio/istio/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - kf-istio-resources.yaml
 namespace: kubeflow
+configMapGenerator:
+- name: istio-parameters
+  env: params.env
+vars:
+- name: clusterRbacConfig
+  objref:
+    kind: ConfigMap
+    name: istio-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.clusterRbacConfig
+configurations:
+- params.yaml
 `)
 }
 
 func TestIstioBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/gcp/istio/base")
+	th := NewKustTestHarness(t, "/manifests/istio/istio/base")
 	writeIstioBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../gcp/istio/base"
+	targetPath := "../istio/istio/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
