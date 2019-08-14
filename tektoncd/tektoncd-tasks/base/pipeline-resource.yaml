@@ -1,0 +1,23 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: kfctl-git
+spec:
+  type: git
+  params:
+    - name: revision
+      value: master
+    - name: url
+      value: https://github.com/kubeflow/kfctl.git
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: kfctl-image
+spec:
+  type: image
+  params:
+    - name: url
+      value: gcr.io/$(project)/kfctl
+---
