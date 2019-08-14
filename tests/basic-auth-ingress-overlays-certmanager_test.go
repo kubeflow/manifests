@@ -11,37 +11,71 @@ import (
 	"testing"
 )
 
-func writeBasicAuthIngressOverlaysGcpCredentials(th *KustTestHarness) {
-	th.writeF("/manifests/gcp/basic-auth-ingress/overlays/gcp-credentials/gcp-credentials-patch.yaml", `
-# Patch the env/volumes/volumeMounts for GCP credentials
-apiVersion: apps/v1beta2
-kind: StatefulSet
+func writeBasicAuthIngressOverlaysCertmanager(th *KustTestHarness) {
+	th.writeF("/manifests/gcp/basic-auth-ingress/overlays/certmanager/job.yaml", `
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: backend-updater
+  name: ingress-bootstrap
 spec:
   template:
     spec:
       containers:
-      - name: backend-updater
+      - command:
+        - /var/ingress-config/ingress_bootstrap.sh
         env:
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/sa/admin-gcp-sa.json
+        - name: NAMESPACE
+          value: $(namespace)
+        - name: TLS_SECRET_NAME
+          value: $(secretName)
+        - name: TLS_HOST_NAME
+          value: $(hostname)
+        - name: INGRESS_NAME
+          value: $(ingressName)
+        image: gcr.io/kubeflow-images-public/ingress-setup:latest
+        name: bootstrap
         volumeMounts:
-        - mountPath: /var/run/secrets/sa
-          name: sa-key
-          readOnly: true
+        - mountPath: /var/ingress-config/
+          name: ingress-config
+      restartPolicy: OnFailure
+      serviceAccountName: kf-admin
       volumes:
-      - name: sa-key
-        secret:
-          secretName: admin-gcp-sa
+      - configMap:
+          defaultMode: 493
+          name: ingress-bootstrap-config
+        name: ingress-config
 `)
-	th.writeK("/manifests/gcp/basic-auth-ingress/overlays/gcp-credentials", `
+	th.writeF("/manifests/gcp/basic-auth-ingress/overlays/certmanager/certificate.yaml", `
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: $(secretName)
+spec:
+  acme:
+    config:
+    - domains:
+      - $(hostname)
+      http01:
+        ingress: $(ingressName)
+  commonName: $(hostname)
+  dnsNames:
+  - $(hostname)
+  issuerRef:
+    kind: ClusterIssuer
+    name: $(issuer)
+  secretName: $(secretName)
+`)
+	th.writeK("/manifests/gcp/basic-auth-ingress/overlays/certmanager", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
-patches:
-- gcp-credentials-patch.yaml`)
+resources:
+- job.yaml
+- certificate.yaml
+namespace: kubeflow
+commonLabels:
+  kustomize.component: basic-auth-ingress`)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cloud-endpoint.yaml", `
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
@@ -496,14 +530,14 @@ configurations:
 `)
 }
 
-func TestBasicAuthIngressOverlaysGcpCredentials(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/gcp/basic-auth-ingress/overlays/gcp-credentials")
-	writeBasicAuthIngressOverlaysGcpCredentials(th)
+func TestBasicAuthIngressOverlaysCertmanager(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/gcp/basic-auth-ingress/overlays/certmanager")
+	writeBasicAuthIngressOverlaysCertmanager(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../gcp/basic-auth-ingress/overlays/gcp-credentials"
+	targetPath := "../gcp/basic-auth-ingress/overlays/certmanager"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

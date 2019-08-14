@@ -1,7 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- certificate.yaml
 - cloud-endpoint.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
@@ -9,7 +8,6 @@ resources:
 - deployment.yaml
 - ingress.yaml
 - istio-mapping-svc.yaml
-- job.yaml
 - service-account.yaml
 - service.yaml
 - stateful-set.yaml

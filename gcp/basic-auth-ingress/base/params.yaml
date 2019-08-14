@@ -29,3 +29,5 @@ varReference:
   kind: CloudEndpoint
 - path: spec/targetIngress/namespace
   kind: CloudEndpoint
+- path: spec/domains
+  kind: ManagedCertificate
