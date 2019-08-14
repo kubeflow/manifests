@@ -108,7 +108,7 @@ metadata:
   labels:
     component: server
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       component: server
