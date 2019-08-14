@@ -32,7 +32,9 @@ spec:
               apiVersion: v1
               fieldPath: metadata.namespace
         - name: IN_CLUSTER
-          value: "true"
+          value: 'true'
+        - name: ENABLE_WEB_CONSOLE
+          value: 'false'
         - name: BASE_HREF
           value: /argo/
         image: argoproj/argoui:v2.3.0
