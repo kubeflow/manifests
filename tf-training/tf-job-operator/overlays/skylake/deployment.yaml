@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: tf-job-operator
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: tf-job-operator
+    spec:
+      containers:
+      - name: tf-job-operator
+        resources:
+          requests:
+            intel.com/skylake: 1
+          limits:
+            intel.com/skylake: 1
