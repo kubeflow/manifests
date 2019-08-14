@@ -54,8 +54,7 @@ spec:
       volumes:
       - name: sa-key
         secret:
-          secretName: admin-gcp-sa
-`)
+          secretName: admin-gcp-sa`)
 	th.writeK("/manifests/gcp/iap-ingress/overlays/gcp-credentials", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -593,8 +592,7 @@ varReference:
 - path: data/healthcheck_route.yaml
   kind: ConfigMap
 - path: spec/domains
-  kind: ManagedCertificate
-`)
+  kind: ManagedCertificate`)
 	th.writeF("/manifests/gcp/iap-ingress/base/params.env", `
 namespace=kubeflow
 appName=kubeflow
@@ -606,8 +604,7 @@ oauthSecretName=kubeflow-oauth
 project=
 adminSaSecretName=admin-gcp-sa
 tlsSecretName=envoy-ingress-tls
-istioNamespace=istio-system
-`)
+istioNamespace=istio-system`)
 	th.writeK("/manifests/gcp/iap-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
