@@ -23,6 +23,7 @@ spec:
     resources:
     - name: builtImage
       type: image
+      outputImageDir: /workspace/builtImage
   steps:
   - name: build-and-push
     image: gcr.io/kaniko-project/executor:v0.10.0
@@ -34,7 +35,7 @@ spec:
     args: ["--dockerfile=${inputs.params.pathToDockerFile}",
            "--destination=${outputs.resources.builtImage.url}",
            "--context=${inputs.params.pathToContext}",
-           "--target=kfctl"]
+           "--target=kfctl_base"]
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret
