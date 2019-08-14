@@ -22,8 +22,7 @@ rules:
     resources:
       - namespaces
       - pods
-    verbs: ["get", "list", "watch"]
-`)
+    verbs: ["get", "list", "watch"]`)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -36,8 +35,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: fluentd
-    namespace: kube-system
-`)
+    namespace: kube-system`)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/configmap.yaml", `
 apiVersion: v1
 kind: ConfigMap
@@ -160,8 +158,7 @@ data:
           retry_forever true
         </buffer>
       </match>
-    </label>
-`)
+    </label>`)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/daemonset.yaml", `
 apiVersion: extensions/v1beta1
 kind: DaemonSet
@@ -230,14 +227,12 @@ spec:
             path: /var/lib/docker/containers
         - name: runlogjournal
           hostPath:
-            path: /run/log/journal
-`)
+            path: /run/log/journal`)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: fluentd
-`)
+  name: fluentd`)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/params.env", `
 region=us-west-2
 clusterName=
