@@ -1,0 +1,14 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: kfctl-build-apply-pipeline-run
+spec:
+  pipelineRef:
+    name: kfctl-build-apply
+  resources:
+    - name: source-repo
+      resourceRef:
+        name: kfctl-git
+    - name: web-image
+      resourceRef:
+        name: kfctl-image

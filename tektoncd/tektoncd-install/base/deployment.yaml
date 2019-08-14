@@ -3,7 +3,6 @@ apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: tekton-pipelines-controller
-  namespace: tekton-pipelines
 spec:
   replicas: 1
   template:
@@ -51,7 +50,6 @@ apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: tekton-pipelines-webhook
-  namespace: tekton-pipelines
 spec:
   replicas: 1
   template:
