@@ -8,7 +8,7 @@ resources:
 - pod-security-policy.yaml
 - service-account.yaml
 - service.yaml
-namespace: kubeflow
+namespace: tekton-pipelines
 configMapGenerator:
 - name: tektoncd-parameters
   env: params.env

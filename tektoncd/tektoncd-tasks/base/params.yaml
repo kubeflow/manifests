@@ -1,0 +1,3 @@
+varReference:
+- path: spec/params/value
+  kind: PipelineResource
