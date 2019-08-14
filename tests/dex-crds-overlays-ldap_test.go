@@ -111,6 +111,28 @@ data:
       name: 'Dex Login Application'
       secret: $(application_secret)
 `)
+	th.writeF("/manifests/common/dex-auth/dex-crds/overlays/ldap/deployment.yaml", `
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: dex
+  name: dex
+spec:
+  template:
+    spec:
+      serviceAccountName: dex
+      containers:
+      - name: dex
+        volumeMounts:
+        - name: tls
+          mountPath: /etc/dex/tls
+      volumes:
+      - name: tls
+        secret:
+          secretName: $(dex_domain).tls
+`)
 	th.writeF("/manifests/common/dex-auth/dex-crds/overlays/ldap/params.yaml", `
 varReference:
 - path: data/config.yaml
@@ -138,6 +160,7 @@ bases:
 
 patchesStrategicMerge:
 - config-map.yaml
+- deployment.yaml
 
 configMapGenerator:
 - name: dex-parameters
@@ -295,8 +318,6 @@ spec:
         volumeMounts:
         - name: config
           mountPath: /etc/dex/cfg
-        - name: tls
-          mountPath: /etc/dex/tls
       volumes:
       - name: config
         configMap:
@@ -304,9 +325,6 @@ spec:
           items:
           - key: config.yaml
             path: config.yaml
-      - name: tls
-        secret:
-          secretName: $(dex_domain).tls
 `)
 	th.writeF("/manifests/common/dex-auth/dex-crds/base/service.yaml", `
 apiVersion: v1

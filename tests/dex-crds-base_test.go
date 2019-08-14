@@ -122,8 +122,6 @@ spec:
         volumeMounts:
         - name: config
           mountPath: /etc/dex/cfg
-        - name: tls
-          mountPath: /etc/dex/tls
       volumes:
       - name: config
         configMap:
@@ -131,9 +129,6 @@ spec:
           items:
           - key: config.yaml
             path: config.yaml
-      - name: tls
-        secret:
-          secretName: $(dex_domain).tls
 `)
 	th.writeF("/manifests/common/dex-auth/dex-crds/base/service.yaml", `
 apiVersion: v1

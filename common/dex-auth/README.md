@@ -37,6 +37,8 @@ Please generate certificates with a trusted authority for enabling this example 
 
 `kubectl create namespace auth`
 
+*Note*: This step is not required if you disable TLS in Dex configuration
+
 `kubectl create secret tls dex.example.com.tls --cert=ssl/cert.pem --key=ssl/key.pem -n auth`
 
 Replace `dex.example.com.tls` with your own domain.

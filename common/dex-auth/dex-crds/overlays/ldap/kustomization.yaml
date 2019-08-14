@@ -6,6 +6,7 @@ bases:
 
 patchesStrategicMerge:
 - config-map.yaml
+- deployment.yaml
 
 configMapGenerator:
 - name: dex-parameters
