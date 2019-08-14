@@ -43,6 +43,7 @@ rules:
   - kubeflow.org
   resources:
   - studyjobs
+  - studyjobs/finalizers
   verbs:
   - "*"
 - apiGroups:
