@@ -298,6 +298,10 @@ spec:
             configMapKeyRef:
               name: parameters
               key: UI
+        - name: USERID_HEADER
+          value: $(userid-header)
+        - name: USERID_PREFIX
+          value: $(userid-prefix)
         image: gcr.io/kubeflow-images-public/jupyter-web-app:v0.5.0
         imagePullPolicy: $(policy)
         name: jupyter-web-app
@@ -399,14 +403,18 @@ varReference:
   kind: Deployment
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
-`)
+- path: spec/template/spec/containers/0/env/2/value
+  kind: Deployment
+- path: spec/template/spec/containers/0/env/3/value
+  kind: Deployment`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.env", `
 UI=default
 ROK_SECRET_NAME=secret-rok-{username}
 policy=Always
 prefix=jupyter
 clusterDomain=cluster.local
-`)
+userid-header=x-goog-authenticated-user-email
+userid-prefix=accounts.google.com:`)
 	th.writeK("/manifests/jupyter/jupyter-web-app/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -462,6 +470,20 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
+- name: userid-header
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.userid-header
+- name: userid-prefix
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.userid-prefix
 configurations:
 - params.yaml
 `)
