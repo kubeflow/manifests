@@ -230,10 +230,14 @@ varReference:
   kind: Service
 - path: spec/http/route/destination/host
   kind: VirtualService
-`)
+- path: spec/template/spec/containers/0/env/0/value
+  kind: Deployment
+- path: spec/template/spec/containers/0/env/1/value
+  kind: Deployment`)
 	th.writeF("/manifests/common/centraldashboard/base/params.env", `
 clusterDomain=cluster.local
-`)
+userid-header=
+userid-prefix=`)
 	th.writeK("/manifests/common/centraldashboard/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -272,6 +276,20 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
+- name: userid-header
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.userid-header
+- name: userid-prefix
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.userid-prefix
 configurations:
 - params.yaml
 
