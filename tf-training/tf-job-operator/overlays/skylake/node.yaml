@@ -1,7 +1,16 @@
+---
 apiVersion: v1
 kind: Node
 metadata:
   name: $(skylake01)
 status:
   capacity:
-    intel.com/skylake: "4"
+    intel.com/skylake: "2"
+---
+apiVersion: v1
+kind: Node
+metadata:
+  name: $(skylake02)
+status:
+  capacity:
+    intel.com/skylake: "2"

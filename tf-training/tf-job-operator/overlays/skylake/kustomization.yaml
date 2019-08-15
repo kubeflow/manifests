@@ -18,5 +18,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.skylake01
+- name: skylake02
+  objref:
+    kind: ConfigMap
+    name: tf-job-operator-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.skylake02
 configurations:
 - params.yaml
