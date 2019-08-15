@@ -11,41 +11,79 @@ import (
 	"testing"
 )
 
-func writeTfJobOperatorOverlaysIstio(th *KustTestHarness) {
-	th.writeF("/manifests/tf-training/tf-job-operator/overlays/istio/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
+func writeTfJobOperatorOverlaysSkylake(th *KustTestHarness) {
+	th.writeF("/manifests/tf-training/tf-job-operator/overlays/skylake/node.yaml", `
+---
+apiVersion: v1
+kind: Node
 metadata:
-  name: tf-job-dashboard
+  name: $(skylake01)
+status:
+  capacity:
+    "intel.com/skylake": "2"
+---
+apiVersion: v1
+kind: Node
+metadata:
+  name: $(skylake02)
+status:
+  capacity:
+    "intel.com/skylake": "2"
+`)
+	th.writeF("/manifests/tf-training/tf-job-operator/overlays/skylake/deployment.yaml", `
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: tf-job-operator
 spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /tfjobs/
-    rewrite:
-      uri: /tfjobs/
-    route:
-    - destination:
-        host: tf-job-dashboard.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 80
+  template:
+    spec:
+      containers:
+      - name: tf-job-operator
+        resources:
+          requests:
+            intel.com/skylake: 1
+          limits:
+            intel.com/skylake: 1
 `)
-	th.writeF("/manifests/tf-training/tf-job-operator/overlays/istio/params.yaml", `
+	th.writeF("/manifests/tf-training/tf-job-operator/overlays/skylake/params.yaml", `
 varReference:
-- path: spec/http/route/destination/host
-  kind: VirtualService
+- path: metadata.name
+  kind: Node
 `)
-	th.writeK("/manifests/tf-training/tf-job-operator/overlays/istio", `
+	th.writeF("/manifests/tf-training/tf-job-operator/overlays/skylake/params.env", `
+skylake01=node1
+skylake02=node2
+`)
+	th.writeK("/manifests/tf-training/tf-job-operator/overlays/skylake", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
 resources:
-- virtual-service.yaml
+- node.yaml
+patchesStrategicMerge:
+- deployment.yaml
+configMapGenerator:
+- name: tf-job-operator-device-parameters
+  env: params.env
+vars:
+- name: skylake01
+  objref:
+    kind: ConfigMap
+    name: tf-job-operator-device-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.skylake01
+- name: skylake02
+  objref:
+    kind: ConfigMap
+    name: tf-job-operator-device-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.skylake02
+generatorOptions:
+  disableNameSuffixHash: true
 configurations:
 - params.yaml
 `)
@@ -416,14 +454,14 @@ configurations:
 `)
 }
 
-func TestTfJobOperatorOverlaysIstio(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/tf-training/tf-job-operator/overlays/istio")
-	writeTfJobOperatorOverlaysIstio(th)
+func TestTfJobOperatorOverlaysSkylake(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/tf-training/tf-job-operator/overlays/skylake")
+	writeTfJobOperatorOverlaysSkylake(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../tf-training/tf-job-operator/overlays/istio"
+	targetPath := "../tf-training/tf-job-operator/overlays/skylake"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

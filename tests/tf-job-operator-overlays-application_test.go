@@ -418,7 +418,7 @@ resources:
 commonLabels:
   kustomize.component: tf-job-operator
 configMapGenerator:
-- name: parameters
+- name: tf-job-operator-parameters
   env: params.env
 vars:
 - name: namespace
@@ -431,7 +431,7 @@ vars:
 - name: clusterDomain
   objref:
     kind: ConfigMap
-    name: parameters
+    name: tf-job-operator-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain

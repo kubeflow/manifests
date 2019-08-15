@@ -7,23 +7,24 @@ resources:
 patchesStrategicMerge:
 - deployment.yaml
 configMapGenerator:
-- name: tf-job-operator-parameters
-  behavior: merge
+- name: tf-job-operator-device-parameters
   env: params.env
 vars:
 - name: skylake01
   objref:
     kind: ConfigMap
-    name: tf-job-operator-parameters
+    name: tf-job-operator-device-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.skylake01
 - name: skylake02
   objref:
     kind: ConfigMap
-    name: tf-job-operator-parameters
+    name: tf-job-operator-device-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.skylake02
+generatorOptions:
+  disableNameSuffixHash: true
 configurations:
 - params.yaml
