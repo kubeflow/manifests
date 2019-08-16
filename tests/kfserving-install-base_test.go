@@ -12,16 +12,6 @@ import (
 )
 
 func writeKfservingInstallBase(th *KustTestHarness) {
-	th.writeF("/manifests/kfserving/kfserving-install/base/namespace.yaml", `
-apiVersion: v1
-kind: Namespace
-metadata:
-  labels:
-    control-plane: kfserving-controller-manager
-    controller-tools.k8s.io: "1.0"
-    istio-injection: disabled
-  name: kfserving-system
-`)
 	th.writeF("/manifests/kfserving/kfserving-install/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -34,7 +24,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: kfserving-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -48,7 +37,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: kfserving-system
 ---
 `)
 	th.writeF("/manifests/kfserving/kfserving-install/base/cluster-role.yaml", `
@@ -233,14 +221,12 @@ data:
 kind: ConfigMap
 metadata:
   name: kfservice-config
-  namespace: kfserving-system
 `)
 	th.writeF("/manifests/kfserving/kfserving-install/base/secret.yaml", `
 apiVersion: v1
 kind: Secret
 metadata:
   name: kfserving-webhook-server-secret
-  namespace: kfserving-system
 `)
 	th.writeF("/manifests/kfserving/kfserving-install/base/statefulset.yaml", `
 apiVersion: apps/v1
@@ -250,7 +236,6 @@ metadata:
     control-plane: kfserving-controller-manager
     controller-tools.k8s.io: "1.0"
   name: kfserving-controller-manager
-  namespace: kfserving-system
 spec:
   selector:
     matchLabels:
@@ -323,7 +308,6 @@ metadata:
     control-plane: controller-manager
     controller-tools.k8s.io: "1.0"
   name: kfserving-controller-manager-metrics-service
-  namespace: kfserving-system
 spec:
   ports:
   - name: https
@@ -340,7 +324,6 @@ metadata:
     control-plane: kfserving-controller-manager
     controller-tools.k8s.io: "1.0"
   name: kfserving-controller-manager-service
-  namespace: kfserving-system
 spec:
   ports:
   - port: 443
@@ -354,7 +337,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
 resources:
-- namespace.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - config-map.yaml

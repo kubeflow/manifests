@@ -11,8 +11,8 @@ import (
 	"testing"
 )
 
-func writeKnativeInstallBase(th *KustTestHarness) {
-	th.writeF("/manifests/knative/knative-install/base/namespace.yaml", `
+func writeKnativeServingInstallBase(th *KustTestHarness) {
+	th.writeF("/manifests/knative/knative-serving-install/base/namespace.yaml", `
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -22,7 +22,7 @@ metadata:
   name: knative-serving
 
 `)
-	th.writeF("/manifests/knative/knative-install/base/gateway.yaml", `
+	th.writeF("/manifests/knative/knative-serving-install/base/gateway.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -71,7 +71,7 @@ spec:
       protocol: HTTP
 
 `)
-	th.writeF("/manifests/knative/knative-install/base/cluster-role.yaml", `
+	th.writeF("/manifests/knative/knative-serving-install/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -256,7 +256,7 @@ rules:
 
 ---
 `)
-	th.writeF("/manifests/knative/knative-install/base/cluster-role-binding.yaml", `
+	th.writeF("/manifests/knative/knative-serving-install/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -308,7 +308,7 @@ subjects:
 
 ---
 `)
-	th.writeF("/manifests/knative/knative-install/base/service-role.yaml", `
+	th.writeF("/manifests/knative/knative-serving-install/base/service-role.yaml", `
 apiVersion: rbac.istio.io/v1alpha1
 kind: ServiceRole
 metadata:
@@ -323,7 +323,7 @@ spec:
 
 
 `)
-	th.writeF("/manifests/knative/knative-install/base/service-role-binding.yaml", `
+	th.writeF("/manifests/knative/knative-serving-install/base/service-role-binding.yaml", `
 apiVersion: rbac.istio.io/v1alpha1
 kind: ServiceRoleBinding
 metadata:
@@ -336,7 +336,7 @@ spec:
   subjects:
   - user: '*'
 `)
-	th.writeF("/manifests/knative/knative-install/base/role-binding.yaml", `
+	th.writeF("/manifests/knative/knative-serving-install/base/role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -355,7 +355,7 @@ subjects:
   namespace: knative-serving
 
 `)
-	th.writeF("/manifests/knative/knative-install/base/config-map.yaml", `
+	th.writeF("/manifests/knative/knative-serving-install/base/config-map.yaml", `
 apiVersion: v1
 data:
   _example: |
@@ -990,7 +990,7 @@ metadata:
 
 ---
 `)
-	th.writeF("/manifests/knative/knative-install/base/deployment.yaml", `
+	th.writeF("/manifests/knative/knative-serving-install/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1342,7 +1342,7 @@ spec:
 ---
 
 `)
-	th.writeF("/manifests/knative/knative-install/base/service-account.yaml", `
+	th.writeF("/manifests/knative/knative-serving-install/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -1352,7 +1352,7 @@ metadata:
   namespace: knative-serving
 
 `)
-	th.writeF("/manifests/knative/knative-install/base/service.yaml", `
+	th.writeF("/manifests/knative/knative-serving-install/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -1441,7 +1441,7 @@ spec:
 
 ---
 `)
-	th.writeF("/manifests/knative/knative-install/base/apiservice.yaml", `
+	th.writeF("/manifests/knative/knative-serving-install/base/apiservice.yaml", `
 apiVersion: apiregistration.k8s.io/v1beta1
 kind: APIService
 metadata:
@@ -1460,7 +1460,7 @@ spec:
   versionPriority: 100
 
 `)
-	th.writeF("/manifests/knative/knative-install/base/image.yaml", `
+	th.writeF("/manifests/knative/knative-serving-install/base/image.yaml", `
 apiVersion: caching.internal.knative.dev/v1alpha1
 kind: Image
 metadata:
@@ -1472,7 +1472,7 @@ spec:
   image: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:e0654305370cf3bbbd0f56f97789c92cf5215f752b70902eba5d5fc0e88c5aca
 
 `)
-	th.writeF("/manifests/knative/knative-install/base/hpa.yaml", `
+	th.writeF("/manifests/knative/knative-serving-install/base/hpa.yaml", `
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
@@ -1492,7 +1492,7 @@ spec:
     name: activator
 
 `)
-	th.writeK("/manifests/knative/knative-install/base", `
+	th.writeK("/manifests/knative/knative-serving-install/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: knative-serving
@@ -1516,14 +1516,14 @@ commonLabels:
 `)
 }
 
-func TestKnativeInstallBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/knative/knative-install/base")
-	writeKnativeInstallBase(th)
+func TestKnativeServingInstallBase(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/knative/knative-serving-install/base")
+	writeKnativeServingInstallBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../knative/knative-install/base"
+	targetPath := "../knative/knative-serving-install/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
