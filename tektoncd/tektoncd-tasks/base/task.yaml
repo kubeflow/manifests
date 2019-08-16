@@ -4,7 +4,6 @@ kind: Task
 metadata:
   name: build-kfctl-image-from-git-source
 spec:
-  serviceAccountName: tekton-pipelines
   inputs:
     resources:
     - name: docker-source
