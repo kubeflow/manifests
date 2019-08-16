@@ -31,4 +31,3 @@ data:
 kind: ConfigMap
 metadata:
   name: kfservice-config
-  namespace: kfserving-system

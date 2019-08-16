@@ -9,7 +9,6 @@ metadata:
     control-plane: controller-manager
     controller-tools.k8s.io: "1.0"
   name: kfserving-controller-manager-metrics-service
-  namespace: kfserving-system
 spec:
   ports:
   - name: https
@@ -26,7 +25,6 @@ metadata:
     control-plane: kfserving-controller-manager
     controller-tools.k8s.io: "1.0"
   name: kfserving-controller-manager-service
-  namespace: kfserving-system
 spec:
   ports:
   - port: 443
