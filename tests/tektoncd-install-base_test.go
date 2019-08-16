@@ -11,45 +11,8 @@ import (
 	"testing"
 )
 
-func writeTektoncdOverlaysIstio(th *KustTestHarness) {
-	th.writeF("/manifests/tektoncd/tektoncd/overlays/istio/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: tektoncd
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /tektoncd/
-    rewrite:
-      uri: /tektoncd/
-    route:
-    - destination:
-        host: tekton-pipelines-controller.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 80
-`)
-	th.writeF("/manifests/tektoncd/tektoncd/overlays/istio/params.yaml", `
-varReference:
-- path: spec/http/route/destination/host
-  kind: VirtualService
-`)
-	th.writeK("/manifests/tektoncd/tektoncd/overlays/istio", `
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-bases:
-- ../../base
-resources:
-- virtual-service.yaml
-configurations:
-- params.yaml
-`)
-	th.writeF("/manifests/tektoncd/tektoncd/base/cluster-role-binding.yaml", `
+func writeTektoncdInstallBase(th *KustTestHarness) {
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -61,9 +24,8 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: tekton-pipelines-controller
-  namespace: tekton-pipelines
 `)
-	th.writeF("/manifests/tektoncd/tektoncd/base/cluster-role.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/cluster-role.yaml", `
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -227,21 +189,19 @@ rules:
   - list
   - watch
 `)
-	th.writeF("/manifests/tektoncd/tektoncd/base/config-map.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/config-map.yaml", `
 ---
 apiVersion: v1
 data: null
 kind: ConfigMap
 metadata:
   name: config-artifact-bucket
-  namespace: tekton-pipelines
 ---
 apiVersion: v1
 data: null
 kind: ConfigMap
 metadata:
   name: config-artifact-pvc
-  namespace: tekton-pipelines
 ---
 apiVersion: v1
 data:
@@ -267,7 +227,6 @@ data:
 kind: ConfigMap
 metadata:
   name: config-defaults
-  namespace: tekton-pipelines
 ---
 apiVersion: v1
 data:
@@ -301,15 +260,13 @@ data:
 kind: ConfigMap
 metadata:
   name: config-logging
-  namespace: tekton-pipelines
 `)
-	th.writeF("/manifests/tektoncd/tektoncd/base/deployment.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/deployment.yaml", `
 ---
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: tekton-pipelines-controller
-  namespace: tekton-pipelines
 spec:
   replicas: 1
   template:
@@ -357,7 +314,6 @@ apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: tekton-pipelines-webhook
-  namespace: tekton-pipelines
 spec:
   replicas: 1
   template:
@@ -379,7 +335,7 @@ spec:
           name: config-logging
         name: config-logging
 `)
-	th.writeF("/manifests/tektoncd/tektoncd/base/pod-security-policy.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/pod-security-policy.yaml", `
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
@@ -409,14 +365,13 @@ spec:
   - configMap
   - secret
 `)
-	th.writeF("/manifests/tektoncd/tektoncd/base/service-account.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: tekton-pipelines-controller
-  namespace: tekton-pipelines
 `)
-	th.writeF("/manifests/tektoncd/tektoncd/base/service.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/service.yaml", `
 ---
 apiVersion: v1
 kind: Service
@@ -424,7 +379,6 @@ metadata:
   labels:
     app: tekton-pipelines-controller
   name: tekton-pipelines-controller
-  namespace: tekton-pipelines
 spec:
   ports:
   - name: metrics
@@ -440,7 +394,6 @@ metadata:
   labels:
     app: tekton-pipelines-webhook
   name: tekton-pipelines-webhook
-  namespace: tekton-pipelines
 spec:
   ports:
   - port: 443
@@ -449,11 +402,11 @@ spec:
     app: tekton-pipelines-webhook
 ---
 `)
-	th.writeF("/manifests/tektoncd/tektoncd/base/params.env", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/params.env", `
 namespace=
 clusterDomain=cluster.local
 `)
-	th.writeK("/manifests/tektoncd/tektoncd/base", `
+	th.writeK("/manifests/tektoncd/tektoncd-install/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -464,7 +417,7 @@ resources:
 - pod-security-policy.yaml
 - service-account.yaml
 - service.yaml
-namespace: kubeflow
+namespace: tekton-pipelines
 configMapGenerator:
 - name: tektoncd-parameters
   env: params.env
@@ -486,14 +439,14 @@ vars:
 `)
 }
 
-func TestTektoncdOverlaysIstio(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/tektoncd/tektoncd/overlays/istio")
-	writeTektoncdOverlaysIstio(th)
+func TestTektoncdInstallBase(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/tektoncd/tektoncd-install/base")
+	writeTektoncdInstallBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../tektoncd/tektoncd/overlays/istio"
+	targetPath := "../tektoncd/tektoncd-install/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
