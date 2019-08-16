@@ -92,6 +92,7 @@ spec:
     - "${inputs.params.version}"
     - "--skip-init-gcp-project"
     - "--disable_usage_report"
+    - "${inputs.params.app_dir}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
