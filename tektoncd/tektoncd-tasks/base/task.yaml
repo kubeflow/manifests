@@ -4,6 +4,7 @@ kind: Task
 metadata:
   name: build-kfctl-image-from-git-source
 spec:
+  serviceAccountName: tekton-pipelines
   inputs:
     resources:
     - name: docker-source
@@ -92,10 +93,28 @@ spec:
     - "${inputs.params.version}"
     - "--skip-init-gcp-project"
     - "--disable_usage_report"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kaniko-secret.json
+    volumeMounts:
+    - name: kaniko-secret
+      mountPath: /secret
+    imagePullPolicy: Always
   - name: kubectl-generate
     image: "${inputs.resources.image.url}"
+    imagePullPolicy: Always
     command: ["/usr/local/bin/kfctl"]
     args:
     - "generate"
     - "all"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kaniko-secret.json
+    volumeMounts:
+    - name: kaniko-secret
+      mountPath: /secret
+  volumes:
+  - name: kaniko-secret
+    secret:
+      secretName: kaniko-secret
 ---
