@@ -5,7 +5,6 @@ metadata:
     control-plane: kfserving-controller-manager
     controller-tools.k8s.io: "1.0"
   name: kfserving-controller-manager
-  namespace: kfserving-system
 spec:
   selector:
     matchLabels:

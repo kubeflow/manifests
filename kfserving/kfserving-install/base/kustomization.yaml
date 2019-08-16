@@ -2,7 +2,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
 resources:
-- namespace.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - config-map.yaml
