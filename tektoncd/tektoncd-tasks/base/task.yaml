@@ -104,6 +104,7 @@ spec:
     image: "${inputs.resources.image.url}"
     imagePullPolicy: Always
     command: ["/usr/local/bin/kfctl"]
+    workingDir: "${inputs.params.app_dir}"
     args:
     - "generate"
     - "all"
