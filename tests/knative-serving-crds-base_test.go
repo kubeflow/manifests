@@ -11,8 +11,8 @@ import (
 	"testing"
 )
 
-func writeKnativeCrdsBase(th *KustTestHarness) {
-	th.writeF("/manifests/knative/knative-crds/base/crd.yaml", `
+func writeKnativeServingCrdsBase(th *KustTestHarness) {
+	th.writeF("/manifests/knative/knative-serving-crds/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -410,7 +410,7 @@ spec:
 
 ---
 `)
-	th.writeK("/manifests/knative/knative-crds/base", `
+	th.writeK("/manifests/knative/knative-serving-crds/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -418,14 +418,14 @@ resources:
 `)
 }
 
-func TestKnativeCrdsBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/knative/knative-crds/base")
-	writeKnativeCrdsBase(th)
+func TestKnativeServingCrdsBase(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/knative/knative-serving-crds/base")
+	writeKnativeServingCrdsBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../knative/knative-crds/base"
+	targetPath := "../knative/knative-serving-crds/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
