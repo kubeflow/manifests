@@ -1,26 +1,26 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/v3/pkg/fs"
-	"sigs.k8s.io/kustomize/v3/pkg/loader"
-	"sigs.k8s.io/kustomize/v3/pkg/plugins"
-	"sigs.k8s.io/kustomize/v3/pkg/resmap"
-	"sigs.k8s.io/kustomize/v3/pkg/resource"
-	"sigs.k8s.io/kustomize/v3/pkg/target"
-	"sigs.k8s.io/kustomize/v3/pkg/validators"
-	"testing"
+  "sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+  "sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+  "sigs.k8s.io/kustomize/v3/pkg/fs"
+  "sigs.k8s.io/kustomize/v3/pkg/loader"
+  "sigs.k8s.io/kustomize/v3/pkg/plugins"
+  "sigs.k8s.io/kustomize/v3/pkg/resmap"
+  "sigs.k8s.io/kustomize/v3/pkg/resource"
+  "sigs.k8s.io/kustomize/v3/pkg/target"
+  "sigs.k8s.io/kustomize/v3/pkg/validators"
+  "testing"
 )
 
 func writeTektoncdInstallBase(th *KustTestHarness) {
-	th.writeF("/manifests/tektoncd/tektoncd-install/base/namespace.yaml", `
+  th.writeF("/manifeststektoncd/tektoncd-install/base/namespace.yaml", `
 apiVersion: v1
 kind: Namespace
 metadata:
   name: tekton-pipelines
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-install/base/crds.yaml", `
+  th.writeF("/manifeststektoncd/tektoncd-install/base/crds.yaml", `
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -177,7 +177,7 @@ spec:
     status: {}
   version: v1alpha1
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-install/base/cluster-role-binding.yaml", `
+  th.writeF("/manifeststektoncd/tektoncd-install/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -190,7 +190,7 @@ subjects:
 - kind: ServiceAccount
   name: tekton-pipelines-controller
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-install/base/cluster-role.yaml", `
+  th.writeF("/manifeststektoncd/tektoncd-install/base/cluster-role.yaml", `
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -354,7 +354,7 @@ rules:
   - list
   - watch
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-install/base/config-map.yaml", `
+  th.writeF("/manifeststektoncd/tektoncd-install/base/config-map.yaml", `
 ---
 apiVersion: v1
 data: null
@@ -426,7 +426,7 @@ kind: ConfigMap
 metadata:
   name: config-logging
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-install/base/deployment.yaml", `
+  th.writeF("/manifeststektoncd/tektoncd-install/base/deployment.yaml", `
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -506,7 +506,7 @@ spec:
           name: config-logging
         name: config-logging
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-install/base/pod-security-policy.yaml", `
+  th.writeF("/manifeststektoncd/tektoncd-install/base/pod-security-policy.yaml", `
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
@@ -536,13 +536,13 @@ spec:
   - configMap
   - secret
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-install/base/service-account.yaml", `
+  th.writeF("/manifeststektoncd/tektoncd-install/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: tekton-pipelines-controller
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-install/base/service.yaml", `
+  th.writeF("/manifeststektoncd/tektoncd-install/base/service.yaml", `
 ---
 apiVersion: v1
 kind: Service
@@ -573,16 +573,19 @@ spec:
     app: tekton-pipelines-webhook
 ---
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-install/base/params.env", `
+  th.writeF("/manifeststektoncd/tektoncd-install/base/params.env", `
 namespace=
 clusterDomain=cluster.local
 `)
-	th.writeK("/manifests/tektoncd/tektoncd-install/base", `
+  th.writeK("/manifeststektoncd/tektoncd-install/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+<<<<<<< HEAD
 - namespace.yaml
 - crds.yaml
+=======
+>>>>>>> ffc90a4... snapshot
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - config-map.yaml
@@ -613,32 +616,32 @@ vars:
 }
 
 func TestTektoncdInstallBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/tektoncd/tektoncd-install/base")
-	writeTektoncdInstallBase(th)
-	m, err := th.makeKustTarget().MakeCustomizedResMap()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	expected, err := m.AsYaml()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	targetPath := "../tektoncd/tektoncd-install/base"
-	fsys := fs.MakeRealFS()
-	lrc := loader.RestrictionRootOnly
-	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
-	pc := plugins.DefaultPluginConfig()
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	actual, err := kt.MakeCustomizedResMap()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	th.assertActualEqualsExpected(actual, string(expected))
+  th := NewKustTestHarness(t, "/manifeststektoncd/tektoncd-install/base")
+  writeTektoncdInstallBase(th)
+  m, err := th.makeKustTarget().MakeCustomizedResMap()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  expected, err := m.AsYaml()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  targetPath := "..tektoncd/tektoncd-install/base"
+  fsys := fs.MakeRealFS()
+  lrc := loader.RestrictionRootOnly
+  _loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+  if loaderErr != nil {
+    t.Fatalf("could not load kustomize loader: %v", loaderErr)
+  }
+  rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+  pc := plugins.DefaultPluginConfig()
+  kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+  if err != nil {
+    th.t.Fatalf("Unexpected construction error %v", err)
+  }
+  actual, err := kt.MakeCustomizedResMap()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  th.assertActualEqualsExpected(actual, string(expected))
 }
