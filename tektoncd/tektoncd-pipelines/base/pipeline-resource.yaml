@@ -6,10 +6,10 @@ metadata:
 spec:
   type: git
   params:
-    - name: revision
-      value: $(pullrequest)
-    - name: url
-      value: https://github.com/kubeflow/kfctl.git
+  - name: revision
+    value: $(pullrequest)
+  - name: url
+    value: https://github.com/kubeflow/kfctl.git
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
@@ -18,6 +18,5 @@ metadata:
 spec:
   type: image
   params:
-    - name: url
-      value: gcr.io/$(project)/kfctl
----
+  - name: url
+    value: gcr.io/$(project)/kfctl

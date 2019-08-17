@@ -1,6 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+- pipeline-resource.yaml
 - pipeline.yaml
 - pipeline-run.yaml
 namespace: tekton-pipelines
@@ -15,5 +16,26 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.project
+- name: email
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.email
+- name: config
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.config
+- name: pullrequest
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.pullrequest
 configurations:
 - params.yaml
