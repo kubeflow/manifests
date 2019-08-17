@@ -44,8 +44,10 @@ spec:
           value: master
         - name: project
           value: $(project)
+        - name: email
+          value: $(email)
         - name: configPath
-          value: "https://raw.githubusercontent.com/kubeflow/kubeflow/master/bootstrap/config/kfctl_gcp_iap.yaml"
+          value: $(config)
         - name: disable_usage_report
           value: "false"
         - name: skip-init-gcp-project

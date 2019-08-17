@@ -78,6 +78,9 @@ spec:
     - name: project
       type: string
       description: name of project
+    - name: email
+      type: string
+      description: email
   steps:
   - name: kfctl-init
     image: "${inputs.resources.image.url}"
@@ -110,6 +113,8 @@ spec:
     args:
     - "generate"
     - "all"
+    - "--email"
+    - "${inputs.params.email}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
