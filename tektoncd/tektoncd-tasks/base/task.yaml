@@ -99,23 +99,40 @@ spec:
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
     imagePullPolicy: Always
-  - name: kubectl-generate
+  - name: kfctl-generate
     image: "${inputs.resources.image.url}"
     imagePullPolicy: Always
-    command: ["/usr/local/bin/kfctl"]
     workingDir: "${inputs.params.app_dir}"
+    command: ["/usr/local/bin/kfctl"]
     args:
     - "generate"
     - "all"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_SECRET
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
   volumes:
   - name: kaniko-secret
     secret:
       secretName: kaniko-secret
+  - name: kubeflow
+    persistentVolumeClaim:
+      claimName: kubeflow-pvc
 ---
