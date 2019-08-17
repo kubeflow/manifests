@@ -12,6 +12,30 @@ import (
 )
 
 func writeTektoncdPipelinesBase(th *KustTestHarness) {
+	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline-resource.yaml", `
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: kfctl-git
+spec:
+  type: git
+  params:
+  - name: revision
+    value: $(pullrequest)
+  - name: url
+    value: https://github.com/kubeflow/kfctl.git
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: kfctl-image
+spec:
+  type: image
+  params:
+  - name: url
+    value: gcr.io/$(project)/kfctl
+`)
 	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline.yaml", `
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
@@ -59,8 +83,10 @@ spec:
           value: master
         - name: project
           value: $(project)
+        - name: email
+          value: $(email)
         - name: configPath
-          value: bootstrap/config/kfctl_gcp_iap.yaml
+          value: $(config)
         - name: disable_usage_report
           value: "false"
         - name: skip-init-gcp-project
@@ -85,16 +111,22 @@ spec:
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/params.yaml", `
 varReference:
+- path: spec/tasks/params/value
+  kind: Pipeline
 - path: spec/params/value
   kind: PipelineResource
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/params.env", `
 project=constant-cubist-173123
+email=kam.d.kasravi@intel.com
+pullrequest=refs/pull/10/head
+config=https://raw.githubusercontent.com/kubeflow/kubeflow/master/bootstrap/config/kfctl_gcp_iap.yaml
 `)
 	th.writeK("/manifests/tektoncd/tektoncd-pipelines/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+- pipeline-resource.yaml
 - pipeline.yaml
 - pipeline-run.yaml
 namespace: tekton-pipelines
@@ -109,6 +141,27 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.project
+- name: email
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.email
+- name: config
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.config
+- name: pullrequest
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.pullrequest
 configurations:
 - params.yaml
 `)
