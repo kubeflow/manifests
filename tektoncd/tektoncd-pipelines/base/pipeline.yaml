@@ -35,20 +35,10 @@ spec:
               - kfctl-build-push
       params:
         - name: app_dir
-          value: /kubeflow/dls-kf
-        - name: platform
-          value: gke
-        - name: useIstio
-          value: "true"
-        - name: version
-          value: master
+          value: $(app_dir)
         - name: project
           value: $(project)
-        - name: email
-          value: $(email)
         - name: configPath
-          value: $(config)
-        - name: disable_usage_report
-          value: "false"
-        - name: skip-init-gcp-project
-          value: "false"
+          value: $(configPath)
+        - name: zone
+          value: $(zone)
