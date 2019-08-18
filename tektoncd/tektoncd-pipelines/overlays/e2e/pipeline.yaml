@@ -1,0 +1,9 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: kfctl-build-apply
+spec:
+  tasks:
+  - name: kfctl-run-e2e-tests
+    taskRef:
+      name: kfctl-run-e2e-tests
