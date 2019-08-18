@@ -16,20 +16,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.project
-- name: email
+- name: configPath
   objref:
     kind: ConfigMap
     name: kfctl-pipelines-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.email
-- name: config
-  objref:
-    kind: ConfigMap
-    name: kfctl-pipelines-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.config
+    fieldpath: data.configPath
 - name: pullrequest
   objref:
     kind: ConfigMap
@@ -37,5 +30,19 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.pullrequest
+- name: app_dir
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.app_dir
+- name: zone
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.zone
 configurations:
 - params.yaml
