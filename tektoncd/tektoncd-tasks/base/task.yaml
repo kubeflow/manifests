@@ -1,0 +1,143 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: build-kfctl-image-from-git-source
+spec:
+  inputs:
+    resources:
+    - name: docker-source
+      type: git
+    params:
+    - name: pathToDockerFile
+      type: string
+      description: The path to the dockerfile to build
+      default: /workspace/docker-source/Dockerfile
+    - name: pathToContext
+      type: string
+      description:
+        The build context used by Kaniko
+        (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
+      default: /workspace/docker-source
+  outputs:
+    resources:
+    - name: builtImage
+      type: image
+      outputImageDir: /workspace/builtImage
+  steps:
+  - name: build-and-push
+    image: gcr.io/kaniko-project/executor:v0.10.0
+    command:
+    - /kaniko/executor
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kaniko-secret.json
+    args: ["--dockerfile=${inputs.params.pathToDockerFile}",
+           "--destination=${outputs.resources.builtImage.url}",
+           "--context=${inputs.params.pathToContext}",
+           "--target=kfctl_base"]
+    volumeMounts:
+    - name: kaniko-secret
+      mountPath: /secret
+  volumes:
+  - name: kaniko-secret
+    secret:
+      secretName: kaniko-secret
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: deploy-using-kfctl
+spec:
+  inputs:
+    resources:
+    - name: image
+      type: image
+    params:
+    - name: app_dir
+      type: string
+      description: where to create the kf app
+    - name: platform
+      type: string
+      description: gke|azure|minikube
+    - name: useIstio
+      type: string
+      description: true or false
+    - name: skip-init-gcp-project
+      type: string
+      description: true or false
+    - name: disable_usage_report
+      type: string
+      description: true or false
+    - name: version
+      type: string
+      description: repo version
+    - name: configPath
+      type: string
+      description: url for config arg
+    - name: project
+      type: string
+      description: name of project
+    - name: email
+      type: string
+      description: email
+  steps:
+  - name: kfctl-init
+    image: "${inputs.resources.image.url}"
+    command: ["/usr/local/bin/kfctl"]
+    args:
+    - "init"
+    - "--config"
+    - "${inputs.params.configPath}"
+    - "--project"
+    - "${inputs.params.project}"
+    - "--version"
+    - "${inputs.params.version}"
+    - "--skip-init-gcp-project"
+    - "--disable_usage_report"
+    - "${inputs.params.app_dir}"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kaniko-secret.json
+    volumeMounts:
+    - name: kaniko-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
+    imagePullPolicy: Always
+  - name: kfctl-generate
+    image: "${inputs.resources.image.url}"
+    imagePullPolicy: Always
+    workingDir: "${inputs.params.app_dir}"
+    command: ["/usr/local/bin/kfctl"]
+    args:
+    - "generate"
+    - "all"
+    - "--email"
+    - "${inputs.params.email}"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kaniko-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_SECRET
+    volumeMounts:
+    - name: kaniko-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
+  volumes:
+  - name: kaniko-secret
+    secret:
+      secretName: kaniko-secret
+  - name: kubeflow
+    persistentVolumeClaim:
+      claimName: kubeflow-pvc
+---
