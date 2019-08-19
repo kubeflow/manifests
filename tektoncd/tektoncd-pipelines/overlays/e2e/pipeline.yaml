@@ -4,6 +4,39 @@ metadata:
   name: kfctl-build-apply
 spec:
   tasks:
+    - name: kfctl-build-push
+      taskRef:
+        name: build-kfctl-image-from-git-source
+      params:
+        - name: pathToDockerFile
+          value: /workspace/docker-source/Dockerfile
+        - name: pathToContext
+          value: /workspace/docker-source
+      resources:
+        inputs:
+          - name: docker-source
+            resource: source-repo
+        outputs:
+          - name: builtImage
+            resource: web-image
+    - name: kfctl-init-generate-apply
+      taskRef:
+        name: deploy-using-kfctl
+      resources:
+        inputs:
+          - name: image
+            resource: web-image
+            from:
+              - kfctl-build-push
+      params:
+        - name: app_dir
+          value: $(app_dir)
+        - name: project
+          value: $(project)
+        - name: configPath
+          value: $(configPath)
+        - name: zone
+          value: $(zone)
   - name: kfctl-run-e2e-tests
     taskRef:
       name: kfctl-run-e2e-tests
