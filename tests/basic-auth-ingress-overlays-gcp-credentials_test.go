@@ -40,28 +40,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
-patches:
+patchesStrategicMerge:
 - gcp-credentials-patch.yaml`)
-	th.writeF("/manifests/gcp/basic-auth-ingress/base/certificate.yaml", `
-apiVersion: certmanager.k8s.io/v1alpha1
-kind: Certificate
-metadata:
-  name: $(secretName)
-spec:
-  acme:
-    config:
-    - domains:
-      - $(hostname)
-      http01:
-        ingress: $(ingressName)
-  commonName: $(hostname)
-  dnsNames:
-  - $(hostname)
-  issuerRef:
-    kind: ClusterIssuer
-    name: $(issuer)
-  secretName: $(secretName)
-`)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cloud-endpoint.yaml", `
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
@@ -258,6 +238,7 @@ metadata:
     ingress.kubernetes.io/ssl-redirect: "true"
     kubernetes.io/ingress.global-static-ip-name: $(ipName)
     kubernetes.io/tls-acme: "true"
+    networking.gke.io/managed-certificates: gke-certificate
   name: $(ingressName)
 spec:
   rules:
@@ -296,39 +277,6 @@ spec:
   selector:
     app: istioMappingSvc
   type: ClusterIP
-`)
-	th.writeF("/manifests/gcp/basic-auth-ingress/base/job.yaml", `
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: ingress-bootstrap
-spec:
-  template:
-    spec:
-      containers:
-      - command:
-        - /var/ingress-config/ingress_bootstrap.sh
-        env:
-        - name: NAMESPACE
-          value: $(namespace)
-        - name: TLS_SECRET_NAME
-          value: $(secretName)
-        - name: TLS_HOST_NAME
-          value: $(hostname)
-        - name: INGRESS_NAME
-          value: $(ingressName)
-        image: gcr.io/kubeflow-images-public/ingress-setup:latest
-        name: bootstrap
-        volumeMounts:
-        - mountPath: /var/ingress-config/
-          name: ingress-config
-      restartPolicy: OnFailure
-      serviceAccountName: kf-admin
-      volumes:
-      - configMap:
-          defaultMode: 493
-          name: ingress-bootstrap-config
-        name: ingress-config
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/service-account.yaml", `
 apiVersion: v1
@@ -435,6 +383,8 @@ varReference:
   kind: CloudEndpoint
 - path: spec/targetIngress/namespace
   kind: CloudEndpoint
+- path: spec/domains
+  kind: ManagedCertificate
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/params.env", `
 appName=kubeflow
@@ -452,7 +402,6 @@ istioNamespace=istio-system
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- certificate.yaml
 - cloud-endpoint.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
@@ -460,7 +409,6 @@ resources:
 - deployment.yaml
 - ingress.yaml
 - istio-mapping-svc.yaml
-- job.yaml
 - service-account.yaml
 - service.yaml
 - stateful-set.yaml
