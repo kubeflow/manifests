@@ -6,6 +6,7 @@ resources:
 - config-map.yaml
 - deployment.yaml
 - service.yaml
+- virtualservice.yaml
 configMapGenerator:
 - name: dex-authn-parameters
   env: params.env

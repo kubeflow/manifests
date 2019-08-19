@@ -7,6 +7,7 @@ resources:
 - crds.yaml
 - deployment.yaml
 - service.yaml
+- virtualservice.yaml
 configMapGenerator:
 - name: dex-parameters
   env: params.env
