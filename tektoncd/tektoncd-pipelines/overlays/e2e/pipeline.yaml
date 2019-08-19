@@ -1,6 +1,6 @@
 - op: add
   path: /spec/tasks/-
   value:
-    name: kfctl-run-e2e-tests
+    name: kubeflow-run-e2e-test
     taskRef:
-      name: kfctl-run-e2e-tests
+      name: kubeflow-run-e2e-test
