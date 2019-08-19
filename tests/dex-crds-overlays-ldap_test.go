@@ -342,6 +342,30 @@ spec:
   selector:
     app: dex
 `)
+	th.writeF("/manifests/common/dex-auth/dex-crds/base/virtualservice.yaml", `
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dex
+spec:
+  gateways:
+  - kubeflow/kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - port: 5556
+      uri:
+        prefix: /
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: dex.auth.svc.cluster.local
+        port:
+          number: 5556
+
+`)
 	th.writeF("/manifests/common/dex-auth/dex-crds/base/params.yaml", `
 varReference:
 - path: spec/template/spec/volumes/secret/secretName
@@ -372,6 +396,7 @@ resources:
 - crds.yaml
 - deployment.yaml
 - service.yaml
+- virtualservice.yaml
 configMapGenerator:
 - name: dex-parameters
   env: params.env

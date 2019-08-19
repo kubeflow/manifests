@@ -79,6 +79,28 @@ spec:
   selector:
     app: ldap
 `)
+	th.writeF("/manifests/common/dex-auth/dex-ldap/base/virtualservice.yaml", `
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ldap-admin
+spec:
+  gateways:
+  - kubeflow/kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /ldap-admin/
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: ldap-admin.auth.svc.cluster.local
+        port:
+          number: 80
+`)
 	th.writeK("/manifests/common/dex-auth/dex-ldap/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -88,6 +110,7 @@ resources:
 - namespace.yaml
 - deployment.yaml
 - service.yaml
+- virtualservice.yaml
 `)
 }
 

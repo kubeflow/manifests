@@ -190,6 +190,29 @@ spec:
   selector:
     app: dex-authenticator
 `)
+	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/virtualservice.yaml", `
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dex-authenticator
+spec:
+  gateways:
+  - kubeflow/kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - port: 5555
+      uri:
+        prefix: /
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: dex-authenticator.auth.svc.cluster.local
+        port:
+          number: 5555
+`)
 	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/params.yaml", `
 varReference:
 - path: data/config.yaml
@@ -215,6 +238,7 @@ resources:
 - config-map.yaml
 - deployment.yaml
 - service.yaml
+- virtualservice.yaml
 configMapGenerator:
 - name: dex-authn-parameters
   env: params.env

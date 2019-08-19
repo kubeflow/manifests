@@ -1,0 +1,25 @@
+# This config is gated on kiali upgrade to 0.21 from 0.16 in istio 1.1.6:
+# https://github.com/kiali/kiali/issues/1154
+# https://github.com/istio/istio/issues/11131
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dex-authenticator
+spec:
+  gateways:
+  - kubeflow/kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - port: 5555
+      uri:
+        prefix: /
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: dex-authenticator.auth.svc.cluster.local
+        port:
+          number: 5555
