@@ -40,8 +40,7 @@ gen-target-start() {
 
 gen-target-middle() {
   local directory=$1
-
-  for i in $(echo $(cat $directory/kustomization.yaml | grep '^- .*yaml$' | sed 's/^- //') $(cat $directory/kustomization.yaml | grep '  path: ' | sed 's/^.*: \(.*\)$/\1/') params.env secrets.env kustomization.yaml | sed 's/ /\\n/g' | sort | uniq | awk '{gsub(/\\n/,"\n")}1'); do
+  for i in $(echo $(cat $directory/kustomization.yaml | grep '^- .*yaml$' | sed 's/^- //') $(cat $directory/kustomization.yaml | grep '  path: ' | sed 's/^.*: \(.*\)$/\1/') $(cat $directory/kustomization.yaml | sed '1,/^[ \t]*files:/d;/^[^ \t]/,$d' | sed 's/^[ \t]*- //') params.env secrets.env kustomization.yaml | sed 's/ /\\n/g' | sort | uniq | awk '{gsub(/\\n/,"\n")}1'); do
     file=$i
     if [[ -f $directory/$file ]]; then
       case $file in
@@ -56,6 +55,9 @@ gen-target-middle() {
           ;;
         secrets.env)
           gen-target-resource $file $directory
+          ;;
+        *.pem)
+          gen-target-resource $file $directory '-n'
           ;;
         *) ;;
 
@@ -97,11 +99,13 @@ gen-target-kustomization() {
 }
 
 gen-target-resource() {
-  local file=$1 dir=$2 fname
+  local file=$1 dir=$2 echooptions='' fname
   fname=/manifests${dir##*/manifests}/$file
-
-  echo '  th.writeF("'$fname'", `'
-  cat $dir/$file | sed 's/`/U+0060/g'
+  if (( $# == 3 )); then
+    echooptions=$3
+  fi
+  echo $echooptions '  th.writeF("'$fname'", `'
+  cat $dir/$file | sed 's/`/U+0060/g' 
   echo '`)'
 }
 
