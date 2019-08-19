@@ -11,7 +11,56 @@ import (
 	"testing"
 )
 
-func writeKfservingInstallBase(th *KustTestHarness) {
+func writeKfservingInstallOverlaysApplication(th *KustTestHarness) {
+	th.writeF("/manifests/kfserving/kfserving-install/overlays/application/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: "kfserving"
+spec:
+  type: "kfserving"
+  componentKinds:
+    - group: apps/v1
+      kind: StatefulSet
+    - group: v1
+      kind: Service
+    - group: extensions/v1beta1
+      kind: Deployment
+    - group: v1
+      kind: Secret
+    - group: v1
+      kind: ConfigMap
+  version: "v1alpha1"
+  description: "KFServing provides a Kubernetes Custom Resource Definition for serving ML Models on arbitrary frameworks"
+  icons:
+  maintainers:
+    - name: Johnu George
+      email: johnugeo@cisco.com
+  owners:
+    - name: Johnu George
+      email: johnugeo@cisco.com
+  keywords:
+   - "kfserving"
+   - "inference"
+  links:
+    - description: About
+      url: "https://github.com/kubeflow/kfserving"
+`)
+	th.writeK("/manifests/kfserving/kfserving-install/overlays/application", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- application.yaml
+commonLabels:
+  app.kubernetes.io/name: kfserving  
+  app.kubernetes.io/instance: kfserving
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: serving
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.6
+`)
 	th.writeF("/manifests/kfserving/kfserving-install/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -371,14 +420,14 @@ configurations:
 `)
 }
 
-func TestKfservingInstallBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/kfserving/kfserving-install/base")
-	writeKfservingInstallBase(th)
+func TestKfservingInstallOverlaysApplication(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/kfserving/kfserving-install/overlays/application")
+	writeKfservingInstallOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../kfserving/kfserving-install/base"
+	targetPath := "../kfserving/kfserving-install/overlays/application"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
