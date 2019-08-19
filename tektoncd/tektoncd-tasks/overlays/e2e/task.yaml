@@ -4,9 +4,6 @@ metadata:
   name: kubeflow-run-e2e-test
 spec:
   inputs:
-    resources:
-    - name: image
-      type: image
     params:
     - name: app_dir
       type: string
@@ -21,9 +18,9 @@ spec:
       type: string
       description: zone of project
   steps:
-  - name: kfctl-init
+  - name: e2e-test
     image: "${inputs.resources.image.url}"
-    command: ["/usr/local/bin/kfctl"]
+    command: ["/bin/echo"]
     args:
     - "init"
     - "--config"
@@ -40,34 +37,6 @@ spec:
     - name: kubeflow
       mountPath: /kubeflow
     imagePullPolicy: Always
-  - name: kfctl-generate
-    image: "${inputs.resources.image.url}"
-    imagePullPolicy: Always
-    workingDir: "${inputs.params.app_dir}"
-    command: ["/usr/local/bin/kfctl"]
-    args:
-    - "generate"
-    - "all"
-    - "--zone"
-    - "${inputs.params.zone}"
-    env:
-    - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
-    - name: CLIENT_ID
-      valueFrom:
-        secretKeyRef:
-          name: client-secret
-          key: CLIENT_ID
-    - name: CLIENT_SECRET
-      valueFrom:
-        secretKeyRef:
-          name: client-secret
-          key: CLIENT_SECRET
-    volumeMounts:
-    - name: kaniko-secret
-      mountPath: /secret
-    - name: kubeflow
-      mountPath: /kubeflow
   volumes:
   - name: kaniko-secret
     secret:
