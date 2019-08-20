@@ -109,6 +109,28 @@ spec:
         secretKeyRef:
           name: client-secret
           key: CLIENT_SECRET
+  - name: kfctl-apply
+    image: "${inputs.resources.image.url}"
+    imagePullPolicy: Always
+    workingDir: "${inputs.params.app_dir}"
+    command: ["/usr/local/bin/kfctl"]
+    args:
+    - "apply"
+    - "all"
+    - "--verbose"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kaniko-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_SECRET
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret
