@@ -169,6 +169,7 @@ data:
   config: |
     {
     executorImage: $(executorImage),
+    containerRuntimeExecutor: $(containerRuntimeExecutor),
     artifactRepository:
     {
         s3: {
@@ -362,6 +363,7 @@ varReference:
 	th.writeF("/manifests/argo/base/params.env", `
 namespace=
 executorImage=argoproj/argoexec:v2.3.0
+containerRuntimeExecutor=docker
 artifactRepositoryBucket=mlpipeline
 artifactRepositoryKeyPrefix=artifacts
 artifactRepositoryEndpoint=minio-service.kubeflow:9000
@@ -405,6 +407,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.executorImage
+- name: containerRuntimeExecutor
+  objref:
+    kind: ConfigMap
+    name: workflow-controller-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.containerRuntimeExecutor
 - name: artifactRepositoryBucket
   objref:
     kind: ConfigMap

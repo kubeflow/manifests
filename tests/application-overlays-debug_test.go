@@ -102,7 +102,13 @@ metadata:
   name: stateful-set
 spec:
   serviceName: service
+  selector:
+    matchLabels:
+      app: application-controller
   template:
+    metadata:
+      labels:
+        app: application-controller
     spec:
       containers:
       - name: manager
