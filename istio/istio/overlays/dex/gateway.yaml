@@ -1,0 +1,24 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: kubeflow-gateway
+spec:
+  servers:
+  - hosts:
+    - '*'
+    port:
+      name: http-dex-authn
+      number: 5555
+      protocol: HTTP
+  - hosts:
+    - '*'
+    port:
+      name: http-dex
+      number: 5556
+      protocol: HTTP
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
