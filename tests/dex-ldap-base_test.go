@@ -12,13 +12,13 @@ import (
 )
 
 func writeDexLdapBase(th *KustTestHarness) {
-	th.writeF("/manifests/common/dex-auth/dex-ldap/base/namespace.yaml", `
+	th.writeF("/manifests/dex-auth/dex-ldap/base/namespace.yaml", `
 apiVersion: v1
 kind: Namespace
 metadata:
   name: auth
 `)
-	th.writeF("/manifests/common/dex-auth/dex-ldap/base/deployment.yaml", `
+	th.writeF("/manifests/dex-auth/dex-ldap/base/deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -46,7 +46,7 @@ spec:
         - name: PHPLDAPADMIN_LDAP_HOSTS
           value: localhost
 `)
-	th.writeF("/manifests/common/dex-auth/dex-ldap/base/service.yaml", `
+	th.writeF("/manifests/dex-auth/dex-ldap/base/service.yaml", `
 ---
 
 apiVersion: v1
@@ -79,7 +79,7 @@ spec:
   selector:
     app: ldap
 `)
-	th.writeK("/manifests/common/dex-auth/dex-ldap/base", `
+	th.writeK("/manifests/dex-auth/dex-ldap/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: auth
@@ -92,13 +92,13 @@ resources:
 }
 
 func TestDexLdapBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/common/dex-auth/dex-ldap/base")
+	th := NewKustTestHarness(t, "/manifests/dex-auth/dex-ldap/base")
 	writeDexLdapBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../common/dex-auth/dex-ldap/base"
+	targetPath := "../dex-auth/dex-ldap/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
