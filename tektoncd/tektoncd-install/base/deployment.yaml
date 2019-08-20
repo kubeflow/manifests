@@ -35,9 +35,9 @@ spec:
         - $(registry)/$(imagedigestexporter)
         - -pr-image
         - $(registry)/$(pullrequest-init)
-        - -build-gcs-fetcher
+        - -build-gcs-fetcher-image
         - $(registry)/$(gcs-fetcher)
-        - -build-gcs-uploader
+        - -build-gcs-uploader-image
         - $(registry)/$(gcs-uploader)
         env:
         - name: SYSTEM_NAMESPACE
