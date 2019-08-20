@@ -4,6 +4,9 @@ metadata:
   name: kubeflow-run-e2e-test
 spec:
   inputs:
+    resources:
+    - name: image
+      type: image
     params:
     - name: app_dir
       type: string
