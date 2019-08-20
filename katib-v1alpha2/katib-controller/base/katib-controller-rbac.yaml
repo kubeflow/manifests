@@ -46,8 +46,10 @@ rules:
   resources:
   - experiments
   - experiments/status
+  - experiments/finalizers
   - trials
   - trials/status
+  - trials/finalizers
   verbs:
   - "*"
 - apiGroups:
