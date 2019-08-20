@@ -2,10 +2,12 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
-patchesJson6902:
-- target:
-    group: tekton.dev
-    version: v1alpha1
-    kind: Pipeline
-    name: kfctl-build-apply
-  path: pipeline.yaml
+#patchesJson6902:
+#- target:
+#    group: tekton.dev
+#    version: v1alpha1
+#    kind: Pipeline
+#    name: kfctl-build-apply
+#  path: pipeline.yaml
+patchesStrategicMerge:
+- pipeline.yaml
