@@ -4,12 +4,12 @@
     name: kubeflow-run-e2e-test
     taskRef:
       name: kubeflow-run-e2e-test
-      params:
-        - name: app_dir
-          value: $(app_dir)
-        - name: project
-          value: $(project)
-        - name: configPath
-          value: $(configPath)
-        - name: zone
-          value: $(zone)
+    params:
+    - name: app_dir
+      value: $(app_dir)
+    - name: project
+      value: $(project)
+    - name: configPath
+      value: $(configPath)
+    - name: zone
+      value: $(zone)
