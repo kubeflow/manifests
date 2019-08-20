@@ -12,13 +12,13 @@ import (
 )
 
 func writeDexAuthenticatorBase(th *KustTestHarness) {
-	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/namespace.yaml", `
+	th.writeF("/manifests/dex-auth/dex-authenticator/base/namespace.yaml", `
 apiVersion: v1
 kind: Namespace
 metadata:
   name: auth
 `)
-	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/config-map.yaml", `
+	th.writeF("/manifests/dex-auth/dex-authenticator/base/config-map.yaml", `
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -113,7 +113,7 @@ data:
     # Enable more debug
     debug: false
 `)
-	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/deployment.yaml", `
+	th.writeF("/manifests/dex-auth/dex-authenticator/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -172,7 +172,7 @@ spec:
         configMap:
           name: k8s-ca
 `)
-	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/service.yaml", `
+	th.writeF("/manifests/dex-auth/dex-authenticator/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -190,12 +190,12 @@ spec:
   selector:
     app: dex-authenticator
 `)
-	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/params.yaml", `
+	th.writeF("/manifests/dex-auth/dex-authenticator/base/params.yaml", `
 varReference:
 - path: data/config.yaml
   kind: ConfigMap
 `)
-	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/params.env", `
+	th.writeF("/manifests/dex-auth/dex-authenticator/base/params.env", `
 # Dex Server Parameters (some params are shared with client)
 # Set issuer to https if tls is enabled
 issuer=http://dex.example.com:32000
@@ -206,7 +206,7 @@ client_redirect_uri=http://login.example.org:5555/callback/onprem-cluster
 k8s_master_uri=https://k8s.example.com:443
 client_listen_addr=http://127.0.0.1:5555 # Set to HTTPS if TLS is configured
 `)
-	th.writeK("/manifests/common/dex-auth/dex-authenticator/base", `
+	th.writeK("/manifests/dex-auth/dex-authenticator/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: auth
@@ -274,13 +274,13 @@ configurations:
 }
 
 func TestDexAuthenticatorBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/common/dex-auth/dex-authenticator/base")
+	th := NewKustTestHarness(t, "/manifests/dex-auth/dex-authenticator/base")
 	writeDexAuthenticatorBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../common/dex-auth/dex-authenticator/base"
+	targetPath := "../dex-auth/dex-authenticator/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
