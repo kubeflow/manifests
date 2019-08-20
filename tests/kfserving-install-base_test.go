@@ -206,13 +206,13 @@ data:
             "image": "tensorflow/serving"
         },
         "sklearn": {
-            "image": "gcr.io/kfserving/sklearnserver"
+            "image": "$(registry)/sklearnserver"
         },
         "pytorch": {
-            "image": "gcr.io/kfserving/pytorchserver"
+            "image": "$(registry)/pytorchserver"
         },
         "xgboost": {
-            "image": "gcr.io/kfserving/xgbserver"
+            "image": "$(registry)/xgbserver"
         },
         "tensorrt": {
             "image": "nvcr.io/nvidia/tensorrtserver"
@@ -270,7 +270,7 @@ spec:
               fieldPath: metadata.namespace
         - name: SECRET_NAME
           value: kfserving-webhook-server-secret
-        image: gcr.io/kfserving/kfserving-controller:v0.1.1
+        image: $(registry)/kfserving-controller:v0.1.1
         imagePullPolicy: Always
         name: manager
         ports:
@@ -332,6 +332,16 @@ spec:
     controller-tools.k8s.io: "1.0"
 ---
 `)
+	th.writeF("/manifests/kfserving/kfserving-install/base/params.yaml", `
+varReference:
+- path: spec/template/spec/containers/image
+  kind: StatefulSet
+- path: data/frameworks
+  kind: ConfigMap
+`)
+	th.writeF("/manifests/kfserving/kfserving-install/base/params.env", `
+registry=gcr.io/kfserving
+`)
 	th.writeK("/manifests/kfserving/kfserving-install/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -345,6 +355,19 @@ resources:
 - service.yaml
 commonLabels:
   kustomize.component: kfserving
+configMapGenerator:
+  - name: kfserving-parameters
+    env: params.env
+vars:
+  - name: registry
+    objref:
+      kind: ConfigMap
+      name: kfserving-parameters
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.registry
+configurations:
+- params.yaml
 `)
 }
 

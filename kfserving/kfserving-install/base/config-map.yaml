@@ -16,13 +16,13 @@ data:
             "image": "tensorflow/serving"
         },
         "sklearn": {
-            "image": "gcr.io/kfserving/sklearnserver"
+            "image": "$(registry)/sklearnserver"
         },
         "pytorch": {
-            "image": "gcr.io/kfserving/pytorchserver"
+            "image": "$(registry)/pytorchserver"
         },
         "xgboost": {
-            "image": "gcr.io/kfserving/xgbserver"
+            "image": "$(registry)/xgbserver"
         },
         "tensorrt": {
             "image": "nvcr.io/nvidia/tensorrtserver"
