@@ -1,27 +1,9 @@
-#- op: add
-#  path: /spec/tasks/-
-#  value:
-#    name: kubeflow-run-e2e-test
-#    taskRef:
-#      name: kubeflow-run-e2e-test
-#      params:
-#        - name: app_dir
-#          value: $(app_dir)
-#        - name: project
-#          value: $(project)
-#        - name: configPath
-#          value: $(configPath)
-#        - name: zone
-#          value: $(zone)
-apiVersion: tekton.dev/v1alpha1
-kind: Pipeline
-metadata:
-  name: kfctl-build-apply
-spec:
-  tasks:
-    - name: kubeflow-run-e2e-test
-      taskRef:
-        name: kubeflow-run-e2e-test
+- op: add
+  path: /spec/tasks/-
+  value:
+    name: kubeflow-run-e2e-test
+    taskRef:
+      name: kubeflow-run-e2e-test
       params:
       - name: app_dir
         value: $(app_dir)
