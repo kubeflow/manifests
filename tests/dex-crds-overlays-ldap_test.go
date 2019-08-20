@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func writeDexCrdsOverlaysLDAP(th *KustTestHarness) {
+func writeDexCrdsOverlaysLdap(th *KustTestHarness) {
 	th.writeF("/manifests/common/dex-auth/dex-crds/overlays/ldap/config-map.yaml", `
 ---
 apiVersion: v1
@@ -69,13 +69,13 @@ data:
           # server provides access for anonymous auth.
           # Please note that if the bind password contains a '$', it has to be saved in an
           # environment variable which should be given as the value to 'bindPW'.
-          bindDN: cn=admin,dc=example,dc=org
-          bindPW: admin
+          bindDN: $(ldap_bind_dn)
+          bindPW: $(ldap_bind_pw)
           # User search maps a username and password entered by a user to a LDAP entry.
           userSearch:
             # BaseDN to start the search from. It will translate to the query
             # "(&(objectClass=person)(uid=<username>))".
-            baseDN: ou=People,dc=example,dc=org
+            baseDN: $(ldap_user_base_dn)
             # Optional filter to apply when searching the directory.
             filter: "(objectClass=posixAccount)"
             # username attribute used for comparing user entries. This will be translated
@@ -93,7 +93,7 @@ data:
           groupSearch:
             # BaseDN to start the search from. It will translate to the query
             # "(&(objectClass=group)(member=<user uid>))".
-            baseDN: ou=Groups,dc=example,dc=org
+            baseDN: $(ldap_group_base_dn)
             # Optional filter to apply when searching the directory.
             filter: "(objectClass=posixGroup)"
             # Following two fields are used to match a user to a group. It adds an additional
@@ -112,7 +112,6 @@ data:
       secret: $(application_secret)
 `)
 	th.writeF("/manifests/common/dex-auth/dex-crds/overlays/ldap/deployment.yaml", `
----
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -235,11 +234,10 @@ data:
       skipApprovalScreen: true
     enablePasswordDB: true
     staticPasswords:
-    - email: "admin@example.com"
-      # bcrypt hash of the string "password"
-      hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"
-      username: "admin"
-      userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"
+    - email: $(static_email)
+      hash: $(static_password_hash)
+      username: $(static_username)
+      userID: $(static_user_id)
     staticClients:
     - id: $(client_id)
       redirectURIs: $(oidc_redirect_uris)
@@ -446,9 +444,9 @@ configurations:
 `)
 }
 
-func TestDexCrdsOverlaysLDAP(t *testing.T) {
+func TestDexCrdsOverlaysLdap(t *testing.T) {
 	th := NewKustTestHarness(t, "/manifests/common/dex-auth/dex-crds/overlays/ldap")
-	writeDexCrdsOverlaysLDAP(th)
+	writeDexCrdsOverlaysLdap(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
