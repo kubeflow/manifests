@@ -12,20 +12,6 @@ import (
 )
 
 func writeTektoncdPipelinesBase(th *KustTestHarness) {
-	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/cluster-role-binding.yaml", `
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRoleBinding
-metadata:
-  name: tekton-pipelines-controller-admin
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: tekton-pipelines-admin
-subjects:
-- kind: ServiceAccount
-  name: tekton-pipelines
-  namespace: $(namespace)
-`)
 	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline-resource.yaml", `
 ---
 apiVersion: tekton.dev/v1alpha1
@@ -134,7 +120,6 @@ configPath=https://raw.githubusercontent.com/kkasravi/kfctl/tektoncd_pipelines/c
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- cluster-role-binding.yaml
 - pipeline-resource.yaml
 - pipeline.yaml
 - pipeline-run.yaml
