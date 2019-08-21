@@ -43,54 +43,44 @@ metadata:
   name: kfctl-build-apply
 spec:
   resources:
-    - name: source-repo
-      type: git
-    - name: web-image
-      type: image
+  - name: source-repo
+    type: git
+  - name: web-image
+    type: image
   tasks:
-    - name: kfctl-build-push
-      taskRef:
-        name: build-kfctl-image-from-git-source
-      params:
-        - name: pathToDockerFile
-          value: /workspace/docker-source/Dockerfile
-        - name: pathToContext
-          value: /workspace/docker-source
-      resources:
-        inputs:
-          - name: docker-source
-            resource: source-repo
-        outputs:
-          - name: builtImage
-            resource: web-image
-    - name: kfctl-init-generate-apply
-      taskRef:
-        name: deploy-using-kfctl
-      resources:
-        inputs:
-          - name: image
-            resource: web-image
-            from:
-              - kfctl-build-push
-      params:
-        - name: app_dir
-          value: /kubeflow/dls-kf
-        - name: platform
-          value: gke
-        - name: useIstio
-          value: "true"
-        - name: version
-          value: master
-        - name: project
-          value: $(project)
-        - name: email
-          value: $(email)
-        - name: configPath
-          value: $(config)
-        - name: disable_usage_report
-          value: "false"
-        - name: skip-init-gcp-project
-          value: "false"
+  - name: kfctl-build-push
+    taskRef:
+      name: build-kfctl-image-from-git-source
+    params:
+    - name: pathToDockerFile
+      value: /workspace/docker-source/Dockerfile
+    - name: pathToContext
+      value: /workspace/docker-source
+    resources:
+      inputs:
+      - name: docker-source
+        resource: source-repo
+      outputs:
+      - name: builtImage
+        resource: web-image
+  - name: kfctl-init-generate-apply
+    taskRef:
+      name: deploy-using-kfctl
+    resources:
+      inputs:
+      - name: image
+        resource: web-image
+        from:
+        - kfctl-build-push
+    params:
+    - name: app_dir
+      value: $(app_dir)
+    - name: project
+      value: $(project)
+    - name: configPath
+      value: $(configPath)
+    - name: zone
+      value: $(zone)
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline-run.yaml", `
 apiVersion: tekton.dev/v1alpha1
@@ -118,9 +108,10 @@ varReference:
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/params.env", `
 project=constant-cubist-173123
-email=kam.d.kasravi@intel.com
 pullrequest=refs/pull/10/head
-config=https://raw.githubusercontent.com/kubeflow/kubeflow/master/bootstrap/config/kfctl_gcp_iap.yaml
+app_dir=/kubeflow/kubeflow-e2e
+zone=us-west1-a
+configPath=https://raw.githubusercontent.com/kkasravi/kfctl/tektoncd_pipelines/config/kfctl_e2e.yaml
 `)
 	th.writeK("/manifests/tektoncd/tektoncd-pipelines/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -141,20 +132,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.project
-- name: email
+- name: configPath
   objref:
     kind: ConfigMap
     name: kfctl-pipelines-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.email
-- name: config
-  objref:
-    kind: ConfigMap
-    name: kfctl-pipelines-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.config
+    fieldpath: data.configPath
 - name: pullrequest
   objref:
     kind: ConfigMap
@@ -162,6 +146,20 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.pullrequest
+- name: app_dir
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.app_dir
+- name: zone
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.zone
 configurations:
 - params.yaml
 `)
