@@ -4,5 +4,6 @@ resources:
 - persistent-volume-claim.yaml
 - secret.yaml
 - service-account.yaml
+- cluster-role-binding.yaml
 - task.yaml
 namespace: tekton-pipelines
