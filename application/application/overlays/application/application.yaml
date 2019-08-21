@@ -11,9 +11,9 @@ spec:
   componentKinds:
     - group: app.k8s.io
       kind: Application
-  descriptor: 
+  descriptor:
     type: kubeflow
-    version: v1beta1
+    version: v0.6.2
     description: application that aggregates all kubeflow applications
     maintainers:
     - name: Jeremy Lewi
