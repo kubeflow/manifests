@@ -20,10 +20,18 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-cd tests
-
 # the tests depend on kustomize
 export PATH=${GOPATH}/bin:/usr/local/go/bin:${PATH}
 export GO111MODULE=on
 go get sigs.k8s.io/kustomize
-make test
+
+# Generate Go files on upstream HEAD 
+cd /src/kubeflow/manifests/tests
+make generate
+cd -
+if diff /src/kubeflow/manifests/tests/*.go tests/*.go ; then
+    cd tests
+    make test
+else
+    exit 1
+fi
