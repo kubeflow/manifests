@@ -24,6 +24,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: tekton-pipelines-controller
+  namespace: $(namespace)
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-install/base/cluster-role.yaml", `
 ---
@@ -448,6 +449,8 @@ spec:
 varReference:
 - path: spec/template/spec/containers/image
   kind: Deployment
+- path: subjects/namespace
+  kind: ClusterRoleBinding
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-install/base/params.env", `
 namespace=tekton-pipelines
