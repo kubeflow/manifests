@@ -33,8 +33,7 @@ spec:
       volumes:
       - name: sa-key
         secret:
-          secretName: admin-gcp-sa
-`)
+          secretName: admin-gcp-sa`)
 	th.writeK("/manifests/gcp/cloud-endpoints/overlays/gcp-credentials", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
