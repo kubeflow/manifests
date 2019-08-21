@@ -9,3 +9,5 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: tekton-pipelines-controller
+- kind: ServiceAccount
+  name: tekton-pipelines
