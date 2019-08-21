@@ -8,4 +8,4 @@ roleRef:
   name: tekton-pipelines-admin
 subjects:
 - kind: ServiceAccount
-  name: tekton-pipelines-controller
+  name: tekton-pipelines
