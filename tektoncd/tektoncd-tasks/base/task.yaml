@@ -109,6 +109,11 @@ spec:
         secretKeyRef:
           name: client-secret
           key: CLIENT_SECRET
+    volumeMounts:
+    - name: kaniko-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
   - name: kfctl-apply
     image: "${inputs.resources.image.url}"
     imagePullPolicy: Always
