@@ -1,27 +1,7 @@
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: kubeflow-run-e2e-test
-spec:
-  inputs:
-    resources:
-    - name: image
-      type: image
-    params:
-    - name: app_dir
-      type: string
-      description: where to create the kf app
-    - name: configPath
-      type: string
-      description: url for config arg
-    - name: project
-      type: string
-      description: name of project
-    - name: zone
-      type: string
-      description: zone of project
-  steps:
-  - name: e2e-test
+- op: add
+  path: /spec/steps/-
+  value:
+    name: kfctl-e2e
     image: "${inputs.resources.image.url}"
     command: ["/bin/echo"]
     args:
@@ -40,10 +20,3 @@ spec:
     - name: kubeflow
       mountPath: /kubeflow
     imagePullPolicy: Always
-  volumes:
-  - name: kaniko-secret
-    secret:
-      secretName: kaniko-secret
-  - name: kubeflow
-    persistentVolumeClaim:
-      claimName: kubeflow-pvc

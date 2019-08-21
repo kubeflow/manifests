@@ -119,30 +119,15 @@ spec:
     - name: app_dir
       type: string
       description: where to create the kf app
-    - name: platform
-      type: string
-      description: gke|azure|minikube
-    - name: useIstio
-      type: string
-      description: true or false
-    - name: skip-init-gcp-project
-      type: string
-      description: true or false
-    - name: disable_usage_report
-      type: string
-      description: true or false
-    - name: version
-      type: string
-      description: repo version
     - name: configPath
       type: string
       description: url for config arg
     - name: project
       type: string
       description: name of project
-    - name: email
+    - name: zone
       type: string
-      description: email
+      description: zone of project
   steps:
   - name: kfctl-init
     image: "${inputs.resources.image.url}"
@@ -153,10 +138,6 @@ spec:
     - "${inputs.params.configPath}"
     - "--project"
     - "${inputs.params.project}"
-    - "--version"
-    - "${inputs.params.version}"
-    - "--skip-init-gcp-project"
-    - "--disable_usage_report"
     - "${inputs.params.app_dir}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -175,8 +156,35 @@ spec:
     args:
     - "generate"
     - "all"
-    - "--email"
-    - "${inputs.params.email}"
+    - "--zone"
+    - "${inputs.params.zone}"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kaniko-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_SECRET
+    volumeMounts:
+    - name: kaniko-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
+  - name: kfctl-apply
+    image: "${inputs.resources.image.url}"
+    imagePullPolicy: Always
+    workingDir: "${inputs.params.app_dir}"
+    command: ["/usr/local/bin/kfctl"]
+    args:
+    - "apply"
+    - "all"
+    - "--verbose"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
