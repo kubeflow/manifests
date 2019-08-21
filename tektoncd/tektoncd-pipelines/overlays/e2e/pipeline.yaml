@@ -4,6 +4,12 @@
     name: kubeflow-run-e2e-test
     taskRef:
       name: kubeflow-run-e2e-test
+    resources:
+      inputs:
+      - name: image
+        resource: web-image
+        from:
+        - kfctl-build-push
     params:
     - name: app_dir
       value: $(app_dir)
