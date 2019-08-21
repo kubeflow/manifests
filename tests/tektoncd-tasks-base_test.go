@@ -63,7 +63,7 @@ imagePullSecrets:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: tekton-pipelines-controller-admin
+  name: tekton-pipelines-admin
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
