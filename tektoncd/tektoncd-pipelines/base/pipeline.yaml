@@ -24,21 +24,21 @@ spec:
       outputs:
       - name: builtImage
         resource: web-image
-    - name: kfctl-init-generate-apply
-      taskRef:
-        name: deploy-using-kfctl
-      resources:
-        inputs:
-        - name: image
-          resource: web-image
-          from:
-          - kfctl-build-push
-      params:
-      - name: app_dir
-        value: $(app_dir)
-      - name: project
-        value: $(project)
-      - name: configPath
-        value: $(configPath)
-      - name: zone
-        value: $(zone)
+  - name: kfctl-init-generate-apply
+    taskRef:
+      name: deploy-using-kfctl
+    resources:
+      inputs:
+      - name: image
+        resource: web-image
+        from:
+        - kfctl-build-push
+    params:
+    - name: app_dir
+      value: $(app_dir)
+    - name: project
+      value: $(project)
+    - name: configPath
+      value: $(configPath)
+    - name: zone
+      value: $(zone)
