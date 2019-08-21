@@ -59,6 +59,20 @@ metadata:
 imagePullSecrets:
 - name: gcr-secret
 `)
+	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/cluster-role-binding.yaml", `
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: tekton-pipelines-controller-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-pipelines-admin
+subjects:
+- kind: ServiceAccount
+  name: tekton-pipelines
+  namespace: $(namespace)
+`)
 	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/task.yaml", `
 ---
 apiVersion: tekton.dev/v1alpha1
@@ -219,6 +233,7 @@ resources:
 - persistent-volume-claim.yaml
 - secret.yaml
 - service-account.yaml
+- cluster-role-binding.yaml
 - task.yaml
 namespace: tekton-pipelines
 `)
