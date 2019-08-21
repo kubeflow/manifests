@@ -123,8 +123,8 @@ varReference:
   kind: ClusterRoleBinding
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/params.env", `
-project=constant-cubist-173123
 namespace=tekton-pipelines
+project=constant-cubist-173123
 pullrequest=refs/pull/10/head
 app_dir=/kubeflow/kubeflow-e2e
 zone=us-west1-a
