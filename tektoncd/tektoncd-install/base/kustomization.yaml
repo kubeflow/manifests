@@ -12,14 +12,9 @@ namespace: tekton-pipelines
 configMapGenerator:
 - name: tektoncd-parameters
   env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
 vars:
-- name: namespace
-  objref:
-    kind: ConfigMap
-    name: tektoncd-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.namespace
 - name: clusterDomain
   objref:
     kind: ConfigMap
