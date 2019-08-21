@@ -71,7 +71,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: tekton-pipelines
-  namespace: $(namespace)
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/task.yaml", `
 ---
@@ -226,14 +225,6 @@ spec:
       claimName: kubeflow-pvc
 ---
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/params.yaml", `
-varReference:
-- path: subjects/namespace
-  kind: ClusterRoleBinding
-`)
-	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/params.env", `
-namespace=tekton-pipelines
-`)
 	th.writeK("/manifests/tektoncd/tektoncd-tasks/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -244,19 +235,6 @@ resources:
 - cluster-role-binding.yaml
 - task.yaml
 namespace: tekton-pipelines
-configMapGenerator:
-- name: kfctl-tasks-parameters
-  env: params.env
-vars:
-- name: namespace
-  objref:
-    kind: ConfigMap
-    name: kfctl-tasks-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.namespace
-configurations:
-- params.yaml
 `)
 }
 

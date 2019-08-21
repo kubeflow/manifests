@@ -226,7 +226,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: tekton-pipelines-controller
-  namespace: $(namespace)
 `)
   th.writeF("/manifeststektoncd/tektoncd-install/base/cluster-role.yaml", `
 ---
@@ -657,11 +656,8 @@ spec:
 varReference:
 - path: spec/template/spec/containers/image
   kind: Deployment
-- path: subjects/namespace
-  kind: ClusterRoleBinding
 `)
   th.writeF("/manifeststektoncd/tektoncd-install/base/params.env", `
-namespace=tekton-pipelines
 clusterDomain=cluster.local
 project=constant-cubist-173123
 registry=gcr.io/tekton-releases
@@ -699,14 +695,9 @@ namespace: tekton-pipelines
 configMapGenerator:
 - name: tektoncd-parameters
   env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
 vars:
-- name: namespace
-  objref:
-    kind: ConfigMap
-    name: tektoncd-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.namespace
 - name: clusterDomain
   objref:
     kind: ConfigMap
