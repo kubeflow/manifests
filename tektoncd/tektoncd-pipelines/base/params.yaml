@@ -3,3 +3,5 @@ varReference:
   kind: Pipeline
 - path: spec/params/value
   kind: PipelineResource
+- path: subjects/namespace
+  kind: ClusterRoleBinding
