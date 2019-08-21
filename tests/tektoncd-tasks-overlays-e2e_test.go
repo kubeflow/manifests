@@ -11,58 +11,43 @@ import (
 	"testing"
 )
 
-func writeTektoncdTasksOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/tektoncd/tektoncd-tasks/overlays/application/application.yaml", `
-apiVersion: app.k8s.io/v1beta1
-kind: Application
-metadata:
-  name: tektoncd
-spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: 
-      app.kubernetes.io/instance: tektoncd
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: tektoncd
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
-  componentKinds:
-  - group: v1
-    kind: ConfigMap
-  - group: v1
-    kind: Secret
-  - group: tekton.dev/v1alpha1
-    kind: PipelineResource
-  - group: tekton.dev/v1alpha1
-    kind: Task
-  - group: tekton.dev/v1alpha1
-    kind: TaskRun
-  descriptor:
-    type: tekton
-    version: v1beta1
-    description: Launches a build-and-push
-    maintainers:
-    owners:
-    keywords:
-    links:
-    - description: About
-      url: 
-  addOwnerRef: true
+func writeTektoncdTasksOverlaysE2e(th *KustTestHarness) {
+	th.writeF("/manifests/tektoncd/tektoncd-tasks/overlays/e2e/task.yaml", `
+- op: add
+  path: /spec/steps/-
+  value:
+    name: kfctl-e2e
+    image: "${inputs.resources.image.url}"
+    command: ["/bin/echo"]
+    args:
+    - "init"
+    - "--config"
+    - "${inputs.params.configPath}"
+    - "--project"
+    - "${inputs.params.project}"
+    - "${inputs.params.app_dir}"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kaniko-secret.json
+    volumeMounts:
+    - name: kaniko-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
+    imagePullPolicy: Always
 `)
-	th.writeK("/manifests/tektoncd/tektoncd-tasks/overlays/application", `
+	th.writeK("/manifests/tektoncd/tektoncd-tasks/overlays/e2e", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
-resources:
-- application.yaml
-commonLabels:
-  app.kubernetes.io/name: centraldashboard
-  app.kubernetes.io/instance: centraldashboard
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: centraldashboard
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
+patchesJson6902:
+- target:
+    group: tekton.dev
+    version: v1alpha1
+    kind: Task
+    name: deploy-using-kfctl
+  path: task.yaml
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/persistent-volume-claim.yaml", `
 kind: PersistentVolumeClaim
@@ -276,14 +261,14 @@ namespace: tekton-pipelines
 `)
 }
 
-func TestTektoncdTasksOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/tektoncd/tektoncd-tasks/overlays/application")
-	writeTektoncdTasksOverlaysApplication(th)
+func TestTektoncdTasksOverlaysE2e(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/tektoncd/tektoncd-tasks/overlays/e2e")
+	writeTektoncdTasksOverlaysE2e(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../tektoncd/tektoncd-tasks/overlays/application"
+	targetPath := "../tektoncd/tektoncd-tasks/overlays/e2e"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

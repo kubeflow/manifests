@@ -33,8 +33,10 @@ test:
 clean:
 	@rm -f $$(ls *_test.go | egrep -v 'kusttestharness_test.go|go.mod|go.sum')
 
+# not used 
 run-unittest-plugin:
 	cd .. && XDG_CONFIG_HOME=$$(pwd)/plugins kustomize build profiles/overlays/test --enable_alpha_plugins
 
+# not used
 run-application-plugin:
 	cd .. && XDG_CONFIG_HOME=$$(pwd)/plugins kustomize build jupyter/jupyter-web-app/overlays/application --enable_alpha_plugins
