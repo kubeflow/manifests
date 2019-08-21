@@ -24,6 +24,8 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: tekton-pipelines-controller
+- kind: ServiceAccount
+  name: tekton-pipelines
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-install/base/cluster-role.yaml", `
 ---
