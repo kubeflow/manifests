@@ -10,6 +10,13 @@ configMapGenerator:
 - name: kfctl-pipelines-parameters
   env: params.env
 vars:
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 - name: project
   objref:
     kind: ConfigMap

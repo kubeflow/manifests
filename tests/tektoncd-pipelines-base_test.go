@@ -24,6 +24,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: tekton-pipelines
+  namespace: $(namespace)
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline-resource.yaml", `
 ---
@@ -118,9 +119,12 @@ varReference:
   kind: Pipeline
 - path: spec/params/value
   kind: PipelineResource
+- path: subjects/namespace
+  kind: ClusterRoleBinding
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/params.env", `
 project=constant-cubist-173123
+namespace=tekton-pipelines
 pullrequest=refs/pull/10/head
 app_dir=/kubeflow/kubeflow-e2e
 zone=us-west1-a
@@ -139,6 +143,13 @@ configMapGenerator:
 - name: kfctl-pipelines-parameters
   env: params.env
 vars:
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 - name: project
   objref:
     kind: ConfigMap
