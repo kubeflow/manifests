@@ -20,7 +20,7 @@ metadata:
   name: $(skylake01a)
 status:
   capacity:
-    "intel.com/skylake": "2"
+    "intel.com~1skylake": "2"
 ---
 apiVersion: v1
 kind: Node
@@ -28,7 +28,7 @@ metadata:
   name: $(skylake02a)
 status:
   capacity:
-    "intel.com/skylake": "2"
+    "intel.com~1skylake": "2"
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/overlays/skylake/deployment.yaml", `
 apiVersion: extensions/v1beta1
