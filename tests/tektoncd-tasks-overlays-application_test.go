@@ -31,12 +31,16 @@ spec:
     kind: ConfigMap
   - group: v1
     kind: Secret
+  - group: v1
+    kind: ServiceAccount
   - group: tekton.dev/v1alpha1
     kind: PipelineResource
   - group: tekton.dev/v1alpha1
     kind: Task
   - group: tekton.dev/v1alpha1
-    kind: TaskRun
+    kind: Pipeline
+  - group: tekton.dev/v1alpha1
+    kind: PipelineRun
   descriptor:
     type: tekton
     version: v1beta1
@@ -129,7 +133,7 @@ subjects:
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: build-kfctl-image-from-git-source
+  name: kfctl-build-push
 spec:
   inputs:
     resources:
@@ -174,7 +178,7 @@ spec:
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: deploy-using-kfctl
+  name: kfctl-init-generate-apply
 spec:
   inputs:
     resources:

@@ -50,7 +50,7 @@ spec:
   tasks:
   - name: kfctl-build-push
     taskRef:
-      name: build-kfctl-image-from-git-source
+      name: kfctl-build-push
     params:
     - name: pathToDockerFile
       value: /workspace/docker-source/Dockerfile
@@ -65,7 +65,7 @@ spec:
         resource: web-image
   - name: kfctl-init-generate-apply
     taskRef:
-      name: deploy-using-kfctl
+      name: kfctl-init-generate-apply
     resources:
       inputs:
       - name: image
