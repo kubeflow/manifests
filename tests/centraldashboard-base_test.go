@@ -76,6 +76,8 @@ spec:
           value: $(userid-header)
         - name: USERID_PREFIX
           value: $(userid-prefix)
+        - name: PROFILES_KFAM_SERVICE_HOST
+          value: profiles-kfam.kubeflow
       serviceAccountName: centraldashboard
 `)
 	th.writeF("/manifests/common/centraldashboard/base/role-binding.yaml", `
