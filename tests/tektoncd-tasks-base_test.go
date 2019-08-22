@@ -129,6 +129,9 @@ spec:
     - name: image
       type: image
     params:
+    - name: namespace
+      type: string
+      description: the namespace to deploy kf 
     - name: app_dir
       type: string
       description: where to create the kf app
@@ -151,6 +154,8 @@ spec:
     - "${inputs.params.configPath}"
     - "--project"
     - "${inputs.params.project}"
+    - "--namespace"
+    - "${inputs.params.namespace}"
     - "${inputs.params.app_dir}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
