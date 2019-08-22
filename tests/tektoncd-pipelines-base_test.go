@@ -73,6 +73,8 @@ spec:
         from:
         - kfctl-build-push
     params:
+    - name: namespace
+      value: $(namespace)
     - name: app_dir
       value: $(app_dir)
     - name: project
@@ -107,11 +109,12 @@ varReference:
   kind: PipelineResource
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/params.env", `
+namespace=kubeflow
 project=constant-cubist-173123
 pullrequest=refs/pull/10/head
 app_dir=/kubeflow/kubeflow-e2e
 zone=us-west1-a
-configPath=https://raw.githubusercontent.com/kkasravi/kfctl/tektoncd_pipelines/config/kfctl_e2e.yaml
+configPath=https://raw.githubusercontent.com/kubeflow/kubeflow/master/bootstrap/config/kfctl_gcp_iap.yaml
 `)
 	th.writeK("/manifests/tektoncd/tektoncd-pipelines/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -125,6 +128,13 @@ configMapGenerator:
 - name: kfctl-pipelines-parameters
   env: params.env
 vars:
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 - name: project
   objref:
     kind: ConfigMap
