@@ -173,7 +173,7 @@ spec:
     command: ["/usr/local/bin/kfctl"]
     args:
     - "generate"
-    - "all"
+    - "k8s"
     - "--zone"
     - "${inputs.params.zone}"
     env:
@@ -201,7 +201,7 @@ spec:
     command: ["/usr/local/bin/kfctl"]
     args:
     - "apply"
-    - "all"
+    - "k8s"
     - "--verbose"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS

@@ -45,12 +45,12 @@ spec:
     type: tekton
     version: v1beta1
     description: Launches a build-and-push
-    maintainers:
-    owners:
-    keywords:
+    maintainers: []
+    owners: []
+    keywords: []
     links:
     - description: About
-      url: 
+      url: "" 
   addOwnerRef: true
 `)
 	th.writeK("/manifests/tektoncd/tektoncd-tasks/overlays/application", `
@@ -229,7 +229,7 @@ spec:
     command: ["/usr/local/bin/kfctl"]
     args:
     - "generate"
-    - "all"
+    - "k8s"
     - "--zone"
     - "${inputs.params.zone}"
     env:
@@ -257,7 +257,7 @@ spec:
     command: ["/usr/local/bin/kfctl"]
     args:
     - "apply"
-    - "all"
+    - "k8s"
     - "--verbose"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
