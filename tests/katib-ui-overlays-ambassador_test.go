@@ -11,7 +11,37 @@ import (
 	"testing"
 )
 
-func writeKatibUiBase(th *KustTestHarness) {
+func writeKatibUiOverlaysAmbassador(th *KustTestHarness) {
+	th.writeF("/manifests/katib-v1alpha2/katib-ui/overlays/ambassador/katib-ui-service.yaml", `
+apiVersion: v1
+kind: Service
+metadata:
+  name: katib-ui
+  annotations:
+    getambassador.io/config: |-
+      ---
+      apiVersion: ambassador/v0
+      kind:  Mapping
+      name: katib-ui-mapping
+      prefix: /katib/
+      service: katib-ui.$(namespace)
+`)
+	th.writeF("/manifests/katib-v1alpha2/katib-ui/overlays/ambassador/params.yaml", `
+varReference:
+- path: metadata/annotations/getambassador.io\/config
+  kind: Service
+`)
+	th.writeK("/manifests/katib-v1alpha2/katib-ui/overlays/ambassador", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+patchesStrategicMerge:
+- katib-ui-service.yaml
+configurations:
+- params.yaml
+
+`)
 	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/katib-ui-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -139,14 +169,14 @@ configurations:
 `)
 }
 
-func TestKatibUiBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/katib-ui/base")
-	writeKatibUiBase(th)
+func TestKatibUiOverlaysAmbassador(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/katib-ui/overlays/ambassador")
+	writeKatibUiOverlaysAmbassador(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha2/katib-ui/base"
+	targetPath := "../katib-v1alpha2/katib-ui/overlays/ambassador"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

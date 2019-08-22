@@ -138,8 +138,6 @@ varReference:
   kind: ConfigMap
 - path: data/config
   kind: Deployment
-- path: metadata/annotations/getambassador.io\/config
-  kind: Service
 `)
 	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/params.env", `
 clusterDomain=cluster.local
