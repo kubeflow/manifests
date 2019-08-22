@@ -48,7 +48,7 @@ spec:
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/overlays/skylake/params.yaml", `
 varReference:
-- path: metadata.name
+- path: metadata/name
   kind: Node
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/overlays/skylake/params.env", `
