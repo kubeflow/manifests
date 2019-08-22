@@ -27,5 +27,5 @@ spec:
         - name: USERID_PREFIX
           value: $(userid-prefix)
         - name: PROFILES_KFAM_SERVICE_HOST
-          value: profiles-kfam
+          value: profiles-kfam.kubeflow
       serviceAccountName: centraldashboard
