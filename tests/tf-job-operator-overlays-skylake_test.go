@@ -17,7 +17,7 @@ func writeTfJobOperatorOverlaysSkylake(th *KustTestHarness) {
 apiVersion: v1
 kind: Node
 metadata:
-  name: $(skylake01)
+  name: $(skylake01a)
 status:
   capacity:
     "intel.com/skylake": "2"
@@ -25,7 +25,7 @@ status:
 apiVersion: v1
 kind: Node
 metadata:
-  name: $(skylake02)
+  name: $(skylake02a)
 status:
   capacity:
     "intel.com/skylake": "2"
@@ -52,8 +52,8 @@ varReference:
   kind: Node
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/overlays/skylake/params.env", `
-skylake01=node1
-skylake02=node2
+skylake01a=node1
+skylake02a=node2
 `)
 	th.writeK("/manifests/tf-training/tf-job-operator/overlays/skylake", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -68,20 +68,20 @@ configMapGenerator:
 - name: tf-job-operator-device-parameters
   env: params.env
 vars:
-- name: skylake01
+- name: skylake01a
   objref:
     kind: ConfigMap
     name: tf-job-operator-device-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.skylake01
-- name: skylake02
+    fieldpath: data.skylake01a
+- name: skylake02a
   objref:
     kind: ConfigMap
     name: tf-job-operator-device-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.skylake02
+    fieldpath: data.skylake02a
 generatorOptions:
   disableNameSuffixHash: true
 configurations:
