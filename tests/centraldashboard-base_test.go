@@ -71,6 +71,13 @@ spec:
         ports:
         - containerPort: 8082
           protocol: TCP
+        env:
+        - name: USERID_HEADER
+          value: $(userid-header)
+        - name: USERID_PREFIX
+          value: $(userid-prefix)
+        - name: PROFILES_KFAM_SERVICE_HOST
+          value: profiles-kfam.kubeflow
       serviceAccountName: centraldashboard
 `)
 	th.writeF("/manifests/common/centraldashboard/base/role-binding.yaml", `
