@@ -16,12 +16,16 @@ spec:
     kind: ConfigMap
   - group: v1
     kind: Secret
+  - group: v1
+    kind: ServiceAccount
   - group: tekton.dev/v1alpha1
     kind: PipelineResource
   - group: tekton.dev/v1alpha1
     kind: Task
   - group: tekton.dev/v1alpha1
-    kind: TaskRun
+    kind: Pipeline
+  - group: tekton.dev/v1alpha1
+    kind: PipelineRun
   descriptor:
     type: tekton
     version: v1beta1
