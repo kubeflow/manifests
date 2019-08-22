@@ -184,7 +184,7 @@ commonLabels:
 images:
   - name: gcr.io/kubeflow-images-public/centraldashboard
     newName: gcr.io/kubeflow-images-public/centraldashboard
-    newTag: v20190816-v0.6.0-rc.0-57-g1d4b59c1
+    newTag: v20190822-v0.6.0-rc.0-68-g127e6006
 configMapGenerator:
 - name: parameters
   env: params.env
