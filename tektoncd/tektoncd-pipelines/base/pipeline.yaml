@@ -34,6 +34,8 @@ spec:
         from:
         - kfctl-build-push
     params:
+    - name: namespace
+      value: $(namespace)
     - name: app_dir
       value: $(app_dir)
     - name: project
