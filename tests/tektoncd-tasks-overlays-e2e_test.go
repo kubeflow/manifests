@@ -46,7 +46,7 @@ patchesJson6902:
     group: tekton.dev
     version: v1alpha1
     kind: Task
-    name: deploy-using-kfctl
+    name: kfctl-init-generate-apply
   path: task.yaml
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/persistent-volume-claim.yaml", `
@@ -114,7 +114,7 @@ subjects:
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: build-kfctl-image-from-git-source
+  name: kfctl-build-push
 spec:
   inputs:
     resources:
@@ -159,7 +159,7 @@ spec:
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: deploy-using-kfctl
+  name: kfctl-init-generate-apply
 spec:
   inputs:
     resources:

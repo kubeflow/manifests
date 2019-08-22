@@ -77,7 +77,7 @@ subjects:
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: build-kfctl-image-from-git-source
+  name: kfctl-build-push
 spec:
   inputs:
     resources:
@@ -122,7 +122,7 @@ spec:
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: deploy-using-kfctl
+  name: kfctl-init-generate-apply
 spec:
   inputs:
     resources:
