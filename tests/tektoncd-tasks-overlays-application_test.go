@@ -119,7 +119,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: tekton-pipelines-admin
+  name: cluster-admin
 subjects:
 - kind: ServiceAccount
   name: tekton-pipelines
