@@ -7,5 +7,5 @@ patchesJson6902:
     group: tekton.dev
     version: v1alpha1
     kind: Task
-    name: deploy-using-kfctl
+    name: kfctl-init-generate-apply
   path: task.yaml
