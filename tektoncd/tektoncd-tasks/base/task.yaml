@@ -75,6 +75,11 @@ spec:
     - name: email
       type: string
       description: email for gcp
+  outputs:
+    resources:
+    - name: builtImage
+      type: image
+      outputImageDir: /workspace/builtImage
   steps:
   - name: kfctl-init
     image: "${inputs.resources.image.url}"
