@@ -181,6 +181,12 @@ spec:
     - name: zone
       type: string
       description: zone of project
+    - name: platform
+      type: string
+      description: all | k8s
+    - name: email
+      type: string
+      description: email for gcp
   steps:
   - name: kfctl-init
     image: "${inputs.resources.image.url}"
@@ -210,9 +216,11 @@ spec:
     command: ["/usr/local/bin/kfctl"]
     args:
     - "generate"
-    - "k8s"
+    - "${inputs.params.platform}"
     - "--zone"
     - "${inputs.params.zone}"
+    - "--email"
+    - "${inputs.params.email}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
@@ -238,7 +246,7 @@ spec:
     command: ["/usr/local/bin/kfctl"]
     args:
     - "apply"
-    - "k8s"
+    - "${inputs.params.platform}"
     - "--verbose"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
