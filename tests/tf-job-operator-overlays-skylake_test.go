@@ -20,7 +20,12 @@ metadata:
   name: $(skylake01a)
 status:
   capacity:
-    "intel.com~1skylake": "2"
+    cpu: "4"
+    ephemeral-storage: 138154560Ki
+    hugepages-1Gi: "0"
+    hugepages-2Mi: "0"
+    memory: 6100436Ki
+    pods: "110"
 ---
 apiVersion: v1
 kind: Node
@@ -28,7 +33,12 @@ metadata:
   name: $(skylake02a)
 status:
   capacity:
-    "intel.com~1skylake": "2"
+    cpu: "112"
+    ephemeral-storage: 1536718068Ki
+    hugepages-1Gi: "0"
+    hugepages-2Mi: "0"
+    memory: 394910496Ki
+    pods: "110"
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/overlays/skylake/deployment.yaml", `
 apiVersion: extensions/v1beta1
@@ -51,6 +61,18 @@ varReference:
 - path: metadata/name
   kind: Node
 `)
+	th.writeF("/manifests/tf-training/tf-job-operator/overlays/skylake/patch.yaml", `
+- op: add
+  path: /status/capacity/intel.com~1skylake
+  value:
+    "2"
+`)
+	th.writeF("/manifests/tf-training/tf-job-operator/overlays/skylake/patch.yaml", `
+- op: add
+  path: /status/capacity/intel.com~1skylake
+  value:
+    "2"
+`)
 	th.writeF("/manifests/tf-training/tf-job-operator/overlays/skylake/params.env", `
 skylake01a=node1
 skylake02a=node2
@@ -64,9 +86,12 @@ resources:
 - node.yaml
 patchesStrategicMerge:
 - deployment.yaml
+namespace: kubeflow
 configMapGenerator:
 - name: tf-job-operator-device-parameters
   env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
 vars:
 - name: skylake01a
   objref:
@@ -82,8 +107,17 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.skylake02a
-generatorOptions:
-  disableNameSuffixHash: true
+patchesJson6902:
+- target:
+    version: v1
+    kind: Node
+    name: $(skylake01a)
+  path: patch.yaml
+- target:
+    version: v1
+    kind: Node
+    name: $(skylake02a)
+  path: patch.yaml
 configurations:
 - params.yaml
 `)
