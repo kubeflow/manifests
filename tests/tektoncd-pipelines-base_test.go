@@ -12,30 +12,6 @@ import (
 )
 
 func writeTektoncdPipelinesBase(th *KustTestHarness) {
-	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline-resource.yaml", `
----
-apiVersion: tekton.dev/v1alpha1
-kind: PipelineResource
-metadata:
-  name: kfctl-git
-spec:
-  type: git
-  params:
-  - name: revision
-    value: $(pullrequest)
-  - name: url
-    value: https://github.com/kubeflow/kfctl.git
----
-apiVersion: tekton.dev/v1alpha1
-kind: PipelineResource
-metadata:
-  name: kfctl-image
-spec:
-  type: image
-  params:
-  - name: url
-    value: gcr.io/$(project)/kfctl
-`)
 	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline.yaml", `
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
@@ -93,6 +69,30 @@ spec:
     - name: platform
       value: $(platform)
 `)
+	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline-resource.yaml", `
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: kfctl-git
+spec:
+  type: git
+  params:
+  - name: revision
+    value: $(pullrequest)
+  - name: url
+    value: https://github.com/kubeflow/kfctl.git
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: kfctl-image
+spec:
+  type: image
+  params:
+  - name: url
+    value: gcr.io/$(project)/kfctl
+`)
 	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline-run.yaml", `
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineRun
@@ -131,8 +131,8 @@ platform=all
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- pipeline-resource.yaml
 - pipeline.yaml
+- pipeline-resource.yaml
 - pipeline-run.yaml
 namespace: tekton-pipelines
 configMapGenerator:
