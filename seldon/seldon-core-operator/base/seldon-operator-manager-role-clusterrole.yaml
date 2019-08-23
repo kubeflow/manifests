@@ -1,6 +1,11 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  labels:
+    app.kubernetes.io/instance: seldon-core-operator
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/name: seldon-core-operator
+    helm.sh/chart: seldon-core-operator-0.4.0
   name: seldon-operator-manager-role
 rules:
 - apiGroups:
@@ -124,6 +129,14 @@ rules:
   - update
   - patch
 - apiGroups:
+  - machinelearning.seldon.io
+  resources:
+  - seldondeployments/finalizers
+  verbs:
+  - get
+  - update
+  - patch
+- apiGroups:
   - admissionregistration.k8s.io
   resources:
   - mutatingwebhookconfigurations
@@ -148,6 +161,22 @@ rules:
   - update
   - patch
   - delete
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+  - list
+  - watch
 - apiGroups:
   - ""
   resources:
