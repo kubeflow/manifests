@@ -1,0 +1,5 @@
+varReference:
+- path: spec/serviceName
+  kind: StatefulSet
+- path: spec/template/spec/containers/env/value
+  kind: StatefulSet

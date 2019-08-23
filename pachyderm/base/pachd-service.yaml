@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: pachd
+  name: pachd
+spec:
+  ports:
+    - name: api-grpc-port
+      nodePort: 30650
+      port: 650
+      protocol: TCP
+      targetPort: 650
+    - name: trace-port
+      nodePort: 30651
+      port: 651
+      protocol: TCP
+      targetPort: 651
+    - name: api-http-port
+      nodePort: 30652
+      port: 652
+      protocol: TCP
+      targetPort: 652
+    - name: api-git-port
+      nodePort: 30999
+      port: 999
+      protocol: TCP
+      targetPort: 999
+  selector:
+    app: pachd
+  type: NodePort

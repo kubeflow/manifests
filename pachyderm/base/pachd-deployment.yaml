@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pachd
+spec:
+  replicas: 1
+  strategy: {}
+  selector:
+    matchLabels:
+      app: pachd
+  template:
+    metadata:
+      labels:
+        app: pachd
+    spec:
+      containers:
+      - name: myapp
+        image: pachyderm/pachd:1.8.6
+        imagePullPolicy: Always
+        env:
+          - name: EXPORT_OBJECT_API
+            value: "false"
+          - name: PACH_ROOT
+            value: /pach
+          - name: NUM_SHARDS
+            value: "16"
+          - name: STORAGE_BACKEND
+            value: LOCAL
+          - name: PACHD_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: WORKER_IMAGE
+            value: pachyderm/worker:1.8.6
+          - name: WORKER_SIDECAR_IMAGE
+            value: pachyderm/pachd:1.8.6
+          - name: WORKER_IMAGE_PULL_POLICY
+            value: IfNotPresent
+          - name: PACHD_VERSION
+            value: 1.8.6
+          - name: METRICS
+            value: "true"
+          - name: LOG_LEVEL
+            value: info
+          - name: BLOCK_CACHE_BYTES
+            value: 0G
+          - name: PACHYDERM_AUTHENTICATION_DISABLED_FOR_TESTING
+            value: "false"
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: 250m
+        ports:
+        - name: api-grpc-port
+          containerPort: 650
+          protocol: TCP
+        - name: trace-port
+          containerPort: 651
+          protocol: TCP
+        - name: api-http-port
+          containerPort: 652
+          protocol: TCP
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - mountPath: /pach
+            name: pachdvol
+      serviceAccountName: pachyderm-service-account
+      volumes:
+        - name: pachdvol
+          emptyDir: {}
+

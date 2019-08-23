@@ -1,0 +1,41 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-role
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - nodes
+  - pods
+  - pods/log
+  - endpoints
+  verbs:
+  - 'get'
+  - 'list'
+  - 'watch'
+- apiGroups:
+  - ''
+  resources:
+  - replicationcontrollers
+  - services
+  verbs:
+  - 'get'
+  - 'list'
+  - 'watch'
+  - 'create'
+  - 'update'
+  - 'delete'
+- apiGroups:
+  - ''
+  resourceNames:
+  - 'pachyderm-storage-secret'
+  resources:
+  - 'secrets'
+  verbs:
+  - 'get'
+  - 'list'
+  - 'watch'
+  - 'create'
+  - 'update'
+  - 'delete'
