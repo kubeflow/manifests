@@ -1,0 +1,25 @@
+- op: add
+  path: /spec/tasks/-
+  value:
+    name: kfctl-e2e
+    taskRef:
+      name: kfctl-e2e
+    resources:
+      inputs:
+      - name: image
+        resource: web-image
+        from:
+        - kfctl-init-generate-apply
+    params:
+    - name: namespace
+      value: $(namespace)
+    - name: app_dir
+      value: $(app_dir)
+    - name: project
+      value: $(project)
+    - name: configPath
+      value: $(configPath)
+    - name: zone
+      value: $(zone)
+    - name: platform
+      value: $(platform)

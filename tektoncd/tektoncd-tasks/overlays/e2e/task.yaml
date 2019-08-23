@@ -1,7 +1,34 @@
-- op: add
-  path: /spec/steps/-
-  value:
-    name: kfctl-e2e
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: kfctl-e2e
+spec:
+  inputs:
+    resources:
+    - name: image
+      type: image
+    params:
+    - name: namespace
+      type: string
+      description: the namespace to deploy kf 
+    - name: app_dir
+      type: string
+      description: where to create the kf app
+    - name: configPath
+      type: string
+      description: url for config arg
+    - name: project
+      type: string
+      description: name of project
+    - name: zone
+      type: string
+      description: zone of project
+    - name: platform
+      type: string
+      description: all | k8s
+    - name: email
+      type: string
+      description: email for gcp
     image: "${inputs.resources.image.url}"
     command: ["/bin/echo"]
     args:
@@ -14,9 +41,25 @@
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_SECRET
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
-    imagePullPolicy: Always
+  volumes:
+  - name: kaniko-secret
+    secret:
+      secretName: kaniko-secret
+  - name: kubeflow
+    persistentVolumeClaim:
+      claimName: kubeflow-pvc

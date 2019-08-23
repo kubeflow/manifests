@@ -11,7 +11,47 @@ import (
 	"testing"
 )
 
-func writeTektoncdPipelinesBase(th *KustTestHarness) {
+func writeTektoncdPipelinesOverlaysE2e(th *KustTestHarness) {
+	th.writeF("/manifests/tektoncd/tektoncd-pipelines/overlays/e2e/pipeline.yaml", `
+- op: add
+  path: /spec/tasks/-
+  value:
+    name: kfctl-e2e
+    taskRef:
+      name: kfctl-e2e
+    resources:
+      inputs:
+      - name: image
+        resource: web-image
+        from:
+        - kfctl-init-generate-apply
+    params:
+    - name: namespace
+      value: $(namespace)
+    - name: app_dir
+      value: $(app_dir)
+    - name: project
+      value: $(project)
+    - name: configPath
+      value: $(configPath)
+    - name: zone
+      value: $(zone)
+    - name: platform
+      value: $(platform)
+`)
+	th.writeK("/manifests/tektoncd/tektoncd-pipelines/overlays/e2e", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+patchesJson6902:
+- target:
+    group: tekton.dev
+    version: v1alpha1
+    kind: Pipeline
+    name: kfctl-build-apply
+  path: pipeline.yaml
+`)
 	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline-resource.yaml", `
 ---
 apiVersion: tekton.dev/v1alpha1
@@ -195,14 +235,14 @@ configurations:
 `)
 }
 
-func TestTektoncdPipelinesBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/tektoncd/tektoncd-pipelines/base")
-	writeTektoncdPipelinesBase(th)
+func TestTektoncdPipelinesOverlaysE2e(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/tektoncd/tektoncd-pipelines/overlays/e2e")
+	writeTektoncdPipelinesOverlaysE2e(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../tektoncd/tektoncd-pipelines/base"
+	targetPath := "../tektoncd/tektoncd-pipelines/overlays/e2e"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
