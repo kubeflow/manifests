@@ -23,27 +23,50 @@ spec:
     - name: image
       type: image
     params:
-    - name: namespace
+    - name: image
       type: string
-      description: the namespace to deploy kf 
-    - name: app_dir
-      type: string
-      description: where to create the kf app
-    - name: configPath
-      type: string
-      description: url for config arg
+      description: the image name
     - name: project
       type: string
-      description: name of project
-    image: "${inputs.resources.image.url}"
-    command: ["/bin/echo"]
+      description: the gcp project to run the e2e tests
+    - name: config_file
+      type: string
+      description: the location of the prow_config file
+    - name: cluster
+      type: string
+      description: name of k8 cluster
+    - name: bucket
+      type: string
+      description: name of gcp bucket to store test results
+    - name: REPO_OWNER
+      type: string
+      description: git repository org
+    - name: REPO_NAME
+      type: string
+      description: git repository name
+    - name: repos_dir
+      type: string
+      description: path to where the repo is downloaded
+    - name: zone
+      type: string
+      description: k8 zone where e2e tests run
+    image: "${image}"
+    command: ["python"]
     args:
-    - "init"
-    - "--config"
-    - "${inputs.params.configPath}"
+    - "-m"
+    - "kubeflow.testing.run_e2e_workflow"
     - "--project"
-    - "${inputs.params.project}"
-    - "${inputs.params.app_dir}"
+    - "${project}"
+    - "--zone"
+    - "${zone}"
+    - "--cluster"
+    - "${cluster}"
+    - "--bucket"
+    - "${bucket}"
+    - "--config_file"
+    - "${config_file}"
+    - "--repos_dir"
+    - "${repos_dir}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json

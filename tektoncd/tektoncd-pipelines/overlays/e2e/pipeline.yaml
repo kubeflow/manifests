@@ -11,11 +11,21 @@
         from:
         - kfctl-init-generate-apply
     params:
-    - name: namespace
-      value: $(namespace)
-    - name: app_dir
-      value: $(app_dir)
+    - name: image
+      value: $(image)
     - name: project
       value: $(project)
-    - name: configPath
-      value: $(configPath)
+    - name: config_file
+      value: $(config_file)
+    - name: cluster
+      value: $(cluster)
+    - name: bucket
+      value: $(bucket)
+    - name: REPO_OWNER
+      value: $(REPO_OWNER)
+    - name: REPO_NAME
+      value: $(REPO_NAME)
+    - name: repos_dir
+      value: $(repos_dir)
+    - name: zone
+      value: $(zone)
