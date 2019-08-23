@@ -1,0 +1,4 @@
+- op: add
+  path: /status/capacity/intel.com~1skylake
+  value:
+    "2"

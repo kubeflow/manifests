@@ -5,7 +5,12 @@ metadata:
   name: $(skylake01a)
 status:
   capacity:
-    "intel.com~1skylake": "2"
+    cpu: "4"
+    ephemeral-storage: 138154560Ki
+    hugepages-1Gi: "0"
+    hugepages-2Mi: "0"
+    memory: 6100436Ki
+    pods: "110"
 ---
 apiVersion: v1
 kind: Node
@@ -13,4 +18,9 @@ metadata:
   name: $(skylake02a)
 status:
   capacity:
-    "intel.com~1skylake": "2"
+    cpu: "112"
+    ephemeral-storage: 1536718068Ki
+    hugepages-1Gi: "0"
+    hugepages-2Mi: "0"
+    memory: 394910496Ki
+    pods: "110"

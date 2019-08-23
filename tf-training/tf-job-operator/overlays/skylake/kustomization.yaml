@@ -6,9 +6,12 @@ resources:
 - node.yaml
 patchesStrategicMerge:
 - deployment.yaml
+namespace: kubeflow
 configMapGenerator:
 - name: tf-job-operator-device-parameters
   env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
 vars:
 - name: skylake01a
   objref:
@@ -24,7 +27,16 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.skylake02a
-generatorOptions:
-  disableNameSuffixHash: true
+patchesJson6902:
+- target:
+    version: v1
+    kind: Node
+    name: $(skylake01a)
+  path: patch.yaml
+- target:
+    version: v1
+    kind: Node
+    name: $(skylake02a)
+  path: patch.yaml
 configurations:
 - params.yaml
