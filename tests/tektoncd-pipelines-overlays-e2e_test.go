@@ -34,10 +34,6 @@ func writeTektoncdPipelinesOverlaysE2e(th *KustTestHarness) {
       value: $(project)
     - name: configPath
       value: $(configPath)
-    - name: zone
-      value: $(zone)
-    - name: platform
-      value: $(platform)
 `)
 	th.writeK("/manifests/tektoncd/tektoncd-pipelines/overlays/e2e", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -51,30 +47,6 @@ patchesJson6902:
     kind: Pipeline
     name: kfctl-build-apply
   path: pipeline.yaml
-`)
-	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline-resource.yaml", `
----
-apiVersion: tekton.dev/v1alpha1
-kind: PipelineResource
-metadata:
-  name: kfctl-git
-spec:
-  type: git
-  params:
-  - name: revision
-    value: $(pullrequest)
-  - name: url
-    value: https://github.com/kubeflow/kfctl.git
----
-apiVersion: tekton.dev/v1alpha1
-kind: PipelineResource
-metadata:
-  name: kfctl-image
-spec:
-  type: image
-  params:
-  - name: url
-    value: gcr.io/$(project)/kfctl
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline.yaml", `
 apiVersion: tekton.dev/v1alpha1
@@ -133,6 +105,30 @@ spec:
     - name: platform
       value: $(platform)
 `)
+	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline-resource.yaml", `
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: kfctl-git
+spec:
+  type: git
+  params:
+  - name: revision
+    value: $(pullrequest)
+  - name: url
+    value: https://github.com/kubeflow/kfctl.git
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: kfctl-image
+spec:
+  type: image
+  params:
+  - name: url
+    value: gcr.io/$(project)/kfctl
+`)
 	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline-run.yaml", `
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineRun
@@ -171,8 +167,8 @@ platform=all
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- pipeline-resource.yaml
 - pipeline.yaml
+- pipeline-resource.yaml
 - pipeline-run.yaml
 namespace: tekton-pipelines
 configMapGenerator:
