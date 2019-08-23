@@ -112,6 +112,11 @@ spec:
         resource: web-image
         from:
         - kfctl-build-push
+      outputs:
+      - name: builtImage
+        resource: web-image
+        from:
+        - kfctl-build-push
     params:
     - name: namespace
       value: $(namespace)
