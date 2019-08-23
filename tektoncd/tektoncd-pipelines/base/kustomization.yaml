@@ -51,5 +51,19 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.zone
+- name: email
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.email
+- name: platform
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.platform
 configurations:
 - params.yaml
