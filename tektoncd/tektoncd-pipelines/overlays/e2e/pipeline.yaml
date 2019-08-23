@@ -19,7 +19,3 @@
       value: $(project)
     - name: configPath
       value: $(configPath)
-    - name: zone
-      value: $(zone)
-    - name: platform
-      value: $(platform)
