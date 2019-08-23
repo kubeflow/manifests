@@ -31,7 +31,7 @@ func writeTektoncdPipelinesOverlaysE2e(th *KustTestHarness) {
     - name: project
       value: $(project)
     - name: config_file
-      value: $(config_file)
+      value: /src/$(REPO_OWNER)/$(REPO_NAME)/prow_config.yaml
     - name: cluster
       value: $(cluster)
     - name: bucket
