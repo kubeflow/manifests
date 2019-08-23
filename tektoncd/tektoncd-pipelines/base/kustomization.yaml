@@ -1,8 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- pipeline-resource.yaml
 - pipeline.yaml
+- pipeline-resource.yaml
 - pipeline-run.yaml
 namespace: tekton-pipelines
 configMapGenerator:
