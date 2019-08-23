@@ -7,7 +7,7 @@ data:
   config: |
     {
     executorImage: $(executorImage),
-    containerRuntimeExecutor: k8sapi,
+    containerRuntimeExecutor: $(containerRuntimeExecutor),
     artifactRepository:
     {
         s3: {
@@ -26,3 +26,4 @@ data:
         }
     }
     }
+
