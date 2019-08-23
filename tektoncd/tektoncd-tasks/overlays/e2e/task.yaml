@@ -20,15 +20,6 @@ spec:
     - name: project
       type: string
       description: name of project
-    - name: zone
-      type: string
-      description: zone of project
-    - name: platform
-      type: string
-      description: all | k8s
-    - name: email
-      type: string
-      description: email for gcp
     image: "${inputs.resources.image.url}"
     command: ["/bin/echo"]
     args:
