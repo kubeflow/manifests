@@ -13,10 +13,37 @@ import (
 
 func writeTektoncdTasksOverlaysE2e(th *KustTestHarness) {
 	th.writeF("/manifests/tektoncd/tektoncd-tasks/overlays/e2e/task.yaml", `
-- op: add
-  path: /spec/steps/-
-  value:
-    name: kfctl-e2e
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: kfctl-e2e
+spec:
+  inputs:
+    resources:
+    - name: image
+      type: image
+    params:
+    - name: namespace
+      type: string
+      description: the namespace to deploy kf 
+    - name: app_dir
+      type: string
+      description: where to create the kf app
+    - name: configPath
+      type: string
+      description: url for config arg
+    - name: project
+      type: string
+      description: name of project
+    - name: zone
+      type: string
+      description: zone of project
+    - name: platform
+      type: string
+      description: all | k8s
+    - name: email
+      type: string
+      description: email for gcp
     image: "${inputs.resources.image.url}"
     command: ["/bin/echo"]
     args:
@@ -29,25 +56,36 @@ func writeTektoncdTasksOverlaysE2e(th *KustTestHarness) {
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_SECRET
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
-    imagePullPolicy: Always
+  volumes:
+  - name: kaniko-secret
+    secret:
+      secretName: kaniko-secret
+  - name: kubeflow
+    persistentVolumeClaim:
+      claimName: kubeflow-pvc
 `)
 	th.writeK("/manifests/tektoncd/tektoncd-tasks/overlays/e2e", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
-patchesJson6902:
-- target:
-    group: tekton.dev
-    version: v1alpha1
-    kind: Task
-    name: kfctl-init-generate-apply
-  path: task.yaml
+resources:
+- task.yaml
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/persistent-volume-claim.yaml", `
 kind: PersistentVolumeClaim

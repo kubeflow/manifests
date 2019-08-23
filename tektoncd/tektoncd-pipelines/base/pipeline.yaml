@@ -44,5 +44,7 @@ spec:
       value: $(configPath)
     - name: zone
       value: $(zone)
+    - name: email
+      value: $(email)
     - name: platform
       value: $(platform)
