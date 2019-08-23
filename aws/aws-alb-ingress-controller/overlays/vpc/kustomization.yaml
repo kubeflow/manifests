@@ -1,6 +1,5 @@
-bases:
-- ../../base
 resources:
+- ../../base
 - vpc.yaml
 configMapGenerator:
 - name: alb-ingress-controller-parameters

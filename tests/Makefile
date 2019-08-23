@@ -35,8 +35,8 @@ clean:
 
 # not used 
 run-unittest-plugin:
-	cd .. && XDG_CONFIG_HOME=$$(pwd)/plugins kustomize --enable_alpha_goplugins_accept_panic_risk build profiles/overlays/test
+	cd .. && XDG_CONFIG_HOME=$$(pwd)/plugins kustomize build profiles/overlays/test --enable_alpha_plugins
 
 # not used
 run-application-plugin:
-	cd .. && XDG_CONFIG_HOME=$$(pwd)/plugins kustomize --enable_alpha_goplugins_accept_panic_risk build jupyter/jupyter-web-app/overlays/application
+	cd .. && XDG_CONFIG_HOME=$$(pwd)/plugins kustomize build jupyter/jupyter-web-app/overlays/application --enable_alpha_plugins

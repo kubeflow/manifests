@@ -22,7 +22,7 @@ Kfctl traverses directories under manifests to find and build kustomize targets 
 ```
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-bases:
+resources:
   - <component>/{base|overlay/<overlay>}
 commonLabels:
   app.kubernetes.io/name: <appName>

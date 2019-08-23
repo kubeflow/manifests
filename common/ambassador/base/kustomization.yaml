@@ -24,6 +24,7 @@ patchesJson6902:
     version: v1beta1
     kind: Deployment
     name: ambassador
+    namespace: istio-system
   path: deployment-ambassador-patch.yaml
 vars:
 - name: ambassadorServiceType
