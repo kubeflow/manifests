@@ -22,20 +22,22 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
-	"sigs.k8s.io/kustomize/pkg/fs"
-	"sigs.k8s.io/kustomize/pkg/ifc"
-	"sigs.k8s.io/kustomize/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/ifc"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
 	"strings"
 	"testing"
 
-	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/pkg/constants"
-	"sigs.k8s.io/kustomize/pkg/resmap"
-	"sigs.k8s.io/kustomize/pkg/resource"
-	. "sigs.k8s.io/kustomize/pkg/target"
-	"sigs.k8s.io/kustomize/pkg/transformers/config/defaultconfig"
-	"sigs.k8s.io/kustomize/pkg/types"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/pgmconfig"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	. "sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/transformers/config/defaultconfig"
+	"sigs.k8s.io/kustomize/v3/pkg/types"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
 )
 
 // FakeLoader encapsulates the delegate Loader and the fake file system.
@@ -50,7 +52,8 @@ func NewFakeLoader(initialDir string) FakeLoader {
 	// Create fake filesystem and inject it into initial Loader.
 	fSys := fs.MakeFakeFS()
 	fSys.Mkdir(initialDir)
-	ldr, err := loader.NewLoader(initialDir, fSys)
+	lrc := loader.RestrictionRootOnly
+	ldr, err := loader.NewLoader(lrc, validators.MakeFakeValidator(), initialDir, fSys)
 	if err != nil {
 		log.Fatalf("Unable to make loader: %v", err)
 	}
@@ -88,7 +91,17 @@ func (f FakeLoader) Load(location string) ([]byte, error) {
 
 // Cleanup does nothing
 func (f FakeLoader) Cleanup() error {
-	return nil
+	return f.delegate.Cleanup()
+}
+
+// Validator delegates.
+func (f FakeLoader) Validator() ifc.Validator {
+	return f.delegate.Validator()
+}
+
+// LoadKvPairs delegates.
+func (f FakeLoader) LoadKvPairs(args types.GeneratorArgs) ([]types.Pair, error) {
+	return f.delegate.LoadKvPairs(args)
 }
 
 type KustTestHarness struct {
@@ -101,13 +114,15 @@ func NewKustTestHarness(t *testing.T, path string) *KustTestHarness {
 	return &KustTestHarness{
 		t: t,
 		rf: resmap.NewFactory(resource.NewFactory(
-			kunstruct.NewKunstructuredFactoryImpl())),
+			kunstruct.NewKunstructuredFactoryImpl()),
+			transformer.NewFactoryImpl()),
 		ldr: NewFakeLoader(path)}
 }
 
 func (th *KustTestHarness) makeKustTarget() *KustTarget {
+	pc := plugins.DefaultPluginConfig()
 	kt, err := NewKustTarget(
-		th.ldr, th.rf, transformer.NewFactoryImpl())
+		th.ldr, th.rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, th.rf))
 	if err != nil {
 		th.t.Fatalf("Unexpected construction error %v", err)
 	}
@@ -122,7 +137,7 @@ func (th *KustTestHarness) writeF(dir string, content string) {
 }
 
 func (th *KustTestHarness) writeK(dir string, content string) {
-	th.writeF(filepath.Join(dir, constants.KustomizationFileNames[0]), `
+	th.writeF(filepath.Join(dir, pgmconfig.KustomizationFileNames[0]), `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 `+content)
@@ -190,7 +205,7 @@ func (th *KustTestHarness) assertActualEqualsExpected(
 	if len(expected) > 0 && expected[0] == 10 {
 		expected = expected[1:]
 	}
-	actual, err := m.EncodeAsYaml()
+	actual, err := m.AsYaml()
 	if err != nil {
 		th.t.Fatalf("Unexpected err: %v", err)
 	}
