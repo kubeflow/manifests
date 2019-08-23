@@ -26,7 +26,7 @@ spec:
     kind: VirtualService
   descriptor:
     type: centraldashboard
-    version: v1beta1
+    version: v0.6.2
     description: Provides a Dashboard UI for kubeflow
     maintainers:
     - name: Jason Prodonovich
