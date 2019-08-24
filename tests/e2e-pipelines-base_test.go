@@ -11,8 +11,8 @@ import (
 	"testing"
 )
 
-func writeTektoncdPipelinesBase(th *KustTestHarness) {
-	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline.yaml", `
+func writeE2ePipelinesBase(th *KustTestHarness) {
+	th.writeF("/manifests/e2e/e2e-pipelines/base/pipeline.yaml", `
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
@@ -69,7 +69,7 @@ spec:
     - name: platform
       value: $(platform)
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline-resource.yaml", `
+	th.writeF("/manifests/e2e/e2e-pipelines/base/pipeline-resource.yaml", `
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
@@ -93,13 +93,13 @@ spec:
   - name: url
     value: gcr.io/$(project)/kfctl
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline-run.yaml", `
+	th.writeF("/manifests/e2e/e2e-pipelines/base/pipeline-run.yaml", `
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineRun
 metadata:
   name: kfctl-build-apply-pipeline-run
 spec:
-  serviceAccount: tekton-pipelines
+  serviceAccount: e2e-pipelines
   pipelineRef:
     name: kfctl-build-apply
   resources:
@@ -110,14 +110,14 @@ spec:
       resourceRef:
         name: kfctl-image
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/params.yaml", `
+	th.writeF("/manifests/e2e/e2e-pipelines/base/params.yaml", `
 varReference:
 - path: spec/tasks/params/value
   kind: Pipeline
 - path: spec/params/value
   kind: PipelineResource
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/params.env", `
+	th.writeF("/manifests/e2e/e2e-pipelines/base/params.env", `
 namespace=kubeflow
 project=constant-cubist-173123
 pullrequest=refs/pull/10/head
@@ -127,7 +127,7 @@ email=foo@bar.com
 configPath=https://raw.githubusercontent.com/kubeflow/kubeflow/master/bootstrap/config/kfctl_gcp_iap.yaml
 platform=all
 `)
-	th.writeK("/manifests/tektoncd/tektoncd-pipelines/base", `
+	th.writeK("/manifests/e2e/e2e-pipelines/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -200,14 +200,14 @@ configurations:
 `)
 }
 
-func TestTektoncdPipelinesBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/tektoncd/tektoncd-pipelines/base")
-	writeTektoncdPipelinesBase(th)
+func TestE2ePipelinesBase(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/e2e/e2e-pipelines/base")
+	writeE2ePipelinesBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../tektoncd/tektoncd-pipelines/base"
+	targetPath := "../e2e/e2e-pipelines/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
