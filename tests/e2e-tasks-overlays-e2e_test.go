@@ -219,18 +219,18 @@ spec:
     - /kaniko/executor
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/gcr-secret.json
+      value: /secret/kaniko-secret.json
     args: ["--dockerfile=${inputs.params.pathToDockerFile}",
            "--destination=${outputs.resources.builtImage.url}",
            "--context=${inputs.params.pathToContext}",
            "--target=kfctl_base"]
     volumeMounts:
-    - name: gcr-secret
+    - name: kaniko-secret
       mountPath: /secret
   volumes:
-  - name: gcr-secret
+  - name: kaniko-secret
     secret:
-      secretName: gcr-secret
+      secretName: kaniko-secret
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: Task
@@ -283,9 +283,9 @@ spec:
     - "${inputs.params.app_dir}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/gcr-secret.json
+      value: /secret/kaniko-secret.json
     volumeMounts:
-    - name: gcr-secret
+    - name: kaniko-secret
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
@@ -304,7 +304,7 @@ spec:
     - "${inputs.params.email}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/gcr-secret.json
+      value: /secret/kaniko-secret.json
     - name: CLIENT_ID
       valueFrom:
         secretKeyRef:
@@ -316,7 +316,7 @@ spec:
           name: client-secret
           key: CLIENT_SECRET
     volumeMounts:
-    - name: gcr-secret
+    - name: kaniko-secret
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
@@ -348,6 +348,9 @@ spec:
     - name: kubeflow
       mountPath: /kubeflow
   volumes:
+  - name: kaniko-secret
+    secret:
+      secretName: kaniko-secret
   - name: gcr-secret
     secret:
       secretName: gcr-secret
