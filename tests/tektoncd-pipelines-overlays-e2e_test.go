@@ -44,6 +44,14 @@ func writeTektoncdPipelinesOverlaysE2e(th *KustTestHarness) {
       value: $(repos_dir)
     - name: zone
       value: $(zone)
+    - name: JOB_NAME
+      value: $(JOB_NAME)
+    - name: JOB_TYPE
+      value: $(JOB_TYPE)
+    - name: PULL_NUMBER
+      value: "$(PULL_NUMBER)"
+    - name: BUILD_NUMBER
+      value: "$(BUILD_NUMBER)"
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-pipelines/overlays/e2e/params.env", `
 image=gcr.io/kubeflow-ci/test-worker:latest
@@ -55,6 +63,10 @@ REPO_NAME=kfctl
 repos_dir=/src
 zone=us-west1-a
 configPath=https://raw.githubusercontent.com/kubeflow/kubeflow/master/bootstrap/config/kfctl_gcp_iap.yaml
+JOB_NAME=kubeflow-test-presubmit-test
+JOB_TYPE=presubmit
+PULL_NUMBER=33
+BUILD_NUMBER=a3bc
 `)
 	th.writeK("/manifests/tektoncd/tektoncd-pipelines/overlays/e2e", `
 apiVersion: kustomize.config.k8s.io/v1beta1
