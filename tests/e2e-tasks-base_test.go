@@ -11,64 +11,8 @@ import (
 	"testing"
 )
 
-func writeTektoncdTasksOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/tektoncd/tektoncd-tasks/overlays/application/application.yaml", `
-apiVersion: app.k8s.io/v1beta1
-kind: Application
-metadata:
-  name: tektoncd
-spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: 
-      app.kubernetes.io/instance: tektoncd
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: tektoncd
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
-  componentKinds:
-  - group: v1
-    kind: ConfigMap
-  - group: v1
-    kind: Secret
-  - group: v1
-    kind: ServiceAccount
-  - group: tekton.dev/v1alpha1
-    kind: PipelineResource
-  - group: tekton.dev/v1alpha1
-    kind: Task
-  - group: tekton.dev/v1alpha1
-    kind: Pipeline
-  - group: tekton.dev/v1alpha1
-    kind: PipelineRun
-  descriptor:
-    type: tekton
-    version: v1beta1
-    description: Launches a build-and-push
-    maintainers: []
-    owners: []
-    keywords: []
-    links:
-    - description: About
-      url: "" 
-  addOwnerRef: true
-`)
-	th.writeK("/manifests/tektoncd/tektoncd-tasks/overlays/application", `
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-bases:
-- ../../base
-resources:
-- application.yaml
-commonLabels:
-  app.kubernetes.io/name: centraldashboard
-  app.kubernetes.io/instance: centraldashboard
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: centraldashboard
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
-`)
-	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/persistent-volume-claim.yaml", `
+func writeE2eTasksBase(th *KustTestHarness) {
+	th.writeF("/manifests/e2e/e2e-tasks/base/persistent-volume-claim.yaml", `
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -80,7 +24,7 @@ spec:
     requests:
       storage: 1Gi
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/secret.yaml", `
+	th.writeF("/manifests/e2e/e2e-tasks/base/secret.yaml", `
 ---
 apiVersion: v1
 kind: Secret
@@ -107,28 +51,28 @@ data:
   CLIENT_ID: MzM2MzM1NTQxOTkzLWdzZTFyMnZvc3Q1Z2JiMTN0ZWpjYmk0M3UyY3NjYTRpLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29t
   CLIENT_SECRET: ZFBIbmFvbUc3dUNodjFVTWY0bVFuX0tk
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/service-account.yaml", `
+	th.writeF("/manifests/e2e/e2e-tasks/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: tekton-pipelines
+  name: e2e-pipelines
 imagePullSecrets:
 - name: gcr-secret
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/cluster-role-binding.yaml", `
+	th.writeF("/manifests/e2e/e2e-tasks/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: tekton-pipelines-admin
+  name: e2e-pipelines-admin
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cluster-admin
 subjects:
 - kind: ServiceAccount
-  name: tekton-pipelines
+  name: e2e-pipelines
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/task.yaml", `
+	th.writeF("/manifests/e2e/e2e-tasks/base/task.yaml", `
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: Task
@@ -299,7 +243,7 @@ spec:
       claimName: kubeflow-pvc
 ---
 `)
-	th.writeK("/manifests/tektoncd/tektoncd-tasks/base", `
+	th.writeK("/manifests/e2e/e2e-tasks/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -312,14 +256,14 @@ namespace: tekton-pipelines
 `)
 }
 
-func TestTektoncdTasksOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/tektoncd/tektoncd-tasks/overlays/application")
-	writeTektoncdTasksOverlaysApplication(th)
+func TestE2eTasksBase(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/e2e/e2e-tasks/base")
+	writeE2eTasksBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../tektoncd/tektoncd-tasks/overlays/application"
+	targetPath := "../e2e/e2e-tasks/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

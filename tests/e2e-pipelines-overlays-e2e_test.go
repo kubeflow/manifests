@@ -11,8 +11,8 @@ import (
 	"testing"
 )
 
-func writeTektoncdPipelinesOverlaysE2e(th *KustTestHarness) {
-	th.writeF("/manifests/tektoncd/tektoncd-pipelines/overlays/e2e/pipeline.yaml", `
+func writeE2ePipelinesOverlaysE2e(th *KustTestHarness) {
+	th.writeF("/manifests/e2e/e2e-pipelines/overlays/e2e/pipeline.yaml", `
 - op: add
   path: /spec/tasks/-
   value:
@@ -53,7 +53,7 @@ func writeTektoncdPipelinesOverlaysE2e(th *KustTestHarness) {
     - name: BUILD_NUMBER
       value: "$(BUILD_NUMBER)"
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-pipelines/overlays/e2e/params.env", `
+	th.writeF("/manifests/e2e/e2e-pipelines/overlays/e2e/params.env", `
 image=gcr.io/kubeflow-ci/test-worker:latest
 project=kubeflow-ci
 cluster=kubeflow-testing
@@ -68,7 +68,7 @@ JOB_TYPE=presubmit
 PULL_NUMBER=33
 BUILD_NUMBER=a3bc
 `)
-	th.writeK("/manifests/tektoncd/tektoncd-pipelines/overlays/e2e", `
+	th.writeK("/manifests/e2e/e2e-pipelines/overlays/e2e", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -81,7 +81,7 @@ patchesJson6902:
     name: kfctl-build-apply
   path: pipeline.yaml
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline.yaml", `
+	th.writeF("/manifests/e2e/e2e-pipelines/base/pipeline.yaml", `
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
@@ -138,7 +138,7 @@ spec:
     - name: platform
       value: $(platform)
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline-resource.yaml", `
+	th.writeF("/manifests/e2e/e2e-pipelines/base/pipeline-resource.yaml", `
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
@@ -162,13 +162,13 @@ spec:
   - name: url
     value: gcr.io/$(project)/kfctl
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/pipeline-run.yaml", `
+	th.writeF("/manifests/e2e/e2e-pipelines/base/pipeline-run.yaml", `
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineRun
 metadata:
   name: kfctl-build-apply-pipeline-run
 spec:
-  serviceAccount: tekton-pipelines
+  serviceAccount: e2e-pipelines
   pipelineRef:
     name: kfctl-build-apply
   resources:
@@ -179,14 +179,14 @@ spec:
       resourceRef:
         name: kfctl-image
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/params.yaml", `
+	th.writeF("/manifests/e2e/e2e-pipelines/base/params.yaml", `
 varReference:
 - path: spec/tasks/params/value
   kind: Pipeline
 - path: spec/params/value
   kind: PipelineResource
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-pipelines/base/params.env", `
+	th.writeF("/manifests/e2e/e2e-pipelines/base/params.env", `
 namespace=kubeflow
 project=constant-cubist-173123
 pullrequest=refs/pull/10/head
@@ -196,7 +196,7 @@ email=foo@bar.com
 configPath=https://raw.githubusercontent.com/kubeflow/kubeflow/master/bootstrap/config/kfctl_gcp_iap.yaml
 platform=all
 `)
-	th.writeK("/manifests/tektoncd/tektoncd-pipelines/base", `
+	th.writeK("/manifests/e2e/e2e-pipelines/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -269,14 +269,14 @@ configurations:
 `)
 }
 
-func TestTektoncdPipelinesOverlaysE2e(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/tektoncd/tektoncd-pipelines/overlays/e2e")
-	writeTektoncdPipelinesOverlaysE2e(th)
+func TestE2ePipelinesOverlaysE2e(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/e2e/e2e-pipelines/overlays/e2e")
+	writeE2ePipelinesOverlaysE2e(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../tektoncd/tektoncd-pipelines/overlays/e2e"
+	targetPath := "../e2e/e2e-pipelines/overlays/e2e"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

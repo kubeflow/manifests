@@ -11,121 +11,64 @@ import (
 	"testing"
 )
 
-func writeTektoncdTasksOverlaysE2e(th *KustTestHarness) {
-	th.writeF("/manifests/tektoncd/tektoncd-tasks/overlays/e2e/task.yaml", `
-apiVersion: tekton.dev/v1alpha1
-kind: Task
+func writeE2eTasksOverlaysApplication(th *KustTestHarness) {
+	th.writeF("/manifests/e2e/e2e-tasks/overlays/application/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
 metadata:
-  name: kfctl-e2e
+  name: tektoncd
 spec:
-  inputs:
-    resources:
-    - name: image
-      type: image
-    params:
-    - name: image
-      type: string
-      description: the image name
-    - name: project
-      type: string
-      description: the gcp project to run the e2e tests
-    - name: config_file
-      type: string
-      description: the location of the prow_config file
-    - name: cluster
-      type: string
-      description: name of k8 cluster
-    - name: bucket
-      type: string
-      description: name of gcp bucket to store test results
-    - name: JOB_NAME
-      type: string
-      description: prow job name
-    - name: JOB_TYPE
-      type: string
-      description: presubmit | postsubmit | periodic
-    - name: PULL_NUMBER
-      type: string
-      description: PR #
-    - name: REPO_OWNER
-      type: string
-      description: git repository org
-    - name: REPO_NAME
-      type: string
-      description: git repository name
-    - name: BUILD_NUMBER
-      type: string
-      description: build #
-    - name: repos_dir
-      type: string
-      description: path to where the repo is downloaded
-    - name: zone
-      type: string
-      description: k8 zone where e2e tests run
-    image: "${image}"
-    command: ["python"]
-    args:
-    - "-m"
-    - "kubeflow.testing.run_tests"
-    - "--project"
-    - "${inputs.params.project}"
-    - "--zone"
-    - "${inputs.params.zone}"
-    - "--cluster"
-    - "${inputs.params.cluster}"
-    - "--bucket"
-    - "${inputs.params.bucket}"
-    - "--config_file"
-    - "${inputs.params.config_file}"
-    - "--repos_dir"
-    - "${inputs.params.repos_dir}"
-    env:
-    - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
-    - name: CLIENT_ID
-      valueFrom:
-        secretKeyRef:
-          name: client-secret
-          key: CLIENT_ID
-    - name: CLIENT_SECRET
-      valueFrom:
-        secretKeyRef:
-          name: client-secret
-          key: CLIENT_SECRET
-    - name: JOB_NAME
-      value: ${inputs.params.JOB_NAME}
-    - name: JOB_TYPE
-      value: ${inputs.params.JOB_TYPE}
-    - name: PULL_NUMBER
-      value: "${inputs.params.PULL_NUMBER}"
-    - name: REPO_NAME
-      value: "${inputs.params.REPO_NAME}"
-    - name: REPO_OWNER
-      value: "${inputs.params.REPO_OWNER}"
-    - name: BUILD_NUMBER
-      value: "${inputs.params.BUILD_NUMBER}"
-    volumeMounts:
-    - name: kaniko-secret
-      mountPath: /secret
-    - name: kubeflow
-      mountPath: /kubeflow
-  volumes:
-  - name: kaniko-secret
-    secret:
-      secretName: kaniko-secret
-  - name: kubeflow
-    persistentVolumeClaim:
-      claimName: kubeflow-pvc
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: 
+      app.kubernetes.io/instance: tektoncd
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: tektoncd
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.6
+  componentKinds:
+  - group: v1
+    kind: ConfigMap
+  - group: v1
+    kind: Secret
+  - group: v1
+    kind: ServiceAccount
+  - group: tekton.dev/v1alpha1
+    kind: PipelineResource
+  - group: tekton.dev/v1alpha1
+    kind: Task
+  - group: tekton.dev/v1alpha1
+    kind: Pipeline
+  - group: tekton.dev/v1alpha1
+    kind: PipelineRun
+  descriptor:
+    type: tekton
+    version: v1beta1
+    description: Launches a build-and-push
+    maintainers: []
+    owners: []
+    keywords: []
+    links:
+    - description: About
+      url: "" 
+  addOwnerRef: true
 `)
-	th.writeK("/manifests/tektoncd/tektoncd-tasks/overlays/e2e", `
+	th.writeK("/manifests/e2e/e2e-tasks/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
 resources:
-- task.yaml
+- application.yaml
+commonLabels:
+  app.kubernetes.io/name: centraldashboard
+  app.kubernetes.io/instance: centraldashboard
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: centraldashboard
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.6
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/persistent-volume-claim.yaml", `
+	th.writeF("/manifests/e2e/e2e-tasks/base/persistent-volume-claim.yaml", `
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -137,7 +80,7 @@ spec:
     requests:
       storage: 1Gi
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/secret.yaml", `
+	th.writeF("/manifests/e2e/e2e-tasks/base/secret.yaml", `
 ---
 apiVersion: v1
 kind: Secret
@@ -164,28 +107,28 @@ data:
   CLIENT_ID: MzM2MzM1NTQxOTkzLWdzZTFyMnZvc3Q1Z2JiMTN0ZWpjYmk0M3UyY3NjYTRpLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29t
   CLIENT_SECRET: ZFBIbmFvbUc3dUNodjFVTWY0bVFuX0tk
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/service-account.yaml", `
+	th.writeF("/manifests/e2e/e2e-tasks/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: tekton-pipelines
+  name: e2e-pipelines
 imagePullSecrets:
 - name: gcr-secret
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/cluster-role-binding.yaml", `
+	th.writeF("/manifests/e2e/e2e-tasks/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: tekton-pipelines-admin
+  name: e2e-pipelines-admin
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cluster-admin
 subjects:
 - kind: ServiceAccount
-  name: tekton-pipelines
+  name: e2e-pipelines
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-tasks/base/task.yaml", `
+	th.writeF("/manifests/e2e/e2e-tasks/base/task.yaml", `
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: Task
@@ -356,7 +299,7 @@ spec:
       claimName: kubeflow-pvc
 ---
 `)
-	th.writeK("/manifests/tektoncd/tektoncd-tasks/base", `
+	th.writeK("/manifests/e2e/e2e-tasks/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -369,14 +312,14 @@ namespace: tekton-pipelines
 `)
 }
 
-func TestTektoncdTasksOverlaysE2e(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/tektoncd/tektoncd-tasks/overlays/e2e")
-	writeTektoncdTasksOverlaysE2e(th)
+func TestE2eTasksOverlaysApplication(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/e2e/e2e-tasks/overlays/application")
+	writeE2eTasksOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../tektoncd/tektoncd-tasks/overlays/e2e"
+	targetPath := "../e2e/e2e-tasks/overlays/application"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
