@@ -143,7 +143,7 @@ spec:
     - "--verbose"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/.dockerconfigjson
+      value: /secret/gcr-secret.json
     - name: CLIENT_ID
       valueFrom:
         secretKeyRef:
@@ -163,6 +163,9 @@ spec:
   - name: kaniko-secret
     secret:
       secretName: kaniko-secret
+  - name: docker-secret
+    secret:
+      secretName: docker-secret
   - name: gcr-secret
     secret:
       secretName: gcr-secret
