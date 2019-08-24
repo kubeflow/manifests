@@ -3,7 +3,7 @@ kind: PipelineRun
 metadata:
   name: kfctl-build-apply-pipeline-run
 spec:
-  serviceAccount: tekton-pipelines
+  serviceAccount: e2e-pipelines
   pipelineRef:
     name: kfctl-build-apply
   resources:
