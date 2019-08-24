@@ -29,3 +29,11 @@
       value: $(repos_dir)
     - name: zone
       value: $(zone)
+    - name: JOB_NAME
+      value: $(JOB_NAME)
+    - name: JOB_TYPE
+      value: $(JOB_TYPE)
+    - name: PULL_NUMBER
+      value: "$(PULL_NUMBER)"
+    - name: BUILD_NUMBER
+      value: "$(BUILD_NUMBER)"

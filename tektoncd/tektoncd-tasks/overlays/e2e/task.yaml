@@ -23,12 +23,24 @@ spec:
     - name: bucket
       type: string
       description: name of gcp bucket to store test results
+    - name: JOB_NAME
+      type: string
+      description: prow job name
+    - name: JOB_TYPE
+      type: string
+      description: presubmit | postsubmit | periodic
+    - name: PULL_NUMBER
+      type: string
+      description: PR #
     - name: REPO_OWNER
       type: string
       description: git repository org
     - name: REPO_NAME
       type: string
       description: git repository name
+    - name: BUILD_NUMBER
+      type: string
+      description: build #
     - name: repos_dir
       type: string
       description: path to where the repo is downloaded
@@ -39,19 +51,19 @@ spec:
     command: ["python"]
     args:
     - "-m"
-    - "kubeflow.testing.run_e2e_workflow"
+    - "kubeflow.testing.run_tests"
     - "--project"
-    - "${project}"
+    - "${inputs.params.project}"
     - "--zone"
-    - "${zone}"
+    - "${inputs.params.zone}"
     - "--cluster"
-    - "${cluster}"
+    - "${inputs.params.cluster}"
     - "--bucket"
-    - "${bucket}"
+    - "${inputs.params.bucket}"
     - "--config_file"
-    - "${config_file}"
+    - "${inputs.params.config_file}"
     - "--repos_dir"
-    - "${repos_dir}"
+    - "${inputs.params.repos_dir}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
@@ -65,6 +77,18 @@ spec:
         secretKeyRef:
           name: client-secret
           key: CLIENT_SECRET
+    - name: JOB_NAME
+      value: ${inputs.params.JOB_NAME}
+    - name: JOB_TYPE
+      value: ${inputs.params.JOB_TYPE}
+    - name: PULL_NUMBER
+      value: "${inputs.params.PULL_NUMBER}"
+    - name: REPO_NAME
+      value: "${inputs.params.REPO_NAME}"
+    - name: REPO_OWNER
+      value: "${inputs.params.REPO_OWNER}"
+    - name: BUILD_NUMBER
+      value: "${inputs.params.BUILD_NUMBER}"
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret
