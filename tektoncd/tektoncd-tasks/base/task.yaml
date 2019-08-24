@@ -157,12 +157,17 @@ spec:
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret
+    - name: gcr-secret
+      mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
   volumes:
   - name: kaniko-secret
     secret:
       secretName: kaniko-secret
+  - name: gcr-secret
+    secret:
+      secretName: gcr-secret
   - name: kubeflow
     persistentVolumeClaim:
       claimName: kubeflow-pvc
