@@ -106,18 +106,18 @@ spec:
     - /kaniko/executor
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
+      value: /secret/gcr-secret.json
     args: ["--dockerfile=${inputs.params.pathToDockerFile}",
            "--destination=${outputs.resources.builtImage.url}",
            "--context=${inputs.params.pathToContext}",
            "--target=kfctl_base"]
     volumeMounts:
-    - name: kaniko-secret
+    - name: gcr-secret
       mountPath: /secret
   volumes:
-  - name: kaniko-secret
+  - name: gcr-secret
     secret:
-      secretName: kaniko-secret
+      secretName: gcr-secret
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: Task
@@ -170,9 +170,9 @@ spec:
     - "${inputs.params.app_dir}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
+      value: /secret/gcr-secret.json
     volumeMounts:
-    - name: kaniko-secret
+    - name: gcr-secret
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
@@ -191,7 +191,7 @@ spec:
     - "${inputs.params.email}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
+      value: /secret/gcr-secret.json
     - name: CLIENT_ID
       valueFrom:
         secretKeyRef:
@@ -203,7 +203,7 @@ spec:
           name: client-secret
           key: CLIENT_SECRET
     volumeMounts:
-    - name: kaniko-secret
+    - name: gcr-secret
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
@@ -218,7 +218,7 @@ spec:
     - "--verbose"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
+      value: /secret/gcr-secret.json
     - name: CLIENT_ID
       valueFrom:
         secretKeyRef:
@@ -230,16 +230,11 @@ spec:
           name: client-secret
           key: CLIENT_SECRET
     volumeMounts:
-    - name: kaniko-secret
-      mountPath: /secret
     - name: gcr-secret
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
   volumes:
-  - name: kaniko-secret
-    secret:
-      secretName: kaniko-secret
   - name: gcr-secret
     secret:
       secretName: gcr-secret
