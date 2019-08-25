@@ -30,26 +30,36 @@ func writeE2ePipelinesOverlaysE2e(th *KustTestHarness) {
       value: $(image)
     - name: project
       value: $(project)
-    - name: config_file
-      value: /src/$(REPO_OWNER)/$(REPO_NAME)/prow_config.yaml
     - name: cluster
       value: $(cluster)
     - name: bucket
       value: $(bucket)
-    - name: REPO_OWNER
-      value: $(REPO_OWNER)
-    - name: REPO_NAME
-      value: $(REPO_NAME)
     - name: repos_dir
       value: $(repos_dir)
     - name: zone
       value: $(zone)
+    - name: configPath
+      value: $(configPath)
+    - name: email
+      value: $(email)
+    - name: platform
+      value: $(platform)
+    - name: REPO_OWNER
+      value: $(REPO_OWNER)
+    - name: REPO_NAME
+      value: $(REPO_NAME)
+    - name: config_file
+      value: /src/$(REPO_OWNER)/$(REPO_NAME)/prow_config.yaml
     - name: JOB_NAME
       value: $(JOB_NAME)
     - name: JOB_TYPE
       value: $(JOB_TYPE)
     - name: PULL_NUMBER
       value: "$(PULL_NUMBER)"
+    - name: PULL_BASE_REF
+      value: "$(PULL_BASE_REF)"
+    - name: PULL_PULL_SHA
+      value: "$(PULL_PULL_SHA)"
     - name: BUILD_NUMBER
       value: "$(BUILD_NUMBER)"
 `)
@@ -61,6 +71,8 @@ bucket=kubernetes-jenkins
 repos_dir=/src
 zone=us-west1-a
 configPath=https://raw.githubusercontent.com/kubeflow/kubeflow/master/bootstrap/config/kfctl_gcp_iap.yaml
+email=kfctl-e2e@constant-cubist-173123.iam.gserviceaccount.com
+platform=all
 REPO_OWNER=kubeflow
 REPO_NAME=kfctl
 JOB_NAME=kubeflow-test-presubmit-test
