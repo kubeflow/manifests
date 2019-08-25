@@ -143,7 +143,7 @@ spec:
     - "--verbose"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/key.json
+      value: /secret/kfctl-e2e.json
     - name: CLIENT_ID
       valueFrom:
         secretKeyRef:
@@ -155,7 +155,7 @@ spec:
           name: client-secret
           key: CLIENT_SECRET
     volumeMounts:
-    - name: gcr-secret
+    - name: kfctl-e2e-secret
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
@@ -166,10 +166,9 @@ spec:
   - name: docker-secret
     secret:
       secretName: docker-secret
-  - name: gcr-secret
+  - name: kfctl-e2e-secret
     secret:
-      secretName: gcr-secret
+      secretName: kfctl-e2e-secret
   - name: kubeflow
     persistentVolumeClaim:
       claimName: kubeflow-pvc
----
