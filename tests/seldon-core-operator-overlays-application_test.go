@@ -61,163 +61,10 @@ commonLabels:
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.6
 `)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-config-cm.yaml", `
-apiVersion: v1
-data:
-  credentials: |-
-    {
-       "gcs" : {
-           "gcsCredentialFileName": "gcloud-application-credentials.json"
-       },
-       "s3" : {
-           "s3AccessKeyIDName": "awsAccessKeyID",
-           "s3SecretAccessKeyName": "awsSecretAccessKey"
-       }
-    }
-kind: ConfigMap
-metadata:
-  labels:
-    app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
-    app.kubernetes.io/name: seldon-core-operator
-    helm.sh/chart: seldon-core-operator-0.4.0
-  name: seldon-config
-  namespace: kubeflow
-`)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-manager-sa.yaml", `
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  labels:
-    app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
-    app.kubernetes.io/name: seldon-core-operator
-    helm.sh/chart: seldon-core-operator-0.4.0
-  name: seldon-manager
-  namespace: kubeflow
-`)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-controller-manager-service-svc.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
-    app.kubernetes.io/name: seldon-core-operator
-    control-plane: seldon-controller-manager
-    controller-tools.k8s.io: "1.0"
-    helm.sh/chart: seldon-core-operator-0.4.0
-  name: seldon-operator-controller-manager-service
-  namespace: kubeflow
-spec:
-  ports:
-  - port: 443
-  selector:
-    control-plane: seldon-controller-manager
-    controller-tools.k8s.io: "1.0"
-`)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-controller-manager-statefulset.yaml", `
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  labels:
-    app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
-    app.kubernetes.io/name: seldon-core-operator
-    control-plane: seldon-controller-manager
-    controller-tools.k8s.io: "1.0"
-    helm.sh/chart: seldon-core-operator-0.4.0
-  name: seldon-operator-controller-manager
-  namespace: kubeflow
-spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/instance: seldon-core-operator
-      app.kubernetes.io/name: seldon-core-operator
-      control-plane: seldon-controller-manager
-      controller-tools.k8s.io: "1.0"
-  serviceName: seldon-operator-controller-manager-service
-  template:
-    metadata:
-      annotations:
-        prometheus.io/scrape: "true"
-      labels:
-        app.kubernetes.io/instance: seldon-core-operator
-        app.kubernetes.io/name: seldon-core-operator
-        control-plane: seldon-controller-manager
-        controller-tools.k8s.io: "1.0"
-    spec:
-      containers:
-      - command:
-        - /manager
-        env:
-        - name: POD_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: SECRET_NAME
-          value: seldon-operator-webhook-server-secret
-        - name: AMBASSADOR_ENABLED
-          value: "true"
-        - name: AMBASSADOR_SINGLE_NAMESPACE
-          value: "false"
-        - name: ENGINE_CONTAINER_IMAGE_AND_VERSION
-          value: docker.io/seldonio/engine:0.4.0
-        - name: ENGINE_CONTAINER_IMAGE_PULL_POLICY
-          value: IfNotPresent
-        - name: ENGINE_CONTAINER_SERVICE_ACCOUNT_NAME
-          value: default
-        - name: ENGINE_CONTAINER_USER
-          value: "8888"
-        - name: ENGINE_LOG_MESSAGES_EXTERNALLY
-          value: "false"
-        - name: PREDICTIVE_UNIT_SERVICE_PORT
-          value: "9000"
-        - name: ENGINE_SERVER_GRPC_PORT
-          value: "5001"
-        - name: ENGINE_SERVER_PORT
-          value: "8000"
-        - name: ENGINE_PROMETHEUS_PATH
-          value: prometheus
-        - name: ISTIO_ENABLED
-          value: "true"
-        - name: ISTIO_GATEWAY
-          value: kubeflow-gateway
-        image: docker.io/seldonio/seldon-core-operator:0.4.0
-        imagePullPolicy: Always
-        name: manager
-        ports:
-        - containerPort: 8080
-          name: metrics
-          protocol: TCP
-        - containerPort: 9876
-          name: webhook-server
-          protocol: TCP
-        resources:
-          requests:
-            cpu: 100m
-            memory: 20Mi
-        volumeMounts:
-        - mountPath: /tmp/cert
-          name: cert
-          readOnly: true
-      serviceAccountName: seldon-manager
-      terminationGracePeriodSeconds: 10
-      volumes:
-      - name: cert
-        secret:
-          defaultMode: 420
-          secretName: seldon-operator-webhook-server-secret
-`)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-manager-role-clusterrole.yaml", `
+	th.writeF("/manifests/seldon/seldon-core-operator/base/clusterrole.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  labels:
-    app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
-    app.kubernetes.io/name: seldon-core-operator
-    helm.sh/chart: seldon-core-operator-0.4.0
   name: seldon-operator-manager-role
 rules:
 - apiGroups:
@@ -341,14 +188,6 @@ rules:
   - update
   - patch
 - apiGroups:
-  - machinelearning.seldon.io
-  resources:
-  - seldondeployments/finalizers
-  verbs:
-  - get
-  - update
-  - patch
-- apiGroups:
   - admissionregistration.k8s.io
   resources:
   - mutatingwebhookconfigurations
@@ -376,22 +215,6 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - configmaps
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - serviceaccounts
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
   - services
   verbs:
   - get
@@ -402,33 +225,7 @@ rules:
   - patch
   - delete
 `)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-manager-rolebinding-crb.yaml", `
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  labels:
-    app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
-    app.kubernetes.io/name: seldon-core-operator
-    helm.sh/chart: seldon-core-operator-0.4.0
-  name: seldon-operator-manager-rolebinding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: seldon-operator-manager-role
-subjects:
-- kind: ServiceAccount
-  name: seldon-manager
-  namespace: kubeflow
-`)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-webhook-server-secret-secret.yaml", `
-apiVersion: v1
-kind: Secret
-metadata:
-  name: seldon-operator-webhook-server-secret
-  namespace: kubeflow
-`)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/seldondeployments.machinelearning.seldon.io-crd.yaml", `
+	th.writeF("/manifests/seldon/seldon-core-operator/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -442,8 +239,6 @@ spec:
     - sdep
     singular: seldondeployment
   scope: Namespaced
-  subresources:
-    status: {}
   validation:
     openAPIV3Schema:
       properties:
@@ -643,6 +438,79 @@ spec:
                             generation:
                               format: int64
                               type: integer
+                            initializers:
+                              properties:
+                                pending:
+                                  items:
+                                    properties:
+                                      name:
+                                        type: string
+                                    required:
+                                    - name
+                                    type: object
+                                  type: array
+                                  x-kubernetes-patch-merge-key: name
+                                  x-kubernetes-patch-strategy: merge
+                                result:
+                                  properties:
+                                    apiVersion:
+                                      type: string
+                                    code:
+                                      format: int32
+                                      type: integer
+                                    details:
+                                      properties:
+                                        causes:
+                                          items:
+                                            properties:
+                                              field:
+                                                type: string
+                                              message:
+                                                type: string
+                                              reason:
+                                                type: string
+                                            type: object
+                                          type: array
+                                        group:
+                                          type: string
+                                        kind:
+                                          type: string
+                                        name:
+                                          type: string
+                                        retryAfterSeconds:
+                                          format: int32
+                                          type: integer
+                                        uid:
+                                          type: string
+                                      type: object
+                                    kind:
+                                      type: string
+                                    message:
+                                      type: string
+                                    metadata:
+                                      properties:
+                                        continue:
+                                          type: string
+                                        remainingItemCount:
+                                          format: int64
+                                          type: integer
+                                        resourceVersion:
+                                          type: string
+                                        selfLink:
+                                          type: string
+                                      type: object
+                                    reason:
+                                      type: string
+                                    status:
+                                      type: string
+                                  type: object
+                                  x-kubernetes-group-version-kind:
+                                  - group: ""
+                                    kind: Status
+                                    version: v1
+                              required:
+                              - pending
+                              type: object
                             labels:
                               additionalProperties:
                                 type: string
@@ -1366,8 +1234,6 @@ spec:
                                             type: string
                                           gmsaCredentialSpecName:
                                             type: string
-                                          runAsUserName:
-                                            type: string
                                         type: object
                                     type: object
                                   stdin:
@@ -1448,451 +1314,6 @@ spec:
                               type: string
                             enableServiceLinks:
                               type: boolean
-                            ephemeralContainers:
-                              items:
-                                properties:
-                                  args:
-                                    items:
-                                      type: string
-                                    type: array
-                                  command:
-                                    items:
-                                      type: string
-                                    type: array
-                                  env:
-                                    items:
-                                      properties:
-                                        name:
-                                          type: string
-                                        value:
-                                          type: string
-                                        valueFrom:
-                                          properties:
-                                            configMapKeyRef:
-                                              properties:
-                                                key:
-                                                  type: string
-                                                name:
-                                                  type: string
-                                                optional:
-                                                  type: boolean
-                                              required:
-                                              - key
-                                              type: object
-                                            fieldRef:
-                                              properties:
-                                                apiVersion:
-                                                  type: string
-                                                fieldPath:
-                                                  type: string
-                                              required:
-                                              - fieldPath
-                                              type: object
-                                            resourceFieldRef:
-                                              properties:
-                                                containerName:
-                                                  type: string
-                                                divisor:
-                                                  type: string
-                                                resource:
-                                                  type: string
-                                              required:
-                                              - resource
-                                              type: object
-                                            secretKeyRef:
-                                              properties:
-                                                key:
-                                                  type: string
-                                                name:
-                                                  type: string
-                                                optional:
-                                                  type: boolean
-                                              required:
-                                              - key
-                                              type: object
-                                          type: object
-                                      required:
-                                      - name
-                                      type: object
-                                    type: array
-                                    x-kubernetes-patch-merge-key: name
-                                    x-kubernetes-patch-strategy: merge
-                                  envFrom:
-                                    items:
-                                      properties:
-                                        configMapRef:
-                                          properties:
-                                            name:
-                                              type: string
-                                            optional:
-                                              type: boolean
-                                          type: object
-                                        prefix:
-                                          type: string
-                                        secretRef:
-                                          properties:
-                                            name:
-                                              type: string
-                                            optional:
-                                              type: boolean
-                                          type: object
-                                      type: object
-                                    type: array
-                                  image:
-                                    type: string
-                                  imagePullPolicy:
-                                    type: string
-                                  lifecycle:
-                                    properties:
-                                      postStart:
-                                        properties:
-                                          exec:
-                                            properties:
-                                              command:
-                                                items:
-                                                  type: string
-                                                type: array
-                                            type: object
-                                          httpGet:
-                                            properties:
-                                              host:
-                                                type: string
-                                              httpHeaders:
-                                                items:
-                                                  properties:
-                                                    name:
-                                                      type: string
-                                                    value:
-                                                      type: string
-                                                  required:
-                                                  - name
-                                                  - value
-                                                  type: object
-                                                type: array
-                                              path:
-                                                type: string
-                                              port:
-                                                format: int-or-string
-                                                type: string
-                                              scheme:
-                                                type: string
-                                            required:
-                                            - port
-                                            type: object
-                                          tcpSocket:
-                                            properties:
-                                              host:
-                                                type: string
-                                              port:
-                                                format: int-or-string
-                                                type: string
-                                            required:
-                                            - port
-                                            type: object
-                                        type: object
-                                      preStop:
-                                        properties:
-                                          exec:
-                                            properties:
-                                              command:
-                                                items:
-                                                  type: string
-                                                type: array
-                                            type: object
-                                          httpGet:
-                                            properties:
-                                              host:
-                                                type: string
-                                              httpHeaders:
-                                                items:
-                                                  properties:
-                                                    name:
-                                                      type: string
-                                                    value:
-                                                      type: string
-                                                  required:
-                                                  - name
-                                                  - value
-                                                  type: object
-                                                type: array
-                                              path:
-                                                type: string
-                                              port:
-                                                format: int-or-string
-                                                type: string
-                                              scheme:
-                                                type: string
-                                            required:
-                                            - port
-                                            type: object
-                                          tcpSocket:
-                                            properties:
-                                              host:
-                                                type: string
-                                              port:
-                                                format: int-or-string
-                                                type: string
-                                            required:
-                                            - port
-                                            type: object
-                                        type: object
-                                    type: object
-                                  livenessProbe:
-                                    properties:
-                                      exec:
-                                        properties:
-                                          command:
-                                            items:
-                                              type: string
-                                            type: array
-                                        type: object
-                                      failureThreshold:
-                                        format: int32
-                                        type: integer
-                                      httpGet:
-                                        properties:
-                                          host:
-                                            type: string
-                                          httpHeaders:
-                                            items:
-                                              properties:
-                                                name:
-                                                  type: string
-                                                value:
-                                                  type: string
-                                              required:
-                                              - name
-                                              - value
-                                              type: object
-                                            type: array
-                                          path:
-                                            type: string
-                                          port:
-                                            format: int-or-string
-                                            type: string
-                                          scheme:
-                                            type: string
-                                        required:
-                                        - port
-                                        type: object
-                                      initialDelaySeconds:
-                                        format: int32
-                                        type: integer
-                                      periodSeconds:
-                                        format: int32
-                                        type: integer
-                                      successThreshold:
-                                        format: int32
-                                        type: integer
-                                      tcpSocket:
-                                        properties:
-                                          host:
-                                            type: string
-                                          port:
-                                            format: int-or-string
-                                            type: string
-                                        required:
-                                        - port
-                                        type: object
-                                      timeoutSeconds:
-                                        format: int32
-                                        type: integer
-                                    type: object
-                                  name:
-                                    type: string
-                                  ports:
-                                    items:
-                                      properties:
-                                        containerPort:
-                                          format: int32
-                                          type: integer
-                                        hostIP:
-                                          type: string
-                                        hostPort:
-                                          format: int32
-                                          type: integer
-                                        name:
-                                          type: string
-                                        protocol:
-                                          type: string
-                                      required:
-                                      - containerPort
-                                      type: object
-                                    type: array
-                                  readinessProbe:
-                                    properties:
-                                      exec:
-                                        properties:
-                                          command:
-                                            items:
-                                              type: string
-                                            type: array
-                                        type: object
-                                      failureThreshold:
-                                        format: int32
-                                        type: integer
-                                      httpGet:
-                                        properties:
-                                          host:
-                                            type: string
-                                          httpHeaders:
-                                            items:
-                                              properties:
-                                                name:
-                                                  type: string
-                                                value:
-                                                  type: string
-                                              required:
-                                              - name
-                                              - value
-                                              type: object
-                                            type: array
-                                          path:
-                                            type: string
-                                          port:
-                                            format: int-or-string
-                                            type: string
-                                          scheme:
-                                            type: string
-                                        required:
-                                        - port
-                                        type: object
-                                      initialDelaySeconds:
-                                        format: int32
-                                        type: integer
-                                      periodSeconds:
-                                        format: int32
-                                        type: integer
-                                      successThreshold:
-                                        format: int32
-                                        type: integer
-                                      tcpSocket:
-                                        properties:
-                                          host:
-                                            type: string
-                                          port:
-                                            format: int-or-string
-                                            type: string
-                                        required:
-                                        - port
-                                        type: object
-                                      timeoutSeconds:
-                                        format: int32
-                                        type: integer
-                                    type: object
-                                  resources:
-                                    properties:
-                                      limits:
-                                        type: object
-                                      requests:
-                                        type: object
-                                    type: object
-                                  securityContext:
-                                    properties:
-                                      allowPrivilegeEscalation:
-                                        type: boolean
-                                      capabilities:
-                                        properties:
-                                          add:
-                                            items:
-                                              type: string
-                                            type: array
-                                          drop:
-                                            items:
-                                              type: string
-                                            type: array
-                                        type: object
-                                      privileged:
-                                        type: boolean
-                                      procMount:
-                                        type: string
-                                      readOnlyRootFilesystem:
-                                        type: boolean
-                                      runAsGroup:
-                                        format: int64
-                                        type: integer
-                                      runAsNonRoot:
-                                        type: boolean
-                                      runAsUser:
-                                        format: int64
-                                        type: integer
-                                      seLinuxOptions:
-                                        properties:
-                                          level:
-                                            type: string
-                                          role:
-                                            type: string
-                                          type:
-                                            type: string
-                                          user:
-                                            type: string
-                                        type: object
-                                      windowsOptions:
-                                        properties:
-                                          gmsaCredentialSpec:
-                                            type: string
-                                          gmsaCredentialSpecName:
-                                            type: string
-                                          runAsUserName:
-                                            type: string
-                                        type: object
-                                    type: object
-                                  stdin:
-                                    type: boolean
-                                  stdinOnce:
-                                    type: boolean
-                                  targetContainerName:
-                                    type: string
-                                  terminationMessagePath:
-                                    type: string
-                                  terminationMessagePolicy:
-                                    type: string
-                                  tty:
-                                    type: boolean
-                                  volumeDevices:
-                                    items:
-                                      properties:
-                                        devicePath:
-                                          type: string
-                                        name:
-                                          type: string
-                                      required:
-                                      - name
-                                      - devicePath
-                                      type: object
-                                    type: array
-                                    x-kubernetes-patch-merge-key: devicePath
-                                    x-kubernetes-patch-strategy: merge
-                                  volumeMounts:
-                                    items:
-                                      properties:
-                                        mountPath:
-                                          type: string
-                                        mountPropagation:
-                                          type: string
-                                        name:
-                                          type: string
-                                        readOnly:
-                                          type: boolean
-                                        subPath:
-                                          type: string
-                                        subPathExpr:
-                                          type: string
-                                      required:
-                                      - name
-                                      - mountPath
-                                      type: object
-                                    type: array
-                                    x-kubernetes-patch-merge-key: mountPath
-                                    x-kubernetes-patch-strategy: merge
-                                  workingDir:
-                                    type: string
-                                required:
-                                - name
-                                type: object
-                              type: array
-                              x-kubernetes-patch-merge-key: name
-                              x-kubernetes-patch-strategy: merge
                             hostAliases:
                               items:
                                 properties:
@@ -2314,8 +1735,6 @@ spec:
                                             type: string
                                           gmsaCredentialSpecName:
                                             type: string
-                                          runAsUserName:
-                                            type: string
                                         type: object
                                     type: object
                                   stdin:
@@ -2449,8 +1868,6 @@ spec:
                                       type: string
                                     gmsaCredentialSpecName:
                                       type: string
-                                    runAsUserName:
-                                      type: string
                                   type: object
                               type: object
                             serviceAccount:
@@ -2480,53 +1897,6 @@ spec:
                                     type: string
                                 type: object
                               type: array
-                            topologySpreadConstraints:
-                              items:
-                                properties:
-                                  labelSelector:
-                                    properties:
-                                      matchExpressions:
-                                        items:
-                                          properties:
-                                            key:
-                                              type: string
-                                              x-kubernetes-patch-merge-key: key
-                                              x-kubernetes-patch-strategy: merge
-                                            operator:
-                                              type: string
-                                            values:
-                                              items:
-                                                type: string
-                                              type: array
-                                          required:
-                                          - key
-                                          - operator
-                                          type: object
-                                        type: array
-                                      matchLabels:
-                                        additionalProperties:
-                                          type: string
-                                        type: object
-                                    type: object
-                                  maxSkew:
-                                    format: int32
-                                    type: integer
-                                  topologyKey:
-                                    type: string
-                                  whenUnsatisfiable:
-                                    type: string
-                                required:
-                                - maxSkew
-                                - topologyKey
-                                - whenUnsatisfiable
-                                type: object
-                              type: array
-                              x-kubernetes-list-map-keys:
-                              - topologyKey
-                              - whenUnsatisfiable
-                              x-kubernetes-list-type: map
-                              x-kubernetes-patch-merge-key: topologyKey
-                              x-kubernetes-patch-strategy: merge
                             volumes:
                               items:
                                 properties:
@@ -2948,476 +2318,6 @@ spec:
                           type: object
                       type: object
                     type: array
-                  explainer:
-                    properties:
-                      config:
-                        additionalProperties: true
-                        type: object
-                      containerSpec:
-                        properties:
-                          args:
-                            items:
-                              type: string
-                            type: array
-                          command:
-                            items:
-                              type: string
-                            type: array
-                          env:
-                            items:
-                              properties:
-                                name:
-                                  type: string
-                                value:
-                                  type: string
-                                valueFrom:
-                                  properties:
-                                    configMapKeyRef:
-                                      properties:
-                                        key:
-                                          type: string
-                                        name:
-                                          type: string
-                                        optional:
-                                          type: boolean
-                                      required:
-                                      - key
-                                      type: object
-                                    fieldRef:
-                                      properties:
-                                        apiVersion:
-                                          type: string
-                                        fieldPath:
-                                          type: string
-                                      required:
-                                      - fieldPath
-                                      type: object
-                                    resourceFieldRef:
-                                      properties:
-                                        containerName:
-                                          type: string
-                                        divisor:
-                                          type: string
-                                        resource:
-                                          type: string
-                                      required:
-                                      - resource
-                                      type: object
-                                    secretKeyRef:
-                                      properties:
-                                        key:
-                                          type: string
-                                        name:
-                                          type: string
-                                        optional:
-                                          type: boolean
-                                      required:
-                                      - key
-                                      type: object
-                                  type: object
-                              required:
-                              - name
-                              type: object
-                            type: array
-                            x-kubernetes-patch-merge-key: name
-                            x-kubernetes-patch-strategy: merge
-                          envFrom:
-                            items:
-                              properties:
-                                configMapRef:
-                                  properties:
-                                    name:
-                                      type: string
-                                    optional:
-                                      type: boolean
-                                  type: object
-                                prefix:
-                                  type: string
-                                secretRef:
-                                  properties:
-                                    name:
-                                      type: string
-                                    optional:
-                                      type: boolean
-                                  type: object
-                              type: object
-                            type: array
-                          image:
-                            type: string
-                          imagePullPolicy:
-                            type: string
-                          lifecycle:
-                            properties:
-                              postStart:
-                                properties:
-                                  exec:
-                                    properties:
-                                      command:
-                                        items:
-                                          type: string
-                                        type: array
-                                    type: object
-                                  httpGet:
-                                    properties:
-                                      host:
-                                        type: string
-                                      httpHeaders:
-                                        items:
-                                          properties:
-                                            name:
-                                              type: string
-                                            value:
-                                              type: string
-                                          required:
-                                          - name
-                                          - value
-                                          type: object
-                                        type: array
-                                      path:
-                                        type: string
-                                      port:
-                                        format: int-or-string
-                                        type: string
-                                      scheme:
-                                        type: string
-                                    required:
-                                    - port
-                                    type: object
-                                  tcpSocket:
-                                    properties:
-                                      host:
-                                        type: string
-                                      port:
-                                        format: int-or-string
-                                        type: string
-                                    required:
-                                    - port
-                                    type: object
-                                type: object
-                              preStop:
-                                properties:
-                                  exec:
-                                    properties:
-                                      command:
-                                        items:
-                                          type: string
-                                        type: array
-                                    type: object
-                                  httpGet:
-                                    properties:
-                                      host:
-                                        type: string
-                                      httpHeaders:
-                                        items:
-                                          properties:
-                                            name:
-                                              type: string
-                                            value:
-                                              type: string
-                                          required:
-                                          - name
-                                          - value
-                                          type: object
-                                        type: array
-                                      path:
-                                        type: string
-                                      port:
-                                        format: int-or-string
-                                        type: string
-                                      scheme:
-                                        type: string
-                                    required:
-                                    - port
-                                    type: object
-                                  tcpSocket:
-                                    properties:
-                                      host:
-                                        type: string
-                                      port:
-                                        format: int-or-string
-                                        type: string
-                                    required:
-                                    - port
-                                    type: object
-                                type: object
-                            type: object
-                          livenessProbe:
-                            properties:
-                              exec:
-                                properties:
-                                  command:
-                                    items:
-                                      type: string
-                                    type: array
-                                type: object
-                              failureThreshold:
-                                format: int32
-                                type: integer
-                              httpGet:
-                                properties:
-                                  host:
-                                    type: string
-                                  httpHeaders:
-                                    items:
-                                      properties:
-                                        name:
-                                          type: string
-                                        value:
-                                          type: string
-                                      required:
-                                      - name
-                                      - value
-                                      type: object
-                                    type: array
-                                  path:
-                                    type: string
-                                  port:
-                                    format: int-or-string
-                                    type: string
-                                  scheme:
-                                    type: string
-                                required:
-                                - port
-                                type: object
-                              initialDelaySeconds:
-                                format: int32
-                                type: integer
-                              periodSeconds:
-                                format: int32
-                                type: integer
-                              successThreshold:
-                                format: int32
-                                type: integer
-                              tcpSocket:
-                                properties:
-                                  host:
-                                    type: string
-                                  port:
-                                    format: int-or-string
-                                    type: string
-                                required:
-                                - port
-                                type: object
-                              timeoutSeconds:
-                                format: int32
-                                type: integer
-                            type: object
-                          name:
-                            type: string
-                          ports:
-                            items:
-                              properties:
-                                containerPort:
-                                  format: int32
-                                  type: integer
-                                hostIP:
-                                  type: string
-                                hostPort:
-                                  format: int32
-                                  type: integer
-                                name:
-                                  type: string
-                                protocol:
-                                  type: string
-                              required:
-                              - containerPort
-                              type: object
-                            type: array
-                            x-kubernetes-list-map-keys:
-                            - containerPort
-                            - protocol
-                            x-kubernetes-list-type: map
-                            x-kubernetes-patch-merge-key: containerPort
-                            x-kubernetes-patch-strategy: merge
-                          readinessProbe:
-                            properties:
-                              exec:
-                                properties:
-                                  command:
-                                    items:
-                                      type: string
-                                    type: array
-                                type: object
-                              failureThreshold:
-                                format: int32
-                                type: integer
-                              httpGet:
-                                properties:
-                                  host:
-                                    type: string
-                                  httpHeaders:
-                                    items:
-                                      properties:
-                                        name:
-                                          type: string
-                                        value:
-                                          type: string
-                                      required:
-                                      - name
-                                      - value
-                                      type: object
-                                    type: array
-                                  path:
-                                    type: string
-                                  port:
-                                    format: int-or-string
-                                    type: string
-                                  scheme:
-                                    type: string
-                                required:
-                                - port
-                                type: object
-                              initialDelaySeconds:
-                                format: int32
-                                type: integer
-                              periodSeconds:
-                                format: int32
-                                type: integer
-                              successThreshold:
-                                format: int32
-                                type: integer
-                              tcpSocket:
-                                properties:
-                                  host:
-                                    type: string
-                                  port:
-                                    format: int-or-string
-                                    type: string
-                                required:
-                                - port
-                                type: object
-                              timeoutSeconds:
-                                format: int32
-                                type: integer
-                            type: object
-                          resources:
-                            properties:
-                              limits:
-                                type: object
-                              requests:
-                                type: object
-                            type: object
-                          securityContext:
-                            properties:
-                              allowPrivilegeEscalation:
-                                type: boolean
-                              capabilities:
-                                properties:
-                                  add:
-                                    items:
-                                      type: string
-                                    type: array
-                                  drop:
-                                    items:
-                                      type: string
-                                    type: array
-                                type: object
-                              privileged:
-                                type: boolean
-                              procMount:
-                                type: string
-                              readOnlyRootFilesystem:
-                                type: boolean
-                              runAsGroup:
-                                format: int64
-                                type: integer
-                              runAsNonRoot:
-                                type: boolean
-                              runAsUser:
-                                format: int64
-                                type: integer
-                              seLinuxOptions:
-                                properties:
-                                  level:
-                                    type: string
-                                  role:
-                                    type: string
-                                  type:
-                                    type: string
-                                  user:
-                                    type: string
-                                type: object
-                              windowsOptions:
-                                properties:
-                                  gmsaCredentialSpec:
-                                    type: string
-                                  gmsaCredentialSpecName:
-                                    type: string
-                                  runAsUserName:
-                                    type: string
-                                type: object
-                            type: object
-                          stdin:
-                            type: boolean
-                          stdinOnce:
-                            type: boolean
-                          terminationMessagePath:
-                            type: string
-                          terminationMessagePolicy:
-                            type: string
-                          tty:
-                            type: boolean
-                          volumeDevices:
-                            items:
-                              properties:
-                                devicePath:
-                                  type: string
-                                name:
-                                  type: string
-                              required:
-                              - name
-                              - devicePath
-                              type: object
-                            type: array
-                            x-kubernetes-patch-merge-key: devicePath
-                            x-kubernetes-patch-strategy: merge
-                          volumeMounts:
-                            items:
-                              properties:
-                                mountPath:
-                                  type: string
-                                mountPropagation:
-                                  type: string
-                                name:
-                                  type: string
-                                readOnly:
-                                  type: boolean
-                                subPath:
-                                  type: string
-                                subPathExpr:
-                                  type: string
-                              required:
-                              - name
-                              - mountPath
-                              type: object
-                            type: array
-                            x-kubernetes-patch-merge-key: mountPath
-                            x-kubernetes-patch-strategy: merge
-                          workingDir:
-                            type: string
-                        required:
-                        - name
-                        type: object
-                      endpoint:
-                        properties:
-                          service_host:
-                            type: string
-                          service_port:
-                            type: integer
-                          type:
-                            enum:
-                            - REST
-                            - GRPC
-                            type: string
-                      envSecretRefName:
-                        type: string
-                      modelUri:
-                        type: string
-                      serviceAccountName:
-                        type: string
-                      type:
-                        type: string
-                    type: object
                   graph:
                     properties:
                       children:
@@ -3427,7 +2327,6 @@ spec:
                               items:
                                 properties:
                                   children:
-                                    items: {}
                                     type: array
                                   endpoint:
                                     properties:
@@ -3440,8 +2339,6 @@ spec:
                                         - REST
                                         - GRPC
                                         type: string
-                                  envSecretRefName:
-                                    type: string
                                   implementation:
                                     enum:
                                     - UNKNOWN_IMPLEMENTATION
@@ -3449,10 +2346,6 @@ spec:
                                     - SIMPLE_ROUTER
                                     - RANDOM_ABTEST
                                     - AVERAGE_COMBINER
-                                    - SKLEARN_SERVER
-                                    - XGBOOST_SERVER
-                                    - TENSORFLOW_SERVER
-                                    - MLFLOW_SERVER
                                     type: string
                                   methods:
                                     items:
@@ -3464,11 +2357,7 @@ spec:
                                       - SEND_FEEDBACK
                                       type: string
                                     type: array
-                                  modelUri:
-                                    type: string
                                   name:
-                                    type: string
-                                  serviceAccountName:
                                     type: string
                                   type:
                                     enum:
@@ -3498,10 +2387,6 @@ spec:
                               - SIMPLE_ROUTER
                               - RANDOM_ABTEST
                               - AVERAGE_COMBINER
-                              - SKLEARN_SERVER
-                              - XGBOOST_SERVER
-                              - TENSORFLOW_SERVER
-                              - MLFLOW_SERVER
                               type: string
                             methods:
                               items:
@@ -3543,9 +2428,6 @@ spec:
                         - SIMPLE_ROUTER
                         - RANDOM_ABTEST
                         - AVERAGE_COMBINER
-                        - SKLEARN_SERVER
-                        - XGBOOST_SERVER
-                        - TENSORFLOW_SERVER
                         type: string
                       methods:
                         items:
@@ -3643,41 +2525,145 @@ spec:
   - name: v1alpha2
     served: true
     storage: true
-
 `)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/webhook-server-service-svc.yaml", `
+	th.writeF("/manifests/seldon/seldon-core-operator/base/rolebinding.yaml", `
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: seldon-operator-manager-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: seldon-operator-manager-role
+subjects:
+- kind: ServiceAccount
+  name: seldon-manager
+  namespace: kubeflow
+`)
+	th.writeF("/manifests/seldon/seldon-core-operator/base/secret.yaml", `
+apiVersion: v1
+kind: Secret
+metadata:
+  name: seldon-operator-webhook-server-secret
+`)
+	th.writeF("/manifests/seldon/seldon-core-operator/base/service-account.yaml", `
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: seldon-manager
+`)
+	th.writeF("/manifests/seldon/seldon-core-operator/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
-    app.kubernetes.io/name: seldon-core-operator
     control-plane: seldon-controller-manager
     controller-tools.k8s.io: "1.0"
-    helm.sh/chart: seldon-core-operator-0.4.0
-  name: webhook-server-service
-  namespace: kubeflow
+  name: seldon-operator-controller-manager-service
 spec:
   ports:
   - port: 443
-    targetPort: 9876
   selector:
     control-plane: seldon-controller-manager
+    controller-tools.k8s.io: "1.0"
+`)
+	th.writeF("/manifests/seldon/seldon-core-operator/base/statefulset.yaml", `
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    control-plane: seldon-controller-manager
+    controller-tools.k8s.io: "1.0"
+  name: seldon-operator-controller-manager
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: seldon-core-operator
+      app.kubernetes.io/name: seldon-core-operator
+      control-plane: seldon-controller-manager
+      controller-tools.k8s.io: "1.0"
+  serviceName: seldon-operator-controller-manager-service
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+      labels:
+        app.kubernetes.io/instance: seldon-core-operator
+        app.kubernetes.io/name: seldon-core-operator
+        control-plane: seldon-controller-manager
+        controller-tools.k8s.io: "1.0"
+    spec:
+      containers:
+      - command:
+        - /manager
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: SECRET_NAME
+          value: seldon-operator-webhook-server-secret
+        - name: AMBASSADOR_ENABLED
+          value: "true"
+        - name: AMBASSADOR_SINGLE_NAMESPACE
+          value: "false"
+        - name: ENGINE_CONTAINER_IMAGE_AND_VERSION
+          value: docker.io/seldonio/engine:0.3.0
+        - name: ENGINE_CONTAINER_IMAGE_PULL_POLICY
+          value: IfNotPresent
+        - name: ENGINE_CONTAINER_SERVICE_ACCOUNT_NAME
+          value: default
+        - name: ENGINE_CONTAINER_USER
+          value: "8888"
+        - name: PREDICTIVE_UNIT_SERVICE_PORT
+          value: "9000"
+        - name: ENGINE_SERVER_GRPC_PORT
+          value: "5001"
+        - name: ENGINE_SERVER_PORT
+          value: "8000"
+        - name: ENGINE_PROMETHEUS_PATH
+          value: prometheus
+        - name: ISTIO_ENABLED
+          value: "true"
+        - name: ISTIO_GATEWAY
+          value: kubeflow-gateway
+        image: docker.io/seldonio/seldon-core-operator:0.3.1
+        imagePullPolicy: Always
+        name: manager
+        ports:
+        - containerPort: 8080
+          name: metrics
+          protocol: TCP
+        - containerPort: 9876
+          name: webhook-server
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 100m
+            memory: 20Mi
+        volumeMounts:
+        - mountPath: /tmp/cert
+          name: cert
+          readOnly: true
+      serviceAccountName: seldon-manager
+      terminationGracePeriodSeconds: 10
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: seldon-operator-webhook-server-secret
+  volumeClaimTemplates: []
 `)
 	th.writeK("/manifests/seldon/seldon-core-operator/base", `
-# List of resource files that kustomize reads, modifies
-# and emits as a YAML string
 resources:
-- seldon-config-cm.yaml
-- seldon-manager-sa.yaml
-- seldon-operator-controller-manager-service-svc.yaml
-- seldon-operator-controller-manager-statefulset.yaml
-- seldon-operator-manager-role-clusterrole.yaml
-- seldon-operator-manager-rolebinding-crb.yaml
-- seldon-operator-webhook-server-secret-secret.yaml
-- seldondeployments.machinelearning.seldon.io-crd.yaml
-- webhook-server-service-svc.yaml`)
+- clusterrole.yaml
+- crd.yaml
+- rolebinding.yaml
+- secret.yaml
+- service-account.yaml
+- service.yaml
+- statefulset.yaml
+`)
 }
 
 func TestSeldonCoreOperatorOverlaysApplication(t *testing.T) {
