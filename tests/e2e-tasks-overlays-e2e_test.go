@@ -29,15 +29,36 @@ spec:
     - name: project
       type: string
       description: the gcp project to run the e2e tests
-    - name: config_file
-      type: string
-      description: the location of the prow_config file
     - name: cluster
       type: string
       description: name of k8 cluster
     - name: bucket
       type: string
       description: name of gcp bucket to store test results
+    - name: repos_dir
+      type: string
+      description: path to where the repo is downloaded
+    - name: zone
+      type: string
+      description: k8 zone where e2e tests run
+    - name: configPath
+      type: string
+      description: the location of the config file for kfctl init
+    - name: email
+      type: string
+      description: email of project owner
+    - name: platform
+      type: string
+      description: all | k8s
+    - name: REPO_OWNER
+      type: string
+      description: git repository org
+    - name: REPO_NAME
+      type: string
+      description: git repository name
+    - name: config_file
+      type: string
+      description: the location of the prow_config file
     - name: JOB_NAME
       type: string
       description: prow job name
@@ -47,21 +68,15 @@ spec:
     - name: PULL_NUMBER
       type: string
       description: PR #
-    - name: REPO_OWNER
+    - name: PULL_BASE_REF
       type: string
-      description: git repository org
-    - name: REPO_NAME
+      description: master | pull id
+    - name: PULL_PULL_SHA
       type: string
-      description: git repository name
+      description: sha of pull id
     - name: BUILD_NUMBER
       type: string
       description: build #
-    - name: repos_dir
-      type: string
-      description: path to where the repo is downloaded
-    - name: zone
-      type: string
-      description: k8 zone where e2e tests run
     image: "${image}"
     command: ["python"]
     args:
