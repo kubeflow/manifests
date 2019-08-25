@@ -1,4 +1,4 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: spark-operator-spark
+  name: sparkoperator

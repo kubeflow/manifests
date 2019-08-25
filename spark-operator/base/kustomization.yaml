@@ -5,9 +5,7 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: spark-operator
   app.kubernetes.io/instance: spark-operator
-  app.kubernetes.io/managed-by: Tiller
   app.kubernetes.io/name: sparkoperator
-  helm.sh/chart: sparkoperator-0.2.4
 
 # Images modify the tags for images without
 # creating patches.
@@ -17,14 +15,14 @@ images:
 
 # Value of this field is prepended to the
 # names of all resources
-namePrefix: spark-operator-spark
+namePrefix: spark-operator
 
 # List of resource files that kustomize reads, modifies
 # and emits as a YAML string
 resources:
-- spark-operator-spark-sa.yaml
-- spark-operator-sparkoperator-cr-clusterrole.yaml
-- spark-operator-sparkoperator-crd-crd.yaml
-- spark-operator-sparkoperator-crd-cleanup-job.yaml
-- spark-operator-sparkoperator-deploy.yaml
-- spark-operator-sparkoperator-sa.yaml
+- spark-sa.yaml
+- cr-clusterrole.yaml
+- crd.yaml
+- crd-cleanup-job.yaml
+- deploy.yaml
+- operator-sa.yaml

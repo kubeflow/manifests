@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spark-operator-sparkoperator
+  name: sparkoperator
 spec:
   replicas: 1
   selector:
@@ -41,4 +41,4 @@ spec:
         name: sparkoperator
         ports:
         - containerPort: 10254
-      serviceAccountName: spark-operator-sparkoperator
+      serviceAccountName: sparkoperator
