@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: spark-operator-sparkoperator-crd-cleanup
+  name: crd-cleanup
   namespace: default
 spec:
   template:
@@ -24,4 +24,4 @@ spec:
         imagePullPolicy: IfNotPresent
         name: delete-scheduledsparkapp-crd
       restartPolicy: OnFailure
-      serviceAccountName: spark-operator-sparkoperator
+      serviceAccountName: sparkoperator
