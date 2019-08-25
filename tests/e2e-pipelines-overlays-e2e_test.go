@@ -58,14 +58,16 @@ image=gcr.io/kubeflow-ci/test-worker:latest
 project=kubeflow-ci
 cluster=kubeflow-testing
 bucket=kubernetes-jenkins
-REPO_OWNER=kubeflow
-REPO_NAME=kfctl
 repos_dir=/src
 zone=us-west1-a
 configPath=https://raw.githubusercontent.com/kubeflow/kubeflow/master/bootstrap/config/kfctl_gcp_iap.yaml
+REPO_OWNER=kubeflow
+REPO_NAME=kfctl
 JOB_NAME=kubeflow-test-presubmit-test
 JOB_TYPE=presubmit
 PULL_NUMBER=33
+PULL_BASE_REF=master
+PULL_PULL_SHA=123abc
 BUILD_NUMBER=a3bc
 `)
 	th.writeK("/manifests/e2e/e2e-pipelines/overlays/e2e", `
