@@ -136,7 +136,8 @@ spec:
     image: "${inputs.resources.image.url}"
     imagePullPolicy: Always
     workingDir: "${inputs.params.app_dir}"
-    command: ["/usr/local/bin/kfctl"]
+#    command: ["/usr/local/bin/kfctl"]
+    command: ["/bin/sleep", "infinity"]
     args:
     - "apply"
     - "${inputs.params.platform}"
