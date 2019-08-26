@@ -10,3 +10,5 @@ resources:
 - seldon-operator-webhook-server-secret-secret.yaml
 - seldondeployments.machinelearning.seldon.io-crd.yaml
 - webhook-server-service-svc.yaml
+patchesStrategicMerge:
+  - volume_claim_patch.yaml
