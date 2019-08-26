@@ -144,7 +144,7 @@ spec:
 #    - "--verbose"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kfctl-e2e.json
+      value: /secret/kfctl-e2e-secret.json
     - name: CLIENT_ID
       valueFrom:
         secretKeyRef:
