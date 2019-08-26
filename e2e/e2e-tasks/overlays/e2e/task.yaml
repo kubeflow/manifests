@@ -62,6 +62,8 @@ spec:
     - name: BUILD_NUMBER
       type: string
       description: build #
+  steps: e2e-run-tests
+  - name: 
     image: "${image}"
     command: ["python"]
     args:
@@ -105,7 +107,7 @@ spec:
     - name: BUILD_NUMBER
       value: "${inputs.params.BUILD_NUMBER}"
     volumeMounts:
-    - name: kaniko-secret
+    - name: kfctl-e2e-secret
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
@@ -113,6 +115,9 @@ spec:
   - name: kaniko-secret
     secret:
       secretName: kaniko-secret
+  - name: kfctl-e2e-secret
+    secret:
+      secretName: kfctl-e2e-secret
   - name: kubeflow
     persistentVolumeClaim:
       claimName: kubeflow-pvc
