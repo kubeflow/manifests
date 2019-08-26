@@ -62,8 +62,8 @@ spec:
     - name: BUILD_NUMBER
       type: string
       description: build #
-  steps: e2e-run-tests
-  - name: 
+  steps:
+  - name: e2e-run-tests
     image: "${image}"
     command: ["python"]
     args:
