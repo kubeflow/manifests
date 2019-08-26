@@ -140,7 +140,7 @@ spec:
     args:
     - "auth"
     - "activate-service-account"
-    - "--keyfile"
+    - "--key-file"
     - "/secret/kfctl-e2e-secret.json"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
