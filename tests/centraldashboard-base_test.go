@@ -71,6 +71,13 @@ spec:
         ports:
         - containerPort: 8082
           protocol: TCP
+        env:
+        - name: USERID_HEADER
+          value: $(userid-header)
+        - name: USERID_PREFIX
+          value: $(userid-prefix)
+        - name: PROFILES_KFAM_SERVICE_HOST
+          value: profiles-kfam.kubeflow
       serviceAccountName: centraldashboard
 `)
 	th.writeF("/manifests/common/centraldashboard/base/role-binding.yaml", `
@@ -154,10 +161,14 @@ varReference:
   kind: Service
 - path: spec/http/route/destination/host
   kind: VirtualService
-`)
+- path: spec/template/spec/containers/0/env/0/value
+  kind: Deployment
+- path: spec/template/spec/containers/0/env/1/value
+  kind: Deployment`)
 	th.writeF("/manifests/common/centraldashboard/base/params.env", `
 clusterDomain=cluster.local
-`)
+userid-header=
+userid-prefix=`)
 	th.writeK("/manifests/common/centraldashboard/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -175,7 +186,7 @@ commonLabels:
 images:
   - name: gcr.io/kubeflow-images-public/centraldashboard
     newName: gcr.io/kubeflow-images-public/centraldashboard
-    newTag: v20190808-v0.6.2-rc.0-0-g65583158
+    newTag: v20190823-v0.6.0-rc.0-69-gcb7dab59
 configMapGenerator:
 - name: parameters
   env: params.env
@@ -196,6 +207,20 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
+- name: userid-header
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.userid-header
+- name: userid-prefix
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.userid-prefix
 configurations:
 - params.yaml
 

@@ -12,13 +12,13 @@ import (
 )
 
 func writeDexCrdsBase(th *KustTestHarness) {
-	th.writeF("/manifests/common/dex-auth/dex-crds/base/namespace.yaml", `
+	th.writeF("/manifests/dex-auth/dex-crds/base/namespace.yaml", `
 apiVersion: v1
 kind: Namespace
 metadata:
   name: auth
 `)
-	th.writeF("/manifests/common/dex-auth/dex-crds/base/config-map.yaml", `
+	th.writeF("/manifests/dex-auth/dex-crds/base/config-map.yaml", `
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -50,7 +50,7 @@ data:
       name: 'Dex Login Application'
       secret: $(application_secret)
 `)
-	th.writeF("/manifests/common/dex-auth/dex-crds/base/crds.yaml", `
+	th.writeF("/manifests/dex-auth/dex-crds/base/crds.yaml", `
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -97,7 +97,7 @@ metadata:
   name: dex
   namespace: auth
 `)
-	th.writeF("/manifests/common/dex-auth/dex-crds/base/deployment.yaml", `
+	th.writeF("/manifests/dex-auth/dex-crds/base/deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -130,7 +130,7 @@ spec:
           - key: config.yaml
             path: config.yaml
 `)
-	th.writeF("/manifests/common/dex-auth/dex-crds/base/service.yaml", `
+	th.writeF("/manifests/dex-auth/dex-crds/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -146,14 +146,14 @@ spec:
   selector:
     app: dex
 `)
-	th.writeF("/manifests/common/dex-auth/dex-crds/base/params.yaml", `
+	th.writeF("/manifests/dex-auth/dex-crds/base/params.yaml", `
 varReference:
 - path: spec/template/spec/volumes/secret/secretName
   kind: Deployment
 - path: data/config.yaml
   kind: ConfigMap
 `)
-	th.writeF("/manifests/common/dex-auth/dex-crds/base/params.env", `
+	th.writeF("/manifests/dex-auth/dex-crds/base/params.env", `
 # Dex Server Parameters (some params are shared with client)
 dex_domain=dex.example.com
 # Set issuer to https if tls is enabled
@@ -166,7 +166,7 @@ client_id=ldapdexapp
 oidc_redirect_uris=['http://login.example.org:5555/callback/onprem-cluster']
 application_secret=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
 `)
-	th.writeK("/manifests/common/dex-auth/dex-crds/base", `
+	th.writeK("/manifests/dex-auth/dex-crds/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: auth
@@ -251,13 +251,13 @@ configurations:
 }
 
 func TestDexCrdsBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/common/dex-auth/dex-crds/base")
+	th := NewKustTestHarness(t, "/manifests/dex-auth/dex-crds/base")
 	writeDexCrdsBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../common/dex-auth/dex-crds/base"
+	targetPath := "../dex-auth/dex-crds/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

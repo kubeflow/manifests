@@ -14,7 +14,7 @@ commonLabels:
 images:
   - name: gcr.io/kubeflow-images-public/centraldashboard
     newName: gcr.io/kubeflow-images-public/centraldashboard
-    newTag: v20190808-v0.6.2-rc.0-0-g65583158
+    newTag: v20190823-v0.6.0-rc.0-69-gcb7dab59
 configMapGenerator:
 - name: parameters
   env: params.env
@@ -35,6 +35,20 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
+- name: userid-header
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.userid-header
+- name: userid-prefix
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.userid-prefix
 configurations:
 - params.yaml
 

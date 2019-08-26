@@ -273,6 +273,10 @@ spec:
             configMapKeyRef:
               name: parameters
               key: UI
+        - name: USERID_HEADER
+          value: $(userid-header)
+        - name: USERID_PREFIX
+          value: $(userid-prefix)
         image: gcr.io/kubeflow-images-public/jupyter-web-app:v0.5.0
         imagePullPolicy: $(policy)
         name: jupyter-web-app
@@ -374,14 +378,18 @@ varReference:
   kind: Deployment
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
-`)
+- path: spec/template/spec/containers/0/env/2/value
+  kind: Deployment
+- path: spec/template/spec/containers/0/env/3/value
+  kind: Deployment`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.env", `
 UI=default
 ROK_SECRET_NAME=secret-rok-{username}
 policy=Always
 prefix=jupyter
 clusterDomain=cluster.local
-`)
+userid-header=
+userid-prefix=`)
 	th.writeK("/manifests/jupyter/jupyter-web-app/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -400,43 +408,57 @@ commonLabels:
   app: jupyter-web-app
   kustomize.component: jupyter-web-app
 images:
-  - name: gcr.io/kubeflow-images-public/jupyter-web-app
-    newName: gcr.io/kubeflow-images-public/jupyter-web-app
-    newTag: 9419d4d
+- name: gcr.io/kubeflow-images-public/jupyter-web-app
+  newName: gcr.io/kubeflow-images-public/jupyter-web-app
+  newTag: 9419d4d7
 configMapGenerator:
-- name: parameters
-  env: params.env
+- env: params.env
+  name: parameters
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- name: policy
+- fieldref:
+    fieldPath: data.policy
+  name: policy
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.policy
-- name: prefix
+- fieldref:
+    fieldPath: data.prefix
+  name: prefix
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.prefix
-- name: clusterDomain
+- fieldref:
+    fieldPath: data.clusterDomain
+  name: clusterDomain
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.clusterDomain
-- name: namespace
+- fieldref:
+    fieldPath: metadata.namespace
+  name: namespace
   objref:
+    apiVersion: v1
     kind: Service
     name: service
+- fieldref:
+    fieldPath: data.userid-header
+  name: userid-header
+  objref:
     apiVersion: v1
-  fieldref:
-    fieldpath: metadata.namespace
+    kind: ConfigMap
+    name: parameters
+- fieldref:
+    fieldPath: data.userid-prefix
+  name: userid-prefix
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: parameters
 configurations:
 - params.yaml
 `)

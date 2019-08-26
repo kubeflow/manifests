@@ -125,8 +125,7 @@ metadata:
   name: kfam
 spec:
   ports:
-    - port: 8081
-`)
+    - port: 8081`)
 	th.writeF("/manifests/profiles/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -138,6 +137,11 @@ spec:
       containers:
       - command:
         - /manager
+        args:
+        - "-userid-header"
+        - $(userid-header)
+        - "-userid-prefix"
+        - $(userid-prefix)
         image: gcr.io/kubeflow-images-public/profile-controller:v20190619-v0-219-gbd3daa8c-dirty-1ced0e
         imagePullPolicy: Always
         name: manager
@@ -146,6 +150,10 @@ spec:
         args:
         - "-cluster-admin"
         - $(admin)
+        - "-userid-header"
+        - $(userid-header)
+        - "-userid-prefix"
+        - $(userid-prefix)
         image: gcr.io/kubeflow-images-public/kfam:v20190612-v0-170-ga06cdb79-dirty-a33ee4
         imagePullPolicy: Always
         name: kfam
@@ -153,12 +161,20 @@ spec:
 `)
 	th.writeF("/manifests/profiles/base/params.yaml", `
 varReference:
+- path: spec/template/spec/containers/0/args/1
+  kind: Deployment
+- path: spec/template/spec/containers/0/args/3
+  kind: Deployment
 - path: spec/template/spec/containers/1/args/1
   kind: Deployment
-
-`)
+- path: spec/template/spec/containers/1/args/3
+  kind: Deployment
+- path: spec/template/spec/containers/1/args/5
+  kind: Deployment`)
 	th.writeF("/manifests/profiles/base/params.env", `
 admin=
+userid-header=
+userid-prefix=
 `)
 	th.writeK("/manifests/profiles/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -190,6 +206,20 @@ vars:
       apiVersion: v1
     fieldref:
       fieldpath: data.admin
+  - name: userid-header
+    objref:
+      kind: ConfigMap
+      name: profiles-parameters
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.userid-header
+  - name: userid-prefix
+    objref:
+      kind: ConfigMap
+      name: profiles-parameters
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.userid-prefix
   - name: namespace
     objref:
       kind: Service

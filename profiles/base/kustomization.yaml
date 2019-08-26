@@ -27,6 +27,20 @@ vars:
       apiVersion: v1
     fieldref:
       fieldpath: data.admin
+  - name: userid-header
+    objref:
+      kind: ConfigMap
+      name: profiles-parameters
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.userid-header
+  - name: userid-prefix
+    objref:
+      kind: ConfigMap
+      name: profiles-parameters
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.userid-prefix
   - name: namespace
     objref:
       kind: Service
