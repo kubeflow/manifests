@@ -22,7 +22,7 @@ namePrefix: spark-operator
 resources:
 - spark-sa.yaml
 - cr-clusterrole.yaml
-- crd.yaml
+- crb.yaml
 - crd-cleanup-job.yaml
 - deploy.yaml
 - operator-sa.yaml

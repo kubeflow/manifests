@@ -24,4 +24,4 @@ spec:
         imagePullPolicy: IfNotPresent
         name: delete-scheduledsparkapp-crd
       restartPolicy: OnFailure
-      serviceAccountName: sparkoperator
+      serviceAccountName: operator-sa
