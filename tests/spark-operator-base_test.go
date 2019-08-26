@@ -12,17 +12,17 @@ import (
 )
 
 func writeSparkOperatorBase(th *KustTestHarness) {
-	th.writeF("/manifests/spark-operator/base/spark-operator-spark-sa.yaml", `
+	th.writeF("/manifests/spark-operator/base/spark-sa.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: spark-operator-spark
+  name: spark-sa
 `)
-	th.writeF("/manifests/spark-operator/base/spark-operator-sparkoperator-cr-clusterrole.yaml", `
+	th.writeF("/manifests/spark-operator/base/cr-clusterrole.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: spark-operator-sparkoperator-cr
+  name: operator-cr
 rules:
 - apiGroups:
   - ""
@@ -89,24 +89,24 @@ rules:
   verbs:
   - '*'
 `)
-	th.writeF("/manifests/spark-operator/base/spark-operator-sparkoperator-crb-crb.yaml", `
+	th.writeF("/manifests/spark-operator/base/crb.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: spark-operator-sparkoperator-crb
+  name: sparkoperator-crb
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: spark-operator-sparkoperator-cr
+  name: operator-cr
 subjects:
 - kind: ServiceAccount
-  name: spark-operator-sparkoperator
+  name: operator-sa
 `)
-	th.writeF("/manifests/spark-operator/base/spark-operator-sparkoperator-crd-cleanup-job.yaml", `
+	th.writeF("/manifests/spark-operator/base/crd-cleanup-job.yaml", `
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: spark-operator-sparkoperator-crd-cleanup
+  name: crd-cleanup
   namespace: default
 spec:
   template:
@@ -129,13 +129,13 @@ spec:
         imagePullPolicy: IfNotPresent
         name: delete-scheduledsparkapp-crd
       restartPolicy: OnFailure
-      serviceAccountName: spark-operator-sparkoperator
+      serviceAccountName: operator-sa
 `)
-	th.writeF("/manifests/spark-operator/base/spark-operator-sparkoperator-deploy.yaml", `
+	th.writeF("/manifests/spark-operator/base/deploy.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spark-operator-sparkoperator
+  name: sparkoperator
 spec:
   replicas: 1
   selector:
@@ -175,13 +175,13 @@ spec:
         name: sparkoperator
         ports:
         - containerPort: 10254
-      serviceAccountName: spark-operator-sparkoperator
+      serviceAccountName: operator-sa
 `)
-	th.writeF("/manifests/spark-operator/base/spark-operator-sparkoperator-sa.yaml", `
+	th.writeF("/manifests/spark-operator/base/operator-sa.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: spark-operator-sparkoperator
+  name: operator-sa
 `)
 	th.writeK("/manifests/spark-operator/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -191,9 +191,7 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: spark-operator
   app.kubernetes.io/instance: spark-operator
-  app.kubernetes.io/managed-by: Tiller
   app.kubernetes.io/name: sparkoperator
-  helm.sh/chart: sparkoperator-0.2.4
 
 # Images modify the tags for images without
 # creating patches.
@@ -203,17 +201,17 @@ images:
 
 # Value of this field is prepended to the
 # names of all resources
-namePrefix: spark-operator-spark
+namePrefix: spark-operator
 
 # List of resource files that kustomize reads, modifies
 # and emits as a YAML string
 resources:
-- spark-operator-spark-sa.yaml
-- spark-operator-sparkoperator-cr-clusterrole.yaml
-- spark-operator-sparkoperator-crb-crb.yaml
-- spark-operator-sparkoperator-crd-cleanup-job.yaml
-- spark-operator-sparkoperator-deploy.yaml
-- spark-operator-sparkoperator-sa.yaml
+- spark-sa.yaml
+- cr-clusterrole.yaml
+- crb.yaml
+- crd-cleanup-job.yaml
+- deploy.yaml
+- operator-sa.yaml
 `)
 }
 
