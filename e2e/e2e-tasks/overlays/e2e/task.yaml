@@ -65,22 +65,9 @@ spec:
   steps:
   - name: e2e-run-tests
     image: "${image}"
-    command: ["python"]
+    command: ["pytest"]
     args:
-    - "-m"
-    - "kubeflow.testing.run_tests"
-    - "--project"
-    - "${inputs.params.project}"
-    - "--zone"
-    - "${inputs.params.zone}"
-    - "--cluster"
-    - "${inputs.params.cluster}"
-    - "--bucket"
-    - "${inputs.params.bucket}"
-    - "--config_file"
-    - "${inputs.params.config_file}"
-    - "--repos_dir"
-    - "${inputs.params.repos_dir}"
+    - "testing/e2e/params_test.py"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
