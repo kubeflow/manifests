@@ -190,7 +190,7 @@ spec:
   selector:
     app: dex-authenticator
 `)
-	th.writeF("/manifests/common/dex-auth/dex-authenticator/base/virtualservice.yaml", `
+	th.writeF("/manifests/dex-auth/dex-authenticator/base/virtualservice.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:

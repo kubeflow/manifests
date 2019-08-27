@@ -24,7 +24,8 @@ spec:
   - '*'
   http:
   - match:
-    - uri:
+    - port: 80
+      uri:
         prefix: /
     rewrite:
       uri: /
