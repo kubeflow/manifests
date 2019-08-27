@@ -64,7 +64,7 @@ spec:
       description: build #
   steps:
   - name: e2e-run-tests
-    image: "${image}"
+    image: "${inputs.params.image}"
     command: ["pytest"]
     args:
     - "testing/e2e/params_test.py"
