@@ -124,8 +124,11 @@ gen-test-case() {
   echo '  if err != nil {'
   echo '    t.Fatalf("Err: %v", err)'
   echo '  }'
+  echo '  expected, err := m.EncodeAsYaml()'
+  echo '  if err != nil {'
+  echo '    t.Fatalf("Err: %v", err)'
+  echo '  }'
   echo '  targetPath := "'$targetPath'"'
-
   echo '  fsys := fs.MakeRealFS()'
   echo '    _loader, loaderErr := loader.NewLoader(targetPath, fsys)'
   echo '    if loaderErr != nil {'
@@ -136,12 +139,11 @@ gen-test-case() {
   echo '    if err != nil {'
   echo '      th.t.Fatalf("Unexpected construction error %v", err)'
   echo '    }'
-  echo '  n, err := kt.MakeCustomizedResMap()'
+  echo '  actual, err := kt.MakeCustomizedResMap()'
   echo '  if err != nil {'
   echo '    t.Fatalf("Err: %v", err)'
   echo '  }'
-  echo '  expected, err := n.EncodeAsYaml()'
-  echo '  th.assertActualEqualsExpected(m, string(expected))'
+  echo '  th.assertActualEqualsExpected(actual, string(expected))'
   echo '}'
 }
 

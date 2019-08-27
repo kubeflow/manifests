@@ -22,7 +22,8 @@ rules:
     resources:
       - namespaces
       - pods
-    verbs: ["get", "list", "watch"]`)
+    verbs: ["get", "list", "watch"]
+`)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -35,7 +36,8 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: fluentd
-    namespace: kube-system`)
+    namespace: kube-system
+`)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/configmap.yaml", `
 apiVersion: v1
 kind: ConfigMap
@@ -158,7 +160,8 @@ data:
           retry_forever true
         </buffer>
       </match>
-    </label>`)
+    </label>
+`)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/daemonset.yaml", `
 apiVersion: extensions/v1beta1
 kind: DaemonSet
@@ -227,12 +230,14 @@ spec:
             path: /var/lib/docker/containers
         - name: runlogjournal
           hostPath:
-            path: /run/log/journal`)
+            path: /run/log/journal
+`)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: fluentd`)
+  name: fluentd
+`)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/params.env", `
 region=us-west-2
 clusterName=
@@ -283,6 +288,10 @@ func TestFluentdCloudWatchBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
+	expected, err := m.EncodeAsYaml()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
 	targetPath := "../aws/fluentd-cloud-watch/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
@@ -294,10 +303,9 @@ func TestFluentdCloudWatchBase(t *testing.T) {
 	if err != nil {
 		th.t.Fatalf("Unexpected construction error %v", err)
 	}
-	n, err := kt.MakeCustomizedResMap()
+	actual, err := kt.MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	th.assertActualEqualsExpected(actual, string(expected))
 }

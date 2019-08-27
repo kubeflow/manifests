@@ -33,7 +33,8 @@ metadata:
   name: $(minioPvcName)
 spec:
   volumeName: $(minioPvName)
-  storageClassName: ""`)
+  storageClassName: ""
+`)
 	th.writeF("/manifests/pipeline/minio/overlays/minioPd/params.yaml", `
 varReference:
 - path: spec/gcePersistentDisk/pdName
@@ -154,9 +155,11 @@ varReference:
 - path: spec/template/spec/volumes/persistentVolumeClaim/claimName
   kind: Deployment
 - path: metadata/name
-  kind: PersistentVolumeClaim`)
+  kind: PersistentVolumeClaim
+`)
 	th.writeF("/manifests/pipeline/minio/base/params.env", `
-minioPvcName=`)
+minioPvcName=
+`)
 	th.writeK("/manifests/pipeline/minio/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -195,6 +198,10 @@ func TestMinioOverlaysMinioPd(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
+	expected, err := m.EncodeAsYaml()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
 	targetPath := "../pipeline/minio/overlays/minioPd"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
@@ -206,10 +213,9 @@ func TestMinioOverlaysMinioPd(t *testing.T) {
 	if err != nil {
 		th.t.Fatalf("Unexpected construction error %v", err)
 	}
-	n, err := kt.MakeCustomizedResMap()
+	actual, err := kt.MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	th.assertActualEqualsExpected(actual, string(expected))
 }
