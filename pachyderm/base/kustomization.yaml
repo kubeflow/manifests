@@ -1,12 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- secret.yaml
 - service-account.yaml
 - etcd-service.yaml
 - etcd-headless-service.yaml
 - etcd-stateful-set.yaml
 - pachd-service.yaml
+- pachd-deployment.yaml
 namespace: kubeflow
 namePrefix: pachyderm-
 commonLabels:
@@ -14,6 +14,9 @@ commonLabels:
 configMapGenerator:
 - name: parameters
   env: params.env
+secretGenerator:
+- name: secrets
+  env: secrets.env
 vars:
 - name: etcdHeadlessServiceName
   objref:
@@ -22,5 +25,26 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name
+- name: etcdServiceName
+  objref:
+    kind: Service
+    name: etcd
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.name
+- name: pachydermServiceAccountName
+  objref:
+    kind: ServiceAccount
+    name: service-account
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.name
+- name: pachydermServiceAccountNamespace
+  objref:
+    kind: ServiceAccount
+    name: service-account
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.namespace
 configurations:
 - params.yaml

@@ -8,5 +8,5 @@ roleRef:
   name: cluster-role
 subjects:
 - kind: ServiceAccount
-  name: service-account
-  namespace: $(namespace)
+  name: $(pachydermServiceAccountName)
+  namespace: $(pachydermServiceAccountNamespace)

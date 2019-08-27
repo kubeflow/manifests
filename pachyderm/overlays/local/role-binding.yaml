@@ -1,12 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
-  name: role-binding
+  name: pachyderm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: pachyderm-role
+  name: pachyderm
 subjects:
 - kind: ServiceAccount
-  name: pachyderm-service-account
-  namespace: $(namespace)
+  name: $(pachydermServiceAccountName)
+  namespace: $(pachydermServiceAccountNamespace)

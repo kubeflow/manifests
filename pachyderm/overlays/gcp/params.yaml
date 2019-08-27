@@ -1,3 +1,5 @@
 varReference:
 - path: subjects/namespace
-  kind: RoleBinding
+  kind: ClusterRoleBinding
+- path: subjects/name
+  kind: ClusterRoleBinding

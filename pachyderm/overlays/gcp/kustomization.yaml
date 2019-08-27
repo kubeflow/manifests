@@ -1,7 +1,17 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+bases:
+- ../../base
 resources:
 - cluster-role.yaml
 - cluster-role-binding.yaml
+configMapGenerator:
+- name: parameters
+  behavior: merge
+  env: params.env
+secretGenerator:
+- name: secrets
+  behavior: merge
+  env: secrets.env
 configurations:
 - params.yaml

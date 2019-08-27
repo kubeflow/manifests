@@ -1,3 +1,5 @@
 varReference:
 - path: subjects/namespace
   kind: RoleBinding
+- path: subjects/name
+  kind: RoleBinding
