@@ -58,8 +58,7 @@ spec:
               mountPath: /var/lib/csi/sockets/pluginproxy/
       volumes:
         - name: socket-dir
-          emptyDir: {}
-`)
+          emptyDir: {}`)
 	th.writeF("/manifests/aws/aws-efs-csi-driver/base/csi-attacher-cluster-role.yaml", `
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -74,8 +73,7 @@ rules:
     verbs: ["get", "list", "watch"]
   - apiGroups: ["storage.k8s.io"]
     resources: ["volumeattachments"]
-    verbs: ["get", "list", "watch", "update"]
-`)
+    verbs: ["get", "list", "watch", "update"]`)
 	th.writeF("/manifests/aws/aws-efs-csi-driver/base/csi-attacher-cluster-role-binding.yaml", `
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -88,14 +86,12 @@ subjects:
 roleRef:
   kind: ClusterRole
   name: efs-csi-external-attacher-clusterrole
-  apiGroup: rbac.authorization.k8s.io
-`)
+  apiGroup: rbac.authorization.k8s.io`)
 	th.writeF("/manifests/aws/aws-efs-csi-driver/base/csi-controller-sa.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: efs-csi-controller-sa
-`)
+  name: efs-csi-controller-sa`)
 	th.writeF("/manifests/aws/aws-efs-csi-driver/base/csi-node-cluster-role.yaml", `
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -119,8 +115,7 @@ rules:
     verbs: ["get", "list", "watch", "update"]
   - apiGroups: ["csi.storage.k8s.io"]
     resources: ["csinodeinfos"]
-    verbs: ["get", "list", "watch", "update"]
-`)
+    verbs: ["get", "list", "watch", "update"]`)
 	th.writeF("/manifests/aws/aws-efs-csi-driver/base/csi-node-cluster-role-binding.yaml", `
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -133,8 +128,7 @@ subjects:
 roleRef:
   kind: ClusterRole
   name: efs-csi-node-clusterrole
-  apiGroup: rbac.authorization.k8s.io
-`)
+  apiGroup: rbac.authorization.k8s.io`)
 	th.writeF("/manifests/aws/aws-efs-csi-driver/base/csi-node-daemon-set.yaml", `
 kind: DaemonSet
 apiVersion: apps/v1beta2
@@ -218,15 +212,13 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: efs-csi-node-sa
-`)
+  name: efs-csi-node-sa`)
 	th.writeF("/manifests/aws/aws-efs-csi-driver/base/csi-default-storage.yaml", `
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: efs-default
-provisioner: efs.csi.aws.com
-`)
+provisioner: efs.csi.aws.com`)
 	th.writeK("/manifests/aws/aws-efs-csi-driver/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization

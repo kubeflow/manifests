@@ -145,6 +145,8 @@ spec:
           value: $(userid-header)
         - name: USERID_PREFIX
           value: $(userid-prefix)
+        - name: PROFILES_KFAM_SERVICE_HOST
+          value: profiles-kfam.kubeflow
       serviceAccountName: centraldashboard
 `)
 	th.writeF("/manifests/common/centraldashboard/base/role-binding.yaml", `
@@ -253,7 +255,7 @@ commonLabels:
 images:
   - name: gcr.io/kubeflow-images-public/centraldashboard
     newName: gcr.io/kubeflow-images-public/centraldashboard
-    newTag: v20190816-v0.6.0-rc.0-57-g1d4b59c1
+    newTag: v20190823-v0.6.0-rc.0-69-gcb7dab59
 configMapGenerator:
 - name: parameters
   env: params.env

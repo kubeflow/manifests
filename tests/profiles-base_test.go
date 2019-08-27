@@ -125,8 +125,7 @@ metadata:
   name: kfam
 spec:
   ports:
-    - port: 8081
-`)
+    - port: 8081`)
 	th.writeF("/manifests/profiles/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
