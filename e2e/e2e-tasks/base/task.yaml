@@ -25,7 +25,7 @@ spec:
       type: image
       outputImageDir: /workspace/builtImage
   steps:
-  - name: build-and-push
+  - name: kfctl-build-and-push
     image: gcr.io/kaniko-project/executor:v0.10.0
     command:
     - /kaniko/executor

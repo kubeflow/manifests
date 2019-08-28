@@ -27,13 +27,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
-- name: project
-  objref:
-    kind: ConfigMap
-    name: tektoncd-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.project
 - name: registry
   objref:
     kind: ConfigMap
