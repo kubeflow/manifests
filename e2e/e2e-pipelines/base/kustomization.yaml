@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
 - pipeline.yaml
 - pipeline-resource.yaml
-- pipeline-run.yaml
 namespace: tekton-pipelines
 configMapGenerator:
 - name: kfctl-pipelines-parameters

@@ -1,0 +1,7 @@
+varReference:
+- path: metadata/name
+  kind: PipelineRun
+- path: spec/pipelineRef/name
+  kind: PipelineRun
+- path: spec/serviceAccount
+  kind: PipelineRun
