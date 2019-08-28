@@ -49,8 +49,7 @@ spec:
       volumes:
         - name: device-plugin
           hostPath:
-            path: /var/lib/kubelet/device-plugins
-`)
+            path: /var/lib/kubelet/device-plugins`)
 	th.writeK("/manifests/aws/nvidia-device-plugin/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
