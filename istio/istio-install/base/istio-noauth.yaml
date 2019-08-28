@@ -15706,6 +15706,7 @@ metadata:
   name: istio-ingressgateway
   namespace: istio-system
   annotations:
+    beta.cloud.google.com/backend-config: '{"ports": {"http2":"iap-backendconfig"}}'
   labels:
     chart: gateways
     heritage: Tiller
@@ -15713,7 +15714,7 @@ metadata:
     app: istio-ingressgateway
     istio: ingressgateway
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     release: istio
     app: istio-ingressgateway
