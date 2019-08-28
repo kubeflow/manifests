@@ -24,6 +24,8 @@ spec:
       outputs:
       - name: builtImage
         resource: web-image
+      - name: docker-source
+        resource: source-repo
   - name: kfctl-init-generate-apply
     taskRef:
       name: kfctl-init-generate-apply
