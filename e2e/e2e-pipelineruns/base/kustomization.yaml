@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- pipeline-run.yaml
+namespace: tekton-pipelines
+configMapGenerator:
+- name: kfctl-pipelineruns-parameters
+  env: params.env
+vars:
+- name: pipelinerun
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelineruns-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.pipelinerun
+- name: pipeline
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelineruns-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.pipeline
+- name: serviceAccount
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelineruns-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.serviceAccount
+configurations:
+- params.yaml

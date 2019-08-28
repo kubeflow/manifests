@@ -1,11 +1,11 @@
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineRun
 metadata:
-  name: kfctl-build-apply-pipeline-run
+  name: $(pipelinerun)
 spec:
-  serviceAccount: e2e-pipelines
+  serviceAccount: $(serviceAccount)
   pipelineRef:
-    name: kfctl-build-apply
+    name: $(pipeline)
   resources:
     - name: source-repo
       resourceRef:
