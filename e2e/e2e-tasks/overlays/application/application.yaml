@@ -29,7 +29,7 @@ spec:
   descriptor:
     type: tekton
     version: v1beta1
-    description: Launches a build-and-push
+    description: Launches a PipelineRun
     maintainers: []
     owners: []
     keywords: []
