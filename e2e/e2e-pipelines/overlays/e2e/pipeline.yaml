@@ -6,8 +6,6 @@
       name: kfctl-e2e
     resources:
       inputs:
-      - name: docker-source
-        resource: source-repo
       - name: image
         resource: web-image
         from:
