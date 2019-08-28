@@ -125,7 +125,8 @@ metadata:
   name: kfam
 spec:
   ports:
-    - port: 8081`)
+    - port: 8081
+`)
 	th.writeF("/manifests/profiles/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -170,7 +171,8 @@ varReference:
 - path: spec/template/spec/containers/1/args/3
   kind: Deployment
 - path: spec/template/spec/containers/1/args/5
-  kind: Deployment`)
+  kind: Deployment
+`)
 	th.writeF("/manifests/profiles/base/params.env", `
 admin=
 userid-header=
@@ -239,6 +241,10 @@ func TestProfilesBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
+	expected, err := m.EncodeAsYaml()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
 	targetPath := "../profiles/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
@@ -250,10 +256,9 @@ func TestProfilesBase(t *testing.T) {
 	if err != nil {
 		th.t.Fatalf("Unexpected construction error %v", err)
 	}
-	n, err := kt.MakeCustomizedResMap()
+	actual, err := kt.MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	th.assertActualEqualsExpected(actual, string(expected))
 }

@@ -381,7 +381,8 @@ varReference:
 - path: spec/template/spec/containers/0/env/2/value
   kind: Deployment
 - path: spec/template/spec/containers/0/env/3/value
-  kind: Deployment`)
+  kind: Deployment
+`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.env", `
 UI=default
 ROK_SECRET_NAME=secret-rok-{username}
@@ -389,7 +390,8 @@ policy=Always
 prefix=jupyter
 clusterDomain=cluster.local
 userid-header=
-userid-prefix=`)
+userid-prefix=
+`)
 	th.writeK("/manifests/jupyter/jupyter-web-app/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -471,6 +473,10 @@ func TestJupyterWebAppOverlaysIstio(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
+	expected, err := m.EncodeAsYaml()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
 	targetPath := "../jupyter/jupyter-web-app/overlays/istio"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
@@ -482,10 +488,9 @@ func TestJupyterWebAppOverlaysIstio(t *testing.T) {
 	if err != nil {
 		th.t.Fatalf("Unexpected construction error %v", err)
 	}
-	n, err := kt.MakeCustomizedResMap()
+	actual, err := kt.MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	th.assertActualEqualsExpected(actual, string(expected))
 }

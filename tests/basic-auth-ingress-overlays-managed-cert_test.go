@@ -19,7 +19,8 @@ metadata:
   name: gke-certificate
 spec:
   domains:
-  - $(hostname)`)
+  - $(hostname)
+`)
 	th.writeK("/manifests/gcp/basic-auth-ingress/overlays/managed-cert", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -491,6 +492,10 @@ func TestBasicAuthIngressOverlaysManagedCert(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
+	expected, err := m.EncodeAsYaml()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
 	targetPath := "../gcp/basic-auth-ingress/overlays/managed-cert"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
@@ -502,10 +507,9 @@ func TestBasicAuthIngressOverlaysManagedCert(t *testing.T) {
 	if err != nil {
 		th.t.Fatalf("Unexpected construction error %v", err)
 	}
-	n, err := kt.MakeCustomizedResMap()
+	actual, err := kt.MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	th.assertActualEqualsExpected(actual, string(expected))
 }

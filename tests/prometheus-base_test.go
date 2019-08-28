@@ -295,7 +295,8 @@ varReference:
 	th.writeF("/manifests/gcp/prometheus/base/params.env", `
 projectId=
 clusterName=
-zone=`)
+zone=
+`)
 	th.writeK("/manifests/gcp/prometheus/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -344,6 +345,10 @@ func TestPrometheusBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
+	expected, err := m.EncodeAsYaml()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
 	targetPath := "../gcp/prometheus/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
@@ -355,10 +360,9 @@ func TestPrometheusBase(t *testing.T) {
 	if err != nil {
 		th.t.Fatalf("Unexpected construction error %v", err)
 	}
-	n, err := kt.MakeCustomizedResMap()
+	actual, err := kt.MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	th.assertActualEqualsExpected(actual, string(expected))
 }

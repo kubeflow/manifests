@@ -619,7 +619,8 @@ varReference:
 - path: data/healthcheck_route.yaml
   kind: ConfigMap
 - path: spec/domains
-  kind: ManagedCertificate`)
+  kind: ManagedCertificate
+`)
 	th.writeF("/manifests/gcp/iap-ingress/base/params.env", `
 namespace=kubeflow
 appName=kubeflow
@@ -631,7 +632,8 @@ oauthSecretName=kubeflow-oauth
 project=
 adminSaSecretName=admin-gcp-sa
 tlsSecretName=envoy-ingress-tls
-istioNamespace=istio-system`)
+istioNamespace=istio-system
+`)
 	th.writeK("/manifests/gcp/iap-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -754,6 +756,10 @@ func TestIapIngressOverlaysCertmanager(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
+	expected, err := m.EncodeAsYaml()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
 	targetPath := "../gcp/iap-ingress/overlays/certmanager"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
@@ -765,10 +771,9 @@ func TestIapIngressOverlaysCertmanager(t *testing.T) {
 	if err != nil {
 		th.t.Fatalf("Unexpected construction error %v", err)
 	}
-	n, err := kt.MakeCustomizedResMap()
+	actual, err := kt.MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	th.assertActualEqualsExpected(actual, string(expected))
 }
