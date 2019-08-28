@@ -69,12 +69,45 @@ subjects:
   name: $(pachydermServiceAccountName)
   namespace: $(pachydermServiceAccountNamespace)
 `)
+	th.writeF("/manifests/pachyderm/overlays/gcp/etcd-storage-class.yaml", `
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  labels:
+    app: etcd
+  name: etcd-storage-class
+parameters:
+  type: pd-ssd
+provisioner: kubernetes.io/gce-pd
+reclaimPolicy: Delete`)
+	th.writeF("/manifests/pachyderm/overlays/gcp/etcd-stateful-set.yaml", `
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: etcd
+  name: etcd
+spec:
+  volumeClaimTemplates:
+  - metadata:
+      labels:
+        app: etcd
+      name: etcd
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: $(etcdStorageClass)
+`)
 	th.writeF("/manifests/pachyderm/overlays/gcp/params.yaml", `
 varReference:
 - path: subjects/namespace
   kind: ClusterRoleBinding
 - path: subjects/name
-  kind: ClusterRoleBinding`)
+  kind: ClusterRoleBinding
+- path: spec/volumeClaimTemplates/spec/storageClassName
+  kind: StatefulSet`)
 	th.writeF("/manifests/pachyderm/overlays/gcp/params.env", `
 STORAGE_BACKEND=GOOGLE
 `)
@@ -89,6 +122,9 @@ bases:
 resources:
 - cluster-role.yaml
 - cluster-role-binding.yaml
+- etcd-storage-class.yaml
+patchesStrategicMerge:
+- etcd-stateful-set.yaml
 configMapGenerator:
 - name: parameters
   behavior: merge
@@ -97,6 +133,14 @@ secretGenerator:
 - name: secrets
   behavior: merge
   env: secrets.env
+vars:
+- name: etcdStorageClass
+  objref:
+    kind: StorageClass
+    name: etcd-storage-class
+    apiVersion: storage.k8s.io/v1
+  fieldref:
+    fieldpath: metadata.name
 configurations:
 - params.yaml
 `)
