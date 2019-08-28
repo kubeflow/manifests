@@ -3,3 +3,5 @@ varReference:
   kind: ClusterRoleBinding
 - path: subjects/name
   kind: ClusterRoleBinding
+- path: spec/volumeClaimTemplates/spec/storageClassName
+  kind: StatefulSet
