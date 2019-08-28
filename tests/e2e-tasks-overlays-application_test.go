@@ -44,7 +44,7 @@ spec:
   descriptor:
     type: tekton
     version: v1beta1
-    description: Launches a build-and-push
+    description: Launches a PipelineRun
     maintainers: []
     owners: []
     keywords: []
@@ -164,7 +164,7 @@ spec:
       type: image
       outputImageDir: /workspace/builtImage
   steps:
-  - name: build-and-push
+  - name: kfctl-build-and-push
     image: gcr.io/kaniko-project/executor:v0.10.0
     command:
     - /kaniko/executor
@@ -271,6 +271,62 @@ spec:
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
+  - name: kfctl-activate-service-account
+    image: "${inputs.resources.image.url}"
+    imagePullPolicy: Always
+    workingDir: "${inputs.params.app_dir}"
+    command: ["/opt/google-cloud-sdk/bin/gcloud"]
+    args:
+    - "auth"
+    - "activate-service-account"
+    - "--key-file"
+    - "/secret/kfctl-e2e-secret.json"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kfctl-e2e-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_SECRET
+    volumeMounts:
+    - name: kfctl-e2e-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
+  - name: kfctl-set-account
+    image: "${inputs.resources.image.url}"
+    imagePullPolicy: Always
+    workingDir: "${inputs.params.app_dir}"
+    command: ["/opt/google-cloud-sdk/bin/gcloud"]
+    args:
+    - "config"
+    - "set"
+    - "account"
+    - "${inputs.params.email}"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kfctl-e2e-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_SECRET
+    volumeMounts:
+    - name: kfctl-e2e-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
   - name: kfctl-apply
     image: "${inputs.resources.image.url}"
     imagePullPolicy: Always
@@ -333,6 +389,10 @@ func TestE2eTasksOverlaysApplication(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
+	expected, err := m.EncodeAsYaml()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
 	targetPath := "../e2e/e2e-tasks/overlays/application"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
@@ -344,10 +404,9 @@ func TestE2eTasksOverlaysApplication(t *testing.T) {
 	if err != nil {
 		th.t.Fatalf("Unexpected construction error %v", err)
 	}
-	n, err := kt.MakeCustomizedResMap()
+	actual, err := kt.MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	th.assertActualEqualsExpected(actual, string(expected))
 }

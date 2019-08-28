@@ -77,23 +77,12 @@ spec:
     - name: BUILD_NUMBER
       type: string
       description: build #
-    image: "${image}"
-    command: ["python"]
+  steps:
+  - name: e2e-run-tests
+    image: "${inputs.params.image}"
+    command: ["pytest"]
     args:
-    - "-m"
-    - "kubeflow.testing.run_tests"
-    - "--project"
-    - "${inputs.params.project}"
-    - "--zone"
-    - "${inputs.params.zone}"
-    - "--cluster"
-    - "${inputs.params.cluster}"
-    - "--bucket"
-    - "${inputs.params.bucket}"
-    - "--config_file"
-    - "${inputs.params.config_file}"
-    - "--repos_dir"
-    - "${inputs.params.repos_dir}"
+    - "testing/e2e/params_test.py"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
@@ -120,7 +109,7 @@ spec:
     - name: BUILD_NUMBER
       value: "${inputs.params.BUILD_NUMBER}"
     volumeMounts:
-    - name: kaniko-secret
+    - name: kfctl-e2e-secret
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
@@ -128,6 +117,9 @@ spec:
   - name: kaniko-secret
     secret:
       secretName: kaniko-secret
+  - name: kfctl-e2e-secret
+    secret:
+      secretName: kfctl-e2e-secret
   - name: kubeflow
     persistentVolumeClaim:
       claimName: kubeflow-pvc
@@ -236,7 +228,7 @@ spec:
       type: image
       outputImageDir: /workspace/builtImage
   steps:
-  - name: build-and-push
+  - name: kfctl-build-and-push
     image: gcr.io/kaniko-project/executor:v0.10.0
     command:
     - /kaniko/executor
@@ -343,6 +335,62 @@ spec:
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
+  - name: kfctl-activate-service-account
+    image: "${inputs.resources.image.url}"
+    imagePullPolicy: Always
+    workingDir: "${inputs.params.app_dir}"
+    command: ["/opt/google-cloud-sdk/bin/gcloud"]
+    args:
+    - "auth"
+    - "activate-service-account"
+    - "--key-file"
+    - "/secret/kfctl-e2e-secret.json"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kfctl-e2e-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_SECRET
+    volumeMounts:
+    - name: kfctl-e2e-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
+  - name: kfctl-set-account
+    image: "${inputs.resources.image.url}"
+    imagePullPolicy: Always
+    workingDir: "${inputs.params.app_dir}"
+    command: ["/opt/google-cloud-sdk/bin/gcloud"]
+    args:
+    - "config"
+    - "set"
+    - "account"
+    - "${inputs.params.email}"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kfctl-e2e-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_SECRET
+    volumeMounts:
+    - name: kfctl-e2e-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
   - name: kfctl-apply
     image: "${inputs.resources.image.url}"
     imagePullPolicy: Always
@@ -405,6 +453,10 @@ func TestE2eTasksOverlaysE2e(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
+	expected, err := m.EncodeAsYaml()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
 	targetPath := "../e2e/e2e-tasks/overlays/e2e"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
@@ -416,10 +468,9 @@ func TestE2eTasksOverlaysE2e(t *testing.T) {
 	if err != nil {
 		th.t.Fatalf("Unexpected construction error %v", err)
 	}
-	n, err := kt.MakeCustomizedResMap()
+	actual, err := kt.MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	th.assertActualEqualsExpected(actual, string(expected))
 }
