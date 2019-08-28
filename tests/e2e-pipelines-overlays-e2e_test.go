@@ -12,6 +12,13 @@ import (
 )
 
 func writeE2ePipelinesOverlaysE2e(th *KustTestHarness) {
+	th.writeF("/manifests/e2e/e2e-pipelines/overlays/e2e/params.yaml", `
+varReference:
+- path: spec/tasks/params/value
+  kind: Pipeline
+- path: spec/params/value
+  kind: PipelineResource
+`)
 	th.writeF("/manifests/e2e/e2e-pipelines/overlays/e2e/pipeline.yaml", `
 - op: add
   path: /spec/tasks/-
@@ -95,6 +102,96 @@ patchesJson6902:
     kind: Pipeline
     name: kfctl-build-apply
   path: pipeline.yaml
+configMapGenerator:
+- name: kfctl-e2e-parameters
+  env: params.env
+vars:
+- name: image
+  objref:
+    kind: ConfigMap
+    name: kfctl-e2e-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.image
+- name: cluster
+  objref:
+    kind: ConfigMap
+    name: kfctl-e2e-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.cluster
+- name: bucket
+  objref:
+    kind: ConfigMap
+    name: kfctl-e2e-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.bucket
+- name: repos_dir
+  objref:
+    kind: ConfigMap
+    name: kfctl-e2e-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.repos_dir
+- name: REPO_OWNER
+  objref:
+    kind: ConfigMap
+    name: kfctl-e2e-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.REPO_OWNER
+- name: REPO_NAME
+  objref:
+    kind: ConfigMap
+    name: kfctl-e2e-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.REPO_NAME
+- name: JOB_NAME
+  objref:
+    kind: ConfigMap
+    name: kfctl-e2e-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.JOB_NAME
+- name: JOB_TYPE
+  objref:
+    kind: ConfigMap
+    name: kfctl-e2e-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.JOB_TYPE
+- name: PULL_NUMBER
+  objref:
+    kind: ConfigMap
+    name: kfctl-e2e-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.PULL_NUMBER
+- name: PULL_BASE_REF
+  objref:
+    kind: ConfigMap
+    name: kfctl-e2e-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.PULL_BASE_REF
+- name: PULL_PULL_SHA
+  objref:
+    kind: ConfigMap
+    name: kfctl-e2e-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.PULL_PULL_SHA
+- name: BUILD_NUMBER
+  objref:
+    kind: ConfigMap
+    name: kfctl-e2e-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.BUILD_NUMBER
+configurations:
+- params.yaml
 `)
 	th.writeF("/manifests/e2e/e2e-pipelines/base/pipeline.yaml", `
 apiVersion: tekton.dev/v1alpha1
@@ -177,23 +274,6 @@ spec:
   - name: url
     value: gcr.io/$(project)/kfctl
 `)
-	th.writeF("/manifests/e2e/e2e-pipelines/base/pipeline-run.yaml", `
-apiVersion: tekton.dev/v1alpha1
-kind: PipelineRun
-metadata:
-  name: kfctl-build-apply-pipeline-run
-spec:
-  serviceAccount: e2e-pipelines
-  pipelineRef:
-    name: kfctl-build-apply
-  resources:
-    - name: source-repo
-      resourceRef:
-        name: kfctl-git
-    - name: web-image
-      resourceRef:
-        name: kfctl-image
-`)
 	th.writeF("/manifests/e2e/e2e-pipelines/base/params.yaml", `
 varReference:
 - path: spec/tasks/params/value
@@ -217,7 +297,6 @@ kind: Kustomization
 resources:
 - pipeline.yaml
 - pipeline-resource.yaml
-- pipeline-run.yaml
 namespace: tekton-pipelines
 configMapGenerator:
 - name: kfctl-pipelines-parameters
@@ -291,6 +370,10 @@ func TestE2ePipelinesOverlaysE2e(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
+	expected, err := m.EncodeAsYaml()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
 	targetPath := "../e2e/e2e-pipelines/overlays/e2e"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
@@ -302,10 +385,9 @@ func TestE2ePipelinesOverlaysE2e(t *testing.T) {
 	if err != nil {
 		th.t.Fatalf("Unexpected construction error %v", err)
 	}
-	n, err := kt.MakeCustomizedResMap()
+	actual, err := kt.MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	th.assertActualEqualsExpected(actual, string(expected))
 }

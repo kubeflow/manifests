@@ -93,23 +93,6 @@ spec:
   - name: url
     value: gcr.io/$(project)/kfctl
 `)
-	th.writeF("/manifests/e2e/e2e-pipelines/base/pipeline-run.yaml", `
-apiVersion: tekton.dev/v1alpha1
-kind: PipelineRun
-metadata:
-  name: kfctl-build-apply-pipeline-run
-spec:
-  serviceAccount: e2e-pipelines
-  pipelineRef:
-    name: kfctl-build-apply
-  resources:
-    - name: source-repo
-      resourceRef:
-        name: kfctl-git
-    - name: web-image
-      resourceRef:
-        name: kfctl-image
-`)
 	th.writeF("/manifests/e2e/e2e-pipelines/base/params.yaml", `
 varReference:
 - path: spec/tasks/params/value
@@ -133,7 +116,6 @@ kind: Kustomization
 resources:
 - pipeline.yaml
 - pipeline-resource.yaml
-- pipeline-run.yaml
 namespace: tekton-pipelines
 configMapGenerator:
 - name: kfctl-pipelines-parameters
@@ -207,6 +189,10 @@ func TestE2ePipelinesBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
+	expected, err := m.EncodeAsYaml()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
 	targetPath := "../e2e/e2e-pipelines/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
@@ -218,10 +204,9 @@ func TestE2ePipelinesBase(t *testing.T) {
 	if err != nil {
 		th.t.Fatalf("Unexpected construction error %v", err)
 	}
-	n, err := kt.MakeCustomizedResMap()
+	actual, err := kt.MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	th.assertActualEqualsExpected(actual, string(expected))
 }
