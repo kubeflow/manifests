@@ -65,13 +65,14 @@ spec:
     - name: BUILD_NUMBER
       type: string
       description: build #
+    - name: tests
+      type: array
+      description: tests
   steps:
   - name: e2e-run-tests
     image: "${inputs.params.image}"
     command: ["pytest"]
-    args:
-    - "-s"
-    - "/workspace/kfctl/testing/e2e/params_test.py"
+    args: ${inputs.params.tests}
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
