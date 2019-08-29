@@ -28,6 +28,8 @@ varReference:
       name: kfctl-e2e
     resources:
       inputs:
+      - name: docker-source
+        resource: source-repo
       - name: image
         resource: web-image
         from:
@@ -89,6 +91,7 @@ PULL_NUMBER=33
 PULL_BASE_REF=master
 PULL_PULL_SHA=123abc
 BUILD_NUMBER=a3bc
+tests=
 `)
 	th.writeK("/manifests/e2e/e2e-pipelines/overlays/e2e", `
 apiVersion: kustomize.config.k8s.io/v1beta1
