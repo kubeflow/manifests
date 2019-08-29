@@ -20,6 +20,9 @@ metadata:
 spec:
   inputs:
     resources:
+    - name: docker-source
+      type: git
+      targetPath: kfctl
     - name: image
       type: image
     params:
@@ -77,12 +80,16 @@ spec:
     - name: BUILD_NUMBER
       type: string
       description: build #
+    - name: tests
+      type: string
+      description: tests
   steps:
   - name: e2e-run-tests
     image: "${inputs.params.image}"
     command: ["pytest"]
-    args:
-    - "testing/e2e/params_test.py"
+    args: 
+    - "-s"
+    - "${inputs.params.tests}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json

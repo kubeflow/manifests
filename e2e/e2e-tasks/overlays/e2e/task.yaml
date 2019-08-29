@@ -66,13 +66,15 @@ spec:
       type: string
       description: build #
     - name: tests
-      type: array
+      type: string
       description: tests
   steps:
   - name: e2e-run-tests
     image: "${inputs.params.image}"
     command: ["pytest"]
-    args: ${inputs.params.tests}
+    args: 
+    - "-s"
+    - "${inputs.params.tests}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
