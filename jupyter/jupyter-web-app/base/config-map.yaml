@@ -140,4 +140,4 @@ data:
         readOnly: false
 kind: ConfigMap
 metadata:
-  name: config
+  name: parameters

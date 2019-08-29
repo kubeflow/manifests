@@ -12,7 +12,7 @@ metadata:
       service: centraldashboard.$(namespace)
   labels:
     app: centraldashboard
-  name: centraldashboard
+  name: service
 spec:
   ports:
   - port: 80

@@ -9,6 +9,8 @@ resources:
 namespace: kubeflow
 commonLabels:
   kustomize.component: kubebench
+generatorOptions:
+  disableNameSuffixHash: true
 configMapGenerator:
 - name: parameters
   env: params.env

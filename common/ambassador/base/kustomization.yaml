@@ -13,8 +13,9 @@ images:
   - name: quay.io/datawire/ambassador
     newName: quay.io/datawire/ambassador
     newTag: 0.37.0
+namePrefix: ambassador-
 configMapGenerator:
-- name: ambassador-parameters
+- name: parameters
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
@@ -29,7 +30,7 @@ vars:
 - name: ambassadorServiceType
   objref:
     kind: ConfigMap
-    name: ambassador-parameters
+    name: parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.ambassadorServiceType

@@ -81,7 +81,7 @@ spec:
       containers:
       - args:
         - --configmap
-        - workflow-controller-configmap
+        - workflow-controller-parameters
         command:
         - workflow-controller
         env:

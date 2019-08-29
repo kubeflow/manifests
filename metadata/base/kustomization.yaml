@@ -1,11 +1,13 @@
-namePrefix: metadata-
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 commonLabels:
   kustomize.component: metadata
 configMapGenerator:
-- name: ui-parameters
+- name: parameters
   env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+namePrefix: metadata-
 resources:
 - metadata-db-pvc.yaml
 - metadata-db-secret.yaml
@@ -23,21 +25,21 @@ vars:
 - name: ui-namespace
   objref:
     kind: Service
-    name: ui
+    name: service
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
 - name: ui-clusterDomain
   objref:
     kind: ConfigMap
-    name: ui-parameters
+    name: parameters
     version: v1
   fieldref:
     fieldpath: data.uiClusterDomain
 - name: service
   objref:
     kind: Service
-    name: ui
+    name: service
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name

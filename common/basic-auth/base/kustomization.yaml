@@ -8,6 +8,7 @@ resources:
 commonLabels:
   kustomize.component: basic-auth
 namespace: kubeflow
+namePrefix: basic-auth-
 images:
   - name: gcr.io/kubeflow-images-public/kflogin-ui
     newName: gcr.io/kubeflow-images-public/kflogin-ui
@@ -18,7 +19,7 @@ images:
 generatorOptions:
   disableNameSuffixHash: true
 configMapGenerator:
-- name: basic-auth-parameters
+- name: parameters
   env: params.env
 vars:
 - name: service-namespace
@@ -31,14 +32,14 @@ vars:
 - name: authSecretName
   objref:
     kind: ConfigMap
-    name: basic-auth-parameters
+    name: parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.authSecretName
 - name: clusterDomain
   objref:
     kind: ConfigMap
-    name: basic-auth-parameters
+    name: parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain

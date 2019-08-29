@@ -13,7 +13,7 @@ metadata:
       service: tensorboard.$(namespace):9000
   labels:
     app: tensorboard
-  name: tensorboard
+  name: service
 spec:
   ports:
   - name: tb

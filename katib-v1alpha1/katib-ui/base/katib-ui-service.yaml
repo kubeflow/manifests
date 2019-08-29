@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: katib-ui
+  name: service
   labels:
     component: ui
 spec:

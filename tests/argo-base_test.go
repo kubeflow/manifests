@@ -126,7 +126,7 @@ rules:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: workflow-controller-configmap
+  name: workflow-controller-parameters
   namespace: kubeflow
 data:
   config: |
@@ -253,7 +253,7 @@ spec:
       containers:
       - args:
         - --configmap
-        - workflow-controller-configmap
+        - workflow-controller-parameters
         command:
         - workflow-controller
         env:

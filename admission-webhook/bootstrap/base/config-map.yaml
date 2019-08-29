@@ -128,4 +128,4 @@ data:
     done
 kind: ConfigMap
 metadata:
-  name: config-map
+  name: parameters

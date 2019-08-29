@@ -35,5 +35,5 @@ spec:
       serviceAccountName: pytorch-operator
       volumes:
       - configMap:
-          name: pytorch-operator-config
+          name: parameters
         name: config-volume

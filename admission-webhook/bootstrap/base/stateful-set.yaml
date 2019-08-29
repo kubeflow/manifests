@@ -20,7 +20,7 @@ spec:
       serviceAccountName: service-account
       volumes:
       - configMap:
-          name: config-map
+          name: parameters
         name: admission-webhook-config
   # Workaround for https://github.com/kubernetes-sigs/kustomize/issues/677
   volumeClaimTemplates: []

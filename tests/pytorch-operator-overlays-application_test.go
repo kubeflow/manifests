@@ -149,7 +149,7 @@ data:
     }
 kind: ConfigMap
 metadata:
-  name: pytorch-operator-config
+  name: pytorch-operator-parameters
 `)
 	th.writeF("/manifests/pytorch-job/pytorch-operator/base/deployment.yaml", `
 apiVersion: extensions/v1beta1
@@ -189,7 +189,7 @@ spec:
       serviceAccountName: pytorch-operator
       volumes:
       - configMap:
-          name: pytorch-operator-config
+          name: pytorch-operator-parameters
         name: config-volume
 `)
 	th.writeF("/manifests/pytorch-job/pytorch-operator/base/service-account.yaml", `

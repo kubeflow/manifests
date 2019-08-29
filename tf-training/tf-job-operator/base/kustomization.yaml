@@ -11,6 +11,9 @@ resources:
 - service.yaml
 commonLabels:
   kustomize.component: tf-job-operator
+namePrefix: tf-job-
+generatorOptions:
+  disableNameSuffixHash: true
 configMapGenerator:
 - name: parameters
   env: params.env
@@ -18,7 +21,7 @@ vars:
 - name: namespace
   objref:
     kind: Service
-    name: tf-job-dashboard
+    name: dashboard-service
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace

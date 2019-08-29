@@ -6,4 +6,4 @@ data:
     }
 kind: ConfigMap
 metadata:
-  name: pytorch-operator-config
+  name: parameters

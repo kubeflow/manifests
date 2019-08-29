@@ -7,9 +7,12 @@ resources:
 - role.yaml
 - service-account.yaml
 - service.yaml
+generatorOptions:
+  disableNameSuffixHash: true
 configMapGenerator:
-- name: ui-parameters
+- name: parameters
   env: params.env
+namePrefix: pipelines-ui-
 images:
 - name: gcr.io/ml-pipeline/frontend
   newTag: '0.1.23'
@@ -17,28 +20,28 @@ vars:
 - name: ui-namespace
   objref:
     kind: Service
-    name: ml-pipeline-ui
+    name: service
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
 - name: ui-clusterDomain
   objref:
     kind: ConfigMap
-    name: ui-parameters
+    name: parameters
     version: v1
   fieldref:
     fieldpath: data.uiClusterDomain
 - name: service
   objref:
     kind: Service
-    name: ml-pipeline-ui
+    name: service
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name
 - name: tensorboard-service
   objref:
     kind: Service
-    name: ml-pipeline-tensorboard-ui
+    name: tensorboard
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name

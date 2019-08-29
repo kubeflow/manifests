@@ -4,7 +4,7 @@ kind: ClusterRole
 metadata:
   labels:
     app: tf-job-dashboard
-  name: tf-job-dashboard
+  name: dashboard
 rules:
 - apiGroups:
   - tensorflow.org
@@ -58,7 +58,7 @@ kind: ClusterRole
 metadata:
   labels:
     app: tf-job-operator
-  name: tf-job-operator
+  name: operator
 rules:
 - apiGroups:
   - tensorflow.org

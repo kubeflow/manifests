@@ -6,6 +6,9 @@ resources:
 - service.yaml
 commonLabels:
   kustomize.component: tensorboard
+namePrefix: tensorboard-
+generatorOptions:
+  disableNameSuffixHash: true
 configMapGenerator:
 - name: parameters
   env: params.env
@@ -13,7 +16,7 @@ vars:
 - name: namespace
   objref:
     kind: Service
-    name: tensorboard
+    name: service
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace

@@ -6,8 +6,9 @@ resources:
 - deployment.yaml
 - service.yaml
 - persistent-volume-claim.yaml
+namePrefix: pipeline-mysql-
 configMapGenerator:
-- name: pipeline-mysql-parameters
+- name: parameters
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
@@ -15,7 +16,7 @@ vars:
 - name: mysqlPvcName
   objref:
     kind: ConfigMap
-    name: pipeline-mysql-parameters
+    name: parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.mysqlPvcName

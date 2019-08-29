@@ -183,7 +183,7 @@ data:
     done
 kind: ConfigMap
 metadata:
-  name: config-map
+  name: parameters
 `)
 	th.writeF("/manifests/admission-webhook/bootstrap/base/service-account.yaml", `
 apiVersion: v1
@@ -214,7 +214,7 @@ spec:
       serviceAccountName: service-account
       volumes:
       - configMap:
-          name: config-map
+          name: parameters
         name: admission-webhook-config
   # Workaround for https://github.com/kubernetes-sigs/kustomize/issues/677
   volumeClaimTemplates: []
@@ -250,21 +250,21 @@ configurations:
 - params.yaml
 namespace: kubeflow
 configMapGenerator:
-- name: config-map
+- name: parameters
   behavior: merge
   env: params.env
 vars:
 - name: webhookNamePrefix
   objref:
     kind: ConfigMap
-    name: config-map
+    name: parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.webhookNamePrefix
 - name: namespace
   objref:
     kind: ConfigMap
-    name: config-map 
+    name: parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.namespace    
