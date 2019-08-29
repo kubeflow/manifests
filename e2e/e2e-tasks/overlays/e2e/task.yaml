@@ -68,10 +68,10 @@ spec:
   steps:
   - name: e2e-run-tests
     image: "${inputs.params.image}"
-    command: ["/bin/sleep", "infinity"]
-#    command: ["pytest"]
-#    args:
-#    - "/workspace/kfctl/testing/e2e/params_test.py"
+    command: ["pytest"]
+    args:
+    - "-s"
+    - "/workspace/kfctl/testing/e2e/params_test.py"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
