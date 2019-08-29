@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: istio-system
+  name: $(namespace)
   labels:
     istio-injection: disabled
 ---
@@ -11,7 +11,6 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: istio-galley
-  namespace: istio-system
   labels:
     app: galley
     chart: galley
@@ -34,7 +33,6 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: istio-egressgateway
-  namespace: istio-system
   labels:
     chart: gateways
     heritage: Tiller
@@ -54,7 +52,6 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: istio-ingressgateway
-  namespace: istio-system
   labels:
     chart: gateways
     heritage: Tiller
@@ -78,7 +75,6 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: istio-policy
-  namespace: istio-system
   labels:
     app: policy
     chart: mixer
@@ -101,7 +97,6 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: istio-telemetry
-  namespace: istio-system
   labels:
     app: telemetry
     chart: mixer
@@ -128,7 +123,6 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: istio-pilot
-  namespace: istio-system
   labels:
     app: pilot
     chart: pilot
@@ -151,7 +145,6 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: istio-sidecar-injector
-  namespace: istio-system
   labels:
     app: sidecarInjectorWebhook
     release: istio
@@ -170,7 +163,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: istio-galley-configuration
-  namespace: istio-system
   labels:
     app: galley
     chart: galley
@@ -194,7 +186,7 @@ data:
         clientConfig:
           service:
             name: istio-galley
-            namespace: istio-system
+            namespace: $(namespace)
             path: "/admitpilot"
           caBundle: ""
         rules:
@@ -248,7 +240,7 @@ data:
         clientConfig:
           service:
             name: istio-galley
-            namespace: istio-system
+            namespace: $(namespace)
             path: "/admitmixer"
           caBundle: ""
         rules:
@@ -301,7 +293,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: istio-grafana-custom-resources
-  namespace: istio-system
   labels:
     app: grafana
     chart: grafana
@@ -314,7 +305,7 @@ data:
     kind: Policy
     metadata:
       name: grafana-ports-mtls-disabled
-      namespace: istio-system
+      namespace: $(namespace)
       labels:
         app: grafana
         chart: grafana
@@ -341,13 +332,13 @@ data:
     if [ "$?" -eq 0 ]; then
         echo "istio-galley validatingwebhookconfiguration found - waiting for istio-galley deployment to be ready"
         while true; do
-            kubectl -n istio-system get deployment istio-galley 2>/dev/null
+            kubectl -n $(namespace) get deployment istio-galley 2>/dev/null
             if [ "$?" -eq 0 ]; then
                 break
             fi
             sleep 1
         done
-        kubectl -n istio-system rollout status deployment istio-galley
+        kubectl -n $(namespace) rollout status deployment istio-galley
         if [ "$?" -ne 0 ]; then
             echo "istio-galley deployment rollout status check failed"
             exit 1
@@ -365,7 +356,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: istio-grafana-configuration-dashboards-galley-dashboard
-  namespace: istio-system
   labels:
     app: grafana
     chart: grafana
@@ -2198,7 +2188,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: istio-grafana-configuration-dashboards-istio-mesh-dashboard
-  namespace: istio-system
   labels:
     app: grafana
     chart: grafana
@@ -3165,7 +3154,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: istio-grafana-configuration-dashboards-istio-performance-dashboard
-  namespace: istio-system
   labels:
     app: grafana
     chart: grafana
@@ -3289,7 +3277,7 @@ data:
           "refId": "B"
         },
         {
-          "expr": "(sum(irate(container_cpu_usage_seconds_total{job=\"kubernetes-cadvisor\",namespace!=\"istio-system\",container_name=\"istio-proxy\"}[1m]))/ (round(sum(irate(istio_requests_total[1m])), 0.001)/1000))/ (sum(irate(istio_requests_total{source_workload=\"istio-ingressgateway\"}[1m])) >bool 10)",
+          "expr": "(sum(irate(container_cpu_usage_seconds_total{job=\"kubernetes-cadvisor\",namespace!=\"$(namespace)\",container_name=\"istio-proxy\"}[1m]))/ (round(sum(irate(istio_requests_total[1m])), 0.001)/1000))/ (sum(irate(istio_requests_total{source_workload=\"istio-ingressgateway\"}[1m])) >bool 10)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "istio-proxy",
@@ -3394,7 +3382,7 @@ data:
           "refId": "B"
         },
         {
-          "expr": "sum(rate(container_cpu_usage_seconds_total{job=\"kubernetes-cadvisor\",namespace!=\"istio-system\",container_name=\"istio-proxy\"}[1m]))",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{job=\"kubernetes-cadvisor\",namespace!=\"$(namespace)\",container_name=\"istio-proxy\"}[1m]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "istio-proxy",
@@ -3512,7 +3500,7 @@ data:
           "refId": "B"
         },
         {
-          "expr": "sum(container_memory_usage_bytes{namespace!=\"istio-system\",container_name=\"istio-proxy\"}) / count(container_memory_usage_bytes{namespace!=\"istio-system\",container_name=\"istio-proxy\"})",
+          "expr": "sum(container_memory_usage_bytes{namespace!=\"$(namespace)\",container_name=\"istio-proxy\"}) / count(container_memory_usage_bytes{namespace!=\"$(namespace)\",container_name=\"istio-proxy\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "per istio proxy",
@@ -3617,7 +3605,7 @@ data:
           "refId": "B"
         },
         {
-          "expr": "sum(irate(istio_response_bytes_sum{source_workload_namespace!=\"istio-system\", reporter=\"source\"}[1m])) + sum(irate(istio_response_bytes_sum{destination_workload_namespace!=\"istio-system\", reporter=\"destination\"}[1m])) + sum(irate(istio_request_bytes_sum{source_workload_namespace!=\"istio-system\", reporter=\"source\"}[1m])) + sum(irate(istio_request_bytes_sum{destination_workload_namespace!=\"istio-system\", reporter=\"destination\"}[1m]))",
+          "expr": "sum(irate(istio_response_bytes_sum{source_workload_namespace!=\"$(namespace)\", reporter=\"source\"}[1m])) + sum(irate(istio_response_bytes_sum{destination_workload_namespace!=\"$(namespace)\", reporter=\"destination\"}[1m])) + sum(irate(istio_request_bytes_sum{source_workload_namespace!=\"$(namespace)\", reporter=\"source\"}[1m])) + sum(irate(istio_request_bytes_sum{destination_workload_namespace!=\"$(namespace)\", reporter=\"destination\"}[1m]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "istio-proxy",
@@ -5001,7 +4989,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: istio-grafana-configuration-dashboards-istio-service-dashboard
-  namespace: istio-system
   labels:
     app: grafana
     chart: grafana
@@ -7616,7 +7603,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: istio-grafana-configuration-dashboards-istio-workload-dashboard
-  namespace: istio-system
   labels:
     app: grafana
     chart: grafana
@@ -9933,7 +9919,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: istio-grafana-configuration-dashboards-mixer-dashboard
-  namespace: istio-system
   labels:
     app: grafana
     chart: grafana
@@ -11755,7 +11740,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: istio-grafana-configuration-dashboards-pilot-dashboard
-  namespace: istio-system
   labels:
     app: grafana
     chart: grafana
@@ -13560,7 +13544,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: istio-grafana
-  namespace: istio-system
   labels:
     app: grafana
     chart: grafana
@@ -13598,7 +13581,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: kiali
-  namespace: istio-system
   labels:
     app: kiali
     chart: kiali
@@ -13606,7 +13588,7 @@ metadata:
     release: istio
 data:
   config.yaml: |
-    istio_namespace: istio-system
+    istio_namespace: $(namespace)
     auth:
       strategy: "login"
     server:
@@ -13626,7 +13608,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: prometheus
-  namespace: istio-system
   labels:
     app: prometheus
     chart: prometheus
@@ -13643,7 +13624,7 @@ data:
       - role: endpoints
         namespaces:
           names:
-          - istio-system
+          - $(namespace)
 
       relabel_configs:
       - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
@@ -13679,7 +13660,7 @@ data:
       - role: endpoints
         namespaces:
           names:
-          - istio-system
+          - $(namespace)
 
 
       relabel_configs:
@@ -13692,7 +13673,7 @@ data:
       - role: endpoints
         namespaces:
           names:
-          - istio-system
+          - $(namespace)
 
       relabel_configs:
       - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
@@ -13704,7 +13685,7 @@ data:
       - role: endpoints
         namespaces:
           names:
-          - istio-system
+          - $(namespace)
 
       relabel_configs:
       - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
@@ -13716,7 +13697,7 @@ data:
       - role: endpoints
         namespaces:
           names:
-          - istio-system
+          - $(namespace)
 
       relabel_configs:
       - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
@@ -13728,7 +13709,7 @@ data:
       - role: endpoints
         namespaces:
           names:
-          - istio-system
+          - $(namespace)
 
       relabel_configs:
       - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
@@ -13909,7 +13890,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: istio-security-custom-resources
-  namespace: istio-system
   labels:
     app: security
     chart: security
@@ -13948,13 +13928,13 @@ data:
     if [ "$?" -eq 0 ]; then
         echo "istio-galley validatingwebhookconfiguration found - waiting for istio-galley deployment to be ready"
         while true; do
-            kubectl -n istio-system get deployment istio-galley 2>/dev/null
+            kubectl -n $(namespace) get deployment istio-galley 2>/dev/null
             if [ "$?" -eq 0 ]; then
                 break
             fi
             sleep 1
         done
-        kubectl -n istio-system rollout status deployment istio-galley
+        kubectl -n $(namespace) rollout status deployment istio-galley
         if [ "$?" -ne 0 ]; then
             echo "istio-galley deployment rollout status check failed"
             exit 1
@@ -13972,7 +13952,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: istio
-  namespace: istio-system
   labels:
     app: istio
     chart: istio
@@ -13999,8 +13978,8 @@ data:
 
     # Set accessLogEncoding to JSON or TEXT to configure sidecar access log
     accessLogEncoding: 'TEXT'
-    mixerCheckServer: istio-policy.istio-system.svc.cluster.local:9091
-    mixerReportServer: istio-telemetry.istio-system.svc.cluster.local:9091
+    mixerCheckServer: istio-policy.$(namespace).svc.cluster.local:9091
+    mixerReportServer: istio-telemetry.$(namespace).svc.cluster.local:9091
     # policyCheckFailOpen allows traffic in cases when the mixer policy service cannot be reached.
     # Default is false which means the traffic is denied when the client is unable to connect to Mixer.
     policyCheckFailOpen: false
@@ -14049,9 +14028,9 @@ data:
 
     # The namespace to treat as the administrative root namespace for istio
     # configuration.
-    rootNamespace: istio-system
+    rootNamespace: $(namespace)
     configSources:
-    - address: istio-galley.istio-system.svc:9901
+    - address: istio-galley.$(namespace).svc:9901
 
     defaultConfig:
       #
@@ -14098,13 +14077,13 @@ data:
       tracing:
         zipkin:
           # Address of the Zipkin collector
-          address: zipkin.istio-system:9411
+          address: zipkin.$(namespace):9411
       #
       # Mutual TLS authentication between sidecars and istio control plane.
       controlPlaneAuthPolicy: NONE
       #
       # Address where istio Pilot service is running
-      discoveryAddress: istio-pilot.istio-system:15010
+      discoveryAddress: istio-pilot.$(namespace):15010
 
   # Configuration file for the mesh networks to be used by the Split Horizon EDS.
   meshNetworks: |-
@@ -14117,7 +14096,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: istio-sidecar-injector
-  namespace: istio-system
   labels:
     app: istio
     chart: istio
@@ -14492,7 +14470,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: istio-galley-service-account
-  namespace: istio-system
   labels:
     app: galley
     chart: galley
@@ -14506,7 +14483,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: istio-egressgateway-service-account
-  namespace: istio-system
   labels:
     app: istio-egressgateway
     chart: gateways
@@ -14517,7 +14493,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: istio-ingressgateway-service-account
-  namespace: istio-system
   labels:
     app: istio-ingressgateway
     chart: gateways
@@ -14532,7 +14507,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: istio-grafana-post-install-account
-  namespace: istio-system
   labels:
     app: grafana
     chart: grafana
@@ -14542,7 +14516,7 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: istio-grafana-post-install-istio-system
+  name: istio-grafana-post-install-$(namespace)
   labels:
     app: grafana
     chart: grafana
@@ -14556,7 +14530,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: istio-grafana-post-install-role-binding-istio-system
+  name: istio-grafana-post-install-role-binding-$(namespace)
   labels:
     app: grafana
     chart: grafana
@@ -14565,17 +14539,16 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: istio-grafana-post-install-istio-system
+  name: istio-grafana-post-install-$(namespace)
 subjects:
   - kind: ServiceAccount
     name: istio-grafana-post-install-account
-    namespace: istio-system
+    namespace: $(namespace)
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: istio-grafana-post-install-release-1.2-latest-daily
-  namespace: istio-system
   annotations:
     "helm.sh/hook": post-install
     "helm.sh/hook-delete-policy": hook-succeeded
@@ -14647,7 +14620,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: kiali-service-account
-  namespace: istio-system
   labels:
     app: kiali
     chart: kiali
@@ -14661,7 +14633,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: istio-mixer-service-account
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -14674,7 +14645,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: istio-pilot-service-account
-  namespace: istio-system
   labels:
     app: pilot
     chart: pilot
@@ -14687,7 +14657,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: prometheus
-  namespace: istio-system
   labels:
     app: prometheus
     chart: prometheus
@@ -14709,7 +14678,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: istio-cleanup-secrets-service-account
-  namespace: istio-system
   annotations:
     "helm.sh/hook": post-delete
     "helm.sh/hook-delete-policy": hook-succeeded
@@ -14723,7 +14691,7 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: istio-cleanup-secrets-istio-system
+  name: istio-cleanup-secrets-$(namespace)
   annotations:
     "helm.sh/hook": post-delete
     "helm.sh/hook-delete-policy": hook-succeeded
@@ -14741,7 +14709,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: istio-cleanup-secrets-istio-system
+  name: istio-cleanup-secrets-$(namespace)
   annotations:
     "helm.sh/hook": post-delete
     "helm.sh/hook-delete-policy": hook-succeeded
@@ -14754,17 +14722,16 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: istio-cleanup-secrets-istio-system
+  name: istio-cleanup-secrets-$(namespace)
 subjects:
   - kind: ServiceAccount
     name: istio-cleanup-secrets-service-account
-    namespace: istio-system
+    namespace: $(namespace)
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: istio-cleanup-secrets-release-1.2-latest-daily
-  namespace: istio-system
   annotations:
     "helm.sh/hook": post-delete
     "helm.sh/hook-delete-policy": hook-succeeded
@@ -14840,7 +14807,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: istio-security-post-install-account
-  namespace: istio-system
   labels:
     app: security
     chart: security
@@ -14850,7 +14816,7 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: istio-security-post-install-istio-system
+  name: istio-security-post-install-$(namespace)
   labels:
     app: security
     chart: security
@@ -14873,7 +14839,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: istio-security-post-install-role-binding-istio-system
+  name: istio-security-post-install-role-binding-$(namespace)
   labels:
     app: security
     chart: security
@@ -14882,17 +14848,16 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: istio-security-post-install-istio-system
+  name: istio-security-post-install-$(namespace)
 subjects:
   - kind: ServiceAccount
     name: istio-security-post-install-account
-    namespace: istio-system
+    namespace: $(namespace)
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: istio-security-post-install-release-1.2-latest-daily
-  namespace: istio-system
   annotations:
     "helm.sh/hook": post-install
     "helm.sh/hook-delete-policy": hook-succeeded
@@ -14965,7 +14930,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: istio-citadel-service-account
-  namespace: istio-system
   labels:
     app: security
     chart: security
@@ -14978,7 +14942,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: istio-sidecar-injector-service-account
-  namespace: istio-system
   labels:
     app: sidecarInjectorWebhook
     chart: sidecarInjectorWebhook
@@ -14992,14 +14955,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: istio-multi
-  namespace: istio-system
 
 ---
 # Source: istio/charts/galley/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: istio-galley-istio-system
+  name: istio-galley-$(namespace)
   labels:
     app: galley
     chart: galley
@@ -15310,7 +15272,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: istio-mixer-istio-system
+  name: istio-mixer-$(namespace)
   labels:
     app: mixer
     chart: mixer
@@ -15335,7 +15297,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: istio-pilot-istio-system
+  name: istio-pilot-$(namespace)
   labels:
     app: pilot
     chart: pilot
@@ -15372,7 +15334,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: prometheus-istio-system
+  name: prometheus-$(namespace)
   labels:
     app: prometheus
     chart: prometheus
@@ -15399,7 +15361,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: istio-citadel-istio-system
+  name: istio-citadel-$(namespace)
   labels:
     app: security
     chart: security
@@ -15424,7 +15386,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: istio-sidecar-injector-istio-system
+  name: istio-sidecar-injector-$(namespace)
   labels:
     app: sidecarInjectorWebhook
     chart: sidecarInjectorWebhook
@@ -15458,7 +15420,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: istio-galley-admin-role-binding-istio-system
+  name: istio-galley-admin-role-binding-$(namespace)
   labels:
     app: galley
     chart: galley
@@ -15467,18 +15429,18 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: istio-galley-istio-system
+  name: istio-galley-$(namespace)
 subjects:
   - kind: ServiceAccount
     name: istio-galley-service-account
-    namespace: istio-system
+    namespace: $(namespace)
 
 ---
 # Source: istio/charts/kiali/templates/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: istio-kiali-admin-role-binding-istio-system
+  name: istio-kiali-admin-role-binding-$(namespace)
   labels:
     app: kiali
     chart: kiali
@@ -15491,7 +15453,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kiali-service-account
-  namespace: istio-system
+  namespace: $(namespace)
 
 ---
 # Source: istio/charts/mixer/templates/clusterrolebinding.yaml
@@ -15499,7 +15461,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: istio-mixer-admin-role-binding-istio-system
+  name: istio-mixer-admin-role-binding-$(namespace)
   labels:
     app: mixer
     chart: mixer
@@ -15508,18 +15470,18 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: istio-mixer-istio-system
+  name: istio-mixer-$(namespace)
 subjects:
   - kind: ServiceAccount
     name: istio-mixer-service-account
-    namespace: istio-system
+    namespace: $(namespace)
 
 ---
 # Source: istio/charts/pilot/templates/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: istio-pilot-istio-system
+  name: istio-pilot-$(namespace)
   labels:
     app: pilot
     chart: pilot
@@ -15528,18 +15490,18 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: istio-pilot-istio-system
+  name: istio-pilot-$(namespace)
 subjects:
   - kind: ServiceAccount
     name: istio-pilot-service-account
-    namespace: istio-system
+    namespace: $(namespace)
 
 ---
 # Source: istio/charts/prometheus/templates/clusterrolebindings.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: prometheus-istio-system
+  name: prometheus-$(namespace)
   labels:
     app: prometheus
     chart: prometheus
@@ -15548,18 +15510,18 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: prometheus-istio-system
+  name: prometheus-$(namespace)
 subjects:
 - kind: ServiceAccount
   name: prometheus
-  namespace: istio-system
+  namespace: $(namespace)
 
 ---
 # Source: istio/charts/security/templates/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: istio-citadel-istio-system
+  name: istio-citadel-$(namespace)
   labels:
     app: security
     chart: security
@@ -15568,18 +15530,18 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: istio-citadel-istio-system
+  name: istio-citadel-$(namespace)
 subjects:
   - kind: ServiceAccount
     name: istio-citadel-service-account
-    namespace: istio-system
+    namespace: $(namespace)
 
 ---
 # Source: istio/charts/sidecarInjectorWebhook/templates/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: istio-sidecar-injector-admin-role-binding-istio-system
+  name: istio-sidecar-injector-admin-role-binding-$(namespace)
   labels:
     app: sidecarInjectorWebhook
     chart: sidecarInjectorWebhook
@@ -15589,11 +15551,11 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: istio-sidecar-injector-istio-system
+  name: istio-sidecar-injector-$(namespace)
 subjects:
   - kind: ServiceAccount
     name: istio-sidecar-injector-service-account
-    namespace: istio-system
+    namespace: $(namespace)
 
 ---
 # Source: istio/templates/clusterrolebinding.yaml
@@ -15610,7 +15572,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: istio-multi
-  namespace: istio-system
+  namespace: $(namespace)
 
 ---
 # Source: istio/charts/gateways/templates/role.yaml
@@ -15619,7 +15581,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: istio-ingressgateway-sds
-  namespace: istio-system
 rules:
 - apiGroups: [""]
   resources: ["secrets"]
@@ -15633,7 +15594,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: istio-ingressgateway-sds
-  namespace: istio-system
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -15649,7 +15609,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: istio-galley
-  namespace: istio-system
   labels:
     app: galley
     chart: galley
@@ -15674,7 +15633,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: istio-egressgateway
-  namespace: istio-system
   annotations:
   labels:
     chart: gateways
@@ -15704,7 +15662,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: istio-ingressgateway
-  namespace: istio-system
   annotations:
     beta.cloud.google.com/backend-config: '{"ports": {"http2":"iap-backendconfig"}}'
   labels:
@@ -15765,7 +15722,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: grafana
-  namespace: istio-system
   annotations:
   labels:
     app: grafana
@@ -15788,7 +15744,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: kiali
-  namespace: istio-system
   labels:
     app: kiali
     chart: kiali
@@ -15809,7 +15764,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: istio-policy
-  namespace: istio-system
   annotations:
    networking.istio.io/exportTo: "*"
   labels:
@@ -15834,7 +15788,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: istio-telemetry
-  namespace: istio-system
   annotations:
    networking.istio.io/exportTo: "*"
   labels:
@@ -15865,7 +15818,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: istio-pilot
-  namespace: istio-system
   labels:
     app: pilot
     chart: pilot
@@ -15891,7 +15843,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: prometheus
-  namespace: istio-system
   annotations:
     prometheus.io/scrape: 'true'
   labels:
@@ -15915,7 +15866,6 @@ metadata:
   # we use the normal name here (e.g. 'prometheus')
   # as grafana is configured to use this as a data source
   name: istio-citadel
-  namespace: istio-system
   labels:
     app: security
     chart: security
@@ -15939,7 +15889,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: istio-sidecar-injector
-  namespace: istio-system
   labels:
     app: sidecarInjectorWebhook
     chart: sidecarInjectorWebhook
@@ -15958,7 +15907,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-galley
-  namespace: istio-system
   labels:
     app: galley
     chart: galley
@@ -16002,7 +15950,7 @@ spec:
           - --livenessProbePath=/healthliveness
           - --readinessProbePath=/healthready
           - --readinessProbeInterval=1s
-          - --deployment-namespace=istio-system
+          - --deployment-namespace=$(namespace)
           - --insecure=true
           - --validation-webhook-config-file
           - /etc/config/validatingwebhookconfiguration.yaml
@@ -16091,7 +16039,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-egressgateway
-  namespace: istio-system
   labels:
     chart: gateways
     heritage: Tiller
@@ -16266,7 +16213,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-ingressgateway
-  namespace: istio-system
   labels:
     chart: gateways
     heritage: Tiller
@@ -16450,7 +16396,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: grafana
-  namespace: istio-system
   labels:
     app: grafana
     chart: grafana
@@ -16604,7 +16549,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kiali
-  namespace: istio-system
   labels:
     app: kiali
     chart: kiali
@@ -16703,7 +16647,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-policy
-  namespace: istio-system
   labels:
     app: istio-mixer
     chart: mixer
@@ -16788,11 +16731,11 @@ spec:
           - --address
           - unix:///sock/mixer.socket
           - --log_output_level=default:info
-          - --configStoreURL=mcp://istio-galley.istio-system.svc:9901
-          - --configDefaultNamespace=istio-system
+          - --configStoreURL=mcp://istio-galley.$(namespace).svc:9901
+          - --configDefaultNamespace=$(namespace)
           - --useAdapterCRDs=false
           - --useTemplateCRDs=false
-          - --trace_zipkin_url=http://zipkin.istio-system:9411/api/v1/spans
+          - --trace_zipkin_url=http://zipkin.$(namespace):9411/api/v1/spans
         env:
         - name: GODEBUG
           value: "gctrace=1"
@@ -16872,7 +16815,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-telemetry
-  namespace: istio-system
   labels:
     app: istio-mixer
     chart: mixer
@@ -16957,11 +16899,11 @@ spec:
           - --address
           - unix:///sock/mixer.socket
           - --log_output_level=default:info
-          - --configStoreURL=mcp://istio-galley.istio-system.svc:9901
-          - --configDefaultNamespace=istio-system
+          - --configStoreURL=mcp://istio-galley.$(namespace).svc:9901
+          - --configDefaultNamespace=$(namespace)
           - --useAdapterCRDs=false
           - --useTemplateCRDs=false
-          - --trace_zipkin_url=http://zipkin.istio-system:9411/api/v1/spans
+          - --trace_zipkin_url=http://zipkin.$(namespace):9411/api/v1/spans
           - --averageLatencyThreshold
           - 100ms
           - --loadsheddingMode
@@ -17052,7 +16994,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-pilot
-  namespace: istio-system
   # TODO: default template doesn't have this, which one is right ?
   labels:
     app: pilot
@@ -17231,7 +17172,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
-  namespace: istio-system
   labels:
     app: prometheus
     chart: prometheus
@@ -17329,7 +17269,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-citadel
-  namespace: istio-system
   labels:
     app: security
     chart: security
@@ -17364,8 +17303,8 @@ spec:
           args:
             - --append-dns-names=true
             - --grpc-port=8060
-            - --citadel-storage-namespace=istio-system
-            - --custom-dns-names=istio-pilot-service-account.istio-system:istio-pilot.istio-system
+            - --citadel-storage-namespace=$(namespace)
+            - --custom-dns-names=istio-pilot-service-account.$(namespace):istio-pilot.$(namespace)
             - --monitoring-port=15014
             - --self-signed-ca=true
             - --workload-cert-ttl=2160h
@@ -17413,7 +17352,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-sidecar-injector
-  namespace: istio-system
   labels:
     app: sidecarInjectorWebhook
     chart: sidecarInjectorWebhook
@@ -17541,7 +17479,6 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: istio-egressgateway
-  namespace: istio-system
   labels:
     chart: gateways
     heritage: Tiller
@@ -17565,7 +17502,6 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: istio-ingressgateway
-  namespace: istio-system
   labels:
     chart: gateways
     heritage: Tiller
@@ -17593,7 +17529,6 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: istio-policy
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -17616,7 +17551,6 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: istio-telemetry
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -17643,7 +17577,6 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: istio-pilot
-  namespace: istio-system
   labels:
     app: pilot
     chart: pilot
@@ -17679,7 +17612,7 @@ webhooks:
     clientConfig:
       service:
         name: istio-sidecar-injector
-        namespace: istio-system
+        namespace: $(namespace)
         path: "/inject"
       caBundle: ""
     rules:
@@ -17774,7 +17707,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: attributemanifest
 metadata:
   name: istioproxy
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -17915,7 +17847,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: attributemanifest
 metadata:
   name: kubernetes
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -17981,7 +17912,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: instance
 metadata:
   name: requestcount
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18018,7 +17948,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: instance
 metadata:
   name: requestduration
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18055,7 +17984,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: instance
 metadata:
   name: requestsize
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18092,7 +18020,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: instance
 metadata:
   name: responsesize
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18129,7 +18056,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: instance
 metadata:
   name: tcpbytesent
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18162,7 +18088,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: instance
 metadata:
   name: tcpbytereceived
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18195,7 +18120,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: instance
 metadata:
   name: tcpconnectionsopened
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18228,7 +18152,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: instance
 metadata:
   name: tcpconnectionsclosed
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18261,7 +18184,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: handler
 metadata:
   name: prometheus
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18274,7 +18196,7 @@ spec:
       metricsExpiryDuration: "10m"
     metrics:
     - name: requests_total
-      instance_name: requestcount.instance.istio-system
+      instance_name: requestcount.instance.$(namespace)
       kind: COUNTER
       label_names:
       - reporter
@@ -18298,7 +18220,7 @@ spec:
       - permissive_response_policyid
       - connection_security_policy
     - name: request_duration_seconds
-      instance_name: requestduration.instance.istio-system
+      instance_name: requestduration.instance.$(namespace)
       kind: DISTRIBUTION
       label_names:
       - reporter
@@ -18325,7 +18247,7 @@ spec:
         explicit_buckets:
           bounds: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]
     - name: request_bytes
-      instance_name: requestsize.instance.istio-system
+      instance_name: requestsize.instance.$(namespace)
       kind: DISTRIBUTION
       label_names:
       - reporter
@@ -18354,7 +18276,7 @@ spec:
           scale: 1
           growthFactor: 10
     - name: response_bytes
-      instance_name: responsesize.instance.istio-system
+      instance_name: responsesize.instance.$(namespace)
       kind: DISTRIBUTION
       label_names:
       - reporter
@@ -18383,7 +18305,7 @@ spec:
           scale: 1
           growthFactor: 10
     - name: tcp_sent_bytes_total
-      instance_name: tcpbytesent.instance.istio-system
+      instance_name: tcpbytesent.instance.$(namespace)
       kind: COUNTER
       label_names:
       - reporter
@@ -18403,7 +18325,7 @@ spec:
       - connection_security_policy
       - response_flags
     - name: tcp_received_bytes_total
-      instance_name: tcpbytereceived.instance.istio-system
+      instance_name: tcpbytereceived.instance.$(namespace)
       kind: COUNTER
       label_names:
       - reporter
@@ -18423,7 +18345,7 @@ spec:
       - connection_security_policy
       - response_flags
     - name: tcp_connections_opened_total
-      instance_name: tcpconnectionsopened.instance.istio-system
+      instance_name: tcpconnectionsopened.instance.$(namespace)
       kind: COUNTER
       label_names:
       - reporter
@@ -18443,7 +18365,7 @@ spec:
       - connection_security_policy
       - response_flags
     - name: tcp_connections_closed_total
-      instance_name: tcpconnectionsclosed.instance.istio-system
+      instance_name: tcpconnectionsclosed.instance.$(namespace)
       kind: COUNTER
       label_names:
       - reporter
@@ -18467,7 +18389,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: rule
 metadata:
   name: promhttp
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18487,7 +18408,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: rule
 metadata:
   name: promtcp
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18505,7 +18425,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: rule
 metadata:
   name: promtcpconnectionopen
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18522,7 +18441,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: rule
 metadata:
   name: promtcpconnectionclosed
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18539,7 +18457,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: handler
 metadata:
   name: kubernetesenv
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18560,7 +18477,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: rule
 metadata:
   name: kubeattrgenrulerule
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18576,7 +18492,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: rule
 metadata:
   name: tcpkubeattrgenrulerule
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18593,7 +18508,6 @@ apiVersion: "config.istio.io/v1alpha2"
 kind: instance
 metadata:
   name: attributes
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
@@ -18639,14 +18553,13 @@ apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
   name: istio-policy
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
     heritage: Tiller
     release: istio
 spec:
-  host: istio-policy.istio-system.svc.cluster.local
+  host: istio-policy.$(namespace).svc.cluster.local
   trafficPolicy:
     connectionPool:
       http:
@@ -18657,14 +18570,13 @@ apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
   name: istio-telemetry
-  namespace: istio-system
   labels:
     app: mixer
     chart: mixer
     heritage: Tiller
     release: istio
 spec:
-  host: istio-telemetry.istio-system.svc.cluster.local
+  host: istio-telemetry.$(namespace).svc.cluster.local
   trafficPolicy:
     connectionPool:
       http:
