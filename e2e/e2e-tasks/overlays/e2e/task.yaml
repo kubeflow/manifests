@@ -5,6 +5,9 @@ metadata:
 spec:
   inputs:
     resources:
+    - name: docker-source
+      type: git
+      targetPath: kfctl
     - name: image
       type: image
     params:
@@ -68,7 +71,7 @@ spec:
     command: ["/bin/sleep", "infinity"]
 #    command: ["pytest"]
 #    args:
-#    - "/workspace/docker-source/testing/e2e/params_test.py"
+#    - "/workspace/kfctl/testing/e2e/params_test.py"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
