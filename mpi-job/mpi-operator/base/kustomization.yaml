@@ -13,8 +13,9 @@ images:
 - name: mpioperator/mpi-operator
   newName: mpioperator/mpi-operator
   newTag: 0.1.0
+namePrefix: mpi-operator-
 configMapGenerator:
-- name: mpi-operator-config
+- name: parameters
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
@@ -22,7 +23,7 @@ vars:
 - name: kubectl-delivery-image
   objref:
     kind: ConfigMap
-    name: mpi-operator-config
+    name: parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.kubectl-delivery-image

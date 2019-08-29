@@ -4,8 +4,9 @@ resources:
 - katib-ui-rbac.yaml
 - katib-ui-service.yaml
 configMapGenerator:
-- name: katib-parameters
+- name: parameters
   env: params.env
+namePrefix: katib-ui-
 generatorOptions:
   disableNameSuffixHash: true
 images:
@@ -15,14 +16,14 @@ vars:
 - name: clusterDomain
   objref:
     kind: ConfigMap
-    name: katib-parameters
+    name: parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
 - name: namespace
   objref:
     kind: Service
-    name: katib-ui
+    name: service
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace

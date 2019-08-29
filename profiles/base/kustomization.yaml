@@ -12,8 +12,10 @@ namePrefix: profiles-
 namespace: kubeflow
 commonLabels:
   kustomize.component: profiles
+generatorOptions:
+  disableNameSuffixHash: true
 configMapGenerator:
-  - name: profiles-parameters
+  - name: parameters
     env: params.env
 images:
   - name: gcr.io/kubeflow-images-public/profile-controller
@@ -23,28 +25,28 @@ vars:
   - name: admin
     objref:
       kind: ConfigMap
-      name: profiles-parameters
+      name: parameters
       apiVersion: v1
     fieldref:
       fieldpath: data.admin
   - name: userid-header
     objref:
       kind: ConfigMap
-      name: profiles-parameters
+      name: parameters
       apiVersion: v1
     fieldref:
       fieldpath: data.userid-header
   - name: userid-prefix
     objref:
       kind: ConfigMap
-      name: profiles-parameters
+      name: parameters
       apiVersion: v1
     fieldref:
       fieldpath: data.userid-prefix
   - name: namespace
     objref:
       kind: Service
-      name: kfam
+      name: service
       apiVersion: v1
     fieldref:
       fieldpath: metadata.namespace

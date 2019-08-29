@@ -7,8 +7,9 @@ resources:
 - secret.yaml
 - service.yaml
 - persistent-volume-claim.yaml
+namePrefix: pipeline-minio-
 configMapGenerator:
-- name: pipeline-minio-parameters
+- name: parameters
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
@@ -16,7 +17,7 @@ vars:
 - name: minioPvcName
   objref:
     kind: ConfigMap
-    name: pipeline-minio-parameters
+    name: parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.minioPvcName

@@ -19,21 +19,21 @@ configurations:
 - params.yaml
 namespace: kubeflow
 configMapGenerator:
-- name: config-map
+- name: parameters
   behavior: merge
   env: params.env
 vars:
 - name: webhookNamePrefix
   objref:
     kind: ConfigMap
-    name: config-map
+    name: parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.webhookNamePrefix
 - name: namespace
   objref:
     kind: ConfigMap
-    name: config-map 
+    name: parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.namespace    

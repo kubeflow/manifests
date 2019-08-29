@@ -8,6 +8,7 @@ resources:
 - service.yaml
 - stateful-set.yaml
 namespace: kubeflow
+namePrefix: jupyter-
 commonLabels:
   kustomize.component: jupyter
   app: jupyter
@@ -31,7 +32,7 @@ vars:
 - name: namespace
   objref:
     kind: Service
-    name: jupyter-lb
+    name: service
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace

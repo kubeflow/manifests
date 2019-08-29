@@ -8,16 +8,19 @@ resources:
 - secret.yaml
 - statefulset.yaml
 - service.yaml
+namePrefix: kfserving-
 commonLabels:
   kustomize.component: kfserving
+generatorOptions:
+  disableNameSuffixHash: true
 configMapGenerator:
-  - name: kfserving-parameters
+  - name: parameters
     env: params.env
 vars:
   - name: registry
     objref:
       kind: ConfigMap
-      name: kfserving-parameters
+      name: parameters
       apiVersion: v1
     fieldref:
       fieldpath: data.registry
