@@ -3,7 +3,7 @@ kind: Service
 metadata:
   labels:
     app: pachd
-  name: pachd
+  name: service
 spec:
   ports:
     - name: api-grpc-port

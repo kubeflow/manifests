@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pachd
+  name: deployment
 spec:
   replicas: 1
   strategy: {}
