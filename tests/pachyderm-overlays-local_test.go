@@ -336,7 +336,7 @@ kind: Service
 metadata:
   labels:
     app: pachd
-  name: pachd
+  name: service
 spec:
   ports:
     - name: api-grpc-port
@@ -366,7 +366,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pachd
+  name: deployment
 spec:
   replicas: 1
   strategy: {}

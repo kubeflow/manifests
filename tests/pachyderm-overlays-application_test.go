@@ -16,34 +16,37 @@ func writePachydermOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: kubeflow
+  name: pachyderm
 spec:
   selector:
     matchLabels:
+      app.kubernetes.io/name: pachyderm
+      app.kubernetes.io/instance: pachyderm
+      app.kubernetes.io/component: pachyderm
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/part-of: kubeflow
       app.kubernetes.io/version: v0.6
   componentKinds:
-    - group: app.k8s.io
-      kind: Application
+  - group: v1
+    kind: Service
+  - group: apps
+    kind: Deployment
+  - group: v1
+    kind: Secret
+  - group: v1
+    kind: ConfigMap
+  - group: v1
+    kind: ServiceAccount
   descriptor:
-    type: kubeflow
-    version: v1beta1
-    description: application that aggregates all kubeflow applications
-    maintainers:
-    - name: Jeremy Lewi
-      email: jlewi@google.com
-    - name: Kam Kasravi
-      email: kam.d.kasravi@intel.com
-    owners:
-    - name: Jeremy Lewi
-      email: jlewi@google.com
-    keywords:
-     - kubeflow
-    links:
-    - description: About
-      url: "https://kubeflow.org"
-  addOwnerRef: true
+    type: pachyderm
+    version: v1alpha1
+    description: deploy and manage multi-stage, language-agnostic data pipelines while maintaining complete reproducibility and provenance.
+  keywords:
+  - pachyderm
+  - "data provenance"
+  links:
+  - description: About
+    url: https://pachyderm.readthedocs.io/en/latest
 `)
 	th.writeK("/manifests/pachyderm/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -305,7 +308,7 @@ kind: Service
 metadata:
   labels:
     app: pachd
-  name: pachd
+  name: service
 spec:
   ports:
     - name: api-grpc-port
@@ -335,7 +338,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pachd
+  name: deployment
 spec:
   replicas: 1
   strategy: {}
