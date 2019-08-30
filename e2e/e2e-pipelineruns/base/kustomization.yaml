@@ -28,12 +28,5 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.serviceAccount
-#patchesJson6902:
-#- path: pipeline-run-patch.yaml
-#  target:
-#    group: tekton.dev
-#    version: v1alpha1
-#    kind: PipelineRun
-#    name: $(pipelinerun)-
 configurations:
 - params.yaml
