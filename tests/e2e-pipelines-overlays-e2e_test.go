@@ -71,6 +71,8 @@ varReference:
       value: "$(PULL_PULL_SHA)"
     - name: BUILD_NUMBER
       value: "$(BUILD_NUMBER)"
+    - name: tests
+      value: "$(tests)"
 `)
 	th.writeF("/manifests/e2e/e2e-pipelines/overlays/e2e/params.env", `
 image=gcr.io/kubeflow-ci/test-worker:latest
@@ -193,6 +195,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.BUILD_NUMBER
+- name: tests
+  objref:
+    kind: ConfigMap
+    name: kfctl-e2e-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.tests
 configurations:
 - params.yaml
 `)

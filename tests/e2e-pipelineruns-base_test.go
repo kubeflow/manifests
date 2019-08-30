@@ -16,7 +16,7 @@ func writeE2ePipelinerunsBase(th *KustTestHarness) {
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineRun
 metadata:
-  name: $(pipelinerun)
+  name: $(pipelinerun)-
 spec:
   serviceAccount: $(serviceAccount)
   pipelineRef:
@@ -29,9 +29,14 @@ spec:
       resourceRef:
         name: kfctl-image
 `)
+	th.writeF("/manifests/e2e/e2e-pipelineruns/base/pipeline-run-patch.yaml", `
+- op: move
+  from: /metadata/name
+  path: /metadata/generateName
+`)
 	th.writeF("/manifests/e2e/e2e-pipelineruns/base/params.yaml", `
 varReference:
-- path: metadata/name
+- path: metadata/generateName
   kind: PipelineRun
 - path: spec/pipelineRef/name
   kind: PipelineRun
@@ -74,6 +79,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.serviceAccount
+patchesJson6902:
+- path: pipeline-run-patch.yaml
+  target:
+    group: tekton.dev
+    version: v1alpha1
+    kind: PipelineRun
+    name: $(pipelinerun)-
 configurations:
 - params.yaml
 `)
