@@ -6,10 +6,7 @@ seldon-core-operator/base: seldon-core clean-kustomize
 	helm convert -f values.yaml seldon-core/helm-charts/seldon-core-operator --skip-transformers=image,secret,namePrefix,labels,configMap --destination seldon-core-operator/base --namespace kubeflow
 	# Convert seems to lose subresources so we add the crd explicitly
 	cp seldon-core/helm-charts/seldon-core-operator/templates/crd.yaml seldon-core-operator/base/seldondeployments.machinelearning.seldon.io-crd.yaml
-	cp hack/volume_claim_patch.yaml seldon-core-operator/base
-	echo "" >> seldon-core-operator/base/kustomization.yaml
-	echo "patchesStrategicMerge:" >> seldon-core-operator/base/kustomization.yaml
-	echo "  - volume_claim_patch.yaml" >> seldon-core-operator/base/kustomization.yaml
+	echo "  volumeClaimTemplates: []" >> seldon-core-operator/base/seldon-operator-controller-manager-statefulset.yaml
 
 .PHONY: clean
 clean:

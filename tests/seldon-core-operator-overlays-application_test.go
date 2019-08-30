@@ -208,6 +208,7 @@ spec:
         secret:
           defaultMode: 420
           secretName: seldon-operator-webhook-server-secret
+  volumeClaimTemplates: []
 `)
 	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-manager-role-clusterrole.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1

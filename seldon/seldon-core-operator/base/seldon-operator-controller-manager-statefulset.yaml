@@ -89,3 +89,4 @@ spec:
         secret:
           defaultMode: 420
           secretName: seldon-operator-webhook-server-secret
+  volumeClaimTemplates: []
