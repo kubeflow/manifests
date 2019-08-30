@@ -49,3 +49,5 @@
       value: "$(PULL_PULL_SHA)"
     - name: BUILD_NUMBER
       value: "$(BUILD_NUMBER)"
+    - name: tests
+      value: "$(tests)"

@@ -97,5 +97,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.BUILD_NUMBER
+- name: tests
+  objref:
+    kind: ConfigMap
+    name: kfctl-e2e-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.tests
 configurations:
 - params.yaml
