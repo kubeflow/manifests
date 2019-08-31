@@ -190,7 +190,7 @@ spec:
       mountPath: /kubeflow
   - name: kfctl-configure-kubectl
     image: "${inputs.resources.image.url}"
-    imagePullPolicy: IfNotPresent
+    imagePullPolicy: Always
     workingDir: "${inputs.params.app_dir}"
     command: ["/opt/google-cloud-sdk/bin/gcloud"]
     args:
