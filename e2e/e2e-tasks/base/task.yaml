@@ -188,6 +188,38 @@ spec:
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
+  - name: kfctl-configure-kubectl
+    image: "${inputs.resources.image.url}"
+    imagePullPolicy: IfNotPresent
+    workingDir: "${inputs.params.app_dir}"
+    command: ["/opt/google-cloud-sdk/bin/gcloud"]
+    args:
+    - "--project"
+    - "${inputs.params.project}"
+    - "container"
+    - "clusters"
+    - "--zone"
+    - "${inputs.params.zone}"
+    - "get-credentials"
+    - "${inputs.params.cluster}"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kfctl-e2e-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_SECRET
+    volumeMounts:
+    - name: kfctl-e2e-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
   - name: kfctl-apply
     image: "${inputs.resources.image.url}"
     imagePullPolicy: Always
