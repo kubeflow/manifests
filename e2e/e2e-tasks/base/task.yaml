@@ -104,10 +104,10 @@ spec:
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
-    imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
   - name: kfctl-generate
     image: "${inputs.resources.image.url}"
-    imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
     workingDir: "${inputs.params.app_dir}"
     command: ["/usr/local/bin/kfctl"]
     args:
@@ -137,7 +137,7 @@ spec:
       mountPath: /kubeflow
   - name: kfctl-activate-service-account
     image: "${inputs.resources.image.url}"
-    imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
     workingDir: "${inputs.params.app_dir}"
     command: ["/opt/google-cloud-sdk/bin/gcloud"]
     args:
@@ -165,7 +165,7 @@ spec:
       mountPath: /kubeflow
   - name: kfctl-set-account
     image: "${inputs.resources.image.url}"
-    imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
     workingDir: "${inputs.params.app_dir}"
     command: ["/opt/google-cloud-sdk/bin/gcloud"]
     args:
@@ -193,7 +193,7 @@ spec:
       mountPath: /kubeflow
   - name: kfctl-apply
     image: "${inputs.resources.image.url}"
-    imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
     workingDir: "${inputs.params.app_dir}"
 #    command: ["/bin/sleep", "infinity"]
     command: ["/usr/local/bin/kfctl"]
@@ -221,7 +221,7 @@ spec:
       mountPath: /kubeflow
   - name: kfctl-configure-kubectl
     image: "${inputs.resources.image.url}"
-    imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
     workingDir: "${inputs.params.app_dir}"
     command: ["/opt/google-cloud-sdk/bin/gcloud"]
     args:
