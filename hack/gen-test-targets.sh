@@ -13,7 +13,7 @@ fi
 EXCLUDE_DIRS=( "kfdef" "gatekeeper" "gcp/deployment_manager_configs" "aws/infra_configs" )
 source hack/utils.sh
 rm -f $(ls tests/*_test.go | grep -v kusttestharness_test.go)
-for i in $(find * -type d -exec sh -c '(ls -p "{}"|grep />/dev/null)||echo "{}"' \; | egrep -v 'doc|tests|hack|plugins'); do
+for i in $(find * -type d -exec sh -c '(ls -p "{}"|grep />/dev/null)||echo "{}"' \; | egrep -v '^docs|^tests|^hack|^plugins'); do
   exclude=false
   for item in "${EXCLUDE_DIRS[@]}"
   do
