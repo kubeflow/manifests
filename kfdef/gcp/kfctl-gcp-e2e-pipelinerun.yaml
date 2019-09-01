@@ -90,11 +90,11 @@ spec:
       - name: testing_repo
         value: "https://github.com/kkasravi/testing.git"
       - name: testing_repo_revision
-        value: c3df5f806aac6292e34cf90385820e674f4c30d9
+        value: "c3df5f806aac6292e34cf90385820e674f4c30d9"
       - name: kfctl_repo
         value: "https://github.com/kkasravi/kfctl.git"
       - name: kfctl_repo_revision
-        value: 67336cec0f7f61c6b4c186112396db03e3afbb60
+        value: "67336cec0f7f61c6b4c186112396db03e3afbb60"
       - name: tests
         value: /kubeflow/kfctl/testing/e2e
       repoRef:
