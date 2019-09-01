@@ -68,11 +68,16 @@ spec:
   steps:
   - name: e2e-run-tests
     image: "${inputs.params.image}"
-    command: ["pytest"]
-    args: 
-    - "-s"
-    - "${inputs.params.tests}"
+    command: ["/bin/sleep", "infinity"]
+#    command: ["python"]
+#    args:
+#    - "-m"
+#    - "pytest"
+#    - "-s"
+#    - "${inputs.params.tests}"
     env:
+    - name: PYTHONPATH
+      value: /kubeflow/testing/py:/kubeflow/kfctl/testing
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
     - name: CLIENT_ID
@@ -102,6 +107,11 @@ spec:
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
+    - name: testing
+      mountPath: /kubeflow/testing
+    - name: kfctl
+      mountPath: /kubeflow/kfctl
+  volumes:
   volumes:
   - name: kaniko-secret
     secret:
@@ -112,3 +122,11 @@ spec:
   - name: kubeflow
     persistentVolumeClaim:
       claimName: kubeflow-pvc
+  - name: testing
+    gitRepo:
+      repository: "https://github.com/kkasravi/testing.git"
+      revision: "c3df5f806aac6292e34cf90385820e674f4c30d9"
+  - name: kfctl
+    gitRepo:
+      repository: "https://github.com/kkasravi/kfctl.git"
+      revision: "345d1b7e5eda503e6c2a72851f04006cdd7b406f"
