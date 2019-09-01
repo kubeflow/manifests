@@ -20,13 +20,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.image
-- name: cluster
-  objref:
-    kind: ConfigMap
-    name: kfctl-e2e-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.cluster
 - name: bucket
   objref:
     kind: ConfigMap
