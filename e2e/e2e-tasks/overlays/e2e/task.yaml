@@ -80,13 +80,13 @@ spec:
   steps:
   - name: e2e-run-tests
     image: "${inputs.params.image}"
-#    command: ["/bin/sleep", "infinity"]
-    command: ["python"]
-    args:
-    - "-m"
-    - "pytest"
-    - "-s"
-    - "${inputs.params.tests}"
+    command: ["/bin/sleep", "infinity"]
+#    command: ["python"]
+#    args:
+#    - "-m"
+#    - "pytest"
+#    - "-s"
+#    - "${inputs.params.tests}"
     env:
     - name: PYTHONPATH
       value: /kubeflow/testing/py:/kubeflow/kfctl/testing
