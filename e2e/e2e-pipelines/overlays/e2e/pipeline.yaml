@@ -47,11 +47,13 @@
       value: "$(PULL_PULL_SHA)"
     - name: BUILD_NUMBER
       value: "$(BUILD_NUMBER)"
+    - name: testing_repo
+      value: "https://github.com/kkasravi/testing.git"
     - name: testing_repo_revision
       value: c3df5f806aac6292e34cf90385820e674f4c30d9
     - name: kfctl_repo
       value: "https://github.com/kkasravi/kfctl.git"
-    - name kfctl_repo_revision
+    - name: kfctl_repo_revision
       value: 345d1b7e5eda503e6c2a72851f04006cdd7b406f
     - name: tests
       value: "$(tests)"
