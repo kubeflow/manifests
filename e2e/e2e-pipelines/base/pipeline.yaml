@@ -53,3 +53,5 @@ spec:
       value: $(email)
     - name: platform
       value: $(platform)
+    - name: cluster
+      value: $(cluster)

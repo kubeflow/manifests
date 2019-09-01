@@ -64,5 +64,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.platform
+- name: cluster
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.cluster
 configurations:
 - params.yaml

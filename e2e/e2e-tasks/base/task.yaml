@@ -75,6 +75,9 @@ spec:
     - name: email
       type: string
       description: email for gcp
+    - name: cluster
+      type: string
+      description: name of the cluster
   outputs:
     resources:
     - name: builtImage
