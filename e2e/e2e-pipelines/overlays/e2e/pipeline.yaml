@@ -17,8 +17,6 @@
       value: $(image)
     - name: project
       value: $(project)
-    - name: cluster
-      value: $(cluster)
     - name: bucket
       value: $(bucket)
     - name: repos_dir
