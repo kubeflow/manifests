@@ -62,19 +62,31 @@ spec:
     - name: BUILD_NUMBER
       type: string
       description: build #
+    - name: testing_repo
+      type: string
+      description: testing repo
+    - name: testing_repo_revision
+      type: string
+      description: testing repo revision
+    - name: kfctl_repo
+      type: string
+      description: kfctl repo
+    - name: kfctl_repo_revision
+      type: string
+      description: kfctl repo revision
     - name: tests
       type: string
       description: tests
   steps:
   - name: e2e-run-tests
     image: "${inputs.params.image}"
-    command: ["/bin/sleep", "infinity"]
-#    command: ["python"]
-#    args:
-#    - "-m"
-#    - "pytest"
-#    - "-s"
-#    - "${inputs.params.tests}"
+#    command: ["/bin/sleep", "infinity"]
+    command: ["python"]
+    args:
+    - "-m"
+    - "pytest"
+    - "-s"
+    - "${inputs.params.tests}"
     env:
     - name: PYTHONPATH
       value: /kubeflow/testing/py:/kubeflow/kfctl/testing
@@ -112,7 +124,6 @@ spec:
     - name: kfctl
       mountPath: /kubeflow/kfctl
   volumes:
-  volumes:
   - name: kaniko-secret
     secret:
       secretName: kaniko-secret
@@ -124,9 +135,9 @@ spec:
       claimName: kubeflow-pvc
   - name: testing
     gitRepo:
-      repository: "https://github.com/kkasravi/testing.git"
-      revision: "c3df5f806aac6292e34cf90385820e674f4c30d9"
+      repository: "${inputs.params.testing_repo}"
+      revision: "${inputs.params.testing_repo_revision}"
   - name: kfctl
     gitRepo:
-      repository: "https://github.com/kkasravi/kfctl.git"
-      revision: "345d1b7e5eda503e6c2a72851f04006cdd7b406f"
+      repository: "${inputs.params.kfctl_repo}"
+      revision: "${inputs.params.kfctl_repo_revision}"
