@@ -19,7 +19,8 @@ metadata:
   name: gke-certificate
 spec:
   domains:
-  - $(hostname)`)
+  - $(hostname)
+`)
 	th.writeK("/manifests/gcp/basic-auth-ingress/overlays/managed-cert", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
