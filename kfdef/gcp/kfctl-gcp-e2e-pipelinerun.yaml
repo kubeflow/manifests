@@ -1,0 +1,114 @@
+# This is the config to install Kubeflow on an existing k8s cluster.
+
+apiVersion: kfdef.apps.kubeflow.org/v1alpha1
+kind: KfDef
+metadata:
+  name: kubeflow_app
+  namespace: tekton-pipelines
+spec:
+  repos:
+  - name: manifests
+    root: 
+    uri: https://github.com/kubeflow/manifests/archive/pull/328/head.tar.gz
+  - name: kubeflow
+    root: kubeflow-master
+    uri: https://github.com/kubeflow/kubeflow/archive/master.tar.gz
+  applications:
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: application/application-crds
+    name: application-crds
+  - kustomizeConfig:
+      overlays:
+      - application
+      repoRef:
+        name: manifests
+        path: application/application
+    name: application
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: tektoncd/tektoncd-crds
+    name: tektoncd-crds
+  - kustomizeConfig:
+      parameters:
+      - name: registry
+        value: gcr.io/tekton-releases
+      repoRef:
+        name: manifests
+        path: tektoncd/tektoncd-install
+    name: tektoncd-install
+  - kustomizeConfig:
+      overlays:
+      - application
+      - e2e
+      repoRef:
+        name: manifests
+        path: e2e/e2e-tasks
+    name: e2e-tasks
+  - kustomizeConfig:
+      overlays:
+      - e2e
+      parameters:
+      - name: image
+        value: "gcr.io/constant-cubist-173123/test-worker:v20190901-c3df5f8-e3b0c4"
+      - name: project
+        value: constant-cubist-173123
+      - name: cluster
+        value: kubeflow-e2e
+      - name: bucket
+        value: kfctl-e2e
+      - name: repos_dir
+        value: /src
+      - name: zone
+        value: us-west1-a
+      - name: configPath
+        value: https://raw.githubusercontent.com/kubeflow/kubeflow/master/bootstrap/config/kfctl_gcp_iap.yaml
+      - name: pullrequest
+        value: refs/pull/10/head
+      - name: email
+        value: kfctl-e2e@constant-cubist-173123.iam.gserviceaccount.com
+      - name: platform
+        value: all
+      - name: REPO_OWNER
+        value: kubeflow
+      - name: REPO_NAME
+        value: kfctl
+      - name: JOB_NAME
+        value: kubeflow-test-presubmit-test
+      - name: JOB_TYPE
+        value: presubmit
+      - name: PULL_NUMBER
+        value: 10
+      - name: PULL_BASE_REF
+        value: master
+      - name: PULL_PULL_SHA
+        value: 123abc
+      - name: BUILD_NUMBER
+        value: a3bc
+      - name: testing_repo
+        value: "https://github.com/kkasravi/testing.git"
+      - name: testing_repo_revision
+        value: c3df5f806aac6292e34cf90385820e674f4c30d9
+      - name: kfctl_repo
+        value: "https://github.com/kkasravi/kfctl.git"
+      - name kfctl_repo_revision
+        value: 345d1b7e5eda503e6c2a72851f04006cdd7b406f
+      - name: tests
+        value: /kubeflow/kfctl/testing/e2e
+      repoRef:
+        name: manifests
+        path: e2e/e2e-pipelines
+    name: e2e-pipelines
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: e2e/e2e-pipelineruns
+    name: e2e-pipelineruns
+  enableApplications: true
+  packageManager: kustomize
+  skipInitProject: true
+  useBasicAuth: false
+  useIstio: false
+  version: master
