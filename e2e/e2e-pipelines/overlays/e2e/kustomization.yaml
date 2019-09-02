@@ -90,34 +90,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.BUILD_NUMBER
-- name: testing_repo
-  objref:
-    kind: ConfigMap
-    name: kfctl-e2e-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.testing_repo
-- name: testing_repo_revision
-  objref:
-    kind: ConfigMap
-    name: kfctl-e2e-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.testing_repo_revision
-- name: kfctl_repo
-  objref:
-    kind: ConfigMap
-    name: kfctl-e2e-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.kfctl_repo
-- name: kfctl_repo_revision
-  objref:
-    kind: ConfigMap
-    name: kfctl-e2e-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.kfctl_repo_revision
 - name: tests
   objref:
     kind: ConfigMap
