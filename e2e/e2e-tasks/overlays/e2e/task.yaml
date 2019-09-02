@@ -62,18 +62,6 @@ spec:
     - name: BUILD_NUMBER
       type: string
       description: build #
-    - name: testing_repo
-      type: string
-      description: testing repo
-    - name: testing_repo_revision
-      type: string
-      description: testing repo revision
-    - name: kfctl_repo
-      type: string
-      description: kfctl repo
-    - name: kfctl_repo_revision
-      type: string
-      description: kfctl repo revision
     - name: tests
       type: string
       description: tests
