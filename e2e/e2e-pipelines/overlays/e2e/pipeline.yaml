@@ -48,12 +48,12 @@
     - name: BUILD_NUMBER
       value: "$(BUILD_NUMBER)"
     - name: testing_repo
-      value: "https://github.com/kkasravi/testing.git"
+      value: "$(testing_repo)"
     - name: testing_repo_revision
-      value: c3df5f806aac6292e34cf90385820e674f4c30d9
+      value: $(testing_repo_revision)
     - name: kfctl_repo
-      value: "https://github.com/kkasravi/kfctl.git"
+      value: "$(kfctl_repo)"
     - name: kfctl_repo_revision
-      value: 345d1b7e5eda503e6c2a72851f04006cdd7b406f
+      value: $(kfctl_repo_revision)
     - name: tests
       value: "$(tests)"
