@@ -7,7 +7,7 @@ spec:
   type: git
   params:
   - name: revision
-    value: $(pullrequest)
+    value: $(kfctl_pullrequest)
   - name: url
     value: https://github.com/kubeflow/kfctl.git
 ---

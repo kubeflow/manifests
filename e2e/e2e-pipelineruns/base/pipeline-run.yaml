@@ -7,7 +7,7 @@ spec:
   pipelineRef:
     name: $(pipeline)
   resources:
-    - name: source-repo
+    - name: kfctl-repo
       resourceRef:
         name: kfctl-git
     - name: web-image

@@ -4,7 +4,7 @@ metadata:
   name: kfctl-build-apply
 spec:
   resources:
-  - name: source-repo
+  - name: kfctl-repo
     type: git
   - name: web-image
     type: image
@@ -14,13 +14,13 @@ spec:
       name: kfctl-build-push
     params:
     - name: pathToDockerFile
-      value: /workspace/docker-source/Dockerfile
+      value: /workspace/kfctl/Dockerfile
     - name: pathToContext
-      value: /workspace/docker-source
+      value: /workspace/kfctl
     resources:
       inputs:
-      - name: docker-source
-        resource: source-repo
+      - name: kfctl
+        resource: kfctl-repo
       outputs:
       - name: builtImage
         resource: web-image

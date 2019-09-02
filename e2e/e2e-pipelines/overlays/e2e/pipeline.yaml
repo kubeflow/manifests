@@ -6,8 +6,8 @@
       name: kfctl-e2e
     resources:
       inputs:
-      - name: docker-source
-        resource: source-repo
+      - name: kfctl
+        resource: kfctl-repo
       - name: image
         resource: web-image
         from:
@@ -47,13 +47,5 @@
       value: "$(PULL_PULL_SHA)"
     - name: BUILD_NUMBER
       value: "$(BUILD_NUMBER)"
-    - name: testing_repo
-      value: "$(testing_repo)"
-    - name: testing_repo_revision
-      value: $(testing_repo_revision)
-    - name: kfctl_repo
-      value: "$(kfctl_repo)"
-    - name: kfctl_repo_revision
-      value: $(kfctl_repo_revision)
     - name: tests
       value: "$(tests)"
