@@ -64,7 +64,7 @@ spec:
       - name: zone
         value: us-west1-a
       - name: configPath
-        value: "https://raw.githubusercontent.com/kkasravi/manifests/kfdef/kfdef/gcp/kfctl_gcp_iap.yaml"
+        value: "https://raw.githubusercontent.com/kkasravi/manifests/e2e-pipelineruns/kfdef/gcp/kfctl_gcp_iap.yaml"
       - name: kfctl_pullrequest
         value: refs/pull/10/head
       - name: email
