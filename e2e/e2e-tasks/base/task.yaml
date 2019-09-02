@@ -6,19 +6,19 @@ metadata:
 spec:
   inputs:
     resources:
-    - name: docker-source
+    - name: kfctl
       type: git
     params:
     - name: pathToDockerFile
       type: string
       description: The path to the dockerfile to build
-      default: /workspace/docker-source/Dockerfile
+      default: /workspace/kfctl/Dockerfile
     - name: pathToContext
       type: string
       description:
         The build context used by Kaniko
         (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
-      default: /workspace/docker-source
+      default: /workspace/kfctl
   outputs:
     resources:
     - name: builtImage

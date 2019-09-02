@@ -29,13 +29,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.configPath
-- name: pullrequest
+- name: kfctl_pullrequest
   objref:
     kind: ConfigMap
     name: kfctl-pipelines-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.pullrequest
+    fieldpath: data.kfctl_pullrequest
 - name: app_dir
   objref:
     kind: ConfigMap

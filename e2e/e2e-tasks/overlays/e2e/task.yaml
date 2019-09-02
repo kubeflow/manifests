@@ -5,7 +5,7 @@ metadata:
 spec:
   inputs:
     resources:
-    - name: docker-source
+    - name: kfctl
       type: git
       targetPath: kfctl
     - name: image
@@ -81,6 +81,7 @@ spec:
   - name: e2e-run-tests
     image: "${inputs.params.image}"
     command: ["/bin/sleep", "infinity"]
+    workingDir: /workspace/kfctl
 #    command: ["python"]
 #    args:
 #    - "-m"
@@ -89,7 +90,7 @@ spec:
 #    - "${inputs.params.tests}"
     env:
     - name: PYTHONPATH
-      value: /kubeflow/testing/py:/kubeflow/kfctl/testing
+      value: /workspace/kubeflow/testing/py:/workspace/kubeflow/kfctl/testing
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
     - name: CLIENT_ID
@@ -119,10 +120,6 @@ spec:
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
-    - name: testing
-      mountPath: /kubeflow/testing
-    - name: kfctl
-      mountPath: /kubeflow/kfctl
   volumes:
   - name: kaniko-secret
     secret:
@@ -133,11 +130,3 @@ spec:
   - name: kubeflow
     persistentVolumeClaim:
       claimName: kubeflow-pvc
-  - name: testing
-    gitRepo:
-      repository: "${inputs.params.testing_repo}"
-      revision: "${inputs.params.testing_repo_revision}"
-  - name: kfctl
-    gitRepo:
-      repository: "${inputs.params.kfctl_repo}"
-      revision: "${inputs.params.kfctl_repo_revision}"
