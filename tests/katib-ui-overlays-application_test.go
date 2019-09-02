@@ -12,7 +12,7 @@ import (
 )
 
 func writeKatibUiOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/katib-v1alpha2/katib-ui/overlays/application/application.yaml", `
+	th.writeF("/manifests/katib/katib-ui/overlays/application/application.yaml", `
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
@@ -70,7 +70,7 @@ spec:
       url: "https://github.com/kubeflow/katib"
   addOwnerRef: true
 `)
-	th.writeK("/manifests/katib-v1alpha2/katib-ui/overlays/application", `
+	th.writeK("/manifests/katib/katib-ui/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -85,7 +85,7 @@ commonLabels:
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.6
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/katib-ui-deployment.yaml", `
+	th.writeF("/manifests/katib/katib-ui/base/katib-ui-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -113,7 +113,7 @@ spec:
           containerPort: 80
       serviceAccountName: katib-ui
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/katib-ui-rbac.yaml", `
+	th.writeF("/manifests/katib/katib-ui/base/katib-ui-rbac.yaml", `
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -150,7 +150,7 @@ subjects:
 - kind: ServiceAccount
   name: katib-ui
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/katib-ui-service.yaml", `
+	th.writeF("/manifests/katib/katib-ui/base/katib-ui-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -168,7 +168,7 @@ spec:
     app: katib
     component: ui
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/params.yaml", `
+	th.writeF("/manifests/katib/katib-ui/base/params.yaml", `
 varReference:
 - path: data/config
   kind: ConfigMap
@@ -177,10 +177,10 @@ varReference:
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/params.env", `
+	th.writeF("/manifests/katib/katib-ui/base/params.env", `
 clusterDomain=cluster.local
 `)
-	th.writeK("/manifests/katib-v1alpha2/katib-ui/base", `
+	th.writeK("/manifests/katib/katib-ui/base", `
 namespace: kubeflow
 resources:
 - katib-ui-deployment.yaml
@@ -215,7 +215,7 @@ configurations:
 }
 
 func TestKatibUiOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/katib-ui/overlays/application")
+	th := NewKustTestHarness(t, "/manifests/katib/katib-ui/overlays/application")
 	writeKatibUiOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
@@ -225,7 +225,7 @@ func TestKatibUiOverlaysApplication(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha2/katib-ui/overlays/application"
+	targetPath := "../katib/katib-ui/overlays/application"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

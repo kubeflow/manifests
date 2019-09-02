@@ -12,7 +12,7 @@ import (
 )
 
 func writeKatibManagerBase(th *KustTestHarness) {
-	th.writeF("/manifests/katib-v1alpha2/katib-manager/base/katib-manager-deployment.yaml", `
+	th.writeF("/manifests/katib/katib-manager/base/katib-manager-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -53,7 +53,7 @@ spec:
             command: ["/bin/grpc_health_probe", "-addr=:6789"]
           initialDelaySeconds: 10
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-manager/base/katib-manager-rest-deployment.yaml", `
+	th.writeF("/manifests/katib/katib-manager/base/katib-manager-rest-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -80,7 +80,7 @@ spec:
         - name: api
           containerPort: 80
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-manager/base/katib-manager-rest-service.yaml", `
+	th.writeF("/manifests/katib/katib-manager/base/katib-manager-rest-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -98,7 +98,7 @@ spec:
     app: katib
     component: manager-rest
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-manager/base/katib-manager-service.yaml", `
+	th.writeF("/manifests/katib/katib-manager/base/katib-manager-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -116,7 +116,7 @@ spec:
     app: katib
     component: manager
 `)
-	th.writeK("/manifests/katib-v1alpha2/katib-manager/base", `
+	th.writeK("/manifests/katib/katib-manager/base", `
 namespace: kubeflow
 resources:
 - katib-manager-deployment.yaml
@@ -134,7 +134,7 @@ images:
 }
 
 func TestKatibManagerBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/katib-manager/base")
+	th := NewKustTestHarness(t, "/manifests/katib/katib-manager/base")
 	writeKatibManagerBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
@@ -144,7 +144,7 @@ func TestKatibManagerBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha2/katib-manager/base"
+	targetPath := "../katib/katib-manager/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

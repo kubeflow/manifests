@@ -12,7 +12,7 @@ import (
 )
 
 func writeKatibDbBase(th *KustTestHarness) {
-	th.writeF("/manifests/katib-v1alpha2/katib-db/base/katib-db-deployment.yaml", `
+	th.writeF("/manifests/katib/katib-db/base/katib-db-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -65,7 +65,7 @@ spec:
         persistentVolumeClaim:
           claimName: katib-mysql
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-db/base/katib-db-pvc.yaml", `
+	th.writeF("/manifests/katib/katib-db/base/katib-db-pvc.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -77,7 +77,7 @@ spec:
     requests:
       storage: 10Gi
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-db/base/katib-db-secret.yaml", `
+	th.writeF("/manifests/katib/katib-db/base/katib-db-secret.yaml", `
 apiVersion: v1
 kind: Secret
 type: Opaque
@@ -86,7 +86,7 @@ metadata:
 data:
   MYSQL_ROOT_PASSWORD: dGVzdA== # "test"
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-db/base/katib-db-service.yaml", `
+	th.writeF("/manifests/katib/katib-db/base/katib-db-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -104,7 +104,7 @@ spec:
     app: katib
     component: db
 `)
-	th.writeK("/manifests/katib-v1alpha2/katib-db/base", `
+	th.writeK("/manifests/katib/katib-db/base", `
 namespace: kubeflow
 resources:
 - katib-db-deployment.yaml
@@ -120,7 +120,7 @@ images:
 }
 
 func TestKatibDbBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/katib-db/base")
+	th := NewKustTestHarness(t, "/manifests/katib/katib-db/base")
 	writeKatibDbBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
@@ -130,7 +130,7 @@ func TestKatibDbBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha2/katib-db/base"
+	targetPath := "../katib/katib-db/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

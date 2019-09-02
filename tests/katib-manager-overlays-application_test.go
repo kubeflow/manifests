@@ -12,7 +12,7 @@ import (
 )
 
 func writeKatibManagerOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/katib-v1alpha2/katib-manager/overlays/application/application.yaml", `
+	th.writeF("/manifests/katib/katib-manager/overlays/application/application.yaml", `
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
@@ -68,7 +68,7 @@ spec:
       url: "https://github.com/kubeflow/katib"
   addOwnerRef: true
 `)
-	th.writeK("/manifests/katib-v1alpha2/katib-manager/overlays/application", `
+	th.writeK("/manifests/katib/katib-manager/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -83,7 +83,7 @@ commonLabels:
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.6
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-manager/base/katib-manager-deployment.yaml", `
+	th.writeF("/manifests/katib/katib-manager/base/katib-manager-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -124,7 +124,7 @@ spec:
             command: ["/bin/grpc_health_probe", "-addr=:6789"]
           initialDelaySeconds: 10
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-manager/base/katib-manager-rest-deployment.yaml", `
+	th.writeF("/manifests/katib/katib-manager/base/katib-manager-rest-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -151,7 +151,7 @@ spec:
         - name: api
           containerPort: 80
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-manager/base/katib-manager-rest-service.yaml", `
+	th.writeF("/manifests/katib/katib-manager/base/katib-manager-rest-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -169,7 +169,7 @@ spec:
     app: katib
     component: manager-rest
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-manager/base/katib-manager-service.yaml", `
+	th.writeF("/manifests/katib/katib-manager/base/katib-manager-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -187,7 +187,7 @@ spec:
     app: katib
     component: manager
 `)
-	th.writeK("/manifests/katib-v1alpha2/katib-manager/base", `
+	th.writeK("/manifests/katib/katib-manager/base", `
 namespace: kubeflow
 resources:
 - katib-manager-deployment.yaml
@@ -205,7 +205,7 @@ images:
 }
 
 func TestKatibManagerOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/katib-manager/overlays/application")
+	th := NewKustTestHarness(t, "/manifests/katib/katib-manager/overlays/application")
 	writeKatibManagerOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
@@ -215,7 +215,7 @@ func TestKatibManagerOverlaysApplication(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha2/katib-manager/overlays/application"
+	targetPath := "../katib/katib-manager/overlays/application"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

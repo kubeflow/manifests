@@ -12,7 +12,7 @@ import (
 )
 
 func writeMetricsCollectorBase(th *KustTestHarness) {
-	th.writeF("/manifests/katib-v1alpha2/metrics-collector/base/metrics-collector-rbac.yaml", `
+	th.writeF("/manifests/katib/metrics-collector/base/metrics-collector-rbac.yaml", `
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -50,7 +50,7 @@ subjects:
 - kind: ServiceAccount
   name: metrics-collector
 `)
-	th.writeF("/manifests/katib-v1alpha2/metrics-collector/base/metrics-collector-template-configmap.yaml", `
+	th.writeF("/manifests/katib/metrics-collector/base/metrics-collector-template-configmap.yaml", `
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -92,7 +92,7 @@ data:
                 - "{{.MetricNames}}"
               restartPolicy: Never
 `)
-	th.writeK("/manifests/katib-v1alpha2/metrics-collector/base", `
+	th.writeK("/manifests/katib/metrics-collector/base", `
 namespace: kubeflow
 resources:
 - metrics-collector-rbac.yaml
@@ -106,7 +106,7 @@ images:
 }
 
 func TestMetricsCollectorBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/metrics-collector/base")
+	th := NewKustTestHarness(t, "/manifests/katib/metrics-collector/base")
 	writeMetricsCollectorBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
@@ -116,7 +116,7 @@ func TestMetricsCollectorBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha2/metrics-collector/base"
+	targetPath := "../katib/metrics-collector/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

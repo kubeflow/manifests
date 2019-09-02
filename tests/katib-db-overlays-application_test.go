@@ -12,7 +12,7 @@ import (
 )
 
 func writeKatibDbOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/katib-v1alpha2/katib-db/overlays/application/application.yaml", `
+	th.writeF("/manifests/katib/katib-db/overlays/application/application.yaml", `
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
@@ -72,7 +72,7 @@ spec:
       url: "https://github.com/kubeflow/katib"
   addOwnerRef: true
 `)
-	th.writeK("/manifests/katib-v1alpha2/katib-db/overlays/application", `
+	th.writeK("/manifests/katib/katib-db/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -87,7 +87,7 @@ commonLabels:
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.6
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-db/base/katib-db-deployment.yaml", `
+	th.writeF("/manifests/katib/katib-db/base/katib-db-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -140,7 +140,7 @@ spec:
         persistentVolumeClaim:
           claimName: katib-mysql
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-db/base/katib-db-pvc.yaml", `
+	th.writeF("/manifests/katib/katib-db/base/katib-db-pvc.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -152,7 +152,7 @@ spec:
     requests:
       storage: 10Gi
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-db/base/katib-db-secret.yaml", `
+	th.writeF("/manifests/katib/katib-db/base/katib-db-secret.yaml", `
 apiVersion: v1
 kind: Secret
 type: Opaque
@@ -161,7 +161,7 @@ metadata:
 data:
   MYSQL_ROOT_PASSWORD: dGVzdA== # "test"
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-db/base/katib-db-service.yaml", `
+	th.writeF("/manifests/katib/katib-db/base/katib-db-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -179,7 +179,7 @@ spec:
     app: katib
     component: db
 `)
-	th.writeK("/manifests/katib-v1alpha2/katib-db/base", `
+	th.writeK("/manifests/katib/katib-db/base", `
 namespace: kubeflow
 resources:
 - katib-db-deployment.yaml
@@ -195,7 +195,7 @@ images:
 }
 
 func TestKatibDbOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/katib-db/overlays/application")
+	th := NewKustTestHarness(t, "/manifests/katib/katib-db/overlays/application")
 	writeKatibDbOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
@@ -205,7 +205,7 @@ func TestKatibDbOverlaysApplication(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha2/katib-db/overlays/application"
+	targetPath := "../katib/katib-db/overlays/application"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

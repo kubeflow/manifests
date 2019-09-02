@@ -12,7 +12,7 @@ import (
 )
 
 func writeSuggestionBase(th *KustTestHarness) {
-	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-bayesianoptimization-deployment.yaml", `
+	th.writeF("/manifests/katib/suggestion/base/suggestion-bayesianoptimization-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -37,7 +37,7 @@ spec:
         - name: api
           containerPort: 6789
 `)
-	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-bayesianoptimization-service.yaml", `
+	th.writeF("/manifests/katib/suggestion/base/suggestion-bayesianoptimization-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -55,7 +55,7 @@ spec:
     app: katib
     component: suggestion-bayesianoptimization
 `)
-	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-grid-deployment.yaml", `
+	th.writeF("/manifests/katib/suggestion/base/suggestion-grid-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -80,7 +80,7 @@ spec:
         - name: api
           containerPort: 6789
 `)
-	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-grid-service.yaml", `
+	th.writeF("/manifests/katib/suggestion/base/suggestion-grid-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -98,7 +98,7 @@ spec:
     app: katib
     component: suggestion-grid
 `)
-	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-hyperband-deployment.yaml", `
+	th.writeF("/manifests/katib/suggestion/base/suggestion-hyperband-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -123,7 +123,7 @@ spec:
         - name: api
           containerPort: 6789
 `)
-	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-hyperband-service.yaml", `
+	th.writeF("/manifests/katib/suggestion/base/suggestion-hyperband-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -141,7 +141,7 @@ spec:
     app: katib
     component: suggestion-hyperband
 `)
-	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-nasrl-deployment.yaml", `
+	th.writeF("/manifests/katib/suggestion/base/suggestion-nasrl-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -165,7 +165,7 @@ spec:
         - name: api
           containerPort: 6789
 `)
-	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-nasrl-service.yaml", `
+	th.writeF("/manifests/katib/suggestion/base/suggestion-nasrl-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -183,7 +183,7 @@ spec:
     app: katib
     component: suggestion-nasrl
 `)
-	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-random-deployment.yaml", `
+	th.writeF("/manifests/katib/suggestion/base/suggestion-random-deployment.yaml", `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -208,7 +208,7 @@ spec:
         - name: api
           containerPort: 6789
 `)
-	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-random-service.yaml", `
+	th.writeF("/manifests/katib/suggestion/base/suggestion-random-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -226,7 +226,7 @@ spec:
     app: katib
     component: suggestion-random
 `)
-	th.writeK("/manifests/katib-v1alpha2/suggestion/base", `
+	th.writeK("/manifests/katib/suggestion/base", `
 namespace: kubeflow
 resources:
 - suggestion-bayesianoptimization-deployment.yaml
@@ -256,7 +256,7 @@ images:
 }
 
 func TestSuggestionBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/suggestion/base")
+	th := NewKustTestHarness(t, "/manifests/katib/suggestion/base")
 	writeSuggestionBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
@@ -266,7 +266,7 @@ func TestSuggestionBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha2/suggestion/base"
+	targetPath := "../katib/suggestion/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

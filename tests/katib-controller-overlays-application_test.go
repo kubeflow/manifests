@@ -12,7 +12,7 @@ import (
 )
 
 func writeKatibControllerOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/katib-v1alpha2/katib-controller/overlays/application/application.yaml", `
+	th.writeF("/manifests/katib/katib-controller/overlays/application/application.yaml", `
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
@@ -76,7 +76,7 @@ spec:
       url: "https://github.com/kubeflow/katib"
   addOwnerRef: true
 `)
-	th.writeK("/manifests/katib-v1alpha2/katib-controller/overlays/application", `
+	th.writeK("/manifests/katib/katib-controller/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -91,7 +91,7 @@ commonLabels:
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.6
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-controller/base/experiment-crd.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/experiment-crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -118,7 +118,7 @@ spec:
     - kubeflow
     - katib
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-controller/base/katib-controller-deployment.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/katib-controller-deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -160,7 +160,7 @@ spec:
           defaultMode: 420
           secretName: katib-controller
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-controller/base/katib-controller-rbac.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/katib-controller-rbac.yaml", `
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -238,13 +238,13 @@ subjects:
 - kind: ServiceAccount
   name: katib-controller
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-controller/base/katib-controller-secret.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/katib-controller-secret.yaml", `
 apiVersion: v1
 kind: Secret
 metadata:
   name: katib-controller
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-controller/base/katib-controller-service.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/katib-controller-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -257,7 +257,7 @@ spec:
   selector:
     app: katib-controller
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-controller/base/trial-crd.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/trial-crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -284,7 +284,7 @@ spec:
     - kubeflow
     - katib
 `)
-	th.writeF("/manifests/katib-v1alpha2/katib-controller/base/trial-template.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/trial-template.yaml", `
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -304,7 +304,7 @@ data:
             image: alpine
           restartPolicy: Never
 `)
-	th.writeK("/manifests/katib-v1alpha2/katib-controller/base", `
+	th.writeK("/manifests/katib/katib-controller/base", `
 namespace: kubeflow
 resources:
 - experiment-crd.yaml
@@ -323,7 +323,7 @@ images:
 }
 
 func TestKatibControllerOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/katib-controller/overlays/application")
+	th := NewKustTestHarness(t, "/manifests/katib/katib-controller/overlays/application")
 	writeKatibControllerOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
@@ -333,7 +333,7 @@ func TestKatibControllerOverlaysApplication(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha2/katib-controller/overlays/application"
+	targetPath := "../katib/katib-controller/overlays/application"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

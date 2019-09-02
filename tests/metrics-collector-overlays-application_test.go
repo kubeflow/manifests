@@ -12,7 +12,7 @@ import (
 )
 
 func writeMetricsCollectorOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/katib-v1alpha2/metrics-collector/overlays/application/application.yaml", `
+	th.writeF("/manifests/katib/metrics-collector/overlays/application/application.yaml", `
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
@@ -68,7 +68,7 @@ spec:
       url: "https://github.com/kubeflow/katib"
   addOwnerRef: true
 `)
-	th.writeK("/manifests/katib-v1alpha2/metrics-collector/overlays/application", `
+	th.writeK("/manifests/katib/metrics-collector/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -83,7 +83,7 @@ commonLabels:
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.6
 `)
-	th.writeF("/manifests/katib-v1alpha2/metrics-collector/base/metrics-collector-rbac.yaml", `
+	th.writeF("/manifests/katib/metrics-collector/base/metrics-collector-rbac.yaml", `
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -121,7 +121,7 @@ subjects:
 - kind: ServiceAccount
   name: metrics-collector
 `)
-	th.writeF("/manifests/katib-v1alpha2/metrics-collector/base/metrics-collector-template-configmap.yaml", `
+	th.writeF("/manifests/katib/metrics-collector/base/metrics-collector-template-configmap.yaml", `
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -163,7 +163,7 @@ data:
                 - "{{.MetricNames}}"
               restartPolicy: Never
 `)
-	th.writeK("/manifests/katib-v1alpha2/metrics-collector/base", `
+	th.writeK("/manifests/katib/metrics-collector/base", `
 namespace: kubeflow
 resources:
 - metrics-collector-rbac.yaml
@@ -177,7 +177,7 @@ images:
 }
 
 func TestMetricsCollectorOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib-v1alpha2/metrics-collector/overlays/application")
+	th := NewKustTestHarness(t, "/manifests/katib/metrics-collector/overlays/application")
 	writeMetricsCollectorOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
@@ -187,7 +187,7 @@ func TestMetricsCollectorOverlaysApplication(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha2/metrics-collector/overlays/application"
+	targetPath := "../katib/metrics-collector/overlays/application"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
