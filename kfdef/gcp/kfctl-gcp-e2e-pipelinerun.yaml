@@ -65,7 +65,7 @@ spec:
         value: us-west1-a
       - name: configPath
         value: "https://raw.githubusercontent.com/kkasravi/manifests/kfdef/kfdef/gcp/kfctl_gcp_iap.yaml"
-      - name: pullrequest
+      - name: kfctl_pullrequest
         value: refs/pull/10/head
       - name: email
         value: kfctl-e2e@constant-cubist-173123.iam.gserviceaccount.com
@@ -87,14 +87,6 @@ spec:
         value: 123abc
       - name: BUILD_NUMBER
         value: a3bc
-      - name: testing_repo
-        value: "https://github.com/kkasravi/testing.git"
-      - name: testing_repo_revision
-        value: "c3df5f806aac6292e34cf90385820e674f4c30d9"
-      - name: kfctl_repo
-        value: "https://github.com/kkasravi/kfctl.git"
-      - name: kfctl_repo_revision
-        value: "67336cec0f7f61c6b4c186112396db03e3afbb60"
       - name: tests
         value: /kubeflow/kfctl/testing/e2e
       repoRef:
