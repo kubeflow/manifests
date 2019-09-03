@@ -21,6 +21,8 @@
       value: $(project)
     - name: bucket
       value: $(bucket)
+    - name: cluster
+      value: $(cluster)
     - name: repos_dir
       value: $(repos_dir)
     - name: zone
