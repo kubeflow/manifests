@@ -72,7 +72,7 @@ spec:
   - name: kfctl-activate-service-account
     image: "${inputs.resources.image.url}"
     imagePullPolicy: IfNotPresent
-    workingDir: "${inputs.params.app_dir}"
+    workingDir: /kubeflow
     command: ["/opt/google-cloud-sdk/bin/gcloud"]
     args:
     - "auth"
@@ -100,7 +100,7 @@ spec:
   - name: kfctl-set-account
     image: "${inputs.resources.image.url}"
     imagePullPolicy: IfNotPresent
-    workingDir: "${inputs.params.app_dir}"
+    workingDir: /kubeflow
     command: ["/opt/google-cloud-sdk/bin/gcloud"]
     args:
     - "config"
@@ -128,7 +128,7 @@ spec:
   - name: kfctl-configure-kubectl
     image: "${inputs.resources.image.url}"
     imagePullPolicy: IfNotPresent
-    workingDir: "${inputs.params.app_dir}"
+    workingDir: /kubeflow
     command: ["/opt/google-cloud-sdk/bin/gcloud"]
     args:
     - "--project"
@@ -161,15 +161,17 @@ spec:
     image: "${inputs.params.image}"
     workingDir: /workspace/testing/py/kubeflow/testing/e2e/kfctl_gcp_iap
 #    command: ["/bin/sleep", "infinity"]
-    command: ["python"]
+    command: ["pytest"]
     args:
-    - "-m"
-    - "pytest"
     - "-s"
+    - "--log-cli-level=info"
+    - "--junitxml=junit_test_kfctl_gcp_iap.xml"
+    - "-o"
+    - "junit_suite_name=junit_test_kfctl_gcp_iap"
     - "${inputs.params.tests}"
     env:
     - name: PYTHONPATH
-      value: /workspace/kubeflow/testing/py:/workspace/kubeflow/kfctl/testing
+      value: /workspace/testing/py:/workspace/kfctl/testing
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kfctl-e2e-secret.json
     - name: CLIENT_ID
