@@ -8,6 +8,9 @@ spec:
     - name: kfctl
       type: git
       targetPath: kfctl
+    - name: testing
+      type: git
+      targetPath: testing
     - name: image
       type: image
     params:
@@ -156,7 +159,7 @@ spec:
       mountPath: /kubeflow
   - name: e2e-run-tests
     image: "${inputs.params.image}"
-    workingDir: /workspace/kfctl/testing/e2e/kfctl_gcp_iap
+    workingDir: /workspace/testing/py/kubeflow/testing/e2e/kfctl_gcp_iap
 #    command: ["/bin/sleep", "infinity"]
     command: ["python"]
     args:

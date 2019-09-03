@@ -10,6 +10,9 @@ spec:
     - name: kfctl-repo
       resourceRef:
         name: kfctl-git
+    - name: testing-repo
+      resourceRef:
+        name: testing-git
     - name: web-image
       resourceRef:
         name: kfctl-image

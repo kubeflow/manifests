@@ -8,6 +8,8 @@
       inputs:
       - name: kfctl
         resource: kfctl-repo
+      - name: testing
+        resource: testing-repo
       - name: image
         resource: web-image
         from:
