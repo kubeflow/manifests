@@ -7,13 +7,13 @@ configMapGenerator:
 - name: kfctl-pipelineruns-parameters
   env: params.env
 vars:
-- name: pipelinerun
+- name: generateName
   objref:
     kind: ConfigMap
     name: kfctl-pipelineruns-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.pipelinerun
+    fieldpath: data.generateName
 - name: pipeline
   objref:
     kind: ConfigMap

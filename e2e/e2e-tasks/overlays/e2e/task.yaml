@@ -20,6 +20,9 @@ spec:
     - name: project
       type: string
       description: the gcp project to run the e2e tests
+    - name: cluster
+      type: string
+      description: the gcp cluster
     - name: bucket
       type: string
       description: name of gcp bucket to store test results
