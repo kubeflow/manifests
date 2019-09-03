@@ -197,7 +197,7 @@ spec:
         port:
           number: 5554
 `)
-	th.writeK("/manifests/dex-auth/keycloak-gatekeeper/base/params.env", `
+	th.writeF("/manifests/dex-auth/keycloak-gatekeeper/base/params.env", `
 client_id=ldapdexapp
 client_secret=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
 secure_cookie=false
@@ -206,7 +206,7 @@ upstream_url=http://kubeflow.centraldashboard.com:31380
 redirection_url=http://keycloak-gatekeeper.example.com:31204
 encryption_key=nm6xjpPXPJFInLYo
 `)
-	th.writeK("/manifests/dex-auth/keycloak-gatekeeper/base/params.yaml", `
+	th.writeF("/manifests/dex-auth/keycloak-gatekeeper/base/params.yaml", `
 varReference:
 - path: spec/template/spec/containers/args
   kind: Deployment
