@@ -88,7 +88,7 @@ spec:
       - name: BUILD_NUMBER
         value: a3bc
       - name: tests
-        value: /kubeflow/kfctl/testing/e2e
+        value: test_kfctl_gcp_iap.py
       repoRef:
         name: manifests
         path: e2e/e2e-pipelines
