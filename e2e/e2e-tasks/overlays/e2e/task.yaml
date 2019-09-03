@@ -66,21 +66,109 @@ spec:
       type: string
       description: tests
   steps:
+  - name: kfctl-activate-service-account
+    image: "${inputs.resources.image.url}"
+    imagePullPolicy: IfNotPresent
+    workingDir: "${inputs.params.app_dir}"
+    command: ["/opt/google-cloud-sdk/bin/gcloud"]
+    args:
+    - "auth"
+    - "activate-service-account"
+    - "--key-file"
+    - "/secret/kfctl-e2e-secret.json"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kfctl-e2e-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_SECRET
+    volumeMounts:
+    - name: kfctl-e2e-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
+  - name: kfctl-set-account
+    image: "${inputs.resources.image.url}"
+    imagePullPolicy: IfNotPresent
+    workingDir: "${inputs.params.app_dir}"
+    command: ["/opt/google-cloud-sdk/bin/gcloud"]
+    args:
+    - "config"
+    - "set"
+    - "account"
+    - "${inputs.params.email}"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kfctl-e2e-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_SECRET
+    volumeMounts:
+    - name: kfctl-e2e-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
+  - name: kfctl-configure-kubectl
+    image: "${inputs.resources.image.url}"
+    imagePullPolicy: IfNotPresent
+    workingDir: "${inputs.params.app_dir}"
+    command: ["/opt/google-cloud-sdk/bin/gcloud"]
+    args:
+    - "--project"
+    - "${inputs.params.project}"
+    - "container"
+    - "clusters"
+    - "--zone"
+    - "${inputs.params.zone}"
+    - "get-credentials"
+    - "${inputs.params.cluster}"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kfctl-e2e-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_SECRET
+    volumeMounts:
+    - name: kfctl-e2e-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
   - name: e2e-run-tests
     image: "${inputs.params.image}"
-    command: ["/bin/sleep", "infinity"]
-    workingDir: /workspace/kfctl
-#    command: ["python"]
-#    args:
-#    - "-m"
-#    - "pytest"
-#    - "-s"
-#    - "${inputs.params.tests}"
+    workingDir: /workspace/kfctl/testing/e2e/kfctl_gcp_iap
+#    command: ["/bin/sleep", "infinity"]
+    command: ["python"]
+    args:
+    - "-m"
+    - "pytest"
+    - "-s"
+    - "${inputs.params.tests}"
     env:
     - name: PYTHONPATH
       value: /workspace/kubeflow/testing/py:/workspace/kubeflow/kfctl/testing
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
+      value: /secret/kfctl-e2e-secret.json
     - name: CLIENT_ID
       valueFrom:
         secretKeyRef:
