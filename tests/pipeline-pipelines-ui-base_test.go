@@ -34,6 +34,10 @@ spec:
       - name: ml-pipeline-ui
         image: gcr.io/ml-pipeline/frontend
         imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
         ports:
         - containerPort: 3000
       serviceAccountName: ml-pipeline-ui
