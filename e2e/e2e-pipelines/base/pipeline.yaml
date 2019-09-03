@@ -6,6 +6,8 @@ spec:
   resources:
   - name: kfctl-repo
     type: git
+  - name: testing-repo
+    type: git
   - name: web-image
     type: image
   tasks:

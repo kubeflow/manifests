@@ -36,6 +36,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.kfctl_pullrequest
+- name: testing_pullrequest
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.testing_pullrequest
 - name: app_dir
   objref:
     kind: ConfigMap
