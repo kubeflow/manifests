@@ -52,7 +52,7 @@ spec:
       - e2e
       parameters:
       - name: image
-        value: "gcr.io/constant-cubist-173123/test-worker:v20190901-c3df5f8-e3b0c4"
+        value: "gcr.io/constant-cubist-173123/test-worker:v20190903-79c40fb-dirty-a7bfd9"
       - name: project
         value: constant-cubist-173123
       - name: cluster
