@@ -12,19 +12,12 @@ import (
 )
 
 func writeKeycloakGatekeeperBase(th *KustTestHarness) {
-	th.writeF("/manifests/dex-auth/keycloak-gatekeeper/base/namespace.yaml", `
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: auth
-`)
 	th.writeF("/manifests/dex-auth/keycloak-gatekeeper/base/config-map.yaml", `
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: keycloak-gatekeeper-page-templates
-  namespace: auth
 data:
   forbidden-page: |
     <!DOCTYPE html>
@@ -91,13 +84,18 @@ data:
     </body>
     </html>
 `)
+	th.writeF("/manifests/dex-auth/keycloak-gatekeeper/base/namespace.yaml", `
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: auth
+`)
 	th.writeF("/manifests/dex-auth/keycloak-gatekeeper/base/deployment.yaml", `
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: keycloak-gatekeeper
-  namespace: auth
 spec:
   replicas: 1
   revisionHistoryLimit: 0
@@ -106,20 +104,31 @@ spec:
       app: keycloak-gatekeeper
   template:
     metadata:
-      annotations:
-        checksum/config: 485074e1c0607eca69f97a813313e55bce27515a65f57b11036c8dd074ea3a30
       labels:
         app: keycloak-gatekeeper
+      annotations:
+        checksum/config: 485074e1c0607eca69f97a813313e55bce27515a65f57b11036c8dd074ea3a30
     spec:
+      securityContext:
+        fsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
       containers:
-      - args:
+      - name: main
+        image: keycloak/keycloak-gatekeeper:5.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 3000
+          protocol: TCP
+        args:
         - --listen=:3000
-        - --client-id=ldapdexapp
-        - --client-secret=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
-        - --secure-cookie=false
-        - --discovery-url=http://dex.example.com:31200
-        - --upstream-url=http://kubeflow.centraldashboard.com:31380
-        - --redirection-url=http://keycloak-gatekeeper.example.com:31204
+        - --client-id=$(client_id)
+        - --client-secret=$(client_secret)
+        - --secure-cookie=$(secure_cookie)
+        - --discovery-url=$(discovery_url)
+        - --upstream-url=$(upstream_url)
+        - --redirection-url=$(redirection_url)
         - --scopes=groups
         - --sign-in-page=/opt/templates/sign_in.html.tmpl
         - --forbidden-page=/opt/templates/forbidden.html.tmpl
@@ -127,33 +136,22 @@ spec:
         - --http-only-cookie=true
         - --preserve-host=true
         - --enable-encrypted-token=true
-        - --encryption-key=nm6xjpPXPJFInLYo
+        - --encryption-key=$(encryption_key)
         - --enable-authorization-header
         - --resources=uri=/*
-        image: keycloak/keycloak-gatekeeper:5.0.0
-        imagePullPolicy: IfNotPresent
-        name: main
-        ports:
-        - containerPort: 3000
-          name: http
-          protocol: TCP
-        securityContext:
-          readOnlyRootFilesystem: true
         volumeMounts:
-        - mountPath: /opt/templates/forbidden.html.tmpl
-          name: page-templates
+        - name: page-templates
+          mountPath: /opt/templates/forbidden.html.tmpl
           subPath: forbidden-page
-        - mountPath: /opt/templates/sign_in.html.tmpl
-          name: page-templates
+        - name: page-templates
+          mountPath: /opt/templates/sign_in.html.tmpl
           subPath: login-page
-      securityContext:
-        fsGroup: 1000
-        runAsNonRoot: true
-        runAsUser: 1000
+        securityContext:
+            readOnlyRootFilesystem: true
       volumes:
-      - configMap:
+      - name: page-templates
+        configMap:
           name: keycloak-gatekeeper-page-templates
-        name: page-templates
 `)
 	th.writeF("/manifests/dex-auth/keycloak-gatekeeper/base/service.yaml", `
 ---
@@ -173,12 +171,10 @@ spec:
     app: keycloak-gatekeeper
 `)
 	th.writeF("/manifests/dex-auth/keycloak-gatekeeper/base/virtualservice.yaml", `
----
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: keycloak-gatekeeper
-  namespace: auth
 spec:
   gateways:
   - kubeflow/kubeflow-gateway
@@ -197,6 +193,11 @@ spec:
         port:
           number: 5554
 `)
+	th.writeF("/manifests/dex-auth/keycloak-gatekeeper/base/params.yaml", `
+varReference:
+- path: spec/template/spec/containers/args
+  kind: Deployment
+`)
 	th.writeF("/manifests/dex-auth/keycloak-gatekeeper/base/params.env", `
 client_id=ldapdexapp
 client_secret=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
@@ -205,11 +206,6 @@ discovery_url=http://dex.example.com:31200
 upstream_url=http://kubeflow.centraldashboard.com:31380
 redirection_url=http://keycloak-gatekeeper.example.com:31204
 encryption_key=nm6xjpPXPJFInLYo
-`)
-	th.writeF("/manifests/dex-auth/keycloak-gatekeeper/base/params.yaml", `
-varReference:
-- path: spec/template/spec/containers/args
-  kind: Deployment
 `)
 	th.writeK("/manifests/dex-auth/keycloak-gatekeeper/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1

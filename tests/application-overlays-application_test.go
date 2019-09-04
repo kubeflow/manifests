@@ -44,6 +44,12 @@ spec:
 varReference:
 - path: metadata/name
   kind: Application
+- path: spec/selector/app.kubernetes.io\/instance
+  kind: Service
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: StatefulSet
+- path: spec/template/metadata/labels/app.kubernetes.io\/instance
+  kind: StatefulSet
 `)
 	th.writeF("/manifests/application/application/overlays/application/params.env", `
 generateName=
@@ -56,13 +62,13 @@ bases:
 resources:
 - application.yaml
 configMapGenerator:
-- name: kubeflow-parameters
+- name: kubeflow-app-parameters
   env: params.env
 vars:
 - name: generateName
   objref:
     kind: ConfigMap
-    name: kubeflow-parameters 
+    name: kubeflow-app-parameters 
     apiVersion: v1
   fieldref:
     fieldpath: data.generateName
