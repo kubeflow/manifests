@@ -28,6 +28,27 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
+- name: registry
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.registry
+- name: centraldashboardImageName
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.centraldashboardImageName
+- name: centraldashboardImageTag
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.centraldashboardImageTag
 - name: clusterDomain
   objref:
     kind: ConfigMap
