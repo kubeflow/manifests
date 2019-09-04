@@ -5,20 +5,20 @@ bases:
 resources:
 - application.yaml
 configMapGenerator:
-- name: e2e-tasks-parameters
+- name: e2e-pipelines-parameters
   env: params.env
 vars:
 - name: generateName
   objref:
     kind: ConfigMap
-    name: e2e-tasks-parameters
+    name: e2e-pipelines-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.generateName
 configurations:
 - params.yaml
 commonLabels:
-  app.kubernetes.io/name: e2e-tasks
+  app.kubernetes.io/name: e2e-pipelines
   app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: e2e
