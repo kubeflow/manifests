@@ -12,7 +12,7 @@ import (
 )
 
 func writeIapIngressOverlaysGcpCredentials(th *KustTestHarness) {
-	th.writeF("/manifests/gcp/iap-ingress/overlays/gcp-credentials/gcp-credentials-patch.yaml", `
+	th.writeF("/manifests/gcp/iap-ingress/overlays/gcp-credentials/deployment.yaml", `
 # Patch the env/volumes/volumeMounts for GCP credentials
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -34,6 +34,8 @@ spec:
       - name: sa-key
         secret:
           secretName: admin-gcp-sa
+`)
+	th.writeF("/manifests/gcp/iap-ingress/overlays/gcp-credentials/stateful-set.yaml", `
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -54,14 +56,17 @@ spec:
       volumes:
       - name: sa-key
         secret:
-          secretName: admin-gcp-sa`)
+          secretName: admin-gcp-sa
+`)
 	th.writeK("/manifests/gcp/iap-ingress/overlays/gcp-credentials", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
 patchesStrategicMerge:
-- gcp-credentials-patch.yaml`)
+- deployment.yaml
+- stateful-set.yaml
+`)
 	th.writeF("/manifests/gcp/iap-ingress/base/backend-config.yaml", `
 apiVersion: cloud.google.com/v1beta1
 kind: BackendConfig
