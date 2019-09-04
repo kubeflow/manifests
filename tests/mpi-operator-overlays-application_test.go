@@ -18,16 +18,8 @@ func writeMpiOperatorOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: mpi-operator
+  name: $(generateName)
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: mpi-operator
-      app.kubernetes.io/instance: mpi-operator
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: mpijob
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7
   componentKinds:
   - group: apps
     kind: Deployment
@@ -46,6 +38,14 @@ spec:
     - description: About
       url: "https://github.com/kubeflow/mpi-operator"
 `)
+	th.writeF("/manifests/mpi-job/mpi-operator/overlays/application/params.yaml", `
+varReference:
+- path: metadata/name
+  kind: Application
+`)
+	th.writeF("/manifests/mpi-job/mpi-operator/overlays/application/params.env", `
+generateName=
+`)
 	th.writeK("/manifests/mpi-job/mpi-operator/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -53,13 +53,26 @@ bases:
 - ../../base
 resources:
 - application.yaml
+configMapGenerator:
+- name: mpi-operator-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: mpi-operator-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
 commonLabels:
   app.kubernetes.io/name: mpi-operator
-  app.kubernetes.io/instance: mpi-operator
+  app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: mpijob
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7
+  app.kubernetes.io/version: v0.6
 `)
 	th.writeF("/manifests/mpi-job/mpi-operator/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1

@@ -18,16 +18,8 @@ func writeCentraldashboardOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: centraldashboard
+  name: $(generateName)
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: 
-      app.kubernetes.io/instance: centraldashboard
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: centraldashboard
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -77,7 +69,7 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: centraldashboard
-  app.kubernetes.io/instance: centraldashboard
+  app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: centraldashboard
   app.kubernetes.io/part-of: kubeflow

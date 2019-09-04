@@ -6,7 +6,7 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: centraldashboard
-  app.kubernetes.io/instance: centraldashboard
+  app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: centraldashboard
   app.kubernetes.io/part-of: kubeflow
