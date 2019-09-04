@@ -3,4 +3,5 @@ kind: Kustomization
 bases:
 - ../../base
 patchesStrategicMerge:
-- gcp-credentials-patch.yaml
+- deployment.yaml
+- stateful-set.yaml
