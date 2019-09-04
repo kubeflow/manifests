@@ -89,6 +89,9 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: generateName
+        value: jupyter-web-app-
       repoRef:
         name: manifests
         path: jupyter/jupyter-web-app
