@@ -22,6 +22,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: kubeflow-
       repoRef:
         name: manifests
         path: application/application
@@ -43,13 +46,20 @@ spec:
       overlays:
       - application
       - e2e
+      parameters:
+      - name: generateName
+        value: e2e-tasks-
       repoRef:
         name: manifests
         path: e2e/e2e-tasks
     name: e2e-tasks
   - kustomizeConfig:
       overlays:
+      - application
       - e2e
+      parameters:
+      - name: generateName
+        value: e2e-pipelines-
       parameters:
       - name: image
         value: "gcr.io/constant-cubist-173123/test-worker:v20190903-79c40fb-dirty-a7bfd9"

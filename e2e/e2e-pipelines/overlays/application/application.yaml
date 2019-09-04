@@ -4,22 +4,12 @@ metadata:
   name: $(generateName)
 spec:
   componentKinds:
-  - group: v1
-    kind: ConfigMap
-  - group: v1
-    kind: Secret
-  - group: v1
-    kind: ServiceAccount
   - group: tekton.dev/v1alpha1
     kind: PipelineResource
   - group: tekton.dev/v1alpha1
-    kind: Task
-  - group: tekton.dev/v1alpha1
     kind: Pipeline
-  - group: tekton.dev/v1alpha1
-    kind: PipelineRun
   descriptor:
-    type: tekton
+    type: tektoncd
     version: v1beta1
     description: Launches a PipelineRun
     maintainers: []
