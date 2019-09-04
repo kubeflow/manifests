@@ -18,7 +18,7 @@ func writeSeldonCoreOperatorOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: "seldon-core-operator"
+  name: $(generateName)
 spec:
   type: "seldon-core-operator"
   componentKinds:
@@ -48,6 +48,14 @@ spec:
     - description: Docs
       url: "https://docs.seldon.io/projects/seldon-core/en/v0.3.0/"
 `)
+	th.writeF("/manifests/seldon/seldon-core-operator/overlays/application/params.yaml", `
+varReference:
+- path: metadata/name
+  kind: Application
+`)
+	th.writeF("/manifests/seldon/seldon-core-operator/overlays/application/params.env", `
+generateName=
+`)
 	th.writeK("/manifests/seldon/seldon-core-operator/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -55,9 +63,22 @@ bases:
 - ../../base
 resources:
 - application.yaml
+configMapGenerator:
+- name: seldon-core-operator-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: seldon-core-operator-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
 commonLabels:
   app.kubernetes.io/name: seldon-core-operator  
-  app.kubernetes.io/instance: seldon-core-operator
+  app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: seldon
   app.kubernetes.io/part-of: kubeflow
@@ -134,8 +155,6 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/instance: seldon-core-operator
-      app.kubernetes.io/name: seldon-core-operator
       control-plane: seldon-controller-manager
       controller-tools.k8s.io: "1.0"
   serviceName: seldon-operator-controller-manager-service
@@ -144,8 +163,6 @@ spec:
       annotations:
         prometheus.io/scrape: "true"
       labels:
-        app.kubernetes.io/instance: seldon-core-operator
-        app.kubernetes.io/name: seldon-core-operator
         control-plane: seldon-controller-manager
         controller-tools.k8s.io: "1.0"
     spec:
