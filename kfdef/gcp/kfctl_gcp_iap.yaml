@@ -49,6 +49,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: kubeflow-
       repoRef:
         name: manifests
         path: application/application
@@ -67,7 +70,11 @@ spec:
     name: argo
   - kustomizeConfig:
       overlays:
+      - application
       - istio
+      parameters:
+      - name: generateName
+        value: centraldashboard-
       repoRef:
         name: manifests
         path: common/centraldashboard
@@ -97,16 +104,31 @@ spec:
         path: jupyter/jupyter-web-app
     name: jupyter-web-app
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: katib-db-
       repoRef:
         name: manifests
         path: katib-v1alpha2/katib-db
     name: katib-db
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: katib-manager-
       repoRef:
         name: manifests
         path: katib-v1alpha2/katib-manager
     name: katib-manager
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: katib-controller-
       repoRef:
         name: manifests
         path: katib-v1alpha2/katib-controller
@@ -114,6 +136,10 @@ spec:
   - kustomizeConfig:
       overlays:
       - istio
+      - application
+      parameters:
+      - name: generateName
+        value: katib-ui-
       repoRef:
         name: manifests
         path: katib-v1alpha2/katib-ui
@@ -121,16 +147,30 @@ spec:
   - kustomizeConfig:
       overlays:
       - istio
+      - application
+      parameters:
+      - name: generateName
+        value: metadata-
       repoRef:
         name: manifests
         path: metadata
     name: metadata
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: metrics-collector-
       repoRef:
         name: manifests
         path: katib-v1alpha2/metrics-collector
     name: metrics-collector
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: suggestion-
       repoRef:
         name: manifests
         path: katib-v1alpha2/suggestion
@@ -142,6 +182,8 @@ spec:
       parameters:
       - name: injectGcpCredentials
         value: "true"
+      - name: generateName
+        value: notebook-controller-
       repoRef:
         name: manifests
         path: jupyter/notebook-controller
@@ -154,6 +196,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: pytorch-operator-
       repoRef:
         name: manifests
         path: pytorch-job/pytorch-operator
@@ -180,6 +225,11 @@ spec:
         path: kfserving/kfserving-crds
     name: kfserving-crds
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: kfserving-
       repoRef:
         name: manifests
         path: kfserving/kfserving-install
@@ -207,6 +257,9 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: generateName
+        value: tfjob-operator-
       repoRef:
         name: manifests
         path: tf-training/tf-job-operator
@@ -319,6 +372,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: seldon-core-operator-
       repoRef:
         name: manifests
         path: seldon/seldon-core-operator
