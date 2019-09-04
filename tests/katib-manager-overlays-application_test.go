@@ -16,16 +16,8 @@ func writeKatibManagerOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: katib-manager 
+  name: $(generateName)
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: katib-manager 
-      app.kubernetes.io/instance: katib-manager 
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: katib
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
   componentKinds:
   - group: core
     kind: Service
@@ -68,6 +60,14 @@ spec:
       url: "https://github.com/kubeflow/katib"
   addOwnerRef: true
 `)
+	th.writeF("/manifests/katib-v1alpha2/katib-manager/overlays/application/params.yaml", `
+varReference:
+- path: metadata/name
+  kind: Application
+`)
+	th.writeF("/manifests/katib-v1alpha2/katib-manager/overlays/application/params.env", `
+generateName=
+`)
 	th.writeK("/manifests/katib-v1alpha2/katib-manager/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -75,9 +75,22 @@ bases:
 - ../../base
 resources:
 - application.yaml
+configMapGenerator:
+- name: katib-manager-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: katib-manager-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
 commonLabels:
   app.kubernetes.io/name: katib-manager 
-  app.kubernetes.io/instance: katib-manager 
+  app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: katib
   app.kubernetes.io/part-of: kubeflow

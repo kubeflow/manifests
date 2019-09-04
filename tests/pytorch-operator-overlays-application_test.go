@@ -16,16 +16,8 @@ func writePytorchOperatorOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: pytorch-operator
+  name: $(generateName)
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: pytorch-operator
-      app.kubernetes.io/instance: pytorch-operator
-      app.kubernetes.io/version: v0.6.0
-      app.kubernetes.io/component: pytorch
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/managed-by: kfctl
   componentKinds:
   - group: core
     kind: Service
@@ -58,6 +50,14 @@ spec:
       url: "https://www.kubeflow.org/docs/reference/pytorchjob/v1/pytorch/"
   addOwnerRef: true
 `)
+	th.writeF("/manifests/pytorch-job/pytorch-operator/overlays/application/params.yaml", `
+varReference:
+- path: metadata/name
+  kind: Application
+`)
+	th.writeF("/manifests/pytorch-job/pytorch-operator/overlays/application/params.env", `
+generateName=
+`)
 	th.writeK("/manifests/pytorch-job/pytorch-operator/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -65,9 +65,22 @@ bases:
 - ../../base
 resources:
 - application.yaml
+configMapGenerator:
+- name: pytorch-operator-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: pytorch-operator-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
 commonLabels:
   app.kubernetes.io/name: pytorch-operator
-  app.kubernetes.io/instance: pytorch-operator
+  app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/version: v0.6.0
   app.kubernetes.io/component: pytorch
   app.kubernetes.io/part-of: kubeflow

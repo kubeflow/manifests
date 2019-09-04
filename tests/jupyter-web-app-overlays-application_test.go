@@ -16,16 +16,8 @@ func writeJupyterWebAppOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: jupyter-web-app
+  name: $(generateName)
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: jupyter-web-app
-      app.kubernetes.io/instance: jupyter-web-app
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: jupyter
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -61,6 +53,14 @@ spec:
   addOwnerRef: true
 
 `)
+	th.writeF("/manifests/jupyter/jupyter-web-app/overlays/application/params.yaml", `
+varReference:
+- path: metadata/name
+  kind: Application
+`)
+	th.writeF("/manifests/jupyter/jupyter-web-app/overlays/application/params.env", `
+generateName=
+`)
 	th.writeK("/manifests/jupyter/jupyter-web-app/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -68,9 +68,22 @@ bases:
 - ../../base
 resources:
 - application.yaml
+configMapGenerator:
+- name: jupyter-web-app-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: jupyter-web-app-parameters 
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
 commonLabels:
   app.kubernetes.io/name: jupyter-web-app
-  app.kubernetes.io/instance: jupyter-web-app
+  app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: jupyter
   app.kubernetes.io/part-of: kubeflow
