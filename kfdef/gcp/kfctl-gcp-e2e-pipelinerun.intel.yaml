@@ -61,17 +61,17 @@ spec:
       - name: generateName
         value: e2e-pipelines-
       - name: image
-        value: "gcr.io/kubeflow-ci/test-worker:latest"
+        value: "gcr.io/constant-cubist-173123/test-worker:v20190903-79c40fb-dirty-a7bfd9"
       - name: project
-        value: kubeflow-ci
+        value: constant-cubist-173123
       - name: cluster
         value: kubeflow-e2e
       - name: bucket
-        value: kubernetes-jenkins
+        value: kfctl-e2e
       - name: repos_dir
         value: /src
       - name: zone
-        value: us-east1-d
+        value: us-west1-a
       - name: configPath
         value: "https://raw.githubusercontent.com/kkasravi/manifests/e2e-pipelineruns/kfdef/gcp/kfctl_gcp_iap.yaml"
       - name: kfctl_pullrequest
@@ -79,7 +79,7 @@ spec:
       - name: testing_pullrequest
         value: refs/pull/446/head
       - name: email
-        value: kfctl-e2e@kubeflow-ci.iam.gserviceaccount.com
+        value: kfctl-e2e@constant-cubist-173123.iam.gserviceaccount.com
       - name: platform
         value: all
       - name: REPO_OWNER
