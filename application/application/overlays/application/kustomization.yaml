@@ -4,9 +4,22 @@ bases:
 - ../../base
 resources:
 - application.yaml
+configMapGenerator:
+- name: kubeflow-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: kubeflow-parameters 
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
 commonLabels:
   app.kubernetes.io/name: kubeflow
-  app.kubernetes.io/instance: kubeflow
+  app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: kubeflow
   app.kubernetes.io/part-of: kubeflow

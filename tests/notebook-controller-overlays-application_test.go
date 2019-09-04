@@ -16,16 +16,8 @@ func writeNotebookControllerOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: notebook-controller
+  name: $(generateName)
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: notebook-controller
-      app.kubernetes.io/instance: notebook-controller
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: notebook
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
   componentKinds:
     - group: core
       kind: Service
@@ -53,6 +45,14 @@ spec:
       url: "https://github.com/kubeflow/kubeflow/tree/master/components/notebook-controller"
   addOwnerRef: true
 `)
+	th.writeF("/manifests/jupyter/notebook-controller/overlays/application/params.yaml", `
+varReference:
+- path: metadata/name
+  kind: Application
+`)
+	th.writeF("/manifests/jupyter/notebook-controller/overlays/application/params.env", `
+generateName=
+`)
 	th.writeK("/manifests/jupyter/notebook-controller/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -60,9 +60,22 @@ bases:
 - ../../base
 resources:
 - application.yaml
+configMapGenerator:
+- name: notebook-controller-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: notebook-controller-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
 commonLabels:
   app.kubernetes.io/name: notebook-controller
-  app.kubernetes.io/instance: notebook-controller
+  app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: notebook
   app.kubernetes.io/part-of: kubeflow
