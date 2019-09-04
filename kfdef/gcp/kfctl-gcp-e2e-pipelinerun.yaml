@@ -60,7 +60,6 @@ spec:
       parameters:
       - name: generateName
         value: e2e-pipelines-
-      parameters:
       - name: image
         value: "gcr.io/constant-cubist-173123/test-worker:v20190903-79c40fb-dirty-a7bfd9"
       - name: project
