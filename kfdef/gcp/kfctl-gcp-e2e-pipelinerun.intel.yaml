@@ -61,7 +61,7 @@ spec:
       - name: generateName
         value: e2e-pipelines-
       - name: image
-        value: "gcr.io/constant-cubist-173123/test-worker:v20190904-1757b11-e3b0c4"
+        value: "gcr.io/constant-cubist-173123/test-worker:v20190904-64e0308-e3b0c4"
       - name: project
         value: constant-cubist-173123
       - name: cluster
