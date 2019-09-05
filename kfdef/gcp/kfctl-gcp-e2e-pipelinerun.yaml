@@ -79,7 +79,7 @@ spec:
       - name: testing_pullrequest
         value: refs/pull/446/head
       - name: email
-        value: kfctl-e2e@kubeflow-ci.iam.gserviceaccount.com
+        value: kubeflow-testing@kubeflow-ci.iam.gserviceaccount.com
       - name: platform
         value: all
       - name: REPO_OWNER
