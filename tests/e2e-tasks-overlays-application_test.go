@@ -16,16 +16,8 @@ func writeE2eTasksOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: tektoncd
+  name: $(generateName)
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: 
-      app.kubernetes.io/instance: tektoncd
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: tektoncd
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
   componentKinds:
   - group: v1
     kind: ConfigMap
@@ -53,6 +45,14 @@ spec:
       url: "" 
   addOwnerRef: true
 `)
+	th.writeF("/manifests/e2e/e2e-tasks/overlays/application/params.yaml", `
+varReference:
+- path: metadata/name
+  kind: Application
+`)
+	th.writeF("/manifests/e2e/e2e-tasks/overlays/application/params.env", `
+generateName=
+`)
 	th.writeK("/manifests/e2e/e2e-tasks/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -60,11 +60,24 @@ bases:
 - ../../base
 resources:
 - application.yaml
+configMapGenerator:
+- name: e2e-tasks-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: e2e-tasks-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
 commonLabels:
-  app.kubernetes.io/name: centraldashboard
-  app.kubernetes.io/instance: centraldashboard
+  app.kubernetes.io/name: e2e-tasks
+  app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: centraldashboard
+  app.kubernetes.io/component: e2e
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.6
 `)
@@ -145,19 +158,19 @@ metadata:
 spec:
   inputs:
     resources:
-    - name: docker-source
+    - name: kfctl
       type: git
     params:
     - name: pathToDockerFile
       type: string
       description: The path to the dockerfile to build
-      default: /workspace/docker-source/Dockerfile
+      default: /workspace/kfctl/Dockerfile
     - name: pathToContext
       type: string
       description:
         The build context used by Kaniko
         (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
-      default: /workspace/docker-source
+      default: /workspace/kfctl
   outputs:
     resources:
     - name: builtImage
@@ -214,6 +227,9 @@ spec:
     - name: email
       type: string
       description: email for gcp
+    - name: cluster
+      type: string
+      description: name of the cluster
   outputs:
     resources:
     - name: builtImage
@@ -240,10 +256,10 @@ spec:
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
-    imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
   - name: kfctl-generate
     image: "${inputs.resources.image.url}"
-    imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
     workingDir: "${inputs.params.app_dir}"
     command: ["/usr/local/bin/kfctl"]
     args:
@@ -273,7 +289,7 @@ spec:
       mountPath: /kubeflow
   - name: kfctl-activate-service-account
     image: "${inputs.resources.image.url}"
-    imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
     workingDir: "${inputs.params.app_dir}"
     command: ["/opt/google-cloud-sdk/bin/gcloud"]
     args:
@@ -301,7 +317,7 @@ spec:
       mountPath: /kubeflow
   - name: kfctl-set-account
     image: "${inputs.resources.image.url}"
-    imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
     workingDir: "${inputs.params.app_dir}"
     command: ["/opt/google-cloud-sdk/bin/gcloud"]
     args:
@@ -329,7 +345,7 @@ spec:
       mountPath: /kubeflow
   - name: kfctl-apply
     image: "${inputs.resources.image.url}"
-    imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
     workingDir: "${inputs.params.app_dir}"
 #    command: ["/bin/sleep", "infinity"]
     command: ["/usr/local/bin/kfctl"]
@@ -337,6 +353,38 @@ spec:
     - "apply"
     - "${inputs.params.platform}"
     - "--verbose"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kfctl-e2e-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: client-secret
+          key: CLIENT_SECRET
+    volumeMounts:
+    - name: kfctl-e2e-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
+  - name: kfctl-configure-kubectl
+    image: "${inputs.resources.image.url}"
+    imagePullPolicy: IfNotPresent
+    workingDir: "${inputs.params.app_dir}"
+    command: ["/opt/google-cloud-sdk/bin/gcloud"]
+    args:
+    - "--project"
+    - "${inputs.params.project}"
+    - "container"
+    - "clusters"
+    - "--zone"
+    - "${inputs.params.zone}"
+    - "get-credentials"
+    - "${inputs.params.cluster}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kfctl-e2e-secret.json

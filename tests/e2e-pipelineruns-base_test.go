@@ -16,27 +16,25 @@ func writeE2ePipelinerunsBase(th *KustTestHarness) {
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineRun
 metadata:
-  name: $(pipelinerun)-
+  name: $(generateName)
 spec:
   serviceAccount: $(serviceAccount)
   pipelineRef:
     name: $(pipeline)
   resources:
-    - name: source-repo
+    - name: kfctl-repo
       resourceRef:
         name: kfctl-git
+    - name: testing-repo
+      resourceRef:
+        name: testing-git
     - name: web-image
       resourceRef:
         name: kfctl-image
 `)
-	th.writeF("/manifests/e2e/e2e-pipelineruns/base/pipeline-run-patch.yaml", `
-- op: move
-  from: /metadata/name
-  path: /metadata/generateName
-`)
 	th.writeF("/manifests/e2e/e2e-pipelineruns/base/params.yaml", `
 varReference:
-- path: metadata/generateName
+- path: metadata/name
   kind: PipelineRun
 - path: spec/pipelineRef/name
   kind: PipelineRun
@@ -44,7 +42,7 @@ varReference:
   kind: PipelineRun
 `)
 	th.writeF("/manifests/e2e/e2e-pipelineruns/base/params.env", `
-pipelinerun=kfctl-build-apply-pipeline-run
+generateName=
 pipeline=kfctl-build-apply
 serviceAccount=e2e-pipelines
 `)
@@ -58,13 +56,13 @@ configMapGenerator:
 - name: kfctl-pipelineruns-parameters
   env: params.env
 vars:
-- name: pipelinerun
+- name: generateName
   objref:
     kind: ConfigMap
     name: kfctl-pipelineruns-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.pipelinerun
+    fieldpath: data.generateName
 - name: pipeline
   objref:
     kind: ConfigMap
@@ -79,13 +77,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.serviceAccount
-patchesJson6902:
-- path: pipeline-run-patch.yaml
-  target:
-    group: tekton.dev
-    version: v1alpha1
-    kind: PipelineRun
-    name: $(pipelinerun)-
 configurations:
 - params.yaml
 `)

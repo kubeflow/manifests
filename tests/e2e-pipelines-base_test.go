@@ -19,7 +19,9 @@ metadata:
   name: kfctl-build-apply
 spec:
   resources:
-  - name: source-repo
+  - name: kfctl-repo
+    type: git
+  - name: testing-repo
     type: git
   - name: web-image
     type: image
@@ -29,13 +31,13 @@ spec:
       name: kfctl-build-push
     params:
     - name: pathToDockerFile
-      value: /workspace/docker-source/Dockerfile
+      value: /workspace/kfctl/Dockerfile
     - name: pathToContext
-      value: /workspace/docker-source
+      value: /workspace/kfctl
     resources:
       inputs:
-      - name: docker-source
-        resource: source-repo
+      - name: kfctl
+        resource: kfctl-repo
       outputs:
       - name: builtImage
         resource: web-image
@@ -68,6 +70,8 @@ spec:
       value: $(email)
     - name: platform
       value: $(platform)
+    - name: cluster
+      value: $(cluster)
 `)
 	th.writeF("/manifests/e2e/e2e-pipelines/base/pipeline-resource.yaml", `
 ---
@@ -79,9 +83,21 @@ spec:
   type: git
   params:
   - name: revision
-    value: $(pullrequest)
+    value: $(kfctl_pullrequest)
   - name: url
     value: https://github.com/kubeflow/kfctl.git
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: testing-git
+spec:
+  type: git
+  params:
+  - name: revision
+    value: $(testing_pullrequest)
+  - name: url
+    value: https://github.com/kubeflow/testing.git
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
@@ -103,12 +119,14 @@ varReference:
 	th.writeF("/manifests/e2e/e2e-pipelines/base/params.env", `
 namespace=kubeflow
 project=constant-cubist-173123
-pullrequest=refs/pull/10/head
+kfctl_pullrequest=refs/pull/10/head
+testing_pullrequest=refs/pull/446/head
 app_dir=/kubeflow/kubeflow-e2e
 zone=us-west1-a
 email=foo@bar.com
 configPath=https://raw.githubusercontent.com/kubeflow/kubeflow/master/bootstrap/config/kfctl_gcp_iap.yaml
 platform=all
+cluster=kubeflow-e2e
 `)
 	th.writeK("/manifests/e2e/e2e-pipelines/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -142,13 +160,20 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.configPath
-- name: pullrequest
+- name: kfctl_pullrequest
   objref:
     kind: ConfigMap
     name: kfctl-pipelines-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.pullrequest
+    fieldpath: data.kfctl_pullrequest
+- name: testing_pullrequest
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.testing_pullrequest
 - name: app_dir
   objref:
     kind: ConfigMap
@@ -177,6 +202,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.platform
+- name: cluster
+  objref:
+    kind: ConfigMap
+    name: kfctl-pipelines-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.cluster
 configurations:
 - params.yaml
 `)

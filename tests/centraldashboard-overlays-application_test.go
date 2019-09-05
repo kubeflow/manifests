@@ -58,6 +58,20 @@ spec:
   addOwnerRef: true
 
 `)
+	th.writeF("/manifests/common/centraldashboard/overlays/application/params.yaml", `
+varReference:
+- path: metadata/name
+  kind: Application
+- path: spec/selector/app.kubernetes.io\/instance
+  kind: Service
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Deployment
+- path: spec/template/metadata/labels/app.kubernetes.io\/instance
+  kind: Deployment
+`)
+	th.writeF("/manifests/common/centraldashboard/overlays/application/params.env", `
+generateName=
+`)
 	th.writeK("/manifests/common/centraldashboard/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -65,6 +79,19 @@ bases:
 - ../../base
 resources:
 - application.yaml
+configMapGenerator:
+- name: centraldashboard-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: centraldashboard-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
 commonLabels:
   app.kubernetes.io/name: centraldashboard
   app.kubernetes.io/instance: $(generateName)
