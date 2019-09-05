@@ -11,193 +11,65 @@ import (
 	"testing"
 )
 
-func writeE2ePipelinesOverlaysE2e(th *KustTestHarness) {
-	th.writeF("/manifests/e2e/e2e-pipelines/overlays/e2e/params.yaml", `
+func writeE2ePipelinesOverlaysApplication(th *KustTestHarness) {
+	th.writeF("/manifests/e2e/e2e-pipelines/overlays/application/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: $(generateName)
+spec:
+  componentKinds:
+  - group: tekton.dev/v1alpha1
+    kind: PipelineResource
+  - group: tekton.dev/v1alpha1
+    kind: Pipeline
+  descriptor:
+    type: tektoncd
+    version: v1beta1
+    description: Launches a PipelineRun
+    maintainers: []
+    owners: []
+    keywords: []
+    links:
+    - description: About
+      url: "" 
+  addOwnerRef: true
+`)
+	th.writeF("/manifests/e2e/e2e-pipelines/overlays/application/params.yaml", `
 varReference:
-- path: spec/tasks/params/value
-  kind: Pipeline
-- path: spec/params/value
-  kind: PipelineResource
+- path: metadata/name
+  kind: Application
 `)
-	th.writeF("/manifests/e2e/e2e-pipelines/overlays/e2e/pipeline.yaml", `
-- op: add
-  path: /spec/tasks/-
-  value:
-    name: kfctl-e2e
-    taskRef:
-      name: kfctl-e2e
-    resources:
-      inputs:
-      - name: kfctl
-        resource: kfctl-repo
-      - name: testing
-        resource: testing-repo
-      - name: image
-        resource: web-image
-        from:
-        - kfctl-init-generate-apply
-    params:
-    - name: image
-      value: $(image)
-    - name: project
-      value: $(project)
-    - name: bucket
-      value: $(bucket)
-    - name: cluster
-      value: $(cluster)
-    - name: repos_dir
-      value: $(repos_dir)
-    - name: zone
-      value: $(zone)
-    - name: configPath
-      value: $(configPath)
-    - name: email
-      value: $(email)
-    - name: platform
-      value: $(platform)
-    - name: REPO_OWNER
-      value: $(REPO_OWNER)
-    - name: REPO_NAME
-      value: $(REPO_NAME)
-    - name: config_file
-      value: /src/$(REPO_OWNER)/$(REPO_NAME)/prow_config.yaml
-    - name: JOB_NAME
-      value: $(JOB_NAME)
-    - name: JOB_TYPE
-      value: $(JOB_TYPE)
-    - name: PULL_NUMBER
-      value: "$(PULL_NUMBER)"
-    - name: PULL_BASE_REF
-      value: "$(PULL_BASE_REF)"
-    - name: PULL_PULL_SHA
-      value: "$(PULL_PULL_SHA)"
-    - name: BUILD_NUMBER
-      value: "$(BUILD_NUMBER)"
-    - name: tests
-      value: "$(tests)"
+	th.writeF("/manifests/e2e/e2e-pipelines/overlays/application/params.env", `
+generateName=
 `)
-	th.writeF("/manifests/e2e/e2e-pipelines/overlays/e2e/params.env", `
-image=gcr.io/kubeflow-ci/test-worker:latest
-project=kubeflow-ci
-bucket=kubernetes-jenkins
-repos_dir=/src
-zone=us-west1-a
-configPath=https://raw.githubusercontent.com/kubeflow/kubeflow/master/bootstrap/config/kfctl_gcp_iap.yaml
-email=kfctl-e2e@constant-cubist-173123.iam.gserviceaccount.com
-platform=all
-REPO_OWNER=kubeflow
-REPO_NAME=kfctl
-config_file=prow_config.yaml
-JOB_NAME=kubeflow-test-presubmit-test
-JOB_TYPE=presubmit
-PULL_NUMBER=33
-PULL_BASE_REF=master
-PULL_PULL_SHA=123abc
-BUILD_NUMBER=a3bc
-tests=
-`)
-	th.writeK("/manifests/e2e/e2e-pipelines/overlays/e2e", `
+	th.writeK("/manifests/e2e/e2e-pipelines/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
-patchesJson6902:
-- target:
-    group: tekton.dev
-    version: v1alpha1
-    kind: Pipeline
-    name: kfctl-build-apply
-  path: pipeline.yaml
+resources:
+- application.yaml
 configMapGenerator:
-- name: kfctl-e2e-parameters
+- name: e2e-pipelines-parameters
   env: params.env
 vars:
-- name: image
+- name: generateName
   objref:
     kind: ConfigMap
-    name: kfctl-e2e-parameters
+    name: e2e-pipelines-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.image
-- name: bucket
-  objref:
-    kind: ConfigMap
-    name: kfctl-e2e-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.bucket
-- name: repos_dir
-  objref:
-    kind: ConfigMap
-    name: kfctl-e2e-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.repos_dir
-- name: REPO_OWNER
-  objref:
-    kind: ConfigMap
-    name: kfctl-e2e-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.REPO_OWNER
-- name: REPO_NAME
-  objref:
-    kind: ConfigMap
-    name: kfctl-e2e-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.REPO_NAME
-- name: JOB_NAME
-  objref:
-    kind: ConfigMap
-    name: kfctl-e2e-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.JOB_NAME
-- name: JOB_TYPE
-  objref:
-    kind: ConfigMap
-    name: kfctl-e2e-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.JOB_TYPE
-- name: PULL_NUMBER
-  objref:
-    kind: ConfigMap
-    name: kfctl-e2e-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.PULL_NUMBER
-- name: PULL_BASE_REF
-  objref:
-    kind: ConfigMap
-    name: kfctl-e2e-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.PULL_BASE_REF
-- name: PULL_PULL_SHA
-  objref:
-    kind: ConfigMap
-    name: kfctl-e2e-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.PULL_PULL_SHA
-- name: BUILD_NUMBER
-  objref:
-    kind: ConfigMap
-    name: kfctl-e2e-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.BUILD_NUMBER
-- name: tests
-  objref:
-    kind: ConfigMap
-    name: kfctl-e2e-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.tests
+    fieldpath: data.generateName
 configurations:
 - params.yaml
+commonLabels:
+  app.kubernetes.io/name: e2e-pipelines
+  app.kubernetes.io/instance: $(generateName)
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: e2e
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.6
 `)
 	th.writeF("/manifests/e2e/e2e-pipelines/base/pipeline.yaml", `
 apiVersion: tekton.dev/v1alpha1
@@ -401,9 +273,9 @@ configurations:
 `)
 }
 
-func TestE2ePipelinesOverlaysE2e(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/e2e/e2e-pipelines/overlays/e2e")
-	writeE2ePipelinesOverlaysE2e(th)
+func TestE2ePipelinesOverlaysApplication(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/e2e/e2e-pipelines/overlays/application")
+	writeE2ePipelinesOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -412,7 +284,7 @@ func TestE2ePipelinesOverlaysE2e(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../e2e/e2e-pipelines/overlays/e2e"
+	targetPath := "../e2e/e2e-pipelines/overlays/application"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
