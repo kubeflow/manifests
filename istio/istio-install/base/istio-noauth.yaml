@@ -14923,6 +14923,77 @@ spec:
                 operator: In
                 values:
                 - s390x
+---
+# Source: istio/charts/gateways/templates/clusterrole.yaml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: istio-egressgateway-$(namespace)
+  labels:
+    app: egressgateway
+    chart: gateways
+    heritage: Tiller
+    release: istio
+rules:
+- apiGroups: ["networking.istio.io"]
+  resources: ["virtualservices", "destinationrules", "gateways"]
+  verbs: ["get", "watch", "list", "update"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: istio-ingressgateway-$(namespace)
+  labels:
+    app: ingressgateway
+    chart: gateways
+    heritage: Tiller
+    release: istio
+rules:
+- apiGroups: ["networking.istio.io"]
+  resources: ["virtualservices", "destinationrules", "gateways"]
+  verbs: ["get", "watch", "list", "update"]
+---
+
+---
+# Source: istio/charts/gateways/templates/clusterrolebindings.yaml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: istio-egressgateway-$(namespace)
+  labels:
+    app: egressgateway
+    chart: gateways
+    heritage: Tiller
+    release: istio
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: istio-egressgateway-istio-system
+subjects:
+- kind: ServiceAccount
+  name: istio-egressgateway-service-account
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: istio-ingressgateway-$(namespace)
+  labels:
+    app: ingressgateway
+    chart: gateways
+    heritage: Tiller
+    release: istio
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: istio-ingressgateway-$(namespace)
+subjects:
+- kind: ServiceAccount
+  name: istio-ingressgateway-service-account
+---
+
 
 ---
 # Source: istio/charts/security/templates/serviceaccount.yaml
@@ -15715,6 +15786,28 @@ spec:
       port: 15443
       targetPort: 15443
 ---
+
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRole
+metadata:
+  name: istio-ingressgateway
+spec:
+  rules:
+  - services: ["istio-ingressgateway.$(namespace).svc.cluster.local"]
+
+---
+
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRoleBinding
+metadata:
+  name: istio-ingressgateway
+spec:
+  subjects:
+  - user: "*"
+
+  roleRef:
+    kind: ServiceRole
+    name: "istio-ingressgateway"
 
 ---
 # Source: istio/charts/grafana/templates/service.yaml
