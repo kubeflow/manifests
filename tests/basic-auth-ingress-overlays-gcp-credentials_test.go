@@ -33,7 +33,8 @@ spec:
       volumes:
       - name: sa-key
         secret:
-          secretName: admin-gcp-sa`)
+          secretName: admin-gcp-sa
+`)
 	th.writeK("/manifests/gcp/basic-auth-ingress/overlays/gcp-credentials", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -264,6 +265,7 @@ metadata:
       rewrite: ""
       service: istio-ingressgateway.istio-system
       precedence: 1
+      use_websocket: true
   labels:
     app: istioMappingSvc
     ksonnet.io/component: basic-auth-ingress
