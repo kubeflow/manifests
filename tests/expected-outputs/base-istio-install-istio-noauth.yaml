@@ -266,6 +266,28 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
+    app: egressgateway
+    chart: gateways
+    heritage: Tiller
+    release: istio
+  name: istio-egressgateway-istio-system
+rules:
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - virtualservices
+  - destinationrules
+  - gateways
+  verbs:
+  - get
+  - watch
+  - list
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
     app: galley
     chart: galley
     heritage: Tiller
@@ -363,6 +385,28 @@ rules:
   - '*'
   verbs:
   - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: ingressgateway
+    chart: gateways
+    heritage: Tiller
+    release: istio
+  name: istio-ingressgateway-istio-system
+rules:
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - virtualservices
+  - destinationrules
+  - gateways
+  verbs:
+  - get
+  - watch
+  - list
+  - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -961,6 +1005,24 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
+    app: egressgateway
+    chart: gateways
+    heritage: Tiller
+    release: istio
+  name: istio-egressgateway-istio-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: istio-egressgateway-istio-system
+subjects:
+- kind: ServiceAccount
+  name: istio-egressgateway-service-account
+  namespace: istio-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
     app: galley
     chart: galley
     heritage: Tiller
@@ -991,6 +1053,24 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: istio-grafana-post-install-account
+  namespace: istio-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: ingressgateway
+    chart: gateways
+    heritage: Tiller
+    release: istio
+  name: istio-ingressgateway-istio-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: istio-ingressgateway-istio-system
+subjects:
+- kind: ServiceAccount
+  name: istio-ingressgateway-service-account
   namespace: istio-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -8628,3 +8708,25 @@ spec:
       http:
         http2MaxRequests: 10000
         maxRequestsPerConnection: 10000
+---
+apiVersion: rbac.istio.io/v1alpha1
+kind: ServiceRole
+metadata:
+  name: istio-ingressgateway
+  namespace: istio-system
+spec:
+  rules:
+  - services:
+    - istio-ingressgateway.istio-system.svc.cluster.local
+---
+apiVersion: rbac.istio.io/v1alpha1
+kind: ServiceRoleBinding
+metadata:
+  name: istio-ingressgateway
+  namespace: istio-system
+spec:
+  roleRef:
+    kind: ServiceRole
+    name: istio-ingressgateway
+  subjects:
+  - user: '*'

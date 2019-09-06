@@ -27,3 +27,5 @@ varReference:
   kind: handler
 - path: spec/host
   kind: DestinationRule
+- path: spec/rules/services
+  kind: ServiceRole
