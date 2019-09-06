@@ -301,6 +301,7 @@ metadata:
       rewrite: ""
       service: istio-ingressgateway.istio-system
       precedence: 1
+      use_websocket: true
   labels:
     app: istioMappingSvc
     ksonnet.io/component: basic-auth-ingress
