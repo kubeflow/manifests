@@ -234,4 +234,4 @@ spec:
         secretName: gcp-secret
     - name: kubeflow
       persistentVolumeClaim:
-        claimName: ci-create-cluster-persistent-volume-claim-persistent-volume-claim
+        claimName: ci-create-cluster-persistent-volume-claim
