@@ -75,5 +75,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.kfctl_image
+- name: pvc_mount_path
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.pvc_mount_path
 configurations:
 - params.yaml
