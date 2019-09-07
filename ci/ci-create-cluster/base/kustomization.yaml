@@ -5,14 +5,20 @@ resources:
 - secret.yaml
 - service-account.yaml
 - cluster-role-binding.yaml
-- task.yaml
-- pipeline.yaml
-- pipeline-run.yaml
+- task-run.yaml
 namespace: tekton-pipelines
+namePrefix: ci-create-cluster-
 configMapGenerator:
 - name: ci-create-cluster-parameters
   env: params.env
 vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: ci-create-cluster-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
 - name: namespace
   objref:
     kind: ConfigMap
