@@ -12,13 +12,6 @@ configMapGenerator:
 - name: ci-create-cluster-parameters
   env: params.env
 vars:
-- name: generateName
-  objref:
-    kind: ConfigMap
-    name: ci-create-cluster-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.generateName
 - name: namespace
   objref:
     kind: ConfigMap
