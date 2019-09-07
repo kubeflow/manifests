@@ -62,6 +62,25 @@ spec:
         name: manifests
         path: profiles
     name: profiles
+  - kustomizeConfig:
+      overlays:
+      - gcp-credentials
+      - managed-cert
+      parameters:
+      - name: namespace
+        value: istio-system
+      - initRequired: true
+        name: ipName
+        value: test1-ip
+      - initRequired: true
+        name: hostname
+        # The value of hostname should be the DNS address for ingress.
+        # This will be set automatically during kfctl generate.
+        # value: test1.endpoints.SET_PROJECT.cloud.goog
+      repoRef:
+        name: manifests
+        path: gcp/iap-ingress
+    name: iap-ingress
   email: kfctl-e2e@constant-cubist-173123.iam.gserviceaccount.com
   enableApplications: true
   packageManager: kustomize

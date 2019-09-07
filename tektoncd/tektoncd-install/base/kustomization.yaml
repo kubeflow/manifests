@@ -20,13 +20,6 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- name: clusterDomain
-  objref:
-    kind: ConfigMap
-    name: tektoncd-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.clusterDomain
 - name: registry
   objref:
     kind: ConfigMap
