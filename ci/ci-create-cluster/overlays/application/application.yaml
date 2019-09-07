@@ -1,7 +1,7 @@
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: $(generateName)
+  name: ci-create-cluster-$(generateName)
 spec:
   componentKinds:
     - group: app.k8s.io
