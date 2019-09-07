@@ -6,7 +6,3 @@ spec:
   serviceAccount: ci-pipeline
   pipelineRef:
     name: ci-create-cluster
-  resources:
-    - name: kfctl-image
-      resourceRef:
-        name: kfctl-image
