@@ -1,0 +1,12 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: $(generateName)
+spec:
+  serviceAccount: ci-pipeline
+  pipelineRef:
+    name: ci-create-cluster
+  resources:
+    - name: kfctl-image
+      resourceRef:
+        name: kfctl-image
