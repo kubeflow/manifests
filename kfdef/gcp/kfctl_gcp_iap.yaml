@@ -390,7 +390,7 @@ spec:
   useBasicAuth: false
   useIstio: true
   version: master
+  project: constant-cubist-173123
   # Project should be set to the GCP project you want to use.
   # If you run kfctl init --config=<path>/kfctl_gcp_iap.yaml 
   # kfctl will try to automatically set it.
-  # project: <your project>
