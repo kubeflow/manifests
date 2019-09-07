@@ -63,7 +63,7 @@ spec:
       - application
       parameters:
       - name: generateName
-        value: -
+        value: "-"
       - name: kfctl_image
         value: "gcr.io/constant-cubist-173123/kfctl@sha256:ab0c4986322e3e6a755056278c7270983b0f3bdc0751aefff075fb2b3d0c3254"
       - name: app_dir
