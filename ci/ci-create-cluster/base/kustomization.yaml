@@ -68,5 +68,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.cluster
+- name: kfctl_image
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.kfctl_image
 configurations:
 - params.yaml
