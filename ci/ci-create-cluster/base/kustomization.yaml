@@ -37,35 +37,35 @@ vars:
 - name: app_dir
   objref:
     kind: ConfigMap
-    name: kfctl-pipelines-parameters
+    name: ci-create-cluster-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.app_dir
 - name: zone
   objref:
     kind: ConfigMap
-    name: kfctl-pipelines-parameters
+    name: ci-create-cluster-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.zone
 - name: email
   objref:
     kind: ConfigMap
-    name: kfctl-pipelines-parameters
+    name: ci-create-cluster-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.email
 - name: platform
   objref:
     kind: ConfigMap
-    name: kfctl-pipelines-parameters
+    name: ci-create-cluster-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.platform
 - name: cluster
   objref:
     kind: ConfigMap
-    name: kfctl-pipelines-parameters
+    name: ci-create-cluster-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.cluster

@@ -3,9 +3,6 @@ kind: Pipeline
 metadata:
   name: ci-create-cluster
 spec:
-  resources:
-  - name: kfctl-image
-    type: image
   tasks:
   - name: kfctl-init-generate-apply
     taskRef:
