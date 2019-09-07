@@ -54,8 +54,10 @@ spec:
         name: manifests
         path: tektoncd/tektoncd-install
     name: tektoncd-install
+  email: kfctl-e2e@constant-cubist-173123.iam.gserviceaccount.com
   enableApplications: true
   packageManager: kustomize
+  platform: gcp
   skipInitProject: true
   useBasicAuth: false
   useIstio: false
