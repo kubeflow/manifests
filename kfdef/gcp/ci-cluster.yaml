@@ -13,6 +13,14 @@ spec:
     uri: https://github.com/kubeflow/kubeflow/archive/master.tar.gz
   applications:
   - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/istio-crds
+    name: istio-crds
+  - kustomizeConfig:
 #      overlays:
 #      - application
 #      parameters:
@@ -108,6 +116,16 @@ spec:
         name: manifests
         path: pipeline/mysql
     name: mysql
+  - kustomizeConfig:
+      overlays:
+      - gcp-credentials
+      parameters:
+      - name: secretName
+        value: admin-gcp-sa
+      repoRef:
+        name: manifests
+        path: gcp/cloud-endpoints
+    name: cloud-endpoints
   - kustomizeConfig:
       parameters:
       - name: admin
