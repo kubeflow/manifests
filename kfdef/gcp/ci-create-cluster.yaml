@@ -77,7 +77,7 @@ spec:
       - name: zone
         value: us-west1-a
       - name: configPath
-        value: "https://raw.githubusercontent.com/kkasravi/manifests/e2e-pipelineruns/kfdef/gcp/ci_cluster.yaml"
+        value: "https://raw.githubusercontent.com/kkasravi/manifests/e2e-pipelineruns/kfdef/gcp/ci-cluster.yaml"
       - name: email
         value: kfctl-e2e@constant-cubist-173123.iam.gserviceaccount.com
       - name: platform
