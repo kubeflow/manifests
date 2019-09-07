@@ -55,6 +55,32 @@ spec:
         path: tektoncd/tektoncd-install
     name: tektoncd-install
   - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: admission-webhook/webhook
+    name: webhook
+  - kustomizeConfig:
+      parameters:
+      - name: webhookNamePrefix
+        value: admission-webhook-
+      repoRef:
+        name: manifests
+        path: admission-webhook/bootstrap
+    name: bootstrap
+  - kustomizeConfig:
+      overlays:
+      - istio
+      - application
+      parameters:
+      - name: injectGcpCredentials
+        value: "true"
+      - name: generateName
+        value: notebook-controller-
+      repoRef:
+        name: manifests
+        path: jupyter/notebook-controller
+    name: notebook-controller
+  - kustomizeConfig:
       overlays:
       - minioPd
       parameters:
