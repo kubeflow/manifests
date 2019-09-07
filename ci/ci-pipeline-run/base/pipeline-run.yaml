@@ -3,7 +3,7 @@ kind: PipelineRun
 metadata:
   name: $(generateName)
 spec:
-  serviceAccount: $(serviceAccount)
+  serviceAccount: service-account
   pipelineRef:
     name: $(pipeline)
   resources:

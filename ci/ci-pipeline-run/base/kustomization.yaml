@@ -6,7 +6,8 @@ resources:
 - service-account.yaml
 - cluster-role-binding.yaml
 - pipeline-run.yaml
-namespace: ci-pipeline
+namePrefix: ci-pipeline-run-
+namespace: ci-pipeline-run
 configMapGenerator:
 - name: ci-pipeline-run-parameters
   env: params.env
@@ -25,12 +26,5 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.pipeline
-- name: serviceAccount
-  objref:
-    kind: ConfigMap
-    name: ci-pipeline-run-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.serviceAccount
 configurations:
 - params.yaml
