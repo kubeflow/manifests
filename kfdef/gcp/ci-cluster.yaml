@@ -55,6 +55,20 @@ spec:
         path: tektoncd/tektoncd-install
     name: tektoncd-install
   - kustomizeConfig:
+      overlays:
+      - minioPd
+      parameters:
+      - name: minioPd
+        value: test1-storage-artifact-store
+      - name: minioPvName
+        value: minio-pv
+      - name: minioPvcName
+        value: minio-pv-claim
+      repoRef:
+        name: manifests
+        path: pipeline/minio
+    name: minio
+  - kustomizeConfig:
       parameters:
       - name: admin
         value: kfctl-e2e@constant-cubist-173123.iam.gserviceaccount.com
