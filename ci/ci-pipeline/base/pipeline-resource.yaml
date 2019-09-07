@@ -1,0 +1,46 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: kubeflow
+spec:
+  type: git
+  params:
+  - name: revision
+    value: $(kubeflow_pullrequest)
+  - name: url
+    value: https://github.com/kubeflow/kubeflow.git
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: manifests
+spec:
+  type: git
+  params:
+  - name: revision
+    value: $(manifests_pullrequest)
+  - name: url
+    value: https://github.com/kubeflow/manifests.git
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: testing
+spec:
+  type: git
+  params:
+  - name: revision
+    value: $(testing_pullrequest)
+  - name: url
+    value: https://github.com/kubeflow/testing.git
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: image
+spec:
+  type: image
+  params:
+  - name: url
+    value: $(image)

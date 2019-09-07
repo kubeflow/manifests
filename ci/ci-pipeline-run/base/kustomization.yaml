@@ -1,0 +1,36 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- persistent-volume-claim.yaml
+- secret.yaml
+- service-account.yaml
+- cluster-role-binding.yaml
+- pipeline-run.yaml
+namespace: ci-pipeline
+configMapGenerator:
+- name: ci-pipeline-run-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-run-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+- name: pipeline
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-run-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.pipeline
+- name: serviceAccount
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-run-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.serviceAccount
+configurations:
+- params.yaml

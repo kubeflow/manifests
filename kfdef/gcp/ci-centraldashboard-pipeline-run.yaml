@@ -50,6 +50,7 @@ spec:
       parameters:
       - name: generateName
         value: tektoncd-install-
+      parameters:
       - name: registry
         value: gcr.io/tekton-releases
       repoRef:

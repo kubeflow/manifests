@@ -1,0 +1,44 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: build-push
+spec:
+  inputs:
+    resources:
+    - name: kfctl
+      type: git
+    params:
+    - name: pathToDockerFile
+      type: string
+      description: The path to the dockerfile to build
+      default: /workspace/kfctl/Dockerfile
+    - name: pathToContext
+      type: string
+      description:
+        The build context used by Kaniko
+        (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
+      default: /workspace/kfctl
+  outputs:
+    resources:
+    - name: builtImage
+      type: image
+      outputImageDir: /workspace/builtImage
+  steps:
+  - name: build-and-push
+    image: gcr.io/kaniko-project/executor:v0.10.0
+    command:
+    - /kaniko/executor
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kaniko-secret.json
+    args: ["--dockerfile=${inputs.params.pathToDockerFile}",
+           "--destination=${outputs.resources.builtImage.url}",
+           "--context=${inputs.params.pathToContext}",
+           "--target=kfctl_base"]
+    volumeMounts:
+    - name: kaniko-secret
+      mountPath: /secret
+  volumes:
+  - name: kaniko-secret
+    secret:
+      secretName: kaniko-secret

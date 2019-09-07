@@ -1,0 +1,21 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: $(generateName)
+spec:
+  serviceAccount: $(serviceAccount)
+  pipelineRef:
+    name: $(pipeline)
+  resources:
+    - name: kubeflow
+      resourceRef:
+        name: kubeflow
+    - name: manifests
+      resourceRef:
+        name: manifests
+    - name: testing
+      resourceRef:
+        name: testing
+    - name: image
+      resourceRef:
+        name: image

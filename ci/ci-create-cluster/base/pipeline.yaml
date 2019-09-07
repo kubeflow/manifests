@@ -1,0 +1,38 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: ci-create-cluster
+spec:
+  resources:
+  - name: kfctl-image
+    type: image
+  tasks:
+  - name: kfctl-init-generate-apply
+    taskRef:
+      name: kfctl-init-generate-apply
+    resources:
+      inputs:
+      - name: image
+        resource: kfctl-image
+      outputs:
+      - name: builtImage
+        resource: web-image
+        from:
+        - kfctl-build-push
+    params:
+    - name: namespace
+      value: $(namespace)
+    - name: app_dir
+      value: $(app_dir)
+    - name: project
+      value: $(project)
+    - name: configPath
+      value: $(configPath)
+    - name: zone
+      value: $(zone)
+    - name: email
+      value: $(email)
+    - name: platform
+      value: $(platform)
+    - name: cluster
+      value: $(cluster)
