@@ -13,11 +13,11 @@ spec:
     uri: https://github.com/kubeflow/kubeflow/archive/master.tar.gz
   applications:
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: application-crds
+#      overlays:
+#      - application
+#      parameters:
+#      - name: generateName
+#        value: application-crds
       repoRef:
         name: manifests
         path: application/application-crds
