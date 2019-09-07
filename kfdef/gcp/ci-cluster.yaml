@@ -69,6 +69,20 @@ spec:
         path: pipeline/minio
     name: minio
   - kustomizeConfig:
+      overlays:
+      - mysqlPd
+      parameters:
+      - name: mysqlPd
+        value: test1-storage-metadata-store
+      - name: mysqlPvName
+        value: mysql-pv
+      - name: mysqlPvcName
+        value: mysql-pv-claim
+      repoRef:
+        name: manifests
+        path: pipeline/mysql
+    name: mysql
+  - kustomizeConfig:
       parameters:
       - name: admin
         value: kfctl-e2e@constant-cubist-173123.iam.gserviceaccount.com
