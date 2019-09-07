@@ -24,6 +24,8 @@ spec:
       value: $(cluster)
     - name: kfctl_image
       value: $(kfctl_image)
+    - name: pvc_mount_path
+      value: $(pvc_mount_path)
   taskSpec:
     inputs:
       params:
@@ -54,9 +56,13 @@ spec:
       - name: cluster
         type: string
         description: name of the cluster
+      - name: pvc_mount_path
+        type: string
+        description: parent dir for kfctl
     steps:
     - name: kfctl-init
       image: "${inputs.params.kfctl_image}"
+      workingDir: "${inputs.params.pvc_mount_path}"
       command: ["/usr/local/bin/kfctl"]
       args:
       - "init"
@@ -74,12 +80,12 @@ spec:
       - name: ci-create-cluster-kaniko-secret
         mountPath: /secret
       - name: kubeflow
-        mountPath: /kubeflow
+        mountPath: "${inputs.params.pvc_mount_path}"
       imagePullPolicy: IfNotPresent
     - name: kfctl-generate
       image: "${inputs.params.kfctl_image}"
       imagePullPolicy: IfNotPresent
-      workingDir: "${inputs.params.app_dir}"
+      workingDir: "${inputs.params.pvc_mount_path}/${inputs.params.app_dir}"
       command: ["/usr/local/bin/kfctl"]
       args:
       - "generate"
@@ -109,7 +115,7 @@ spec:
     - name: kfctl-activate-service-account
       image: "${inputs.params.kfctl_image}"
       imagePullPolicy: IfNotPresent
-      workingDir: "${inputs.params.app_dir}"
+      workingDir: "${inputs.params.pvc_mount_path}"
       command: ["/opt/google-cloud-sdk/bin/gcloud"]
       args:
       - "auth"
@@ -137,7 +143,7 @@ spec:
     - name: kfctl-set-account
       image: "${inputs.params.kfctl_image}"
       imagePullPolicy: IfNotPresent
-      workingDir: "${inputs.params.app_dir}"
+      workingDir: "${inputs.params.pvc_mount_path}"
       command: ["/opt/google-cloud-sdk/bin/gcloud"]
       args:
       - "config"
@@ -165,7 +171,7 @@ spec:
     - name: kfctl-apply
       image: "${inputs.params.kfctl_image}"
       imagePullPolicy: IfNotPresent
-      workingDir: "${inputs.params.app_dir}"
+      workingDir: "${inputs.params.pvc_mount_path}/${inputs.params.app_dir}"
   #    command: ["/bin/sleep", "infinity"]
       command: ["/usr/local/bin/kfctl"]
       args:
@@ -193,7 +199,7 @@ spec:
     - name: kfctl-configure-kubectl
       image: "${inputs.params.kfctl_image}"
       imagePullPolicy: IfNotPresent
-      workingDir: "${inputs.params.app_dir}"
+      workingDir: "${inputs.pvc_mount_path}"
       command: ["/opt/google-cloud-sdk/bin/gcloud"]
       args:
       - "--project"
