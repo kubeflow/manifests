@@ -60,58 +60,6 @@ spec:
         type: string
         description: parent dir for kfctl
     steps:
-    - name: kfctl-init
-      image: "${inputs.params.kfctl_image}"
-      workingDir: "${inputs.params.pvc_mount_path}"
-      command: ["/usr/local/bin/kfctl"]
-      args:
-      - "init"
-      - "--config"
-      - "${inputs.params.configPath}"
-      - "--project"
-      - "${inputs.params.project}"
-      - "--namespace"
-      - "${inputs.params.namespace}"
-      - "${inputs.params.app_dir}"
-      env:
-      - name: GOOGLE_APPLICATION_CREDENTIALS
-        value: /secret/ci-create-cluster-kaniko-secret.json
-      volumeMounts:
-      - name: ci-create-cluster-kaniko-secret
-        mountPath: /secret
-      - name: kubeflow
-        mountPath: "${inputs.params.pvc_mount_path}"
-      imagePullPolicy: IfNotPresent
-    - name: kfctl-generate
-      image: "${inputs.params.kfctl_image}"
-      imagePullPolicy: IfNotPresent
-      workingDir: "${inputs.params.pvc_mount_path}/${inputs.params.app_dir}"
-      command: ["/usr/local/bin/kfctl"]
-      args:
-      - "generate"
-      - "${inputs.params.platform}"
-      - "--zone"
-      - "${inputs.params.zone}"
-      - "--email"
-      - "${inputs.params.email}"
-      env:
-      - name: GOOGLE_APPLICATION_CREDENTIALS
-        value: /secret/ci-create-cluster-kaniko-secret.json
-      - name: CLIENT_ID
-        valueFrom:
-          secretKeyRef:
-            name: ci-create-cluster-client-secret
-            key: CLIENT_ID
-      - name: CLIENT_SECRET
-        valueFrom:
-          secretKeyRef:
-            name: ci-create-cluster-client-secret
-            key: CLIENT_SECRET
-      volumeMounts:
-      - name: ci-create-cluster-kaniko-secret
-        mountPath: /secret
-      - name: kubeflow
-        mountPath: /kubeflow
     - name: kfctl-activate-service-account
       image: "${inputs.params.kfctl_image}"
       imagePullPolicy: IfNotPresent
@@ -165,6 +113,58 @@ spec:
             key: CLIENT_SECRET
       volumeMounts:
       - name: ci-create-cluster-gcp-secret
+        mountPath: /secret
+      - name: kubeflow
+        mountPath: /kubeflow
+    - name: kfctl-init
+      image: "${inputs.params.kfctl_image}"
+      workingDir: "${inputs.params.pvc_mount_path}"
+      command: ["/usr/local/bin/kfctl"]
+      args:
+      - "init"
+      - "--config"
+      - "${inputs.params.configPath}"
+      - "--project"
+      - "${inputs.params.project}"
+      - "--namespace"
+      - "${inputs.params.namespace}"
+      - "${inputs.params.app_dir}"
+      env:
+      - name: GOOGLE_APPLICATION_CREDENTIALS
+        value: /secret/ci-create-cluster-kaniko-secret.json
+      volumeMounts:
+      - name: ci-create-cluster-kaniko-secret
+        mountPath: /secret
+      - name: kubeflow
+        mountPath: "${inputs.params.pvc_mount_path}"
+      imagePullPolicy: IfNotPresent
+    - name: kfctl-generate
+      image: "${inputs.params.kfctl_image}"
+      imagePullPolicy: IfNotPresent
+      workingDir: "${inputs.params.pvc_mount_path}/${inputs.params.app_dir}"
+      command: ["/usr/local/bin/kfctl"]
+      args:
+      - "generate"
+      - "${inputs.params.platform}"
+      - "--zone"
+      - "${inputs.params.zone}"
+      - "--email"
+      - "${inputs.params.email}"
+      env:
+      - name: GOOGLE_APPLICATION_CREDENTIALS
+        value: /secret/ci-create-cluster-kaniko-secret.json
+      - name: CLIENT_ID
+        valueFrom:
+          secretKeyRef:
+            name: ci-create-cluster-client-secret
+            key: CLIENT_ID
+      - name: CLIENT_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: ci-create-cluster-client-secret
+            key: CLIENT_SECRET
+      volumeMounts:
+      - name: ci-create-cluster-kaniko-secret
         mountPath: /secret
       - name: kubeflow
         mountPath: /kubeflow
