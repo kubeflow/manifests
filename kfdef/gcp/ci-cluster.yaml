@@ -54,6 +54,14 @@ spec:
         name: manifests
         path: tektoncd/tektoncd-install
     name: tektoncd-install
+  - kustomizeConfig:
+      parameters:
+      - name: admin
+        value: kfctl-e2e@constant-cubist-173123.iam.gserviceaccount.com
+      repoRef:
+        name: manifests
+        path: profiles
+    name: profiles
   email: kfctl-e2e@constant-cubist-173123.iam.gserviceaccount.com
   enableApplications: true
   packageManager: kustomize
