@@ -199,7 +199,7 @@ spec:
     - name: kfctl-configure-kubectl
       image: "${inputs.params.kfctl_image}"
       imagePullPolicy: IfNotPresent
-      workingDir: "${inputs.pvc_mount_path}"
+      workingDir: "${inputs.params.pvc_mount_path}"
       command: ["/opt/google-cloud-sdk/bin/gcloud"]
       args:
       - "--project"
