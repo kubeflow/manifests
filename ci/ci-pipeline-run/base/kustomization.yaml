@@ -7,9 +7,10 @@ resources:
 - cluster-role-binding.yaml
 - pipeline-run.yaml
 namePrefix: ci-pipeline-run-
-namespace: ci-pipeline-run
+namespace: kubeflow-ci
 configMapGenerator:
 - name: ci-pipeline-run-parameters
+  behavior: create
   env: params.env
 vars:
 - name: generateName
