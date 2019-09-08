@@ -66,6 +66,8 @@ spec:
         value: ci-pipeline
       - name: image_name
         value: centraldashboard
+      - name: docker_target
+        value: serve
       - name: kubeflow_repo_revision
         value: master
       - name: kubeflow_repo_url
