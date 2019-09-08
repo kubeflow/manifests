@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: testing-repo
+  name: testing
 spec:
   type: git
   params:

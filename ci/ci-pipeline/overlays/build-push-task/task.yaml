@@ -5,7 +5,7 @@ metadata:
 spec:
   inputs:
     resources:
-    - name: kubeflow-repo
+    - name: kubeflow
       type: git
     params:
     - name: pathToDockerfile
@@ -33,9 +33,9 @@ spec:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
     args:
-    - "--dockerfile=${inputs.params.pathToDockerfile}"
+    - "--dockerfile=/workspace/${inputs.resources.name}/${inputs.params.pathToDockerfile}"
     - "--destination=${outputs.resources.$(image_name).url}"
-    - "--context=${inputs.params.pathToContext}"
+    - "--context=/workspace/${inputs.resources.name}/${inputs.params.pathToContext}"
     - "--target=${inputs.params.dockerTarget}"
     volumeMounts:
     - name: kaniko-secret

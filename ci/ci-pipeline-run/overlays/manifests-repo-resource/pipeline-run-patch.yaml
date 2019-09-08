@@ -1,6 +1,6 @@
 - op: add
   path: /spec/resources/-
   value:
-    name: manifests-repo
+    name: manifests
     resourceRef:
-      name: manifests-repo
+      name: manifests

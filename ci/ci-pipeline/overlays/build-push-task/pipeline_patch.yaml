@@ -6,8 +6,8 @@
       name: build-push
     resources:
       inputs:
-      - name: kubeflow-repo
-        resource: kubeflow-repo
+      - name: kubeflow
+        resource: kubeflow
       outputs:
       - name: $(image_name)
         resource: $(image_name)
@@ -21,7 +21,7 @@
 - op: add
   path: /spec/resources/-
   value:
-    name: kubeflow-repo
+    name: kubeflow
     type: git
 - op: add
   path: /spec/resources/-
