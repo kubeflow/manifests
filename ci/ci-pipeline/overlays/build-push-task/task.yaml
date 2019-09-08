@@ -4,25 +4,8 @@ metadata:
   name: build-push
 spec:
   inputs:
-    params:
-    - name: namespace
-      value: $(namespace)
-    - name: app_dir
-      value: $(app_dir)
-    - name: cluster
-      value: $(cluster)
-    - name: kfctl_image
-      value: $(kfctl_image)
-    - name: pvc_mount_path
-      value: $(pvc_mount_path)
-    - name: pathToDockerFile
-      value: $(path_to_docker_file)
-    - name: pathToContext
-      value: $(path_to_context)
-    - name: dockerTarget
-      value: $(docker_target)
     resources:
-    - name: kubeflow
+    - name: kubeflow-repo
       resourceSpec:
         type: git
         params:
@@ -30,6 +13,19 @@ spec:
             value: master
           - name: url
             value: https://github.com/kubeflow/kubeflow.git
+    params:
+    - name: namespace
+      value: $(namespace)
+    - name: app_dir
+      value: $(app_dir)
+    - name: pvc_mount_path
+      value: $(pvc_mount_path)
+    - name: kfctl_image
+      value: $(kfctl_image)
+    - name: pathToDockerFile
+      value: $(path_to_docker_file)
+    - name: pathToContext
+      value: $(path_to_context)
   outputs:
     resources:
     - name: builtImage
@@ -38,44 +34,23 @@ spec:
         type: image
         params:
         - name: url
-          value: $(IMG)
-  taskSpec:
-    inputs:
-      resources:
-      - name: kubeflow
-        type: git
-      params:
-      - name: pathToDockerFile
-        type: string
-        description: The path to the dockerfile to build
-        default: /workspace/kubeflow/Dockerfile
-      - name: pathToContext
-        type: string
-        description:
-          The build context used by Kaniko
-          (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
-        default: /workspace/kubeflow
-    outputs:
-      resources:
-      - name: builtImage
-        type: image
-        outputImageDir: /workspace/builtImage
-    steps:
-    - name: build-and-push
-      image: gcr.io/kaniko-project/executor:v0.10.0
-      command:
-      - /kaniko/executor
-      env:
-      - name: GOOGLE_APPLICATION_CREDENTIALS
-        value: /secret/kaniko-secret.json
-      args: ["--dockerfile=${inputs.params.pathToDockerFile}",
-             "--destination=${outputs.resources.builtImage.url}",
-             "--context=${inputs.params.pathToContext}",
-             "--target=${inputs.params.dockerTarget}"]
-      volumeMounts:
-      - name: kaniko-secret
-        mountPath: /secret
-    volumes:
+          value: $(image_url)
+  steps:
+  - name: build-and-push
+    image: gcr.io/kaniko-project/executor:v0.10.0
+    command:
+    - /kaniko/executor
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kaniko-secret.json
+    args: ["--dockerfile=${inputs.params.pathToDockerFile}",
+           "--destination=${outputs.resources.builtImage.url}",
+           "--context=${inputs.params.pathToContext}",
+           "--target=${inputs.params.dockerTarget}"]
+    volumeMounts:
     - name: kaniko-secret
-      secret:
-        secretName: kaniko-secret
+      mountPath: /secret
+  volumes:
+  - name: kaniko-secret
+    secret:
+      secretName: kaniko-secret
