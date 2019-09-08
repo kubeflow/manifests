@@ -15,16 +15,15 @@ spec:
   - kustomizeConfig:
       overlays:
       - build-push-task
-      - update-manifests-task
       parameters:
       - name: pipeline
         value: ci-pipeline
       - name: image_name
-        value: centraldashboard
+        value: profile-controller
       - name: docker_target
         value: serve
       - name: kubeflow_repo_revision
-        value: pull/4091/head
+        value: master
       - name: kubeflow_repo_url
         value: https://github.com/kubeflow/kubeflow
       - name: path_to_context
@@ -39,7 +38,6 @@ spec:
       overlays:
       - application
       - kubeflow-repo-resource
-      - manifests-repo-resource
       - image-resource
       parameters:
       - name: generateName
