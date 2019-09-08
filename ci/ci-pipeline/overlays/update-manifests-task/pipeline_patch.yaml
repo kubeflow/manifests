@@ -13,8 +13,6 @@
       value: "$(path_to_manifests_kustomization_file)"
     - name: pathToManifestsTestsDir
       value: "$(path_to_manifests_tests_dir)"
-    - name: imageName
-      value: "$(image_name)"
     - name: imageTag
       value: "$(image_tag)"
 - op: add
