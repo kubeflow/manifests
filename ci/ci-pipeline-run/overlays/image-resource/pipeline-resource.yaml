@@ -1,0 +1,9 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: $(image_name)
+spec:
+  type: image
+  params:
+  - name: url
+    value: $(image_url)

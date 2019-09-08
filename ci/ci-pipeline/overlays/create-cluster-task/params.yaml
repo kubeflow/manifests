@@ -1,0 +1,5 @@
+varReference:
+- path: metadata/name
+  kind: TaskRun
+- path: spec/inputs/params/value
+  kind: TaskRun

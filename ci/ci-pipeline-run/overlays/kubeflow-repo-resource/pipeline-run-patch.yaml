@@ -1,0 +1,5 @@
+- op: add
+  path: /spec/resources/-
+  value:
+    name: kubeflow-repo
+    type: git

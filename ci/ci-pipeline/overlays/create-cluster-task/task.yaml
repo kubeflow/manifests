@@ -1,0 +1,219 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: task
+spec:
+  inputs:
+    params:
+    - name: kfctl_image
+      type: string
+      description: the kfctl container image
+    - name: namespace
+      type: string
+      description: the namespace to deploy kf 
+    - name: app_dir
+      type: string
+      description: where to create the kf app
+    - name: configPath
+      type: string
+      description: url for config arg
+    - name: project
+      type: string
+      description: name of project
+    - name: zone
+      type: string
+      description: zone of project
+    - name: platform
+      type: string
+      description: all | k8s
+    - name: email
+      type: string
+      description: email for gcp
+    - name: cluster
+      type: string
+      description: name of the cluster
+    - name: pvc_mount_path
+      type: string
+      description: parent dir for kfctl
+  steps:
+  - name: kfctl-activate-service-account
+    image: "${inputs.params.kfctl_image}"
+    imagePullPolicy: IfNotPresent
+    workingDir: "${inputs.params.pvc_mount_path}"
+    command: ["/opt/google-cloud-sdk/bin/gcloud"]
+    args:
+    - "auth"
+    - "activate-service-account"
+    - "--key-file"
+    - "/secret/ci-create-cluster-gcp-secret.json"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/ci-create-cluster-gcp-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: ci-create-cluster-client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: ci-create-cluster-client-secret
+          key: CLIENT_SECRET
+    volumeMounts:
+    - name: ci-create-cluster-gcp-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
+  - name: kfctl-set-account
+    image: "${inputs.params.kfctl_image}"
+    imagePullPolicy: IfNotPresent
+    workingDir: "${inputs.params.pvc_mount_path}"
+    command: ["/opt/google-cloud-sdk/bin/gcloud"]
+    args:
+    - "config"
+    - "set"
+    - "account"
+    - "${inputs.params.email}"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/ci-create-cluster-gcp-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: ci-create-cluster-client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: ci-create-cluster-client-secret
+          key: CLIENT_SECRET
+    volumeMounts:
+    - name: ci-create-cluster-gcp-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
+  - name: kfctl-init
+    image: "${inputs.params.kfctl_image}"
+    workingDir: "${inputs.params.pvc_mount_path}"
+    command: ["/usr/local/bin/kfctl"]
+    args:
+    - "init"
+    - "--config"
+    - "${inputs.params.configPath}"
+    - "--project"
+    - "${inputs.params.project}"
+    - "--namespace"
+    - "${inputs.params.namespace}"
+    - "${inputs.params.app_dir}"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/ci-create-cluster-kaniko-secret.json
+    volumeMounts:
+    - name: ci-create-cluster-kaniko-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: "${inputs.params.pvc_mount_path}"
+    imagePullPolicy: IfNotPresent
+  - name: kfctl-generate
+    image: "${inputs.params.kfctl_image}"
+    imagePullPolicy: IfNotPresent
+    workingDir: "${inputs.params.pvc_mount_path}/${inputs.params.app_dir}"
+    command: ["/usr/local/bin/kfctl"]
+    args:
+    - "generate"
+    - "${inputs.params.platform}"
+    - "--zone"
+    - "${inputs.params.zone}"
+    - "--email"
+    - "${inputs.params.email}"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/ci-create-cluster-kaniko-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: ci-create-cluster-client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: ci-create-cluster-client-secret
+          key: CLIENT_SECRET
+    volumeMounts:
+    - name: ci-create-cluster-kaniko-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
+  - name: kfctl-apply
+    image: "${inputs.params.kfctl_image}"
+    imagePullPolicy: IfNotPresent
+    workingDir: "${inputs.params.pvc_mount_path}/${inputs.params.app_dir}"
+#    command: ["/bin/sleep", "infinity"]
+    command: ["/usr/local/bin/kfctl"]
+    args:
+    - "apply"
+    - "${inputs.params.platform}"
+    - "--verbose"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/ci-create-cluster-gcp-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: ci-create-cluster-client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: ci-create-cluster-client-secret
+          key: CLIENT_SECRET
+    volumeMounts:
+    - name: ci-create-cluster-gcp-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
+  - name: kfctl-configure-kubectl
+    image: "${inputs.params.kfctl_image}"
+    imagePullPolicy: IfNotPresent
+    workingDir: "${inputs.params.pvc_mount_path}"
+    command: ["/opt/google-cloud-sdk/bin/gcloud"]
+    args:
+    - "--project"
+    - "${inputs.params.project}"
+    - "container"
+    - "clusters"
+    - "--zone"
+    - "${inputs.params.zone}"
+    - "get-credentials"
+    - "${inputs.params.cluster}"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/ci-create-cluster-gcp-secret.json
+    - name: CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: ci-create-cluster-client-secret
+          key: CLIENT_ID
+    - name: CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: ci-create-cluster-client-secret
+          key: CLIENT_SECRET
+    volumeMounts:
+    - name: ci-create-cluster-gcp-secret
+      mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
+  volumes:
+  - name: ci-create-cluster-kaniko-secret
+    secret:
+      secretName: ci-create-cluster-kaniko-secret
+  - name: ci-create-cluster-docker-secret
+    secret:
+      secretName: ci-create-cluster-docker-secret
+  - name: ci-create-cluster-gcp-secret
+    secret:
+      secretName: ci-create-cluster-gcp-secret
+  - name: kubeflow
+    persistentVolumeClaim:
+      claimName: ci-create-cluster-persistent-volume-claim
