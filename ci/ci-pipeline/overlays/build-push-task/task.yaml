@@ -18,6 +18,9 @@ spec:
         The build context used by Kaniko
         (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
       default: /workspace/kfctl
+    - name: dockerTarget
+      type: string
+      description:
   outputs:
     resources:
     - name: builtImage

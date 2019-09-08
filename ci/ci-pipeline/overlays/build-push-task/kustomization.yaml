@@ -37,5 +37,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.image_name
+- name: docker_target
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.docker_target
 configurations:
 - params.yaml

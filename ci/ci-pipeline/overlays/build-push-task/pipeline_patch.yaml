@@ -8,6 +8,7 @@
       inputs:
       - name: kubeflow
         resource: kubeflow-repo
+      outputs:
       - name: $(image_name)
         resource: $(image_name)
     params:
@@ -15,3 +16,12 @@
       value: "$(path_to_docker_file)"
     - name: pathToContext
       value: "$(path_to_context)"
+    - name: dockerTarget
+      value: "$(docker_target)"
+- op: add
+  path: /spec/resources/-
+  value:
+    name: kubeflow-repo
+    type: git
+    name: $(image_name)
+    type: image

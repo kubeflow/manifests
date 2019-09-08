@@ -1,7 +1,11 @@
 varReference:
 - path: spec/tasks/resources/inputs/name
   kind: Pipeline
+- path: spec/tasks/resources/inputs/resource
+  kind: Pipeline
 - path: spec/tasks/resources/inputs/value
   kind: Pipeline
 - path: spec/tasks/params/value
+  kind: Pipeline
+- path: spec/resources/name
   kind: Pipeline
