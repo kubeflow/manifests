@@ -9,21 +9,21 @@ resources:
 namePrefix: ci-pipeline-run-
 namespace: kubeflow-ci
 configMapGenerator:
-- name: ci-pipeline-run-parameters
+- name: parameters
   behavior: create
   env: params.env
 vars:
 - name: generateName
   objref:
     kind: ConfigMap
-    name: ci-pipeline-run-parameters
+    name: parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.generateName
 - name: pipeline
   objref:
     kind: ConfigMap
-    name: ci-pipeline-run-parameters
+    name: parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.pipeline
