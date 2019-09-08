@@ -2,4 +2,5 @@
   path: /spec/resources/-
   value:
     name: $(image_name)
-    type: git
+    resourceRef:
+      name: $(image_name)
