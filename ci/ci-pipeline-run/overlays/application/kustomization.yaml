@@ -5,13 +5,13 @@ bases:
 resources:
 - application.yaml
 configMapGenerator:
-- name: ci-pipeline-run-parameters
+- name: ci-pipeline-run-app-parameters
   env: params.env
 vars:
 - name: generateName
   objref:
     kind: ConfigMap
-    name: ci-pipeline-run-parameters
+    name: ci-pipeline-run-app-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.generateName
