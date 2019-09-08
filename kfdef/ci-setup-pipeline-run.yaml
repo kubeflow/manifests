@@ -60,6 +60,32 @@ spec:
     name: tektoncd-install
   - kustomizeConfig:
       overlays:
+      - build-push-task
+      parameters:
+      - name: generateName
+        value: ci-pipeline-run-
+      - name: pipeline
+        value: ci-pipeline
+      - name: image_name
+        value: centraldashboard
+      - name: image_url
+        value: "gcr.io/constant-cubist-173123/centraldashboard"
+      - name: kubeflow_repo_revision
+        value: master
+      - name: kubeflow_repo_url
+        value: https://github.com/kubeflow/kubeflow
+      - name: kfctl_image
+        value: "gcr.io/constant-cubist-173123/kfctl@sha256:ab0c4986322e3e6a755056278c7270983b0f3bdc0751aefff075fb2b3d0c3254"
+      - name: pvc_mount_path
+        value: /kubeflow
+      - name: project
+        value: constant-cubist-173123
+      repoRef:
+        name: manifests
+        path: ci/ci-pipeline
+    name: ci-pipeline-run
+  - kustomizeConfig:
+      overlays:
       - application
       - kubeflow-repo-resource
       - image-resource
