@@ -23,10 +23,6 @@ spec:
         value: centraldashboard
       - name: docker_target
         value: serve
-      - name: kubeflow_repo_revision
-        value: pull/4091/head
-      - name: kubeflow_repo_url
-        value: https://github.com/kubeflow/kubeflow
       - name: path_to_context
         value: components/centraldashboard
       - name: path_to_docker_file
@@ -46,12 +42,8 @@ spec:
         value: ci-pipeline-run-
       - name: pipeline
         value: ci-pipeline
-      - name: image_name
-        value: centraldashboard
-      - name: image_url
-        value: "gcr.io/constant-cubist-173123/centraldashboard"
       - name: kubeflow_repo_revision
-        value: master
+        value: pull/4091/head
       - name: kubeflow_repo_url
         value: https://github.com/kubeflow/kubeflow
       - name: kfctl_image
