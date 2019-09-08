@@ -6,7 +6,7 @@
       name: build-push
     resources:
       inputs:
-      - name: kubeflow
+      - name: kubeflow-repo
         resource: kubeflow-repo
       outputs:
       - name: $(image_name)
