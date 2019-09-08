@@ -4,21 +4,28 @@ bases:
 - ../../base
 resources:
 - pipeline-resource.yaml
+patchesJson6902:
+- target:
+    group: tekton.dev
+    version: v1alpha1
+    kind: PipelineRun
+    name: $(generateName)
+  path: pipeline-run-patch.yaml
 configMapGenerator:
-- name: testing_repo_parameters
+- name: testing-repo-parameters
   env: params.env
 vars:
 - name: testing_repo_revision
   objref:
     kind: ConfigMap
-    name: testing_repo_parameters
+    name: testing-repo-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.testing_repo_revision
 - name: testing_repo_url
   objref:
     kind: ConfigMap
-    name: testing_repo_parameters
+    name: testing-repo-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.testing_repo_url
