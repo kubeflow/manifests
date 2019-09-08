@@ -2,4 +2,5 @@
   path: /spec/resources/-
   value:
     name: kubeflow-repo
-    type: git
+    resourceRef:
+      name: kubeflow-repo
