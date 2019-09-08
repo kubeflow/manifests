@@ -8,7 +8,7 @@ spec:
     - name: kubeflow-repo
       type: git
     params:
-    - name: pathToDockerFile
+    - name: pathToDockerfile
       type: string
       description: The path to the dockerfile to build
       default: /workspace/kfctl/Dockerfile
@@ -33,7 +33,7 @@ spec:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
     args:
-    - "--dockerfile=${inputs.params.pathToDockerFile}"
+    - "--dockerfile=${inputs.params.pathToDockerfile}"
     - "--destination=${outputs.resources.$(image_name).url}"
     - "--context=${inputs.params.pathToContext}"
     - "--target=${inputs.params.dockerTarget}"
