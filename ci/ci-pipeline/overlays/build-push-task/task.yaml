@@ -14,16 +14,14 @@ spec:
       default: /workspace/kfctl/Dockerfile
     - name: pathToContext
       type: string
-      description:
-        The build context used by Kaniko
-        (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
+      description: The build context used by Kaniko
       default: /workspace/kfctl
     - name: dockerTarget
       type: string
-      description:
+      description: docker target arg
   outputs:
     resources:
-    - name: builtImage
+    - name: $(image_name)
       type: image
       outputImageDir: /workspace/builtImage
   steps:
@@ -34,10 +32,11 @@ spec:
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
-    args: ["--dockerfile=${inputs.params.pathToDockerFile}",
-           "--destination=${outputs.resources.builtImage.url}",
-           "--context=${inputs.params.pathToContext}",
-           "--target=${inputs.params.dockerTarget}"]
+    args:
+    - "--dockerfile=${inputs.params.pathToDockerFile}"
+    - "--destination=${outputs.resources.$(image_name).url}"
+    - "--context=${inputs.params.pathToContext}"
+    - "--target=${inputs.params.dockerTarget}"
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret

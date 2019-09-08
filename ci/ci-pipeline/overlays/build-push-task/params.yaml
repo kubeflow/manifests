@@ -13,3 +13,7 @@ varReference:
   kind: Pipeline
 - path: spec/resources/name
   kind: Pipeline
+- path: spec/outputs/resources/name
+  kind: Task
+- path: spec/steps/args
+  kind: Task
