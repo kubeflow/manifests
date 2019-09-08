@@ -1,0 +1,24 @@
+- op: add
+  path: /spec/tasks/-
+  value:
+    name: update-manifests
+    taskRef:
+      name: update-manifests
+    resources:
+      inputs:
+      - name: kubeflow
+        resource: kubeflow
+    params:
+    - name: pathToManifestsKustomizationFile
+      value: "$(path_to_manifests_kustomization_file)"
+    - name: pathToManifestsTestsDir
+      value: "$(path_to_manifests_tests_dir)"
+    - name: imageName
+      value: "$(image_name)"
+    - name: imageTag
+      value: "$(image_tag)"
+- op: add
+  path: /spec/resources/-
+  value:
+    name: kubeflow
+    type: git

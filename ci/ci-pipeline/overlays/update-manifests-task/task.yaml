@@ -1,0 +1,46 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: update-manifests
+spec:
+  inputs:
+    resources:
+    - name: kubeflow
+      type: git
+    - name: manifests
+      type: git
+    params:
+    - name: pathToManifestsKustomizationFile
+      type: string
+      description: the manifests kustomization yaml we need to edit
+      default: /workspace/manifests
+    - name: pathToManifestsTestsDir
+      type: string
+      description: Where manifests tests are generated and run
+      default: /workspace/manifests/tests
+    - name: imageName
+      type: string
+      description: name of the image 
+    - name: imageTag
+      type: string
+      description: tag of the image
+  steps:
+  - name: update-manifests
+    image: gcr.io/kaniko-project/executor:v0.10.0
+    command:
+    - /kaniko/executor
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kaniko-secret.json
+    args:
+    - "--dockerfile=/workspace/${inputs.resources.kubeflow.name}/${inputs.params.pathToDockerfile}"
+    - "--destination=${outputs.resources.$(image_name).url}"
+    - "--context=/workspace/${inputs.resources.kubeflow.name}/${inputs.params.pathToContext}"
+    - "--target=${inputs.params.dockerTarget}"
+    volumeMounts:
+    - name: kaniko-secret
+      mountPath: /secret
+  volumes:
+  - name: kaniko-secret
+    secret:
+      secretName: ci-pipeline-run-kaniko-secret
