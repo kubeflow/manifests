@@ -1,5 +1,0 @@
-varReference:
-- path: spec/tasks/params/value
-  kind: Pipeline
-- path: spec/params/value
-  kind: PipelineResource

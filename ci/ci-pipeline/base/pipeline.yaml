@@ -4,38 +4,4 @@ metadata:
   name: ci-pipeline
 spec:
   resources: []
-  tasks:
-  - name: build-push
-    taskRef:
-      name: build-push
-    params:
-    - name: pathToDockerFile
-      value: $(pathToDockerFile)
-    - name: pathToContext
-      value: $(pathToContext)
-    resources:
-      inputs:
-      - name: kubeflow
-        resource: kubeflow
-      outputs:
-      - name: builtImage
-        resource: image
-  - name: update-manifests
-    taskRef:
-      name: update-manifests
-    resources:
-      inputs:
-      - name: image
-        resource: image
-        from:
-        - build-push
-      outputs:
-      - name: builtImage
-        resource: image
-        from:
-        - build-push
-    params:
-    - name: pathToContext
-      value: $(pathToContext)
-    - name: pathToDockerFile
-      value: $(pathToDockerFile)
+  tasks: []
