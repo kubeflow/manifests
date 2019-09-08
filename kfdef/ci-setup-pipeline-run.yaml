@@ -61,31 +61,23 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      - kubeflow-repo-resource
+      - image-resource
       parameters:
       - name: generateName
-        value: ci-create-cluster-
+        value: ci-pipeline-run-
+      - name: pipeline
+        value: ci-pipeline
       - name: kfctl_image
         value: "gcr.io/constant-cubist-173123/kfctl@sha256:ab0c4986322e3e6a755056278c7270983b0f3bdc0751aefff075fb2b3d0c3254"
-      - name: app_dir
-        value: kubeflow-ci
       - name: pvc_mount_path
         value: /kubeflow
       - name: project
         value: constant-cubist-173123
-      - name: cluster
-        value: kubeflow-ci
-      - name: zone
-        value: us-west1-a
-      - name: configPath
-        value: "https://raw.githubusercontent.com/kkasravi/manifests/e2e-pipelineruns/kfdef/gcp/ci-cluster.yaml"
-      - name: email
-        value: kfctl-e2e@constant-cubist-173123.iam.gserviceaccount.com
-      - name: platform
-        value: all
       repoRef:
         name: manifests
-        path: ci/ci-create-cluster-task
-    name: ci-create-cluster
+        path: ci/ci-pipeline-run
+    name: ci-pipeline-run
   enableApplications: true
   packageManager: kustomize
   skipInitProject: true
