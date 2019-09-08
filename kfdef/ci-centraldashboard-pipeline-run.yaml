@@ -42,6 +42,10 @@ spec:
         value: ci-pipeline-run-
       - name: pipeline
         value: ci-pipeline
+      - name: image_name
+        value: centraldashboard
+      - name: image_url
+        value: "gcr.io/constant-cubist-173123/centraldashboard"
       - name: kubeflow_repo_revision
         value: pull/4091/head
       - name: kubeflow_repo_url
