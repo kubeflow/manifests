@@ -13,7 +13,6 @@ patchesJson6902:
   path: pipeline-run-patch.yaml
 configMapGenerator:
 - name: manifests-repo-parameters
-  behavior: merge
   env: params.env
 vars:
 - name: manifests_repo_revision
