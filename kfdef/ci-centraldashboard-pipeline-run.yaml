@@ -29,7 +29,7 @@ spec:
         value: components/centraldashboard/Dockerfile
       - name: path_to_manifests_kustomization_file
         value: common/centraldashboard
-      - name: path_to_manifests_dir
+      - name: path_to_manifests_tests_dir
         value: tests
       repoRef:
         name: manifests
