@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: kfctl-repo
+  name: kfctl
 spec:
   type: git
   params:

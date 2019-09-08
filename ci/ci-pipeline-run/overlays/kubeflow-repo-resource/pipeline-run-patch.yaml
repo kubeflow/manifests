@@ -1,6 +1,6 @@
 - op: add
   path: /spec/resources/-
   value:
-    name: kubeflow-repo
+    name: kubeflow
     resourceRef:
-      name: kubeflow-repo
+      name: kubeflow

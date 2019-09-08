@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: manifests-repo
+  name: manifests
 spec:
   type: git
   params:

@@ -1,6 +1,6 @@
 - op: add
   path: /spec/resources/-
   value:
-    name: testing-repo
+    name: testing
     resourceRef:
-      name: testing-repo
+      name: testing
