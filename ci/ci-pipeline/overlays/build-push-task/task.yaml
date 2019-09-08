@@ -6,37 +6,25 @@ spec:
   inputs:
     resources:
     - name: kubeflow-repo
-      resourceSpec:
-        type: git
-        params:
-          - name: revision
-            value: master
-          - name: url
-            value: https://github.com/kubeflow/kubeflow.git
+      type: git
     params:
-    - name: namespace
-      value: $(namespace)
-    - name: app_dir
-      value: $(app_dir)
-    - name: pvc_mount_path
-      value: $(pvc_mount_path)
-    - name: kfctl_image
-      value: $(kfctl_image)
     - name: pathToDockerFile
-      value: $(path_to_docker_file)
+      type: string
+      description: The path to the dockerfile to build
+      default: /workspace/kfctl/Dockerfile
     - name: pathToContext
-      value: $(path_to_context)
+      type: string
+      description:
+        The build context used by Kaniko
+        (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
+      default: /workspace/kfctl
   outputs:
     resources:
     - name: builtImage
+      type: image
       outputImageDir: /workspace/builtImage
-      resourceSpec:
-        type: image
-        params:
-        - name: url
-          value: $(image_url)
   steps:
-  - name: build-and-push
+  - name: build-push
     image: gcr.io/kaniko-project/executor:v0.10.0
     command:
     - /kaniko/executor
