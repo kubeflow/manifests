@@ -12,21 +12,20 @@ patchesJson6902:
     name: $(generateName)
   path: pipeline-run-patch.yaml
 configMapGenerator:
-- name: ci-pipeline-run-parameters
-  behavior: merge
+- name: image-resource-parameters
   env: params.env
 vars:
 - name: image_name
   objref:
     kind: ConfigMap
-    name: ci-pipeline-run-parameters
+    name: image-resource-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.image_name
 - name: image_url
   objref:
     kind: ConfigMap
-    name: ci-pipeline-run-parameters
+    name: image-resource-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.image_url
