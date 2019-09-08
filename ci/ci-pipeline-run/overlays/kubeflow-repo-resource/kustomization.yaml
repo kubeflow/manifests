@@ -12,20 +12,20 @@ patchesJson6902:
     name: $(generateName)
   path: pipeline-run-patch.yaml
 configMapGenerator:
-- name: kubeflow_repo_parameters
+- name: kubeflow-repo-parameters
   env: params.env
 vars:
 - name: kubeflow_repo_revision
   objref:
     kind: ConfigMap
-    name: kubeflow_repo_parameters
+    name: kubeflow-repo-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.kubeflow_repo_revision
 - name: kubeflow_repo_url
   objref:
     kind: ConfigMap
-    name: kubeflow_repo_parameters
+    name: kubeflow-repo-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.kubeflow_repo_url
