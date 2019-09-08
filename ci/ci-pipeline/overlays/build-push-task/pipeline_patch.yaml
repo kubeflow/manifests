@@ -23,5 +23,8 @@
   value:
     name: kubeflow-repo
     type: git
+- op: add
+  path: /spec/resources/-
+  value:
     name: $(image_name)
     type: image
