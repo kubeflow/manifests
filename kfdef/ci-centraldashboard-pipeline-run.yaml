@@ -27,6 +27,10 @@ spec:
         value: components/centraldashboard
       - name: path_to_docker_file
         value: components/centraldashboard/Dockerfile
+      - name: path_to_manifests_kustomization_file
+        value: common/centraldashboard
+      - name: path_to_manifests_dir
+        value: tests
       repoRef:
         name: manifests
         path: ci/ci-pipeline
