@@ -12,20 +12,21 @@ patchesJson6902:
     name: $(generateName)
   path: pipeline-run-patch.yaml
 configMapGenerator:
-- name: testing-repo-parameters
+- name: ci-pipeline-run-parameters
+  behavior: merge
   env: params.env
 vars:
 - name: testing_repo_revision
   objref:
     kind: ConfigMap
-    name: testing-repo-parameters
+    name: ci-pipeline-run-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.testing_repo_revision
 - name: testing_repo_url
   objref:
     kind: ConfigMap
-    name: testing-repo-parameters
+    name: ci-pipeline-run-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.testing_repo_url
