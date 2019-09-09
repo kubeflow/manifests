@@ -8,6 +8,8 @@
       inputs:
       - name: manifests
         resource: manifests
+      - name: $(image_name)
+        resource: $(image_name)
       outputs:
       - name: manifests
         resource: manifests

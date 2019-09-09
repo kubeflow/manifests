@@ -11,11 +11,9 @@ spec:
     - name: pathToDockerfile
       type: string
       description: The path to the dockerfile to build
-      default: /workspace/kfctl/Dockerfile
     - name: pathToContext
       type: string
       description: The build context used by Kaniko
-      default: /workspace/kfctl
     - name: dockerTarget
       type: string
       description: docker target arg
@@ -23,7 +21,7 @@ spec:
     resources:
     - name: $(image_name)
       type: image
-      outputImageDir: /workspace/builtImage
+      outputImageDir: /workspace/$(image_name)
   steps:
   - name: build-push
     image: gcr.io/kaniko-project/executor:v0.10.0
