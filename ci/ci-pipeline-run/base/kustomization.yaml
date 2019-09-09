@@ -9,7 +9,6 @@ resources:
 namespace: kubeflow-ci
 configMapGenerator:
 - name: ci-pipeline-run-parameters
-  behavior: create
   env: params.env
 vars:
 - name: generateName
