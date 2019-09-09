@@ -18,6 +18,10 @@ spec:
     - name: container_image
       type: string
       description: pod container image
+  outputs:
+    resources:
+    - name: manifests
+      type: git
   steps:
   - name: update-manifests
     workingDir: "/workspace/${inputs.resources.manifests.name}/${inputs.params.pathToManifestsTestsDir}"
