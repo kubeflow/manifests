@@ -6,8 +6,8 @@
       name: update-manifests
     resources:
       inputs:
-      - name: kubeflow
-        resource: kubeflow
+      - name: manifests
+        resource: manifests
     params:
     - name: pathToManifestsKustomizationFile
       value: "$(path_to_manifests_kustomization_file)"
@@ -18,5 +18,5 @@
 - op: add
   path: /spec/resources/-
   value:
-    name: kubeflow
+    name: manifests
     type: git
