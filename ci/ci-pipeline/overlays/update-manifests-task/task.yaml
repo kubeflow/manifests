@@ -18,9 +18,6 @@ spec:
       type: string
       description: Where manifests tests are generated and run
       default: /workspace/manifests/tests
-    - name: imageName
-      type: string
-      description: name of the image 
     - name: imageTag
       type: string
       description: tag of the image
