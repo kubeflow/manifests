@@ -12,20 +12,21 @@ patchesJson6902:
     name: $(generateName)
   path: pipeline-run-patch.yaml
 configMapGenerator:
-- name: kfctl-repo-parameters
+- name: ci-pipeline-run-parameters
+  behavior: merge
   env: params.env
 vars:
 - name: kfctl_repo_revision
   objref:
     kind: ConfigMap
-    name: kfctl-repo-parameters
+    name: ci-pipeline-run-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.kfctl_repo_revision
 - name: kfctl_repo_url
   objref:
     kind: ConfigMap
-    name: kfctl-repo-parameters
+    name: ci-pipeline-run-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.kfctl_repo_url
