@@ -1,5 +1,4 @@
 resources:
-- ../../base
 patchesStrategicMerge:
 - ingress.yaml
 configMapGenerator:
