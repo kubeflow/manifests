@@ -3,6 +3,7 @@ kind: Kustomization
 bases:
 - ../../base
 resources:
+- config-map.yaml
 - task.yaml
 namespace: kubeflow-ci
 patchesJson6902:
@@ -15,9 +16,6 @@ patchesJson6902:
 configMapGenerator:
 - name: update-manifests-parameters
   env: params.env
-- name: update-manifests-commands
-  files:
-  - rebuild-manifests.sh
 vars:
 - name: path_to_manifests_tests_dir
   objref:
