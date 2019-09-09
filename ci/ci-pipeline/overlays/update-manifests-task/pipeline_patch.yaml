@@ -9,8 +9,6 @@
       - name: manifests
         resource: manifests
     params:
-    - name: pathToManifestsKustomizationFile
-      value: "$(path_to_manifests_kustomization_file)"
     - name: pathToManifestsTestsDir
       value: "$(path_to_manifests_tests_dir)"
     - name: imageTag
