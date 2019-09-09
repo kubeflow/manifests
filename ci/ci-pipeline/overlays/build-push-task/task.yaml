@@ -43,4 +43,4 @@ spec:
   volumes:
   - name: kaniko-secret
     secret:
-      secretName: ci-pipeline-run-kaniko-secret
+      secretName: kaniko-secret
