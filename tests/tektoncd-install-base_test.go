@@ -621,7 +621,6 @@ varReference:
   kind: Deployment
 `)
   th.writeF("/manifeststektoncd/tektoncd-install/base/params.env", `
-clusterDomain=cluster.local
 registry=gcr.io/tekton-releases
 webhook=github.com/tektoncd/pipeline/cmd/webhook@sha256:496e36b8723a668ac3531acc26512c123342da7827c10386b571aa975d6a47e7
 nop=github.com/tektoncd/pipeline/cmd/nop@sha256:c903f9e4d60220e7cf7beab4b94e4117abcc048ab7404da3a2a4b417891741cb
@@ -660,13 +659,6 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- name: clusterDomain
-  objref:
-    kind: ConfigMap
-    name: tektoncd-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.clusterDomain
 - name: registry
   objref:
     kind: ConfigMap
