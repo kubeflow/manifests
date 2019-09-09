@@ -15,6 +15,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - build-push-task
+      - update-manifests-task
       parameters:
       - name: pipeline
         value: ci-pipeline
@@ -22,14 +23,16 @@ spec:
         value: profile-controller
       - name: docker_target
         value: serve
-      - name: kubeflow_repo_revision
-        value: master
-      - name: kubeflow_repo_url
-        value: https://github.com/kubeflow/kubeflow
       - name: path_to_context
         value: components/centraldashboard
       - name: path_to_docker_file
         value: components/centraldashboard/Dockerfile
+      - name: path_to_manifests_kustomization_file
+        value: common/centraldashboard
+      - name: path_to_manifests_tests_dir
+        value: tests
+      - name: container_image
+        value: "gcr.io/constant-cubist-173123/test-worker@sha256:6258613836e9e5cb4468a3c8841026af9fb3272b39b16fa3f8b2af3cf1d0f350"
       repoRef:
         name: manifests
         path: ci/ci-pipeline
@@ -38,6 +41,7 @@ spec:
       overlays:
       - application
       - kubeflow-repo-resource
+      - manifests-repo-resource
       - image-resource
       parameters:
       - name: generateName
@@ -45,11 +49,11 @@ spec:
       - name: pipeline
         value: ci-pipeline
       - name: image_name
-        value: centraldashboard
+        value: profile-controller
       - name: image_url
-        value: "gcr.io/constant-cubist-173123/centraldashboard"
+        value: "gcr.io/constant-cubist-173123/profile-controller"
       - name: kubeflow_repo_revision
-        value: master
+        value: pull/4091/head
       - name: kubeflow_repo_url
         value: https://github.com/kubeflow/kubeflow
       - name: kfctl_image

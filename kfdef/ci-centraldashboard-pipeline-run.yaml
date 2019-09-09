@@ -31,6 +31,8 @@ spec:
         value: common/centraldashboard
       - name: path_to_manifests_tests_dir
         value: tests
+      - name: container_image
+        value: "gcr.io/constant-cubist-173123/test-worker@sha256:6258613836e9e5cb4468a3c8841026af9fb3272b39b16fa3f8b2af3cf1d0f350"
       repoRef:
         name: manifests
         path: ci/ci-pipeline
