@@ -8,11 +8,16 @@
       inputs:
       - name: manifests
         resource: manifests
+      outputs:
+      - name: manifests
+        resource: manifests
     params:
     - name: pathToManifestsTestsDir
       value: "$(path_to_manifests_tests_dir)"
     - name: imageTag
       value: "$(image_tag)"
+    - name: container_image
+      value: "$(container_image)"
 - op: add
   path: /spec/resources/-
   value:
