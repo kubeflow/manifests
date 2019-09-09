@@ -10,10 +10,6 @@ spec:
     - name: manifests
       type: git
     params:
-    - name: pathToManifestsKustomizationFile
-      type: string
-      description: the manifests kustomization yaml we need to edit
-      default: /workspace/manifests
     - name: pathToManifestsTestsDir
       type: string
       description: Where manifests tests are generated and run
@@ -23,19 +19,23 @@ spec:
       description: tag of the image
   steps:
   - name: update-manifests
-    image: gcr.io/kaniko-project/executor:v0.10.0
-    command:
-    - /kaniko/executor
+    workingDir: "/workspace/${inputs.resources.manifests.name}/${inputs.params.pathToManifestsTestsDir}"
+    image: "golang:1.12.7"
+    command: 
+    - /bin/bash
+    - /tmp/rebuild-manifests.sh
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
-    args:
-    - "--manifestsKustomizationFile=/workspace/${inputs.resources.manifests.name}/${inputs.params.pathToManifestsKustomizationFile}"
-    - "--manifestsTestsDir=/workspace/${inputs.resources.manifests.name}/${inputs.params.pathToManifestsTestsDir}"
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret
+    - name: update-manifests-commands
+      mountPath: /tmp
   volumes:
   - name: kaniko-secret
     secret:
       secretName: ci-pipeline-run-kaniko-secret
+  - name: update-manifests-commands
+    configMap:
+      name: update-manifests-commands
