@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: update-manifests-commands
+data:
+  rebuild-manifests.sh: |-
+    #!/usr/bin/env bash
+    make generate; make test
