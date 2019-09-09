@@ -12,7 +12,7 @@ fi
 
 source hack/utils.sh
 rm -f $(ls tests/*_test.go | grep -v kusttestharness_test.go)
-for i in $(find * -type d -exec sh -c '(ls -p "{}"|grep />/dev/null)||echo "{}"' \; | egrep -v 'docs|tests|hack|plugins'); do
+for i in $(find * -type d -exec sh -c '(ls -p "{}"|grep />/dev/null)||echo "{}"' \; | egrep -v 'docs|gatekeeper|kfdef|tests|hack|plugins'); do
   rootdir=$(pwd)
   absdir=$rootdir/$i
   if [[ ! $absdir  =~ overlays/test$ ]]; then

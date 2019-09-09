@@ -25,7 +25,8 @@ roleRef:
   name: mxnet-operator
 subjects:
 - kind: ServiceAccount
-  name: mxnet-operator`)
+  name: mxnet-operator
+`)
 	th.writeF("/manifests/mxnet-job/mxnet-operator/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
@@ -75,7 +76,8 @@ rules:
   resources:
   - deployments
   verbs:
-  - '*'`)
+  - '*'
+`)
 	th.writeF("/manifests/mxnet-job/mxnet-operator/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -127,7 +129,8 @@ kind: ServiceAccount
 metadata:
   labels:
     app: mxnet-operator
-  name: mxnet-operator`)
+  name: mxnet-operator
+`)
 	th.writeK("/manifests/mxnet-job/mxnet-operator/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
