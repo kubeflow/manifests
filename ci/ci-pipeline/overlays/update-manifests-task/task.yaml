@@ -5,8 +5,6 @@ metadata:
 spec:
   inputs:
     resources:
-    - name: kubeflow
-      type: git
     - name: manifests
       type: git
     params:
