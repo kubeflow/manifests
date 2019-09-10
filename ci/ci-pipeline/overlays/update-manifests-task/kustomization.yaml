@@ -24,6 +24,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.path_to_manifests_tests_dir
+- name: image_name
+  objref:
+    kind: ConfigMap
+    name: update-manifests-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.image_name
 - name: image_tag
   objref:
     kind: ConfigMap
