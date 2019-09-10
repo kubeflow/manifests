@@ -35,7 +35,7 @@ spec:
     - "--destination=${outputs.resources.$(image_name).url}"
     - "--context=/workspace/${inputs.resources.kubeflow.name}/${inputs.params.pathToContext}"
     - "--target=${inputs.params.dockerTarget}"
-    - "--digest-file=/workspace/$(image_name)/digest"
+    - "--digest-file=/workspace/$(image_name)-digest"
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret
