@@ -5,4 +5,8 @@ metadata:
 data:
   rebuild-manifests.sh: |-
     #!/usr/bin/env bash
-    make generate; make test
+    pushd ../common/centraldashboard/base
+    kustomize edit set image gcr.io/kubeflow-images-public/centraldashboard=gcr.io/kubeflow-images-public/centraldashboard@$(cat /kubeflow/centraldashboard-digest)
+    popd
+    make generate
+    make test
