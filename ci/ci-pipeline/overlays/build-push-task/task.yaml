@@ -39,6 +39,8 @@ spec:
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret
+    - name: kubeflow
+      mountPath: /kubeflow
   volumes:
   - name: kaniko-secret
     secret:

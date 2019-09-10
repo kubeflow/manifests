@@ -38,6 +38,8 @@ spec:
       mountPath: /secret
     - name: update-manifests-commands
       mountPath: /kubeflow
+    - name: kubeflow
+      mountPath: /kubeflow
   volumes:
   - name: kaniko-secret
     secret:
