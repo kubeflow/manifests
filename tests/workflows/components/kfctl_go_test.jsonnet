@@ -202,7 +202,7 @@ local dagTemplates = [
                             env_vars=[{
                               name: "EXTRA_REPOS",
                               // TODO(jlewi): Stop pinning to 341 once its submitted.
-                              value: "kubeflow/kubeflow@HEAD;kubeflow/tf-operator@HEAD;kubeflow/testing@HEAD",
+                              value: "kubeflow/kubeflow@v0.6-branch;kubeflow/tf-operator@HEAD;kubeflow/testing@HEAD",
                             }]),
     dependencies: null,
   },  // checkout

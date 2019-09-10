@@ -202,7 +202,7 @@
                 ],
                 env: prow_env + [{
                   name: "EXTRA_REPOS",
-                  value: "kubeflow/testing@HEAD,kubeflow/manifests@HEAD",
+                  value: "kubeflow/testing@HEAD",
                 }],
                 image: testWorkerImage,
                 volumeMounts: [
