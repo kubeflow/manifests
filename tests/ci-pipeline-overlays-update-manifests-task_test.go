@@ -32,6 +32,8 @@ spec:
     resources:
     - name: manifests
       type: git
+    - name: $(image_name)
+      type: image
     params:
     - name: pathToManifestsTestsDir
       type: string
@@ -85,7 +87,7 @@ varReference:
   kind: Pipeline
 - path: spec/resources/name
   kind: Pipeline
-- path: spec/outputs/resources/name
+- path: spec/inputs/resources/name
   kind: Task
 - path: spec/steps/args
   kind: Task
@@ -97,10 +99,16 @@ varReference:
     name: update-manifests
     taskRef:
       name: update-manifests
+    runAfter: 
+    - build-push
     resources:
       inputs:
       - name: manifests
         resource: manifests
+      - name: $(image_name)
+        resource: $(image_name)
+        from: 
+        - build-push
       outputs:
       - name: manifests
         resource: manifests
@@ -176,12 +184,26 @@ spec:
   resources: []
   tasks: []
 `)
+	th.writeF("/manifests/ci/ci-pipeline/base/params.env", `
+image_name=
+`)
 	th.writeK("/manifests/ci/ci-pipeline/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - pipeline.yaml
 namespace: kubeflow-ci
+configMapGenerator:
+- name: ci-pipeline-parameters
+  env: params.env
+vars:
+- name: image_name
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.image_name
 `)
 }
 

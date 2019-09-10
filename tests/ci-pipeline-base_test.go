@@ -22,12 +22,26 @@ spec:
   resources: []
   tasks: []
 `)
+	th.writeF("/manifests/ci/ci-pipeline/base/params.env", `
+image_name=
+`)
 	th.writeK("/manifests/ci/ci-pipeline/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - pipeline.yaml
 namespace: kubeflow-ci
+configMapGenerator:
+- name: ci-pipeline-parameters
+  env: params.env
+vars:
+- name: image_name
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.image_name
 `)
 }
 

@@ -26,11 +26,9 @@ spec:
     - name: pathToDockerfile
       type: string
       description: The path to the dockerfile to build
-      default: /workspace/kfctl/Dockerfile
     - name: pathToContext
       type: string
       description: The build context used by Kaniko
-      default: /workspace/kfctl
     - name: dockerTarget
       type: string
       description: docker target arg
@@ -38,10 +36,10 @@ spec:
     resources:
     - name: $(image_name)
       type: image
-      outputImageDir: /workspace/builtImage
+      outputImageDir: /workspace
   steps:
   - name: build-push
-    image: gcr.io/kaniko-project/executor:v0.10.0
+    image: gcr.io/kaniko-project/executor:v0.11.0
     command:
     - /kaniko/executor
     env:
@@ -52,6 +50,7 @@ spec:
     - "--destination=${outputs.resources.$(image_name).url}"
     - "--context=/workspace/${inputs.resources.kubeflow.name}/${inputs.params.pathToContext}"
     - "--target=${inputs.params.dockerTarget}"
+    - "--digest-file=/workspace/$(image_name)-digest"
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret
@@ -79,6 +78,8 @@ varReference:
 - path: spec/outputs/resources/name
   kind: Task
 - path: spec/steps/args
+  kind: Task
+- path: spec/outputs/resources/outputImageDir
   kind: Task
 `)
 	th.writeF("/manifests/ci/ci-pipeline/overlays/build-push-task/pipeline_patch.yaml", `
@@ -116,7 +117,6 @@ varReference:
 	th.writeF("/manifests/ci/ci-pipeline/overlays/build-push-task/params.env", `
 path_to_docker_file=
 path_to_context=
-image_name=
 docker_target=
 `)
 	th.writeK("/manifests/ci/ci-pipeline/overlays/build-push-task", `
@@ -152,13 +152,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.path_to_context
-- name: image_name
-  objref:
-    kind: ConfigMap
-    name: build-push-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.image_name
 - name: docker_target
   objref:
     kind: ConfigMap
@@ -179,12 +172,26 @@ spec:
   resources: []
   tasks: []
 `)
+	th.writeF("/manifests/ci/ci-pipeline/base/params.env", `
+image_name=
+`)
 	th.writeK("/manifests/ci/ci-pipeline/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - pipeline.yaml
 namespace: kubeflow-ci
+configMapGenerator:
+- name: ci-pipeline-parameters
+  env: params.env
+vars:
+- name: image_name
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.image_name
 `)
 }
 

@@ -640,11 +640,8 @@ controller=github.com/tektoncd/pipeline/cmd/controller@sha256:4f10413791df045f29
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-<<<<<<< HEAD
 - namespace.yaml
 - crds.yaml
-=======
->>>>>>> ffc90a4... snapshot
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - config-map.yaml

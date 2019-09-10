@@ -19,16 +19,6 @@ spec:
       - application
       parameters:
       - name: generateName
-        value: application-crds-
-      repoRef:
-        name: manifests
-        path: application/application-crds
-    name: application-crds
-  - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
         value: kubeflow-
       repoRef:
         name: manifests
