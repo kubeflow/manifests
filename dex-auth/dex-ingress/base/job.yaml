@@ -1,0 +1,34 @@
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ingress-gen-self-cert
+spec:
+  template:
+    spec:
+      containers:
+      - command:
+        - /var/ingress-configs/ingress_gen_self_cert.sh
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            configMapKeyRef:
+              name: dex-ingress-parameters
+              key: istioNamespace
+        - name: DOMAINS
+          valueFrom:
+            configMapKeyRef:
+              name: dex-ingress-parameters
+              key: domains
+        image: krishnadurai/ingress-gen-self-cert:latest
+        name: gen-self-cert
+        volumeMounts:
+        - mountPath: /var/ingress-configs/
+          name: ingress-config
+      restartPolicy: OnFailure
+      serviceAccountName: dex-ingress-admin
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: ingress-config
+        name: ingress-config

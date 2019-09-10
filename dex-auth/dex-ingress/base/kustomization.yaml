@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: istio-system
+
+resources:
+- service-account.yaml
+- cluster-role.yaml
+- cluster-role-binding.yaml
+- config-map.yaml
+- job.yaml
+
+configMapGenerator:
+- name: dex-ingress-parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+
+vars:
+- name: istioNamespace
+  objref:
+    kind: ConfigMap
+    name: dex-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.istioNamespace
+- name: domains
+  objref:
+    kind: ConfigMap
+    name: dex-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.domains

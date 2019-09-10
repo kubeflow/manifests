@@ -1,0 +1,49 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ingress-config
+data:
+  ingress_gen_self_cert.sh: |
+    #!/bin/bash
+
+    SSL_DIR=/var/ingress-certs
+    mkdir -p ${SSL_DIR}
+
+    IFS=', ' read -r -a array <<< "$DOMAINS"
+    if [ ${#array[@]} -eq 0 ];
+    then
+      echo "Enter domain names for gateway server as arguments"
+      exit
+    fi
+
+    for ((i = 0; i < ${#array[@]}; ++i)); do
+        position=$(( $i + 1 ))
+        ALT_NAMES="${ALT_NAMES}DNS.${position}=${array[$i]}\n"
+    done
+
+    cat << EOF > ${SSL_DIR}/req.cnf
+    [req]
+    req_extensions = v3_req
+    distinguished_name = req_distinguished_name
+
+    [req_distinguished_name]
+
+    [ v3_req ]
+    basicConstraints = CA:FALSE
+    keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+    subjectAltName = @alt_names
+
+    [alt_names]
+    $(printf ${ALT_NAMES})
+    EOF
+
+    openssl genrsa -out ${SSL_DIR}/ca-key.pem 2048
+    openssl req -x509 -new -nodes -key ${SSL_DIR}/ca-key.pem -days 1000 -out ${SSL_DIR}/ca.pem -subj "/CN=istio-ingressgateway-certs-ca"
+
+    openssl genrsa -out ${SSL_DIR}/key.pem 2048
+    openssl req -new -key ${SSL_DIR}/key.pem -out ${SSL_DIR}/csr.pem -subj "/CN=istio-ingressgateway-certs-ca" -config ${SSL_DIR}/req.cnf
+    openssl x509 -req -in ${SSL_DIR}/csr.pem -CA ${SSL_DIR}/ca.pem -CAkey ${SSL_DIR}/ca-key.pem -CAcreateserial -out ${SSL_DIR}/cert.pem -days 1000 -extensions v3_req -extfile ${SSL_DIR}/req.cnf
+
+    kubectl create secret tls istio-ingressgateway-certs  --cert=${SSL_DIR}/cert.pem --key=${SSL_DIR}/key.pem -n $NAMESPACE
+    kubectl create secret tls istio-ingressgateway-certs-ca  --cert=${SSL_DIR}/ca.pem --key=${SSL_DIR}/ca-key.pem -n $NAMESPACE
