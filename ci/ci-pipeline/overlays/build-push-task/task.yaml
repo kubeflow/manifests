@@ -21,7 +21,7 @@ spec:
     resources:
     - name: $(image_name)
       type: image
-      outputImageDir: /workspace/$(image_name)
+      outputImageDir: /workspace
   steps:
   - name: build-push
     image: gcr.io/kaniko-project/executor:v0.11.0
