@@ -7,8 +7,3 @@ spec:
   pipelineRef:
     name: $(pipeline)
   resources: []
-  podTemplate:
-    volumes:
-    - name: kubeflow
-      persistentVolumeClaim:
-        claimName: ci-pipeline-run-persistent-volume-claim

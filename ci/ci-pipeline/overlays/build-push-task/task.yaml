@@ -45,3 +45,6 @@ spec:
   - name: kaniko-secret
     secret:
       secretName: kaniko-secret
+  - name: kubeflow
+    persistentVolumeClaim:
+      claimName: ci-pipeline-run-persistent-volume-claim
