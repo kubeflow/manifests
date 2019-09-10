@@ -4,12 +4,16 @@
     name: update-manifests
     taskRef:
       name: update-manifests
+    runAfter: 
+    - build-push-task
     resources:
       inputs:
       - name: manifests
         resource: manifests
       - name: $(image_name)
         resource: $(image_name)
+        from: 
+        - build-push-task 
       outputs:
       - name: manifests
         resource: manifests
