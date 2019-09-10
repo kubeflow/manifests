@@ -39,16 +39,6 @@ spec:
       - application
       parameters:
       - name: generateName
-        value: tektoncd-crds-
-      repoRef:
-        name: manifests
-        path: tektoncd/tektoncd-crds
-    name: tektoncd-crds
-  - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
         value: tektoncd-install-
       - name: registry
         value: gcr.io/tekton-releases
