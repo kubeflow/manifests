@@ -10,7 +10,7 @@ vars:
 - name: image_name
   objref:
     kind: ConfigMap
-    name: build-push-parameters
+    name: ci-pipeline-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.image_name
