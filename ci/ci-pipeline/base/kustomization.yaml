@@ -3,3 +3,16 @@ kind: Kustomization
 resources:
 - pipeline.yaml
 namespace: kubeflow-ci
+configMapGenerator:
+- name: ci-pipeline-parameters
+  env: params.env
+vars:
+- name: image_name
+  objref:
+    kind: ConfigMap
+    name: build-push-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.image_name
+configurations:
+- params.yaml

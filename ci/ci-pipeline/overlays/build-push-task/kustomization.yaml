@@ -30,13 +30,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.path_to_context
-- name: image_name
-  objref:
-    kind: ConfigMap
-    name: build-push-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.image_name
 - name: docker_target
   objref:
     kind: ConfigMap
