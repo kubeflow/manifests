@@ -14,9 +14,6 @@ spec:
       type: string
       description: Where manifests tests are generated and run
       default: /workspace/manifests/tests
-    - name: imageTag
-      type: string
-      description: tag of the image
     - name: container_image
       type: string
       description: pod container image
