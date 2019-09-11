@@ -1,7 +1,7 @@
 apiVersion: kfdef.apps.kubeflow.org/v1alpha1
 kind: KfDef
 metadata:
-  name: kubeflow_app
+  name: ci-central-dashboard-pipeline-run
   namespace: kubeflow-ci
 spec:
   repos:
@@ -32,7 +32,7 @@ spec:
       - name: path_to_manifests_tests_dir
         value: tests
       - name: container_image
-        value: "gcr.io/constant-cubist-173123/test-worker@sha256:6258613836e9e5cb4468a3c8841026af9fb3272b39b16fa3f8b2af3cf1d0f350"
+        value: "gcr.io/kubeflow-ci/test-worker:latest"
       repoRef:
         name: manifests
         path: ci/ci-pipeline
@@ -44,24 +44,24 @@ spec:
       - manifests-repo-resource
       - image-resource
       parameters:
+      - name: namespace
+        value: kubeflow-test-infra
       - name: generateName
-        value: ci-pipeline-run-
+        value: ci-centraldashboard-pipeline-run-
       - name: pipeline
         value: ci-pipeline
       - name: image_name
         value: centraldashboard
       - name: image_url
-        value: "gcr.io/constant-cubist-173123/centraldashboard"
+        value: "gcr.io/kubeflow-images-public/centraldashboard"
       - name: kubeflow_repo_revision
         value: pull/4091/head
       - name: kubeflow_repo_url
         value: https://github.com/kubeflow/kubeflow
-      - name: kfctl_image
-        value: "gcr.io/constant-cubist-173123/kfctl@sha256:ab0c4986322e3e6a755056278c7270983b0f3bdc0751aefff075fb2b3d0c3254"
       - name: pvc_mount_path
         value: /kubeflow
       - name: project
-        value: constant-cubist-173123
+        value: kubeflow-ci
       repoRef:
         name: manifests
         path: ci/ci-pipeline-run

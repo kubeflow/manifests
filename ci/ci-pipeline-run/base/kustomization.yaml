@@ -11,6 +11,13 @@ configMapGenerator:
 - name: ci-pipeline-run-parameters
   env: params.env
 vars:
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-run-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 - name: generateName
   objref:
     kind: ConfigMap
