@@ -6,6 +6,7 @@ data:
   rebuild-manifests.sh: |-
     #!/usr/bin/env bash
     pushd ../common/centraldashboard/base
+    echo updating image in centraldashboard/kustomization.yaml
     kustomize edit set image gcr.io/kubeflow-images-public/centraldashboard=gcr.io/kubeflow-images-public/centraldashboard@$(cat /kubeflow/centraldashboard-digest)
     popd
     make generate
