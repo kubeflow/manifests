@@ -6,7 +6,7 @@ resources:
 - service-account.yaml
 - cluster-role-binding.yaml
 - pipeline-run.yaml
-namespace: kubeflow-ci
+namespace: $(namespace)
 configMapGenerator:
 - name: ci-pipeline-run-parameters
   env: params.env
