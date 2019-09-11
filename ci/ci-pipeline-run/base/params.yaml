@@ -1,6 +1,8 @@
 varReference:
 - path: metadata/name
   kind: PipelineRun
+- path: metadata/labels/scope
+  kind: PipelineRun
 - path: metadata/namespace
   kind: PersistentVolumeClaim
 - path: spec/pipelineRef/name

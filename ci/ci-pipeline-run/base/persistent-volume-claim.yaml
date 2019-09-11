@@ -2,7 +2,6 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: ci-pipeline-run-persistent-volume-claim
-  namespace: $(namespace)
 spec:
   accessModes:
     - ReadWriteMany
