@@ -14,27 +14,28 @@ patchesJson6902:
     name: ci-pipeline
   path: pipeline_patch.yaml
 configMapGenerator:
-- name: update-manifests-parameters
+- name: ci-pipeline-parameters
+  behavior: merge
   env: params.env
 vars:
 - name: path_to_manifests_tests_dir
   objref:
     kind: ConfigMap
-    name: update-manifests-parameters
+    name: ci-pipeline-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.path_to_manifests_tests_dir
 - name: image_tag
   objref:
     kind: ConfigMap
-    name: update-manifests-parameters
+    name: ci-pipeline-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.image_tag
 - name: container_image
   objref:
     kind: ConfigMap
-    name: update-manifests-parameters
+    name: ci-pipeline-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.container_image
