@@ -25,13 +25,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.path_to_manifests_tests_dir
-- name: image_tag
-  objref:
-    kind: ConfigMap
-    name: ci-pipeline-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.image_tag
 - name: container_image
   objref:
     kind: ConfigMap
