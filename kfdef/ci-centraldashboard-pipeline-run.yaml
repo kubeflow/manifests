@@ -2,7 +2,7 @@ apiVersion: kfdef.apps.kubeflow.org/v1alpha1
 kind: KfDef
 metadata:
   name: ci-central-dashboard-pipeline-run
-  namespace: kubeflow-ci
+  namespace: kubeflow-test-infra
 spec:
   repos:
   - name: manifests
