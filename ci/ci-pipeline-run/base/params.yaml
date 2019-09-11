@@ -1,5 +1,7 @@
 varReference:
 - path: metadata/name
   kind: PipelineRun
+- path: metadata/namespace
+  kind: PipelineRun
 - path: spec/pipelineRef/name
   kind: PipelineRun

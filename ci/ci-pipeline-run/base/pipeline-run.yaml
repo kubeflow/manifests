@@ -2,6 +2,7 @@ apiVersion: tekton.dev/v1alpha1
 kind: PipelineRun
 metadata:
   name: $(generateName)
+  namespace: $(namespace)
 spec:
   serviceAccount: ci-pipeline-run-service-account
   pipelineRef:
