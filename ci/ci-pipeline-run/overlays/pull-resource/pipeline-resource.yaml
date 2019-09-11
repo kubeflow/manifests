@@ -1,0 +1,13 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: $(pull_request_repo)
+spec:
+  type: pullRequest
+  params:
+  - name: url
+    value: https://github.com/kubeflow/$(pull_request_repo)/pulls/$(pull_request_id)
+  secrets:
+    - fieldName: githubToken
+      secretName: github-secrets
+      secretKey: token
