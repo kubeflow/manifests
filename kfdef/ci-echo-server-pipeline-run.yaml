@@ -20,15 +20,15 @@ spec:
       - name: pipeline
         value: ci-pipeline
       - name: image_name
-        value: profile-controller
+        value: echo-server
       - name: docker_target
         value: serve
       - name: path_to_context
-        value: components/profile-controller
+        value: components/echo-server
       - name: path_to_docker_file
-        value: components/profile-controller/Dockerfile
+        value: components/echo-server/Dockerfile
       - name: path_to_manifests_kustomization_file
-        value: common/profile-controller
+        value: common/echo-server
       - name: path_to_manifests_tests_dir
         value: tests
       - name: container_image
@@ -49,9 +49,9 @@ spec:
       - name: pipeline
         value: ci-pipeline
       - name: image_name
-        value: profile-controller
+        value: echo-server
       - name: image_url
-        value: "gcr.io/constant-cubist-173123/profile-controller"
+        value: "gcr.io/constant-cubist-173123/echo-server"
       - name: kubeflow_repo_revision
         value: pull/4091/head
       - name: kubeflow_repo_url
