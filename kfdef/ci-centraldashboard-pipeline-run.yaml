@@ -17,6 +17,8 @@ spec:
       - build-push-task
       - update-manifests-task
       parameters:
+      - name: namespace
+        value: kubeflow-test-infra
       - name: pipeline
         value: ci-pipeline
       - name: image_name
