@@ -2,7 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - persistent-volume-claim.yaml
-- secret.yaml
+- secrets.yaml
 - service-account.yaml
 - cluster-role-binding.yaml
 - pipeline-run.yaml

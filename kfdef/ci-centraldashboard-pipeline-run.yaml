@@ -7,7 +7,7 @@ spec:
   repos:
   - name: manifests
     root: 
-    uri: https://github.com/kubeflow/manifests/archive/pull/328/head.tar.gz
+    uri: /Users/kdkasrav/go/src/github.com/kubeflow/manifests
   - name: kubeflow
     root: kubeflow-master
     uri: https://github.com/kubeflow/kubeflow/archive/master.tar.gz
