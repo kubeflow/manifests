@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
 - istio-noauth.yaml
 namespace: istio-system
-
 configMapGenerator:
 - name: istio-install-parameters
   env: params.env
