@@ -74,7 +74,8 @@ vars:
   fieldref:
     fieldpath: data.certArn
 configurations:
-- params.yaml`)
+- params.yaml
+`)
 	th.writeF("/manifests/aws/istio-ingress/base/ingress.yaml", `
 apiVersion: extensions/v1beta1
 kind: Ingress

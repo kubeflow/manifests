@@ -75,7 +75,8 @@ resources:
 - certificate.yaml
 namespace: kubeflow
 commonLabels:
-  kustomize.component: basic-auth-ingress`)
+  kustomize.component: basic-auth-ingress
+`)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cloud-endpoint.yaml", `
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
