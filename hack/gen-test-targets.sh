@@ -10,11 +10,25 @@ if [[ $(basename $PWD) != "manifests" ]]; then
   exit 1
 fi
 
+EXCLUDE_DIRS=( "kfdef" "gatekeeper" "gcp/deployment_manager_configs" "aws/infra_configs" )
 source hack/utils.sh
 rm -f $(ls tests/*_test.go | grep -v kusttestharness_test.go)
-for i in $(find * -type d -exec sh -c '(ls -p "{}"|grep />/dev/null)||echo "{}"' \; | egrep -v 'docs|gatekeeper|kfdef|tests|hack|plugins'); do
+for i in $(find * -type d -exec sh -c '(ls -p "{}"|grep />/dev/null)||echo "{}"' \; | egrep -v 'doc|tests|hack|plugins'); do
+  exclude=false
+  for item in "${EXCLUDE_DIRS[@]}"
+  do
+  	#https://stackoverflow.com/questions/2172352/in-bash-how-can-i-check-if-a-string-begins-with-some-value
+  	# Check if item is a prefix of i
+    if [[ "$i" == "$item"* ]]; then
+        exclude=true
+    fi
+  done
+
+  if $exclude; then
+    continue
+  fi
   rootdir=$(pwd)
-  absdir=$rootdir/$i
+  absdir=$rootdir/$i  
   if [[ ! $absdir  =~ overlays/test$ ]]; then
     testname=$(get-target-name $absdir)_test.go
     echo generating $testname from manifests/${absdir#*manifests/}
