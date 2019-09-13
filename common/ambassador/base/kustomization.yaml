@@ -6,9 +6,9 @@ resources:
 - deployment.yaml
 - service-account.yaml
 - service.yaml
+namespace: kubeflow
 commonLabels:
   kustomize.component: ambassador
-namespace: istio-system
 images:
   - name: quay.io/datawire/ambassador
     newName: quay.io/datawire/ambassador
