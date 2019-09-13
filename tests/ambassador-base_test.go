@@ -161,7 +161,7 @@ resources:
 - deployment.yaml
 - service-account.yaml
 - service.yaml
-namespace: kubeflow
+namespace: istio-system
 commonLabels:
   kustomize.component: ambassador
 images:
