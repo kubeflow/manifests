@@ -17,12 +17,15 @@ apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
   name: ci-pipeline
+  labels:
+    scope: $(namespace)
 spec:
   params: []
   resources: []
   tasks: []
 `)
 	th.writeF("/manifests/ci/ci-pipeline/base/params.env", `
+namespace=
 image_name=
 `)
 	th.writeK("/manifests/ci/ci-pipeline/base", `
@@ -30,11 +33,18 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - pipeline.yaml
-namespace: kubeflow-ci
+namespace: $(namespace)
 configMapGenerator:
 - name: ci-pipeline-parameters
   env: params.env
 vars:
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 - name: image_name
   objref:
     kind: ConfigMap

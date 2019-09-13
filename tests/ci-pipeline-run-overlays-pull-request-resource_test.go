@@ -11,57 +11,80 @@ import (
 	"testing"
 )
 
-func writeCiPipelineRunOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/ci/ci-pipeline-run/overlays/application/application.yaml", `
-apiVersion: app.k8s.io/v1beta1
-kind: Application
+func writeCiPipelineRunOverlaysPullRequestResource(th *KustTestHarness) {
+	th.writeF("/manifests/ci/ci-pipeline-run/overlays/pull-request-resource/pipeline-resource.yaml", `
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
 metadata:
-  name: $(generateName)
+  name: $(pull_request_repo)
 spec:
-  componentKinds:
-    - group: app.k8s.io
-      kind: Application
-  descriptor: 
-    type: ci-pipeline-run
-    version: v1beta1
-    description: a pipeline run that composes resources and tasks
-    maintainers:
-    - name: Kam Kasravi
-      email: kam.d.kasravi@intel.com
-    owners:
-    - name: Kam Kasravi
-      email: kam.d.kasravi@intel.com
-    keywords:
-     - kubeflow
-    links:
-    - description: About
-      url: "https://kubeflow.org"
-  addOwnerRef: true
+  type: pullRequest
+  params:
+  - name: url
+    value: https://github.com/kubeflow/$(pull_request_repo)/pulls/$(pull_request_id)
+  secrets:
+    - fieldName: githubToken
+      secretName: github-secrets
+      secretKey: token
 `)
-	th.writeF("/manifests/ci/ci-pipeline-run/overlays/application/params.yaml", `
+	th.writeF("/manifests/ci/ci-pipeline-run/overlays/pull-request-resource/params.yaml", `
 varReference:
 - path: metadata/name
-  kind: Application
+  kind: PipelineResource
+- path: spec/params/value
+  kind: PipelineResource
+- path: spec/resources/name
+  kind: PipelineRun
+- path: spec/resources/resourceRef/name
+  kind: PipelineRun
 `)
-	th.writeF("/manifests/ci/ci-pipeline-run/overlays/application/params.env", `
-generateName=
+	th.writeF("/manifests/ci/ci-pipeline-run/overlays/pull-request-resource/pipeline-run-patch.yaml", `
+- op: add
+  path: /spec/resources/-
+  value:
+    name: $(pull_request_repo)
+    resourceRef:
+      name: $(pull_request_repo)
 `)
-	th.writeK("/manifests/ci/ci-pipeline-run/overlays/application", `
+	th.writeF("/manifests/ci/ci-pipeline-run/overlays/pull-request-resource/params.env", `
+pull_request_id=
+pull_request_repo=
+`)
+	th.writeK("/manifests/ci/ci-pipeline-run/overlays/pull-request-resource", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
 resources:
-- application.yaml
+- pipeline-resource.yaml
+patchesJson6902:
+- target:
+    group: tekton.dev
+    version: v1alpha1
+    kind: PipelineRun
+    name: $(generateName)
+  path: pipeline-run-patch.yaml
+configMapGenerator:
+- name: ci-pipeline-run-parameters
+  behavior: merge
+  env: params.env
+vars:
+- name: pull_request_id
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-run-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.pull_request_id
+- name: pull_request_repo
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-run-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.pull_request_repo
 configurations:
 - params.yaml
-commonLabels:
-  app.kubernetes.io/name: ci-pipeline-run
-  app.kubernetes.io/instance: $(generateName)
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: kubeflow
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
 `)
 	th.writeF("/manifests/ci/ci-pipeline-run/base/persistent-volume-claim.yaml", `
 kind: PersistentVolumeClaim
@@ -193,9 +216,9 @@ configurations:
 `)
 }
 
-func TestCiPipelineRunOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/ci/ci-pipeline-run/overlays/application")
-	writeCiPipelineRunOverlaysApplication(th)
+func TestCiPipelineRunOverlaysPullRequestResource(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/ci/ci-pipeline-run/overlays/pull-request-resource")
+	writeCiPipelineRunOverlaysPullRequestResource(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -204,7 +227,7 @@ func TestCiPipelineRunOverlaysApplication(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../ci/ci-pipeline-run/overlays/application"
+	targetPath := "../ci/ci-pipeline-run/overlays/pull-request-resource"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {

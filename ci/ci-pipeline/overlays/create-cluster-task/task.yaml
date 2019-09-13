@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: task
+  name: create-cluster
 spec:
   inputs:
     params:
@@ -45,22 +45,22 @@ spec:
     - "auth"
     - "activate-service-account"
     - "--key-file"
-    - "/secret/ci-create-cluster-gcp-secret.json"
+    - "/secret/kaniko-secret.json"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/ci-create-cluster-gcp-secret.json
+      value: /secret/kaniko-secret.json
     - name: CLIENT_ID
       valueFrom:
         secretKeyRef:
-          name: ci-create-cluster-client-secret
+          name: client-secret
           key: CLIENT_ID
     - name: CLIENT_SECRET
       valueFrom:
         secretKeyRef:
-          name: ci-create-cluster-client-secret
+          name: client-secret
           key: CLIENT_SECRET
     volumeMounts:
-    - name: ci-create-cluster-gcp-secret
+    - name: kaniko-secret
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
@@ -76,19 +76,19 @@ spec:
     - "${inputs.params.email}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/ci-create-cluster-gcp-secret.json
+      value: /secret/kaniko-secret.json
     - name: CLIENT_ID
       valueFrom:
         secretKeyRef:
-          name: ci-create-cluster-client-secret
+          name: client-secret
           key: CLIENT_ID
     - name: CLIENT_SECRET
       valueFrom:
         secretKeyRef:
-          name: ci-create-cluster-client-secret
+          name: client-secret
           key: CLIENT_SECRET
     volumeMounts:
-    - name: ci-create-cluster-gcp-secret
+    - name: kaniko-secret
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
@@ -107,9 +107,9 @@ spec:
     - "${inputs.params.app_dir}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/ci-create-cluster-kaniko-secret.json
+      value: /secret/kaniko-secret.json
     volumeMounts:
-    - name: ci-create-cluster-kaniko-secret
+    - name: kaniko-secret
       mountPath: /secret
     - name: kubeflow
       mountPath: "${inputs.params.pvc_mount_path}"
@@ -128,19 +128,19 @@ spec:
     - "${inputs.params.email}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/ci-create-cluster-kaniko-secret.json
+      value: /secret/kaniko-secret.json
     - name: CLIENT_ID
       valueFrom:
         secretKeyRef:
-          name: ci-create-cluster-client-secret
+          name: client-secret
           key: CLIENT_ID
     - name: CLIENT_SECRET
       valueFrom:
         secretKeyRef:
-          name: ci-create-cluster-client-secret
+          name: client-secret
           key: CLIENT_SECRET
     volumeMounts:
-    - name: ci-create-cluster-kaniko-secret
+    - name: kaniko-secret
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
@@ -148,7 +148,7 @@ spec:
     image: "${inputs.params.kfctl_image}"
     imagePullPolicy: IfNotPresent
     workingDir: "${inputs.params.pvc_mount_path}/${inputs.params.app_dir}"
-#    command: ["/bin/sleep", "infinity"]
+    #command: ["/bin/sleep", "infinity"]
     command: ["/usr/local/bin/kfctl"]
     args:
     - "apply"
@@ -156,19 +156,19 @@ spec:
     - "--verbose"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/ci-create-cluster-gcp-secret.json
+      value: /secret/kaniko-secret.json
     - name: CLIENT_ID
       valueFrom:
         secretKeyRef:
-          name: ci-create-cluster-client-secret
+          name: client-secret
           key: CLIENT_ID
     - name: CLIENT_SECRET
       valueFrom:
         secretKeyRef:
-          name: ci-create-cluster-client-secret
+          name: client-secret
           key: CLIENT_SECRET
     volumeMounts:
-    - name: ci-create-cluster-gcp-secret
+    - name: kaniko-secret
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
@@ -188,32 +188,32 @@ spec:
     - "${inputs.params.cluster}"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/ci-create-cluster-gcp-secret.json
+      value: /secret/kaniko-secret.json
     - name: CLIENT_ID
       valueFrom:
         secretKeyRef:
-          name: ci-create-cluster-client-secret
+          name: client-secret
           key: CLIENT_ID
     - name: CLIENT_SECRET
       valueFrom:
         secretKeyRef:
-          name: ci-create-cluster-client-secret
+          name: client-secret
           key: CLIENT_SECRET
     volumeMounts:
-    - name: ci-create-cluster-gcp-secret
+    - name: kaniko-secret
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
   volumes:
-  - name: ci-create-cluster-kaniko-secret
+  - name: kaniko-secret
     secret:
-      secretName: ci-create-cluster-kaniko-secret
-  - name: ci-create-cluster-docker-secret
+      secretName: kaniko-secret
+  - name: docker-secret
     secret:
-      secretName: ci-create-cluster-docker-secret
-  - name: ci-create-cluster-gcp-secret
+      secretName: docker-secret
+  - name: kaniko-secret
     secret:
-      secretName: ci-create-cluster-gcp-secret
+      secretName: kaniko-secret
   - name: kubeflow
     persistentVolumeClaim:
       claimName: ci-create-cluster-persistent-volume-claim

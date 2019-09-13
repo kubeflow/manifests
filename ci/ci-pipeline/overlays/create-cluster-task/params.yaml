@@ -1,5 +1,7 @@
 varReference:
-- path: metadata/name
-  kind: TaskRun
-- path: spec/inputs/params/value
-  kind: TaskRun
+- path: spec/params/value
+  kind: Pipeline
+- path: spec/tasks/params/value
+  kind: Pipeline
+- path: spec/resources/name
+  kind: Pipeline

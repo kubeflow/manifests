@@ -20,7 +20,12 @@ metadata:
 data:
   rebuild-manifests.sh: |-
     #!/usr/bin/env bash
-    make generate; make test
+    pushd ../common/centraldashboard/base
+    echo updating image in centraldashboard/kustomization.yaml
+    kustomize edit set image gcr.io/kubeflow-images-public/centraldashboard=gcr.io/kubeflow-images-public/centraldashboard@$(cat /kubeflow/centraldashboard-digest)
+    popd
+    make generate
+    make test
 `)
 	th.writeF("/manifests/ci/ci-pipeline/overlays/update-manifests-task/task.yaml", `
 apiVersion: tekton.dev/v1alpha1
@@ -39,9 +44,6 @@ spec:
       type: string
       description: Where manifests tests are generated and run
       default: /workspace/manifests/tests
-    - name: imageTag
-      type: string
-      description: tag of the image
     - name: container_image
       type: string
       description: pod container image
@@ -53,16 +55,18 @@ spec:
   - name: update-manifests
     workingDir: "/workspace/${inputs.resources.manifests.name}/${inputs.params.pathToManifestsTestsDir}"
     image: ${inputs.params.container_image}
-    command: ["/bin/sleep", "infinity"]
-#    command: ["/bin/bash", "/kubeflow/rebuild-manifests.sh"]
+#    command: ["/bin/sleep", "infinity"]
+    command: ["/bin/bash", "/update-manifests-commands/rebuild-manifests.sh"]
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret
-    - name: update-manifests-commands
+    - name: kubeflow
       mountPath: /kubeflow
+    - name: update-manifests-commands
+      mountPath: /update-manifests-commands
   volumes:
   - name: kaniko-secret
     secret:
@@ -70,6 +74,9 @@ spec:
   - name: update-manifests-commands
     configMap:
       name: update-manifests-commands
+  - name: kubeflow
+    persistentVolumeClaim:
+      claimName: ci-pipeline-run-persistent-volume-claim
 `)
 	th.writeF("/manifests/ci/ci-pipeline/overlays/update-manifests-task/params.yaml", `
 varReference:
@@ -115,8 +122,6 @@ varReference:
     params:
     - name: pathToManifestsTestsDir
       value: "$(path_to_manifests_tests_dir)"
-    - name: imageTag
-      value: "$(image_tag)"
     - name: container_image
       value: "$(container_image)"
 - op: add
@@ -127,8 +132,7 @@ varReference:
 `)
 	th.writeF("/manifests/ci/ci-pipeline/overlays/update-manifests-task/params.env", `
 path_to_manifests_tests_dir=
-image_tag=
-container_image=gcr.io/constant-cubist-173123/test-worker@sha256:6258613836e9e5cb4468a3c8841026af9fb3272b39b16fa3f8b2af3cf1d0f350
+container_image=gcr.io/constant-cubist-173123/test-worker@sha256:88444dad0b2011c3594299928ec0699c081d0343a16ad6bea581063171faa9f7
 `)
 	th.writeK("/manifests/ci/ci-pipeline/overlays/update-manifests-task", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -147,27 +151,21 @@ patchesJson6902:
     name: ci-pipeline
   path: pipeline_patch.yaml
 configMapGenerator:
-- name: update-manifests-parameters
+- name: ci-pipeline-parameters
+  behavior: merge
   env: params.env
 vars:
 - name: path_to_manifests_tests_dir
   objref:
     kind: ConfigMap
-    name: update-manifests-parameters
+    name: ci-pipeline-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.path_to_manifests_tests_dir
-- name: image_tag
-  objref:
-    kind: ConfigMap
-    name: update-manifests-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.image_tag
 - name: container_image
   objref:
     kind: ConfigMap
-    name: update-manifests-parameters
+    name: ci-pipeline-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.container_image
@@ -179,12 +177,15 @@ apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
   name: ci-pipeline
+  labels:
+    scope: $(namespace)
 spec:
   params: []
   resources: []
   tasks: []
 `)
 	th.writeF("/manifests/ci/ci-pipeline/base/params.env", `
+namespace=
 image_name=
 `)
 	th.writeK("/manifests/ci/ci-pipeline/base", `
@@ -192,11 +193,18 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - pipeline.yaml
-namespace: kubeflow-ci
+namespace: $(namespace)
 configMapGenerator:
 - name: ci-pipeline-parameters
   env: params.env
 vars:
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 - name: image_name
   objref:
     kind: ConfigMap
