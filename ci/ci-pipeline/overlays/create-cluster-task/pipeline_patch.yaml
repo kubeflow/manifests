@@ -1,87 +1,27 @@
 - op: add
-  path: /spec/params/-
-  value:
-    name: namespace
-    value: $(namespace)
-- op: add
-  path: /spec/params/-
-  value:
-    name: app_dir
-    value: $(app_dir)
-- op: add
-  path: /spec/params/-
-  value:
-    name: project
-    value: $(project)
-- op: add
-  path: /spec/params/-
-  value:
-    name: configPath
-    value: $(configPath)
-- op: add
-  path: /spec/params/-
-  value:
-    name: zone
-    value: $(zone)
-- op: add
-  path: /spec/params/-
-  value:
-    name: email
-    value: $(email)
-- op: add
-  path: /spec/params/-
-  value:
-    name: platform
-    value: $(platform)
-- op: add
-  path: /spec/params/-
-  value:
-    name: cluster
-    value: $(cluster)
-- op: add
-  path: /spec/params/-
-  value:
-    name: kfctl_image
-    value: $(kfctl_image)
-- op: add
-  path: /spec/params/-
-  value:
-    name: pvc_mount_path
-    value: $(pvc_mount_path)
-- op: add
   path: /spec/tasks/-
   value:
     name: create-cluster
     taskRef: 
       name: create-cluster
     params:
-    - name: kfctl_image
-      type: string
-      description: the kfctl container image
-    - name: namespace
-      type: string
-      description: the namespace to deploy kf 
     - name: app_dir
-      type: string
-      description: where to create the kf app
-    - name: configPath
-      type: string
-      description: url for config arg
-    - name: project
-      type: string
-      description: name of project
-    - name: zone
-      type: string
-      description: zone of project
-    - name: platform
-      type: string
-      description: all | k8s
-    - name: email
-      type: string
-      description: email for gcp
+      value: $(app_dir)
     - name: cluster
-      type: string
-      description: name of the cluster
+      value: $(cluster)
+    - name: configPath
+      value: $(configPath)
+    - name: email
+      value: $(email)
+    - name: kfctl_image
+      value: $(kfctl_image)
+    - name: namespace
+      value: $(namespace)
+    - name: platform
+      value: $(platform)
+    - name: project
+      value: $(project)
     - name: pvc_mount_path
-      type: string
-      description: parent dir for kfctl
+      value: $(pvc_mount_path)
+    - name: zone
+      value: $(zone)

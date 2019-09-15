@@ -5,36 +5,36 @@ metadata:
 spec:
   inputs:
     params:
+    - name: app_dir
+      type: string
+      description: where to create the kf app
+    - name: cluster
+      type: string
+      description: name of the cluster
+    - name: configPath
+      type: string
+      description: url for config arg
+    - name: email
+      type: string
+      description: email for gcp
     - name: kfctl_image
       type: string
       description: the kfctl container image
     - name: namespace
       type: string
       description: the namespace to deploy kf 
-    - name: app_dir
-      type: string
-      description: where to create the kf app
-    - name: configPath
-      type: string
-      description: url for config arg
-    - name: project
-      type: string
-      description: name of project
-    - name: zone
-      type: string
-      description: zone of project
     - name: platform
       type: string
       description: all | k8s
-    - name: email
+    - name: project
       type: string
-      description: email for gcp
-    - name: cluster
-      type: string
-      description: name of the cluster
+      description: name of project
     - name: pvc_mount_path
       type: string
       description: parent dir for kfctl
+    - name: zone
+      type: string
+      description: zone of project
   steps:
   - name: kfctl-activate-service-account
     image: "${inputs.params.kfctl_image}"
@@ -213,4 +213,4 @@ spec:
 #      secretName: docker-secret
   - name: kubeflow
     persistentVolumeClaim:
-      claimName: ci-create-cluster-persistent-volume-claim
+      claimName: ci-pipeline-run-persistent-volume-claim
