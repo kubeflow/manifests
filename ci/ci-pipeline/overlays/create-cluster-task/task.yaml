@@ -208,12 +208,9 @@ spec:
   - name: kaniko-secret
     secret:
       secretName: kaniko-secret
-  - name: docker-secret
-    secret:
-      secretName: docker-secret
-  - name: kaniko-secret
-    secret:
-      secretName: kaniko-secret
+#  - name: docker-secret
+#    secret:
+#      secretName: docker-secret
   - name: kubeflow
     persistentVolumeClaim:
       claimName: ci-create-cluster-persistent-volume-claim
