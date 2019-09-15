@@ -5,3 +5,9 @@ varReference:
   kind: Pipeline
 - path: spec/resources/name
   kind: Pipeline
+- path: spec/steps/image
+  kind: Task
+- path: spec/steps/volumeMounts/mountPath
+  kind: Task
+- path: spec/steps/workingDir
+  kind: Task
