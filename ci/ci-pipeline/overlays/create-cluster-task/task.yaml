@@ -14,9 +14,45 @@ spec:
     - name: configPath
       type: string
       description: url for config arg
+    - name: cpu-pool-initialNodeCount
+      type: string
+      description: initial cput node count
+    - name: cpu-pool-machine-type
+      type: string
+      description: cpu machine type
+    - name: cpu-pool-max-nodes
+      type: string
+      description: max cpu nodes
+    - name: cpu-pool-min-nodes
+      type: string
+      description: min cpu nodes
+    - name: cpu-pool-min-cpu-platform
+      type: string
+      description: cpu platform
+    - name: cpu-pool-image-type
+      type: string
+      description: cpu image type
     - name: email
       type: string
       description: email for gcp
+    - name: gpu-pool-initialNodeCount
+      type: string
+      description: initial gpu node count
+    - name: gpu-pool-machine-type
+      type: string
+      description: gpu machine type
+    - name: gpu-pool-max-nodes
+      type: string
+      description: max gpu nodes
+    - name: gpu-pool-min-nodes
+      type: string
+      description: min gpu nodes
+    - name: gpu-type
+      type: string
+      description: gpu type
+    - name: gpu-pool-image-type
+      type: string
+      description: gpu image type
     - name: kfctl_image
       type: string
       description: the kfctl container image
@@ -94,28 +130,6 @@ spec:
     - name: kubeflow
       mountPath: "${inputs.params.pvc_mount_path}"
     imagePullPolicy: IfNotPresent
-#  - name: kfctl-configure-kubectl
-#    image: "${inputs.params.kfctl_image}"
-#    imagePullPolicy: IfNotPresent
-#    workingDir: "${inputs.params.pvc_mount_path}"
-#    command: ["/opt/google-cloud-sdk/bin/gcloud"]
-#    args:
-#    - "--project"
-#    - "${inputs.params.project}"
-#    - "container"
-#    - "clusters"
-#    - "--zone"
-#    - "${inputs.params.zone}"
-#    - "get-credentials"
-#    - "${inputs.params.cluster}"
-#    env:
-#    - name: GOOGLE_APPLICATION_CREDENTIALS
-#      value: /secret/kaniko-secret.json
-#    volumeMounts:
-#    - name: kaniko-secret
-#      mountPath: /secret
-#    - name: kubeflow
-#      mountPath: /kubeflow
   - name: kfctl-generate
     image: "${inputs.params.kfctl_image}"
     imagePullPolicy: IfNotPresent
@@ -148,6 +162,19 @@ spec:
       mountPath: /client-secret
     - name: kubeflow
       mountPath: /kubeflow
+  - name: update-gcp-config
+    image: "${inputs.params.kfctl_image}"
+    imagePullPolicy: IfNotPresent
+    workingDir: "${inputs.params.pvc_mount_path}/${inputs.params.app_dir}/gcp_config"
+    command: ["/bin/bash", "/update-gcp-config/update-gcp-config.sh"]
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kaniko-secret.json
+    volumeMounts:
+    - name: kubeflow
+      mountPath: /kubeflow
+    - name: update-gcp-config
+      mountPath: /update-gcp-config
   - name: kfctl-apply
     image: "${inputs.params.kfctl_image}"
     imagePullPolicy: IfNotPresent
@@ -185,9 +212,9 @@ spec:
   - name: client-secret
     secret:
       secretName: client-secret
-#  - name: docker-secret
-#    secret:
-#      secretName: docker-secret
   - name: kubeflow
     persistentVolumeClaim:
       claimName: ci-pipeline-run-persistent-volume-claim
+  - name: update-gcp-config
+    configMap:
+      name: update-gcp-config

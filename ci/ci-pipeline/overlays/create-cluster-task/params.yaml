@@ -11,3 +11,5 @@ varReference:
   kind: Task
 - path: spec/steps/workingDir
   kind: Task
+- path: data/update-gcp-config.sh
+  kind: ConfigMap

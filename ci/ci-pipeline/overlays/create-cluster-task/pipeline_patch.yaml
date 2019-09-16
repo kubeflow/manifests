@@ -11,10 +11,38 @@
       value: $(cluster)
     - name: configPath
       value: $(configPath)
+    - name: cpu-pool-initialNodeCount
+      value: $(cpu-pool-initialNodeCount)
+    - name: cpu-pool-initialNodeCount
+      value: $(cpu-pool-initialNodeCount)
+    - name: cpu-pool-machine-type
+      value: $(cpu-pool-machine-type)
+    - name: cpu-pool-max-nodes
+      value: $(cpu-pool-max-nodes)
+    - name: cpu-pool-min-nodes
+      value: $(cpu-pool-min-nodes)
+    - name: cpu-pool-min-cpu-platform
+      value: $(cpu-pool-min-cpu-platform)
+    - name: cpu-pool-image-type
+      value: $(cpu-pool-image-type)
     - name: email
       value: $(email)
+    - name: gpu-pool-initialNodeCount
+      value: $(gpu-pool-initialNodeCount)
+    - name: gpu-pool-machine-type
+      value: $(gpu-pool-machine-type)
+    - name: gpu-pool-max-nodes
+      value: $(gpu-pool-max-nodes)
+    - name: gpu-pool-min-nodes
+      value: $(gpu-pool-min-nodes)
+    - name: gpu-type
+      value: $(gpu-type)
+    - name: gpu-pool-image-type
+      value: $(gpu-pool-image-type)
     - name: kfctl_image
       value: $(kfctl_image)
+    - name: min_cpu_platform
+      value: $(min-cpu_platform)
     - name: namespace
       value: $(namespace)
     - name: platform
