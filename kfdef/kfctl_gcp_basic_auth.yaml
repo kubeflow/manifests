@@ -357,6 +357,14 @@ spec:
   enableApplications: true
   packageManager: kustomize
   platform: gcp
+  plugins:
+  - name: gcp
+    spec:
+      createPipelinePersistentStorage: true
+      deploymentManagerConfig:
+        repoRef:
+          name: manifests
+          path: gcp/deployment_manager_configs
   skipInitProject: true
   useBasicAuth: true
   useIstio: true
