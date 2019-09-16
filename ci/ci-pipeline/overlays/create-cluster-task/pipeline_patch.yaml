@@ -37,6 +37,8 @@
       value: $(gpu-pool-min-nodes)
     - name: gpu-type
       value: $(gpu-type)
+    - name: gpu-pool-min-cpu-platform
+      value: $(gpu-pool-min-cpu-platform)
     - name: gpu-pool-image-type
       value: $(gpu-pool-image-type)
     - name: kfctl_image

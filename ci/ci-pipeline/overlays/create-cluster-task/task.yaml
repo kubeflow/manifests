@@ -50,6 +50,9 @@ spec:
     - name: gpu-type
       type: string
       description: gpu type
+    - name: gpu-pool-min-cpu-platform
+      type: string
+      description: cpu platform in gpu pool
     - name: gpu-pool-image-type
       type: string
       description: gpu image type
