@@ -175,6 +175,10 @@ spec:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
     volumeMounts:
+    - name: kaniko-secret
+      mountPath: /secret
+    - name: client-secret
+      mountPath: /client-secret
     - name: kubeflow
       mountPath: /kubeflow
     - name: update-gcp-config
