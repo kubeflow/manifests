@@ -19,8 +19,9 @@ kebab-case-2-PascalCase() {
 
 gen-target-start() {
   local dir=$(get-target $1) target fname
-  fname=/manifests${dir##*/manifests}
+  fname=/manifests${dir#*/manifests}
   target=$(kebab-case-2-PascalCase $(get-target-name $1))
+#echo 'gen-target-start dir='$dir' fname='$fname' target='$target
 
   echo 'package tests_test'
   echo ''
@@ -79,16 +80,17 @@ gen-target() {
 
 gen-target-base() {
   echo '  th.writeK("'$kname'", `'
-  cat $dir/$file | sed 'sx- ../../basex- '$basedir'x'
+  cat $dir/$file | sed 'sx- ../../basex- '$basedir'x' | sed 's/`/`+"`"+`/g'
   echo '`)'
 }
 
 gen-target-kustomization() {
   local file=$1 dir=$2 fname kname basedir
-  fname=/manifests${dir##*/manifests}
+  fname=/manifests${dir#*/manifests}
   kname=${fname%/kustomization.yaml}
+#echo 'gen-target-kustomization file='$file' dir='$dir' fname='$fname' kname='$kname
   echo '  th.writeK("'$kname'", `'
-  cat $dir/$file 
+  cat $dir/$file | sed 's/`/`+"`"+`/g'
   echo '`)'
   if [[ $(get-target-dirname $dir) != "base" ]]; then
     basedir=$(get-target $dir)/base
@@ -100,20 +102,21 @@ gen-target-kustomization() {
 
 gen-target-resource() {
   local file=$1 dir=$2 echooptions='' fname
-  fname=/manifests${dir##*/manifests}/$file
+  fname=/manifests${dir#*/manifests}/$file
   if (( $# == 3 )); then
     echooptions=$3
   fi
   echo $echooptions '  th.writeF("'$fname'", `'
-  cat $dir/$file | sed 's/`/U+0060/g' 
+  cat $dir/$file | sed 's/`/`+"`"+`/g'
   echo '`)'
 }
 
 gen-test-case() {
   local base=$(get-target-name $1) dir=$(get-target $1) target fname
-  fname=/manifests${dir##*/manifests}/$(get-target-dirname $1)
+  fname=/manifests${dir#*/manifests}/$(get-target-dirname $1)
   target=$(kebab-case-2-PascalCase $base)
   targetPath=..${1#*/manifests}
+#echo 'gen-test-case base='$base' dir='$dir' fname='$fname' target='$target' targetPath='$targetPath
 
   gen-target $1
   echo ''
