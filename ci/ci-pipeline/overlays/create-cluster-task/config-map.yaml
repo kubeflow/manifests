@@ -39,3 +39,5 @@ data:
     mv o cluster.jinja
     sed "162, 175 s/minCpuPlatform: 'Intel Broadwell'/minCpuPlatform: {{ properties['gpu-pool-min-cpu-platform'] }}/" cluster.jinja > o
     mv o cluster.jinja
+    sed 's/"\([0-9]*\)"/\1/g' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
