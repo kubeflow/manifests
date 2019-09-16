@@ -5,6 +5,8 @@ metadata:
 data:
   update-gcp-config.sh: |-
     #!/usr/bin/env bash
+    sed 's/cluster-version:.*$/cluster-version: "$(cluster-version)"/' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
     sed 's/cpu-pool-initialNodeCount:.*$/cpu-pool-initialNodeCount: $(cpu-pool-initialNodeCount)/' cluster-kubeflow.yaml > o
     mv o cluster-kubeflow.yaml
     sed 's/cpu-pool-machine-type:.*$/cpu-pool-machine-type: $(cpu-pool-machine-type)/' cluster-kubeflow.yaml > o

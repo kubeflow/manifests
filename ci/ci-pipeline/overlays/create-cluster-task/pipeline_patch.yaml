@@ -9,6 +9,8 @@
       value: $(app_dir)
     - name: cluster
       value: $(cluster)
+    - name: cluster-version
+      value: $(cluster-version)
     - name: configPath
       value: $(configPath)
     - name: cpu-pool-initialNodeCount

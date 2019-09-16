@@ -11,6 +11,9 @@ spec:
     - name: cluster
       type: string
       description: name of the cluster
+    - name: cluster-version
+      type: string
+      description: version of kubernetes
     - name: configPath
       type: string
       description: url for config arg
