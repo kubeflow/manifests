@@ -13,7 +13,7 @@ data:
     mv o cluster-kubeflow.yaml
     sed 's/cpu-pool-min-nodes:.*$/cpu-pool-min-nodes: $(cpu-pool-min-nodes)/' cluster-kubeflow.yaml > o
     mv o cluster-kubeflow.yaml
-    sed 's/cpu-pool-min-cpu-platform:.*$/cpu-pool-min-cpu-platform: "$(cpu-pool-min-cpu-platform)"/' cluster-kubeflow.yaml > o
+    sed '18 a \    cpu-pool-min-cpu-platform: "$(cpu-pool-min-cpu-platform)"/' cluster-kubeflow.yaml > o
     mv o cluster-kubeflow.yaml
     sed '19 a \    cpu-pool-image-type: $(cpu-pool-image-type)' cluster-kubeflow.yaml > o
     mv o cluster-kubeflow.yaml
@@ -26,6 +26,8 @@ data:
     sed 's/gpu-pool-min-nodes:.*$/gpu-pool-min-nodes: $(gpu-pool-min-nodes)/' cluster-kubeflow.yaml > o
     mv o cluster-kubeflow.yaml
     sed 's/gpu-type:.*$/gpu-type: $(gpu-type)/' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
+    sed '28 a \    gpu-pool-min-cpu-platform: "$(gpu-pool-min-cpu-platform)"/' cluster-kubeflow.yaml > o
     mv o cluster-kubeflow.yaml
     sed '29 a \    gpu-pool-image-type: $(gpu-pool-image-type)' cluster-kubeflow.yaml > o
     mv o cluster-kubeflow.yaml
