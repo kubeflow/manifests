@@ -49,21 +49,9 @@ spec:
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
-    - name: CLIENT_ID
-      valueFrom:
-        secretKeyRef:
-          name: client-secret
-          key: CLIENT_ID
-    - name: CLIENT_SECRET
-      valueFrom:
-        secretKeyRef:
-          name: client-secret
-          key: CLIENT_SECRET
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret
-    - name: client-secret
-      mountPath: /client-secret
     - name: kubeflow
       mountPath: /kubeflow
   - name: kfctl-set-account
@@ -79,21 +67,9 @@ spec:
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
-    - name: CLIENT_ID
-      valueFrom:
-        secretKeyRef:
-          name: client-secret
-          key: CLIENT_ID
-    - name: CLIENT_SECRET
-      valueFrom:
-        secretKeyRef:
-          name: client-secret
-          key: CLIENT_SECRET
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret
-    - name: client-secret
-      mountPath: /client-secret
     - name: kubeflow
       mountPath: /kubeflow
   - name: kfctl-init
@@ -118,40 +94,28 @@ spec:
     - name: kubeflow
       mountPath: "${inputs.params.pvc_mount_path}"
     imagePullPolicy: IfNotPresent
-  - name: kfctl-configure-kubectl
-    image: "${inputs.params.kfctl_image}"
-    imagePullPolicy: IfNotPresent
-    workingDir: "${inputs.params.pvc_mount_path}"
-    command: ["/opt/google-cloud-sdk/bin/gcloud"]
-    args:
-    - "--project"
-    - "${inputs.params.project}"
-    - "container"
-    - "clusters"
-    - "--zone"
-    - "${inputs.params.zone}"
-    - "get-credentials"
-    - "${inputs.params.cluster}"
-    env:
-    - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
-    - name: CLIENT_ID
-      valueFrom:
-        secretKeyRef:
-          name: client-secret
-          key: CLIENT_ID
-    - name: CLIENT_SECRET
-      valueFrom:
-        secretKeyRef:
-          name: client-secret
-          key: CLIENT_SECRET
-    volumeMounts:
-    - name: kaniko-secret
-      mountPath: /secret
-    - name: client-secret
-      mountPath: /client-secret
-    - name: kubeflow
-      mountPath: /kubeflow
+#  - name: kfctl-configure-kubectl
+#    image: "${inputs.params.kfctl_image}"
+#    imagePullPolicy: IfNotPresent
+#    workingDir: "${inputs.params.pvc_mount_path}"
+#    command: ["/opt/google-cloud-sdk/bin/gcloud"]
+#    args:
+#    - "--project"
+#    - "${inputs.params.project}"
+#    - "container"
+#    - "clusters"
+#    - "--zone"
+#    - "${inputs.params.zone}"
+#    - "get-credentials"
+#    - "${inputs.params.cluster}"
+#    env:
+#    - name: GOOGLE_APPLICATION_CREDENTIALS
+#      value: /secret/kaniko-secret.json
+#    volumeMounts:
+#    - name: kaniko-secret
+#      mountPath: /secret
+#    - name: kubeflow
+#      mountPath: /kubeflow
   - name: kfctl-generate
     image: "${inputs.params.kfctl_image}"
     imagePullPolicy: IfNotPresent
