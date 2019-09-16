@@ -669,7 +669,8 @@ vars:
   fieldref:
     fieldpath: data.istioNamespace
 configurations:
-- params.yaml`)
+- params.yaml
+`)
 }
 
 func TestIapIngressBase(t *testing.T) {
