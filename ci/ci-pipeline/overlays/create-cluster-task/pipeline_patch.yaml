@@ -41,8 +41,6 @@
       value: $(gpu-pool-image-type)
     - name: kfctl_image
       value: $(kfctl_image)
-    - name: min_cpu_platform
-      value: $(min-cpu_platform)
     - name: namespace
       value: $(namespace)
     - name: platform
