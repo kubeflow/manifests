@@ -8,4 +8,7 @@ spec:
   serviceAccount: ci-pipeline-run-service-account
   pipelineRef:
     name: $(pipeline)
+  podTemplate:
+    securityContext:
+      runAsNonRoot: true
   resources: []
