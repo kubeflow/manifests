@@ -43,3 +43,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name
+images:
+- name: gcr.io/kubeflow-images-public/metadata
+  newName: gcr.io/kubeflow-images-public/metadata
+  newTag: v0.1.8
+- name: gcr.io/kubeflow-images-public/metadata-frontend
+  newName: gcr.io/kubeflow-images-public/metadata-frontend
+  newTag: v0.1.8
+- name: mysql
+  newName: mysql
+  newTag: 8.0.3

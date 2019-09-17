@@ -34,3 +34,7 @@ vars:
     fieldpath: data.clusterDomain
 configurations:
 - params.yaml
+images:
+- name: gcr.io/kubeflow-images-public/tf_operator
+  newName: gcr.io/kubeflow-images-public/tf_operator
+  newTag: v0.6.0.rc0

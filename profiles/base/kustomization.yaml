@@ -16,9 +16,12 @@ configMapGenerator:
   - name: profiles-parameters
     env: params.env
 images:
-  - name: gcr.io/kubeflow-images-public/profile-controller
-    newName: gcr.io/kubeflow-images-public/profile-controller
-    newTag: v20190619-v0-219-gbd3daa8c-dirty-1ced0e
+- name: gcr.io/kubeflow-images-public/kfam
+  newName: gcr.io/kubeflow-images-public/kfam
+  newTag: v20190612-v0-170-ga06cdb79-dirty-a33ee4
+- name: gcr.io/kubeflow-images-public/profile-controller
+  newName: gcr.io/kubeflow-images-public/profile-controller
+  newTag: v20190619-v0-219-gbd3daa8c-dirty-1ced0e
 vars:
   - name: admin
     objref:

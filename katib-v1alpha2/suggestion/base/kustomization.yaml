@@ -14,12 +14,17 @@ generatorOptions:
   disableNameSuffixHash: true
 images:
   - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-hyperband
+    newName: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-hyperband
     newTag: v0.6.0-rc.0
   - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-bayesianoptimization
+    newName: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-bayesianoptimization
     newTag: v0.6.0-rc.0
   - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-grid
+    newName: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-grid
     newTag: v0.6.0-rc.0
   - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-random
+    newName: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-random
     newTag: v0.6.0-rc.0
   - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-nasrl
+    newName: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-nasrl
     newTag: v0.6.0-rc.0
