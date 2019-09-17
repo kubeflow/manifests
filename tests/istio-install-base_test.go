@@ -17355,22 +17355,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - istio-noauth.yaml
-namespace: istio-system
-configMapGenerator:
-- name: istio-install-parameters
-  env: params.env
-generatorOptions:
-  disableNameSuffixHash: true
-vars:
-- name: namespace
-  objref:
-    kind: ConfigMap
-    name: istio-install-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.namespace
-configurations:
-- params.yaml
+namespace: kubeflow
 `)
 }
 
