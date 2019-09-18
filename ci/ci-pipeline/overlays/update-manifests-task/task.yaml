@@ -9,7 +9,7 @@ spec:
       type: git
     - name: $(image_name)
       type: image
-    - name: $(pull_request_repo)
+    - name: $(pull_request_repo)-$(pull-request-id)
       type: pullRequest
     params:
     - name: pathToManifestsTestsDir

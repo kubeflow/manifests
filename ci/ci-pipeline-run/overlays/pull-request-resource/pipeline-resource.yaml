@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: $(pull_request_repo)_$(pull_request_id)
+  name: $(pull_request_repo)-$(pull_request_id)
 spec:
   type: pullRequest
   params:
