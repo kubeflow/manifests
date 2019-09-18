@@ -346,8 +346,7 @@ vars:
     name: ui
     apiVersion: v1
   fieldref:
-    fieldpath: metadata.name
-`)
+    fieldpath: metadata.name`)
 }
 
 func TestMetadataOverlaysApplication(t *testing.T) {
