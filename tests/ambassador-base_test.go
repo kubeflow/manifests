@@ -64,7 +64,6 @@ apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: ambassador
-  namespace: istio-system
 spec:
   replicas: 3
   template:
@@ -107,7 +106,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: ambassador
-  namespace: istio-system
 `)
 	th.writeF("/manifests/common/ambassador/base/service.yaml", `
 ---
@@ -117,7 +115,6 @@ metadata:
   labels:
     service: ambassador-admin
   name: ambassador-admin
-  namespace: istio-system
 spec:
   ports:
   - name: ambassador-admin
@@ -133,7 +130,6 @@ metadata:
   labels:
     service: ambassador
   name: ambassador
-  namespace: istio-system
 spec:
   ports:
   - name: ambassador
@@ -165,9 +161,9 @@ resources:
 - deployment.yaml
 - service-account.yaml
 - service.yaml
+namespace: istio-system
 commonLabels:
   kustomize.component: ambassador
-namespace: istio-system
 images:
   - name: quay.io/datawire/ambassador
     newName: quay.io/datawire/ambassador
