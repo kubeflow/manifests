@@ -12,6 +12,11 @@ data:
     make generate
     make test
     if (( $? == 0 )); then
-      # get 
+      #cat pr.json | jq '. |  .Head.Repo'
+      #"https://github.com/kkasravi/kubeflow.git"
+      #cat pr.json | jq .Head.Repo?
+      #"https://github.com/kkasravi/kubeflow.git"
+      #$ cat pr.json | jq .Head.Branch?
+      #"e2e-pipelineruns"
       echo remote url is 
     fi

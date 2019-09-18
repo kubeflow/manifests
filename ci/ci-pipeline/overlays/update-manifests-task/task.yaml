@@ -9,7 +9,7 @@ spec:
       type: git
     - name: $(image_name)
       type: image
-    - name: $(pull_request_repo)-$(pull-request-id)
+    - name: $(pull_request_repo)-$(pull_request_id)
       type: pullRequest
     params:
     - name: pathToManifestsTestsDir
@@ -32,6 +32,9 @@ spec:
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
+    envFrom:
+    - configMapRef:
+        name: ci-pipeline-parameters
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret

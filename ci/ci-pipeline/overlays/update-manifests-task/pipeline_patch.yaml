@@ -10,6 +10,8 @@
       inputs:
       - name: manifests
         resource: manifests
+      - name: $(pull_request_repo)-$(pull_request_id)
+        resource: $(pull_request_repo)-$(pull_request_id)
       - name: $(image_name)
         resource: $(image_name)
         from: 
@@ -27,3 +29,8 @@
   value:
     name: manifests
     type: git
+- op: add
+  path: /spec/resources/-
+  value:
+    name: $(pull_request_repo)-$(pull_request_id)
+    type: pullRequest

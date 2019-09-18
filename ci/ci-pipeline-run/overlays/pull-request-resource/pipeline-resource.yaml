@@ -6,7 +6,7 @@ spec:
   type: pullRequest
   params:
   - name: url
-    value: https://github.com/kubeflow/$(pull_request_repo)/pull/$(pull_request_id)
+    value: https://github.com/kubeflow/$(pull_request_repo)/pulls/$(pull_request_id)
   secrets:
     - fieldName: githubToken
       secretName: github-token-secret

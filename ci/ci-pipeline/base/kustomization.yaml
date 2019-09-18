@@ -6,6 +6,8 @@ namespace: $(namespace)
 configMapGenerator:
 - name: ci-pipeline-parameters
   env: params.env
+generatorOptions:
+ disableNameSuffixHash: true
 vars:
 - name: namespace
   objref:

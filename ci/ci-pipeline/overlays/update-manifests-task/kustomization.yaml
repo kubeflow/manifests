@@ -39,5 +39,19 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.container_image
+- name: pull_request_repo
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.pull_request_repo
+- name: pull_request_id
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.pull_request_id
 configurations:
 - params.yaml

@@ -1,6 +1,6 @@
 - op: add
   path: /spec/resources/-
   value:
-    name: $(pull_request_repo)
+    name: $(pull_request_repo)-$(pull_request_id)
     resourceRef:
-      name: $(pull_request_repo)
+      name: $(pull_request_repo)-$(pull_request_id)
