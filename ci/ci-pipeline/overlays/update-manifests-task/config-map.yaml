@@ -19,7 +19,8 @@ data:
       kubectl get secret github-secret -ojson | jq ' . | .data["ssh-publickey"]' | xargs | base64 -d > ~/.ssh/id_rsa.pub
       cp ~/.ssh/id_github-secret ~/.ssh/id_rsa
       chmod 0600 ~/.ssh/id_rsa
-      GIT_SSH_COMMAND="ssh -i ~/.ssh/id_github-secret" git remote add upstream git@github.com:kubeflow/manifests.git
+      chmod 0600 ~/.ssh/id_rsa.pub
+      yes | GIT_SSH_COMMAND="ssh -i ~/.ssh/id_github-secret" git remote add upstream git@github.com:kubeflow/manifests.git
       GIT_SSH_COMMAND="ssh -i ~/.ssh/id_github-secret" git fetch upstream master
       GIT_SSH_COMMAND="ssh -i ~/.ssh/id_github-secret" git checkout -b $new_branch_name upstream/master
       kustomize edit set image gcr.io/kubeflow-images-public/${image_name}=gcr.io/kubeflow-images-public/${image_name}@$(cat /kubeflow/${image_name}-digest)
