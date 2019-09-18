@@ -19,7 +19,7 @@ metadata:
   name: kubeflow-gateway
 spec:
   selector:
-    istio: ingressgateway
+    istio: $(gatewaySelector)
   servers:
   - port:
       number: 80
@@ -128,9 +128,12 @@ spec:
 varReference:
 - path: spec/mode
   kind: ClusterRbacConfig
+- path: spec/selector
+  kind: Gateway
 `)
 	th.writeF("/manifests/istio/istio/base/params.env", `
 clusterRbacConfig=ON
+gatewaySelector=ingressgateway
 `)
 	th.writeK("/manifests/istio/istio/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -149,6 +152,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterRbacConfig
+- name: gatewaySelector
+  objref:
+    kind: ConfigMap
+    name: istio-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.gatewaySelector
 configurations:
 - params.yaml
 `)
