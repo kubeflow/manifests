@@ -9,6 +9,8 @@ spec:
       type: git
     - name: $(image_name)
       type: image
+    - name: $(pull_request_repo)
+      type: pullRequest
     params:
     - name: pathToManifestsTestsDir
       type: string

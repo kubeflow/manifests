@@ -11,3 +11,7 @@ data:
     popd
     make generate
     make test
+    if (( $? == 0 )); then
+      # get 
+      echo remote url is 
+    fi
