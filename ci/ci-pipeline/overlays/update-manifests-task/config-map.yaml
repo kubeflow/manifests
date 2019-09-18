@@ -20,21 +20,22 @@ data:
       cp ~/.ssh/id_github-secret ~/.ssh/id_rsa
       chmod 0600 ~/.ssh/id_rsa
       chmod 0600 ~/.ssh/id_rsa.pub
-      yes | GIT_SSH_COMMAND="ssh -i ~/.ssh/id_github-secret" git remote add upstream git@github.com:kubeflow/manifests.git
-      GIT_SSH_COMMAND="ssh -i ~/.ssh/id_github-secret" git fetch upstream master
-      GIT_SSH_COMMAND="ssh -i ~/.ssh/id_github-secret" git checkout -b $new_branch_name upstream/master
+      yes | GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa" git remote add upstream git@github.com:kubeflow/manifests.git
+      GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa" git fetch upstream master
+      GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa" git checkout -b $new_branch_name upstream/master
       kustomize edit set image gcr.io/kubeflow-images-public/${image_name}=gcr.io/kubeflow-images-public/${image_name}@$(cat /kubeflow/${image_name}-digest)
       cd /workspace/manifests/tests
       make generate && make test
       if (( $? == 0 )); then
-        GIT_SSH_COMMAND="ssh -i ~/.ssh/id_github-secret" git commit -a -m "image updated as part of $kubeflow_forked_repo branch:$kubeflow_forked_branch PR:${pull_request_id}"
-        GIT_SSH_COMMAND="ssh -i ~/.ssh/id_github-secret" git push origin $new_branch_name -f
+        GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa" git commit -a -m "image updated as part of $kubeflow_forked_repo branch:$kubeflow_forked_branch PR:${pull_request_id}"
+        GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa" git push origin $new_branch_name -f
         tmpfile=$(mktemp)
         echo "[auto PR] Update the $image_name image to $(cat /kubeflow/${image_name}-digest)" > $tmpfile
         echo "" >> $tmpfile
         echo "" >> $tmpfile
         echo "Image built from repo:$kubeflow_forked_repo branch:$kubeflow_forked_branch commit:$kubeflow_forked_commit" >> $tmpfile
-        GIT_SSH_COMMAND="ssh -i ~/.ssh/id_github-secret" hub pull-request -f -b 'kubeflow:master' -F $tmpfile
+        export GITHUB_TOKEN=$(kubectl get secrets github-token-secret -ojson | jq '. | .data.token' | xargs | base64 -d)
+        GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa" hub pull-request -f -b 'kubeflow:master' -F $tmpfile
       else
         echo 'make generate && make test' failed
       fi
