@@ -5,18 +5,33 @@ metadata:
 data:
   rebuild-manifests.sh: |-
     #!/usr/bin/env bash
-    pushd ../common/centraldashboard/base
-    echo updating image in centraldashboard/kustomization.yaml
-    kustomize edit set image gcr.io/kubeflow-images-public/centraldashboard=gcr.io/kubeflow-images-public/centraldashboard@$(cat /kubeflow/centraldashboard-digest)
-    popd
-    make generate
-    make test
-    if (( $? == 0 )); then
-      #cat pr.json | jq '. |  .Head.Repo'
-      #"https://github.com/kkasravi/kubeflow.git"
-      #cat pr.json | jq .Head.Repo?
-      #"https://github.com/kkasravi/kubeflow.git"
-      #$ cat pr.json | jq .Head.Branch?
-      #"e2e-pipelineruns"
-      echo remote url is 
+    # get branch name of kubeflow PR
+    if [[ -f /workspace/${pull_request_repo}-${pull_request_id}/pr.json ]]; then
+      pushd /workspace/${pull_request_repo}-${pull_request_id}
+      kubeflow_forked_repo=$(cat pr.json | jq .Head.Repo? | xargs)
+      kubeflow_forked_branch=$(cat pr.json | jq .Head.Branch? | xargs)
+      kubeflow_forked_commit=$(cat pr.json | jq .Head.SHA? | xargs)
+      new_branch_name=$(echo ${kubeflow_forked_branch}-image-update | xargs)
+      popd
+      git remote add upstream git@github.com:kubeflow/manifests.git
+      GIT_SSH_COMMAND="ssh -i ~/.ssh/id_github-secret" git fetch upstream master
+      GIT_SSH_COMMAND="ssh -i ~/.ssh/id_github-secret" git checkout -b $new_branch_name upstream/master
+      kustomize edit set image gcr.io/kubeflow-images-public/${image_name}=gcr.io/kubeflow-images-public/${image_name}@$(cat /kubeflow/${image_name}-digest)
+      cd /workspace/manifests/tests
+      make generate && make test
+      if (( $? == 0 )); then
+        git commit -a -m "image updated as part of $kubeflow_forked_repo branch:$kubeflow_forked_branch PR:${pull_request_id}"
+        git push origin $new_branch_name -f
+        tmpfile=$(mktemp)
+        echo "[auto PR] Update the $image_name image to $(cat /kubeflow/${image_name}-digest)" > $tmpfile
+        echo "" >> $tmpfile
+        echo "" >> $tmpfile
+        echo "Image built from repo:$kubeflow_forked_repo branch:$kubeflow_forked_branch commit:$kubeflow_forked_commit" >> $tmpfile
+        hub pull-request -f -b 'kubeflow:master' -F $tmpfile
+      else
+        echo 'make generate && make test' failed
+      fi
+    else 
+      echo 'invalid pull-request'
+      echo /workspace/${pull_request_repo}-${pull_request_id}/pr.json does not exist
     fi

@@ -12,10 +12,10 @@ spec:
     - name: $(pull_request_repo)-$(pull_request_id)
       type: pullRequest
     params:
-    - name: pathToManifestsTestsDir
+    - name: pathToManifestsDir
       type: string
-      description: Where manifests tests are generated and run
-      default: /workspace/manifests/tests
+      description: Where the components manifest dir is
+      default: /workspace/manifests
     - name: container_image
       type: string
       description: pod container image
@@ -25,7 +25,7 @@ spec:
       type: git
   steps:
   - name: update-manifests
-    workingDir: "/workspace/${inputs.resources.manifests.name}/${inputs.params.pathToManifestsTestsDir}"
+    workingDir: "/workspace/${inputs.resources.manifests.name}/${inputs.params.pathToManifestsDir}"
     image: ${inputs.params.container_image}
     command: ["/bin/sleep", "infinity"]
     #command: ["/bin/bash", "/update-manifests-commands/rebuild-manifests.sh"]
