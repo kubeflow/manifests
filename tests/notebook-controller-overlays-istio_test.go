@@ -111,7 +111,13 @@ spec:
   scope: Namespaced
   subresources:
     status: {}
-  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: false
+  - name: v1beta1
+    served: true
+    storage: true
   validation:
     openAPIV3Schema:
       properties:
@@ -219,7 +225,7 @@ commonLabels:
 images:
   - name: gcr.io/kubeflow-images-public/notebook-controller
     newName: gcr.io/kubeflow-images-public/notebook-controller
-    newTag: v20190603-v0-175-geeca4530-e3b0c4
+    newTag: v20190911-e8193317-dirty-cd2831
 configMapGenerator:
 - name: parameters
   env: params.env
