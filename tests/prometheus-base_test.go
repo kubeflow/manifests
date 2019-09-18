@@ -295,8 +295,7 @@ varReference:
 	th.writeF("/manifests/gcp/prometheus/base/params.env", `
 projectId=
 clusterName=
-zone=
-`)
+zone=`)
 	th.writeK("/manifests/gcp/prometheus/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
