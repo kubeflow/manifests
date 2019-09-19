@@ -28,7 +28,7 @@ spec:
     workingDir: "/workspace/${inputs.resources.manifests.name}/${inputs.params.pathToManifestsDir}"
     image: ${inputs.params.container_image}
     command: ["/bin/sleep", "infinity"]
-    #command: ["/bin/bash", "/update-manifests-commands/rebuild-manifests.sh"]
+    #command: ["/workspace/kubeflow/py/kubeflow/kubeflow/ci/rebuild-manifests.sh"]
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
@@ -40,15 +40,10 @@ spec:
       mountPath: /secret
     - name: kubeflow
       mountPath: /kubeflow
-    - name: update-manifests-commands
-      mountPath: /update-manifests-commands
   volumes:
   - name: kaniko-secret
     secret:
       secretName: kaniko-secret
-  - name: update-manifests-commands
-    configMap:
-      name: update-manifests-commands
   - name: kubeflow
     persistentVolumeClaim:
       claimName: ci-pipeline-run-persistent-volume-claim
