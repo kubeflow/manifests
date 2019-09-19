@@ -13,7 +13,7 @@ import (
 	"testing"
 )
 
-func writeCertManagerBase(th *KustTestHarness) {
+func writeCertManagerOverlayLetsEnrypt(th *KustTestHarness) {
 	th.writeF("/manifests/cert-manager/cert-manager/base/namespace.yaml", `
 ---
 apiVersion: v1
@@ -934,11 +934,70 @@ vars:
 configurations:
 - params.yaml
 `)
+	th.writeF("/manifests/cert-manager/cert-manager/overlays/letsencrypt/cluster-issuer.yaml", `
+---
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    email: $(acmeEmail)
+    http01: {}
+    privateKeySecretRef:
+      name: letsencrypt-prod-secret
+    server: $(acmeUrl)
+`)
+	th.writeF("/manifests/cert-manager/cert-manager/overlays/letsencrypt/params.yaml", `
+varReference:
+- path: spec/acme/email
+  kind: ClusterIssuer
+- path: spec/acme/server
+  kind: ClusterIssuer
+`)
+	th.writeF("/manifests/cert-manager/cert-manager/overlays/letsencrypt/params.env", `
+acmeEmail=
+acmeUrl=https://acme-v02.api.letsencrypt.org/directory
+`)
+	th.writeK("/manifests/cert-manager/cert-manager/overlays/letsencrypt", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- cluster-issuer.yaml
+commonLabels:
+  kustomize.component: cert-manager
+configMapGenerator:
+- name: cert-manager-parameters
+  behavior: merge
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: acmeEmail
+  objref:
+    kind: ConfigMap
+    name: cert-manager-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.acmeEmail
+- name: acmeUrl
+  objref:
+    kind: ConfigMap
+    name: cert-manager-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.acmeUrl
+configurations:
+- params.yaml
+`)
 }
 
-func TestCertManagerBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/cert-manager/cert-manager/base")
-	writeCertManagerBase(th)
+
+func TestCertManagerOverlayLetsEncrypt(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/cert-manager/cert-manager/overlays/letsencrypt")
+	writeCertManagerOverlayLetsEnrypt(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -947,7 +1006,7 @@ func TestCertManagerBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../cert-manager/cert-manager/base"
+	targetPath := "../cert-manager/cert-manager/overlays/letsencrypt"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
