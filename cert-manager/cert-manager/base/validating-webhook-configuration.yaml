@@ -20,7 +20,7 @@ webhooks:
       - key: "name"
         operator: "NotIn"
         values:
-        - cert-manager
+        - $(namespace)
     rules:
       - apiGroups:
           - "certmanager.k8s.io"

@@ -7,3 +7,7 @@ varReference:
   kind: APIService
 - path: spec/template/spec/containers/args
   kind: Deployment
+- path: metadata/name
+  kind: Namespace
+- path: webhooks/namespaceSelector/matchExpressions/values
+  kind: ValidatingWebhookConfiguration

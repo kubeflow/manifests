@@ -7513,13 +7513,6 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: cert-manager
-  labels:
-    certmanager.k8s.io/disable-validation: "true"
 `)
 	th.writeK("/manifests/cert-manager/cert-manager-crds/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1

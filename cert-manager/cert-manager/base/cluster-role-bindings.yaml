@@ -14,7 +14,6 @@ roleRef:
   name: cert-manager-leaderelection
 subjects:
   - name: cert-manager
-    namespace: "cert-manager"
     namespace: $(namespace)
     kind: ServiceAccount
 
@@ -34,7 +33,6 @@ roleRef:
   name: cert-manager-controller-issuers
 subjects:
   - name: cert-manager
-    namespace: $(namespace)
     namespace: $(namespace)
     kind: ServiceAccount
 
@@ -169,6 +167,5 @@ roleRef:
   name: cert-manager-cainjector
 subjects:
   - name: cert-manager-cainjector
-    namespace: "cert-manager"
     namespace: $(namespace)
     kind: ServiceAccount

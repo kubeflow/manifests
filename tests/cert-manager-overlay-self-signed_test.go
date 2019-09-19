@@ -12,6 +12,15 @@ import (
 )
 
 func writeCertManagerOverlaySelfSigned(th *KustTestHarness) {
+	th.writeF("/manifests/cert-manager/cert-manager/base/namespace.yaml", `
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: $(namespace)
+  labels:
+    certmanager.k8s.io/disable-validation: "true"
+`)
 	th.writeF("/manifests/cert-manager/cert-manager/base/api-service.yaml", `
 ---
 apiVersion: apiregistration.k8s.io/v1beta1
@@ -836,6 +845,10 @@ varReference:
   kind: APIService
 - path: spec/template/spec/containers/args
   kind: Deployment
+- path: metadata/name
+  kind: Namespace
+- path: webhooks/namespaceSelector/matchExpressions/values
+  kind: ValidatingWebhookConfiguration
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/params.env", `
 namespace=cert-manager
@@ -844,6 +857,7 @@ namespace=cert-manager
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+- namespace.yaml
 - api-service.yaml
 - cluster-role-bindings.yaml
 - cluster-roles.yaml
