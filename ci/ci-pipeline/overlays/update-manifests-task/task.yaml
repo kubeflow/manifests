@@ -29,8 +29,8 @@ spec:
   - name: update-manifests
     workingDir: "/workspace/${inputs.resources.manifests.name}/${inputs.params.pathToManifestsDir}"
     image: ${inputs.params.container_image}
-    command: ["/bin/sleep", "infinity"]
-    #command: ["/workspace/${inputs.resources.manifests.name}/py/kubeflow/kubeflow/ci/rebuild-manifests.sh"]
+    #command: ["/bin/sleep", "infinity"]
+    command: ["/workspace/${inputs.resources.manifests.name}/py/kubeflow/kubeflow/ci/rebuild-manifests.sh"]
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
