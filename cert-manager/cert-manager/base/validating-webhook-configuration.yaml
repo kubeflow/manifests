@@ -11,16 +11,6 @@ metadata:
     certmanager.k8s.io/inject-apiserver-ca: "true"
 webhooks:
   - name: webhook.certmanager.k8s.io
-    namespaceSelector:
-      matchExpressions:
-      - key: "certmanager.k8s.io/disable-validation"
-        operator: "NotIn"
-        values:
-        - "true"
-      - key: "name"
-        operator: "NotIn"
-        values:
-        - $(namespace)
     rules:
       - apiGroups:
           - "certmanager.k8s.io"

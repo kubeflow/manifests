@@ -9,5 +9,3 @@ varReference:
   kind: Deployment
 - path: metadata/name
   kind: Namespace
-- path: webhooks/namespaceSelector/matchExpressions/values
-  kind: ValidatingWebhookConfiguration

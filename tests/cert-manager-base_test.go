@@ -18,8 +18,6 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: $(namespace)
-  labels:
-    certmanager.k8s.io/disable-validation: "true"
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/api-service.yaml", `
 ---
@@ -804,16 +802,6 @@ metadata:
     certmanager.k8s.io/inject-apiserver-ca: "true"
 webhooks:
   - name: webhook.certmanager.k8s.io
-    namespaceSelector:
-      matchExpressions:
-      - key: "certmanager.k8s.io/disable-validation"
-        operator: "NotIn"
-        values:
-        - "true"
-      - key: "name"
-        operator: "NotIn"
-        values:
-        - cert-manager
     rules:
       - apiGroups:
           - "certmanager.k8s.io"
