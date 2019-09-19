@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func writeCertManagerBase(th *KustTestHarness) {
+func writeCertManagerOverlaySelfSigned(th *KustTestHarness) {
 	th.writeF("/manifests/cert-manager/cert-manager/base/api-service.yaml", `
 ---
 apiVersion: apiregistration.k8s.io/v1beta1
@@ -871,11 +871,31 @@ vars:
 configurations:
 - params.yaml
 `)
+	th.writeF("/manifests/cert-manager/cert-manager/overlays/self-signed/cluster-issuer.yaml", `
+---
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: ClusterIssuer
+metadata:
+  name: kubeflow-self-signing-issuer
+spec:
+  selfSigned: {}
+`)
+	th.writeK("/manifests/cert-manager/cert-manager/overlays/self-signed", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: cert-manager
+bases:
+- ../../base
+resources:
+- cluster-issuer.yaml
+commonLabels:
+  kustomize.component: cert-manager
+`)
 }
 
-func TestCertManagerBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/cert-manager/cert-manager/base")
-	writeCertManagerBase(th)
+func TestCertManagerOverlaySelfSigned(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/cert-manager/cert-manager/overlays/self-signed")
+	writeCertManagerOverlaySelfSigned(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -884,7 +904,7 @@ func TestCertManagerBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../cert-manager/cert-manager/base"
+	targetPath := "../cert-manager/cert-manager/overlays/self-signed"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
