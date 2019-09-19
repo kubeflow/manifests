@@ -1,0 +1,23 @@
+---
+
+# apiserver gets the ability to read authentication. This allows it to
+# read the specific configmap that has the requestheader-* entries to
+# api agg
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: cert-manager-webhook:webhook-authentication-reader
+  namespace: $(webhookRoleBindingNamespace)
+  labels:
+    app: webhook
+    app.kubernetes.io/name: webhook
+    app.kubernetes.io/instance:  cert-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: extension-apiserver-authentication-reader
+subjects:
+- apiGroup: ""
+  kind: ServiceAccount
+  name: cert-manager-webhook
+  namespace: cert-manager
