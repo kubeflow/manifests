@@ -8,6 +8,10 @@
     - build-push
     resources:
       inputs:
+      - name: kubeflow
+        resource: kubeflow
+        from: 
+        - build-push
       - name: manifests
         resource: manifests
       - name: $(pull_request_repo)-$(pull_request_id)

@@ -7,6 +7,8 @@ spec:
     resources:
     - name: manifests
       type: git
+    - name: kubeflow
+      type: git
     - name: $(image_name)
       type: image
     - name: $(pull_request_repo)-$(pull_request_id)
