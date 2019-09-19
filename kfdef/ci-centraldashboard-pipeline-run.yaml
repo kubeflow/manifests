@@ -2,7 +2,7 @@ apiVersion: kfdef.apps.kubeflow.org/v1alpha1
 kind: KfDef
 metadata:
   name: ci-central-dashboard-pipeline-run
-  namespace: kubeflow-test-infra
+  namespace: kubeflow-ci
 spec:
   repos:
   - name: manifests
@@ -17,8 +17,6 @@ spec:
       - build-push-task
       - update-manifests-task
       parameters:
-      - name: namespace
-        value: kubeflow-test-infra
       - name: pipeline
         value: ci-pipeline
       - name: image_name
@@ -31,10 +29,14 @@ spec:
         value: components/centraldashboard/Dockerfile
       - name: path_to_manifests_kustomization_file
         value: common/centraldashboard
-      - name: path_to_manifests_tests_dir
-        value: tests
+      - name: path_to_manifests_dir
+        value: common/centraldashboard/base
       - name: container_image
         value: "gcr.io/kubeflow-ci/test-worker:latest"
+      - name: pull_request_repo
+        value: kubeflow
+      - name: pull_request_id
+        value: 4091
       repoRef:
         name: manifests
         path: ci/ci-pipeline
@@ -45,9 +47,10 @@ spec:
       - kubeflow-repo-resource
       - manifests-repo-resource
       - image-resource
+      - pull-request-resource
       parameters:
       - name: namespace
-        value: kubeflow-test-infra
+        value: kubeflow-ci
       - name: generateName
         value: ci-centraldashboard-pipeline-run-
       - name: pipeline
@@ -57,9 +60,17 @@ spec:
       - name: image_url
         value: "gcr.io/kubeflow-images-public/centraldashboard"
       - name: kubeflow_repo_revision
-        value: pull/4091/head
+        value: refs/pull/4091/head
       - name: kubeflow_repo_url
-        value: https://github.com/kubeflow/kubeflow
+        value: git@github.com:kubeflow/kubeflow.git
+      - name: manifests_repo_revision
+        value: master
+      - name: manifests_repo_url
+        value: git@github.com:kkasravi/manifests.git
+      - name: pull_request_repo
+        value: kubeflow
+      - name: pull_request_id
+        value: 4091
       - name: pvc_mount_path
         value: /kubeflow
       - name: project
