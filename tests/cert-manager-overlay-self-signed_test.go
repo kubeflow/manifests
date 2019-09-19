@@ -13,7 +13,7 @@ import (
 	"testing"
 )
 
-func writeCertManagerBase(th *KustTestHarness) {
+func writeCertManagerOverlaySelfSigned(th *KustTestHarness) {
 	th.writeF("/manifests/cert-manager/cert-manager/base/namespace.yaml", `
 ---
 apiVersion: v1
@@ -911,16 +911,6 @@ resources:
 - validating-webhook-configuration.yaml
 commonLabels:
   kustomize.component: cert-manager
-images:
-- name: quay.io/jetstack/cert-manager-controller
-  newName: quay.io/jetstack/cert-manager-controller
-  newTag: v0.10.0
-- name: quay.io/jetstack/cert-manager-webhook
-  newName: quay.io/jetstack/cert-manager-webhook
-  newTag: v0.10.0
-- name: quay.io/jetstack/cert-manager-cainjector
-  newName: quay.io/jetstack/cert-manager-cainjector
-  newTag: v0.10.0
 configMapGenerator:
 - name: cert-manager-parameters
   env: params.env
@@ -944,11 +934,30 @@ vars:
 configurations:
 - params.yaml
 `)
+	th.writeF("/manifests/cert-manager/cert-manager/overlays/self-signed/cluster-issuer.yaml", `
+---
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: ClusterIssuer
+metadata:
+  name: kubeflow-self-signing-issuer
+spec:
+  selfSigned: {}
+`)
+	th.writeK("/manifests/cert-manager/cert-manager/overlays/self-signed", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- cluster-issuer.yaml
+commonLabels:
+  kustomize.component: cert-manager
+`)
 }
 
-func TestCertManagerBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/cert-manager/cert-manager/base")
-	writeCertManagerBase(th)
+func TestCertManagerOverlaySelfSigned(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/cert-manager/cert-manager/overlays/self-signed")
+	writeCertManagerOverlaySelfSigned(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -957,7 +966,7 @@ func TestCertManagerBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../cert-manager/cert-manager/base"
+	targetPath := "../cert-manager/cert-manager/overlays/self-signed"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
