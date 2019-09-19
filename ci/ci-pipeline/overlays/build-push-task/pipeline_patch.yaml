@@ -9,6 +9,8 @@
       - name: kubeflow
         resource: kubeflow
       outputs:
+      - name: kubeflow
+        resource: kubeflow
       - name: $(image_name)
         resource: $(image_name)
     params:

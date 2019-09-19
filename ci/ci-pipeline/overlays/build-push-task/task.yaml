@@ -19,6 +19,8 @@ spec:
       description: docker target arg
   outputs:
     resources:
+    - name: kubeflow
+      type: git
     - name: $(image_name)
       type: image
       outputImageDir: /kubeflow
