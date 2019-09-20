@@ -5,14 +5,13 @@ bases:
 resources:
 - application.yaml
 configMapGenerator:
-- name: notebook-controller-parameters
-  behavior: merge
+- name: notebook-controller-app-parameters
   env: params.env
 vars:
 - name: generateName
   objref:
     kind: ConfigMap
-    name: notebook-controller-parameters
+    name: notebook-controller-app-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.generateName
