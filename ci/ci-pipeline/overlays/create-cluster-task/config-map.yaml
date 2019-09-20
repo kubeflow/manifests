@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -43,3 +44,17 @@ data:
     mv o cluster.jinja
     sed 's/"\([0-9]*\)"/\1/g' cluster-kubeflow.yaml > o
     mv o cluster-kubeflow.yaml
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: label-accelerator-nodes
+data:
+  label-accelerator-nodes.sh: |-
+    #!/usr/bin/env bash
+    gpuNode=$(kubectl get nodes -oname | grep gpu)
+    if [[ -n $gpuNode ]]; then
+      kubectl label $gpuNode accelerator=nvidia-tesla-p100
+    else
+      echo 'no gpu node available'
+    fi
