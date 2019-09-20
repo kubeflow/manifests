@@ -6,6 +6,7 @@ resources:
 - application.yaml
 configMapGenerator:
 - name: notebook-controller-parameters
+  behavior: merge
   env: params.env
 vars:
 - name: generateName
