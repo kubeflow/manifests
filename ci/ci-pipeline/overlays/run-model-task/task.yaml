@@ -3,22 +3,25 @@ kind: Task
 metadata:
   name: run-model
 spec:
-  params:
-  - name: imageName
-    type: string
-    description: container image name
-  - name: acceleratorType
-    type: string
-    description: accelerator type
-  - name: acceleratorCount
-    type: string
-    description: accelerator count
+#  inputs:
+#    params:
+#    - name: imageName
+#      type: string
+#      description: container image name
+#    - name: acceleratorType
+#      type: string
+#      description: accelerator type
+#    - name: acceleratorCount
+#      type: string
+#      description: accelerator count
   steps:
   - name: run-model
-    image: ${params.imageName}
+#    image: ${inputs.params.imageName}
+    image: "gcr.io/constant-cubist-173123/tf-test-skx:355316a"
     resources:
       limits:
-        ${params.acceleratorType}: "${params.acceleratorCount}"
+        #${inputs.params.acceleratorType}: ${inputs.params.acceleratorCount}
+        cpu: 1
     volumeMounts:
     - name: kubeflow
       mountPath: /kubeflow

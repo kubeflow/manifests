@@ -19,3 +19,7 @@ varReference:
   kind: Task
 - path: spec/outputs/resources/outputImageDir
   kind: Task
+- path: spec/steps/image
+  kind: Task
+- path: spec/steps/resources/limits
+  kind: Task
