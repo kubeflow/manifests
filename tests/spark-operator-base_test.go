@@ -12,13 +12,13 @@ import (
 )
 
 func writeSparkOperatorBase(th *KustTestHarness) {
-	th.writeF("/manifests/spark-operator/base/spark-sa.yaml", `
+	th.writeF("/manifests/spark/spark-operator/base/spark-sa.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: spark-sa
 `)
-	th.writeF("/manifests/spark-operator/base/cr-clusterrole.yaml", `
+	th.writeF("/manifests/spark/spark-operator/base/cr-clusterrole.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -89,7 +89,7 @@ rules:
   verbs:
   - '*'
 `)
-	th.writeF("/manifests/spark-operator/base/crb.yaml", `
+	th.writeF("/manifests/spark/spark-operator/base/crb.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -102,7 +102,7 @@ subjects:
 - kind: ServiceAccount
   name: operator-sa
 `)
-	th.writeF("/manifests/spark-operator/base/crd-cleanup-job.yaml", `
+	th.writeF("/manifests/spark/spark-operator/base/crd-cleanup-job.yaml", `
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -131,7 +131,7 @@ spec:
       restartPolicy: OnFailure
       serviceAccountName: operator-sa
 `)
-	th.writeF("/manifests/spark-operator/base/deploy.yaml", `
+	th.writeF("/manifests/spark/spark-operator/base/deploy.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -177,13 +177,13 @@ spec:
         - containerPort: 10254
       serviceAccountName: operator-sa
 `)
-	th.writeF("/manifests/spark-operator/base/operator-sa.yaml", `
+	th.writeF("/manifests/spark/spark-operator/base/operator-sa.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: operator-sa
 `)
-	th.writeK("/manifests/spark-operator/base", `
+	th.writeK("/manifests/spark/spark-operator/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
@@ -216,13 +216,13 @@ resources:
 }
 
 func TestSparkOperatorBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/spark-operator/base")
+	th := NewKustTestHarness(t, "/manifests/spark/spark-operator/base")
 	writeSparkOperatorBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../spark-operator/base"
+	targetPath := "../spark/spark-operator/base"
 	fsys := fs.MakeRealFS()
 	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
 	if loaderErr != nil {
