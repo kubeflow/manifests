@@ -15,10 +15,12 @@ spec:
     description: accelerator count
   steps:
   - name: run-model
-    image: ${params.imageName}
+    #image: ${params.imageName}
+    image: "gcr.io/constant-cubist-173123/tf-test-gpu@sha256:706ff9468ba09eab305c2768321a9950e6e5c1be9e0ccfd8bc9af9e4ea6becee"
     resources:
       limits:
-        ${params.acceleratorType}: "${params.acceleratorCount}"
+        #${params.acceleratorType}: "${params.acceleratorCount}"
+        nvidia/com: "1"
     volumeMounts:
     - name: kubeflow
       mountPath: /kubeflow
