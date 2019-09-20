@@ -18,7 +18,7 @@ spec:
     image: ${params.imageName}
     resources:
       limits:
-        ${params.acceleratorType}: ${params.acceleratorCount}
+        ${params.acceleratorType}: "${params.acceleratorCount}"
     volumeMounts:
     - name: kubeflow
       mountPath: /kubeflow
