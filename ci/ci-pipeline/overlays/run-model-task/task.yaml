@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: run-model
+spec:
+  params:
+  - name: imageName
+    type: string
+    description: container image name
+  steps:
+  - name: run-model
+    image: ${params.imageName}
+    volumeMounts:
+    - name: kubeflow
+      mountPath: /kubeflow
+  volumes:
+  - name: kubeflow
+    persistentVolumeClaim:
+      claimName: ci-pipeline-run-persistent-volume-claim
