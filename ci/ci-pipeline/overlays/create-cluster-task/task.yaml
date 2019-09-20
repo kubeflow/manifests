@@ -117,7 +117,7 @@ spec:
   - name: kfctl-init
     image: "${inputs.params.kfctl_image}"
     workingDir: "${inputs.params.pvc_mount_path}"
-    command: ["/usr/local/bin/kfctl"]
+    command: ["/go/src/github.com/kubeflow/kfctl/bin/kfctl"]
     args:
     - "init"
     - "--config"
@@ -140,7 +140,7 @@ spec:
     image: "${inputs.params.kfctl_image}"
     imagePullPolicy: IfNotPresent
     workingDir: "${inputs.params.pvc_mount_path}/${inputs.params.app_dir}"
-    command: ["/usr/local/bin/kfctl"]
+    command: ["/go/src/github.com/kubeflow/kfctl/bin/kfctl"]
     args:
     - "generate"
     - "${inputs.params.platform}"
@@ -191,7 +191,7 @@ spec:
     imagePullPolicy: IfNotPresent
     workingDir: "${inputs.params.pvc_mount_path}/${inputs.params.app_dir}"
     #command: ["/bin/sleep", "infinity"]
-    command: ["/usr/local/bin/kfctl"]
+    command: ["/go/src/github.com/kubeflow/kfctl/bin/kfctl"]
     args:
     - "apply"
     - "${inputs.params.platform}"
