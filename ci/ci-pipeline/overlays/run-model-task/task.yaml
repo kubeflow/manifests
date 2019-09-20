@@ -7,9 +7,18 @@ spec:
   - name: imageName
     type: string
     description: container image name
+  - name: acceleratorType
+    type: string
+    description: accelerator type
+  - name: acceleratorCount
+    type: string
+    description: accelerator count
   steps:
   - name: run-model
     image: ${params.imageName}
+    resources:
+      limits:
+        ${params.acceleratorType}: ${params.acceleratorCount}
     volumeMounts:
     - name: kubeflow
       mountPath: /kubeflow
