@@ -5,9 +5,9 @@
     taskRef:
       name: run-model
     params:
-    - name: imageName
-      value: "$(image_name)"
-    - name: acceleratorType
-      value: "$(accelerator_type)"
-    - name: acceleratorCount
-      value: "$(accelerator_count)"
+#    - name: imageName
+#      value: "$(image_name)"
+#    - name: acceleratorType
+#      value: "$(accelerator_type)"
+#    - name: acceleratorCount
+#      value: "$(accelerator_count)"

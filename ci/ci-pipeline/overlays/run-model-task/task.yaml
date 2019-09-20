@@ -4,15 +4,15 @@ metadata:
   name: run-model
 spec:
   params:
-  - name: imageName
-    type: string
-    description: container image name
-  - name: acceleratorType
-    type: string
-    description: accelerator type
-  - name: acceleratorCount
-    type: string
-    description: accelerator count
+#  - name: imageName
+#    type: string
+#    description: container image name
+#  - name: acceleratorType
+#    type: string
+#    description: accelerator type
+#  - name: acceleratorCount
+#    type: string
+#    description: accelerator count
   steps:
   - name: run-model
     #image: ${params.imageName}
@@ -20,7 +20,7 @@ spec:
     resources:
       limits:
         #${params.acceleratorType}: "${params.acceleratorCount}"
-        nvidia/com: "1"
+        nvidia/com: 1 
     volumeMounts:
     - name: kubeflow
       mountPath: /kubeflow
@@ -28,3 +28,5 @@ spec:
   - name: kubeflow
     persistentVolumeClaim:
       claimName: ci-pipeline-run-persistent-volume-claim
+  nodeSelector:
+    accelerator: nvidia-tesla-p100
