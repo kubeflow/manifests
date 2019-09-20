@@ -11,7 +11,7 @@ spec:
   podTemplate:
     securityContext:
       runAsNonRoot: true
-    nodeSelector:
-      accelerator: "nvidia-tesla-p100"
-      cloud.google.com/gke-accelerator: "nvidia-tesla-p100"
+#    nodeSelector:
+#      accelerator: "nvidia-tesla-p100"
+#      cloud.google.com/gke-accelerator: "nvidia-tesla-p100"
   resources: []

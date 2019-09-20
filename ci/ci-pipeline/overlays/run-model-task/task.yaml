@@ -4,23 +4,21 @@ metadata:
   name: run-model
 spec:
   params:
-#  - name: imageName
-#    type: string
-#    description: container image name
-#  - name: acceleratorType
-#    type: string
-#    description: accelerator type
-#  - name: acceleratorCount
-#    type: string
-#    description: accelerator count
+  - name: imageName
+    type: string
+    description: container image name
+  - name: acceleratorType
+    type: string
+    description: accelerator type
+  - name: acceleratorCount
+    type: string
+    description: accelerator count
   steps:
   - name: run-model
-    #image: ${params.imageName}
-    image: "gcr.io/constant-cubist-173123/tf-test-gpu@sha256:706ff9468ba09eab305c2768321a9950e6e5c1be9e0ccfd8bc9af9e4ea6becee"
+    image: ${params.imageName}
     resources:
       limits:
-        #${params.acceleratorType}: "${params.acceleratorCount}"
-        nvidia/com: 1 
+        ${params.acceleratorType}: "${params.acceleratorCount}"
     volumeMounts:
     - name: kubeflow
       mountPath: /kubeflow
