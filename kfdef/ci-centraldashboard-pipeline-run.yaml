@@ -27,8 +27,6 @@ spec:
         value: components/centraldashboard
       - name: path_to_docker_file
         value: components/centraldashboard/Dockerfile
-      - name: path_to_manifests_kustomization_file
-        value: common/centraldashboard
       - name: path_to_manifests_dir
         value: common/centraldashboard/base
       - name: container_image
