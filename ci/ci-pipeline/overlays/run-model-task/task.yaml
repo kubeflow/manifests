@@ -28,5 +28,3 @@ spec:
   - name: kubeflow
     persistentVolumeClaim:
       claimName: ci-pipeline-run-persistent-volume-claim
-  nodeSelector:
-    accelerator: nvidia-tesla-p100
