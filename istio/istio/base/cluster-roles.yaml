@@ -1,0 +1,53 @@
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-istio-admin
+  labels:
+    rbac.example.com/aggregate-to-kubeflow-admin: "true"
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.example.com/aggregate-to-kubeflow-istio-admin: "true"
+rules: []
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-istio-edit
+  labels:
+    rbac.example.com/aggregate-to-kubeflow-edit: "true"
+    rbac.example.com/aggregate-to-kubeflow-istio-admin: "true"
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.example.com/aggregate-to-kubeflow-isito-edit: "true"
+rules:
+- apiGroups: ["istio.io"]
+  resources: ["*"]
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-istio-view
+  labels:
+    rbac.example.com/aggregate-to-kubeflow-view: "true"
+    rbac.example.com/aggregate-to-kubeflow-istio-edit: "true"
+rules:
+- apiGroups: ["istio.io"]
+  resources: ["*"]
+  verbs:
+  - get
+  - list
+  - watch
