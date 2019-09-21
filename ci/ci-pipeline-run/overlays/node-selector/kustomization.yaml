@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+patchesJson6902:
+- target:
+    group: tekton.dev
+    version: v1alpha1
+    kind: PipelineRun
+    name: $(generateName)
+  path: pipeline-run-patch.yaml
+configMapGenerator:
+- name: ci-pipeline-run-parameters
+  behavior: merge
+  env: params.env
+vars:
+- name: accelerator_type
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-run-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.accelerator_type
+configurations:
+- params.yaml

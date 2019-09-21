@@ -1,0 +1,5 @@
+- op: add
+  path: /spec/podTemplate
+  value:
+    nodeSelector:
+      accelerator: $(accelerator_type)
