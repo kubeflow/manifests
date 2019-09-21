@@ -124,6 +124,61 @@ metadata:
 spec:
   mode: $(clusterRbacConfig)
 `)
+	th.writeF("/manifests/istio/istio/base/cluster-roles.yaml", `
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-istio-admin
+  labels:
+    rbac.example.com/aggregate-to-kubeflow-admin: "true"
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.example.com/aggregate-to-kubeflow-istio-admin: "true"
+rules: []
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-istio-edit
+  labels:
+    rbac.example.com/aggregate-to-kubeflow-edit: "true"
+    rbac.example.com/aggregate-to-kubeflow-istio-admin: "true"
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.example.com/aggregate-to-kubeflow-isito-edit: "true"
+rules:
+- apiGroups: ["istio.io"]
+  resources: ["*"]
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-istio-view
+  labels:
+    rbac.example.com/aggregate-to-kubeflow-view: "true"
+    rbac.example.com/aggregate-to-kubeflow-istio-edit: "true"
+rules:
+- apiGroups: ["istio.io"]
+  resources: ["*"]
+  verbs:
+  - get
+  - list
+  - watch
+`)
 	th.writeF("/manifests/istio/istio/base/params.yaml", `
 varReference:
 - path: spec/mode
@@ -137,6 +192,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - kf-istio-resources.yaml
+- cluster-roles.yaml
 namespace: kubeflow
 configMapGenerator:
 - name: istio-parameters
