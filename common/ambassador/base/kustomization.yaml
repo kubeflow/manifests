@@ -21,7 +21,7 @@ generatorOptions:
 patchesJson6902:
 - target:
     group: apps
-    version: v1beta1
+    version: v1
     kind: Deployment
     name: ambassador
   path: deployment-ambassador-patch.yaml

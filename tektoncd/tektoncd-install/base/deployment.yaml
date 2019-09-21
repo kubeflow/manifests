@@ -1,5 +1,5 @@
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tekton-pipelines-controller
@@ -46,7 +46,7 @@ spec:
           name: config-logging
         name: config-logging
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tekton-pipelines-webhook

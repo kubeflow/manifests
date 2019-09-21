@@ -1,5 +1,5 @@
 # Patch the env/volumes/volumeMounts for GCP credentials
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: iap-enabler
