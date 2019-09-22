@@ -6,6 +6,9 @@ metadata:
     component: suggestion-hyperband
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      component: suggestion-hyperband
   template:
     metadata:
       name: vizier-suggestion-hyperband

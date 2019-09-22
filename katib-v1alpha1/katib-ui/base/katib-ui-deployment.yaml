@@ -6,6 +6,9 @@ metadata:
     component: ui
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      component: ui
   template:
     metadata:
       name: katib-ui

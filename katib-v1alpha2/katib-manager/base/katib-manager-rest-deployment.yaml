@@ -7,6 +7,10 @@ metadata:
     component: manager-rest
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: manager-rest
   template:
     metadata:
       name: katib-manager-rest

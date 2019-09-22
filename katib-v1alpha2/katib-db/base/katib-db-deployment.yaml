@@ -7,6 +7,10 @@ metadata:
     component: db
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: db
   template:
     metadata:
       name: katib-db

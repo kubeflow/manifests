@@ -7,6 +7,10 @@ metadata:
     component: suggestion-random
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: suggestion-random
   template:
     metadata:
       name: katib-suggestion-random

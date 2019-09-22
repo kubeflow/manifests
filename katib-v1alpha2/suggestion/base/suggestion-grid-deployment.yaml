@@ -7,6 +7,10 @@ metadata:
     component: suggestion-grid
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: suggestion-grid
   template:
     metadata:
       name: katib-suggestion-grid

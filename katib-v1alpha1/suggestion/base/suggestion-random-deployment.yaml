@@ -6,6 +6,9 @@ metadata:
     component: suggestion-random
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      component: suggestion-random
   template:
     metadata:
       name: vizier-suggestion-random

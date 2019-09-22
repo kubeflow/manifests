@@ -14291,6 +14291,13 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: galley
+      chart: galley
+      heritage: Tiller
+      release: istio      
+      istio: galley
   template:
     metadata:
       labels:
@@ -14415,6 +14422,13 @@ metadata:
     app: istio-egressgateway
     istio: egressgateway
 spec:
+  selector:
+    matchLabels:
+      chart: gateways
+      heritage: Tiller
+      release: istio
+      app: istio-egressgateway
+      istio: egressgateway
   template:
     metadata:
       labels:
@@ -14580,6 +14594,13 @@ metadata:
     app: istio-ingressgateway
     istio: ingressgateway
 spec:
+  selector:
+    matchLabels:
+      chart: gateways
+      heritage: Tiller
+      release: istio
+      app: istio-ingressgateway
+      istio: ingressgateway
   template:
     metadata:
       labels:
@@ -14754,6 +14775,12 @@ metadata:
     release: istio
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+      chart: grafana
+      heritage: Tiller
+      release: istio
   template:
     metadata:
       labels:
@@ -15636,6 +15663,13 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: security
+      chart: security
+      heritage: Tiller
+      release: istio
+      istio: citadel
   template:
     metadata:
       labels:
@@ -15722,6 +15756,13 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: sidecarInjectorWebhook
+      chart: sidecarInjectorWebhook
+      heritage: Tiller
+      release: istio
+      istio: sidecar-injector
   template:
     metadata:
       labels:
@@ -15839,6 +15880,12 @@ metadata:
     heritage: Tiller
     release: istio
 spec:
+  selector:
+    matchLabels:
+      app: jaeger
+      chart: tracing
+      heritage: Tiller
+      release: istio
   template:
     metadata:
       labels:

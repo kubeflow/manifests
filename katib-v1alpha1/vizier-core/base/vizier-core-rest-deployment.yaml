@@ -6,6 +6,9 @@ metadata:
     component: core-rest
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      component: core-rest
   template:
     metadata:
       name: vizier-core-rest
