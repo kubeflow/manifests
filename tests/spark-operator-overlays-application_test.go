@@ -13,7 +13,61 @@ import (
 	"testing"
 )
 
-func writeSparkOperatorBase(th *KustTestHarness) {
+func writeSparkOperatorOverlaysApplication(th *KustTestHarness) {
+	th.writeF("/manifests/spark/spark-operator/overlays/application/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: spark-operator
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sparkoperator
+      app.kubernetes.io/instance: spark-operator
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: sppark-operator
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.6 
+  componentKinds:
+  - group: core
+    kind: Service
+  - group: apps
+    kind: Deployment
+  - group: core
+    kind: ConfigMap
+  - group: core
+    kind: ServiceAccount
+  - group: kubeflow.org
+    kind: SparkOperator
+  descriptor:
+    type: "spark-operator"
+    version: "v1"
+    description: "Spark-operator allows users to create and manage the \"SparkApplication\" custom resource."
+    maintainers:
+    - name: Holden Karau
+      email: holden@pigscanfly.ca
+    owners:
+    - name: Holden Karau
+      email: holden@pigscanfly.ca
+    keywords:
+    - "spark"
+  addOwnerRef: true
+`)
+	th.writeK("/manifests/spark/spark-operator/overlays/application", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- application.yaml
+commonLabels:
+  app.kubernetes.io/name: sparkoperator
+  app.kubernetes.io/instance: spark-operator
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: spark-operator
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.6
+`)
 	th.writeF("/manifests/spark/spark-operator/base/spark-sa.yaml", `
 apiVersion: v1
 kind: ServiceAccount
@@ -217,9 +271,9 @@ resources:
 `)
 }
 
-func TestSparkOperatorBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/spark/spark-operator/base")
-	writeSparkOperatorBase(th)
+func TestSparkOperatorOverlaysApplication(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/spark/spark-operator/overlays/application")
+	writeSparkOperatorOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -228,7 +282,7 @@ func TestSparkOperatorBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../spark/spark-operator/base"
+	targetPath := "../spark/spark-operator/overlays/application"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
