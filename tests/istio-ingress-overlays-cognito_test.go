@@ -23,19 +23,16 @@ metadata:
     alb.ingress.kubernetes.io/auth-type: cognito
     alb.ingress.kubernetes.io/auth-idp-cognito: '{"UserPoolArn":"$(CognitoUserPoolArn)","UserPoolClientId":"$(CognitoAppClientId)", "UserPoolDomain":"$(CognitoUserPoolDomain)"}'
     alb.ingress.kubernetes.io/certificate-arn: $(certArn)
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
-`)
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'`)
 	th.writeF("/manifests/aws/istio-ingress/overlays/cognito/params.yaml", `
 varReference:
 - path: metadata/annotations
-  kind: Ingress
-`)
+  kind: Ingress`)
 	th.writeF("/manifests/aws/istio-ingress/overlays/cognito/params.env", `
 CognitoUserPoolArn=
 CognitoAppClientId=
 CognitoUserPoolDomain=
-certArn=
-`)
+certArn=`)
 	th.writeK("/manifests/aws/istio-ingress/overlays/cognito", `
 bases:
 - ../../base
@@ -74,8 +71,7 @@ vars:
   fieldref:
     fieldpath: data.certArn
 configurations:
-- params.yaml
-`)
+- params.yaml`)
 	th.writeF("/manifests/aws/istio-ingress/base/ingress.yaml", `
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -92,8 +88,7 @@ spec:
           - backend:
               serviceName: istio-ingressgateway
               servicePort: 80
-            path: /*
-`)
+            path: /*`)
 	th.writeF("/manifests/aws/istio-ingress/base/istio-gateway.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
@@ -109,8 +104,7 @@ spec:
     port:
       name: http
       number: 80
-      protocol: HTTP
-`)
+      protocol: HTTP`)
 	th.writeK("/manifests/aws/istio-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
