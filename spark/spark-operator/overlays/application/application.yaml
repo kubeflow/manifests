@@ -11,7 +11,7 @@ spec:
       app.kubernetes.io/component: sppark-operator
       app.kubernetes.io/part-of: kubeflow
       app.kubernetes.io/version: v0.6 
-componentKinds:
+  componentKinds:
   - group: core
     kind: Service
   - group: apps

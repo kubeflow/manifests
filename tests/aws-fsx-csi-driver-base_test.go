@@ -1,13 +1,15 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/pkg/fs"
-	"sigs.k8s.io/kustomize/pkg/loader"
-	"sigs.k8s.io/kustomize/pkg/resmap"
-	"sigs.k8s.io/kustomize/pkg/resource"
-	"sigs.k8s.io/kustomize/pkg/target"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
 	"testing"
 )
 
@@ -69,8 +71,7 @@ spec:
               mountPath: /var/lib/csi/sockets/pluginproxy/
       volumes:
         - name: socket-dir
-          emptyDir: {}
-`)
+          emptyDir: {}`)
 	th.writeF("/manifests/aws/aws-fsx-csi-driver/base/csi-attacher-cluster-role.yaml", `
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -85,8 +86,7 @@ rules:
     verbs: ["get", "list", "watch"]
   - apiGroups: ["storage.k8s.io"]
     resources: ["volumeattachments"]
-    verbs: ["get", "list", "watch", "update"]
-`)
+    verbs: ["get", "list", "watch", "update"]`)
 	th.writeF("/manifests/aws/aws-fsx-csi-driver/base/csi-attacher-cluster-role-binding.yaml", `
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -99,8 +99,7 @@ subjects:
 roleRef:
   kind: ClusterRole
   name: fsx-csi-external-attacher-clusterrole
-  apiGroup: rbac.authorization.k8s.io
-`)
+  apiGroup: rbac.authorization.k8s.io`)
 	th.writeF("/manifests/aws/aws-fsx-csi-driver/base/csi-controller-cluster-role.yaml", `
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -118,8 +117,7 @@ rules:
     verbs: ["get", "list", "watch"]
   - apiGroups: [""]
     resources: ["events"]
-    verbs: ["get", "list", "watch", "create", "update", "patch"]
-`)
+    verbs: ["get", "list", "watch", "create", "update", "patch"]`)
 	th.writeF("/manifests/aws/aws-fsx-csi-driver/base/csi-controller-cluster-role-binding.yaml", `
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -132,8 +130,7 @@ subjects:
 roleRef:
   kind: ClusterRole
   name: external-provisioner-role
-  apiGroup: rbac.authorization.k8s.io
-`)
+  apiGroup: rbac.authorization.k8s.io`)
 	th.writeF("/manifests/aws/aws-fsx-csi-driver/base/csi-controller-sa.yaml", `
 apiVersion: v1
 kind: ServiceAccount
@@ -177,8 +174,7 @@ subjects:
 roleRef:
   kind: ClusterRole
   name: fsx-csi-node-clusterrole
-  apiGroup: rbac.authorization.k8s.io
-`)
+  apiGroup: rbac.authorization.k8s.io`)
 	th.writeF("/manifests/aws/aws-fsx-csi-driver/base/csi-node-daemonset.yaml", `
 kind: DaemonSet
 apiVersion: apps/v1beta2
@@ -279,8 +275,7 @@ rules:
     verbs: ["get", "list", "watch"]
   - apiGroups: [""]
     resources: ["events"]
-    verbs: ["get", "list", "watch", "create", "update", "patch"]
-`)
+    verbs: ["get", "list", "watch", "create", "update", "patch"]`)
 	th.writeF("/manifests/aws/aws-fsx-csi-driver/base/csi-provisioner-cluster-role-binding.yaml", `
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -293,15 +288,13 @@ subjects:
 roleRef:
   kind: ClusterRole
   name: fsx-external-provisioner-clusterrole
-  apiGroup: rbac.authorization.k8s.io
-`)
+  apiGroup: rbac.authorization.k8s.io`)
 	th.writeF("/manifests/aws/aws-fsx-csi-driver/base/csi-default-storage.yaml", `
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: fsx-default
-provisioner: fsx.csi.aws.com
-`)
+provisioner: fsx.csi.aws.com`)
 	th.writeK("/manifests/aws/aws-fsx-csi-driver/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -342,18 +335,20 @@ func TestAwsFsxCsiDriverBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := m.EncodeAsYaml()
+	expected, err := m.AsYaml()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
 	targetPath := "../aws/aws-fsx-csi-driver/base"
 	fsys := fs.MakeRealFS()
-	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
 	if loaderErr != nil {
 		t.Fatalf("could not load kustomize loader: %v", loaderErr)
 	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
 	if err != nil {
 		th.t.Fatalf("Unexpected construction error %v", err)
 	}
