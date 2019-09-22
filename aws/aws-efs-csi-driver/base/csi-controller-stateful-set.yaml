@@ -5,6 +5,9 @@ metadata:
 spec:
   serviceName: efs-csi-controller
   replicas: 1
+  selector:
+    matchLabels:
+      app: efs-csi-controller
   template:
     metadata:
       labels:

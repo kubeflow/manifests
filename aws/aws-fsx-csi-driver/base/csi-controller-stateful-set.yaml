@@ -5,6 +5,9 @@ metadata:
 spec:
   serviceName: fsx-csi-controller
   replicas: 1
+  selector:
+    matchLabels:
+      app: fsx-csi-controller
   template:
     metadata:
       labels:
