@@ -172,8 +172,8 @@ spec:
     image: "${inputs.params.kfctl_image}"
     imagePullPolicy: IfNotPresent
     workingDir: "${inputs.params.pvc_mount_path}/${inputs.params.app_dir}/gcp_config"
-    #command: ["/bin/sleep", "infinity"]
-    command: ["/bin/bash", "/update-gcp-config/update-gcp-config.sh"]
+    command: ["/bin/sleep", "infinity"]
+    #command: ["/bin/bash", "/update-gcp-config/update-gcp-config.sh"]
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
