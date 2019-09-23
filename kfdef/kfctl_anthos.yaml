@@ -9,12 +9,8 @@ metadata:
 spec:
   repos:
   - name: manifests
-    #root: manifests-master
-    #uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
-    uri: https://github.com/kubeflow/manifests/archive/pull/368/head.tar.gz
-  # - name: kubeflow
-  #   root: kubeflow-master
-  #   uri: https://github.com/kubeflow/kubeflow/archive/master.tar.gz
+    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
+    #uri: https://github.com/kubeflow/manifests/archive/pull/368/head.tar.gz
   applications:
   # This component is the istio resources for Kubeflow (e.g. gateway), not about installing istio.
   - kustomizeConfig:
