@@ -64,6 +64,11 @@ spec:
   - kustomizeConfig:
       overlays:
       - istio
+      parameters:
+      - name: userid-header
+        value: X-Goog-Authenticated-User-Email
+      - name: userid-prefix
+        value: "accounts.google.com:"
       repoRef:
         name: manifests
         path: common/centraldashboard
@@ -85,6 +90,11 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: userid-header
+        value: X-Goog-Authenticated-User-Email
+      - name: userid-prefix
+        value: "accounts.google.com:"
       repoRef:
         name: manifests
         path: jupyter/jupyter-web-app
@@ -281,6 +291,10 @@ spec:
       - initRequired: true
         name: admin
         value: SET_EMAIL
+      - name: userid-header
+        value: X-Goog-Authenticated-User-Email
+      - name: userid-prefix
+        value: "accounts.google.com:"
       repoRef:
         name: manifests
         path: profiles
@@ -318,7 +332,7 @@ spec:
     name: seldon-core-operator
   # email should  be set the google account of the person setting up Kubeflow.
   # If its not set kfctl generate will try to set it automatically based on the default
-  # gcloud config  
+  # gcloud config
   # email: <your_email@gmail.com>
   enableApplications: true
   packageManager: kustomize
@@ -336,6 +350,6 @@ spec:
   useIstio: true
   version: master
   # Project should be set to the GCP project you want to use.
-  # If you run kfctl init --config=<path>/kfctl_gcp_iap.yaml 
+  # If you run kfctl init --config=<path>/kfctl_gcp_iap.yaml
   # kfctl will try to automatically set it.
   # project: <your project>
