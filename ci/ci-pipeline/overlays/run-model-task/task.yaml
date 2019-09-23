@@ -20,7 +20,7 @@ spec:
     resources:
       limits:
         #${inputs.params.acceleratorName}: "${inputs.params.acceleratorCount}"
-        nvidia.com/gpu: "${inputs.params.acceleratorCount}"
+        nvidia.com/gpu: '1'
     volumeMounts:
     - name: kubeflow
       mountPath: /kubeflow
