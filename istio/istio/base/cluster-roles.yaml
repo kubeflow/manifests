@@ -24,7 +24,7 @@ metadata:
 aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
-      rbac.example.com/aggregate-to-kubeflow-isito-edit: "true"
+      rbac.example.com/aggregate-to-kubeflow-istio-edit: "true"
 rules:
 - apiGroups: ["istio.io"]
   resources: ["*"]
