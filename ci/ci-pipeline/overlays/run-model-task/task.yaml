@@ -17,7 +17,9 @@ spec:
   steps:
   - name: run-model
     #image: ${inputs.params.imageName}
-    image: gcr.io/constant-cubist-173123/tf-test-gpu@sha256:706ff9468ba09eab305c2768321a9950e6e5c1be9e0ccfd8bc9af9e4ea6becee
+    image: gcr.io/constant-cubist-173123/tf-test-gpu@sha256:1b0fd2ddb871c4cb56234ffa428c6661fa4024edf140bcbe7865aab49e7f5b70"
+    command: ["/bin/sleep", "infinity"]
+    #command: ["python", "model.py"]
     workingDir: /kubeflow
     resources:
       limits:
