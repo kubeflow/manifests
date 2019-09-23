@@ -10,3 +10,4 @@ data:
       tensorboard --logdir train
     else
       echo 'run model failed'
+    fi
