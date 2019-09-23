@@ -134,11 +134,11 @@ kind: ClusterRole
 metadata:
   name: kubeflow-istio-admin
   labels:
-    rbac.example.com/aggregate-to-kubeflow-admin: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
 aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
-      rbac.example.com/aggregate-to-kubeflow-istio-admin: "true"
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-istio-admin: "true"
 rules: []
 
 ---
@@ -148,16 +148,15 @@ kind: ClusterRole
 metadata:
   name: kubeflow-istio-edit
   labels:
-    rbac.example.com/aggregate-to-kubeflow-edit: "true"
-    rbac.example.com/aggregate-to-kubeflow-istio-admin: "true"
-aggregationRule:
-  clusterRoleSelectors:
-  - matchLabels:
-      rbac.example.com/aggregate-to-kubeflow-isito-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-istio-admin: "true"
 rules:
 - apiGroups: ["istio.io"]
   resources: ["*"]
   verbs:
+  - get
+  - list
+  - watch
   - create
   - delete
   - deletecollection
@@ -171,8 +170,7 @@ kind: ClusterRole
 metadata:
   name: kubeflow-istio-view
   labels:
-    rbac.example.com/aggregate-to-kubeflow-view: "true"
-    rbac.example.com/aggregate-to-kubeflow-istio-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
 rules:
 - apiGroups: ["istio.io"]
   resources: ["*"]

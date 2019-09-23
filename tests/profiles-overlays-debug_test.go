@@ -199,7 +199,7 @@ spec:
         - $(userid-header)
         - "-userid-prefix"
         - $(userid-prefix)
-        image: gcr.io/kubeflow-images-public/profile-controller:v20190619-v0-219-gbd3daa8c-dirty-1ced0e
+        image: krishnadurai/profile-controller
         imagePullPolicy: Always
         name: manager
       - command:
