@@ -89,7 +89,7 @@ spec:
   version: v1
 `)
 	th.writeF("/manifests/gcp/cloud-endpoints/base/deployment.yaml", `
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cloud-endpoints-controller

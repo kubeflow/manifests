@@ -14292,7 +14292,7 @@ spec:
 
 ---
 # Source: istio/charts/galley/templates/deployment.yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-galley
@@ -14308,6 +14308,13 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: galley
+      chart: galley
+      heritage: Tiller
+      release: istio      
+      istio: galley
   template:
     metadata:
       labels:
@@ -14421,7 +14428,7 @@ spec:
 ---
 # Source: istio/charts/gateways/templates/deployment.yaml
 
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-egressgateway
@@ -14432,6 +14439,13 @@ metadata:
     app: istio-egressgateway
     istio: egressgateway
 spec:
+  selector:
+    matchLabels:
+      chart: gateways
+      heritage: Tiller
+      release: istio
+      app: istio-egressgateway
+      istio: egressgateway
   template:
     metadata:
       labels:
@@ -14586,7 +14600,7 @@ spec:
                 values:
                 - s390x      
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-ingressgateway
@@ -14597,6 +14611,13 @@ metadata:
     app: istio-ingressgateway
     istio: ingressgateway
 spec:
+  selector:
+    matchLabels:
+      chart: gateways
+      heritage: Tiller
+      release: istio
+      app: istio-ingressgateway
+      istio: ingressgateway
   template:
     metadata:
       labels:
@@ -14760,7 +14781,7 @@ spec:
 
 ---
 # Source: istio/charts/grafana/templates/deployment.yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: grafana
@@ -14771,6 +14792,12 @@ metadata:
     release: istio
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+      chart: grafana
+      heritage: Tiller
+      release: istio
   template:
     metadata:
       labels:
@@ -14909,7 +14936,7 @@ spec:
 
 ---
 # Source: istio/charts/kiali/templates/deployment.yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kiali
@@ -15010,7 +15037,7 @@ spec:
 ---
 # Source: istio/charts/mixer/templates/deployment.yaml
 
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-policy
@@ -15181,7 +15208,7 @@ spec:
           readOnly: true
 
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-telemetry
@@ -15359,7 +15386,7 @@ spec:
 
 ---
 # Source: istio/charts/pilot/templates/deployment.yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-pilot
@@ -15540,7 +15567,7 @@ spec:
 ---
 # Source: istio/charts/prometheus/templates/deployment.yaml
 # TODO: the original template has service account, roles, etc
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
@@ -15637,7 +15664,7 @@ spec:
 ---
 # Source: istio/charts/security/templates/deployment.yaml
 # istio CA watching all namespaces
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-citadel
@@ -15653,6 +15680,13 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: security
+      chart: security
+      heritage: Tiller
+      release: istio
+      istio: citadel
   template:
     metadata:
       labels:
@@ -15723,7 +15757,7 @@ spec:
 
 ---
 # Source: istio/charts/sidecarInjectorWebhook/templates/deployment.yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-sidecar-injector
@@ -15739,6 +15773,13 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: sidecarInjectorWebhook
+      chart: sidecarInjectorWebhook
+      heritage: Tiller
+      release: istio
+      istio: sidecar-injector
   template:
     metadata:
       labels:
@@ -15846,7 +15887,7 @@ spec:
 # Source: istio/charts/tracing/templates/deployment-jaeger.yaml
 
 
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-tracing
@@ -15856,6 +15897,12 @@ metadata:
     heritage: Tiller
     release: istio
 spec:
+  selector:
+    matchLabels:
+      app: jaeger
+      chart: tracing
+      heritage: Tiller
+      release: istio
   template:
     metadata:
       labels:
@@ -15957,7 +16004,7 @@ spec:
   maxReplicas: 5
   minReplicas: 1
   scaleTargetRef:
-    apiVersion: apps/v1beta1
+    apiVersion: apps/v1
     kind: Deployment
     name: istio-egressgateway
   metrics:
@@ -15979,7 +16026,7 @@ spec:
   maxReplicas: 5
   minReplicas: 1
   scaleTargetRef:
-    apiVersion: apps/v1beta1
+    apiVersion: apps/v1
     kind: Deployment
     name: istio-ingressgateway
   metrics:
@@ -16005,7 +16052,7 @@ spec:
     maxReplicas: 5
     minReplicas: 1
     scaleTargetRef:
-      apiVersion: apps/v1beta1
+      apiVersion: apps/v1
       kind: Deployment
       name: istio-policy
     metrics:
@@ -16027,7 +16074,7 @@ spec:
     maxReplicas: 5
     minReplicas: 1
     scaleTargetRef:
-      apiVersion: apps/v1beta1
+      apiVersion: apps/v1
       kind: Deployment
       name: istio-telemetry
     metrics:
@@ -16053,7 +16100,7 @@ spec:
   maxReplicas: 5
   minReplicas: 1
   scaleTargetRef:
-    apiVersion: apps/v1beta1
+    apiVersion: apps/v1
     kind: Deployment
     name: istio-pilot
   metrics:

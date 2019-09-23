@@ -80,7 +80,7 @@ rules:
   - delete
 `)
 	th.writeF("/manifests/pipeline/pipelines-viewer/base/deployment.yaml", `
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: controller-deployment

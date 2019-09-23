@@ -93,7 +93,7 @@ data:
   MYSQL_ROOT_PASSWORD: dGVzdA== # "test"
 `)
 	th.writeF("/manifests/metadata/base/metadata-db-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: db
@@ -160,7 +160,7 @@ spec:
     component: db
 `)
 	th.writeF("/manifests/metadata/base/metadata-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: deployment
@@ -213,7 +213,7 @@ spec:
     name: backendapi
 `)
 	th.writeF("/manifests/metadata/base/metadata-ui-deployment.yaml", `
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ui

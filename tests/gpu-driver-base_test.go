@@ -15,7 +15,7 @@ import (
 
 func writeGpuDriverBase(th *KustTestHarness) {
 	th.writeF("/manifests/gcp/gpu-driver/base/daemon-set.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:

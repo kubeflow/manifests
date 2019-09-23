@@ -162,7 +162,7 @@ data:
       </match>
     </label>`)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/daemonset.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: fluentd-cloudwatch
@@ -229,7 +229,8 @@ spec:
             path: /var/lib/docker/containers
         - name: runlogjournal
           hostPath:
-            path: /run/log/journal`)
+            path: /run/log/journal
+`)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount

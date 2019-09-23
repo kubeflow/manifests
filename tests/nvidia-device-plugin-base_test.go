@@ -15,7 +15,7 @@ import (
 
 func writeNvidiaDevicePluginBase(th *KustTestHarness) {
 	th.writeF("/manifests/aws/nvidia-device-plugin/base/daemonset.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: nvidia-device-plugin-daemonset
@@ -51,7 +51,8 @@ spec:
       volumes:
         - name: device-plugin
           hostPath:
-            path: /var/lib/kubelet/device-plugins`)
+            path: /var/lib/kubelet/device-plugins
+`)
 	th.writeK("/manifests/aws/nvidia-device-plugin/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization

@@ -15,7 +15,7 @@ import (
 
 func writeIstioIngressOverlaysOidc(th *KustTestHarness) {
 	th.writeF("/manifests/aws/istio-ingress/overlays/oidc/ingress.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: istio-ingress
@@ -25,7 +25,8 @@ metadata:
     alb.ingress.kubernetes.io/auth-type: oidc
     alb.ingress.kubernetes.io/auth-idp-cognito: '{"Issuer":"$(oidcIssuer)","AuthorizationEndpoint":"$(oidcAuthorizationEndpoint)","TokenEndpoint":"$(oidcTokenEndpoint)","UserInfoEndpoint":"$(oidcUserInfoEndpoint)","SecretName":"$(oidcSecretName)"}'
     alb.ingress.kubernetes.io/certificate-arn: $(certArn)
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'`)
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+`)
 	th.writeF("/manifests/aws/istio-ingress/overlays/oidc/params.yaml", `
 varReference:
 - path: metadata/annotations
@@ -102,7 +103,7 @@ vars:
 configurations:
 - params.yaml`)
 	th.writeF("/manifests/aws/istio-ingress/base/ingress.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:
@@ -117,7 +118,8 @@ spec:
           - backend:
               serviceName: istio-ingressgateway
               servicePort: 80
-            path: /*`)
+            path: /*
+`)
 	th.writeF("/manifests/aws/istio-ingress/base/istio-gateway.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway

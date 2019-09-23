@@ -15,7 +15,7 @@ import (
 
 func writeIstioIngressBase(th *KustTestHarness) {
 	th.writeF("/manifests/aws/istio-ingress/base/ingress.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:
@@ -30,7 +30,8 @@ spec:
           - backend:
               serviceName: istio-ingressgateway
               servicePort: 80
-            path: /*`)
+            path: /*
+`)
 	th.writeF("/manifests/aws/istio-ingress/base/istio-gateway.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway

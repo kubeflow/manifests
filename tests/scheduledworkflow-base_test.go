@@ -35,7 +35,7 @@ spec:
     storage: true
 `)
 	th.writeF("/manifests/pipeline/scheduledworkflow/base/deployment.yaml", `
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ml-pipeline-scheduledworkflow

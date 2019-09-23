@@ -90,7 +90,7 @@ commonLabels:
   app.kubernetes.io/version: v0.6
 `)
 	th.writeF("/manifests/katib-v1alpha2/katib-db/base/katib-db-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: katib-db
@@ -99,6 +99,10 @@ metadata:
     component: db
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: db
   template:
     metadata:
       name: katib-db

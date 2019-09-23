@@ -15,7 +15,7 @@ import (
 
 func writeStudyjobBase(th *KustTestHarness) {
 	th.writeF("/manifests/katib-v1alpha1/studyjob/base/studyjob-controller-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: studyjob-controller
