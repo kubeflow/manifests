@@ -31,7 +31,6 @@ metadata:
   labels:
     app: kiali
     chart: kiali
-    heritage: Tiller
     release: istio
 type: Opaque
 data:
@@ -47,7 +46,6 @@ metadata:
   labels:
     app: galley
     chart: galley
-    heritage: Tiller
     release: istio
     istio: galley
 data:
@@ -60,7 +58,6 @@ data:
       labels:
         app: galley
         chart: galley
-        heritage: Tiller
         release: istio
         istio: galley
     webhooks:
@@ -171,7 +168,6 @@ metadata:
   labels:
     app: grafana
     chart: grafana
-    heritage: Tiller
     release: istio
     istio: grafana
 data:
@@ -184,7 +180,6 @@ data:
       labels:
         app: grafana
         chart: grafana
-        heritage: Tiller
         release: istio
     spec:
       targets:
@@ -234,7 +229,6 @@ metadata:
   labels:
     app: grafana
     chart: grafana
-    heritage: Tiller
     release: istio
     istio: grafana
 data:
@@ -2066,7 +2060,6 @@ metadata:
   labels:
     app: grafana
     chart: grafana
-    heritage: Tiller
     release: istio
     istio: grafana
 data:
@@ -3032,7 +3025,6 @@ metadata:
   labels:
     app: grafana
     chart: grafana
-    heritage: Tiller
     release: istio
     istio: grafana
 data:
@@ -3662,7 +3654,6 @@ metadata:
   labels:
     app: grafana
     chart: grafana
-    heritage: Tiller
     release: istio
     istio: grafana
 data:
@@ -6276,7 +6267,6 @@ metadata:
   labels:
     app: grafana
     chart: grafana
-    heritage: Tiller
     release: istio
     istio: grafana
 data:
@@ -8592,7 +8582,6 @@ metadata:
   labels:
     app: grafana
     chart: grafana
-    heritage: Tiller
     release: istio
     istio: grafana
 data:
@@ -10413,7 +10402,6 @@ metadata:
   labels:
     app: grafana
     chart: grafana
-    heritage: Tiller
     release: istio
     istio: grafana
 data:
@@ -12024,7 +12012,6 @@ metadata:
   labels:
     app: grafana
     chart: grafana
-    heritage: Tiller
     release: istio
     istio: grafana
 data:
@@ -12061,7 +12048,6 @@ metadata:
   labels:
     app: kiali
     chart: kiali
-    heritage: Tiller
     release: istio
 data:
   config.yaml: |
@@ -12085,7 +12071,6 @@ metadata:
   labels:
     app: prometheus
     chart: prometheus
-    heritage: Tiller
     release: istio
 data:
   prometheus.yml: |-
@@ -12399,7 +12384,6 @@ metadata:
   labels:	
     app: security	
     chart: security	
-    heritage: Tiller	
     release: istio	
     istio: citadel	
 data:	
@@ -12412,7 +12396,6 @@ data:
       labels:
         app: security
         chart: security
-        heritage: Tiller
         release: istio
     spec:
       peers:
@@ -12461,7 +12444,6 @@ metadata:
   labels:
     app: istio
     chart: istio
-    heritage: Tiller
     release: istio
 data:
   mesh: |-
@@ -12605,7 +12587,6 @@ metadata:
   labels:
     app: istio
     chart: istio
-    heritage: Tiller
     release: istio
     istio: sidecar-injector
 data:
@@ -12823,7 +12804,6 @@ metadata:
   labels:
     app: galley
     chart: galley
-    heritage: Tiller
     release: istio
 
 ---
@@ -12836,7 +12816,6 @@ metadata:
   labels:
     app: istio-egressgateway
     chart: gateways
-    heritage: Tiller
     release: istio
 ---
 apiVersion: v1
@@ -12846,7 +12825,6 @@ metadata:
   labels:
     app: istio-ingressgateway
     chart: gateways
-    heritage: Tiller
     release: istio
 ---
 
@@ -12860,7 +12838,6 @@ metadata:
   labels:
     app: grafana
     chart: grafana
-    heritage: Tiller
     release: istio
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -12870,7 +12847,6 @@ metadata:
   labels:
     app: grafana
     chart: grafana
-    heritage: Tiller
     release: istio
 rules:
 - apiGroups: ["authentication.istio.io"] # needed to create default authn policy
@@ -12884,7 +12860,6 @@ metadata:
   labels:
     app: grafana
     chart: grafana
-    heritage: Tiller
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -12905,7 +12880,6 @@ metadata:
   labels:
     app: grafana
     chart: grafana
-    heritage: Tiller
     release: istio
 spec:
   template:
@@ -12914,7 +12888,6 @@ spec:
       labels:
         app: istio-grafana
         chart: grafana
-        heritage: Tiller
         release: istio
     spec:
       serviceAccountName: istio-grafana-post-install-account
@@ -12973,7 +12946,6 @@ metadata:
   labels:
     app: kiali
     chart: kiali
-    heritage: Tiller
     release: istio
 
 ---
@@ -12986,7 +12958,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 
 ---
@@ -12998,7 +12969,6 @@ metadata:
   labels:
     app: pilot
     chart: pilot
-    heritage: Tiller
     release: istio
 
 ---
@@ -13010,7 +12980,6 @@ metadata:
   labels:
     app: prometheus
     chart: prometheus
-    heritage: Tiller
     release: istio
 
 ---
@@ -13035,7 +13004,6 @@ metadata:
   labels:
     app: security
     chart: security
-    heritage: Tiller
     release: istio
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -13049,7 +13017,6 @@ metadata:
   labels:
     app: security
     chart: security
-    heritage: Tiller
     release: istio
 rules:
 - apiGroups: [""]
@@ -13067,7 +13034,6 @@ metadata:
   labels:
     app: security
     chart: security
-    heritage: Tiller
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13089,7 +13055,6 @@ metadata:
   labels:
     app: security
     chart: security
-    heritage: Tiller
     release: istio
 spec:
   template:
@@ -13098,7 +13063,6 @@ spec:
       labels:
         app: security
         chart: security
-        heritage: Tiller
         release: istio
     spec:
       serviceAccountName: istio-cleanup-secrets-service-account
@@ -13160,7 +13124,6 @@ metadata:
   labels:	
     app: security	
     chart: security	
-    heritage: Tiller	
     release: istio	
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1	
@@ -13170,7 +13133,6 @@ metadata:
   labels:	
     app: security	
     chart: security	
-    heritage: Tiller	
     release: istio	
 rules:	
 - apiGroups: ["authentication.istio.io"] # needed to create default authn policy	
@@ -13193,7 +13155,6 @@ metadata:
   labels:	
     app: security	
     chart: security	
-    heritage: Tiller	
     release: istio	
 roleRef:	
   apiGroup: rbac.authorization.k8s.io	
@@ -13214,7 +13175,6 @@ metadata:
   labels:	
     app: security	
     chart: security	
-    heritage: Tiller	
     release: istio	
 spec:	
   template:	
@@ -13223,7 +13183,6 @@ spec:
       labels:	
         app: security	
         chart: security	
-        heritage: Tiller	
         release: istio	
     spec:	
       serviceAccountName: istio-security-post-install-account	
@@ -13283,7 +13242,6 @@ metadata:
   labels:
     app: security
     chart: security
-    heritage: Tiller
     release: istio
 
 ---
@@ -13295,7 +13253,6 @@ metadata:
   labels:
     app: sidecarInjectorWebhook
     chart: sidecarInjectorWebhook
-    heritage: Tiller
     release: istio
     istio: sidecar-injector
 
@@ -13315,7 +13272,6 @@ metadata:
   labels:
     app: galley
     chart: galley
-    heritage: Tiller
     release: istio
 rules:
 - apiGroups: ["admissionregistration.k8s.io"]
@@ -13358,7 +13314,6 @@ metadata:
   labels:
     app: egressgateway
     chart: gateways
-    heritage: Tiller
     release: istio
 rules:
 - apiGroups: ["networking.istio.io"]
@@ -13372,7 +13327,6 @@ metadata:
   labels:
     app: ingressgateway
     chart: gateways
-    heritage: Tiller
     release: istio
 rules:
 - apiGroups: ["networking.istio.io"]
@@ -13389,7 +13343,6 @@ metadata:
   labels:
     app: kiali
     chart: kiali
-    heritage: Tiller
     release: istio
 rules:
 - apiGroups: [""]
@@ -13514,7 +13467,6 @@ metadata:
   labels:
     app: kiali
     chart: kiali
-    heritage: Tiller
     release: istio
 rules:
 - apiGroups: [""]
@@ -13632,7 +13584,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 rules:
 - apiGroups: ["config.istio.io"] # istio CRD watcher
@@ -13657,7 +13608,6 @@ metadata:
   labels:
     app: pilot
     chart: pilot
-    heritage: Tiller
     release: istio
 rules:
 - apiGroups: ["config.istio.io"]
@@ -13694,7 +13644,6 @@ metadata:
   labels:
     app: prometheus
     chart: prometheus
-    heritage: Tiller
     release: istio
 rules:
 - apiGroups: [""]
@@ -13721,7 +13670,6 @@ metadata:
   labels:
     app: security
     chart: security
-    heritage: Tiller
     release: istio
 rules:
 - apiGroups: [""]
@@ -13746,7 +13694,6 @@ metadata:
   labels:
     app: sidecarInjectorWebhook
     chart: sidecarInjectorWebhook
-    heritage: Tiller
     release: istio
     istio: sidecar-injector
 rules:
@@ -13780,7 +13727,6 @@ metadata:
   labels:
     app: galley
     chart: galley
-    heritage: Tiller
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13801,7 +13747,6 @@ metadata:
   labels:
     app: egressgateway
     chart: gateways
-    heritage: Tiller
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13818,7 +13763,6 @@ metadata:
   labels:
     app: ingressgateway
     chart: gateways
-    heritage: Tiller
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13838,7 +13782,6 @@ metadata:
   labels:
     app: kiali
     chart: kiali
-    heritage: Tiller
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13858,7 +13801,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13878,7 +13820,6 @@ metadata:
   labels:
     app: pilot
     chart: pilot
-    heritage: Tiller
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13898,7 +13839,6 @@ metadata:
   labels:
     app: prometheus
     chart: prometheus
-    heritage: Tiller
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13917,7 +13857,6 @@ metadata:
   labels:
     app: security
     chart: security
-    heritage: Tiller
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13937,7 +13876,6 @@ metadata:
   labels:
     app: sidecarInjectorWebhook
     chart: sidecarInjectorWebhook
-    heritage: Tiller
     release: istio
     istio: sidecar-injector
 roleRef:
@@ -14003,7 +13941,6 @@ metadata:
   labels:
     app: galley
     chart: galley
-    heritage: Tiller
     release: istio
     istio: galley
 spec:
@@ -14026,7 +13963,6 @@ metadata:
   name: istio-egressgateway
   labels:
     chart: gateways
-    heritage: Tiller
     release: istio
     app: istio-egressgateway
     istio: egressgateway
@@ -14056,7 +13992,6 @@ metadata:
     beta.cloud.google.com/backend-config: '{"ports": {"http2":"iap-backendconfig"}}'
   labels:
     chart: gateways
-    heritage: Tiller
     release: istio
     app: istio-ingressgateway
     istio: ingressgateway
@@ -14115,7 +14050,6 @@ metadata:
   labels:
     app: grafana
     chart: grafana
-    heritage: Tiller
     release: istio
 spec:
   type: ClusterIP
@@ -14136,7 +14070,6 @@ metadata:
   labels:
     app: kiali
     chart: kiali
-    heritage: Tiller
     release: istio
 spec:
   ports:
@@ -14158,7 +14091,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
     istio: mixer
 spec:
@@ -14182,7 +14114,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
     istio: mixer
 spec:
@@ -14210,7 +14141,6 @@ metadata:
   labels:
     app: pilot
     chart: pilot
-    heritage: Tiller
     release: istio
     istio: pilot
 spec:
@@ -14237,7 +14167,6 @@ metadata:
   labels:
     app: prometheus
     chart: prometheus
-    heritage: Tiller
     release: istio
 spec:
   selector:
@@ -14258,7 +14187,6 @@ metadata:
   labels:
     app: security
     chart: security
-    heritage: Tiller
     release: istio
     istio: citadel
 spec:
@@ -14281,7 +14209,6 @@ metadata:
   labels:
     app: sidecarInjectorWebhook
     chart: sidecarInjectorWebhook
-    heritage: Tiller
     release: istio
     istio: sidecar-injector
 spec:
@@ -14299,7 +14226,6 @@ metadata:
   labels:
     app: galley
     chart: galley
-    heritage: Tiller
     release: istio
     istio: galley
 spec:
@@ -14312,7 +14238,6 @@ spec:
     matchLabels:
       app: galley
       chart: galley
-      heritage: Tiller
       release: istio      
       istio: galley
   template:
@@ -14320,7 +14245,6 @@ spec:
       labels:
         app: galley
         chart: galley
-        heritage: Tiller
         release: istio      
         istio: galley
       annotations:
@@ -14434,7 +14358,6 @@ metadata:
   name: istio-egressgateway
   labels:
     chart: gateways
-    heritage: Tiller
     release: istio
     app: istio-egressgateway
     istio: egressgateway
@@ -14442,7 +14365,6 @@ spec:
   selector:
     matchLabels:
       chart: gateways
-      heritage: Tiller
       release: istio
       app: istio-egressgateway
       istio: egressgateway
@@ -14450,7 +14372,6 @@ spec:
     metadata:
       labels:
         chart: gateways
-        heritage: Tiller
         release: istio
         app: istio-egressgateway
         istio: egressgateway
@@ -14606,7 +14527,6 @@ metadata:
   name: istio-ingressgateway
   labels:
     chart: gateways
-    heritage: Tiller
     release: istio
     app: istio-ingressgateway
     istio: ingressgateway
@@ -14614,7 +14534,6 @@ spec:
   selector:
     matchLabels:
       chart: gateways
-      heritage: Tiller
       release: istio
       app: istio-ingressgateway
       istio: ingressgateway
@@ -14622,7 +14541,6 @@ spec:
     metadata:
       labels:
         chart: gateways
-        heritage: Tiller
         release: istio
         app: istio-ingressgateway
         istio: ingressgateway
@@ -14788,7 +14706,6 @@ metadata:
   labels:
     app: grafana
     chart: grafana
-    heritage: Tiller
     release: istio
 spec:
   replicas: 1
@@ -14796,14 +14713,12 @@ spec:
     matchLabels:
       app: grafana
       chart: grafana
-      heritage: Tiller
       release: istio
   template:
     metadata:
       labels:
         app: grafana
         chart: grafana
-        heritage: Tiller
         release: istio
       annotations:
         sidecar.istio.io/inject: "false"
@@ -14943,7 +14858,6 @@ metadata:
   labels:
     app: kiali
     chart: kiali
-    heritage: Tiller
     release: istio
 spec:
   replicas: 1
@@ -14956,7 +14870,6 @@ spec:
       labels:
         app: kiali
         chart: kiali
-        heritage: Tiller
         release: istio
       annotations:
         sidecar.istio.io/inject: "false"
@@ -15044,7 +14957,6 @@ metadata:
   labels:
     app: istio-mixer
     chart: mixer
-    heritage: Tiller
     release: istio
     istio: mixer
 spec:
@@ -15061,7 +14973,6 @@ spec:
       labels:
         app: policy
         chart: mixer
-        heritage: Tiller
         release: istio
         istio: mixer
         istio-mixer-type: policy
@@ -15215,7 +15126,6 @@ metadata:
   labels:
     app: istio-mixer
     chart: mixer
-    heritage: Tiller
     release: istio
     istio: mixer
 spec:
@@ -15232,7 +15142,6 @@ spec:
       labels:
         app: telemetry
         chart: mixer
-        heritage: Tiller
         release: istio
         istio: mixer
         istio-mixer-type: telemetry
@@ -15394,7 +15303,6 @@ metadata:
   labels:
     app: pilot
     chart: pilot
-    heritage: Tiller
     release: istio
     istio: pilot
   annotations:
@@ -15412,7 +15320,6 @@ spec:
       labels:
         app: pilot
         chart: pilot
-        heritage: Tiller
         release: istio
         istio: pilot
       annotations:
@@ -15574,7 +15481,6 @@ metadata:
   labels:
     app: prometheus
     chart: prometheus
-    heritage: Tiller
     release: istio
 spec:
   replicas: 1
@@ -15586,7 +15492,6 @@ spec:
       labels:
         app: prometheus
         chart: prometheus
-        heritage: Tiller
         release: istio
       annotations:
         sidecar.istio.io/inject: "false"
@@ -15671,7 +15576,6 @@ metadata:
   labels:
     app: security
     chart: security
-    heritage: Tiller
     release: istio
     istio: citadel
 spec:
@@ -15684,7 +15588,6 @@ spec:
     matchLabels:
       app: security
       chart: security
-      heritage: Tiller
       release: istio
       istio: citadel
   template:
@@ -15692,7 +15595,6 @@ spec:
       labels:
         app: security
         chart: security
-        heritage: Tiller
         release: istio
         istio: citadel
       annotations:
@@ -15764,7 +15666,6 @@ metadata:
   labels:
     app: sidecarInjectorWebhook
     chart: sidecarInjectorWebhook
-    heritage: Tiller
     release: istio
     istio: sidecar-injector
 spec:
@@ -15777,7 +15678,6 @@ spec:
     matchLabels:
       app: sidecarInjectorWebhook
       chart: sidecarInjectorWebhook
-      heritage: Tiller
       release: istio
       istio: sidecar-injector
   template:
@@ -15785,7 +15685,6 @@ spec:
       labels:
         app: sidecarInjectorWebhook
         chart: sidecarInjectorWebhook
-        heritage: Tiller
         release: istio
         istio: sidecar-injector
       annotations:
@@ -15894,21 +15793,18 @@ metadata:
   labels:
     app: jaeger
     chart: tracing
-    heritage: Tiller
     release: istio
 spec:
   selector:
     matchLabels:
       app: jaeger
       chart: tracing
-      heritage: Tiller
       release: istio
   template:
     metadata:
       labels:
         app: jaeger
         chart: tracing
-        heritage: Tiller
         release: istio
       annotations:
         sidecar.istio.io/inject: "false"
@@ -15998,7 +15894,6 @@ metadata:
   labels:
     app: egressgateway
     chart: gateways
-    heritage: Tiller
     release: istio
 spec:
   maxReplicas: 5
@@ -16020,7 +15915,6 @@ metadata:
   labels:
     app: ingressgateway
     chart: gateways
-    heritage: Tiller
     release: istio
 spec:
   maxReplicas: 5
@@ -16046,7 +15940,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
     maxReplicas: 5
@@ -16068,7 +15961,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
     maxReplicas: 5
@@ -16094,7 +15986,6 @@ metadata:
   labels:
     app: pilot
     chart: pilot
-    heritage: Tiller
     release: istio
 spec:
   maxReplicas: 5
@@ -16122,7 +16013,6 @@ metadata:
     app: jaeger
     jaeger-infra: jaeger-service
     chart: tracing
-    heritage: Tiller
     release: istio
 spec:
   ports:
@@ -16143,7 +16033,6 @@ metadata:
     app: jaeger
     jaeger-infra: collector-service
     chart: tracing
-    heritage: Tiller
     release: istio
 spec:
   ports:
@@ -16167,7 +16056,6 @@ metadata:
     app: jaeger
     jaeger-infra: agent-service
     chart: tracing
-    heritage: Tiller
     release: istio
 spec:
   ports:
@@ -16198,7 +16086,6 @@ metadata:
   labels:
     app: jaeger
     chart: tracing
-    heritage: Tiller
     release: istio
 spec:
   type: ClusterIP
@@ -16218,7 +16105,6 @@ metadata:
   labels:
     app: jaeger
     chart: tracing
-    heritage: Tiller
     release: istio
 spec:
   ports:
@@ -16240,7 +16126,6 @@ metadata:
   labels:
     app: sidecarInjectorWebhook
     chart: sidecarInjectorWebhook
-    heritage: Tiller
     release: istio
 webhooks:
   - name: sidecar-injector.istio.io
@@ -16271,7 +16156,6 @@ metadata:
   labels:
     app: galley
     chart: galley
-    heritage: Tiller
     release: istio
     istio: galley
 spec:
@@ -16292,7 +16176,6 @@ metadata:
   name: istio-egressgateway
   labels:
     chart: gateways
-    heritage: Tiller
     release: istio
     app: istio-egressgateway
     istio: egressgateway
@@ -16311,7 +16194,6 @@ metadata:
   name: istio-ingressgateway
   labels:
     chart: gateways
-    heritage: Tiller
     release: istio
     app: istio-ingressgateway
     istio: ingressgateway
@@ -16335,7 +16217,6 @@ metadata:
   labels:
     app: policy
     chart: mixer
-    heritage: Tiller
     release: istio
     version: 1.1.0
     istio: mixer
@@ -16357,7 +16238,6 @@ metadata:
   labels:
     app: telemetry
     chart: mixer
-    heritage: Tiller
     release: istio
     version: 1.1.0
     istio: mixer
@@ -16381,7 +16261,6 @@ metadata:
   labels:
     app: pilot
     chart: pilot
-    heritage: Tiller
     release: istio
     istio: pilot
 spec:
@@ -16401,7 +16280,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   attributes:
@@ -16541,7 +16419,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   attributes:
@@ -16605,7 +16482,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   compiledAdapter: stdio
@@ -16619,7 +16495,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   severity: '"Info"'
@@ -16675,7 +16550,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   severity: '"Info"'
@@ -16716,7 +16590,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   match: context.protocol == "http" || context.protocol == "grpc"
@@ -16732,7 +16605,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   match: context.protocol == "tcp"
@@ -16748,7 +16620,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   value: "1"
@@ -16782,7 +16653,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   value: response.duration | "0ms"
@@ -16816,7 +16686,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   value: request.size | 0
@@ -16850,7 +16719,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   value: response.size | 0
@@ -16884,7 +16752,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   value: connection.sent.bytes | 0
@@ -16914,7 +16781,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   value: connection.received.bytes | 0
@@ -16944,7 +16810,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   value: "1"
@@ -16974,7 +16839,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   value: "1"
@@ -17004,7 +16868,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   compiledAdapter: prometheus
@@ -17209,7 +17072,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   match: (context.protocol == "http" || context.protocol == "grpc") && (match((request.useragent | "-"), "kube-probe*") == false)
@@ -17228,7 +17090,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   match: context.protocol == "tcp"
@@ -17245,7 +17106,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   match: context.protocol == "tcp" && ((connection.event | "na") == "open")
@@ -17261,7 +17121,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   match: context.protocol == "tcp" && ((connection.event | "na") == "close")
@@ -17277,7 +17136,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   compiledAdapter: kubernetesenv
@@ -17297,7 +17155,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   actions:
@@ -17312,7 +17169,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   match: context.protocol == "tcp"
@@ -17328,7 +17184,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   # Pass the required attribute data to the adapter
@@ -17371,7 +17226,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   host: istio-policy.istio-system.svc.cluster.local
@@ -17388,7 +17242,6 @@ metadata:
   labels:
     app: mixer
     chart: mixer
-    heritage: Tiller
     release: istio
 spec:
   host: istio-telemetry.istio-system.svc.cluster.local
