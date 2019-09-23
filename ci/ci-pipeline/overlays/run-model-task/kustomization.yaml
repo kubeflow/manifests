@@ -24,13 +24,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.image_name
-- name: accelerator_type
+- name: accelerator_name
   objref:
     kind: ConfigMap
     name: ci-pipeline-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.accelerator_type
+    fieldpath: data.accelerator_name
 - name: accelerator_count
   objref:
     kind: ConfigMap
