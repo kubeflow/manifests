@@ -2,4 +2,4 @@
   path: /spec/podTemplate
   value:
     nodeSelector:
-      cloud.google.com/gke-accelerator: nvidia-tesla-t4: $(accelerator_type)
+      cloud.google.com\/gke-accelerator: $(accelerator_type)
