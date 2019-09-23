@@ -54,7 +54,7 @@ data:
     #!/usr/bin/env bash
     gpuNode=$(kubectl get nodes -oname | grep gpu)
     if [[ -n $gpuNode ]]; then
-      kubectl label $gpuNode accelerator=nvidia-tesla-p100
+      kubectl label $gpuNode accelerator=$(gpu-type)
     else
       echo 'no gpu node available'
     fi
