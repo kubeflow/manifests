@@ -80,7 +80,7 @@ rules:
   - apiGroups: ["batch"]
     resources: ["jobs", "jobs/status"]
     verbs: ["*"]
-  - apiGroups: ["extensions"]
+  - apiGroups: ["extensions", "networking.k8s.io"]
     verbs: ["*"]
     resources: ["ingresses","ingresses/status","deployments","deployments/status"]
   - apiGroups: [""]

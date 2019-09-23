@@ -13675,7 +13675,7 @@ rules:
 - apiGroups: ["apiextensions.k8s.io"]
   resources: ["customresourcedefinitions"]
   verbs: ["*"]
-- apiGroups: ["extensions"]
+- apiGroups: ["extensions", "networking.k8s.io"]
   resources: ["ingresses", "ingresses/status"]
   verbs: ["*"]
 - apiGroups: [""]
