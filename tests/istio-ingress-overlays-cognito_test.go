@@ -15,7 +15,7 @@ import (
 
 func writeIstioIngressOverlaysCognito(th *KustTestHarness) {
 	th.writeF("/manifests/aws/istio-ingress/overlays/cognito/ingress.yaml", `
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: istio-ingress
@@ -76,7 +76,7 @@ vars:
 configurations:
 - params.yaml`)
 	th.writeF("/manifests/aws/istio-ingress/base/ingress.yaml", `
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:

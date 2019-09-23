@@ -203,7 +203,7 @@ spec:
           timeoutSeconds: 5
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/ingress.yaml", `
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:

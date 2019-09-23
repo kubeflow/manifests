@@ -13343,7 +13343,7 @@ rules:
 - apiGroups: ["extensions"]
   resources: ["ingresses"]
   verbs: ["get", "list", "watch"]
-- apiGroups: ["extensions"]
+- apiGroups: ["extensions", "apps"]
   resources: ["deployments/finalizers"]
   resourceNames: ["istio-galley"]
   verbs: ["update"]

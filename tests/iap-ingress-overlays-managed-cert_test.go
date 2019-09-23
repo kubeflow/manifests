@@ -413,7 +413,7 @@ spec:
         name: config-volume
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/ingress.yaml", `
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:
