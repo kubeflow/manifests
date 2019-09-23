@@ -22,10 +22,3 @@ spec:
       limits:
         #${inputs.params.acceleratorName}: "${inputs.params.acceleratorCount}"
         nvidia.com/gpu: '1'
-    volumeMounts:
-    - name: kubeflow
-      mountPath: /kubeflow
-  volumes:
-  - name: kubeflow
-    persistentVolumeClaim:
-      claimName: ci-pipeline-run-persistent-volume-claim
