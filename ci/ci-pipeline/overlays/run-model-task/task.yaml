@@ -18,10 +18,16 @@ spec:
   - name: run-model
     #image: ${inputs.params.imageName}
     image: "gcr.io/constant-cubist-173123/tf-test-gpu@sha256:d8f3a79eb104928c9ec1e73a284d1db739591563815b41860c1d769e919ffb4c"
-    command: ["/bin/sleep", "infinity"]
-    #command: ["python", "model.py"]
+    command: ["/bin/bash", "run-model.sh"]
     workingDir: /kubeflow
     resources:
       limits:
         #${inputs.params.acceleratorName}: "${inputs.params.acceleratorCount}"
         nvidia.com/gpu: '1'
+    volumeMounts:
+    - name: run-model
+      mountPath: /run-model
+  volumes:
+  - name: run-model
+    configMap:
+      name: run-model

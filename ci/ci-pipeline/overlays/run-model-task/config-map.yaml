@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: run-model
+data:
+  run-model.sh: |-
+    #!/usr/bin/env bash
+    python model.py
+    if (( $? == 0 )); then
+      tensorboard --logdir train
+    else
+      echo 'run model failed'

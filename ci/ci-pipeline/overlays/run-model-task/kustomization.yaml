@@ -3,6 +3,7 @@ kind: Kustomization
 bases:
 - ../../base
 resources:
+- config-map.yaml
 - task.yaml
 namespace: kubeflow-ci
 patchesJson6902:
