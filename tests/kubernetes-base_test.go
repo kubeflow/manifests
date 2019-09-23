@@ -18,21 +18,7 @@ func writeKubernetesBase(th *KustTestHarness) {
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kubeflow-cluster-admin
-aggregationRule:
-  clusterRoleSelectors:
-  - matchLabels:
-      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-cluster-admin: "true"
-rules: []
-
----
-
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
   name: kubeflow-admin
-  labels:
-    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-cluster-admin: "true"
 aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
