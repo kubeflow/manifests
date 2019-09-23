@@ -13,3 +13,5 @@ varReference:
   kind: Task
 - path: data/update-gcp-config.sh
   kind: ConfigMap
+- path: data/label-accelerator-nodes.sh
+  kind: ConfigMap
