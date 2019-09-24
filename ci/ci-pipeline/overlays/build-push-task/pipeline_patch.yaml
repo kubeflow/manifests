@@ -14,6 +14,8 @@
       - name: $(image_name)
         resource: $(image_name)
     params:
+    - name: imageName
+      value: "$(image_name)"
     - name: pathToDockerfile
       value: "$(path_to_docker_file)"
     - name: pathToContext
