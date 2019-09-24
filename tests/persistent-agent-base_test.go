@@ -51,7 +51,7 @@ rules:
   - watch
 `)
 	th.writeF("/manifests/pipeline/persistent-agent/base/deployment.yaml", `
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: persistenceagent

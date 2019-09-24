@@ -19,8 +19,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: alb-ingress-controller
+  labels:
+    missing: label
 spec:
+  selector:
+    matchLabels:
+      missing: label
   template:
+    metadata:
+      labels:
+        missing: label
     spec:
       containers:
         - name: alb-ingress-controller
@@ -71,6 +79,7 @@ rules:
   - apiGroups:
       - ""
       - extensions
+      - networking.k8s.io
     resources:
       - configmaps
       - endpoints
@@ -97,7 +106,8 @@ rules:
     verbs:
       - get
       - list
-      - watch`)
+      - watch
+`)
 	th.writeF("/manifests/aws/aws-alb-ingress-controller/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

@@ -62,7 +62,7 @@ rules:
   - watch
 `)
 	th.writeF("/manifests/common/ambassador/base/deployment.yaml", `
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ambassador
@@ -178,7 +178,7 @@ generatorOptions:
 patchesJson6902:
 - target:
     group: apps
-    version: v1beta1
+    version: v1
     kind: Deployment
     name: ambassador
   path: deployment-ambassador-patch.yaml

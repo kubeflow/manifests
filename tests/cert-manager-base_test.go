@@ -66,13 +66,14 @@ rules:
   - '*'
 - apiGroups:
   - extensions
+  - networking.k8s.io
   resources:
   - ingresses
   verbs:
   - '*'
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/deployment.yaml", `
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:

@@ -6,6 +6,7 @@ rules:
   - apiGroups:
       - ""
       - extensions
+      - networking.k8s.io
     resources:
       - configmaps
       - endpoints

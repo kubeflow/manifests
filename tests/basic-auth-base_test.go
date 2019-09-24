@@ -15,7 +15,7 @@ import (
 
 func writeBasicAuthBase(th *KustTestHarness) {
 	th.writeF("/manifests/common/basic-auth/base/kflogin-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: basic-auth-login
@@ -38,7 +38,7 @@ spec:
         - containerPort: 5000
 `)
 	th.writeF("/manifests/common/basic-auth/base/gatekeeper-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: basic-auth

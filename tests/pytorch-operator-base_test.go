@@ -93,7 +93,7 @@ metadata:
   name: pytorch-operator-config
 `)
 	th.writeF("/manifests/pytorch-job/pytorch-operator/base/deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pytorch-operator

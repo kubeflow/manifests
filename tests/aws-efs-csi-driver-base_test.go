@@ -16,12 +16,15 @@ import (
 func writeAwsEfsCsiDriverBase(th *KustTestHarness) {
 	th.writeF("/manifests/aws/aws-efs-csi-driver/base/csi-controller-stateful-set.yaml", `
 kind: StatefulSet
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 metadata:
   name: efs-csi-controller
 spec:
   serviceName: efs-csi-controller
   replicas: 1
+  selector:
+    matchLabels:
+      app: efs-csi-controller
   template:
     metadata:
       labels:
@@ -60,7 +63,8 @@ spec:
               mountPath: /var/lib/csi/sockets/pluginproxy/
       volumes:
         - name: socket-dir
-          emptyDir: {}`)
+          emptyDir: {}
+`)
 	th.writeF("/manifests/aws/aws-efs-csi-driver/base/csi-attacher-cluster-role.yaml", `
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -133,7 +137,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io`)
 	th.writeF("/manifests/aws/aws-efs-csi-driver/base/csi-node-daemon-set.yaml", `
 kind: DaemonSet
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 metadata:
   name: efs-csi-node
 spec:

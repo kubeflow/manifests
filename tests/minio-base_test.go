@@ -15,7 +15,7 @@ import (
 
 func writeMinioBase(th *KustTestHarness) {
 	th.writeF("/manifests/pipeline/minio/base/deployment.yaml", `
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: minio

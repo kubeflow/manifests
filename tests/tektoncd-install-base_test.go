@@ -265,12 +265,15 @@ metadata:
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-install/base/deployment.yaml", `
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tekton-pipelines-controller
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: tekton-pipelines-controller
   template:
     metadata:
       annotations:
@@ -312,12 +315,15 @@ spec:
           name: config-logging
         name: config-logging
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tekton-pipelines-webhook
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: tekton-pipelines-webhook
   template:
     metadata:
       annotations:
