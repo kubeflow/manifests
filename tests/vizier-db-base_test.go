@@ -15,7 +15,7 @@ import (
 
 func writeVizierDbBase(th *KustTestHarness) {
 	th.writeF("/manifests/katib-v1alpha1/vizier-db/base/vizier-db-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vizier-db
@@ -23,6 +23,9 @@ metadata:
     component: db
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      component: db
   template:
     metadata:
       name: vizier-db

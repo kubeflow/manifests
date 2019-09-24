@@ -9,7 +9,7 @@ spec:
       kind: StatefulSet
     - group: v1
       kind: Service
-    - group: extensions/v1beta1
+    - group: apps/v1
       kind: Deployment
     - group: v1
       kind: Secret

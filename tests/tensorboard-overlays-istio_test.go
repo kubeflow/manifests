@@ -52,7 +52,7 @@ configurations:
 - params.yaml
 `)
 	th.writeF("/manifests/tensorboard/base/deployment.yaml", `
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:

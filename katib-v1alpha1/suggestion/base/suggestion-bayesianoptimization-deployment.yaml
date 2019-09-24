@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vizier-suggestion-bayesianoptimization
@@ -6,6 +6,9 @@ metadata:
     component: suggestion-bayesianoptimization
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      component: suggestion-bayesianoptimization
   template:
     metadata:
       name: vizier-suggestion-bayesianoptimization

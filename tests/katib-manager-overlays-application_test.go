@@ -86,7 +86,7 @@ commonLabels:
   app.kubernetes.io/version: v0.6
 `)
 	th.writeF("/manifests/katib-v1alpha2/katib-manager/base/katib-manager-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: katib-manager
@@ -95,6 +95,10 @@ metadata:
     component: manager
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: manager
   template:
     metadata:
       name: katib-manager
@@ -127,7 +131,7 @@ spec:
           initialDelaySeconds: 10
 `)
 	th.writeF("/manifests/katib-v1alpha2/katib-manager/base/katib-manager-rest-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: katib-manager-rest
@@ -136,6 +140,10 @@ metadata:
     component: manager-rest
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: manager-rest
   template:
     metadata:
       name: katib-manager-rest

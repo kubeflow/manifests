@@ -278,7 +278,7 @@ spec:
     storage: false
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tf-job-dashboard
@@ -302,7 +302,7 @@ spec:
         - containerPort: 8080
       serviceAccountName: tf-job-dashboard
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tf-job-operator

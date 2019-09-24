@@ -2,8 +2,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: alb-ingress-controller
+  labels:
+    missing: label
 spec:
+  selector:
+    matchLabels:
+      missing: label
   template:
+    metadata:
+      labels:
+        missing: label
     spec:
       containers:
         - name: alb-ingress-controller

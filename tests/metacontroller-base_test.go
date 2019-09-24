@@ -81,7 +81,7 @@ metadata:
   name: meta-controller-service
 `)
 	th.writeF("/manifests/metacontroller/base/stateful-set.yaml", `
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:

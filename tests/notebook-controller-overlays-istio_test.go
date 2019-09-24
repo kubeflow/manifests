@@ -15,7 +15,7 @@ import (
 
 func writeNotebookControllerOverlaysIstio(th *KustTestHarness) {
 	th.writeF("/manifests/jupyter/notebook-controller/overlays/istio/deployment.yaml", `
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: deployment
@@ -170,7 +170,7 @@ status:
 
 `)
 	th.writeF("/manifests/jupyter/notebook-controller/base/deployment.yaml", `
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: deployment

@@ -86,7 +86,7 @@ commonLabels:
   app.kubernetes.io/version: v0.6
 `)
 	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-bayesianoptimization-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: katib-suggestion-bayesianoptimization
@@ -95,6 +95,10 @@ metadata:
     component: suggestion-bayesianoptimization
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: suggestion-bayesianoptimization
   template:
     metadata:
       name: katib-suggestion-bayesianoptimization
@@ -129,7 +133,7 @@ spec:
     component: suggestion-bayesianoptimization
 `)
 	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-grid-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: katib-suggestion-grid
@@ -138,6 +142,10 @@ metadata:
     component: suggestion-grid
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: suggestion-grid
   template:
     metadata:
       name: katib-suggestion-grid
@@ -172,7 +180,7 @@ spec:
     component: suggestion-grid
 `)
 	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-hyperband-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: katib-suggestion-hyperband
@@ -181,6 +189,10 @@ metadata:
     component: suggestion-hyperband
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: suggestion-hyperband
   template:
     metadata:
       name: katib-suggestion-hyperband
@@ -215,7 +227,7 @@ spec:
     component: suggestion-hyperband
 `)
 	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-nasrl-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: katib-suggestion-nasrl
@@ -224,6 +236,10 @@ metadata:
     component: suggestion-nasrl
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: suggestion-nasrl
   template:
     metadata:
       name: katib-suggestion-nasrl
@@ -257,7 +273,7 @@ spec:
     component: suggestion-nasrl
 `)
 	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-random-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: katib-suggestion-random
@@ -266,6 +282,10 @@ metadata:
     component: suggestion-random
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: suggestion-random
   template:
     metadata:
       name: katib-suggestion-random

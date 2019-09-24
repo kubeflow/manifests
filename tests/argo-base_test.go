@@ -173,7 +173,7 @@ spec:
 `)
 	th.writeF("/manifests/argo/base/deployment.yaml", `
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -227,7 +227,7 @@ spec:
       serviceAccountName: argo-ui
       terminationGracePeriodSeconds: 30
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
