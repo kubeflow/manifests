@@ -31,7 +31,6 @@ kind: ConfigMap
 metadata:
   labels:
     app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
     helm.sh/chart: seldon-core-operator-0.4.0
   name: seldon-config
@@ -43,7 +42,6 @@ kind: ServiceAccount
 metadata:
   labels:
     app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
     helm.sh/chart: seldon-core-operator-0.4.0
   name: seldon-manager
@@ -55,7 +53,6 @@ kind: Service
 metadata:
   labels:
     app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
     control-plane: seldon-controller-manager
     controller-tools.k8s.io: "1.0"
@@ -75,7 +72,6 @@ kind: StatefulSet
 metadata:
   labels:
     app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
     control-plane: seldon-controller-manager
     controller-tools.k8s.io: "1.0"
@@ -169,7 +165,6 @@ kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
     helm.sh/chart: seldon-core-operator-0.4.0
   name: seldon-operator-manager-role
@@ -362,7 +357,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
     helm.sh/chart: seldon-core-operator-0.4.0
   name: seldon-operator-manager-rolebinding
@@ -3605,7 +3599,6 @@ kind: Service
 metadata:
   labels:
     app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
     control-plane: seldon-controller-manager
     controller-tools.k8s.io: "1.0"

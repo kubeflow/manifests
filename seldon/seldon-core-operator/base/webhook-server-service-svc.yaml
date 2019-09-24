@@ -3,7 +3,6 @@ kind: Service
 metadata:
   labels:
     app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
     control-plane: seldon-controller-manager
     controller-tools.k8s.io: "1.0"

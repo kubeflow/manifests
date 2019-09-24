@@ -23,7 +23,6 @@ metadata:
   labels:
     app: istio-pilot
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -65,7 +64,6 @@ metadata:
   labels:
     app: istio-pilot
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -103,7 +101,6 @@ metadata:
   labels:
     app: istio-pilot
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -149,7 +146,6 @@ metadata:
   labels:
     app: istio-pilot
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -174,7 +170,6 @@ metadata:
   labels:
     app: istio-pilot
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -197,7 +192,6 @@ metadata:
   labels:
     app: istio-pilot
     istio: rbac
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -220,7 +214,6 @@ metadata:
   labels:
     app: istio-citadel
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -243,7 +236,6 @@ metadata:
   labels:
     app: istio-citadel
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -267,7 +259,6 @@ metadata:
   labels:
     app: istio-mixer
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -290,7 +281,6 @@ metadata:
   labels:
     app: istio-mixer
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -313,7 +303,6 @@ metadata:
   labels:
     app: istio-mixer
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -336,7 +325,6 @@ metadata:
   labels:
     app: istio-mixer
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -361,7 +349,6 @@ metadata:
     package: istio.io.mixer
     istio: core
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -386,7 +373,6 @@ metadata:
     package: istio.io.mixer
     istio: core
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -411,7 +397,6 @@ metadata:
     package: bypass
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -436,7 +421,6 @@ metadata:
     package: circonus
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -461,7 +445,6 @@ metadata:
     package: denier
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -486,7 +469,6 @@ metadata:
     package: fluentd
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -511,7 +493,6 @@ metadata:
     package: kubernetesenv
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -536,7 +517,6 @@ metadata:
     package: listchecker
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -561,7 +541,6 @@ metadata:
     package: memquota
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -586,7 +565,6 @@ metadata:
     package: noop
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -611,7 +589,6 @@ metadata:
     package: opa
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -636,7 +613,6 @@ metadata:
     package: prometheus
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -661,7 +637,6 @@ metadata:
     package: rbac
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -686,7 +661,6 @@ metadata:
     package: redisquota
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -708,7 +682,6 @@ metadata:
     package: signalfx
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -733,7 +706,6 @@ metadata:
     package: solarwinds
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -758,7 +730,6 @@ metadata:
     package: stackdriver
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -783,7 +754,6 @@ metadata:
     package: statsd
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -808,7 +778,6 @@ metadata:
     package: stdio
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -833,7 +802,6 @@ metadata:
     package: apikey
     istio: mixer-instance
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -858,7 +826,6 @@ metadata:
     package: authorization
     istio: mixer-instance
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -883,7 +850,6 @@ metadata:
     package: checknothing
     istio: mixer-instance
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -908,7 +874,6 @@ metadata:
     package: adapter.template.kubernetes
     istio: mixer-instance
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -933,7 +898,6 @@ metadata:
     package: listentry
     istio: mixer-instance
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -958,7 +922,6 @@ metadata:
     package: logentry
     istio: mixer-instance
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1003,7 +966,6 @@ metadata:
     package: edge
     istio: mixer-instance
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1028,7 +990,6 @@ metadata:
     package: metric
     istio: mixer-instance
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1053,7 +1014,6 @@ metadata:
     package: quota
     istio: mixer-instance
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1078,7 +1038,6 @@ metadata:
     package: reportnothing
     istio: mixer-instance
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1103,7 +1062,6 @@ metadata:
     package: tracespan
     istio: mixer-instance
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1128,7 +1086,6 @@ metadata:
     package: istio.io.mixer
     istio: rbac
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1153,7 +1110,6 @@ metadata:
     package: istio.io.mixer
     istio: rbac
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1178,7 +1134,6 @@ metadata:
     package: istio.io.mixer
     istio: rbac
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1215,7 +1170,6 @@ metadata:
     package: adapter
     istio: mixer-adapter
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1240,7 +1194,6 @@ metadata:
     package: instance
     istio: mixer-instance
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1265,7 +1218,6 @@ metadata:
     package: template
     istio: mixer-template
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1290,7 +1242,6 @@ metadata:
     package: handler
     istio: mixer-handler
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1357,7 +1308,6 @@ metadata:
   labels:
     app: istio-pilot
     chart: istio
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1402,7 +1352,6 @@ metadata:
   labels:
     app: certmanager
     chart: certmanager
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1421,7 +1370,6 @@ metadata:
   labels:
     app: certmanager
     chart: certmanager
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1440,7 +1388,6 @@ metadata:
   labels:
     app: certmanager
     chart: certmanager
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1484,7 +1431,6 @@ metadata:
   labels:
     app: certmanager
     chart: certmanager
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1522,7 +1468,6 @@ metadata:
   labels:
     app: certmanager
     chart: certmanager
-    heritage: Tiller
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
