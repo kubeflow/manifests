@@ -4,14 +4,12 @@ data: null
 kind: ConfigMap
 metadata:
   name: config-artifact-bucket
-  namespace: tekton-pipelines
 ---
 apiVersion: v1
 data: null
 kind: ConfigMap
 metadata:
   name: config-artifact-pvc
-  namespace: tekton-pipelines
 ---
 apiVersion: v1
 data:
@@ -37,7 +35,6 @@ data:
 kind: ConfigMap
 metadata:
   name: config-defaults
-  namespace: tekton-pipelines
 ---
 apiVersion: v1
 data:
@@ -71,7 +68,6 @@ data:
 kind: ConfigMap
 metadata:
   name: config-logging
-  namespace: tekton-pipelines
 ---
 apiVersion: v1
 data:
@@ -111,5 +107,4 @@ data:
 kind: ConfigMap
 metadata:
   name: config-observability
-  namespace: tekton-pipelines
 ---

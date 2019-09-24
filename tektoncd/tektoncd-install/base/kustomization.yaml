@@ -6,10 +6,10 @@ resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - config-map.yaml
-- deployment.yaml
 - pod-security-policy.yaml
 - service-account.yaml
 - service.yaml
+- deployment.yaml
 namespace: tekton-pipelines
 configMapGenerator:
 - name: tektoncd-parameters
