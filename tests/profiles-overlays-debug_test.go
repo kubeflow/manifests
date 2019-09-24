@@ -199,7 +199,7 @@ spec:
         - $(userid-header)
         - "-userid-prefix"
         - $(userid-prefix)
-        image: krishnadurai/profile-controller
+        image: gcr.io/kubeflow-images-public/profile-controller:v20190619-v0-219-gbd3daa8c-dirty-1ced0e
         imagePullPolicy: Always
         name: manager
       - command:
@@ -211,7 +211,7 @@ spec:
         - $(userid-header)
         - "-userid-prefix"
         - $(userid-prefix)
-        image: krishnadurai/kfam
+        image: gcr.io/kubeflow-images-public/kfam:v20190612-v0-170-ga06cdb79-dirty-a33ee4
         imagePullPolicy: Always
         name: kfam
       serviceAccountName: controller-service-account

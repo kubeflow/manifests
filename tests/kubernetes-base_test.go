@@ -13,8 +13,8 @@ import (
 	"testing"
 )
 
-func writeKubernetesBase(th *KustTestHarness) {
-	th.writeF("/manifests/kubernetes/base/cluster-roles.yaml", `
+func writeKubeflowRolesBase(th *KustTestHarness) {
+	th.writeF("/manifests/kubeflow-roles/base/cluster-roles.yaml", `
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
@@ -55,7 +55,7 @@ aggregationRule:
       rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
 rules: []
 `)
-	th.writeK("/manifests/kubernetes/base", `
+	th.writeK("/manifests/kubeflow-roles/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -63,9 +63,9 @@ resources:
 `)
 }
 
-func TestKubernetesBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/kubernetes/base")
-	writeKubernetesBase(th)
+func TestKubeflowRolesBase(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/kubeflow-roles/base")
+	writeKubeflowRolesBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -74,7 +74,7 @@ func TestKubernetesBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../kubernetes/base"
+	targetPath := "../kubeflow-roles/base"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
