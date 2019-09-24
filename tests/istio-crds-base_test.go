@@ -22,7 +22,6 @@ metadata:
   name: virtualservices.networking.istio.io
   labels:
     app: istio-pilot
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -63,7 +62,6 @@ metadata:
   name: destinationrules.networking.istio.io
   labels:
     app: istio-pilot
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -100,7 +98,6 @@ metadata:
   name: serviceentries.networking.istio.io
   labels:
     app: istio-pilot
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -145,7 +142,6 @@ metadata:
   name: gateways.networking.istio.io
   labels:
     app: istio-pilot
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -169,7 +165,6 @@ metadata:
   name: envoyfilters.networking.istio.io
   labels:
     app: istio-pilot
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -213,7 +208,6 @@ metadata:
   name: policies.authentication.istio.io
   labels:
     app: istio-citadel
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -235,7 +229,6 @@ metadata:
   name: meshpolicies.authentication.istio.io
   labels:
     app: istio-citadel
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -258,7 +251,6 @@ metadata:
   name: httpapispecbindings.config.istio.io
   labels:
     app: istio-mixer
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -280,7 +272,6 @@ metadata:
   name: httpapispecs.config.istio.io
   labels:
     app: istio-mixer
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -302,7 +293,6 @@ metadata:
   name: quotaspecbindings.config.istio.io
   labels:
     app: istio-mixer
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -324,7 +314,6 @@ metadata:
   name: quotaspecs.config.istio.io
   labels:
     app: istio-mixer
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -348,7 +337,6 @@ metadata:
     app: mixer
     package: istio.io.mixer
     istio: core
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -372,7 +360,6 @@ metadata:
     app: mixer
     package: istio.io.mixer
     istio: core
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -396,7 +383,6 @@ metadata:
     app: mixer
     package: bypass
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -420,7 +406,6 @@ metadata:
     app: mixer
     package: circonus
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -444,7 +429,6 @@ metadata:
     app: mixer
     package: denier
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -468,7 +452,6 @@ metadata:
     app: mixer
     package: fluentd
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -492,7 +475,6 @@ metadata:
     app: mixer
     package: kubernetesenv
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -516,7 +498,6 @@ metadata:
     app: mixer
     package: listchecker
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -540,7 +521,6 @@ metadata:
     app: mixer
     package: memquota
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -564,7 +544,6 @@ metadata:
     app: mixer
     package: noop
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -588,7 +567,6 @@ metadata:
     app: mixer
     package: opa
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -612,7 +590,6 @@ metadata:
     app: mixer
     package: prometheus
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -636,7 +613,6 @@ metadata:
     app: mixer
     package: rbac
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -660,7 +636,6 @@ metadata:
     app: mixer
     package: redisquota
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -681,7 +656,6 @@ metadata:
     app: mixer
     package: signalfx
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -705,7 +679,6 @@ metadata:
     app: mixer
     package: solarwinds
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -729,7 +702,6 @@ metadata:
     app: mixer
     package: stackdriver
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -753,7 +725,6 @@ metadata:
     app: mixer
     package: statsd
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -777,7 +748,6 @@ metadata:
     app: mixer
     package: stdio
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -801,7 +771,6 @@ metadata:
     app: mixer
     package: apikey
     istio: mixer-instance
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -825,7 +794,6 @@ metadata:
     app: mixer
     package: authorization
     istio: mixer-instance
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -849,7 +817,6 @@ metadata:
     app: mixer
     package: checknothing
     istio: mixer-instance
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -873,7 +840,6 @@ metadata:
     app: mixer
     package: adapter.template.kubernetes
     istio: mixer-instance
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -897,7 +863,6 @@ metadata:
     app: mixer
     package: listentry
     istio: mixer-instance
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -921,7 +886,6 @@ metadata:
     app: mixer
     package: logentry
     istio: mixer-instance
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -965,7 +929,6 @@ metadata:
     app: mixer
     package: edge
     istio: mixer-instance
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -989,7 +952,6 @@ metadata:
     app: mixer
     package: metric
     istio: mixer-instance
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1013,7 +975,6 @@ metadata:
     app: mixer
     package: quota
     istio: mixer-instance
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1037,7 +998,6 @@ metadata:
     app: mixer
     package: reportnothing
     istio: mixer-instance
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1061,7 +1021,6 @@ metadata:
     app: mixer
     package: tracespan
     istio: mixer-instance
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1085,7 +1044,6 @@ metadata:
     app: mixer
     package: istio.io.mixer
     istio: rbac
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1109,7 +1067,6 @@ metadata:
     app: mixer
     package: istio.io.mixer
     istio: rbac
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1133,7 +1090,6 @@ metadata:
     app: mixer
     package: istio.io.mixer
     istio: rbac
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1169,7 +1125,6 @@ metadata:
     app: mixer
     package: adapter
     istio: mixer-adapter
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1193,7 +1148,6 @@ metadata:
     app: mixer
     package: instance
     istio: mixer-instance
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1217,7 +1171,6 @@ metadata:
     app: mixer
     package: template
     istio: mixer-template
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1241,7 +1194,6 @@ metadata:
     app: mixer
     package: handler
     istio: mixer-handler
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1307,7 +1259,6 @@ metadata:
   name: sidecars.networking.istio.io
   labels:
     app: istio-pilot
-    chart: istio
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1351,7 +1302,6 @@ metadata:
   name: clusterissuers.certmanager.k8s.io
   labels:
     app: certmanager
-    chart: certmanager
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1369,7 +1319,6 @@ metadata:
   name: issuers.certmanager.k8s.io
   labels:
     app: certmanager
-    chart: certmanager
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1387,7 +1336,6 @@ metadata:
   name: certificates.certmanager.k8s.io
   labels:
     app: certmanager
-    chart: certmanager
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1430,7 +1378,6 @@ metadata:
   name: orders.certmanager.k8s.io
   labels:
     app: certmanager
-    chart: certmanager
     release: istio
   annotations:
     "helm.sh/resource-policy": keep
@@ -1467,7 +1414,6 @@ metadata:
   name: challenges.certmanager.k8s.io
   labels:
     app: certmanager
-    chart: certmanager
     release: istio
   annotations:
     "helm.sh/resource-policy": keep

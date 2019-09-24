@@ -15,6 +15,5 @@ metadata:
   labels:
     app.kubernetes.io/instance: seldon-core-operator
     app.kubernetes.io/name: seldon-core-operator
-    helm.sh/chart: seldon-core-operator-0.4.0
   name: seldon-config
   namespace: kubeflow

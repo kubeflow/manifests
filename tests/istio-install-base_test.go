@@ -30,7 +30,6 @@ metadata:
   name: kiali
   labels:
     app: kiali
-    chart: kiali
     release: istio
 type: Opaque
 data:
@@ -45,7 +44,6 @@ metadata:
   name: istio-galley-configuration
   labels:
     app: galley
-    chart: galley
     release: istio
     istio: galley
 data:
@@ -57,7 +55,6 @@ data:
       namespace: istio-system
       labels:
         app: galley
-        chart: galley
         release: istio
         istio: galley
     webhooks:
@@ -167,7 +164,6 @@ metadata:
   name: istio-grafana-custom-resources
   labels:
     app: grafana
-    chart: grafana
     release: istio
     istio: grafana
 data:
@@ -179,7 +175,6 @@ data:
       namespace: istio-system
       labels:
         app: grafana
-        chart: grafana
         release: istio
     spec:
       targets:
@@ -228,7 +223,6 @@ metadata:
   name: istio-grafana-configuration-dashboards-galley-dashboard
   labels:
     app: grafana
-    chart: grafana
     release: istio
     istio: grafana
 data:
@@ -2059,7 +2053,6 @@ metadata:
   name: istio-grafana-configuration-dashboards-istio-mesh-dashboard
   labels:
     app: grafana
-    chart: grafana
     release: istio
     istio: grafana
 data:
@@ -3024,7 +3017,6 @@ metadata:
   name: istio-grafana-configuration-dashboards-istio-performance-dashboard
   labels:
     app: grafana
-    chart: grafana
     release: istio
     istio: grafana
 data:
@@ -3653,7 +3645,6 @@ metadata:
   name: istio-grafana-configuration-dashboards-istio-service-dashboard
   labels:
     app: grafana
-    chart: grafana
     release: istio
     istio: grafana
 data:
@@ -6266,7 +6257,6 @@ metadata:
   name: istio-grafana-configuration-dashboards-istio-workload-dashboard
   labels:
     app: grafana
-    chart: grafana
     release: istio
     istio: grafana
 data:
@@ -8581,7 +8571,6 @@ metadata:
   name: istio-grafana-configuration-dashboards-mixer-dashboard
   labels:
     app: grafana
-    chart: grafana
     release: istio
     istio: grafana
 data:
@@ -10401,7 +10390,6 @@ metadata:
   name: istio-grafana-configuration-dashboards-pilot-dashboard
   labels:
     app: grafana
-    chart: grafana
     release: istio
     istio: grafana
 data:
@@ -12011,7 +11999,6 @@ metadata:
   name: istio-grafana
   labels:
     app: grafana
-    chart: grafana
     release: istio
     istio: grafana
 data:
@@ -12047,7 +12034,6 @@ metadata:
   name: kiali
   labels:
     app: kiali
-    chart: kiali
     release: istio
 data:
   config.yaml: |
@@ -12070,7 +12056,6 @@ metadata:
   name: prometheus
   labels:
     app: prometheus
-    chart: prometheus
     release: istio
 data:
   prometheus.yml: |-
@@ -12383,7 +12368,6 @@ metadata:
   name: istio-security-custom-resources	
   labels:	
     app: security	
-    chart: security	
     release: istio	
     istio: citadel	
 data:	
@@ -12395,7 +12379,6 @@ data:
       name: "default"
       labels:
         app: security
-        chart: security
         release: istio
     spec:
       peers:
@@ -12443,7 +12426,6 @@ metadata:
   name: istio
   labels:
     app: istio
-    chart: istio
     release: istio
 data:
   mesh: |-
@@ -12586,7 +12568,6 @@ metadata:
   name: istio-sidecar-injector
   labels:
     app: istio
-    chart: istio
     release: istio
     istio: sidecar-injector
 data:
@@ -12803,7 +12784,6 @@ metadata:
   name: istio-galley-service-account
   labels:
     app: galley
-    chart: galley
     release: istio
 
 ---
@@ -12815,7 +12795,6 @@ metadata:
   name: istio-egressgateway-service-account
   labels:
     app: istio-egressgateway
-    chart: gateways
     release: istio
 ---
 apiVersion: v1
@@ -12824,7 +12803,6 @@ metadata:
   name: istio-ingressgateway-service-account
   labels:
     app: istio-ingressgateway
-    chart: gateways
     release: istio
 ---
 
@@ -12837,7 +12815,6 @@ metadata:
   name: istio-grafana-post-install-account
   labels:
     app: grafana
-    chart: grafana
     release: istio
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -12846,7 +12823,6 @@ metadata:
   name: istio-grafana-post-install-istio-system
   labels:
     app: grafana
-    chart: grafana
     release: istio
 rules:
 - apiGroups: ["authentication.istio.io"] # needed to create default authn policy
@@ -12859,7 +12835,6 @@ metadata:
   name: istio-grafana-post-install-role-binding-istio-system
   labels:
     app: grafana
-    chart: grafana
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -12879,7 +12854,6 @@ metadata:
     "helm.sh/hook-delete-policy": hook-succeeded
   labels:
     app: grafana
-    chart: grafana
     release: istio
 spec:
   template:
@@ -12887,7 +12861,6 @@ spec:
       name: istio-grafana-post-install
       labels:
         app: istio-grafana
-        chart: grafana
         release: istio
     spec:
       serviceAccountName: istio-grafana-post-install-account
@@ -12945,7 +12918,6 @@ metadata:
   name: kiali-service-account
   labels:
     app: kiali
-    chart: kiali
     release: istio
 
 ---
@@ -12957,7 +12929,6 @@ metadata:
   name: istio-mixer-service-account
   labels:
     app: mixer
-    chart: mixer
     release: istio
 
 ---
@@ -12968,7 +12939,6 @@ metadata:
   name: istio-pilot-service-account
   labels:
     app: pilot
-    chart: pilot
     release: istio
 
 ---
@@ -12979,7 +12949,6 @@ metadata:
   name: prometheus
   labels:
     app: prometheus
-    chart: prometheus
     release: istio
 
 ---
@@ -13003,7 +12972,6 @@ metadata:
     "helm.sh/hook-weight": "1"
   labels:
     app: security
-    chart: security
     release: istio
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -13016,7 +12984,6 @@ metadata:
     "helm.sh/hook-weight": "1"
   labels:
     app: security
-    chart: security
     release: istio
 rules:
 - apiGroups: [""]
@@ -13033,7 +13000,6 @@ metadata:
     "helm.sh/hook-weight": "2"
   labels:
     app: security
-    chart: security
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13054,7 +13020,6 @@ metadata:
     "helm.sh/hook-weight": "3"
   labels:
     app: security
-    chart: security
     release: istio
 spec:
   template:
@@ -13062,7 +13027,6 @@ spec:
       name: istio-cleanup-secrets
       labels:
         app: security
-        chart: security
         release: istio
     spec:
       serviceAccountName: istio-cleanup-secrets-service-account
@@ -13123,7 +13087,6 @@ metadata:
   name: istio-security-post-install-account	
   labels:	
     app: security	
-    chart: security	
     release: istio	
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1	
@@ -13132,7 +13095,6 @@ metadata:
   name: istio-security-post-install-istio-system	
   labels:	
     app: security	
-    chart: security	
     release: istio	
 rules:	
 - apiGroups: ["authentication.istio.io"] # needed to create default authn policy	
@@ -13154,7 +13116,6 @@ metadata:
   name: istio-security-post-install-role-binding-istio-system	
   labels:	
     app: security	
-    chart: security	
     release: istio	
 roleRef:	
   apiGroup: rbac.authorization.k8s.io	
@@ -13174,7 +13135,6 @@ metadata:
     "helm.sh/hook-delete-policy": hook-succeeded	
   labels:	
     app: security	
-    chart: security	
     release: istio	
 spec:	
   template:	
@@ -13182,7 +13142,6 @@ spec:
       name: istio-security-post-install	
       labels:	
         app: security	
-        chart: security	
         release: istio	
     spec:	
       serviceAccountName: istio-security-post-install-account	
@@ -13241,7 +13200,6 @@ metadata:
   name: istio-citadel-service-account
   labels:
     app: security
-    chart: security
     release: istio
 
 ---
@@ -13252,7 +13210,6 @@ metadata:
   name: istio-sidecar-injector-service-account
   labels:
     app: sidecarInjectorWebhook
-    chart: sidecarInjectorWebhook
     release: istio
     istio: sidecar-injector
 
@@ -13271,7 +13228,6 @@ metadata:
   name: istio-galley-istio-system
   labels:
     app: galley
-    chart: galley
     release: istio
 rules:
 - apiGroups: ["admissionregistration.k8s.io"]
@@ -13313,7 +13269,6 @@ metadata:
   name: istio-egressgateway-istio-system
   labels:
     app: egressgateway
-    chart: gateways
     release: istio
 rules:
 - apiGroups: ["networking.istio.io"]
@@ -13326,7 +13281,6 @@ metadata:
   name: istio-ingressgateway-istio-system
   labels:
     app: ingressgateway
-    chart: gateways
     release: istio
 rules:
 - apiGroups: ["networking.istio.io"]
@@ -13342,7 +13296,6 @@ metadata:
   name: kiali
   labels:
     app: kiali
-    chart: kiali
     release: istio
 rules:
 - apiGroups: [""]
@@ -13466,7 +13419,6 @@ metadata:
   name: kiali-viewer
   labels:
     app: kiali
-    chart: kiali
     release: istio
 rules:
 - apiGroups: [""]
@@ -13583,7 +13535,6 @@ metadata:
   name: istio-mixer-istio-system
   labels:
     app: mixer
-    chart: mixer
     release: istio
 rules:
 - apiGroups: ["config.istio.io"] # istio CRD watcher
@@ -13607,7 +13558,6 @@ metadata:
   name: istio-pilot-istio-system
   labels:
     app: pilot
-    chart: pilot
     release: istio
 rules:
 - apiGroups: ["config.istio.io"]
@@ -13643,7 +13593,6 @@ metadata:
   name: prometheus-istio-system
   labels:
     app: prometheus
-    chart: prometheus
     release: istio
 rules:
 - apiGroups: [""]
@@ -13669,7 +13618,6 @@ metadata:
   name: istio-citadel-istio-system
   labels:
     app: security
-    chart: security
     release: istio
 rules:
 - apiGroups: [""]
@@ -13693,7 +13641,6 @@ metadata:
   name: istio-sidecar-injector-istio-system
   labels:
     app: sidecarInjectorWebhook
-    chart: sidecarInjectorWebhook
     release: istio
     istio: sidecar-injector
 rules:
@@ -13726,7 +13673,6 @@ metadata:
   name: istio-galley-admin-role-binding-istio-system
   labels:
     app: galley
-    chart: galley
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13746,7 +13692,6 @@ metadata:
   name: istio-egressgateway-istio-system
   labels:
     app: egressgateway
-    chart: gateways
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13762,7 +13707,6 @@ metadata:
   name: istio-ingressgateway-istio-system
   labels:
     app: ingressgateway
-    chart: gateways
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13781,7 +13725,6 @@ metadata:
   name: istio-kiali-admin-role-binding-istio-system
   labels:
     app: kiali
-    chart: kiali
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13800,7 +13743,6 @@ metadata:
   name: istio-mixer-admin-role-binding-istio-system
   labels:
     app: mixer
-    chart: mixer
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13819,7 +13761,6 @@ metadata:
   name: istio-pilot-istio-system
   labels:
     app: pilot
-    chart: pilot
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13838,7 +13779,6 @@ metadata:
   name: prometheus-istio-system
   labels:
     app: prometheus
-    chart: prometheus
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13856,7 +13796,6 @@ metadata:
   name: istio-citadel-istio-system
   labels:
     app: security
-    chart: security
     release: istio
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -13875,7 +13814,6 @@ metadata:
   name: istio-sidecar-injector-admin-role-binding-istio-system
   labels:
     app: sidecarInjectorWebhook
-    chart: sidecarInjectorWebhook
     release: istio
     istio: sidecar-injector
 roleRef:
@@ -13894,7 +13832,6 @@ kind: ClusterRoleBinding
 metadata:
   name: istio-multi
   labels:
-    chart: istio-1.1.0
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -13940,7 +13877,6 @@ metadata:
   name: istio-galley
   labels:
     app: galley
-    chart: galley
     release: istio
     istio: galley
 spec:
@@ -13962,7 +13898,6 @@ kind: Service
 metadata:
   name: istio-egressgateway
   labels:
-    chart: gateways
     release: istio
     app: istio-egressgateway
     istio: egressgateway
@@ -13991,7 +13926,6 @@ metadata:
   annotations:
     beta.cloud.google.com/backend-config: '{"ports": {"http2":"iap-backendconfig"}}'
   labels:
-    chart: gateways
     release: istio
     app: istio-ingressgateway
     istio: ingressgateway
@@ -14049,7 +13983,6 @@ metadata:
   name: grafana
   labels:
     app: grafana
-    chart: grafana
     release: istio
 spec:
   type: ClusterIP
@@ -14069,7 +14002,6 @@ metadata:
   name: kiali
   labels:
     app: kiali
-    chart: kiali
     release: istio
 spec:
   ports:
@@ -14090,7 +14022,6 @@ metadata:
    networking.istio.io/exportTo: "*"
   labels:
     app: mixer
-    chart: mixer
     release: istio
     istio: mixer
 spec:
@@ -14113,7 +14044,6 @@ metadata:
    networking.istio.io/exportTo: "*"
   labels:
     app: mixer
-    chart: mixer
     release: istio
     istio: mixer
 spec:
@@ -14140,7 +14070,6 @@ metadata:
   name: istio-pilot
   labels:
     app: pilot
-    chart: pilot
     release: istio
     istio: pilot
 spec:
@@ -14166,7 +14095,6 @@ metadata:
     prometheus.io/scrape: 'true'
   labels:
     app: prometheus
-    chart: prometheus
     release: istio
 spec:
   selector:
@@ -14186,7 +14114,6 @@ metadata:
   name: istio-citadel
   labels:
     app: security
-    chart: security
     release: istio
     istio: citadel
 spec:
@@ -14208,7 +14135,6 @@ metadata:
   name: istio-sidecar-injector
   labels:
     app: sidecarInjectorWebhook
-    chart: sidecarInjectorWebhook
     release: istio
     istio: sidecar-injector
 spec:
@@ -14225,7 +14151,6 @@ metadata:
   name: istio-galley
   labels:
     app: galley
-    chart: galley
     release: istio
     istio: galley
 spec:
@@ -14237,14 +14162,12 @@ spec:
   selector:
     matchLabels:
       app: galley
-      chart: galley
       release: istio      
       istio: galley
   template:
     metadata:
       labels:
         app: galley
-        chart: galley
         release: istio      
         istio: galley
       annotations:
@@ -14357,21 +14280,18 @@ kind: Deployment
 metadata:
   name: istio-egressgateway
   labels:
-    chart: gateways
     release: istio
     app: istio-egressgateway
     istio: egressgateway
 spec:
   selector:
     matchLabels:
-      chart: gateways
       release: istio
       app: istio-egressgateway
       istio: egressgateway
   template:
     metadata:
       labels:
-        chart: gateways
         release: istio
         app: istio-egressgateway
         istio: egressgateway
@@ -14526,21 +14446,18 @@ kind: Deployment
 metadata:
   name: istio-ingressgateway
   labels:
-    chart: gateways
     release: istio
     app: istio-ingressgateway
     istio: ingressgateway
 spec:
   selector:
     matchLabels:
-      chart: gateways
       release: istio
       app: istio-ingressgateway
       istio: ingressgateway
   template:
     metadata:
       labels:
-        chart: gateways
         release: istio
         app: istio-ingressgateway
         istio: ingressgateway
@@ -14705,20 +14622,17 @@ metadata:
   name: grafana
   labels:
     app: grafana
-    chart: grafana
     release: istio
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: grafana
-      chart: grafana
       release: istio
   template:
     metadata:
       labels:
         app: grafana
-        chart: grafana
         release: istio
       annotations:
         sidecar.istio.io/inject: "false"
@@ -14857,7 +14771,6 @@ metadata:
   name: kiali
   labels:
     app: kiali
-    chart: kiali
     release: istio
 spec:
   replicas: 1
@@ -14869,7 +14782,6 @@ spec:
       name: kiali
       labels:
         app: kiali
-        chart: kiali
         release: istio
       annotations:
         sidecar.istio.io/inject: "false"
@@ -14956,7 +14868,6 @@ metadata:
   name: istio-policy
   labels:
     app: istio-mixer
-    chart: mixer
     release: istio
     istio: mixer
 spec:
@@ -14972,7 +14883,6 @@ spec:
     metadata:
       labels:
         app: policy
-        chart: mixer
         release: istio
         istio: mixer
         istio-mixer-type: policy
@@ -15125,7 +15035,6 @@ metadata:
   name: istio-telemetry
   labels:
     app: istio-mixer
-    chart: mixer
     release: istio
     istio: mixer
 spec:
@@ -15141,7 +15050,6 @@ spec:
     metadata:
       labels:
         app: telemetry
-        chart: mixer
         release: istio
         istio: mixer
         istio-mixer-type: telemetry
@@ -15302,7 +15210,6 @@ metadata:
   # TODO: default template doesn't have this, which one is right ?
   labels:
     app: pilot
-    chart: pilot
     release: istio
     istio: pilot
   annotations:
@@ -15319,7 +15226,6 @@ spec:
     metadata:
       labels:
         app: pilot
-        chart: pilot
         release: istio
         istio: pilot
       annotations:
@@ -15480,7 +15386,6 @@ metadata:
   name: prometheus
   labels:
     app: prometheus
-    chart: prometheus
     release: istio
 spec:
   replicas: 1
@@ -15491,7 +15396,6 @@ spec:
     metadata:
       labels:
         app: prometheus
-        chart: prometheus
         release: istio
       annotations:
         sidecar.istio.io/inject: "false"
@@ -15575,7 +15479,6 @@ metadata:
   name: istio-citadel
   labels:
     app: security
-    chart: security
     release: istio
     istio: citadel
 spec:
@@ -15587,14 +15490,12 @@ spec:
   selector:
     matchLabels:
       app: security
-      chart: security
       release: istio
       istio: citadel
   template:
     metadata:
       labels:
         app: security
-        chart: security
         release: istio
         istio: citadel
       annotations:
@@ -15665,7 +15566,6 @@ metadata:
   name: istio-sidecar-injector
   labels:
     app: sidecarInjectorWebhook
-    chart: sidecarInjectorWebhook
     release: istio
     istio: sidecar-injector
 spec:
@@ -15677,14 +15577,12 @@ spec:
   selector:
     matchLabels:
       app: sidecarInjectorWebhook
-      chart: sidecarInjectorWebhook
       release: istio
       istio: sidecar-injector
   template:
     metadata:
       labels:
         app: sidecarInjectorWebhook
-        chart: sidecarInjectorWebhook
         release: istio
         istio: sidecar-injector
       annotations:
@@ -15792,19 +15690,16 @@ metadata:
   name: istio-tracing
   labels:
     app: jaeger
-    chart: tracing
     release: istio
 spec:
   selector:
     matchLabels:
       app: jaeger
-      chart: tracing
       release: istio
   template:
     metadata:
       labels:
         app: jaeger
-        chart: tracing
         release: istio
       annotations:
         sidecar.istio.io/inject: "false"
@@ -15893,7 +15788,6 @@ metadata:
   name: istio-egressgateway
   labels:
     app: egressgateway
-    chart: gateways
     release: istio
 spec:
   maxReplicas: 5
@@ -15914,7 +15808,6 @@ metadata:
   name: istio-ingressgateway
   labels:
     app: ingressgateway
-    chart: gateways
     release: istio
 spec:
   maxReplicas: 5
@@ -15939,7 +15832,6 @@ metadata:
   name: istio-policy
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
     maxReplicas: 5
@@ -15960,7 +15852,6 @@ metadata:
   name: istio-telemetry
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
     maxReplicas: 5
@@ -15985,7 +15876,6 @@ metadata:
   name: istio-pilot
   labels:
     app: pilot
-    chart: pilot
     release: istio
 spec:
   maxReplicas: 5
@@ -16012,7 +15902,6 @@ metadata:
   labels:
     app: jaeger
     jaeger-infra: jaeger-service
-    chart: tracing
     release: istio
 spec:
   ports:
@@ -16032,7 +15921,6 @@ metadata:
   labels:
     app: jaeger
     jaeger-infra: collector-service
-    chart: tracing
     release: istio
 spec:
   ports:
@@ -16055,7 +15943,6 @@ metadata:
   labels:
     app: jaeger
     jaeger-infra: agent-service
-    chart: tracing
     release: istio
 spec:
   ports:
@@ -16085,7 +15972,6 @@ metadata:
   name: zipkin
   labels:
     app: jaeger
-    chart: tracing
     release: istio
 spec:
   type: ClusterIP
@@ -16104,7 +15990,6 @@ metadata:
   annotations:
   labels:
     app: jaeger
-    chart: tracing
     release: istio
 spec:
   ports:
@@ -16125,7 +16010,6 @@ metadata:
   name: istio-sidecar-injector
   labels:
     app: sidecarInjectorWebhook
-    chart: sidecarInjectorWebhook
     release: istio
 webhooks:
   - name: sidecar-injector.istio.io
@@ -16155,7 +16039,6 @@ metadata:
   name: istio-galley
   labels:
     app: galley
-    chart: galley
     release: istio
     istio: galley
 spec:
@@ -16175,7 +16058,6 @@ kind: PodDisruptionBudget
 metadata:
   name: istio-egressgateway
   labels:
-    chart: gateways
     release: istio
     app: istio-egressgateway
     istio: egressgateway
@@ -16193,7 +16075,6 @@ kind: PodDisruptionBudget
 metadata:
   name: istio-ingressgateway
   labels:
-    chart: gateways
     release: istio
     app: istio-ingressgateway
     istio: ingressgateway
@@ -16216,7 +16097,6 @@ metadata:
   name: istio-policy
   labels:
     app: policy
-    chart: mixer
     release: istio
     version: 1.1.0
     istio: mixer
@@ -16237,7 +16117,6 @@ metadata:
   name: istio-telemetry
   labels:
     app: telemetry
-    chart: mixer
     release: istio
     version: 1.1.0
     istio: mixer
@@ -16260,7 +16139,6 @@ metadata:
   name: istio-pilot
   labels:
     app: pilot
-    chart: pilot
     release: istio
     istio: pilot
 spec:
@@ -16279,7 +16157,6 @@ metadata:
   name: istioproxy
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   attributes:
@@ -16418,7 +16295,6 @@ metadata:
   name: kubernetes
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   attributes:
@@ -16481,7 +16357,6 @@ metadata:
   name: stdio
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   compiledAdapter: stdio
@@ -16494,7 +16369,6 @@ metadata:
   name: accesslog
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   severity: '"Info"'
@@ -16549,7 +16423,6 @@ metadata:
   name: tcpaccesslog
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   severity: '"Info"'
@@ -16589,7 +16462,6 @@ metadata:
   name: stdio
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   match: context.protocol == "http" || context.protocol == "grpc"
@@ -16604,7 +16476,6 @@ metadata:
   name: stdiotcp
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   match: context.protocol == "tcp"
@@ -16619,7 +16490,6 @@ metadata:
   name: requestcount
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   value: "1"
@@ -16652,7 +16522,6 @@ metadata:
   name: requestduration
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   value: response.duration | "0ms"
@@ -16685,7 +16554,6 @@ metadata:
   name: requestsize
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   value: request.size | 0
@@ -16718,7 +16586,6 @@ metadata:
   name: responsesize
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   value: response.size | 0
@@ -16751,7 +16618,6 @@ metadata:
   name: tcpbytesent
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   value: connection.sent.bytes | 0
@@ -16780,7 +16646,6 @@ metadata:
   name: tcpbytereceived
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   value: connection.received.bytes | 0
@@ -16809,7 +16674,6 @@ metadata:
   name: tcpconnectionsopened
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   value: "1"
@@ -16838,7 +16702,6 @@ metadata:
   name: tcpconnectionsclosed
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   value: "1"
@@ -16867,7 +16730,6 @@ metadata:
   name: prometheus
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   compiledAdapter: prometheus
@@ -17071,7 +16933,6 @@ metadata:
   name: promhttp
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   match: (context.protocol == "http" || context.protocol == "grpc") && (match((request.useragent | "-"), "kube-probe*") == false)
@@ -17089,7 +16950,6 @@ metadata:
   name: promtcp
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   match: context.protocol == "tcp"
@@ -17105,7 +16965,6 @@ metadata:
   name: promtcpconnectionopen
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   match: context.protocol == "tcp" && ((connection.event | "na") == "open")
@@ -17120,7 +16979,6 @@ metadata:
   name: promtcpconnectionclosed
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   match: context.protocol == "tcp" && ((connection.event | "na") == "close")
@@ -17135,7 +16993,6 @@ metadata:
   name: kubernetesenv
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   compiledAdapter: kubernetesenv
@@ -17154,7 +17011,6 @@ metadata:
   name: kubeattrgenrulerule
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   actions:
@@ -17168,7 +17024,6 @@ metadata:
   name: tcpkubeattrgenrulerule
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   match: context.protocol == "tcp"
@@ -17183,7 +17038,6 @@ metadata:
   name: attributes
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   # Pass the required attribute data to the adapter
@@ -17225,7 +17079,6 @@ metadata:
   name: istio-policy
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   host: istio-policy.istio-system.svc.cluster.local
@@ -17241,7 +17094,6 @@ metadata:
   name: istio-telemetry
   labels:
     app: mixer
-    chart: mixer
     release: istio
 spec:
   host: istio-telemetry.istio-system.svc.cluster.local
