@@ -4,5 +4,15 @@ metadata:
   name: $(generateName)
 spec:
   podTemplate:
-    nodeSelector:
-      cloud.google.com/gke-accelerator: $(accelerator_type)
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: cpu
+              operator: In
+              values:
+              - skylake
+              - cascadelake
+#    nodeSelector:
+#      accelerator: $(accelerator_type)

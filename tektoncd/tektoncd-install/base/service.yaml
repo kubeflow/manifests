@@ -5,6 +5,7 @@ metadata:
   labels:
     app: tekton-pipelines-controller
   name: tekton-pipelines-controller
+  namespace: tekton-pipelines
 spec:
   ports:
   - name: metrics
@@ -20,6 +21,7 @@ metadata:
   labels:
     app: tekton-pipelines-webhook
   name: tekton-pipelines-webhook
+  namespace: tekton-pipelines
 spec:
   ports:
   - port: 443

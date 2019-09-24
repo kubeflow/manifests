@@ -1,0 +1,16 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: ci-pipeline
+spec:
+  tasks:
+  - name: run-model
+    taskRef:
+      name: run-model
+    params:
+    - name: imageName
+      value: $(image_name)
+    - name: acceleratorName
+      value: $(accelerator_name)
+    - name: acceleratorCount
+      value: $(accelerator_count)
