@@ -18,8 +18,13 @@ func writeApplicationOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: $(generateName)
+  name: kubeflow
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.6
   componentKinds:
     - group: app.k8s.io
       kind: Application
@@ -42,20 +47,6 @@ spec:
       url: "https://kubeflow.org"
   addOwnerRef: true
 `)
-	th.writeF("/manifests/application/application/overlays/application/params.yaml", `
-varReference:
-- path: metadata/name
-  kind: Application
-- path: spec/selector/app.kubernetes.io\/instance
-  kind: Service
-- path: spec/selector/matchLabels/app.kubernetes.io\/instance
-  kind: StatefulSet
-- path: spec/template/metadata/labels/app.kubernetes.io\/instance
-  kind: StatefulSet
-`)
-	th.writeF("/manifests/application/application/overlays/application/params.env", `
-generateName=
-`)
 	th.writeK("/manifests/application/application/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -63,267 +54,13 @@ bases:
 - ../../base
 resources:
 - application.yaml
-configMapGenerator:
-- name: kubeflow-app-parameters
-  env: params.env
-vars:
-- name: generateName
-  objref:
-    kind: ConfigMap
-    name: kubeflow-app-parameters 
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.generateName
-configurations:
-- params.yaml
 commonLabels:
   app.kubernetes.io/name: kubeflow
-  app.kubernetes.io/instance: $(generateName)
+  app.kubernetes.io/instance: kubeflow
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: kubeflow
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.6
-`)
-	th.writeF("/manifests/application/application/base/crd.yaml", `
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  creationTimestamp: null
-  name: applications.app.k8s.io
-spec:
-  group: app.k8s.io
-  names:
-    kind: Application
-    plural: applications
-  scope: Namespaced
-  validation:
-    openAPIV3Schema:
-      properties:
-        apiVersion:
-          type: string
-        kind:
-          type: string
-        metadata:
-          type: object
-        spec:
-          properties:
-            addOwnerRef:
-              type: boolean
-            assemblyPhase:
-              type: string
-            componentKinds:
-              items:
-                type: object
-              type: array
-            descriptor:
-              properties:
-                description:
-                  type: string
-                icons:
-                  items:
-                    properties:
-                      size:
-                        type: string
-                      src:
-                        type: string
-                      type:
-                        type: string
-                    required:
-                    - src
-                    type: object
-                  type: array
-                keywords:
-                  items:
-                    type: string
-                  type: array
-                links:
-                  items:
-                    properties:
-                      description:
-                        type: string
-                      url:
-                        type: string
-                    type: object
-                  type: array
-                maintainers:
-                  items:
-                    properties:
-                      email:
-                        type: string
-                      name:
-                        type: string
-                      url:
-                        type: string
-                    type: object
-                  type: array
-                notes:
-                  type: string
-                owners:
-                  items:
-                    properties:
-                      email:
-                        type: string
-                      name:
-                        type: string
-                      url:
-                        type: string
-                    type: object
-                  type: array
-                type:
-                  type: string
-                version:
-                  type: string
-              type: object
-            info:
-              items:
-                properties:
-                  name:
-                    type: string
-                  type:
-                    type: string
-                  value:
-                    type: string
-                  valueFrom:
-                    properties:
-                      configMapKeyRef:
-                        properties:
-                          apiVersion:
-                            type: string
-                          fieldPath:
-                            type: string
-                          key:
-                            type: string
-                          kind:
-                            type: string
-                          name:
-                            type: string
-                          namespace:
-                            type: string
-                          resourceVersion:
-                            type: string
-                          uid:
-                            type: string
-                        type: object
-                      ingressRef:
-                        properties:
-                          apiVersion:
-                            type: string
-                          fieldPath:
-                            type: string
-                          host:
-                            type: string
-                          kind:
-                            type: string
-                          name:
-                            type: string
-                          namespace:
-                            type: string
-                          path:
-                            type: string
-                          resourceVersion:
-                            type: string
-                          uid:
-                            type: string
-                        type: object
-                      secretKeyRef:
-                        properties:
-                          apiVersion:
-                            type: string
-                          fieldPath:
-                            type: string
-                          key:
-                            type: string
-                          kind:
-                            type: string
-                          name:
-                            type: string
-                          namespace:
-                            type: string
-                          resourceVersion:
-                            type: string
-                          uid:
-                            type: string
-                        type: object
-                      serviceRef:
-                        properties:
-                          apiVersion:
-                            type: string
-                          fieldPath:
-                            type: string
-                          kind:
-                            type: string
-                          name:
-                            type: string
-                          namespace:
-                            type: string
-                          path:
-                            type: string
-                          port:
-                            format: int32
-                            type: integer
-                          resourceVersion:
-                            type: string
-                          uid:
-                            type: string
-                        type: object
-                      type:
-                        type: string
-                    type: object
-                type: object
-              type: array
-            selector:
-              type: object
-          type: object
-        status:
-          properties:
-            components:
-              items:
-                properties:
-                  group:
-                    type: string
-                  kind:
-                    type: string
-                  link:
-                    type: string
-                  name:
-                    type: string
-                  status:
-                    type: string
-                type: object
-              type: array
-            conditions:
-              items:
-                properties:
-                  lastTransitionTime:
-                    format: date-time
-                    type: string
-                  lastUpdateTime:
-                    format: date-time
-                    type: string
-                  message:
-                    type: string
-                  reason:
-                    type: string
-                  status:
-                    type: string
-                  type:
-                    type: string
-                required:
-                - type
-                - status
-                type: object
-              type: array
-            observedGeneration:
-              format: int64
-              type: integer
-          type: object
-  version: v1beta1
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []
 `)
 	th.writeF("/manifests/application/application/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
@@ -415,7 +152,6 @@ project=
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- crd.yaml
 - cluster-role.yaml
 - cluster-role-binding.yaml
 - service-account.yaml

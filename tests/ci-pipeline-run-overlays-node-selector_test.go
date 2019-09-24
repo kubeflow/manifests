@@ -13,7 +13,51 @@ import (
 	"testing"
 )
 
-func writeCiPipelineRunBase(th *KustTestHarness) {
+func writeCiPipelineRunOverlaysNodeSelector(th *KustTestHarness) {
+	th.writeF("/manifests/ci/ci-pipeline-run/overlays/node-selector/params.yaml", `
+varReference:
+- path: spec/podTemplate/nodeSelector
+  kind: PipelineRun
+`)
+	th.writeF("/manifests/ci/ci-pipeline-run/overlays/node-selector/pipeline-run-patch.yaml", `
+- op: add
+  path: /spec/podTemplate
+  value:
+    nodeSelector:
+      accelerator: $(accelerator_type)
+      #cloud.google.com/gke-accelerator: $(accelerator_type)
+`)
+	th.writeF("/manifests/ci/ci-pipeline-run/overlays/node-selector/params.env", `
+generateName=
+accelerator_type=nvidia-tesla-t4
+`)
+	th.writeK("/manifests/ci/ci-pipeline-run/overlays/node-selector", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+patchesJson6902:
+- target:
+    group: tekton.dev
+    version: v1alpha1
+    kind: PipelineRun
+    name: $(generateName)
+  path: pipeline-run-patch.yaml
+configMapGenerator:
+- name: ci-pipeline-run-parameters
+  behavior: merge
+  env: params.env
+vars:
+- name: accelerator_type
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-run-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.accelerator_type
+configurations:
+- params.yaml
+`)
 	th.writeF("/manifests/ci/ci-pipeline-run/base/persistent-volume-claim.yaml", `
 kind: PersistentVolumeClaim
 apiVersion: v1
@@ -169,9 +213,9 @@ configurations:
 `)
 }
 
-func TestCiPipelineRunBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/ci/ci-pipeline-run/base")
-	writeCiPipelineRunBase(th)
+func TestCiPipelineRunOverlaysNodeSelector(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/ci/ci-pipeline-run/overlays/node-selector")
+	writeCiPipelineRunOverlaysNodeSelector(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -180,7 +224,7 @@ func TestCiPipelineRunBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../ci/ci-pipeline-run/base"
+	targetPath := "../ci/ci-pipeline-run/overlays/node-selector"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)

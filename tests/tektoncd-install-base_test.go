@@ -1,26 +1,26 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/v3/pkg/fs"
-  "sigs.k8s.io/kustomize/v3/pkg/loader"
-  "sigs.k8s.io/kustomize/v3/pkg/plugins"
-  "sigs.k8s.io/kustomize/v3/pkg/resmap"
-  "sigs.k8s.io/kustomize/v3/pkg/resource"
-  "sigs.k8s.io/kustomize/v3/pkg/target"
-  "sigs.k8s.io/kustomize/v3/pkg/validators"
-  "testing"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
+	"testing"
 )
 
 func writeTektoncdInstallBase(th *KustTestHarness) {
-  th.writeF("/manifeststektoncd/tektoncd-install/base/namespace.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/namespace.yaml", `
 apiVersion: v1
 kind: Namespace
 metadata:
   name: tekton-pipelines
 `)
-  th.writeF("/manifeststektoncd/tektoncd-install/base/crds.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/crds.yaml", `
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -177,7 +177,7 @@ spec:
     status: {}
   version: v1alpha1
 `)
-  th.writeF("/manifeststektoncd/tektoncd-install/base/cluster-role-binding.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -190,7 +190,7 @@ subjects:
 - kind: ServiceAccount
   name: tekton-pipelines-controller
 `)
-  th.writeF("/manifeststektoncd/tektoncd-install/base/cluster-role.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/cluster-role.yaml", `
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -354,7 +354,7 @@ rules:
   - list
   - watch
 `)
-  th.writeF("/manifeststektoncd/tektoncd-install/base/config-map.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/config-map.yaml", `
 ---
 apiVersion: v1
 data: null
@@ -464,7 +464,7 @@ kind: ConfigMap
 metadata:
   name: config-logging
 `)
-  th.writeF("/manifeststektoncd/tektoncd-install/base/deployment.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/deployment.yaml", `
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -548,7 +548,7 @@ spec:
           name: config-logging
         name: config-logging
 `)
-  th.writeF("/manifeststektoncd/tektoncd-install/base/pod-security-policy.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/pod-security-policy.yaml", `
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
@@ -578,13 +578,13 @@ spec:
   - configMap
   - secret
 `)
-  th.writeF("/manifeststektoncd/tektoncd-install/base/service-account.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: tekton-pipelines-controller
 `)
-  th.writeF("/manifeststektoncd/tektoncd-install/base/service.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/service.yaml", `
 ---
 apiVersion: v1
 kind: Service
@@ -615,12 +615,12 @@ spec:
     app: tekton-pipelines-webhook
 ---
 `)
-  th.writeF("/manifeststektoncd/tektoncd-install/base/params.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/params.yaml", `
 varReference:
 - path: spec/template/spec/containers/image
   kind: Deployment
 `)
-  th.writeF("/manifeststektoncd/tektoncd-install/base/params.env", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/base/params.env", `
 registry=gcr.io/tekton-releases
 webhook=github.com/tektoncd/pipeline/cmd/webhook@sha256:496e36b8723a668ac3531acc26512c123342da7827c10386b571aa975d6a47e7
 nop=github.com/tektoncd/pipeline/cmd/nop@sha256:c903f9e4d60220e7cf7beab4b94e4117abcc048ab7404da3a2a4b417891741cb
@@ -636,7 +636,7 @@ imagedigestexporter=github.com/tektoncd/pipeline/cmd/imagedigestexporter@sha256:
 kubeconfigwriter=github.com/tektoncd/pipeline/cmd/kubeconfigwriter@sha256:115acf8aa4d79be49a481f6d520ff66839d57656c840588052097956224fb3ff
 controller=github.com/tektoncd/pipeline/cmd/controller@sha256:4f10413791df045f29f882fab817219e54123b527d6230a4991e2558f3d659f9
 `)
-  th.writeK("/manifeststektoncd/tektoncd-install/base", `
+	th.writeK("/manifests/tektoncd/tektoncd-install/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -760,32 +760,32 @@ configurations:
 }
 
 func TestTektoncdInstallBase(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifeststektoncd/tektoncd-install/base")
-  writeTektoncdInstallBase(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := m.AsYaml()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "..tektoncd/tektoncd-install/base"
-  fsys := fs.MakeRealFS()
-  lrc := loader.RestrictionRootOnly
-  _loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
-  if loaderErr != nil {
-    t.Fatalf("could not load kustomize loader: %v", loaderErr)
-  }
-  rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
-  pc := plugins.DefaultPluginConfig()
-  kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
-  if err != nil {
-    th.t.Fatalf("Unexpected construction error %v", err)
-  }
-  actual, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  th.assertActualEqualsExpected(actual, string(expected))
+	th := NewKustTestHarness(t, "/manifests/tektoncd/tektoncd-install/base")
+	writeTektoncdInstallBase(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := m.AsYaml()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../tektoncd/tektoncd-install/base"
+	fsys := fs.MakeRealFS()
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	actual, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	th.assertActualEqualsExpected(actual, string(expected))
 }

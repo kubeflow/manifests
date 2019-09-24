@@ -13,62 +13,58 @@ import (
 	"testing"
 )
 
-func writeCiPipelineOverlaysBuildPushTask(th *KustTestHarness) {
-	th.writeF("/manifests/ci/ci-pipeline/overlays/build-push-task/task.yaml", `
+func writeCiPipelineOverlaysRunModelTask(th *KustTestHarness) {
+	th.writeF("/manifests/ci/ci-pipeline/overlays/run-model-task/config-map.yaml", `
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: run-model
+data:
+  run-model.sh: |-
+    #!/usr/bin/env bash
+    python model.py
+    if (( $? == 0 )); then
+      tensorboard --logdir train
+    else
+      echo 'run model failed'
+    fi
+`)
+	th.writeF("/manifests/ci/ci-pipeline/overlays/run-model-task/task.yaml", `
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: build-push
+  name: run-model
 spec:
   inputs:
-    resources:
-    - name: kubeflow
-      type: git
     params:
-    - name: pathToDockerfile
+    - name: imageName
       type: string
-      description: The path to the dockerfile to build
-    - name: pathToContext
+      description: container image name
+    - name: acceleratorName
       type: string
-      description: The build context used by Kaniko
-    - name: dockerTarget
+      description: accelerator name
+    - name: acceleratorCount
       type: string
-      description: docker target arg
-  outputs:
-    resources:
-    - name: kubeflow
-      type: git
-    - name: $(image_name)
-      type: image
-      outputImageDir: /kubeflow
+      description: accelerator count
   steps:
-  - name: build-push
-    image: gcr.io/kaniko-project/executor:v0.11.0
-    command:
-    - /kaniko/executor
-    env:
-    - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
-    args:
-    - "--dockerfile=/workspace/${inputs.resources.kubeflow.name}/${inputs.params.pathToDockerfile}"
-    - "--destination=${outputs.resources.$(image_name).url}"
-    - "--context=/workspace/${inputs.resources.kubeflow.name}/${inputs.params.pathToContext}"
-    - "--target=${inputs.params.dockerTarget}"
-    - "--digest-file=/kubeflow/$(image_name)-digest"
+  - name: run-model
+    #image: ${inputs.params.imageName}
+    image: "gcr.io/constant-cubist-173123/tf-test-gpu@sha256:d8f3a79eb104928c9ec1e73a284d1db739591563815b41860c1d769e919ffb4c"
+    command: ["/bin/bash", "/run-model/run-model.sh"]
+    workingDir: /kubeflow
+    resources:
+      limits:
+        #${inputs.params.acceleratorName}: "${inputs.params.acceleratorCount}"
+        nvidia.com/gpu: '1'
     volumeMounts:
-    - name: kaniko-secret
-      mountPath: /secret
-    - name: kubeflow
-      mountPath: /kubeflow
+    - name: run-model
+      mountPath: /run-model
   volumes:
-  - name: kaniko-secret
-    secret:
-      secretName: kaniko-secret
-  - name: kubeflow
-    persistentVolumeClaim:
-      claimName: ci-pipeline-run-persistent-volume-claim
+  - name: run-model
+    configMap:
+      name: run-model
 `)
-	th.writeF("/manifests/ci/ci-pipeline/overlays/build-push-task/params.yaml", `
+	th.writeF("/manifests/ci/ci-pipeline/overlays/run-model-task/params.yaml", `
 varReference:
 - path: spec/tasks/resources/inputs/name
   kind: Pipeline
@@ -90,53 +86,38 @@ varReference:
   kind: Task
 - path: spec/outputs/resources/outputImageDir
   kind: Task
+- path: spec/steps/image
+  kind: Task
+- path: spec/steps/resources/limits
+  kind: Task
 `)
-	th.writeF("/manifests/ci/ci-pipeline/overlays/build-push-task/pipeline_patch.yaml", `
+	th.writeF("/manifests/ci/ci-pipeline/overlays/run-model-task/pipeline_patch.yaml", `
 - op: add
   path: /spec/tasks/-
   value:
-    name: build-push 
+    name: run-model
     taskRef:
-      name: build-push
-    resources:
-      inputs:
-      - name: kubeflow
-        resource: kubeflow
-      outputs:
-      - name: kubeflow
-        resource: kubeflow
-      - name: $(image_name)
-        resource: $(image_name)
+      name: run-model
     params:
-    - name: pathToDockerfile
-      value: "$(path_to_docker_file)"
-    - name: pathToContext
-      value: "$(path_to_context)"
-    - name: dockerTarget
-      value: "$(docker_target)"
-- op: add
-  path: /spec/resources/-
-  value:
-    name: kubeflow
-    type: git
-- op: add
-  path: /spec/resources/-
-  value:
-    name: $(image_name)
-    type: image
+    - name: imageName
+      value: $(image_name)
+    - name: acceleratorName
+      value: $(accelerator_name)
+    - name: acceleratorCount
+      value: $(accelerator_count)
 `)
-	th.writeF("/manifests/ci/ci-pipeline/overlays/build-push-task/params.env", `
-image_name=
-path_to_docker_file=
-path_to_context=
-docker_target=
+	th.writeF("/manifests/ci/ci-pipeline/overlays/run-model-task/params.env", `
+image_name=gcr.io/constant-cubist-173123/tf-test-gpu:355316a
+accelerator_name=nvidia.com/gpu
+accelerator_count=1
 `)
-	th.writeK("/manifests/ci/ci-pipeline/overlays/build-push-task", `
+	th.writeK("/manifests/ci/ci-pipeline/overlays/run-model-task", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
 resources:
+- config-map.yaml
 - task.yaml
 namespace: kubeflow-ci
 patchesJson6902:
@@ -158,27 +139,20 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.image_name
-- name: path_to_docker_file
+- name: accelerator_name
   objref:
     kind: ConfigMap
     name: ci-pipeline-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.path_to_docker_file
-- name: path_to_context
+    fieldpath: data.accelerator_name
+- name: accelerator_count
   objref:
     kind: ConfigMap
     name: ci-pipeline-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.path_to_context
-- name: docker_target
-  objref:
-    kind: ConfigMap
-    name: ci-pipeline-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.docker_target
+    fieldpath: data.accelerator_count
 configurations:
 - params.yaml
 `)
@@ -219,9 +193,9 @@ vars:
 `)
 }
 
-func TestCiPipelineOverlaysBuildPushTask(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/ci/ci-pipeline/overlays/build-push-task")
-	writeCiPipelineOverlaysBuildPushTask(th)
+func TestCiPipelineOverlaysRunModelTask(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/ci/ci-pipeline/overlays/run-model-task")
+	writeCiPipelineOverlaysRunModelTask(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -230,7 +204,7 @@ func TestCiPipelineOverlaysBuildPushTask(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../ci/ci-pipeline/overlays/build-push-task"
+	targetPath := "../ci/ci-pipeline/overlays/run-model-task"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
