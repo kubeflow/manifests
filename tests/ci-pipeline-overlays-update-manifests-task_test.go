@@ -38,16 +38,12 @@ spec:
     - name: container_image
       type: string
       description: pod container image
-  outputs:
-    resources:
-    - name: manifests
-      type: git
   steps:
   - name: update-manifests
-    workingDir: "/workspace/${inputs.resources.manifests.name}/${inputs.params.pathToManifestsDir}"
-    image: ${inputs.params.container_image}
+    workingDir: "/workspace/$(inputs.resources.manifests.name)/$(inputs.params.pathToManifestsDir)"
+    image: $(inputs.params.container_image)
     #command: ["/bin/sleep", "infinity"]
-    command: ["/workspace/${inputs.resources.kubeflow.name}/py/kubeflow/kubeflow/ci/rebuild-manifests.sh"]
+    command: ["/workspace/$(inputs.resources.kubeflow.name)/py/kubeflow/kubeflow/ci/rebuild-manifests.sh"]
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
@@ -101,8 +97,6 @@ varReference:
       inputs:
       - name: kubeflow
         resource: kubeflow
-        from: 
-        - build-push
       - name: manifests
         resource: manifests
       - name: $(pull_request_repo)-$(pull_request_id)
@@ -111,9 +105,6 @@ varReference:
         resource: $(image_name)
         from: 
         - build-push
-      outputs:
-      - name: manifests
-        resource: manifests
     params:
     - name: pathToManifestsDir
       value: "$(path_to_manifests_dir)"
@@ -123,6 +114,11 @@ varReference:
   path: /spec/resources/-
   value:
     name: manifests
+    type: git
+- op: add
+  path: /spec/resources/-
+  value:
+    name: kubeflow
     type: git
 - op: add
   path: /spec/resources/-

@@ -9,12 +9,12 @@ configMapGenerator:
   behavior: merge
   env: params.env
 vars:
-- name: accelerator_type
+- name: cpuType
   objref:
     kind: ConfigMap
     name: ci-pipeline-run-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.accelerator_type
+    fieldpath: data.cpuType
 configurations:
 - params.yaml

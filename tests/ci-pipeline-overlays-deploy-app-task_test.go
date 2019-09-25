@@ -49,9 +49,9 @@ spec:
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
-    args: ["--dockerfile=${inputs.params.pathToDockerFile}",
-           "--destination=${outputs.resources.builtImage.url}",
-           "--context=${inputs.params.pathToContext}",
+    args: ["--dockerfile=$(inputs.params.pathToDockerFile)",
+           "--destination=$(outputs.resources.builtImage.url)",
+           "--context=$(inputs.params.pathToContext)",
            "--target=kfctl_base"]
     volumeMounts:
     - name: kaniko-secret
@@ -102,17 +102,17 @@ spec:
       outputImageDir: /workspace/builtImage
   steps:
   - name: kfctl-init
-    image: "${inputs.resources.image.url}"
+    image: "$(inputs.resources.image.url)"
     command: ["/usr/local/bin/kfctl"]
     args:
     - "init"
     - "--config"
-    - "${inputs.params.configPath}"
+    - "$(inputs.params.configPath)"
     - "--project"
-    - "${inputs.params.project}"
+    - "$(inputs.params.project)"
     - "--namespace"
-    - "${inputs.params.namespace}"
-    - "${inputs.params.app_dir}"
+    - "$(inputs.params.namespace)"
+    - "$(inputs.params.app_dir)"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
@@ -123,17 +123,17 @@ spec:
       mountPath: /kubeflow
     imagePullPolicy: IfNotPresent
   - name: kfctl-generate
-    image: "${inputs.resources.image.url}"
+    image: "$(inputs.resources.image.url)"
     imagePullPolicy: IfNotPresent
-    workingDir: "${inputs.params.app_dir}"
+    workingDir: "$(inputs.params.app_dir)"
     command: ["/usr/local/bin/kfctl"]
     args:
     - "generate"
-    - "${inputs.params.platform}"
+    - "$(inputs.params.platform)"
     - "--zone"
-    - "${inputs.params.zone}"
+    - "$(inputs.params.zone)"
     - "--email"
-    - "${inputs.params.email}"
+    - "$(inputs.params.email)"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
@@ -153,9 +153,9 @@ spec:
     - name: kubeflow
       mountPath: /kubeflow
   - name: kfctl-activate-service-account
-    image: "${inputs.resources.image.url}"
+    image: "$(inputs.resources.image.url)"
     imagePullPolicy: IfNotPresent
-    workingDir: "${inputs.params.app_dir}"
+    workingDir: "$(inputs.params.app_dir)"
     command: ["/opt/google-cloud-sdk/bin/gcloud"]
     args:
     - "auth"
@@ -181,15 +181,15 @@ spec:
     - name: kubeflow
       mountPath: /kubeflow
   - name: kfctl-set-account
-    image: "${inputs.resources.image.url}"
+    image: "$(inputs.resources.image.url)"
     imagePullPolicy: IfNotPresent
-    workingDir: "${inputs.params.app_dir}"
+    workingDir: "$(inputs.params.app_dir)"
     command: ["/opt/google-cloud-sdk/bin/gcloud"]
     args:
     - "config"
     - "set"
     - "account"
-    - "${inputs.params.email}"
+    - "$(inputs.params.email)"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/ci-secret.json
@@ -209,14 +209,14 @@ spec:
     - name: kubeflow
       mountPath: /kubeflow
   - name: kfctl-apply
-    image: "${inputs.resources.image.url}"
+    image: "$(inputs.resources.image.url)"
     imagePullPolicy: IfNotPresent
-    workingDir: "${inputs.params.app_dir}"
+    workingDir: "$(inputs.params.app_dir)"
 #    command: ["/bin/sleep", "infinity"]
     command: ["/usr/local/bin/kfctl"]
     args:
     - "apply"
-    - "${inputs.params.platform}"
+    - "$(inputs.params.platform)"
     - "--verbose"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -237,19 +237,19 @@ spec:
     - name: kubeflow
       mountPath: /kubeflow
   - name: kfctl-configure-kubectl
-    image: "${inputs.resources.image.url}"
+    image: "$(inputs.resources.image.url)"
     imagePullPolicy: IfNotPresent
-    workingDir: "${inputs.params.app_dir}"
+    workingDir: "$(inputs.params.app_dir)"
     command: ["/opt/google-cloud-sdk/bin/gcloud"]
     args:
     - "--project"
-    - "${inputs.params.project}"
+    - "$(inputs.params.project)"
     - "container"
     - "clusters"
     - "--zone"
-    - "${inputs.params.zone}"
+    - "$(inputs.params.zone)"
     - "get-credentials"
-    - "${inputs.params.cluster}"
+    - "$(inputs.params.cluster)"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/ci-secret.json

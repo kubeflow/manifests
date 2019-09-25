@@ -13,57 +13,61 @@ import (
 	"testing"
 )
 
-func writeCiPipelineRunOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/ci/ci-pipeline-run/overlays/application/application.yaml", `
-apiVersion: app.k8s.io/v1beta1
-kind: Application
+func writeCiPipelineRunOverlaysAcceleratorNodeSelector(th *KustTestHarness) {
+	th.writeF("/manifests/ci/ci-pipeline-run/overlays/accelerator-node-selector/pipeline-run.yaml", `
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
 metadata:
   name: $(generateName)
 spec:
-  componentKinds:
-    - group: app.k8s.io
-      kind: Application
-  descriptor: 
-    type: ci-pipeline-run
-    version: v1beta1
-    description: a pipeline run that composes resources and tasks
-    maintainers:
-    - name: Kam Kasravi
-      email: kam.d.kasravi@intel.com
-    owners:
-    - name: Kam Kasravi
-      email: kam.d.kasravi@intel.com
-    keywords:
-     - kubeflow
-    links:
-    - description: About
-      url: "https://kubeflow.org"
-  addOwnerRef: true
+  podTemplate:
+#    affinity:
+#      nodeAffinity:
+#        requiredDuringSchedulingIgnoredDuringExecution:
+#          nodeSelectorTerms:
+#          - matchExpressions:
+#            - key: cpu
+#              operator: In
+#              values:
+#              - skylake
+#              - cascadelake
+    nodeSelector:
+      accelerator: $(acceleratorType)
 `)
-	th.writeF("/manifests/ci/ci-pipeline-run/overlays/application/params.yaml", `
+	th.writeF("/manifests/ci/ci-pipeline-run/overlays/accelerator-node-selector/params.yaml", `
 varReference:
-- path: metadata/name
-  kind: Application
+- path: spec/podTemplate/nodeSelector
+  kind: PipelineRun
+- path: spec/podTemplate/nodeSelector/cpu
+  kind: PipelineRun
+- path: spec/podTemplate/nodeSelector/gpu
+  kind: PipelineRun
 `)
-	th.writeF("/manifests/ci/ci-pipeline-run/overlays/application/params.env", `
+	th.writeF("/manifests/ci/ci-pipeline-run/overlays/accelerator-node-selector/params.env", `
 generateName=
+acceleratorType=nvidia-tesla-t4
 `)
-	th.writeK("/manifests/ci/ci-pipeline-run/overlays/application", `
+	th.writeK("/manifests/ci/ci-pipeline-run/overlays/accelerator-node-selector", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
-resources:
-- application.yaml
+patchesStrategicMerge:
+- pipeline-run.yaml
+configMapGenerator:
+- name: ci-pipeline-run-parameters
+  behavior: merge
+  env: params.env
+vars:
+- name: acceleratorType
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-run-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.acceleratorType
 configurations:
 - params.yaml
-commonLabels:
-  app.kubernetes.io/name: ci-pipeline-run
-  app.kubernetes.io/instance: $(generateName)
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: kubeflow
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
 `)
 	th.writeF("/manifests/ci/ci-pipeline-run/base/persistent-volume-claim.yaml", `
 kind: PersistentVolumeClaim
@@ -216,9 +220,9 @@ configurations:
 `)
 }
 
-func TestCiPipelineRunOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/ci/ci-pipeline-run/overlays/application")
-	writeCiPipelineRunOverlaysApplication(th)
+func TestCiPipelineRunOverlaysAcceleratorNodeSelector(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/ci/ci-pipeline-run/overlays/accelerator-node-selector")
+	writeCiPipelineRunOverlaysAcceleratorNodeSelector(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -227,7 +231,7 @@ func TestCiPipelineRunOverlaysApplication(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../ci/ci-pipeline-run/overlays/application"
+	targetPath := "../ci/ci-pipeline-run/overlays/accelerator-node-selector"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)

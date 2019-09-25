@@ -69,11 +69,25 @@ metadata:
 data:
   label-accelerator-nodes.sh: |-
     #!/usr/bin/env bash
-    gpuNode=$(kubectl get nodes -oname | grep gpu)
+    gpuNode=$(echo $(kubectl get nodes -oname --no-headers | grep gpu))
     if [[ -n $gpuNode ]]; then
       kubectl label $gpuNode accelerator=$(gpu-type)
     else
       echo 'no gpu node available'
+    fi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: label-cpu-nodes
+data:
+  label-cpu-nodes.sh: |-
+    #!/usr/bin/env bash
+    cpuNode=$(echo $(kubectl get nodes -oname --no-headers | grep -v gpu))
+    if [[ -n $cpuNode ]]; then
+      kubectl label $cpuNode cpu=$(cpu-type)
+    else
+      echo 'no cpu node available'
     fi
 `)
 	th.writeF("/manifests/ci/ci-pipeline/overlays/create-cluster-task/task.yaml", `
@@ -158,9 +172,9 @@ spec:
       description: zone of project
   steps:
   - name: kfctl-activate-service-account
-    image: "${inputs.params.kfctl_image}"
+    image: "$(inputs.params.kfctl_image)"
     imagePullPolicy: IfNotPresent
-    workingDir: "${inputs.params.pvc_mount_path}"
+    workingDir: "$(inputs.params.pvc_mount_path)"
     command: ["/opt/google-cloud-sdk/bin/gcloud"]
     args:
     - "auth"
@@ -176,15 +190,15 @@ spec:
     - name: kubeflow
       mountPath: /kubeflow
   - name: kfctl-set-account
-    image: "${inputs.params.kfctl_image}"
+    image: "$(inputs.params.kfctl_image)"
     imagePullPolicy: IfNotPresent
-    workingDir: "${inputs.params.pvc_mount_path}"
+    workingDir: "$(inputs.params.pvc_mount_path)"
     command: ["/opt/google-cloud-sdk/bin/gcloud"]
     args:
     - "config"
     - "set"
     - "account"
-    - "${inputs.params.email}"
+    - "$(inputs.params.email)"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
@@ -194,18 +208,18 @@ spec:
     - name: kubeflow
       mountPath: /kubeflow
   - name: kfctl-init
-    image: "${inputs.params.kfctl_image}"
-    workingDir: "${inputs.params.pvc_mount_path}"
+    image: "$(inputs.params.kfctl_image)"
+    workingDir: "$(inputs.params.pvc_mount_path)"
     command: ["/usr/local/bin/kfctl"]
     args:
     - "init"
     - "--config"
-    - "${inputs.params.configPath}"
+    - "$(inputs.params.configPath)"
     - "--project"
-    - "${inputs.params.project}"
+    - "$(inputs.params.project)"
     - "--namespace"
-    - "${inputs.params.namespace}"
-    - "${inputs.params.app_dir}"
+    - "$(inputs.params.namespace)"
+    - "$(inputs.params.app_dir)"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
@@ -213,20 +227,20 @@ spec:
     - name: kaniko-secret
       mountPath: /secret
     - name: kubeflow
-      mountPath: "${inputs.params.pvc_mount_path}"
+      mountPath: "$(inputs.params.pvc_mount_path)"
     imagePullPolicy: IfNotPresent
   - name: kfctl-generate
-    image: "${inputs.params.kfctl_image}"
+    image: "$(inputs.params.kfctl_image)"
     imagePullPolicy: IfNotPresent
-    workingDir: "${inputs.params.pvc_mount_path}/${inputs.params.app_dir}"
+    workingDir: "$(inputs.params.pvc_mount_path)/$(inputs.params.app_dir)"
     command: ["/usr/local/bin/kfctl"]
     args:
     - "generate"
-    - "${inputs.params.platform}"
+    - "$(inputs.params.platform)"
     - "--zone"
-    - "${inputs.params.zone}"
+    - "$(inputs.params.zone)"
     - "--email"
-    - "${inputs.params.email}"
+    - "$(inputs.params.email)"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
@@ -248,9 +262,9 @@ spec:
     - name: kubeflow
       mountPath: /kubeflow
   - name: update-gcp-config
-    image: "${inputs.params.kfctl_image}"
+    image: "$(inputs.params.kfctl_image)"
     imagePullPolicy: IfNotPresent
-    workingDir: "${inputs.params.pvc_mount_path}/${inputs.params.app_dir}/gcp_config"
+    workingDir: "$(inputs.params.pvc_mount_path)/$(inputs.params.app_dir)/gcp_config"
     #command: ["/bin/sleep", "infinity"]
     command: ["/bin/bash", "/update-gcp-config/update-gcp-config.sh"]
     env:
@@ -266,14 +280,14 @@ spec:
     - name: update-gcp-config
       mountPath: /update-gcp-config
   - name: kfctl-apply
-    image: "${inputs.params.kfctl_image}"
+    image: "$(inputs.params.kfctl_image)"
     imagePullPolicy: IfNotPresent
-    workingDir: "${inputs.params.pvc_mount_path}/${inputs.params.app_dir}"
+    workingDir: "$(inputs.params.pvc_mount_path)/$(inputs.params.app_dir)"
     #command: ["/bin/sleep", "infinity"]
     command: ["/usr/local/bin/kfctl"]
     args:
     - "apply"
-    - "${inputs.params.platform}"
+    - "$(inputs.params.platform)"
     - "--verbose"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -296,9 +310,9 @@ spec:
     - name: kubeflow
       mountPath: /kubeflow
   - name: label-accelerator-nodes
-    image: "${inputs.params.kfctl_image}"
+    image: "$(inputs.params.kfctl_image)"
     imagePullPolicy: IfNotPresent
-    workingDir: "${inputs.params.pvc_mount_path}"
+    workingDir: "$(inputs.params.pvc_mount_path)"
     #command: ["/bin/sleep", "infinity"]
     command: ["/bin/bash", "/label-accelerator-nodes/label-accelerator-nodes.sh"]
     env:

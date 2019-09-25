@@ -48,14 +48,18 @@ spec:
       description: accelerator count
   steps:
   - name: run-model
-    #image: ${inputs.params.imageName}
-    image: "gcr.io/constant-cubist-173123/tf-test-gpu@sha256:d8f3a79eb104928c9ec1e73a284d1db739591563815b41860c1d769e919ffb4c"
+    image: $(inputs.params.imageName)
+    #image: "gcr.io/constant-cubist-173123/tf-test-gpu@sha256:d8f3a79eb104928c9ec1e73a284d1db739591563815b41860c1d769e919ffb4c"
+    #command: ["/bin/bash", "/bin/echo -$(inputs.params.acceleratorName)- -$(inputs.params.acceleratorCount)-"]
     command: ["/bin/bash", "/run-model/run-model.sh"]
     workingDir: /kubeflow
     resources:
       limits:
-        #${inputs.params.acceleratorName}: "${inputs.params.acceleratorCount}"
-        nvidia.com/gpu: '1'
+        #$(inputs.params.acceleratorName): '1'
+        #$(inputs.params.acceleratorName): $(inputs.params.acceleratorCount)
+        #$(inputs.params.acceleratorName)-$(inputs.params.acceleratorCount): '1'
+        #nvidia.com/gpu: '1'
+        cpu: '1'
     volumeMounts:
     - name: run-model
       mountPath: /run-model
@@ -63,6 +67,24 @@ spec:
   - name: run-model
     configMap:
       name: run-model
+`)
+	th.writeF("/manifests/ci/ci-pipeline/overlays/run-model-task/pipeline.yaml", `
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: ci-pipeline
+spec:
+  tasks:
+  - name: run-model
+    taskRef:
+      name: run-model
+    params:
+    - name: imageName
+      value: $(image_name)
+    - name: acceleratorName
+      value: $(accelerator_name)
+    - name: acceleratorCount
+      value: $(accelerator_count)
 `)
 	th.writeF("/manifests/ci/ci-pipeline/overlays/run-model-task/params.yaml", `
 varReference:
@@ -91,21 +113,6 @@ varReference:
 - path: spec/steps/resources/limits
   kind: Task
 `)
-	th.writeF("/manifests/ci/ci-pipeline/overlays/run-model-task/pipeline_patch.yaml", `
-- op: add
-  path: /spec/tasks/-
-  value:
-    name: run-model
-    taskRef:
-      name: run-model
-    params:
-    - name: imageName
-      value: $(image_name)
-    - name: acceleratorName
-      value: $(accelerator_name)
-    - name: acceleratorCount
-      value: $(accelerator_count)
-`)
 	th.writeF("/manifests/ci/ci-pipeline/overlays/run-model-task/params.env", `
 image_name=gcr.io/constant-cubist-173123/tf-test-gpu:355316a
 accelerator_name=nvidia.com/gpu
@@ -120,13 +127,8 @@ resources:
 - config-map.yaml
 - task.yaml
 namespace: kubeflow-ci
-patchesJson6902:
-- target:
-    group: tekton.dev
-    version: v1alpha1
-    kind: Pipeline
-    name: ci-pipeline
-  path: pipeline_patch.yaml
+patchesStrategicMerge:
+- pipeline.yaml
 configMapGenerator:
 - name: ci-pipeline-parameters
   behavior: merge

@@ -86,10 +86,10 @@ spec:
       env:
       - name: GOOGLE_APPLICATION_CREDENTIALS
         value: /secret/kaniko-secret.json
-      args: ["--dockerfile=${inputs.params.pathToDockerFile}",
-             "--destination=${outputs.resources.builtImage.url}",
-             "--context=${inputs.params.pathToContext}",
-             "--target=${inputs.params.dockerTarget}"]
+      args: ["--dockerfile=$(inputs.params.pathToDockerFile)",
+             "--destination=$(outputs.resources.builtImage.url)",
+             "--context=$(inputs.params.pathToContext)",
+             "--target=$(inputs.params.dockerTarget)"]
       volumeMounts:
       - name: kaniko-secret
         mountPath: /secret

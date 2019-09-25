@@ -1,6 +1,0 @@
-- op: add
-  path: /spec/podTemplate
-  value:
-    nodeSelector:
-      accelerator: $(accelerator_type)
-      #cloud.google.com/gke-accelerator: $(accelerator_type)

@@ -25,6 +25,8 @@ spec:
     - name: kubeflow
       type: git
     params:
+    - name: imageName
+      type: string
     - name: pathToDockerfile
       type: string
       description: The path to the dockerfile to build
@@ -36,8 +38,6 @@ spec:
       description: docker target arg
   outputs:
     resources:
-    - name: kubeflow
-      type: git
     - name: $(image_name)
       type: image
       outputImageDir: /kubeflow
@@ -50,10 +50,10 @@ spec:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
     args:
-    - "--dockerfile=/workspace/${inputs.resources.kubeflow.name}/${inputs.params.pathToDockerfile}"
-    - "--destination=${outputs.resources.$(image_name).url}"
-    - "--context=/workspace/${inputs.resources.kubeflow.name}/${inputs.params.pathToContext}"
-    - "--target=${inputs.params.dockerTarget}"
+    - "--dockerfile=/workspace/$(inputs.resources.kubeflow.name)/$(inputs.params.pathToDockerfile)"
+    - "--destination=$(outputs.resources.$(inputs.params.imageName).url)"
+    - "--context=/workspace/$(inputs.resources.kubeflow.name)/$(inputs.params.pathToContext)"
+    - "--target=$(inputs.params.dockerTarget)"
     - "--digest-file=/kubeflow/$(image_name)-digest"
     volumeMounts:
     - name: kaniko-secret
@@ -103,11 +103,11 @@ varReference:
       - name: kubeflow
         resource: kubeflow
       outputs:
-      - name: kubeflow
-        resource: kubeflow
       - name: $(image_name)
         resource: $(image_name)
     params:
+    - name: imageName
+      value: "$(image_name)"
     - name: pathToDockerfile
       value: "$(path_to_docker_file)"
     - name: pathToContext
