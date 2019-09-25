@@ -6,7 +6,7 @@ data:
     kind: VirtualService
     metadata:
       name: default-routes
-      namespace: $(namespace)
+      namespace: $(ConfigMap.parameters.data.namespace)
     spec:
       hosts:
       - "*"
@@ -34,7 +34,7 @@ data:
     kind: Gateway
     metadata:
       name: kubeflow-gateway
-      namespace: $(namespace)
+      namespace: $(ConfigMap.parameters.data.namespace)
     spec:
       selector:
         istio: ingressgateway

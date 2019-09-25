@@ -1,13 +1,16 @@
 # Please set project and email!
-apiVersion: kfdef.apps.kubeflow.org/v1alpha1
+apiVersion: kubeflow.airshipit.org/v1beta1
 kind: KfDef
 metadata:
-  creationTimestamp: null
-  name: myapp2
+  name: app
   namespace: kubeflow
 spec:
   repos:
+  - name: kubeflow
+    root: kubeflow-master
+    uri: https://github.com/kubeflow/kubeflow/archive/master.tar.gz
   - name: manifests
+    root: master/
     uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
     # To get manifest at a PR:
     #uri: https://github.com/kubeflow/manifests/archive/pull/235/head.tar.gz
@@ -32,7 +35,7 @@ spec:
   - kustomizeConfig:
       parameters:
       - name: clusterRbacConfig
-        value: "ON"
+        value: "OFF"
       repoRef:
         name: manifests
         path: istio/istio
@@ -65,11 +68,6 @@ spec:
   - kustomizeConfig:
       overlays:
       - istio
-      parameters:
-      - name: userid-header
-        value: X-Goog-Authenticated-User-Email
-      - name: userid-prefix
-        value: "accounts.google.com:"
       repoRef:
         name: manifests
         path: common/centraldashboard
@@ -95,11 +93,6 @@ spec:
       overlays:
       - istio
       - application
-      parameters:
-      - name: userid-header
-        value: X-Goog-Authenticated-User-Email
-      - name: userid-prefix
-        value: "accounts.google.com:"
       repoRef:
         name: manifests
         path: jupyter/jupyter-web-app
@@ -172,7 +165,7 @@ spec:
       parameters:
       - initRequired: true
         name: usageId
-        value: "7439583937720421527"
+        value: "2700513155662330975"
       - initRequired: true
         name: reportUsage
         value: "true"
@@ -295,6 +288,14 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - initRequired: true
+        name: ipName
+        value: ipName
+      - initRequired: true
+        name: hostname
+        # hostname will be set automatically by kfctl init & generate
+        # value: <deployName>.endpoints.<project>.cloud.goog
       repoRef:
         name: manifests
         path: gcp/cloud-endpoints
@@ -306,11 +307,8 @@ spec:
       parameters:
       - initRequired: true
         name: admin
-        value: SET_EMAIL
-      - name: userid-header
-        value: X-Goog-Authenticated-User-Email
-      - name: userid-prefix
-        value: "accounts.google.com:"
+        # emaill will be set automatically by kfctl init and generate
+        # value: SET_EMAIL
       repoRef:
         name: manifests
         path: profiles
@@ -324,8 +322,29 @@ spec:
     name: gpu-driver
   - kustomizeConfig:
       overlays:
-      - managed-cert
       - application
+      repoRef:
+        name: manifests
+        path: seldon/seldon-core-operator
+    name: seldon-core-operator
+  - kustomizeConfig:
+      parameters:
+      - name: ambassadorServiceType
+        value: NodePort
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: common/ambassador
+    name: ambassador
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: common/basic-auth
+    name: basic-auth
+  - kustomizeConfig:
+      overlays:
+      - managed-cert
       parameters:
       - name: namespace
         value: istio-system
@@ -334,23 +353,23 @@ spec:
         value: test1-ip
       - initRequired: true
         name: hostname
-        # The value of hostname should be the DNS address for ingress.
-        # This will be set automatically during kfctl generate.
+        # project will be set automatically by kfctl init & generate
         # value: test1.endpoints.SET_PROJECT.cloud.goog
+      - initRequired: true
+        name: project
+        # Project will be set automatically by kfctl init & generate
+        # value: SET_PROJECT
+      - name: ingressName
+        value: envoy-ingress
+      - name: issuer
+        value: letsencrypt-prod
       repoRef:
         name: manifests
-        path: gcp/iap-ingress
-    name: iap-ingress
-  - kustomizeConfig:
-      overlays:
-      - application
-      repoRef:
-        name: manifests
-        path: seldon/seldon-core-operator
-    name: seldon-core-operator
+        path: gcp/basic-auth-ingress
+    name: basic-auth-ingress
   # email should  be set the google account of the person setting up Kubeflow.
   # If its not set kfctl generate will try to set it automatically based on the default
-  # gcloud config
+  # gcloud config  
   # email: <your_email@gmail.com>
   enableApplications: true
   packageManager: kustomize
@@ -365,10 +384,10 @@ spec:
           path: gcp/deployment_manager_configs
       enableWorkloadIdentity: true
   skipInitProject: true
-  useBasicAuth: false
+  useBasicAuth: true
   useIstio: true
   version: master
   # Project should be set to the GCP project you want to use.
-  # If you run kfctl init --config=<path>/kfctl_gcp_iap.yaml
+  # If you run kfctl init --config=<path>/kfctl_gcp_iap.yaml 
   # kfctl will try to automatically set it.
   # project: <your project>

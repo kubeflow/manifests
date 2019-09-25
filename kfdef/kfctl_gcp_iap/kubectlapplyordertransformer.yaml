@@ -1,0 +1,28 @@
+apiVersion: builtin
+kind: KindOrderTransformer
+metadata:
+  name: kubectlapplyordertransformer
+kindorder:
+- Namespace
+- CustomResourceDefinition
+- ServiceAccount
+- ClusterRole
+- RoleBinding
+- ClusterRoleBinding
+- ConfigMap
+- Service
+- Deployment
+- CronJob
+- ValidatingWebhookConfiguration
+- APIService
+- Job
+- Certificate
+- ClusterIssuer
+- Issuer
+---
+apiVersion: builtin
+kind: KindFilterTransformer
+metadata:
+  name: kubectlapplyfiltertransformer
+excludes:
+- KfDef

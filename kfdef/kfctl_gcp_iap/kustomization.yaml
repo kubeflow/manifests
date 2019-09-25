@@ -1,0 +1,6 @@
+resources:
+- ../common
+- kfdef-app.yaml
+- ../../common/spartakus/base
+  # - ../../gcp/iap-ingress/overlays/managed-cert
+- ../../gcp/iap-ingress/overlays/application

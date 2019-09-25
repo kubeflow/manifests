@@ -2,15 +2,15 @@ apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:
-    certmanager.k8s.io/issuer: $(issuer)
+    certmanager.k8s.io/issuer: $(ConfigMap.parameters.data.issuer)
     ingress.kubernetes.io/ssl-redirect: "true"
-    kubernetes.io/ingress.global-static-ip-name: $(ipName)
+    kubernetes.io/ingress.global-static-ip-name: $(KfDef.app.applications[name=iap-ingress].kustomizeConfig.parameters[name=ipName].value)
     kubernetes.io/tls-acme: "true"
     networking.gke.io/managed-certificates: gke-certificate
   name: envoy-ingress
 spec:
   rules:
-  - host: $(hostname)
+  - host: $(KfDef.app.applications[name=iap-ingress].kustomizeConfig.parameters[name=hostname].value)
     http:
       paths:
       - backend:

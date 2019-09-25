@@ -45,11 +45,11 @@ spec:
         - /var/envoy-config/setup_backend.sh
         env:
         - name: NAMESPACE
-          value: $(istioNamespace)
+          value: $(ConfigMap.parameters.data.istioNamespace)
         - name: SERVICE
           value: istio-ingressgateway
         - name: INGRESS_NAME
-          value: $(ingressName)
+          value: $(ConfigMap.parameters.data.ingressName)
         - name: ENVOY_ADMIN
           value: http://localhost:8001
         - name: USE_ISTIO

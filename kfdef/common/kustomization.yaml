@@ -1,0 +1,3 @@
+resources:
+# - kfdef.apps.kubeflow.org_kfdefs.yaml
+- kubeflow.airshipit.org_kfdefs.yaml

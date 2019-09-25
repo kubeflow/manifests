@@ -1,7 +1,7 @@
-apiVersion: kfdef.apps.kubeflow.org/v1alpha1
+apiVersion: kubeflow.airshipit.org/v1beta1
 kind: KfDef
 metadata:
-  name: kubeflow-aws
+  name: app
   namespace: kubeflow
 spec:
   platform: aws
@@ -65,14 +65,14 @@ spec:
       name: centraldashboard
     - kustomizeConfig:
         overlays:
-          - application
+        - application
         repoRef:
           name: manifests
           path: admission-webhook/webhook
       name: webhook
     - kustomizeConfig:
         overlays:
-          - application
+        - application
         parameters:
           - name: webhookNamePrefix
             value: admission-webhook-
@@ -153,25 +153,23 @@ spec:
       name: katib-crds
     - kustomizeConfig:
         overlays:
-        - application
-        - istio
+          - application
+          - istio
         repoRef:
           name: manifests
           path: katib/katib-controller
       name: katib-controller
     - kustomizeConfig:
         overlays:
-        - application
+          - application
         repoRef:
           name: manifests
           path: pipeline/api-service
       name: api-service
     - kustomizeConfig:
         overlays:
-        - application
+          - application
         parameters:
-          - name: minioPvName
-            value: minio-pv
           - name: minioPvcName
             value: minio-pv-claim
         repoRef:
@@ -180,10 +178,8 @@ spec:
       name: minio
     - kustomizeConfig:
         overlays:
-        - application
+          - application
         parameters:
-          - name: mysqlPvName
-            value: mysql-pv
           - name: mysqlPvcName
             value: mysql-pv-claim
         repoRef:
@@ -192,14 +188,14 @@ spec:
       name: mysql
     - kustomizeConfig:
         overlays:
-        - application
+          - application
         repoRef:
           name: manifests
           path: pipeline/persistent-agent
       name: persistent-agent
     - kustomizeConfig:
         overlays:
-        - application
+          - application
         repoRef:
           name: manifests
           path: pipeline/pipelines-runner
@@ -214,29 +210,29 @@ spec:
       name: pipelines-ui
     - kustomizeConfig:
         overlays:
-        - application
+          - application
         repoRef:
           name: manifests
           path: pipeline/pipelines-viewer
       name: pipelines-viewer
     - kustomizeConfig:
         overlays:
-        - application
+          - application
         repoRef:
           name: manifests
           path: pipeline/scheduledworkflow
       name: scheduledworkflow
     - kustomizeConfig:
         overlays:
-        - application
+          - application
         repoRef:
           name: manifests
           path: pipeline/pipeline-visualization-service
       name: pipeline-visualization-service
     - kustomizeConfig:
         overlays:
-        - application
-        - istio
+          - application
+          - istio
         repoRef:
           name: manifests
           path: profiles
@@ -254,8 +250,6 @@ spec:
           name: manifests
           path: mpi-job/mpi-operator
     - kustomizeConfig:
-        overlays:
-          - cognito
         parameters:
           - initRequired: true
             name: namespace
@@ -294,12 +288,11 @@ spec:
   plugins:
     - name: aws
       spec:
-        auth:
-          cognito:
-            cognitoUserPoolArn: arn:aws:cognito-idp:us-west-2:xxxxx:userpool/us-west-2_xxxxxx
-            cognitoAppClientId: xxxxxbxxxxxx
-            cognitoUserPoolDomain: your-user-pool
-            certArn: arn:aws:acm:us-west-2:xxxxx:certificate/xxxxxxxxxxxxx-xxxx
         roles:
-          - eksctl-kubeflow-aws-nodegroup-ng-a2-NodeInstanceRole-xxxxx
+          - eksctl-kubeflow-aws-nodegroup-ng-a2-NodeInstanceRole-xxxxxxx
         region: us-west-2
+        auth:
+          basicAuth:
+            password:
+              name: password
+            username: admin

@@ -4,4 +4,4 @@ metadata:
   name: gke-certificate
 spec:
   domains:
-  - $(hostname)
+  - $(KfDef.app.applications[name=iap-ingress].kustomizeConfig.parameters[name=hostname].value)

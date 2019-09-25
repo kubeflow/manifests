@@ -1,13 +1,41 @@
-# This is the config to install Kubeflow on an existing K8s cluster, with support
-# for multi-user and LDAP auth using Dex.
-
-apiVersion: kfdef.apps.kubeflow.org/v1alpha1
+# Please set project and email!
+apiVersion: kubeflow.airshipit.org/v1beta1
 kind: KfDef
 metadata:
-  name: demo
+  name: app
   namespace: kubeflow
 spec:
+  repos:
+  - name: manifests
+    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
+    # To get manifest at a PR:
+    #uri: https://github.com/kubeflow/manifests/archive/pull/235/head.tar.gz
+  appdir: /tmp/myapp2
   applications:
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/istio-crds
+    name: istio-crds
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/istio-install
+    name: istio-install
+  - kustomizeConfig:
+      parameters:
+      - name: clusterRbacConfig
+        value: "ON"
+      repoRef:
+        name: manifests
+        path: istio/istio
+    name: istio
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -21,6 +49,11 @@ spec:
         path: application/application
     name: application
   - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: metacontroller
+    name: metacontroller
+  - kustomizeConfig:
       overlays:
       - istio
       - application
@@ -29,11 +62,13 @@ spec:
         path: argo
     name: argo
   - kustomizeConfig:
-      parameters:
-      - name: userid-header
-        value: kubeflow-userid
       overlays:
       - istio
+      parameters:
+      - name: userid-header
+        value: X-Goog-Authenticated-User-Email
+      - name: userid-prefix
+        value: "accounts.google.com:"
       repoRef:
         name: manifests
         path: common/centraldashboard
@@ -56,12 +91,14 @@ spec:
         path: admission-webhook/bootstrap
     name: bootstrap
   - kustomizeConfig:
-      parameters:
-      - name: userid-header
-        value: kubeflow-userid
       overlays:
       - istio
       - application
+      parameters:
+      - name: userid-header
+        value: X-Goog-Authenticated-User-Email
+      - name: userid-prefix
+        value: "accounts.google.com:"
       repoRef:
         name: manifests
         path: jupyter/jupyter-web-app
@@ -77,6 +114,9 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: injectGcpCredentials
+        value: "true"
       repoRef:
         name: manifests
         path: jupyter/notebook-controller
@@ -87,15 +127,51 @@ spec:
         path: pytorch-job/pytorch-job-crds
     name: pytorch-job-crds
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pytorch-job/pytorch-operator
     name: pytorch-operator
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: namespace
+        value: knative-serving
+      repoRef:
+        name: manifests
+        path: knative/knative-serving-crds
+    name: knative-crds
+  - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: namespace
+        value: knative-serving
+      repoRef:
+        name: manifests
+        path: knative/knative-serving-install
+    name: knative-install
+  - kustomizeConfig:
+      overlays:
+      - application
+      repoRef:
+        name: manifests
+        path: kfserving/kfserving-crds
+    name: kfserving-crds
+  - kustomizeConfig:
+      overlays:
+      - application
+      repoRef:
+        name: manifests
+        path: kfserving/kfserving-install
+    name: kfserving-install
+  - kustomizeConfig:
       parameters:
       - initRequired: true
         name: usageId
-        value: <randomly-generated-id>
+        value: "7439583937720421527"
       - initRequired: true
         name: reportUsage
         value: "true"
@@ -144,8 +220,13 @@ spec:
     name: api-service
   - kustomizeConfig:
       overlays:
+      - minioPd
       - application
       parameters:
+      - name: minioPd
+        value: test1-storage-artifact-store
+      - name: minioPvName
+        value: minio-pv
       - name: minioPvcName
         value: minio-pv-claim
       repoRef:
@@ -154,8 +235,13 @@ spec:
     name: minio
   - kustomizeConfig:
       overlays:
+      - mysqlPd
       - application
       parameters:
+      - name: mysqlPd
+        value: test1-storage-metadata-store
+      - name: mysqlPvName
+        value: mysql-pv
       - name: mysqlPvcName
         value: mysql-pv-claim
       repoRef:
@@ -206,12 +292,24 @@ spec:
         path: pipeline/pipeline-visualization-service
     name: pipeline-visualization-service
   - kustomizeConfig:
-      parameters:
-      - name: userid-header
-        value: kubeflow-userid
+      overlays:
+      - application
+      repoRef:
+        name: manifests
+        path: gcp/cloud-endpoints
+    name: cloud-endpoints
+  - kustomizeConfig:
       overlays:
       - application
       - istio
+      parameters:
+      - initRequired: true
+        name: admin
+        value: SET_EMAIL
+      - name: userid-header
+        value: X-Goog-Authenticated-User-Email
+      - name: userid-prefix
+        value: "accounts.google.com:"
       repoRef:
         name: manifests
         path: profiles
@@ -221,10 +319,55 @@ spec:
       - application
       repoRef:
         name: manifests
+        path: gcp/gpu-driver
+    name: gpu-driver
+  - kustomizeConfig:
+      overlays:
+      - managed-cert
+      - application
+      parameters:
+      - name: namespace
+        value: istio-system
+      - initRequired: true
+        name: ipName
+        value: test1-ip
+      - initRequired: true
+        name: hostname
+        # The value of hostname should be the DNS address for ingress.
+        # This will be set automatically during kfctl generate.
+        value: test1.endpoints.SET_PROJECT.cloud.google
+      repoRef:
+        name: manifests
+        path: gcp/iap-ingress
+    name: iap-ingress
+  - kustomizeConfig:
+      overlays:
+      - application
+      repoRef:
+        name: manifests
         path: seldon/seldon-core-operator
     name: seldon-core-operator
-  platform: existing_arrikto
-  repos:
-  - name: manifests
-    root: manifests-master
-    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
+  # email should  be set the google account of the person setting up Kubeflow.
+  # If its not set kfctl generate will try to set it automatically based on the default
+  # gcloud config
+  # email: <your_email@gmail.com>
+  enableApplications: true
+  packageManager: kustomize
+  platform: gcp
+  plugins:
+  - name: gcp
+    spec:
+      createPipelinePersistentStorage: true
+      deploymentManagerConfig:
+        repoRef:
+          name: manifests
+          path: gcp/deployment_manager_configs
+      enableWorkloadIdentity: true
+  skipInitProject: true
+  useBasicAuth: false
+  useIstio: true
+  version: master
+  # Project should be set to the GCP project you want to use.
+  # If you run kfctl init --config=<path>/kfctl_gcp_iap.yaml
+  # kfctl will try to automatically set it.
+  # project: <your project>

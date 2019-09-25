@@ -6,4 +6,4 @@ spec:
   iap:
     enabled: true
     oauthclientCredentials:
-      secretName: $(oauthSecretName)
+      secretName: $(ConfigMap.parameters.data.oauthSecretName)

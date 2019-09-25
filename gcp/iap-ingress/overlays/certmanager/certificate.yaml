@@ -1,18 +1,18 @@
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
-  name: $(tlsSecretName)
+  name: $(ConfigMap.parameters.data.tlsSecretName)
 spec:
   acme:
     config:
     - domains:
-      - $(hostname)
+      - $(KfDef.app.applications[name=iap-ingress].kustomizeConfig.parameters[name=hostname].value)
       http01:
-        ingress: $(ingressName)
-  commonName: $(hostname)
+        ingress: $(ConfigMap.parameters.data.ingressName)
+  commonName: $(KfDef.app.applications[name=iap-ingress].kustomizeConfig.parameters[name=hostname].value)
   dnsNames:
-  - $(hostname)
+  - $(KfDef.app.applications[name=iap-ingress].kustomizeConfig.parameters[name=hostname].value)
   issuerRef:
     kind: ClusterIssuer
-    name: $(issuer)
-  secretName: $(tlsSecretName)
+    name: $(ConfigMap.parameters.data.issuer)
+  secretName: $(ConfigMap.parameters.data.tlsSecretName)

@@ -1,10 +1,10 @@
 # This is the config to install Kubeflow on an Anthos.
 # The cluster comes with customized Istio installation.
 
-apiVersion: kfdef.apps.kubeflow.org/v1alpha1
+apiVersion: kubeflow.airshipit.org/v1alpha1
 kind: KfDef
 metadata:
-  name: kubeflow_app
+  name: app
   namespace: kubeflow
 spec:
   repos:

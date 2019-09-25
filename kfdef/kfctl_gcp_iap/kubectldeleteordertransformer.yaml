@@ -1,0 +1,21 @@
+apiVersion: builtin
+kind: KindOrderTransformer
+metadata:
+  name: kubectldeletetransformer
+kindorder:
+- Issuer
+- ClusterIssuer
+- Certificate
+- Job
+- APIService
+- ValidatingWebhookConfiguration
+- CronJob
+- Deployment
+- Service
+- ConfigMap
+- ClusterRoleBinding
+- RoleBinding
+- ClusterRole
+- ServiceAccount
+- CustomResourceDefinition
+- Namespace
