@@ -4,15 +4,5 @@ metadata:
   name: $(generateName)
 spec:
   podTemplate:
-#    affinity:
-#      nodeAffinity:
-#        requiredDuringSchedulingIgnoredDuringExecution:
-#          nodeSelectorTerms:
-#          - matchExpressions:
-#            - key: cpu
-#              operator: In
-#              values:
-#              - skylake
-#              - cascadelake
     nodeSelector:
-      cpu: $(cpuType)
+      cpu: "$(cpuType)"
