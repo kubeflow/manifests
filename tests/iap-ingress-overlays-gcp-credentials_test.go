@@ -727,7 +727,8 @@ vars:
   fieldref:
     fieldpath: data.istioNamespace
 configurations:
-- params.yaml`)
+- params.yaml
+`)
 }
 
 func TestIapIngressOverlaysGcpCredentials(t *testing.T) {

@@ -749,7 +749,8 @@ vars:
   fieldref:
     fieldpath: data.istioNamespace
 configurations:
-- params.yaml`)
+- params.yaml
+`)
 }
 
 func TestIapIngressOverlaysCertmanager(t *testing.T) {

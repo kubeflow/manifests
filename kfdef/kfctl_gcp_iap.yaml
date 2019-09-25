@@ -56,6 +56,7 @@ spec:
     name: metacontroller
   - kustomizeConfig:
       overlays:
+      - application
       - istio
       repoRef:
         name: manifests
@@ -74,11 +75,15 @@ spec:
         path: common/centraldashboard
     name: centraldashboard
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: admission-webhook/webhook
     name: webhook
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
       - name: webhookNamePrefix
         value: admission-webhook-
@@ -220,12 +225,15 @@ spec:
         path: tf-training/tf-job-operator
     name: tf-job-operator
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pipeline/api-service
     name: api-service
   - kustomizeConfig:
       overlays:
+      - application
       - minioPd
       parameters:
       - name: minioPd
@@ -240,6 +248,7 @@ spec:
     name: minio
   - kustomizeConfig:
       overlays:
+      - application
       - mysqlPd
       parameters:
       - name: mysqlPd
@@ -253,28 +262,37 @@ spec:
         path: pipeline/mysql
     name: mysql
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pipeline/persistent-agent
     name: persistent-agent
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pipeline/pipelines-runner
     name: pipelines-runner
   - kustomizeConfig:
       overlays:
+      - application
       - istio
       repoRef:
         name: manifests
         path: pipeline/pipelines-ui
     name: pipelines-ui
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pipeline/pipelines-viewer
     name: pipelines-viewer
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pipeline/scheduledworkflow
@@ -286,6 +304,7 @@ spec:
     name: cloud-endpoints
   - kustomizeConfig:
       overlays:
+      - application
       - istio
       parameters:
       - initRequired: true

@@ -49,6 +49,7 @@ spec:
       name: metacontroller
     - kustomizeConfig:
         overlays:
+          - application
           - istio
         repoRef:
           name: manifests
@@ -56,18 +57,22 @@ spec:
       name: argo
     - kustomizeConfig:
         overlays:
-          - istio
           - application
+          - istio
         repoRef:
           name: manifests
           path: common/centraldashboard
       name: centraldashboard
     - kustomizeConfig:
+        overlays:
+          - application
         repoRef:
           name: manifests
           path: admission-webhook/webhook
       name: webhook
     - kustomizeConfig:
+        overlays:
+          - application
         parameters:
           - name: webhookNamePrefix
             value: admission-webhook-
@@ -77,8 +82,8 @@ spec:
       name: bootstrap
     - kustomizeConfig:
         overlays:
-          - istio
           - application
+          - istio
         repoRef:
           name: manifests
           path: jupyter/jupyter-web-app
@@ -124,8 +129,8 @@ spec:
       name: suggestion
     - kustomizeConfig:
         overlays:
-          - istio
           - application
+          - istio
         repoRef:
           name: manifests
           path: jupyter/notebook-controller
@@ -168,18 +173,22 @@ spec:
       name: tf-job-crds
     - kustomizeConfig:
         overlays:
-          - istio
           - application
+          - istio
         repoRef:
           name: manifests
           path: tf-training/tf-job-operator
       name: tf-job-operator
     - kustomizeConfig:
+        overlays:
+          - application
         repoRef:
           name: manifests
           path: pipeline/api-service
       name: api-service
     - kustomizeConfig:
+        overlays:
+          - application
         parameters:
           - name: minioPvName
             value: minio-pv
@@ -190,6 +199,8 @@ spec:
           path: pipeline/minio
       name: minio
     - kustomizeConfig:
+        overlays:
+          - application
         parameters:
           - name: mysqlPvName
             value: mysql-pv
@@ -200,34 +211,44 @@ spec:
           path: pipeline/mysql
       name: mysql
     - kustomizeConfig:
+        overlays:
+          - application
         repoRef:
           name: manifests
           path: pipeline/persistent-agent
       name: persistent-agent
     - kustomizeConfig:
+        overlays:
+          - application
         repoRef:
           name: manifests
           path: pipeline/pipelines-runner
       name: pipelines-runner
     - kustomizeConfig:
         overlays:
+          - application
           - istio
         repoRef:
           name: manifests
           path: pipeline/pipelines-ui
       name: pipelines-ui
     - kustomizeConfig:
+        overlays:
+          - application
         repoRef:
           name: manifests
           path: pipeline/pipelines-viewer
       name: pipelines-viewer
     - kustomizeConfig:
+        overlays:
+          - application
         repoRef:
           name: manifests
           path: pipeline/scheduledworkflow
       name: scheduledworkflow
     - kustomizeConfig:
         overlays:
+          - application
           - istio
         repoRef:
           name: manifests

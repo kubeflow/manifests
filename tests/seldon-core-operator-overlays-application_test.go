@@ -1,20 +1,20 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/v3/pkg/fs"
-  "sigs.k8s.io/kustomize/v3/pkg/loader"
-  "sigs.k8s.io/kustomize/v3/pkg/plugins"
-  "sigs.k8s.io/kustomize/v3/pkg/resmap"
-  "sigs.k8s.io/kustomize/v3/pkg/resource"
-  "sigs.k8s.io/kustomize/v3/pkg/target"
-  "sigs.k8s.io/kustomize/v3/pkg/validators"
-  "testing"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
+	"testing"
 )
 
 func writeSeldonCoreOperatorOverlaysApplication(th *KustTestHarness) {
-  th.writeF("/manifests/seldon/seldon-core-operator/overlays/application/application.yaml", `
+	th.writeF("/manifests/seldon/seldon-core-operator/overlays/application/application.yaml", `
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
@@ -48,15 +48,15 @@ spec:
     - description: Docs
       url: "https://docs.seldon.io/projects/seldon-core/en/v0.3.0/"
 `)
-  th.writeF("/manifests/seldon/seldon-core-operator/overlays/application/params.yaml", `
+	th.writeF("/manifests/seldon/seldon-core-operator/overlays/application/params.yaml", `
 varReference:
 - path: metadata/name
   kind: Application
 `)
-  th.writeF("/manifests/seldon/seldon-core-operator/overlays/application/params.env", `
+	th.writeF("/manifests/seldon/seldon-core-operator/overlays/application/params.env", `
 generateName=
 `)
-  th.writeK("/manifests/seldon/seldon-core-operator/overlays/application", `
+	th.writeK("/manifests/seldon/seldon-core-operator/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -84,7 +84,7 @@ commonLabels:
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.6
 `)
-  th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-config-cm.yaml", `
+	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-config-cm.yaml", `
 apiVersion: v1
 data:
   credentials: |-
@@ -107,7 +107,7 @@ metadata:
   name: seldon-config
   namespace: kubeflow
 `)
-  th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-manager-sa.yaml", `
+	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-manager-sa.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -119,7 +119,7 @@ metadata:
   name: seldon-manager
   namespace: kubeflow
 `)
-  th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-controller-manager-service-svc.yaml", `
+	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-controller-manager-service-svc.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -139,7 +139,7 @@ spec:
     control-plane: seldon-controller-manager
     controller-tools.k8s.io: "1.0"
 `)
-  th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-controller-manager-statefulset.yaml", `
+	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-controller-manager-statefulset.yaml", `
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -229,7 +229,7 @@ spec:
           secretName: seldon-operator-webhook-server-secret
   volumeClaimTemplates: []
 `)
-  th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-manager-role-clusterrole.yaml", `
+	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-manager-role-clusterrole.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -422,7 +422,7 @@ rules:
   - patch
   - delete
 `)
-  th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-manager-rolebinding-crb.yaml", `
+	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-manager-rolebinding-crb.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -441,14 +441,14 @@ subjects:
   name: seldon-manager
   namespace: kubeflow
 `)
-  th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-webhook-server-secret-secret.yaml", `
+	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-webhook-server-secret-secret.yaml", `
 apiVersion: v1
 kind: Secret
 metadata:
   name: seldon-operator-webhook-server-secret
   namespace: kubeflow
 `)
-  th.writeF("/manifests/seldon/seldon-core-operator/base/seldondeployments.machinelearning.seldon.io-crd.yaml", `
+	th.writeF("/manifests/seldon/seldon-core-operator/base/seldondeployments.machinelearning.seldon.io-crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -3665,7 +3665,7 @@ spec:
     storage: true
 
 `)
-  th.writeF("/manifests/seldon/seldon-core-operator/base/webhook-server-service-svc.yaml", `
+	th.writeF("/manifests/seldon/seldon-core-operator/base/webhook-server-service-svc.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -3685,7 +3685,7 @@ spec:
   selector:
     control-plane: seldon-controller-manager
 `)
-  th.writeK("/manifests/seldon/seldon-core-operator/base", `
+	th.writeK("/manifests/seldon/seldon-core-operator/base", `
 # List of resource files that kustomize reads, modifies
 # and emits as a YAML string
 resources:
@@ -3702,32 +3702,32 @@ resources:
 }
 
 func TestSeldonCoreOperatorOverlaysApplication(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/seldon/seldon-core-operator/overlays/application")
-  writeSeldonCoreOperatorOverlaysApplication(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := m.AsYaml()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "../seldon/seldon-core-operator/overlays/application"
-  fsys := fs.MakeRealFS()
-  lrc := loader.RestrictionRootOnly
-  _loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
-  if loaderErr != nil {
-    t.Fatalf("could not load kustomize loader: %v", loaderErr)
-  }
-  rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
-  pc := plugins.DefaultPluginConfig()
-  kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
-  if err != nil {
-    th.t.Fatalf("Unexpected construction error %v", err)
-  }
-  actual, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  th.assertActualEqualsExpected(actual, string(expected))
+	th := NewKustTestHarness(t, "/manifests/seldon/seldon-core-operator/overlays/application")
+	writeSeldonCoreOperatorOverlaysApplication(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := m.AsYaml()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../seldon/seldon-core-operator/overlays/application"
+	fsys := fs.MakeRealFS()
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	actual, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	th.assertActualEqualsExpected(actual, string(expected))
 }

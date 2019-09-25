@@ -57,6 +57,7 @@ spec:
     name: metacontroller
   - kustomizeConfig:
       overlays:
+      - application
       - istio
       repoRef:
         name: manifests
@@ -70,11 +71,15 @@ spec:
         path: common/centraldashboard
     name: centraldashboard
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: admission-webhook/bootstrap
     name: bootstrap
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: admission-webhook/webhook
@@ -202,11 +207,15 @@ spec:
         path: tf-training/tf-job-operator
     name: tf-job-operator
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pipeline/api-service
     name: api-service
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
       - name: minioPvcName
         value: minio-pv-claim
@@ -215,6 +224,8 @@ spec:
         path: pipeline/minio
     name: minio
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
       - name: mysqlPvcName
         value: mysql-pv-claim
@@ -223,34 +234,44 @@ spec:
         path: pipeline/mysql
     name: mysql
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pipeline/persistent-agent
     name: persistent-agent
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pipeline/pipelines-runner
     name: pipelines-runner
   - kustomizeConfig:
       overlays:
+      - application
       - istio
       repoRef:
         name: manifests
         path: pipeline/pipelines-ui
     name: pipelines-ui
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pipeline/pipelines-viewer
     name: pipelines-viewer
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pipeline/scheduledworkflow
     name: scheduledworkflow
   - kustomizeConfig:
       overlays:
+      - application
       - istio
       parameters:
       - initRequired: true

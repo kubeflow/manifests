@@ -1,0 +1,25 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: $(generateName)
+spec:
+  componentKinds:
+  - group: apps
+    kind: Deployment
+  - group: rbac.authorization.k8s.io
+    kind: Role
+  - group: rbac.authorization.k8s.io
+    kind: RoleBinding
+  - group: core
+    kind: ServiceAccount
+  - group: core
+    kind: Service
+  descriptor:
+    type: "profiles"
+    version: "v1beta1"
+    description: "provides isolated namespaces for users"
+    keywords:
+    - "profiles"
+    links:
+    - description: About
+      url: "https://github.com/kubeflow/kubeflow/tree/master/components/profile-controller"
