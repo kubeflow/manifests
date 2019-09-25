@@ -52,9 +52,23 @@ metadata:
 data:
   label-accelerator-nodes.sh: |-
     #!/usr/bin/env bash
-    gpuNode=$(kubectl get nodes -oname | grep gpu)
+    gpuNode=$(echo $(kubectl get nodes -oname --no-headers | grep gpu))
     if [[ -n $gpuNode ]]; then
       kubectl label $gpuNode accelerator=$(gpu-type)
     else
       echo 'no gpu node available'
+    fi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: label-cpu-nodes
+data:
+  label-cpu-nodes.sh: |-
+    #!/usr/bin/env bash
+    cpuNode=$(echo $(kubectl get nodes -oname --no-headers | grep -v gpu))
+    if [[ -n $cpuNode ]]; then
+      kubectl label $cpuNode cpu=$(cpu-type)
+    else
+      echo 'no cpu node available'
     fi
