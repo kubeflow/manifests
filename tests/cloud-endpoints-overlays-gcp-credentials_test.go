@@ -16,7 +16,7 @@ import (
 func writeCloudEndpointsOverlaysGcpCredentials(th *KustTestHarness) {
 	th.writeF("/manifests/gcp/cloud-endpoints/overlays/gcp-credentials/gcp-credentials-patch.yaml", `
 # Patch the env/volumes/volumeMounts for GCP credentials
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cloud-endpoints-controller
@@ -35,7 +35,8 @@ spec:
       volumes:
       - name: sa-key
         secret:
-          secretName: admin-gcp-sa`)
+          secretName: admin-gcp-sa
+`)
 	th.writeK("/manifests/gcp/cloud-endpoints/overlays/gcp-credentials", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -72,6 +73,7 @@ rules:
   - list
 - apiGroups:
   - extensions
+  - networking.k8s.io
   resources:
   - ingresses
   verbs:
@@ -118,7 +120,7 @@ spec:
   version: v1
 `)
 	th.writeF("/manifests/gcp/cloud-endpoints/base/deployment.yaml", `
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cloud-endpoints-controller

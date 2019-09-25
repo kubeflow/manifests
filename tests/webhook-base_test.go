@@ -47,7 +47,7 @@ rules:
   - delete
 `)
 	th.writeF("/manifests/admission-webhook/webhook/base/deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: deployment
@@ -215,7 +215,7 @@ vars:
   objref:
     kind: Deployment
     name: deployment
-    apiVersion: extensions/v1beta1
+    apiVersion: apps/v1
   fieldref:
     fieldpath: metadata.name
 configurations:

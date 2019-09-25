@@ -88,6 +88,7 @@ rules:
   - update
 - apiGroups:
   - extensions
+  - networking.k8s.io
   resources:
   - ingresses
   verbs:
@@ -344,7 +345,7 @@ metadata:
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/deployment.yaml", `
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: whoami-app
@@ -373,7 +374,7 @@ spec:
           successThreshold: 1
           timeoutSeconds: 5
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: iap-enabler
@@ -412,7 +413,7 @@ spec:
         name: config-volume
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/ingress.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:

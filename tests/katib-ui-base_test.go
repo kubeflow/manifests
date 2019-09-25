@@ -15,7 +15,7 @@ import (
 
 func writeKatibUiBase(th *KustTestHarness) {
 	th.writeF("/manifests/katib-v1alpha2/katib-ui/base/katib-ui-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: katib-ui
@@ -24,6 +24,10 @@ metadata:
     component: ui
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: ui
   template:
     metadata:
       name: katib-ui

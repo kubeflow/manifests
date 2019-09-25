@@ -100,7 +100,7 @@ metadata:
   namespace: auth
 `)
 	th.writeF("/manifests/dex-auth/dex-crds/base/deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -108,6 +108,9 @@ metadata:
   name: dex
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+        app: dex
   template:
     metadata:
       labels:

@@ -15,7 +15,7 @@ import (
 
 func writeVizierCoreBase(th *KustTestHarness) {
 	th.writeF("/manifests/katib-v1alpha1/vizier-core/base/vizier-core-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vizier-core
@@ -23,6 +23,9 @@ metadata:
     component: core
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      component: core
   template:
     metadata:
       name: vizier-core
@@ -77,7 +80,7 @@ rules:
   - apiGroups: ["batch"]
     resources: ["jobs", "jobs/status"]
     verbs: ["*"]
-  - apiGroups: ["extensions"]
+  - apiGroups: ["extensions", "networking.k8s.io", "apps"]
     verbs: ["*"]
     resources: ["ingresses","ingresses/status","deployments","deployments/status"]
   - apiGroups: [""]
@@ -90,7 +93,7 @@ metadata:
   name: vizier-core
 `)
 	th.writeF("/manifests/katib-v1alpha1/vizier-core/base/vizier-core-rest-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vizier-core-rest
@@ -98,6 +101,9 @@ metadata:
     component: core-rest
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      component: core-rest
   template:
     metadata:
       name: vizier-core-rest

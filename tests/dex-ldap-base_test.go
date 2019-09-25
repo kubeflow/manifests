@@ -21,12 +21,17 @@ metadata:
   name: auth
 `)
 	th.writeF("/manifests/dex-auth/dex-ldap/base/deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ldap
+  labels:
+    app: ldap
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: ldap
   template:
     metadata:
       labels:

@@ -58,6 +58,7 @@ rules:
   - update
 - apiGroups:
   - extensions
+  - networking.k8s.io
   resources:
   - ingresses
   verbs:
@@ -172,7 +173,7 @@ metadata:
 ---
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: whoami-app
@@ -202,7 +203,7 @@ spec:
           timeoutSeconds: 5
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/ingress.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:
@@ -282,7 +283,7 @@ spec:
   type: ClusterIP
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/stateful-set.yaml", `
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:

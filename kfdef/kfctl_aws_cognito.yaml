@@ -268,8 +268,6 @@ spec:
   enableApplications: true
   packageManager: kustomize
   repos:
-    - name: kubeflow
-      uri: https://github.com/kubeflow/kubeflow/archive/master.tar.gz
     - name: manifests
       root: manifests-master
       uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
