@@ -234,6 +234,24 @@ spec:
       mountPath: /kubeflow
     - name: label-accelerator-nodes
       mountPath: /label-accelerator-nodes
+  - name: label-cpu-nodes
+    image: "$(inputs.params.kfctl_image)"
+    imagePullPolicy: IfNotPresent
+    workingDir: "$(inputs.params.pvc_mount_path)"
+    #command: ["/bin/sleep", "infinity"]
+    command: ["/bin/bash", "/label-cpu-nodes/label-cpu-nodes.sh"]
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secret/kaniko-secret.json
+    volumeMounts:
+    - name: kaniko-secret
+      mountPath: /secret
+    - name: client-secret
+      mountPath: /client-secret
+    - name: kubeflow
+      mountPath: /kubeflow
+    - name: label-cpu-nodes
+      mountPath: /label-cpu-nodes
   volumes:
   - name: kaniko-secret
     secret:
@@ -250,3 +268,6 @@ spec:
   - name: label-accelerator-nodes
     configMap:
       name: label-accelerator-nodes
+  - name: label-cpu-nodes
+    configMap:
+      name: label-cpu-nodes
