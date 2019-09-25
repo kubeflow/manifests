@@ -10,8 +10,6 @@
       inputs:
       - name: kubeflow
         resource: kubeflow
-        from: 
-        - build-push
       - name: manifests
         resource: manifests
       - name: $(pull_request_repo)-$(pull_request_id)
@@ -20,9 +18,6 @@
         resource: $(image_name)
         from: 
         - build-push
-      outputs:
-      - name: manifests
-        resource: manifests
     params:
     - name: pathToManifestsDir
       value: "$(path_to_manifests_dir)"
@@ -32,6 +27,11 @@
   path: /spec/resources/-
   value:
     name: manifests
+    type: git
+- op: add
+  path: /spec/resources/-
+  value:
+    name: kubeflow
     type: git
 - op: add
   path: /spec/resources/-
