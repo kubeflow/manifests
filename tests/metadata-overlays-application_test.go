@@ -178,7 +178,7 @@ spec:
     spec:
       containers:
       - name: container
-        image: gcr.io/kubeflow-images-public/metadata:v0.1.8
+        image: gcr.io/kubeflow-images-public/metadata:v0.1.9
         env:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
@@ -195,6 +195,43 @@ spec:
         ports:
         - name: backendapi
           containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-deployment
+  labels:
+    component: grpc-server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: grpc-server
+  template:
+    metadata:
+      labels:
+        component: grpc-server
+    spec:
+      containers:
+        - name: container
+          image: gcr.io/tfx-oss-public/ml_metadata_store_server:0.14.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: metadata-db-secrets
+                  key: MYSQL_ROOT_PASSWORD
+          command: ["/bin/metadata_store_server"]
+          args: ["--grpc_port=8080",
+                 "--mysql_config_host=metadata-db.kubeflow",
+                 "--mysql_config_database=metadb",
+                 "--mysql_config_port=3306",
+                 "--mysql_config_user=root",
+                 "--mysql_config_password=$(MYSQL_ROOT_PASSWORD)"
+          ]
+          ports:
+            - name: grpc-backendapi
+              containerPort: 8080
 `)
 	th.writeF("/manifests/metadata/base/metadata-service.yaml", `
 kind: Service
@@ -211,6 +248,21 @@ spec:
   - port: 8080
     protocol: TCP
     name: backendapi
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: grpc-metadata
+  name: grpc-service
+spec:
+  selector:
+    component: grpc-server
+  type: ClusterIP
+  ports:
+    - port: 8080
+      protocol: TCP
+      name: grpc-backendapi
 `)
 	th.writeF("/manifests/metadata/base/metadata-ui-deployment.yaml", `
 apiVersion: apps/v1
@@ -302,6 +354,48 @@ spec:
   selector:
     app: metadata-ui
 `)
+	th.writeF("/manifests/metadata/base/metadata-envoy-deployment.yaml", `
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: envoy-deployment
+  labels:
+    component: envoy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: envoy
+  template:
+    metadata:
+      labels:
+        component: envoy
+    spec:
+      containers:
+      - name: container
+        image: gcr.io/ml-pipeline/envoy:initial
+        ports:
+        - name: md-envoy
+          containerPort: 9090
+        - name: envoy-admin
+          containerPort: 9901
+`)
+	th.writeF("/manifests/metadata/base/metadata-envoy-service.yaml", `
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: metadata
+  name: envoy-service
+spec:
+  selector:
+    component: envoy
+  type: ClusterIP
+  ports:
+  - port: 9090
+    protocol: TCP
+    name: md-envoy
+`)
 	th.writeF("/manifests/metadata/base/params.env", `
 uiClusterDomain=cluster.local
 `)
@@ -326,6 +420,8 @@ resources:
 - metadata-ui-rolebinding.yaml
 - metadata-ui-sa.yaml
 - metadata-ui-service.yaml
+- metadata-envoy-deployment.yaml
+- metadata-envoy-service.yaml
 namespace: kubeflow
 vars:
 - name: ui-namespace

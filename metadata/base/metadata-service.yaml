@@ -12,3 +12,18 @@ spec:
   - port: 8080
     protocol: TCP
     name: backendapi
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: grpc-metadata
+  name: grpc-service
+spec:
+  selector:
+    component: grpc-server
+  type: ClusterIP
+  ports:
+    - port: 8080
+      protocol: TCP
+      name: grpc-backendapi
