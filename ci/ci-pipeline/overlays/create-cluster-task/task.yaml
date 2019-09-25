@@ -243,6 +243,9 @@ spec:
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko-secret.json
+    envFrom:
+    - configMapRef:
+        name: ci-pipeline-parameters
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret

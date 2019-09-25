@@ -65,20 +65,22 @@ metadata:
   name: label-cpu-nodes
 data:
   label-cpu-nodes.sh: |-
-    #!/usr/bin/env bash
+    gcloud config set project $project
     cpuNodes=$(echo $(kubectl get nodes -oname --no-headers))
     if [[ -n $cpuNodes ]]; then
       for i in $cpuNodes;do
-        cpuPlatform=$(gcloud compute instances describe $i --zone=us-central1-b --format json | jq .minCpuPlatform)
-        case $cpuPlatform in 
-          "Intel Cascade Lake")
-            kubectl label $cpuNode cpu='cascadelake'
+        cpuNode=${i#node/}
+        cpuPlatform=$(gcloud compute instances describe $cpuNode --zone=us-central1-b --format json | jq .minCpuPlatform | xargs)
+    echo 'cpuPlatform='$cpuPlatform
+        case $cpuPlatform in
+          'Intel Cascade Lake')
+            kubectl label node $cpuNode cpu='cascadelake'
             ;;
-          "Intel Skylake")
-            kubectl label $cpuNode cpu='skylake'
+          'Intel Skylake')
+            kubectl label node $cpuNode cpu='skylake'
             ;;
-          "Intel Broadwell")
-            kubectl label $cpuNode cpu='broadwell'
+          'Intel Broadwell')
+            kubectl label node $cpuNode cpu='broadwell'
             ;;
           *)
             echo $cpuPlatform not supported
