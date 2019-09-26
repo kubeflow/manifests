@@ -62,7 +62,7 @@ kind: ClusterRole
 metadata:
   name: kubeflow-kubernetes-admin
   labels:
-    rbac.authorization.k8s.io/aggregate-to-kubeflow-admin: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
 rules:
 - apiGroups:
   - authorization.k8s.io
@@ -91,7 +91,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    rbac.authorization.k8s.io/aggregate-to-kubeflow-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
   name: kubeflow-kubernetes-edit
 rules:
 - apiGroups:
@@ -229,7 +229,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    rbac.authorization.k8s.io/aggregate-to-kubeflow-view: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
   name: kubeflow-kubernetes-view
 rules:
 - apiGroups:
