@@ -27,7 +27,6 @@ apiVersion: apiregistration.k8s.io/v1beta1
 kind: APIService
 metadata:
   name: v1beta1.webhook.certmanager.k8s.io
-  namespace: $(namespace)
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -50,7 +49,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
   name: cert-manager-leaderelection
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -70,7 +68,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
   name: cert-manager-controller-issuers
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -90,7 +87,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
   name: cert-manager-controller-clusterissuers
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -110,7 +106,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
   name: cert-manager-controller-certificates
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -130,7 +125,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
   name: cert-manager-controller-orders
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -150,7 +144,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
   name: cert-manager-controller-challenges
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -170,7 +163,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
   name: cert-manager-controller-ingress-shim
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -191,7 +183,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
   name: cert-manager-webhook:auth-delegator
-  namespace: $(namespace)
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -211,7 +202,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
   name: cert-manager-cainjector
-  namespace: $(namespace)
   labels:
     app: cainjector
     app.kubernetes.io/name: cainjector
@@ -231,7 +221,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: cert-manager-leaderelection
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -249,7 +238,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: cert-manager-controller-issuers
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -275,7 +263,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: cert-manager-controller-clusterissuers
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -301,7 +288,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: cert-manager-controller-certificates
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -334,7 +320,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: cert-manager-cainjector
-  namespace: $(namespace)
   labels:
     app: cainjector
     app.kubernetes.io/name: cainjector
@@ -366,7 +351,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: cert-manager-controller-orders
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -401,7 +385,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: cert-manager-controller-challenges
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -448,7 +431,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: cert-manager-controller-ingress-shim
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -479,7 +461,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: cert-manager-view
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -498,7 +479,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: cert-manager-edit
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -516,7 +496,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: cert-manager-webhook:webhook-requester
-  namespace: $(namespace)
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -538,7 +517,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cert-manager-cainjector
-  namespace: $(namespace)
   labels:
     app: cainjector
     app.kubernetes.io/name: cainjector
@@ -581,7 +559,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cert-manager
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -635,7 +612,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cert-manager-webhook
-  namespace: $(namespace)
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -688,7 +664,6 @@ apiVersion: admissionregistration.k8s.io/v1beta1
 kind: MutatingWebhookConfiguration
 metadata:
   name: cert-manager-webhook
-  namespace: $(namespace)
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -743,7 +718,7 @@ subjects:
 - apiGroup: ""
   kind: ServiceAccount
   name: cert-manager-webhook
-  namespace: cert-manager
+  namespace: $(namespace)
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/service-accounts.yaml", `
 ---
@@ -751,7 +726,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: cert-manager-cainjector
-  namespace: $(namespace)
   labels:
     app: cainjector
     app.kubernetes.io/name: cainjector
@@ -762,7 +736,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: cert-manager
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -773,7 +746,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: cert-manager-webhook
-  namespace: $(namespace)
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -785,7 +757,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: cert-manager
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -805,7 +776,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: cert-manager-webhook
-  namespace: $(namespace)
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -827,7 +797,6 @@ apiVersion: admissionregistration.k8s.io/v1beta1
 kind: ValidatingWebhookConfiguration
 metadata:
   name: cert-manager-webhook
-  namespace: $(namespace)
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -898,6 +867,7 @@ webhookRoleBindingNamespace=kube-system
 	th.writeK("/manifests/cert-manager/cert-manager/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: cert-manager
 resources:
 - namespace.yaml
 - api-service.yaml
@@ -962,6 +932,7 @@ acmeUrl=https://acme-v02.api.letsencrypt.org/directory
 	th.writeK("/manifests/cert-manager/cert-manager/overlays/letsencrypt", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: cert-manager
 bases:
 - ../../base
 resources:
