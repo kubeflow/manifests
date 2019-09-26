@@ -3,7 +3,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cert-manager-cainjector
-  namespace: $(namespace)
   labels:
     app: cainjector
     app.kubernetes.io/name: cainjector
@@ -46,7 +45,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cert-manager
-  namespace: $(namespace)
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -100,7 +98,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cert-manager-webhook
-  namespace: $(namespace)
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
