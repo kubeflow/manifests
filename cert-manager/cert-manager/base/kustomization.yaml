@@ -8,7 +8,6 @@ resources:
 - cluster-roles.yaml
 - deployments.yaml
 - mutating-webhook-configuration.yaml
-- role-binding.yaml
 - service-accounts.yaml
 - services.yaml
 - validating-webhook-configuration.yaml
@@ -37,12 +36,5 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.namespace
-- name: webhookRoleBindingNamespace
-  objref:
-    kind: ConfigMap
-    name: cert-manager-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.webhookRoleBindingNamespace
 configurations:
 - params.yaml

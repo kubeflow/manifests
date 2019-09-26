@@ -695,31 +695,6 @@ webhooks:
         path: /apis/webhook.certmanager.k8s.io/v1beta1/mutations
       caBundle: ""
 `)
-	th.writeF("/manifests/cert-manager/cert-manager/base/role-binding.yaml", `
----
-
-# apiserver gets the ability to read authentication. This allows it to
-# read the specific configmap that has the requestheader-* entries to
-# api agg
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: RoleBinding
-metadata:
-  name: cert-manager-webhook:webhook-authentication-reader
-  namespace: $(webhookRoleBindingNamespace)
-  labels:
-    app: webhook
-    app.kubernetes.io/name: webhook
-    app.kubernetes.io/instance:  cert-manager
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: extension-apiserver-authentication-reader
-subjects:
-- apiGroup: ""
-  kind: ServiceAccount
-  name: cert-manager-webhook
-  namespace: $(namespace)
-`)
 	th.writeF("/manifests/cert-manager/cert-manager/base/service-accounts.yaml", `
 ---
 apiVersion: v1
@@ -852,8 +827,6 @@ varReference:
 - path: metadata/namespace
   kind: MutatingWebhookConfiguration
 - path: metadata/namespace
-  kind: RoleBinding
-- path: metadata/namespace
   kind: ServiceAccount
 - path: metadata/namespace
   kind: Service
@@ -862,7 +835,6 @@ varReference:
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/params.env", `
 namespace=cert-manager
-webhookRoleBindingNamespace=kube-system
 `)
 	th.writeK("/manifests/cert-manager/cert-manager/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -875,7 +847,6 @@ resources:
 - cluster-roles.yaml
 - deployments.yaml
 - mutating-webhook-configuration.yaml
-- role-binding.yaml
 - service-accounts.yaml
 - services.yaml
 - validating-webhook-configuration.yaml
@@ -904,13 +875,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.namespace
-- name: webhookRoleBindingNamespace
-  objref:
-    kind: ConfigMap
-    name: cert-manager-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.webhookRoleBindingNamespace
 configurations:
 - params.yaml
 `)

@@ -20,8 +20,6 @@ varReference:
 - path: metadata/namespace
   kind: MutatingWebhookConfiguration
 - path: metadata/namespace
-  kind: RoleBinding
-- path: metadata/namespace
   kind: ServiceAccount
 - path: metadata/namespace
   kind: Service
