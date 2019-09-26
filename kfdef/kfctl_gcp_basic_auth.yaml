@@ -365,6 +365,7 @@ spec:
         repoRef:
           name: manifests
           path: gcp/deployment_manager_configs
+      enableWorkloadIdentity: true
   skipInitProject: true
   useBasicAuth: true
   useIstio: true
