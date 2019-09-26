@@ -50,13 +50,6 @@ spec:
         path: application/application
     name: application
   - kustomizeConfig:
-      overlays:
-      - kubeflow-roles
-      repoRef:
-        name: manifests
-        path: kubeflow-roles
-    name: kubeflow-roles
-  - kustomizeConfig:
       repoRef:
         name: manifests
         path: metacontroller
