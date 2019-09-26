@@ -7,7 +7,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
   name: cert-manager-webhook:webhook-authentication-reader
-  namespace: $(webhookRoleBindingNamespace)
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -20,4 +19,4 @@ subjects:
 - apiGroup: ""
   kind: ServiceAccount
   name: cert-manager-webhook
-  namespace: $(namespace)
+  namespace: $(certManagerNamespace)
