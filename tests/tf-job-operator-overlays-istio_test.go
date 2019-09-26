@@ -200,59 +200,6 @@ kind: ConfigMap
 metadata:
   name: tf-job-operator-config
 `)
-	th.writeF("/manifests/tf-training/tf-job-operator/base/crd.yaml", `
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  name: tfjobs.kubeflow.org
-spec:
-  additionalPrinterColumns:
-  - JSONPath: .status.conditions[-1:].type
-    name: State
-    type: string
-  - JSONPath: .metadata.creationTimestamp
-    name: Age
-    type: date
-  group: kubeflow.org
-  names:
-    kind: TFJob
-    plural: tfjobs
-    singular: tfjob
-  scope: Namespaced
-  subresources:
-    status: {}
-  validation:
-    openAPIV3Schema:
-      properties:
-        spec:
-          properties:
-            tfReplicaSpecs:
-              properties:
-                Chief:
-                  properties:
-                    replicas:
-                      maximum: 1
-                      minimum: 1
-                      type: integer
-                PS:
-                  properties:
-                    replicas:
-                      minimum: 1
-                      type: integer
-                Worker:
-                  properties:
-                    replicas:
-                      minimum: 1
-                      type: integer
-  version: v1
-  versions:
-  - name: v1
-    served: true
-    storage: true
-  - name: v1beta2
-    served: true
-    storage: false
-`)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -389,7 +336,6 @@ resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - config-map.yaml
-- crd.yaml
 - deployment.yaml
 - service-account.yaml
 - service.yaml
