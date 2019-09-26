@@ -3,7 +3,6 @@ apiVersion: admissionregistration.k8s.io/v1beta1
 kind: ValidatingWebhookConfiguration
 metadata:
   name: cert-manager-webhook
-  namespace: $(namespace)
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
