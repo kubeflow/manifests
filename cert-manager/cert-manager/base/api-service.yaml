@@ -3,7 +3,6 @@ apiVersion: apiregistration.k8s.io/v1beta1
 kind: APIService
 metadata:
   name: v1beta1.webhook.certmanager.k8s.io
-  namespace: $(namespace)
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
