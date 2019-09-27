@@ -275,11 +275,6 @@ spec:
         path: pipeline/scheduledworkflow
     name: scheduledworkflow
   - kustomizeConfig:
-      overlays:
-      - gcp-credentials
-      parameters:
-      - name: secretName
-        value: admin-gcp-sa
       repoRef:
         name: manifests
         path: gcp/cloud-endpoints
@@ -306,7 +301,6 @@ spec:
     name: gpu-driver
   - kustomizeConfig:
       overlays:
-      - gcp-credentials
       - managed-cert
       parameters:
       - name: namespace
