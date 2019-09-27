@@ -45,6 +45,62 @@ rules:
   - create
   - patch
   - delete
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-poddefaults-admin
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-poddefaults-admin: "true"
+rules: null
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-poddefaults-edit
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-poddefaults-admin: "true"
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - poddefaults
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-poddefaults-view
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - poddefaults
+  verbs:
+  - get
+  - list
+  - watch
 `)
 	th.writeF("/manifests/admission-webhook/webhook/base/deployment.yaml", `
 apiVersion: apps/v1
@@ -65,7 +121,7 @@ spec:
       - name: webhook-cert
         secret:
           secretName: webhook-certs
-      serviceAccountName: service-account    
+      serviceAccountName: service-account
 `)
 	th.writeF("/manifests/admission-webhook/webhook/base/mutating-webhook-configuration.yaml", `
 apiVersion: admissionregistration.k8s.io/v1beta1
@@ -185,12 +241,12 @@ resources:
 commonLabels:
   kustomize.component: admission-webhook
   app: admission-webhook
-namePrefix: admission-webhook- 
+namePrefix: admission-webhook-
 images:
   - name: gcr.io/kubeflow-images-public/admission-webhook
     newName: gcr.io/kubeflow-images-public/admission-webhook
     newTag: v20190520-v0-139-gcee39dbc-dirty-0d8f4c
-namespace: kubeflow  
+namespace: kubeflow
 configMapGenerator:
 - name: admission-webhook-parameters
   env: params.env
@@ -200,10 +256,10 @@ vars:
 - name: namespace
   objref:
     kind: ConfigMap
-    name: admission-webhook-parameters 
+    name: admission-webhook-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.namespace	
+    fieldpath: data.namespace
 - name: serviceName
   objref:
     kind: Service

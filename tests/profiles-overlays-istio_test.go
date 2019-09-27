@@ -120,6 +120,63 @@ kind: ServiceAccount
 metadata:
   name: default-service-account
 `)
+	th.writeF("/manifests/profiles/base/cluster-role.yaml", `
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-profiles-admin
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-profiles-admin: "true"
+rules: null
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-profiles-edit
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-profiles-admin: "true"
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - profiles
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-profiles-view
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - profiles
+  verbs:
+  - get
+  - list
+  - watch
+`)
 	th.writeF("/manifests/profiles/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -225,6 +282,7 @@ kind: Kustomization
 resources:
 - crd.yaml
 - service-account.yaml
+- cluster-role.yaml
 - cluster-role-binding.yaml
 - role.yaml
 - role-binding.yaml
