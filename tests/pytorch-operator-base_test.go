@@ -122,7 +122,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: gcr.io/kubeflow-images-public/pytorch-operator:v0.5.1-5-ge775742
+        image: gcr.io/kubeflow-images-public/pytorch-operator:v0.6.0-18-g5e36a57
         name: pytorch-operator
         volumeMounts:
         - mountPath: /etc/config
