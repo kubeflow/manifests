@@ -4,44 +4,45 @@ metadata:
   name: update-manifests
 spec:
   inputs:
-    resources:
-    - name: manifests
-      type: git
-    - name: kubeflow
-      type: git
-    - name: $(image_name)
-      type: image
-    - name: $(pull_request_repo)-$(pull_request_id)
-      type: pullRequest
     params:
+    - name: containerImage
+      type: string
+      description: pod container image
+    - name: imageName
+      type: string
+      description: pod container image
     - name: pathToManifestsDir
       type: string
       description: Where the components manifest dir is
       default: /workspace/manifests
-    - name: container_image
-      type: string
-      description: pod container image
+    resources:
+    - name: kubeflow
+      type: git
+    - name: manifests
+      type: git
+    - name: $(image_name)
+      type: image
   steps:
   - name: update-manifests
     workingDir: "/workspace/$(inputs.resources.manifests.name)/$(inputs.params.pathToManifestsDir)"
     image: $(inputs.params.container_image)
-    #command: ["/bin/sleep", "infinity"]
-    command: ["/workspace/$(inputs.resources.kubeflow.name)/py/kubeflow/kubeflow/ci/rebuild-manifests.sh"]
+    command: ["/bin/sleep", "infinity"]
+    #command: ["/workspace/$(inputs.resources.kubeflow.name)/py/kubeflow/kubeflow/ci/rebuild-manifests.sh"]
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
+      value: /secret/gcp-credentials/key.json
     envFrom:
     - configMapRef:
         name: ci-pipeline-parameters
     volumeMounts:
-    - name: kaniko-secret
-      mountPath: /secret
+    - name: gcp-credentials
+      mountPath: /secret/gcp-credentials
     - name: kubeflow
       mountPath: /kubeflow
   volumes:
-  - name: kaniko-secret
+  - name: gcp-credentials
     secret:
-      secretName: kaniko-secret
+      secretName: gcp-credentials
   - name: kubeflow
     persistentVolumeClaim:
       claimName: ci-pipeline-run-persistent-volume-claim

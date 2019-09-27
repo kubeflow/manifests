@@ -11,23 +11,13 @@ spec:
     - name: acceleratorName
       type: string
       description: accelerator name
-    - name: acceleratorCount
-      type: string
-      description: accelerator count
   steps:
   - name: run-model
     image: $(inputs.params.imageName)
-    #image: "gcr.io/constant-cubist-173123/tf-test-gpu@sha256:d8f3a79eb104928c9ec1e73a284d1db739591563815b41860c1d769e919ffb4c"
-    #command: ["/bin/bash", "/bin/echo -$(inputs.params.acceleratorName)- -$(inputs.params.acceleratorCount)-"]
     command: ["/bin/bash", "/run-model/run-model.sh"]
     workingDir: /kubeflow
     resources:
       limits:
-        #$(inputs.params.acceleratorName): '1'
-        #$(inputs.params.acceleratorName): $(inputs.params.acceleratorCount)
-        #$(inputs.params.acceleratorName)-$(inputs.params.acceleratorCount): '1'
-        #nvidia.com/gpu: '1'
-        cpu: '1'
     volumeMounts:
     - name: run-model
       mountPath: /run-model

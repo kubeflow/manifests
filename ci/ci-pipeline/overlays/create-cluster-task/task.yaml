@@ -87,13 +87,13 @@ spec:
     - "auth"
     - "activate-service-account"
     - "--key-file"
-    - "/secret/kaniko-secret.json"
+    - "/secret/gcp-credentials/key.json"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
+      value: /secret/gcp-credentials/key.json
     volumeMounts:
-    - name: kaniko-secret
-      mountPath: /secret
+    - name: gcp-credentials
+      mountPath: /secret/gcp-credentials
     - name: kubeflow
       mountPath: /kubeflow
   - name: kfctl-set-account
@@ -108,10 +108,10 @@ spec:
     - "$(inputs.params.email)"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
+      value: /secret/gcp-credentials/key.json
     volumeMounts:
-    - name: kaniko-secret
-      mountPath: /secret
+    - name: gcp-credentials
+      mountPath: /secret/gcp-credentials
     - name: kubeflow
       mountPath: /kubeflow
   - name: kfctl-init
@@ -129,10 +129,10 @@ spec:
     - "$(inputs.params.app_dir)"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
+      value: /secret/gcp-credentials/key.json
     volumeMounts:
-    - name: kaniko-secret
-      mountPath: /secret
+    - name: gcp-credentials
+      mountPath: /secret/gcp-credentials
     - name: kubeflow
       mountPath: "$(inputs.params.pvc_mount_path)"
     imagePullPolicy: IfNotPresent
@@ -150,7 +150,7 @@ spec:
     - "$(inputs.params.email)"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
+      value: /secret/gcp-credentials/key.json
     - name: CLIENT_ID
       valueFrom:
         secretKeyRef:
@@ -162,10 +162,10 @@ spec:
           name: client-secret
           key: CLIENT_SECRET
     volumeMounts:
-    - name: kaniko-secret
-      mountPath: /secret
-    - name: client-secret
-      mountPath: /client-secret
+    - name: gcp-credentials
+      mountPath: /secret/gcp-credentials
+    - name: kubeflow-oauth
+      mountPath: /secret/kubeflow-oauth
     - name: kubeflow
       mountPath: /kubeflow
   - name: update-gcp-config
@@ -176,12 +176,12 @@ spec:
     command: ["/bin/bash", "/update-gcp-config/update-gcp-config.sh"]
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
+      value: /secret/gcp-credentials/key.json
     volumeMounts:
-    - name: kaniko-secret
-      mountPath: /secret
-    - name: client-secret
-      mountPath: /client-secret
+    - name: gcp-credentials
+      mountPath: /secret/gcp-credentials
+    - name: kubeflow-oauth
+      mountPath: /secret/kubeflow-oauth
     - name: kubeflow
       mountPath: /kubeflow
     - name: update-gcp-config
@@ -198,7 +198,7 @@ spec:
     - "--verbose"
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
+      value: /secret/gcp-credentials/key.json
     - name: CLIENT_ID
       valueFrom:
         secretKeyRef:
@@ -210,10 +210,10 @@ spec:
           name: client-secret
           key: CLIENT_SECRET
     volumeMounts:
-    - name: kaniko-secret
-      mountPath: /secret
-    - name: client-secret
-      mountPath: /client-secret
+    - name: gcp-credentials
+      mountPath: /secret/gcp-credentials
+    - name: kubeflow-oauth
+      mountPath: /secret/kubeflow-oauth
     - name: kubeflow
       mountPath: /kubeflow
   - name: label-accelerator-nodes
@@ -224,12 +224,12 @@ spec:
     command: ["/bin/bash", "/label-accelerator-nodes/label-accelerator-nodes.sh"]
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
+      value: /secret/gcp-credentials/key.json
     volumeMounts:
-    - name: kaniko-secret
-      mountPath: /secret
-    - name: client-secret
-      mountPath: /client-secret
+    - name: gcp-credentials
+      mountPath: /secret/gcp-credentials
+    - name: kubeflow-oauth
+      mountPath: /secret/kubeflow-oauth
     - name: kubeflow
       mountPath: /kubeflow
     - name: label-accelerator-nodes
@@ -242,23 +242,23 @@ spec:
     command: ["/bin/bash", "/label-cpu-nodes/label-cpu-nodes.sh"]
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
-      value: /secret/kaniko-secret.json
+      value: /secret/gcp-credentials/key.json
     envFrom:
     - configMapRef:
         name: ci-pipeline-parameters
     volumeMounts:
-    - name: kaniko-secret
-      mountPath: /secret
-    - name: client-secret
-      mountPath: /client-secret
+    - name: gcp-credentials
+      mountPath: /secret/gcp-credentials
+    - name: kubeflow-oauth
+      mountPath: /secret/kubeflow-oauth
     - name: kubeflow
       mountPath: /kubeflow
     - name: label-cpu-nodes
       mountPath: /label-cpu-nodes
   volumes:
-  - name: kaniko-secret
+  - name: gcp-credentials
     secret:
-      secretName: kaniko-secret
+      secretName: gcp-credentials
   - name: client-secret
     secret:
       secretName: client-secret

@@ -12,5 +12,3 @@ spec:
       value: $(image_name)
     - name: acceleratorName
       value: $(accelerator_name)
-    - name: acceleratorCount
-      value: $(accelerator_count)

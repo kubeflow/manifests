@@ -23,3 +23,9 @@ varReference:
   kind: Task
 - path: spec/steps/resources/limits
   kind: Task
+- path: spec/steps/resources/limits/nvidia\.com\/gpu
+  kind: Task
+- path: spec/steps/resources/limits/intel\.com\/nnpt
+  kind: Task
+- path: spec/steps/resources/limits/cpu
+  kind: Task

@@ -4,25 +4,34 @@
     name: update-manifests
     taskRef:
       name: update-manifests
+      kind: namespaced
     runAfter: 
     - build-push
+    params:
+    - name: containerImage
+      value: "$(params.container_image)"
+    - name: imageName
+      value: $(params.image_name)
+    - name: pathToManifestsDir
+      value: "$(params.path_to_manifests_dir)"
     resources:
       inputs:
       - name: kubeflow
         resource: kubeflow
       - name: manifests
         resource: manifests
-      - name: $(pull_request_repo)-$(pull_request_id)
-        resource: $(pull_request_repo)-$(pull_request_id)
       - name: $(image_name)
         resource: $(image_name)
         from: 
         - build-push
-    params:
-    - name: pathToManifestsDir
-      value: "$(path_to_manifests_dir)"
-    - name: container_image
-      value: "$(container_image)"
+- op: add
+  path: /spec/params/-
+  value:
+    name: container_image
+- op: add
+  path: /spec/params/-
+  value:
+    name: path_to_manifests_dir
 - op: add
   path: /spec/resources/-
   value:
@@ -33,8 +42,3 @@
   value:
     name: kubeflow
     type: git
-- op: add
-  path: /spec/resources/-
-  value:
-    name: $(pull_request_repo)-$(pull_request_id)
-    type: pullRequest

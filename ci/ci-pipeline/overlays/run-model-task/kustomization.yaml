@@ -6,6 +6,13 @@ resources:
 - config-map.yaml
 - task.yaml
 namespace: kubeflow-ci
+patchesJson6902:
+- target:
+    group: tekton.dev
+    version: v1alpha1
+    kind: Task
+    name: run-model
+  path: task_patch.yaml
 patchesStrategicMerge:
 - pipeline.yaml
 configMapGenerator:
