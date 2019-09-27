@@ -274,11 +274,7 @@ spec:
         path: pipeline/scheduledworkflow
     name: scheduledworkflow
   - kustomizeConfig:
-      overlays:
-      - gcp-credentials
       parameters:
-      - name: secretName
-        value: admin-gcp-sa
       - initRequired: true
         name: ipName
         value: ipName
@@ -331,7 +327,6 @@ spec:
     name: basic-auth
   - kustomizeConfig:
       overlays:
-      - gcp-credentials
       - managed-cert
       parameters:
       - name: namespace
@@ -370,6 +365,7 @@ spec:
         repoRef:
           name: manifests
           path: gcp/deployment_manager_configs
+      enableWorkloadIdentity: true
   skipInitProject: true
   useBasicAuth: true
   useIstio: true
