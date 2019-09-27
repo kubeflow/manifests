@@ -10,7 +10,8 @@ spec:
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
-    #uri: https://github.com/kubeflow/manifests/archive/pull/368/head.tar.gz
+    # An example uri that uses a PR version of the manifest repo.
+    # uri: https://github.com/kubeflow/manifests/archive/pull/PR_NUMBER/head.tar.gz
   applications:
   # This component is the istio resources for Kubeflow (e.g. gateway), not about installing istio.
   - kustomizeConfig:
