@@ -1,33 +1,15 @@
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: cluster-role
-rules:
-- apiGroups:
-  - kubeflow.org
-  resources:
-  - poddefaults
-  verbs:
-  - get
-  - watch
-  - list
-  - update
-  - create
-  - patch
-  - delete
-
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kubeflow-poddefaults-admin
+  name: kubeflow-profiles-admin
   labels:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
 aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
-      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-poddefaults-admin: "true"
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-profiles-admin: "true"
 rules: null
 
 ---
@@ -35,15 +17,15 @@ rules: null
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kubeflow-poddefaults-edit
+  name: kubeflow-profiles-edit
   labels:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
-    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-poddefaults-admin: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-profiles-admin: "true"
 rules:
 - apiGroups:
   - kubeflow.org
   resources:
-  - poddefaults
+  - profiles
   verbs:
   - get
   - list
@@ -59,14 +41,14 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kubeflow-poddefaults-view
+  name: kubeflow-profiles-view
   labels:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
 rules:
 - apiGroups:
   - kubeflow.org
   resources:
-  - poddefaults
+  - profiles
   verbs:
   - get
   - list

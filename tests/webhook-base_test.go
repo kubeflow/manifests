@@ -45,6 +45,62 @@ rules:
   - create
   - patch
   - delete
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-poddefaults-admin
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-poddefaults-admin: "true"
+rules: null
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-poddefaults-edit
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-poddefaults-admin: "true"
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - poddefaults
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-poddefaults-view
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - poddefaults
+  verbs:
+  - get
+  - list
+  - watch
 `)
 	th.writeF("/manifests/admission-webhook/webhook/base/deployment.yaml", `
 apiVersion: apps/v1
@@ -65,7 +121,7 @@ spec:
       - name: webhook-cert
         secret:
           secretName: webhook-certs
-      serviceAccountName: service-account    
+      serviceAccountName: service-account
 `)
 	th.writeF("/manifests/admission-webhook/webhook/base/mutating-webhook-configuration.yaml", `
 apiVersion: admissionregistration.k8s.io/v1beta1
