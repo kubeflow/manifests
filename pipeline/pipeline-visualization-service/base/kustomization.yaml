@@ -4,6 +4,7 @@ nameprefix: ml-pipeline-
 commonLabels:
   app: ml-pipeline-visualizationserver
 resources:
+- deployment.yaml
 - service.yaml
 images:
 - name: gcr.io/ml-pipeline/visualization-server

@@ -3,6 +3,7 @@ kind: Kustomization
 commonLabels:
   app: ml-pipeline
 resources:
+- config-map.yaml
 - deployment.yaml
 - role-binding.yaml
 - role.yaml
@@ -10,4 +11,4 @@ resources:
 - service.yaml
 images:
 - name: gcr.io/ml-pipeline/api-server
-  newTag: '0.1.23'
+  newTag: '0.1.31'
