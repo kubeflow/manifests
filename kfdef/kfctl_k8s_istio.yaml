@@ -88,6 +88,13 @@ spec:
         path: jupyter/jupyter-web-app
     name: jupyter-web-app
   - kustomizeConfig:
+      overlays:
+      - application
+      repoRef:
+        name: manifests
+        path: spark/spark-operator
+    name: spark-operator
+  - kustomizeConfig:
       repoRef:
         name: manifests
         path: katib-v1alpha2/katib-db
