@@ -68,21 +68,11 @@ metadata:
   name: kubeflow-poddefaults-edit
   labels:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
-    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-poddefaults-admin: "true"
-rules:
-- apiGroups:
-  - kubeflow.org
-  resources:
-  - poddefaults
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - delete
-  - deletecollection
-  - patch
-  - update
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-poddefaults-edit: "true"
+rules: null
 
 ---
 
@@ -91,6 +81,8 @@ kind: ClusterRole
 metadata:
   name: kubeflow-poddefaults-view
   labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-poddefaults-admin: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-poddefaults-edit: "true"
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
 rules:
 - apiGroups:
