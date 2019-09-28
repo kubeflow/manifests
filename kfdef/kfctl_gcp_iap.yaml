@@ -133,6 +133,13 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      repoRef:
+        name: manifests
+        path: spark/spark-operator
+    name: spark-operator
+  - kustomizeConfig:
+      overlays:
+      - application
       parameters:
       - name: generateName
         value: katib-manager-

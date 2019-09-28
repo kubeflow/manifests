@@ -117,6 +117,13 @@ spec:
       name: katib-db
     - kustomizeConfig:
         overlays:
+        - application
+        repoRef:
+          name: manifests
+          path: spark/spark-operator
+      name: spark-operator
+    - kustomizeConfig:
+        overlays:
           - application
         parameters:
           - name: generateName
