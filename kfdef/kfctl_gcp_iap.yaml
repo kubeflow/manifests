@@ -207,6 +207,11 @@ spec:
         path: tensorboard
     name: tensorboard
   - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: tf-training/tf-job-crds
+    name: tf-job-crds
+  - kustomizeConfig:
       overlays:
       - istio
       - application
