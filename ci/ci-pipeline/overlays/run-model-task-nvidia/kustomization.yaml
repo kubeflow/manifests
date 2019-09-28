@@ -3,6 +3,13 @@ kind: Kustomization
 bases:
 - ../../base
 namespace: kubeflow-ci
+patchesJson6902:
+- target:
+    group: tekton.dev
+    version: v1alpha1
+    kind: Pipeline
+    name: ci-pipeline
+  path: pipeline_patch.yaml
 patchesStrategicMerge:
 - task.yaml
 configMapGenerator:
