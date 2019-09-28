@@ -1,5 +1,5 @@
 - op: add
-  path: /spec/tasks/run-model/params/-
+  path: /spec/tasks/0/params/-
   value:
     name: acceleratorName
     value: $(accelerator_name)
