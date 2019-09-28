@@ -5,7 +5,6 @@ resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - config-map.yaml
-- crd.yaml
 - deployment.yaml
 - service-account.yaml
 - service.yaml
