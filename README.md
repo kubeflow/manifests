@@ -8,7 +8,9 @@ See [Best Practices](./docs/KustomizeBestPractices.md) for details on how kustom
 
 
 ## Kfctl Processing
-Kfctl traverses directories under manifests to find and build kustomize targets based on the configuration file `app.yaml`. The contents of app.yaml is the result of running kustomize on the base and specific overlays in the kubeflow [config](https://github.com/kubeflow/kubeflow/tree/master/bootstrap/config) directory. The overlays reflect what options are chosen when calling `kfctl init...`.  The kustomize package manager in kfctl will then read app.yaml and apply the packages, components and componentParams to kustomize in the following way:
+Kfctl traverses directories under manifests to find and build kustomize targets based on the configuration file `app.yaml`.
+`app.yaml` is based on the configuration you choose from the [configs](https://github.com/kubeflow/manifests/tree/master/kfdef).
+The kustomize package manager in kfctl will then read app.yaml and apply the packages, components and componentParams to kustomize in the following way:
 
 - **packages**
   - are always top-level directories under the manifests repo
@@ -68,45 +70,10 @@ Since each overlay includes '../../base' as its base set of resources - combinin
 
 Then the result will be to combine these overlays eg 'mixin' an overlays in the kustomization.yaml file.
 
-#### Merging multiple overlays to generate app.yaml
+#### Generating app.yaml
 
-In the past when `kfctl init ...` was called it would download the kubeflow repo under `<deployment>/.cache` and read one of the config files under `.cache/kubeflow/<version>/bootstrap/config`. These config files define packages, components and component parameters (among other things). Each config file is a compatible k8 resource of kind *KfDef*. The config files are:
-
-- kfctl_default.yaml
-- kfctl_basic_auth.yaml
-- kfctl_iap.yaml
-
-Both kfctl_basic_auth.yaml and kfctl_iap.yaml contained the contents of kfctl_default.yaml plus additional changes specific to using kfctl_basic_auth.yaml when --use_basic_auth is passed in or kfctl_iap.yaml when --platform gcp is passed in . This has been refactored to use kustomize where the config/base holds kfctl_default and additional overlays add to the base. The directory now looks like:
-
-```
-.
-└── config
-    ├── base
-    │   ├── kfctl_default.yaml
-    │   └── kustomization.yaml
-    └── overlays
-        ├── basic_auth
-        │   ├── kfctl_default-patch.yaml
-        │   ├── kfctl_default.yaml
-        │   └── kustomization.yaml
-        ├── gcp
-        │   ├── kfctl_default-patch.yaml
-        │   ├── kfctl_default.yaml
-        │   └── kustomization.yaml
-        ├── ksonnet
-        │   ├── kfctl_default-patch.yaml
-        │   ├── kfctl_default.yaml
-        │   └── kustomization.yaml
-        └── kustomize
-            ├── kfctl_default-patch.yaml
-            ├── kfctl_default.yaml
-            └── kustomization.yaml
-```
-
-Where ksonnet and kustomize hold differing ways of handling the pipeline manifest.
-
-Based on the cli args to `kfctl init...`, the correct overlays will be merged to produce an app.yaml.
-The original files have been left as is until UI integration can be completed in a separate PR
+You can specify your configuration file with `-f` <path_to_config>`.
+You can see config options in the [kfdef](https://github.com/kubeflow/manifests/tree/master/kfdef) directory.
 
 ### Using kustomize
 
