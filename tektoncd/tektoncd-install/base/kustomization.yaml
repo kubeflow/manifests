@@ -52,13 +52,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.gcs-fetcher
-- name: gcs-uploader
-  objref:
-    kind: ConfigMap
-    name: tektoncd-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.gcs-uploader
 - name: gsutil
   objref:
     kind: ConfigMap
