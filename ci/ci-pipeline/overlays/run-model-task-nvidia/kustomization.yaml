@@ -2,23 +2,20 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
-resources:
-- config-map.yaml
-- task.yaml
 namespace: kubeflow-ci
 patchesStrategicMerge:
-- pipeline.yaml
+- task.yaml
 configMapGenerator:
 - name: ci-pipeline-parameters
   behavior: merge
   env: params.env
 vars:
-- name: image_name
+- name: accelerator_count
   objref:
     kind: ConfigMap
     name: ci-pipeline-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.image_name
+    fieldpath: data.accelerator_count
 configurations:
 - params.yaml

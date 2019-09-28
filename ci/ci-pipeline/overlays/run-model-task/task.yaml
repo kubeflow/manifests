@@ -16,8 +16,6 @@ spec:
     image: $(inputs.params.imageName)
     command: ["/bin/bash", "/run-model/run-model.sh"]
     workingDir: /kubeflow
-    resources:
-      limits:
     volumeMounts:
     - name: run-model
       mountPath: /run-model

@@ -1,0 +1,3 @@
+varReference:
+- path: spec/steps/resources/limits/nvidia.com~1gpu
+  kind: Task

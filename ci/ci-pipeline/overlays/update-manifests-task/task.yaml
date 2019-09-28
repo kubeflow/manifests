@@ -25,7 +25,7 @@ spec:
   steps:
   - name: update-manifests
     workingDir: "/workspace/$(inputs.resources.manifests.name)/$(inputs.params.pathToManifestsDir)"
-    image: $(inputs.params.container_image)
+    image: $(inputs.params.containerImage)
     command: ["/bin/sleep", "infinity"]
     #command: ["/workspace/$(inputs.resources.kubeflow.name)/py/kubeflow/kubeflow/ci/rebuild-manifests.sh"]
     env:
