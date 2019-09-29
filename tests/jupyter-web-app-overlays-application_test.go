@@ -158,29 +158,13 @@ data:
       image:
         # The container Image for the user's Jupyter Notebook
         # If readonly, this value must be a member of the list below
-        value: gcr.io/kubeflow-images-public/tensorflow-1.13.1-notebook-cpu:v0.5.0
+        value: gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v-base-ef41372-1177829795472347138
         # The list of available standard container Images
         options:
-          - gcr.io/kubeflow-images-public/tensorflow-1.5.1-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.5.1-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.6.0-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.6.0-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.7.0-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.7.0-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.8.0-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.8.0-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.9.0-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.9.0-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.10.1-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.10.1-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.11.0-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.11.0-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.12.0-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.12.0-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.13.1-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.13.1-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-2.0.0a-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-2.0.0a-notebook-gpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v-base-ef41372-1177829795472347138
+          - gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-gpu:v-base-ef41372-1177829795472347138
+          - gcr.io/kubeflow-images-public/tensorflow-2.0.0a-notebook-cpu:v-base-ef41372-1177829795472347138
+          - gcr.io/kubeflow-images-public/tensorflow-2.0.0a-notebook-gpu:v-base-ef41372-1177829795472347138
         # By default, custom container Images are allowed
         # Uncomment the following line to only enable standard container Images
         readOnly: false
@@ -408,7 +392,8 @@ varReference:
 - path: spec/template/spec/containers/0/env/2/value
   kind: Deployment
 - path: spec/template/spec/containers/0/env/3/value
-  kind: Deployment`)
+  kind: Deployment
+`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.env", `
 UI=default
 ROK_SECRET_NAME=secret-rok-{username}
@@ -416,7 +401,8 @@ policy=Always
 prefix=jupyter
 clusterDomain=cluster.local
 userid-header=
-userid-prefix=`)
+userid-prefix=
+`)
 	th.writeK("/manifests/jupyter/jupyter-web-app/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
