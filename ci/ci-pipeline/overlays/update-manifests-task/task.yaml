@@ -5,13 +5,10 @@ metadata:
 spec:
   inputs:
     params:
-    - name: containerImage
+    - name: container_image
       type: string
       description: pod container image
-    - name: imageName
-      type: string
-      description: pod container image
-    - name: pathToManifestsDir
+    - name: path_to_manifests_dir
       type: string
       description: Where the components manifest dir is
       default: /workspace/manifests
@@ -24,13 +21,16 @@ spec:
       type: image
   steps:
   - name: update-manifests
-    workingDir: "/workspace/$(inputs.resources.manifests.name)/$(inputs.params.pathToManifestsDir)"
-    image: $(inputs.params.containerImage)
+    workingDir: "/workspace/$(inputs.resources.manifests.name)/$(inputs.params.path_to_manifests_dir)"
+    image: $(inputs.params.container_image)
     command: ["/bin/sleep", "infinity"]
     #command: ["/workspace/$(inputs.resources.kubeflow.name)/py/kubeflow/kubeflow/ci/rebuild-manifests.sh"]
     env:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/gcp-credentials/key.json
+    envFrom:
+    - configMapRef:
+        name: ci-pipeline-run-parameters
     envFrom:
     - configMapRef:
         name: ci-pipeline-parameters

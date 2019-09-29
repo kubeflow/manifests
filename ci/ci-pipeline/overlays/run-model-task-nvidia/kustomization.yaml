@@ -10,8 +10,12 @@ patchesJson6902:
     kind: Pipeline
     name: ci-pipeline
   path: pipeline_patch.yaml
-patchesStrategicMerge:
-- task.yaml
+- target:
+    group: tekton.dev
+    version: v1alpha1
+    kind: Task
+    name: ci-pipeline
+  path: task_patch.yaml
 configMapGenerator:
 - name: ci-pipeline-parameters
   behavior: merge

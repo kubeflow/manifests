@@ -4,21 +4,21 @@ metadata:
   name: build-push
 spec:
   inputs:
+    params:
+    - name: docker_target
+      type: string
+      description: docker target arg
+    - name: image_name
+      type: string
+    - name: path_to_context
+      type: string
+      description: The build context used by Kaniko
+    - name: path_to_docker_file
+      type: string
+      description: The path to the dockerfile to build
     resources:
     - name: kubeflow
       type: git
-    params:
-    - name: dockerTarget
-      type: string
-      description: docker target arg
-    - name: imageName
-      type: string
-    - name: pathToContext
-      type: string
-      description: The build context used by Kaniko
-    - name: pathToDockerfile
-      type: string
-      description: The path to the dockerfile to build
   outputs:
     resources:
     - name: $(image_name)
@@ -33,11 +33,11 @@ spec:
     - name: GOOGLE_APPLICATION_CREDENTIALS
       value: /secret/kaniko/kaniko-secret.json
     args:
-    - "--dockerfile=/workspace/$(inputs.resources.kubeflow.name)/$(inputs.params.pathToDockerfile)"
-    - "--destination=$(outputs.resources.$(inputs.params.imageName).url)"
-    - "--context=/workspace/$(inputs.resources.kubeflow.name)/$(inputs.params.pathToContext)"
-    - "--target=$(inputs.params.dockerTarget)"
-    - "--digest-file=/kubeflow/$(inputs.params.imageName)-digest"
+    - "--dockerfile=/workspace/$(inputs.resources.kubeflow.name)/$(inputs.params.path_to_docker_file)"
+    - "--destination=$(outputs.resources.$(inputs.params.image_name).url)"
+    - "--context=/workspace/$(inputs.resources.kubeflow.name)/$(inputs.params.path_to_context)"
+    - "--target=$(inputs.params.docker_target)"
+    - "--digest-file=/kubeflow/$(inputs.params.image_name)-digest"
     volumeMounts:
     - name: kaniko-secret
       mountPath: /secret/kaniko

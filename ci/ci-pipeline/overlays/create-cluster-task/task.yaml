@@ -245,6 +245,9 @@ spec:
       value: /secret/gcp-credentials/key.json
     envFrom:
     - configMapRef:
+        name: ci-pipeline-run-parameters
+    envFrom:
+    - configMapRef:
         name: ci-pipeline-parameters
     volumeMounts:
     - name: gcp-credentials

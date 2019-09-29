@@ -8,12 +8,10 @@
     runAfter: 
     - build-push
     params:
-    - name: containerImage
-      value: "$(params.container_image)"
-    - name: imageName
-      value: $(params.image_name)
-    - name: pathToManifestsDir
-      value: "$(params.path_to_manifests_dir)"
+    - name: container_image
+      value: "$(container_image)"
+    - name: path_to_manifests_dir
+      value: "$(path_to_manifests_dir)"
     resources:
       inputs:
       - name: kubeflow
@@ -25,20 +23,7 @@
         from: 
         - build-push
 - op: add
-  path: /spec/params/-
-  value:
-    name: container_image
-- op: add
-  path: /spec/params/-
-  value:
-    name: path_to_manifests_dir
-- op: add
   path: /spec/resources/-
   value:
     name: manifests
-    type: git
-- op: add
-  path: /spec/resources/-
-  value:
-    name: kubeflow
     type: git

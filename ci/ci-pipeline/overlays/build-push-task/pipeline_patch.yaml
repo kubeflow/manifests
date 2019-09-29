@@ -6,13 +6,13 @@
       name: build-push
       kind: namespaced
     params:
-    - name: dockerTarget
+    - name: docker_target
       value: "$(docker_target)"
-    - name: imageName
+    - name: image_name
       value: "$(image_name)"
-    - name: pathToContext
+    - name: path_to_context
       value: "$(path_to_context)"
-    - name: pathToDockerfile
+    - name: path_to_docker_file
       value: "$(path_to_docker_file)"
     resources:
       inputs:
@@ -21,22 +21,6 @@
       outputs:
       - name: $(image_name)
         resource: $(image_name)
-- op: add
-  path: /spec/params/-
-  value:
-    name: docker_target
-- op: add
-  path: /spec/params/-
-  value:
-    name: image_name
-- op: add
-  path: /spec/params/-
-  value:
-    name: path_to_context
-- op: add
-  path: /spec/params/-
-  value:
-    name: path_to_docker_file
 - op: add
   path: /spec/resources/-
   value:
