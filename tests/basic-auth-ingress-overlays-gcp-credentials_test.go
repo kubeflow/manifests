@@ -1,20 +1,22 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/pkg/fs"
-	"sigs.k8s.io/kustomize/pkg/loader"
-	"sigs.k8s.io/kustomize/pkg/resmap"
-	"sigs.k8s.io/kustomize/pkg/resource"
-	"sigs.k8s.io/kustomize/pkg/target"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
 	"testing"
 )
 
 func writeBasicAuthIngressOverlaysGcpCredentials(th *KustTestHarness) {
 	th.writeF("/manifests/gcp/basic-auth-ingress/overlays/gcp-credentials/gcp-credentials-patch.yaml", `
 # Patch the env/volumes/volumeMounts for GCP credentials
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: backend-updater
@@ -33,7 +35,8 @@ spec:
       volumes:
       - name: sa-key
         secret:
-          secretName: admin-gcp-sa`)
+          secretName: admin-gcp-sa
+`)
 	th.writeK("/manifests/gcp/basic-auth-ingress/overlays/gcp-credentials", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -85,6 +88,7 @@ rules:
   - update
 - apiGroups:
   - extensions
+  - networking.k8s.io
   resources:
   - ingresses
   verbs:
@@ -199,7 +203,7 @@ metadata:
 ---
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: whoami-app
@@ -229,7 +233,7 @@ spec:
           timeoutSeconds: 5
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/ingress.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:
@@ -264,6 +268,7 @@ metadata:
       rewrite: ""
       service: istio-ingressgateway.istio-system
       precedence: 1
+      use_websocket: true
   labels:
     app: istioMappingSvc
     ksonnet.io/component: basic-auth-ingress
@@ -308,7 +313,7 @@ spec:
   type: ClusterIP
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/stateful-set.yaml", `
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
@@ -502,21 +507,26 @@ func TestBasicAuthIngressOverlaysGcpCredentials(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../gcp/basic-auth-ingress/overlays/gcp-credentials"
-	fsys := fs.MakeRealFS()
-	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	n, err := kt.MakeCustomizedResMap()
+	expected, err := m.AsYaml()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	targetPath := "../gcp/basic-auth-ingress/overlays/gcp-credentials"
+	fsys := fs.MakeRealFS()
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	actual, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	th.assertActualEqualsExpected(actual, string(expected))
 }

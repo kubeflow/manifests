@@ -4,7 +4,7 @@ metadata:
   name: kubeflow-gateway
 spec:
   selector:
-    istio: ingressgateway
+    istio: $(gatewaySelector)
   servers:
   - port:
       number: 80

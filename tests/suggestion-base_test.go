@@ -1,19 +1,21 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/pkg/fs"
-	"sigs.k8s.io/kustomize/pkg/loader"
-	"sigs.k8s.io/kustomize/pkg/resmap"
-	"sigs.k8s.io/kustomize/pkg/resource"
-	"sigs.k8s.io/kustomize/pkg/target"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
 	"testing"
 )
 
 func writeSuggestionBase(th *KustTestHarness) {
 	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-bayesianoptimization-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: katib-suggestion-bayesianoptimization
@@ -22,6 +24,10 @@ metadata:
     component: suggestion-bayesianoptimization
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: suggestion-bayesianoptimization
   template:
     metadata:
       name: katib-suggestion-bayesianoptimization
@@ -56,7 +62,7 @@ spec:
     component: suggestion-bayesianoptimization
 `)
 	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-grid-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: katib-suggestion-grid
@@ -65,6 +71,10 @@ metadata:
     component: suggestion-grid
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: suggestion-grid
   template:
     metadata:
       name: katib-suggestion-grid
@@ -99,7 +109,7 @@ spec:
     component: suggestion-grid
 `)
 	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-hyperband-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: katib-suggestion-hyperband
@@ -108,6 +118,10 @@ metadata:
     component: suggestion-hyperband
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: suggestion-hyperband
   template:
     metadata:
       name: katib-suggestion-hyperband
@@ -142,7 +156,7 @@ spec:
     component: suggestion-hyperband
 `)
 	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-nasrl-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: katib-suggestion-nasrl
@@ -151,6 +165,10 @@ metadata:
     component: suggestion-nasrl
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: suggestion-nasrl
   template:
     metadata:
       name: katib-suggestion-nasrl
@@ -184,7 +202,7 @@ spec:
     component: suggestion-nasrl
 `)
 	th.writeF("/manifests/katib-v1alpha2/suggestion/base/suggestion-random-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: katib-suggestion-random
@@ -193,6 +211,10 @@ metadata:
     component: suggestion-random
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: suggestion-random
   template:
     metadata:
       name: katib-suggestion-random
@@ -262,21 +284,26 @@ func TestSuggestionBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib-v1alpha2/suggestion/base"
-	fsys := fs.MakeRealFS()
-	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	n, err := kt.MakeCustomizedResMap()
+	expected, err := m.AsYaml()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	targetPath := "../katib-v1alpha2/suggestion/base"
+	fsys := fs.MakeRealFS()
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	actual, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	th.assertActualEqualsExpected(actual, string(expected))
 }

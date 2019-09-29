@@ -1,13 +1,15 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/pkg/fs"
-	"sigs.k8s.io/kustomize/pkg/loader"
-	"sigs.k8s.io/kustomize/pkg/resmap"
-	"sigs.k8s.io/kustomize/pkg/resource"
-	"sigs.k8s.io/kustomize/pkg/target"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
 	"testing"
 )
 
@@ -34,7 +36,7 @@ data:
   MYSQL_ROOT_PASSWORD: dGVzdA== # "test"
 `)
 	th.writeF("/manifests/metadata/base/metadata-db-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: db
@@ -101,7 +103,7 @@ spec:
     component: db
 `)
 	th.writeF("/manifests/metadata/base/metadata-deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: deployment
@@ -119,7 +121,7 @@ spec:
     spec:
       containers:
       - name: container
-        image: gcr.io/kubeflow-images-public/metadata:v0.1.8
+        image: gcr.io/kubeflow-images-public/metadata:v0.1.9
         env:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
@@ -136,6 +138,43 @@ spec:
         ports:
         - name: backendapi
           containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-deployment
+  labels:
+    component: grpc-server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: grpc-server
+  template:
+    metadata:
+      labels:
+        component: grpc-server
+    spec:
+      containers:
+        - name: container
+          image: gcr.io/tfx-oss-public/ml_metadata_store_server:0.14.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: metadata-db-secrets
+                  key: MYSQL_ROOT_PASSWORD
+          command: ["/bin/metadata_store_server"]
+          args: ["--grpc_port=8080",
+                 "--mysql_config_host=metadata-db.kubeflow",
+                 "--mysql_config_database=metadb",
+                 "--mysql_config_port=3306",
+                 "--mysql_config_user=root",
+                 "--mysql_config_password=$(MYSQL_ROOT_PASSWORD)"
+          ]
+          ports:
+            - name: grpc-backendapi
+              containerPort: 8080
 `)
 	th.writeF("/manifests/metadata/base/metadata-service.yaml", `
 kind: Service
@@ -152,9 +191,24 @@ spec:
   - port: 8080
     protocol: TCP
     name: backendapi
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: grpc-metadata
+  name: grpc-service
+spec:
+  selector:
+    component: grpc-server
+  type: ClusterIP
+  ports:
+    - port: 8080
+      protocol: TCP
+      name: grpc-backendapi
 `)
 	th.writeF("/manifests/metadata/base/metadata-ui-deployment.yaml", `
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ui
@@ -243,6 +297,48 @@ spec:
   selector:
     app: metadata-ui
 `)
+	th.writeF("/manifests/metadata/base/metadata-envoy-deployment.yaml", `
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: envoy-deployment
+  labels:
+    component: envoy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: envoy
+  template:
+    metadata:
+      labels:
+        component: envoy
+    spec:
+      containers:
+      - name: container
+        image: gcr.io/ml-pipeline/envoy:initial
+        ports:
+        - name: md-envoy
+          containerPort: 9090
+        - name: envoy-admin
+          containerPort: 9901
+`)
+	th.writeF("/manifests/metadata/base/metadata-envoy-service.yaml", `
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: metadata
+  name: envoy-service
+spec:
+  selector:
+    component: envoy
+  type: ClusterIP
+  ports:
+  - port: 9090
+    protocol: TCP
+    name: md-envoy
+`)
 	th.writeF("/manifests/metadata/base/params.env", `
 uiClusterDomain=cluster.local
 `)
@@ -267,6 +363,8 @@ resources:
 - metadata-ui-rolebinding.yaml
 - metadata-ui-sa.yaml
 - metadata-ui-service.yaml
+- metadata-envoy-deployment.yaml
+- metadata-envoy-service.yaml
 namespace: kubeflow
 vars:
 - name: ui-namespace
@@ -299,21 +397,26 @@ func TestMetadataBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../metadata/base"
-	fsys := fs.MakeRealFS()
-	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	n, err := kt.MakeCustomizedResMap()
+	expected, err := m.AsYaml()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	targetPath := "../metadata/base"
+	fsys := fs.MakeRealFS()
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	actual, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	th.assertActualEqualsExpected(actual, string(expected))
 }

@@ -6,9 +6,9 @@ resources:
 - deployment.yaml
 - service-account.yaml
 - service.yaml
+namespace: istio-system
 commonLabels:
   kustomize.component: ambassador
-namespace: istio-system
 images:
   - name: quay.io/datawire/ambassador
     newName: quay.io/datawire/ambassador
@@ -21,7 +21,7 @@ generatorOptions:
 patchesJson6902:
 - target:
     group: apps
-    version: v1beta1
+    version: v1
     kind: Deployment
     name: ambassador
   path: deployment-ambassador-patch.yaml

@@ -66,6 +66,15 @@ Replace `dex.example.com.tls` with your own domain.
  - k8s_master_uri: Kubernetes API master server's URI
  - dex_client_listen_addr: Listen address for dex client to login
 
+ **Keycloak Gatekeeper variables in params [environment file](keycloak-gatekeeper/base/params.env):**
+
+ - client_id: ID for the authentication proxy client application
+ - client_secret: Application secret for authentication client
+ - secure_cookie: Set to true for TLS based cookie
+ - discovery_url: Is the url for retrieve the openid configuration - normally the <server>/auth/realm/<realm_name>
+ - upstream_url: The upstream endpoint which we should proxy request
+ - redirection_url: The redirection url, essentially the site url, note: /oauth/callback is added at the end
+ - encryption_key: The encryption key used to encode the session state
 
 ##### Certificate files:
 
@@ -111,10 +120,17 @@ cd dex-crds
 kustomize build overlays/ldap | kubectl apply -f -
 ```
 
-**Dex Authentication Client**
+**Dex Kubernetes Authentication Client**
 
 ```
 cd dex-authenticator
+kustomize build base | kubectl apply -f -
+```
+
+**Keycloak Gatekeeper (Proxy) Authentication Client**
+
+```
+cd keycloak-gatekeeper
 kustomize build base | kubectl apply -f -
 ```
 

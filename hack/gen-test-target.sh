@@ -19,19 +19,22 @@ kebab-case-2-PascalCase() {
 
 gen-target-start() {
   local dir=$(get-target $1) target fname
-  fname=/manifests${dir##*/manifests}
+  fname=/manifests${dir#*/manifests}
   target=$(kebab-case-2-PascalCase $(get-target-name $1))
+#echo 'gen-target-start dir='$dir' fname='$fname' target='$target
 
   echo 'package tests_test'
   echo ''
   echo 'import ('
-  echo '  "sigs.k8s.io/kustomize/k8sdeps/kunstruct"'
-  echo '  "sigs.k8s.io/kustomize/k8sdeps/transformer"'
-  echo '  "sigs.k8s.io/kustomize/pkg/fs"'
-  echo '  "sigs.k8s.io/kustomize/pkg/loader"'
-  echo '  "sigs.k8s.io/kustomize/pkg/resmap"'
-  echo '  "sigs.k8s.io/kustomize/pkg/resource"'
-  echo '  "sigs.k8s.io/kustomize/pkg/target"'
+  echo '  "sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"'
+  echo '  "sigs.k8s.io/kustomize/v3/k8sdeps/transformer"'
+  echo '  "sigs.k8s.io/kustomize/v3/pkg/fs"'
+  echo '  "sigs.k8s.io/kustomize/v3/pkg/loader"'
+  echo '  "sigs.k8s.io/kustomize/v3/pkg/plugins"'
+  echo '  "sigs.k8s.io/kustomize/v3/pkg/resmap"'
+  echo '  "sigs.k8s.io/kustomize/v3/pkg/resource"'
+  echo '  "sigs.k8s.io/kustomize/v3/pkg/target"'
+  echo '  "sigs.k8s.io/kustomize/v3/pkg/validators"'
   echo '  "testing"'
   echo ')'
   echo ''
@@ -79,16 +82,17 @@ gen-target() {
 
 gen-target-base() {
   echo '  th.writeK("'$kname'", `'
-  cat $dir/$file | sed 'sx- ../../basex- '$basedir'x'
+  cat $dir/$file | sed 'sx- ../../basex- '$basedir'x' | sed 's/`/`+"`"+`/g'
   echo '`)'
 }
 
 gen-target-kustomization() {
   local file=$1 dir=$2 fname kname basedir
-  fname=/manifests${dir##*/manifests}
+  fname=/manifests${dir#*/manifests}
   kname=${fname%/kustomization.yaml}
+#echo 'gen-target-kustomization file='$file' dir='$dir' fname='$fname' kname='$kname
   echo '  th.writeK("'$kname'", `'
-  cat $dir/$file 
+  cat $dir/$file | sed 's/`/`+"`"+`/g'
   echo '`)'
   if [[ $(get-target-dirname $dir) != "base" ]]; then
     basedir=$(get-target $dir)/base
@@ -100,20 +104,21 @@ gen-target-kustomization() {
 
 gen-target-resource() {
   local file=$1 dir=$2 echooptions='' fname
-  fname=/manifests${dir##*/manifests}/$file
+  fname=/manifests${dir#*/manifests}/$file
   if (( $# == 3 )); then
     echooptions=$3
   fi
   echo $echooptions '  th.writeF("'$fname'", `'
-  cat $dir/$file | sed 's/`/U+0060/g' 
+  cat $dir/$file | sed 's/`/`+"`"+`/g'
   echo '`)'
 }
 
 gen-test-case() {
   local base=$(get-target-name $1) dir=$(get-target $1) target fname
-  fname=/manifests${dir##*/manifests}/$(get-target-dirname $1)
+  fname=/manifests${dir#*/manifests}/$(get-target-dirname $1)
   target=$(kebab-case-2-PascalCase $base)
   targetPath=..${1#*/manifests}
+#echo 'gen-test-case base='$base' dir='$dir' fname='$fname' target='$target' targetPath='$targetPath
 
   gen-target $1
   echo ''
@@ -124,24 +129,28 @@ gen-test-case() {
   echo '  if err != nil {'
   echo '    t.Fatalf("Err: %v", err)'
   echo '  }'
-  echo '  targetPath := "'$targetPath'"'
-
-  echo '  fsys := fs.MakeRealFS()'
-  echo '    _loader, loaderErr := loader.NewLoader(targetPath, fsys)'
-  echo '    if loaderErr != nil {'
-  echo '      t.Fatalf("could not load kustomize loader: %v", loaderErr)'
-  echo '    }'
-  echo '    rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))'
-  echo '    kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())'
-  echo '    if err != nil {'
-  echo '      th.t.Fatalf("Unexpected construction error %v", err)'
-  echo '    }'
-  echo '  n, err := kt.MakeCustomizedResMap()'
+  echo '  expected, err := m.AsYaml()'
   echo '  if err != nil {'
   echo '    t.Fatalf("Err: %v", err)'
   echo '  }'
-  echo '  expected, err := n.EncodeAsYaml()'
-  echo '  th.assertActualEqualsExpected(m, string(expected))'
+  echo '  targetPath := "'$targetPath'"'
+  echo '  fsys := fs.MakeRealFS()'
+  echo '  lrc := loader.RestrictionRootOnly'
+  echo '  _loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)'
+  echo '  if loaderErr != nil {'
+  echo '    t.Fatalf("could not load kustomize loader: %v", loaderErr)'
+  echo '  }'
+  echo '  rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())'
+  echo '  pc := plugins.DefaultPluginConfig()'
+  echo '  kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))'
+  echo '  if err != nil {'
+  echo '    th.t.Fatalf("Unexpected construction error %v", err)'
+  echo '  }'
+  echo '  actual, err := kt.MakeCustomizedResMap()'
+  echo '  if err != nil {'
+  echo '    t.Fatalf("Err: %v", err)'
+  echo '  }'
+  echo '  th.assertActualEqualsExpected(actual, string(expected))'
   echo '}'
 }
 
