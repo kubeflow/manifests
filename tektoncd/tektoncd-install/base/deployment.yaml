@@ -2,9 +2,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app.kubernetes.io/component: controller
-    app.kubernetes.io/name: tekton-pipelines
+#  labels:
+#    app.kubernetes.io/component: controller
+#    app.kubernetes.io/name: tekton-pipelines
   name: tekton-pipelines-controller
 spec:
   replicas: 1
@@ -17,8 +17,8 @@ spec:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
       labels:
         app: tekton-pipelines-controller
-        app.kubernetes.io/component: controller
-        app.kubernetes.io/name: tekton-pipelines
+#        app.kubernetes.io/component: controller
+#        app.kubernetes.io/name: tekton-pipelines
     spec:
       containers:
       - args:
@@ -70,9 +70,9 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app.kubernetes.io/component: webhook-controller
-    app.kubernetes.io/name: tekton-pipelines
+#  labels:
+#    app.kubernetes.io/component: webhook-controller
+#    app.kubernetes.io/name: tekton-pipelines
   name: tekton-pipelines-webhook
 spec:
   replicas: 1
@@ -85,8 +85,8 @@ spec:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
       labels:
         app: tekton-pipelines-webhook
-        app.kubernetes.io/component: webhook-controller
-        app.kubernetes.io/name: tekton-pipelines
+#        app.kubernetes.io/component: webhook-controller
+#        app.kubernetes.io/name: tekton-pipelines
     spec:
       containers:
       - env:
