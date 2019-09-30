@@ -154,12 +154,12 @@ spec:
     - name: CLIENT_ID
       valueFrom:
         secretKeyRef:
-          name: client-secret
+          name: kubeflow-oauth
           key: CLIENT_ID
     - name: CLIENT_SECRET
       valueFrom:
         secretKeyRef:
-          name: client-secret
+          name: kubeflow-oauth
           key: CLIENT_SECRET
     volumeMounts:
     - name: gcp-credentials
@@ -202,12 +202,12 @@ spec:
     - name: CLIENT_ID
       valueFrom:
         secretKeyRef:
-          name: client-secret
+          name: kubeflow-oauth
           key: CLIENT_ID
     - name: CLIENT_SECRET
       valueFrom:
         secretKeyRef:
-          name: client-secret
+          name: kubeflow-oauth
           key: CLIENT_SECRET
     volumeMounts:
     - name: gcp-credentials
@@ -262,9 +262,9 @@ spec:
   - name: gcp-credentials
     secret:
       secretName: gcp-credentials
-  - name: client-secret
+  - name: kubeflow-oauth
     secret:
-      secretName: client-secret
+      secretName: kubeflow-oauth
   - name: kubeflow
     persistentVolumeClaim:
       claimName: ci-pipeline-run-persistent-volume-claim
