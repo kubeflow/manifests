@@ -29,7 +29,7 @@ vars:
     name: admission-webhook-parameters 
     apiVersion: v1
   fieldref:
-    fieldpath: data.namespace	
+    fieldpath: data.namespace
 - name: serviceName
   objref:
     kind: Service
