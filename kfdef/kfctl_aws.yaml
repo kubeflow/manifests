@@ -38,6 +38,9 @@ spec:
     - kustomizeConfig:
         overlays:
           - application
+        parameters:
+          - name: generateName
+            value: kubeflow-
         repoRef:
           name: manifests
           path: application/application
@@ -51,6 +54,9 @@ spec:
         overlays:
           - istio
           - application
+        parameters:
+          - name: generateName
+            value: argo-
         repoRef:
           name: manifests
           path: argo
@@ -59,6 +65,9 @@ spec:
         overlays:
           - istio
           - application
+        parameters:
+          - name: generateName
+            value: centraldashboard-
         repoRef:
           name: manifests
           path: common/centraldashboard
@@ -66,6 +75,9 @@ spec:
     - kustomizeConfig:
         overlays:
           - application
+        parameters:
+          - name: generateName
+            value: admission-webhook-
         repoRef:
           name: manifests
           path: admission-webhook/webhook
@@ -74,6 +86,8 @@ spec:
         overlays:
           - application
         parameters:
+          - name: generateName
+            value: admission-bootstrap-
           - name: webhookNamePrefix
             value: admission-webhook-
         repoRef:
@@ -84,6 +98,9 @@ spec:
         overlays:
           - istio
           - application
+        parameters:
+          - name: generateName
+            value: jupyter-webapp-
         repoRef:
           name: manifests
           path: jupyter/jupyter-web-app
@@ -131,6 +148,9 @@ spec:
         overlays:
           - istio
           - application
+        parameters:
+          - name: generateName
+            value: notebook-controller-
         repoRef:
           name: manifests
           path: jupyter/notebook-controller
@@ -143,6 +163,9 @@ spec:
     - kustomizeConfig:
         overlays:
           - application
+        parameters:
+          - name: generateName
+            value: pytorch-operator-
         repoRef:
           name: manifests
           path: pytorch-job/pytorch-operator
@@ -175,6 +198,9 @@ spec:
         overlays:
           - istio
           - application
+        parameters:
+          - name: generateName
+            value: tf-job-operator-
         repoRef:
           name: manifests
           path: tf-training/tf-job-operator
@@ -182,6 +208,9 @@ spec:
     - kustomizeConfig:
         overlays:
           - application
+        parameters:
+          - name: generateName
+            value: pipeline-api-service-
         repoRef:
           name: manifests
           path: pipeline/api-service
@@ -190,6 +219,8 @@ spec:
         overlays:
           - application
         parameters:
+          - name: generateName
+            value: pipeline-minio-
           - name: minioPvcName
             value: minio-pv-claim
         repoRef:
@@ -200,6 +231,8 @@ spec:
         overlays:
           - application
         parameters:
+          - name: generateName
+            value: pipeline-mysql-
           - name: mysqlPvcName
             value: mysql-pv-claim
         repoRef:
@@ -209,6 +242,9 @@ spec:
     - kustomizeConfig:
         overlays:
           - application
+        parameters:
+          - name: generateName
+            value: pipeline-persistent-agent-
         repoRef:
           name: manifests
           path: pipeline/persistent-agent
@@ -216,6 +252,9 @@ spec:
     - kustomizeConfig:
         overlays:
           - application
+        parameters:
+          - name: generateName
+            value: pipeline-pipelines-runner-
         repoRef:
           name: manifests
           path: pipeline/pipelines-runner
@@ -224,6 +263,9 @@ spec:
         overlays:
           - application
           - istio
+        parameters:
+          - name: generateName
+            value: pipeline-pipelines-ui-
         repoRef:
           name: manifests
           path: pipeline/pipelines-ui
@@ -231,6 +273,9 @@ spec:
     - kustomizeConfig:
         overlays:
           - application
+        parameters:
+          - name: generateName
+            value: pipeline-pipelines-viewer-
         repoRef:
           name: manifests
           path: pipeline/pipelines-viewer
@@ -238,6 +283,9 @@ spec:
     - kustomizeConfig:
         overlays:
           - application
+        parameters:
+          - name: generateName
+            value: pipeline-scheduledworkflow-
         repoRef:
           name: manifests
           path: pipeline/scheduledworkflow
@@ -246,6 +294,9 @@ spec:
         overlays:
           - istio
           - application
+        parameters:
+          - name: generateName
+            value: profiles-
         repoRef:
           name: manifests
           path: profiles
@@ -253,12 +304,18 @@ spec:
     - kustomizeConfig:
         overlays:
           - application
+        parameters:
+          - name: generateName
+            value: seldon-core-operator-
         repoRef:
           name: manifests
           path: seldon/seldon-core-operator
     - kustomizeConfig:
         overlays:
           - application
+        parameters:
+          - name: generateName
+            value: mpi-operator-operator-
         repoRef:
           name: manifests
           path: mpi-job/mpi-operator

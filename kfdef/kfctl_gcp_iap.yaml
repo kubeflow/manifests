@@ -302,6 +302,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: pipeline-pipelines-runner-
       repoRef:
         name: manifests
         path: pipeline/pipelines-runner
@@ -347,6 +350,8 @@ spec:
       - application
       - istio
       parameters:
+      - name: generateName
+        value: profiles-
       - initRequired: true
         name: admin
         value: SET_EMAIL
