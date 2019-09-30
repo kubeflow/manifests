@@ -14,7 +14,7 @@ patchesJson6902:
     group: tekton.dev
     version: v1alpha1
     kind: Task
-    name: ci-pipeline
+    name: run-model
   path: task_patch.yaml
 configMapGenerator:
 - name: ci-pipeline-parameters
