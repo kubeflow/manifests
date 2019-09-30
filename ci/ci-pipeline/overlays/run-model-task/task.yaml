@@ -8,9 +8,6 @@ spec:
     - name: imageName
       type: string
       description: container image name
-    - name: acceleratorName
-      type: string
-      description: accelerator name
   steps:
   - name: run-model
     image: $(inputs.params.imageName)

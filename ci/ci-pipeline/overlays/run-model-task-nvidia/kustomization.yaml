@@ -7,12 +7,6 @@ patchesJson6902:
 - target:
     group: tekton.dev
     version: v1alpha1
-    kind: Pipeline
-    name: ci-pipeline
-  path: pipeline_patch.yaml
-- target:
-    group: tekton.dev
-    version: v1alpha1
     kind: Task
     name: run-model
   path: task_patch.yaml
