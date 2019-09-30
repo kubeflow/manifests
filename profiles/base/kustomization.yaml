@@ -13,40 +13,41 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: profiles
 configMapGenerator:
-  - name: profiles-parameters
-    env: params.env
+- envs:
+  - params.env
+  name: profiles-parameters
 images:
-  - name: gcr.io/kubeflow-images-public/profile-controller
-    newName: gcr.io/kubeflow-images-public/profile-controller
-    newTag: v20190619-v0-219-gbd3daa8c-dirty-1ced0e
+- digest: sha256:8ddf50a46c903bbaabf6da71bb572ba950f5c50974950d34caf0a37bb2f41a0b
+  name: gcr.io/kubeflow-images-public/profile-controller
+  newName: gcr.io/kubeflow-images-public/profile-controller
 vars:
-  - name: admin
-    objref:
-      kind: ConfigMap
-      name: profiles-parameters
-      apiVersion: v1
-    fieldref:
-      fieldpath: data.admin
-  - name: userid-header
-    objref:
-      kind: ConfigMap
-      name: profiles-parameters
-      apiVersion: v1
-    fieldref:
-      fieldpath: data.userid-header
-  - name: userid-prefix
-    objref:
-      kind: ConfigMap
-      name: profiles-parameters
-      apiVersion: v1
-    fieldref:
-      fieldpath: data.userid-prefix
-  - name: namespace
-    objref:
-      kind: Service
-      name: kfam
-      apiVersion: v1
-    fieldref:
-      fieldpath: metadata.namespace
+- fieldref:
+    fieldPath: data.admin
+  name: admin
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: profiles-parameters
+- fieldref:
+    fieldPath: data.userid-header
+  name: userid-header
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: profiles-parameters
+- fieldref:
+    fieldPath: data.userid-prefix
+  name: userid-prefix
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: profiles-parameters
+- fieldref:
+    fieldPath: metadata.namespace
+  name: namespace
+  objref:
+    apiVersion: v1
+    kind: Service
+    name: kfam
 configurations:
 - params.yaml
