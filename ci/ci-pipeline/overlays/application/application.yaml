@@ -7,20 +7,12 @@ spec:
     matchLabels:
       app.kubernetes.io/instance: $(generateName)
   componentKinds:
-    - group: tekton.dev
-      kind: PipelineRun
-    - group: tekton.dev
-      kind: Pipeline
-    - group: tekton.dev
-      kind: PipelineResource
-    - group: TaskRun
-      kind: PipelineResource
-    - group: core
-      kind: Pod
-    - group: core
-      kind: ServiceAccount
+  - group: tekton.dev
+    kind: Pipeline
+  - group: tekton.dev
+    kind: Task
   descriptor: 
-    type: ci-pipeline-run
+    type: ci-pipeline
     version: v1beta1
     description: a pipeline run that composes resources and tasks
     maintainers:
