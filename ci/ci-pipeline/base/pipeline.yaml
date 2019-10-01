@@ -1,0 +1,10 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: ci-pipeline
+  labels:
+    scope: $(namespace)
+spec:
+  params: []
+  resources: []
+  tasks: []

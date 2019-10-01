@@ -1,0 +1,10 @@
+- op: add
+  path: /spec/tasks/-
+  value:
+    name: application-status
+    taskRef:
+      name: application-status
+      kind: namespaced
+    params:
+    - name: applications
+      value: "$(applications)"

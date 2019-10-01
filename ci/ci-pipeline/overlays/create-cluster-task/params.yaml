@@ -1,0 +1,17 @@
+varReference:
+- path: spec/params/value
+  kind: Pipeline
+- path: spec/tasks/params/value
+  kind: Pipeline
+- path: spec/resources/name
+  kind: Pipeline
+- path: spec/steps/image
+  kind: Task
+- path: spec/steps/volumeMounts/mountPath
+  kind: Task
+- path: spec/steps/workingDir
+  kind: Task
+- path: data/update-gcp-config.sh
+  kind: ConfigMap
+- path: data/label-accelerator-nodes.sh
+  kind: ConfigMap

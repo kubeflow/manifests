@@ -1,0 +1,29 @@
+- op: add
+  path: /spec/tasks/-
+  value:
+    name: update-manifests
+    taskRef:
+      name: update-manifests
+      kind: namespaced
+    runAfter: 
+    - build-push
+    params:
+    - name: container_image
+      value: "$(container_image)"
+    - name: path_to_manifests_dir
+      value: "$(path_to_manifests_dir)"
+    resources:
+      inputs:
+      - name: kubeflow
+        resource: kubeflow
+      - name: manifests
+        resource: manifests
+      - name: $(image_name)
+        resource: $(image_name)
+        from: 
+        - build-push
+- op: add
+  path: /spec/resources/-
+  value:
+    name: manifests
+    type: git

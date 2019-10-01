@@ -1,0 +1,11 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: manifests
+spec:
+  type: git
+  params:
+    - name: revision
+      value: $(manifests_repo_revision)
+    - name: url
+      value: $(manifests_repo_url)

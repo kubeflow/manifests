@@ -1,0 +1,11 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: kfctl
+spec:
+  type: git
+  params:
+    - name: revision
+      value: $(kfctl_repo_revision)
+    - name: url
+      value: $(kfctl_repo_url)

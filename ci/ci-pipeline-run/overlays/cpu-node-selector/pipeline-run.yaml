@@ -1,0 +1,8 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: $(generateName)
+spec:
+  podTemplate:
+    nodeSelector:
+      cpu: "$(cpuType)"
