@@ -49,6 +49,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: kubeflow-
       repoRef:
         name: manifests
         path: application/application
@@ -62,6 +65,9 @@ spec:
       overlays:
       - application
       - istio
+      parameters:
+      - name: generateName
+        value: argo-
       repoRef:
         name: manifests
         path: argo
@@ -76,6 +82,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: admission-webhook-
       repoRef:
         name: manifests
         path: admission-webhook/webhook
@@ -84,6 +93,8 @@ spec:
       overlays:
       - application
       parameters:
+      - name: generateName
+        value: admission-bootstrap-
       - name: webhookNamePrefix
         value: admission-webhook-
       repoRef:
@@ -94,6 +105,9 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: generateName
+        value: jupyter-webapp-
       repoRef:
         name: manifests
         path: jupyter/jupyter-web-app
@@ -142,6 +156,8 @@ spec:
       - istio
       - application
       parameters:
+      - name: generateName
+        value: notebook-controller-
       - name: injectGcpCredentials
         value: "true"
       repoRef:
@@ -156,6 +172,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: pytorch-operator-
       repoRef:
         name: manifests
         path: pytorch-job/pytorch-operator
@@ -214,6 +233,9 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: generateName
+        value: tf-job-operator-
       repoRef:
         name: manifests
         path: tf-training/tf-job-operator
@@ -221,6 +243,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: pipeline-api-service-
       repoRef:
         name: manifests
         path: pipeline/api-service
@@ -230,6 +255,8 @@ spec:
       - application
       - minioPd
       parameters:
+      - name: generateName
+        value: pipeline-minio-
       - name: minioPd
         value: test1-storage-artifact-store
       - name: minioPvName
@@ -245,6 +272,8 @@ spec:
       - application
       - mysqlPd
       parameters:
+      - name: generateName
+        value: pipeline-mysql-
       - name: mysqlPd
         value: test1-storage-metadata-store
       - name: mysqlPvName
@@ -258,6 +287,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: pipeline-persistent-agent-
       repoRef:
         name: manifests
         path: pipeline/persistent-agent
@@ -265,6 +297,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: pipeline-pipelines-runner-
       repoRef:
         name: manifests
         path: pipeline/pipelines-runner
@@ -273,6 +308,9 @@ spec:
       overlays:
       - application
       - istio
+      parameters:
+      - name: generateName
+        value: pipeline-pipelines-ui-
       repoRef:
         name: manifests
         path: pipeline/pipelines-ui
@@ -280,6 +318,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: pipeline-pipelines-viewer-
       repoRef:
         name: manifests
         path: pipeline/pipelines-viewer
@@ -287,6 +328,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: pipeline-scheduledworkflow-
       repoRef:
         name: manifests
         path: pipeline/scheduledworkflow
@@ -309,6 +353,8 @@ spec:
       - application
       - istio
       parameters:
+      - name: generateName
+        value: profiles-
       - initRequired: true
         name: admin
         # emaill will be set automatically by kfctl init and generate
@@ -325,6 +371,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: seldon-core-operator-
       repoRef:
         name: manifests
         path: seldon/seldon-core-operator
