@@ -1,0 +1,22 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: run-model
+spec:
+  inputs:
+    params:
+    - name: imageName
+      type: string
+      description: container image name
+  steps:
+  - name: run-model
+    image: $(inputs.params.imageName)
+    command: ["/bin/bash", "/run-model/run-model.sh"]
+    workingDir: /kubeflow
+    volumeMounts:
+    - name: run-model
+      mountPath: /run-model
+  volumes:
+  - name: run-model
+    configMap:
+      name: run-model

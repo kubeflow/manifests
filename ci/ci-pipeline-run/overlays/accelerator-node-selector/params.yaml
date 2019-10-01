@@ -1,0 +1,7 @@
+varReference:
+- path: spec/podTemplate/nodeSelector
+  kind: PipelineRun
+- path: spec/podTemplate/nodeSelector/cpu
+  kind: PipelineRun
+- path: spec/podTemplate/nodeSelector/gpu
+  kind: PipelineRun

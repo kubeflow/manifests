@@ -1,0 +1,33 @@
+- op: add
+  path: /spec/tasks/-
+  value:
+    name: build-push 
+    taskRef:
+      name: build-push
+      kind: namespaced
+    params:
+    - name: docker_target
+      value: "$(docker_target)"
+    - name: image_name
+      value: "$(image_name)"
+    - name: path_to_context
+      value: "$(path_to_context)"
+    - name: path_to_docker_file
+      value: "$(path_to_docker_file)"
+    resources:
+      inputs:
+      - name: kubeflow
+        resource: kubeflow
+      outputs:
+      - name: $(image_name)
+        resource: $(image_name)
+- op: add
+  path: /spec/resources/-
+  value:
+    name: kubeflow
+    type: git
+- op: add
+  path: /spec/resources/-
+  value:
+    name: $(image_name)
+    type: image

@@ -1,0 +1,92 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: update-gcp-config
+data:
+  update-gcp-config.sh: |-
+    #!/usr/bin/env bash
+    sed 's/cluster-version:.*$/cluster-version: "$(cluster-version)"/' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
+    sed 's/cpu-pool-initialNodeCount:.*$/cpu-pool-initialNodeCount: $(cpu-pool-initialNodeCount)/' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
+    sed 's/cpu-pool-machine-type:.*$/cpu-pool-machine-type: $(cpu-pool-machine-type)/' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
+    sed 's/cpu-pool-max-nodes:.*$/cpu-pool-max-nodes: $(cpu-pool-max-nodes)/' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
+    sed 's/cpu-pool-min-nodes:.*$/cpu-pool-min-nodes: $(cpu-pool-min-nodes)/' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
+    sed '18 a \    cpu-pool-min-cpu-platform: "$(cpu-pool-min-cpu-platform)"' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
+    sed '19 a \    cpu-pool-image-type: $(cpu-pool-image-type)' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
+    sed 's/gpu-pool-initialNodeCount:.*$/gpu-pool-initialNodeCount: $(gpu-pool-initialNodeCount)/' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
+    sed 's/gpu-pool-machine-type:.*$/gpu-pool-machine-type: $(gpu-pool-machine-type)/' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
+    sed 's/gpu-pool-max-nodes:.*$/gpu-pool-max-nodes: $(gpu-pool-max-nodes)/' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
+    sed 's/gpu-pool-min-nodes:.*$/gpu-pool-min-nodes: $(gpu-pool-min-nodes)/' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
+    sed 's/gpu-type:.*$/gpu-type: $(gpu-type)/' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
+    sed '43 a \    gpu-pool-min-cpu-platform: "$(gpu-pool-min-cpu-platform)"' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
+    sed '44 a \    gpu-pool-image-type: $(gpu-pool-image-type)' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
+    sed "125 a \          imageType: {{ properties['cpu-pool-image-type'] }}" cluster.jinja > o
+    mv o cluster.jinja
+    sed "165 a \        imageType: {{ properties['gpu-pool-image-type'] }}" cluster.jinja > o
+    mv o cluster.jinja
+    sed "118, 131 s/minCpuPlatform: 'Intel Broadwell'/minCpuPlatform: {{ properties['cpu-pool-min-cpu-platform'] }}/" cluster.jinja > o
+    mv o cluster.jinja
+    sed "157, 175 s/minCpuPlatform: 'Intel Broadwell'/minCpuPlatform: {{ properties['gpu-pool-min-cpu-platform'] }}/" cluster.jinja > o
+    mv o cluster.jinja
+    sed 's/"\([0-9]*\)"/\1/g' cluster-kubeflow.yaml > o
+    mv o cluster-kubeflow.yaml
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: label-accelerator-nodes
+data:
+  label-accelerator-nodes.sh: |-
+    #!/usr/bin/env bash
+    gpuNode=$(echo $(kubectl get nodes -oname --no-headers | grep gpu))
+    if [[ -n $gpuNode ]]; then
+      kubectl label $gpuNode accelerator=$(gpu-type)
+    else
+      echo 'no gpu node available'
+    fi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: label-cpu-nodes
+data:
+  label-cpu-nodes.sh: |-
+    gcloud config set project $project
+    cpuNodes=$(echo $(kubectl get nodes -oname --no-headers))
+    if [[ -n $cpuNodes ]]; then
+      for i in $cpuNodes;do
+        cpuNode=${i#node/}
+        cpuPlatform=$(gcloud compute instances describe $cpuNode --zone=us-central1-b --format json | jq .minCpuPlatform | xargs)
+    echo 'cpuPlatform='$cpuPlatform
+        case $cpuPlatform in
+          'Intel Cascade Lake')
+            kubectl label node $cpuNode cpu='cascadelake'
+            ;;
+          'Intel Skylake')
+            kubectl label node $cpuNode cpu='skylake'
+            ;;
+          'Intel Broadwell')
+            kubectl label node $cpuNode cpu='broadwell'
+            ;;
+          *)
+            echo $cpuPlatform not supported
+            ;;
+        esac
+      done
+    else
+      echo 'no cpu node available'
+    fi

@@ -1,0 +1,6 @@
+- op: add
+  path: /spec/resources/-
+  value:
+    name: kfctl
+    resourceRef:
+      name: kfctl

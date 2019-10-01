@@ -1,0 +1,5 @@
+- op: add
+  path: /spec/steps/0/resources
+  value:
+    limits:
+      nvidia.com/gpu: $(accelerator_count)
