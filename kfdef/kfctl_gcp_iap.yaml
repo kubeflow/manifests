@@ -70,8 +70,11 @@ spec:
     name: argo
   - kustomizeConfig:
       overlays:
+      - application
       - istio
       parameters:
+      - name: generateName
+        value: centraldashboard-
       - name: userid-header
         value: X-Goog-Authenticated-User-Email
       - name: userid-prefix
