@@ -159,6 +159,11 @@ spec:
           path: metadata
       name: metadata
     - kustomizeConfig:
+        overlays:
+        - application
+        parameters:
+        - name: generateName
+          value: katib-suggestion-
         repoRef:
           name: manifests
           path: katib-v1alpha2/suggestion
