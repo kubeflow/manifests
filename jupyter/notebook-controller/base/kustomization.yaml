@@ -36,3 +36,10 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.USE_ISTIO
+- name: ISTIO_GATEWAY
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ISTIO_GATEWAY
