@@ -425,7 +425,8 @@ vars:
     name: ui
     apiVersion: v1
   fieldref:
-    fieldpath: metadata.name`)
+    fieldpath: metadata.name
+`)
 }
 
 func TestMetadataOverlaysIstio(t *testing.T) {

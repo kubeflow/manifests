@@ -1,6 +1,6 @@
 
 seldon-core:
-	git clone -b release-0.4 --single-branch git@github.com:SeldonIO/seldon-core.git
+	git clone -b v0.4.1 --single-branch git@github.com:SeldonIO/seldon-core.git
 
 seldon-core-operator/base: seldon-core clean-kustomize
 	helm convert -f values.yaml seldon-core/helm-charts/seldon-core-operator --skip-transformers=image,secret,namePrefix,labels,configMap --destination seldon-core-operator/base --namespace kubeflow

@@ -18,16 +18,8 @@ func writeMetadataOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: metadata
+  name: $(generateName)
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: metadata
-      app.kubernetes.io/instance: metadata
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: metadata
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
   componentKinds:
   - group: core
     kind: Service
@@ -56,6 +48,20 @@ spec:
       url: "https://www.kubeflow.org/docs/components/misc/metadata/"
   addOwnerRef: true
 `)
+	th.writeF("/manifests/metadata/overlays/application/params.yaml", `
+varReference:
+- path: metadata/name
+  kind: Application
+- path: spec/selector/app.kubernetes.io\/instance
+  kind: Service
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Deployment
+- path: spec/template/metadata/labels/app.kubernetes.io\/instance
+  kind: Deployment
+`)
+	th.writeF("/manifests/metadata/overlays/application/params.env", `
+generateName=
+`)
 	th.writeK("/manifests/metadata/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -63,9 +69,22 @@ bases:
 - ../../base
 resources:
 - application.yaml
+configMapGenerator:
+- name: metadata-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: metadata-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
 commonLabels:
   app.kubernetes.io/name: metadata
-  app.kubernetes.io/instance: metadata
+  app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: metadata
   app.kubernetes.io/part-of: kubeflow
@@ -444,7 +463,8 @@ vars:
     name: ui
     apiVersion: v1
   fieldref:
-    fieldpath: metadata.name`)
+    fieldpath: metadata.name
+`)
 }
 
 func TestMetadataOverlaysApplication(t *testing.T) {

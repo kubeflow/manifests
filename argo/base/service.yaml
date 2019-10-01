@@ -12,7 +12,6 @@ metadata:
   labels:
     app: argo-ui
   name: argo-ui
-  namespace: kubeflow
 spec:
   ports:
   - port: 80

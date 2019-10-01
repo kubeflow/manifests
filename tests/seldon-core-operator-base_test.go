@@ -33,7 +33,7 @@ metadata:
     app.kubernetes.io/instance: seldon-core-operator
     app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
-    helm.sh/chart: seldon-core-operator-0.4.0
+    helm.sh/chart: seldon-core-operator-0.4.1
   name: seldon-config
   namespace: kubeflow
 `)
@@ -45,7 +45,7 @@ metadata:
     app.kubernetes.io/instance: seldon-core-operator
     app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
-    helm.sh/chart: seldon-core-operator-0.4.0
+    helm.sh/chart: seldon-core-operator-0.4.1
   name: seldon-manager
   namespace: kubeflow
 `)
@@ -59,7 +59,7 @@ metadata:
     app.kubernetes.io/name: seldon-core-operator
     control-plane: seldon-controller-manager
     controller-tools.k8s.io: "1.0"
-    helm.sh/chart: seldon-core-operator-0.4.0
+    helm.sh/chart: seldon-core-operator-0.4.1
   name: seldon-operator-controller-manager-service
   namespace: kubeflow
 spec:
@@ -79,14 +79,12 @@ metadata:
     app.kubernetes.io/name: seldon-core-operator
     control-plane: seldon-controller-manager
     controller-tools.k8s.io: "1.0"
-    helm.sh/chart: seldon-core-operator-0.4.0
+    helm.sh/chart: seldon-core-operator-0.4.1
   name: seldon-operator-controller-manager
   namespace: kubeflow
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/instance: seldon-core-operator
-      app.kubernetes.io/name: seldon-core-operator
       control-plane: seldon-controller-manager
       controller-tools.k8s.io: "1.0"
   serviceName: seldon-operator-controller-manager-service
@@ -95,8 +93,6 @@ spec:
       annotations:
         prometheus.io/scrape: "true"
       labels:
-        app.kubernetes.io/instance: seldon-core-operator
-        app.kubernetes.io/name: seldon-core-operator
         control-plane: seldon-controller-manager
         controller-tools.k8s.io: "1.0"
     spec:
@@ -115,7 +111,7 @@ spec:
         - name: AMBASSADOR_SINGLE_NAMESPACE
           value: "false"
         - name: ENGINE_CONTAINER_IMAGE_AND_VERSION
-          value: docker.io/seldonio/engine:0.4.0
+          value: docker.io/seldonio/engine:0.4.1
         - name: ENGINE_CONTAINER_IMAGE_PULL_POLICY
           value: IfNotPresent
         - name: ENGINE_CONTAINER_SERVICE_ACCOUNT_NAME
@@ -136,7 +132,7 @@ spec:
           value: "true"
         - name: ISTIO_GATEWAY
           value: kubeflow-gateway
-        image: docker.io/seldonio/seldon-core-operator:0.4.0
+        image: docker.io/seldonio/seldon-core-operator:0.4.1
         imagePullPolicy: Always
         name: manager
         ports:
@@ -171,7 +167,7 @@ metadata:
     app.kubernetes.io/instance: seldon-core-operator
     app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
-    helm.sh/chart: seldon-core-operator-0.4.0
+    helm.sh/chart: seldon-core-operator-0.4.1
   name: seldon-operator-manager-role
 rules:
 - apiGroups:
@@ -364,7 +360,7 @@ metadata:
     app.kubernetes.io/instance: seldon-core-operator
     app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
-    helm.sh/chart: seldon-core-operator-0.4.0
+    helm.sh/chart: seldon-core-operator-0.4.1
   name: seldon-operator-manager-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -3500,6 +3496,7 @@ spec:
                         - SKLEARN_SERVER
                         - XGBOOST_SERVER
                         - TENSORFLOW_SERVER
+                        - MLFLOW_SERVER
                         type: string
                       methods:
                         items:
@@ -3597,6 +3594,9 @@ spec:
   - name: v1alpha2
     served: true
     storage: true
+  - name: v1alpha3
+    served: true
+    storage: false
 
 `)
 	th.writeF("/manifests/seldon/seldon-core-operator/base/webhook-server-service-svc.yaml", `
@@ -3609,7 +3609,7 @@ metadata:
     app.kubernetes.io/name: seldon-core-operator
     control-plane: seldon-controller-manager
     controller-tools.k8s.io: "1.0"
-    helm.sh/chart: seldon-core-operator-0.4.0
+    helm.sh/chart: seldon-core-operator-0.4.1
   name: webhook-server-service
   namespace: kubeflow
 spec:
@@ -3631,7 +3631,8 @@ resources:
 - seldon-operator-manager-rolebinding-crb.yaml
 - seldon-operator-webhook-server-secret-secret.yaml
 - seldondeployments.machinelearning.seldon.io-crd.yaml
-- webhook-server-service-svc.yaml`)
+- webhook-server-service-svc.yaml
+`)
 }
 
 func TestSeldonCoreOperatorBase(t *testing.T) {
