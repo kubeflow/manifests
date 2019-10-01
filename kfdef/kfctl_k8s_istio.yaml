@@ -46,6 +46,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: kubeflow-
       repoRef:
         name: manifests
         path: application/application
@@ -57,7 +60,11 @@ spec:
     name: metacontroller
   - kustomizeConfig:
       overlays:
+      - application
       - istio
+      parameters:
+      - name: generateName
+        value: argo-
       repoRef:
         name: manifests
         path: argo
@@ -70,11 +77,21 @@ spec:
         path: common/centraldashboard
     name: centraldashboard
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: admission-bootstrap-
       repoRef:
         name: manifests
         path: admission-webhook/bootstrap
     name: bootstrap
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: admission-webhook-
       repoRef:
         name: manifests
         path: admission-webhook/webhook
@@ -83,21 +100,39 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: generateName
+        value: jupyter-webapp-
       repoRef:
         name: manifests
         path: jupyter/jupyter-web-app
     name: jupyter-web-app
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: katib-db-
       repoRef:
         name: manifests
         path: katib-v1alpha2/katib-db
     name: katib-db
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: katib-manager-
       repoRef:
         name: manifests
         path: katib-v1alpha2/katib-manager
     name: katib-manager
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: katib-controller-
       repoRef:
         name: manifests
         path: katib-v1alpha2/katib-controller
@@ -105,6 +140,10 @@ spec:
   - kustomizeConfig:
       overlays:
       - istio
+      - application
+      parameters:
+      - name: generateName
+        value: katib-ui-
       repoRef:
         name: manifests
         path: katib-v1alpha2/katib-ui
@@ -122,6 +161,11 @@ spec:
         path: katib-v1alpha2/metrics-collector
     name: metrics-collector
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: katib-suggestion-
       repoRef:
         name: manifests
         path: katib-v1alpha2/suggestion
@@ -130,6 +174,9 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: generateName
+        value: notebook-controller-
       repoRef:
         name: manifests
         path: jupyter/notebook-controller
@@ -140,6 +187,11 @@ spec:
         path: pytorch-job/pytorch-job-crds
     name: pytorch-job-crds
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: pytorch-operator-
       repoRef:
         name: manifests
         path: pytorch-job/pytorch-operator
@@ -185,6 +237,10 @@ spec:
   - kustomizeConfig:
       overlays:
       - istio
+      - application
+      parameters:
+      - name: generateName
+        value: tensorboard-
       repoRef:
         name: manifests
         path: tensorboard
@@ -202,12 +258,21 @@ spec:
         path: tf-training/tf-job-operator
     name: tf-job-operator
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: pipeline-api-service-
       repoRef:
         name: manifests
         path: pipeline/api-service
     name: api-service
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
+      - name: generateName
+        value: pipeline-minio-
       - name: minioPvcName
         value: minio-pv-claim
       repoRef:
@@ -215,7 +280,11 @@ spec:
         path: pipeline/minio
     name: minio
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
+      - name: generateName
+        value: pipeline-mysql-
       - name: mysqlPvcName
         value: mysql-pv-claim
       repoRef:
@@ -223,36 +292,63 @@ spec:
         path: pipeline/mysql
     name: mysql
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: pipeline-persistent-agent-
       repoRef:
         name: manifests
         path: pipeline/persistent-agent
     name: persistent-agent
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: pipeline-pipelines-runner-
       repoRef:
         name: manifests
         path: pipeline/pipelines-runner
     name: pipelines-runner
   - kustomizeConfig:
       overlays:
+      - application
       - istio
+      parameters:
+      - name: generateName
+        value: pipeline-pipelines-ui-
       repoRef:
         name: manifests
         path: pipeline/pipelines-ui
     name: pipelines-ui
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: pipeline-pipelines-viewer-
       repoRef:
         name: manifests
         path: pipeline/pipelines-viewer
     name: pipelines-viewer
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: pipeline-scheduledworkflow-
       repoRef:
         name: manifests
         path: pipeline/scheduledworkflow
     name: scheduledworkflow
   - kustomizeConfig:
       overlays:
+      - application
       - istio
       parameters:
+      - name: generateName
+        value: profiles-
       - initRequired: true
         name: admin
         value: johnDoe@acme.com
@@ -263,6 +359,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: seldon-core-operator-
       repoRef:
         name: manifests
         path: seldon/seldon-core-operator

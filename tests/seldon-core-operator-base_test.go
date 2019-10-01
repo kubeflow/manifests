@@ -85,8 +85,6 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/instance: seldon-core-operator
-      app.kubernetes.io/name: seldon-core-operator
       control-plane: seldon-controller-manager
       controller-tools.k8s.io: "1.0"
   serviceName: seldon-operator-controller-manager-service
@@ -95,8 +93,6 @@ spec:
       annotations:
         prometheus.io/scrape: "true"
       labels:
-        app.kubernetes.io/instance: seldon-core-operator
-        app.kubernetes.io/name: seldon-core-operator
         control-plane: seldon-controller-manager
         controller-tools.k8s.io: "1.0"
     spec:
@@ -3635,7 +3631,8 @@ resources:
 - seldon-operator-manager-rolebinding-crb.yaml
 - seldon-operator-webhook-server-secret-secret.yaml
 - seldondeployments.machinelearning.seldon.io-crd.yaml
-- webhook-server-service-svc.yaml`)
+- webhook-server-service-svc.yaml
+`)
 }
 
 func TestSeldonCoreOperatorBase(t *testing.T) {
