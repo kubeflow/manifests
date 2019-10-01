@@ -56,7 +56,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: katib-config
-  namespace: kubeflow
 data:
   metrics-collector-sidecar: |-
     {
@@ -209,7 +208,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: katib-controller
-  namespace: kubeflow
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -222,7 +220,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: katib-controller
-  namespace: kubeflow
 `)
 	th.writeF("/manifests/katib/katib-controller/base/katib-controller-secret.yaml", `
 apiVersion: v1
@@ -550,7 +547,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: trial-template
-  namespace: kubeflow
 data:
   defaultTrialTemplate.yaml : |-
     apiVersion: batch/v1
