@@ -610,13 +610,13 @@ generatorOptions:
   disableNameSuffixHash: true
 images:
   - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
-    newTag: v0.6.0-rc.0
+    newTag: 7ade03b
   - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
-    newTag: v0.6.0-rc.0
+    newTag: 7ade03b
   - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager-rest
-    newTag: v0.6.0-rc.0
+    newTag: 7ade03b
   - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
-    newTag: v0.6.0-rc.0
+    newTag: 7ade03b
   - name: mysql
     newTag: 8.0.3
 vars:
