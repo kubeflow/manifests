@@ -8,7 +8,7 @@ engine:
     pullPolicy: IfNotPresent
     registry: docker.io
     repository: seldonio/engine
-    tag: 0.4.0
+    tag: 0.4.1
   port: 8000
   prometheus:
     path: prometheus
@@ -23,7 +23,7 @@ image:
   pullPolicy: Always
   registry: docker.io
   repository: seldonio/seldon-core-operator
-  tag: 0.4.0
+  tag: 0.4.1
 istio:
   enabled: true
   gateway: kubeflow-gateway
