@@ -106,51 +106,21 @@ spec:
           path: jupyter/jupyter-web-app
       name: jupyter-web-app
     - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: katib/katib-crds
+      name: katib-crds
+    - kustomizeConfig:
         overlays:
         - application
+        - istio
         parameters:
-          - name: generateName
-            value: katib-db-
+        - name: generateName
+          value: katib-
         repoRef:
           name: manifests
-          path: katib-v1alpha2/katib-db
-      name: katib-db
-    - kustomizeConfig:
-        overlays:
-          - application
-        parameters:
-          - name: generateName
-            value: katib-manager-
-        repoRef:
-          name: manifests
-          path: katib-v1alpha2/katib-manager
-      name: katib-manager
-    - kustomizeConfig:
-        overlays:
-          - application
-        parameters:
-          - name: generateName
-            value: katib-controller-
-        repoRef:
-          name: manifests
-          path: katib-v1alpha2/katib-controller
+          path: katib/katib-controller
       name: katib-controller
-    - kustomizeConfig:
-        overlays:
-          - istio
-          - application
-        parameters:
-          - name: generateName
-            value: katib-ui-
-        repoRef:
-          name: manifests
-          path: katib-v1alpha2/katib-ui
-      name: katib-ui
-    - kustomizeConfig:
-        repoRef:
-          name: manifests
-          path: katib-v1alpha2/metrics-collector
-      name: metrics-collector
     - kustomizeConfig:
         overlays:
         - istio
@@ -158,16 +128,6 @@ spec:
           name: manifests
           path: metadata
       name: metadata
-    - kustomizeConfig:
-        overlays:
-        - application
-        parameters:
-        - name: generateName
-          value: katib-suggestion-
-        repoRef:
-          name: manifests
-          path: katib-v1alpha2/suggestion
-      name: suggestion
     - kustomizeConfig:
         overlays:
           - istio
