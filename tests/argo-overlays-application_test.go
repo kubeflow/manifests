@@ -43,6 +43,12 @@ spec:
 varReference:
 - path: metadata/name
   kind: Application
+- path: spec/selector/app.kubernetes.io\/instance
+  kind: Service
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: StatefulSet
+- path: spec/template/metadata/labels/app.kubernetes.io\/instance
+  kind: StatefulSet
 `)
 	th.writeF("/manifests/argo/overlays/application/params.env", `
 generateName=
@@ -90,7 +96,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: argo
-  namespace: kubeflow
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -190,7 +195,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: workflow-controller-configmap
-  namespace: kubeflow
 data:
   config: |
     {
@@ -240,7 +244,6 @@ metadata:
   labels:
     app: argo-ui
   name: argo-ui
-  namespace: kubeflow
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
@@ -294,7 +297,6 @@ metadata:
   labels:
     app: workflow-controller
   name: workflow-controller
-  namespace: kubeflow
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
@@ -350,7 +352,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: argo-ui
-  namespace: kubeflow
 `)
 	th.writeF("/manifests/argo/base/service.yaml", `
 apiVersion: v1
@@ -367,7 +368,6 @@ metadata:
   labels:
     app: argo-ui
   name: argo-ui
-  namespace: kubeflow
 spec:
   ports:
   - port: 80
@@ -411,6 +411,7 @@ resources:
 - deployment.yaml
 - service-account.yaml
 - service.yaml
+namespace: kubeflow
 commonLabels:
   kustomize.component: argo
 images:

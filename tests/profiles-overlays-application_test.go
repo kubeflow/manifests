@@ -45,6 +45,12 @@ spec:
 varReference:
 - path: metadata/name
   kind: Application
+- path: spec/selector/app.kubernetes.io\/instance
+  kind: Service
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Deployment
+- path: spec/template/metadata/labels/app.kubernetes.io\/instance
+  kind: Deployment
 `)
 	th.writeF("/manifests/profiles/overlays/application/params.env", `
 generateName=

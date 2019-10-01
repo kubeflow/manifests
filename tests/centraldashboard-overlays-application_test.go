@@ -60,6 +60,9 @@ spec:
   addOwnerRef: true
 
 `)
+	th.writeF("/manifests/common/centraldashboard/overlays/application/params.env", `
+generateName=
+`)
 	th.writeK("/manifests/common/centraldashboard/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
