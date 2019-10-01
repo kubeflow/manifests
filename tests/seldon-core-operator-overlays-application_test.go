@@ -55,9 +55,9 @@ varReference:
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service
 - path: spec/selector/matchLabels/app.kubernetes.io\/instance
-  kind: Deployment
+  kind: StatefulSet
 - path: spec/template/metadata/labels/app.kubernetes.io\/instance
-  kind: Deployment
+  kind: StatefulSet
 `)
 	th.writeF("/manifests/seldon/seldon-core-operator/overlays/application/params.env", `
 generateName=
@@ -70,13 +70,13 @@ bases:
 resources:
 - application.yaml
 configMapGenerator:
-- name: seldon-core-operator-parameters
+- name: seldon-core-operator-app-parameters
   env: params.env
 vars:
 - name: generateName
   objref:
     kind: ConfigMap
-    name: seldon-core-operator-parameters
+    name: seldon-core-operator-app-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.generateName
