@@ -147,6 +147,11 @@ spec:
           path: katib-v1alpha2/katib-ui
       name: katib-ui
     - kustomizeConfig:
+        overlays:
+          - application
+        parameters:
+          - name: generateName
+            value: metrics-collector-
         repoRef:
           name: manifests
           path: katib-v1alpha2/metrics-collector
@@ -154,6 +159,10 @@ spec:
     - kustomizeConfig:
         overlays:
         - istio
+        - application
+        parameters:
+        - name: generateName
+          value: metadata-
         repoRef:
           name: manifests
           path: metadata
@@ -195,7 +204,11 @@ spec:
           path: pytorch-job/pytorch-operator
       name: pytorch-operator
     - kustomizeConfig:
+        overlays:
+          - application
         parameters:
+          - name: generateName
+            value: spartakus-
           - initRequired: true
             name: usageId
             value: <randomly-generated-id>

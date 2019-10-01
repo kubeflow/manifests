@@ -151,11 +151,20 @@ spec:
   - kustomizeConfig:
       overlays:
       - istio
+      - application
+      parameters:
+      - name: generateName
+        value: metadata-
       repoRef:
         name: manifests
         path: metadata
     name: metadata
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: metrics-collector-
       repoRef:
         name: manifests
         path: katib-v1alpha2/metrics-collector
@@ -205,7 +214,11 @@ spec:
         path: knative/knative-serving-crds
     name: knative-crds
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
+      - name: generateName
+        value: knative-serving-install-
       - name: namespace
         value: knative-serving
       repoRef:
@@ -218,12 +231,21 @@ spec:
         path: kfserving/kfserving-crds
     name: kfserving-crds
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: kfserving-install-
       repoRef:
         name: manifests
         path: kfserving/kfserving-install
     name: kfserving-install
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
+      - name: generateName
+        value: spartakus-
       - initRequired: true
         name: usageId
         value: <randomly-generated-id>

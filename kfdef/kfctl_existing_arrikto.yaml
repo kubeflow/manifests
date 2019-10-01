@@ -126,11 +126,20 @@ spec:
   - kustomizeConfig:
       overlays:
       - istio
+      - application
+      parameters:
+      - name: generateName
+        value: metadata-
       repoRef:
         name: manifests
         path: metadata
     name: metadata
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: metrics-collector-
       repoRef:
         name: manifests
         path: katib-v1alpha2/metrics-collector
@@ -167,7 +176,11 @@ spec:
         path: pytorch-job/pytorch-operator
     name: pytorch-operator
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
+      - name: generateName
+        value: spartakus-
       - initRequired: true
         name: usageId
         value: <randomly-generated-id>
