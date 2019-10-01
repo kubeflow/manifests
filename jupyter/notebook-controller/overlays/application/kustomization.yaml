@@ -4,9 +4,22 @@ bases:
 - ../../base
 resources:
 - application.yaml
+configMapGenerator:
+- name: notebook-controller-app-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: notebook-controller-app-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
 commonLabels:
   app.kubernetes.io/name: notebook-controller
-  app.kubernetes.io/instance: notebook-controller
+  app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: notebook
   app.kubernetes.io/part-of: kubeflow

@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- application.yaml
+configMapGenerator:
+- name: pipeline-visualization-service-app-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: pipeline-visualization-service-app-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
+commonLabels:
+  app.kubernetes.io/name: pipeline-visualization-service
+  app.kubernetes.io/instance: $(generateName)
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: pipeline-visualization-service
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.6

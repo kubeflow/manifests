@@ -1,0 +1,21 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: $(generateName)
+spec:
+  componentKinds:
+  - group: apps
+    kind: StatefulSet
+  - group: core
+    kind: ServiceAccount
+  - group: core
+    kind: ConfigMap
+  descriptor:
+    type: "admission-webhook-bootstrap"
+    version: "v1alpha1"
+    description: "admission-webhook bootstrap installs the admission-webhook controller"
+    keywords:
+    - "admission-webook"
+    links:
+    - description: About
+      url: "https://github.com/kubeflow/kubeflow/tree/master/components/admission-webhook"
