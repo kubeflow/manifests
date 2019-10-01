@@ -16,3 +16,10 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.namespace
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
