@@ -11,7 +11,7 @@ vars:
 - name: generateName
   objref:
     kind: ConfigMap
-    name: kubeflow-app-parameters 
+    name: kubeflow-app-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.generateName

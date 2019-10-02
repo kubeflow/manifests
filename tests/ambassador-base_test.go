@@ -167,9 +167,9 @@ namespace: istio-system
 commonLabels:
   kustomize.component: ambassador
 images:
-  - name: quay.io/datawire/ambassador
-    newName: quay.io/datawire/ambassador
-    newTag: 0.37.0
+- name: quay.io/datawire/ambassador
+  newName: quay.io/datawire/ambassador
+  newTag: 0.37.0
 configMapGenerator:
 - name: ambassador-parameters
   env: params.env

@@ -367,6 +367,22 @@ resources:
 
 commonLabels:
   kustomize.component: modeldb
+images:
+- name: vertaaiofficial/modeldb-frontend
+  newName: vertaaiofficial/modeldb-frontend
+  newTag: kubeflow
+- name: vertaaiofficial/modeldb-backend-proxy
+  newName: vertaaiofficial/modeldb-backend-proxy
+  newTag: kubeflow
+- name: vertaaiofficial/modeldb-artifact-store
+  newName: vertaaiofficial/modeldb-artifact-store
+  newTag: kubeflow
+- name: mysql
+  newName: mysql
+  newTag: '5.7'
+- name: vertaaiofficial/modeldb-backend
+  newName: vertaaiofficial/modeldb-backend
+  newTag: kubeflow
 `)
 }
 

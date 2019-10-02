@@ -78,7 +78,7 @@ vars:
 - name: generateName
   objref:
     kind: ConfigMap
-    name: spark-operator-app-parameters 
+    name: spark-operator-app-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.generateName
@@ -282,6 +282,7 @@ images:
 
 # Value of this field is prepended to the
 # names of all resources
+  newName: gcr.io/spark-operator/spark-operator
 namePrefix: spark-operator
 
 # List of resource files that kustomize reads, modifies

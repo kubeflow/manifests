@@ -19,13 +19,13 @@ vars:
     name: pipeline-minio-parameters
     apiVersion: v1
   fieldref:
-      fieldpath: data.minioPd
+    fieldpath: data.minioPd
 - name: minioPvName
   objref:
     kind: ConfigMap
     name: pipeline-minio-parameters
     apiVersion: v1
   fieldref:
-      fieldpath: data.minioPvName
+    fieldpath: data.minioPvName
 configurations:
 - params.yaml
