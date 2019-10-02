@@ -108,19 +108,5 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.controller
-- name: clusterDomain
-  objref:
-    kind: ConfigMap
-    name: tektoncd-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.clusterDomain
-- name: namespace
-  objref:
-    kind: ConfigMap
-    name: tektoncd-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.namespace
 configurations:
 - params.yaml

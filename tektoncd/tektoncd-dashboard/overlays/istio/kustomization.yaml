@@ -4,5 +4,23 @@ bases:
 - ../../base
 resources:
 - virtual-service.yaml
+configMapGenerator:
+- name: tektoncd-dashboard-parameters
+  env: params.env
+vars:
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: tektoncd-dashboard-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
+- name: clusterDomain
+  objref:
+    kind: ConfigMap
+    name: tektoncd-dashboard-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.clusterDomain
 configurations:
 - params.yaml
