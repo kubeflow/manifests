@@ -174,7 +174,7 @@ spec:
         - -c
         - 'curl -ik -X DELETE -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
           -H "Accept: application/json" -H "Content-Type: application/json" https://kubernetes.default.svc/apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/sparkapplications.sparkoperator.k8s.io'
-        image: gcr.io/spark-operator/spark-operator:v2.4.0-v1beta1-0.8.2
+        image: gcr.io/spark-operator/spark-operator:v1beta2-1.0.0-2.4.4
         imagePullPolicy: IfNotPresent
         name: delete-sparkapp-crd
       - command:
@@ -182,7 +182,7 @@ spec:
         - -c
         - 'curl -ik -X DELETE -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
           -H "Accept: application/json" -H "Content-Type: application/json" https://kubernetes.default.svc/apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/scheduledsparkapplications.sparkoperator.k8s.io'
-        image: gcr.io/spark-operator/spark-operator:v2.4.0-v1beta1-0.8.2
+        image: gcr.io/spark-operator/spark-operator:v1beta2-1.0.0-2.4.4
         imagePullPolicy: IfNotPresent
         name: delete-scheduledsparkapp-crd
       restartPolicy: OnFailure
@@ -198,7 +198,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: sparkoperator
-      app.kubernetes.io/version: v2.4.0-v1beta1-0.8.2
+      app.kubernetes.io/version: v1beta2-1.0.0-2.4.4
   strategy:
     type: Recreate
   template:
@@ -211,14 +211,13 @@ spec:
         pending: []
       labels:
         app.kubernetes.io/name: sparkoperator
-        app.kubernetes.io/version: v2.4.0-v1beta1-0.8.2
+        app.kubernetes.io/version: v1beta2-1.0.0-2.4.4
     spec:
       containers:
       - args:
         - -v=2
         - -namespace=
         - -ingress-url-format=
-        - -install-crds=true
         - -controller-threads=10
         - -resync-interval=30
         - -logtostderr
@@ -227,7 +226,7 @@ spec:
         - -metrics-port=10254
         - -metrics-endpoint=/metrics
         - -metrics-prefix=
-        image: gcr.io/spark-operator/spark-operator:v2.4.0-v1beta1-0.8.2
+        image: gcr.io/spark-operator/spark-operator:v1beta2-1.0.0-2.4.4
         imagePullPolicy: IfNotPresent
         name: sparkoperator
         ports:
@@ -254,7 +253,7 @@ commonLabels:
 # creating patches.
 images:
 - name: gcr.io/spark-operator/spark-operator
-  newTag: v2.4.0-v1beta1-0.8.2
+  newTag: v1beta2-1.0.0-2.4.4
 
 # Value of this field is prepended to the
 # names of all resources
