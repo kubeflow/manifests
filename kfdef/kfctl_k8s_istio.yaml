@@ -14,7 +14,11 @@ spec:
   applications:
   # Istio install. If not needed, comment out istio-crds and istio-install.
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
+      - name: generateName
+        value: istio-crds-
       - name: namespace
         value: istio-system
       repoRef:
@@ -22,7 +26,11 @@ spec:
         path: istio/istio-crds
     name: istio-crds
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
+      - name: generateName
+        value: istio-install-
       - name: namespace
         value: istio-system
       repoRef:
@@ -31,9 +39,13 @@ spec:
     name: istio-install
   # This component is the istio resources for Kubeflow (e.g. gateway), not about installing istio.
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
-        - name: clusterRbacConfig
-          value: "OFF"
+      - name: generateName
+        value: istio-
+      - name: clusterRbacConfig
+        value: "OFF"
       repoRef:
         name: manifests
         path: istio/istio
@@ -54,6 +66,11 @@ spec:
         path: application/application
     name: application
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: metacontroller-
       repoRef:
         name: manifests
         path: metacontroller
@@ -235,6 +252,11 @@ spec:
         path: knative/knative-serving-install
     name: knative-install
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: kfserving-crds-
       repoRef:
         name: manifests
         path: kfserving/kfserving-crds

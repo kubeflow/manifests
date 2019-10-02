@@ -15,11 +15,15 @@ spec:
   applications:
   # This component is the istio resources for Kubeflow (e.g. gateway), not about installing istio.
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
-        - name: clusterRbacConfig
-          value: "OFF"
-        - name: gatewaySelector
-          value: "ingress-gke-system"
+      - name: generateName
+        value: istio-
+      - name: clusterRbacConfig
+        value: "OFF"
+      - name: gatewaySelector
+        value: "ingress-gke-system"
       repoRef:
         name: manifests
         path: istio/istio
@@ -40,6 +44,11 @@ spec:
         path: application/application
     name: application
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: metacontroller-
       repoRef:
         name: manifests
         path: metacontroller
@@ -216,6 +225,11 @@ spec:
         path: knative/knative-serving-install
     name: knative-install
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: kfserving-crds-
       repoRef:
         name: manifests
         path: kfserving/kfserving-crds

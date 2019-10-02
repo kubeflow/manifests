@@ -24,6 +24,11 @@ spec:
         path: application/application
     name: application
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: metacontroller-
       repoRef:
         name: manifests
         path: metacontroller

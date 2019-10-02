@@ -1,0 +1,35 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: $(generateName)
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
+  componentKinds:
+  - group: authentication.istio.io
+    kind: Policy
+  - group: extensions
+    kind: Ingress
+  - group: ctl.isla.solutions
+    kind: CloudEndpoint
+  - group: cloud.google.com
+    kind: BackendConfig
+  - group: apps
+    kind: StatefulSet
+  - group: core
+    kind: ConfigMap
+  - group: core
+    kind: Service
+  - group: core
+    kind: ServiceAccount
+  descriptor:
+    type: "iap-ingress"
+    version: "v1beta1"
+    description: "iap-ingress"
+    keywords:
+    - "kubeflow"
+    - "iap-ingress"
+    links:
+    - description: About
+      url: "https://kubeflow.org"

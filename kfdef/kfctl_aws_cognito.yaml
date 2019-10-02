@@ -7,7 +7,11 @@ spec:
   platform: aws
   applications:
     - kustomizeConfig:
+        overlays:
+          - application
         parameters:
+          - name: generateName
+            value: istio-crds-
           - name: namespace
             value: istio-system
         repoRef:
@@ -15,7 +19,11 @@ spec:
           path: istio/istio-crds
       name: istio-crds
     - kustomizeConfig:
+        overlays:
+          - application
         parameters:
+          - name: generateName
+            value: istio-install-
           - name: namespace
             value: istio-system
         repoRef:
@@ -23,7 +31,11 @@ spec:
           path: istio/istio-install
       name: istio-install
     - kustomizeConfig:
+        overlays:
+          - application
         parameters:
+          - name: generateName
+            value: istio-
           - name: clusterRbacConfig
             value: "OFF"
         repoRef:
@@ -46,6 +58,11 @@ spec:
           path: application/application
       name: application
     - kustomizeConfig:
+        overlays:
+          - application
+        parameters:
+          - name: generateName
+            value: metacontroller-
         repoRef:
           name: manifests
           path: metacontroller
