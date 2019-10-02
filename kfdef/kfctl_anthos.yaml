@@ -177,6 +177,11 @@ spec:
         path: jupyter/notebook-controller
     name: notebook-controller
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: pytorch-job-crds-
       repoRef:
         name: manifests
         path: pytorch-job/pytorch-job-crds
@@ -187,7 +192,11 @@ spec:
         path: pytorch-job/pytorch-operator
     name: pytorch-operator
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
+      - name: generateName
+        value: knative-serving-crds-
       - name: namespace
         value: knative-serving
       repoRef:
@@ -249,6 +258,11 @@ spec:
         path: tensorboard
     name: tensorboard
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: tf-job-crds-
       repoRef:
         name: manifests
         path: tf-training/tf-job-crds
