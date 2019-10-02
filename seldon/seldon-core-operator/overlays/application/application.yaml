@@ -3,6 +3,9 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   type: "seldon-core-operator"
   componentKinds:
     - group: apps/v1

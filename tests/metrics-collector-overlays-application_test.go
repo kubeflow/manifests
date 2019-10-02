@@ -20,6 +20,9 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -65,6 +68,8 @@ spec:
 	th.writeF("/manifests/katib-v1alpha2/metrics-collector/overlays/application/params.yaml", `
 varReference:
 - path: metadata/name
+  kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
   kind: Application
 `)
 	th.writeF("/manifests/katib-v1alpha2/metrics-collector/overlays/application/params.env", `
