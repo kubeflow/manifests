@@ -23,3 +23,10 @@ vars:
     fieldpath: data.registry
 configurations:
 - params.yaml
+images:
+- name: gcr.io/kubebuilder/kube-rbac-proxy
+  newName: gcr.io/kubebuilder/kube-rbac-proxy
+  newTag: v0.4.0
+- name: $(registry)/kfserving-controller
+  newName: $(registry)/kfserving-controller
+  newTag: v0.1.1
