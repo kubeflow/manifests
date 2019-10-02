@@ -27,9 +27,12 @@ spec:
         env:
           - name: USE_ISTIO
             value: $(USE_ISTIO)
+          - name: ISTIO_GATEWAY
+            value: $(ISTIO_GATEWAY)
 `)
 	th.writeF("/manifests/jupyter/notebook-controller/overlays/istio/params.env", `
 USE_ISTIO=true
+ISTIO_GATEWAY=kubeflow/kubeflow-gateway
 `)
 	th.writeK("/manifests/jupyter/notebook-controller/overlays/istio", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -266,6 +269,7 @@ spec:
 	th.writeF("/manifests/jupyter/notebook-controller/base/params.env", `
 POD_LABELS=gcp-cred-secret=user-gcp-sa,gcp-cred-secret-filename=user-gcp-sa.json
 USE_ISTIO=false
+ISTIO_GATEWAY=kubeflow/kubeflow-gateway
 `)
 	th.writeK("/manifests/jupyter/notebook-controller/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
