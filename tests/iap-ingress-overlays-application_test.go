@@ -624,8 +624,7 @@ varReference:
 - path: data/healthcheck_route.yaml
   kind: ConfigMap
 - path: spec/domains
-  kind: ManagedCertificate
-`)
+  kind: ManagedCertificate`)
 	th.writeF("/manifests/gcp/iap-ingress/base/params.env", `
 namespace=kubeflow
 appName=kubeflow
@@ -637,8 +636,7 @@ oauthSecretName=kubeflow-oauth
 project=
 adminSaSecretName=admin-gcp-sa
 tlsSecretName=envoy-ingress-tls
-istioNamespace=istio-system
-`)
+istioNamespace=istio-system`)
 	th.writeK("/manifests/gcp/iap-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -751,8 +749,7 @@ vars:
   fieldref:
     fieldpath: data.istioNamespace
 configurations:
-- params.yaml
-`)
+- params.yaml`)
 }
 
 func TestIapIngressOverlaysApplication(t *testing.T) {

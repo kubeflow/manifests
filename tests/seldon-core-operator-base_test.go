@@ -3631,8 +3631,7 @@ resources:
 - seldon-operator-manager-rolebinding-crb.yaml
 - seldon-operator-webhook-server-secret-secret.yaml
 - seldondeployments.machinelearning.seldon.io-crd.yaml
-- webhook-server-service-svc.yaml
-`)
+- webhook-server-service-svc.yaml`)
 }
 
 func TestSeldonCoreOperatorBase(t *testing.T) {

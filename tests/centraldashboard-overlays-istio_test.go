@@ -204,13 +204,11 @@ varReference:
 - path: spec/template/spec/containers/0/env/0/value
   kind: Deployment
 - path: spec/template/spec/containers/0/env/1/value
-  kind: Deployment
-`)
+  kind: Deployment`)
 	th.writeF("/manifests/common/centraldashboard/base/params.env", `
 clusterDomain=cluster.local
 userid-header=
-userid-prefix=
-`)
+userid-prefix=`)
 	th.writeK("/manifests/common/centraldashboard/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -226,46 +224,46 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: centraldashboard
 images:
-  - name: gcr.io/kubeflow-images-public/centraldashboard
-    newName: gcr.io/kubeflow-images-public/centraldashboard
-    newTag: v20190823-v0.6.0-rc.0-69-gcb7dab59
+- digest: sha256:9384e7ece83fd524beaf4434edd161279f639ce4aaa87534d9cc58ee1ae57418
+  name: gcr.io/kubeflow-images-public/centraldashboard
+  newName: gcr.io/kubeflow-images-public/centraldashboard
 configMapGenerator:
-- name: parameters
-  env: params.env
+- envs:
+  - params.env
+  name: parameters
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- name: namespace
+- fieldref:
+    fieldPath: metadata.namespace
+  name: namespace
   objref:
+    apiVersion: v1
     kind: Service
     name: centraldashboard
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.namespace
-- name: clusterDomain
+- fieldref:
+    fieldPath: data.clusterDomain
+  name: clusterDomain
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.clusterDomain
-- name: userid-header
+- fieldref:
+    fieldPath: data.userid-header
+  name: userid-header
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.userid-header
-- name: userid-prefix
+- fieldref:
+    fieldPath: data.userid-prefix
+  name: userid-prefix
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.userid-prefix
 configurations:
 - params.yaml
-
 `)
 }
 
