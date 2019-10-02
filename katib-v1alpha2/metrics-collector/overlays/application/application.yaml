@@ -1,16 +1,11 @@
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: metrics-collector
+  name: $(generateName)
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: metrics-collector
-      app.kubernetes.io/instance: metrics-collector
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: katib
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: core
     kind: ConfigMap

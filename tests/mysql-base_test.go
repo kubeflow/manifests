@@ -95,6 +95,7 @@ vars:
 images:
 - name: mysql
   newTag: '5.6'
+  newName: mysql
 configurations:
 - params.yaml
 `)

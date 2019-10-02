@@ -387,7 +387,24 @@ vars:
     name: ui
     apiVersion: v1
   fieldref:
-    fieldpath: metadata.name`)
+    fieldpath: metadata.name
+images:
+- name: mysql
+  newName: mysql
+  newTag: 8.0.3
+- name: gcr.io/kubeflow-images-public/metadata-frontend
+  newName: gcr.io/kubeflow-images-public/metadata-frontend
+  newTag: v0.1.8
+- name: gcr.io/ml-pipeline/envoy
+  newName: gcr.io/ml-pipeline/envoy
+  newTag: initial
+- name: gcr.io/kubeflow-images-public/metadata
+  newName: gcr.io/kubeflow-images-public/metadata
+  newTag: v0.1.9
+- name: gcr.io/tfx-oss-public/ml_metadata_store_server
+  newName: gcr.io/tfx-oss-public/ml_metadata_store_server
+  newTag: 0.14.0
+`)
 }
 
 func TestMetadataBase(t *testing.T) {

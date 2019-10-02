@@ -73,14 +73,14 @@ vars:
     name: pipeline-minio-parameters
     apiVersion: v1
   fieldref:
-      fieldpath: data.minioPd
+    fieldpath: data.minioPd
 - name: minioPvName
   objref:
     kind: ConfigMap
     name: pipeline-minio-parameters
     apiVersion: v1
   fieldref:
-      fieldpath: data.minioPvName
+    fieldpath: data.minioPvName
 configurations:
 - params.yaml
 `)
@@ -185,6 +185,7 @@ vars:
 images:
 - name: minio/minio
   newTag: RELEASE.2018-02-09T22-40-05Z
+  newName: minio/minio
 configurations:
 - params.yaml
 `)

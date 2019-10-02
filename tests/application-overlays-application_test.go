@@ -18,13 +18,11 @@ func writeApplicationOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: kubeflow
+  name: $(generateName)
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
     - group: app.k8s.io
       kind: Application
@@ -47,6 +45,22 @@ spec:
       url: "https://kubeflow.org"
   addOwnerRef: true
 `)
+	th.writeF("/manifests/application/application/overlays/application/params.yaml", `
+varReference:
+- path: metadata/name
+  kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Application
+- path: spec/selector/app.kubernetes.io\/instance
+  kind: Service
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: StatefulSet
+- path: spec/template/metadata/labels/app.kubernetes.io\/instance
+  kind: StatefulSet
+`)
+	th.writeF("/manifests/application/application/overlays/application/params.env", `
+generateName=
+`)
 	th.writeK("/manifests/application/application/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -54,9 +68,22 @@ bases:
 - ../../base
 resources:
 - application.yaml
+configMapGenerator:
+- name: kubeflow-app-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: kubeflow-app-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
 commonLabels:
   app.kubernetes.io/name: kubeflow
-  app.kubernetes.io/instance: kubeflow
+  app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: kubeflow
   app.kubernetes.io/part-of: kubeflow
@@ -165,9 +192,9 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-  - name: gcr.io/kubeflow-images-public/kubernetes-sigs/application
-    newName: gcr.io/kubeflow-images-public/kubernetes-sigs/application
-    newTag: 1.0-beta
+- name: gcr.io/kubeflow-images-public/kubernetes-sigs/application
+  newName: gcr.io/kubeflow-images-public/kubernetes-sigs/application
+  newTag: 1.0-beta
 vars:
 - name: project
   objref:

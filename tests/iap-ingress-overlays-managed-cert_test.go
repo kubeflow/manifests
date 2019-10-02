@@ -597,15 +597,15 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: iap-ingress
 images:
-  - name: gcr.io/kubeflow-images-public/envoy
-    newName: gcr.io/kubeflow-images-public/envoy
-    newTag: v20180309-0fb4886b463698702b6a08955045731903a18738
-  - name: gcr.io/kubeflow-images-public/ingress-setup
-    newName: gcr.io/kubeflow-images-public/ingress-setup
-    newTag: latest
-  - name: gcr.io/cloud-solutions-group/esp-sample-app
-    newName: gcr.io/cloud-solutions-group/esp-sample-app
-    newTag: 1.0.0
+- name: gcr.io/kubeflow-images-public/envoy
+  newName: gcr.io/kubeflow-images-public/envoy
+  newTag: v20180309-0fb4886b463698702b6a08955045731903a18738
+- name: gcr.io/kubeflow-images-public/ingress-setup
+  newName: gcr.io/kubeflow-images-public/ingress-setup
+  newTag: latest
+- name: gcr.io/cloud-solutions-group/esp-sample-app
+  newName: gcr.io/cloud-solutions-group/esp-sample-app
+  newTag: 1.0.0
 configMapGenerator:
 - name: parameters
   env: params.env
@@ -690,7 +690,8 @@ vars:
   fieldref:
     fieldpath: data.istioNamespace
 configurations:
-- params.yaml`)
+- params.yaml
+`)
 }
 
 func TestIapIngressOverlaysManagedCert(t *testing.T) {

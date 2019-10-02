@@ -329,6 +329,9 @@ images:
 - name: quay.io/k8scsi/csi-provisioner
   newName: quay.io/k8scsi/csi-provisioner
   newTag: v0.4.2
+- name: quay.io/k8scsi/csi-attacher
+  newName: quay.io/k8scsi/csi-attacher
+  newTag: v0.4.2
 `)
 }
 

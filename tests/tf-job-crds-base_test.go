@@ -71,7 +71,8 @@ spec:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- crd.yaml`)
+- crd.yaml
+`)
 }
 
 func TestTfJobCrdsBase(t *testing.T) {

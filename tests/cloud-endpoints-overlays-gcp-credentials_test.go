@@ -43,7 +43,8 @@ kind: Kustomization
 bases:
 - ../../base
 patchesStrategicMerge:
-- gcp-credentials-patch.yaml`)
+- gcp-credentials-patch.yaml
+`)
 	th.writeF("/manifests/gcp/cloud-endpoints/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -194,9 +195,9 @@ commonLabels:
   app: cloud-endpoints-controller
   kustomize.component: cloud-endpoints
 images:
-  - name: gcr.io/cloud-solutions-group/cloud-endpoints-controller
-    newName: gcr.io/cloud-solutions-group/cloud-endpoints-controller
-    newTag: 0.2.1
+- name: gcr.io/cloud-solutions-group/cloud-endpoints-controller
+  newName: gcr.io/cloud-solutions-group/cloud-endpoints-controller
+  newTag: 0.2.1
 configMapGenerator:
 - name: cloud-endpoints-parameters
   env: params.env

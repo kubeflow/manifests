@@ -1,8 +1,11 @@
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: "seldon-core-operator"
+  name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   type: "seldon-core-operator"
   componentKinds:
     - group: apps/v1
