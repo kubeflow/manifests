@@ -13,67 +13,74 @@ import (
 	"testing"
 )
 
-func writeTektoncdInstallOverlaysIstio(th *KustTestHarness) {
-	th.writeF("/manifests/tektoncd/tektoncd-install/overlays/istio/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
+func writeTektoncdInstallOverlaysApplication(th *KustTestHarness) {
+	th.writeF("/manifests/tektoncd/tektoncd-install/overlays/application/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
 metadata:
-  name: tektoncd
+  name: $(generateName)
 spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /tektoncd/
-    rewrite:
-      uri: /tektoncd/
-    route:
-    - destination:
-        host: tekton-pipelines-controller.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 80
+  componentKinds:
+    - group: app.k8s.io
+      kind: Application
+  descriptor: 
+    type: tektoncd-install
+    version: v1beta1
+    description: installs tektoncd pipeline
+    maintainers:
+    - name: Kam Kasravi
+      email: kam.d.kasravi@intel.com
+    owners:
+    - name: Kam Kasravi
+      email: kam.d.kasravi@intel.com
+    keywords:
+     - kubeflow
+    links:
+    - description: About
+      url: "https://kubeflow.org"
+  addOwnerRef: true
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-install/overlays/istio/params.yaml", `
+	th.writeF("/manifests/tektoncd/tektoncd-install/overlays/application/params.yaml", `
 varReference:
-- path: spec/http/route/destination/host
-  kind: VirtualService
+- path: metadata/name
+  kind: Application
+- path: spec/selector/app.kubernetes.io\/instance
+  kind: Service
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Deployment
+- path: spec/template/metadata/labels/app.kubernetes.io\/instance
+  kind: Deployment
 `)
-	th.writeF("/manifests/tektoncd/tektoncd-install/overlays/istio/params.env", `
-namespace=
-clusterDomain=cluster.local
+	th.writeF("/manifests/tektoncd/tektoncd-install/overlays/application/params.env", `
+generateName=
 `)
-	th.writeK("/manifests/tektoncd/tektoncd-install/overlays/istio", `
+	th.writeK("/manifests/tektoncd/tektoncd-install/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
 resources:
-- virtual-service.yaml
+- application.yaml
 configMapGenerator:
-- name: tektoncd-install-istio-parameters
+- name: tektoncd-install-parameters
   env: params.env
-generatorOptions:
-  disableNameSuffixHash: true
 vars:
-- name: clusterDomain
+- name: generateName
   objref:
     kind: ConfigMap
-    name: tektoncd-install-istio-parameters
+    name: tektoncd-install-parameters 
     apiVersion: v1
   fieldref:
-    fieldpath: data.clusterDomain
-- name: namespace
-  objref:
-    kind: ConfigMap
-    name: tektoncd-install-istio-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.namespace
+    fieldpath: data.generateName
 configurations:
 - params.yaml
+commonLabels:
+  app.kubernetes.io/name: tektoncd-install
+  app.kubernetes.io/instance: $(generateName)
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: kubeflow
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.6
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-install/base/namespace.yaml", `
 apiVersion: v1
@@ -779,16 +786,6 @@ vars:
     name: tektoncd-parameters
     apiVersion: v1
   fieldref:
-<<<<<<< HEAD
-    fieldpath: data.clusterDomain
-images:
-- name: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller
-  newName: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller
-  digest: 4f10413791df045f29f882fab817219e54123b527d6230a4991e2558f3d659f9
-- name: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook
-  newName: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook
-  digest: 496e36b8723a668ac3531acc26512c123342da7827c10386b571aa975d6a47e7
-=======
     fieldpath: data.entrypoint
 - name: nop
   objref:
@@ -869,13 +866,12 @@ images:
     fieldpath: data.controller
 configurations:
 - params.yaml
->>>>>>> 72036c7... add unit tests, fix for clusterDomain, namespace
 `)
 }
 
-func TestTektoncdInstallOverlaysIstio(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/tektoncd/tektoncd-install/overlays/istio")
-	writeTektoncdInstallOverlaysIstio(th)
+func TestTektoncdInstallOverlaysApplication(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/tektoncd/tektoncd-install/overlays/application")
+	writeTektoncdInstallOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -884,7 +880,7 @@ func TestTektoncdInstallOverlaysIstio(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../tektoncd/tektoncd-install/overlays/istio"
+	targetPath := "../tektoncd/tektoncd-install/overlays/application"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)

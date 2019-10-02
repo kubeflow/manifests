@@ -5,7 +5,7 @@ bases:
 resources:
 - virtual-service.yaml
 configMapGenerator:
-- name: tektoncd-istio-parameters
+- name: tektoncd-install-istio-parameters
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
@@ -13,9 +13,16 @@ vars:
 - name: clusterDomain
   objref:
     kind: ConfigMap
-    name: tektoncd-istio-parameters
+    name: tektoncd-install-istio-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: tektoncd-install-istio-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 configurations:
 - params.yaml
