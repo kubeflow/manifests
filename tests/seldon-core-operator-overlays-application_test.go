@@ -82,7 +82,6 @@ metadata:
     app.kubernetes.io/instance: seldon-core-operator
     app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
-    helm.sh/chart: seldon-core-operator-0.4.1
   name: seldon-config
   namespace: kubeflow
 `)
@@ -94,7 +93,6 @@ metadata:
     app.kubernetes.io/instance: seldon-core-operator
     app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
-    helm.sh/chart: seldon-core-operator-0.4.1
   name: seldon-manager
   namespace: kubeflow
 `)
@@ -108,7 +106,6 @@ metadata:
     app.kubernetes.io/name: seldon-core-operator
     control-plane: seldon-controller-manager
     controller-tools.k8s.io: "1.0"
-    helm.sh/chart: seldon-core-operator-0.4.1
   name: seldon-operator-controller-manager-service
   namespace: kubeflow
 spec:
@@ -128,7 +125,6 @@ metadata:
     app.kubernetes.io/name: seldon-core-operator
     control-plane: seldon-controller-manager
     controller-tools.k8s.io: "1.0"
-    helm.sh/chart: seldon-core-operator-0.4.1
   name: seldon-operator-controller-manager
   namespace: kubeflow
 spec:
@@ -220,7 +216,6 @@ metadata:
     app.kubernetes.io/instance: seldon-core-operator
     app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
-    helm.sh/chart: seldon-core-operator-0.4.1
   name: seldon-operator-manager-role
 rules:
 - apiGroups:
@@ -413,7 +408,6 @@ metadata:
     app.kubernetes.io/instance: seldon-core-operator
     app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
-    helm.sh/chart: seldon-core-operator-0.4.1
   name: seldon-operator-manager-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -3662,7 +3656,6 @@ metadata:
     app.kubernetes.io/name: seldon-core-operator
     control-plane: seldon-controller-manager
     controller-tools.k8s.io: "1.0"
-    helm.sh/chart: seldon-core-operator-0.4.1
   name: webhook-server-service
   namespace: kubeflow
 spec:
