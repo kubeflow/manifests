@@ -1,5 +1,5 @@
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
 metadata:
   name: pipeline-runner
 rules:
@@ -20,11 +20,10 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - persistentvolumes
   - persistentvolumeclaims
   verbs:
-  - create
-  - delete
-  - get
+  - '*'
 - apiGroups:
   - snapshot.storage.k8s.io
   resources:

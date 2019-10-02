@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   labels:
@@ -14,9 +14,14 @@ spec:
         app: ml-pipeline-ui
     spec:
       containers:
-      - name: ml-pipeline-ui
-        image: gcr.io/ml-pipeline/frontend:0.1.23
+      - image: gcr.io/ml-pipeline/frontend:0.1.27
         imagePullPolicy: IfNotPresent
+        name: ml-pipeline-ui
         ports:
         - containerPort: 3000
+        env:
+          - name: MINIO_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
       serviceAccountName: ml-pipeline-ui
