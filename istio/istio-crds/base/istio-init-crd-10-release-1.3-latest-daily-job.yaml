@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: istio-init-crd-10-release-1.3-latest-daily
+  namespace: default
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - command:
+        - kubectl
+        - apply
+        - -f
+        - /etc/istio/crd-10/crd-10.yaml
+        image: gcr.io/istio-release/kubectl:release-1.3-latest-daily
+        imagePullPolicy: IfNotPresent
+        name: istio-init-crd-10
+        volumeMounts:
+        - mountPath: /etc/istio/crd-10
+          name: crd-10
+          readOnly: true
+      restartPolicy: OnFailure
+      serviceAccountName: istio-init-service-account
+      volumes:
+      - configMap:
+          name: istio-crd-10
+        name: crd-10
