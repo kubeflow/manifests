@@ -1,0 +1,14 @@
+# Authentication policy to enable permissive mode for all services (that have sidecar) in the mesh.
+apiVersion: "authentication.istio.io/v1alpha1"
+kind: "MeshPolicy"
+metadata:
+  name: "default"
+  labels:
+    app: security
+    chart: security
+    heritage: Tiller
+    release: istio
+spec:
+  peers:
+  - mtls:
+      mode: PERMISSIVE
