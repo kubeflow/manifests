@@ -1,25 +1,113 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+- namespace.yaml
+- crds.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - config-map.yaml
-- deployment.yaml
 - pod-security-policy.yaml
 - service-account.yaml
 - service.yaml
+- deployment.yaml
 namespace: tekton-pipelines
 configMapGenerator:
 - name: tektoncd-parameters
   env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
 vars:
-- name: namespace
+- name: registry
   objref:
     kind: ConfigMap
     name: tektoncd-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.namespace
+    fieldpath: data.registry
+- name: entrypoint
+  objref:
+    kind: ConfigMap
+    name: tektoncd-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.entrypoint
+- name: nop
+  objref:
+    kind: ConfigMap
+    name: tektoncd-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.nop
+- name: webhook
+  objref:
+    kind: ConfigMap
+    name: tektoncd-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.webhook
+- name: gcs-fetcher
+  objref:
+    kind: ConfigMap
+    name: tektoncd-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.gcs-fetcher
+- name: gsutil
+  objref:
+    kind: ConfigMap
+    name: tektoncd-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.gsutil
+- name: bash
+  objref:
+    kind: ConfigMap
+    name: tektoncd-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.bash
+- name: git-init
+  objref:
+    kind: ConfigMap
+    name: tektoncd-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.git-init
+- name: creds-init
+  objref:
+    kind: ConfigMap
+    name: tektoncd-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.creds-init
+- name: pullrequest-init
+  objref:
+    kind: ConfigMap
+    name: tektoncd-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.pullrequest-init
+- name: imagedigestexporter
+  objref:
+    kind: ConfigMap
+    name: tektoncd-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.imagedigestexporter
+- name: kubeconfigwriter
+  objref:
+    kind: ConfigMap
+    name: tektoncd-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.kubeconfigwriter
+- name: controller
+  objref:
+    kind: ConfigMap
+    name: tektoncd-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.controller
 - name: clusterDomain
   objref:
     kind: ConfigMap
@@ -27,10 +115,19 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: tektoncd-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 images:
 - name: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller
   newName: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller
-  digest: 4f10413791df045f29f882fab817219e54123b527d6230a4991e2558f3d659f9
+  digest: ebc6f768038aa3e31f3d7acda4bc26bf1380b5f2a132f0618181cacc30e295fa
 - name: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook
   newName: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook
-  digest: 496e36b8723a668ac3531acc26512c123342da7827c10386b571aa975d6a47e7
+  digest: 7215a25a58c074bbe30a50db93e6a47d2eb5672f9af7570a4e4ab75e50329131
+configurations:
+- params.yaml
