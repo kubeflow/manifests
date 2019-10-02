@@ -1,0 +1,23 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: $(generateName)
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
+  componentKinds:
+  - group: apps
+    kind: StatefulSet
+  - group: core
+    kind: ServiceAccount
+  descriptor:
+    type: "metacontroller"
+    version: "v1beta1"
+    description: "metacontroller app"
+    keywords:
+    - "kubeflow"
+    - "metacontroller"
+    links:
+    - description: About
+      url: "https://metacontroller.app"
