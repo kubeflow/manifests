@@ -190,7 +190,8 @@ resources:
 - service-account.yaml
 images:
 - name: gcr.io/ml-pipeline/scheduledworkflow
-  newTag: '0.1.23'
+  newTag: 0.1.23
+  newName: gcr.io/ml-pipeline/scheduledworkflow
 `)
 }
 

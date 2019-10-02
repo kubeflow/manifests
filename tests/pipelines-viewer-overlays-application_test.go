@@ -188,7 +188,8 @@ resources:
 - service-account.yaml
 images:
 - name: gcr.io/ml-pipeline/viewer-crd-controller
-  newTag: '0.1.23'
+  newTag: 0.1.23
+  newName: gcr.io/ml-pipeline/viewer-crd-controller
 `)
 }
 

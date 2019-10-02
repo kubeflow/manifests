@@ -224,7 +224,7 @@ data:
         kubectl -n ${namespace} apply -f -
 
     # Webhook pod needs to be restarted so that the service reload the secret
-    # http://github.com/kueflow/kubeflow/issues/3227	
+    # http://github.com/kueflow/kubeflow/issues/3227
     webhookPod=$(kubectl get pods -n ${namespace} |grep ${webhookDeploymentName} |awk '{print $1;}')
     # ignore error if webhook pod does not exist
     kubectl delete pod ${webhookPod} 2>/dev/null || true
@@ -311,11 +311,11 @@ resources:
 - stateful-set.yaml
 commonLabels:
   kustomize.component: admission-webhook-bootstrap
-namePrefix: admission-webhook-bootstrap- 
+namePrefix: admission-webhook-bootstrap-
 images:
-  - name: gcr.io/kubeflow-images-public/ingress-setup
-    newName: gcr.io/kubeflow-images-public/ingress-setup
-    newTag: latest
+- name: gcr.io/kubeflow-images-public/ingress-setup
+  newName: gcr.io/kubeflow-images-public/ingress-setup
+  newTag: latest
 generatorOptions:
   disableNameSuffixHash: true
 configurations:
@@ -336,10 +336,10 @@ vars:
 - name: namespace
   objref:
     kind: ConfigMap
-    name: config-map 
+    name: config-map
     apiVersion: v1
   fieldref:
-    fieldpath: data.namespace    
+    fieldpath: data.namespace
 `)
 }
 

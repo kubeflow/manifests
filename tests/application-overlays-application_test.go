@@ -75,7 +75,7 @@ vars:
 - name: generateName
   objref:
     kind: ConfigMap
-    name: kubeflow-app-parameters 
+    name: kubeflow-app-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.generateName
@@ -192,9 +192,9 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-  - name: gcr.io/kubeflow-images-public/kubernetes-sigs/application
-    newName: gcr.io/kubeflow-images-public/kubernetes-sigs/application
-    newTag: 1.0-beta
+- name: gcr.io/kubeflow-images-public/kubernetes-sigs/application
+  newName: gcr.io/kubeflow-images-public/kubernetes-sigs/application
+  newTag: 1.0-beta
 vars:
 - name: project
   objref:

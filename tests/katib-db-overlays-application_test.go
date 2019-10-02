@@ -106,7 +106,7 @@ vars:
 configurations:
 - params.yaml
 commonLabels:
-  app.kubernetes.io/name: katib-db 
+  app.kubernetes.io/name: katib-db
   app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: katib
@@ -219,8 +219,9 @@ resources:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-  - name: mysql
-    newTag: 8.0.3
+- name: mysql
+  newTag: 8.0.3
+  newName: mysql
 `)
 }
 

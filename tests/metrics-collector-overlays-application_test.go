@@ -96,7 +96,7 @@ vars:
 configurations:
 - params.yaml
 commonLabels:
-  app.kubernetes.io/name: metrics-collector 
+  app.kubernetes.io/name: metrics-collector
   app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: katib
@@ -191,8 +191,8 @@ resources:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/metrics-collector
-    newTag: v0.6.0-rc.0
+- name: gcr.io/kubeflow-images-public/katib/v1alpha2/metrics-collector
+  newTag: v0.6.0-rc.0
 `)
 }
 
