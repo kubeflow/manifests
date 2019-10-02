@@ -420,12 +420,12 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: argo
 images:
-  - name: argoproj/argoui
-    newName: argoproj/argoui
-    newTag: v2.3.0
-  - name: argoproj/workflow-controller
-    newName: argoproj/workflow-controller
-    newTag: v2.3.0
+- name: argoproj/argoui
+  newName: argoproj/argoui
+  newTag: v2.3.0
+- name: argoproj/workflow-controller
+  newName: argoproj/workflow-controller
+  newTag: v2.3.0
 configMapGenerator:
 - name: workflow-controller-parameters
   env: params.env

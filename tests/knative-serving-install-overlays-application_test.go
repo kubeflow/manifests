@@ -1600,6 +1600,25 @@ resources:
 - hpa.yaml
 commonLabels:
   kustomize.component: knative
+images:
+- name: gcr.io/knative-releases/knative.dev/serving/cmd/activator
+  newName: gcr.io/knative-releases/knative.dev/serving/cmd/activator
+  digest: 88d864eb3c47881cf7ac058479d1c735cc3cf4f07a11aad0621cd36dcd9ae3c6
+- name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa
+  newName: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa
+  digest: a7801c3cf4edecfa51b7bd2068f97941f6714f7922cb4806245377c2b336b723
+- name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
+  newName: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
+  digest: aeaacec4feedee309293ac21da13e71a05a2ad84b1d5fcc01ffecfa6cfbb2870
+- name: gcr.io/knative-releases/knative.dev/serving/cmd/networking/istio
+  newName: gcr.io/knative-releases/knative.dev/serving/cmd/networking/istio
+  digest: 057c999bccfe32e9889616b571dc8d389c742ff66f0b5516bad651f05459b7bc
+- name: gcr.io/knative-releases/knative.dev/serving/cmd/webhook
+  newName: gcr.io/knative-releases/knative.dev/serving/cmd/webhook
+  digest: c2076674618933df53e90cf9ddd17f5ddbad513b8c95e955e45e37be7ca9e0e8
+- name: gcr.io/knative-releases/knative.dev/serving/cmd/controller
+  newName: gcr.io/knative-releases/knative.dev/serving/cmd/controller
+  digest: 3b096e55fa907cff53d37dadc5d20c29cea9bb18ed9e921a588fee17beb937df
 `)
 }
 

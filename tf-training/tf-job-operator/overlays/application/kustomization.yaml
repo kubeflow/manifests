@@ -18,7 +18,7 @@ vars:
 configurations:
 - params.yaml
 commonLabels:
-  app.kubernetes.io/name: tf-job-operator 
+  app.kubernetes.io/name: tf-job-operator
   app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: tfjob

@@ -8,11 +8,11 @@ resources:
 - stateful-set.yaml
 commonLabels:
   kustomize.component: admission-webhook-bootstrap
-namePrefix: admission-webhook-bootstrap- 
+namePrefix: admission-webhook-bootstrap-
 images:
-  - name: gcr.io/kubeflow-images-public/ingress-setup
-    newName: gcr.io/kubeflow-images-public/ingress-setup
-    newTag: latest
+- name: gcr.io/kubeflow-images-public/ingress-setup
+  newName: gcr.io/kubeflow-images-public/ingress-setup
+  newTag: latest
 generatorOptions:
   disableNameSuffixHash: true
 configurations:
@@ -33,7 +33,7 @@ vars:
 - name: namespace
   objref:
     kind: ConfigMap
-    name: config-map 
+    name: config-map
     apiVersion: v1
   fieldref:
-    fieldpath: data.namespace    
+    fieldpath: data.namespace

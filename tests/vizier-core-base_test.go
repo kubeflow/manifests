@@ -163,10 +163,12 @@ resources:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-  - name: gcr.io/kubeflow-images-public/katib/vizier-core
-    newTag: v0.1.2-alpha-157-g3d4cd04
-  - name: gcr.io/kubeflow-images-public/katib/vizier-core-rest
-    newTag: v0.1.2-alpha-157-g3d4cd04
+- name: gcr.io/kubeflow-images-public/katib/vizier-core
+  newTag: v0.1.2-alpha-157-g3d4cd04
+  newName: gcr.io/kubeflow-images-public/katib/vizier-core
+- name: gcr.io/kubeflow-images-public/katib/vizier-core-rest
+  newTag: v0.1.2-alpha-157-g3d4cd04
+  newName: gcr.io/kubeflow-images-public/katib/vizier-core-rest
 `)
 }
 

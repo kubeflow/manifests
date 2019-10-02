@@ -446,6 +446,10 @@ vars:
     fieldpath: data.application_secret
 configurations:
 - params.yaml
+images:
+- name: quay.io/coreos/dex
+  newName: quay.io/coreos/dex
+  newTag: v2.9.0
 `)
 }
 

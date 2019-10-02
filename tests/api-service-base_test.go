@@ -114,7 +114,8 @@ resources:
 - service.yaml
 images:
 - name: gcr.io/ml-pipeline/api-server
-  newTag: '0.1.23'
+  newTag: 0.1.23
+  newName: gcr.io/ml-pipeline/api-server
 `)
 }
 
