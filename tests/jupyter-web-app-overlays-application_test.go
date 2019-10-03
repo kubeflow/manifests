@@ -18,8 +18,16 @@ func writeJupyterWebAppOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: $(generateName)
+  name: jupyter-web-app
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: jupyter-web-app
+      app.kubernetes.io/instance: jupyter-web-app
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: jupyter
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.6
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -55,20 +63,6 @@ spec:
   addOwnerRef: true
 
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/overlays/application/params.yaml", `
-varReference:
-- path: metadata/name
-  kind: Application
-- path: spec/selector/app.kubernetes.io\/instance
-  kind: Service
-- path: spec/selector/matchLabels/app.kubernetes.io\/instance
-  kind: Deployment
-- path: spec/template/metadata/labels/app.kubernetes.io\/instance
-  kind: Deployment
-`)
-	th.writeF("/manifests/jupyter/jupyter-web-app/overlays/application/params.env", `
-generateName=
-`)
 	th.writeK("/manifests/jupyter/jupyter-web-app/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -76,22 +70,9 @@ bases:
 - ../../base
 resources:
 - application.yaml
-configMapGenerator:
-- name: jupyter-web-app-parameters
-  env: params.env
-vars:
-- name: generateName
-  objref:
-    kind: ConfigMap
-    name: jupyter-web-app-parameters 
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.generateName
-configurations:
-- params.yaml
 commonLabels:
   app.kubernetes.io/name: jupyter-web-app
-  app.kubernetes.io/instance: $(generateName)
+  app.kubernetes.io/instance: jupyter-web-app
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: jupyter
   app.kubernetes.io/part-of: kubeflow
@@ -427,8 +408,7 @@ varReference:
 - path: spec/template/spec/containers/0/env/2/value
   kind: Deployment
 - path: spec/template/spec/containers/0/env/3/value
-  kind: Deployment
-`)
+  kind: Deployment`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.env", `
 UI=default
 ROK_SECRET_NAME=secret-rok-{username}
@@ -436,8 +416,7 @@ policy=Always
 prefix=jupyter
 clusterDomain=cluster.local
 userid-header=
-userid-prefix=
-`)
+userid-prefix=`)
 	th.writeK("/manifests/jupyter/jupyter-web-app/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization

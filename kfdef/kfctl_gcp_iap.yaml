@@ -8,7 +8,7 @@ metadata:
 spec:
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/pull/342/head.tar.gz
+    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
     # To get manifest at a PR:
     #uri: https://github.com/kubeflow/manifests/archive/pull/235/head.tar.gz
   appdir: /tmp/myapp2
@@ -45,9 +45,6 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
-      parameters:
-      - name: generateName
-        value: kubeflow-
       repoRef:
         name: manifests
         path: application/application
@@ -59,22 +56,15 @@ spec:
     name: metacontroller
   - kustomizeConfig:
       overlays:
-      - application
       - istio
-      parameters:
-      - name: generateName
-        value: argo-
       repoRef:
         name: manifests
         path: argo
     name: argo
   - kustomizeConfig:
       overlays:
-      - application
       - istio
       parameters:
-      - name: generateName
-        value: centraldashboard-
       - name: userid-header
         value: X-Goog-Authenticated-User-Email
       - name: userid-prefix
@@ -84,21 +74,12 @@ spec:
         path: common/centraldashboard
     name: centraldashboard
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: admission-webhook-
       repoRef:
         name: manifests
         path: admission-webhook/webhook
     name: webhook
   - kustomizeConfig:
-      overlays:
-      - application
       parameters:
-      - name: generateName
-        value: admission-bootstrap-
       - name: webhookNamePrefix
         value: admission-webhook-
       repoRef:
@@ -110,8 +91,6 @@ spec:
       - istio
       - application
       parameters:
-      - name: generateName
-        value: jupyter-webapp-
       - name: userid-header
         value: X-Goog-Authenticated-User-Email
       - name: userid-prefix
@@ -121,31 +100,16 @@ spec:
         path: jupyter/jupyter-web-app
     name: jupyter-web-app
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: katib-db-
       repoRef:
         name: manifests
         path: katib-v1alpha2/katib-db
     name: katib-db
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: katib-manager-
       repoRef:
         name: manifests
         path: katib-v1alpha2/katib-manager
     name: katib-manager
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: katib-controller-
       repoRef:
         name: manifests
         path: katib-v1alpha2/katib-controller
@@ -153,10 +117,6 @@ spec:
   - kustomizeConfig:
       overlays:
       - istio
-      - application
-      parameters:
-      - name: generateName
-        value: katib-ui-
       repoRef:
         name: manifests
         path: katib-v1alpha2/katib-ui
@@ -174,11 +134,6 @@ spec:
         path: katib-v1alpha2/metrics-collector
     name: metrics-collector
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: katib-suggestion-
       repoRef:
         name: manifests
         path: katib-v1alpha2/suggestion
@@ -188,8 +143,6 @@ spec:
       - istio
       - application
       parameters:
-      - name: generateName
-        value: notebook-controller-
       - name: injectGcpCredentials
         value: "true"
       repoRef:
@@ -204,9 +157,6 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
-      parameters:
-      - name: generateName
-        value: pytorch-operator-
       repoRef:
         name: manifests
         path: pytorch-job/pytorch-operator
@@ -252,10 +202,6 @@ spec:
   - kustomizeConfig:
       overlays:
       - istio
-      - application
-      parameters:
-      - name: generateName
-        value: tensorboard-
       repoRef:
         name: manifests
         path: tensorboard
@@ -269,30 +215,19 @@ spec:
       overlays:
       - istio
       - application
-      parameters:
-      - name: generateName
-        value: tf-job-operator-
       repoRef:
         name: manifests
         path: tf-training/tf-job-operator
     name: tf-job-operator
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: pipeline-api-service-
       repoRef:
         name: manifests
         path: pipeline/api-service
     name: api-service
   - kustomizeConfig:
       overlays:
-      - application
       - minioPd
       parameters:
-      - name: generateName
-        value: pipeline-minio-
       - name: minioPd
         value: test1-storage-artifact-store
       - name: minioPvName
@@ -305,11 +240,8 @@ spec:
     name: minio
   - kustomizeConfig:
       overlays:
-      - application
       - mysqlPd
       parameters:
-      - name: generateName
-        value: pipeline-mysql-
       - name: mysqlPd
         value: test1-storage-metadata-store
       - name: mysqlPvName
@@ -321,52 +253,28 @@ spec:
         path: pipeline/mysql
     name: mysql
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: pipeline-persistent-agent-
       repoRef:
         name: manifests
         path: pipeline/persistent-agent
     name: persistent-agent
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: pipeline-pipelines-runner-
       repoRef:
         name: manifests
         path: pipeline/pipelines-runner
     name: pipelines-runner
   - kustomizeConfig:
       overlays:
-      - application
       - istio
-      parameters:
-      - name: generateName
-        value: pipeline-pipelines-ui-
       repoRef:
         name: manifests
         path: pipeline/pipelines-ui
     name: pipelines-ui
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: pipeline-pipelines-viewer-
       repoRef:
         name: manifests
         path: pipeline/pipelines-viewer
     name: pipelines-viewer
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: pipeline-scheduledworkflow-
       repoRef:
         name: manifests
         path: pipeline/scheduledworkflow
@@ -378,11 +286,8 @@ spec:
     name: cloud-endpoints
   - kustomizeConfig:
       overlays:
-      - application
       - istio
       parameters:
-      - name: generateName
-        value: profiles-
       - initRequired: true
         name: admin
         value: SET_EMAIL
@@ -420,9 +325,6 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
-      parameters:
-      - name: generateName
-        value: seldon-core-operator-
       repoRef:
         name: manifests
         path: seldon/seldon-core-operator

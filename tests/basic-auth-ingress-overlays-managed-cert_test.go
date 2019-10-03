@@ -21,8 +21,7 @@ metadata:
   name: gke-certificate
 spec:
   domains:
-  - $(hostname)
-`)
+  - $(hostname)`)
 	th.writeK("/manifests/gcp/basic-auth-ingress/overlays/managed-cert", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -32,8 +31,7 @@ resources:
 - cert.yaml
 namespace: kubeflow
 commonLabels:
-  kustomize.component: basic-auth-ingress
-`)
+  kustomize.component: basic-auth-ingress`)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cloud-endpoint.yaml", `
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
