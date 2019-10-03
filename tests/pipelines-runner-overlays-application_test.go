@@ -20,9 +20,6 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: core
     kind: ServiceAccount
@@ -40,8 +37,6 @@ spec:
 	th.writeF("/manifests/pipeline/pipelines-runner/overlays/application/params.yaml", `
 varReference:
 - path: metadata/name
-  kind: Application
-- path: spec/selector/matchLabels/app.kubernetes.io\/instance
   kind: Application
 `)
 	th.writeF("/manifests/pipeline/pipelines-runner/overlays/application/params.env", `

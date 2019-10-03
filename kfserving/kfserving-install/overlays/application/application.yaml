@@ -3,9 +3,6 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/instance: $(generateName)
   type: "kfserving"
   componentKinds:
     - group: apps/v1

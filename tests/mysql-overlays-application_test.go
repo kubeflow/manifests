@@ -20,9 +20,6 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: apps
     kind: Deployment
@@ -44,8 +41,6 @@ spec:
 	th.writeF("/manifests/pipeline/mysql/overlays/application/params.yaml", `
 varReference:
 - path: metadata/name
-  kind: Application
-- path: spec/selector/matchLabels/app.kubernetes.io\/instance
   kind: Application
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service

@@ -14,11 +14,7 @@ spec:
   applications:
   # Istio install. If not needed, comment out istio-crds and istio-install.
   - kustomizeConfig:
-      overlays:
-      - application
       parameters:
-      - name: generateName
-        value: istio-crds-
       - name: namespace
         value: istio-system
       repoRef:
@@ -26,11 +22,7 @@ spec:
         path: istio/istio-crds
     name: istio-crds
   - kustomizeConfig:
-      overlays:
-      - application
       parameters:
-      - name: generateName
-        value: istio-install-
       - name: namespace
         value: istio-system
       repoRef:
@@ -39,13 +31,9 @@ spec:
     name: istio-install
   # This component is the istio resources for Kubeflow (e.g. gateway), not about installing istio.
   - kustomizeConfig:
-      overlays:
-      - application
       parameters:
-      - name: generateName
-        value: istio-
-      - name: clusterRbacConfig
-        value: "OFF"
+        - name: clusterRbacConfig
+          value: "OFF"
       repoRef:
         name: manifests
         path: istio/istio
@@ -66,11 +54,6 @@ spec:
         path: application/application
     name: application
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: metacontroller-
       repoRef:
         name: manifests
         path: metacontroller
@@ -168,20 +151,11 @@ spec:
   - kustomizeConfig:
       overlays:
       - istio
-      - application
-      parameters:
-      - name: generateName
-        value: metadata-
       repoRef:
         name: manifests
         path: metadata
     name: metadata
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: metrics-collector-
       repoRef:
         name: manifests
         path: katib-v1alpha2/metrics-collector
@@ -208,11 +182,6 @@ spec:
         path: jupyter/notebook-controller
     name: notebook-controller
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: pytorch-job-crds-
       repoRef:
         name: manifests
         path: pytorch-job/pytorch-job-crds
@@ -228,11 +197,7 @@ spec:
         path: pytorch-job/pytorch-operator
     name: pytorch-operator
   - kustomizeConfig:
-      overlays:
-      - application
       parameters:
-      - name: generateName
-        value: knative-serving-crds-
       - name: namespace
         value: knative-serving
       repoRef:
@@ -240,11 +205,7 @@ spec:
         path: knative/knative-serving-crds
     name: knative-crds
   - kustomizeConfig:
-      overlays:
-      - application
       parameters:
-      - name: generateName
-        value: knative-serving-install-
       - name: namespace
         value: knative-serving
       repoRef:
@@ -252,31 +213,17 @@ spec:
         path: knative/knative-serving-install
     name: knative-install
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: kfserving-crds-
       repoRef:
         name: manifests
         path: kfserving/kfserving-crds
     name: kfserving-crds
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: kfserving-install-
       repoRef:
         name: manifests
         path: kfserving/kfserving-install
     name: kfserving-install
   - kustomizeConfig:
-      overlays:
-      - application
       parameters:
-      - name: generateName
-        value: spartakus-
       - initRequired: true
         name: usageId
         value: <randomly-generated-id>
@@ -299,11 +246,6 @@ spec:
         path: tensorboard
     name: tensorboard
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: tf-job-crds-
       repoRef:
         name: manifests
         path: tf-training/tf-job-crds

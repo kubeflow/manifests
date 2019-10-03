@@ -20,9 +20,6 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/instance: $(generateName)
   type: "seldon-core-operator"
   componentKinds:
     - group: apps/v1
@@ -54,8 +51,6 @@ spec:
 	th.writeF("/manifests/seldon/seldon-core-operator/overlays/application/params.yaml", `
 varReference:
 - path: metadata/name
-  kind: Application
-- path: spec/selector/matchLabels/app.kubernetes.io\/instance
   kind: Application
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service
