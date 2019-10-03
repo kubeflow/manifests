@@ -795,20 +795,16 @@ vars:
     name: tektoncd-parameters
     apiVersion: v1
   fieldref:
-<<<<<<< HEAD
-    fieldpath: data.clusterDomain
+    fieldpath: data.controller
 images:
 - name: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller
   newName: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller
-  digest: 4f10413791df045f29f882fab817219e54123b527d6230a4991e2558f3d659f9
+  digest: ebc6f768038aa3e31f3d7acda4bc26bf1380b5f2a132f0618181cacc30e295fa
 - name: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook
   newName: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook
-  digest: 496e36b8723a668ac3531acc26512c123342da7827c10386b571aa975d6a47e7
-=======
-    fieldpath: data.controller
+  digest: 7215a25a58c074bbe30a50db93e6a47d2eb5672f9af7570a4e4ab75e50329131
 configurations:
 - params.yaml
->>>>>>> 72036c7... add unit tests, fix for clusterDomain, namespace
 `)
 }
 

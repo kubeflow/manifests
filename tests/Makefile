@@ -16,7 +16,7 @@ GOLANG_VERSION ?= 1.12.4
 GOPATH ?= $(HOME)/go
 
 # Comma seperated items within {} for more than one file
-# EXCLUDE ?= istio-install-base_test.go
+EXCLUDE ?= ci-pipeline-overlays-run-model-task-nvidia_test.go
 
 export GO111MODULE = on
 export GO = go

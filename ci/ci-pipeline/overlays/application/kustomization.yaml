@@ -6,6 +6,20 @@ resources:
 - application.yaml
 configurations:
 - params.yaml
+configMapGenerator:
+- name: ci-pipeline-parameters
+  behavior: merge
+  env: params.env
+generatorOptions:
+ disableNameSuffixHash: true
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: ci-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
 commonLabels:
   app.kubernetes.io/name: ci-pipeline
   app.kubernetes.io/instance: $(generateName)

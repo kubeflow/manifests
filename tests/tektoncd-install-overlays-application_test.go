@@ -864,6 +864,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.controller
+images:
+- name: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller
+  newName: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller
+  digest: ebc6f768038aa3e31f3d7acda4bc26bf1380b5f2a132f0618181cacc30e295fa
+- name: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook
+  newName: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook
+  digest: 7215a25a58c074bbe30a50db93e6a47d2eb5672f9af7570a4e4ab75e50329131
 configurations:
 - params.yaml
 `)
