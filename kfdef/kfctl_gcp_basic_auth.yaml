@@ -239,11 +239,7 @@ spec:
         path: knative/knative-serving-crds
     name: knative-crds
   - kustomizeConfig:
-      overlays:
-      - application
       parameters:
-      - name: generateName
-        value: knative-serving-install-
       - name: namespace
         value: knative-serving
       repoRef:
