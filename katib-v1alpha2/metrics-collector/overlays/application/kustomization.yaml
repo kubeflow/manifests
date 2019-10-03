@@ -4,22 +4,9 @@ bases:
 - ../../base
 resources:
 - application.yaml
-configMapGenerator:
-- name: metrics-collector-parameters
-  env: params.env
-vars:
-- name: generateName
-  objref:
-    kind: ConfigMap
-    name: metrics-collector-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.generateName
-configurations:
-- params.yaml
 commonLabels:
-  app.kubernetes.io/name: metrics-collector
-  app.kubernetes.io/instance: $(generateName)
+  app.kubernetes.io/name: metrics-collector 
+  app.kubernetes.io/instance: metrics-collector 
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: katib
   app.kubernetes.io/part-of: kubeflow

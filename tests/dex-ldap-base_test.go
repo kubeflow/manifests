@@ -95,13 +95,6 @@ resources:
 - namespace.yaml
 - deployment.yaml
 - service.yaml
-images:
-- name: osixia/openldap
-  newName: osixia/openldap
-  newTag: latest
-- name: osixia/phpldapadmin
-  newName: osixia/phpldapadmin
-  newTag: latest
 `)
 }
 

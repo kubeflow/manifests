@@ -1,11 +1,16 @@
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: $(generateName)
+  name: notebook-controller
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/instance: $(generateName)
+      app.kubernetes.io/name: notebook-controller
+      app.kubernetes.io/instance: notebook-controller
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: notebook
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.6
   componentKinds:
     - group: core
       kind: Service

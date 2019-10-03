@@ -9,9 +9,8 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-- name: gcr.io/kubeflow-images-public/katib/katib-ui
-  newTag: v0.1.2-alpha-157-g3d4cd04
-  newName: gcr.io/kubeflow-images-public/katib/katib-ui
+  - name: gcr.io/kubeflow-images-public/katib/katib-ui
+    newTag: v0.1.2-alpha-157-g3d4cd04
 vars:
 - name: clusterDomain
   objref:

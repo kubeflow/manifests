@@ -12392,17 +12392,17 @@ data:
         target_label: pod_name
 ---
 # Source: istio/charts/security/templates/configmap.yaml
-apiVersion: v1 
-kind: ConfigMap 
-metadata: 
-  name: istio-security-custom-resources 
-  labels: 
-    app: security 
-    chart: security 
-    heritage: Tiller
-    release: istio
-    istio: citadel
-data: 
+apiVersion: v1	
+kind: ConfigMap	
+metadata:	
+  name: istio-security-custom-resources	
+  labels:	
+    app: security	
+    chart: security	
+    heritage: Tiller	
+    release: istio	
+    istio: citadel	
+data:	
   custom-resources.yaml: |-    
     # Authentication policy to enable permissive mode for all services (that have sidecar) in the mesh.
     apiVersion: "authentication.istio.io/v1alpha1"
@@ -12417,7 +12417,7 @@ data:
     spec:
       peers:
       - mtls:
-          mode: PERMISSIVE  
+          mode: PERMISSIVE	
   run.sh: |-    
     #!/bin/sh
     
@@ -13153,93 +13153,93 @@ spec:
 ---
 # Source: istio/charts/security/templates/create-custom-resources-job.yaml
 
-apiVersion: v1 
-kind: ServiceAccount  
-metadata:  
-  name: istio-security-post-install-account  
-  labels:  
-    app: security  
-    chart: security  
-    heritage: Tiller  
-    release: istio  
+apiVersion: v1	
+kind: ServiceAccount	
+metadata:	
+  name: istio-security-post-install-account	
+  labels:	
+    app: security	
+    chart: security	
+    heritage: Tiller	
+    release: istio	
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1  
-kind: ClusterRole  
-metadata:  
-  name: istio-security-post-install-istio-system  
-  labels:  
-    app: security  
-    chart: security  
-    heritage: Tiller  
-    release: istio  
-rules:  
-- apiGroups: ["authentication.istio.io"] # needed to create default authn policy  
-  resources: ["*"]  
-  verbs: ["*"]  
-- apiGroups: ["networking.istio.io"] # needed to create security destination rules  
-  resources: ["*"]  
-  verbs: ["*"]  
-- apiGroups: ["admissionregistration.k8s.io"]  
-  resources: ["validatingwebhookconfigurations"]  
-  verbs: ["get"]  
-- apiGroups: ["extensions", "apps"]  
-  resources: ["deployments", "replicasets"]  
-  verbs: ["get", "list", "watch"]  
+apiVersion: rbac.authorization.k8s.io/v1beta1	
+kind: ClusterRole	
+metadata:	
+  name: istio-security-post-install-istio-system	
+  labels:	
+    app: security	
+    chart: security	
+    heritage: Tiller	
+    release: istio	
+rules:	
+- apiGroups: ["authentication.istio.io"] # needed to create default authn policy	
+  resources: ["*"]	
+  verbs: ["*"]	
+- apiGroups: ["networking.istio.io"] # needed to create security destination rules	
+  resources: ["*"]	
+  verbs: ["*"]	
+- apiGroups: ["admissionregistration.k8s.io"]	
+  resources: ["validatingwebhookconfigurations"]	
+  verbs: ["get"]	
+- apiGroups: ["extensions", "apps"]	
+  resources: ["deployments", "replicasets"]	
+  verbs: ["get", "list", "watch"]	
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1  
-kind: ClusterRoleBinding  
-metadata:  
-  name: istio-security-post-install-role-binding-istio-system  
-  labels:  
-    app: security  
-    chart: security  
-    heritage: Tiller  
-    release: istio  
-roleRef:  
-  apiGroup: rbac.authorization.k8s.io  
-  kind: ClusterRole  
-  name: istio-security-post-install-istio-system  
-subjects:  
-  - kind: ServiceAccount  
-    name: istio-security-post-install-account  
-    namespace: istio-system  
+apiVersion: rbac.authorization.k8s.io/v1beta1	
+kind: ClusterRoleBinding	
+metadata:	
+  name: istio-security-post-install-role-binding-istio-system	
+  labels:	
+    app: security	
+    chart: security	
+    heritage: Tiller	
+    release: istio	
+roleRef:	
+  apiGroup: rbac.authorization.k8s.io	
+  kind: ClusterRole	
+  name: istio-security-post-install-istio-system	
+subjects:	
+  - kind: ServiceAccount	
+    name: istio-security-post-install-account	
+    namespace: istio-system	
 ---
 apiVersion: batch/v1
-kind: Job  
-metadata:  
-  name: istio-security-post-install-1.1.6  
-  annotations:  
-    "helm.sh/hook": post-install  
-    "helm.sh/hook-delete-policy": hook-succeeded  
-  labels:  
-    app: security  
-    chart: security  
-    heritage: Tiller  
-    release: istio  
-spec:  
-  template:  
-    metadata:  
-      name: istio-security-post-install  
-      labels:  
-        app: security  
-        chart: security  
-        heritage: Tiller  
-        release: istio  
-    spec:  
-      serviceAccountName: istio-security-post-install-account  
-      containers:  
-        - name: kubectl  
-          image: "docker.io/istio/kubectl:1.1.6"  
-          imagePullPolicy: IfNotPresent  
-          command: [ "/bin/bash", "/tmp/security/run.sh", "/tmp/security/custom-resources.yaml" ]  
-          volumeMounts:  
-            - mountPath: "/tmp/security"  
-              name: tmp-configmap-security  
-      volumes:  
-        - name: tmp-configmap-security  
-          configMap:  
-            name: istio-security-custom-resources  
-      restartPolicy: OnFailure  
+kind: Job	
+metadata:	
+  name: istio-security-post-install-1.1.6	
+  annotations:	
+    "helm.sh/hook": post-install	
+    "helm.sh/hook-delete-policy": hook-succeeded	
+  labels:	
+    app: security	
+    chart: security	
+    heritage: Tiller	
+    release: istio	
+spec:	
+  template:	
+    metadata:	
+      name: istio-security-post-install	
+      labels:	
+        app: security	
+        chart: security	
+        heritage: Tiller	
+        release: istio	
+    spec:	
+      serviceAccountName: istio-security-post-install-account	
+      containers:	
+        - name: kubectl	
+          image: "docker.io/istio/kubectl:1.1.6"	
+          imagePullPolicy: IfNotPresent	
+          command: [ "/bin/bash", "/tmp/security/run.sh", "/tmp/security/custom-resources.yaml" ]	
+          volumeMounts:	
+            - mountPath: "/tmp/security"	
+              name: tmp-configmap-security	
+      volumes:	
+        - name: tmp-configmap-security	
+          configMap:	
+            name: istio-security-custom-resources	
+      restartPolicy: OnFailure	
       affinity:      
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -17405,40 +17405,6 @@ kind: Kustomization
 resources:
 - istio-noauth.yaml
 namespace: kubeflow
-images:
-- name: docker.io/istio/kubectl
-  newName: docker.io/istio/kubectl
-  newTag: 1.1.6
-- name: docker.io/istio/galley
-  newName: docker.io/istio/galley
-  newTag: 1.1.6
-- name: docker.io/istio/proxyv2
-  newName: docker.io/istio/proxyv2
-  newTag: 1.1.6
-- name: grafana/grafana
-  newName: grafana/grafana
-  newTag: 6.0.2
-- name: docker.io/kiali/kiali
-  newName: docker.io/kiali/kiali
-  newTag: v0.16
-- name: docker.io/istio/mixer
-  newName: docker.io/istio/mixer
-  newTag: 1.1.6
-- name: docker.io/istio/pilot
-  newName: docker.io/istio/pilot
-  newTag: 1.1.6
-- name: docker.io/prom/prometheus
-  newName: docker.io/prom/prometheus
-  newTag: v2.3.1
-- name: docker.io/istio/citadel
-  newName: docker.io/istio/citadel
-  newTag: 1.1.6
-- name: docker.io/istio/sidecar_injector
-  newName: docker.io/istio/sidecar_injector
-  newTag: 1.1.6
-- name: docker.io/jaegertracing/all-in-one
-  newName: docker.io/jaegertracing/all-in-one
-  newTag: '1.9'
 `)
 }
 

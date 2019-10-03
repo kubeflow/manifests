@@ -18,11 +18,16 @@ func writeMxnetOperatorOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: $(generateName)
+  name: mxnet-operator
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/instance: $(generateName)
+      app.kubernetes.io/name: mxnet-operator
+      app.kubernetes.io/instance: mxnet-operator
+      app.kubernetes.io/version: v0.6.0
+      app.kubernetes.io/component: mxnet
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/managed-by: kfctl
   componentKinds:
   - group: apps
     kind: Deployment
@@ -49,22 +54,6 @@ spec:
       url: "https://github.com/kubeflow/mxnet-operator"
   addOwnerRef: true
 `)
-	th.writeF("/manifests/mxnet-job/mxnet-operator/overlays/application/params.yaml", `
-varReference:
-- path: metadata/name
-  kind: Application
-- path: spec/selector/matchLabels/app.kubernetes.io\/instance
-  kind: Application
-- path: spec/selector/app.kubernetes.io\/instance
-  kind: Service
-- path: spec/selector/matchLabels/app.kubernetes.io\/instance
-  kind: Deployment
-- path: spec/template/metadata/labels/app.kubernetes.io\/instance
-  kind: Deployment
-`)
-	th.writeF("/manifests/mxnet-job/mxnet-operator/overlays/application/params.env", `
-generateName=
-`)
 	th.writeK("/manifests/mxnet-job/mxnet-operator/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -72,22 +61,9 @@ bases:
 - ../../base
 resources:
 - application.yaml
-configMapGenerator:
-- name: mxnet-operator-parameters
-  env: params.env
-vars:
-- name: generateName
-  objref:
-    kind: ConfigMap
-    name: mxnet-operator-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.generateName
-configurations:
-- params.yaml
 commonLabels:
   app.kubernetes.io/name: mxnet-operator
-  app.kubernetes.io/instance: $(generateName)
+  app.kubernetes.io/instance: mxnet-operator
   app.kubernetes.io/version: v0.6.0
   app.kubernetes.io/component: mxnet
   app.kubernetes.io/part-of: kubeflow
@@ -222,9 +198,9 @@ resources:
 commonLabels:
   kustomize.component: mxnet-operator
 images:
-- name: mxjob/mxnet-operator
-  newName: mxjob/mxnet-operator
-  newTag: v1beta1
+  - name: mxjob/mxnet-operator
+    newName: mxjob/mxnet-operator
+    newTag: v1beta1
 `)
 }
 

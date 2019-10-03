@@ -354,7 +354,7 @@ spec:
     spec:
       containers:
       - name: container
-        image: gcr.io/ml-pipeline/envoy:metadata-grpc
+        image: gcr.io/ml-pipeline/envoy:initial
         ports:
         - name: md-envoy
           containerPort: 9090
@@ -425,31 +425,7 @@ vars:
     name: ui
     apiVersion: v1
   fieldref:
-    fieldpath: metadata.name
-- name: metadata-envoy-service
-  objref:
-    kind: Service
-    name: envoy-service
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.name
-images:
-- name: mysql
-  newName: mysql
-  newTag: 8.0.3
-- name: gcr.io/kubeflow-images-public/metadata-frontend
-  newName: gcr.io/kubeflow-images-public/metadata-frontend
-  newTag: v0.1.8
-- name: gcr.io/ml-pipeline/envoy
-  newName: gcr.io/ml-pipeline/envoy
-  newTag: initial
-- name: gcr.io/kubeflow-images-public/metadata
-  newName: gcr.io/kubeflow-images-public/metadata
-  newTag: v0.1.9
-- name: gcr.io/tfx-oss-public/ml_metadata_store_server
-  newName: gcr.io/tfx-oss-public/ml_metadata_store_server
-  newTag: 0.14.0
-`)
+    fieldpath: metadata.name`)
 }
 
 func TestMetadataOverlaysIstio(t *testing.T) {

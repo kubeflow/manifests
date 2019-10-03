@@ -120,9 +120,8 @@ resources:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-- name: mysql
-  newTag: 8.0.3
-  newName: mysql
+  - name: mysql
+    newTag: 8.0.3
 `)
 }
 
