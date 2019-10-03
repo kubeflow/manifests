@@ -13,7 +13,7 @@ import (
 	"testing"
 )
 
-func writeCertManagerOverlaySelfSigned(th *KustTestHarness) {
+func writeCertManagerOverlayApplication(th *KustTestHarness) {
 	th.writeF("/manifests/cert-manager/cert-manager/base/namespace.yaml", `
 ---
 apiVersion: v1
@@ -488,30 +488,93 @@ vars:
 configurations:
 - params.yaml
 `)
-	th.writeF("/manifests/cert-manager/cert-manager/overlays/self-signed/cluster-issuer.yaml", `
----
-apiVersion: certmanager.k8s.io/v1alpha1
-kind: ClusterIssuer
-metadata:
-  name: kubeflow-self-signing-issuer
-spec:
-  selfSigned: {}
+	th.writeF("/manifests/cert-manager/cert-manager/overlays/application/params.yaml", `
+varReference:
+- path: metadata/name
+  kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Application
+- path: spec/template/metadata/labels/app.kubernetes.io\/instance
+  kind: Deployment
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Deployment
+- path: spec/selector/app.kubernetes.io\/instance
+  kind: Service
 `)
-	th.writeK("/manifests/cert-manager/cert-manager/overlays/self-signed", `
+	th.writeF("/manifests/cert-manager/cert-manager/overlays/application/params.env", `
+generateName=cert-manager
+`)
+	th.writeF("/manifests/cert-manager/cert-manager/overlays/application/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name:  $(generateName)
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cert-manager
+      app.kubernetes.io/instance: $(generateName)
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: cert-manager
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.6
+  componentKinds:
+  - group: rbac
+    kind: ClusterRole
+  - group: rbac
+    kind: ClusterRoleBinding
+  - group: core
+    kind: Namespace
+  - group: core
+    kind: Service
+  - group: apps
+    kind: Deployment
+  - group: core
+    kind: ServiceAccount
+  descriptor:
+    type: ""
+    version: "v0.10.0"
+    description: "Automatically provision and manage TLS certificates in Kubernetes https://jetstack.io."
+    keywords:
+    - cert-manager
+    links:
+    - description: About
+      url: "https://github.com/jetstack/cert-manager"
+`)
+	th.writeK("/manifests/cert-manager/cert-manager/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
 resources:
-- cluster-issuer.yaml
+- application.yaml
+configMapGenerator:
+- name: cert-manager-app-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: cert-manager-app-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
 commonLabels:
-  kustomize.component: cert-manager
+  app.kubernetes.io/name: cert-manager
+  app.kubernetes.io/instance: $(generateName)
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: cert-manager
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.6
 `)
 }
 
-func TestCertManagerOverlaySelfSigned(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/cert-manager/cert-manager/overlays/self-signed")
-	writeCertManagerOverlaySelfSigned(th)
+
+func TestCertManagerOverlayApplication(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/cert-manager/cert-manager/overlays/application")
+	writeCertManagerOverlayApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -520,7 +583,7 @@ func TestCertManagerOverlaySelfSigned(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../cert-manager/cert-manager/overlays/self-signed"
+	targetPath := "../cert-manager/cert-manager/overlays/application"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
