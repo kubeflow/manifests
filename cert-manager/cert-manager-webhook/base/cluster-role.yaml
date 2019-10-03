@@ -4,8 +4,6 @@ metadata:
   name: cert-manager-webhook:webhook-requester
   labels:
     app: webhook
-    app.kubernetes.io/name: webhook
-    app.kubernetes.io/instance:  cert-manager
 rules:
 - apiGroups:
   - admission.certmanager.k8s.io

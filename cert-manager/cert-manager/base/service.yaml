@@ -4,14 +4,9 @@ metadata:
   name: cert-manager
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 spec:
   type: ClusterIP
   ports:
     - protocol: TCP
       port: 9402
       targetPort: 9402
-  selector:
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
