@@ -21,30 +21,7 @@ kind: Namespace
 metadata:
   name: $(namespace)
 `)
-	th.writeF("/manifests/cert-manager/cert-manager/base/api-service.yaml", `
----
-apiVersion: apiregistration.k8s.io/v1beta1
-kind: APIService
-metadata:
-  name: v1beta1.webhook.certmanager.k8s.io
-  labels:
-    app: webhook
-    app.kubernetes.io/name: webhook
-    app.kubernetes.io/instance:  cert-manager
-  annotations:
-    certmanager.k8s.io/inject-ca-from-secret: "cert-manager/cert-manager-webhook-tls"
-spec:
-  group: webhook.certmanager.k8s.io
-  groupPriorityMinimum: 1000
-  versionPriority: 15
-  service:
-    name: cert-manager-webhook
-    namespace: $(namespace)
-  version: v1beta1
-`)
 	th.writeF("/manifests/cert-manager/cert-manager/base/cluster-role-binding.yaml", `
----
-
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -165,66 +142,22 @@ metadata:
   name: cert-manager-controller-ingress-shim
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cert-manager-controller-ingress-shim
 subjects:
   - name: cert-manager
-    namespace: $(namespace)
-    kind: ServiceAccount
-
----
-# apiserver gets the auth-delegator role to delegate auth decisions to
-# the core apiserver
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRoleBinding
-metadata:
-  name: cert-manager-webhook:auth-delegator
-  labels:
-    app: webhook
-    app.kubernetes.io/name: webhook
-    app.kubernetes.io/instance:  cert-manager
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: system:auth-delegator
-subjects:
-- apiGroup: ""
-  kind: ServiceAccount
-  name: cert-manager-webhook
-  namespace: $(namespace)
-
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRoleBinding
-metadata:
-  name: cert-manager-cainjector
-  labels:
-    app: cainjector
-    app.kubernetes.io/name: cainjector
-    app.kubernetes.io/instance:  cert-manager
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cert-manager-cainjector
-subjects:
-  - name: cert-manager-cainjector
     namespace: $(namespace)
     kind: ServiceAccount
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/cluster-role.yaml", `
----
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: cert-manager-leaderelection
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 rules:
   # Used for leader election by the controller
   - apiGroups: [""]
@@ -240,8 +173,6 @@ metadata:
   name: cert-manager-controller-issuers
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 rules:
   - apiGroups: ["certmanager.k8s.io"]
     resources: ["issuers", "issuers/status"]
@@ -265,8 +196,6 @@ metadata:
   name: cert-manager-controller-clusterissuers
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 rules:
   - apiGroups: ["certmanager.k8s.io"]
     resources: ["clusterissuers", "clusterissuers/status"]
@@ -290,8 +219,6 @@ metadata:
   name: cert-manager-controller-certificates
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 rules:
   - apiGroups: ["certmanager.k8s.io"]
     resources: ["certificates", "certificates/status", "certificaterequests", "certificaterequests/status"]
@@ -316,35 +243,6 @@ rules:
     verbs: ["create", "patch"]
 
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRole
-metadata:
-  name: cert-manager-cainjector
-  labels:
-    app: cainjector
-    app.kubernetes.io/name: cainjector
-    app.kubernetes.io/instance:  cert-manager
-rules:
-  - apiGroups: ["certmanager.k8s.io"]
-    resources: ["certificates"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: [""]
-    resources: ["secrets"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: [""]
-    resources: ["configmaps", "events"]
-    verbs: ["get", "create", "update", "patch"]
-  - apiGroups: ["admissionregistration.k8s.io"]
-    resources: ["validatingwebhookconfigurations", "mutatingwebhookconfigurations"]
-    verbs: ["get", "list", "watch", "update"]
-  - apiGroups: ["apiregistration.k8s.io"]
-    resources: ["apiservices"]
-    verbs: ["get", "list", "watch", "update"]
-  - apiGroups: ["apiextensions.k8s.io"]
-    resources: ["customresourcedefinitions"]
-    verbs: ["get", "list", "watch", "update"]
-
----
 
 # Orders controller role
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -353,8 +251,6 @@ metadata:
   name: cert-manager-controller-orders
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 rules:
   - apiGroups: ["certmanager.k8s.io"]
     resources: ["orders", "orders/status"]
@@ -387,8 +283,6 @@ metadata:
   name: cert-manager-controller-challenges
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 rules:
   # Use to update challenge resource status
   - apiGroups: ["certmanager.k8s.io"]
@@ -433,8 +327,6 @@ metadata:
   name: cert-manager-controller-ingress-shim
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 rules:
   - apiGroups: ["certmanager.k8s.io"]
     resources: ["certificates", "certificaterequests"]
@@ -463,8 +355,6 @@ metadata:
   name: cert-manager-view
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
     rbac.authorization.k8s.io/aggregate-to-view: "true"
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
@@ -481,102 +371,30 @@ metadata:
   name: cert-manager-edit
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
 rules:
   - apiGroups: ["certmanager.k8s.io"]
     resources: ["certificates", "certificaterequests", "issuers"]
     verbs: ["create", "delete", "deletecollection", "patch", "update"]
-
----
-
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: cert-manager-webhook:webhook-requester
-  labels:
-    app: webhook
-    app.kubernetes.io/name: webhook
-    app.kubernetes.io/instance:  cert-manager
-rules:
-- apiGroups:
-  - admission.certmanager.k8s.io
-  resources:
-  - certificates
-  - certificaterequests
-  - issuers
-  - clusterissuers
-  verbs:
-  - create
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/deployment.yaml", `
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: cert-manager-cainjector
-  labels:
-    app: cainjector
-    app.kubernetes.io/name: cainjector
-    app.kubernetes.io/instance:  cert-manager
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: cainjector
-      app.kubernetes.io/name: cainjector
-      app.kubernetes.io/instance:  cert-manager
-
-  template:
-    metadata:
-      labels:
-        app: cainjector
-        app.kubernetes.io/name: cainjector
-        app.kubernetes.io/instance:  cert-manager
-      annotations:
-    spec:
-      serviceAccountName: cert-manager-cainjector
-      containers:
-        - name: cainjector
-          image: "quay.io/jetstack/cert-manager-cainjector:v0.10.0"
-          imagePullPolicy: IfNotPresent
-          args:
-          - --v=2
-          - --leader-election-namespace=$(POD_NAMESPACE)
-          env:
-          - name: POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-          resources:
-            {}
-
-
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cert-manager
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: cert-manager
-      app.kubernetes.io/name: cert-manager
-      app.kubernetes.io/instance:  cert-manager
 
   template:
     metadata:
       labels:
         app: cert-manager
-        app.kubernetes.io/name: cert-manager
-        app.kubernetes.io/instance:  cert-manager
       annotations:
         prometheus.io/path: "/metrics"
         prometheus.io/scrape: 'true'
@@ -606,232 +424,37 @@ spec:
             requests:
               cpu: 10m
               memory: 32Mi
-
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: cert-manager-webhook
-  labels:
-    app: webhook
-    app.kubernetes.io/name: webhook
-    app.kubernetes.io/instance:  cert-manager
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: webhook
-      app.kubernetes.io/name: webhook
-      app.kubernetes.io/instance:  cert-manager
-
-  template:
-    metadata:
-      labels:
-        app: webhook
-        app.kubernetes.io/name: webhook
-        app.kubernetes.io/instance:  cert-manager
-      annotations:
-    spec:
-      serviceAccountName: cert-manager-webhook
-      containers:
-        - name: cert-manager
-          image: "quay.io/jetstack/cert-manager-webhook:v0.10.0"
-          imagePullPolicy: IfNotPresent
-          args:
-          - --v=2
-          - --secure-port=6443
-          - --tls-cert-file=/certs/tls.crt
-          - --tls-private-key-file=/certs/tls.key
-          env:
-          - name: POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-          resources:
-            {}
-
-          volumeMounts:
-          - name: certs
-            mountPath: /certs
-      volumes:
-      - name: certs
-        secret:
-          secretName: cert-manager-webhook-tls
-`)
-	th.writeF("/manifests/cert-manager/cert-manager/base/mutating-webhook-configuration.yaml", `
----
-apiVersion: admissionregistration.k8s.io/v1beta1
-kind: MutatingWebhookConfiguration
-metadata:
-  name: cert-manager-webhook
-  labels:
-    app: webhook
-    app.kubernetes.io/name: webhook
-    app.kubernetes.io/instance:  cert-manager
-  annotations:
-    certmanager.k8s.io/inject-apiserver-ca: "true"
-webhooks:
-  - name: webhook.certmanager.k8s.io
-    rules:
-      - apiGroups:
-          - "certmanager.k8s.io"
-        apiVersions:
-          - v1alpha1
-        operations:
-          - CREATE
-          - UPDATE
-        resources:
-          - certificates
-          - issuers
-          - clusterissuers
-          - orders
-          - challenges
-          - certificaterequests
-    failurePolicy: Fail
-    clientConfig:
-      service:
-        name: kubernetes
-        namespace: default
-        path: /apis/webhook.certmanager.k8s.io/v1beta1/mutations
-      caBundle: ""
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/service-account.yaml", `
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: cert-manager-cainjector
-  labels:
-    app: cainjector
-    app.kubernetes.io/name: cainjector
-    app.kubernetes.io/instance:  cert-manager
-
----
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: cert-manager
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
-
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: cert-manager-webhook
-  labels:
-    app: webhook
-    app.kubernetes.io/name: webhook
-    app.kubernetes.io/instance:  cert-manager
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/service.yaml", `
----
 apiVersion: v1
 kind: Service
 metadata:
   name: cert-manager
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 spec:
   type: ClusterIP
   ports:
     - protocol: TCP
       port: 9402
       targetPort: 9402
-  selector:
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: cert-manager-webhook
-  labels:
-    app: webhook
-    app.kubernetes.io/name: webhook
-    app.kubernetes.io/instance:  cert-manager
-spec:
-  type: ClusterIP
-  ports:
-  - name: https
-    port: 443
-    targetPort: 6443
-  selector:
-    app: webhook
-    app.kubernetes.io/name: webhook
-    app.kubernetes.io/instance:  cert-manager
-`)
-	th.writeF("/manifests/cert-manager/cert-manager/base/validating-webhook-configuration.yaml", `
----
-apiVersion: admissionregistration.k8s.io/v1beta1
-kind: ValidatingWebhookConfiguration
-metadata:
-  name: cert-manager-webhook
-  labels:
-    app: webhook
-    app.kubernetes.io/name: webhook
-    app.kubernetes.io/instance:  cert-manager
-  annotations:
-    certmanager.k8s.io/inject-apiserver-ca: "true"
-webhooks:
-  - name: webhook.certmanager.k8s.io
-    rules:
-      - apiGroups:
-          - "certmanager.k8s.io"
-        apiVersions:
-          - v1alpha1
-        operations:
-          - CREATE
-          - UPDATE
-        resources:
-          - certificates
-          - issuers
-          - clusterissuers
-          - certificaterequests
-    failurePolicy: Fail
-    sideEffects: None
-    clientConfig:
-      service:
-        name: kubernetes
-        namespace: default
-        path: /apis/webhook.certmanager.k8s.io/v1beta1/validations
-      caBundle: ""
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/params.yaml", `
 varReference:
-- path: subjects/cert-manager/namespace
-  kind: ClusterRoleBinding
 - path: subjects/namespace
   kind: ClusterRoleBinding
-- path: spec/service/namespace
-  kind: APIService
 - path: spec/template/spec/containers/args
   kind: Deployment
 - path: metadata/name
   kind: Namespace
-- path: webhooks/namespaceSelector/matchExpressions/values
-  kind: ValidatingWebhookConfiguration
-- path: metadata/namespace
-  kind: APIService
-- path: metadata/namespace
-  kind: ClusterRoleBinding
-- path: metadata/namespace
-  kind: ClusterRole
-- path: metadata/namespace
-  kind: Deployment
-- path: metadata/namespace
-  kind: MutatingWebhookConfiguration
-- path: metadata/namespace
-  kind: ServiceAccount
-- path: metadata/namespace
-  kind: Service
-- path: metadata/namespace
-  kind: ValidatingWebhookConfiguration
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/params.env", `
 namespace=cert-manager
@@ -842,14 +465,11 @@ kind: Kustomization
 namespace: cert-manager
 resources:
 - namespace.yaml
-- api-service.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - deployment.yaml
-- mutating-webhook-configuration.yaml
 - service-account.yaml
 - service.yaml
-- validating-webhook-configuration.yaml
 commonLabels:
   kustomize.component: cert-manager
 configMapGenerator:
