@@ -4,22 +4,16 @@ metadata:
   name: cert-manager-webhook
   labels:
     app: webhook
-    app.kubernetes.io/name: webhook
-    app.kubernetes.io/instance:  cert-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: webhook
-      app.kubernetes.io/name: webhook
-      app.kubernetes.io/instance:  cert-manager
 
   template:
     metadata:
       labels:
         app: webhook
-        app.kubernetes.io/name: webhook
-        app.kubernetes.io/instance:  cert-manager
       annotations:
     spec:
       serviceAccountName: cert-manager-webhook

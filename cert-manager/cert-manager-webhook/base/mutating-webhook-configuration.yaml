@@ -4,8 +4,6 @@ metadata:
   name: cert-manager-webhook
   labels:
     app: webhook
-    app.kubernetes.io/name: webhook
-    app.kubernetes.io/instance:  cert-manager
   annotations:
     certmanager.k8s.io/inject-apiserver-ca: "true"
 webhooks:
