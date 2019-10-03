@@ -1,7 +1,7 @@
 varReference:
 - path: subjects/namespace
   kind: ClusterRoleBinding
-- path: spec/template/spec/containers/args
-  kind: Deployment
+- path: spec/service/namespace
+  kind: APIService
 - path: metadata/name
   kind: Namespace
