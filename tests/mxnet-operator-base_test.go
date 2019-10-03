@@ -143,9 +143,9 @@ resources:
 commonLabels:
   kustomize.component: mxnet-operator
 images:
-- name: mxjob/mxnet-operator
-  newName: mxjob/mxnet-operator
-  newTag: v1beta1
+  - name: mxjob/mxnet-operator
+    newName: mxjob/mxnet-operator
+    newTag: v1beta1
 `)
 }
 

@@ -220,8 +220,7 @@ configMapGenerator:
   env: params.env
 images:
 - name: gcr.io/ml-pipeline/frontend
-  newTag: 0.1.23
-  newName: gcr.io/ml-pipeline/frontend
+  newTag: '0.1.23'
 vars:
 - name: ui-namespace
   objref:

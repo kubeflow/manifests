@@ -18,11 +18,16 @@ func writeSparkOperatorOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: $(generateName)
+  name: spark-operator
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/instance: $(generateName)
+      app.kubernetes.io/name: sparkoperator
+      app.kubernetes.io/instance: spark-operator
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: sppark-operator
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.6 
   componentKinds:
   - group: core
     kind: Service
@@ -48,22 +53,6 @@ spec:
     - "spark"
   addOwnerRef: true
 `)
-	th.writeF("/manifests/spark/spark-operator/overlays/application/params.yaml", `
-varReference:
-- path: metadata/name
-  kind: Application
-- path: spec/selector/matchLabels/app.kubernetes.io\/instance
-  kind: Application
-- path: spec/selector/app.kubernetes.io\/instance
-  kind: Service
-- path: spec/selector/matchLabels/app.kubernetes.io\/instance
-  kind: StatefulSet
-- path: spec/template/metadata/labels/app.kubernetes.io\/instance
-  kind: StatefulSet
-`)
-	th.writeF("/manifests/spark/spark-operator/overlays/application/params.env", `
-generateName=
-`)
 	th.writeK("/manifests/spark/spark-operator/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -71,22 +60,9 @@ bases:
 - ../../base
 resources:
 - application.yaml
-configMapGenerator:
-- name: spark-operator-app-parameters
-  env: params.env
-vars:
-- name: generateName
-  objref:
-    kind: ConfigMap
-    name: spark-operator-app-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.generateName
-configurations:
-- params.yaml
 commonLabels:
   app.kubernetes.io/name: sparkoperator
-  app.kubernetes.io/instance: $(generateName)
+  app.kubernetes.io/instance: spark-operator
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: spark-operator
   app.kubernetes.io/part-of: kubeflow
@@ -282,7 +258,6 @@ images:
 
 # Value of this field is prepended to the
 # names of all resources
-  newName: gcr.io/spark-operator/spark-operator
 namePrefix: spark-operator
 
 # List of resource files that kustomize reads, modifies
