@@ -243,8 +243,6 @@ spec:
       parameters:
       - name: generateName
         value: knative-serving-crds-
-      - name: namespace
-        value: knative-serving
       repoRef:
         name: manifests
         path: knative/knative-serving-crds
