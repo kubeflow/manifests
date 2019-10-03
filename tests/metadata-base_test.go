@@ -316,7 +316,7 @@ spec:
     spec:
       containers:
       - name: container
-        image: gcr.io/ml-pipeline/envoy:initial
+        image: gcr.io/ml-pipeline/envoy:metadata-grpc
         ports:
         - name: md-envoy
           containerPort: 9090
@@ -385,6 +385,13 @@ vars:
   objref:
     kind: Service
     name: ui
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.name
+- name: metadata-envoy-service
+  objref:
+    kind: Service
+    name: envoy-service
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name
