@@ -42,7 +42,7 @@ spec:
     namespace: $(namespace)
   version: v1beta1
 `)
-	th.writeF("/manifests/cert-manager/cert-manager/base/cluster-role-bindings.yaml", `
+	th.writeF("/manifests/cert-manager/cert-manager/base/cluster-role-binding.yaml", `
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -215,7 +215,7 @@ subjects:
     namespace: $(namespace)
     kind: ServiceAccount
 `)
-	th.writeF("/manifests/cert-manager/cert-manager/base/cluster-roles.yaml", `
+	th.writeF("/manifests/cert-manager/cert-manager/base/cluster-role.yaml", `
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
@@ -511,7 +511,7 @@ rules:
   verbs:
   - create
 `)
-	th.writeF("/manifests/cert-manager/cert-manager/base/deployments.yaml", `
+	th.writeF("/manifests/cert-manager/cert-manager/base/deployment.yaml", `
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -695,7 +695,7 @@ webhooks:
         path: /apis/webhook.certmanager.k8s.io/v1beta1/mutations
       caBundle: ""
 `)
-	th.writeF("/manifests/cert-manager/cert-manager/base/service-accounts.yaml", `
+	th.writeF("/manifests/cert-manager/cert-manager/base/service-account.yaml", `
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -726,7 +726,7 @@ metadata:
     app.kubernetes.io/name: webhook
     app.kubernetes.io/instance:  cert-manager
 `)
-	th.writeF("/manifests/cert-manager/cert-manager/base/services.yaml", `
+	th.writeF("/manifests/cert-manager/cert-manager/base/service.yaml", `
 ---
 apiVersion: v1
 kind: Service
@@ -843,12 +843,12 @@ namespace: cert-manager
 resources:
 - namespace.yaml
 - api-service.yaml
-- cluster-role-bindings.yaml
-- cluster-roles.yaml
-- deployments.yaml
+- cluster-role-binding.yaml
+- cluster-role.yaml
+- deployment.yaml
 - mutating-webhook-configuration.yaml
-- service-accounts.yaml
-- services.yaml
+- service-account.yaml
+- service.yaml
 - validating-webhook-configuration.yaml
 commonLabels:
   kustomize.component: cert-manager

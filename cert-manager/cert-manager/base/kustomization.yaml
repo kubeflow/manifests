@@ -4,12 +4,12 @@ namespace: cert-manager
 resources:
 - namespace.yaml
 - api-service.yaml
-- cluster-role-bindings.yaml
-- cluster-roles.yaml
-- deployments.yaml
+- cluster-role-binding.yaml
+- cluster-role.yaml
+- deployment.yaml
 - mutating-webhook-configuration.yaml
-- service-accounts.yaml
-- services.yaml
+- service-account.yaml
+- service.yaml
 - validating-webhook-configuration.yaml
 commonLabels:
   kustomize.component: cert-manager
