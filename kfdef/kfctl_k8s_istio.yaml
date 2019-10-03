@@ -14,6 +14,11 @@ spec:
   applications:
   # Istio install. If not needed, comment out istio-crds and istio-install.
   - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: application/application-crds
+    name: application-crds
+  - kustomizeConfig:
       overlays:
       - application
       parameters:
@@ -44,11 +49,6 @@ spec:
         name: manifests
         path: istio/istio
     name: istio
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: application/application-crds
-    name: application-crds
   - kustomizeConfig:
       overlays:
       - application
