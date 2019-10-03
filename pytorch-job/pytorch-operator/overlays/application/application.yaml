@@ -1,11 +1,16 @@
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: $(generateName)
+  name: pytorch-operator
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/instance: $(generateName)
+      app.kubernetes.io/name: pytorch-operator
+      app.kubernetes.io/instance: pytorch-operator
+      app.kubernetes.io/version: v0.6.0
+      app.kubernetes.io/component: pytorch
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/managed-by: kfctl
   componentKinds:
   - group: core
     kind: Service

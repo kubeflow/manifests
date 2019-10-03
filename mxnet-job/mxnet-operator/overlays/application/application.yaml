@@ -1,11 +1,16 @@
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: $(generateName)
+  name: mxnet-operator
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/instance: $(generateName)
+      app.kubernetes.io/name: mxnet-operator
+      app.kubernetes.io/instance: mxnet-operator
+      app.kubernetes.io/version: v0.6.0
+      app.kubernetes.io/component: mxnet
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/managed-by: kfctl
   componentKinds:
   - group: apps
     kind: Deployment

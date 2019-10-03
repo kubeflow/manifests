@@ -4,22 +4,9 @@ bases:
 - ../../base
 resources:
 - application.yaml
-configMapGenerator:
-- name: pytorch-operator-parameters
-  env: params.env
-vars:
-- name: generateName
-  objref:
-    kind: ConfigMap
-    name: pytorch-operator-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.generateName
-configurations:
-- params.yaml
 commonLabels:
   app.kubernetes.io/name: pytorch-operator
-  app.kubernetes.io/instance: $(generateName)
+  app.kubernetes.io/instance: pytorch-operator
   app.kubernetes.io/version: v0.6.0
   app.kubernetes.io/component: pytorch
   app.kubernetes.io/part-of: kubeflow

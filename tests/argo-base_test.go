@@ -29,6 +29,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: argo
+  namespace: kubeflow
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -128,6 +129,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: workflow-controller-configmap
+  namespace: kubeflow
 data:
   config: |
     {
@@ -177,6 +179,7 @@ metadata:
   labels:
     app: argo-ui
   name: argo-ui
+  namespace: kubeflow
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
@@ -230,6 +233,7 @@ metadata:
   labels:
     app: workflow-controller
   name: workflow-controller
+  namespace: kubeflow
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
@@ -285,6 +289,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: argo-ui
+  namespace: kubeflow
 `)
 	th.writeF("/manifests/argo/base/service.yaml", `
 apiVersion: v1
@@ -301,6 +306,7 @@ metadata:
   labels:
     app: argo-ui
   name: argo-ui
+  namespace: kubeflow
 spec:
   ports:
   - port: 80
@@ -344,16 +350,15 @@ resources:
 - deployment.yaml
 - service-account.yaml
 - service.yaml
-namespace: kubeflow
 commonLabels:
   kustomize.component: argo
 images:
-- name: argoproj/argoui
-  newName: argoproj/argoui
-  newTag: v2.3.0
-- name: argoproj/workflow-controller
-  newName: argoproj/workflow-controller
-  newTag: v2.3.0
+  - name: argoproj/argoui
+    newName: argoproj/argoui
+    newTag: v2.3.0
+  - name: argoproj/workflow-controller
+    newName: argoproj/workflow-controller
+    newTag: v2.3.0
 configMapGenerator:
 - name: workflow-controller-parameters
   env: params.env

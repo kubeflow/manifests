@@ -18,11 +18,16 @@ func writeMpiOperatorOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: $(generateName)
+  name: mpi-operator
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/instance: $(generateName)
+      app.kubernetes.io/name: mpi-operator
+      app.kubernetes.io/instance: mpi-operator
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: mpijob
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.7
   componentKinds:
   - group: apps
     kind: Deployment
@@ -41,22 +46,6 @@ spec:
     - description: About
       url: "https://github.com/kubeflow/mpi-operator"
 `)
-	th.writeF("/manifests/mpi-job/mpi-operator/overlays/application/params.yaml", `
-varReference:
-- path: metadata/name
-  kind: Application
-- path: spec/selector/matchLabels/app.kubernetes.io\/instance
-  kind: Application
-- path: spec/selector/app.kubernetes.io\/instance
-  kind: Service
-- path: spec/selector/matchLabels/app.kubernetes.io\/instance
-  kind: Deployment
-- path: spec/template/metadata/labels/app.kubernetes.io\/instance
-  kind: Deployment
-`)
-	th.writeF("/manifests/mpi-job/mpi-operator/overlays/application/params.env", `
-generateName=
-`)
 	th.writeK("/manifests/mpi-job/mpi-operator/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -64,26 +53,13 @@ bases:
 - ../../base
 resources:
 - application.yaml
-configMapGenerator:
-- name: mpi-operator-parameters
-  env: params.env
-vars:
-- name: generateName
-  objref:
-    kind: ConfigMap
-    name: mpi-operator-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.generateName
-configurations:
-- params.yaml
 commonLabels:
   app.kubernetes.io/name: mpi-operator
-  app.kubernetes.io/instance: $(generateName)
+  app.kubernetes.io/instance: mpi-operator
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: mpijob
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
+  app.kubernetes.io/version: v0.7
 `)
 	th.writeF("/manifests/mpi-job/mpi-operator/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1

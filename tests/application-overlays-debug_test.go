@@ -45,10 +45,6 @@ bases:
 - ../../base
 patchesStrategicMerge:
 - stateful-set.yaml
-images:
-- name: gcr.io/$(project)/application-controller
-  newName: gcr.io/$(project)/application-controller
-  newTag: latest
 `)
 	th.writeF("/manifests/application/application/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
@@ -153,9 +149,9 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-- name: gcr.io/kubeflow-images-public/kubernetes-sigs/application
-  newName: gcr.io/kubeflow-images-public/kubernetes-sigs/application
-  newTag: 1.0-beta
+  - name: gcr.io/kubeflow-images-public/kubernetes-sigs/application
+    newName: gcr.io/kubeflow-images-public/kubernetes-sigs/application
+    newTag: 1.0-beta
 vars:
 - name: project
   objref:

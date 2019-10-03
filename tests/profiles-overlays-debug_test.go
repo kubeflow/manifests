@@ -68,10 +68,6 @@ vars:
     fieldpath: data.project
 configurations:
 - params.yaml
-images:
-- name: gcr.io/$(project)/profile-controller
-  newName: gcr.io/$(project)/profile-controller
-  newTag: latest
 `)
 	th.writeF("/manifests/profiles/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
@@ -253,44 +249,41 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: profiles
 configMapGenerator:
-- name: profiles-parameters
-  env: params.env
+  - name: profiles-parameters
+    env: params.env
 images:
-- name: gcr.io/kubeflow-images-public/profile-controller
-  newName: gcr.io/kubeflow-images-public/profile-controller
-  newTag: v20190619-v0-219-gbd3daa8c-dirty-1ced0e
-- name: gcr.io/kubeflow-images-public/kfam
-  newName: gcr.io/kubeflow-images-public/kfam
-  newTag: v20190612-v0-170-ga06cdb79-dirty-a33ee4
+  - name: gcr.io/kubeflow-images-public/profile-controller
+    newName: gcr.io/kubeflow-images-public/profile-controller
+    newTag: v20190619-v0-219-gbd3daa8c-dirty-1ced0e
 vars:
-- name: admin
-  objref:
-    kind: ConfigMap
-    name: profiles-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.admin
-- name: userid-header
-  objref:
-    kind: ConfigMap
-    name: profiles-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.userid-header
-- name: userid-prefix
-  objref:
-    kind: ConfigMap
-    name: profiles-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.userid-prefix
-- name: namespace
-  objref:
-    kind: Service
-    name: kfam
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.namespace
+  - name: admin
+    objref:
+      kind: ConfigMap
+      name: profiles-parameters
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.admin
+  - name: userid-header
+    objref:
+      kind: ConfigMap
+      name: profiles-parameters
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.userid-header
+  - name: userid-prefix
+    objref:
+      kind: ConfigMap
+      name: profiles-parameters
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.userid-prefix
+  - name: namespace
+    objref:
+      kind: Service
+      name: kfam
+      apiVersion: v1
+    fieldref:
+      fieldpath: metadata.namespace
 configurations:
 - params.yaml
 `)

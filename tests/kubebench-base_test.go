@@ -153,15 +153,15 @@ configMapGenerator:
 - name: parameters
   env: params.env
 images:
-- name: gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2
-  newName: gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2
-  newTag: v0.5.0-11-gea53ad5
-- name: gcr.io/kubeflow-images-public/kubebench/kubebench-controller
-  newName: gcr.io/kubeflow-images-public/kubebench/kubebench-controller
-  newTag: v0.4.0-13-g262c593
-- name: gcr.io/kubeflow-images-public/kubebench/kubebench-example-tf-cnn-post-processor
-  newName: gcr.io/kubeflow-images-public/kubebench/kubebench-example-tf-cnn-post-processor
-  newTag: v0.4.0-13-g262c593
+  - name:  gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2
+    newName: gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2
+    newTag: v0.5.0-11-gea53ad5
+  - name: gcr.io/kubeflow-images-public/kubebench/kubebench-controller
+    newName: gcr.io/kubeflow-images-public/kubebench/kubebench-controller
+    newTag: v0.4.0-13-g262c593
+  - name: gcr.io/kubeflow-images-public/kubebench/kubebench-example-tf-cnn-post-processor
+    newName: gcr.io/kubeflow-images-public/kubebench/kubebench-example-tf-cnn-post-processor
+    newTag: v0.4.0-13-g262c593
 vars:
 - name: clusterDomain
   objref:

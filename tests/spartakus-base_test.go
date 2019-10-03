@@ -95,9 +95,9 @@ resources:
 commonLabels:
   kustomize.component: spartakus
 images:
-- name: gcr.io/google_containers/spartakus-amd64
-  newName: gcr.io/google_containers/spartakus-amd64
-  newTag: v1.1.0
+  - name: gcr.io/google_containers/spartakus-amd64
+    newName: gcr.io/google_containers/spartakus-amd64
+    newTag: v1.1.0
 configMapGenerator:
 - name: spartakus-parameters
   env: params.env
