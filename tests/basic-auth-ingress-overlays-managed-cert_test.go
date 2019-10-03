@@ -21,7 +21,8 @@ metadata:
   name: gke-certificate
 spec:
   domains:
-  - $(hostname)`)
+  - $(hostname)
+`)
 	th.writeK("/manifests/gcp/basic-auth-ingress/overlays/managed-cert", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -409,12 +410,12 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: basic-auth-ingress
 images:
-- name: gcr.io/kubeflow-images-public/ingress-setup
-  newName: gcr.io/kubeflow-images-public/ingress-setup
-  newTag: latest
-- name: gcr.io/cloud-solutions-group/esp-sample-app
-  newName: gcr.io/cloud-solutions-group/esp-sample-app
-  newTag: 1.0.0
+  - name: gcr.io/kubeflow-images-public/ingress-setup
+    newName: gcr.io/kubeflow-images-public/ingress-setup
+    newTag: latest
+  - name: gcr.io/cloud-solutions-group/esp-sample-app
+    newName: gcr.io/cloud-solutions-group/esp-sample-app
+    newTag: 1.0.0
 configMapGenerator:
 - name: basic-auth-ingress-parameters
   env: params.env

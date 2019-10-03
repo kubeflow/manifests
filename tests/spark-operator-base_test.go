@@ -204,7 +204,6 @@ images:
 
 # Value of this field is prepended to the
 # names of all resources
-  newName: gcr.io/spark-operator/spark-operator
 namePrefix: spark-operator
 
 # List of resource files that kustomize reads, modifies

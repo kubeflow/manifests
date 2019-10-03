@@ -89,7 +89,7 @@ vars:
 configurations:
 - params.yaml
 commonLabels:
-  app.kubernetes.io/name: kfserving
+  app.kubernetes.io/name: kfserving  
   app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: serving
@@ -440,25 +440,18 @@ resources:
 commonLabels:
   kustomize.component: kfserving
 configMapGenerator:
-- name: kfserving-parameters
-  env: params.env
+  - name: kfserving-parameters
+    env: params.env
 vars:
-- name: registry
-  objref:
-    kind: ConfigMap
-    name: kfserving-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.registry
+  - name: registry
+    objref:
+      kind: ConfigMap
+      name: kfserving-parameters
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.registry
 configurations:
 - params.yaml
-images:
-- name: gcr.io/kubebuilder/kube-rbac-proxy
-  newName: gcr.io/kubebuilder/kube-rbac-proxy
-  newTag: v0.4.0
-- name: $(registry)/kfserving-controller
-  newName: $(registry)/kfserving-controller
-  newTag: v0.1.1
 `)
 }
 

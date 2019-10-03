@@ -35,7 +35,8 @@ metadata:
   name: $(minioPvcName)
 spec:
   volumeName: $(minioPvName)
-  storageClassName: ""`)
+  storageClassName: ""
+`)
 	th.writeF("/manifests/pipeline/minio/overlays/minioPd/params.yaml", `
 varReference:
 - path: spec/gcePersistentDisk/pdName
@@ -73,14 +74,14 @@ vars:
     name: pipeline-minio-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.minioPd
+      fieldpath: data.minioPd
 - name: minioPvName
   objref:
     kind: ConfigMap
     name: pipeline-minio-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.minioPvName
+      fieldpath: data.minioPvName
 configurations:
 - params.yaml
 `)
@@ -156,9 +157,11 @@ varReference:
 - path: spec/template/spec/volumes/persistentVolumeClaim/claimName
   kind: Deployment
 - path: metadata/name
-  kind: PersistentVolumeClaim`)
+  kind: PersistentVolumeClaim
+`)
 	th.writeF("/manifests/pipeline/minio/base/params.env", `
-minioPvcName=`)
+minioPvcName=
+`)
 	th.writeK("/manifests/pipeline/minio/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -185,7 +188,6 @@ vars:
 images:
 - name: minio/minio
   newTag: RELEASE.2018-02-09T22-40-05Z
-  newName: minio/minio
 configurations:
 - params.yaml
 `)

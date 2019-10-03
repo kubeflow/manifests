@@ -107,8 +107,7 @@ resources:
 - service.yaml
 images:
 - name: gcr.io/ml-pipeline/visualization-server
-  newTag: 0.1.27
-  newName: gcr.io/ml-pipeline/visualization-server
+  newTag: '0.1.27'
 `)
 }
 

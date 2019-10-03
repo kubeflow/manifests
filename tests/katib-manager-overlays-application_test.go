@@ -102,7 +102,7 @@ vars:
 configurations:
 - params.yaml
 commonLabels:
-  app.kubernetes.io/name: katib-manager
+  app.kubernetes.io/name: katib-manager 
   app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: katib
@@ -231,12 +231,10 @@ resources:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-- name: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-manager
-  newTag: v0.6.0-rc.0
-  newName: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-manager
-- name: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-manager-rest
-  newTag: v0.6.0-rc.0
-  newName: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-manager-rest
+  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-manager
+    newTag: v0.6.0-rc.0
+  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-manager-rest
+    newTag: v0.6.0-rc.0
 `)
 }
 
