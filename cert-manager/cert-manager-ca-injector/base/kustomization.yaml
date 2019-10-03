@@ -7,11 +7,10 @@ resources:
 - cluster-role.yaml
 - deployment.yaml
 - service-account.yaml
-- service.yaml
 commonLabels:
-  kustomize.component: cert-manager
+  kustomize.component: cert-manager-ca-injector
 configMapGenerator:
-- name: cert-manager-parameters
+- name: cert-manager-ca-injector-parameters
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
@@ -19,7 +18,7 @@ vars:
 - name: namespace
   objref:
     kind: ConfigMap
-    name: cert-manager-parameters
+    name: cert-manager-ca-injector-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.namespace
