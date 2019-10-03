@@ -1,0 +1,17 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: $(generateName)
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
+  descriptor:
+    type: katib-crds
+    version: v1beta1
+    description: "crds for katib"
+    keywords:
+    - "katib-crds"
+    links:
+    - description: About
+      url: "https://kubeflow.org"

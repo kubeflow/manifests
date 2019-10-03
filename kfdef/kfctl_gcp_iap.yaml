@@ -8,7 +8,7 @@ metadata:
 spec:
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/pull/406/head.tar.gz
+    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
     # To get manifest at a PR:
     #uri: https://github.com/kubeflow/manifests/archive/pull/235/head.tar.gz
   appdir: /tmp/myapp2
@@ -138,6 +138,11 @@ spec:
         path: jupyter/jupyter-web-app
     name: jupyter-web-app
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: generateName
+        value: katib-crds-
       repoRef:
         name: manifests
         path: katib/katib-crds
