@@ -17,11 +17,7 @@ spec:
           path: istio/istio-crds
       name: istio-crds
     - kustomizeConfig:
-        overlays:
-          - application
         parameters:
-          - name: generateName
-            value: istio-install-
           - name: namespace
             value: istio-system
         repoRef:

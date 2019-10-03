@@ -8,7 +8,8 @@ metadata:
 spec:
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/pull/342/head.tar.gz
+    root: manifests-master
+    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
     # To get manifest at a PR:
     #uri: https://github.com/kubeflow/manifests/archive/pull/235/head.tar.gz
   appdir: /tmp/myapp2
@@ -24,11 +25,7 @@ spec:
         path: istio/istio-crds
     name: istio-crds
   - kustomizeConfig:
-      overlays:
-      - application
       parameters:
-      - name: generateName
-        value: istio-install-
       - name: namespace
         value: istio-system
       repoRef:
