@@ -238,11 +238,6 @@ spec:
         path: pytorch-job/pytorch-operator
     name: pytorch-operator
   - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: generateName
-        value: knative-serving-crds-
       repoRef:
         name: manifests
         path: knative/knative-serving-crds
