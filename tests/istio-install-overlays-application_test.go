@@ -59,6 +59,10 @@ varReference:
   kind: Deployment
 - path: spec/template/metadata/labels/app.kubernetes.io\/instance
   kind: Deployment
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: PodDisruptionBudget
+- path: spec/template/metadata/labels/app.kubernetes.io\/instance
+  kind: Job
 `)
 	th.writeF("/manifests/istio/istio-install/overlays/application/params.env", `
 generateName=

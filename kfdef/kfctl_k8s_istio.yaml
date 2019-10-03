@@ -19,8 +19,6 @@ spec:
       parameters:
       - name: generateName
         value: istio-crds-
-      - name: namespace
-        value: istio-system
       repoRef:
         name: manifests
         path: istio/istio-crds

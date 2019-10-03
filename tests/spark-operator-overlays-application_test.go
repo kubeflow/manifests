@@ -60,6 +60,8 @@ varReference:
   kind: StatefulSet
 - path: spec/template/metadata/labels/app.kubernetes.io\/instance
   kind: StatefulSet
+- path: spec/template/metadata/labels/app.kubernetes.io\/instance
+  kind: Job
 `)
 	th.writeF("/manifests/spark/spark-operator/overlays/application/params.env", `
 generateName=
