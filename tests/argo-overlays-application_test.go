@@ -20,6 +20,9 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -42,6 +45,8 @@ spec:
 	th.writeF("/manifests/argo/overlays/application/params.yaml", `
 varReference:
 - path: metadata/name
+  kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
   kind: Application
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service
@@ -415,12 +420,12 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: argo
 images:
-  - name: argoproj/argoui
-    newName: argoproj/argoui
-    newTag: v2.3.0
-  - name: argoproj/workflow-controller
-    newName: argoproj/workflow-controller
-    newTag: v2.3.0
+- name: argoproj/argoui
+  newName: argoproj/argoui
+  newTag: v2.3.0
+- name: argoproj/workflow-controller
+  newName: argoproj/workflow-controller
+  newTag: v2.3.0
 configMapGenerator:
 - name: workflow-controller-parameters
   env: params.env

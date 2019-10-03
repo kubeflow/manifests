@@ -20,6 +20,9 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -66,6 +69,8 @@ spec:
 varReference:
 - path: metadata/name
   kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Application
 `)
 	th.writeF("/manifests/katib-v1alpha2/metrics-collector/overlays/application/params.env", `
 generateName=
@@ -91,7 +96,7 @@ vars:
 configurations:
 - params.yaml
 commonLabels:
-  app.kubernetes.io/name: metrics-collector 
+  app.kubernetes.io/name: metrics-collector
   app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: katib
@@ -186,8 +191,8 @@ resources:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/metrics-collector
-    newTag: v0.6.0-rc.0
+- name: gcr.io/kubeflow-images-public/katib/v1alpha2/metrics-collector
+  newTag: v0.6.0-rc.0
 `)
 }
 

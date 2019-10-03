@@ -20,6 +20,9 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
     - group: core
       kind: Service
@@ -50,6 +53,8 @@ spec:
 	th.writeF("/manifests/jupyter/notebook-controller/overlays/application/params.yaml", `
 varReference:
 - path: metadata/name
+  kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
   kind: Application
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service
@@ -269,9 +274,9 @@ commonLabels:
   app: notebook-controller
   kustomize.component: notebook-controller
 images:
-  - name: gcr.io/kubeflow-images-public/notebook-controller
-    newName: gcr.io/kubeflow-images-public/notebook-controller
-    newTag: v20190911-e8193317-dirty-cd2831
+- name: gcr.io/kubeflow-images-public/notebook-controller
+  newName: gcr.io/kubeflow-images-public/notebook-controller
+  newTag: v20190911-e8193317-dirty-cd2831
 configMapGenerator:
 - name: parameters
   env: params.env

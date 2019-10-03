@@ -20,6 +20,9 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   type: "seldon-core-operator"
   componentKinds:
     - group: apps/v1
@@ -52,6 +55,8 @@ spec:
 varReference:
 - path: metadata/name
   kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Application
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service
 - path: spec/selector/matchLabels/app.kubernetes.io\/instance
@@ -83,7 +88,7 @@ vars:
 configurations:
 - params.yaml
 commonLabels:
-  app.kubernetes.io/name: seldon-core-operator  
+  app.kubernetes.io/name: seldon-core-operator
   app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: seldon
@@ -3708,6 +3713,10 @@ resources:
 - seldon-operator-webhook-server-secret-secret.yaml
 - seldondeployments.machinelearning.seldon.io-crd.yaml
 - webhook-server-service-svc.yaml
+images:
+- name: docker.io/seldonio/seldon-core-operator
+  newName: docker.io/seldonio/seldon-core-operator
+  newTag: 0.4.1
 `)
 }
 

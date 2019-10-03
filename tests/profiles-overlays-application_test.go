@@ -20,6 +20,9 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: apps
     kind: Deployment
@@ -44,6 +47,8 @@ spec:
 	th.writeF("/manifests/profiles/overlays/application/params.yaml", `
 varReference:
 - path: metadata/name
+  kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
   kind: Application
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service
@@ -196,8 +201,7 @@ metadata:
   name: kfam
 spec:
   ports:
-    - port: 8081
-`)
+    - port: 8081`)
 	th.writeF("/manifests/profiles/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -242,8 +246,7 @@ varReference:
 - path: spec/template/spec/containers/1/args/3
   kind: Deployment
 - path: spec/template/spec/containers/1/args/5
-  kind: Deployment
-`)
+  kind: Deployment`)
 	th.writeF("/manifests/profiles/base/params.env", `
 admin=
 userid-header=
@@ -265,41 +268,44 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: profiles
 configMapGenerator:
-  - name: profiles-parameters
-    env: params.env
+- name: profiles-parameters
+  env: params.env
 images:
-  - name: gcr.io/kubeflow-images-public/profile-controller
-    newName: gcr.io/kubeflow-images-public/profile-controller
-    newTag: v20190619-v0-219-gbd3daa8c-dirty-1ced0e
+- name: gcr.io/kubeflow-images-public/profile-controller
+  newName: gcr.io/kubeflow-images-public/profile-controller
+  newTag: v20190619-v0-219-gbd3daa8c-dirty-1ced0e
+- name: gcr.io/kubeflow-images-public/kfam
+  newName: gcr.io/kubeflow-images-public/kfam
+  newTag: v20190612-v0-170-ga06cdb79-dirty-a33ee4
 vars:
-  - name: admin
-    objref:
-      kind: ConfigMap
-      name: profiles-parameters
-      apiVersion: v1
-    fieldref:
-      fieldpath: data.admin
-  - name: userid-header
-    objref:
-      kind: ConfigMap
-      name: profiles-parameters
-      apiVersion: v1
-    fieldref:
-      fieldpath: data.userid-header
-  - name: userid-prefix
-    objref:
-      kind: ConfigMap
-      name: profiles-parameters
-      apiVersion: v1
-    fieldref:
-      fieldpath: data.userid-prefix
-  - name: namespace
-    objref:
-      kind: Service
-      name: kfam
-      apiVersion: v1
-    fieldref:
-      fieldpath: metadata.namespace
+- name: admin
+  objref:
+    kind: ConfigMap
+    name: profiles-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.admin
+- name: userid-header
+  objref:
+    kind: ConfigMap
+    name: profiles-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.userid-header
+- name: userid-prefix
+  objref:
+    kind: ConfigMap
+    name: profiles-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.userid-prefix
+- name: namespace
+  objref:
+    kind: Service
+    name: kfam
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.namespace
 configurations:
 - params.yaml
 `)

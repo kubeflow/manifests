@@ -90,6 +90,10 @@ resources:
 namespace: kubeflow
 commonLabels:
   kustomize.component: iap-ingress
+images:
+- name: gcr.io/kubeflow-images-public/ingress-setup
+  newName: gcr.io/kubeflow-images-public/ingress-setup
+  newTag: latest
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/backend-config.yaml", `
 apiVersion: cloud.google.com/v1beta1
@@ -622,8 +626,7 @@ varReference:
 - path: data/healthcheck_route.yaml
   kind: ConfigMap
 - path: spec/domains
-  kind: ManagedCertificate
-`)
+  kind: ManagedCertificate`)
 	th.writeF("/manifests/gcp/iap-ingress/base/params.env", `
 namespace=kubeflow
 appName=kubeflow
@@ -635,8 +638,7 @@ oauthSecretName=kubeflow-oauth
 project=
 adminSaSecretName=admin-gcp-sa
 tlsSecretName=envoy-ingress-tls
-istioNamespace=istio-system
-`)
+istioNamespace=istio-system`)
 	th.writeK("/manifests/gcp/iap-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -656,15 +658,15 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: iap-ingress
 images:
-  - name: gcr.io/kubeflow-images-public/envoy
-    newName: gcr.io/kubeflow-images-public/envoy
-    newTag: v20180309-0fb4886b463698702b6a08955045731903a18738
-  - name: gcr.io/kubeflow-images-public/ingress-setup
-    newName: gcr.io/kubeflow-images-public/ingress-setup
-    newTag: latest
-  - name: gcr.io/cloud-solutions-group/esp-sample-app
-    newName: gcr.io/cloud-solutions-group/esp-sample-app
-    newTag: 1.0.0
+- name: gcr.io/kubeflow-images-public/envoy
+  newName: gcr.io/kubeflow-images-public/envoy
+  newTag: v20180309-0fb4886b463698702b6a08955045731903a18738
+- name: gcr.io/kubeflow-images-public/ingress-setup
+  newName: gcr.io/kubeflow-images-public/ingress-setup
+  newTag: latest
+- name: gcr.io/cloud-solutions-group/esp-sample-app
+  newName: gcr.io/cloud-solutions-group/esp-sample-app
+  newTag: 1.0.0
 configMapGenerator:
 - name: parameters
   env: params.env

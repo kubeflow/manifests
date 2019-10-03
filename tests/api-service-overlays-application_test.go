@@ -20,6 +20,9 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: apps
     kind: Deployment
@@ -44,6 +47,8 @@ spec:
 	th.writeF("/manifests/pipeline/api-service/overlays/application/params.yaml", `
 varReference:
 - path: metadata/name
+  kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
   kind: Application
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service
@@ -183,7 +188,8 @@ resources:
 - service.yaml
 images:
 - name: gcr.io/ml-pipeline/api-server
-  newTag: '0.1.23'
+  newTag: 0.1.23
+  newName: gcr.io/ml-pipeline/api-server
 `)
 }
 

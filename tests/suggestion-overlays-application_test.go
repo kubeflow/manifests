@@ -20,6 +20,9 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: core
     kind: Service
@@ -65,6 +68,8 @@ spec:
 	th.writeF("/manifests/katib-v1alpha2/suggestion/overlays/application/params.yaml", `
 varReference:
 - path: metadata/name
+  kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
   kind: Application
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service
@@ -354,16 +359,21 @@ resources:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-hyperband
-    newTag: v0.6.0-rc.0
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-bayesianoptimization
-    newTag: v0.6.0-rc.0
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-grid
-    newTag: v0.6.0-rc.0
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-random
-    newTag: v0.6.0-rc.0
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-nasrl
-    newTag: v0.6.0-rc.0
+- name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-hyperband
+  newTag: v0.6.0-rc.0
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-hyperband
+- name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-bayesianoptimization
+  newTag: v0.6.0-rc.0
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-bayesianoptimization
+- name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-grid
+  newTag: v0.6.0-rc.0
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-grid
+- name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-random
+  newTag: v0.6.0-rc.0
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-random
+- name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-nasrl
+  newTag: v0.6.0-rc.0
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-nasrl
 `)
 }
 

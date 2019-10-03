@@ -20,6 +20,9 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: core
     kind: Service
@@ -74,6 +77,8 @@ spec:
 varReference:
 - path: metadata/name
   kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Application
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service
 - path: spec/selector/matchLabels/app.kubernetes.io\/instance
@@ -105,7 +110,7 @@ vars:
 configurations:
 - params.yaml
 commonLabels:
-  app.kubernetes.io/name: katib-controller 
+  app.kubernetes.io/name: katib-controller
   app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: katib
@@ -338,8 +343,9 @@ resources:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-controller
-    newTag: v0.6.0-rc.0
+- name: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-controller
+  newTag: v0.6.0-rc.0
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha2/katib-controller
 `)
 }
 

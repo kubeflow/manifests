@@ -20,6 +20,9 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: apps
     kind: Deployment
@@ -42,6 +45,8 @@ spec:
 	th.writeF("/manifests/pipeline/minio/overlays/application/params.yaml", `
 varReference:
 - path: metadata/name
+  kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
   kind: Application
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service
@@ -153,11 +158,9 @@ varReference:
 - path: spec/template/spec/volumes/persistentVolumeClaim/claimName
   kind: Deployment
 - path: metadata/name
-  kind: PersistentVolumeClaim
-`)
+  kind: PersistentVolumeClaim`)
 	th.writeF("/manifests/pipeline/minio/base/params.env", `
-minioPvcName=
-`)
+minioPvcName=`)
 	th.writeK("/manifests/pipeline/minio/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -184,6 +187,7 @@ vars:
 images:
 - name: minio/minio
   newTag: RELEASE.2018-02-09T22-40-05Z
+  newName: minio/minio
 configurations:
 - params.yaml
 `)

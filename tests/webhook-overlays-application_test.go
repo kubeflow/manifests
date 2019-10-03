@@ -20,6 +20,9 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: apps
     kind: Deployment
@@ -42,6 +45,8 @@ spec:
 	th.writeF("/manifests/admission-webhook/webhook/overlays/application/params.yaml", `
 varReference:
 - path: metadata/name
+  kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
   kind: Application
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service
@@ -252,12 +257,12 @@ resources:
 commonLabels:
   kustomize.component: admission-webhook
   app: admission-webhook
-namePrefix: admission-webhook- 
+namePrefix: admission-webhook-
 images:
-  - name: gcr.io/kubeflow-images-public/admission-webhook
-    newName: gcr.io/kubeflow-images-public/admission-webhook
-    newTag: v20190520-v0-139-gcee39dbc-dirty-0d8f4c
-namespace: kubeflow  
+- name: gcr.io/kubeflow-images-public/admission-webhook
+  newName: gcr.io/kubeflow-images-public/admission-webhook
+  newTag: v20190520-v0-139-gcee39dbc-dirty-0d8f4c
+namespace: kubeflow
 configMapGenerator:
 - name: admission-webhook-parameters
   env: params.env
@@ -267,10 +272,10 @@ vars:
 - name: namespace
   objref:
     kind: ConfigMap
-    name: admission-webhook-parameters 
+    name: admission-webhook-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.namespace	
+    fieldpath: data.namespace
 - name: serviceName
   objref:
     kind: Service

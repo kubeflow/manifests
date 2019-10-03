@@ -20,6 +20,9 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: apps
     kind: Deployment
@@ -41,6 +44,8 @@ spec:
 	th.writeF("/manifests/pipeline/mysql/overlays/application/params.yaml", `
 varReference:
 - path: metadata/name
+  kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
   kind: Application
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service
@@ -126,15 +131,13 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 20Gi
-`)
+      storage: 20Gi`)
 	th.writeF("/manifests/pipeline/mysql/base/params.yaml", `
 varReference:
 - path: spec/template/spec/volumes/persistentVolumeClaim/claimName
   kind: Deployment
 - path: metadata/name
-  kind: PersistentVolumeClaim
-`)
+  kind: PersistentVolumeClaim`)
 	th.writeF("/manifests/pipeline/mysql/base/params.env", `
 mysqlPvcName=
 `)
@@ -163,6 +166,7 @@ vars:
 images:
 - name: mysql
   newTag: '5.6'
+  newName: mysql
 configurations:
 - params.yaml
 `)

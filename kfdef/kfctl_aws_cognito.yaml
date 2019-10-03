@@ -7,7 +7,11 @@ spec:
   platform: aws
   applications:
     - kustomizeConfig:
+        overlays:
+          - application
         parameters:
+          - name: generateName
+            value: istio-crds-
           - name: namespace
             value: istio-system
         repoRef:
@@ -15,7 +19,11 @@ spec:
           path: istio/istio-crds
       name: istio-crds
     - kustomizeConfig:
+        overlays:
+          - application
         parameters:
+          - name: generateName
+            value: istio-install-
           - name: namespace
             value: istio-system
         repoRef:
@@ -23,7 +31,11 @@ spec:
           path: istio/istio-install
       name: istio-install
     - kustomizeConfig:
+        overlays:
+          - application
         parameters:
+          - name: generateName
+            value: istio-
           - name: clusterRbacConfig
             value: "OFF"
         repoRef:
@@ -46,6 +58,11 @@ spec:
           path: application/application
       name: application
     - kustomizeConfig:
+        overlays:
+          - application
+        parameters:
+          - name: generateName
+            value: metacontroller-
         repoRef:
           name: manifests
           path: metacontroller
@@ -124,6 +141,10 @@ spec:
     - kustomizeConfig:
         overlays:
           - istio
+          - application
+        parameters:
+          - name: generateName
+            value: metadata-
         repoRef:
           name: manifests
           path: metadata
@@ -140,6 +161,11 @@ spec:
           path: jupyter/notebook-controller
       name: notebook-controller
     - kustomizeConfig:
+        overlays:
+          - application
+        parameters:
+          - name: generateName
+            value: pytorch-job-crds-
         repoRef:
           name: manifests
           path: pytorch-job/pytorch-job-crds
@@ -155,7 +181,11 @@ spec:
           path: pytorch-job/pytorch-operator
       name: pytorch-operator
     - kustomizeConfig:
+        overlays:
+          - application
         parameters:
+          - name: generateName
+            value: spartakus-
           - initRequired: true
             name: usageId
             value: <randomly-generated-id>
@@ -178,6 +208,11 @@ spec:
           path: tensorboard
       name: tensorboard
     - kustomizeConfig:
+        overlays:
+          - application
+        parameters:
+          - name: generateName
+            value: tf-job-crds-
         repoRef:
           name: manifests
           path: tf-training/tf-job-crds

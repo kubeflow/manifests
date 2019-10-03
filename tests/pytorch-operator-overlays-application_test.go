@@ -20,6 +20,9 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: core
     kind: Service
@@ -55,6 +58,8 @@ spec:
 	th.writeF("/manifests/pytorch-job/pytorch-operator/overlays/application/params.yaml", `
 varReference:
 - path: metadata/name
+  kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
   kind: Application
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service
@@ -261,9 +266,9 @@ resources:
 commonLabels:
   kustomize.component: pytorch-operator
 images:
-  - name: gcr.io/kubeflow-images-public/pytorch-operator
-    newName: gcr.io/kubeflow-images-public/pytorch-operator
-    newTag: v0.6.0-18-g5e36a57
+- name: gcr.io/kubeflow-images-public/pytorch-operator
+  newName: gcr.io/kubeflow-images-public/pytorch-operator
+  newTag: v0.6.0-18-g5e36a57
 `)
 }
 

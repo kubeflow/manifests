@@ -20,6 +20,9 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: core
     kind: Service
@@ -70,6 +73,8 @@ spec:
 varReference:
 - path: metadata/name
   kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Application
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service
 - path: spec/selector/matchLabels/app.kubernetes.io\/instance
@@ -101,7 +106,7 @@ vars:
 configurations:
 - params.yaml
 commonLabels:
-  app.kubernetes.io/name: katib-db 
+  app.kubernetes.io/name: katib-db
   app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: katib
@@ -214,8 +219,9 @@ resources:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-  - name: mysql
-    newTag: 8.0.3
+- name: mysql
+  newTag: 8.0.3
+  newName: mysql
 `)
 }
 

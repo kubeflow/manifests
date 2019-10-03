@@ -20,6 +20,9 @@ kind: Application
 metadata:
   name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
     - group: app.k8s.io
       kind: Application
@@ -46,6 +49,8 @@ spec:
 varReference:
 - path: metadata/name
   kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Application
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service
 - path: spec/selector/matchLabels/app.kubernetes.io\/instance
@@ -70,7 +75,7 @@ vars:
 - name: generateName
   objref:
     kind: ConfigMap
-    name: kubeflow-app-parameters 
+    name: kubeflow-app-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.generateName
@@ -187,9 +192,9 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-  - name: gcr.io/kubeflow-images-public/kubernetes-sigs/application
-    newName: gcr.io/kubeflow-images-public/kubernetes-sigs/application
-    newTag: 1.0-beta
+- name: gcr.io/kubeflow-images-public/kubernetes-sigs/application
+  newName: gcr.io/kubeflow-images-public/kubernetes-sigs/application
+  newTag: 1.0-beta
 vars:
 - name: project
   objref:
