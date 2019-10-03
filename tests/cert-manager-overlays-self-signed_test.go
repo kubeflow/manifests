@@ -13,7 +13,7 @@ import (
 	"testing"
 )
 
-func writeCertManagerOverlaySelfSigned(th *KustTestHarness) {
+func writeCertManagerOverlaysSelfSigned(th *KustTestHarness) {
 	th.writeF("/manifests/cert-manager/cert-manager/base/namespace.yaml", `
 ---
 apiVersion: v1
@@ -509,9 +509,9 @@ commonLabels:
 `)
 }
 
-func TestCertManagerOverlaySelfSigned(t *testing.T) {
+func TestCertManagerOverlaysSelfSigned(t *testing.T) {
 	th := NewKustTestHarness(t, "/manifests/cert-manager/cert-manager/overlays/self-signed")
-	writeCertManagerOverlaySelfSigned(th)
+	writeCertManagerOverlaysSelfSigned(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)

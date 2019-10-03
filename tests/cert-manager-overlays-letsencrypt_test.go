@@ -13,7 +13,7 @@ import (
 	"testing"
 )
 
-func writeCertManagerOverlayLetsEnrypt(th *KustTestHarness) {
+func writeCertManagerOverlaysLetsEnrypt(th *KustTestHarness) {
 	th.writeF("/manifests/cert-manager/cert-manager/base/namespace.yaml", `
 ---
 apiVersion: v1
@@ -550,9 +550,9 @@ configurations:
 }
 
 
-func TestCertManagerOverlayLetsEncrypt(t *testing.T) {
+func TestCertManagerOverlaysLetsEncrypt(t *testing.T) {
 	th := NewKustTestHarness(t, "/manifests/cert-manager/cert-manager/overlays/letsencrypt")
-	writeCertManagerOverlayLetsEnrypt(th)
+	writeCertManagerOverlaysLetsEnrypt(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
