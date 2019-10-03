@@ -19,7 +19,3 @@ vars:
     fieldpath: data.project
 configurations:
 - params.yaml
-images:
-- name: gcr.io/$(project)/profile-controller
-  newName: gcr.io/$(project)/profile-controller
-  newTag: latest

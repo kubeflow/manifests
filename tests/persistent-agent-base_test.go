@@ -88,8 +88,7 @@ resources:
 - service-account.yaml
 images:
 - name: gcr.io/ml-pipeline/persistenceagent
-  newTag: 0.1.23
-  newName: gcr.io/ml-pipeline/persistenceagent
+  newTag: '0.1.23'
 `)
 }
 

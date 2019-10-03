@@ -444,13 +444,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
-images:
-- name: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller
-  newName: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller
-  digest: 4f10413791df045f29f882fab817219e54123b527d6230a4991e2558f3d659f9
-- name: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook
-  newName: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook
-  digest: 496e36b8723a668ac3531acc26512c123342da7827c10386b571aa975d6a47e7
 `)
 }
 

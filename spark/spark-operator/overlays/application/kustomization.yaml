@@ -11,7 +11,7 @@ vars:
 - name: generateName
   objref:
     kind: ConfigMap
-    name: spark-operator-app-parameters
+    name: spark-operator-app-parameters 
     apiVersion: v1
   fieldref:
     fieldpath: data.generateName

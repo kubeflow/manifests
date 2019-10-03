@@ -11,7 +11,7 @@ vars:
 - name: generateName
   objref:
     kind: ConfigMap
-    name: jupyter-web-app-parameters
+    name: jupyter-web-app-parameters 
     apiVersion: v1
   fieldref:
     fieldpath: data.generateName

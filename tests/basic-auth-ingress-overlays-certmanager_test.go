@@ -78,10 +78,6 @@ resources:
 namespace: kubeflow
 commonLabels:
   kustomize.component: basic-auth-ingress
-images:
-- name: gcr.io/kubeflow-images-public/ingress-setup
-  newName: gcr.io/kubeflow-images-public/ingress-setup
-  newTag: latest
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cloud-endpoint.yaml", `
 apiVersion: ctl.isla.solutions/v1
@@ -459,12 +455,12 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: basic-auth-ingress
 images:
-- name: gcr.io/kubeflow-images-public/ingress-setup
-  newName: gcr.io/kubeflow-images-public/ingress-setup
-  newTag: latest
-- name: gcr.io/cloud-solutions-group/esp-sample-app
-  newName: gcr.io/cloud-solutions-group/esp-sample-app
-  newTag: 1.0.0
+  - name: gcr.io/kubeflow-images-public/ingress-setup
+    newName: gcr.io/kubeflow-images-public/ingress-setup
+    newTag: latest
+  - name: gcr.io/cloud-solutions-group/esp-sample-app
+    newName: gcr.io/cloud-solutions-group/esp-sample-app
+    newTag: 1.0.0
 configMapGenerator:
 - name: basic-auth-ingress-parameters
   env: params.env

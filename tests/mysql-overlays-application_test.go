@@ -131,13 +131,15 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 20Gi`)
+      storage: 20Gi
+`)
 	th.writeF("/manifests/pipeline/mysql/base/params.yaml", `
 varReference:
 - path: spec/template/spec/volumes/persistentVolumeClaim/claimName
   kind: Deployment
 - path: metadata/name
-  kind: PersistentVolumeClaim`)
+  kind: PersistentVolumeClaim
+`)
 	th.writeF("/manifests/pipeline/mysql/base/params.env", `
 mysqlPvcName=
 `)
@@ -166,7 +168,6 @@ vars:
 images:
 - name: mysql
   newTag: '5.6'
-  newName: mysql
 configurations:
 - params.yaml
 `)

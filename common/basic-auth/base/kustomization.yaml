@@ -9,12 +9,12 @@ commonLabels:
   kustomize.component: basic-auth
 namespace: kubeflow
 images:
-- name: gcr.io/kubeflow-images-public/kflogin-ui
-  newName: gcr.io/kubeflow-images-public/kflogin-ui
-  newTag: v0.5.0
-- name: gcr.io/kubeflow-images-public/gatekeeper
-  newName: gcr.io/kubeflow-images-public/gatekeeper
-  newTag: v0.5.0
+  - name: gcr.io/kubeflow-images-public/kflogin-ui
+    newName: gcr.io/kubeflow-images-public/kflogin-ui
+    newTag: v0.5.0
+  - name: gcr.io/kubeflow-images-public/gatekeeper
+    newName: gcr.io/kubeflow-images-public/gatekeeper
+    newTag: v0.5.0
 generatorOptions:
   disableNameSuffixHash: true
 configMapGenerator:
