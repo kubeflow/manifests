@@ -43,6 +43,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name
+- name: metadata-envoy-service
+  objref:
+    kind: Service
+    name: envoy-service
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.name
 images:
 - name: mysql
   newName: mysql
