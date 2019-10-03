@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cert-manager-cainjector
+  labels:
+    app: cainjector
+    app.kubernetes.io/name: cainjector
+    app.kubernetes.io/instance:  cert-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cainjector
+      app.kubernetes.io/name: cainjector
+      app.kubernetes.io/instance:  cert-manager
+
+  template:
+    metadata:
+      labels:
+        app: cainjector
+        app.kubernetes.io/name: cainjector
+        app.kubernetes.io/instance:  cert-manager
+      annotations:
+    spec:
+      serviceAccountName: cert-manager-cainjector
+      containers:
+        - name: cainjector
+          image: "quay.io/jetstack/cert-manager-cainjector:v0.10.0"
+          imagePullPolicy: IfNotPresent
+          args:
+          - --v=2
+          - --leader-election-namespace=$(POD_NAMESPACE)
+          env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          resources:
+            {}
