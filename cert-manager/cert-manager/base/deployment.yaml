@@ -4,22 +4,16 @@ metadata:
   name: cert-manager
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: cert-manager
-      app.kubernetes.io/name: cert-manager
-      app.kubernetes.io/instance:  cert-manager
 
   template:
     metadata:
       labels:
         app: cert-manager
-        app.kubernetes.io/name: cert-manager
-        app.kubernetes.io/instance:  cert-manager
       annotations:
         prometheus.io/path: "/metrics"
         prometheus.io/scrape: 'true'

@@ -4,22 +4,15 @@ metadata:
   name: cert-manager-cainjector
   labels:
     app: cainjector
-    app.kubernetes.io/name: cainjector
-    app.kubernetes.io/instance:  cert-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: cainjector
-      app.kubernetes.io/name: cainjector
-      app.kubernetes.io/instance:  cert-manager
-
   template:
     metadata:
       labels:
         app: cainjector
-        app.kubernetes.io/name: cainjector
-        app.kubernetes.io/instance:  cert-manager
       annotations:
     spec:
       serviceAccountName: cert-manager-cainjector
