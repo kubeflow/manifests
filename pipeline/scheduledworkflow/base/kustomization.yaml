@@ -4,6 +4,7 @@ namespace: kubeflow
 commonLabels:
   app: ml-pipeline-scheduledworkflow
 resources:
+- cluster-role.yaml
 - crd.yaml
 - deployment.yaml
 - role-binding.yaml

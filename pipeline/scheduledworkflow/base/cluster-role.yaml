@@ -1,46 +1,15 @@
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRole
-metadata:
-  name: controller-role
-rules:
-- apiGroups:
-  - '*'
-  resources:
-  - deployments
-  - services
-  verbs:
-  - create
-  - get
-  - list
-  - watch
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - kubeflow.org
-  resources:
-  - viewers
-  verbs:
-  - create
-  - get
-  - list
-  - watch
-  - update
-  - patch
-  - delete
-
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kubeflow-pipeline-viewers-admin
+  name: kubeflow-scheduledworkflows-admin
   labels:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
 aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
-      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-pipeline-viewers-admin: "true"
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-scheduledworkflows-admin: "true"
 rules: null
 
 ---
@@ -48,15 +17,15 @@ rules: null
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kubeflow-pipeline-viewers-edit
+  name: kubeflow-scheduledworkflows-edit
   labels:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
-    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-pipeline-viewers-admin: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-scheduledworkflows-admin: "true"
 rules:
 - apiGroups:
   - kubeflow.org
   resources:
-  - viewers
+  - scheduledworkflows
   verbs:
   - get
   - list
@@ -72,14 +41,14 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kubeflow-pipeline-viewers-view
+  name: kubeflow-scheduledworkflows-view
   labels:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
 rules:
 - apiGroups:
   - kubeflow.org
   resources:
-  - viewers
+  - scheduledworkflows
   verbs:
   - get
   - list
