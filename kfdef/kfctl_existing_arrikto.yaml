@@ -21,11 +21,6 @@ spec:
         path: application/application
     name: application
   - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: metacontroller
-    name: metacontroller
-  - kustomizeConfig:
       overlays:
       - istio
       repoRef:
