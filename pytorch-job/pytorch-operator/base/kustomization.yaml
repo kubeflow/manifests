@@ -4,7 +4,6 @@ namespace: kubeflow
 resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml
-- config-map.yaml
 - deployment.yaml
 - service-account.yaml
 - service.yaml
