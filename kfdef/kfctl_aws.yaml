@@ -123,11 +123,6 @@ spec:
           path: jupyter/jupyter-web-app
       name: jupyter-web-app
     - kustomizeConfig:
-        overlays:
-        - application
-        parameters:
-        - name: generateName
-          value: katib-crds-
         repoRef:
           name: manifests
           path: katib/katib-crds
