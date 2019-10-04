@@ -74,19 +74,6 @@ spec:
         path: jupyter/jupyter-web-app
     name: jupyter-web-app
   - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: katib/katib-crds
-    name: katib-crds
-  - kustomizeConfig:
-      overlays:
-      - application
-      - istio
-      repoRef:
-        name: manifests
-        path: katib/katib-controller
-    name: katib-controller
-  - kustomizeConfig:
       overlays:
       - istio
       repoRef:
@@ -168,6 +155,19 @@ spec:
         name: manifests
         path: tf-training/tf-job-operator
     name: tf-job-operator
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: katib/katib-crds
+    name: katib-crds
+  - kustomizeConfig:
+      overlays:
+      - application
+      - istio
+      repoRef:
+        name: manifests
+        path: katib/katib-controller
+    name: katib-controller
   - kustomizeConfig:
       repoRef:
         name: manifests
