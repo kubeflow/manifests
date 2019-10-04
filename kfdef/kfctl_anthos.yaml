@@ -13,6 +13,11 @@ spec:
     # An example uri that uses a PR version of the manifest repo.
     # uri: https://github.com/kubeflow/manifests/archive/pull/PR_NUMBER/head.tar.gz
   applications:
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: application/application-crds
+    name: application-crds
   # This component is the istio resources for Kubeflow (e.g. gateway), not about installing istio.
   - kustomizeConfig:
       parameters:
@@ -25,13 +30,11 @@ spec:
         path: istio/istio
     name: istio
   - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: application/application-crds
-    name: application-crds
-  - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: kubeflow-
       repoRef:
         name: manifests
         path: application/application
@@ -69,6 +72,9 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: generateName
+        value: jupyter-web-app-
       repoRef:
         name: manifests
         path: jupyter/jupyter-web-app
@@ -84,6 +90,9 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: generateName
+        value: notebook-controller-
       repoRef:
         name: manifests
         path: jupyter/notebook-controller
@@ -228,6 +237,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: seldon-core-operator-
       repoRef:
         name: manifests
         path: seldon/seldon-core-operator

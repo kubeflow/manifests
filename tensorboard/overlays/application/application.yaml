@@ -1,0 +1,23 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: $(generateName)
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
+  componentKinds:
+  - group: apps
+    kind: Deployment
+  - group: core
+    kind: Service
+  descriptor:
+    type: "tensorboard"
+    version: "v1beta1"
+    description: "tensorboard is the visualization toolkit of tensorflow"
+    keywords:
+    - "tensorboard"
+    - "tensorflow"
+    links:
+    - description: About
+      url: "https://www.tensorflow.org/tensorboard"

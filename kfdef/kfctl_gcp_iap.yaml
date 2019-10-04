@@ -14,6 +14,11 @@ spec:
   appdir: /tmp/myapp2
   applications:
   - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: application/application-crds
+    name: application-crds
+  - kustomizeConfig:
       parameters:
       - name: namespace
         value: istio-system
@@ -38,13 +43,11 @@ spec:
         path: istio/istio
     name: istio
   - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: application/application-crds
-    name: application-crds
-  - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: kubeflow-
       repoRef:
         name: manifests
         path: application/application
@@ -91,6 +94,8 @@ spec:
       - istio
       - application
       parameters:
+      - name: generateName
+        value: jupyter-webapp-
       - name: userid-header
         value: X-Goog-Authenticated-User-Email
       - name: userid-prefix
@@ -111,6 +116,8 @@ spec:
       - istio
       - application
       parameters:
+      - name: generateName
+        value: notebook-controller-
       - name: injectGcpCredentials
         value: "true"
       repoRef:
@@ -125,6 +132,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: pytorch-operator-
       repoRef:
         name: manifests
         path: pytorch-job/pytorch-operator
@@ -182,6 +192,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: tf-job-operator-
       repoRef:
         name: manifests
         path: tf-training/tf-job-operator
@@ -305,6 +318,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: seldon-core-operator-
       repoRef:
         name: manifests
         path: seldon/seldon-core-operator

@@ -1,0 +1,27 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: $(generateName)
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
+  componentKinds:
+  - group: networking.istio.io
+    kind: Gateway
+  - group: networking.istio.io
+    kind: VirtualService
+  - group: networking.istio.io
+    kind: ServiceEntry
+  - group: rbac.istio.io
+    kind: ClusterRbacConfig
+  descriptor:
+    type: "istio"
+    version: "v1beta1"
+    description: "istio"
+    keywords:
+    - "kubeflow"
+    - "istio"
+    links:
+    - description: About
+      url: "https://istio.io"

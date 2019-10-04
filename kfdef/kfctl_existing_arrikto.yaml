@@ -16,6 +16,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: kubeflow-
       repoRef:
         name: manifests
         path: application/application
@@ -51,12 +54,14 @@ spec:
         path: admission-webhook/bootstrap
     name: bootstrap
   - kustomizeConfig:
-      parameters:
-      - name: userid-header
-        value: kubeflow-userid
       overlays:
       - istio
       - application
+      parameters:
+      - name: generateName
+        value: jupyter-webapp-
+      - name: userid-header
+        value: kubeflow-userid
       repoRef:
         name: manifests
         path: jupyter/jupyter-web-app
@@ -72,6 +77,9 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: generateName
+        value: notebook-controller-
       repoRef:
         name: manifests
         path: jupyter/notebook-controller
@@ -113,6 +121,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: tf-job-operator-
       repoRef:
         name: manifests
         path: tf-training/tf-job-operator
@@ -191,6 +202,9 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: generateName
+        value: seldon-core-operator-
       repoRef:
         name: manifests
         path: seldon/seldon-core-operator

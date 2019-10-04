@@ -1,16 +1,11 @@
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: spark-operator
+  name: $(generateName)
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: sparkoperator
-      app.kubernetes.io/instance: spark-operator
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: sppark-operator
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6 
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: core
     kind: Service
