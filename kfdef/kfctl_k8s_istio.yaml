@@ -176,8 +176,6 @@ spec:
         path: tf-training/tf-job-crds
     name: tf-job-crds
   - kustomizeConfig:
-      overlays:
-      - istio
       repoRef:
         name: manifests
         path: tf-training/tf-job-operator
