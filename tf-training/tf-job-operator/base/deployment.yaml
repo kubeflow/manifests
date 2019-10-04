@@ -1,26 +1,3 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: tf-job-dashboard
-spec:
-  template:
-    metadata:
-      labels:
-        name: tf-job-dashboard
-    spec:
-      containers:
-      - command:
-        - /opt/tensorflow_k8s/dashboard/backend
-        env:
-        - name: KUBEFLOW_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        image: gcr.io/kubeflow-images-public/tf_operator:kubeflow-tf-operator-postsubmit-v1-5adee6f-6109-a25c
-        name: tf-job-dashboard
-        ports:
-        - containerPort: 8080
-      serviceAccountName: tf-job-dashboard
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -50,11 +27,4 @@ spec:
               fieldPath: metadata.name
         image: gcr.io/kubeflow-images-public/tf_operator:kubeflow-tf-operator-postsubmit-v1-5adee6f-6109-a25c
         name: tf-job-operator
-        volumeMounts:
-        - mountPath: /etc/config
-          name: config-volume
       serviceAccountName: tf-job-operator
-      volumes:
-      - configMap:
-          name: tf-job-operator-config
-        name: config-volume
