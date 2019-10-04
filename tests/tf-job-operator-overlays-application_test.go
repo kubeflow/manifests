@@ -27,7 +27,7 @@ spec:
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: tfjob
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
+      app.kubernetes.io/version: v0.6 
   componentKinds:
   - group: core
     kind: Service
@@ -66,7 +66,7 @@ bases:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: tf-job-operator
+  app.kubernetes.io/name: tf-job-operator 
   app.kubernetes.io/instance: tf-job-operator
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: tfjob
@@ -188,17 +188,6 @@ rules:
   - get
   - list
   - watch
-`)
-	th.writeF("/manifests/tf-training/tf-job-operator/base/config-map.yaml", `
-apiVersion: v1
-data:
-  controller_config_file.yaml: |-
-    {
-        "grpcServerFilePath": "/opt/mlkube/grpc_tensorflow_server/grpc_tensorflow_server.py"
-    }
-kind: ConfigMap
-metadata:
-  name: tf-job-operator-config
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/deployment.yaml", `
 ---
