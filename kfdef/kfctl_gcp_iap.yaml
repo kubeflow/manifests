@@ -123,6 +123,9 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: injectGcpCredentials
+        value: "true"
       repoRef:
         name: manifests
         path: jupyter/notebook-controller

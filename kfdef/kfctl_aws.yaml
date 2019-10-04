@@ -110,6 +110,7 @@ spec:
         repoRef:
           name: manifests
           path: jupyter/notebook-controller
+      name: notebook-controller
     - kustomizeConfig:
         repoRef:
           name: manifests
