@@ -34,8 +34,6 @@ spec:
   - group: apps
     kind: Deployment
   - group: core
-    kind: ConfigMap
-  - group: core
     kind: ServiceAccount
   - group: kubeflow.org
     kind: TFJob
@@ -81,20 +79,6 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    app: tf-job-dashboard
-  name: tf-job-dashboard
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: tf-job-dashboard
-subjects:
-- kind: ServiceAccount
-  name: tf-job-dashboard
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRoleBinding
-metadata:
-  labels:
     app: tf-job-operator
   name: tf-job-operator
 roleRef:
@@ -111,65 +95,10 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   labels:
-    app: tf-job-dashboard
-  name: tf-job-dashboard
-rules:
-- apiGroups:
-  - tensorflow.org
-  - kubeflow.org
-  resources:
-  - tfjobs
-  - tfjobs/status
-  verbs:
-  - '*'
-- apiGroups:
-  - apiextensions.k8s.io
-  resources:
-  - customresourcedefinitions
-  verbs:
-  - '*'
-- apiGroups:
-  - storage.k8s.io
-  resources:
-  - storageclasses
-  verbs:
-  - '*'
-- apiGroups:
-  - batch
-  resources:
-  - jobs
-  verbs:
-  - '*'
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  - pods
-  - services
-  - endpoints
-  - persistentvolumeclaims
-  - events
-  - pods/log
-  - namespaces
-  verbs:
-  - '*'
-- apiGroups:
-  - apps
-  - extensions
-  resources:
-  - deployments
-  verbs:
-  - '*'
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRole
-metadata:
-  labels:
     app: tf-job-operator
   name: tf-job-operator
 rules:
 - apiGroups:
-  - tensorflow.org
   - kubeflow.org
   resources:
   - tfjobs
@@ -183,71 +112,17 @@ rules:
   verbs:
   - '*'
 - apiGroups:
-  - storage.k8s.io
-  resources:
-  - storageclasses
-  verbs:
-  - '*'
-- apiGroups:
-  - batch
-  resources:
-  - jobs
-  verbs:
-  - '*'
-- apiGroups:
   - ""
   resources:
   - configmaps
   - pods
   - services
   - endpoints
-  - persistentvolumeclaims
   - events
   verbs:
   - '*'
-- apiGroups:
-  - apps
-  - extensions
-  resources:
-  - deployments
-  verbs:
-  - '*'
-`)
-	th.writeF("/manifests/tf-training/tf-job-operator/base/config-map.yaml", `
-apiVersion: v1
-data:
-  controller_config_file.yaml: |-
-    {
-        "grpcServerFilePath": "/opt/mlkube/grpc_tensorflow_server/grpc_tensorflow_server.py"
-    }
-kind: ConfigMap
-metadata:
-  name: tf-job-operator-config
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/deployment.yaml", `
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: tf-job-dashboard
-spec:
-  template:
-    metadata:
-      labels:
-        name: tf-job-dashboard
-    spec:
-      containers:
-      - command:
-        - /opt/tensorflow_k8s/dashboard/backend
-        env:
-        - name: KUBEFLOW_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        image: gcr.io/kubeflow-images-public/tf_operator:kubeflow-tf-operator-postsubmit-v1-5adee6f-6109-a25c
-        name: tf-job-dashboard
-        ports:
-        - containerPort: 8080
-      serviceAccountName: tf-job-dashboard
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -277,14 +152,7 @@ spec:
               fieldPath: metadata.name
         image: gcr.io/kubeflow-images-public/tf_operator:kubeflow-tf-operator-postsubmit-v1-5adee6f-6109-a25c
         name: tf-job-operator
-        volumeMounts:
-        - mountPath: /etc/config
-          name: config-volume
       serviceAccountName: tf-job-operator
-      volumes:
-      - configMap:
-          name: tf-job-operator-config
-        name: config-volume
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/service-account.yaml", `
 ---
@@ -303,26 +171,6 @@ metadata:
   name: tf-job-operator
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/service.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name: tfjobs-ui-mapping
-      prefix: /tfjobs/
-      rewrite: /tfjobs/
-      service: tf-job-dashboard.$(namespace)
-  name: tf-job-dashboard
-spec:
-  ports:
-  - port: 80
-    targetPort: 8080
-  selector:
-    name: tf-job-dashboard
-  type: ClusterIP
 ---
 apiVersion: v1
 kind: Service
@@ -343,14 +191,8 @@ spec:
     name: tf-job-operator
   type: ClusterIP
 `)
-	th.writeF("/manifests/tf-training/tf-job-operator/base/params.yaml", `
-varReference:
-- path: metadata/annotations/getambassador.io\/config
-  kind: Service
-`)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/params.env", `
 namespace=
-clusterDomain=cluster.local
 `)
 	th.writeK("/manifests/tf-training/tf-job-operator/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -359,7 +201,6 @@ namespace: kubeflow
 resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml
-- config-map.yaml
 - deployment.yaml
 - service-account.yaml
 - service.yaml
@@ -369,26 +210,6 @@ images:
   - name: gcr.io/kubeflow-images-public/tf_operator
     newName: gcr.io/kubeflow-images-public/tf_operator
     newTag: kubeflow-tf-operator-postsubmit-v1-5adee6f-6109-a25c
-configMapGenerator:
-- name: parameters
-  env: params.env
-vars:
-- name: namespace
-  objref:
-    kind: Service
-    name: tf-job-dashboard
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.namespace
-- name: clusterDomain
-  objref:
-    kind: ConfigMap
-    name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.clusterDomain
-configurations:
-- params.yaml
 `)
 }
 

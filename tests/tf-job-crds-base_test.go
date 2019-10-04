@@ -58,20 +58,17 @@ spec:
                     replicas:
                       minimum: 1
                       type: integer
-  version: v1
   versions:
   - name: v1
     served: true
     storage: true
-  - name: v1beta2
-    served: true
-    storage: false
 `)
 	th.writeK("/manifests/tf-training/tf-job-crds/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- crd.yaml`)
+- crd.yaml
+`)
 }
 
 func TestTfJobCrdsBase(t *testing.T) {
