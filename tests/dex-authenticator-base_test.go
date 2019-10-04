@@ -272,10 +272,6 @@ vars:
     fieldpath: data.client_listen_addr
 configurations:
 - params.yaml
-images:
-- name: mintel/dex-k8s-authenticator
-  newName: mintel/dex-k8s-authenticator
-  newTag: 1.2.0
 `)
 }
 

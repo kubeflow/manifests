@@ -173,10 +173,6 @@ vars:
     fieldpath: data.clusterDomain
 configurations:
 - params.yaml
-images:
-- name: tensorflow/tensorflow
-  newName: tensorflow/tensorflow
-  newTag: 1.8.0
 `)
 }
 
