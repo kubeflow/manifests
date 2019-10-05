@@ -2,6 +2,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+#  labels:
+#    app.kubernetes.io/component: controller
+#    app.kubernetes.io/name: tekton-pipelines
   name: tekton-pipelines-controller
 spec:
   replicas: 1
@@ -14,6 +17,8 @@ spec:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
       labels:
         app: tekton-pipelines-controller
+#        app.kubernetes.io/component: controller
+#        app.kubernetes.io/name: tekton-pipelines
     spec:
       containers:
       - args:
@@ -21,24 +26,37 @@ spec:
         - -stderrthreshold
         - INFO
         - -kubeconfig-writer-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/kubeconfigwriter@sha256:115acf8aa4d79be49a481f6d520ff66839d57656c840588052097956224fb3ff
+        - $(registry)/$(kubeconfigwriter)
         - -creds-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/creds-init@sha256:c0235af1723068e6806def1d998436cde5d93ff1c38a94b9c92410f5f01bcb26
+        - $(registry)/$(creds-init)
         - -git-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init@sha256:2e5217266f515f91be333d5f8abcdc98bb1a7a4de7b339734e10fd7b972eeb5f
+        - $(registry)/$(git-init)
         - -nop-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/nop@sha256:c903f9e4d60220e7cf7beab4b94e4117abcc048ab7404da3a2a4b417891741cb
+        - $(registry)/$(nop)
         - -bash-noop-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/bash@sha256:157b21c4b29a4f2aa96d52add55781f211cc8101df36657b82089119b2fc4004
+        - $(registry)/$(bash)
         - -gsutil-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/gsutil@sha256:8a86ac637e78885d2945025b43da950a0058f36b3dc62c2bc623963ace19ca1b
+        - $(registry)/$(gsutil)
         - -entrypoint-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/entrypoint@sha256:a424ab773b89e13e5e03ff90962db98424621b47c1bb543ec270783cfd859faf
+        - $(registry)/$(entrypoint)
         - -imagedigest-exporter-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/imagedigestexporter@sha256:aae9c44ed56f0d30530a2349f255c4977a6d8d4a497dfdca626b51f35bf229b4
+        - $(registry)/$(imagedigestexporter)
         - -pr-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/pullrequest-init@sha256:da5dfe24ae824e5e737cee57b2a248eee15e128b0cca44f9466bab902fa8bea0
-        image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller@sha256:4f10413791df045f29f882fab817219e54123b527d6230a4991e2558f3d659f9
+        - $(registry)/$(pullrequest-init)
+        - -build-gcs-fetcher-image
+        - $(registry)/$(gcs-fetcher)
+        env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: METRICS_DOMAIN
+          value: tekton.dev/pipeline
+        image: $(registry)/$(controller)
         name: tekton-pipelines-controller
         volumeMounts:
         - mountPath: /etc/config-logging
@@ -52,6 +70,9 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+#  labels:
+#    app.kubernetes.io/component: webhook-controller
+#    app.kubernetes.io/name: tekton-pipelines
   name: tekton-pipelines-webhook
 spec:
   replicas: 1
@@ -64,9 +85,16 @@ spec:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
       labels:
         app: tekton-pipelines-webhook
+#        app.kubernetes.io/component: webhook-controller
+#        app.kubernetes.io/name: tekton-pipelines
     spec:
       containers:
-      - image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook@sha256:496e36b8723a668ac3531acc26512c123342da7827c10386b571aa975d6a47e7
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: $(registry)/$(webhook)
         name: webhook
         volumeMounts:
         - mountPath: /etc/config-logging
@@ -76,3 +104,4 @@ spec:
       - configMap:
           name: config-logging
         name: config-logging
+---
