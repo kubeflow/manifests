@@ -14,7 +14,7 @@ import (
 )
 
 func writeApplicationCrdsBase(th *KustTestHarness) {
-	th.writeF("/manifests/application/application-crds/base/crd.yaml", `
+	th.writeF("/manifests/application/application/application-crds/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -255,7 +255,7 @@ status:
   conditions: []
   storedVersions: []
 `)
-	th.writeK("/manifests/application/application-crds/base", `
+	th.writeK("/manifests/application/application/application-crds/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -264,7 +264,7 @@ resources:
 }
 
 func TestApplicationCrdsBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/application/application-crds/base")
+	th := NewKustTestHarness(t, "/manifests/application/application/application-crds/base")
 	writeApplicationCrdsBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
@@ -274,7 +274,7 @@ func TestApplicationCrdsBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../application/application-crds/base"
+	targetPath := "../application/application/application-crds/base"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)

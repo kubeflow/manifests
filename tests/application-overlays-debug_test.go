@@ -14,7 +14,7 @@ import (
 )
 
 func writeApplicationOverlaysDebug(th *KustTestHarness) {
-	th.writeF("/manifests/application/application/overlays/debug/stateful-set.yaml", `
+	th.writeF("/manifests/application/application/application/overlays/debug/stateful-set.yaml", `
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -38,15 +38,19 @@ spec:
         securityContext:
           privileged: true
 `)
-	th.writeK("/manifests/application/application/overlays/debug", `
+	th.writeK("/manifests/application/application/application/overlays/debug", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
 patchesStrategicMerge:
 - stateful-set.yaml
+images:
+- name: gcr.io/$(project)/application-controller
+  newName: gcr.io/$(project)/application-controller
+  newTag: latest
 `)
-	th.writeF("/manifests/application/application/base/cluster-role.yaml", `
+	th.writeF("/manifests/application/application/application/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -69,7 +73,7 @@ rules:
   verbs:
   - '*'
 `)
-	th.writeF("/manifests/application/application/base/cluster-role-binding.yaml", `
+	th.writeF("/manifests/application/application/application/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -82,13 +86,13 @@ subjects:
 - kind: ServiceAccount
   name: service-account
 `)
-	th.writeF("/manifests/application/application/base/service-account.yaml", `
+	th.writeF("/manifests/application/application/application/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: service-account
 `)
-	th.writeF("/manifests/application/application/base/service.yaml", `
+	th.writeF("/manifests/application/application/application/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -97,7 +101,7 @@ spec:
   ports:
   - port: 443
 `)
-	th.writeF("/manifests/application/application/base/stateful-set.yaml", `
+	th.writeF("/manifests/application/application/application/base/stateful-set.yaml", `
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -124,15 +128,15 @@ spec:
       serviceAccountName: service-account
   volumeClaimTemplates: []
 `)
-	th.writeF("/manifests/application/application/base/params.yaml", `
+	th.writeF("/manifests/application/application/application/base/params.yaml", `
 varReference:
 - path: spec/template/spec/containers/image
   kind: StatefulSet
 `)
-	th.writeF("/manifests/application/application/base/params.env", `
+	th.writeF("/manifests/application/application/application/base/params.env", `
 project=
 `)
-	th.writeK("/manifests/application/application/base", `
+	th.writeK("/manifests/application/application/application/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -149,9 +153,9 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-  - name: gcr.io/kubeflow-images-public/kubernetes-sigs/application
-    newName: gcr.io/kubeflow-images-public/kubernetes-sigs/application
-    newTag: 1.0-beta
+- name: gcr.io/kubeflow-images-public/kubernetes-sigs/application
+  newName: gcr.io/kubeflow-images-public/kubernetes-sigs/application
+  newTag: 1.0-beta
 vars:
 - name: project
   objref:
@@ -166,7 +170,7 @@ configurations:
 }
 
 func TestApplicationOverlaysDebug(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/application/application/overlays/debug")
+	th := NewKustTestHarness(t, "/manifests/application/application/application/overlays/debug")
 	writeApplicationOverlaysDebug(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
@@ -176,7 +180,7 @@ func TestApplicationOverlaysDebug(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../application/application/overlays/debug"
+	targetPath := "../application/application/application/overlays/debug"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)

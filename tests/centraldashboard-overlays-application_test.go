@@ -18,16 +18,11 @@ func writeCentraldashboardOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: centraldashboard
+  name: $(generateName)
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: 
-      app.kubernetes.io/instance: centraldashboard
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: centraldashboard
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
+      app.kubernetes.io/instance: $(generateName)
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -68,6 +63,22 @@ spec:
   addOwnerRef: true
 
 `)
+	th.writeF("/manifests/common/centraldashboard/overlays/application/params.yaml", `
+varReference:
+- path: metadata/name
+  kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Application
+- path: spec/selector/app.kubernetes.io\/instance
+  kind: Service
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Deployment
+- path: spec/template/metadata/labels/app.kubernetes.io\/instance
+  kind: Deployment
+`)
+	th.writeF("/manifests/common/centraldashboard/overlays/application/params.env", `
+generateName=
+`)
 	th.writeK("/manifests/common/centraldashboard/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -75,9 +86,22 @@ bases:
 - ../../base
 resources:
 - application.yaml
+configMapGenerator:
+- name: centraldashboard-app-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: centraldashboard-app-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
 commonLabels:
   app.kubernetes.io/name: centraldashboard
-  app.kubernetes.io/instance: centraldashboard
+  app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: centraldashboard
   app.kubernetes.io/part-of: kubeflow
@@ -235,11 +259,13 @@ varReference:
 - path: spec/template/spec/containers/0/env/0/value
   kind: Deployment
 - path: spec/template/spec/containers/0/env/1/value
-  kind: Deployment`)
+  kind: Deployment
+`)
 	th.writeF("/manifests/common/centraldashboard/base/params.env", `
 clusterDomain=cluster.local
 userid-header=
-userid-prefix=`)
+userid-prefix=
+`)
 	th.writeK("/manifests/common/centraldashboard/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization

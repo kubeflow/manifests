@@ -18,8 +18,11 @@ func writeKfservingInstallOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: "kfserving"
+  name: $(generateName)
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: $(generateName)
   type: "kfserving"
   componentKinds:
     - group: apps/v1
@@ -48,6 +51,22 @@ spec:
     - description: About
       url: "https://github.com/kubeflow/kfserving"
 `)
+	th.writeF("/manifests/kfserving/kfserving-install/overlays/application/params.yaml", `
+varReference:
+- path: metadata/name
+  kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Application
+- path: spec/selector/app.kubernetes.io\/instance
+  kind: Service
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: StatefulSet
+- path: spec/template/metadata/labels/app.kubernetes.io\/instance
+  kind: StatefulSet
+`)
+	th.writeF("/manifests/kfserving/kfserving-install/overlays/application/params.env", `
+generateName=
+`)
 	th.writeK("/manifests/kfserving/kfserving-install/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -55,9 +74,23 @@ bases:
 - ../../base
 resources:
 - application.yaml
+configMapGenerator:
+- name: kfserving-parameters
+  behavior: merge
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: kfserving-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
 commonLabels:
-  app.kubernetes.io/name: kfserving  
-  app.kubernetes.io/instance: kfserving
+  app.kubernetes.io/name: kfserving
+  app.kubernetes.io/instance: $(generateName)
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: serving
   app.kubernetes.io/part-of: kubeflow
@@ -236,6 +269,7 @@ rules:
   - update
   - patch
   - delete
+
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
