@@ -27,7 +27,7 @@ spec:
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: tfjob
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6 
+      app.kubernetes.io/version: v0.6
   componentKinds:
   - group: core
     kind: Service
@@ -66,7 +66,7 @@ bases:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: tf-job-operator 
+  app.kubernetes.io/name: tf-job-operator
   app.kubernetes.io/instance: tf-job-operator
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: tfjob
@@ -121,6 +121,84 @@ rules:
   - events
   verbs:
   - '*'
+- apiGroups:
+  - apps
+  - extensions
+  resources:
+  - deployments
+  verbs:
+  - '*'
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-tfjobs-admin
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-tfjobs-admin: "true"
+rules: null
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-tfjobs-edit
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-tfjobs-admin: "true"
+rules:
+- apiGroups:
+  - tensorflow.org
+  - kubeflow.org
+  resources:
+  - tfjobs
+  - tfjobs/status
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-tfjobs-view
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+rules:
+- apiGroups:
+  - tensorflow.org
+  - kubeflow.org
+  resources:
+  - tfjobs
+  - tfjobs/status
+  verbs:
+  - get
+  - list
+  - watch
+`)
+	th.writeF("/manifests/tf-training/tf-job-operator/base/config-map.yaml", `
+apiVersion: v1
+data:
+  controller_config_file.yaml: |-
+    {
+        "grpcServerFilePath": "/opt/mlkube/grpc_tensorflow_server/grpc_tensorflow_server.py"
+    }
+kind: ConfigMap
+metadata:
+  name: tf-job-operator-config
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/deployment.yaml", `
 ---
