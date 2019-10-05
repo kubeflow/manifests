@@ -37,6 +37,29 @@ spec:
           number: 80
     timeout: 300s
 `)
+	th.writeF("/manifests/metadata/overlays/istio/virtual-service-metadata-grpc.yaml", `
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: metadata-grpc
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /ml_metadata
+    rewrite:
+      uri: /ml_metadata
+    route:
+    - destination:
+        host: $(metadata-envoy-service).$(ui-namespace).svc.$(ui-clusterDomain)
+        port:
+          number: 9090
+    timeout: 300s
+`)
 	th.writeF("/manifests/metadata/overlays/istio/params.yaml", `
 varReference:
 - path: spec/http/route/destination/host
@@ -49,6 +72,7 @@ bases:
 - ../../base
 resources:
 - virtual-service.yaml
+- virtual-service-metadata-grpc.yaml
 configurations:
 - params.yaml
 `)
