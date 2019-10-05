@@ -13,52 +13,54 @@ import (
 	"testing"
 )
 
-func writeTfJobOperatorOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/tf-training/tf-job-operator/overlays/application/application.yaml", `
+func writePytorchOperatorOverlaysApplication(th *KustTestHarness) {
+	th.writeF("/manifests/pytorch-job/pytorch-operator/overlays/application/application.yaml", `
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: tf-job-operator
+  name: pytorch-operator
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: tf-job-operator
-      app.kubernetes.io/instance: tf-job-operator
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: tfjob
+      app.kubernetes.io/name: pytorch-operator
+      app.kubernetes.io/instance: pytorch-operator
+      app.kubernetes.io/version: v0.6.0
+      app.kubernetes.io/component: pytorch
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6 
+      app.kubernetes.io/managed-by: kfctl
   componentKinds:
   - group: core
     kind: Service
   - group: apps
     kind: Deployment
   - group: core
+    kind: ConfigMap
+  - group: core
     kind: ServiceAccount
   - group: kubeflow.org
-    kind: TFJob
+    kind: PyTorchJob
   descriptor:
-    type: "tf-job-operator"
+    type: "pytorch-operator"
     version: "v1"
-    description: "Tf-operator allows users to create and manage the \"TFJob\" custom resource."
+    description: "Pytorch-operator allows users to create and manage the \"PyTorchJob\" custom resource."
     maintainers:
-    - name: Richard Liu
-      email: ricliu@google.com
+    - name: Johnu George
+      email: johnugeo@cisco.com
     owners:
-    - name: Richard Liu
-      email: ricliu@google.com
+    - name: Johnu George
+      email: johnugeo@cisco.com
     keywords:
-    - "tfjob"
-    - "tf-operator"
-    - "tf-training"
+    - "pytorchjob"
+    - "pytorch-operator"
+    - "pytorch-training"
     links:
     - description: About
-      url: "https://github.com/kubeflow/tf-operator"
+      url: "https://github.com/kubeflow/pytorch-operator"
     - description: Docs
-      url: "https://www.kubeflow.org/docs/reference/tfjob/v1/tensorflow/"
+      url: "https://www.kubeflow.org/docs/reference/pytorchjob/v1/pytorch/"
   addOwnerRef: true
 `)
-	th.writeK("/manifests/tf-training/tf-job-operator/overlays/application", `
+	th.writeK("/manifests/pytorch-job/pytorch-operator/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -66,43 +68,41 @@ bases:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: tf-job-operator 
-  app.kubernetes.io/instance: tf-job-operator
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: tfjob
+  app.kubernetes.io/name: pytorch-operator
+  app.kubernetes.io/instance: pytorch-operator
+  app.kubernetes.io/version: v0.6.0
+  app.kubernetes.io/component: pytorch
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
+  app.kubernetes.io/managed-by: kfctl
 `)
-	th.writeF("/manifests/tf-training/tf-job-operator/base/cluster-role-binding.yaml", `
----
+	th.writeF("/manifests/pytorch-job/pytorch-operator/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    app: tf-job-operator
-  name: tf-job-operator
+    app: pytorch-operator
+  name: pytorch-operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: tf-job-operator
+  name: pytorch-operator
 subjects:
 - kind: ServiceAccount
-  name: tf-job-operator
+  name: pytorch-operator
 `)
-	th.writeF("/manifests/tf-training/tf-job-operator/base/cluster-role.yaml", `
----
+	th.writeF("/manifests/pytorch-job/pytorch-operator/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   labels:
-    app: tf-job-operator
-  name: tf-job-operator
+    app: pytorch-operator
+  name: pytorch-operator
 rules:
 - apiGroups:
   - kubeflow.org
   resources:
-  - tfjobs
-  - tfjobs/status
+  - pytorchjobs
+  - pytorchjobs/status
   verbs:
   - '*'
 - apiGroups:
@@ -120,26 +120,18 @@ rules:
   - events
   verbs:
   - '*'
-- apiGroups:
-  - apps
-  - extensions
-  resources:
-  - deployments
-  verbs:
-  - '*'
-
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kubeflow-tfjobs-admin
+  name: kubeflow-pytorchjobs-admin
   labels:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
 aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
-      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-tfjobs-admin: "true"
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-pytorchjobs-admin: "true"
 rules: null
 
 ---
@@ -147,16 +139,16 @@ rules: null
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kubeflow-tfjobs-edit
+  name: kubeflow-pytorchjobs-edit
   labels:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
-    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-tfjobs-admin: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-pytorchjobs-admin: "true"
 rules:
 - apiGroups:
   - kubeflow.org
   resources:
-  - tfjobs
-  - tfjobs/status
+  - pytorchjobs
+  - pytorchjobs/status
   verbs:
   - get
   - list
@@ -172,36 +164,38 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kubeflow-tfjobs-view
+  name: kubeflow-pytorchjobs-view
   labels:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
 rules:
 - apiGroups:
   - kubeflow.org
   resources:
-  - tfjobs
-  - tfjobs/status
+  - pytorchjobs
+  - pytorchjobs/status
   verbs:
   - get
   - list
   - watch
 `)
-	th.writeF("/manifests/tf-training/tf-job-operator/base/deployment.yaml", `
----
+	th.writeF("/manifests/pytorch-job/pytorch-operator/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tf-job-operator
+  name: pytorch-operator
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      name: pytorch-operator
   template:
     metadata:
       labels:
-        name: tf-job-operator
+        name: pytorch-operator
     spec:
       containers:
       - command:
-        - /opt/kubeflow/tf-operator.v1
+        - /pytorch-operator.v1
         - --alsologtostderr
         - -v=1
         - --monitoring-port=8443
@@ -214,51 +208,45 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: gcr.io/kubeflow-images-public/tf_operator:kubeflow-tf-operator-postsubmit-v1-5adee6f-6109-a25c
-        name: tf-job-operator
-      serviceAccountName: tf-job-operator
+        image: gcr.io/kubeflow-images-public/pytorch-operator:v0.6.0-18-g5e36a57
+        name: pytorch-operator
+      serviceAccountName: pytorch-operator
 `)
-	th.writeF("/manifests/tf-training/tf-job-operator/base/service-account.yaml", `
----
+	th.writeF("/manifests/pytorch-job/pytorch-operator/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
-    app: tf-job-dashboard
-  name: tf-job-dashboard
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  labels:
-    app: tf-job-operator
-  name: tf-job-operator
+    app: pytorch-operator
+  name: pytorch-operator
 `)
-	th.writeF("/manifests/tf-training/tf-job-operator/base/service.yaml", `
----
+	th.writeF("/manifests/pytorch-job/pytorch-operator/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
   annotations:
     prometheus.io/path: /metrics
-    prometheus.io/scrape: "true"
     prometheus.io/port: "8443"
+    prometheus.io/scrape: "true"
   labels:
-    app: tf-job-operator
-  name: tf-job-operator
+    app: pytorch-operator
+  name: pytorch-operator
 spec:
   ports:
   - name: monitoring-port
     port: 8443
     targetPort: 8443
   selector:
-    name: tf-job-operator
+    name: pytorch-operator
   type: ClusterIP
+
 `)
-	th.writeF("/manifests/tf-training/tf-job-operator/base/params.env", `
-namespace=
+	th.writeF("/manifests/pytorch-job/pytorch-operator/base/params.env", `
+pytorchDefaultImage=null
+deploymentScope=cluster
+deploymentNamespace=null
 `)
-	th.writeK("/manifests/tf-training/tf-job-operator/base", `
+	th.writeK("/manifests/pytorch-job/pytorch-operator/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
@@ -269,17 +257,17 @@ resources:
 - service-account.yaml
 - service.yaml
 commonLabels:
-  kustomize.component: tf-job-operator
+  kustomize.component: pytorch-operator
 images:
-  - name: gcr.io/kubeflow-images-public/tf_operator
-    newName: gcr.io/kubeflow-images-public/tf_operator
-    newTag: kubeflow-tf-operator-postsubmit-v1-5adee6f-6109-a25c
+  - name: gcr.io/kubeflow-images-public/pytorch-operator
+    newName: gcr.io/kubeflow-images-public/pytorch-operator
+    newTag: v0.6.0-18-g5e36a57
 `)
 }
 
-func TestTfJobOperatorOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/tf-training/tf-job-operator/overlays/application")
-	writeTfJobOperatorOverlaysApplication(th)
+func TestPytorchOperatorOverlaysApplication(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/pytorch-job/pytorch-operator/overlays/application")
+	writePytorchOperatorOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -288,7 +276,7 @@ func TestTfJobOperatorOverlaysApplication(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../tf-training/tf-job-operator/overlays/application"
+	targetPath := "../pytorch-job/pytorch-operator/overlays/application"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
