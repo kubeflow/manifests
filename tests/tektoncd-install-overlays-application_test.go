@@ -13,7 +13,75 @@ import (
 	"testing"
 )
 
-func writeTektoncdInstallBase(th *KustTestHarness) {
+func writeTektoncdInstallOverlaysApplication(th *KustTestHarness) {
+	th.writeF("/manifests/tektoncd/tektoncd-install/overlays/application/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: $(generateName)
+spec:
+  componentKinds:
+    - group: app.k8s.io
+      kind: Application
+  descriptor: 
+    type: tektoncd-install
+    version: v1beta1
+    description: installs tektoncd pipeline
+    maintainers:
+    - name: Kam Kasravi
+      email: kam.d.kasravi@intel.com
+    owners:
+    - name: Kam Kasravi
+      email: kam.d.kasravi@intel.com
+    keywords:
+     - kubeflow
+    links:
+    - description: About
+      url: "https://kubeflow.org"
+  addOwnerRef: true
+`)
+	th.writeF("/manifests/tektoncd/tektoncd-install/overlays/application/params.yaml", `
+varReference:
+- path: metadata/name
+  kind: Application
+- path: spec/selector/app.kubernetes.io\/instance
+  kind: Service
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Deployment
+- path: spec/template/metadata/labels/app.kubernetes.io\/instance
+  kind: Deployment
+`)
+	th.writeF("/manifests/tektoncd/tektoncd-install/overlays/application/params.env", `
+generateName=
+`)
+	th.writeK("/manifests/tektoncd/tektoncd-install/overlays/application", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- application.yaml
+configMapGenerator:
+- name: tektoncd-install-parameters
+  env: params.env
+vars:
+- name: generateName
+  objref:
+    kind: ConfigMap
+    name: tektoncd-install-parameters 
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.generateName
+configurations:
+- params.yaml
+commonLabels:
+  app.kubernetes.io/name: tektoncd-install
+  app.kubernetes.io/instance: $(generateName)
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: kubeflow
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.6
+`)
 	th.writeF("/manifests/tektoncd/tektoncd-install/base/namespace.yaml", `
 apiVersion: v1
 kind: Namespace
@@ -801,9 +869,9 @@ configurations:
 `)
 }
 
-func TestTektoncdInstallBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/tektoncd/tektoncd-install/base")
-	writeTektoncdInstallBase(th)
+func TestTektoncdInstallOverlaysApplication(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/tektoncd/tektoncd-install/overlays/application")
+	writeTektoncdInstallOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -812,7 +880,7 @@ func TestTektoncdInstallBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../tektoncd/tektoncd-install/base"
+	targetPath := "../tektoncd/tektoncd-install/overlays/application"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
