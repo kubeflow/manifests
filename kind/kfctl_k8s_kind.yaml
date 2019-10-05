@@ -1,0 +1,129 @@
+# This is the config to install Kubeflow on an existing development k8s cluster with containerd
+# This installs a minimum set of components required for model development - a single notebook instance, Pipelines
+# This does not install Istio
+# This also turns off usage reporting by default
+apiVersion: kfdef.apps.kubeflow.org/v1alpha1
+kind: KfDef
+metadata:
+  name: kubeflow_app
+  namespace: kubeflow
+spec:
+  repos:
+  - name: manifests
+    root: manifests-master
+    uri: https://github.com/swiftdiaries/manifests/archive/containerd-cri-argo.tar.gz
+  - name: kubeflow
+    root: kubeflow-master
+    uri: https://github.com/kubeflow/kubeflow/archive/master.tar.gz
+  applications:
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: application/application-crds
+    name: application-crds
+  - kustomizeConfig:
+      overlays:
+      - application
+      repoRef:
+        name: manifests
+        path: application/application
+    name: application
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: metacontroller
+    name: metacontroller
+  - kustomizeConfig:
+      overlays:
+      - base
+      repoRef:
+        name: manifests
+        path: argo
+    name: argo
+  - kustomizeConfig:
+      overlays:
+      - base
+      repoRef:
+        name: manifests
+        path: common/ambassador
+    name: common/ambassador
+  - kustomizeConfig:
+      overlays:
+      - base
+      repoRef:
+        name: manifests
+        path: common/centraldashboard
+    name: centraldashboard
+  - kustomizeConfig:
+      overlays:
+      - base
+      - application
+      repoRef:
+        name: manifests
+        path: jupyter/notebook-controller
+    name: notebook-controller
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: pipeline/api-service
+    name: api-service
+  - kustomizeConfig:
+      parameters:
+      - name: minioPvcName
+        value: minio-pv-claim
+      repoRef:
+        name: manifests
+        path: pipeline/minio
+    name: minio
+  - kustomizeConfig:
+      parameters:
+      - name: mysqlPvcName
+        value: mysql-pv-claim
+      repoRef:
+        name: manifests
+        path: pipeline/mysql
+    name: mysql
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: pipeline/persistent-agent
+    name: persistent-agent
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: pipeline/pipelines-runner
+    name: pipelines-runner
+  - kustomizeConfig:
+      overlays:
+      - base
+      repoRef:
+        name: manifests
+        path: pipeline/pipelines-ui
+    name: pipelines-ui
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: pipeline/pipelines-viewer
+    name: pipelines-viewer
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: pipeline/scheduledworkflow
+    name: scheduledworkflow
+  - kustomizeConfig:
+      overlays:
+      - base
+      parameters:
+      - initRequired: true
+        name: admin
+        value: johnDoe@acme.com
+      repoRef:
+        name: manifests
+        path: profiles
+    name: profiles
+  enableApplications: true
+  packageManager: kustomize
+  skipInitProject: true
+  useBasicAuth: false
+  useIstio: false
+  version: master
