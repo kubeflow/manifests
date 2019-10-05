@@ -17,5 +17,5 @@ spec:
     - destination:
         host: $(metadata-envoy-service).$(ui-namespace).svc.$(ui-clusterDomain)
         port:
-          number: 80
+          number: 9090
     timeout: 300s
