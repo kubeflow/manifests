@@ -27,7 +27,10 @@ generate: clean
 	@cd .. && hack/gen-test-targets.sh && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE) || echo done
 	$(GO) fmt ./...
 
-test:
+modules:
+	@GO111MODULE=on $(GO) mod download
+
+test: modules
 	@GO111MODULE=on $(GO) test -v .
 
 clean:

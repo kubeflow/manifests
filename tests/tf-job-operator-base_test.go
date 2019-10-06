@@ -130,17 +130,6 @@ rules:
   - list
   - watch
 `)
-	th.writeF("/manifests/tf-training/tf-job-operator/base/config-map.yaml", `
-apiVersion: v1
-data:
-  controller_config_file.yaml: |-
-    {
-        "grpcServerFilePath": "/opt/mlkube/grpc_tensorflow_server/grpc_tensorflow_server.py"
-    }
-kind: ConfigMap
-metadata:
-  name: tf-job-operator-config
-`)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/deployment.yaml", `
 ---
 apiVersion: apps/v1

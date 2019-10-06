@@ -13,7 +13,44 @@ import (
 	"testing"
 )
 
-func writeKatibV3ControllerBase(th *KustTestHarness) {
+func writeKatibControllerOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/katib/katib-controller/overlays/istio/katib-ui-virtual-service.yaml", `
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: katib-ui
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /katib/
+    rewrite:
+      uri: /katib/
+    route:
+    - destination:
+        host: katib-ui.$(namespace).svc.$(clusterDomain)
+        port:
+          number: 80
+`)
+	th.writeF("/manifests/katib/katib-controller/overlays/istio/params.yaml", `
+varReference:
+- path: spec/http/route/destination/host
+  kind: VirtualService
+`)
+	th.writeK("/manifests/katib/katib-controller/overlays/istio", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- katib-ui-virtual-service.yaml
+configurations:
+- params.yaml
+`)
 	th.writeF("/manifests/katib/katib-controller/base/katib-configmap.yaml", `
 apiVersion: v1
 kind: ConfigMap
@@ -602,9 +639,9 @@ configurations:
 `)
 }
 
-func TestKatibV3ControllerBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib/katib-controller/base")
-	writeKatibV3ControllerBase(th)
+func TestKatibControllerOverlaysIstio(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/katib/katib-controller/overlays/istio")
+	writeKatibControllerOverlaysIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -613,7 +650,7 @@ func TestKatibV3ControllerBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib/katib-controller/base"
+	targetPath := "../katib/katib-controller/overlays/istio"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
