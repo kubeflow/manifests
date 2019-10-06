@@ -253,3 +253,7 @@ spec:
   useIstio: true
   version: master
   platform: kind
+  plugins:
+  - name: kind
+    spec:
+      useBasicAuth: false
