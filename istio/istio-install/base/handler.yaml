@@ -3,6 +3,17 @@ kind: handler
 metadata:
   labels:
     app: mixer
+  name: kubernetesenv
+spec:
+  compiledAdapter: kubernetesenv
+
+---
+
+apiVersion: config.istio.io/v1alpha2
+kind: handler
+metadata:
+  labels:
+    app: mixer
   name: prometheus
 spec:
   compiledAdapter: prometheus

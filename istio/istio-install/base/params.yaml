@@ -21,7 +21,7 @@ varReference:
   kind: ConfigMap
 - path: data/config.yaml
   kind: ConfigMap
-- path: data/prometheus.yml
+- path: data/prometheus.yaml
   kind: ConfigMap
 - path: spec/params/metrics/instance_name
   kind: handler
@@ -33,7 +33,7 @@ varReference:
   kind: ConfigMap
 - path: data/istio-security-custom-resources-run.sh
   kind: ConfigMap
-- path: data/prometheus-prometheus.yml
+- path: data/validating-webhook-configuration.yaml
   kind: ConfigMap
 - path: subjects/namespace
   kind: ClusterRoleBinding
