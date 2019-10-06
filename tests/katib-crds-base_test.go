@@ -13,7 +13,7 @@ import (
 	"testing"
 )
 
-func writeKatibV3CrdsBase(th *KustTestHarness) {
+func writeKatibCrdsBase(th *KustTestHarness) {
 	th.writeF("/manifests/katib/katib-crds/base/experiment-crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -115,9 +115,9 @@ generatorOptions:
 `)
 }
 
-func TestKatibV3CrdsBase(t *testing.T) {
+func TestKatibCrdsBase(t *testing.T) {
 	th := NewKustTestHarness(t, "/manifests/katib/katib-crds/base")
-	writeKatibV3CrdsBase(th)
+	writeKatibCrdsBase(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
