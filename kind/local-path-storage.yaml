@@ -1,3 +1,6 @@
+# Used by KinD
+# The default storage class in KinD doesn't support Minio deployments that Kubeflow Pipelines has
+# We use local-path-storage to replace that
 apiVersion: v1
 kind: Namespace
 metadata:

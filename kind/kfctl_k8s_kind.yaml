@@ -12,9 +12,6 @@ spec:
   - name: manifests
     root: manifests-master
     uri: https://github.com/swiftdiaries/manifests/archive/containerd-cri-argo.tar.gz
-  - name: kubeflow
-    root: kubeflow-master
-    uri: https://github.com/kubeflow/kubeflow/archive/master.tar.gz
   applications:
   - kustomizeConfig:
       repoRef:
@@ -127,3 +124,8 @@ spec:
   useBasicAuth: false
   useIstio: false
   version: master
+  platform: kind
+  plugins:
+  - name: kind
+    spec:
+      useBasicAuth: false
