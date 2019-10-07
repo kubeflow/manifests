@@ -798,6 +798,13 @@ vars:
     fieldpath: data.controller
 configurations:
 - params.yaml
+images:
+- name: $(registry)/$(controller)
+  newName: $(registry)/$(controller)
+  newTag: latest
+- name: $(registry)/$(webhook)
+  newName: $(registry)/$(webhook)
+  newTag: latest
 `)
 }
 

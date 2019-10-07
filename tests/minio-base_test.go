@@ -115,6 +115,7 @@ vars:
 images:
 - name: minio/minio
   newTag: RELEASE.2018-02-09T22-40-05Z
+  newName: minio/minio
 configurations:
 - params.yaml
 `)

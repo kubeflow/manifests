@@ -78,8 +78,8 @@ bases:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: metrics-collector 
-  app.kubernetes.io/instance: metrics-collector 
+  app.kubernetes.io/name: metrics-collector
+  app.kubernetes.io/instance: metrics-collector
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: katib
   app.kubernetes.io/part-of: kubeflow
@@ -173,8 +173,8 @@ resources:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/metrics-collector
-    newTag: v0.6.0-rc.0
+- name: gcr.io/kubeflow-images-public/katib/v1alpha2/metrics-collector
+  newTag: v0.6.0-rc.0
 `)
 }
 

@@ -300,9 +300,9 @@ resources:
 commonLabels:
   kustomize.component: pytorch-operator
 images:
-  - name: gcr.io/kubeflow-images-public/pytorch-operator
-    newName: gcr.io/kubeflow-images-public/pytorch-operator
-    newTag: v0.6.0-18-g5e36a57
+- name: gcr.io/kubeflow-images-public/pytorch-operator
+  newName: gcr.io/kubeflow-images-public/pytorch-operator
+  newTag: v0.6.0-18-g5e36a57
 `)
 }
 

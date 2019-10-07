@@ -134,9 +134,9 @@ resources:
 commonLabels:
   kustomize.component: metacontroller
 images:
-  - name: metacontroller/metacontroller
-    newName: metacontroller/metacontroller
-    newTag: v0.3.0
+- name: metacontroller/metacontroller
+  newName: metacontroller/metacontroller
+  newTag: v0.3.0
 `)
 }
 

@@ -78,8 +78,8 @@ bases:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: katib-ui 
-  app.kubernetes.io/instance: katib-ui 
+  app.kubernetes.io/name: katib-ui
+  app.kubernetes.io/instance: katib-ui
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: katib
   app.kubernetes.io/part-of: kubeflow
@@ -335,16 +335,21 @@ resources:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-hyperband
-    newTag: v0.6.0-rc.0
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-bayesianoptimization
-    newTag: v0.6.0-rc.0
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-grid
-    newTag: v0.6.0-rc.0
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-random
-    newTag: v0.6.0-rc.0
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-nasrl
-    newTag: v0.6.0-rc.0
+- name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-hyperband
+  newTag: v0.6.0-rc.0
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-hyperband
+- name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-bayesianoptimization
+  newTag: v0.6.0-rc.0
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-bayesianoptimization
+- name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-grid
+  newTag: v0.6.0-rc.0
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-grid
+- name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-random
+  newTag: v0.6.0-rc.0
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-random
+- name: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-nasrl
+  newTag: v0.6.0-rc.0
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha2/suggestion-nasrl
 `)
 }
 
