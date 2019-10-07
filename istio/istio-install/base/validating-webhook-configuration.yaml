@@ -4,9 +4,6 @@ metadata:
   name: istio-galley
   labels:
     app: galley
-    chart: galley
-    heritage: Tiller
-    release: istio
     istio: galley
 webhooks:
   - name: pilot.validation.istio.io
