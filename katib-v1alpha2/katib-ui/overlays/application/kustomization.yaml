@@ -5,8 +5,8 @@ bases:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: katib-ui 
-  app.kubernetes.io/instance: katib-ui 
+  app.kubernetes.io/name: katib-ui
+  app.kubernetes.io/instance: katib-ui
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: katib
   app.kubernetes.io/part-of: kubeflow
