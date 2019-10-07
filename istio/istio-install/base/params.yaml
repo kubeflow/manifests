@@ -13,10 +13,6 @@ varReference:
   kind: ClusterRoleBinding
 - path: data/istio-performance-dashboard.json
   kind: ConfigMap
-- path: data/custom-resources.yaml
-  kind: ConfigMap
-- path: data/run.sh
-  kind: ConfigMap
 - path: data/mesh
   kind: ConfigMap
 - path: data/config.yaml
@@ -29,9 +25,9 @@ varReference:
   kind: DestinationRule
 - path: spec/rules/services
   kind: ServiceRole
-- path: data/istio-galley-configuration-validatingwebhookconfiguration.yaml
+- path: data/istio-security-custom-resources.yaml
   kind: ConfigMap
-- path: data/istio-security-custom-resources-run.sh
+- path: data/istio-security-run.sh
   kind: ConfigMap
 - path: data/validating-webhook-configuration.yaml
   kind: ConfigMap
