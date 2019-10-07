@@ -147,7 +147,7 @@ spec:
         - --deployment-namespace=$(namespace)
         - --insecure=false
         - --validation-webhook-config-file
-        - /etc/config/validatingwebhookconfiguration.yaml
+        - /etc/config/validating-webhook-configuration.yaml
         - --monitoringPort=15014
         - --log_output_level=default:info
         image: gcr.io/istio-release/galley:release-1.3-latest-daily
