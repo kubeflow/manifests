@@ -51,36 +51,14 @@ rules:
   verbs:
   - '*'
 - apiGroups:
-  - storage.k8s.io
-  resources:
-  - storageclasses
-  verbs:
-  - '*'
-- apiGroups:
-  - batch
-  resources:
-  - jobs
-  verbs:
-  - '*'
-- apiGroups:
   - ""
   resources:
-  - configmaps
   - pods
   - services
   - endpoints
-  - persistentvolumeclaims
   - events
   verbs:
   - '*'
-- apiGroups:
-  - apps
-  - extensions
-  resources:
-  - deployments
-  verbs:
-  - '*'
-
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
@@ -139,17 +117,6 @@ rules:
   - list
   - watch
 `)
-	th.writeF("/manifests/pytorch-job/pytorch-operator/base/config-map.yaml", `
-apiVersion: v1
-data:
-  controller_config_file.yaml: |-
-    {
-
-    }
-kind: ConfigMap
-metadata:
-  name: pytorch-operator-config
-`)
 	th.writeF("/manifests/pytorch-job/pytorch-operator/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -182,14 +149,7 @@ spec:
               fieldPath: metadata.name
         image: gcr.io/kubeflow-images-public/pytorch-operator:v0.6.0-18-g5e36a57
         name: pytorch-operator
-        volumeMounts:
-        - mountPath: /etc/config
-          name: config-volume
       serviceAccountName: pytorch-operator
-      volumes:
-      - configMap:
-          name: pytorch-operator-config
-        name: config-volume
 `)
 	th.writeF("/manifests/pytorch-job/pytorch-operator/base/service-account.yaml", `
 apiVersion: v1
@@ -232,7 +192,6 @@ namespace: kubeflow
 resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml
-- config-map.yaml
 - deployment.yaml
 - service-account.yaml
 - service.yaml

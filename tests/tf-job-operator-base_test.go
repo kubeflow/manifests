@@ -55,7 +55,6 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - configmaps
   - pods
   - services
   - endpoints
@@ -95,7 +94,6 @@ metadata:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-tfjobs-admin: "true"
 rules:
 - apiGroups:
-  - tensorflow.org
   - kubeflow.org
   resources:
   - tfjobs
@@ -120,7 +118,6 @@ metadata:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
 rules:
 - apiGroups:
-  - tensorflow.org
   - kubeflow.org
   resources:
   - tfjobs
