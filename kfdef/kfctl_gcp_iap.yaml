@@ -262,6 +262,11 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
+        path: pipeline/pipeline-visualization-service
+    name: pipeline-visualization-service
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
         path: gcp/cloud-endpoints
     name: cloud-endpoints
   - kustomizeConfig:
