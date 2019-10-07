@@ -47,8 +47,8 @@ spec:
       containers:
       - command:
         - /bin/bash
-        - /tmp/security/run.sh
-        - /tmp/security/custom-resources.yaml
+        - /tmp/security/istio-security-run.sh
+        - /tmp/security/istio-security-custom-resources.yaml
         image: gcr.io/istio-release/kubectl:release-1.3-latest-daily
         imagePullPolicy: IfNotPresent
         name: kubectl
