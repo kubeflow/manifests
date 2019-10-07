@@ -29,11 +29,4 @@ spec:
               fieldPath: metadata.name
         image: gcr.io/kubeflow-images-public/pytorch-operator:v0.6.0-18-g5e36a57
         name: pytorch-operator
-        volumeMounts:
-        - mountPath: /etc/config
-          name: config-volume
       serviceAccountName: pytorch-operator
-      volumes:
-      - configMap:
-          name: pytorch-operator-config
-        name: config-volume

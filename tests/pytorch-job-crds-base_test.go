@@ -54,9 +54,6 @@ spec:
                       minimum: 1
                       type: integer
   versions:
-  - name: v1beta2
-    served: true
-    storage: false
   - name: v1
     served: true
     storage: true
