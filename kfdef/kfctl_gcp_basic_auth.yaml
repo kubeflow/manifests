@@ -254,6 +254,11 @@ spec:
         path: pipeline/scheduledworkflow
     name: scheduledworkflow
   - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: pipeline/pipeline-visualization-service
+    name: pipeline-visualization-service
+  - kustomizeConfig:
       parameters:
       - initRequired: true
         name: ipName

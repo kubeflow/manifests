@@ -149,7 +149,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: gcr.io/ml-pipeline/viewer-crd-controller:0.1.23
+        image: gcr.io/ml-pipeline/viewer-crd-controller:0.1.31
         imagePullPolicy: Always
         name: ml-pipeline-viewer-controller
       serviceAccountName: crd-service-account
@@ -175,7 +175,7 @@ resources:
 - service-account.yaml
 images:
 - name: gcr.io/ml-pipeline/viewer-crd-controller
-  newTag: '0.1.23'
+  newTag: '0.1.31'
 `)
 }
 

@@ -14,6 +14,29 @@ import (
 )
 
 func writePipelineVisualizationServiceBase(th *KustTestHarness) {
+	th.writeF("/manifests/pipeline/pipeline-visualization-service/base/deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ml-pipeline-visualizationserver
+  name: ml-pipeline-visualizationserver
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-visualizationserver
+  template:
+    metadata:
+      labels:
+        app: ml-pipeline-visualizationserver
+    spec:
+      containers:
+      - image: gcr.io/ml-pipeline/visualization-server
+        imagePullPolicy: IfNotPresent
+        name: ml-pipeline-visualizationserver
+        ports:
+        - containerPort: 8888
+`)
 	th.writeF("/manifests/pipeline/pipeline-visualization-service/base/service.yaml", `
 apiVersion: v1
 kind: Service
@@ -35,6 +58,7 @@ nameprefix: ml-pipeline-
 commonLabels:
   app: ml-pipeline-visualizationserver
 resources:
+- deployment.yaml
 - service.yaml
 images:
 - name: gcr.io/ml-pipeline/visualization-server

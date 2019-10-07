@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
       - name: ml-pipeline-ui
-        image: gcr.io/ml-pipeline/frontend:0.1.23
+        image: gcr.io/ml-pipeline/frontend
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
@@ -160,7 +160,7 @@ configMapGenerator:
   env: params.env
 images:
 - name: gcr.io/ml-pipeline/frontend
-  newTag: '0.1.23'
+  newTag: '0.1.31'
 vars:
 - name: ui-namespace
   objref:
