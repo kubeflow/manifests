@@ -5,15 +5,13 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: katib-controller
-      app.kubernetes.io/instance: katib-v0.6.2
+      app.kubernetes.io/name: katib
+      app.kubernetes.io/instance: katib
       app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: katib-controller
+      app.kubernetes.io/component: katib
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6.2
+      app.kubernetes.io/version: v0.7
   componentKinds:
-  - group: core
-    kind: ConfigMap
   - group: core
     kind: Service
   - group: apps
@@ -22,8 +20,6 @@ spec:
     kind: Secret
   - group: core
     kind: ServiceAccount
-  - group: core
-    kind: PersistentVolumeClaim
   - group: kubeflow.org
     kind: Experiment
   - group: kubeflow.org

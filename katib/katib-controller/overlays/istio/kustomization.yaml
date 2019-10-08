@@ -3,6 +3,6 @@ kind: Kustomization
 bases:
 - ../../base
 resources:
-- virtual-service.yaml
+- katib-ui-virtual-service.yaml
 configurations:
 - params.yaml
