@@ -5,9 +5,9 @@ bases:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: katib
-  app.kubernetes.io/instance: katib
+  app.kubernetes.io/name: katib-controller
+  app.kubernetes.io/instance: katib-v0.6.2
   app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: katib
+  app.kubernetes.io/component: katib-controller
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7
+  app.kubernetes.io/version: v0.6.2
