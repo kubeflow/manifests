@@ -5,7 +5,7 @@ bases:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: kfserving  
+  app.kubernetes.io/name: kfserving
   app.kubernetes.io/instance: kfserving
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: serving
