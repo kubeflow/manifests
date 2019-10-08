@@ -31,11 +31,14 @@ make test
 
 # Python test for the kustomization images
 # TODO(yanniszark): install these in the worker image
-pip install -r "${REPO}/tests/scripts/requirements.txt"
-python3 "${REPO}"/tests/scripts/extract_images.py "${REPO}"
+# TODO(https://github.com/kubeflow/manifests/issues/449): 
+# The code below doesn't properly handle the case where digest 
+# is used.
+#pip install -r "${REPO}/tests/scripts/requirements.txt"
+#python3 "${REPO}"/tests/scripts/extract_images.py "${REPO}"
 
-if [[ `git status --porcelain` ]]; then
-    echo "Error: images missing from kustomization files."
-    git --no-pager diff
-    exit 1
-fi
+#if [[ `git status --porcelain` ]]; then
+#    echo "Error: images missing from kustomization files."
+#    git --no-pager diff
+#    exit 1
+#fi
