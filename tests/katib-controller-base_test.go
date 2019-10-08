@@ -14,7 +14,20 @@ import (
 )
 
 func writeKatibControllerBase(th *KustTestHarness) {
-	th.writeF("/manifests/katib/katib-controller/base/katib-configmap.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/persistent-volume-claim.yaml", `
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: katib-mysql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+`)
+	th.writeF("/manifests/katib/katib-controller/base/config-map.yaml", `
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -53,50 +66,53 @@ data:
         "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-nasrl"
       }
     }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trial-template
+data:
+  defaultTrialTemplate.yaml : |-
+    apiVersion: batch/v1
+    kind: Job
+    metadata:
+      name: {{.Trial}}
+      namespace: {{.NameSpace}}
+    spec:
+      template:
+        spec:
+          containers:
+          - name: {{.Trial}}
+            image: docker.io/katib/mxnet-mnist-example
+            command:
+            - "python"
+            - "/mxnet/example/image-classification/train_mnist.py"
+            - "--batch-size=64"
+            {{- with .HyperParameters}}
+            {{- range .}}
+            - "{{.Name}}={{.Value}}"
+            {{- end}}
+            {{- end}}
+          restartPolicy: Never
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-controller-deployment.yaml", `
-apiVersion: apps/v1
-kind: Deployment
+	th.writeF("/manifests/katib/katib-controller/base/secret.yaml", `
+---
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: katib-db-secrets
+data:
+  MYSQL_ROOT_PASSWORD: dGVzdA== # "test"
+---
+apiVersion: v1
+kind: Secret
 metadata:
   name: katib-controller
-  labels:
-    app: katib-controller
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: katib-controller
-  template:
-    metadata:
-      labels:
-        app: katib-controller
-    spec:
-      serviceAccountName: katib-controller
-      containers:
-      - name: katib-controller
-        image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
-        imagePullPolicy: IfNotPresent
-        command: ["./katib-controller"]
-        ports:
-        - containerPort: 443
-          name: webhook
-          protocol: TCP
-        env:
-        - name: KATIB_CORE_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        volumeMounts:
-        - mountPath: /tmp/cert
-          name: cert
-          readOnly: true
-      volumes:
-      - name: cert
-        secret:
-          defaultMode: 420
-          secretName: katib-controller
+
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-controller-rbac.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/cluster-role.yaml", `
+---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -167,10 +183,39 @@ rules:
   verbs:
   - "*"
 ---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: katib-ui
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - "*"
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - experiments
+  - trials
+  verbs:
+  - "*"
+
+`)
+	th.writeF("/manifests/katib/katib-controller/base/service-account.yaml", `
+---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: katib-controller
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: katib-ui
+`)
+	th.writeF("/manifests/katib/katib-controller/base/cluster-role-binding.yaml", `
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -183,14 +228,89 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: katib-controller
-`)
-	th.writeF("/manifests/katib/katib-controller/base/katib-controller-secret.yaml", `
-apiVersion: v1
-kind: Secret
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: katib-controller
+  name: katib-ui
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: katib-ui
+subjects:
+- kind: ServiceAccount
+  name: katib-ui
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-controller-service.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/service.yaml", `
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: katib-db
+  labels:
+    app: katib
+    component: db
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3306
+      protocol: TCP
+      name: dbapi
+  selector:
+    app: katib
+    component: db
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: katib-ui
+  labels:
+    app: katib
+    component: ui
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      protocol: TCP
+      name: ui
+  selector:
+    app: katib
+    component: ui
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: katib-manager-rest
+  labels:
+    app: katib
+    component: manager-rest
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      protocol: TCP
+      name: api
+  selector:
+    app: katib
+    component: manager-rest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: katib-manager
+  labels:
+    app: katib
+    component: manager
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6789
+      protocol: TCP
+      name: api
+  selector:
+    app: katib
+    component: manager
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -203,7 +323,95 @@ spec:
   selector:
     app: katib-controller
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-db-deployment.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/deployment.yaml", `
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: katib-controller
+  labels:
+    app: katib-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: katib-controller
+  template:
+    metadata:
+      labels:
+        app: katib-controller
+    spec:
+      serviceAccountName: katib-controller
+      containers:
+      - name: katib-controller
+        image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
+        imagePullPolicy: IfNotPresent
+        command: ["./katib-controller"]
+        ports:
+        - containerPort: 443
+          name: webhook
+          protocol: TCP
+        env:
+        - name: KATIB_CORE_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        volumeMounts:
+        - mountPath: /tmp/cert
+          name: cert
+          readOnly: true
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: katib-controller
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: katib-manager
+  labels:
+    app: katib
+    component: manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      component: manager
+  template:
+    metadata:
+      name: katib-manager
+      labels:
+        app: katib
+        component: manager
+    spec:
+      containers:
+      - name: katib-manager
+        image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
+        imagePullPolicy: IfNotPresent
+        env:
+          - name : DB_NAME
+            value: "mysql"
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: katib-db-secrets
+                key: MYSQL_ROOT_PASSWORD
+        command:
+          - './katib-manager'
+        ports:
+        - name: api
+          containerPort: 6789
+        readinessProbe:
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:6789"]
+          initialDelaySeconds: 5
+        livenessProbe:
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:6789"]
+          initialDelaySeconds: 10
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -259,161 +467,7 @@ spec:
       - name: katib-mysql
         persistentVolumeClaim:
           claimName: katib-mysql
-`)
-	th.writeF("/manifests/katib/katib-controller/base/katib-db-pvc.yaml", `
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: katib-mysql
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
-`)
-	th.writeF("/manifests/katib/katib-controller/base/katib-db-secret.yaml", `
-apiVersion: v1
-kind: Secret
-type: Opaque
-metadata:
-  name: katib-db-secrets
-data:
-  MYSQL_ROOT_PASSWORD: dGVzdA== # "test"
-`)
-	th.writeF("/manifests/katib/katib-controller/base/katib-db-service.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
-  name: katib-db
-  labels:
-    app: katib
-    component: db
-spec:
-  type: ClusterIP
-  ports:
-    - port: 3306
-      protocol: TCP
-      name: dbapi
-  selector:
-    app: katib
-    component: db
-`)
-	th.writeF("/manifests/katib/katib-controller/base/katib-manager-deployment.yaml", `
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: katib-manager
-  labels:
-    app: katib
-    component: manager
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: katib
-      component: manager
-  template:
-    metadata:
-      name: katib-manager
-      labels:
-        app: katib
-        component: manager
-    spec:
-      containers:
-      - name: katib-manager
-        image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
-        imagePullPolicy: IfNotPresent
-        env:
-          - name : DB_NAME
-            value: "mysql"
-          - name: DB_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: katib-db-secrets
-                key: MYSQL_ROOT_PASSWORD
-        command:
-          - './katib-manager'
-        ports:
-        - name: api
-          containerPort: 6789
-        readinessProbe:
-          exec:
-            command: ["/bin/grpc_health_probe", "-addr=:6789"]
-          initialDelaySeconds: 5
-        livenessProbe:
-          exec:
-            command: ["/bin/grpc_health_probe", "-addr=:6789"]
-          initialDelaySeconds: 10
-`)
-	th.writeF("/manifests/katib/katib-controller/base/katib-manager-rest-deployment.yaml", `
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: katib-manager-rest
-  labels:
-    app: katib
-    component: manager-rest
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: katib
-      component: manager-rest
-  template:
-    metadata:
-      name: katib-manager-rest
-      labels:
-        app: katib
-        component: manager-rest
-    spec:
-      containers:
-      - name: katib-manager-rest
-        image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager-rest
-        imagePullPolicy: IfNotPresent
-        command:
-          - './katib-manager-rest'
-        ports:
-        - name: api
-          containerPort: 80
-`)
-	th.writeF("/manifests/katib/katib-controller/base/katib-manager-rest-service.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
-  name: katib-manager-rest
-  labels:
-    app: katib
-    component: manager-rest
-spec:
-  type: ClusterIP
-  ports:
-    - port: 80
-      protocol: TCP
-      name: api
-  selector:
-    app: katib
-    component: manager-rest
-`)
-	th.writeF("/manifests/katib/katib-controller/base/katib-manager-service.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
-  name: katib-manager
-  labels:
-    app: katib
-    component: manager
-spec:
-  type: ClusterIP
-  ports:
-    - port: 6789
-      protocol: TCP
-      name: api
-  selector:
-    app: katib
-    component: manager
-`)
-	th.writeF("/manifests/katib/katib-controller/base/katib-ui-deployment.yaml", `
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -449,90 +503,36 @@ spec:
         - name: ui
           containerPort: 80
       serviceAccountName: katib-ui
-`)
-	th.writeF("/manifests/katib/katib-controller/base/katib-ui-rbac.yaml", `
-kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: katib-ui
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  verbs:
-  - "*"
-- apiGroups:
-  - kubeflow.org
-  resources:
-  - experiments
-  - trials
-  verbs:
-  - "*"
 ---
-apiVersion: v1
-kind: ServiceAccount
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: katib-ui
----
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: katib-ui
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: katib-ui
-subjects:
-- kind: ServiceAccount
-  name: katib-ui
-`)
-	th.writeF("/manifests/katib/katib-controller/base/katib-ui-service.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
-  name: katib-ui
+  name: katib-manager-rest
   labels:
     app: katib
-    component: ui
+    component: manager-rest
 spec:
-  type: ClusterIP
-  ports:
-    - port: 80
-      protocol: TCP
-      name: ui
+  replicas: 1
   selector:
-    app: katib
-    component: ui
-`)
-	th.writeF("/manifests/katib/katib-controller/base/trial-template-configmap.yaml", `
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: trial-template
-data:
-  defaultTrialTemplate.yaml : |-
-    apiVersion: batch/v1
-    kind: Job
+    matchLabels:
+      app: katib
+      component: manager-rest
+  template:
     metadata:
-      name: {{.Trial}}
-      namespace: {{.NameSpace}}
+      name: katib-manager-rest
+      labels:
+        app: katib
+        component: manager-rest
     spec:
-      template:
-        spec:
-          containers:
-          - name: {{.Trial}}
-            image: docker.io/katib/mxnet-mnist-example
-            command:
-            - "python"
-            - "/mxnet/example/image-classification/train_mnist.py"
-            - "--batch-size=64"
-            {{- with .HyperParameters}}
-            {{- range .}}
-            - "{{.Name}}={{.Value}}"
-            {{- end}}
-            {{- end}}
-          restartPolicy: Never
+      containers:
+      - name: katib-manager-rest
+        image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager-rest
+        imagePullPolicy: IfNotPresent
+        command:
+          - './katib-manager-rest'
+        ports:
+        - name: api
+          containerPort: 80
 `)
 	th.writeF("/manifests/katib/katib-controller/base/params.yaml", `
 varReference:
@@ -549,23 +549,14 @@ clusterDomain=cluster.local
 	th.writeK("/manifests/katib/katib-controller/base", `
 namespace: kubeflow
 resources:
-- katib-configmap.yaml
-- katib-controller-deployment.yaml
-- katib-controller-rbac.yaml
-- katib-controller-secret.yaml
-- katib-controller-service.yaml
-- katib-db-deployment.yaml
-- katib-db-pvc.yaml
-- katib-db-secret.yaml
-- katib-db-service.yaml
-- katib-manager-deployment.yaml
-- katib-manager-rest-deployment.yaml
-- katib-manager-rest-service.yaml
-- katib-manager-service.yaml
-- katib-ui-deployment.yaml
-- katib-ui-rbac.yaml
-- katib-ui-service.yaml
-- trial-template-configmap.yaml
+- persistent-volume-claim.yaml
+- config-map.yaml
+- secret.yaml
+- cluster-role.yaml
+- service-account.yaml
+- cluster-role-binding.yaml
+- service.yaml
+- deployment.yaml
 configMapGenerator:
 - name: katib-parameters
   env: params.env
