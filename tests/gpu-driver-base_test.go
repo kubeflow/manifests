@@ -85,12 +85,12 @@ resources:
 commonLabels:
   kustomize.component: gpu-driver
 images:
-  - name: gcr.io/google-containers/pause
-    newName: gcr.io/google-containers/pause
-    newTag: "2.0"
-  - name: cos-nvidia-installer
-    newName: cos-nvidia-installer
-    newTag: fixed
+- name: gcr.io/google-containers/pause
+  newName: gcr.io/google-containers/pause
+  newTag: '2.0'
+- name: cos-nvidia-installer
+  newName: cos-nvidia-installer
+  newTag: fixed
 `)
 }
 
