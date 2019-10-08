@@ -3636,6 +3636,10 @@ resources:
 - seldon-operator-webhook-server-secret-secret.yaml
 - seldondeployments.machinelearning.seldon.io-crd.yaml
 - webhook-server-service-svc.yaml
+images:
+- name: docker.io/seldonio/seldon-core-operator
+  newName: docker.io/seldonio/seldon-core-operator
+  newTag: 0.4.1
 `)
 }
 

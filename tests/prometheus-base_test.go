@@ -298,8 +298,7 @@ varReference:
 	th.writeF("/manifests/gcp/prometheus/base/params.env", `
 projectId=
 clusterName=
-zone=
-`)
+zone=`)
 	th.writeK("/manifests/gcp/prometheus/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -308,34 +307,34 @@ resources:
 commonLabels:
   kustomize.component: prometheus
 configMapGenerator:
-  - name: prometheus-parameters
-    env: params.env
+- name: prometheus-parameters
+  env: params.env
 images:
-  - name: gcr.io/stackdriver-prometheus/stackdriver-prometheus
-    newName: gcr.io/stackdriver-prometheus/stackdriver-prometheus
-    newTag: release-0.4.2
+- name: gcr.io/stackdriver-prometheus/stackdriver-prometheus
+  newName: gcr.io/stackdriver-prometheus/stackdriver-prometheus
+  newTag: release-0.4.2
 vars:
-  - name: projectId
-    objref:
-      kind: ConfigMap
-      name: prometheus-parameters
-      apiVersion: v1
-    fieldref:
-      fieldpath: data.projectId
-  - name: clusterName
-    objref:
-      kind: ConfigMap
-      name: prometheus-parameters
-      apiVersion: v1
-    fieldref:
-      fieldpath: data.clusterName
-  - name: zone
-    objref:
-      kind: ConfigMap
-      name: prometheus-parameters
-      apiVersion: v1
-    fieldref:
-      fieldpath: data.zone
+- name: projectId
+  objref:
+    kind: ConfigMap
+    name: prometheus-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.projectId
+- name: clusterName
+  objref:
+    kind: ConfigMap
+    name: prometheus-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.clusterName
+- name: zone
+  objref:
+    kind: ConfigMap
+    name: prometheus-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.zone
 configurations:
 - params.yaml
 `)

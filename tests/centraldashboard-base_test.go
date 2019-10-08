@@ -166,13 +166,11 @@ varReference:
 - path: spec/template/spec/containers/0/env/0/value
   kind: Deployment
 - path: spec/template/spec/containers/0/env/1/value
-  kind: Deployment
-`)
+  kind: Deployment`)
 	th.writeF("/manifests/common/centraldashboard/base/params.env", `
 clusterDomain=cluster.local
 userid-header=
-userid-prefix=
-`)
+userid-prefix=`)
 	th.writeK("/manifests/common/centraldashboard/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -188,9 +186,9 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: centraldashboard
 images:
-  - name: gcr.io/kubeflow-images-public/centraldashboard
-    newName: gcr.io/kubeflow-images-public/centraldashboard
-    newTag: v20190823-v0.6.0-rc.0-69-gcb7dab59
+- name: gcr.io/kubeflow-images-public/centraldashboard
+  newName: gcr.io/kubeflow-images-public/centraldashboard
+  newTag: v20190823-v0.6.0-rc.0-69-gcb7dab59
 configMapGenerator:
 - name: parameters
   env: params.env

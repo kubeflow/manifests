@@ -68,7 +68,7 @@ vars:
 - name: generateName
   objref:
     kind: ConfigMap
-    name: tektoncd-install-parameters 
+    name: tektoncd-install-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.generateName
@@ -866,6 +866,13 @@ vars:
     fieldpath: data.controller
 configurations:
 - params.yaml
+images:
+- name: $(registry)/$(controller)
+  newName: $(registry)/$(controller)
+  newTag: latest
+- name: $(registry)/$(webhook)
+  newName: $(registry)/$(webhook)
+  newTag: latest
 `)
 }
 

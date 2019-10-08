@@ -279,6 +279,10 @@ vars:
     fieldpath: data.encryption_key
 configurations:
 - params.yaml
+images:
+- name: keycloak/keycloak-gatekeeper
+  newName: keycloak/keycloak-gatekeeper
+  newTag: 5.0.0
 `)
 }
 
