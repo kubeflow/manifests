@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: jupyter-web-app
-      app.kubernetes.io/instance: jupyter-web-app
+      app.kubernetes.io/instance: jupyter-web-app-v0.6.2
       app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: jupyter
+      app.kubernetes.io/component: jupyter-web-app
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
+      app.kubernetes.io/version: v0.6.2
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -39,6 +39,8 @@ spec:
     kind: Role
   - group: core
     kind: ServiceAccount
+  - group: core
+    kind: Service
   - group: networking.istio.io
     kind: VirtualService
   descriptor:
@@ -72,11 +74,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: jupyter-web-app
-  app.kubernetes.io/instance: jupyter-web-app
+  app.kubernetes.io/instance: jupyter-web-app-v0.6.2
   app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: jupyter
+  app.kubernetes.io/component: jupyter-web-app
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
+  app.kubernetes.io/version: v0.6.2
 `)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
@@ -392,7 +394,8 @@ varReference:
 - path: spec/template/spec/containers/0/env/2/value
   kind: Deployment
 - path: spec/template/spec/containers/0/env/3/value
-  kind: Deployment`)
+  kind: Deployment
+`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.env", `
 UI=default
 ROK_SECRET_NAME=secret-rok-{username}
@@ -400,7 +403,8 @@ policy=Always
 prefix=jupyter
 clusterDomain=cluster.local
 userid-header=
-userid-prefix=`)
+userid-prefix=
+`)
 	th.writeK("/manifests/jupyter/jupyter-web-app/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization

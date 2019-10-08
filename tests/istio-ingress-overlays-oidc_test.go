@@ -39,7 +39,8 @@ oidcAuthorizationEndpoint=
 oidcTokenEndpoint=
 oidcUserInfoEndpoint=
 oidcSecretName=istio-oidc-secret
-certArn=`)
+certArn=
+`)
 	th.writeF("/manifests/aws/istio-ingress/overlays/oidc/secrets.env", `
 clientId=
 clientSecret=
@@ -101,7 +102,8 @@ vars:
   fieldref:
     fieldpath: data.certArn
 configurations:
-- params.yaml`)
+- params.yaml
+`)
 	th.writeF("/manifests/aws/istio-ingress/base/ingress.yaml", `
 apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
@@ -135,7 +137,8 @@ spec:
     port:
       name: http
       number: 80
-      protocol: HTTP`)
+      protocol: HTTP
+`)
 	th.writeK("/manifests/aws/istio-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization

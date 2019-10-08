@@ -43,7 +43,8 @@ kind: Kustomization
 bases:
 - ../../base
 patchesStrategicMerge:
-- gcp-credentials-patch.yaml`)
+- gcp-credentials-patch.yaml
+`)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cloud-endpoint.yaml", `
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
