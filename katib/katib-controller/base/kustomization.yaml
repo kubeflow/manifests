@@ -1,13 +1,22 @@
 namespace: kubeflow
 resources:
-- persistent-volume-claim.yaml
-- config-map.yaml
-- secret.yaml
-- cluster-role.yaml
-- service-account.yaml
-- cluster-role-binding.yaml
-- service.yaml
-- deployment.yaml
+- katib-configmap.yaml
+- katib-controller-deployment.yaml
+- katib-controller-rbac.yaml
+- katib-controller-secret.yaml
+- katib-controller-service.yaml
+- katib-db-deployment.yaml
+- katib-db-pvc.yaml
+- katib-db-secret.yaml
+- katib-db-service.yaml
+- katib-manager-deployment.yaml
+- katib-manager-rest-deployment.yaml
+- katib-manager-rest-service.yaml
+- katib-manager-service.yaml
+- katib-ui-deployment.yaml
+- katib-ui-rbac.yaml
+- katib-ui-service.yaml
+- trial-template-configmap.yaml
 configMapGenerator:
 - name: katib-parameters
   env: params.env
