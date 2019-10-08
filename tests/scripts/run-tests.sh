@@ -32,8 +32,7 @@ make test
 # Python test for the kustomization images
 # TODO(yanniszark): install these in the worker image
 pip install -r "${REPO}/tests/scripts/requirements.txt"
-python3 tests/scripts/extract_images.py "${REPO}"
-CHANGED_FILES=$(git diff-files)
+python3 "${REPO}"/tests/scripts/extract_images.py "${REPO}"
 
 if [[ `git status --porcelain` ]]; then
     echo "Error: images missing from kustomization files."
