@@ -20,9 +20,23 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+REPO="$(pwd)"
+
 cd tests
 
 # the tests depend on kustomize
 export PATH=${GOPATH}/bin:/usr/local/go/bin:${PATH}
 export GO111MODULE=on
 make test
+
+# Python test for the kustomization images
+# TODO(yanniszark): install these in the worker image
+pip install -r "${REPO}/tests/scripts/requirements.txt"
+python3 tests/scripts/extract_images.py "${REPO}"
+CHANGED_FILES=$(git diff-files)
+
+if [[ `git status --porcelain` ]]; then
+    echo "Error: images missing from kustomization files."
+    git --no-pager diff
+    exit 1
+fi
