@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: notebook-controller
-      app.kubernetes.io/instance: notebook-controller
+      app.kubernetes.io/instance: notebook-controller-v0.6.2
       app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: notebook
+      app.kubernetes.io/component: notebook-controller
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
+      app.kubernetes.io/version: v0.6.2
   componentKinds:
     - group: core
       kind: Service
@@ -64,11 +64,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: notebook-controller
-  app.kubernetes.io/instance: notebook-controller
+  app.kubernetes.io/instance: notebook-controller-v0.6.2
   app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: notebook
+  app.kubernetes.io/component: notebook-controller
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
+  app.kubernetes.io/version: v0.6.2
 `)
 	th.writeF("/manifests/jupyter/notebook-controller/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
