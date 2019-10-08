@@ -66,7 +66,7 @@ bases:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: tf-job-operator 
+  app.kubernetes.io/name: tf-job-operator
   app.kubernetes.io/instance: tf-job-operator
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: tfjob
@@ -271,9 +271,9 @@ resources:
 commonLabels:
   kustomize.component: tf-job-operator
 images:
-  - name: gcr.io/kubeflow-images-public/tf_operator
-    newName: gcr.io/kubeflow-images-public/tf_operator
-    newTag: kubeflow-tf-operator-postsubmit-v1-5adee6f-6109-a25c
+- name: gcr.io/kubeflow-images-public/tf_operator
+  newName: gcr.io/kubeflow-images-public/tf_operator
+  newTag: kubeflow-tf-operator-postsubmit-v1-5adee6f-6109-a25c
 `)
 }
 

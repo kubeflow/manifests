@@ -123,9 +123,9 @@ resources:
 commonLabels:
   kustomize.component: cert-manager
 images:
-  - name: quay.io/jetstack/cert-manager-controller
-    newName: quay.io/jetstack/cert-manager-controller
-    newTag: v0.4.0
+- name: quay.io/jetstack/cert-manager-controller
+  newName: quay.io/jetstack/cert-manager-controller
+  newTag: v0.4.0
 configMapGenerator:
 - name: cert-manager-parameters
   env: params.env

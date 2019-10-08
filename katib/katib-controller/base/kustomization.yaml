@@ -23,16 +23,21 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 images:
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
-    newTag: 7ade03b
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
-    newTag: 7ade03b
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager-rest
-    newTag: 7ade03b
-  - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
-    newTag: 7ade03b
-  - name: mysql
-    newTag: 8.0.3
+- name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
+  newTag: 7ade03b
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
+- name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
+  newTag: 7ade03b
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
+- name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager-rest
+  newTag: 7ade03b
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager-rest
+- name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
+  newTag: 7ade03b
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
+- name: mysql
+  newTag: 8.0.3
+  newName: mysql
 vars:
 - name: clusterDomain
   objref:

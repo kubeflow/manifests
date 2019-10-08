@@ -47,8 +47,7 @@ spec:
     port:
       name: http
       number: 80
-      protocol: HTTP
-`)
+      protocol: HTTP`)
 	th.writeK("/manifests/aws/istio-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization

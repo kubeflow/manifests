@@ -56,7 +56,7 @@ bases:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: seldon-core-operator  
+  app.kubernetes.io/name: seldon-core-operator
   app.kubernetes.io/instance: seldon-core-operator
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: seldon
@@ -3685,6 +3685,10 @@ resources:
 - seldon-operator-webhook-server-secret-secret.yaml
 - seldondeployments.machinelearning.seldon.io-crd.yaml
 - webhook-server-service-svc.yaml
+images:
+- name: docker.io/seldonio/seldon-core-operator
+  newName: docker.io/seldonio/seldon-core-operator
+  newTag: 0.4.1
 `)
 }
 
