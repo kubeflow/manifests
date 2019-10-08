@@ -70,11 +70,15 @@ spec:
         path: common/centraldashboard
     name: centraldashboard
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: admission-webhook/bootstrap
     name: bootstrap
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: admission-webhook/webhook
