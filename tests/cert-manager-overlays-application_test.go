@@ -749,6 +749,8 @@ spec:
     - protocol: TCP
       port: 9402
       targetPort: 9402
+  selector:
+    app: cert-manager
 
 ---
 
