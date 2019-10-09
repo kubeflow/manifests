@@ -32,7 +32,7 @@ spec:
       kind: Secret
     - group: v1
       kind: ConfigMap
-  version: "v1alpha1"
+  version: "v1alpha2"
   description: "KFServing provides a Kubernetes Custom Resource Definition for serving ML Models on arbitrary frameworks"
   icons:
   maintainers:
@@ -178,7 +178,7 @@ rules:
 - apiGroups:
   - serving.kubeflow.org
   resources:
-  - kfservices
+  - inferenceservices
   verbs:
   - get
   - list
@@ -190,7 +190,7 @@ rules:
 - apiGroups:
   - serving.kubeflow.org
   resources:
-  - kfservices/status
+  - inferenceservices/status
   verbs:
   - get
   - update
@@ -284,7 +284,7 @@ rules:
 - apiGroups:
   - kubeflow.org
   resources:
-  - kfservices
+  - inferenceservices
   verbs:
   - get
   - list
@@ -307,7 +307,7 @@ rules:
 - apiGroups:
   - kubeflow.org
   resources:
-  - kfservices
+  - inferenceservices
   verbs:
   - get
   - list
@@ -318,7 +318,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: inferenceservice-config
-  namespace: kfserving-system
 data:
   predictors: |-
     {

@@ -129,7 +129,7 @@ rules:
 - apiGroups:
   - serving.kubeflow.org
   resources:
-  - kfservices
+  - inferenceservices
   verbs:
   - get
   - list
@@ -141,7 +141,7 @@ rules:
 - apiGroups:
   - serving.kubeflow.org
   resources:
-  - kfservices/status
+  - inferenceservices/status
   verbs:
   - get
   - update
@@ -235,7 +235,7 @@ rules:
 - apiGroups:
   - kubeflow.org
   resources:
-  - kfservices
+  - inferenceservices
   verbs:
   - get
   - list
@@ -258,7 +258,7 @@ rules:
 - apiGroups:
   - kubeflow.org
   resources:
-  - kfservices
+  - inferenceservices
   verbs:
   - get
   - list
@@ -269,7 +269,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: inferenceservice-config
-  namespace: kfserving-system
 data:
   predictors: |-
     {
