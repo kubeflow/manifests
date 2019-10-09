@@ -5,3 +5,5 @@ varReference:
   kind: Deployment
 - path: metadata/name
   kind: Namespace
+- path: spec/service/namespace
+  kind: APIService

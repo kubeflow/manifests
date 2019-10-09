@@ -1,5 +1,0 @@
-varReference:
-- path: subjects/namespace
-  kind: ClusterRoleBinding
-- path: metadata/name
-  kind: Namespace
