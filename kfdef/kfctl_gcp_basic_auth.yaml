@@ -346,6 +346,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - managed-cert
+      - application
       parameters:
       - name: namespace
         value: istio-system
