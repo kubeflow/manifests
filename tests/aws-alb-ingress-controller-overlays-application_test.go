@@ -13,7 +13,59 @@ import (
 	"testing"
 )
 
-func writeAwsAlbIngressControllerBase(th *KustTestHarness) {
+func writeAwsAlbIngressControllerOverlaysApplication(th *KustTestHarness) {
+	th.writeF("/manifests/aws/aws-alb-ingress-controller/overlays/application/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: jupyter-web-app
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: aws-alb-ingress-controller
+      app.kubernetes.io/instance: aws-alb-ingress-controller-v0.6.2
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: aws-alb-ingress-controller
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.6.2
+  componentKinds:
+  - group: core
+    kind: ConfigMap
+  - group: apps
+    kind: Deployment
+  - group: core
+    kind: ServiceAccount
+  descriptor:
+    type: aws-alb-ingress-controller
+    version: v1beta1
+    description: Application Load Balancer (ALB) Ingress Controller Deployment Manifest provides sensible defaults for deploying an ALB Ingress Controller
+    maintainers: []
+    owners: []
+    keywords:
+     - aws
+     - kubeflow
+    links:
+    - description: About
+      url: https://github.com/kubernetes-sigs/aws-alb-ingress-controller
+  addOwnerRef: true
+
+`)
+	th.writeK("/manifests/aws/aws-alb-ingress-controller/overlays/application", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- application.yaml
+commonLabels:
+  app.kubernetes.io/name: aws-alb-ingress-controller
+  app.kubernetes.io/instance: aws-alb-ingress-controller-v0.6.2
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: aws-alb-ingress-controller
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.6.2
+
+`)
 	th.writeF("/manifests/aws/aws-alb-ingress-controller/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -158,9 +210,9 @@ vars:
 `)
 }
 
-func TestAwsAlbIngressControllerBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/aws/aws-alb-ingress-controller/base")
-	writeAwsAlbIngressControllerBase(th)
+func TestAwsAlbIngressControllerOverlaysApplication(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/aws/aws-alb-ingress-controller/overlays/application")
+	writeAwsAlbIngressControllerOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -169,7 +221,7 @@ func TestAwsAlbIngressControllerBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../aws/aws-alb-ingress-controller/base"
+	targetPath := "../aws/aws-alb-ingress-controller/overlays/application"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)

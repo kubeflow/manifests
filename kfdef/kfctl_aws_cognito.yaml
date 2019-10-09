@@ -242,6 +242,8 @@ spec:
           path: aws/istio-ingress
       name: istio-ingress
     - kustomizeConfig:
+        overlays:
+          - application
         parameters:
           - initRequired: true
             name: clusterName
@@ -251,6 +253,8 @@ spec:
           path: aws/aws-alb-ingress-controller
       name: aws-alb-ingress-controller
     - kustomizeConfig:
+        overlays:
+          - application
         repoRef:
           name: manifests
           path: aws/nvidia-device-plugin
