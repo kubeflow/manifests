@@ -15,7 +15,6 @@ import (
 
 func writeCertManagerCrdsBase(th *KustTestHarness) {
 	th.writeF("/manifests/cert-manager/cert-manager-crds/base/crd.yaml", `
----
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -7516,7 +7515,7 @@ status:
   storedVersions: []
 `)
 	th.writeK("/manifests/cert-manager/cert-manager-crds/base", `
-apiversion: kustomize.config.k8s.io/v1beta1
+apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - crd.yaml

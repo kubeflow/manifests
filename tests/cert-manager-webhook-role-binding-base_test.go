@@ -17,6 +17,9 @@ func writeCertManagerWebhookRoleBindingBase(th *KustTestHarness) {
 	th.writeF("/manifests/cert-manager/cert-manager-webhook-role-binding/base/role-binding.yaml", `
 ---
 
+# apiserver gets the ability to read authentication. This allows it to
+# read the specific configmap that has the requestheader-* entries to
+# api agg
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:

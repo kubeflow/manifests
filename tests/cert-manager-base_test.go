@@ -15,11 +15,28 @@ import (
 
 func writeCertManagerBase(th *KustTestHarness) {
 	th.writeF("/manifests/cert-manager/cert-manager/base/namespace.yaml", `
----
 apiVersion: v1
 kind: Namespace
 metadata:
   name: $(namespace)
+`)
+	th.writeF("/manifests/cert-manager/cert-manager/base/api-service.yaml", `
+apiVersion: apiregistration.k8s.io/v1beta1
+kind: APIService
+metadata:
+  name: v1beta1.webhook.certmanager.k8s.io
+  labels:
+    app: webhook
+  annotations:
+    certmanager.k8s.io/inject-ca-from-secret: "cert-manager/cert-manager-webhook-tls"
+spec:
+  group: webhook.certmanager.k8s.io
+  groupPriorityMinimum: 1000
+  versionPriority: 15
+  service:
+    name: cert-manager-webhook
+    namespace: $(namespace)
+  version: v1beta1
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -28,8 +45,6 @@ metadata:
   name: cert-manager-leaderelection
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -47,8 +62,6 @@ metadata:
   name: cert-manager-controller-issuers
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -66,8 +79,6 @@ metadata:
   name: cert-manager-controller-clusterissuers
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -85,8 +96,6 @@ metadata:
   name: cert-manager-controller-certificates
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -104,8 +113,6 @@ metadata:
   name: cert-manager-controller-orders
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -123,8 +130,6 @@ metadata:
   name: cert-manager-controller-challenges
   labels:
     app: cert-manager
-    app.kubernetes.io/name: cert-manager
-    app.kubernetes.io/instance:  cert-manager
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -148,6 +153,43 @@ roleRef:
   name: cert-manager-controller-ingress-shim
 subjects:
   - name: cert-manager
+    namespace: $(namespace)
+    kind: ServiceAccount
+
+---
+
+# apiserver gets the auth-delegator role to delegate auth decisions to
+# the core apiserver
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: cert-manager-webhook:auth-delegator
+  labels:
+    app: webhook
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+- apiGroup: ""
+  kind: ServiceAccount
+  name: cert-manager-webhook
+  namespace: $(namespace)
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: cert-manager-cainjector
+  labels:
+    app: cainjector
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cert-manager-cainjector
+subjects:
+  - name: cert-manager-cainjector
     namespace: $(namespace)
     kind: ServiceAccount
 `)
@@ -377,6 +419,53 @@ rules:
   - apiGroups: ["certmanager.k8s.io"]
     resources: ["certificates", "certificaterequests", "issuers"]
     verbs: ["create", "delete", "deletecollection", "patch", "update"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cert-manager-webhook:webhook-requester
+  labels:
+    app: webhook
+rules:
+- apiGroups:
+  - admission.certmanager.k8s.io
+  resources:
+  - certificates
+  - certificaterequests
+  - issuers
+  - clusterissuers
+  verbs:
+  - create
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: cert-manager-cainjector
+  labels:
+    app: cainjector
+rules:
+  - apiGroups: ["certmanager.k8s.io"]
+    resources: ["certificates"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["configmaps", "events"]
+    verbs: ["get", "create", "update", "patch"]
+  - apiGroups: ["admissionregistration.k8s.io"]
+    resources: ["validatingwebhookconfigurations", "mutatingwebhookconfigurations"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["apiregistration.k8s.io"]
+    resources: ["apiservices"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list", "watch", "update"]
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/deployment.yaml", `
 apiVersion: apps/v1
@@ -424,6 +513,121 @@ spec:
             requests:
               cpu: 10m
               memory: 32Mi
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cert-manager-webhook
+  labels:
+    app: webhook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webhook
+
+  template:
+    metadata:
+      labels:
+        app: webhook
+      annotations:
+    spec:
+      serviceAccountName: cert-manager-webhook
+      containers:
+        - name: cert-manager
+          image: "quay.io/jetstack/cert-manager-webhook:v0.10.0"
+          imagePullPolicy: IfNotPresent
+          args:
+          - --v=2
+          - --secure-port=6443
+          - --tls-cert-file=/certs/tls.crt
+          - --tls-private-key-file=/certs/tls.key
+          env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          resources:
+            {}
+
+          volumeMounts:
+          - name: certs
+            mountPath: /certs
+      volumes:
+      - name: certs
+        secret:
+          secretName: cert-manager-webhook-tls
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cert-manager-cainjector
+  labels:
+    app: cainjector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cainjector
+  template:
+    metadata:
+      labels:
+        app: cainjector
+      annotations:
+    spec:
+      serviceAccountName: cert-manager-cainjector
+      containers:
+        - name: cainjector
+          image: "quay.io/jetstack/cert-manager-cainjector:v0.10.0"
+          imagePullPolicy: IfNotPresent
+          args:
+          - --v=2
+          - --leader-election-namespace=$(POD_NAMESPACE)
+          env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          resources:
+            {}
+`)
+	th.writeF("/manifests/cert-manager/cert-manager/base/mutating-webhook-configuration.yaml", `
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: cert-manager-webhook
+  labels:
+    app: webhook
+  annotations:
+    certmanager.k8s.io/inject-apiserver-ca: "true"
+webhooks:
+  - name: webhook.certmanager.k8s.io
+    rules:
+      - apiGroups:
+          - "certmanager.k8s.io"
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - certificates
+          - issuers
+          - clusterissuers
+          - orders
+          - challenges
+          - certificaterequests
+    failurePolicy: Fail
+    clientConfig:
+      service:
+        name: kubernetes
+        namespace: default
+        path: /apis/webhook.certmanager.k8s.io/v1beta1/mutations
+      caBundle: ""
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/service-account.yaml", `
 apiVersion: v1
@@ -432,6 +636,24 @@ metadata:
   name: cert-manager
   labels:
     app: cert-manager
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cert-manager-webhook
+  labels:
+    app: webhook
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cert-manager-cainjector
+  labels:
+    app: cainjector
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/service.yaml", `
 apiVersion: v1
@@ -446,6 +668,56 @@ spec:
     - protocol: TCP
       port: 9402
       targetPort: 9402
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: cert-manager-webhook
+  labels:
+    app: webhook
+spec:
+  type: ClusterIP
+  ports:
+  - name: https
+    port: 443
+    targetPort: 6443
+  selector:
+    app: webhook
+`)
+	th.writeF("/manifests/cert-manager/cert-manager/base/validating-webhook-configuration.yaml", `
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: cert-manager-webhook
+  labels:
+    app: webhook
+  annotations:
+    certmanager.k8s.io/inject-apiserver-ca: "true"
+webhooks:
+  - name: webhook.certmanager.k8s.io
+    rules:
+      - apiGroups:
+          - "certmanager.k8s.io"
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - certificates
+          - issuers
+          - clusterissuers
+          - certificaterequests
+    failurePolicy: Fail
+    sideEffects: None
+    clientConfig:
+      service:
+        name: kubernetes
+        namespace: default
+        path: /apis/webhook.certmanager.k8s.io/v1beta1/validations
+      caBundle: ""
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/params.yaml", `
 varReference:
@@ -455,6 +727,8 @@ varReference:
   kind: Deployment
 - path: metadata/name
   kind: Namespace
+- path: spec/service/namespace
+  kind: APIService
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/params.env", `
 namespace=cert-manager
@@ -465,11 +739,14 @@ kind: Kustomization
 namespace: cert-manager
 resources:
 - namespace.yaml
+- api-service.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - deployment.yaml
+- mutating-webhook-configuration.yaml
 - service-account.yaml
 - service.yaml
+- validating-webhook-configuration.yaml
 commonLabels:
   kustomize.component: cert-manager
 images:
