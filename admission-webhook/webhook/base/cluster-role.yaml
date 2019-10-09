@@ -28,7 +28,7 @@ aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
       rbac.authorization.kubeflow.org/aggregate-to-kubeflow-poddefaults-admin: "true"
-rules: null
+rules: []
 
 ---
 
@@ -42,7 +42,7 @@ aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
       rbac.authorization.kubeflow.org/aggregate-to-kubeflow-poddefaults-edit: "true"
-rules: null
+rules: []
 
 ---
 
