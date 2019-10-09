@@ -270,6 +270,8 @@ spec:
         path: pipeline/pipeline-visualization-service
     name: pipeline-visualization-service
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: gcp/cloud-endpoints
@@ -290,6 +292,8 @@ spec:
         path: profiles
     name: profiles
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: gcp/gpu-driver
@@ -297,6 +301,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - managed-cert
+      - application
       parameters:
       - name: namespace
         value: istio-system

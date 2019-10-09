@@ -264,6 +264,8 @@ spec:
         path: pipeline/pipeline-visualization-service
     name: pipeline-visualization-service
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
       - initRequired: true
         name: ipName
@@ -289,6 +291,8 @@ spec:
         path: profiles
     name: profiles
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: gcp/gpu-driver
