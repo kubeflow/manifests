@@ -35,7 +35,8 @@ metadata:
   name: $(minioPvcName)
 spec:
   volumeName: $(minioPvName)
-  storageClassName: ""`)
+  storageClassName: ""
+`)
 	th.writeF("/manifests/pipeline/minio/overlays/minioPd/params.yaml", `
 varReference:
 - path: spec/gcePersistentDisk/pdName
@@ -156,9 +157,11 @@ varReference:
 - path: spec/template/spec/volumes/persistentVolumeClaim/claimName
   kind: Deployment
 - path: metadata/name
-  kind: PersistentVolumeClaim`)
+  kind: PersistentVolumeClaim
+`)
 	th.writeF("/manifests/pipeline/minio/base/params.env", `
-minioPvcName=`)
+minioPvcName=
+`)
 	th.writeK("/manifests/pipeline/minio/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
