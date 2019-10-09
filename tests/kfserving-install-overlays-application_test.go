@@ -1,25 +1,33 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/v3/pkg/fs"
-	"sigs.k8s.io/kustomize/v3/pkg/loader"
-	"sigs.k8s.io/kustomize/v3/pkg/plugins"
-	"sigs.k8s.io/kustomize/v3/pkg/resmap"
-	"sigs.k8s.io/kustomize/v3/pkg/resource"
-	"sigs.k8s.io/kustomize/v3/pkg/target"
-	"sigs.k8s.io/kustomize/v3/pkg/validators"
-	"testing"
+  "sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+  "sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+  "sigs.k8s.io/kustomize/v3/pkg/fs"
+  "sigs.k8s.io/kustomize/v3/pkg/loader"
+  "sigs.k8s.io/kustomize/v3/pkg/plugins"
+  "sigs.k8s.io/kustomize/v3/pkg/resmap"
+  "sigs.k8s.io/kustomize/v3/pkg/resource"
+  "sigs.k8s.io/kustomize/v3/pkg/target"
+  "sigs.k8s.io/kustomize/v3/pkg/validators"
+  "testing"
 )
 
 func writeKfservingInstallOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/kfserving/kfserving-install/overlays/application/application.yaml", `
+  th.writeF("/manifests/kfserving/kfserving-install/overlays/application/application.yaml", `
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
   name: "kfserving"
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kfserving-install
+      app.kubernetes.io/instance: kfserving-install-v0.7.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: kfserving-install
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.7.0
   type: "kfserving"
   componentKinds:
     - group: apps/v1
@@ -48,7 +56,7 @@ spec:
     - description: About
       url: "https://github.com/kubeflow/kfserving"
 `)
-	th.writeK("/manifests/kfserving/kfserving-install/overlays/application", `
+  th.writeK("/manifests/kfserving/kfserving-install/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -56,14 +64,14 @@ bases:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: kfserving
-  app.kubernetes.io/instance: kfserving
+  app.kubernetes.io/name: kfserving-install
+  app.kubernetes.io/instance: kfserving-install-v0.7.0
   app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: serving
+  app.kubernetes.io/component: kfserving-install
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
+  app.kubernetes.io/version: v0.7.0
 `)
-	th.writeF("/manifests/kfserving/kfserving-install/base/cluster-role-binding.yaml", `
+  th.writeF("/manifests/kfserving/kfserving-install/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -90,7 +98,7 @@ subjects:
   name: default
 ---
 `)
-	th.writeF("/manifests/kfserving/kfserving-install/base/cluster-role.yaml", `
+  th.writeF("/manifests/kfserving/kfserving-install/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -293,7 +301,7 @@ rules:
   - list
   - watch
 `)
-	th.writeF("/manifests/kfserving/kfserving-install/base/config-map.yaml", `
+  th.writeF("/manifests/kfserving/kfserving-install/base/config-map.yaml", `
 apiVersion: v1
 data:
   credentials: |-
@@ -328,13 +336,13 @@ kind: ConfigMap
 metadata:
   name: kfservice-config
 `)
-	th.writeF("/manifests/kfserving/kfserving-install/base/secret.yaml", `
+  th.writeF("/manifests/kfserving/kfserving-install/base/secret.yaml", `
 apiVersion: v1
 kind: Secret
 metadata:
   name: kfserving-webhook-server-secret
 `)
-	th.writeF("/manifests/kfserving/kfserving-install/base/statefulset.yaml", `
+  th.writeF("/manifests/kfserving/kfserving-install/base/statefulset.yaml", `
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -402,7 +410,7 @@ spec:
           secretName: kfserving-webhook-server-secret
   volumeClaimTemplates: []
 `)
-	th.writeF("/manifests/kfserving/kfserving-install/base/service.yaml", `
+  th.writeF("/manifests/kfserving/kfserving-install/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -438,17 +446,17 @@ spec:
     controller-tools.k8s.io: "1.0"
 ---
 `)
-	th.writeF("/manifests/kfserving/kfserving-install/base/params.yaml", `
+  th.writeF("/manifests/kfserving/kfserving-install/base/params.yaml", `
 varReference:
 - path: spec/template/spec/containers/image
   kind: StatefulSet
 - path: data/frameworks
   kind: ConfigMap
 `)
-	th.writeF("/manifests/kfserving/kfserving-install/base/params.env", `
+  th.writeF("/manifests/kfserving/kfserving-install/base/params.env", `
 registry=gcr.io/kfserving
 `)
-	th.writeK("/manifests/kfserving/kfserving-install/base", `
+  th.writeK("/manifests/kfserving/kfserving-install/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
@@ -485,32 +493,32 @@ images:
 }
 
 func TestKfservingInstallOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/kfserving/kfserving-install/overlays/application")
-	writeKfservingInstallOverlaysApplication(th)
-	m, err := th.makeKustTarget().MakeCustomizedResMap()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	expected, err := m.AsYaml()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	targetPath := "../kfserving/kfserving-install/overlays/application"
-	fsys := fs.MakeRealFS()
-	lrc := loader.RestrictionRootOnly
-	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
-	pc := plugins.DefaultPluginConfig()
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	actual, err := kt.MakeCustomizedResMap()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	th.assertActualEqualsExpected(actual, string(expected))
+  th := NewKustTestHarness(t, "/manifests/kfserving/kfserving-install/overlays/application")
+  writeKfservingInstallOverlaysApplication(th)
+  m, err := th.makeKustTarget().MakeCustomizedResMap()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  expected, err := m.AsYaml()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  targetPath := "../kfserving/kfserving-install/overlays/application"
+  fsys := fs.MakeRealFS()
+  lrc := loader.RestrictionRootOnly
+  _loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+  if loaderErr != nil {
+    t.Fatalf("could not load kustomize loader: %v", loaderErr)
+  }
+  rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+  pc := plugins.DefaultPluginConfig()
+  kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+  if err != nil {
+    th.t.Fatalf("Unexpected construction error %v", err)
+  }
+  actual, err := kt.MakeCustomizedResMap()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  th.assertActualEqualsExpected(actual, string(expected))
 }
