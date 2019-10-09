@@ -22,7 +22,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: proxy-role
+  name: kfserving-proxy-role
 subjects:
 - kind: ServiceAccount
   name: default
@@ -69,7 +69,7 @@ rules:
 - apiGroups:
   - serving.knative.dev
   resources:
-  - configurations
+  - services
   verbs:
   - get
   - list
@@ -81,27 +81,7 @@ rules:
 - apiGroups:
   - serving.knative.dev
   resources:
-  - configurations/status
-  verbs:
-  - get
-  - update
-  - patch
-- apiGroups:
-  - serving.knative.dev
-  resources:
-  - routes
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - serving.knative.dev
-  resources:
-  - routes/status
+  - services/status
   verbs:
   - get
   - update
