@@ -153,7 +153,8 @@ metadata:
   name: kfam
 spec:
   ports:
-    - port: 8081`)
+    - port: 8081
+`)
 	th.writeF("/manifests/profiles/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -198,7 +199,8 @@ varReference:
 - path: spec/template/spec/containers/1/args/3
   kind: Deployment
 - path: spec/template/spec/containers/1/args/5
-  kind: Deployment`)
+  kind: Deployment
+`)
 	th.writeF("/manifests/profiles/base/params.env", `
 admin=
 userid-header=
