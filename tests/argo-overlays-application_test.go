@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: argo
-      app.kubernetes.io/instance: argo-v0.6.2
+      app.kubernetes.io/instance: argo-v2.3.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: argo
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6.2
+      app.kubernetes.io/version: v2.3.0
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -63,11 +63,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: argo
-  app.kubernetes.io/instance: argo-v0.6.2
+  app.kubernetes.io/instance: argo-v2.3.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: argo
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6.2
+  app.kubernetes.io/version: v2.3.0
 `)
 	th.writeF("/manifests/argo/base/cluster-role-binding.yaml", `
 ---
