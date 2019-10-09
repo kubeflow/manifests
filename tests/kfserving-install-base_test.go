@@ -274,8 +274,8 @@ data:
     {
         "tensorflow": {
             "image": "tensorflow/serving",
-            "defaultImageVersion": "latest",
-            "defaultGpuImageVersion": "latest",
+            "defaultImageVersion": "1.14.0",
+            "defaultGpuImageVersion": "1.14.0-gpu",
             "allowedImageVersions": [
                "latest",
                "latest-gpu",
