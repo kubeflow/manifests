@@ -64,6 +64,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - istio
+      - application
       parameters:
       - name: userid-header
         value: X-Goog-Authenticated-User-Email

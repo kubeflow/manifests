@@ -33,6 +33,7 @@ spec:
         value: kubeflow-userid
       overlays:
       - istio
+      - application
       repoRef:
         name: manifests
         path: common/centraldashboard
