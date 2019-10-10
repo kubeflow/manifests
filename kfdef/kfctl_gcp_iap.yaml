@@ -52,6 +52,11 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
+        path: kubeflow-roles
+    name: kubeflow-roles
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
         path: metacontroller
     name: metacontroller
   - kustomizeConfig:
