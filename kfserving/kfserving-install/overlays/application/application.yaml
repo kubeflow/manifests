@@ -15,7 +15,7 @@ spec:
       kind: Secret
     - group: v1
       kind: ConfigMap
-  version: "v1alpha1"
+  version: "v1alpha2"
   description: "KFServing provides a Kubernetes Custom Resource Definition for serving ML Models on arbitrary frameworks"
   icons:
   maintainers:

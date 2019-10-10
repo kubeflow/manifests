@@ -22,7 +22,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: proxy-role
+  name: kfserving-proxy-role
 subjects:
 - kind: ServiceAccount
   name: default
@@ -69,7 +69,7 @@ rules:
 - apiGroups:
   - serving.knative.dev
   resources:
-  - configurations
+  - services
   verbs:
   - get
   - list
@@ -81,15 +81,15 @@ rules:
 - apiGroups:
   - serving.knative.dev
   resources:
-  - configurations/status
+  - services/status
   verbs:
   - get
   - update
   - patch
 - apiGroups:
-  - serving.knative.dev
+  - networking.istio.io
   resources:
-  - routes
+  - virtualservices
   verbs:
   - get
   - list
@@ -99,17 +99,17 @@ rules:
   - patch
   - delete
 - apiGroups:
-  - serving.knative.dev
+  - networking.istio.io
   resources:
-  - routes/status
+  - virtualservices/status
   verbs:
   - get
   - update
-  - patch
+  - patch    
 - apiGroups:
   - serving.kubeflow.org
   resources:
-  - kfservices
+  - inferenceservices
   verbs:
   - get
   - list
@@ -121,7 +121,7 @@ rules:
 - apiGroups:
   - serving.kubeflow.org
   resources:
-  - kfservices/status
+  - inferenceservices/status
   verbs:
   - get
   - update
@@ -215,7 +215,7 @@ rules:
 - apiGroups:
   - kubeflow.org
   resources:
-  - kfservices
+  - inferenceservices
   verbs:
   - get
   - list
@@ -238,7 +238,7 @@ rules:
 - apiGroups:
   - kubeflow.org
   resources:
-  - kfservices
+  - inferenceservices
   verbs:
   - get
   - list
@@ -246,38 +246,99 @@ rules:
 `)
 	th.writeF("/manifests/kfserving/kfserving-install/base/config-map.yaml", `
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: inferenceservice-config
 data:
+  predictors: |-
+    {
+        "tensorflow": {
+            "image": "tensorflow/serving",
+            "defaultImageVersion": "1.14.0",
+            "defaultGpuImageVersion": "1.14.0-gpu",
+            "allowedImageVersions": [
+               "latest",
+               "latest-gpu",
+               "1.11.0",
+               "1.11.0-gpu",
+               "1.12.0",
+               "1.12.0-gpu",
+               "1.13.0",
+               "1.13.0-gpu",
+               "1.14.0",
+               "1.14.0-gpu"
+            ]
+        },
+        "onnx": {
+            "image": "mcr.microsoft.com/onnxruntime/server",
+            "defaultImageVersion": "v0.5.0",
+            "allowedImageVersions": [
+               "latest",
+               "v0.5.0"
+            ]
+        },
+        "sklearn": {
+            "image": "gcr.io/kfserving/sklearnserver",
+            "defaultImageVersion": "0.2.0",
+            "allowedImageVersions": [
+               "latest",
+               "0.2.0"
+            ]
+        },
+        "xgboost": {
+            "image": "gcr.io/kfserving/xgbserver",
+            "defaultImageVersion": "0.2.0",
+            "allowedImageVersions": [
+               "latest",
+               "0.2.0"
+            ]
+        },
+        "pytorch": {
+            "image": "gcr.io/kfserving/pytorchserver",
+            "defaultImageVersion": "0.2.0",
+            "allowedImageVersions": [
+               "latest",
+               "0.2.0"
+            ]
+        },
+        "tensorrt": {
+            "image": "nvcr.io/nvidia/tensorrtserver",
+            "defaultImageVersion": "19.05-py3",
+            "allowedImageVersions": [
+               "19.05-py3"
+            ]
+        }
+    }
+  transformers: |-
+    {
+    }
+  explainers: |-
+    {
+        "image" : "docker.io/seldonio/alibiexplainer",
+        "defaultImageVersion": "0.2.3",
+        "allowedImageVersions": [
+           "0.2.3"
+        ]
+    }
+  storageInitializer: |-
+    {
+        "image" : "gcr.io/kfserving/storage-initializer:0.2.0"
+    }
   credentials: |-
     {
-       "gcs" : {
+       "gcs": {
            "gcsCredentialFileName": "gcloud-application-credentials.json"
        },
-       "s3" : {
+       "s3": {
            "s3AccessKeyIDName": "awsAccessKeyID",
            "s3SecretAccessKeyName": "awsSecretAccessKey"
        }
     }
-  frameworks: |-
+  ingress: |-
     {
-        "tensorflow": {
-            "image": "tensorflow/serving"
-        },
-        "sklearn": {
-            "image": "$(registry)/sklearnserver"
-        },
-        "pytorch": {
-            "image": "$(registry)/pytorchserver"
-        },
-        "xgboost": {
-            "image": "$(registry)/xgbserver"
-        },
-        "tensorrt": {
-            "image": "nvcr.io/nvidia/tensorrtserver"
-        }
+        "ingressGateway" : "knative-ingress-gateway.knative-serving",
+        "ingressService" : "istio-ingressgateway.istio-system.svc.cluster.local"
     }
-kind: ConfigMap
-metadata:
-  name: kfservice-config
 `)
 	th.writeF("/manifests/kfserving/kfserving-install/base/secret.yaml", `
 apiVersion: v1
@@ -327,7 +388,7 @@ spec:
               fieldPath: metadata.namespace
         - name: SECRET_NAME
           value: kfserving-webhook-server-secret
-        image: $(registry)/kfserving-controller:v0.1.1
+        image: $(registry)/kfserving-controller:0.2.0
         imagePullPolicy: Always
         name: manager
         ports:
@@ -431,7 +492,7 @@ images:
   newTag: v0.4.0
 - name: $(registry)/kfserving-controller
   newName: $(registry)/kfserving-controller
-  newTag: v0.1.1
+  newTag: 0.2.0
 `)
 }
 
