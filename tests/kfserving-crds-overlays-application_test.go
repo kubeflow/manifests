@@ -69,16 +69,19 @@ metadata:
   creationTimestamp: null
   labels:
     controller-tools.k8s.io: "1.0"
-  name: kfservices.serving.kubeflow.org
+  name: inferenceservices.serving.kubeflow.org
 spec:
   additionalPrinterColumns:
   - JSONPath: .status.url
     name: URL
     type: string
-  - JSONPath: .status.default.traffic
+  - JSONPath: .status.conditions[?(@.type=='Ready')].status
+    name: Ready
+    type: string
+  - JSONPath: .status.traffic
     name: Default Traffic
     type: integer
-  - JSONPath: .status.canary.traffic
+  - JSONPath: .status.canaryTraffic
     name: Canary Traffic
     type: integer
   - JSONPath: .metadata.creationTimestamp
@@ -86,10 +89,10 @@ spec:
     type: date
   group: serving.kubeflow.org
   names:
-    kind: KFService
-    plural: kfservices
+    kind: InferenceService
+    plural: inferenceservices
     shortNames:
-    - kfservice
+    - inferenceservice
   scope: Namespaced
   validation:
     openAPIV3Schema:
@@ -109,193 +112,448 @@ spec:
         spec:
           properties:
             canary:
-              description: Canary defines an alternate configuration to route a percentage
+              description: Canary defines an alternate endpoints to route a percentage
                 of traffic.
               properties:
-                custom:
-                  description: The following fields follow a "1-of" semantic. Users
-                    must specify exactly one spec.
+                explainer:
+                  description: Explainer defines the model explanation service spec,
+                    explainer service calls to predictor or transformer if it is specified.
                   properties:
-                    container:
+                    alibi:
+                      description: Spec for alibi explainer
+                      properties:
+                        config:
+                          description: Inline custom parameter settings for explainer
+                          type: object
+                        resources:
+                          description: Defaults to requests and limits of 1CPU, 2Gb
+                            MEM.
+                          type: object
+                        runtimeVersion:
+                          description: Defaults to latest Alibi Version
+                          type: string
+                        storageUri:
+                          description: The location of a trained explanation model
+                          type: string
+                        type:
+                          description: The type of Alibi explainer
+                          type: string
+                      required:
+                      - type
                       type: object
-                  required:
-                  - container
+                    custom:
+                      description: Spec for a custom explainer
+                      properties:
+                        container:
+                          type: object
+                      required:
+                      - container
+                      type: object
+                    maxReplicas:
+                      description: This is the up bound for autoscaler to scale to
+                      format: int64
+                      type: integer
+                    minReplicas:
+                      description: Minimum number of replicas, pods won't scale down
+                        to 0 in case of no traffic
+                      format: int64
+                      type: integer
+                    serviceAccountName:
+                      description: ServiceAccountName is the name of the ServiceAccount
+                        to use to run the service
+                      type: string
                   type: object
-                maxReplicas:
-                  description: This is the up bound for autoscaler to scale to
-                  format: int64
-                  type: integer
-                minReplicas:
-                  description: Minimum number of replicas, pods won't scale down to
-                    0 in case of no traffic
-                  format: int64
-                  type: integer
-                pytorch:
+                predictor:
+                  description: Predictor defines the model serving spec +required
                   properties:
-                    modelClassName:
-                      description: Defaults PyTorch model class name to 'PyTorchModel'
-                      type: string
-                    modelUri:
-                      type: string
-                    resources:
-                      description: Defaults to requests and limits of 1CPU, 2Gb MEM.
+                    custom:
+                      description: Spec for a custom predictor
+                      properties:
+                        container:
+                          type: object
+                      required:
+                      - container
                       type: object
-                    runtimeVersion:
-                      description: Defaults to latest PyTorch Version
+                    maxReplicas:
+                      description: This is the up bound for autoscaler to scale to
+                      format: int64
+                      type: integer
+                    minReplicas:
+                      description: Minimum number of replicas, pods won't scale down
+                        to 0 in case of no traffic
+                      format: int64
+                      type: integer
+                    onnx:
+                      description: Spec for ONNX runtime (https://github.com/microsoft/onnxruntime)
+                      properties:
+                        resources:
+                          description: Defaults to requests and limits of 1CPU, 2Gb
+                            MEM.
+                          type: object
+                        runtimeVersion:
+                          description: Allowed runtime versions are [v0.5.0, latest]
+                            and defaults to the version specified in inferenceservice
+                            config map
+                          type: string
+                        storageUri:
+                          description: The location of the trained model
+                          type: string
+                      required:
+                      - storageUri
+                      type: object
+                    pytorch:
+                      description: Spec for PyTorch predictor
+                      properties:
+                        modelClassName:
+                          description: Defaults PyTorch model class name to 'PyTorchModel'
+                          type: string
+                        resources:
+                          description: Defaults to requests and limits of 1CPU, 2Gb
+                            MEM.
+                          type: object
+                        runtimeVersion:
+                          description: Allowed runtime versions are [0.2.0, latest]
+                            and defaults to the version specified in inferenceservice
+                            config map
+                          type: string
+                        storageUri:
+                          description: The location of the trained model
+                          type: string
+                      required:
+                      - storageUri
+                      type: object
+                    serviceAccountName:
+                      description: ServiceAccountName is the name of the ServiceAccount
+                        to use to run the service
                       type: string
-                  required:
-                  - modelUri
+                    sklearn:
+                      description: Spec for SKLearn predictor
+                      properties:
+                        resources:
+                          description: Defaults to requests and limits of 1CPU, 2Gb
+                            MEM.
+                          type: object
+                        runtimeVersion:
+                          description: Allowed runtime versions are [0.2.0, latest]
+                            and defaults to the version specified in inferenceservice
+                            config map
+                          type: string
+                        storageUri:
+                          description: The location of the trained model
+                          type: string
+                      required:
+                      - storageUri
+                      type: object
+                    tensorflow:
+                      description: Spec for Tensorflow Serving (https://github.com/tensorflow/serving)
+                      properties:
+                        resources:
+                          description: Defaults to requests and limits of 1CPU, 2Gb
+                            MEM.
+                          type: object
+                        runtimeVersion:
+                          description: Allowed runtime versions are [1.11.0, 1.12.0,
+                            1.13.0, 1.14.0, latest] or [1.11.0-gpu, 1.12.0-gpu, 1.13.0-gpu,
+                            1.14.0-gpu, latest-gpu] if gpu resource is specified and
+                            defaults to the version specified in inferenceservice
+                            config map.
+                          type: string
+                        storageUri:
+                          description: The location of the trained model
+                          type: string
+                      required:
+                      - storageUri
+                      type: object
+                    tensorrt:
+                      description: Spec for TensorRT Inference Server (https://github.com/NVIDIA/tensorrt-inference-server)
+                      properties:
+                        resources:
+                          description: Defaults to requests and limits of 1CPU, 2Gb
+                            MEM.
+                          type: object
+                        runtimeVersion:
+                          description: Allowed runtime versions are [19.05-py3] and
+                            defaults to the version specified in inferenceservice
+                            config map
+                          type: string
+                        storageUri:
+                          description: The location of the trained model
+                          type: string
+                      required:
+                      - storageUri
+                      type: object
+                    xgboost:
+                      description: Spec for XGBoost predictor
+                      properties:
+                        resources:
+                          description: Defaults to requests and limits of 1CPU, 2Gb
+                            MEM.
+                          type: object
+                        runtimeVersion:
+                          description: Allowed runtime versions are [0.2.0, latest]
+                            and defaults to the version specified in inferenceservice
+                            config map
+                          type: string
+                        storageUri:
+                          description: The location of the trained model
+                          type: string
+                      required:
+                      - storageUri
+                      type: object
                   type: object
-                serviceAccountName:
-                  description: Service Account Name
-                  type: string
-                sklearn:
+                transformer:
+                  description: Transformer defines the pre/post processing before
+                    and after the predictor call, transformer service calls to predictor
+                    service.
                   properties:
-                    modelUri:
-                      type: string
-                    resources:
-                      description: Defaults to requests and limits of 1CPU, 2Gb MEM.
+                    custom:
+                      description: Spec for a custom transformer
+                      properties:
+                        container:
+                          type: object
+                      required:
+                      - container
                       type: object
-                    runtimeVersion:
-                      description: Defaults to latest SKLearn Version.
+                    maxReplicas:
+                      description: This is the up bound for autoscaler to scale to
+                      format: int64
+                      type: integer
+                    minReplicas:
+                      description: Minimum number of replicas, pods won't scale down
+                        to 0 in case of no traffic
+                      format: int64
+                      type: integer
+                    serviceAccountName:
+                      description: ServiceAccountName is the name of the ServiceAccount
+                        to use to run the service
                       type: string
-                  required:
-                  - modelUri
                   type: object
-                tensorflow:
-                  properties:
-                    modelUri:
-                      type: string
-                    resources:
-                      description: Defaults to requests and limits of 1CPU, 2Gb MEM.
-                      type: object
-                    runtimeVersion:
-                      description: Defaults to latest TF Version.
-                      type: string
-                  required:
-                  - modelUri
-                  type: object
-                tensorrt:
-                  properties:
-                    modelUri:
-                      type: string
-                    resources:
-                      description: Defaults to requests and limits of 1CPU, 2Gb MEM.
-                      type: object
-                    runtimeVersion:
-                      description: Defaults to latest TensorRT Version.
-                      type: string
-                  required:
-                  - modelUri
-                  type: object
-                xgboost:
-                  properties:
-                    modelUri:
-                      type: string
-                    resources:
-                      description: Defaults to requests and limits of 1CPU, 2Gb MEM.
-                      type: object
-                    runtimeVersion:
-                      description: Defaults to latest XGBoost Version.
-                      type: string
-                  required:
-                  - modelUri
-                  type: object
+              required:
+              - predictor
               type: object
             canaryTrafficPercent:
+              description: CanaryTrafficPercent defines the percentage of traffic
+                going to canary InferenceService endpoints
               format: int64
               type: integer
             default:
+              description: Default defines default InferenceService endpoints +required
               properties:
-                custom:
-                  description: The following fields follow a "1-of" semantic. Users
-                    must specify exactly one spec.
+                explainer:
+                  description: Explainer defines the model explanation service spec,
+                    explainer service calls to predictor or transformer if it is specified.
                   properties:
-                    container:
+                    alibi:
+                      description: Spec for alibi explainer
+                      properties:
+                        config:
+                          description: Inline custom parameter settings for explainer
+                          type: object
+                        resources:
+                          description: Defaults to requests and limits of 1CPU, 2Gb
+                            MEM.
+                          type: object
+                        runtimeVersion:
+                          description: Defaults to latest Alibi Version
+                          type: string
+                        storageUri:
+                          description: The location of a trained explanation model
+                          type: string
+                        type:
+                          description: The type of Alibi explainer
+                          type: string
+                      required:
+                      - type
                       type: object
-                  required:
-                  - container
+                    custom:
+                      description: Spec for a custom explainer
+                      properties:
+                        container:
+                          type: object
+                      required:
+                      - container
+                      type: object
+                    maxReplicas:
+                      description: This is the up bound for autoscaler to scale to
+                      format: int64
+                      type: integer
+                    minReplicas:
+                      description: Minimum number of replicas, pods won't scale down
+                        to 0 in case of no traffic
+                      format: int64
+                      type: integer
+                    serviceAccountName:
+                      description: ServiceAccountName is the name of the ServiceAccount
+                        to use to run the service
+                      type: string
                   type: object
-                maxReplicas:
-                  description: This is the up bound for autoscaler to scale to
-                  format: int64
-                  type: integer
-                minReplicas:
-                  description: Minimum number of replicas, pods won't scale down to
-                    0 in case of no traffic
-                  format: int64
-                  type: integer
-                pytorch:
+                predictor:
+                  description: Predictor defines the model serving spec +required
                   properties:
-                    modelClassName:
-                      description: Defaults PyTorch model class name to 'PyTorchModel'
-                      type: string
-                    modelUri:
-                      type: string
-                    resources:
-                      description: Defaults to requests and limits of 1CPU, 2Gb MEM.
+                    custom:
+                      description: Spec for a custom predictor
+                      properties:
+                        container:
+                          type: object
+                      required:
+                      - container
                       type: object
-                    runtimeVersion:
-                      description: Defaults to latest PyTorch Version
+                    maxReplicas:
+                      description: This is the up bound for autoscaler to scale to
+                      format: int64
+                      type: integer
+                    minReplicas:
+                      description: Minimum number of replicas, pods won't scale down
+                        to 0 in case of no traffic
+                      format: int64
+                      type: integer
+                    onnx:
+                      description: Spec for ONNX runtime (https://github.com/microsoft/onnxruntime)
+                      properties:
+                        resources:
+                          description: Defaults to requests and limits of 1CPU, 2Gb
+                            MEM.
+                          type: object
+                        runtimeVersion:
+                          description: Allowed runtime versions are [v0.5.0, latest]
+                            and defaults to the version specified in inferenceservice
+                            config map
+                          type: string
+                        storageUri:
+                          description: The location of the trained model
+                          type: string
+                      required:
+                      - storageUri
+                      type: object
+                    pytorch:
+                      description: Spec for PyTorch predictor
+                      properties:
+                        modelClassName:
+                          description: Defaults PyTorch model class name to 'PyTorchModel'
+                          type: string
+                        resources:
+                          description: Defaults to requests and limits of 1CPU, 2Gb
+                            MEM.
+                          type: object
+                        runtimeVersion:
+                          description: Allowed runtime versions are [0.2.0, latest]
+                            and defaults to the version specified in inferenceservice
+                            config map
+                          type: string
+                        storageUri:
+                          description: The location of the trained model
+                          type: string
+                      required:
+                      - storageUri
+                      type: object
+                    serviceAccountName:
+                      description: ServiceAccountName is the name of the ServiceAccount
+                        to use to run the service
                       type: string
-                  required:
-                  - modelUri
+                    sklearn:
+                      description: Spec for SKLearn predictor
+                      properties:
+                        resources:
+                          description: Defaults to requests and limits of 1CPU, 2Gb
+                            MEM.
+                          type: object
+                        runtimeVersion:
+                          description: Allowed runtime versions are [0.2.0, latest]
+                            and defaults to the version specified in inferenceservice
+                            config map
+                          type: string
+                        storageUri:
+                          description: The location of the trained model
+                          type: string
+                      required:
+                      - storageUri
+                      type: object
+                    tensorflow:
+                      description: Spec for Tensorflow Serving (https://github.com/tensorflow/serving)
+                      properties:
+                        resources:
+                          description: Defaults to requests and limits of 1CPU, 2Gb
+                            MEM.
+                          type: object
+                        runtimeVersion:
+                          description: Allowed runtime versions are [1.11.0, 1.12.0,
+                            1.13.0, 1.14.0, latest] or [1.11.0-gpu, 1.12.0-gpu, 1.13.0-gpu,
+                            1.14.0-gpu, latest-gpu] if gpu resource is specified and
+                            defaults to the version specified in inferenceservice
+                            config map.
+                          type: string
+                        storageUri:
+                          description: The location of the trained model
+                          type: string
+                      required:
+                      - storageUri
+                      type: object
+                    tensorrt:
+                      description: Spec for TensorRT Inference Server (https://github.com/NVIDIA/tensorrt-inference-server)
+                      properties:
+                        resources:
+                          description: Defaults to requests and limits of 1CPU, 2Gb
+                            MEM.
+                          type: object
+                        runtimeVersion:
+                          description: Allowed runtime versions are [19.05-py3] and
+                            defaults to the version specified in inferenceservice
+                            config map
+                          type: string
+                        storageUri:
+                          description: The location of the trained model
+                          type: string
+                      required:
+                      - storageUri
+                      type: object
+                    xgboost:
+                      description: Spec for XGBoost predictor
+                      properties:
+                        resources:
+                          description: Defaults to requests and limits of 1CPU, 2Gb
+                            MEM.
+                          type: object
+                        runtimeVersion:
+                          description: Allowed runtime versions are [0.2.0, latest]
+                            and defaults to the version specified in inferenceservice
+                            config map
+                          type: string
+                        storageUri:
+                          description: The location of the trained model
+                          type: string
+                      required:
+                      - storageUri
+                      type: object
                   type: object
-                serviceAccountName:
-                  description: Service Account Name
-                  type: string
-                sklearn:
+                transformer:
+                  description: Transformer defines the pre/post processing before
+                    and after the predictor call, transformer service calls to predictor
+                    service.
                   properties:
-                    modelUri:
-                      type: string
-                    resources:
-                      description: Defaults to requests and limits of 1CPU, 2Gb MEM.
+                    custom:
+                      description: Spec for a custom transformer
+                      properties:
+                        container:
+                          type: object
+                      required:
+                      - container
                       type: object
-                    runtimeVersion:
-                      description: Defaults to latest SKLearn Version.
+                    maxReplicas:
+                      description: This is the up bound for autoscaler to scale to
+                      format: int64
+                      type: integer
+                    minReplicas:
+                      description: Minimum number of replicas, pods won't scale down
+                        to 0 in case of no traffic
+                      format: int64
+                      type: integer
+                    serviceAccountName:
+                      description: ServiceAccountName is the name of the ServiceAccount
+                        to use to run the service
                       type: string
-                  required:
-                  - modelUri
                   type: object
-                tensorflow:
-                  properties:
-                    modelUri:
-                      type: string
-                    resources:
-                      description: Defaults to requests and limits of 1CPU, 2Gb MEM.
-                      type: object
-                    runtimeVersion:
-                      description: Defaults to latest TF Version.
-                      type: string
-                  required:
-                  - modelUri
-                  type: object
-                tensorrt:
-                  properties:
-                    modelUri:
-                      type: string
-                    resources:
-                      description: Defaults to requests and limits of 1CPU, 2Gb MEM.
-                      type: object
-                    runtimeVersion:
-                      description: Defaults to latest TensorRT Version.
-                      type: string
-                  required:
-                  - modelUri
-                  type: object
-                xgboost:
-                  properties:
-                    modelUri:
-                      type: string
-                    resources:
-                      description: Defaults to requests and limits of 1CPU, 2Gb MEM.
-                      type: object
-                    runtimeVersion:
-                      description: Defaults to latest XGBoost Version.
-                      type: string
-                  required:
-                  - modelUri
-                  type: object
+              required:
+              - predictor
               type: object
           required:
           - default
@@ -303,16 +561,12 @@ spec:
         status:
           properties:
             canary:
-              properties:
-                name:
-                  type: string
-                replicas:
-                  format: int64
-                  type: integer
-                traffic:
-                  format: int64
-                  type: integer
+              description: Statuses for the canary endpoints of the InferenceService
               type: object
+            canaryTraffic:
+              description: Traffic percentage that goes to canary services
+              format: int64
+              type: integer
             conditions:
               description: Conditions the latest available observations of a resource's
                 current state. +patchMergeKey=type +patchStrategy=merge
@@ -348,25 +602,22 @@ spec:
                 type: object
               type: array
             default:
-              properties:
-                name:
-                  type: string
-                replicas:
-                  format: int64
-                  type: integer
-                traffic:
-                  format: int64
-                  type: integer
+              description: Statuses for the default endpoints of the InferenceService
               type: object
             observedGeneration:
               description: ObservedGeneration is the 'Generation' of the Service that
                 was last processed by the controller.
               format: int64
               type: integer
+            traffic:
+              description: Traffic percentage that goes to default services
+              format: int64
+              type: integer
             url:
+              description: URL of the InferenceService
               type: string
           type: object
-  version: v1alpha1
+  version: v1alpha2
 status:
   acceptedNames:
     kind: ""
