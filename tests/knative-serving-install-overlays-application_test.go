@@ -62,16 +62,6 @@ commonLabels:
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.8.0
 `)
-  th.writeF("/manifests/knative/knative-serving-install/base/namespace.yaml", `
-apiVersion: v1
-kind: Namespace
-metadata:
-  labels:
-    istio-injection: enabled
-    serving.knative.dev/release: "v0.8.0"
-  name: knative-serving
-
-`)
   th.writeF("/manifests/knative/knative-serving-install/base/gateway.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
@@ -1547,7 +1537,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: knative-serving
 resources:
-- namespace.yaml
 - gateway.yaml
 - cluster-role.yaml
 - cluster-role-binding.yaml

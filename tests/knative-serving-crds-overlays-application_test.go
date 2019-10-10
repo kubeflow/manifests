@@ -62,6 +62,16 @@ commonLabels:
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.8.0
 `)
+  th.writeF("/manifests/knative/knative-serving-crds/base/namespace.yaml", `
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-injection: enabled
+    serving.knative.dev/release: "v0.8.0"
+  name: knative-serving
+
+`)
   th.writeF("/manifests/knative/knative-serving-crds/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -464,6 +474,7 @@ spec:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+- namespace.yaml
 - crd.yaml
 `)
 }
