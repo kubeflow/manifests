@@ -120,11 +120,15 @@ spec:
         path: knative/knative-serving-install
     name: knative-install
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: kfserving/kfserving-crds
     name: kfserving-crds
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: kfserving/kfserving-install
