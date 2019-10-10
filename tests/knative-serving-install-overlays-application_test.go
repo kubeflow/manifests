@@ -13,7 +13,55 @@ import (
   "testing"
 )
 
-func writeKnativeServingInstallBase(th *KustTestHarness) {
+func writeKnativeServingInstallOverlaysApplication(th *KustTestHarness) {
+  th.writeF("/manifests/knative/knative-serving-install/overlays/application/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: knative-serving-install
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: knative-serving-install
+      app.kubernetes.io/instance: knative-serving-install-v0.8.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: knative-serving-install
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.8.0
+  componentKinds:
+  - group: core
+    kind: ConfigMap
+  - group: apps
+    kind: Deployment
+  descriptor:
+    type: knative-serving-install
+    version: v1beta1
+    description: ""
+    maintainers: []
+    owners: []
+    keywords:
+     - knative-serving-install
+     - kubeflow
+    links:
+    - description: About
+      url: ""
+  addOwnerRef: true
+`)
+  th.writeK("/manifests/knative/knative-serving-install/overlays/application", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- application.yaml
+commonLabels:
+  app.kubernetes.io/name: knative-serving-install
+  app.kubernetes.io/instance: knative-serving-install-v0.8.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: knative-serving-install
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.8.0
+`)
   th.writeF("/manifests/knative/knative-serving-install/base/gateway.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
@@ -1526,9 +1574,9 @@ images:
 `)
 }
 
-func TestKnativeServingInstallBase(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/knative/knative-serving-install/base")
-  writeKnativeServingInstallBase(th)
+func TestKnativeServingInstallOverlaysApplication(t *testing.T) {
+  th := NewKustTestHarness(t, "/manifests/knative/knative-serving-install/overlays/application")
+  writeKnativeServingInstallOverlaysApplication(th)
   m, err := th.makeKustTarget().MakeCustomizedResMap()
   if err != nil {
     t.Fatalf("Err: %v", err)
@@ -1537,7 +1585,7 @@ func TestKnativeServingInstallBase(t *testing.T) {
   if err != nil {
     t.Fatalf("Err: %v", err)
   }
-  targetPath := "../knative/knative-serving-install/base"
+  targetPath := "../knative/knative-serving-install/overlays/application"
   fsys := fs.MakeRealFS()
   lrc := loader.RestrictionRootOnly
   _loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)

@@ -135,6 +135,8 @@ spec:
         path: pytorch-job/pytorch-operator
     name: pytorch-operator
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
       - name: namespace
         value: knative-serving
@@ -143,6 +145,8 @@ spec:
         path: knative/knative-serving-crds
     name: knative-crds
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
       - name: namespace
         value: knative-serving
