@@ -13,7 +13,55 @@ import (
   "testing"
 )
 
-func writeKnativeServingCrdsBase(th *KustTestHarness) {
+func writeKnativeServingCrdsOverlaysApplication(th *KustTestHarness) {
+  th.writeF("/manifests/knative/knative-serving-crds/overlays/application/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: knative-serving-crds
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: knative-serving-crds
+      app.kubernetes.io/instance: knative-serving-crds-v0.8.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: knative-serving-crds
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.8.0
+  componentKinds:
+  - group: core
+    kind: ConfigMap
+  - group: apps
+    kind: Deployment
+  descriptor:
+    type: knative-serving-crds
+    version: v1beta1
+    description: ""
+    maintainers: []
+    owners: []
+    keywords:
+     - knative-serving-crds
+     - kubeflow
+    links:
+    - description: About
+      url: ""
+  addOwnerRef: true
+`)
+  th.writeK("/manifests/knative/knative-serving-crds/overlays/application", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- application.yaml
+commonLabels:
+  app.kubernetes.io/name: knative-serving-crds
+  app.kubernetes.io/instance: knative-serving-crds-v0.8.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: knative-serving-crds
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.8.0
+`)
   th.writeF("/manifests/knative/knative-serving-crds/base/namespace.yaml", `
 apiVersion: v1
 kind: Namespace
@@ -431,9 +479,9 @@ resources:
 `)
 }
 
-func TestKnativeServingCrdsBase(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/knative/knative-serving-crds/base")
-  writeKnativeServingCrdsBase(th)
+func TestKnativeServingCrdsOverlaysApplication(t *testing.T) {
+  th := NewKustTestHarness(t, "/manifests/knative/knative-serving-crds/overlays/application")
+  writeKnativeServingCrdsOverlaysApplication(th)
   m, err := th.makeKustTarget().MakeCustomizedResMap()
   if err != nil {
     t.Fatalf("Err: %v", err)
@@ -442,7 +490,7 @@ func TestKnativeServingCrdsBase(t *testing.T) {
   if err != nil {
     t.Fatalf("Err: %v", err)
   }
-  targetPath := "../knative/knative-serving-crds/base"
+  targetPath := "../knative/knative-serving-crds/overlays/application"
   fsys := fs.MakeRealFS()
   lrc := loader.RestrictionRootOnly
   _loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
