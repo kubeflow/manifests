@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: api-service
-      app.kubernetes.io/instance: api-service-v0.7.0
+      app.kubernetes.io/instance: api-service-0.1.31
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: api-service
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/version: 0.1.31
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -44,7 +44,7 @@ spec:
      - kubeflow
     links:
     - description: About
-      url: link
+      url: ""
   addOwnerRef: true
 `)
   th.writeK("/manifests/pipeline/api-service/overlays/application", `
@@ -56,11 +56,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: api-service
-  app.kubernetes.io/instance: api-service-v0.7.0
+  app.kubernetes.io/instance: api-service-0.1.31
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: api-service
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: 0.1.31
 `)
   th.writeF("/manifests/pipeline/api-service/base/config-map.yaml", `
 # The configuration for the ML pipelines APIServer

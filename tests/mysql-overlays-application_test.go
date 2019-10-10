@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: mysql
-      app.kubernetes.io/instance: mysql-v0.7.0
+      app.kubernetes.io/instance: mysql-0.1.31
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: mysql
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/version: 0.1.31
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -56,11 +56,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: mysql
-  app.kubernetes.io/instance: mysql-v0.7.0
+  app.kubernetes.io/instance: mysql-0.1.31
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: mysql
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: 0.1.31
 `)
   th.writeF("/manifests/pipeline/mysql/base/deployment.yaml", `
 apiVersion: apps/v1
