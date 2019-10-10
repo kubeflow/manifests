@@ -484,6 +484,8 @@ spec:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:6789"]
           initialDelaySeconds: 10
+          periodSeconds: 60
+          failureThreshold: 5
 `)
 	th.writeF("/manifests/katib/katib-controller/base/katib-manager-rest-deployment.yaml", `
 apiVersion: apps/v1
