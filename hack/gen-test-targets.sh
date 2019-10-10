@@ -6,13 +6,16 @@
 # The script is based on kusttestharness_test.go from kubernetes-sigs/pkg/kusttest/kusttestharness.go
 #
 add_app=''
+dry_run=false
 source hack/utils.sh
+
 usage () 
 {
   echo -e "Usage: $0 [OPTIONS] <directory>\n"\
   'OPTIONS:\n'\
   '  -h | --help       \n'\
-  '     | --add-app <name=version>\n'
+  '     | --add-app <name=version>\n'\
+  '     | --dry-run\n'
 }
 
 findcommand()
@@ -33,7 +36,7 @@ findcommand()
 addapp()
 {
   local app=${1%=*} version=${1#*=} appdir=${2}/overlays/application 
-echo 'appdir='$appdir' app='$app' version='$version
+#echo 'appdir='$appdir' app='$app' version='$version
   if [[ ! -d $appdir ]]; then
     mkdir -p $appdir
   fi
@@ -83,21 +86,28 @@ spec:
      - kubeflow
     links:
     - description: About
-      url: link
+      url: ""
   addOwnerRef: true
 APPLICATION
+  git add $appdir
 }
 
 generate()
 {
   local rootdir=$(pwd) absdir i
   absdir=${rootdir}/$1
-echo 'rootdir='$rootdir' absdir='$absdir
+#echo 'rootdir='$rootdir' absdir='$absdir
+  if [[ -n $add_app ]]; then
+    absdir=${rootdir}/$1/overlays/application
+  fi
   for i in $(find $absdir -type d -exec sh -c '(ls -p "{}"|grep />/dev/null)||echo "{}"' \;); do
     if [[ ! $i =~ overlays/test$ ]]; then
       testname=$(get-target-name ${i})_test.go
       echo generating $testname from manifests/${i#*manifests/}
-      ./hack/gen-test-target.sh $i 1> tests/$testname
+      $dry_run || ./hack/gen-test-target.sh $i 1> tests/$testname
+      if [[ -n $add_app ]]; then
+        $dry_run || git add tests/$testname
+      fi
     fi
   done
 }
@@ -137,6 +147,10 @@ do
     --add-app)
       shift
       add_app=$1
+      shift
+      ;;
+    --dry-run)
+      dry_run=true
       shift
       ;;
     -*)
