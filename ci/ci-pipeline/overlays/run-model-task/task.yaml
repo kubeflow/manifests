@@ -11,7 +11,8 @@ spec:
   steps:
   - name: run-model
     image: $(inputs.params.imageName)
-    command: ["/bin/bash", "/run-model/run-model.sh"]
+    #command: ["/bin/bash", "/run-model/run-model.sh"]
+    command: ["/bin/sleep", "infinity"]
     workingDir: /kubeflow
     volumeMounts:
     - name: run-model
