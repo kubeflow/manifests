@@ -417,55 +417,6 @@ spec:
           periodSeconds: 60
           failureThreshold: 5
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-manager-rest-deployment.yaml", `
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: katib-manager-rest
-  labels:
-    app: katib
-    component: manager-rest
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: katib
-      component: manager-rest
-  template:
-    metadata:
-      name: katib-manager-rest
-      labels:
-        app: katib
-        component: manager-rest
-    spec:
-      containers:
-      - name: katib-manager-rest
-        image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager-rest
-        imagePullPolicy: IfNotPresent
-        command:
-          - './katib-manager-rest'
-        ports:
-        - name: api
-          containerPort: 80
-`)
-	th.writeF("/manifests/katib/katib-controller/base/katib-manager-rest-service.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
-  name: katib-manager-rest
-  labels:
-    app: katib
-    component: manager-rest
-spec:
-  type: ClusterIP
-  ports:
-    - port: 80
-      protocol: TCP
-      name: api
-  selector:
-    app: katib
-    component: manager-rest
-`)
 	th.writeF("/manifests/katib/katib-controller/base/katib-manager-service.yaml", `
 apiVersion: v1
 kind: Service
@@ -630,8 +581,6 @@ resources:
 - katib-db-secret.yaml
 - katib-db-service.yaml
 - katib-manager-deployment.yaml
-- katib-manager-rest-deployment.yaml
-- katib-manager-rest-service.yaml
 - katib-manager-service.yaml
 - katib-ui-deployment.yaml
 - katib-ui-rbac.yaml
@@ -649,9 +598,6 @@ images:
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
   newTag: 7ade03b
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
-- name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager-rest
-  newTag: 7ade03b
-  newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager-rest
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
   newTag: 7ade03b
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
