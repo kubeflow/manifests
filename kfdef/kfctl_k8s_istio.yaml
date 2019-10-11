@@ -265,6 +265,7 @@ spec:
     name: pipeline-visualization-service
   - kustomizeConfig:
       overlays:
+      - application
       - istio
       parameters:
       - initRequired: true
