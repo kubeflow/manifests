@@ -162,7 +162,7 @@ rules:
   verbs:
   - get
   - update
-  - patch    
+  - patch
 - apiGroups:
   - serving.kubeflow.org
   resources:
@@ -257,7 +257,7 @@ aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
       rbac.authorization.kubeflow.org/aggregate-to-kubeflow-kfserving-admin: "true"
-rules: null
+rules: []
 
 ---
 
@@ -270,7 +270,7 @@ metadata:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-kfserving-admin: "true"
 rules:
 - apiGroups:
-  - kubeflow.org
+  - serving.kubeflow.org
   resources:
   - inferenceservices
   verbs:
@@ -293,7 +293,7 @@ metadata:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
 rules:
 - apiGroups:
-  - kubeflow.org
+  - serving.kubeflow.org
   resources:
   - inferenceservices
   verbs:

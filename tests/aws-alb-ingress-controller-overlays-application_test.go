@@ -13,64 +13,58 @@ import (
 	"testing"
 )
 
-func writeAwsAlbIngressControllerOverlaysVpc(th *KustTestHarness) {
-	th.writeF("/manifests/aws/aws-alb-ingress-controller/overlays/vpc/vpc.yaml", `
-apiVersion: apps/v1
-kind: Deployment
+func writeAwsAlbIngressControllerOverlaysApplication(th *KustTestHarness) {
+	th.writeF("/manifests/aws/aws-alb-ingress-controller/overlays/application/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
 metadata:
-  name: alb-ingress-controller
-  labels:
-    missing: label
+  name: jupyter-web-app
 spec:
   selector:
     matchLabels:
-      missing: label
-  template:
-    metadata:
-      labels:
-        missing: label
-    spec:
-      containers:
-        - name: alb-ingress-controller
-          args:
-            # AWS VPC ID this ingress controller will use to create AWS resources.
-            # If unspecified, it will be discovered from ec2metadata.
-            - --aws-vpc-id=$(VPC_ID)
+      app.kubernetes.io/name: aws-alb-ingress-controller
+      app.kubernetes.io/instance: aws-alb-ingress-controller-v0.6.2
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: aws-alb-ingress-controller
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.6.2
+  componentKinds:
+  - group: core
+    kind: ConfigMap
+  - group: apps
+    kind: Deployment
+  - group: core
+    kind: ServiceAccount
+  descriptor:
+    type: aws-alb-ingress-controller
+    version: v1beta1
+    description: Application Load Balancer (ALB) Ingress Controller Deployment Manifest provides sensible defaults for deploying an ALB Ingress Controller
+    maintainers: []
+    owners: []
+    keywords:
+     - aws
+     - kubeflow
+    links:
+    - description: About
+      url: https://github.com/kubernetes-sigs/aws-alb-ingress-controller
+  addOwnerRef: true
 
-            # AWS region this ingress controller will operate in.
-            # If unspecified, it will be discovered from ec2metadata.
-            # List of regions: http://docs.aws.amazon.com/general/latest/gr/rande.html#vpc_region
-            - --aws-region=$(REGION)
 `)
-	th.writeF("/manifests/aws/aws-alb-ingress-controller/overlays/vpc/params.env", `
-vpcId=
-region=us-west-2
-`)
-	th.writeK("/manifests/aws/aws-alb-ingress-controller/overlays/vpc", `
+	th.writeK("/manifests/aws/aws-alb-ingress-controller/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
 resources:
-- vpc.yaml
-configMapGenerator:
-- name: alb-ingress-controller-vpc-parameters
-  env: params.env
-vars:
-- name: VPC_ID
-  objref:
-    kind: ConfigMap
-    name: alb-ingress-controller-vpc-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.vpcId
-- name: REGION
-  objref:
-    kind: ConfigMap
-    name: alb-ingress-controller-vpc-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.region
+- application.yaml
+commonLabels:
+  app.kubernetes.io/name: aws-alb-ingress-controller
+  app.kubernetes.io/instance: aws-alb-ingress-controller-v0.6.2
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: aws-alb-ingress-controller
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.6.2
+
 `)
 	th.writeF("/manifests/aws/aws-alb-ingress-controller/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
@@ -216,9 +210,9 @@ vars:
 `)
 }
 
-func TestAwsAlbIngressControllerOverlaysVpc(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/aws/aws-alb-ingress-controller/overlays/vpc")
-	writeAwsAlbIngressControllerOverlaysVpc(th)
+func TestAwsAlbIngressControllerOverlaysApplication(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/aws/aws-alb-ingress-controller/overlays/application")
+	writeAwsAlbIngressControllerOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -227,7 +221,7 @@ func TestAwsAlbIngressControllerOverlaysVpc(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../aws/aws-alb-ingress-controller/overlays/vpc"
+	targetPath := "../aws/aws-alb-ingress-controller/overlays/application"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
