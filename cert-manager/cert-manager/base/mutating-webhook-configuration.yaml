@@ -5,14 +5,14 @@ metadata:
   labels:
     app: webhook
   annotations:
-    certmanager.k8s.io/inject-apiserver-ca: "true"
+    cert-manager.io/inject-apiserver-ca: "true"
 webhooks:
-  - name: webhook.certmanager.k8s.io
+  - name: webhook.cert-manager.io
     rules:
       - apiGroups:
-          - "certmanager.k8s.io"
+          - "cert-manager.io"
         apiVersions:
-          - v1alpha1
+          - v1alpha2
         operations:
           - CREATE
           - UPDATE
@@ -28,5 +28,5 @@ webhooks:
       service:
         name: kubernetes
         namespace: default
-        path: /apis/webhook.certmanager.k8s.io/v1beta1/mutations
+        path: /apis/webhook.cert-manager.io/v1beta1/mutations
       caBundle: ""
