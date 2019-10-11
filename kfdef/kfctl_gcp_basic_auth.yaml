@@ -303,6 +303,7 @@ spec:
     name: cloud-endpoints
   - kustomizeConfig:
       overlays:
+      - application
       - istio
       parameters:
       - initRequired: true

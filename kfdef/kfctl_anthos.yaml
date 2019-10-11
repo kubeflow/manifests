@@ -244,6 +244,7 @@ spec:
     name: scheduledworkflow
   - kustomizeConfig:
       overlays:
+      - application
       - istio
       parameters:
       - initRequired: true
