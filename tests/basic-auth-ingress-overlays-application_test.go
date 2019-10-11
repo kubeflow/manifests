@@ -44,7 +44,7 @@ spec:
      - kubeflow
     links:
     - description: About
-      url: link
+      url: ""
   addOwnerRef: true
 `)
   th.writeK("/manifests/gcp/basic-auth-ingress/overlays/application", `
