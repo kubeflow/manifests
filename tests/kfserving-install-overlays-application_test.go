@@ -257,7 +257,7 @@ aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
       rbac.authorization.kubeflow.org/aggregate-to-kubeflow-kfserving-admin: "true"
-rules: null
+rules: []
 
 ---
 

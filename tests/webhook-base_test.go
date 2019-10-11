@@ -58,7 +58,7 @@ aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
       rbac.authorization.kubeflow.org/aggregate-to-kubeflow-poddefaults-admin: "true"
-rules: null
+rules: []
 
 ---
 
@@ -72,7 +72,7 @@ aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
       rbac.authorization.kubeflow.org/aggregate-to-kubeflow-poddefaults-edit: "true"
-rules: null
+rules: []
 
 ---
 
@@ -113,7 +113,7 @@ spec:
       - name: webhook-cert
         secret:
           secretName: webhook-certs
-      serviceAccountName: service-account    
+      serviceAccountName: service-account
 `)
 	th.writeF("/manifests/admission-webhook/webhook/base/mutating-webhook-configuration.yaml", `
 apiVersion: admissionregistration.k8s.io/v1beta1

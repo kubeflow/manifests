@@ -80,7 +80,7 @@ aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
       rbac.authorization.kubeflow.org/aggregate-to-kubeflow-notebooks-admin: "true"
-rules: null
+rules: []
 
 ---
 

@@ -27,7 +27,7 @@ spec:
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: tfjob
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6 
+      app.kubernetes.io/version: v0.6
   componentKinds:
   - group: core
     kind: Service
@@ -140,7 +140,7 @@ aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
       rbac.authorization.kubeflow.org/aggregate-to-kubeflow-tfjobs-admin: "true"
-rules: null
+rules: []
 
 ---
 
