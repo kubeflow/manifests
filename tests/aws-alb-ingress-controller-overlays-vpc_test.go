@@ -1,20 +1,20 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/v3/pkg/fs"
-	"sigs.k8s.io/kustomize/v3/pkg/loader"
-	"sigs.k8s.io/kustomize/v3/pkg/plugins"
-	"sigs.k8s.io/kustomize/v3/pkg/resmap"
-	"sigs.k8s.io/kustomize/v3/pkg/resource"
-	"sigs.k8s.io/kustomize/v3/pkg/target"
-	"sigs.k8s.io/kustomize/v3/pkg/validators"
-	"testing"
+  "sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+  "sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+  "sigs.k8s.io/kustomize/v3/pkg/fs"
+  "sigs.k8s.io/kustomize/v3/pkg/loader"
+  "sigs.k8s.io/kustomize/v3/pkg/plugins"
+  "sigs.k8s.io/kustomize/v3/pkg/resmap"
+  "sigs.k8s.io/kustomize/v3/pkg/resource"
+  "sigs.k8s.io/kustomize/v3/pkg/target"
+  "sigs.k8s.io/kustomize/v3/pkg/validators"
+  "testing"
 )
 
 func writeAwsAlbIngressControllerOverlaysVpc(th *KustTestHarness) {
-	th.writeF("/manifests/aws/aws-alb-ingress-controller/overlays/vpc/vpc.yaml", `
+  th.writeF("/manifests/aws/aws-alb-ingress-controller/overlays/vpc/vpc.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -42,11 +42,11 @@ spec:
             # List of regions: http://docs.aws.amazon.com/general/latest/gr/rande.html#vpc_region
             - --aws-region=$(REGION)
 `)
-	th.writeF("/manifests/aws/aws-alb-ingress-controller/overlays/vpc/params.env", `
+  th.writeF("/manifests/aws/aws-alb-ingress-controller/overlays/vpc/params.env", `
 vpcId=
 region=us-west-2
 `)
-	th.writeK("/manifests/aws/aws-alb-ingress-controller/overlays/vpc", `
+  th.writeK("/manifests/aws/aws-alb-ingress-controller/overlays/vpc", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -72,7 +72,7 @@ vars:
   fieldref:
     fieldpath: data.region
 `)
-	th.writeF("/manifests/aws/aws-alb-ingress-controller/base/cluster-role.yaml", `
+  th.writeF("/manifests/aws/aws-alb-ingress-controller/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -110,7 +110,7 @@ rules:
       - list
       - watch
 `)
-	th.writeF("/manifests/aws/aws-alb-ingress-controller/base/cluster-role-binding.yaml", `
+  th.writeF("/manifests/aws/aws-alb-ingress-controller/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -123,7 +123,7 @@ subjects:
   - kind: ServiceAccount
     name: alb-ingress-controller
 `)
-	th.writeF("/manifests/aws/aws-alb-ingress-controller/base/deployment.yaml", `
+  th.writeF("/manifests/aws/aws-alb-ingress-controller/base/deployment.yaml", `
 # Application Load Balancer (ALB) Ingress Controller Deployment Manifest.
 # This manifest details sensible defaults for deploying an ALB Ingress Controller.
 # GitHub: https://github.com/kubernetes-sigs/aws-alb-ingress-controller
@@ -176,16 +176,16 @@ spec:
           imagePullPolicy: Always
       serviceAccountName: alb-ingress-controller
 `)
-	th.writeF("/manifests/aws/aws-alb-ingress-controller/base/service-account.yaml", `
+  th.writeF("/manifests/aws/aws-alb-ingress-controller/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: alb-ingress-controller
 `)
-	th.writeF("/manifests/aws/aws-alb-ingress-controller/base/params.env", `
+  th.writeF("/manifests/aws/aws-alb-ingress-controller/base/params.env", `
 clusterName=
 `)
-	th.writeK("/manifests/aws/aws-alb-ingress-controller/base", `
+  th.writeK("/manifests/aws/aws-alb-ingress-controller/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
@@ -217,32 +217,32 @@ vars:
 }
 
 func TestAwsAlbIngressControllerOverlaysVpc(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/aws/aws-alb-ingress-controller/overlays/vpc")
-	writeAwsAlbIngressControllerOverlaysVpc(th)
-	m, err := th.makeKustTarget().MakeCustomizedResMap()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	expected, err := m.AsYaml()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	targetPath := "../aws/aws-alb-ingress-controller/overlays/vpc"
-	fsys := fs.MakeRealFS()
-	lrc := loader.RestrictionRootOnly
-	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
-	pc := plugins.DefaultPluginConfig()
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	actual, err := kt.MakeCustomizedResMap()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	th.assertActualEqualsExpected(actual, string(expected))
+  th := NewKustTestHarness(t, "/manifests/aws/aws-alb-ingress-controller/overlays/vpc")
+  writeAwsAlbIngressControllerOverlaysVpc(th)
+  m, err := th.makeKustTarget().MakeCustomizedResMap()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  expected, err := m.AsYaml()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  targetPath := "../aws/aws-alb-ingress-controller/overlays/vpc"
+  fsys := fs.MakeRealFS()
+  lrc := loader.RestrictionRootOnly
+  _loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+  if loaderErr != nil {
+    t.Fatalf("could not load kustomize loader: %v", loaderErr)
+  }
+  rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+  pc := plugins.DefaultPluginConfig()
+  kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+  if err != nil {
+    th.t.Fatalf("Unexpected construction error %v", err)
+  }
+  actual, err := kt.MakeCustomizedResMap()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  th.assertActualEqualsExpected(actual, string(expected))
 }
