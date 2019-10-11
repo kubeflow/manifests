@@ -31,7 +31,7 @@ subjects:
 - apiGroup: ""
   kind: ServiceAccount
   name: cert-manager-cainjector
-  namespace: $(namespace)
+  namespace: $(certManagerNamespace)
 
 ---
 
@@ -51,7 +51,7 @@ subjects:
 - apiGroup: ""
   kind: ServiceAccount
   name: cert-manager
-  namespace: $(namespace)
+  namespace: $(certManagerNamespace)
 
 ---
 
@@ -72,7 +72,7 @@ subjects:
 - apiGroup: ""
   kind: ServiceAccount
   name: cert-manager-webhook
-  namespace: $(namespace)
+  namespace: $(certManagerNamespace)
 `)
 	th.writeF("/manifests/cert-manager/cert-manager-kube-system-resources/base/role.yaml", `
 # leader election rules

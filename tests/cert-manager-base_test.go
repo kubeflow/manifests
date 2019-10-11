@@ -688,6 +688,7 @@ metadata:
   annotations:
     cert-manager.io/inject-apiserver-ca: "true"
 webhooks:
+  - name: webhook.certmanager.k8s.io
     rules:
       - apiGroups:
           - "cert-manager.io"
