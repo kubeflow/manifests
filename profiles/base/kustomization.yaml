@@ -1,13 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- crd.yaml
-- service-account.yaml
 - cluster-role-binding.yaml
+- crd.yaml
+- deployment.yaml
+- profile-instance.yaml
 - role.yaml
 - role-binding.yaml
 - service.yaml
-- deployment.yaml
+- service-account.yaml
 namePrefix: profiles-
 namespace: kubeflow
 commonLabels:
@@ -17,11 +18,11 @@ configMapGenerator:
   env: params.env
 images:
 - name: gcr.io/kubeflow-images-public/profile-controller
-  newName: gcr.io/kubeflow-images-public/profile-controller
-  newTag: v20190619-v0-219-gbd3daa8c-dirty-1ced0e
+  newName: gcr.io/kubeflow-dev/profile-controller
+  newTag: v20191010-v0.6.0-rc.0-155-g1486acd7-dirty-087a92
 - name: gcr.io/kubeflow-images-public/kfam
-  newName: gcr.io/kubeflow-images-public/kfam
-  newTag: v20190612-v0-170-ga06cdb79-dirty-a33ee4
+  newName: gcr.io/kubeflow-dev/kfam
+  newTag: v0.6.0-rc.0-155-g1486acd7
 vars:
 - name: admin
   objref:
@@ -30,6 +31,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.admin
+- name: gcp-sa
+  objref:
+    kind: ConfigMap
+    name: profiles-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.gcp-sa
 - name: userid-header
   objref:
     kind: ConfigMap

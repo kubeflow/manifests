@@ -1,0 +1,8 @@
+apiVersion: profile.kubeflow.org/v1beta1
+kind: Profile
+metadata:
+  name: kubeflow-user1
+spec:
+  owner:
+    kind: User
+    name: $(admin)
