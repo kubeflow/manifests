@@ -235,7 +235,8 @@ spec:
       name: pipeline-visualization-service
     - kustomizeConfig:
         overlays:
-          - istio
+        - application
+        - istio
         repoRef:
           name: manifests
           path: profiles
