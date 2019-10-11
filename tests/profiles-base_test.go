@@ -14,6 +14,19 @@ import (
 )
 
 func writeProfilesBase(th *KustTestHarness) {
+	th.writeF("/manifests/profiles/base/cluster-role-binding.yaml", `
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: controller-service-account
+`)
 	th.writeF("/manifests/profiles/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -67,30 +80,51 @@ status:
   conditions: []
   storedVersions: []
 `)
-	th.writeF("/manifests/profiles/base/service-account.yaml", `
----
-apiVersion: v1
-kind: ServiceAccount
+	th.writeF("/manifests/profiles/base/deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: controller-service-account
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: default-service-account
+  name: deployment
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - command:
+        - /manager
+        args:
+        - "-userid-header"
+        - $(userid-header)
+        - "-userid-prefix"
+        - $(userid-prefix)
+        - "-workload-identity"
+        - $(gcp-sa)
+        image: gcr.io/kubeflow-images-public/profile-controller:v20190619-v0-219-gbd3daa8c-dirty-1ced0e
+        imagePullPolicy: Always
+        name: manager
+      - command:
+        - /opt/kubeflow/access-management
+        args:
+        - "-cluster-admin"
+        - $(admin)
+        - "-userid-header"
+        - $(userid-header)
+        - "-userid-prefix"
+        - $(userid-prefix)
+        image: gcr.io/kubeflow-images-public/kfam:v20190612-v0-170-ga06cdb79-dirty-a33ee4
+        imagePullPolicy: Always
+        name: kfam
+      serviceAccountName: controller-service-account
 `)
-	th.writeF("/manifests/profiles/base/cluster-role-binding.yaml", `
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+	th.writeF("/manifests/profiles/base/profile-instance.yaml", `
+apiVersion: profile.kubeflow.org/v1beta1
+kind: Profile
 metadata:
-  name: cluster-role-binding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-admin
-subjects:
-- kind: ServiceAccount
-  name: controller-service-account
+  name: kubeflow-user1
+spec:
+  owner:
+    kind: User
+    name: $(admin)
 `)
 	th.writeF("/manifests/profiles/base/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
@@ -129,38 +163,17 @@ spec:
   ports:
     - port: 8081
 `)
-	th.writeF("/manifests/profiles/base/deployment.yaml", `
-apiVersion: apps/v1
-kind: Deployment
+	th.writeF("/manifests/profiles/base/service-account.yaml", `
+---
+apiVersion: v1
+kind: ServiceAccount
 metadata:
-  name: deployment
-spec:
-  template:
-    spec:
-      containers:
-      - command:
-        - /manager
-        args:
-        - "-userid-header"
-        - $(userid-header)
-        - "-userid-prefix"
-        - $(userid-prefix)
-        image: gcr.io/kubeflow-images-public/profile-controller:v20190619-v0-219-gbd3daa8c-dirty-1ced0e
-        imagePullPolicy: Always
-        name: manager
-      - command:
-        - /opt/kubeflow/access-management
-        args:
-        - "-cluster-admin"
-        - $(admin)
-        - "-userid-header"
-        - $(userid-header)
-        - "-userid-prefix"
-        - $(userid-prefix)
-        image: gcr.io/kubeflow-images-public/kfam:v20190612-v0-170-ga06cdb79-dirty-a33ee4
-        imagePullPolicy: Always
-        name: kfam
-      serviceAccountName: controller-service-account
+  name: controller-service-account
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: default-service-account
 `)
 	th.writeF("/manifests/profiles/base/params.yaml", `
 varReference:
@@ -168,15 +181,20 @@ varReference:
   kind: Deployment
 - path: spec/template/spec/containers/0/args/3
   kind: Deployment
+- path: spec/template/spec/containers/0/args/5
+  kind: Deployment
 - path: spec/template/spec/containers/1/args/1
   kind: Deployment
 - path: spec/template/spec/containers/1/args/3
   kind: Deployment
 - path: spec/template/spec/containers/1/args/5
   kind: Deployment
+- path: spec/owner/name
+  kind: Profile
 `)
 	th.writeF("/manifests/profiles/base/params.env", `
 admin=
+gcp-sa=
 userid-header=
 userid-prefix=
 `)
@@ -184,13 +202,14 @@ userid-prefix=
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- crd.yaml
-- service-account.yaml
 - cluster-role-binding.yaml
+- crd.yaml
+- deployment.yaml
+- profile-instance.yaml
 - role.yaml
 - role-binding.yaml
 - service.yaml
-- deployment.yaml
+- service-account.yaml
 namePrefix: profiles-
 namespace: kubeflow
 commonLabels:
@@ -200,11 +219,11 @@ configMapGenerator:
   env: params.env
 images:
 - name: gcr.io/kubeflow-images-public/profile-controller
-  newName: gcr.io/kubeflow-images-public/profile-controller
-  newTag: v20190619-v0-219-gbd3daa8c-dirty-1ced0e
+  newName: gcr.io/kubeflow-dev/profile-controller
+  newTag: v20191010-v0.6.0-rc.0-155-g1486acd7-dirty-087a92
 - name: gcr.io/kubeflow-images-public/kfam
-  newName: gcr.io/kubeflow-images-public/kfam
-  newTag: v20190612-v0-170-ga06cdb79-dirty-a33ee4
+  newName: gcr.io/kubeflow-dev/kfam
+  newTag: v0.6.0-rc.0-155-g1486acd7
 vars:
 - name: admin
   objref:
@@ -213,6 +232,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.admin
+- name: gcp-sa
+  objref:
+    kind: ConfigMap
+    name: profiles-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.gcp-sa
 - name: userid-header
   objref:
     kind: ConfigMap
