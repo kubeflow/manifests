@@ -33,6 +33,8 @@ spec:
     kind: ConfigMap
   - group: apps
     kind: Deployment
+  - group: core
+    kind: ServiceAccount
   descriptor:
     type: spartakus
     version: v1beta1
