@@ -3,10 +3,11 @@ kind: Kustomization
 namespace: kube-system
 resources:
 - role-binding.yaml
+- role.yaml
 commonLabels:
   kustomize.component: cert-manager
 configMapGenerator:
-- name: cert-manager-webhook-role-binding-parameters
+- name: cert-manager-kube-params-parameters
   env: params.env
 generatorOptions:
   disableNameSuffixHash: true
@@ -14,7 +15,7 @@ vars:
 - name: certManagerNamespace
   objref:
     kind: ConfigMap
-    name: cert-manager-webhook-role-binding-parameters
+    name: cert-manager-kube-params-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.certManagerNamespace

@@ -14,7 +14,6 @@ spec:
     app: cert-manager
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:

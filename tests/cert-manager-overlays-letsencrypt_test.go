@@ -82,13 +82,13 @@ metadata:
 apiVersion: apiregistration.k8s.io/v1beta1
 kind: APIService
 metadata:
-  name: v1beta1.webhook.certmanager.k8s.io
+  name: v1beta1.webhook.cert-manager.io
   labels:
     app: webhook
   annotations:
-    certmanager.k8s.io/inject-ca-from-secret: "cert-manager/cert-manager-webhook-tls"
+    cert-manager.io/inject-ca-from-secret: "cert-manager/cert-manager-webhook-tls"
 spec:
-  group: webhook.certmanager.k8s.io
+  group: webhook.cert-manager.io
   groupPriorityMinimum: 1000
   versionPriority: 15
   service:
@@ -108,9 +108,9 @@ roleRef:
   kind: ClusterRole
   name: cert-manager-leaderelection
 subjects:
-  - name: cert-manager
-    namespace: $(namespace)
-    kind: ServiceAccount
+- name: cert-manager
+  namespace: $(namespace)
+  kind: ServiceAccount
 
 ---
 
@@ -125,9 +125,9 @@ roleRef:
   kind: ClusterRole
   name: cert-manager-controller-issuers
 subjects:
-  - name: cert-manager
-    namespace: $(namespace)
-    kind: ServiceAccount
+- name: cert-manager
+  namespace: $(namespace)
+  kind: ServiceAccount
 
 ---
 
@@ -142,9 +142,9 @@ roleRef:
   kind: ClusterRole
   name: cert-manager-controller-clusterissuers
 subjects:
-  - name: cert-manager
-    namespace: $(namespace)
-    kind: ServiceAccount
+- name: cert-manager
+  namespace: $(namespace)
+  kind: ServiceAccount
 
 ---
 
@@ -159,9 +159,9 @@ roleRef:
   kind: ClusterRole
   name: cert-manager-controller-certificates
 subjects:
-  - name: cert-manager
-    namespace: $(namespace)
-    kind: ServiceAccount
+- name: cert-manager
+  namespace: $(namespace)
+  kind: ServiceAccount
 
 ---
 
@@ -176,9 +176,9 @@ roleRef:
   kind: ClusterRole
   name: cert-manager-controller-orders
 subjects:
-  - name: cert-manager
-    namespace: $(namespace)
-    kind: ServiceAccount
+- name: cert-manager
+  namespace: $(namespace)
+  kind: ServiceAccount
 
 ---
 
@@ -193,9 +193,9 @@ roleRef:
   kind: ClusterRole
   name: cert-manager-controller-challenges
 subjects:
-  - name: cert-manager
-    namespace: $(namespace)
-    kind: ServiceAccount
+- name: cert-manager
+  namespace: $(namespace)
+  kind: ServiceAccount
 
 ---
 
@@ -210,12 +210,11 @@ roleRef:
   kind: ClusterRole
   name: cert-manager-controller-ingress-shim
 subjects:
-  - name: cert-manager
-    namespace: $(namespace)
-    kind: ServiceAccount
+- name: cert-manager
+  namespace: $(namespace)
+  kind: ServiceAccount
 
 ---
-
 # apiserver gets the auth-delegator role to delegate auth decisions to
 # the core apiserver
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -247,22 +246,36 @@ roleRef:
   kind: ClusterRole
   name: cert-manager-cainjector
 subjects:
-  - name: cert-manager-cainjector
-    namespace: $(namespace)
-    kind: ServiceAccount
+- name: cert-manager-cainjector
+  namespace: $(namespace)
+  kind: ServiceAccount
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: cert-manager-leaderelection
+  name: cert-manager-cainjector
   labels:
-    app: cert-manager
+    app: cainjector
 rules:
-  # Used for leader election by the controller
+  - apiGroups: ["cert-manager.io"]
+    resources: ["certificates"]
+    verbs: ["get", "list", "watch"]
   - apiGroups: [""]
-    resources: ["configmaps"]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["events"]
     verbs: ["get", "create", "update", "patch"]
+  - apiGroups: ["admissionregistration.k8s.io"]
+    resources: ["validatingwebhookconfigurations", "mutatingwebhookconfigurations"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["apiregistration.k8s.io"]
+    resources: ["apiservices"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list", "watch", "update"]
 
 ---
 
@@ -274,10 +287,10 @@ metadata:
   labels:
     app: cert-manager
 rules:
-  - apiGroups: ["certmanager.k8s.io"]
+  - apiGroups: ["cert-manager.io"]
     resources: ["issuers", "issuers/status"]
     verbs: ["update"]
-  - apiGroups: ["certmanager.k8s.io"]
+  - apiGroups: ["cert-manager.io"]
     resources: ["issuers"]
     verbs: ["get", "list", "watch"]
   - apiGroups: [""]
@@ -297,10 +310,10 @@ metadata:
   labels:
     app: cert-manager
 rules:
-  - apiGroups: ["certmanager.k8s.io"]
+  - apiGroups: ["cert-manager.io"]
     resources: ["clusterissuers", "clusterissuers/status"]
     verbs: ["update"]
-  - apiGroups: ["certmanager.k8s.io"]
+  - apiGroups: ["cert-manager.io"]
     resources: ["clusterissuers"]
     verbs: ["get", "list", "watch"]
   - apiGroups: [""]
@@ -320,21 +333,21 @@ metadata:
   labels:
     app: cert-manager
 rules:
-  - apiGroups: ["certmanager.k8s.io"]
+  - apiGroups: ["cert-manager.io"]
     resources: ["certificates", "certificates/status", "certificaterequests", "certificaterequests/status"]
     verbs: ["update"]
-  - apiGroups: ["certmanager.k8s.io"]
-    resources: ["certificates", "certificaterequests", "clusterissuers", "issuers", "orders"]
+  - apiGroups: ["cert-manager.io"]
+    resources: ["certificates", "certificaterequests", "clusterissuers", "issuers"]
     verbs: ["get", "list", "watch"]
   # We require these rules to support users with the OwnerReferencesPermissionEnforcement
-  # admission controller enabled:
+  # admission controller enabled:
   # https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#ownerreferencespermissionenforcement
-  - apiGroups: ["certmanager.k8s.io"]
+  - apiGroups: ["cert-manager.io"]
     resources: ["certificates/finalizers"]
     verbs: ["update"]
-  - apiGroups: ["certmanager.k8s.io"]
+  - apiGroups: ["acme.cert-manager.io"]
     resources: ["orders"]
-    verbs: ["create", "delete"]
+    verbs: ["create", "delete", "get", "list", "watch"]
   - apiGroups: [""]
     resources: ["secrets"]
     verbs: ["get", "list", "watch", "create", "update", "delete"]
@@ -352,19 +365,22 @@ metadata:
   labels:
     app: cert-manager
 rules:
-  - apiGroups: ["certmanager.k8s.io"]
+  - apiGroups: ["acme.cert-manager.io"]
     resources: ["orders", "orders/status"]
     verbs: ["update"]
-  - apiGroups: ["certmanager.k8s.io"]
-    resources: ["orders", "clusterissuers", "issuers", "challenges"]
+  - apiGroups: ["acme.cert-manager.io"]
+    resources: ["orders", "challenges"]
     verbs: ["get", "list", "watch"]
-  - apiGroups: ["certmanager.k8s.io"]
+  - apiGroups: ["cert-manager.io"]
+    resources: ["clusterissuers", "issuers"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["acme.cert-manager.io"]
     resources: ["challenges"]
     verbs: ["create", "delete"]
   # We require these rules to support users with the OwnerReferencesPermissionEnforcement
-  # admission controller enabled:
+  # admission controller enabled:
   # https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#ownerreferencespermissionenforcement
-  - apiGroups: ["certmanager.k8s.io"]
+  - apiGroups: ["acme.cert-manager.io"]
     resources: ["orders/finalizers"]
     verbs: ["update"]
   - apiGroups: [""]
@@ -385,12 +401,16 @@ metadata:
     app: cert-manager
 rules:
   # Use to update challenge resource status
-  - apiGroups: ["certmanager.k8s.io"]
+  - apiGroups: ["acme.cert-manager.io"]
     resources: ["challenges", "challenges/status"]
     verbs: ["update"]
+  # Used to watch challenge resources
+  - apiGroups: ["acme.cert-manager.io"]
+    resources: ["challenges"]
+    verbs: ["get", "list", "watch"]
   # Used to watch challenges, issuer and clusterissuer resources
-  - apiGroups: ["certmanager.k8s.io"]
-    resources: ["challenges", "issuers", "clusterissuers"]
+  - apiGroups: ["cert-manager.io"]
+    resources: ["issuers", "clusterissuers"]
     verbs: ["get", "list", "watch"]
   # Need to be able to retrieve ACME account private key to complete challenges
   - apiGroups: [""]
@@ -408,12 +428,12 @@ rules:
     resources: ["ingresses"]
     verbs: ["get", "list", "watch", "create", "delete", "update"]
   # We require these rules to support users with the OwnerReferencesPermissionEnforcement
-  # admission controller enabled:
+  # admission controller enabled:
   # https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#ownerreferencespermissionenforcement
-  - apiGroups: ["certmanager.k8s.io"]
+  - apiGroups: ["acme.cert-manager.io"]
     resources: ["challenges/finalizers"]
     verbs: ["update"]
-  # DNS01 rules (duplicated above)
+  # DNS01 rules (duplicated above)
   - apiGroups: [""]
     resources: ["secrets"]
     verbs: ["get", "list", "watch"]
@@ -428,17 +448,17 @@ metadata:
   labels:
     app: cert-manager
 rules:
-  - apiGroups: ["certmanager.k8s.io"]
+  - apiGroups: ["cert-manager.io"]
     resources: ["certificates", "certificaterequests"]
     verbs: ["create", "update", "delete"]
-  - apiGroups: ["certmanager.k8s.io"]
+  - apiGroups: ["cert-manager.io"]
     resources: ["certificates", "certificaterequests", "issuers", "clusterissuers"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["networking.k8s.io/v1"]
     resources: ["ingresses"]
     verbs: ["get", "list", "watch"]
   # We require these rules to support users with the OwnerReferencesPermissionEnforcement
-  # admission controller enabled:
+  # admission controller enabled:
   # https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#ownerreferencespermissionenforcement
   - apiGroups: ["networking.k8s.io/v1"]
     resources: ["ingresses/finalizers"]
@@ -452,6 +472,25 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  name: cert-manager-webhook:webhook-requester
+  labels:
+    app: webhook
+rules:
+- apiGroups:
+  - admission.cert-manager.io
+  resources:
+  - certificates
+  - certificaterequests
+  - issuers
+  - clusterissuers
+  verbs:
+  - create
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
   name: cert-manager-view
   labels:
     app: cert-manager
@@ -459,9 +498,9 @@ metadata:
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
 rules:
-  - apiGroups: ["certmanager.k8s.io"]
-    resources: ["certificates", "certificaterequests", "issuers"]
-    verbs: ["get", "list", "watch"]
+- apiGroups: ["cert-manager.io"]
+  resources: ["certificates", "certificaterequests", "issuers"]
+  verbs: ["get", "list", "watch"]
 
 ---
 
@@ -474,58 +513,46 @@ metadata:
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
 rules:
-  - apiGroups: ["certmanager.k8s.io"]
-    resources: ["certificates", "certificaterequests", "issuers"]
-    verbs: ["create", "delete", "deletecollection", "patch", "update"]
-
----
-
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: cert-manager-webhook:webhook-requester
-  labels:
-    app: webhook
-rules:
-- apiGroups:
-  - admission.certmanager.k8s.io
-  resources:
-  - certificates
-  - certificaterequests
-  - issuers
-  - clusterissuers
-  verbs:
-  - create
-
----
-
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRole
+- apiGroups: ["cert-manager.io"]
+  resources: ["certificates", "certificaterequests", "issuers"]
+  verbs: ["create", "delete", "deletecollection", "patch", "update"]
+`)
+	th.writeF("/manifests/cert-manager/cert-manager/base/deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: cert-manager-cainjector
   labels:
     app: cainjector
-rules:
-  - apiGroups: ["certmanager.k8s.io"]
-    resources: ["certificates"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: [""]
-    resources: ["secrets"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: [""]
-    resources: ["configmaps", "events"]
-    verbs: ["get", "create", "update", "patch"]
-  - apiGroups: ["admissionregistration.k8s.io"]
-    resources: ["validatingwebhookconfigurations", "mutatingwebhookconfigurations"]
-    verbs: ["get", "list", "watch", "update"]
-  - apiGroups: ["apiregistration.k8s.io"]
-    resources: ["apiservices"]
-    verbs: ["get", "list", "watch", "update"]
-  - apiGroups: ["apiextensions.k8s.io"]
-    resources: ["customresourcedefinitions"]
-    verbs: ["get", "list", "watch", "update"]
-`)
-	th.writeF("/manifests/cert-manager/cert-manager/base/deployment.yaml", `
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cainjector
+  template:
+    metadata:
+      labels:
+        app: cainjector
+      annotations:
+    spec:
+      serviceAccountName: cert-manager-cainjector
+      containers:
+        - name: cainjector
+          image: "quay.io/jetstack/cert-manager-cainjector:v0.11.0"
+          imagePullPolicy: IfNotPresent
+          args:
+          - --v=2
+          - --leader-election-namespace=kube-system
+          env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          resources:
+            {}
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -537,7 +564,6 @@ spec:
   selector:
     matchLabels:
       app: cert-manager
-
   template:
     metadata:
       labels:
@@ -550,12 +576,12 @@ spec:
       serviceAccountName: cert-manager
       containers:
         - name: cert-manager
-          image: "quay.io/jetstack/cert-manager-controller:v0.10.0"
+          image: "quay.io/jetstack/cert-manager-controller:v0.11.0"
           imagePullPolicy: IfNotPresent
           args:
           - --v=2
           - --cluster-resource-namespace=$(POD_NAMESPACE)
-          - --leader-election-namespace=$(POD_NAMESPACE)
+          - --leader-election-namespace=kube-system
           - --webhook-namespace=$(POD_NAMESPACE)
           - --webhook-ca-secret=cert-manager-webhook-ca
           - --webhook-serving-secret=cert-manager-webhook-tls
@@ -585,7 +611,6 @@ spec:
   selector:
     matchLabels:
       app: webhook
-
   template:
     metadata:
       labels:
@@ -595,7 +620,7 @@ spec:
       serviceAccountName: cert-manager-webhook
       containers:
         - name: cert-manager
-          image: "quay.io/jetstack/cert-manager-webhook:v0.10.0"
+          image: "quay.io/jetstack/cert-manager-webhook:v0.11.0"
           imagePullPolicy: IfNotPresent
           args:
           - --v=2
@@ -617,41 +642,6 @@ spec:
       - name: certs
         secret:
           secretName: cert-manager-webhook-tls
-
----
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: cert-manager-cainjector
-  labels:
-    app: cainjector
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: cainjector
-  template:
-    metadata:
-      labels:
-        app: cainjector
-      annotations:
-    spec:
-      serviceAccountName: cert-manager-cainjector
-      containers:
-        - name: cainjector
-          image: "quay.io/jetstack/cert-manager-cainjector:v0.10.0"
-          imagePullPolicy: IfNotPresent
-          args:
-          - --v=2
-          - --leader-election-namespace=$(POD_NAMESPACE)
-          env:
-          - name: POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-          resources:
-            {}
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/mutating-webhook-configuration.yaml", `
 apiVersion: admissionregistration.k8s.io/v1beta1
@@ -661,14 +651,14 @@ metadata:
   labels:
     app: webhook
   annotations:
-    certmanager.k8s.io/inject-apiserver-ca: "true"
+    cert-manager.io/inject-apiserver-ca: "true"
 webhooks:
-  - name: webhook.certmanager.k8s.io
+  - name: webhook.cert-manager.io
     rules:
       - apiGroups:
-          - "certmanager.k8s.io"
+          - "cert-manager.io"
         apiVersions:
-          - v1alpha1
+          - v1alpha2
         operations:
           - CREATE
           - UPDATE
@@ -684,14 +674,24 @@ webhooks:
       service:
         name: kubernetes
         namespace: default
-        path: /apis/webhook.certmanager.k8s.io/v1beta1/mutations
+        path: /apis/webhook.cert-manager.io/v1beta1/mutations
       caBundle: ""
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  name: cert-manager-cainjector
+  labels:
+    app: cainjector
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
   name: cert-manager
+  annotations:
   labels:
     app: cert-manager
 
@@ -703,15 +703,6 @@ metadata:
   name: cert-manager-webhook
   labels:
     app: webhook
-
----
-
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: cert-manager-cainjector
-  labels:
-    app: cainjector
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/service.yaml", `
 apiVersion: v1
@@ -730,7 +721,6 @@ spec:
     app: cert-manager
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -754,14 +744,13 @@ metadata:
   labels:
     app: webhook
   annotations:
-    certmanager.k8s.io/inject-apiserver-ca: "true"
+    cert-manager.io/inject-apiserver-ca: "true"
 webhooks:
-  - name: webhook.certmanager.k8s.io
     rules:
       - apiGroups:
-          - "certmanager.k8s.io"
+          - "cert-manager.io"
         apiVersions:
-          - v1alpha1
+          - v1alpha2
         operations:
           - CREATE
           - UPDATE
@@ -776,7 +765,7 @@ webhooks:
       service:
         name: kubernetes
         namespace: default
-        path: /apis/webhook.certmanager.k8s.io/v1beta1/validations
+        path: /apis/webhook.cert-manager.io/v1beta1/validations
       caBundle: ""
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/params.yaml", `
@@ -809,6 +798,16 @@ resources:
 - validating-webhook-configuration.yaml
 commonLabels:
   kustomize.component: cert-manager
+images:
+- name: quay.io/jetstack/cert-manager-controller
+  newName: quay.io/jetstack/cert-manager-controller
+  newTag: v0.10.0
+- name: quay.io/jetstack/cert-manager-webhook
+  newName: quay.io/jetstack/cert-manager-webhook
+  newTag: v0.10.0
+- name: quay.io/jetstack/cert-manager-cainjector
+  newName: quay.io/jetstack/cert-manager-cainjector
+  newTag: v0.10.0
 configMapGenerator:
 - name: cert-manager-parameters
   env: params.env
