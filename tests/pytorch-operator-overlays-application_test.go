@@ -132,7 +132,7 @@ aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
       rbac.authorization.kubeflow.org/aggregate-to-kubeflow-pytorchjobs-admin: "true"
-rules: null
+rules: []
 
 ---
 

@@ -81,7 +81,7 @@ aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
       rbac.authorization.kubeflow.org/aggregate-to-kubeflow-tfjobs-admin: "true"
-rules: null
+rules: []
 
 ---
 
