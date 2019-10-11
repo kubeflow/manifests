@@ -14332,6 +14332,7 @@ spec:
           - /etc/config/validatingwebhookconfiguration.yaml
           - --monitoringPort=15014
           - --log_output_level=default:info
+          - --enable-validation=true
           volumeMounts:
           - name: certs
             mountPath: /etc/certs
