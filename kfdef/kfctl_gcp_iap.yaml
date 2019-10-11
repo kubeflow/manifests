@@ -169,6 +169,8 @@ spec:
         path: kfserving/kfserving-install
     name: kfserving-install
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
       - initRequired: true
         name: usageId
