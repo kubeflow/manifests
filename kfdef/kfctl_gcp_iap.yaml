@@ -317,6 +317,7 @@ spec:
       - istio
       parameters:
       - initRequired: true
+        # kfctl will set admin to current user account that deploying kubeflow
         name: admin
         value: SET_EMAIL
       - name: userid-header
@@ -360,6 +361,18 @@ spec:
         name: manifests
         path: seldon/seldon-core-operator
     name: seldon-core-operator
+  - kustomizeConfig:
+      parameters:
+        - name: user
+          # kfctl will set user to current user account that deploying kubeflow
+          value: SET_EMAIL
+        - name: profile-name
+          # kfctl might overwrite profile name
+          value: anonymous
+      repoRef:
+        name: manifests
+        path: default-install
+      name: default-install
   # email should  be set the google account of the person setting up Kubeflow.
   # If its not set kfctl generate will try to set it automatically based on the default
   # gcloud config
