@@ -213,6 +213,8 @@ spec:
         path: katib/katib-controller
     name: katib-controller
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pipeline/api-service
@@ -220,6 +222,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - minioPd
+      - application
       parameters:
       - name: minioPd
         value: test1-storage-artifact-store
@@ -234,6 +237,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - mysqlPd
+      - application
       parameters:
       - name: mysqlPd
         value: test1-storage-metadata-store
@@ -246,11 +250,15 @@ spec:
         path: pipeline/mysql
     name: mysql
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pipeline/persistent-agent
     name: persistent-agent
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pipeline/pipelines-runner
@@ -258,21 +266,28 @@ spec:
   - kustomizeConfig:
       overlays:
       - istio
+      - application
       repoRef:
         name: manifests
         path: pipeline/pipelines-ui
     name: pipelines-ui
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pipeline/pipelines-viewer
     name: pipelines-viewer
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pipeline/scheduledworkflow
     name: scheduledworkflow
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: pipeline/pipeline-visualization-service
