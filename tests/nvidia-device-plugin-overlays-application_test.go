@@ -1,20 +1,20 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/v3/pkg/fs"
-	"sigs.k8s.io/kustomize/v3/pkg/loader"
-	"sigs.k8s.io/kustomize/v3/pkg/plugins"
-	"sigs.k8s.io/kustomize/v3/pkg/resmap"
-	"sigs.k8s.io/kustomize/v3/pkg/resource"
-	"sigs.k8s.io/kustomize/v3/pkg/target"
-	"sigs.k8s.io/kustomize/v3/pkg/validators"
-	"testing"
+  "sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+  "sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+  "sigs.k8s.io/kustomize/v3/pkg/fs"
+  "sigs.k8s.io/kustomize/v3/pkg/loader"
+  "sigs.k8s.io/kustomize/v3/pkg/plugins"
+  "sigs.k8s.io/kustomize/v3/pkg/resmap"
+  "sigs.k8s.io/kustomize/v3/pkg/resource"
+  "sigs.k8s.io/kustomize/v3/pkg/target"
+  "sigs.k8s.io/kustomize/v3/pkg/validators"
+  "testing"
 )
 
 func writeNvidiaDevicePluginOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/aws/nvidia-device-plugin/overlays/application/application.yaml", `
+  th.writeF("/manifests/aws/nvidia-device-plugin/overlays/application/application.yaml", `
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
@@ -49,7 +49,7 @@ spec:
   addOwnerRef: true
 
 `)
-	th.writeK("/manifests/aws/nvidia-device-plugin/overlays/application", `
+  th.writeK("/manifests/aws/nvidia-device-plugin/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -64,7 +64,7 @@ commonLabels:
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v1.0.0-beta
 `)
-	th.writeF("/manifests/aws/nvidia-device-plugin/base/daemonset.yaml", `
+  th.writeF("/manifests/aws/nvidia-device-plugin/base/daemonset.yaml", `
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -103,7 +103,7 @@ spec:
           hostPath:
             path: /var/lib/kubelet/device-plugins
 `)
-	th.writeK("/manifests/aws/nvidia-device-plugin/base", `
+  th.writeK("/manifests/aws/nvidia-device-plugin/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kube-system
@@ -119,32 +119,32 @@ images:
 }
 
 func TestNvidiaDevicePluginOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/aws/nvidia-device-plugin/overlays/application")
-	writeNvidiaDevicePluginOverlaysApplication(th)
-	m, err := th.makeKustTarget().MakeCustomizedResMap()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	expected, err := m.AsYaml()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	targetPath := "../aws/nvidia-device-plugin/overlays/application"
-	fsys := fs.MakeRealFS()
-	lrc := loader.RestrictionRootOnly
-	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
-	pc := plugins.DefaultPluginConfig()
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	actual, err := kt.MakeCustomizedResMap()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	th.assertActualEqualsExpected(actual, string(expected))
+  th := NewKustTestHarness(t, "/manifests/aws/nvidia-device-plugin/overlays/application")
+  writeNvidiaDevicePluginOverlaysApplication(th)
+  m, err := th.makeKustTarget().MakeCustomizedResMap()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  expected, err := m.AsYaml()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  targetPath := "../aws/nvidia-device-plugin/overlays/application"
+  fsys := fs.MakeRealFS()
+  lrc := loader.RestrictionRootOnly
+  _loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+  if loaderErr != nil {
+    t.Fatalf("could not load kustomize loader: %v", loaderErr)
+  }
+  rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+  pc := plugins.DefaultPluginConfig()
+  kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+  if err != nil {
+    th.t.Fatalf("Unexpected construction error %v", err)
+  }
+  actual, err := kt.MakeCustomizedResMap()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  th.assertActualEqualsExpected(actual, string(expected))
 }
