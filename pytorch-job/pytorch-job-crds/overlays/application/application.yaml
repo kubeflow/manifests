@@ -17,8 +17,6 @@ spec:
   - group: apps
     kind: Deployment
   - group: core
-    kind: ConfigMap
-  - group: core
     kind: ServiceAccount
   - group: kubeflow.org
     kind: PyTorchJob
