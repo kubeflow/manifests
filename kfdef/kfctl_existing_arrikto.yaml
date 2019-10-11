@@ -103,6 +103,8 @@ spec:
         path: pytorch-job/pytorch-operator
     name: pytorch-operator
   - kustomizeConfig:
+      overlays:
+      - application
       parameters:
       - initRequired: true
         name: usageId
