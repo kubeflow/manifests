@@ -263,7 +263,7 @@ spec:
     spec:
       containers:
       - name: katib-db
-        image: mysql:8.0.3
+        image: mysql:8
         args:
         - --datadir
         - /var/lib/mysql/datadir
@@ -285,10 +285,19 @@ spec:
             command:
             - "/bin/bash"
             - "-c"
-            - "mysql -D $$MYSQL_DATABASE -p$$MYSQL_ROOT_PASSWORD -e 'SELECT 1'"
+            - "mysql -D ${MYSQL_DATABASE} -p${MYSQL_ROOT_PASSWORD} -e 'SELECT 1'"
           initialDelaySeconds: 5
-          periodSeconds: 2
+          periodSeconds: 10
           timeoutSeconds: 1
+        livenessProbe:
+          exec:
+            command:
+            - "/bin/bash"
+            - "-c"
+            - "mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
         volumeMounts:
         - name: katib-mysql
           mountPath: /var/lib/mysql
@@ -622,7 +631,7 @@ images:
   newTag: 7ade03b
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
 - name: mysql
-  newTag: 8.0.3
+  newTag: "8"
   newName: mysql
 vars:
 - name: clusterDomain
