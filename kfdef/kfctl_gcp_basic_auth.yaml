@@ -183,6 +183,8 @@ spec:
         path: tensorboard
     name: tensorboard
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: tf-training/tf-job-crds
