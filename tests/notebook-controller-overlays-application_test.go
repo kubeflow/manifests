@@ -35,7 +35,7 @@ spec:
       kind: Deployment
     - group: core
       kind: ServiceAccount
-  descriptor:
+  descriptor: 
     type: notebook-controller
     version: v1beta1
     description: Notebooks controller allows users to create a custom resource \"Notebook\" (jupyter notebook).
@@ -49,7 +49,7 @@ spec:
      - jupyter
      - notebook
      - notebook-controller
-     - jupyterhub
+     - jupyterhub  
     links:
     - description: About
       url: "https://github.com/kubeflow/kubeflow/tree/master/components/notebook-controller"
