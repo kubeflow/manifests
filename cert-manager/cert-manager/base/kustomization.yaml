@@ -16,13 +16,13 @@ commonLabels:
 images:
 - name: quay.io/jetstack/cert-manager-controller
   newName: quay.io/jetstack/cert-manager-controller
-  newTag: v0.10.0
+  newTag: v0.11.0
 - name: quay.io/jetstack/cert-manager-webhook
   newName: quay.io/jetstack/cert-manager-webhook
-  newTag: v0.10.0
+  newTag: v0.11.0
 - name: quay.io/jetstack/cert-manager-cainjector
   newName: quay.io/jetstack/cert-manager-cainjector
-  newTag: v0.10.0
+  newTag: v0.11.0
 configMapGenerator:
 - name: cert-manager-parameters
   env: params.env

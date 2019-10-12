@@ -100,23 +100,6 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: cert-manager-leaderelection
-  labels:
-    app: cert-manager
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cert-manager-leaderelection
-subjects:
-- name: cert-manager
-  namespace: $(namespace)
-  kind: ServiceAccount
-
----
-
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRoleBinding
-metadata:
   name: cert-manager-controller-issuers
   labels:
     app: cert-manager
@@ -424,7 +407,7 @@ rules:
   - apiGroups: [""]
     resources: ["pods", "services"]
     verbs: ["get", "list", "watch", "create", "delete"]
-  - apiGroups: ["networking.k8s.io/v1"]
+  - apiGroups: ["extensions, networking.k8s.io/v1"]
     resources: ["ingresses"]
     verbs: ["get", "list", "watch", "create", "delete", "update"]
   # We require these rules to support users with the OwnerReferencesPermissionEnforcement
@@ -802,13 +785,13 @@ commonLabels:
 images:
 - name: quay.io/jetstack/cert-manager-controller
   newName: quay.io/jetstack/cert-manager-controller
-  newTag: v0.10.0
+  newTag: v0.11.0
 - name: quay.io/jetstack/cert-manager-webhook
   newName: quay.io/jetstack/cert-manager-webhook
-  newTag: v0.10.0
+  newTag: v0.11.0
 - name: quay.io/jetstack/cert-manager-cainjector
   newName: quay.io/jetstack/cert-manager-cainjector
-  newTag: v0.10.0
+  newTag: v0.11.0
 configMapGenerator:
 - name: cert-manager-parameters
   env: params.env
