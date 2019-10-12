@@ -23,7 +23,7 @@ export GO = go
 
 all: test
 
-generate: clean
+generate:
 	@cd .. && hack/gen-test-targets.sh && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE) || echo done
 	$(GO) fmt ./...
 
