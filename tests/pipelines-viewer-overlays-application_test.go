@@ -139,7 +139,7 @@ aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
       rbac.authorization.kubeflow.org/aggregate-to-kubeflow-pipeline-viewers-admin: "true"
-rules: null
+rules: []
 
 ---
 
