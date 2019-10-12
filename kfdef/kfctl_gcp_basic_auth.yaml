@@ -67,6 +67,11 @@ spec:
         path: argo
     name: argo
   - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: kubeflow-roles
+    name: kubeflow-roles
+  - kustomizeConfig:
       overlays:
       - istio
       - application
@@ -373,7 +378,7 @@ spec:
     name: basic-auth-ingress
   # email should  be set the google account of the person setting up Kubeflow.
   # If its not set kfctl generate will try to set it automatically based on the default
-  # gcloud config  
+  # gcloud config
   # email: <your_email@gmail.com>
   enableApplications: true
   packageManager: kustomize
@@ -392,6 +397,6 @@ spec:
   useIstio: true
   version: master
   # Project should be set to the GCP project you want to use.
-  # If you run kfctl init --config=<path>/kfctl_gcp_iap.yaml 
+  # If you run kfctl init --config=<path>/kfctl_gcp_iap.yaml
   # kfctl will try to automatically set it.
   # project: <your project>

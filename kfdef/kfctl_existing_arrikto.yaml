@@ -29,6 +29,11 @@ spec:
         path: argo
     name: argo
   - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: kubeflow-roles
+    name: kubeflow-roles
+  - kustomizeConfig:
       parameters:
       - name: userid-header
         value: kubeflow-userid
