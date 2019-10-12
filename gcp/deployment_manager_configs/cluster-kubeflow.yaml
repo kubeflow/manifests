@@ -31,7 +31,9 @@ resources:
     zone: SET_THE_ZONE
     # "1.X": picks the highest valid patch+gke.N patch in the 1.X version
     # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.zones.clusters
-    cluster-version: "1.14"
+    # TODO(https://github.com/kubeflow/kfctl/issues/48): This is a short term
+    # work around. We should unpin once 1.14.6-gke.14 is available.
+    cluster-version: "1.14.6-gke.2"
     # Set this to v1beta1 to use beta features such as private clusterss
     # and the Kubernetes stackdriver agents.
     gkeApiVersion: SET_GKE_API_VERSION

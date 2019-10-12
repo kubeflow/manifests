@@ -96,6 +96,10 @@ resources:
       {% if properties['gkeApiVersion'] == 'v1beta1' and properties['autoprovisioning-config']['enabled'] %}
       autoscaling:
         enableNodeAutoprovisioning: true
+        autoprovisioningNodePoolDefaults:
+          # oauthScopes can't be set with service account
+          serviceAccount: {{ KF_VM_SA_NAME }}@{{ env['project'] }}.iam.gserviceaccount.com
+          
         resourceLimits:
         - resourceType: 'cpu'
           maximum: {{ properties['autoprovisioning-config']['max-cpu'] }}
