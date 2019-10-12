@@ -1,20 +1,20 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/v3/pkg/fs"
-	"sigs.k8s.io/kustomize/v3/pkg/loader"
-	"sigs.k8s.io/kustomize/v3/pkg/plugins"
-	"sigs.k8s.io/kustomize/v3/pkg/resmap"
-	"sigs.k8s.io/kustomize/v3/pkg/resource"
-	"sigs.k8s.io/kustomize/v3/pkg/target"
-	"sigs.k8s.io/kustomize/v3/pkg/validators"
-	"testing"
+  "sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+  "sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+  "sigs.k8s.io/kustomize/v3/pkg/fs"
+  "sigs.k8s.io/kustomize/v3/pkg/loader"
+  "sigs.k8s.io/kustomize/v3/pkg/plugins"
+  "sigs.k8s.io/kustomize/v3/pkg/resmap"
+  "sigs.k8s.io/kustomize/v3/pkg/resource"
+  "sigs.k8s.io/kustomize/v3/pkg/target"
+  "sigs.k8s.io/kustomize/v3/pkg/validators"
+  "testing"
 )
 
 func writeCentraldashboardOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/common/centraldashboard/overlays/application/application.yaml", `
+  th.writeF("/manifests/common/centraldashboard/overlays/application/application.yaml", `
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
@@ -22,12 +22,12 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: 
-      app.kubernetes.io/instance: centraldashboard
+      app.kubernetes.io/name: centraldashboard
+      app.kubernetes.io/instance: centraldashboard-v0.7.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: centraldashboard
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
+      app.kubernetes.io/version: v0.7.0
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -39,6 +39,8 @@ spec:
     kind: Role
   - group: core
     kind: ServiceAccount
+  - group: core
+    kind: Service
   - group: networking.istio.io
     kind: VirtualService
   descriptor:
@@ -68,7 +70,7 @@ spec:
   addOwnerRef: true
 
 `)
-	th.writeK("/manifests/common/centraldashboard/overlays/application", `
+  th.writeK("/manifests/common/centraldashboard/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -77,13 +79,13 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: centraldashboard
-  app.kubernetes.io/instance: centraldashboard
+  app.kubernetes.io/instance: centraldashboard-v0.7.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: centraldashboard
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
+  app.kubernetes.io/version: v0.7.0
 `)
-	th.writeF("/manifests/common/centraldashboard/base/clusterrole-binding.yaml", `
+  th.writeF("/manifests/common/centraldashboard/base/clusterrole-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -99,7 +101,7 @@ subjects:
   name: centraldashboard
   namespace: $(namespace)
 `)
-	th.writeF("/manifests/common/centraldashboard/base/clusterrole.yaml", `
+  th.writeF("/manifests/common/centraldashboard/base/clusterrole.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -118,7 +120,7 @@ rules:
   - list
   - watch
 `)
-	th.writeF("/manifests/common/centraldashboard/base/deployment.yaml", `
+  th.writeF("/manifests/common/centraldashboard/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -151,7 +153,7 @@ spec:
           value: profiles-kfam.kubeflow
       serviceAccountName: centraldashboard
 `)
-	th.writeF("/manifests/common/centraldashboard/base/role-binding.yaml", `
+  th.writeF("/manifests/common/centraldashboard/base/role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -167,7 +169,7 @@ subjects:
   name: centraldashboard
   namespace: $(namespace)
 `)
-	th.writeF("/manifests/common/centraldashboard/base/role.yaml", `
+  th.writeF("/manifests/common/centraldashboard/base/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -194,13 +196,13 @@ rules:
   verbs:
   - get
 `)
-	th.writeF("/manifests/common/centraldashboard/base/service-account.yaml", `
+  th.writeF("/manifests/common/centraldashboard/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: centraldashboard
 `)
-	th.writeF("/manifests/common/centraldashboard/base/service.yaml", `
+  th.writeF("/manifests/common/centraldashboard/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -226,7 +228,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 `)
-	th.writeF("/manifests/common/centraldashboard/base/params.yaml", `
+  th.writeF("/manifests/common/centraldashboard/base/params.yaml", `
 varReference:
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
@@ -235,12 +237,14 @@ varReference:
 - path: spec/template/spec/containers/0/env/0/value
   kind: Deployment
 - path: spec/template/spec/containers/0/env/1/value
-  kind: Deployment`)
-	th.writeF("/manifests/common/centraldashboard/base/params.env", `
+  kind: Deployment
+`)
+  th.writeF("/manifests/common/centraldashboard/base/params.env", `
 clusterDomain=cluster.local
 userid-header=
-userid-prefix=`)
-	th.writeK("/manifests/common/centraldashboard/base", `
+userid-prefix=
+`)
+  th.writeK("/manifests/common/centraldashboard/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -299,32 +303,32 @@ configurations:
 }
 
 func TestCentraldashboardOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/common/centraldashboard/overlays/application")
-	writeCentraldashboardOverlaysApplication(th)
-	m, err := th.makeKustTarget().MakeCustomizedResMap()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	expected, err := m.AsYaml()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	targetPath := "../common/centraldashboard/overlays/application"
-	fsys := fs.MakeRealFS()
-	lrc := loader.RestrictionRootOnly
-	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
-	pc := plugins.DefaultPluginConfig()
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	actual, err := kt.MakeCustomizedResMap()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	th.assertActualEqualsExpected(actual, string(expected))
+  th := NewKustTestHarness(t, "/manifests/common/centraldashboard/overlays/application")
+  writeCentraldashboardOverlaysApplication(th)
+  m, err := th.makeKustTarget().MakeCustomizedResMap()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  expected, err := m.AsYaml()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  targetPath := "../common/centraldashboard/overlays/application"
+  fsys := fs.MakeRealFS()
+  lrc := loader.RestrictionRootOnly
+  _loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+  if loaderErr != nil {
+    t.Fatalf("could not load kustomize loader: %v", loaderErr)
+  }
+  rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+  pc := plugins.DefaultPluginConfig()
+  kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+  if err != nil {
+    th.t.Fatalf("Unexpected construction error %v", err)
+  }
+  actual, err := kt.MakeCustomizedResMap()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  th.assertActualEqualsExpected(actual, string(expected))
 }
