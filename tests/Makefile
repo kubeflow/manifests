@@ -27,6 +27,12 @@ generate: clean
 	@cd .. && hack/gen-test-targets.sh && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE) || echo done
 	$(GO) fmt ./...
 
+# Regenerate all kustomize files not just the ones based on the diff
+generate-all: clean
+	@cd .. && hack/gen-all-test-targets.sh && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE) || echo done
+	$(GO) fmt ./...
+
+
 modules:
 	@GO111MODULE=on $(GO) mod download
 

@@ -24,7 +24,7 @@ findcommand()
   _findcommand()
   {
     local branch=$1
-    for i in $(git diff --name-only origin/${branch}..upstream/master | egrep -v 'doc|tests|hack|plugins');do 
+    for i in $(git diff --name-only upstream/master | egrep -v 'doc|tests|hack|plugins');do 
       if [[ -f $i ]]; then   
         echo $(dirname $i); 
       fi
