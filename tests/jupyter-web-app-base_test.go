@@ -97,10 +97,10 @@ data:
         value: gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v-base-ef41372-1177829795472347138
         # The list of available standard container Images
         options:
-          - gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v-base-ef41372-1177829795472347138
-          - gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-gpu:v-base-ef41372-1177829795472347138
-          - gcr.io/kubeflow-images-public/tensorflow-2.0.0a-notebook-cpu:v-base-ef41372-1177829795472347138
-          - gcr.io/kubeflow-images-public/tensorflow-2.0.0a-notebook-gpu:v-base-ef41372-1177829795472347138
+          - gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v0.7.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-gpu:v0.7.0
+          - gcr.io/kubeflow-images-public/tensorflow-2.0.0a0-notebook-cpu:v0.7.0
+          - gcr.io/kubeflow-images-public/tensorflow-2.0.0a0-notebook-gpu:v0.7.0
         # By default, custom container Images are allowed
         # Uncomment the following line to only enable standard container Images
         readOnly: false
