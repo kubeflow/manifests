@@ -1,12 +1,12 @@
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: pytorch-operator
+  name: pytorch-job-crds
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: pytorch-operator
-      app.kubernetes.io/instance: pytorch-operator-v0.7.0
+      app.kubernetes.io/name: pytorch-job-crds
+      app.kubernetes.io/instance: pytorch-job-crds-v0.7.0
       app.kubernetes.io/version: v0.7.0
       app.kubernetes.io/component: pytorch
       app.kubernetes.io/part-of: kubeflow
@@ -17,15 +17,13 @@ spec:
   - group: apps
     kind: Deployment
   - group: core
-    kind: ConfigMap
-  - group: core
     kind: ServiceAccount
   - group: kubeflow.org
     kind: PyTorchJob
   descriptor:
-    type: "pytorch-operator"
+    type: "pytorch-job-crds"
     version: "v1"
-    description: "Pytorch-operator allows users to create and manage the \"PyTorchJob\" custom resource."
+    description: "Pytorch-job-crds contains the \"PyTorchJob\" custom resource definition."
     maintainers:
     - name: Johnu George
       email: johnugeo@cisco.com

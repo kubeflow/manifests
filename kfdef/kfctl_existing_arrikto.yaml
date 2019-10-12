@@ -83,11 +83,15 @@ spec:
         path: jupyter/notebook-controller
     name: notebook-controller
   - kustomizeConfig:
+      overlays:
+        - application
       repoRef:
         name: manifests
         path: pytorch-job/pytorch-job-crds
     name: pytorch-job-crds
   - kustomizeConfig:
+      overlays:
+        - application
       repoRef:
         name: manifests
         path: pytorch-job/pytorch-operator
