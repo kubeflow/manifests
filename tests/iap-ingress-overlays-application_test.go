@@ -1,21 +1,20 @@
 package tests_test
 
 import (
-	"testing"
-
-	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/v3/pkg/fs"
-	"sigs.k8s.io/kustomize/v3/pkg/loader"
-	"sigs.k8s.io/kustomize/v3/pkg/plugins"
-	"sigs.k8s.io/kustomize/v3/pkg/resmap"
-	"sigs.k8s.io/kustomize/v3/pkg/resource"
-	"sigs.k8s.io/kustomize/v3/pkg/target"
-	"sigs.k8s.io/kustomize/v3/pkg/validators"
+  "sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+  "sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+  "sigs.k8s.io/kustomize/v3/pkg/fs"
+  "sigs.k8s.io/kustomize/v3/pkg/loader"
+  "sigs.k8s.io/kustomize/v3/pkg/plugins"
+  "sigs.k8s.io/kustomize/v3/pkg/resmap"
+  "sigs.k8s.io/kustomize/v3/pkg/resource"
+  "sigs.k8s.io/kustomize/v3/pkg/target"
+  "sigs.k8s.io/kustomize/v3/pkg/validators"
+  "testing"
 )
 
 func writeIapIngressOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/gcp/iap-ingress/overlays/application/application.yaml", `
+  th.writeF("/manifests/gcp/iap-ingress/overlays/application/application.yaml", `
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
@@ -48,7 +47,7 @@ spec:
       url: ""
   addOwnerRef: true
 `)
-	th.writeK("/manifests/gcp/iap-ingress/overlays/application", `
+  th.writeK("/manifests/gcp/iap-ingress/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -63,7 +62,7 @@ commonLabels:
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.7.0
 `)
-	th.writeF("/manifests/gcp/iap-ingress/base/backend-config.yaml", `
+  th.writeF("/manifests/gcp/iap-ingress/base/backend-config.yaml", `
 apiVersion: cloud.google.com/v1beta1
 kind: BackendConfig
 metadata:
@@ -74,7 +73,7 @@ spec:
     oauthclientCredentials:
       secretName: $(oauthSecretName)
 `)
-	th.writeF("/manifests/gcp/iap-ingress/base/cloud-endpoint.yaml", `
+  th.writeF("/manifests/gcp/iap-ingress/base/cloud-endpoint.yaml", `
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
 metadata:
@@ -85,7 +84,7 @@ spec:
     name: $(ingressName)
     namespace: $(istioNamespace)
 `)
-	th.writeF("/manifests/gcp/iap-ingress/base/cluster-role-binding.yaml", `
+  th.writeF("/manifests/gcp/iap-ingress/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -98,7 +97,7 @@ subjects:
 - kind: ServiceAccount
   name: kf-admin
 `)
-	th.writeF("/manifests/gcp/iap-ingress/base/cluster-role.yaml", `
+  th.writeF("/manifests/gcp/iap-ingress/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
@@ -139,7 +138,7 @@ rules:
   verbs:
   - '*'
 `)
-	th.writeF("/manifests/gcp/iap-ingress/base/config-map.yaml", `
+  th.writeF("/manifests/gcp/iap-ingress/base/config-map.yaml", `
 ---
 apiVersion: v1
 data:
@@ -372,7 +371,7 @@ metadata:
   name: ingress-bootstrap-config
 ---
 `)
-	th.writeF("/manifests/gcp/iap-ingress/base/deployment.yaml", `
+  th.writeF("/manifests/gcp/iap-ingress/base/deployment.yaml", `
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -441,7 +440,7 @@ spec:
           name: envoy-config
         name: config-volume
 `)
-	th.writeF("/manifests/gcp/iap-ingress/base/ingress.yaml", `
+  th.writeF("/manifests/gcp/iap-ingress/base/ingress.yaml", `
 apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
@@ -462,7 +461,7 @@ spec:
           servicePort: 80
         path: /*
 `)
-	th.writeF("/manifests/gcp/iap-ingress/base/policy.yaml", `
+  th.writeF("/manifests/gcp/iap-ingress/base/policy.yaml", `
 apiVersion: authentication.istio.io/v1alpha1
 kind: Policy
 metadata:
@@ -486,13 +485,13 @@ spec:
     ports:
     - number: 80
 `)
-	th.writeF("/manifests/gcp/iap-ingress/base/service-account.yaml", `
+  th.writeF("/manifests/gcp/iap-ingress/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: kf-admin
 `)
-	th.writeF("/manifests/gcp/iap-ingress/base/service.yaml", `
+  th.writeF("/manifests/gcp/iap-ingress/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -507,7 +506,7 @@ spec:
     app: whoami
   type: ClusterIP
 `)
-	th.writeF("/manifests/gcp/iap-ingress/base/stateful-set.yaml", `
+  th.writeF("/manifests/gcp/iap-ingress/base/stateful-set.yaml", `
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -549,7 +548,7 @@ spec:
         name: config-volume
   volumeClaimTemplates: []
 `)
-	th.writeF("/manifests/gcp/iap-ingress/base/params.yaml", `
+  th.writeF("/manifests/gcp/iap-ingress/base/params.yaml", `
 varReference:
 - path: metadata/name
   kind: Certificate
@@ -596,7 +595,7 @@ varReference:
 - path: spec/domains
   kind: ManagedCertificate
 `)
-	th.writeF("/manifests/gcp/iap-ingress/base/params.env", `
+  th.writeF("/manifests/gcp/iap-ingress/base/params.env", `
 namespace=kubeflow
 appName=kubeflow
 hostname=
@@ -609,7 +608,7 @@ adminSaSecretName=admin-gcp-sa
 tlsSecretName=envoy-ingress-tls
 istioNamespace=istio-system
 `)
-	th.writeK("/manifests/gcp/iap-ingress/base", `
+  th.writeK("/manifests/gcp/iap-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -726,32 +725,32 @@ configurations:
 }
 
 func TestIapIngressOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/gcp/iap-ingress/overlays/application")
-	writeIapIngressOverlaysApplication(th)
-	m, err := th.makeKustTarget().MakeCustomizedResMap()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	expected, err := m.AsYaml()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	targetPath := "../gcp/iap-ingress/overlays/application"
-	fsys := fs.MakeRealFS()
-	lrc := loader.RestrictionRootOnly
-	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
-	pc := plugins.DefaultPluginConfig()
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	actual, err := kt.MakeCustomizedResMap()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	th.assertActualEqualsExpected(actual, string(expected))
+  th := NewKustTestHarness(t, "/manifests/gcp/iap-ingress/overlays/application")
+  writeIapIngressOverlaysApplication(th)
+  m, err := th.makeKustTarget().MakeCustomizedResMap()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  expected, err := m.AsYaml()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  targetPath := "../gcp/iap-ingress/overlays/application"
+  fsys := fs.MakeRealFS()
+  lrc := loader.RestrictionRootOnly
+  _loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+  if loaderErr != nil {
+    t.Fatalf("could not load kustomize loader: %v", loaderErr)
+  }
+  rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+  pc := plugins.DefaultPluginConfig()
+  kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+  if err != nil {
+    th.t.Fatalf("Unexpected construction error %v", err)
+  }
+  actual, err := kt.MakeCustomizedResMap()
+  if err != nil {
+    t.Fatalf("Err: %v", err)
+  }
+  th.assertActualEqualsExpected(actual, string(expected))
 }
