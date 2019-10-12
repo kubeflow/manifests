@@ -15,7 +15,7 @@ import (
 
 func writeCertManagerOverlaysSelfSigned(th *KustTestHarness) {
 	th.writeF("/manifests/cert-manager/cert-manager/overlays/self-signed/cluster-issuer.yaml", `
-apiVersion: certmanager.k8s.io/v1alpha1
+apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
   name: kubeflow-self-signing-issuer
