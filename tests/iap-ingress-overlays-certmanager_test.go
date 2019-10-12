@@ -1,6 +1,8 @@
 package tests_test
 
 import (
+	"testing"
+
 	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/v3/pkg/fs"
@@ -10,7 +12,6 @@ import (
 	"sigs.k8s.io/kustomize/v3/pkg/resource"
 	"sigs.k8s.io/kustomize/v3/pkg/target"
 	"sigs.k8s.io/kustomize/v3/pkg/validators"
-	"testing"
 )
 
 func writeIapIngressOverlaysCertmanager(th *KustTestHarness) {
@@ -510,7 +511,7 @@ spec:
       - x-goog-iap-jwt-assertion
       trigger_rules:
       - excluded_paths:
-        - exact: /healthz
+        - exact: /healthz/ready
         - prefix: /.well-known/acme-challenge
   principalBinding: USE_ORIGIN
   targets:
