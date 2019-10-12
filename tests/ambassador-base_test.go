@@ -129,6 +129,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    beta.cloud.google.com/backend-config: '{"ports": {"ambassador":"iap-backendconfig"}}'
   labels:
     service: ambassador
   name: ambassador
