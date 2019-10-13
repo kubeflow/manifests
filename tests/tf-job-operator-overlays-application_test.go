@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: tf-job-operator
-      app.kubernetes.io/instance: tf-job-operator
+      app.kubernetes.io/instance: tf-job-operator-v0.7.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: tfjob
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
+      app.kubernetes.io/version: v0.7.0
   componentKinds:
   - group: core
     kind: Service
@@ -67,11 +67,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: tf-job-operator
-  app.kubernetes.io/instance: tf-job-operator
+  app.kubernetes.io/instance: tf-job-operator-v0.7.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: tfjob
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
+  app.kubernetes.io/version: v0.7.0
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/cluster-role-binding.yaml", `
 ---

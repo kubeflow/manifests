@@ -1,12 +1,12 @@
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: tf-job-operator
+  name: tf-job-crds
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: tf-job-operator
-      app.kubernetes.io/instance: tf-job-operator-v0.7.0
+      app.kubernetes.io/name: tf-job-crds
+      app.kubernetes.io/instance: tf-job-crds-v0.7.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: tfjob
       app.kubernetes.io/part-of: kubeflow
@@ -21,9 +21,9 @@ spec:
   - group: kubeflow.org
     kind: TFJob
   descriptor:
-    type: "tf-job-operator"
+    type: "tf-job-crds"
     version: "v1"
-    description: "Tf-operator allows users to create and manage the \"TFJob\" custom resource."
+    description: "Tf-job-crds contains the \"TFJob\" custom resource definition."
     maintainers:
     - name: Richard Liu
       email: ricliu@google.com
