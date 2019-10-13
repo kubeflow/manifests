@@ -13,6 +13,7 @@ import (
 	"testing"
 )
 
+
 func writeIapIngressBase(th *KustTestHarness) {
 	th.writeF("/manifests/gcp/iap-ingress/base/backend-config.yaml", `
 apiVersion: cloud.google.com/v1beta1
@@ -429,7 +430,7 @@ spec:
       - x-goog-iap-jwt-assertion
       trigger_rules:
       - excluded_paths:
-        - exact: /healthz
+        - exact: /healthz/ready
         - prefix: /.well-known/acme-challenge
   principalBinding: USE_ORIGIN
   targets:

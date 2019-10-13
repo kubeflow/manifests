@@ -510,7 +510,7 @@ spec:
       - x-goog-iap-jwt-assertion
       trigger_rules:
       - excluded_paths:
-        - exact: /healthz
+        - exact: /healthz/ready
         - prefix: /.well-known/acme-challenge
   principalBinding: USE_ORIGIN
   targets:
