@@ -5,8 +5,8 @@ bases:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: tf-job-operator
-  app.kubernetes.io/instance: tf-job-operator-v0.7.0
+  app.kubernetes.io/name: tf-job-crds
+  app.kubernetes.io/instance: tf-job-crds-v0.7.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: tfjob
   app.kubernetes.io/part-of: kubeflow
