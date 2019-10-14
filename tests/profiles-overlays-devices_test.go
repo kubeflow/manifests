@@ -249,7 +249,7 @@ spec:
         image: gcr.io/kubeflow-images-public/kfam:v20190612-v0-170-ga06cdb79-dirty-a33ee4
         imagePullPolicy: Always
         name: kfam
-      serviceAccountName: controller-service-account
+      serviceAccountName: profiles-controller-service-account
 `)
 	th.writeF("/manifests/profiles/base/profile-instance.yaml", `
 apiVersion: profile.kubeflow.org/v1beta1
