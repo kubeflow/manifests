@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: mxnet-operator
-      app.kubernetes.io/instance: mxnet-operator
-      app.kubernetes.io/version: v0.6.0
+      app.kubernetes.io/instance: mxnet-operator-v0.7.0
       app.kubernetes.io/component: mxnet
       app.kubernetes.io/part-of: kubeflow
       app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/version: v0.7.0
   componentKinds:
   - group: apps
     kind: Deployment
@@ -63,11 +63,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: mxnet-operator
-  app.kubernetes.io/instance: mxnet-operator
-  app.kubernetes.io/version: v0.6.0
+  app.kubernetes.io/instance: mxnet-operator-v0.7.0
   app.kubernetes.io/component: mxnet
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/version: v0.7.0
 `)
 	th.writeF("/manifests/mxnet-job/mxnet-operator/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1

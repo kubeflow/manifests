@@ -22,9 +22,12 @@ metadata:
 spec:
   selector:
     matchLabels:
+      app.kubernetes.io/name: kubeflow
+      app.kubernetes.io/instance: kubeflow-v0.7.0
       app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: kubeflow
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
+      app.kubernetes.io/version: v0.0.7.0
   componentKinds:
     - group: app.k8s.io
       kind: Application
@@ -56,7 +59,7 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: kubeflow
-  app.kubernetes.io/instance: application-v0.7.0
+  app.kubernetes.io/instance: kubeflow-v0.7.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: kubeflow
   app.kubernetes.io/part-of: kubeflow
