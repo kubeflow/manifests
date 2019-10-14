@@ -1,20 +1,20 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/v3/pkg/fs"
-  "sigs.k8s.io/kustomize/v3/pkg/loader"
-  "sigs.k8s.io/kustomize/v3/pkg/plugins"
-  "sigs.k8s.io/kustomize/v3/pkg/resmap"
-  "sigs.k8s.io/kustomize/v3/pkg/resource"
-  "sigs.k8s.io/kustomize/v3/pkg/target"
-  "sigs.k8s.io/kustomize/v3/pkg/validators"
-  "testing"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
+	"testing"
 )
 
 func writePytorchOperatorOverlaysApplication(th *KustTestHarness) {
-  th.writeF("/manifests/pytorch-job/pytorch-operator/overlays/application/application.yaml", `
+	th.writeF("/manifests/pytorch-job/pytorch-operator/overlays/application/application.yaml", `
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
@@ -60,7 +60,7 @@ spec:
       url: "https://www.kubeflow.org/docs/reference/pytorchjob/v1/pytorch/"
   addOwnerRef: true
 `)
-  th.writeK("/manifests/pytorch-job/pytorch-operator/overlays/application", `
+	th.writeK("/manifests/pytorch-job/pytorch-operator/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -69,13 +69,13 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: pytorch-operator
-  app.kubernetes.io/instance: pytorch-operator
+  app.kubernetes.io/instance: pytorch-operator-v0.7.0
   app.kubernetes.io/version: v0.7.0
   app.kubernetes.io/component: pytorch
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/managed-by: kfctl
 `)
-  th.writeF("/manifests/pytorch-job/pytorch-operator/base/cluster-role-binding.yaml", `
+	th.writeF("/manifests/pytorch-job/pytorch-operator/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -90,7 +90,7 @@ subjects:
 - kind: ServiceAccount
   name: pytorch-operator
 `)
-  th.writeF("/manifests/pytorch-job/pytorch-operator/base/cluster-role.yaml", `
+	th.writeF("/manifests/pytorch-job/pytorch-operator/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
@@ -178,7 +178,7 @@ rules:
   - list
   - watch
 `)
-  th.writeF("/manifests/pytorch-job/pytorch-operator/base/deployment.yaml", `
+	th.writeF("/manifests/pytorch-job/pytorch-operator/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -212,7 +212,7 @@ spec:
         name: pytorch-operator
       serviceAccountName: pytorch-operator
 `)
-  th.writeF("/manifests/pytorch-job/pytorch-operator/base/service-account.yaml", `
+	th.writeF("/manifests/pytorch-job/pytorch-operator/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -220,7 +220,7 @@ metadata:
     app: pytorch-operator
   name: pytorch-operator
 `)
-  th.writeF("/manifests/pytorch-job/pytorch-operator/base/service.yaml", `
+	th.writeF("/manifests/pytorch-job/pytorch-operator/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -241,12 +241,12 @@ spec:
   type: ClusterIP
 
 `)
-  th.writeF("/manifests/pytorch-job/pytorch-operator/base/params.env", `
+	th.writeF("/manifests/pytorch-job/pytorch-operator/base/params.env", `
 pytorchDefaultImage=null
 deploymentScope=cluster
 deploymentNamespace=null
 `)
-  th.writeK("/manifests/pytorch-job/pytorch-operator/base", `
+	th.writeK("/manifests/pytorch-job/pytorch-operator/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
@@ -266,32 +266,32 @@ images:
 }
 
 func TestPytorchOperatorOverlaysApplication(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/pytorch-job/pytorch-operator/overlays/application")
-  writePytorchOperatorOverlaysApplication(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := m.AsYaml()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "../pytorch-job/pytorch-operator/overlays/application"
-  fsys := fs.MakeRealFS()
-  lrc := loader.RestrictionRootOnly
-  _loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
-  if loaderErr != nil {
-    t.Fatalf("could not load kustomize loader: %v", loaderErr)
-  }
-  rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
-  pc := plugins.DefaultPluginConfig()
-  kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
-  if err != nil {
-    th.t.Fatalf("Unexpected construction error %v", err)
-  }
-  actual, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  th.assertActualEqualsExpected(actual, string(expected))
+	th := NewKustTestHarness(t, "/manifests/pytorch-job/pytorch-operator/overlays/application")
+	writePytorchOperatorOverlaysApplication(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := m.AsYaml()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../pytorch-job/pytorch-operator/overlays/application"
+	fsys := fs.MakeRealFS()
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	actual, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	th.assertActualEqualsExpected(actual, string(expected))
 }

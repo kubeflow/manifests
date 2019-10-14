@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: webhook
-      app.kubernetes.io/instance: webhook-v0.6.2
+      app.kubernetes.io/instance: webhook-v0.7.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: bootstrap
       app.kubernetes.io/part-of: webhook
-      app.kubernetes.io/version: v0.6.2
+      app.kubernetes.io/version: v0.7.0
   componentKinds:
   - group: admissionregistration.k8s.io
     kind: MutatingWebhookConfiguration
@@ -45,7 +45,7 @@ spec:
     description: injects volume, volume mounts, env vars into PodDefault
     maintainers: []
     owners: []
-    keywords:
+    keywords: 
      - admission-webhook
      - kubeflow
     links:
@@ -63,11 +63,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: webhook
-  app.kubernetes.io/instance: webhook-v0.6.2
+  app.kubernetes.io/instance: webhook-v0.7.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: webhook
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6.2
+  app.kubernetes.io/version: v0.7.0
 `)
 	th.writeF("/manifests/admission-webhook/webhook/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
@@ -168,7 +168,7 @@ spec:
       - name: webhook-cert
         secret:
           secretName: webhook-certs
-      serviceAccountName: service-account
+      serviceAccountName: service-account    
 `)
 	th.writeF("/manifests/admission-webhook/webhook/base/mutating-webhook-configuration.yaml", `
 apiVersion: admissionregistration.k8s.io/v1beta1
