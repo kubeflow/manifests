@@ -13,3 +13,5 @@ varReference:
   kind: Deployment
 - path: spec/owner/name
   kind: Profile
+- path: metadata/name
+  kind: Profile

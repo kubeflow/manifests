@@ -1,7 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deployment
+  name: profiles-deployment
+  namespace: kubeflow
 spec:
   template:
     spec:
