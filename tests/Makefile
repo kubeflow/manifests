@@ -24,7 +24,11 @@ export GO = go
 all: test
 
 generate: clean
-	@cd .. && hack/gen-test-targets.sh && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE) || echo done
+	@cd .. && hack/gen-test-targets.sh --all && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE) || echo done
+	$(GO) fmt ./...
+
+generate-changed-only:
+	@cd .. && hack/gen-test-targets.sh -c && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE) || echo done
 	$(GO) fmt ./...
 
 modules:
