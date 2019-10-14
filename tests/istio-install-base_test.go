@@ -14349,6 +14349,7 @@ spec:
           - /etc/config/validatingwebhookconfiguration.yaml
           - --monitoringPort=15014
           - --log_output_level=default:info
+          # see  https://github.com/istio/istio/issues/15352
           - --enable-validation=true
           volumeMounts:
           - name: certs
