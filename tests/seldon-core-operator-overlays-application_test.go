@@ -57,7 +57,7 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: seldon-core-operator
-  app.kubernetes.io/instance: seldon-core-operator
+  app.kubernetes.io/instance: seldon-core-operator-v0.7.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: seldon
   app.kubernetes.io/part-of: kubeflow

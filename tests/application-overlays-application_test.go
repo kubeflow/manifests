@@ -56,7 +56,7 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: kubeflow
-  app.kubernetes.io/instance: kubeflow
+  app.kubernetes.io/instance: application-v0.7.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: kubeflow
   app.kubernetes.io/part-of: kubeflow
