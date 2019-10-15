@@ -27,6 +27,7 @@ spec:
         - -v=2
         - -namespace=
         - -ingress-url-format=
+        - -install-crds=true
         - -controller-threads=10
         - -resync-interval=30
         - -logtostderr
