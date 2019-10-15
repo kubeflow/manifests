@@ -27,3 +27,4 @@ resources:
 - crd-cleanup-job.yaml
 - deploy.yaml
 - operator-sa.yaml
+- sparkapplications.sparkoperator.k8s.io-crd.yaml
