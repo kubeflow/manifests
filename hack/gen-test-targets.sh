@@ -11,8 +11,6 @@ changed=false
 dry_run=false
 exclude_dirs='kfdef|gatekeeper|gcp/deployment_manager_configs|aws/infra_configs'
 
-source hack/utils.sh
-
 if [[ $(basename $PWD) != "manifests" ]]; then
   echo "must be at manifests root directory to run $0"
   exit 1
@@ -22,6 +20,8 @@ if [[ ! -f hack/utils.sh ]]; then
   echo "$PWD/hack/utils.sh doesn't exist"
   exit 1
 fi
+
+source hack/utils.sh
 
 usage() 
 {
@@ -77,7 +77,7 @@ findcommand()
       "false")
         branch=$(lsbranchname)
         for i in $(git diff --name-only origin/${branch}..upstream/master); do
-          if [[ -f $i ]]; then   
+          if [[ -f $i && ! $i =~ ^(doc|tests|hack|plugins) ]]; then   
             echo $(dirname $i)
           fi
         done
