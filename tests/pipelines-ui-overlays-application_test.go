@@ -1,20 +1,20 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/v3/pkg/fs"
-  "sigs.k8s.io/kustomize/v3/pkg/loader"
-  "sigs.k8s.io/kustomize/v3/pkg/plugins"
-  "sigs.k8s.io/kustomize/v3/pkg/resmap"
-  "sigs.k8s.io/kustomize/v3/pkg/resource"
-  "sigs.k8s.io/kustomize/v3/pkg/target"
-  "sigs.k8s.io/kustomize/v3/pkg/validators"
-  "testing"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
+	"testing"
 )
 
 func writePipelinesUiOverlaysApplication(th *KustTestHarness) {
-  th.writeF("/manifests/pipeline/pipelines-ui/overlays/application/application.yaml", `
+	th.writeF("/manifests/pipeline/pipelines-ui/overlays/application/application.yaml", `
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
@@ -47,7 +47,7 @@ spec:
       url: ""
   addOwnerRef: true
 `)
-  th.writeK("/manifests/pipeline/pipelines-ui/overlays/application", `
+	th.writeK("/manifests/pipeline/pipelines-ui/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -62,7 +62,7 @@ commonLabels:
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: 0.1.31
 `)
-  th.writeF("/manifests/pipeline/pipelines-ui/base/deployment.yaml", `
+	th.writeF("/manifests/pipeline/pipelines-ui/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -86,7 +86,7 @@ spec:
         - containerPort: 3000
       serviceAccountName: ml-pipeline-ui
 `)
-  th.writeF("/manifests/pipeline/pipelines-ui/base/role-binding.yaml", `
+	th.writeF("/manifests/pipeline/pipelines-ui/base/role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
@@ -101,7 +101,7 @@ subjects:
 - kind: ServiceAccount
   name: ml-pipeline-ui
 `)
-  th.writeF("/manifests/pipeline/pipelines-ui/base/role.yaml", `
+	th.writeF("/manifests/pipeline/pipelines-ui/base/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
@@ -129,13 +129,13 @@ rules:
   - watch
   - delete
 `)
-  th.writeF("/manifests/pipeline/pipelines-ui/base/service-account.yaml", `
+	th.writeF("/manifests/pipeline/pipelines-ui/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: ml-pipeline-ui
 `)
-  th.writeF("/manifests/pipeline/pipelines-ui/base/service.yaml", `
+	th.writeF("/manifests/pipeline/pipelines-ui/base/service.yaml", `
 ---
 apiVersion: v1
 kind: Service
@@ -185,15 +185,15 @@ spec:
   selector:
     app: ml-pipeline-tensorboard-ui
 `)
-  th.writeF("/manifests/pipeline/pipelines-ui/base/params.yaml", `
+	th.writeF("/manifests/pipeline/pipelines-ui/base/params.yaml", `
 varReference:
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
 `)
-  th.writeF("/manifests/pipeline/pipelines-ui/base/params.env", `
+	th.writeF("/manifests/pipeline/pipelines-ui/base/params.env", `
 uiClusterDomain=cluster.local
 `)
-  th.writeK("/manifests/pipeline/pipelines-ui/base", `
+	th.writeK("/manifests/pipeline/pipelines-ui/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
@@ -245,32 +245,32 @@ configurations:
 }
 
 func TestPipelinesUiOverlaysApplication(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/pipeline/pipelines-ui/overlays/application")
-  writePipelinesUiOverlaysApplication(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := m.AsYaml()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "../pipeline/pipelines-ui/overlays/application"
-  fsys := fs.MakeRealFS()
-  lrc := loader.RestrictionRootOnly
-  _loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
-  if loaderErr != nil {
-    t.Fatalf("could not load kustomize loader: %v", loaderErr)
-  }
-  rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
-  pc := plugins.DefaultPluginConfig()
-  kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
-  if err != nil {
-    th.t.Fatalf("Unexpected construction error %v", err)
-  }
-  actual, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  th.assertActualEqualsExpected(actual, string(expected))
+	th := NewKustTestHarness(t, "/manifests/pipeline/pipelines-ui/overlays/application")
+	writePipelinesUiOverlaysApplication(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := m.AsYaml()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../pipeline/pipelines-ui/overlays/application"
+	fsys := fs.MakeRealFS()
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	actual, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	th.assertActualEqualsExpected(actual, string(expected))
 }
