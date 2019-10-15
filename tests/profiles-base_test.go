@@ -186,70 +186,6 @@ status:
   conditions: []
   storedVersions: []
 `)
-<<<<<<< HEAD
-	th.writeF("/manifests/profiles/base/service-account.yaml", `
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: controller-service-account
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: default-service-account
-`)
-	th.writeF("/manifests/profiles/base/cluster-role-binding.yaml", `
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: cluster-role-binding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-admin
-subjects:
-- kind: ServiceAccount
-  name: controller-service-account
-`)
-	th.writeF("/manifests/profiles/base/role.yaml", `
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: default-role
-rules:
-- apiGroups:
-  - kubeflow.org
-  resources:
-  - profiles
-  verbs:
-  - create
-  - watch
-  - list
-`)
-	th.writeF("/manifests/profiles/base/role-binding.yaml", `
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: default-role-binding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: default-role
-subjects:
-- kind: ServiceAccount
-  name: default-service-account
-`)
-	th.writeF("/manifests/profiles/base/service.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
-  name: kfam
-spec:
-  ports:
-    - port: 8081`)
-=======
->>>>>>> update profile config to v1beta1
 	th.writeF("/manifests/profiles/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -314,7 +250,8 @@ varReference:
 - path: spec/template/spec/containers/1/args/3
   kind: Deployment
 - path: spec/template/spec/containers/1/args/5
-  kind: Deployment`)
+  kind: Deployment
+`)
 	th.writeF("/manifests/profiles/base/params.env", `
 admin=anonymous
 gcp-sa=
