@@ -148,8 +148,8 @@ data:
       done
 
       while [[ -z ${BACKEND_SERVICE} ]];
-      do BACKEND_SERVICE=$(gcloud --project=${PROJECT} compute backend-services list --filter=name~${BACKEND_NAME} --uri);
-      echo "Waiting for the backend-services resource PROJECT=${PROJECT} BACKEND_NAME=${BACKEND_NAME} SERVICE=${SERVICE}...";
+      do BACKEND_SERVICE=$(gcloud --project=${PROJECT} compute backend-services list --filter=name~k8s-be-${NODE_PORT}- --uri);
+      echo "Waiting for the backend-services resource PROJECT=${PROJECT} NODEPORT=${NODE_PORT} SERVICE=${SERVICE}...";
       sleep 2;
       done
 
