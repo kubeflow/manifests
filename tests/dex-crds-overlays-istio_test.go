@@ -13,7 +13,38 @@ import (
 	"testing"
 )
 
-func writeDexCrdsBase(th *KustTestHarness) {
+func writeDexCrdsOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/dex-auth/dex-crds/overlays/istio/virtual-service.yaml", `
+# This config is gated on kiali upgrade to 0.21 from 0.16 in istio 1.1.6:
+# https://github.com/kiali/kiali/issues/1154
+# https://github.com/istio/istio/issues/11131
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dex
+spec:
+  gateways:
+  - kubeflow/kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /dex/
+    route:
+    - destination:
+        host: dex.auth.svc.cluster.local
+        port:
+          number: 5556
+`)
+	th.writeK("/manifests/dex-auth/dex-crds/overlays/istio", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- virtual-service.yaml`)
 	th.writeF("/manifests/dex-auth/dex-crds/base/namespace.yaml", `
 apiVersion: v1
 kind: Namespace
@@ -259,9 +290,9 @@ images:
 `)
 }
 
-func TestDexCrdsBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/dex-auth/dex-crds/base")
-	writeDexCrdsBase(th)
+func TestDexCrdsOverlaysIstio(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/dex-auth/dex-crds/overlays/istio")
+	writeDexCrdsOverlaysIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -270,7 +301,7 @@ func TestDexCrdsBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../dex-auth/dex-crds/base"
+	targetPath := "../dex-auth/dex-crds/overlays/istio"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
