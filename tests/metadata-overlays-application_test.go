@@ -167,7 +167,7 @@ metadata:
   labels:
     component: server
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       component: server
@@ -195,6 +195,17 @@ spec:
         ports:
         - name: backendapi
           containerPort: 8080
+
+        readinessProbe:
+          httpGet:
+            path: /api/v1alpha1/artifact_types
+            port: backendapi
+            httpHeaders:
+            - name: ContentType
+              value: application/json
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 2
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -203,7 +214,7 @@ metadata:
   labels:
     component: grpc-server
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       component: grpc-server
