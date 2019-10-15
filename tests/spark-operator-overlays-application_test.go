@@ -27,7 +27,7 @@ spec:
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: sppark-operator
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6 
+      app.kubernetes.io/version: v0.7.0
   componentKinds:
   - group: core
     kind: Service
@@ -66,7 +66,7 @@ commonLabels:
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: spark-operator
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
+  app.kubernetes.io/version: v0.7.0
 `)
 	th.writeF("/manifests/spark/spark-operator/base/spark-sa.yaml", `
 apiVersion: v1
