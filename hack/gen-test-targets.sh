@@ -9,6 +9,9 @@ add_app=''
 all=false
 changed=false
 dry_run=false
+exclude_dirs='kfdef|gatekeeper|gcp/deployment_manager_configs|aws/infra_configs'
+
+source hack/utils.sh
 
 if [[ $(basename $PWD) != "manifests" ]]; then
   echo "must be at manifests root directory to run $0"
@@ -19,8 +22,6 @@ if [[ ! -f hack/utils.sh ]]; then
   echo "$PWD/hack/utils.sh doesn't exist"
   exit 1
 fi
-
-source hack/utils.sh
 
 usage() 
 {
@@ -75,16 +76,16 @@ findcommand()
     case "$all" in 
       "false")
         branch=$(lsbranchname)
-        for i in $(git diff --name-only origin/${branch}..upstream/master | egrep -v 'doc|tests|hack|plugins');do 
+        for i in $(git diff --name-only origin/${branch}..upstream/master); do
           if [[ -f $i ]]; then   
-            echo $(dirname $i); 
+            echo $(dirname $i)
           fi
         done
         ;;
       "true")
-        for i in $(find * -type d -exec sh -c '(ls -p "{}"|grep />/dev/null)||echo "{}"' \; | egrep -v 'doc|tests|hack|plugins|overlays'); do
-          if [[ -d $i ]]; then   
-            echo $(dirname $i); 
+        for i in $(find * -type d -exec sh -c '(ls -p "{}"|grep />/dev/null)||echo "{}"' \;); do
+          if [[ $i =~ (base|overlays.*)$ && ! $i =~ ^(doc|tests|hack|plugins) ]]; then
+            echo $i
           fi
         done
         ;;
@@ -165,14 +166,15 @@ APPLICATION
 
 generate()
 {
-  local rootdir=$(pwd) absdir i
+  local rootdir=$PWD absdir i
   absdir=${rootdir}/$1
-#echo 'rootdir='$rootdir' absdir='$absdir
+#echo 'rootdir='$rootdir' absdir='$absdir 2>&1
   if [[ -n $add_app ]]; then
     absdir=${rootdir}/$1/overlays/application
   fi
   for i in $(find $absdir -type d -exec sh -c '(ls -p "{}"|grep />/dev/null)||echo "{}"' \;); do
-    if [[ ! $i =~ overlays/test$ ]]; then
+#echo 'generate i='$i 2>&1
+    if [[ ! $1 =~ ^($exclude_dirs) ]]; then
       testname=$(get-target-name ${i})_test.go
       echo generating $testname from manifests/${i#*manifests/}
       $dry_run || ./hack/gen-test-target.sh $i 1> tests/$testname
@@ -185,21 +187,8 @@ generate()
 
 generate-all()
 {
-  EXCLUDE_DIRS=( "kfdef" "gatekeeper" "gcp/deployment_manager_configs" "aws/infra_configs" "." )
-  source hack/utils.sh
   for i in $(findcommand); do
-    exclude=false
-    for item in "${EXCLUDE_DIRS[@]}"
-    do
-      #https://stackoverflow.com/questions/2172352/in-bash-how-can-i-check-if-a-string-begins-with-some-value
-      # Check if item is a prefix of i
-      if [[ "$i" == "$item"* ]]; then
-        exclude=true
-      fi
-    done
-    if $exclude; then
-      continue
-    fi
+#echo 'generate-all i='$i 2>&1
     generate $i
   done
 }
@@ -249,13 +238,12 @@ case $# in
      ;;
   1)
      if (( $# == 1 )); then
-       cmd="generate $1"
+       dir=$1
        if [[ -n $add_app ]]; then
-         addapp $add_app $1
-         cmd="generate $1/overlays/application"
+         addapp $add_app $dir
+         dir=${dir}/overlays/application
        fi
-       $dry_run && cmd='echo '$cmd
-       eval $cmd
+       generate $dir
      fi
      ;;
   *)
