@@ -45,24 +45,23 @@ patchesStrategicMerge:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: profiles-cluster-role-binding
-  namespace: kubeflow
+  name: cluster-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cluster-admin
 subjects:
 - kind: ServiceAccount
-  name: profiles-controller-service-account
+  name: controller-service-account
 `)
 	th.writeF("/manifests/profiles/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
-  name: profiles.profile.kubeflow.org
+  name: profiles.kubeflow.org
 spec:
-  group: profile.kubeflow.org
+  group: kubeflow.org
   names:
     kind: Profile
     plural: profiles
@@ -218,8 +217,7 @@ status:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: profiles-deployment
-  namespace: kubeflow
+  name: deployment
 spec:
   replicas: 1
   template:
@@ -249,23 +247,13 @@ spec:
         image: gcr.io/kubeflow-images-public/kfam:v20190612-v0-170-ga06cdb79-dirty-a33ee4
         imagePullPolicy: Always
         name: kfam
-      serviceAccountName: profiles-controller-service-account
-`)
-	th.writeF("/manifests/profiles/base/profile-instance.yaml", `
-apiVersion: profile.kubeflow.org/v1beta1
-kind: Profile
-metadata:
-  name: $(profile-name)
-spec:
-  owner:
-    kind: User
-    name: $(admin)
+      serviceAccountName: controller-service-account
 `)
 	th.writeF("/manifests/profiles/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
-  name: profiles-kfam
+  name: kfam
   namespace: kubeflow
 spec:
   ports:
@@ -275,8 +263,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: profiles-controller-service-account
-  namespace: kubeflow
+  name: controller-service-account
 `)
 	th.writeF("/manifests/profiles/base/params.yaml", `
 varReference:
@@ -292,14 +279,9 @@ varReference:
   kind: Deployment
 - path: spec/template/spec/containers/1/args/5
   kind: Deployment
-- path: spec/owner/name
-  kind: Profile
-- path: metadata/name
-  kind: Profile
 `)
 	th.writeF("/manifests/profiles/base/params.env", `
 admin=anonymous
-profile-name=anonymous
 gcp-sa=
 userid-header=
 userid-prefix=
@@ -311,9 +293,10 @@ resources:
 - cluster-role-binding.yaml
 - crd.yaml
 - deployment.yaml
-- profile-instance.yaml
 - service.yaml
 - service-account.yaml
+namePrefix: profiles-
+namespace: kubeflow
 commonLabels:
   kustomize.component: profiles
 configMapGenerator:
@@ -321,9 +304,9 @@ configMapGenerator:
   env: params.env
 images:
 - name: gcr.io/kubeflow-images-public/profile-controller
-  digest: sha256:00873cfa9bba52565cccfe57f6f76a5807657536488114236f1da800d56128eb
+  digest: sha256:f0011f9c8b73e8a26e2ea203394031104d09753f684177caf1017c15aac658f9
 - name: gcr.io/kubeflow-images-public/kfam
-  digest: sha256:59564e438d1ba9d956d01d8e5cc52d8bb5de6c6cce065ccc3dac3b396fc6f5cc
+  digest: sha256:3b0d4be7e59a3fa5ed1d80dccc832312caa94f3b2d36682524d3afc4e45164f0
 vars:
 - name: admin
   objref:
@@ -339,13 +322,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.gcp-sa
-- name: profile-name
-  objref:
-    kind: ConfigMap
-    name: profiles-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.profile-name
 - name: userid-header
   objref:
     kind: ConfigMap
@@ -363,7 +339,7 @@ vars:
 - name: namespace
   objref:
     kind: Service
-    name: profiles-kfam
+    name: kfam
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace

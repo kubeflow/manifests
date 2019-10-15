@@ -358,6 +358,16 @@ spec:
         name: manifests
         path: seldon/seldon-core-operator
     name: seldon-core-operator
+  - kustomizeConfig:
+      parameters:
+        - name: user
+          value: SET_EMAIL
+        - name: profile-name
+          value: anonymous
+      repoRef:
+        name: manifests
+        path: default-install
+      name: default-install
   # email should  be set the google account of the person setting up Kubeflow.
   # If its not set kfctl generate will try to set it automatically based on the default
   # gcloud config

@@ -4,9 +4,10 @@ resources:
 - cluster-role-binding.yaml
 - crd.yaml
 - deployment.yaml
-- profile-instance.yaml
 - service.yaml
 - service-account.yaml
+namePrefix: profiles-
+namespace: kubeflow
 commonLabels:
   kustomize.component: profiles
 configMapGenerator:
@@ -14,9 +15,9 @@ configMapGenerator:
   env: params.env
 images:
 - name: gcr.io/kubeflow-images-public/profile-controller
-  digest: sha256:00873cfa9bba52565cccfe57f6f76a5807657536488114236f1da800d56128eb
+  digest: sha256:f0011f9c8b73e8a26e2ea203394031104d09753f684177caf1017c15aac658f9
 - name: gcr.io/kubeflow-images-public/kfam
-  digest: sha256:59564e438d1ba9d956d01d8e5cc52d8bb5de6c6cce065ccc3dac3b396fc6f5cc
+  digest: sha256:3b0d4be7e59a3fa5ed1d80dccc832312caa94f3b2d36682524d3afc4e45164f0
 vars:
 - name: admin
   objref:
@@ -32,13 +33,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.gcp-sa
-- name: profile-name
-  objref:
-    kind: ConfigMap
-    name: profiles-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.profile-name
 - name: userid-header
   objref:
     kind: ConfigMap
@@ -56,7 +50,7 @@ vars:
 - name: namespace
   objref:
     kind: Service
-    name: profiles-kfam
+    name: kfam
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace

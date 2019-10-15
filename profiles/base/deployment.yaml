@@ -1,8 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: profiles-deployment
-  namespace: kubeflow
+  name: deployment
 spec:
   replicas: 1
   template:
@@ -32,4 +31,4 @@ spec:
         image: gcr.io/kubeflow-images-public/kfam:v20190612-v0-170-ga06cdb79-dirty-a33ee4
         imagePullPolicy: Always
         name: kfam
-      serviceAccountName: profiles-controller-service-account
+      serviceAccountName: controller-service-account

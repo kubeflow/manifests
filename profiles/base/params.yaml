@@ -11,7 +11,3 @@ varReference:
   kind: Deployment
 - path: spec/template/spec/containers/1/args/5
   kind: Deployment
-- path: spec/owner/name
-  kind: Profile
-- path: metadata/name
-  kind: Profile
