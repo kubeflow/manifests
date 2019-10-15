@@ -28,3 +28,4 @@ resources:
 - deploy.yaml
 - operator-sa.yaml
 - sparkapplications.sparkoperator.k8s.io-crd.yaml
+- scheduledsparkapplications.sparkoperator.k8s.io-crd.yaml
