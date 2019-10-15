@@ -18,8 +18,7 @@ func writeProfilesOverlaysDevices(th *KustTestHarness) {
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: profiles-deployment
-  namespace: kubeflow
+  name: deployment
 spec:
   template:
     spec:
