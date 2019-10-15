@@ -13,7 +13,6 @@ import (
 	"testing"
 )
 
-
 func writeIapIngressBase(th *KustTestHarness) {
 	th.writeF("/manifests/gcp/iap-ingress/base/backend-config.yaml", `
 apiVersion: cloud.google.com/v1beta1
