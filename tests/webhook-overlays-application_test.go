@@ -45,7 +45,7 @@ spec:
     description: injects volume, volume mounts, env vars into PodDefault
     maintainers: []
     owners: []
-    keywords:
+    keywords: 
      - admission-webhook
      - kubeflow
     links:
@@ -168,7 +168,7 @@ spec:
       - name: webhook-cert
         secret:
           secretName: webhook-certs
-      serviceAccountName: service-account
+      serviceAccountName: service-account    
 `)
 	th.writeF("/manifests/admission-webhook/webhook/base/mutating-webhook-configuration.yaml", `
 apiVersion: admissionregistration.k8s.io/v1beta1

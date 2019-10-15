@@ -1,20 +1,20 @@
 package tests_test
 
 import (
-  "sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
-  "sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
-  "sigs.k8s.io/kustomize/v3/pkg/fs"
-  "sigs.k8s.io/kustomize/v3/pkg/loader"
-  "sigs.k8s.io/kustomize/v3/pkg/plugins"
-  "sigs.k8s.io/kustomize/v3/pkg/resmap"
-  "sigs.k8s.io/kustomize/v3/pkg/resource"
-  "sigs.k8s.io/kustomize/v3/pkg/target"
-  "sigs.k8s.io/kustomize/v3/pkg/validators"
-  "testing"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
+	"testing"
 )
 
 func writeCloudEndpointsOverlaysApplication(th *KustTestHarness) {
-  th.writeF("/manifests/gcp/cloud-endpoints/overlays/application/application.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/overlays/application/application.yaml", `
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
@@ -47,7 +47,7 @@ spec:
       url: ""
   addOwnerRef: true
 `)
-  th.writeK("/manifests/gcp/cloud-endpoints/overlays/application", `
+	th.writeK("/manifests/gcp/cloud-endpoints/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -62,7 +62,7 @@ commonLabels:
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.7.0
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/cluster-role-binding.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -75,7 +75,7 @@ subjects:
 - kind: ServiceAccount
   name: kf-admin
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/cluster-role.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
@@ -98,7 +98,7 @@ rules:
   - get
   - list
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/composite-controller.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/composite-controller.yaml", `
 apiVersion: metacontroller.k8s.io/v1alpha1
 kind: CompositeController
 metadata:
@@ -120,7 +120,7 @@ spec:
     resource: cloudendpoints
   resyncPeriodSeconds: 2
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/crd.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -137,7 +137,7 @@ spec:
   scope: Namespaced
   version: v1
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/deployment.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -165,13 +165,13 @@ spec:
       serviceAccountName: kf-admin
       terminationGracePeriodSeconds: 5
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/service-account.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: kf-admin
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/service.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -184,7 +184,7 @@ spec:
     app: cloud-endpoints-controller
   type: ClusterIP
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/params.yaml", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/params.yaml", `
 varReference:
 - path: spec/template/spec/volumes/secret/secretName
   kind: Deployment
@@ -193,11 +193,11 @@ varReference:
 - path: spec/hooks/sync/webhook/url
   kind: CompositeController
 `)
-  th.writeF("/manifests/gcp/cloud-endpoints/base/params.env", `
+	th.writeF("/manifests/gcp/cloud-endpoints/base/params.env", `
 namespace=kubeflow
 secretName=admin-gcp-sa
 `)
-  th.writeK("/manifests/gcp/cloud-endpoints/base", `
+	th.writeK("/manifests/gcp/cloud-endpoints/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -241,32 +241,32 @@ configurations:
 }
 
 func TestCloudEndpointsOverlaysApplication(t *testing.T) {
-  th := NewKustTestHarness(t, "/manifests/gcp/cloud-endpoints/overlays/application")
-  writeCloudEndpointsOverlaysApplication(th)
-  m, err := th.makeKustTarget().MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  expected, err := m.AsYaml()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  targetPath := "../gcp/cloud-endpoints/overlays/application"
-  fsys := fs.MakeRealFS()
-  lrc := loader.RestrictionRootOnly
-  _loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
-  if loaderErr != nil {
-    t.Fatalf("could not load kustomize loader: %v", loaderErr)
-  }
-  rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
-  pc := plugins.DefaultPluginConfig()
-  kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
-  if err != nil {
-    th.t.Fatalf("Unexpected construction error %v", err)
-  }
-  actual, err := kt.MakeCustomizedResMap()
-  if err != nil {
-    t.Fatalf("Err: %v", err)
-  }
-  th.assertActualEqualsExpected(actual, string(expected))
+	th := NewKustTestHarness(t, "/manifests/gcp/cloud-endpoints/overlays/application")
+	writeCloudEndpointsOverlaysApplication(th)
+	m, err := th.makeKustTarget().MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	expected, err := m.AsYaml()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	targetPath := "../gcp/cloud-endpoints/overlays/application"
+	fsys := fs.MakeRealFS()
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	actual, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	th.assertActualEqualsExpected(actual, string(expected))
 }
