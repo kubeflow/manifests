@@ -130,7 +130,8 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    beta.cloud.google.com/backend-config: '{"ports": {"ambassador":"iap-backendconfig"}}'
+    # Ambassador is only used on GCP with basic auth.
+    beta.cloud.google.com/backend-config: '{"ports": {"ambassador":"basicauth-backendconfig"}}'
   labels:
     service: ambassador
   name: ambassador
