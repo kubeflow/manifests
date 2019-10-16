@@ -235,6 +235,7 @@ spec:
 	th.writeF("/manifests/jupyter/notebook-controller/base/params.env", `
 POD_LABELS=gcp-cred-secret=user-gcp-sa,gcp-cred-secret-filename=user-gcp-sa.json
 USE_ISTIO=false
+ISTIO_GATEWAY=kubeflow/kubeflow-gateway
 `)
 	th.writeK("/manifests/jupyter/notebook-controller/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -275,6 +276,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.USE_ISTIO
+- name: ISTIO_GATEWAY
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ISTIO_GATEWAY
 `)
 }
 
