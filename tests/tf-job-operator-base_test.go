@@ -214,7 +214,7 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/tf_operator
   newName: gcr.io/kubeflow-images-public/tf_operator
-  newTag: kubeflow-tf-operator-postsubmit-v1-5adee6f-6109-a25c
+  newTag: v0.7.0
 `)
 }
 
