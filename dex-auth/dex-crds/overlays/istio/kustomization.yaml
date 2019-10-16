@@ -4,3 +4,20 @@ bases:
 - ../../base
 resources:
 - virtual-service.yaml
+
+configMapGenerator:
+- name: dex-parameters
+  behavior: merge
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+configurations:
+- params.yaml
+vars:
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace

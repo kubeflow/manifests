@@ -1,3 +1,5 @@
 varReference:
 - path: spec/template/spec/containers/env/value
   kind: Deployment
+- path: spec/filters/filterConfig/httpService/serverUri
+  kind: EnvoyFilter

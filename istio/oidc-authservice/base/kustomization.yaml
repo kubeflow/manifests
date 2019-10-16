@@ -72,6 +72,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.userid-prefix
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: oidc-authservice-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 configurations:
 - params.yaml
 images:
