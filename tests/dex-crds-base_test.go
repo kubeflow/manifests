@@ -254,8 +254,11 @@ configurations:
 - params.yaml
 images:
 - name: quay.io/coreos/dex
-  newName: quay.io/coreos/dex
-  newTag: v2.9.0
+  # Using a custom Dex image so as to include:
+  # https://github.com/dexidp/dex/pull/1554
+  # TODO(yanniszark): switch to official image once a new release is cut.
+  newName: gcr.io/arrikto/dexidp/dex
+  newTag: 4bede5eb80822fc3a7fc9edca0ed2605cd339d17
 `)
 }
 

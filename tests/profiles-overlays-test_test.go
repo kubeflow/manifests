@@ -13,65 +13,39 @@ import (
 	"testing"
 )
 
-func writeProfilesOverlaysDebug(th *KustTestHarness) {
-	th.writeF("/manifests/profiles/overlays/debug/deployment.yaml", `
-apiVersion: apps/v1
-kind: Deployment
+func writeProfilesOverlaysTest(th *KustTestHarness) {
+	th.writeF("/manifests/profiles/overlays/test/app_test.yaml", `
+apiVersion: kfdef.apps.kubeflow.org/v1alpha1
+kind: KfDef
 metadata:
-  name: deployment
+  name: plugin-test
 spec:
-  template:
-    spec:
-      containers:
-      - name: manager
-        command: ["/go/bin/dlv"]
-        args: ["--listen=:2345", "--headless=true", "--api-version=2", "exec", "/go/src/github.com/kubeflow/kubeflow/components/profile-controller/manager"]
-        env:
-        - name: project
-          valueFrom:
-            configMapKeyRef:
-              name: parameters
-              key: project
-        image: gcr.io/$(project)/profile-controller:latest
-        ports:
-        - containerPort: 2345
-        securityContext:
-          privileged: true
+  appdir: .
+  componentParams:
+    profiles:
+    - name: overlay
+      value: debug
+    - name: overlay
+      value: devices
+  components:
+  - profiles
+  manifestsRepo: /Users/kdkasrav/plugin-test/.cache/manifests/pull/31/head
+  packageManager: kustomize@pull/31
+  packages:
+  - profiles
+  repo: /Users/kdkasrav/plugin-test/.cache/kubeflow/master/kubeflow
+  useBasicAuth: false
+  useIstio: true
+  version: master
+status: {}
 `)
-	th.writeF("/manifests/profiles/overlays/debug/params.yaml", `
-varReference:
-- path: spec/template/spec/containers/image
-  kind: Deployment
-`)
-	th.writeF("/manifests/profiles/overlays/debug/params.env", `
-project=
-`)
-	th.writeK("/manifests/profiles/overlays/debug", `
+	th.writeK("/manifests/profiles/overlays/test", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
-patchesStrategicMerge:
-- deployment.yaml
-configMapGenerator:
-- name: parameters
-  env: params.env
-generatorOptions:
-  disableNameSuffixHash: true
-vars:
-- name: project
-  objref:
-    kind: ConfigMap
-    name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.project
-configurations:
-- params.yaml
-images:
-- name: gcr.io/$(project)/profile-controller
-  newName: gcr.io/$(project)/profile-controller
-  newTag: latest
+generators:
+- app_test.yaml
 `)
 	th.writeF("/manifests/profiles/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
@@ -377,9 +351,9 @@ configurations:
 `)
 }
 
-func TestProfilesOverlaysDebug(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/profiles/overlays/debug")
-	writeProfilesOverlaysDebug(th)
+func TestProfilesOverlaysTest(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/profiles/overlays/test")
+	writeProfilesOverlaysTest(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -388,7 +362,7 @@ func TestProfilesOverlaysDebug(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../profiles/overlays/debug"
+	targetPath := "../profiles/overlays/test"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
