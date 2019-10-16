@@ -27,7 +27,7 @@ spec:
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: metadata
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
+      app.kubernetes.io/version: v0.7.0
   componentKinds:
   - group: core
     kind: Service
@@ -69,7 +69,7 @@ commonLabels:
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: metadata
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
+  app.kubernetes.io/version: v0.7.0
 `)
 	th.writeF("/manifests/metadata/base/metadata-db-pvc.yaml", `
 apiVersion: v1

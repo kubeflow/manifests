@@ -90,7 +90,7 @@ commonLabels:
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: tektoncd
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
+  app.kubernetes.io/version: v0.7.0
 `)
 	th.writeF("/manifests/tektoncd/tektoncd-dashboard/base/crds.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
