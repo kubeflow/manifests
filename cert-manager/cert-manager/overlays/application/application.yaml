@@ -1,7 +1,7 @@
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name:  $(generateName)
+  name: cert-manager
 spec:
   selector:
     matchLabels:
