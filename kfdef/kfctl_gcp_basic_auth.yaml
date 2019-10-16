@@ -381,6 +381,11 @@ spec:
         name: manifests
         path: gcp/basic-auth-ingress
     name: basic-auth-ingress
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: default-install
+    name: default-install
   # email should  be set the google account of the person setting up Kubeflow.
   # If its not set kfctl generate will try to set it automatically based on the default
   # gcloud config
