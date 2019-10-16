@@ -18,7 +18,7 @@ func writeCertManagerOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name:  $(generateName)
+  name: cert-manager
 spec:
   selector:
     matchLabels:
@@ -64,7 +64,7 @@ varReference:
 - path: spec/selector/app.kubernetes.io\/instance
   kind: Service
 `)
-  th.writeK("/manifests/cert-manager/cert-manager/overlays/application", `
+	th.writeK("/manifests/cert-manager/cert-manager/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
