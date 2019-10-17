@@ -9,7 +9,7 @@ metadata:
 spec:
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
+    uri: https://github.com/kubeflow/manifests/archive/v0.7-branch/head.tar.gz
     # An example uri that uses a PR version of the manifest repo.
     # uri: https://github.com/kubeflow/manifests/archive/pull/PR_NUMBER/head.tar.gz
   applications:
@@ -282,4 +282,4 @@ spec:
   skipInitProject: true
   useBasicAuth: false
   useIstio: true
-  version: master
+  version: v0.7.0
