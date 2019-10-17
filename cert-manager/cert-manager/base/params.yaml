@@ -1,5 +1,9 @@
 varReference:
-- path: spec/acme/email
-  kind: ClusterIssuer
-- path: spec/acme/server
-  kind: ClusterIssuer
+- path: subjects/namespace
+  kind: ClusterRoleBinding
+- path: spec/template/spec/containers/args
+  kind: Deployment
+- path: metadata/name
+  kind: Namespace
+- path: spec/service/namespace
+  kind: APIService

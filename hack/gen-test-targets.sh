@@ -5,7 +5,7 @@
 # gen-test-target to generate each golang unit test.
 # The script is based on kusttestharness_test.go from kubernetes-sigs/pkg/kusttest/kusttestharness.go
 #
-add_app=''
+gen_app=''
 all=false
 changed=false
 dry_run=false
@@ -28,7 +28,7 @@ usage()
   echo -e "Usage: $0 [OPTIONS] [<directory>]\n"\
   'OPTIONS:\n'\
   '  -h | --help       \n'\
-  '     | --add-app <name=version> <directory>\n'\
+  '     | --gen-app <name=version> <directory>\n'\
   '  -a | --all\n'\
   '  -c | --changed-only\n'\
   '  -d | --dry-run'
@@ -46,14 +46,19 @@ usage-extended()
   echo '   generating webhook-base_test.go from manifests/admission-webhook/webhook/base'
   echo '   ...'
   echo '2. Generate an application overlay for spartakus.'
-  echo '   $ '$0' --add-app spartakus=v0.7.0 common/spartakus'
+  echo '   $ '$0' --gen-app spartakus=v0.7.0 common/spartakus'
   echo '   mkdir -p common/spartakus/overlays/application'
   echo '   git add common/spartakus/overlays/application'
   echo '   generate common/spartakus/overlays/application'
-  echo '3. Generate unit tests for just the changed resources on the current branch.'
+  echo "3. Update an application overlay's version for admissionwebhook/webhook."
+  echo '   $ '$0' --gen-app webhook=v0.7.0 admissionwebhook/webhook'
+  echo '   editfile admission-webhook/webhook/overlays/application/application.yaml webhook v0.7.0'
+  echo '   editfile admission-webhook/webhook/overlays/application/kustomization.yaml webhook v0.7.0'
+  echo '   generate admission-webhook/webhook'
+  echo '4. Generate unit tests for just the changed resources on the current branch.'
   echo '   $ '$0' --changed-only'
   echo '   generating webhook-overlays-application_test.go from manifests/admission-webhook/webhook/overlays/application'
-  echo '4. Show what unit tests would be generated for just the changed resources on the current branch.'
+  echo '5. Show what unit tests would be generated for just the changed resources on the current branch.'
   echo '   $ '$0' --changed-only --dry-run'
   echo '   generating webhook-overlays-application_test.go from manifests/admission-webhook/webhook/overlays/application'
 }
@@ -100,7 +105,23 @@ findcommand()
   _findcommand | sort | uniq
 }
 
-addapp()
+editfile()
+{
+  local file=$1 app=$2 version=$3
+  if [[ -f $file ]]; then
+    ed -s $file <<EDIT_APPLICATION
+%sxapp.kubernetes.io/instance: .*xapp.kubernetes.io/instance: ${app}-${version}x
+w
+%sxapp.kubernetes.io/version: .*xapp.kubernetes.io/version: ${version}x
+w
+q
+EDIT_APPLICATION
+  else
+    echo "$file doesn't exist"
+  fi
+}
+
+genapp()
 {
   local app=${1%=*} version=${1#*=} appdir=${2}/overlays/application cmd
 #echo 'appdir='$appdir' app='$app' version='$version
@@ -108,8 +129,7 @@ addapp()
     cmd="mkdir -p $appdir"
     $dry_run && cmd='echo '$cmd
     eval $cmd
-  fi
-  $dry_run || cat << KUSTOMIZATION > ${appdir}/kustomization.yaml
+    $dry_run || cat << KUSTOMIZATION > ${appdir}/kustomization.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -125,7 +145,7 @@ commonLabels:
   app.kubernetes.io/version: $version
 KUSTOMIZATION
 
-  $dry_run || cat << APPLICATION > ${appdir}/application.yaml
+    $dry_run || cat << APPLICATION > ${appdir}/application.yaml
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
@@ -159,17 +179,24 @@ spec:
   addOwnerRef: true
 APPLICATION
 
-  cmd="git add $appdir"
-  $dry_run && cmd='echo '$cmd
-  eval $cmd
+    cmd="git add $appdir"
+    $dry_run && cmd='echo '$cmd
+    eval $cmd
+  else
+    for i in $appdir/{application.yaml,kustomization.yaml}; do 
+      cmd="editfile $i ${app} ${version}"
+      $dry_run && cmd='echo '$cmd
+      eval $cmd
+    done
+  fi
 }
 
 generate()
 {
   local rootdir=$PWD absdir i
   absdir=${rootdir}/$1
-#echo 'rootdir='$rootdir' absdir='$absdir 2>&1
-  if [[ -n $add_app ]]; then
+#echo 'rootdir='$rootdir' absdir='$absdir
+  if [[ -n $gen_app ]]; then
     absdir=${rootdir}/$1/overlays/application
   fi
   for i in $(find $absdir -type d -exec sh -c '(ls -p "{}"|grep />/dev/null)||echo "{}"' \;); do
@@ -178,7 +205,7 @@ generate()
       testname=$(get-target-name ${i})_test.go
       echo generating $testname from manifests/${i#*manifests/}
       $dry_run || ./hack/gen-test-target.sh $i 1> tests/$testname
-      if [[ -n $add_app ]]; then
+      if [[ -n $gen_app ]]; then
         $dry_run || git add tests/$testname
       fi
     fi
@@ -204,9 +231,9 @@ do
       usage && usage-extended
       exit 0
       ;;
-    --add-app)
+    --gen-app)
       shift
-      add_app=$1
+      gen_app=$1
       shift
       ;;
     -a | --all)
@@ -238,12 +265,12 @@ case $# in
      ;;
   1)
      if (( $# == 1 )); then
-       dir=$1
-       if [[ -n $add_app ]]; then
-         addapp $add_app $dir
-         dir=${dir}/overlays/application
+       if [[ -n $gen_app ]]; then
+         genapp $gen_app $1
        fi
-       generate $dir
+       cmd="generate $1"
+       $dry_run && cmd='echo '$cmd
+       eval $cmd
      fi
      ;;
   *)

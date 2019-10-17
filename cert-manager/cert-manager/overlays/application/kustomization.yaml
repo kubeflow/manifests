@@ -4,10 +4,12 @@ bases:
 - ../../base
 resources:
 - application.yaml
+configurations:
+- params.yaml
 commonLabels:
-  app.kubernetes.io/name: mxnet-operator
-  app.kubernetes.io/instance: mxnet-operator-v0.7.0
-  app.kubernetes.io/component: mxnet
-  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/name: cert-manager
+  app.kubernetes.io/instance: cert-manager-v0.7.0
   app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: cert-manager
+  app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.7.0

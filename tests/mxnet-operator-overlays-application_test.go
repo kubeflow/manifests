@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: mxnet-operator
-      app.kubernetes.io/instance: mxnet-operator
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/instance: mxnet-operator-v0.7.0
       app.kubernetes.io/component: mxnet
       app.kubernetes.io/part-of: kubeflow
       app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/version: v0.7.0
   componentKinds:
   - group: apps
     kind: Deployment
@@ -63,11 +63,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: mxnet-operator
-  app.kubernetes.io/instance: mxnet-operator
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/instance: mxnet-operator-v0.7.0
   app.kubernetes.io/component: mxnet
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/version: v0.7.0
 `)
 	th.writeF("/manifests/mxnet-job/mxnet-operator/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -82,7 +82,8 @@ roleRef:
   name: mxnet-operator
 subjects:
 - kind: ServiceAccount
-  name: mxnet-operator`)
+  name: mxnet-operator
+`)
 	th.writeF("/manifests/mxnet-job/mxnet-operator/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
@@ -132,7 +133,8 @@ rules:
   resources:
   - deployments
   verbs:
-  - '*'`)
+  - '*'
+`)
 	th.writeF("/manifests/mxnet-job/mxnet-operator/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -184,7 +186,8 @@ kind: ServiceAccount
 metadata:
   labels:
     app: mxnet-operator
-  name: mxnet-operator`)
+  name: mxnet-operator
+`)
 	th.writeK("/manifests/mxnet-job/mxnet-operator/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
