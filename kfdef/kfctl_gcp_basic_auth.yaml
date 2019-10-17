@@ -7,12 +7,9 @@ metadata:
   namespace: kubeflow
 spec:
   repos:
-  - name: kubeflow
-    root: kubeflow-master
-    uri: https://github.com/kubeflow/kubeflow/archive/master.tar.gz
   - name: manifests
-    root: master/
-    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
+    root: manifests-0.7-branch
+    uri: https://github.com/kubeflow/manifests/archive/v0.7-branch/head.tar.gz
     # To get manifest at a PR:
     #uri: https://github.com/kubeflow/manifests/archive/pull/235/head.tar.gz
   appdir: /tmp/myapp2
@@ -405,7 +402,7 @@ spec:
   skipInitProject: true
   useBasicAuth: true
   useIstio: true
-  version: master
+  version: v0.7.0
   # Project should be set to the GCP project you want to use.
   # If you run kfctl init --config=<path>/kfctl_gcp_iap.yaml
   # kfctl will try to automatically set it.

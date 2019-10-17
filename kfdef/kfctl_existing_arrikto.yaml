@@ -239,7 +239,8 @@ spec:
         path: seldon/seldon-core-operator
     name: seldon-core-operator
   platform: existing_arrikto
+  version: v0.7.0
   repos:
   - name: manifests
-    root: manifests-master
-    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
+    root: manifests-0.7-branch
+    uri: https://github.com/kubeflow/manifests/archive/v0.7-branch/head.tar.gz
