@@ -23,7 +23,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: sparkoperator
-      app.kubernetes.io/instance: spark-operator
+      app.kubernetes.io/instance: spark-operator-v0.7.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: sppark-operator
       app.kubernetes.io/part-of: kubeflow
@@ -62,7 +62,7 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: sparkoperator
-  app.kubernetes.io/instance: spark-operator
+  app.kubernetes.io/instance: spark-operator-v0.7.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: spark-operator
   app.kubernetes.io/part-of: kubeflow

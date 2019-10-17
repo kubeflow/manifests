@@ -69,7 +69,7 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: pytorch-operator
-  app.kubernetes.io/instance: pytorch-operator
+  app.kubernetes.io/instance: pytorch-operator-v0.7.0
   app.kubernetes.io/version: v0.7.0
   app.kubernetes.io/component: pytorch
   app.kubernetes.io/part-of: kubeflow
