@@ -1,21 +1,10 @@
-# Please set project and email!
-apiVersion: kfdef.apps.kubeflow.org/v1alpha1
+apiVersion: kfdef.apps.kubeflow.org/v1beta1
 kind: KfDef
 metadata:
   creationTimestamp: null
   name: myapp2
   namespace: kubeflow
 spec:
-  repos:
-  - name: kubeflow
-    root: kubeflow-master
-    uri: https://github.com/kubeflow/kubeflow/archive/master.tar.gz
-  - name: manifests
-    root: master/
-    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
-    # To get manifest at a PR:
-    #uri: https://github.com/kubeflow/manifests/archive/pull/235/head.tar.gz
-  appdir: /tmp/myapp2
   applications:
   - kustomizeConfig:
       parameters:
@@ -174,11 +163,9 @@ spec:
       overlays:
       - application
       parameters:
-      - initRequired: true
-        name: usageId
+      - name: usageId
         value: "2700513155662330975"
-      - initRequired: true
-        name: reportUsage
+      - name: reportUsage
         value: "true"
       repoRef:
         name: manifests
@@ -302,13 +289,9 @@ spec:
       overlays:
       - application
       parameters:
-      - initRequired: true
-        name: ipName
+      - name: ipName
         value: ipName
-      - initRequired: true
-        name: hostname
-        # hostname will be set automatically by kfctl init & generate
-        # value: <deployName>.endpoints.<project>.cloud.goog
+      - name: hostname
       repoRef:
         name: manifests
         path: gcp/cloud-endpoints
@@ -318,10 +301,7 @@ spec:
       - application
       - istio
       parameters:
-      - initRequired: true
-        name: admin
-        # emaill will be set automatically by kfctl init and generate
-        # value: SET_EMAIL
+      - name: admin
       repoRef:
         name: manifests
         path: profiles
@@ -362,17 +342,10 @@ spec:
       parameters:
       - name: namespace
         value: istio-system
-      - initRequired: true
-        name: ipName
+      - name: ipName
         value: test1-ip
-      - initRequired: true
-        name: hostname
-        # project will be set automatically by kfctl init & generate
-        # value: test1.endpoints.SET_PROJECT.cloud.goog
-      - initRequired: true
-        name: project
-        # Project will be set automatically by kfctl init & generate
-        # value: SET_PROJECT
+      - name: hostname
+      - name: project
       - name: ingressName
         value: envoy-ingress
       - name: issuer
@@ -386,15 +359,11 @@ spec:
         name: manifests
         path: default-install
     name: default-install
-  # email should  be set the google account of the person setting up Kubeflow.
-  # If its not set kfctl generate will try to set it automatically based on the default
-  # gcloud config
-  # email: <your_email@gmail.com>
-  enableApplications: true
-  packageManager: kustomize
-  platform: gcp
   plugins:
-  - name: gcp
+  - kind: KfGcpPlugin
+    metadata:
+      creationTimestamp: null
+      name: gcp
     spec:
       createPipelinePersistentStorage: true
       deploymentManagerConfig:
@@ -402,11 +371,12 @@ spec:
           name: manifests
           path: gcp/deployment_manager_configs
       enableWorkloadIdentity: true
-  skipInitProject: true
-  useBasicAuth: true
-  useIstio: true
+      skipInitProject: true
+      useBasicAuth: true
+  repos:
+  - name: kubeflow
+    uri: https://github.com/kubeflow/kubeflow/archive/master.tar.gz
+  - name: manifests
+    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
   version: master
-  # Project should be set to the GCP project you want to use.
-  # If you run kfctl init --config=<path>/kfctl_gcp_iap.yaml
-  # kfctl will try to automatically set it.
-  # project: <your project>
+status: {}
