@@ -13,7 +13,74 @@ import (
 	"testing"
 )
 
-func writeCertManagerBase(th *KustTestHarness) {
+func writeCertManagerOverlaysApplication(th *KustTestHarness) {
+	th.writeF("/manifests/cert-manager/cert-manager/overlays/application/application.yaml", `
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: cert-manager
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cert-manager
+      app.kubernetes.io/instance: cert-manager-v0.7.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: cert-manager
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.7.0
+  componentKinds:
+  - group: rbac
+    kind: ClusterRole
+  - group: rbac
+    kind: ClusterRoleBinding
+  - group: core
+    kind: Namespace
+  - group: core
+    kind: Service
+  - group: apps
+    kind: Deployment
+  - group: core
+    kind: ServiceAccount
+  descriptor:
+    type: ""
+    version: "v0.10.0"
+    description: "Automatically provision and manage TLS certificates in Kubernetes https://jetstack.io."
+    keywords:
+    - cert-manager
+    links:
+    - description: About
+      url: "https://github.com/jetstack/cert-manager"
+`)
+	th.writeF("/manifests/cert-manager/cert-manager/overlays/application/params.yaml", `
+varReference:
+- path: metadata/name
+  kind: Application
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Application
+- path: spec/template/metadata/labels/app.kubernetes.io\/instance
+  kind: Deployment
+- path: spec/selector/matchLabels/app.kubernetes.io\/instance
+  kind: Deployment
+- path: spec/selector/app.kubernetes.io\/instance
+  kind: Service
+`)
+	th.writeK("/manifests/cert-manager/cert-manager/overlays/application", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+resources:
+- application.yaml
+configurations:
+- params.yaml
+commonLabels:
+  app.kubernetes.io/name: cert-manager
+  app.kubernetes.io/instance: cert-manager-v0.7.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: cert-manager
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.7.0
+`)
 	th.writeF("/manifests/cert-manager/cert-manager/base/namespace.yaml", `
 apiVersion: v1
 kind: Namespace
@@ -752,9 +819,9 @@ configurations:
 `)
 }
 
-func TestCertManagerBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/cert-manager/cert-manager/base")
-	writeCertManagerBase(th)
+func TestCertManagerOverlaysApplication(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/cert-manager/cert-manager/overlays/application")
+	writeCertManagerOverlaysApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -763,7 +830,7 @@ func TestCertManagerBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../cert-manager/cert-manager/base"
+	targetPath := "../cert-manager/cert-manager/overlays/application"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
