@@ -2,7 +2,6 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: authn-filter
-  namespace: istio-system
 spec:
   workloadLabels:
     istio: ingressgateway
@@ -10,8 +9,8 @@ spec:
   - filterConfig:
       httpService:
         serverUri:
-          uri: http://authservice.istio-system.svc.cluster.local
-          cluster: outbound|8080||authservice.istio-system.svc.cluster.local
+          uri: http://authservice.$(namespace).svc.cluster.local
+          cluster: outbound|8080||authservice.$(namespace).svc.cluster.local
           failureModeAllow: false
           timeout: 10s
         authorizationRequest: 
