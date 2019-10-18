@@ -246,8 +246,6 @@ spec:
         env:
           - name: USE_ISTIO
             value: "false"
-          - name: ISTIO_GATEWAY
-            value: $(ISTIO_GATEWAY)
           - name: POD_LABELS
             value: $(POD_LABELS)
         imagePullPolicy: Always

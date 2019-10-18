@@ -184,8 +184,7 @@ status:
     kind: ""
     plural: ""
   conditions: []
-  storedVersions: []
-`)
+  storedVersions: []`)
 	th.writeF("/manifests/profiles/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -229,8 +228,7 @@ metadata:
   name: kfam
 spec:
   ports:
-    - port: 8081
-`)
+    - port: 8081`)
 	th.writeF("/manifests/profiles/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
