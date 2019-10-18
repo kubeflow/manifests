@@ -371,11 +371,13 @@ data:
     }
   explainers: |-
     {
-        "image" : "docker.io/seldonio/alibiexplainer",
-        "defaultImageVersion": "0.2.3",
-        "allowedImageVersions": [
-           "0.2.3"
-        ]
+        "alibi": {
+            "image": "gcr.io/kfserving/alibi-explainer",
+            "defaultImageVersion": "0.2.3",
+            "allowedImageVersions": [
+               "0.2.3"
+            ]
+        }
     }
   storageInitializer: |-
     {
