@@ -315,7 +315,7 @@ data:
   explainers: |-
     {
         "alibi": {
-            "image": "docker.io/seldonio/alibiexplainer",
+            "image": "gcr.io/kfserving/alibi-explainer",
             "defaultImageVersion": "0.2.3",
             "allowedImageVersions": [
                "0.2.3"
