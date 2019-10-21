@@ -8,6 +8,7 @@ data:
     {
     executorImage: $(executorImage),
     containerRuntimeExecutor: $(containerRuntimeExecutor),
+    dockerSockPath: $(dockerSockPath),
     artifactRepository:
     {
         s3: {
