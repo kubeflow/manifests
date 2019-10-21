@@ -1,25 +1,21 @@
 # This is the config to install Kubeflow on an Anthos.
 # The cluster comes with customized Istio installation.
 
-apiVersion: kfdef.apps.kubeflow.org/v1alpha1
+apiVersion: kfdef.apps.kubeflow.org/v1beta1
 kind: KfDef
 metadata:
-  name: kubeflow_app
+  # User needs to set the app name, otherwise will try to infer from the directory.
+  # name: kubeflow_app
   namespace: kubeflow
 spec:
-  repos:
-  - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
-    # An example uri that uses a PR version of the manifest repo.
-    # uri: https://github.com/kubeflow/manifests/archive/pull/PR_NUMBER/head.tar.gz
   applications:
   # This component is the istio resources for Kubeflow (e.g. gateway), not about installing istio.
   - kustomizeConfig:
       parameters:
-        - name: clusterRbacConfig
-          value: "OFF"
-        - name: gatewaySelector
-          value: "ingress-gke-system"
+      - name: clusterRbacConfig
+        value: "OFF"
+      - name: gatewaySelector
+        value: ingress-gke-system
       repoRef:
         name: manifests
         path: istio/istio
@@ -151,11 +147,9 @@ spec:
       overlays:
       - application
       parameters:
-      - initRequired: true
-        name: usageId
+      - name: usageId
         value: <randomly-generated-id>
-      - initRequired: true
-        name: reportUsage
+      - name: reportUsage
         value: "true"
       repoRef:
         name: manifests
@@ -263,8 +257,7 @@ spec:
       - application
       - istio
       parameters:
-      - initRequired: true
-        name: admin
+      - name: admin
         value: johnDoe@acme.com
       repoRef:
         name: manifests
@@ -277,9 +270,9 @@ spec:
         name: manifests
         path: seldon/seldon-core-operator
     name: seldon-core-operator
-  enableApplications: true
-  packageManager: kustomize
-  skipInitProject: true
-  useBasicAuth: false
-  useIstio: true
+  repos:
+  - name: manifests
+    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
+    # An example uri that uses a PR version of the manifest repo.
+    # uri: https://github.com/kubeflow/manifests/archive/pull/PR_NUMBER/head.tar.gz
   version: master
