@@ -374,8 +374,6 @@ spec:
       skipInitProject: true
       useBasicAuth: true
   repos:
-  - name: kubeflow
-    uri: https://github.com/kubeflow/kubeflow/archive/master.tar.gz
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
   version: master
