@@ -309,8 +309,9 @@ spec:
       - application
       - istio
       parameters:
+        # kfctl will set admin to current user account that deploying kubeflow
       - name: admin
-        value: SET_EMAIL
+        # value: SET_EMAIL
       - name: userid-header
         value: X-Goog-Authenticated-User-Email
       - name: userid-prefix
@@ -333,9 +334,13 @@ spec:
       parameters:
       - name: namespace
         value: istio-system
+        # email will be auto-filled.
       - name: ipName
         value: test1-ip
       - name: hostname
+        # The value of hostname should be the DNS address for ingress.
+        # This will be set automatically during kfctl generate.
+        # value: test1.endpoints.SET_PROJECT.cloud.goog
       repoRef:
         name: manifests
         path: gcp/iap-ingress
@@ -350,8 +355,10 @@ spec:
   - kustomizeConfig:
       parameters:
       - name: user
-        value: SET_EMAIL
+        # kfctl will set user to current user account that deploying kubeflow
+        # value: SET_EMAIL
       - name: profile-name
+        # kfctl might overwrite profile name
         value: anonymous
       repoRef:
         name: manifests
@@ -371,8 +378,19 @@ spec:
       enableWorkloadIdentity: true
       skipInitProject: true
       useBasicAuth: false
+      # email should  be set the google account of the person setting up Kubeflow.
+      # If its not set kfctl generate will try to set it automatically based on the default
+      # gcloud config
+      # email: <your_email@gmail.com>
+      #
+      # Project should be set to the GCP project you want to use.
+      # If you run kfctl init --config=<path>/kfctl_gcp_iap.yaml
+      # kfctl will try to automatically set it.
+      # project: <your project>
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
+    # To get manifest at a PR:
+    #uri: https://github.com/kubeflow/manifests/archive/pull/235/head.tar.gz
   version: master
 status: {}
