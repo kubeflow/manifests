@@ -386,6 +386,10 @@ spec:
       # If you run kfctl init --config=<path>/kfctl_gcp_iap.yaml
       # kfctl will try to automatically set it.
       # project: <your project>
+      #
+      # User can specify which zone to deploy to. If not set, will try to auto-fill
+      # this field based on default config in gcloud.
+      # zone: us-east1-d
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
