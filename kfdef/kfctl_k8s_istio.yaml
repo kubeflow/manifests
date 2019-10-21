@@ -3,7 +3,6 @@
 apiVersion: kfdef.apps.kubeflow.org/v1beta1
 kind: KfDef
 metadata:
-  creationTimestamp: null
   # If name is not set, kfctl will infer app name from the directory.
   # name: myapp2
   namespace: kubeflow
