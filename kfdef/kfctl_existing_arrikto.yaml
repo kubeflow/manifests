@@ -143,21 +143,12 @@ spec:
     name: centraldashboard
   - kustomizeConfig:
       overlays:
+      - cert-manager
       - application
       repoRef:
         name: manifests
         path: admission-webhook/webhook
     name: webhook
-  - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: webhookNamePrefix
-        value: admission-webhook-
-      repoRef:
-        name: manifests
-        path: admission-webhook/bootstrap
-    name: bootstrap
   - kustomizeConfig:
       parameters:
       - name: userid-header
