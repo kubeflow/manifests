@@ -304,6 +304,8 @@ spec:
       - istio
       parameters:
       - name: admin
+        # email will be auto-filled.
+        # value: SET_EMAIL
       repoRef:
         name: manifests
         path: profiles
@@ -345,9 +347,14 @@ spec:
       - name: namespace
         value: istio-system
       - name: ipName
-        value: test1-ip
+        # ipName will be auto-filled based on app name if not set.
+        # value: test1-ip
       - name: hostname
+        # hostname will be auto-filled if not set.
+        # value: <deployName>.endpoints.<project>.cloud.goog
       - name: project
+        # Project will be auto-filled.
+        # value: SET_PROJECT
       - name: ingressName
         value: envoy-ingress
       - name: issuer
@@ -375,6 +382,15 @@ spec:
       enableWorkloadIdentity: true
       skipInitProject: true
       useBasicAuth: true
+      # email should  be set the google account of the person setting up Kubeflow.
+      # If its not set kfctl generate will try to set it automatically based on the default
+      # gcloud config
+      # email: <your_email@gmail.com>
+      #
+      # Project should be set to the GCP project you want to use.
+      # If you run kfctl init --config=<path>/kfctl_gcp_iap.yaml
+      # kfctl will try to automatically set it.
+      # project: <your project>
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
