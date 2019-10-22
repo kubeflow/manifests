@@ -124,13 +124,13 @@ metadata:
 spec:
   mode: $(clusterRbacConfig)
 `)
-	th.writeF("/manifests/istio/istio/base/params.env", `
-clusterRbacConfig=ON
-`)
 	th.writeF("/manifests/istio/istio/base/params.yaml", `
 varReference:
 - path: spec/mode
   kind: ClusterRbacConfig
+`)
+	th.writeF("/manifests/istio/istio/base/params.env", `
+clusterRbacConfig=ON
 `)
 	th.writeK("/manifests/istio/istio/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -150,7 +150,7 @@ vars:
   fieldref:
     fieldpath: data.clusterRbacConfig
 configurations:
- - params.yaml
+- params.yaml
 `)
 }
 
