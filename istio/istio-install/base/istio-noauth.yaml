@@ -14044,7 +14044,7 @@ metadata:
     app: istio-ingressgateway
     istio: ingressgateway
 spec:
-  type: NodePort
+  type: $(service_type)
   selector:
     release: istio
     app: istio-ingressgateway
@@ -14056,16 +14056,13 @@ spec:
       targetPort: 15020
     -
       name: http2
-      nodePort: 31380
       port: 80
       targetPort: 80
     -
       name: https
-      nodePort: 31390
       port: 443
     -
       name: tcp
-      nodePort: 31400
       port: 31400
     -
       name: https-kiali

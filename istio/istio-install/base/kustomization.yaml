@@ -37,3 +37,19 @@ images:
 - name: docker.io/jaegertracing/all-in-one
   newName: docker.io/jaegertracing/all-in-one
   newTag: '1.9'
+
+configMapGenerator:
+- name: istio-install-parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: service_type
+  objref:
+    kind: ConfigMap
+    name: istio-install-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.service_type
+configurations:
+- params.yaml
