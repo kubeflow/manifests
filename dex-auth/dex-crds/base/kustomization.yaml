@@ -76,6 +76,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.application_secret
+- name: service_type
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.service_type
 configurations:
 - params.yaml
 images:

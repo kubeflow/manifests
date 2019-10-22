@@ -3,12 +3,11 @@ kind: Service
 metadata:
   name: dex
 spec:
-  type: NodePort
+  type: $(service_type)
   ports:
   - name: dex
     port: 5556
     protocol: TCP
     targetPort: 5556
-    nodePort: 32000
   selector:
     app: dex

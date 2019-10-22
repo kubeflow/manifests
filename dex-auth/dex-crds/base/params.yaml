@@ -3,3 +3,5 @@ varReference:
   kind: Deployment
 - path: data/config.yaml
   kind: ConfigMap
+- path: spec/type
+  kind: Service
