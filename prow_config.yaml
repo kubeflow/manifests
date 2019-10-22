@@ -18,4 +18,4 @@ workflows:
       workflowName: kfctl-go
       useIstio: true
       version: master
-      configPath: kfdef/kfctl_gcp_iap.yaml
+      configPath: kfdef/kfctl_gcp_iap.0.7.0.yaml
