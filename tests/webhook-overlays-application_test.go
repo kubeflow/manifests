@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: webhook
-      app.kubernetes.io/instance: webhook-v0.7.0
+      app.kubernetes.io/instance: webhook-v0.7.1
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: bootstrap
       app.kubernetes.io/part-of: webhook
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/version: v0.7.1
   componentKinds:
   - group: admissionregistration.k8s.io
     kind: MutatingWebhookConfiguration
@@ -63,11 +63,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: webhook
-  app.kubernetes.io/instance: webhook-v0.7.0
+  app.kubernetes.io/instance: webhook-v0.7.1
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: webhook
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v0.7.1
 `)
 	th.writeF("/manifests/admission-webhook/webhook/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
