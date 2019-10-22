@@ -34,6 +34,8 @@ spec:
       parameters:
         - name: namespace
           value: istio-system
+        - name: service_type
+          value: ClusterIP
       repoRef:
         name: manifests
         path: istio/istio-install
@@ -75,6 +77,8 @@ spec:
       parameters:
         - name: namespace
           value: auth
+        - name: service_type
+          value: ClusterIP
         - name: issuer
           value: http://dex.auth.svc.cluster.local:5556/dex
         - name: client_id
@@ -309,4 +313,5 @@ spec:
     name: seldon-core-operator
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
+    # uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
+    uri: file:///home/yannis/go/src/github.com/kubeflow/manifests
