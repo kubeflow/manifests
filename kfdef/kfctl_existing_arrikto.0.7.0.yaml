@@ -1,13 +1,12 @@
 # This is the config to install Kubeflow on an existing K8s cluster, with support
 # for multi-user and LDAP auth using Dex.
 
-apiVersion: kfdef.apps.kubeflow.org/v1alpha1
+apiVersion: kfdef.apps.kubeflow.org/v1beta1
 kind: KfDef
 metadata:
   name: demo
   namespace: kubeflow
 spec:
-  packageManager: kustomize
   applications:
   - kustomizeConfig:
       repoRef:
@@ -22,6 +21,102 @@ spec:
         path: application/application
     name: application
   - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: cert-manager
+      repoRef:
+        name: manifests
+        path: cert-manager/cert-manager-crds
+    name: cert-manager-crds
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: kube-system
+      repoRef:
+        name: manifests
+        path: cert-manager/cert-manager-kube-system-resources
+    name: cert-manager-kube-system-resources
+  - kustomizeConfig:
+      overlays:
+      - self-signed
+      - application
+      parameters:
+      - name: namespace
+        value: cert-manager
+      repoRef:
+        name: manifests
+        path: cert-manager/cert-manager
+    name: cert-manager
+  # Istio install. If not needed, comment out istio-crds and istio-install.
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/istio-crds
+    name: istio-crds
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/istio-install
+    name: istio-install
+  # This component is the istio resources for Kubeflow (e.g. gateway), not about installing istio
+  - kustomizeConfig:
+      parameters:
+      - name: clusterRbacConfig
+        value: "ON"
+      repoRef:
+        name: manifests
+        path: istio/istio
+    name: istio
+  - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: namespace
+        value: istio-system
+      - name: userid-header
+        value: kubeflow-userid
+      - name: oidc_provider
+        value: http://dex.auth.svc.cluster.local:5556/dex
+      - name: oidc_redirect_uri
+        value: /login/oidc
+      - name: oidc_auth_url
+        value: /dex/auth
+      - name: skip_auth_uri
+        value: /dex
+      - name: client_id
+        value: kubeflow-oidc-authservice
+      repoRef:
+        name: manifests
+        path: istio/oidc-authservice
+    name: oidc-authservice
+  - kustomizeConfig:
+      overlays:
+      - istio
+      parameters:
+      - name: namespace
+        value: auth
+      - name: issuer
+        value: http://dex.auth.svc.cluster.local:5556/dex
+      - name: client_id
+        value: kubeflow-oidc-authservice
+      - name: oidc_redirect_uris
+        value: '["/login/oidc"]'
+      - name: static_email
+        value: admin@kubeflow.org
+      # Password is "12341234", 12-round bcrypt-hashed.
+      - name: static_password_hash
+        value: $2y$12$ruoM7FqXrpVgaol44eRZW.4HWS8SAvg6KYVVSCIwKQPBmTpCm.EeO
+      repoRef:
+        name: manifests
+        path: dex-auth/dex-crds
+    name: dex
+  - kustomizeConfig:
       overlays:
       - istio
       - application
@@ -35,18 +130,19 @@ spec:
         path: kubeflow-roles
     name: kubeflow-roles
   - kustomizeConfig:
-      parameters:
-      - name: userid-header
-        value: kubeflow-userid
       overlays:
       - istio
       - application
+      parameters:
+      - name: userid-header
+        value: kubeflow-userid
       repoRef:
         name: manifests
         path: common/centraldashboard
     name: centraldashboard
   - kustomizeConfig:
       overlays:
+      - cert-manager
       - application
       repoRef:
         name: manifests
@@ -54,21 +150,11 @@ spec:
     name: webhook
   - kustomizeConfig:
       overlays:
+      - istio
       - application
-      parameters:
-      - name: webhookNamePrefix
-        value: admission-webhook-
-      repoRef:
-        name: manifests
-        path: admission-webhook/bootstrap
-    name: bootstrap
-  - kustomizeConfig:
       parameters:
       - name: userid-header
         value: kubeflow-userid
-      overlays:
-      - istio
-      - application
       repoRef:
         name: manifests
         path: jupyter/jupyter-web-app
@@ -90,14 +176,14 @@ spec:
     name: notebook-controller
   - kustomizeConfig:
       overlays:
-        - application
+      - application
       repoRef:
         name: manifests
         path: pytorch-job/pytorch-job-crds
     name: pytorch-job-crds
   - kustomizeConfig:
       overlays:
-        - application
+      - application
       repoRef:
         name: manifests
         path: pytorch-job/pytorch-operator
@@ -106,11 +192,9 @@ spec:
       overlays:
       - application
       parameters:
-      - initRequired: true
-        name: usageId
+      - name: usageId
         value: <randomly-generated-id>
-      - initRequired: true
-        name: reportUsage
+      - name: reportUsage
         value: "true"
       repoRef:
         name: manifests
@@ -221,12 +305,12 @@ spec:
         path: pipeline/pipeline-visualization-service
     name: pipeline-visualization-service
   - kustomizeConfig:
-      parameters:
-      - name: userid-header
-        value: kubeflow-userid
       overlays:
       - application
       - istio
+      parameters:
+      - name: userid-header
+        value: kubeflow-userid
       repoRef:
         name: manifests
         path: profiles
@@ -238,9 +322,6 @@ spec:
         name: manifests
         path: seldon/seldon-core-operator
     name: seldon-core-operator
-  platform: existing_arrikto
-  version: v0.7.0
   repos:
   - name: manifests
-    root: manifests-0.7-branch
-    uri: https://github.com/kubeflow/manifests/archive/v0.7-branch/head.tar.gz
+    uri: https://github.com/kubeflow/manifests/archive/v0.7-branch.tar.gz

@@ -1,25 +1,30 @@
-# This is the config to install Kubeflow on an Anthos.
-# The cluster comes with customized Istio installation.
-
-apiVersion: kfdef.apps.kubeflow.org/v1alpha1
+apiVersion: kfdef.apps.kubeflow.org/v1beta1
 kind: KfDef
 metadata:
-  name: kubeflow_app
+  name: kubeflow-aws
   namespace: kubeflow
 spec:
-  repos:
-  - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/v0.7-branch/head.tar.gz
-    # An example uri that uses a PR version of the manifest repo.
-    # uri: https://github.com/kubeflow/manifests/archive/pull/PR_NUMBER/head.tar.gz
   applications:
-  # This component is the istio resources for Kubeflow (e.g. gateway), not about installing istio.
   - kustomizeConfig:
       parameters:
-        - name: clusterRbacConfig
-          value: "OFF"
-        - name: gatewaySelector
-          value: "ingress-gke-system"
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/istio-crds
+    name: istio-crds
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/istio-install
+    name: istio-install
+  - kustomizeConfig:
+      parameters:
+      - name: clusterRbacConfig
+        value: "OFF"
       repoRef:
         name: manifests
         path: istio/istio
@@ -67,15 +72,18 @@ spec:
       - application
       repoRef:
         name: manifests
-        path: admission-webhook/bootstrap
-    name: bootstrap
+        path: admission-webhook/webhook
+    name: webhook
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: webhookNamePrefix
+        value: admission-webhook-
       repoRef:
         name: manifests
-        path: admission-webhook/webhook
-    name: webhook
+        path: admission-webhook/bootstrap
+    name: bootstrap
   - kustomizeConfig:
       overlays:
       - istio
@@ -117,45 +125,9 @@ spec:
       overlays:
       - application
       parameters:
-      - name: namespace
-        value: knative-serving
-      repoRef:
-        name: manifests
-        path: knative/knative-serving-crds
-    name: knative-crds
-  - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: namespace
-        value: knative-serving
-      repoRef:
-        name: manifests
-        path: knative/knative-serving-install
-    name: knative-install
-  - kustomizeConfig:
-      overlays:
-      - application
-      repoRef:
-        name: manifests
-        path: kfserving/kfserving-crds
-    name: kfserving-crds
-  - kustomizeConfig:
-      overlays:
-      - application
-      repoRef:
-        name: manifests
-        path: kfserving/kfserving-install
-    name: kfserving-install
-  - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - initRequired: true
-        name: usageId
+      - name: usageId
         value: <randomly-generated-id>
-      - initRequired: true
-        name: reportUsage
+      - name: reportUsage
         value: "true"
       repoRef:
         name: manifests
@@ -206,6 +178,8 @@ spec:
       overlays:
       - application
       parameters:
+      - name: minioPvName
+        value: minio-pv
       - name: minioPvcName
         value: minio-pv-claim
       repoRef:
@@ -216,6 +190,8 @@ spec:
       overlays:
       - application
       parameters:
+      - name: mysqlPvName
+        value: mysql-pv
       - name: mysqlPvcName
         value: mysql-pv-claim
       repoRef:
@@ -261,11 +237,14 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      repoRef:
+        name: manifests
+        path: pipeline/pipeline-visualization-service
+    name: pipeline-visualization-service
+  - kustomizeConfig:
+      overlays:
+      - application
       - istio
-      parameters:
-      - initRequired: true
-        name: admin
-        value: johnDoe@acme.com
       repoRef:
         name: manifests
         path: profiles
@@ -276,10 +255,54 @@ spec:
       repoRef:
         name: manifests
         path: seldon/seldon-core-operator
-    name: seldon-core-operator
-  enableApplications: true
-  packageManager: kustomize
-  skipInitProject: true
-  useBasicAuth: false
-  useIstio: true
-  version: v0.7.0
+  - kustomizeConfig:
+      overlays:
+      - application
+      repoRef:
+        name: manifests
+        path: mpi-job/mpi-operator
+  - kustomizeConfig:
+      overlays:
+      - cognito
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: aws/istio-ingress
+    name: istio-ingress
+  - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: clusterName
+        value: kubeflow-aws
+      repoRef:
+        name: manifests
+        path: aws/aws-alb-ingress-controller
+    name: aws-alb-ingress-controller
+  - kustomizeConfig:
+      overlays:
+      - application
+      repoRef:
+        name: manifests
+        path: aws/nvidia-device-plugin
+    name: nvidia-device-plugin
+  plugins:
+  - kind: KfAwsPlugin
+    metadata:
+      name: aws
+    spec:
+      auth:
+        cognito:
+          certArn: arn:aws:acm:us-west-2:xxxxx:certificate/xxxxxxxxxxxxx-xxxx
+          cognitoAppClientId: xxxxxbxxxxxx
+          cognitoUserPoolArn: arn:aws:cognito-idp:us-west-2:xxxxx:userpool/us-west-2_xxxxxx
+          cognitoUserPoolDomain: your-user-pool
+      region: us-west-2
+      roles:
+      - eksctl-kubeflow-aws-nodegroup-ng-a2-NodeInstanceRole-xxxxx
+  repos:
+  - name: manifests
+    uri: https://github.com/kubeflow/manifests/archive/v0.7-branch.tar.gz
+  version: master
