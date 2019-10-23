@@ -21,6 +21,33 @@ spec:
         name: manifests
         path: application/application
     name: application
+  - kustomizeConfig:
+      parameters:
+        - name: namespace
+          value: cert-manager
+      repoRef:
+        name: manifests
+        path: cert-manager/cert-manager-crds
+    name: cert-manager-crds
+  - kustomizeConfig:
+      parameters:
+        - name: namespace
+          value: kube-system
+      repoRef:
+        name: manifests
+        path: cert-manager/cert-manager-kube-system-resources
+    name: cert-manager-kube-system-resources
+  - kustomizeConfig:
+      overlays:
+        - self-signed
+        - application
+      parameters:
+        - name: namespace
+          value: cert-manager
+      repoRef:
+        name: manifests
+        path: cert-manager/cert-manager
+    name: cert-manager
   # Istio install. If not needed, comment out istio-crds and istio-install.
   - kustomizeConfig:
       parameters:
@@ -116,21 +143,12 @@ spec:
     name: centraldashboard
   - kustomizeConfig:
       overlays:
+      - cert-manager
       - application
       repoRef:
         name: manifests
         path: admission-webhook/webhook
     name: webhook
-  - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: webhookNamePrefix
-        value: admission-webhook-
-      repoRef:
-        name: manifests
-        path: admission-webhook/bootstrap
-    name: bootstrap
   - kustomizeConfig:
       parameters:
       - name: userid-header
