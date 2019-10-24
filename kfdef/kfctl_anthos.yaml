@@ -82,13 +82,6 @@ spec:
     name: jupyter-web-app
   - kustomizeConfig:
       overlays:
-      - application
-      repoRef:
-        name: manifests
-        path: spark/spark-operator
-    name: spark-operator
-  - kustomizeConfig:
-      overlays:
       - istio
       repoRef:
         name: manifests
