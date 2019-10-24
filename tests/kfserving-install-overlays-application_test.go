@@ -314,8 +314,6 @@ data:
             "defaultImageVersion": "1.14.0",
             "defaultGpuImageVersion": "1.14.0-gpu",
             "allowedImageVersions": [
-               "latest",
-               "latest-gpu",
                "1.11.0",
                "1.11.0-gpu",
                "1.12.0",
@@ -330,7 +328,6 @@ data:
             "image": "mcr.microsoft.com/onnxruntime/server",
             "defaultImageVersion": "v0.5.1",
             "allowedImageVersions": [
-               "latest",
                "v0.5.1"
             ]
         },
@@ -338,7 +335,6 @@ data:
             "image": "gcr.io/kfserving/sklearnserver",
             "defaultImageVersion": "0.2.0",
             "allowedImageVersions": [
-               "latest",
                "0.2.0"
             ]
         },
@@ -346,7 +342,6 @@ data:
             "image": "gcr.io/kfserving/xgbserver",
             "defaultImageVersion": "0.2.0",
             "allowedImageVersions": [
-               "latest",
                "0.2.0"
             ]
         },
@@ -354,7 +349,6 @@ data:
             "image": "gcr.io/kfserving/pytorchserver",
             "defaultImageVersion": "0.2.0",
             "allowedImageVersions": [
-               "latest",
                "0.2.0"
             ]
         },
@@ -372,16 +366,20 @@ data:
   explainers: |-
     {
         "alibi": {
-            "image": "gcr.io/kfserving/alibi-explainer",
-            "defaultImageVersion": "0.2.3",
+            "image" : "gcr.io/kfserving/alibi-explainer",
+            "defaultImageVersion": "0.2.0",
             "allowedImageVersions": [
-               "0.2.3"
+               "0.2.0"
             ]
         }
     }
   storageInitializer: |-
     {
-        "image" : "gcr.io/kfserving/storage-initializer:0.2.0"
+        "image" : "gcr.io/kfserving/storage-initializer:0.2.0",
+        "memoryRequest": "100Mi",
+        "memoryLimit": "1Gi",
+        "cpuRequest": "100m",
+        "cpuLimit": "1"
     }
   credentials: |-
     {
