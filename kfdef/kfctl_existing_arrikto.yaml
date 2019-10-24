@@ -159,6 +159,14 @@ spec:
         name: manifests
         path: jupyter/jupyter-web-app
     name: jupyter-web-app
+# Spark is not currently enabled by default on arrikto. Uncomment to enable.
+#  - kustomizeConfig:
+#      overlays:
+#      - application
+#      repoRef:
+#        name: manifests
+#        path: spark/spark-operator
+#    name: spark-operator
   - kustomizeConfig:
       overlays:
       - istio

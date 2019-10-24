@@ -94,6 +94,13 @@ spec:
     name: jupyter-web-app
   - kustomizeConfig:
       overlays:
+      - application
+      repoRef:
+        name: manifests
+        path: spark/spark-operator
+    name: spark-operator
+  - kustomizeConfig:
+      overlays:
       - istio
       repoRef:
         name: manifests
@@ -296,7 +303,7 @@ spec:
           username: admin
       region: us-west-2
       roles:
-      - eksctl-kubeflow-aws-nodegroup-ng-a2-NodeInstanceRole-xxxxxxx
+      - eksctl-kubeflow-aws-nodegroup-ng-a2-NodeInstanceRole-
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
