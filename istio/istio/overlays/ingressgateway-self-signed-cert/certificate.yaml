@@ -6,7 +6,7 @@ spec:
   secretName: istio-ingressgateway-certs
   domains:
   - $(domain)
-  commonName: "kubeflow-root-ca"
+  commonName: "istio-ingressgateway-root-ca"
   isCA: true
   issuerRef:
     name: kubeflow-self-signing-issuer
