@@ -303,7 +303,7 @@ spec:
           username: admin
       region: us-west-2
       roles:
-      - eksctl-kubeflow-aws-nodegroup-ng-a2-NodeInstanceRole-
+      - eksctl-kubeflow-aws-nodegroup-ng-a2-NodeInstanceRole-xxxxxxx
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
