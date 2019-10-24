@@ -188,7 +188,7 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/centraldashboard
   newName: gcr.io/kubeflow-images-public/centraldashboard
-  digest: sha256:fb72156fad20ce408304c3b5b4a2fa6c56d884f9e73923706ef8d80218b612bd
+  digest: sha256:008deb7e471ad70b3c0abe09ae674de75668eba0a712435f8e1136fbc07146c6
 configMapGenerator:
 - name: parameters
   env: params.env
