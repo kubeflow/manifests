@@ -105,7 +105,7 @@ spec:
         app: centraldashboard
     spec:
       containers:
-      - image: gcr.io/kubeflow-images-public/centraldashboard:v0.5.0
+      - image: gcr.io/kubeflow-images-public/centraldashboard
         imagePullPolicy: IfNotPresent
         name: centraldashboard
         ports:
@@ -226,7 +226,7 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/centraldashboard
   newName: gcr.io/kubeflow-images-public/centraldashboard
-  digest: sha256:008deb7e471ad70b3c0abe09ae674de75668eba0a712435f8e1136fbc07146c6
+  digest: sha256:fa4ab9421b691eadaaa3a30d5ba69542f0c33e1c01da05298d0b5bd01856465b
 configMapGenerator:
 - name: parameters
   env: params.env
