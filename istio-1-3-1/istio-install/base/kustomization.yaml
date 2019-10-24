@@ -3,16 +3,6 @@
 configMapGenerator:
 - name: istio-install-parameters
   env: params.env
-- files:
-  - prometheus.yaml
-  name: prometheus
-- files:
-  - validating-webhook-configuration.yaml
-  name: istio-galley-configuration
-- files:
-  - istio-security-custom-resources.yaml
-  - istio-security-run.sh
-  name: istio-security-custom-resources
 
 # Images modify the tags for images without
 # creating patches.
