@@ -306,7 +306,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: inferenceservice-config
-  namespace: kfserving-system
 data:
   predictors: |-
     {
