@@ -251,12 +251,14 @@ spec:
       repoRef:
         name: manifests
         path: seldon/seldon-core-operator
+    name: seldon-core
   - kustomizeConfig:
       overlays:
       - application
       repoRef:
         name: manifests
         path: mpi-job/mpi-operator
+    name: mpi-operator
   - kustomizeConfig:
       parameters:
       - name: namespace
