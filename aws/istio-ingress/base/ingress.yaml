@@ -6,6 +6,7 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
   name: istio-ingress
+  namespace: istio-system
 spec:
   rules:
     - http:
