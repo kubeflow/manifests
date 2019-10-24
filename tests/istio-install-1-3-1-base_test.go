@@ -4298,6 +4298,33 @@ metadata:
     app: prometheus
   name: prometheus
 `)
+	th.writeF("/manifests/istio-1-3-1/istio-install-1-3-1/base/service-role.yaml", `
+# Added to allow all requests to istio-ingressgateway
+# Refer issue: https://github.com/istio/istio/issues/14885
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRole
+metadata:
+  name: istio-ingressgateway
+spec:
+  rules:
+  - services:
+    - istio-ingressgateway.$(namespace).svc.cluster.local
+`)
+	th.writeF("/manifests/istio-1-3-1/istio-install-1-3-1/base/service-role-binding.yaml", `
+# Added to allow all requests to istio-ingressgateway
+# Refer issue: https://github.com/istio/istio/issues/14885
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRoleBinding
+metadata:
+  name: istio-ingressgateway
+spec:
+  subjects:
+  - user: "*"
+
+  roleRef:
+    kind: ServiceRole
+    name: "istio-ingressgateway"
+`)
 	th.writeF("/manifests/istio-1-3-1/istio-install-1-3-1/base/params.yaml", `
 varReference:
 - path: metadata/name
@@ -4386,6 +4413,8 @@ resources:
 - rule.yaml
 - service.yaml
 - service-account.yaml
+- service-role.yaml
+- service-role-binding.yaml
 
 vars:
 - name: namespace

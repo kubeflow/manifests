@@ -45,6 +45,8 @@ resources:
 - rule.yaml
 - service.yaml
 - service-account.yaml
+- service-role.yaml
+- service-role-binding.yaml
 
 vars:
 - name: namespace
