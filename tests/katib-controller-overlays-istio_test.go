@@ -1,6 +1,8 @@
 package tests_test
 
 import (
+	"testing"
+
 	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/v3/pkg/fs"
@@ -10,7 +12,6 @@ import (
 	"sigs.k8s.io/kustomize/v3/pkg/resource"
 	"sigs.k8s.io/kustomize/v3/pkg/target"
 	"sigs.k8s.io/kustomize/v3/pkg/validators"
-	"testing"
 )
 
 func writeKatibControllerOverlaysIstio(th *KustTestHarness) {
@@ -60,34 +61,34 @@ data:
   metrics-collector-sidecar: |-
     {
       "StdOut": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:fb6739c"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:0eadfce"
       },
       "File": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:fb6739c"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:0eadfce"
       },
       "TensorFlowEvent": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:fb6739c"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:0eadfce"
       }
     }
   suggestion: |-
     {
       "random": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:fb6739c"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:8c8094a"
       },
       "grid": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-chocolate:fb6739c"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-chocolate:8c8094a"
       },
       "hyperband": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperband:030b691"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperband:8c8094a"
       },
       "bayesianoptimization": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-skopt:fb6739c"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-skopt:8c8094a"
       },
       "tpe": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:fb6739c"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:8c8094a"
       },
       "nasrl": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-nasrl:fb6739c"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-nasrl:8c8094a"
       }
     }
 `)
@@ -630,13 +631,13 @@ generatorOptions:
   disableNameSuffixHash: true
 images:
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
-  newTag: fb6739c
+  newTag: 0eadfce
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
-  newTag: fb6739c
+  newTag: 0eadfce
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
-  newTag: fb6739c
+  newTag: 0eadfce
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
 - name: mysql
   newTag: "8"
