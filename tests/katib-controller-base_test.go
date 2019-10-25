@@ -23,34 +23,34 @@ data:
   metrics-collector-sidecar: |-
     {
       "StdOut": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:fb6739c"
       },
       "File": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:fb6739c"
       },
       "TensorFlowEvent": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:fb6739c"
       }
     }
   suggestion: |-
     {
       "random": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:fb6739c"
       },
       "grid": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-chocolate:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-chocolate:fb6739c"
       },
       "hyperband": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperband:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperband:030b691"
       },
       "bayesianoptimization": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-skopt:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-skopt:fb6739c"
       },
       "tpe": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:fb6739c"
       },
       "nasrl": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-nasrl:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-nasrl:fb6739c"
       }
     }
 `)
@@ -593,13 +593,13 @@ generatorOptions:
   disableNameSuffixHash: true
 images:
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
-  newTag: v0.7.0
+  newTag: fb6739c
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
-  newTag: v0.7.0
+  newTag: fb6739c
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
-  newTag: v0.7.0
+  newTag: fb6739c
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
 - name: mysql
   newTag: "8"
