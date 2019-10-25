@@ -42,6 +42,8 @@ spec:
     name: istio-install
   # This component is the istio resources for Kubeflow (e.g. gateway), not about installing istio.
   - kustomizeConfig:
+      overlays:
+      - https-gateway
       parameters:
         - name: clusterRbacConfig
           value: "ON"
@@ -76,6 +78,16 @@ spec:
         name: manifests
         path: cert-manager/cert-manager
     name: cert-manager
+  - kustomizeConfig:
+      parameters:
+        - name: namespace
+          value: istio-system
+        - name: domain
+          value: DOMAIN #Replace with your kubeflow domain
+      repoRef:
+        name: manifests
+        path: istio/ingressgateway-self-signed-cert
+    name: ingressgateway-self-signed-cert
   - kustomizeConfig:
       overlays:
         - application
