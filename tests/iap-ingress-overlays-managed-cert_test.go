@@ -196,6 +196,7 @@ data:
       NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
       echo "node port is ${NODE_PORT}"
 
+      BACKEND_NAME=""
       while [[ -z ${BACKEND_NAME} ]]; do
         BACKENDS=$(kubectl --namespace=${NAMESPACE} get ingress ${INGRESS_NAME} -o jsonpath='{.metadata.annotations.ingress\.kubernetes\.io/backends}')
         echo "fetching backends info with ${INGRESS_NAME}: ${BACKENDS}"
@@ -204,6 +205,7 @@ data:
         sleep 2
       done
 
+      BACKEND_ID=""
       while [[ -z ${BACKEND_ID} ]]; do
         BACKEND_ID=$(gcloud compute --project=${PROJECT} backend-services list --filter=name~${BACKEND_NAME} --format='value(id)')
         echo "Waiting for backend id PROJECT=${PROJECT} NAMESPACE=${NAMESPACE} SERVICE=${SERVICE} filter=name~${BACKEND_NAME}"
@@ -558,7 +560,8 @@ varReference:
 - path: data/healthcheck_route.yaml
   kind: ConfigMap
 - path: spec/domains
-  kind: ManagedCertificate`)
+  kind: ManagedCertificate
+`)
 	th.writeF("/manifests/gcp/iap-ingress/base/params.env", `
 namespace=kubeflow
 appName=kubeflow
@@ -570,7 +573,8 @@ oauthSecretName=kubeflow-oauth
 project=
 adminSaSecretName=admin-gcp-sa
 tlsSecretName=envoy-ingress-tls
-istioNamespace=istio-system`)
+istioNamespace=istio-system
+`)
 	th.writeK("/manifests/gcp/iap-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
