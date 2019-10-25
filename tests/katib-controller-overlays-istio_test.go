@@ -60,34 +60,34 @@ data:
   metrics-collector-sidecar: |-
     {
       "StdOut": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:fb6739c"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector"
       },
       "File": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:fb6739c"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector"
       },
       "TensorFlowEvent": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:fb6739c"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector"
       }
     }
   suggestion: |-
     {
       "random": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:fb6739c"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt"
       },
       "grid": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-chocolate:fb6739c"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-chocolate"
       },
       "hyperband": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperband:030b691"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperband"
       },
       "bayesianoptimization": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-skopt:fb6739c"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-skopt"
       },
       "tpe": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:fb6739c"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt"
       },
       "nasrl": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-nasrl:fb6739c"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-nasrl"
       }
     }
 `)
@@ -630,14 +630,14 @@ generatorOptions:
   disableNameSuffixHash: true
 images:
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
-  newTag: fb6739c
-  newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
+  newTag: latest
+  newName: gcr.io/kubeflow-ci/katib/v1alpha3/katib-controller
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
-  newTag: fb6739c
-  newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
+  newTag: latest
+  newName: gcr.io/kubeflow-ci/katib/v1alpha3/katib-manager
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
-  newTag: fb6739c
-  newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
+  newTag: latest
+  newName: gcr.io/kubeflow-ci/katib/v1alpha3/katib-ui
 - name: mysql
   newTag: "8"
   newName: mysql
