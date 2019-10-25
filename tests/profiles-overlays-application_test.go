@@ -157,7 +157,7 @@ spec:
                     type: object
                 type: object
               type: array
-            resourcequotaspec:
+            resourceQuotaSpec:
               description: Resourcequota that will be applied to target namespace
               properties:
                 hard:
@@ -240,7 +240,8 @@ status:
     kind: ""
     plural: ""
   conditions: []
-  storedVersions: []`)
+  storedVersions: []
+`)
 	th.writeF("/manifests/profiles/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -284,7 +285,8 @@ metadata:
   name: kfam
 spec:
   ports:
-    - port: 8081`)
+    - port: 8081
+`)
 	th.writeF("/manifests/profiles/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
@@ -330,7 +332,7 @@ configMapGenerator:
   env: params.env
 images:
 - name: gcr.io/kubeflow-images-public/profile-controller
-  digest: sha256:f0011f9c8b73e8a26e2ea203394031104d09753f684177caf1017c15aac658f9
+  digest: sha256:9b834c9d44f9e4e8d5b9f8f01645afb84d5b3debcb177f3e49eac8ee46ae239d
 - name: gcr.io/kubeflow-images-public/kfam
   digest: sha256:3b0d4be7e59a3fa5ed1d80dccc832312caa94f3b2d36682524d3afc4e45164f0
 vars:
