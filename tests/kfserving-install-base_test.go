@@ -388,7 +388,7 @@ spec:
               fieldPath: metadata.namespace
         - name: SECRET_NAME
           value: kfserving-webhook-server-secret
-        image: $(registry)/kfserving-controller:0.2.0
+        image: gcr.io/kfserving/kfserving-controller
         imagePullPolicy: Always
         name: manager
         ports:
@@ -490,9 +490,9 @@ images:
 - name: gcr.io/kubebuilder/kube-rbac-proxy
   newName: gcr.io/kubebuilder/kube-rbac-proxy
   newTag: v0.4.0
-- name: $(registry)/kfserving-controller
-  newName: $(registry)/kfserving-controller
-  newTag: 0.2.0
+- name: gcr.io/kfserving/kfserving-controller
+  newName: gcr.io/kfserving/kfserving-controller
+  digest: sha256:180d06026c4dd6c2d3ce4748efc896751b9bb6108b67a9eaa0e50158d6e10f1e
 `)
 }
 
