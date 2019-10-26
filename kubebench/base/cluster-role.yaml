@@ -4,16 +4,11 @@ metadata:
   name: kubebench-operator
 rules:
 - apiGroups:
-  - kubebench.operator
+  - kubeflow.org
   resources:
-  - kubebenchjobs.kubebench.operator
   - kubebenchjobs
   verbs:
-  - create
-  - update
-  - get
-  - list
-  - watch
+  - '*'
 - apiGroups:
   - ""
   resources:
@@ -32,6 +27,7 @@ rules:
   resources:
   - tfjobs
   - pytorchjobs
+  - mpijobs
   verbs:
   - '*'
 - apiGroups:
