@@ -225,8 +225,8 @@ commonLabels:
   kustomize.component: centraldashboard
 images:
 - name: gcr.io/kubeflow-images-public/centraldashboard
-  newName: gcr.io/kubeflow-images-public/centraldashboard
-  digest: sha256:bcf462b61b7f39e1479c4ac6dd0eb5a1b2504f2d2e18e325c6e8404a28f09a60
+  newName: gcr.io/kubeflow-images-public/centraldashboard:list-8-gf5250b01
+  digest: sha256:4299297b8390599854aa8f77e9eb717db684b32ca9a94a0ab0e73f3f73e5d8b5
 configMapGenerator:
 - name: parameters
   env: params.env
