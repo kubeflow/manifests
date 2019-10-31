@@ -189,27 +189,6 @@
     //
     // argoTaskTemplates is constructing from tasks as well.
     tasks:: [
-      {
-        local v1Suffix = "-v1",
-        template: tests.buildTemplate {
-          name: "tfjob-test" + v1Suffix,
-          pythonPath: tests.kubeflowPy + ":" + tests.tfOperatorPy + ":" + tests.kubeflowTestingPy,
-          command: [
-            "python",
-            "-m",
-            "kubeflow.tf_operator.simple_tfjob_tests",
-            "--app_dir=" + tests.tfOperatorRoot + "/test/workflows",
-            "--tfjob_version=v1",
-            // Name is used for the test case name so it should be unique across
-            // all E2E tests.
-            "--params=name=smoke-tfjob-" + tests.platform + ",namespace=" + tests.stepsNamespace,
-            "--artifacts_path=" + tests.artifactsDir,
-            // Skip GPU tests
-            "--skip_tests=test_simple_tfjob_gpu",
-          ],
-        },  // run tests
-        dependencies: null,
-      },  // tf-job-test-v1
       // TODO(https://github.com/kubeflow/kubeflow/issues/1407): argo-deploy is flaky so disable it.
       // {
       //
@@ -272,24 +251,6 @@
         },
         dependencies: null,
       },  // pytorchjob - deploy,
-      {
-
-        template: tests.buildTemplate {
-          name: "tfjob-simple-prototype-test",
-          command: [
-            "python",
-            "-m",
-            "testing.tf_job_simple_test",
-            "--src_dir=" + tests.srcDir,
-            "--tf_job_version=v1",
-            "--test_dir=" + tests.testDir,
-            "--artifacts_dir=" + tests.artifactsDir,
-          ],
-          pythonPath: tests.kubeflowPy + ":" + tests.tfOperatorPy + ":" + tests.kubeflowTestingPy,
-        },
-
-        dependencies: null,
-      },  // tfjob-simple-prototype-test
       // The test is flaky so disable it see https://github.com/kubeflow/kubeflow/issues/2825.
       // TODO(jlewi). We probably don't need to run the test to verify katib is working correctly.
       // i.e. that the required resources are deployed.
