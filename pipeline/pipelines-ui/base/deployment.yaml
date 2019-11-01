@@ -13,21 +13,10 @@ spec:
       labels:
         app: ml-pipeline-ui
     spec:
-      volumes:
-      - name: gcp-sa-token
-        secret:
-          secretName: user-gcp-sa
       containers:
       - name: ml-pipeline-ui
-        env:
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /etc/credentials/user-gcp-sa.json
         image: gcr.io/ml-pipeline/frontend
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
-        volumeMounts:
-        - name: gcp-sa-token
-          mountPath: "/etc/credentials"
-          readOnly: true
       serviceAccountName: ml-pipeline-ui
