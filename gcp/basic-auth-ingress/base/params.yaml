@@ -31,3 +31,5 @@ varReference:
   kind: CloudEndpoint
 - path: spec/domains
   kind: ManagedCertificate
+- path: subjects/namespace
+  kind: ClusterRoleBinding
