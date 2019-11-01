@@ -94,7 +94,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kf-admin
-  namespace: kubeflow
+  namespace: $(istioNamespace)
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -425,6 +425,8 @@ varReference:
   kind: CloudEndpoint
 - path: spec/domains
   kind: ManagedCertificate
+- path: subjects/namespace
+  kind: ClusterRoleBinding
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/params.env", `
 appName=kubeflow
