@@ -1590,3 +1590,4 @@ func TestIstioCrdsBase(t *testing.T) {
 	}
 	th.assertActualEqualsExpected(actual, string(expected))
 }
+
