@@ -40,8 +40,7 @@ oidcAuthorizationEndpoint=
 oidcTokenEndpoint=
 oidcUserInfoEndpoint=
 oidcSecretName=istio-oidc-secret
-certArn=
-`)
+certArn=`)
 	th.writeF("/manifests/aws/istio-ingress/overlays/oidc/secrets.env", `
 clientId=
 clientSecret=
