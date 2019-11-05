@@ -13,9 +13,9 @@ commonLabels:
   app: notebook-controller
   kustomize.component: notebook-controller
 images:
-  - name: gcr.io/kubeflow-images-public/notebook-controller
-    newName: gcr.io/kubeflow-images-public/notebook-controller
-    newTag: v20190603-v0-175-geeca4530-e3b0c4
+- name: gcr.io/kubeflow-images-public/notebook-controller
+  newName: gcr.io/kubeflow-images-public/notebook-controller
+  digest: sha256:6490f737000bd1d2520ac4b8cbde2b09749cdb291b1967ddda95d05131db49db
 configMapGenerator:
 - name: parameters
   env: params.env
@@ -36,3 +36,10 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.USE_ISTIO
+- name: ISTIO_GATEWAY
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ISTIO_GATEWAY

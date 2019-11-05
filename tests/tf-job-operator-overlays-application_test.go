@@ -1,13 +1,15 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/pkg/fs"
-	"sigs.k8s.io/kustomize/pkg/loader"
-	"sigs.k8s.io/kustomize/pkg/resmap"
-	"sigs.k8s.io/kustomize/pkg/resource"
-	"sigs.k8s.io/kustomize/pkg/target"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
 	"testing"
 )
 
@@ -21,18 +23,16 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: tf-job-operator
-      app.kubernetes.io/instance: tf-job-operator
+      app.kubernetes.io/instance: tf-job-operator-v0.7.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: tfjob
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6 
+      app.kubernetes.io/version: v0.7.0
   componentKinds:
   - group: core
     kind: Service
   - group: apps
     kind: Deployment
-  - group: core
-    kind: ConfigMap
   - group: core
     kind: ServiceAccount
   - group: kubeflow.org
@@ -66,28 +66,14 @@ bases:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: tf-job-operator 
-  app.kubernetes.io/instance: tf-job-operator
+  app.kubernetes.io/name: tf-job-operator
+  app.kubernetes.io/instance: tf-job-operator-v0.7.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: tfjob
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
+  app.kubernetes.io/version: v0.7.0
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/cluster-role-binding.yaml", `
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRoleBinding
-metadata:
-  labels:
-    app: tf-job-dashboard
-  name: tf-job-dashboard
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: tf-job-dashboard
-subjects:
-- kind: ServiceAccount
-  name: tf-job-dashboard
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -109,65 +95,10 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   labels:
-    app: tf-job-dashboard
-  name: tf-job-dashboard
-rules:
-- apiGroups:
-  - tensorflow.org
-  - kubeflow.org
-  resources:
-  - tfjobs
-  - tfjobs/status
-  verbs:
-  - '*'
-- apiGroups:
-  - apiextensions.k8s.io
-  resources:
-  - customresourcedefinitions
-  verbs:
-  - '*'
-- apiGroups:
-  - storage.k8s.io
-  resources:
-  - storageclasses
-  verbs:
-  - '*'
-- apiGroups:
-  - batch
-  resources:
-  - jobs
-  verbs:
-  - '*'
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  - pods
-  - services
-  - endpoints
-  - persistentvolumeclaims
-  - events
-  - pods/log
-  - namespaces
-  verbs:
-  - '*'
-- apiGroups:
-  - apps
-  - extensions
-  resources:
-  - deployments
-  verbs:
-  - '*'
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRole
-metadata:
-  labels:
     app: tf-job-operator
   name: tf-job-operator
 rules:
 - apiGroups:
-  - tensorflow.org
   - kubeflow.org
   resources:
   - tfjobs
@@ -181,25 +112,11 @@ rules:
   verbs:
   - '*'
 - apiGroups:
-  - storage.k8s.io
-  resources:
-  - storageclasses
-  verbs:
-  - '*'
-- apiGroups:
-  - batch
-  resources:
-  - jobs
-  verbs:
-  - '*'
-- apiGroups:
   - ""
   resources:
-  - configmaps
   - pods
   - services
   - endpoints
-  - persistentvolumeclaims
   - events
   verbs:
   - '*'
@@ -210,97 +127,68 @@ rules:
   - deployments
   verbs:
   - '*'
-`)
-	th.writeF("/manifests/tf-training/tf-job-operator/base/config-map.yaml", `
-apiVersion: v1
-data:
-  controller_config_file.yaml: |-
-    {
-        "grpcServerFilePath": "/opt/mlkube/grpc_tensorflow_server/grpc_tensorflow_server.py"
-    }
-kind: ConfigMap
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
 metadata:
-  name: tf-job-operator-config
-`)
-	th.writeF("/manifests/tf-training/tf-job-operator/base/crd.yaml", `
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
+  name: kubeflow-tfjobs-admin
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-tfjobs-admin: "true"
+rules: []
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
 metadata:
-  name: tfjobs.kubeflow.org
-spec:
-  additionalPrinterColumns:
-  - JSONPath: .status.conditions[-1:].type
-    name: State
-    type: string
-  - JSONPath: .metadata.creationTimestamp
-    name: Age
-    type: date
-  group: kubeflow.org
-  names:
-    kind: TFJob
-    plural: tfjobs
-    singular: tfjob
-  scope: Namespaced
-  subresources:
-    status: {}
-  validation:
-    openAPIV3Schema:
-      properties:
-        spec:
-          properties:
-            tfReplicaSpecs:
-              properties:
-                Chief:
-                  properties:
-                    replicas:
-                      maximum: 1
-                      minimum: 1
-                      type: integer
-                PS:
-                  properties:
-                    replicas:
-                      minimum: 1
-                      type: integer
-                Worker:
-                  properties:
-                    replicas:
-                      minimum: 1
-                      type: integer
-  version: v1
-  versions:
-  - name: v1
-    served: true
-    storage: true
-  - name: v1beta2
-    served: true
-    storage: false
+  name: kubeflow-tfjobs-edit
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-tfjobs-admin: "true"
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - tfjobs
+  - tfjobs/status
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-tfjobs-view
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - tfjobs
+  - tfjobs/status
+  verbs:
+  - get
+  - list
+  - watch
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/deployment.yaml", `
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: tf-job-dashboard
-spec:
-  template:
-    metadata:
-      labels:
-        name: tf-job-dashboard
-    spec:
-      containers:
-      - command:
-        - /opt/tensorflow_k8s/dashboard/backend
-        env:
-        - name: KUBEFLOW_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        image: gcr.io/kubeflow-images-public/tf_operator:v0.6.0.rc0
-        name: tf-job-dashboard
-        ports:
-        - containerPort: 8080
-      serviceAccountName: tf-job-dashboard
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tf-job-operator
@@ -326,16 +214,9 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: gcr.io/kubeflow-images-public/tf_operator:v0.6.0.rc0
+        image: gcr.io/kubeflow-images-public/tf_operator:kubeflow-tf-operator-postsubmit-v1-5adee6f-6109-a25c
         name: tf-job-operator
-        volumeMounts:
-        - mountPath: /etc/config
-          name: config-volume
       serviceAccountName: tf-job-operator
-      volumes:
-      - configMap:
-          name: tf-job-operator-config
-        name: config-volume
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/service-account.yaml", `
 ---
@@ -354,26 +235,6 @@ metadata:
   name: tf-job-operator
 `)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/service.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name: tfjobs-ui-mapping
-      prefix: /tfjobs/
-      rewrite: /tfjobs/
-      service: tf-job-dashboard.$(namespace)
-  name: tf-job-dashboard
-spec:
-  ports:
-  - port: 80
-    targetPort: 8080
-  selector:
-    name: tf-job-dashboard
-  type: ClusterIP
 ---
 apiVersion: v1
 kind: Service
@@ -394,14 +255,8 @@ spec:
     name: tf-job-operator
   type: ClusterIP
 `)
-	th.writeF("/manifests/tf-training/tf-job-operator/base/params.yaml", `
-varReference:
-- path: metadata/annotations/getambassador.io\/config
-  kind: Service
-`)
 	th.writeF("/manifests/tf-training/tf-job-operator/base/params.env", `
 namespace=
-clusterDomain=cluster.local
 `)
 	th.writeK("/manifests/tf-training/tf-job-operator/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -410,33 +265,15 @@ namespace: kubeflow
 resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml
-- config-map.yaml
-- crd.yaml
 - deployment.yaml
 - service-account.yaml
 - service.yaml
 commonLabels:
   kustomize.component: tf-job-operator
-configMapGenerator:
-- name: parameters
-  env: params.env
-vars:
-- name: namespace
-  objref:
-    kind: Service
-    name: tf-job-dashboard
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.namespace
-- name: clusterDomain
-  objref:
-    kind: ConfigMap
-    name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.clusterDomain
-configurations:
-- params.yaml
+images:
+- name: gcr.io/kubeflow-images-public/tf_operator
+  newName: gcr.io/kubeflow-images-public/tf_operator
+  newTag: v0.7.0
 `)
 }
 
@@ -447,21 +284,26 @@ func TestTfJobOperatorOverlaysApplication(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../tf-training/tf-job-operator/overlays/application"
-	fsys := fs.MakeRealFS()
-	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	n, err := kt.MakeCustomizedResMap()
+	expected, err := m.AsYaml()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	targetPath := "../tf-training/tf-job-operator/overlays/application"
+	fsys := fs.MakeRealFS()
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	actual, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	th.assertActualEqualsExpected(actual, string(expected))
 }

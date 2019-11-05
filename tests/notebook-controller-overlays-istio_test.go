@@ -1,19 +1,21 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/pkg/fs"
-	"sigs.k8s.io/kustomize/pkg/loader"
-	"sigs.k8s.io/kustomize/pkg/resmap"
-	"sigs.k8s.io/kustomize/pkg/resource"
-	"sigs.k8s.io/kustomize/pkg/target"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
 	"testing"
 )
 
 func writeNotebookControllerOverlaysIstio(th *KustTestHarness) {
 	th.writeF("/manifests/jupyter/notebook-controller/overlays/istio/deployment.yaml", `
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: deployment
@@ -25,9 +27,12 @@ spec:
         env:
           - name: USE_ISTIO
             value: $(USE_ISTIO)
+          - name: ISTIO_GATEWAY
+            value: $(ISTIO_GATEWAY)
 `)
 	th.writeF("/manifests/jupyter/notebook-controller/overlays/istio/params.env", `
 USE_ISTIO=true
+ISTIO_GATEWAY=kubeflow/kubeflow-gateway
 `)
 	th.writeK("/manifests/jupyter/notebook-controller/overlays/istio", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -96,6 +101,64 @@ rules:
   - virtualservices
   verbs:
   - '*'
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-notebooks-admin
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-notebooks-admin: "true"
+rules: []
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-notebooks-edit
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-notebooks-admin: "true"
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - notebooks
+  - notebooks/status
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-notebooks-view
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - notebooks
+  - notebooks/status
+  verbs:
+  - get
+  - list
+  - watch
 `)
 	th.writeF("/manifests/jupyter/notebook-controller/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
@@ -111,7 +174,13 @@ spec:
   scope: Namespaced
   subresources:
     status: {}
-  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: false
+  - name: v1beta1
+    served: true
+    storage: true
   validation:
     openAPIV3Schema:
       properties:
@@ -162,7 +231,7 @@ status:
 
 `)
 	th.writeF("/manifests/jupyter/notebook-controller/base/deployment.yaml", `
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: deployment
@@ -200,6 +269,7 @@ spec:
 	th.writeF("/manifests/jupyter/notebook-controller/base/params.env", `
 POD_LABELS=gcp-cred-secret=user-gcp-sa,gcp-cred-secret-filename=user-gcp-sa.json
 USE_ISTIO=false
+ISTIO_GATEWAY=kubeflow/kubeflow-gateway
 `)
 	th.writeK("/manifests/jupyter/notebook-controller/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -217,9 +287,9 @@ commonLabels:
   app: notebook-controller
   kustomize.component: notebook-controller
 images:
-  - name: gcr.io/kubeflow-images-public/notebook-controller
-    newName: gcr.io/kubeflow-images-public/notebook-controller
-    newTag: v20190603-v0-175-geeca4530-e3b0c4
+- name: gcr.io/kubeflow-images-public/notebook-controller
+  newName: gcr.io/kubeflow-images-public/notebook-controller
+  digest: sha256:6490f737000bd1d2520ac4b8cbde2b09749cdb291b1967ddda95d05131db49db
 configMapGenerator:
 - name: parameters
   env: params.env
@@ -240,6 +310,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.USE_ISTIO
+- name: ISTIO_GATEWAY
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ISTIO_GATEWAY
 `)
 }
 
@@ -250,21 +327,26 @@ func TestNotebookControllerOverlaysIstio(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../jupyter/notebook-controller/overlays/istio"
-	fsys := fs.MakeRealFS()
-	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	n, err := kt.MakeCustomizedResMap()
+	expected, err := m.AsYaml()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	targetPath := "../jupyter/notebook-controller/overlays/istio"
+	fsys := fs.MakeRealFS()
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	actual, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	th.assertActualEqualsExpected(actual, string(expected))
 }

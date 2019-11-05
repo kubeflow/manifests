@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: ml-pipeline-ui
-        image: gcr.io/ml-pipeline/frontend:0.1.23
+        image: gcr.io/ml-pipeline/frontend
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000

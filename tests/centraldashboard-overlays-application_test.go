@@ -1,13 +1,15 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/pkg/fs"
-	"sigs.k8s.io/kustomize/pkg/loader"
-	"sigs.k8s.io/kustomize/pkg/resmap"
-	"sigs.k8s.io/kustomize/pkg/resource"
-	"sigs.k8s.io/kustomize/pkg/target"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
 	"testing"
 )
 
@@ -20,12 +22,12 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: 
-      app.kubernetes.io/instance: centraldashboard
+      app.kubernetes.io/name: centraldashboard
+      app.kubernetes.io/instance: centraldashboard-v0.7.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: centraldashboard
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
+      app.kubernetes.io/version: v0.7.0
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -37,6 +39,8 @@ spec:
     kind: Role
   - group: core
     kind: ServiceAccount
+  - group: core
+    kind: Service
   - group: networking.istio.io
     kind: VirtualService
   descriptor:
@@ -75,11 +79,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: centraldashboard
-  app.kubernetes.io/instance: centraldashboard
+  app.kubernetes.io/instance: centraldashboard-v0.7.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: centraldashboard
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
+  app.kubernetes.io/version: v0.7.0
 `)
 	th.writeF("/manifests/common/centraldashboard/base/clusterrole-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
@@ -117,7 +121,7 @@ rules:
   - watch
 `)
 	th.writeF("/manifests/common/centraldashboard/base/deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -134,12 +138,19 @@ spec:
         app: centraldashboard
     spec:
       containers:
-      - image: gcr.io/kubeflow-images-public/centraldashboard:v0.5.0
+      - image: gcr.io/kubeflow-images-public/centraldashboard
         imagePullPolicy: IfNotPresent
         name: centraldashboard
         ports:
         - containerPort: 8082
           protocol: TCP
+        env:
+        - name: USERID_HEADER
+          value: $(userid-header)
+        - name: USERID_PREFIX
+          value: $(userid-prefix)
+        - name: PROFILES_KFAM_SERVICE_HOST
+          value: profiles-kfam.kubeflow
       serviceAccountName: centraldashboard
 `)
 	th.writeF("/manifests/common/centraldashboard/base/role-binding.yaml", `
@@ -223,10 +234,14 @@ varReference:
   kind: Service
 - path: spec/http/route/destination/host
   kind: VirtualService
-`)
+- path: spec/template/spec/containers/0/env/0/value
+  kind: Deployment
+- path: spec/template/spec/containers/0/env/1/value
+  kind: Deployment`)
 	th.writeF("/manifests/common/centraldashboard/base/params.env", `
 clusterDomain=cluster.local
-`)
+userid-header=
+userid-prefix=`)
 	th.writeK("/manifests/common/centraldashboard/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -242,9 +257,9 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: centraldashboard
 images:
-  - name: gcr.io/kubeflow-images-public/centraldashboard
-    newName: gcr.io/kubeflow-images-public/centraldashboard
-    newTag: v20190808-v0.6.2-rc.0-0-g65583158
+- name: gcr.io/kubeflow-images-public/centraldashboard
+  newName: gcr.io/kubeflow-images-public/centraldashboard
+  digest: sha256:4299297b8390599854aa8f77e9eb717db684b32ca9a94a0ab0e73f3f73e5d8b5
 configMapGenerator:
 - name: parameters
   env: params.env
@@ -265,6 +280,20 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
+- name: userid-header
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.userid-header
+- name: userid-prefix
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.userid-prefix
 configurations:
 - params.yaml
 
@@ -278,21 +307,26 @@ func TestCentraldashboardOverlaysApplication(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../common/centraldashboard/overlays/application"
-	fsys := fs.MakeRealFS()
-	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	n, err := kt.MakeCustomizedResMap()
+	expected, err := m.AsYaml()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	targetPath := "../common/centraldashboard/overlays/application"
+	fsys := fs.MakeRealFS()
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	actual, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	th.assertActualEqualsExpected(actual, string(expected))
 }

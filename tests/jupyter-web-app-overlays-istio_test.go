@@ -1,13 +1,15 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/pkg/fs"
-	"sigs.k8s.io/kustomize/pkg/loader"
-	"sigs.k8s.io/kustomize/pkg/resmap"
-	"sigs.k8s.io/kustomize/pkg/resource"
-	"sigs.k8s.io/kustomize/pkg/target"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
 	"testing"
 )
 
@@ -131,29 +133,13 @@ data:
       image:
         # The container Image for the user's Jupyter Notebook
         # If readonly, this value must be a member of the list below
-        value: gcr.io/kubeflow-images-public/tensorflow-1.13.1-notebook-cpu:v0.5.0
+        value: gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v-base-ef41372-1177829795472347138
         # The list of available standard container Images
         options:
-          - gcr.io/kubeflow-images-public/tensorflow-1.5.1-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.5.1-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.6.0-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.6.0-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.7.0-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.7.0-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.8.0-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.8.0-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.9.0-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.9.0-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.10.1-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.10.1-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.11.0-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.11.0-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.12.0-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.12.0-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.13.1-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.13.1-notebook-gpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-2.0.0a-notebook-cpu:v0.5.0
-          - gcr.io/kubeflow-images-public/tensorflow-2.0.0a-notebook-gpu:v0.5.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v0.7.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-gpu:v0.7.0
+          - gcr.io/kubeflow-images-public/tensorflow-2.0.0a0-notebook-cpu:v0.7.0
+          - gcr.io/kubeflow-images-public/tensorflow-2.0.0a0-notebook-gpu:v0.7.0
         # By default, custom container Images are allowed
         # Uncomment the following line to only enable standard container Images
         readOnly: false
@@ -273,6 +259,10 @@ spec:
             configMapKeyRef:
               name: parameters
               key: UI
+        - name: USERID_HEADER
+          value: $(userid-header)
+        - name: USERID_PREFIX
+          value: $(userid-prefix)
         image: gcr.io/kubeflow-images-public/jupyter-web-app:v0.5.0
         imagePullPolicy: $(policy)
         name: jupyter-web-app
@@ -374,14 +364,18 @@ varReference:
   kind: Deployment
 - path: metadata/annotations/getambassador.io\/config
   kind: Service
-`)
+- path: spec/template/spec/containers/0/env/2/value
+  kind: Deployment
+- path: spec/template/spec/containers/0/env/3/value
+  kind: Deployment`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.env", `
 UI=default
 ROK_SECRET_NAME=secret-rok-{username}
 policy=Always
 prefix=jupyter
 clusterDomain=cluster.local
-`)
+userid-header=
+userid-prefix=`)
 	th.writeK("/manifests/jupyter/jupyter-web-app/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -400,43 +394,57 @@ commonLabels:
   app: jupyter-web-app
   kustomize.component: jupyter-web-app
 images:
-  - name: gcr.io/kubeflow-images-public/jupyter-web-app
-    newName: gcr.io/kubeflow-images-public/jupyter-web-app
-    newTag: 9419d4d
+- name: gcr.io/kubeflow-images-public/jupyter-web-app
+  newName: gcr.io/kubeflow-images-public/jupyter-web-app
+  newTag: 9419d4d
 configMapGenerator:
-- name: parameters
-  env: params.env
+- env: params.env
+  name: parameters
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- name: policy
+- fieldref:
+    fieldPath: data.policy
+  name: policy
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.policy
-- name: prefix
+- fieldref:
+    fieldPath: data.prefix
+  name: prefix
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.prefix
-- name: clusterDomain
+- fieldref:
+    fieldPath: data.clusterDomain
+  name: clusterDomain
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.clusterDomain
-- name: namespace
+- fieldref:
+    fieldPath: metadata.namespace
+  name: namespace
   objref:
+    apiVersion: v1
     kind: Service
     name: service
+- fieldref:
+    fieldPath: data.userid-header
+  name: userid-header
+  objref:
     apiVersion: v1
-  fieldref:
-    fieldpath: metadata.namespace
+    kind: ConfigMap
+    name: parameters
+- fieldref:
+    fieldPath: data.userid-prefix
+  name: userid-prefix
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: parameters
 configurations:
 - params.yaml
 `)
@@ -449,21 +457,26 @@ func TestJupyterWebAppOverlaysIstio(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../jupyter/jupyter-web-app/overlays/istio"
-	fsys := fs.MakeRealFS()
-	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	n, err := kt.MakeCustomizedResMap()
+	expected, err := m.AsYaml()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	targetPath := "../jupyter/jupyter-web-app/overlays/istio"
+	fsys := fs.MakeRealFS()
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	actual, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	th.assertActualEqualsExpected(actual, string(expected))
 }

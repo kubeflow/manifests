@@ -1,13 +1,15 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/pkg/fs"
-	"sigs.k8s.io/kustomize/pkg/loader"
-	"sigs.k8s.io/kustomize/pkg/resmap"
-	"sigs.k8s.io/kustomize/pkg/resource"
-	"sigs.k8s.io/kustomize/pkg/target"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
 	"testing"
 )
 
@@ -132,6 +134,7 @@ data:
   config: |
     {
     executorImage: $(executorImage),
+    containerRuntimeExecutor: $(containerRuntimeExecutor),
     artifactRepository:
     {
         s3: {
@@ -170,7 +173,7 @@ spec:
 `)
 	th.writeF("/manifests/argo/base/deployment.yaml", `
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -224,7 +227,7 @@ spec:
       serviceAccountName: argo-ui
       terminationGracePeriodSeconds: 30
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -325,6 +328,7 @@ varReference:
 	th.writeF("/manifests/argo/base/params.env", `
 namespace=
 executorImage=argoproj/argoexec:v2.3.0
+containerRuntimeExecutor=docker
 artifactRepositoryBucket=mlpipeline
 artifactRepositoryKeyPrefix=artifacts
 artifactRepositoryEndpoint=minio-service.kubeflow:9000
@@ -349,12 +353,12 @@ resources:
 commonLabels:
   kustomize.component: argo
 images:
-  - name: argoproj/argoui
-    newName: argoproj/argoui
-    newTag: v2.3.0
-  - name: argoproj/workflow-controller
-    newName: argoproj/workflow-controller
-    newTag: v2.3.0
+- name: argoproj/argoui
+  newName: argoproj/argoui
+  newTag: v2.3.0
+- name: argoproj/workflow-controller
+  newName: argoproj/workflow-controller
+  newTag: v2.3.0
 configMapGenerator:
 - name: workflow-controller-parameters
   env: params.env
@@ -368,6 +372,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.executorImage
+- name: containerRuntimeExecutor
+  objref:
+    kind: ConfigMap
+    name: workflow-controller-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.containerRuntimeExecutor
 - name: artifactRepositoryBucket
   objref:
     kind: ConfigMap
@@ -450,21 +461,26 @@ func TestArgoBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../argo/base"
-	fsys := fs.MakeRealFS()
-	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	n, err := kt.MakeCustomizedResMap()
+	expected, err := m.AsYaml()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	targetPath := "../argo/base"
+	fsys := fs.MakeRealFS()
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	actual, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	th.assertActualEqualsExpected(actual, string(expected))
 }

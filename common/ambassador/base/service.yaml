@@ -5,7 +5,6 @@ metadata:
   labels:
     service: ambassador-admin
   name: ambassador-admin
-  namespace: istio-system
 spec:
   ports:
   - name: ambassador-admin
@@ -18,10 +17,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    # Ambassador is only used on GCP with basic auth.
+    beta.cloud.google.com/backend-config: '{"ports": {"ambassador":"basicauth-backendconfig"}}'
   labels:
     service: ambassador
   name: ambassador
-  namespace: istio-system
 spec:
   ports:
   - name: ambassador

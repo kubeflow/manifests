@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -15,10 +15,17 @@ spec:
         app: centraldashboard
     spec:
       containers:
-      - image: gcr.io/kubeflow-images-public/centraldashboard:v0.5.0
+      - image: gcr.io/kubeflow-images-public/centraldashboard
         imagePullPolicy: IfNotPresent
         name: centraldashboard
         ports:
         - containerPort: 8082
           protocol: TCP
+        env:
+        - name: USERID_HEADER
+          value: $(userid-header)
+        - name: USERID_PREFIX
+          value: $(userid-prefix)
+        - name: PROFILES_KFAM_SERVICE_HOST
+          value: profiles-kfam.kubeflow
       serviceAccountName: centraldashboard

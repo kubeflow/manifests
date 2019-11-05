@@ -20,10 +20,25 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+REPO="$(pwd)"
+
 cd tests
 
 # the tests depend on kustomize
 export PATH=${GOPATH}/bin:/usr/local/go/bin:${PATH}
 export GO111MODULE=on
-go get sigs.k8s.io/kustomize
 make test
+
+# Python test for the kustomization images
+# TODO(yanniszark): install these in the worker image
+# TODO(https://github.com/kubeflow/manifests/issues/449): 
+# The code below doesn't properly handle the case where digest 
+# is used.
+#pip install -r "${REPO}/tests/scripts/requirements.txt"
+#python3 "${REPO}"/tests/scripts/extract_images.py "${REPO}"
+
+#if [[ `git status --porcelain` ]]; then
+#    echo "Error: images missing from kustomization files."
+#    git --no-pager diff
+#    exit 1
+#fi

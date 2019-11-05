@@ -12,9 +12,9 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: centraldashboard
 images:
-  - name: gcr.io/kubeflow-images-public/centraldashboard
-    newName: gcr.io/kubeflow-images-public/centraldashboard
-    newTag: v20190808-v0.6.2-rc.0-0-g65583158
+- name: gcr.io/kubeflow-images-public/centraldashboard
+  newName: gcr.io/kubeflow-images-public/centraldashboard
+  digest: sha256:4299297b8390599854aa8f77e9eb717db684b32ca9a94a0ab0e73f3f73e5d8b5
 configMapGenerator:
 - name: parameters
   env: params.env
@@ -35,6 +35,20 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
+- name: userid-header
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.userid-header
+- name: userid-prefix
+  objref:
+    kind: ConfigMap
+    name: parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.userid-prefix
 configurations:
 - params.yaml
 

@@ -1,29 +1,33 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/pkg/fs"
-	"sigs.k8s.io/kustomize/pkg/loader"
-	"sigs.k8s.io/kustomize/pkg/resmap"
-	"sigs.k8s.io/kustomize/pkg/resource"
-	"sigs.k8s.io/kustomize/pkg/target"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
 	"testing"
 )
 
 func writeIstioIngressOverlaysOidc(th *KustTestHarness) {
 	th.writeF("/manifests/aws/istio-ingress/overlays/oidc/ingress.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: istio-ingress
+  namespace: istio-system
   annotations:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/auth-type: oidc
     alb.ingress.kubernetes.io/auth-idp-cognito: '{"Issuer":"$(oidcIssuer)","AuthorizationEndpoint":"$(oidcAuthorizationEndpoint)","TokenEndpoint":"$(oidcTokenEndpoint)","UserInfoEndpoint":"$(oidcUserInfoEndpoint)","SecretName":"$(oidcSecretName)"}'
     alb.ingress.kubernetes.io/certificate-arn: $(certArn)
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'`)
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+`)
 	th.writeF("/manifests/aws/istio-ingress/overlays/oidc/params.yaml", `
 varReference:
 - path: metadata/annotations
@@ -98,9 +102,10 @@ vars:
   fieldref:
     fieldpath: data.certArn
 configurations:
-- params.yaml`)
+- params.yaml
+`)
 	th.writeF("/manifests/aws/istio-ingress/base/ingress.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:
@@ -108,6 +113,7 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
   name: istio-ingress
+  namespace: istio-system
 spec:
   rules:
     - http:
@@ -115,30 +121,13 @@ spec:
           - backend:
               serviceName: istio-ingressgateway
               servicePort: 80
-            path: /*`)
-	th.writeF("/manifests/aws/istio-ingress/base/istio-gateway.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: kubeflow-gateway
-  namespace: kubeflow
-spec:
-  selector:
-    istio: ingressgateway
-  servers:
-  - hosts:
-    - '*'
-    port:
-      name: http
-      number: 80
-      protocol: HTTP`)
+            path: /*
+`)
 	th.writeK("/manifests/aws/istio-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - ingress.yaml
-- istio-gateway.yaml
-#- istio-virtual-service.yaml
 commonLabels:
   kustomize.component: istio-ingress
 `)
@@ -151,21 +140,26 @@ func TestIstioIngressOverlaysOidc(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../aws/istio-ingress/overlays/oidc"
-	fsys := fs.MakeRealFS()
-	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	n, err := kt.MakeCustomizedResMap()
+	expected, err := m.AsYaml()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	targetPath := "../aws/istio-ingress/overlays/oidc"
+	fsys := fs.MakeRealFS()
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	actual, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	th.assertActualEqualsExpected(actual, string(expected))
 }

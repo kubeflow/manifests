@@ -3,6 +3,8 @@ kind: BackendConfig
 metadata:
   name: iap-backendconfig
 spec:
+  # Jupyter uses websockets so we want to increase the timeout.
+  timeoutSec: 3600
   iap:
     enabled: true
     oauthclientCredentials:

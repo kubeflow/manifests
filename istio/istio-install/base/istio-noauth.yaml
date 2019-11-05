@@ -12375,17 +12375,17 @@ data:
         target_label: pod_name
 ---
 # Source: istio/charts/security/templates/configmap.yaml
-apiVersion: v1	
-kind: ConfigMap	
-metadata:	
-  name: istio-security-custom-resources	
-  labels:	
-    app: security	
-    chart: security	
-    heritage: Tiller	
-    release: istio	
-    istio: citadel	
-data:	
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: istio-security-custom-resources
+  labels:
+    app: security
+    chart: security
+    heritage: Tiller
+    release: istio
+    istio: citadel
+data:
   custom-resources.yaml: |-    
     # Authentication policy to enable permissive mode for all services (that have sidecar) in the mesh.
     apiVersion: "authentication.istio.io/v1alpha1"
@@ -12400,7 +12400,7 @@ data:
     spec:
       peers:
       - mtls:
-          mode: PERMISSIVE	
+          mode: PERMISSIVE
   run.sh: |-    
     #!/bin/sh
     
@@ -13136,93 +13136,93 @@ spec:
 ---
 # Source: istio/charts/security/templates/create-custom-resources-job.yaml
 
-apiVersion: v1	
-kind: ServiceAccount	
-metadata:	
-  name: istio-security-post-install-account	
-  labels:	
-    app: security	
-    chart: security	
-    heritage: Tiller	
-    release: istio	
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: istio-security-post-install-account
+  labels:
+    app: security
+    chart: security
+    heritage: Tiller
+    release: istio
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1	
-kind: ClusterRole	
-metadata:	
-  name: istio-security-post-install-istio-system	
-  labels:	
-    app: security	
-    chart: security	
-    heritage: Tiller	
-    release: istio	
-rules:	
-- apiGroups: ["authentication.istio.io"] # needed to create default authn policy	
-  resources: ["*"]	
-  verbs: ["*"]	
-- apiGroups: ["networking.istio.io"] # needed to create security destination rules	
-  resources: ["*"]	
-  verbs: ["*"]	
-- apiGroups: ["admissionregistration.k8s.io"]	
-  resources: ["validatingwebhookconfigurations"]	
-  verbs: ["get"]	
-- apiGroups: ["extensions", "apps"]	
-  resources: ["deployments", "replicasets"]	
-  verbs: ["get", "list", "watch"]	
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: istio-security-post-install-istio-system
+  labels:
+    app: security
+    chart: security
+    heritage: Tiller
+    release: istio
+rules:
+- apiGroups: ["authentication.istio.io"] # needed to create default authn policy
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["networking.istio.io"] # needed to create security destination rules
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["admissionregistration.k8s.io"]
+  resources: ["validatingwebhookconfigurations"]
+  verbs: ["get"]
+- apiGroups: ["extensions", "apps"]
+  resources: ["deployments", "replicasets"]
+  verbs: ["get", "list", "watch"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1	
-kind: ClusterRoleBinding	
-metadata:	
-  name: istio-security-post-install-role-binding-istio-system	
-  labels:	
-    app: security	
-    chart: security	
-    heritage: Tiller	
-    release: istio	
-roleRef:	
-  apiGroup: rbac.authorization.k8s.io	
-  kind: ClusterRole	
-  name: istio-security-post-install-istio-system	
-subjects:	
-  - kind: ServiceAccount	
-    name: istio-security-post-install-account	
-    namespace: istio-system	
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: istio-security-post-install-role-binding-istio-system
+  labels:
+    app: security
+    chart: security
+    heritage: Tiller
+    release: istio
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: istio-security-post-install-istio-system
+subjects:
+  - kind: ServiceAccount
+    name: istio-security-post-install-account
+    namespace: istio-system
 ---
 apiVersion: batch/v1
-kind: Job	
-metadata:	
-  name: istio-security-post-install-1.1.6	
-  annotations:	
-    "helm.sh/hook": post-install	
-    "helm.sh/hook-delete-policy": hook-succeeded	
-  labels:	
-    app: security	
-    chart: security	
-    heritage: Tiller	
-    release: istio	
-spec:	
-  template:	
-    metadata:	
-      name: istio-security-post-install	
-      labels:	
-        app: security	
-        chart: security	
-        heritage: Tiller	
-        release: istio	
-    spec:	
-      serviceAccountName: istio-security-post-install-account	
-      containers:	
-        - name: kubectl	
-          image: "docker.io/istio/kubectl:1.1.6"	
-          imagePullPolicy: IfNotPresent	
-          command: [ "/bin/bash", "/tmp/security/run.sh", "/tmp/security/custom-resources.yaml" ]	
-          volumeMounts:	
-            - mountPath: "/tmp/security"	
-              name: tmp-configmap-security	
-      volumes:	
-        - name: tmp-configmap-security	
-          configMap:	
-            name: istio-security-custom-resources	
-      restartPolicy: OnFailure	
+kind: Job
+metadata:
+  name: istio-security-post-install-1.1.6
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": hook-succeeded
+  labels:
+    app: security
+    chart: security
+    heritage: Tiller
+    release: istio
+spec:
+  template:
+    metadata:
+      name: istio-security-post-install
+      labels:
+        app: security
+        chart: security
+        heritage: Tiller
+        release: istio
+    spec:
+      serviceAccountName: istio-security-post-install-account
+      containers:
+        - name: kubectl
+          image: "docker.io/istio/kubectl:1.1.6"
+          imagePullPolicy: IfNotPresent
+          command: [ "/bin/bash", "/tmp/security/run.sh", "/tmp/security/custom-resources.yaml" ]
+          volumeMounts:
+            - mountPath: "/tmp/security"
+              name: tmp-configmap-security
+      volumes:
+        - name: tmp-configmap-security
+          configMap:
+            name: istio-security-custom-resources
+      restartPolicy: OnFailure
       affinity:      
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -13326,7 +13326,7 @@ rules:
 - apiGroups: ["extensions"]
   resources: ["ingresses"]
   verbs: ["get", "list", "watch"]
-- apiGroups: ["extensions"]
+- apiGroups: ["extensions", "apps"]
   resources: ["deployments/finalizers"]
   resourceNames: ["istio-galley"]
   verbs: ["update"]
@@ -13658,7 +13658,7 @@ rules:
 - apiGroups: ["apiextensions.k8s.io"]
   resources: ["customresourcedefinitions"]
   verbs: ["*"]
-- apiGroups: ["extensions"]
+- apiGroups: ["extensions", "networking.k8s.io"]
   resources: ["ingresses", "ingresses/status"]
   verbs: ["*"]
 - apiGroups: [""]
@@ -14275,7 +14275,7 @@ spec:
 
 ---
 # Source: istio/charts/galley/templates/deployment.yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-galley
@@ -14291,6 +14291,13 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: galley
+      chart: galley
+      heritage: Tiller
+      release: istio      
+      istio: galley
   template:
     metadata:
       labels:
@@ -14325,6 +14332,8 @@ spec:
           - /etc/config/validatingwebhookconfiguration.yaml
           - --monitoringPort=15014
           - --log_output_level=default:info
+          # see  https://github.com/istio/istio/issues/15352
+          - --enable-validation=true
           volumeMounts:
           - name: certs
             mountPath: /etc/certs
@@ -14404,7 +14413,7 @@ spec:
 ---
 # Source: istio/charts/gateways/templates/deployment.yaml
 
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-egressgateway
@@ -14415,6 +14424,13 @@ metadata:
     app: istio-egressgateway
     istio: egressgateway
 spec:
+  selector:
+    matchLabels:
+      chart: gateways
+      heritage: Tiller
+      release: istio
+      app: istio-egressgateway
+      istio: egressgateway
   template:
     metadata:
       labels:
@@ -14569,7 +14585,7 @@ spec:
                 values:
                 - s390x      
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-ingressgateway
@@ -14580,6 +14596,13 @@ metadata:
     app: istio-ingressgateway
     istio: ingressgateway
 spec:
+  selector:
+    matchLabels:
+      chart: gateways
+      heritage: Tiller
+      release: istio
+      app: istio-ingressgateway
+      istio: ingressgateway
   template:
     metadata:
       labels:
@@ -14743,7 +14766,7 @@ spec:
 
 ---
 # Source: istio/charts/grafana/templates/deployment.yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: grafana
@@ -14754,6 +14777,12 @@ metadata:
     release: istio
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+      chart: grafana
+      heritage: Tiller
+      release: istio
   template:
     metadata:
       labels:
@@ -14892,7 +14921,7 @@ spec:
 
 ---
 # Source: istio/charts/kiali/templates/deployment.yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kiali
@@ -14993,7 +15022,7 @@ spec:
 ---
 # Source: istio/charts/mixer/templates/deployment.yaml
 
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-policy
@@ -15164,7 +15193,7 @@ spec:
           readOnly: true
 
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-telemetry
@@ -15342,7 +15371,7 @@ spec:
 
 ---
 # Source: istio/charts/pilot/templates/deployment.yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-pilot
@@ -15523,7 +15552,7 @@ spec:
 ---
 # Source: istio/charts/prometheus/templates/deployment.yaml
 # TODO: the original template has service account, roles, etc
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
@@ -15620,7 +15649,7 @@ spec:
 ---
 # Source: istio/charts/security/templates/deployment.yaml
 # istio CA watching all namespaces
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-citadel
@@ -15636,6 +15665,13 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: security
+      chart: security
+      heritage: Tiller
+      release: istio
+      istio: citadel
   template:
     metadata:
       labels:
@@ -15706,7 +15742,7 @@ spec:
 
 ---
 # Source: istio/charts/sidecarInjectorWebhook/templates/deployment.yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-sidecar-injector
@@ -15722,6 +15758,13 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: sidecarInjectorWebhook
+      chart: sidecarInjectorWebhook
+      heritage: Tiller
+      release: istio
+      istio: sidecar-injector
   template:
     metadata:
       labels:
@@ -15829,7 +15872,7 @@ spec:
 # Source: istio/charts/tracing/templates/deployment-jaeger.yaml
 
 
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-tracing
@@ -15839,6 +15882,12 @@ metadata:
     heritage: Tiller
     release: istio
 spec:
+  selector:
+    matchLabels:
+      app: jaeger
+      chart: tracing
+      heritage: Tiller
+      release: istio
   template:
     metadata:
       labels:
@@ -15940,7 +15989,7 @@ spec:
   maxReplicas: 5
   minReplicas: 1
   scaleTargetRef:
-    apiVersion: apps/v1beta1
+    apiVersion: apps/v1
     kind: Deployment
     name: istio-egressgateway
   metrics:
@@ -15962,7 +16011,7 @@ spec:
   maxReplicas: 5
   minReplicas: 1
   scaleTargetRef:
-    apiVersion: apps/v1beta1
+    apiVersion: apps/v1
     kind: Deployment
     name: istio-ingressgateway
   metrics:
@@ -15988,7 +16037,7 @@ spec:
     maxReplicas: 5
     minReplicas: 1
     scaleTargetRef:
-      apiVersion: apps/v1beta1
+      apiVersion: apps/v1
       kind: Deployment
       name: istio-policy
     metrics:
@@ -16010,7 +16059,7 @@ spec:
     maxReplicas: 5
     minReplicas: 1
     scaleTargetRef:
-      apiVersion: apps/v1beta1
+      apiVersion: apps/v1
       kind: Deployment
       name: istio-telemetry
     metrics:
@@ -16036,7 +16085,7 @@ spec:
   maxReplicas: 5
   minReplicas: 1
   scaleTargetRef:
-    apiVersion: apps/v1beta1
+    apiVersion: apps/v1
     kind: Deployment
     name: istio-pilot
   metrics:

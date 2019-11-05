@@ -1,13 +1,15 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/pkg/fs"
-	"sigs.k8s.io/kustomize/pkg/loader"
-	"sigs.k8s.io/kustomize/pkg/resmap"
-	"sigs.k8s.io/kustomize/pkg/resource"
-	"sigs.k8s.io/kustomize/pkg/target"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
 	"testing"
 )
 
@@ -75,7 +77,21 @@ resources:
 - certificate.yaml
 namespace: kubeflow
 commonLabels:
-  kustomize.component: basic-auth-ingress`)
+  kustomize.component: basic-auth-ingress
+images:
+- name: gcr.io/kubeflow-images-public/ingress-setup
+  newName: gcr.io/kubeflow-images-public/ingress-setup
+  newTag: latest
+`)
+	th.writeF("/manifests/gcp/basic-auth-ingress/base/backend-config.yaml", `
+apiVersion: cloud.google.com/v1beta1
+kind: BackendConfig
+metadata:
+  name: basicauth-backendconfig
+spec:
+  # Jupyter uses websockets so we want to increase the timeout.
+  timeoutSec: 3600
+`)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cloud-endpoint.yaml", `
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
@@ -99,7 +115,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kf-admin
-  namespace: kubeflow
+  namespace: $(istioNamespace)
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -120,6 +136,7 @@ rules:
   - update
 - apiGroups:
   - extensions
+  - networking.k8s.io
   resources:
   - ingresses
   verbs:
@@ -134,8 +151,8 @@ data:
   update_backend.sh: |
     #!/bin/bash
     #
-    # A simple shell script to configure the backend timeouts and health checks by using gcloud.
-
+    # A simple shell script to configure the health checks by using gcloud.
+    set -x 
     [ -z ${NAMESPACE} ] && echo Error NAMESPACE must be set && exit 1
     [ -z ${SERVICE} ] && echo Error SERVICE must be set && exit 1
     [ -z ${INGRESS_NAME} ] && echo Error INGRESS_NAME must be set && exit 1
@@ -146,58 +163,67 @@ data:
       exit 1
     fi
 
-    # Activate the service account, allow 5 retries
-    for i in {1..5}; do gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS} && break || sleep 10; done
+    set_health_check() {
+      # Activate the service account, allow 5 retries
+      if [[ ! -z "${GOOGLE_APPLICATION_CREDENTIALS}" ]]; then
+        # TODO(jlewi): As of 0.7 we should always be using workload identity. We can remove it post 0.7.0 once we have workload identity
+        # fully working
+        # Activate the service account, allow 5 retries
+        for i in {1..5}; do gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS} && break || sleep 10; done
+      fi      
 
-    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[0].nodePort}')
-    echo node port is ${NODE_PORT}
+      # For debugging print out what account we are using
+      gcloud auth list
 
-    while [[ -z ${BACKEND_NAME} ]]; do
-      BACKENDS=$(kubectl --namespace=${NAMESPACE} get ingress ${INGRESS_NAME} -o jsonpath='{.metadata.annotations.ingress\.kubernetes\.io/backends}')
-      echo "fetching backends info with ${INGRESS_NAME}: ${BACKENDS}"
-      BACKEND_NAME=$(echo $BACKENDS | grep -o "k8s-be-${NODE_PORT}--[0-9a-z]\+")
-      echo "backend name is ${BACKEND_NAME}"
-      sleep 2
+      NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[0].nodePort}')
+      echo node port is ${NODE_PORT}
+
+      while [[ -z ${BACKEND_NAME} ]]; do
+        BACKENDS=$(kubectl --namespace=${NAMESPACE} get ingress ${INGRESS_NAME} -o jsonpath='{.metadata.annotations.ingress\.kubernetes\.io/backends}')
+        echo "fetching backends info with ${INGRESS_NAME}: ${BACKENDS}"
+        BACKEND_NAME=$(echo $BACKENDS | grep -o "k8s-be-${NODE_PORT}--[0-9a-z]\+")
+        echo "backend name is ${BACKEND_NAME}"
+        sleep 2
+      done
+
+      while [[ -z ${BACKEND_SERVICE} ]];
+      do BACKEND_SERVICE=$(gcloud --project=${PROJECT} compute backend-services list --filter=name~k8s-be-${NODE_PORT}- --uri);
+      echo "Waiting for the backend-services resource PROJECT=${PROJECT} NODEPORT=${NODE_PORT} SERVICE=${SERVICE}...";
+      sleep 2;
+      done
+
+      while [[ -z ${HEALTH_CHECK_URI} ]];
+      do HEALTH_CHECK_URI=$(gcloud compute --project=${PROJECT} health-checks list --filter=name~${BACKEND_NAME} --uri);
+      echo "Waiting for the healthcheck resource PROJECT=${PROJECT} NODEPORT=${NODE_PORT} SERVICE=${SERVICE}...";
+      sleep 2;
+      done
+
+      echo health check URI is ${HEALTH_CHECK_URI}
+
+      # Since we create the envoy-ingress ingress object before creating the envoy
+      # deployment object, healthcheck will not be configured correctly in the GCP
+      # load balancer. It will default the healthcheck request path to a value of
+      # / instead of the intended /healthz.
+      # Manually update the healthcheck request path to /healthz
+      if [[ ${HEALTHCHECK_PATH} ]]; then
+        echo Running health checks update ${HEALTH_CHECK_URI} with ${HEALTHCHECK_PATH}
+        gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=${HEALTHCHECK_PATH}
+      else
+        echo Running health checks update ${HEALTH_CHECK_URI} with /healthz
+        gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=/healthz
+      fi
+
+      if [[ ${USE_ISTIO} ]]; then
+        # Create the route so healthcheck can pass
+        kubectl apply -f /var/envoy-config/healthcheck_route.yaml
+      fi
+    }
+
+    while true; do
+      set_health_check
+      echo "Backend updated successfully. Waiting 1 hour before updating again."
+      sleep 3600
     done
-
-    while [[ -z ${BACKEND_SERVICE} ]];
-    do BACKEND_SERVICE=$(gcloud --project=${PROJECT} compute backend-services list --filter=name~k8s-be-${NODE_PORT}- --uri);
-    echo "Waiting for the backend-services resource PROJECT=${PROJECT} NODEPORT=${NODE_PORT} SERVICE=${SERVICE}...";
-    sleep 2;
-    done
-
-    while [[ -z ${HEALTH_CHECK_URI} ]];
-    do HEALTH_CHECK_URI=$(gcloud compute --project=${PROJECT} health-checks list --filter=name~${BACKEND_NAME} --uri);
-    echo "Waiting for the healthcheck resource PROJECT=${PROJECT} NODEPORT=${NODE_PORT} SERVICE=${SERVICE}...";
-    sleep 2;
-    done
-
-    echo health check URI is ${HEALTH_CHECK_URI}
-
-    # Since we create the envoy-ingress ingress object before creating the envoy
-    # deployment object, healthcheck will not be configured correctly in the GCP
-    # load balancer. It will default the healthcheck request path to a value of
-    # / instead of the intended /healthz.
-    # Manually update the healthcheck request path to /healthz
-    if [[ ${HEALTHCHECK_PATH} ]]; then
-      echo Running health checks update ${HEALTH_CHECK_URI} with ${HEALTHCHECK_PATH}
-      gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=${HEALTHCHECK_PATH}
-    else
-      echo Running health checks update ${HEALTH_CHECK_URI} with /healthz
-      gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=/healthz
-    fi
-
-    if [[ ${USE_ISTIO} ]]; then
-      # Create the route so healthcheck can pass
-      kubectl apply -f /var/envoy-config/healthcheck_route.yaml
-    fi
-
-    # Since JupyterHub uses websockets we want to increase the backend timeout
-    echo Increasing backend timeout for JupyterHub
-    gcloud --project=${PROJECT} compute backend-services update --global ${BACKEND_SERVICE} --timeout=3600
-
-    echo "Backend updated successfully. Waiting 1 hour before updating again."
-    sleep 3600
 kind: ConfigMap
 metadata:
   name: envoy-config
@@ -234,7 +260,7 @@ metadata:
 ---
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: whoami-app
@@ -264,7 +290,7 @@ spec:
           timeoutSeconds: 5
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/ingress.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:
@@ -299,6 +325,7 @@ metadata:
       rewrite: ""
       service: istio-ingressgateway.istio-system
       precedence: 1
+      use_websocket: true
   labels:
     app: istioMappingSvc
     ksonnet.io/component: basic-auth-ingress
@@ -343,7 +370,7 @@ spec:
   type: ClusterIP
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/stateful-set.yaml", `
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
@@ -419,6 +446,8 @@ varReference:
   kind: CloudEndpoint
 - path: spec/domains
   kind: ManagedCertificate
+- path: subjects/namespace
+  kind: ClusterRoleBinding
 `)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/params.env", `
 appName=kubeflow
@@ -436,6 +465,7 @@ istioNamespace=istio-system
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+- backend-config.yaml
 - cloud-endpoint.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
@@ -450,12 +480,12 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: basic-auth-ingress
 images:
-  - name: gcr.io/kubeflow-images-public/ingress-setup
-    newName: gcr.io/kubeflow-images-public/ingress-setup
-    newTag: latest
-  - name: gcr.io/cloud-solutions-group/esp-sample-app
-    newName: gcr.io/cloud-solutions-group/esp-sample-app
-    newTag: 1.0.0
+- name: gcr.io/kubeflow-images-public/ingress-setup
+  newName: gcr.io/kubeflow-images-public/ingress-setup
+  newTag: latest
+- name: gcr.io/cloud-solutions-group/esp-sample-app
+  newName: gcr.io/cloud-solutions-group/esp-sample-app
+  newTag: 1.0.0
 configMapGenerator:
 - name: basic-auth-ingress-parameters
   env: params.env
@@ -537,21 +567,26 @@ func TestBasicAuthIngressOverlaysCertmanager(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../gcp/basic-auth-ingress/overlays/certmanager"
-	fsys := fs.MakeRealFS()
-	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	n, err := kt.MakeCustomizedResMap()
+	expected, err := m.AsYaml()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	targetPath := "../gcp/basic-auth-ingress/overlays/certmanager"
+	fsys := fs.MakeRealFS()
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	actual, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	th.assertActualEqualsExpected(actual, string(expected))
 }

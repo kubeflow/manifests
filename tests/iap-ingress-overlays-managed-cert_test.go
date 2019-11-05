@@ -1,13 +1,15 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/pkg/fs"
-	"sigs.k8s.io/kustomize/pkg/loader"
-	"sigs.k8s.io/kustomize/pkg/resmap"
-	"sigs.k8s.io/kustomize/pkg/resource"
-	"sigs.k8s.io/kustomize/pkg/target"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
 	"testing"
 )
 
@@ -38,6 +40,8 @@ kind: BackendConfig
 metadata:
   name: iap-backendconfig
 spec:
+  # Jupyter uses websockets so we want to increase the timeout.
+  timeoutSec: 3600
   iap:
     enabled: true
     oauthclientCredentials:
@@ -86,6 +90,7 @@ rules:
   - update
 - apiGroups:
   - extensions
+  - networking.k8s.io
   resources:
   - ingresses
   verbs:
@@ -158,7 +163,8 @@ data:
   setup_backend.sh: |
     #!/usr/bin/env bash
     #
-    # A simple shell script to configure the backend timeouts and health checks by using gcloud.
+    # A simple shell script to configure the JWT audience used with ISTIO
+    set -x
     [ -z ${NAMESPACE} ] && echo Error NAMESPACE must be set && exit 1
     [ -z ${SERVICE} ] && echo Error SERVICE must be set && exit 1
     [ -z ${INGRESS_NAME} ] && echo Error INGRESS_NAME must be set && exit 1
@@ -176,74 +182,61 @@ data:
     fi
 
     # Activate the service account
-    gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
-    # Print out the config for debugging
-    gcloud config list
-
-    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
-    echo "node port is ${NODE_PORT}"
-
-    while [[ -z ${BACKEND_NAME} ]]; do
-      BACKENDS=$(kubectl --namespace=${NAMESPACE} get ingress ${INGRESS_NAME} -o jsonpath='{.metadata.annotations.ingress\.kubernetes\.io/backends}')
-      echo "fetching backends info with ${INGRESS_NAME}: ${BACKENDS}"
-      BACKEND_NAME=$(echo $BACKENDS | grep -o "k8s-be-${NODE_PORT}--[0-9a-z]\+")
-      echo "backend name is ${BACKEND_NAME}"
-      sleep 2
-    done
-
-    while [[ -z ${BACKEND_ID} ]]; do
-      BACKEND_ID=$(gcloud compute --project=${PROJECT} backend-services list --filter=name~${BACKEND_NAME} --format='value(id)')
-      echo "Waiting for backend id PROJECT=${PROJECT} NAMESPACE=${NAMESPACE} SERVICE=${SERVICE} filter=name~${BACKEND_NAME}"
-      sleep 2
-    done
-    echo BACKEND_ID=${BACKEND_ID}
-
-    JWT_AUDIENCE="/projects/${PROJECT_NUM}/global/backendServices/${BACKEND_ID}"
-
-    # For healthcheck compare.
-    mkdir -p /var/shared
-    echo "JWT_AUDIENCE=${JWT_AUDIENCE}" > /var/shared/healthz.env
-    echo "NODE_PORT=${NODE_PORT}" >> /var/shared/healthz.env
-    echo "BACKEND_ID=${BACKEND_ID}" >> /var/shared/healthz.env
-
-    if [[ -z ${USE_ISTIO} ]]; then
-      # TODO(https://github.com/kubeflow/kubeflow/issues/942): We should publish the modified envoy
-      # config as a config map and use that in the envoy sidecars.
-      kubectl get configmap -n ${NAMESPACE} envoy-config -o jsonpath='{.data.envoy-config\.json}' |
-        sed -e "s|{{JWT_AUDIENCE}}|${JWT_AUDIENCE}|g" > /var/shared/envoy-config.json
-    else
-      # Use kubectl patch.
-       echo patch JWT audience: ${JWT_AUDIENCE}
-       kubectl -n ${NAMESPACE} patch policy ingress-jwt --type json -p '[{"op": "replace", "path": "/spec/origins/0/jwt/audiences/0", "value": "'${JWT_AUDIENCE}'"}]'
+    if [ ! -z "${GOOGLE_APPLICATION_CREDENTIALS}" ]; then
+      # As of 0.7.0 we should be using workload identity and never setting GOOGLE_APPLICATION_CREDENTIALS.
+      # But we kept this for backwards compatibility but can remove later.
+      gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
     fi
 
-    echo "Clearing lock on service annotation"
-    kubectl patch svc "${SERVICE}" -p "{\"metadata\": { \"annotations\": {\"backendlock\": \"\" }}}"
+    # Print out the config for debugging
+    gcloud config list
+    gcloud auth list
 
-    checkBackend() {
-      # created by init container.
-      . /var/shared/healthz.env
+    set_jwt_policy () {
+      NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+      echo "node port is ${NODE_PORT}"
 
-      # If node port or backend id change, so does the JWT audience.
-      CURR_NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
-      read -ra toks <<<"$(gcloud compute --project=${PROJECT} backend-services list --filter=name~k8s-be-${CURR_NODE_PORT}- --format='value(id,timeoutSec)')"
-      CURR_BACKEND_ID="${toks[0]}"
-      CURR_BACKEND_TIMEOUT="${toks[1]}"
-      [[ "$BACKEND_ID" == "$CURR_BACKEND_ID" && "${CURR_BACKEND_TIMEOUT}" -eq 3600 ]]
+      BACKEND_NAME=""
+      while [[ -z ${BACKEND_NAME} ]]; do
+        BACKENDS=$(kubectl --namespace=${NAMESPACE} get ingress ${INGRESS_NAME} -o jsonpath='{.metadata.annotations.ingress\.kubernetes\.io/backends}')
+        echo "fetching backends info with ${INGRESS_NAME}: ${BACKENDS}"
+        BACKEND_NAME=$(echo $BACKENDS | grep -o "k8s-be-${NODE_PORT}--[0-9a-z]\+")
+        echo "backend name is ${BACKEND_NAME}"
+        sleep 2
+      done
+
+      BACKEND_ID=""
+      while [[ -z ${BACKEND_ID} ]]; do
+        BACKEND_ID=$(gcloud compute --project=${PROJECT} backend-services list --filter=name~${BACKEND_NAME} --format='value(id)')
+        echo "Waiting for backend id PROJECT=${PROJECT} NAMESPACE=${NAMESPACE} SERVICE=${SERVICE} filter=name~${BACKEND_NAME}"
+        sleep 2
+      done
+      echo BACKEND_ID=${BACKEND_ID}
+
+      JWT_AUDIENCE="/projects/${PROJECT_NUM}/global/backendServices/${BACKEND_ID}"
+      
+      # Use kubectl patch.
+      echo patch JWT audience: ${JWT_AUDIENCE}
+      kubectl -n ${NAMESPACE} patch policy ingress-jwt --type json -p '[{"op": "replace", "path": "/spec/origins/0/jwt/audiences/0", "value": "'${JWT_AUDIENCE}'"}]'
+
+      echo "Clearing lock on service annotation"
+      kubectl patch svc "${SERVICE}" -p "{\"metadata\": { \"annotations\": {\"backendlock\": \"\" }}}"
     }
 
-    # Verify configuration every 10 seconds.
     while true; do
-      if ! checkBackend; then
-        echo "$(date) WARN: Backend check failed, restarting container."
-        exit 1
-      fi
-      sleep 10
+      set_jwt_policy
+      # Every 5 minutes recheck the JWT policy and reset it if the backend has changed for some reason.
+      # This follows Kubernetes level based design.
+      # We have at least one report see 
+      # https://github.com/kubeflow/kubeflow/issues/4342#issuecomment-544653657
+      # of the backend id changing over time.
+      sleep 300
     done
   update_backend.sh: |
     #!/bin/bash
     #
-    # A simple shell script to configure the backend timeouts and health checks by using gcloud.
+    # A simple shell script to configure the health checks by using gcloud.
+    set -x
 
     [ -z ${NAMESPACE} ] && echo Error NAMESPACE must be set && exit 1
     [ -z ${SERVICE} ] && echo Error SERVICE must be set && exit 1
@@ -255,58 +248,63 @@ data:
       exit 1
     fi
 
-    # Activate the service account, allow 5 retries
-    for i in {1..5}; do gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS} && break || sleep 10; done
+    if [[ ! -z "${GOOGLE_APPLICATION_CREDENTIALS}" ]]; then
+      # TODO(jlewi): As of 0.7 we should always be using workload identity. We can remove it post 0.7.0 once we have workload identity
+      # fully working
+      # Activate the service account, allow 5 retries
+      for i in {1..5}; do gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS} && break || sleep 10; done
+    fi      
 
-    NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
-    echo node port is ${NODE_PORT}
+    set_health_check () {
+      NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+      echo node port is ${NODE_PORT}
 
-    while [[ -z ${BACKEND_NAME} ]]; do
-      BACKENDS=$(kubectl --namespace=${NAMESPACE} get ingress ${INGRESS_NAME} -o jsonpath='{.metadata.annotations.ingress\.kubernetes\.io/backends}')
-      echo "fetching backends info with ${INGRESS_NAME}: ${BACKENDS}"
-      BACKEND_NAME=$(echo $BACKENDS | grep -o "k8s-be-${NODE_PORT}--[0-9a-z]\+")
-      echo "backend name is ${BACKEND_NAME}"
-      sleep 2
+      while [[ -z ${BACKEND_NAME} ]]; do
+        BACKENDS=$(kubectl --namespace=${NAMESPACE} get ingress ${INGRESS_NAME} -o jsonpath='{.metadata.annotations.ingress\.kubernetes\.io/backends}')
+        echo "fetching backends info with ${INGRESS_NAME}: ${BACKENDS}"
+        BACKEND_NAME=$(echo $BACKENDS | grep -o "k8s-be-${NODE_PORT}--[0-9a-z]\+")
+        echo "backend name is ${BACKEND_NAME}"
+        sleep 2
+      done
+
+      while [[ -z ${BACKEND_SERVICE} ]];
+      do BACKEND_SERVICE=$(gcloud --project=${PROJECT} compute backend-services list --filter=name~${BACKEND_NAME} --uri);
+      echo "Waiting for the backend-services resource PROJECT=${PROJECT} BACKEND_NAME=${BACKEND_NAME} SERVICE=${SERVICE}...";
+      sleep 2;
+      done
+
+      while [[ -z ${HEALTH_CHECK_URI} ]];
+      do HEALTH_CHECK_URI=$(gcloud compute --project=${PROJECT} health-checks list --filter=name~${BACKEND_NAME} --uri);
+      echo "Waiting for the healthcheck resource PROJECT=${PROJECT} NODEPORT=${NODE_PORT} SERVICE=${SERVICE}...";
+      sleep 2;
+      done
+
+      echo health check URI is ${HEALTH_CHECK_URI}
+
+      # Since we create the envoy-ingress ingress object before creating the envoy
+      # deployment object, healthcheck will not be configured correctly in the GCP
+      # load balancer. It will default the healthcheck request path to a value of
+      # / instead of the intended /healthz.
+      # Manually update the healthcheck request path to /healthz
+      if [[ ${HEALTHCHECK_PATH} ]]; then
+        # This is basic auth
+        echo Running health checks update ${HEALTH_CHECK_URI} with ${HEALTHCHECK_PATH}
+        gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=${HEALTHCHECK_PATH}
+      else
+        # /healthz/ready is the health check path for istio-ingressgateway
+        echo Running health checks update ${HEALTH_CHECK_URI} with /healthz/ready
+        gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=/healthz/ready
+        # We need the nodeport for istio-ingressgateway status-port
+        STATUS_NODE_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="status-port")].nodePort}')
+        gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --port=${STATUS_NODE_PORT}
+      fi      
+    }
+
+    while true; do
+      set_health_check
+      echo "Backend updated successfully. Waiting 1 hour before updating again."
+      sleep 3600
     done
-
-    while [[ -z ${BACKEND_SERVICE} ]];
-    do BACKEND_SERVICE=$(gcloud --project=${PROJECT} compute backend-services list --filter=name~k8s-be-${NODE_PORT}- --uri);
-    echo "Waiting for the backend-services resource PROJECT=${PROJECT} NODEPORT=${NODE_PORT} SERVICE=${SERVICE}...";
-    sleep 2;
-    done
-
-    while [[ -z ${HEALTH_CHECK_URI} ]];
-    do HEALTH_CHECK_URI=$(gcloud compute --project=${PROJECT} health-checks list --filter=name~${BACKEND_NAME} --uri);
-    echo "Waiting for the healthcheck resource PROJECT=${PROJECT} NODEPORT=${NODE_PORT} SERVICE=${SERVICE}...";
-    sleep 2;
-    done
-
-    echo health check URI is ${HEALTH_CHECK_URI}
-
-    # Since we create the envoy-ingress ingress object before creating the envoy
-    # deployment object, healthcheck will not be configured correctly in the GCP
-    # load balancer. It will default the healthcheck request path to a value of
-    # / instead of the intended /healthz.
-    # Manually update the healthcheck request path to /healthz
-    if [[ ${HEALTHCHECK_PATH} ]]; then
-      # This is basic auth
-      echo Running health checks update ${HEALTH_CHECK_URI} with ${HEALTHCHECK_PATH}
-      gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=${HEALTHCHECK_PATH}
-    else
-      # /healthz/ready is the health check path for istio-ingressgateway
-      echo Running health checks update ${HEALTH_CHECK_URI} with /healthz/ready
-      gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=/healthz/ready
-      # We need the nodeport for istio-ingressgateway status-port
-      STATUS_NODE_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="status-port")].nodePort}')
-      gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --port=${STATUS_NODE_PORT}
-    fi
-
-    # Since JupyterHub uses websockets we want to increase the backend timeout
-    echo Increasing backend timeout for JupyterHub
-    gcloud --project=${PROJECT} compute backend-services update --global ${BACKEND_SERVICE} --timeout=3600
-
-    echo "Backend updated successfully. Waiting 1 hour before updating again."
-    sleep 3600
 kind: ConfigMap
 metadata:
   name: envoy-config
@@ -342,7 +340,7 @@ metadata:
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/deployment.yaml", `
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: whoami-app
@@ -371,7 +369,7 @@ spec:
           successThreshold: 1
           timeoutSeconds: 5
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: iap-enabler
@@ -410,7 +408,7 @@ spec:
         name: config-volume
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/ingress.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:
@@ -446,7 +444,7 @@ spec:
       - x-goog-iap-jwt-assertion
       trigger_rules:
       - excluded_paths:
-        - exact: /healthz
+        - exact: /healthz/ready
         - prefix: /.well-known/acme-challenge
   principalBinding: USE_ORIGIN
   targets:
@@ -594,15 +592,15 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: iap-ingress
 images:
-  - name: gcr.io/kubeflow-images-public/envoy
-    newName: gcr.io/kubeflow-images-public/envoy
-    newTag: v20180309-0fb4886b463698702b6a08955045731903a18738
-  - name: gcr.io/kubeflow-images-public/ingress-setup
-    newName: gcr.io/kubeflow-images-public/ingress-setup
-    newTag: latest
-  - name: gcr.io/cloud-solutions-group/esp-sample-app
-    newName: gcr.io/cloud-solutions-group/esp-sample-app
-    newTag: 1.0.0
+- name: gcr.io/kubeflow-images-public/envoy
+  newName: gcr.io/kubeflow-images-public/envoy
+  newTag: v20180309-0fb4886b463698702b6a08955045731903a18738
+- name: gcr.io/kubeflow-images-public/ingress-setup
+  newName: gcr.io/kubeflow-images-public/ingress-setup
+  newTag: latest
+- name: gcr.io/cloud-solutions-group/esp-sample-app
+  newName: gcr.io/cloud-solutions-group/esp-sample-app
+  newTag: 1.0.0
 configMapGenerator:
 - name: parameters
   env: params.env
@@ -687,7 +685,8 @@ vars:
   fieldref:
     fieldpath: data.istioNamespace
 configurations:
-- params.yaml`)
+- params.yaml
+`)
 }
 
 func TestIapIngressOverlaysManagedCert(t *testing.T) {
@@ -697,21 +696,26 @@ func TestIapIngressOverlaysManagedCert(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../gcp/iap-ingress/overlays/managed-cert"
-	fsys := fs.MakeRealFS()
-	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	n, err := kt.MakeCustomizedResMap()
+	expected, err := m.AsYaml()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := n.EncodeAsYaml()
-	th.assertActualEqualsExpected(m, string(expected))
+	targetPath := "../gcp/iap-ingress/overlays/managed-cert"
+	fsys := fs.MakeRealFS()
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
+	if loaderErr != nil {
+		t.Fatalf("could not load kustomize loader: %v", loaderErr)
+	}
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
+	if err != nil {
+		th.t.Fatalf("Unexpected construction error %v", err)
+	}
+	actual, err := kt.MakeCustomizedResMap()
+	if err != nil {
+		t.Fatalf("Err: %v", err)
+	}
+	th.assertActualEqualsExpected(actual, string(expected))
 }

@@ -1,5 +1,3 @@
-# TODO: AWS has not enable this yet
-
 apiVersion: authentication.istio.io/v1alpha1
 kind: Policy
 metadata:
@@ -7,14 +5,16 @@ metadata:
   namespace: istio-system
 spec:
   targets:
-    - name: istio-ingressgateway
-      ports:
-        - number: 80
+  - name: istio-ingressgateway
+    ports:
+    - number: 80
   origins:
-    - jwt:
-        audiences:
-          - cognito_app_client_id
-        issuer: "testing@secure.istio.io"
-        jwksUri: "https://raw.githubusercontent.com/istio/istio/release-1.2/security/tools/jwt/samples/jwks.json"
-        jwtHeaders: x-amzn-cognito-jwt-assertion
+  - jwt:
+      issuer: "https://cognito-idp.us-west-2.amazonaws.com/us-west-2_xxxxx"
+      jwksUri: "https://cognito-idp.us-west-2.amazonaws.com/us-west-2_xxxxx/.well-known/jwks.json"
+      jwtHeaders:
+      - "x-amzn-oidc-accesstoken"
+      triggerRules:
+      - excludedPaths:
+        - exact: /health_check
   principalBinding: USE_ORIGIN
