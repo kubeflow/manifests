@@ -409,7 +409,7 @@ vars:
 images:
 - name: gcr.io/kubeflow-images-public/metadata
   newName: gcr.io/kubeflow-images-public/metadata
-  newTag: v0.1.9
+  newTag: v0.1.10
 - name: gcr.io/tfx-oss-public/ml_metadata_store_server
   newName: gcr.io/tfx-oss-public/ml_metadata_store_server
   newTag: 0.14.0
