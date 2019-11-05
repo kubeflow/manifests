@@ -16,7 +16,8 @@ rules:
   - kubeflow.org
   resources:
   - notebooks
-  - poddefaults  
+  - notebooks/finalizers
+  - poddefaults
   verbs:
   - get
   - list
