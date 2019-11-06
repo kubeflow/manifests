@@ -110,7 +110,7 @@ metadata:
   labels:
     component: server
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       component: server
@@ -157,7 +157,7 @@ metadata:
   labels:
     component: grpc-server
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       component: grpc-server
