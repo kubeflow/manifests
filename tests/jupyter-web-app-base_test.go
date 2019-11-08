@@ -46,7 +46,8 @@ rules:
   - kubeflow.org
   resources:
   - notebooks
-  - poddefaults  
+  - notebooks/finalizers
+  - poddefaults
   verbs:
   - get
   - list
@@ -328,7 +329,8 @@ varReference:
 - path: spec/template/spec/containers/0/env/2/value
   kind: Deployment
 - path: spec/template/spec/containers/0/env/3/value
-  kind: Deployment`)
+  kind: Deployment
+`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.env", `
 UI=default
 ROK_SECRET_NAME=secret-rok-{username}
@@ -336,7 +338,8 @@ policy=Always
 prefix=jupyter
 clusterDomain=cluster.local
 userid-header=
-userid-prefix=`)
+userid-prefix=
+`)
 	th.writeK("/manifests/jupyter/jupyter-web-app/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization

@@ -232,10 +232,13 @@ rules:
   resources:
   - experiments
   - experiments/status
+  - experiments/finalizers
   - trials
   - trials/status
+  - trials/finalizers
   - suggestions
   - suggestions/status
+  - suggestions/finalizers
   verbs:
   - "*"
 - apiGroups:

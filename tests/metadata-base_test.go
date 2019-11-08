@@ -121,7 +121,7 @@ spec:
     spec:
       containers:
       - name: container
-        image: gcr.io/kubeflow-images-public/metadata:v0.1.9
+        image: gcr.io/kubeflow-images-public/metadata:v0.1.10
         env:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:

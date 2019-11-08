@@ -26,7 +26,8 @@ spec:
   ports:
   - port: 8080
     name: http-authservice
-    targetPort: http-api`)
+    targetPort: http-api
+`)
 	th.writeF("/manifests/istio/oidc-authservice/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -131,7 +132,8 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi`)
+      storage: 10Gi
+`)
 	th.writeF("/manifests/istio/oidc-authservice/base/params.yaml", `
 varReference:
 - path: spec/template/spec/containers/env/value
@@ -139,7 +141,8 @@ varReference:
 - path: spec/filters/filterConfig/httpService/serverUri/uri
   kind: EnvoyFilter
 - path: spec/filters/filterConfig/httpService/serverUri/cluster
-  kind: EnvoyFilter`)
+  kind: EnvoyFilter
+`)
 	th.writeF("/manifests/istio/oidc-authservice/base/params.env", `
 client_id=ldapdexapp
 oidc_provider=
@@ -149,7 +152,8 @@ application_secret=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
 skip_auth_uri=
 userid-header=
 userid-prefix=
-namespace=istio-system`)
+namespace=istio-system
+`)
 	th.writeK("/manifests/istio/oidc-authservice/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization

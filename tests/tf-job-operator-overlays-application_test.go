@@ -158,7 +158,6 @@ rules:
   resources:
   - tfjobs
   - tfjobs/status
-  - tfjobs/finalizers
   verbs:
   - get
   - list

@@ -17474,4 +17474,3 @@ func TestIstioInstallBase(t *testing.T) {
 	}
 	th.assertActualEqualsExpected(actual, string(expected))
 }
-

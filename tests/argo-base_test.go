@@ -85,6 +85,7 @@ rules:
   - argoproj.io
   resources:
   - workflows
+  - workflows/finalizers
   verbs:
   - get
   - list
@@ -119,6 +120,7 @@ rules:
   - argoproj.io
   resources:
   - workflows
+  - workflows/finalizers
   verbs:
   - get
   - list
@@ -153,6 +155,7 @@ data:
         }
     }
     }
+
 `)
 	th.writeF("/manifests/argo/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
@@ -206,7 +209,9 @@ spec:
               apiVersion: v1
               fieldPath: metadata.namespace
         - name: IN_CLUSTER
-          value: "true"
+          value: 'true'
+        - name: ENABLE_WEB_CONSOLE
+          value: 'false'
         - name: BASE_HREF
           value: /argo/
         image: argoproj/argoui:v2.3.0
@@ -329,6 +334,7 @@ varReference:
 namespace=
 executorImage=argoproj/argoexec:v2.3.0
 containerRuntimeExecutor=docker
+#containerRuntimeExecutor=k8sapi
 artifactRepositoryBucket=mlpipeline
 artifactRepositoryKeyPrefix=artifacts
 artifactRepositoryEndpoint=minio-service.kubeflow:9000
