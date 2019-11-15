@@ -13,7 +13,7 @@ import (
 	"testing"
 )
 
-func writeKatibControllerOverlaysIBMStorageConfig(th *KustTestHarness) {
+func writeKatibControllerOverlaysIbmStorageConfig(th *KustTestHarness) {
 	th.writeF("/manifests/katib/katib-controller/overlays/ibm-storage-config/katib-db-deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -25,7 +25,6 @@ spec:
       containers:
       - name: katib-db
         livenessProbe: null
-
 `)
 	th.writeK("/manifests/katib/katib-controller/overlays/ibm-storage-config", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -649,9 +648,9 @@ configurations:
 `)
 }
 
-func TestKatibControllerOverlaysIBMStorageConfig(t *testing.T) {
+func TestKatibControllerOverlaysIbmStorageConfig(t *testing.T) {
 	th := NewKustTestHarness(t, "/manifests/katib/katib-controller/overlays/ibm-storage-config")
-	writeKatibControllerOverlaysIBMStorageConfig(th)
+	writeKatibControllerOverlaysIbmStorageConfig(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)

@@ -13,7 +13,7 @@ import (
 	"testing"
 )
 
-func writeOidcAuthserviceOverlaysIBMStorageConfig(th *KustTestHarness) {
+func writeOidcAuthserviceOverlaysIbmStorageConfig(th *KustTestHarness) {
 	th.writeF("/manifests/istio/oidc-authservice/overlays/ibm-storage-config/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -51,7 +51,8 @@ spec:
   ports:
   - port: 8080
     name: http-authservice
-    targetPort: http-api`)
+    targetPort: http-api
+`)
 	th.writeF("/manifests/istio/oidc-authservice/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -111,7 +112,7 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-              claimName: authservice-pvc
+              claimName: authservice-pvc          
 `)
 	th.writeF("/manifests/istio/oidc-authservice/base/envoy-filter.yaml", `
 apiVersion: networking.istio.io/v1alpha3
@@ -129,7 +130,7 @@ spec:
           cluster: outbound|8080||authservice.$(namespace).svc.cluster.local
           failureModeAllow: false
           timeout: 10s
-        authorizationRequest:
+        authorizationRequest: 
           allowedHeaders:
             patterns:
             - exact: "cookie"
@@ -156,7 +157,8 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi`)
+      storage: 10Gi
+`)
 	th.writeF("/manifests/istio/oidc-authservice/base/params.yaml", `
 varReference:
 - path: spec/template/spec/containers/env/value
@@ -164,7 +166,8 @@ varReference:
 - path: spec/filters/filterConfig/httpService/serverUri/uri
   kind: EnvoyFilter
 - path: spec/filters/filterConfig/httpService/serverUri/cluster
-  kind: EnvoyFilter`)
+  kind: EnvoyFilter
+`)
 	th.writeF("/manifests/istio/oidc-authservice/base/params.env", `
 client_id=ldapdexapp
 oidc_provider=
@@ -174,7 +177,8 @@ application_secret=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
 skip_auth_uri=
 userid-header=
 userid-prefix=
-namespace=istio-system`)
+namespace=istio-system
+`)
 	th.writeK("/manifests/istio/oidc-authservice/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -266,9 +270,9 @@ images:
 `)
 }
 
-func TestOidcAuthserviceOverlaysIBMStorageConfig(t *testing.T) {
+func TestOidcAuthserviceOverlaysIbmStorageConfig(t *testing.T) {
 	th := NewKustTestHarness(t, "/manifests/istio/oidc-authservice/overlays/ibm-storage-config")
-	writeOidcAuthserviceOverlaysIBMStorageConfig(th)
+	writeOidcAuthserviceOverlaysIbmStorageConfig(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)

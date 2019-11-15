@@ -13,7 +13,7 @@ import (
 	"testing"
 )
 
-func writeMetadataOverlaysIBMStorageConfig(th *KustTestHarness) {
+func writeMetadataOverlaysIbmStorageConfig(th *KustTestHarness) {
 	th.writeK("/manifests/metadata/overlays/ibm-storage-config", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -131,7 +131,7 @@ spec:
     spec:
       containers:
       - name: container
-        image: gcr.io/kubeflow-images-public/metadata:v0.1.9
+        image: gcr.io/kubeflow-images-public/metadata:v0.1.10
         env:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
@@ -435,9 +435,9 @@ images:
 `)
 }
 
-func TestMetadataOverlaysIBMStorageConfig(t *testing.T) {
+func TestMetadataOverlaysIbmStorageConfig(t *testing.T) {
 	th := NewKustTestHarness(t, "/manifests/metadata/overlays/ibm-storage-config")
-	writeMetadataOverlaysIBMStorageConfig(th)
+	writeMetadataOverlaysIbmStorageConfig(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
