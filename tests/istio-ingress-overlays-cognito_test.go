@@ -19,6 +19,7 @@ apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: istio-ingress
+  namespace: istio-system
   annotations:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
@@ -85,6 +86,7 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
   name: istio-ingress
+  namespace: istio-system
 spec:
   rules:
     - http:
@@ -94,29 +96,11 @@ spec:
               servicePort: 80
             path: /*
 `)
-	th.writeF("/manifests/aws/istio-ingress/base/istio-gateway.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: kubeflow-gateway
-  namespace: kubeflow
-spec:
-  selector:
-    istio: ingressgateway
-  servers:
-  - hosts:
-    - '*'
-    port:
-      name: http
-      number: 80
-      protocol: HTTP`)
 	th.writeK("/manifests/aws/istio-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - ingress.yaml
-- istio-gateway.yaml
-#- istio-virtual-service.yaml
 commonLabels:
   kustomize.component: istio-ingress
 `)

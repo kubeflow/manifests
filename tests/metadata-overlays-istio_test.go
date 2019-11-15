@@ -371,7 +371,7 @@ spec:
     app: metadata-ui
 `)
 	th.writeF("/manifests/metadata/base/metadata-envoy-deployment.yaml", `
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: envoy-deployment
@@ -471,7 +471,7 @@ vars:
 images:
 - name: gcr.io/kubeflow-images-public/metadata
   newName: gcr.io/kubeflow-images-public/metadata
-  newTag: v0.1.9
+  newTag: v0.1.10
 - name: gcr.io/tfx-oss-public/ml_metadata_store_server
   newName: gcr.io/tfx-oss-public/ml_metadata_store_server
   newTag: 0.14.0
