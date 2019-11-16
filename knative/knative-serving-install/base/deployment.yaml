@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.10.0"
   name: activator
   namespace: knative-serving
 spec:
@@ -18,17 +18,18 @@ spec:
       labels:
         app: activator
         role: activator
-        serving.knative.dev/release: "v0.8.0"
+        serving.knative.dev/release: "v0.10.0"
     spec:
       containers:
-      - args:
-        - -logtostderr=false
-        - -stderrthreshold=FATAL
-        env:
+      - env:
         - name: POD_NAME
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
         - name: SYSTEM_NAMESPACE
           valueFrom:
             fieldRef:
@@ -38,8 +39,8 @@ spec:
         - name: CONFIG_OBSERVABILITY_NAME
           value: config-observability
         - name: METRICS_DOMAIN
-          value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:88d864eb3c47881cf7ac058479d1c735cc3cf4f07a11aad0621cd36dcd9ae3c6
+          value: knative.dev/internal/serving
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:0c52e0a85612bbedebf6d0de2b1951a4f762a05691f86e78079a5089d4848652
         livenessProbe:
           httpGet:
             httpHeaders:
@@ -50,11 +51,13 @@ spec:
         name: activator
         ports:
         - containerPort: 8012
-          name: http1-port
+          name: http1
         - containerPort: 8013
-          name: h2c-port
+          name: h2c
         - containerPort: 9090
-          name: metrics-port
+          name: metrics
+        - containerPort: 8008
+          name: profiling
         readinessProbe:
           httpGet:
             httpHeaders:
@@ -74,12 +77,31 @@ spec:
       serviceAccountName: controller
       terminationGracePeriodSeconds: 300
 ---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: activator
+  namespace: knative-serving
+spec:
+  maxReplicas: 20
+  metrics:
+  - resource:
+      name: cpu
+      targetAverageUtilization: 100
+    type: Resource
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: activator
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     autoscaling.knative.dev/autoscaler-provider: hpa
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.10.0"
   name: autoscaler-hpa
   namespace: knative-serving
 spec:
@@ -93,7 +115,7 @@ spec:
         sidecar.istio.io/inject: "false"
       labels:
         app: autoscaler-hpa
-        serving.knative.dev/release: "v0.8.0"
+        serving.knative.dev/release: "v0.10.0"
     spec:
       containers:
       - env:
@@ -107,11 +129,13 @@ spec:
           value: config-observability
         - name: METRICS_DOMAIN
           value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa@sha256:a7801c3cf4edecfa51b7bd2068f97941f6714f7922cb4806245377c2b336b723
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa@sha256:f5514430997ed3799e0f708d657fef935e7eef2774f073a46ffb06311c8b5e76
         name: autoscaler-hpa
         ports:
         - containerPort: 9090
           name: metrics
+        - containerPort: 8008
+          name: profiling
         resources:
           limits:
             cpu: 1000m
@@ -122,14 +146,12 @@ spec:
         securityContext:
           allowPrivilegeEscalation: false
       serviceAccountName: controller
-
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.10.0"
   name: autoscaler
   namespace: knative-serving
 spec:
@@ -145,7 +167,7 @@ spec:
         traffic.sidecar.istio.io/includeInboundPorts: 8080,9090
       labels:
         app: autoscaler
-        serving.knative.dev/release: "v0.8.0"
+        serving.knative.dev/release: "v0.10.0"
     spec:
       containers:
       - args:
@@ -162,7 +184,7 @@ spec:
           value: config-observability
         - name: METRICS_DOMAIN
           value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:aeaacec4feedee309293ac21da13e71a05a2ad84b1d5fcc01ffecfa6cfbb2870
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:9b716bec384c166782f30756e0981ab11178e1a6b7a4fa6965cc6225abf8567c
         livenessProbe:
           httpGet:
             httpHeaders:
@@ -178,6 +200,8 @@ spec:
           name: metrics
         - containerPort: 8443
           name: custom-metrics
+        - containerPort: 8008
+          name: profiling
         readinessProbe:
           httpGet:
             httpHeaders:
@@ -195,27 +219,26 @@ spec:
         securityContext:
           allowPrivilegeEscalation: false
       serviceAccountName: controller
-
----
+---      
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    networking.knative.dev/ingress-provider: istio
-    serving.knative.dev/release: "v0.8.0"
-  name: networking-istio
+    serving.knative.dev/release: "v0.10.0"
+  name: controller
   namespace: knative-serving
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: networking-istio
+      app: controller
   template:
     metadata:
       annotations:
         sidecar.istio.io/inject: "false"
       labels:
-        app: networking-istio
+        app: controller
+        serving.knative.dev/release: "v0.10.0"
     spec:
       containers:
       - env:
@@ -228,12 +251,14 @@ spec:
         - name: CONFIG_OBSERVABILITY_NAME
           value: config-observability
         - name: METRICS_DOMAIN
-          value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/networking/istio@sha256:057c999bccfe32e9889616b571dc8d389c742ff66f0b5516bad651f05459b7bc
-        name: networking-istio
+          value: knative.dev/internal/serving
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256:a168c9fa095c88b3e0bcbbaa6d4501a8a02ab740b360938879ae9df55964a758
+        name: controller
         ports:
         - containerPort: 9090
           name: metrics
+        - containerPort: 8008
+          name: profiling
         resources:
           limits:
             cpu: 1000m
@@ -244,13 +269,12 @@ spec:
         securityContext:
           allowPrivilegeEscalation: false
       serviceAccountName: controller
-
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.10.0"
   name: webhook
   namespace: knative-serving
 spec:
@@ -267,7 +291,7 @@ spec:
       labels:
         app: webhook
         role: webhook
-        serving.knative.dev/release: "v0.8.0"
+        serving.knative.dev/release: "v0.10.0"
     spec:
       containers:
       - env:
@@ -281,11 +305,13 @@ spec:
           value: config-observability
         - name: METRICS_DOMAIN
           value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:c2076674618933df53e90cf9ddd17f5ddbad513b8c95e955e45e37be7ca9e0e8
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:f59e8d9782f17b1af3060152d99b70ae08f40aa69b799180d24964e527ebb818
         name: webhook
         ports:
         - containerPort: 9090
-          name: metrics-port
+          name: metrics
+        - containerPort: 8008
+          name: profiling
         resources:
           limits:
             cpu: 200m
@@ -296,27 +322,27 @@ spec:
         securityContext:
           allowPrivilegeEscalation: false
       serviceAccountName: controller
-
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
-  name: controller
+    networking.knative.dev/ingress-provider: istio
+    serving.knative.dev/release: "v0.10.0"
+  name: networking-istio
   namespace: knative-serving
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: controller
+      app: networking-istio
   template:
     metadata:
       annotations:
         sidecar.istio.io/inject: "false"
       labels:
-        app: controller
-        serving.knative.dev/release: "v0.8.0"
+        app: networking-istio
+        serving.knative.dev/release: "v0.10.0"
     spec:
       containers:
       - env:
@@ -330,11 +356,13 @@ spec:
           value: config-observability
         - name: METRICS_DOMAIN
           value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256:3b096e55fa907cff53d37dadc5d20c29cea9bb18ed9e921a588fee17beb937df
-        name: controller
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/networking/istio@sha256:4bc49ca99adf8e4f5c498bdd1287cdf643e4b721e69b2c4a022fe98db46486ff
+        name: networking-istio
         ports:
         - containerPort: 9090
           name: metrics
+        - containerPort: 8008
+          name: profiling
         resources:
           limits:
             cpu: 1000m
@@ -345,6 +373,4 @@ spec:
         securityContext:
           allowPrivilegeEscalation: false
       serviceAccountName: controller
-
----
 
