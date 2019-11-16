@@ -3,6 +3,6 @@ kind: Namespace
 metadata:
   labels:
     istio-injection: enabled
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.10.0"
   name: knative-serving
 
