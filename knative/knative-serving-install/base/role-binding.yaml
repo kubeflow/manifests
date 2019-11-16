@@ -3,7 +3,7 @@ kind: RoleBinding
 metadata:
   labels:
     autoscaling.knative.dev/metric-provider: custom-metrics
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.10.0"
   name: custom-metrics-auth-reader
   namespace: kube-system
 roleRef:
@@ -14,4 +14,3 @@ subjects:
 - kind: ServiceAccount
   name: controller
   namespace: knative-serving
-
