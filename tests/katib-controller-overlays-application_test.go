@@ -18,16 +18,16 @@ func writeKatibControllerOverlaysApplication(th *KustTestHarness) {
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: katib
+  name: katib-controller
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: katib
-      app.kubernetes.io/instance: katib
+      app.kubernetes.io/name: katib-controller
+      app.kubernetes.io/instance: katib-controller-v0.7.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: katib
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7
+      app.kubernetes.io/version: v0.7.0
   componentKinds:
   - group: core
     kind: Service
@@ -86,12 +86,12 @@ bases:
 resources:
 - application.yaml
 commonLabels:
-  app.kubernetes.io/name: katib
-  app.kubernetes.io/instance: katib
+  app.kubernetes.io/name: katib-controller
+  app.kubernetes.io/instance: katib-controller-v0.7.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: katib
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7
+  app.kubernetes.io/version: v0.7.0
 `)
 	th.writeF("/manifests/katib/katib-controller/base/katib-configmap.yaml", `
 apiVersion: v1
