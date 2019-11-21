@@ -8,6 +8,7 @@ configMapGenerator:
   env: params.env
 resources:
 - metadata-db-pvc.yaml
+- metadata-db-configmap.yaml
 - metadata-db-secret.yaml
 - metadata-db-deployment.yaml
 - metadata-db-service.yaml

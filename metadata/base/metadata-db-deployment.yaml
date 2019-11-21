@@ -23,11 +23,14 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: metadata-db-secrets
-                key: MYSQL_ROOT_PASSWORD
+                key: password
           - name: MYSQL_ALLOW_EMPTY_PASSWORD
             value: "true"
           - name: MYSQL_DATABASE
-            value: "metadb"
+            valueFrom:
+              configMapKeyRef:
+                name: metadata-db-configmap
+                key: mysql_database
         ports:
         - name: dbapi
           containerPort: 3306
