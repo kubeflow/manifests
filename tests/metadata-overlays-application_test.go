@@ -1,6 +1,8 @@
 package tests_test
 
 import (
+	"testing"
+
 	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/v3/pkg/fs"
@@ -10,7 +12,6 @@ import (
 	"sigs.k8s.io/kustomize/v3/pkg/resource"
 	"sigs.k8s.io/kustomize/v3/pkg/target"
 	"sigs.k8s.io/kustomize/v3/pkg/validators"
-	"testing"
 )
 
 func writeMetadataOverlaysApplication(th *KustTestHarness) {
@@ -191,7 +192,7 @@ spec:
     spec:
       containers:
       - name: container
-        image: gcr.io/kubeflow-images-public/metadata:v0.1.9
+        image: gcr.io/kubeflow-images-public/metadata:v0.1.11
         env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
@@ -253,7 +254,7 @@ spec:
     spec:
       containers:
         - name: container
-          image: gcr.io/tfx-oss-public/ml_metadata_store_server:0.14.0
+          image: gcr.io/tfx-oss-public/ml_metadata_store_server:0.15.1
           env:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
@@ -510,10 +511,10 @@ vars:
 images:
 - name: gcr.io/kubeflow-images-public/metadata
   newName: gcr.io/kubeflow-images-public/metadata
-  newTag: v0.1.10
+  newTag: v0.1.11
 - name: gcr.io/tfx-oss-public/ml_metadata_store_server
   newName: gcr.io/tfx-oss-public/ml_metadata_store_server
-  newTag: 0.14.0
+  newTag: 0.15.1
 - name: gcr.io/ml-pipeline/envoy
   newName: gcr.io/ml-pipeline/envoy
   newTag: metadata-grpc
