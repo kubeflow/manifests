@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: container
-        image: gcr.io/kubeflow-images-public/metadata:v0.1.10
+        image: gcr.io/kubeflow-images-public/metadata:v0.1.11
         env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
@@ -78,7 +78,7 @@ spec:
     spec:
       containers:
         - name: container
-          image: gcr.io/tfx-oss-public/ml_metadata_store_server:0.14.0
+          image: gcr.io/tfx-oss-public/ml_metadata_store_server:0.15.1
           env:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
