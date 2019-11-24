@@ -111,6 +111,15 @@ rules:
   verbs:
   - '*'
 - apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+- apiGroups:
   - kubeflow.org
   resources:
   - notebooks
