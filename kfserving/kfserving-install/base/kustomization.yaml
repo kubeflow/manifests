@@ -29,4 +29,4 @@ images:
   newTag: v0.4.0
 - name: $(registry)/kfserving-controller
   newName: $(registry)/kfserving-controller
-  newTag: 0.2.0
+  newTag: 0.2.2

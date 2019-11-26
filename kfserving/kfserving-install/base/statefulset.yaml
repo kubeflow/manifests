@@ -39,7 +39,7 @@ spec:
               fieldPath: metadata.namespace
         - name: SECRET_NAME
           value: kfserving-webhook-server-secret
-        image: $(registry)/kfserving-controller:0.2.0
+        image: $(registry)/kfserving-controller:0.2.2
         imagePullPolicy: Always
         name: manager
         ports:

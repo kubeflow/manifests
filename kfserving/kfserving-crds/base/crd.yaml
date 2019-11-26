@@ -147,7 +147,7 @@ spec:
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [0.2.0, latest]
+                          description: Allowed runtime versions are [0.2.2, latest]
                             and defaults to the version specified in inferenceservice
                             config map
                           type: string
@@ -169,7 +169,7 @@ spec:
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [0.2.0, latest]
+                          description: Allowed runtime versions are [0.2.2, latest]
                             and defaults to the version specified in inferenceservice
                             config map
                           type: string
@@ -225,7 +225,7 @@ spec:
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [0.2.0, latest]
+                          description: Allowed runtime versions are [0.2.2, latest]
                             and defaults to the version specified in inferenceservice
                             config map
                           type: string
@@ -371,7 +371,7 @@ spec:
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [0.2.0, latest]
+                          description: Allowed runtime versions are [0.2.2, latest]
                             and defaults to the version specified in inferenceservice
                             config map
                           type: string
@@ -393,7 +393,7 @@ spec:
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [0.2.0, latest]
+                          description: Allowed runtime versions are [0.2.2, latest]
                             and defaults to the version specified in inferenceservice
                             config map
                           type: string
@@ -449,7 +449,7 @@ spec:
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [0.2.0, latest]
+                          description: Allowed runtime versions are [0.2.2, latest]
                             and defaults to the version specified in inferenceservice
                             config map
                           type: string
