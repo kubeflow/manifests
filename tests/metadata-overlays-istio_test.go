@@ -1,6 +1,8 @@
 package tests_test
 
 import (
+	"testing"
+
 	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/v3/pkg/fs"
@@ -10,7 +12,6 @@ import (
 	"sigs.k8s.io/kustomize/v3/pkg/resource"
 	"sigs.k8s.io/kustomize/v3/pkg/target"
 	"sigs.k8s.io/kustomize/v3/pkg/validators"
-	"testing"
 )
 
 func writeMetadataOverlaysIstio(th *KustTestHarness) {
@@ -88,6 +89,15 @@ spec:
     requests:
       storage: 10Gi
 `)
+	th.writeF("/manifests/metadata/base/metadata-db-configmap.yaml", `
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-configmap
+data:
+  mysql_database: "metadb"
+  mysql_port: "3306"
+`)
 	th.writeF("/manifests/metadata/base/metadata-db-secret.yaml", `
 apiVersion: v1
 kind: Secret
@@ -95,7 +105,8 @@ type: Opaque
 metadata:
   name: db-secrets
 data:
-  MYSQL_ROOT_PASSWORD: dGVzdA== # "test"
+  username: cm9vdA== # "root"
+  password: dGVzdA== # "test"
 `)
 	th.writeF("/manifests/metadata/base/metadata-db-deployment.yaml", `
 apiVersion: apps/v1
@@ -119,15 +130,18 @@ spec:
         - --datadir
         - /var/lib/mysql/datadir
         env:
-          - name: MYSQL_ROOT_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: metadata-db-secrets
-                key: MYSQL_ROOT_PASSWORD
-          - name: MYSQL_ALLOW_EMPTY_PASSWORD
-            value: "true"
-          - name: MYSQL_DATABASE
-            value: "metadb"
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: metadata-db-secrets
+              key: password
+        - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          value: "true"
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: metadata-db-configmap
+              key: mysql_database
         ports:
         - name: dbapi
           containerPort: 3306
@@ -183,20 +197,35 @@ spec:
     spec:
       containers:
       - name: container
-        image: gcr.io/kubeflow-images-public/metadata:v0.1.9
+        image: gcr.io/kubeflow-images-public/metadata:v0.1.11
         env:
-          - name: MYSQL_ROOT_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: metadata-db-secrets
-                key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: metadata-db-secrets
+              key: password
+        - name: MYSQL_USER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: metadata-db-secrets
+              key: username
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: metadata-db-configmap
+              key: mysql_database
+        - name: MYSQL_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: metadata-db-configmap
+              key: mysql_port
         command: ["./server/server",
                   "--http_port=8080",
                   "--mysql_service_host=metadata-db.kubeflow",
-                  "--mysql_service_port=3306",
-                  "--mysql_service_user=root",
+                  "--mysql_service_port=$(MYSQL_PORT)",
+                  "--mysql_service_user=$(MYSQL_USER_NAME)",
                   "--mysql_service_password=$(MYSQL_ROOT_PASSWORD)",
-                  "--mlmd_db_name=metadb"]
+                  "--mlmd_db_name=$(MYSQL_DATABASE)"]
         ports:
         - name: backendapi
           containerPort: 8080
@@ -230,19 +259,34 @@ spec:
     spec:
       containers:
         - name: container
-          image: gcr.io/tfx-oss-public/ml_metadata_store_server:0.14.0
+          image: gcr.io/tfx-oss-public/ml_metadata_store_server:0.15.1
           env:
-            - name: MYSQL_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: metadata-db-secrets
-                  key: MYSQL_ROOT_PASSWORD
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: metadata-db-secrets
+                key: password
+          - name: MYSQL_USER_NAME
+            valueFrom:
+              secretKeyRef:
+                name: metadata-db-secrets
+                key: username
+          - name: MYSQL_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: metadata-db-configmap
+                key: mysql_database
+          - name: MYSQL_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: metadata-db-configmap
+                key: mysql_port
           command: ["/bin/metadata_store_server"]
           args: ["--grpc_port=8080",
                  "--mysql_config_host=metadata-db.kubeflow",
-                 "--mysql_config_database=metadb",
-                 "--mysql_config_port=3306",
-                 "--mysql_config_user=root",
+                 "--mysql_config_database=$(MYSQL_DATABASE)",
+                 "--mysql_config_port=$(MYSQL_PORT)",
+                 "--mysql_config_user=$(MYSQL_USER_NAME)",
                  "--mysql_config_password=$(MYSQL_ROOT_PASSWORD)"
           ]
           ports:
@@ -426,6 +470,7 @@ configMapGenerator:
   env: params.env
 resources:
 - metadata-db-pvc.yaml
+- metadata-db-configmap.yaml
 - metadata-db-secret.yaml
 - metadata-db-deployment.yaml
 - metadata-db-service.yaml
@@ -471,10 +516,10 @@ vars:
 images:
 - name: gcr.io/kubeflow-images-public/metadata
   newName: gcr.io/kubeflow-images-public/metadata
-  newTag: v0.1.10
+  newTag: v0.1.11
 - name: gcr.io/tfx-oss-public/ml_metadata_store_server
   newName: gcr.io/tfx-oss-public/ml_metadata_store_server
-  newTag: 0.14.0
+  newTag: 0.15.1
 - name: gcr.io/ml-pipeline/envoy
   newName: gcr.io/ml-pipeline/envoy
   newTag: metadata-grpc
