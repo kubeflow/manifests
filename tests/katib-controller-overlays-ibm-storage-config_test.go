@@ -24,6 +24,7 @@ spec:
     spec:
       containers:
       - name: katib-db
+        # Base's livenessProbe created some kernel errors on non-POSIX filesystem
         livenessProbe: null
 `)
 	th.writeK("/manifests/katib/katib-controller/overlays/ibm-storage-config", `

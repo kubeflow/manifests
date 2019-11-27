@@ -38,6 +38,10 @@ bases:
 - ../../base
 patchesStrategicMerge:
 - deployment.yaml
+images:
+  - name: busybox
+    newTag: "latest"
+    newName: busybox
 `)
 	th.writeF("/manifests/istio/oidc-authservice/base/service.yaml", `
 apiVersion: v1
