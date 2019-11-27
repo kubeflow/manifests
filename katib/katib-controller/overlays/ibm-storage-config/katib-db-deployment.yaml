@@ -7,4 +7,5 @@ spec:
     spec:
       containers:
       - name: katib-db
+        # Base's livenessProbe created some kernel errors on non-POSIX filesystem
         livenessProbe: null
