@@ -1,6 +1,8 @@
 package tests_test
 
 import (
+	"testing"
+
 	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/v3/pkg/fs"
@@ -10,7 +12,6 @@ import (
 	"sigs.k8s.io/kustomize/v3/pkg/resource"
 	"sigs.k8s.io/kustomize/v3/pkg/target"
 	"sigs.k8s.io/kustomize/v3/pkg/validators"
-	"testing"
 )
 
 func writeKfservingInstallOverlaysApplication(th *KustTestHarness) {
@@ -333,23 +334,23 @@ data:
         },
         "sklearn": {
             "image": "gcr.io/kfserving/sklearnserver",
-            "defaultImageVersion": "0.2.0",
+            "defaultImageVersion": "0.2.2",
             "allowedImageVersions": [
-               "0.2.0"
+               "0.2.2"
             ]
         },
         "xgboost": {
             "image": "gcr.io/kfserving/xgbserver",
-            "defaultImageVersion": "0.2.0",
+            "defaultImageVersion": "0.2.2",
             "allowedImageVersions": [
-               "0.2.0"
+               "0.2.2"
             ]
         },
         "pytorch": {
             "image": "gcr.io/kfserving/pytorchserver",
-            "defaultImageVersion": "0.2.0",
+            "defaultImageVersion": "0.2.2",
             "allowedImageVersions": [
-               "0.2.0"
+               "0.2.2"
             ]
         },
         "tensorrt": {
@@ -367,15 +368,15 @@ data:
     {
         "alibi": {
             "image" : "gcr.io/kfserving/alibi-explainer",
-            "defaultImageVersion": "0.2.0",
+            "defaultImageVersion": "0.2.2",
             "allowedImageVersions": [
-               "0.2.0"
+               "0.2.2"
             ]
         }
     }
   storageInitializer: |-
     {
-        "image" : "gcr.io/kfserving/storage-initializer:0.2.0",
+        "image" : "gcr.io/kfserving/storage-initializer:0.2.2",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -445,7 +446,7 @@ spec:
               fieldPath: metadata.namespace
         - name: SECRET_NAME
           value: kfserving-webhook-server-secret
-        image: $(registry)/kfserving-controller:0.2.0
+        image: $(registry)/kfserving-controller:0.2.2
         imagePullPolicy: Always
         name: manager
         ports:
@@ -549,7 +550,7 @@ images:
   newTag: v0.4.0
 - name: $(registry)/kfserving-controller
   newName: $(registry)/kfserving-controller
-  newTag: 0.2.0
+  newTag: 0.2.2
 `)
 }
 
