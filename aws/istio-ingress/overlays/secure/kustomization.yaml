@@ -1,0 +1,35 @@
+bases:
+- ../../base
+patchesStrategicMerge:
+- ingress.yaml
+configMapGenerator:
+- name: istio-ingress-parameters
+  behavior: merge
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: certArn
+  objref:
+    kind: ConfigMap
+    name: istio-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.certArn
+- name: hostname
+  objref:
+    kind: ConfigMap
+    name: istio-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.hostname
+- name: inboundCidrs
+  objref:
+    kind: ConfigMap
+    name: istio-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.inboundCidrs
+namespace: istio-system
+configurations:
+- params.yaml

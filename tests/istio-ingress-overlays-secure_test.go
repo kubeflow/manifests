@@ -13,64 +13,59 @@ import (
 	"testing"
 )
 
-func writeIstioIngressOverlaysCognito(th *KustTestHarness) {
-	th.writeF("/manifests/aws/istio-ingress/overlays/cognito/ingress.yaml", `
+func writeIstioIngressOverlaysSecure(th *KustTestHarness) {
+	th.writeF("/manifests/aws/istio-ingress/overlays/secure/ingress.yaml", `
 apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: istio-ingress
   annotations:
-    alb.ingress.kubernetes.io/auth-type: cognito
-    alb.ingress.kubernetes.io/auth-idp-cognito: '{"UserPoolArn":"$(CognitoUserPoolArn)","UserPoolClientId":"$(CognitoAppClientId)", "UserPoolDomain":"$(CognitoUserPoolDomain)"}'
     alb.ingress.kubernetes.io/certificate-arn: $(certArn)
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/inbound-cidrs: $(inboundCidrs)
+    external-dns.alpha.kubernetes.io/hostname: $(hostname)
 `)
-	th.writeF("/manifests/aws/istio-ingress/overlays/cognito/params.yaml", `
+	th.writeF("/manifests/aws/istio-ingress/overlays/secure/params.yaml", `
 varReference:
 - path: metadata/annotations
   kind: Ingress`)
-	th.writeF("/manifests/aws/istio-ingress/overlays/cognito/params.env", `
-CognitoUserPoolArn=
-CognitoAppClientId=
-CognitoUserPoolDomain=
-certArn=`)
-	th.writeK("/manifests/aws/istio-ingress/overlays/cognito", `
+	th.writeF("/manifests/aws/istio-ingress/overlays/secure/params.env", `
+certArn=
+hostname=
+inboundCidrs=`)
+	th.writeK("/manifests/aws/istio-ingress/overlays/secure", `
 bases:
 - ../../base
 patchesStrategicMerge:
 - ingress.yaml
 configMapGenerator:
-- name: istio-ingress-cognito-parameters
+- name: istio-ingress-parameters
+  behavior: merge
   env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
 vars:
-- name: CognitoUserPoolArn
-  objref:
-    kind: ConfigMap
-    name: istio-ingress-cognito-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.CognitoUserPoolArn
-- name: CognitoAppClientId
-  objref:
-    kind: ConfigMap
-    name: istio-ingress-cognito-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.CognitoAppClientId
-- name: CognitoUserPoolDomain
-  objref:
-    kind: ConfigMap
-    name: istio-ingress-cognito-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.CognitoUserPoolDomain
 - name: certArn
   objref:
     kind: ConfigMap
-    name: istio-ingress-cognito-parameters
+    name: istio-ingress-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.certArn
+- name: hostname
+  objref:
+    kind: ConfigMap
+    name: istio-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.hostname
+- name: inboundCidrs
+  objref:
+    kind: ConfigMap
+    name: istio-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.inboundCidrs
 namespace: istio-system
 configurations:
 - params.yaml
@@ -117,9 +112,9 @@ vars:
     fieldpath: data.loadBalancerScheme`)
 }
 
-func TestIstioIngressOverlaysCognito(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/aws/istio-ingress/overlays/cognito")
-	writeIstioIngressOverlaysCognito(th)
+func TestIstioIngressOverlaysSecure(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/aws/istio-ingress/overlays/secure")
+	writeIstioIngressOverlaysSecure(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -128,7 +123,7 @@ func TestIstioIngressOverlaysCognito(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../aws/istio-ingress/overlays/cognito"
+	targetPath := "../aws/istio-ingress/overlays/secure"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
