@@ -1,8 +1,6 @@
 package tests_test
 
 import (
-	"testing"
-
 	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/v3/pkg/fs"
@@ -12,6 +10,7 @@ import (
 	"sigs.k8s.io/kustomize/v3/pkg/resource"
 	"sigs.k8s.io/kustomize/v3/pkg/target"
 	"sigs.k8s.io/kustomize/v3/pkg/validators"
+	"testing"
 )
 
 func writeKfservingInstallOverlaysApplication(th *KustTestHarness) {
@@ -245,6 +244,14 @@ rules:
   - update
   - patch
   - delete
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
 
 ---
 
@@ -397,6 +404,14 @@ data:
         "ingressGateway" : "knative-ingress-gateway.knative-serving",
         "ingressService" : "istio-ingressgateway.istio-system.svc.cluster.local"
     }
+  logger: |-
+    {
+        "image" : "gcr.io/kfserving/logger:0.2.2",
+        "memoryRequest": "100Mi",
+        "memoryLimit": "1Gi",
+        "cpuRequest": "100m",
+        "cpuLimit": "1"
+    }
 `)
 	th.writeF("/manifests/kfserving/kfserving-install/base/secret.yaml", `
 apiVersion: v1
@@ -446,6 +461,8 @@ spec:
               fieldPath: metadata.namespace
         - name: SECRET_NAME
           value: kfserving-webhook-server-secret
+        - name: ENABLE_WEBHOOK_NAMESPACE_SELECTOR
+          value: enabled
         image: $(registry)/kfserving-controller:0.2.2
         imagePullPolicy: Always
         name: manager
