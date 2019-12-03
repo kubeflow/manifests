@@ -1,8 +1,6 @@
 package tests_test
 
 import (
-	"testing"
-
 	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/v3/pkg/fs"
@@ -12,70 +10,19 @@ import (
 	"sigs.k8s.io/kustomize/v3/pkg/resource"
 	"sigs.k8s.io/kustomize/v3/pkg/target"
 	"sigs.k8s.io/kustomize/v3/pkg/validators"
+	"testing"
 )
 
-func writeMetadataOverlaysIstio(th *KustTestHarness) {
-	th.writeF("/manifests/metadata/overlays/istio/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: metadata-ui
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /metadata
-    rewrite:
-      uri: /metadata
-    route:
-    - destination:
-        host: $(service).$(ui-namespace).svc.$(ui-clusterDomain)
-        port:
-          number: 80
-    timeout: 300s
-`)
-	th.writeF("/manifests/metadata/overlays/istio/virtual-service-metadata-grpc.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: metadata-grpc
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /ml_metadata
-    rewrite:
-      uri: /ml_metadata
-    route:
-    - destination:
-        host: $(metadata-envoy-service).$(ui-namespace).svc.$(ui-clusterDomain)
-        port:
-          number: 9090
-    timeout: 300s
-`)
-	th.writeF("/manifests/metadata/overlays/istio/params.yaml", `
-varReference:
-- path: spec/http/route/destination/host
-  kind: VirtualService
-`)
-	th.writeK("/manifests/metadata/overlays/istio", `
+func writeMetadataOverlaysIbmStorageConfig(th *KustTestHarness) {
+	th.writeK("/manifests/metadata/overlays/ibm-storage-config", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
-resources:
-- virtual-service.yaml
-- virtual-service-metadata-grpc.yaml
-configurations:
-- params.yaml
+images:
+  - name: mysql
+    newTag: "5.6"
+    newName: mysql
 `)
 	th.writeF("/manifests/metadata/base/metadata-db-pvc.yaml", `
 apiVersion: v1
@@ -89,15 +36,6 @@ spec:
     requests:
       storage: 10Gi
 `)
-	th.writeF("/manifests/metadata/base/metadata-db-configmap.yaml", `
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: db-configmap
-data:
-  mysql_database: "metadb"
-  mysql_port: "3306"
-`)
 	th.writeF("/manifests/metadata/base/metadata-db-secret.yaml", `
 apiVersion: v1
 kind: Secret
@@ -105,8 +43,7 @@ type: Opaque
 metadata:
   name: db-secrets
 data:
-  username: cm9vdA== # "root"
-  password: dGVzdA== # "test"
+  MYSQL_ROOT_PASSWORD: dGVzdA== # "test"
 `)
 	th.writeF("/manifests/metadata/base/metadata-db-deployment.yaml", `
 apiVersion: apps/v1
@@ -130,18 +67,15 @@ spec:
         - --datadir
         - /var/lib/mysql/datadir
         env:
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: metadata-db-secrets
-              key: password
-        - name: MYSQL_ALLOW_EMPTY_PASSWORD
-          value: "true"
-        - name: MYSQL_DATABASE
-          valueFrom:
-            configMapKeyRef:
-              name: metadata-db-configmap
-              key: mysql_database
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: metadata-db-secrets
+                key: MYSQL_ROOT_PASSWORD
+          - name: MYSQL_ALLOW_EMPTY_PASSWORD
+            value: "true"
+          - name: MYSQL_DATABASE
+            value: "metadb"
         ports:
         - name: dbapi
           containerPort: 3306
@@ -197,35 +131,20 @@ spec:
     spec:
       containers:
       - name: container
-        image: gcr.io/kubeflow-images-public/metadata:v0.1.11
+        image: gcr.io/kubeflow-images-public/metadata:v0.1.10
         env:
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: metadata-db-secrets
-              key: password
-        - name: MYSQL_USER_NAME
-          valueFrom:
-            secretKeyRef:
-              name: metadata-db-secrets
-              key: username
-        - name: MYSQL_DATABASE
-          valueFrom:
-            configMapKeyRef:
-              name: metadata-db-configmap
-              key: mysql_database
-        - name: MYSQL_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: metadata-db-configmap
-              key: mysql_port
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: metadata-db-secrets
+                key: MYSQL_ROOT_PASSWORD
         command: ["./server/server",
                   "--http_port=8080",
                   "--mysql_service_host=metadata-db.kubeflow",
-                  "--mysql_service_port=$(MYSQL_PORT)",
-                  "--mysql_service_user=$(MYSQL_USER_NAME)",
+                  "--mysql_service_port=3306",
+                  "--mysql_service_user=root",
                   "--mysql_service_password=$(MYSQL_ROOT_PASSWORD)",
-                  "--mlmd_db_name=$(MYSQL_DATABASE)"]
+                  "--mlmd_db_name=metadb"]
         ports:
         - name: backendapi
           containerPort: 8080
@@ -259,34 +178,19 @@ spec:
     spec:
       containers:
         - name: container
-          image: gcr.io/tfx-oss-public/ml_metadata_store_server:0.15.1
+          image: gcr.io/tfx-oss-public/ml_metadata_store_server:0.14.0
           env:
-          - name: MYSQL_ROOT_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: metadata-db-secrets
-                key: password
-          - name: MYSQL_USER_NAME
-            valueFrom:
-              secretKeyRef:
-                name: metadata-db-secrets
-                key: username
-          - name: MYSQL_DATABASE
-            valueFrom:
-              configMapKeyRef:
-                name: metadata-db-configmap
-                key: mysql_database
-          - name: MYSQL_PORT
-            valueFrom:
-              configMapKeyRef:
-                name: metadata-db-configmap
-                key: mysql_port
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: metadata-db-secrets
+                  key: MYSQL_ROOT_PASSWORD
           command: ["/bin/metadata_store_server"]
           args: ["--grpc_port=8080",
                  "--mysql_config_host=metadata-db.kubeflow",
-                 "--mysql_config_database=$(MYSQL_DATABASE)",
-                 "--mysql_config_port=$(MYSQL_PORT)",
-                 "--mysql_config_user=$(MYSQL_USER_NAME)",
+                 "--mysql_config_database=metadb",
+                 "--mysql_config_port=3306",
+                 "--mysql_config_user=root",
                  "--mysql_config_password=$(MYSQL_ROOT_PASSWORD)"
           ]
           ports:
@@ -470,7 +374,6 @@ configMapGenerator:
   env: params.env
 resources:
 - metadata-db-pvc.yaml
-- metadata-db-configmap.yaml
 - metadata-db-secret.yaml
 - metadata-db-deployment.yaml
 - metadata-db-service.yaml
@@ -516,10 +419,10 @@ vars:
 images:
 - name: gcr.io/kubeflow-images-public/metadata
   newName: gcr.io/kubeflow-images-public/metadata
-  newTag: v0.1.11
+  newTag: v0.1.10
 - name: gcr.io/tfx-oss-public/ml_metadata_store_server
   newName: gcr.io/tfx-oss-public/ml_metadata_store_server
-  newTag: 0.15.1
+  newTag: 0.14.0
 - name: gcr.io/ml-pipeline/envoy
   newName: gcr.io/ml-pipeline/envoy
   newTag: metadata-grpc
@@ -532,9 +435,9 @@ images:
 `)
 }
 
-func TestMetadataOverlaysIstio(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/metadata/overlays/istio")
-	writeMetadataOverlaysIstio(th)
+func TestMetadataOverlaysIbmStorageConfig(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/metadata/overlays/ibm-storage-config")
+	writeMetadataOverlaysIbmStorageConfig(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -543,7 +446,7 @@ func TestMetadataOverlaysIstio(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../metadata/overlays/istio"
+	targetPath := "../metadata/overlays/ibm-storage-config"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
