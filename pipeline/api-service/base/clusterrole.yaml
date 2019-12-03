@@ -1,7 +1,5 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
-# TODO: Does this need to be changed to a clusterrole?
-# see  manifests in kubeflow/pipelines
-kind: Role
+kind: ClusterRole
 metadata:
   name: ml-pipeline
 rules:
@@ -34,4 +32,3 @@ rules:
   - pods
   verbs:
   - delete
-

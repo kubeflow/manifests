@@ -3,8 +3,8 @@ kind: Kustomization
 namespace: kubeflow
 resources:
 - deployment.yaml
-- role-binding.yaml
-- role.yaml
+- clusterrole-binding.yaml
+- clusterrole.yaml
 - service-account.yaml
 - service.yaml
 configMapGenerator:

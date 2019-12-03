@@ -5,12 +5,21 @@ commonLabels:
   app: ml-pipeline-scheduledworkflow
 resources:
 - cluster-role.yaml
+- cluster-role-binding.yaml
 - crd.yaml
 - deployment.yaml
-- role-binding.yaml
-- role.yaml
 - service-account.yaml
 images:
 - name: gcr.io/ml-pipeline/scheduledworkflow
   newTag: 0.2.0
   newName: gcr.io/ml-pipeline/scheduledworkflow
+vars:
+- name: namespace
+  objref:
+    kind: ServiceAccount
+    name: ml-pipeline-scheduledworkflow
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.namespace
+configurations:
+- params.yaml
