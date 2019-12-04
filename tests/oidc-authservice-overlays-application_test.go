@@ -140,6 +140,10 @@ spec:
         volumeMounts:
           - name: data
             mountPath: /var/lib/authservice
+        readinessProbe:
+            httpGet:
+              path: /
+              port: 8081
       securityContext:
         fsGroup: 111
       volumes:
@@ -296,7 +300,7 @@ configurations:
 images:
 - name: gcr.io/arrikto/kubeflow/oidc-authservice
   newName: gcr.io/arrikto/kubeflow/oidc-authservice
-  newTag: 6ac9400
+  newTag: 28c59ef
 `)
 }
 
