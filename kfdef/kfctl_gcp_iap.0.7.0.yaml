@@ -399,4 +399,4 @@ spec:
     uri: https://github.com/kubeflow/manifests/archive/v0.7-branch.tar.gz
     # To get manifest at a PR:
     #uri: https://github.com/kubeflow/manifests/archive/pull/235/head.tar.gz
-  version: master
+  version: v0.7.0

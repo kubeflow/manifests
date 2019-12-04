@@ -278,4 +278,4 @@ spec:
     uri: https://github.com/kubeflow/manifests/archive/v0.7-branch.tar.gz
     # An example uri that uses a PR version of the manifest repo.
     # uri: https://github.com/kubeflow/manifests/archive/pull/PR_NUMBER/head.tar.gz
-  version: master
+  version: v0.7.0
