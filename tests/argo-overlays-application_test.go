@@ -146,6 +146,7 @@ rules:
   - watch
   - update
   - patch
+  - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole

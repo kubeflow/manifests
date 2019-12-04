@@ -1,8 +1,6 @@
 package tests_test
 
 import (
-	"testing"
-
 	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/v3/pkg/fs"
@@ -12,6 +10,7 @@ import (
 	"sigs.k8s.io/kustomize/v3/pkg/resource"
 	"sigs.k8s.io/kustomize/v3/pkg/target"
 	"sigs.k8s.io/kustomize/v3/pkg/validators"
+	"testing"
 )
 
 func writeMetadataBase(th *KustTestHarness) {
@@ -43,8 +42,8 @@ type: Opaque
 metadata:
   name: db-secrets
 data:
-  username: cm9vdA== # "root"
-  password: dGVzdA== # "test"
+  username: "cm9vdA==" # "root"
+  password: "dGVzdA==" # "test"
 `)
 	th.writeF("/manifests/metadata/base/metadata-db-deployment.yaml", `
 apiVersion: apps/v1
@@ -68,18 +67,18 @@ spec:
         - --datadir
         - /var/lib/mysql/datadir
         env:
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: metadata-db-secrets
-              key: password
-        - name: MYSQL_ALLOW_EMPTY_PASSWORD
-          value: "true"
-        - name: MYSQL_DATABASE
-          valueFrom:
-            configMapKeyRef:
-              name: metadata-db-configmap
-              key: mysql_database
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: metadata-db-secrets
+                key: password
+          - name: MYSQL_ALLOW_EMPTY_PASSWORD
+            value: "true"
+          - name: MYSQL_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: metadata-db-configmap
+                key: mysql_database
         ports:
         - name: dbapi
           containerPort: 3306
