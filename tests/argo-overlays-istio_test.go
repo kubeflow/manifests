@@ -51,6 +51,79 @@ resources:
 configurations:
 - params.yaml
 `)
+	th.writeF("/manifests/argo/base/aggregate-roles.yaml", `
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: argo
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+  name: argo-aggregate-to-view
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  - workflows/finalizers
+  - workflowtemplates
+  - workflowtemplates/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: argo
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+  name: argo-aggregate-to-edit
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  - workflows/finalizers
+  - workflowtemplates
+  - workflowtemplates/finalizers
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: argo
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+  name: argo-aggregate-to-admin
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  - workflows/finalizers
+  - workflowtemplates
+  - workflowtemplates/finalizers
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+`)
 	th.writeF("/manifests/argo/base/cluster-role-binding.yaml", `
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -103,6 +176,7 @@ rules:
   - watch
   - update
   - patch
+  - delete
 - apiGroups:
   - ""
   resources:
@@ -129,6 +203,23 @@ rules:
   - watch
   - update
   - patch
+  - delete
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflowtemplates
+  - workflowtemplates/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+  - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
@@ -158,6 +249,7 @@ rules:
   resources:
   - workflows
   - workflows/finalizers
+  - workflowtemplates
   verbs:
   - get
   - list
@@ -203,11 +295,23 @@ spec:
   group: argoproj.io
   names:
     kind: Workflow
-    listKind: WorkflowList
     plural: workflows
     shortNames:
     - wf
-    singular: workflow
+  scope: Namespaced
+  version: v1alpha1
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: workflowtemplates.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: WorkflowTemplate
+    plural: workflowtemplates
+    shortNames:
+    - wftmpl
   scope: Namespaced
   version: v1alpha1
 `)
@@ -320,6 +424,34 @@ spec:
       serviceAccountName: argo
       terminationGracePeriodSeconds: 30
 `)
+	th.writeF("/manifests/argo/base/role.yaml", `
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app: argo
+  name: argo
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+`)
+	th.writeF("/manifests/argo/base/role-binding.yaml", `
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argo
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: argo
+subjects:
+  - kind: ServiceAccount
+    name: argo
+`)
 	th.writeF("/manifests/argo/base/service-account.yaml", `
 ---
 apiVersion: v1
@@ -385,11 +517,14 @@ clusterDomain=cluster.local
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+- aggregate-roles.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - config-map.yaml
 - crd.yaml
 - deployment.yaml
+- role.yaml
+- role-binding.yaml
 - service-account.yaml
 - service.yaml
 commonLabels:
@@ -397,10 +532,10 @@ commonLabels:
 images:
 - name: argoproj/argoui
   newName: argoproj/argoui
-  newTag: v2.3.0
+  newTag: v2.4.2
 - name: argoproj/workflow-controller
   newName: argoproj/workflow-controller
-  newTag: v2.3.0
+  newTag: v2.4.2
 configMapGenerator:
 - name: workflow-controller-parameters
   env: params.env
