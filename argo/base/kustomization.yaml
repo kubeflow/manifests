@@ -1,11 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+- aggregate-roles.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - config-map.yaml
 - crd.yaml
 - deployment.yaml
+- role.yaml
+- role-binding.yaml
 - service-account.yaml
 - service.yaml
 commonLabels:
@@ -13,10 +16,10 @@ commonLabels:
 images:
 - name: argoproj/argoui
   newName: argoproj/argoui
-  newTag: v2.3.0
+  newTag: v2.4.2
 - name: argoproj/workflow-controller
   newName: argoproj/workflow-controller
-  newTag: v2.3.0
+  newTag: v2.4.2
 configMapGenerator:
 - name: workflow-controller-parameters
   env: params.env
