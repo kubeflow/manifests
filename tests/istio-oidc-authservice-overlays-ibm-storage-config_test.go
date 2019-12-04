@@ -67,7 +67,7 @@ spec:
     matchLabels:
       app: authservice
   strategy:
-    type: RollingUpdate
+    type: Recreate
   template:
     metadata:
       annotations:
