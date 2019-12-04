@@ -187,6 +187,14 @@ rules:
   - update
   - patch
   - delete
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
 
 ---
 
@@ -276,23 +284,23 @@ data:
         },
         "sklearn": {
             "image": "gcr.io/kfserving/sklearnserver",
-            "defaultImageVersion": "0.2.0",
+            "defaultImageVersion": "0.2.2",
             "allowedImageVersions": [
-               "0.2.0"
+               "0.2.2"
             ]
         },
         "xgboost": {
             "image": "gcr.io/kfserving/xgbserver",
-            "defaultImageVersion": "0.2.0",
+            "defaultImageVersion": "0.2.2",
             "allowedImageVersions": [
-               "0.2.0"
+               "0.2.2"
             ]
         },
         "pytorch": {
             "image": "gcr.io/kfserving/pytorchserver",
-            "defaultImageVersion": "0.2.0",
+            "defaultImageVersion": "0.2.2",
             "allowedImageVersions": [
-               "0.2.0"
+               "0.2.2"
             ]
         },
         "tensorrt": {
@@ -310,15 +318,15 @@ data:
     {
         "alibi": {
             "image" : "gcr.io/kfserving/alibi-explainer",
-            "defaultImageVersion": "0.2.0",
+            "defaultImageVersion": "0.2.2",
             "allowedImageVersions": [
-               "0.2.0"
+               "0.2.2"
             ]
         }
     }
   storageInitializer: |-
     {
-        "image" : "gcr.io/kfserving/storage-initializer:0.2.0",
+        "image" : "gcr.io/kfserving/storage-initializer:0.2.2",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -338,6 +346,14 @@ data:
     {
         "ingressGateway" : "knative-ingress-gateway.knative-serving",
         "ingressService" : "istio-ingressgateway.istio-system.svc.cluster.local"
+    }
+  logger: |-
+    {
+        "image" : "gcr.io/kfserving/logger:0.2.2",
+        "memoryRequest": "100Mi",
+        "memoryLimit": "1Gi",
+        "cpuRequest": "100m",
+        "cpuLimit": "1"
     }
 `)
 	th.writeF("/manifests/kfserving/kfserving-install/base/secret.yaml", `
@@ -388,7 +404,9 @@ spec:
               fieldPath: metadata.namespace
         - name: SECRET_NAME
           value: kfserving-webhook-server-secret
-        image: $(registry)/kfserving-controller:0.2.0
+        - name: ENABLE_WEBHOOK_NAMESPACE_SELECTOR
+          value: enabled
+        image: $(registry)/kfserving-controller:0.2.2
         imagePullPolicy: Always
         name: manager
         ports:
@@ -492,7 +510,7 @@ images:
   newTag: v0.4.0
 - name: $(registry)/kfserving-controller
   newName: $(registry)/kfserving-controller
-  newTag: 0.2.0
+  newTag: 0.2.2
 `)
 }
 

@@ -29,23 +29,23 @@ data:
         },
         "sklearn": {
             "image": "gcr.io/kfserving/sklearnserver",
-            "defaultImageVersion": "0.2.0",
+            "defaultImageVersion": "0.2.2",
             "allowedImageVersions": [
-               "0.2.0"
+               "0.2.2"
             ]
         },
         "xgboost": {
             "image": "gcr.io/kfserving/xgbserver",
-            "defaultImageVersion": "0.2.0",
+            "defaultImageVersion": "0.2.2",
             "allowedImageVersions": [
-               "0.2.0"
+               "0.2.2"
             ]
         },
         "pytorch": {
             "image": "gcr.io/kfserving/pytorchserver",
-            "defaultImageVersion": "0.2.0",
+            "defaultImageVersion": "0.2.2",
             "allowedImageVersions": [
-               "0.2.0"
+               "0.2.2"
             ]
         },
         "tensorrt": {
@@ -63,15 +63,15 @@ data:
     {
         "alibi": {
             "image" : "gcr.io/kfserving/alibi-explainer",
-            "defaultImageVersion": "0.2.0",
+            "defaultImageVersion": "0.2.2",
             "allowedImageVersions": [
-               "0.2.0"
+               "0.2.2"
             ]
         }
     }
   storageInitializer: |-
     {
-        "image" : "gcr.io/kfserving/storage-initializer:0.2.0",
+        "image" : "gcr.io/kfserving/storage-initializer:0.2.2",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -91,4 +91,12 @@ data:
     {
         "ingressGateway" : "knative-ingress-gateway.knative-serving",
         "ingressService" : "istio-ingressgateway.istio-system.svc.cluster.local"
+    }
+  logger: |-
+    {
+        "image" : "gcr.io/kfserving/logger:0.2.2",
+        "memoryRequest": "100Mi",
+        "memoryLimit": "1Gi",
+        "cpuRequest": "100m",
+        "cpuLimit": "1"
     }
