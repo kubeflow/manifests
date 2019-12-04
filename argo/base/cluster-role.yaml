@@ -18,6 +18,7 @@ rules:
   - watch
   - update
   - patch
+  - delete
 - apiGroups:
   - ""
   resources:
@@ -37,12 +38,30 @@ rules:
   - argoproj.io
   resources:
   - workflows
+  - workflows/finalizers
   verbs:
   - get
   - list
   - watch
   - update
   - patch
+  - delete
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflowtemplates
+  - workflowtemplates/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+  - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
@@ -71,6 +90,7 @@ rules:
   - argoproj.io
   resources:
   - workflows
+  - workflowtemplates
   verbs:
   - get
   - list
