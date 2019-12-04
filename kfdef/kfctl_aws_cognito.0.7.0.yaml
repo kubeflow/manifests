@@ -310,4 +310,4 @@ spec:
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/v0.7-branch.tar.gz
-  version: master
+  version: v0.7.0
