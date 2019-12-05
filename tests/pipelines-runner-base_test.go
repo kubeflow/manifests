@@ -93,6 +93,7 @@ rules:
   - '*'
 - apiGroups:
   - kubeflow.org
+  - serving.kubeflow.org
   resources:
   - '*'
   verbs:

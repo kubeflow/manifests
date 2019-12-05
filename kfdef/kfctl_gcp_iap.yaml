@@ -114,6 +114,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - istio
+      - application
       repoRef:
         name: manifests
         path: metadata
@@ -211,6 +212,8 @@ spec:
         path: tf-training/tf-job-operator
     name: tf-job-operator
   - kustomizeConfig:
+      overlays:
+      - application
       repoRef:
         name: manifests
         path: katib/katib-crds

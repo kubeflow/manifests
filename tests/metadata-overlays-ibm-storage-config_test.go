@@ -13,7 +13,17 @@ import (
 	"testing"
 )
 
-func writeMetadataBase(th *KustTestHarness) {
+func writeMetadataOverlaysIbmStorageConfig(th *KustTestHarness) {
+	th.writeK("/manifests/metadata/overlays/ibm-storage-config", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+images:
+  - name: mysql
+    newTag: "5.6"
+    newName: mysql
+`)
 	th.writeF("/manifests/metadata/base/metadata-db-pvc.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -469,9 +479,9 @@ images:
 `)
 }
 
-func TestMetadataBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/metadata/base")
-	writeMetadataBase(th)
+func TestMetadataOverlaysIbmStorageConfig(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/metadata/overlays/ibm-storage-config")
+	writeMetadataOverlaysIbmStorageConfig(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -480,7 +490,7 @@ func TestMetadataBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../metadata/base"
+	targetPath := "../metadata/overlays/ibm-storage-config"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)

@@ -13,85 +13,31 @@ import (
 	"testing"
 )
 
-func writeKatibControllerOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/katib/katib-controller/overlays/application/application.yaml", `
-apiVersion: app.k8s.io/v1beta1
-kind: Application
+func writeKatibControllerOverlaysIbmStorageConfig(th *KustTestHarness) {
+	th.writeF("/manifests/katib/katib-controller/overlays/ibm-storage-config/katib-db-deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: katib-controller
+  name: katib-db
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: katib-controller
-      app.kubernetes.io/instance: katib-controller-v0.7.0
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: katib
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
-  componentKinds:
-  - group: core
-    kind: Service
-  - group: apps
-    kind: Deployment
-  - group: core
-    kind: Secret
-  - group: core
-    kind: ServiceAccount
-  - group: kubeflow.org
-    kind: Experiment
-  - group: kubeflow.org
-    kind: Suggestion
-  - group: kubeflow.org
-    kind: Trial
-  descriptor:
-    type: "katib"
-    version: "v1alpha3"
-    description: "Katib is a service for hyperparameter tuning and neural architecture search."
-    maintainers:
-    - name: Ce Gao
-      email: gaoce@caicloud.io
-    - name: Johnu George
-      email: johnugeo@cisco.com
-    - name: Hougang Liu
-      email: liuhougang6@126.com
-    - name: Richard Liu
-      email: ricliu@google.com
-    - name: YujiOshima
-      email: yuji.oshima0x3fd@gmail.com
-    owners:
-    - name: Ce Gao
-      email: gaoce@caicloud.io
-    - name: Johnu George
-      email: johnugeo@cisco.com
-    - name: Hougang Liu
-      email: liuhougang6@126.com
-    - name: Richard Liu
-      email: ricliu@google.com
-    - name: YujiOshima
-      email: yuji.oshima0x3fd@gmail.com
-    keywords:
-    - katib
-    - katib-controller
-    - hyperparameter tuning
-    links:
-    - description: About
-      url: "https://github.com/kubeflow/katib"
-  addOwnerRef: true
+  template:
+    spec:
+      containers:
+      - name: katib-db
+        # Base's livenessProbe created some kernel errors on non-POSIX filesystem
+        livenessProbe: null
 `)
-	th.writeK("/manifests/katib/katib-controller/overlays/application", `
+	th.writeK("/manifests/katib/katib-controller/overlays/ibm-storage-config", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
-resources:
-- application.yaml
-commonLabels:
-  app.kubernetes.io/name: katib-controller
-  app.kubernetes.io/instance: katib-controller-v0.7.0
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: katib
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+patchesStrategicMerge:
+- katib-db-deployment.yaml
+images:
+  - name: mysql
+    newTag: "5.6"
+    newName: mysql
 `)
 	th.writeF("/manifests/katib/katib-controller/base/katib-configmap.yaml", `
 apiVersion: v1
@@ -232,13 +178,10 @@ rules:
   resources:
   - experiments
   - experiments/status
-  - experiments/finalizers
   - trials
   - trials/status
-  - trials/finalizers
   - suggestions
   - suggestions/status
-  - suggestions/finalizers
   verbs:
   - "*"
 - apiGroups:
@@ -706,9 +649,9 @@ configurations:
 `)
 }
 
-func TestKatibControllerOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/katib/katib-controller/overlays/application")
-	writeKatibControllerOverlaysApplication(th)
+func TestKatibControllerOverlaysIbmStorageConfig(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/katib/katib-controller/overlays/ibm-storage-config")
+	writeKatibControllerOverlaysIbmStorageConfig(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -717,7 +660,7 @@ func TestKatibControllerOverlaysApplication(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../katib/katib-controller/overlays/application"
+	targetPath := "../katib/katib-controller/overlays/ibm-storage-config"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
