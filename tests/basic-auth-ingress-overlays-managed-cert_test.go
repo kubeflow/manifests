@@ -21,7 +21,8 @@ metadata:
   name: gke-certificate
 spec:
   domains:
-  - $(hostname)`)
+  - $(hostname)
+`)
 	th.writeK("/manifests/gcp/basic-auth-ingress/overlays/managed-cert", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -40,7 +41,8 @@ metadata:
   name: basicauth-backendconfig
 spec:
   # Jupyter uses websockets so we want to increase the timeout.
-  timeoutSec: 3600`)
+  timeoutSec: 3600
+`)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cloud-endpoint.yaml", `
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint

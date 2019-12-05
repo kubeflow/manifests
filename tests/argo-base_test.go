@@ -334,7 +334,6 @@ varReference:
 namespace=
 executorImage=argoproj/argoexec:v2.3.0
 containerRuntimeExecutor=docker
-#containerRuntimeExecutor=k8sapi
 artifactRepositoryBucket=mlpipeline
 artifactRepositoryKeyPrefix=artifacts
 artifactRepositoryEndpoint=minio-service.kubeflow:9000
