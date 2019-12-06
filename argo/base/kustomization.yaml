@@ -16,10 +16,10 @@ commonLabels:
 images:
 - name: argoproj/argoui
   newName: argoproj/argoui
-  newTag: v2.4.2
+  newTag: v2.4.3
 - name: argoproj/workflow-controller
   newName: argoproj/workflow-controller
-  newTag: v2.4.2
+  newTag: v2.4.3
 configMapGenerator:
 - name: workflow-controller-parameters
   env: params.env
