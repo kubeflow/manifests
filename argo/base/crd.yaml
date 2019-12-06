@@ -6,9 +6,11 @@ spec:
   group: argoproj.io
   names:
     kind: Workflow
+    listKind: WorkflowList
     plural: workflows
     shortNames:
     - wf
+    singular: workflow
   scope: Namespaced
   version: v1alpha1
 ---
