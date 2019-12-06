@@ -511,15 +511,9 @@ images:
 - name: gcr.io/kubebuilder/kube-rbac-proxy
   newName: gcr.io/kubebuilder/kube-rbac-proxy
   newTag: v0.4.0
-<<<<<<< HEAD
-- name: gcr.io/kfserving/kfserving-controller
-  newName: gcr.io/kfserving/kfserving-controller
-  digest: sha256:180d06026c4dd6c2d3ce4748efc896751b9bb6108b67a9eaa0e50158d6e10f1e
-=======
 - name: $(registry)/kfserving-controller
   newName: $(registry)/kfserving-controller
   newTag: 0.2.2
->>>>>>> updating tests
 `)
 }
 
