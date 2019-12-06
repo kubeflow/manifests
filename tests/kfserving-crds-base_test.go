@@ -101,6 +101,16 @@ spec:
                       required:
                       - container
                       type: object
+                    logger:
+                      description: Activate request/response logging
+                      properties:
+                        mode:
+                          description: What payloads to log
+                          type: string
+                        url:
+                          description: URL to send request logging CloudEvents
+                          type: string
+                      type: object
                     maxReplicas:
                       description: This is the up bound for autoscaler to scale to
                       format: int64
@@ -126,6 +136,16 @@ spec:
                       required:
                       - container
                       type: object
+                    logger:
+                      description: Activate request/response logging
+                      properties:
+                        mode:
+                          description: What payloads to log
+                          type: string
+                        url:
+                          description: URL to send request logging CloudEvents
+                          type: string
+                      type: object
                     maxReplicas:
                       description: This is the up bound for autoscaler to scale to
                       format: int64
@@ -143,9 +163,8 @@ spec:
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [v0.5.0, latest]
-                            and defaults to the version specified in inferenceservice
-                            config map
+                          description: Allowed runtime versions are specified in the
+                            inferenceservice config map
                           type: string
                         storageUri:
                           description: The location of the trained model
@@ -164,9 +183,8 @@ spec:
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [0.2.0, latest]
-                            and defaults to the version specified in inferenceservice
-                            config map
+                          description: Allowed runtime versions are specified in the
+                            inferenceservice config map
                           type: string
                         storageUri:
                           description: The location of the trained model
@@ -186,9 +204,8 @@ spec:
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [0.2.0, latest]
-                            and defaults to the version specified in inferenceservice
-                            config map
+                          description: Allowed runtime versions are specified in the
+                            inferenceservice config map
                           type: string
                         storageUri:
                           description: The location of the trained model
@@ -204,11 +221,8 @@ spec:
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [1.11.0, 1.12.0,
-                            1.13.0, 1.14.0, latest] or [1.11.0-gpu, 1.12.0-gpu, 1.13.0-gpu,
-                            1.14.0-gpu, latest-gpu] if gpu resource is specified and
-                            defaults to the version specified in inferenceservice
-                            config map.
+                          description: Allowed runtime versions are specified in the
+                            inferenceservice config map.
                           type: string
                         storageUri:
                           description: The location of the trained model
@@ -224,9 +238,8 @@ spec:
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [19.05-py3] and
-                            defaults to the version specified in inferenceservice
-                            config map
+                          description: Allowed runtime versions are specified in the
+                            inferenceservice config map
                           type: string
                         storageUri:
                           description: The location of the trained model
@@ -237,14 +250,17 @@ spec:
                     xgboost:
                       description: Spec for XGBoost predictor
                       properties:
+                        nthread:
+                          description: Number of thread to be used by XGBoost
+                          format: int64
+                          type: integer
                         resources:
                           description: Defaults to requests and limits of 1CPU, 2Gb
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [0.2.0, latest]
-                            and defaults to the version specified in inferenceservice
-                            config map
+                          description: Allowed runtime versions are specified in the
+                            inferenceservice config map
                           type: string
                         storageUri:
                           description: The location of the trained model
@@ -265,6 +281,16 @@ spec:
                           type: object
                       required:
                       - container
+                      type: object
+                    logger:
+                      description: Activate request/response logging
+                      properties:
+                        mode:
+                          description: What payloads to log
+                          type: string
+                        url:
+                          description: URL to send request logging CloudEvents
+                          type: string
                       type: object
                     maxReplicas:
                       description: This is the up bound for autoscaler to scale to
@@ -325,6 +351,16 @@ spec:
                       required:
                       - container
                       type: object
+                    logger:
+                      description: Activate request/response logging
+                      properties:
+                        mode:
+                          description: What payloads to log
+                          type: string
+                        url:
+                          description: URL to send request logging CloudEvents
+                          type: string
+                      type: object
                     maxReplicas:
                       description: This is the up bound for autoscaler to scale to
                       format: int64
@@ -350,6 +386,16 @@ spec:
                       required:
                       - container
                       type: object
+                    logger:
+                      description: Activate request/response logging
+                      properties:
+                        mode:
+                          description: What payloads to log
+                          type: string
+                        url:
+                          description: URL to send request logging CloudEvents
+                          type: string
+                      type: object
                     maxReplicas:
                       description: This is the up bound for autoscaler to scale to
                       format: int64
@@ -367,9 +413,8 @@ spec:
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [v0.5.0, latest]
-                            and defaults to the version specified in inferenceservice
-                            config map
+                          description: Allowed runtime versions are specified in the
+                            inferenceservice config map
                           type: string
                         storageUri:
                           description: The location of the trained model
@@ -388,9 +433,8 @@ spec:
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [0.2.0, latest]
-                            and defaults to the version specified in inferenceservice
-                            config map
+                          description: Allowed runtime versions are specified in the
+                            inferenceservice config map
                           type: string
                         storageUri:
                           description: The location of the trained model
@@ -410,9 +454,8 @@ spec:
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [0.2.0, latest]
-                            and defaults to the version specified in inferenceservice
-                            config map
+                          description: Allowed runtime versions are specified in the
+                            inferenceservice config map
                           type: string
                         storageUri:
                           description: The location of the trained model
@@ -428,11 +471,8 @@ spec:
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [1.11.0, 1.12.0,
-                            1.13.0, 1.14.0, latest] or [1.11.0-gpu, 1.12.0-gpu, 1.13.0-gpu,
-                            1.14.0-gpu, latest-gpu] if gpu resource is specified and
-                            defaults to the version specified in inferenceservice
-                            config map.
+                          description: Allowed runtime versions are specified in the
+                            inferenceservice config map.
                           type: string
                         storageUri:
                           description: The location of the trained model
@@ -448,9 +488,8 @@ spec:
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [19.05-py3] and
-                            defaults to the version specified in inferenceservice
-                            config map
+                          description: Allowed runtime versions are specified in the
+                            inferenceservice config map
                           type: string
                         storageUri:
                           description: The location of the trained model
@@ -461,14 +500,17 @@ spec:
                     xgboost:
                       description: Spec for XGBoost predictor
                       properties:
+                        nthread:
+                          description: Number of thread to be used by XGBoost
+                          format: int64
+                          type: integer
                         resources:
                           description: Defaults to requests and limits of 1CPU, 2Gb
                             MEM.
                           type: object
                         runtimeVersion:
-                          description: Allowed runtime versions are [0.2.0, latest]
-                            and defaults to the version specified in inferenceservice
-                            config map
+                          description: Allowed runtime versions are specified in the
+                            inferenceservice config map
                           type: string
                         storageUri:
                           description: The location of the trained model
@@ -489,6 +531,16 @@ spec:
                           type: object
                       required:
                       - container
+                      type: object
+                    logger:
+                      description: Activate request/response logging
+                      properties:
+                        mode:
+                          description: What payloads to log
+                          type: string
+                        url:
+                          description: URL to send request logging CloudEvents
+                          type: string
                       type: object
                     maxReplicas:
                       description: This is the up bound for autoscaler to scale to
