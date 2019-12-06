@@ -6,8 +6,8 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: argo
-  app.kubernetes.io/instance: argo-v2.3.0
+  app.kubernetes.io/instance: argo-v2.4.2
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: argo
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v2.3.0
+  app.kubernetes.io/version: v2.4.2
