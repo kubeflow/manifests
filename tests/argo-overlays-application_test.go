@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: argo
-      app.kubernetes.io/instance: argo-v2.3.0
+      app.kubernetes.io/instance: argo-v2.4.3
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: argo
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v2.3.0
+      app.kubernetes.io/version: v2.4.3
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -63,84 +63,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: argo
-  app.kubernetes.io/instance: argo-v2.3.0
+  app.kubernetes.io/instance: argo-v2.4.3
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: argo
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v2.3.0
-`)
-	th.writeF("/manifests/argo/base/aggregate-roles.yaml", `
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    app: argo
-    rbac.authorization.k8s.io/aggregate-to-view: "true"
-  name: argo-aggregate-to-view
-rules:
-- apiGroups:
-  - argoproj.io
-  resources:
-  - workflows
-  - workflows/finalizers
-  - workflowtemplates
-  - workflowtemplates/finalizers
-  verbs:
-  - get
-  - list
-  - watch
-
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    app: argo
-    rbac.authorization.k8s.io/aggregate-to-edit: "true"
-  name: argo-aggregate-to-edit
-rules:
-- apiGroups:
-  - argoproj.io
-  resources:
-  - workflows
-  - workflows/finalizers
-  - workflowtemplates
-  - workflowtemplates/finalizers
-  verbs:
-  - create
-  - delete
-  - deletecollection
-  - get
-  - list
-  - patch
-  - update
-  - watch
-
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    app: argo
-    rbac.authorization.k8s.io/aggregate-to-admin: "true"
-  name: argo-aggregate-to-admin
-rules:
-- apiGroups:
-  - argoproj.io
-  resources:
-  - workflows
-  - workflows/finalizers
-  - workflowtemplates
-  - workflowtemplates/finalizers
-  verbs:
-  - create
-  - delete
-  - deletecollection
-  - get
-  - list
-  - patch
-  - update
-  - watch
+  app.kubernetes.io/version: v2.4.3
 `)
 	th.writeF("/manifests/argo/base/cluster-role-binding.yaml", `
 ---
@@ -238,6 +165,7 @@ rules:
   verbs:
   - get
   - list
+
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
@@ -271,6 +199,79 @@ rules:
   verbs:
   - get
   - list
+  - watch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: argo
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+  name: argo-aggregate-to-view
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  - workflows/finalizers
+  - workflowtemplates
+  - workflowtemplates/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: argo
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+  name: argo-aggregate-to-edit
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  - workflows/finalizers
+  - workflowtemplates
+  - workflowtemplates/finalizers
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: argo
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+  name: argo-aggregate-to-admin
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  - workflows/finalizers
+  - workflowtemplates
+  - workflowtemplates/finalizers
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
   - watch
 `)
 	th.writeF("/manifests/argo/base/config-map.yaml", `
@@ -313,9 +314,11 @@ spec:
   group: argoproj.io
   names:
     kind: Workflow
+    listKind: WorkflowList
     plural: workflows
     shortNames:
     - wf
+    singular: workflow
   scope: Namespaced
   version: v1alpha1
 ---
@@ -373,7 +376,7 @@ spec:
           value: 'false'
         - name: BASE_HREF
           value: /argo/
-        image: argoproj/argoui:v2.3.0
+        image: argoproj/argoui:v2.4.3
         imagePullPolicy: IfNotPresent
         name: argo-ui
         resources: {}
@@ -428,7 +431,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: metadata.namespace
-        image: argoproj/workflow-controller:v2.3.0
+        image: argoproj/workflow-controller:v2.4.3
         imagePullPolicy: IfNotPresent
         name: workflow-controller
         resources: {}
@@ -519,7 +522,7 @@ varReference:
 `)
 	th.writeF("/manifests/argo/base/params.env", `
 namespace=
-executorImage=argoproj/argoexec:v2.3.0
+executorImage=argoproj/argoexec:v2.4.3
 containerRuntimeExecutor=docker
 artifactRepositoryBucket=mlpipeline
 artifactRepositoryKeyPrefix=artifacts
@@ -535,7 +538,6 @@ clusterDomain=cluster.local
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- aggregate-roles.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - config-map.yaml
@@ -550,10 +552,10 @@ commonLabels:
 images:
 - name: argoproj/argoui
   newName: argoproj/argoui
-  newTag: v2.4.2
+  newTag: v2.4.3
 - name: argoproj/workflow-controller
   newName: argoproj/workflow-controller
-  newTag: v2.4.2
+  newTag: v2.4.3
 configMapGenerator:
 - name: workflow-controller-parameters
   env: params.env
