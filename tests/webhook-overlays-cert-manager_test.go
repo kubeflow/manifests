@@ -28,7 +28,8 @@ spec:
   issuerRef:
     kind: ClusterIssuer
     name: $(issuer)
-  secretName: webhook-certs`)
+  secretName: webhook-certs
+`)
 	th.writeF("/manifests/admission-webhook/webhook/overlays/cert-manager/mutating-webhook-configuration.yaml", `
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: MutatingWebhookConfiguration
@@ -36,7 +37,8 @@ metadata:
   name: mutating-webhook-configuration
   annotations:
     cert-manager.io/inject-ca-from: $(namespace)/$(cert_name)
-  `)
+  
+`)
 	th.writeF("/manifests/admission-webhook/webhook/overlays/cert-manager/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -63,7 +65,8 @@ varReference:
   kind: MutatingWebhookConfiguration
 `)
 	th.writeF("/manifests/admission-webhook/webhook/overlays/cert-manager/params.env", `
-issuer=kubeflow-self-signing-issuer`)
+issuer=kubeflow-self-signing-issuer
+`)
 	th.writeK("/manifests/admission-webhook/webhook/overlays/cert-manager", `
 bases:
 - ../../base
@@ -100,7 +103,8 @@ vars:
     fieldpath: metadata.name
 
 configurations:
-- params.yaml`)
+- params.yaml
+`)
 	th.writeF("/manifests/admission-webhook/webhook/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

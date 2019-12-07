@@ -44,6 +44,7 @@ rules:
   resources:
   - tfjobs
   - tfjobs/status
+  - tfjobs/finalizers
   verbs:
   - '*'
 - apiGroups:

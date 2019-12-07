@@ -44,7 +44,8 @@ varReference:
   kind: VirtualService
 `)
 	th.writeF("/manifests/dex-auth/dex-crds/overlays/istio/params.env", `
-namespace=auth`)
+namespace=auth
+`)
 	th.writeK("/manifests/dex-auth/dex-crds/overlays/istio", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization

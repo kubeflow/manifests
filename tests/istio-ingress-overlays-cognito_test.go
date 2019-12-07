@@ -31,12 +31,14 @@ metadata:
 	th.writeF("/manifests/aws/istio-ingress/overlays/cognito/params.yaml", `
 varReference:
 - path: metadata/annotations
-  kind: Ingress`)
+  kind: Ingress
+`)
 	th.writeF("/manifests/aws/istio-ingress/overlays/cognito/params.env", `
 CognitoUserPoolArn=
 CognitoAppClientId=
 CognitoUserPoolDomain=
-certArn=`)
+certArn=
+`)
 	th.writeK("/manifests/aws/istio-ingress/overlays/cognito", `
 bases:
 - ../../base
