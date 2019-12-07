@@ -115,6 +115,7 @@ rules:
   resources:
   - notebooks
   - notebooks/status
+  - notebooks/finalizers
   verbs:
   - '*'
 - apiGroups:

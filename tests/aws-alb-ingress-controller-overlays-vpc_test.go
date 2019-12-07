@@ -44,7 +44,8 @@ spec:
 `)
 	th.writeF("/manifests/aws/aws-alb-ingress-controller/overlays/vpc/params.env", `
 vpcId=
-region=us-west-2`)
+region=us-west-2
+`)
 	th.writeK("/manifests/aws/aws-alb-ingress-controller/overlays/vpc", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -120,7 +121,8 @@ roleRef:
   name: alb-ingress-controller
 subjects:
   - kind: ServiceAccount
-    name: alb-ingress-controller`)
+    name: alb-ingress-controller
+`)
 	th.writeF("/manifests/aws/aws-alb-ingress-controller/base/deployment.yaml", `
 # Application Load Balancer (ALB) Ingress Controller Deployment Manifest.
 # This manifest details sensible defaults for deploying an ALB Ingress Controller.
@@ -172,14 +174,17 @@ spec:
           # Repository location of the ALB Ingress Controller.
           image: docker.io/amazon/aws-alb-ingress-controller:v1.1.2
           imagePullPolicy: Always
-      serviceAccountName: alb-ingress-controller`)
+      serviceAccountName: alb-ingress-controller
+`)
 	th.writeF("/manifests/aws/aws-alb-ingress-controller/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: alb-ingress-controller`)
+  name: alb-ingress-controller
+`)
 	th.writeF("/manifests/aws/aws-alb-ingress-controller/base/params.env", `
-clusterName=`)
+clusterName=
+`)
 	th.writeK("/manifests/aws/aws-alb-ingress-controller/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
