@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: authservice
 spec:
@@ -7,8 +7,9 @@ spec:
   selector:
     matchLabels:
       app: authservice
-  strategy:
-    type: Recreate
+  serviceName: authservice
+  updateStrategy:
+    type: RollingUpdate
   template:
     metadata:
       annotations:
@@ -49,11 +50,15 @@ spec:
           - name: STORE_PATH
             value: /var/lib/authservice/data.db
         volumeMounts:
-          - name: data
+          - name: authservice-pvc
             mountPath: /var/lib/authservice
       securityContext:
         fsGroup: 111
-      volumes:
-        - name: data
-          persistentVolumeClaim:
-              claimName: authservice-pvc          
+  volumeClaimTemplates:
+  - metadata:
+      name: authservice-pvc
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 10Gi
