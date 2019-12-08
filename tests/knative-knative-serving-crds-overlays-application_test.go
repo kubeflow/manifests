@@ -68,17 +68,18 @@ kind: Namespace
 metadata:
   labels:
     istio-injection: enabled
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.10.0"
   name: knative-serving
 
 `)
 	th.writeF("/manifests/knative/knative-serving-crds/base/crd.yaml", `
+---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   labels:
     knative.dev/crd-install: "true"
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.10.0"
   name: certificates.networking.internal.knative.dev
 spec:
   additionalPrinterColumns:
@@ -109,203 +110,7 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     knative.dev/crd-install: "true"
-    serving.knative.dev/release: "v0.8.0"
-  name: clusteringresses.networking.internal.knative.dev
-spec:
-  additionalPrinterColumns:
-  - JSONPath: .status.conditions[?(@.type=='Ready')].status
-    name: Ready
-    type: string
-  - JSONPath: .status.conditions[?(@.type=='Ready')].reason
-    name: Reason
-    type: string
-  group: networking.internal.knative.dev
-  names:
-    categories:
-    - knative-internal
-    - networking
-    kind: ClusterIngress
-    plural: clusteringresses
-    singular: clusteringress
-  scope: Cluster
-  subresources:
-    status: {}
-  versions:
-  - name: v1alpha1
-    served: true
-    storage: true
-
----
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  labels:
-    knative.dev/crd-install: "true"
-  name: images.caching.internal.knative.dev
-spec:
-  group: caching.internal.knative.dev
-  names:
-    categories:
-    - knative-internal
-    - caching
-    kind: Image
-    plural: images
-    shortNames:
-    - img
-    singular: image
-  scope: Namespaced
-  subresources:
-    status: {}
-  version: v1alpha1
-
----
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  labels:
-    knative.dev/crd-install: "true"
-    serving.knative.dev/release: "v0.8.0"
-  name: ingresses.networking.internal.knative.dev
-spec:
-  additionalPrinterColumns:
-  - JSONPath: .status.conditions[?(@.type=='Ready')].status
-    name: Ready
-    type: string
-  - JSONPath: .status.conditions[?(@.type=='Ready')].reason
-    name: Reason
-    type: string
-  group: networking.internal.knative.dev
-  names:
-    categories:
-    - knative-internal
-    - networking
-    kind: Ingress
-    plural: ingresses
-    shortNames:
-    - ing
-    singular: ingress
-  scope: Namespaced
-  subresources:
-    status: {}
-  versions:
-  - name: v1alpha1
-    served: true
-    storage: true
-
----
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  labels:
-    knative.dev/crd-install: "true"
-    serving.knative.dev/release: "v0.8.0"
-  name: metrics.autoscaling.internal.knative.dev
-spec:
-  additionalPrinterColumns:
-  - JSONPath: .status.conditions[?(@.type=='Ready')].status
-    name: Ready
-    type: string
-  - JSONPath: .status.conditions[?(@.type=='Ready')].reason
-    name: Reason
-    type: string
-  group: autoscaling.internal.knative.dev
-  names:
-    categories:
-    - knative-internal
-    - autoscaling
-    kind: Metric
-    plural: metrics
-    singular: metric
-  scope: Namespaced
-  subresources:
-    status: {}
-  version: v1alpha1
-
----
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  labels:
-    knative.dev/crd-install: "true"
-    serving.knative.dev/release: "v0.8.0"
-  name: podautoscalers.autoscaling.internal.knative.dev
-spec:
-  additionalPrinterColumns:
-  - JSONPath: .status.conditions[?(@.type=='Ready')].status
-    name: Ready
-    type: string
-  - JSONPath: .status.conditions[?(@.type=='Ready')].reason
-    name: Reason
-    type: string
-  group: autoscaling.internal.knative.dev
-  names:
-    categories:
-    - knative-internal
-    - autoscaling
-    kind: PodAutoscaler
-    plural: podautoscalers
-    shortNames:
-    - kpa
-    - pa
-    singular: podautoscaler
-  scope: Namespaced
-  subresources:
-    status: {}
-  versions:
-  - name: v1alpha1
-    served: true
-    storage: true
-
----
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  labels:
-    knative.dev/crd-install: "true"
-    serving.knative.dev/release: "v0.8.0"
-  name: serverlessservices.networking.internal.knative.dev
-spec:
-  additionalPrinterColumns:
-  - JSONPath: .spec.mode
-    name: Mode
-    type: string
-  - JSONPath: .status.serviceName
-    name: ServiceName
-    type: string
-  - JSONPath: .status.privateServiceName
-    name: PrivateServiceName
-    type: string
-  - JSONPath: .status.conditions[?(@.type=='Ready')].status
-    name: Ready
-    type: string
-  - JSONPath: .status.conditions[?(@.type=='Ready')].reason
-    name: Reason
-    type: string
-  group: networking.internal.knative.dev
-  names:
-    categories:
-    - knative-internal
-    - networking
-    kind: ServerlessService
-    plural: serverlessservices
-    shortNames:
-    - sks
-    singular: serverlessservice
-  scope: Namespaced
-  subresources:
-    status: {}
-  versions:
-  - name: v1alpha1
-    served: true
-    storage: true
-
----
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  labels:
-    knative.dev/crd-install: "true"
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.10.0"
   name: configurations.serving.knative.dev
 spec:
   additionalPrinterColumns:
@@ -340,6 +145,12 @@ spec:
   - name: v1alpha1
     served: true
     storage: true
+  - name: v1beta1
+    served: true
+    storage: false
+  - name: v1
+    served: true
+    storage: false
 
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
@@ -347,7 +158,134 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     knative.dev/crd-install: "true"
-    serving.knative.dev/release: "v0.8.0"
+  name: images.caching.internal.knative.dev
+spec:
+  group: caching.internal.knative.dev
+  names:
+    categories:
+    - knative-internal
+    - caching
+    kind: Image
+    plural: images
+    shortNames:
+    - img
+    singular: image
+  scope: Namespaced
+  subresources:
+    status: {}
+  version: v1alpha1
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    knative.dev/crd-install: "true"
+    serving.knative.dev/release: "v0.10.0"
+  name: ingresses.networking.internal.knative.dev
+spec:
+  additionalPrinterColumns:
+  - JSONPath: .status.conditions[?(@.type=='Ready')].status
+    name: Ready
+    type: string
+  - JSONPath: .status.conditions[?(@.type=='Ready')].reason
+    name: Reason
+    type: string
+  group: networking.internal.knative.dev
+  names:
+    categories:
+    - knative-internal
+    - networking
+    kind: Ingress
+    plural: ingresses
+    shortNames:
+    - ing
+    singular: ingress
+  scope: Namespaced
+  subresources:
+    status: {}
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    knative.dev/crd-install: "true"
+    serving.knative.dev/release: "v0.10.0"
+  name: metrics.autoscaling.internal.knative.dev
+spec:
+  additionalPrinterColumns:
+  - JSONPath: .status.conditions[?(@.type=='Ready')].status
+    name: Ready
+    type: string
+  - JSONPath: .status.conditions[?(@.type=='Ready')].reason
+    name: Reason
+    type: string
+  group: autoscaling.internal.knative.dev
+  names:
+    categories:
+    - knative-internal
+    - autoscaling
+    kind: Metric
+    plural: metrics
+    singular: metric
+  scope: Namespaced
+  subresources:
+    status: {}
+  version: v1alpha1
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    knative.dev/crd-install: "true"
+    serving.knative.dev/release: "v0.10.0"
+  name: podautoscalers.autoscaling.internal.knative.dev
+spec:
+  additionalPrinterColumns:
+  - JSONPath: .status.desiredScale
+    name: DesiredScale
+    type: integer
+  - JSONPath: .status.actualScale
+    name: ActualScale
+    type: integer
+  - JSONPath: .status.conditions[?(@.type=='Ready')].status
+    name: Ready
+    type: string
+  - JSONPath: .status.conditions[?(@.type=='Ready')].reason
+    name: Reason
+    type: string
+  group: autoscaling.internal.knative.dev
+  names:
+    categories:
+    - knative-internal
+    - autoscaling
+    kind: PodAutoscaler
+    plural: podautoscalers
+    shortNames:
+    - kpa
+    - pa
+    singular: podautoscaler
+  scope: Namespaced
+  subresources:
+    status: {}
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    knative.dev/crd-install: "true"
+    serving.knative.dev/release: "v0.10.0"
   name: revisions.serving.knative.dev
 spec:
   additionalPrinterColumns:
@@ -384,14 +322,21 @@ spec:
   - name: v1alpha1
     served: true
     storage: true
+  - name: v1beta1
+    served: true
+    storage: false
+  - name: v1
+    served: true
+    storage: false
 
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   labels:
+    duck.knative.dev/addressable: "true"
     knative.dev/crd-install: "true"
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.10.0"
   name: routes.serving.knative.dev
 spec:
   additionalPrinterColumns:
@@ -422,14 +367,21 @@ spec:
   - name: v1alpha1
     served: true
     storage: true
+  - name: v1beta1
+    served: true
+    storage: false
+  - name: v1
+    served: true
+    storage: false
 
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   labels:
+    duck.knative.dev/addressable: "true"
     knative.dev/crd-install: "true"
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.10.0"
   name: services.serving.knative.dev
 spec:
   additionalPrinterColumns:
@@ -460,6 +412,55 @@ spec:
     - kservice
     - ksvc
     singular: service
+  scope: Namespaced
+  subresources:
+    status: {}
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+  - name: v1beta1
+    served: true
+    storage: false
+  - name: v1
+    served: true
+    storage: false
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    knative.dev/crd-install: "true"
+    serving.knative.dev/release: "v0.10.0"
+  name: serverlessservices.networking.internal.knative.dev
+spec:
+  additionalPrinterColumns:
+  - JSONPath: .spec.mode
+    name: Mode
+    type: string
+  - JSONPath: .status.serviceName
+    name: ServiceName
+    type: string
+  - JSONPath: .status.privateServiceName
+    name: PrivateServiceName
+    type: string
+  - JSONPath: .status.conditions[?(@.type=='Ready')].status
+    name: Ready
+    type: string
+  - JSONPath: .status.conditions[?(@.type=='Ready')].reason
+    name: Reason
+    type: string
+  group: networking.internal.knative.dev
+  names:
+    categories:
+    - knative-internal
+    - networking
+    kind: ServerlessService
+    plural: serverlessservices
+    shortNames:
+    - sks
+    singular: serverlessservice
   scope: Namespaced
   subresources:
     status: {}

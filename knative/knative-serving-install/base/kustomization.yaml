@@ -14,7 +14,7 @@ resources:
 - service.yaml
 - apiservice.yaml
 - image.yaml
-- webhook-configuration.yaml  
+- webhook-configuration.yaml
 commonLabels:
   kustomize.component: knative
 images:
