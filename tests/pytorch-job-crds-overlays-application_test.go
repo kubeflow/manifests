@@ -23,8 +23,8 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: pytorch-job-crds
-      app.kubernetes.io/instance: pytorch-job-crds-v0.7.0
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/instance: pytorch-job-crds-v0.7.1
+      app.kubernetes.io/version: v0.7.1
       app.kubernetes.io/component: pytorch
       app.kubernetes.io/part-of: kubeflow
       app.kubernetes.io/managed-by: kfctl
@@ -67,11 +67,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: pytorch-job-crds
-  app.kubernetes.io/instance: pytorch-job-crds-v0.7.0
+  app.kubernetes.io/instance: pytorch-job-crds-v0.7.1
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: pytorch
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v0.7.1
 `)
 	th.writeF("/manifests/pytorch-job/pytorch-job-crds/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1

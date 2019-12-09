@@ -20,8 +20,8 @@ configurations:
 commonLabels:
   app: tekton-dashboard
   app.kubernetes.io/name: tektoncd-dashboard
-  app.kubernetes.io/instance: tektoncd-dashboard-v0.7.0
+  app.kubernetes.io/instance: tektoncd-dashboard-v0.7.1
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: tektoncd
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v0.7.1

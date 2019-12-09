@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: prometheus
-      app.kubernetes.io/instance: prometheus-v0.7.0
+      app.kubernetes.io/instance: prometheus-v0.7.1
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: prometheus
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/version: v0.7.1
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -56,11 +56,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: prometheus
-  app.kubernetes.io/instance: prometheus-v0.7.0
+  app.kubernetes.io/instance: prometheus-v0.7.1
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: prometheus
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v0.7.1
 `)
 	th.writeF("/manifests/gcp/prometheus/base/prometheus.yaml", `
 apiVersion: v1
