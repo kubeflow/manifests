@@ -180,7 +180,7 @@ spec:
               items:
                 properties:
                   type:
-                    description: Type of the confition/
+                    description: Type of the condition/
                     type: string
                 required:
                 - type
