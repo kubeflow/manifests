@@ -105,10 +105,7 @@ rules:
   resources:
   - events
   verbs:
-  - get
   - list
-  - watch
-  - create
 - apiGroups:
   - storage.k8s.io
   resources:
