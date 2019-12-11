@@ -27,4 +27,4 @@ workflows:
       test_endpoint: true
       # The path for the config should depend on the commit we are testing manifests on.
       # so we use the local path which will be checked out to the correct commit
-      config_path: {srcrootdir}/kubeflow/manifests/kfdef/kfctl_gcp_iap.yaml
+      config_path: "{srcrootdir}/kubeflow/manifests/kfdef/kfctl_gcp_iap.yaml"
