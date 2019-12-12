@@ -7,5 +7,5 @@ Resolves #
 **Checklist:**
 - [ ] Unit tests have been rebuilt: 
     1. `cd manifests/tests`
-    2. `make generate`
+    2. `make generate-changed-only
     3. `make test`
