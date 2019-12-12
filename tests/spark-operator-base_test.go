@@ -185,6 +185,40 @@ kind: ServiceAccount
 metadata:
   name: operator-sa
 `)
+	th.writeF("/manifests/spark/spark-operator/base/role.yaml", `
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: spark-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+`)
+	th.writeF("/manifests/spark/spark-operator/base/rolebinding.yaml", `
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: spark-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: spark-role
+subjects:
+- kind: ServiceAccount
+  name: spark-sa
+
+`)
 	th.writeF("/manifests/spark/spark-operator/base/sparkapplications.sparkoperator.k8s.io-crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -5301,6 +5335,8 @@ resources:
 - crd-cleanup-job.yaml
 - deploy.yaml
 - operator-sa.yaml
+- role.yaml
+- rolebinding.yaml
 - sparkapplications.sparkoperator.k8s.io-crd.yaml
 - scheduledsparkapplications.sparkoperator.k8s.io-crd.yaml
 `)
