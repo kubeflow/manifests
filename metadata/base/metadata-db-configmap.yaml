@@ -1,7 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: db-configmap
+  name: metadata-configmap
 data:
   mysql_database: "metadb"
+  mysql_host: "metadata-db.kubeflow"
   mysql_port: "3306"

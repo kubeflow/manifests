@@ -30,17 +30,27 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: db-configmap
+  name: metadata-configmap
 data:
   mysql_database: "metadb"
+  mysql_host: "metadata-db.kubeflow"
   mysql_port: "3306"
+`)
+	th.writeF("/manifests/metadata/base/metadata-grpc-configmap.yaml", `
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: metadata-grpc-configmap
+data:
+  METADATA_GRPC_SERVICE_HOST: "grpc-service"
+  METADATA_GRPC_SERVICE_PORT: "8080"
 `)
 	th.writeF("/manifests/metadata/base/metadata-db-secret.yaml", `
 apiVersion: v1
 kind: Secret
 type: Opaque
 metadata:
-  name: db-secrets
+  name: mysql-credential
 data:
   username: "cm9vdA==" # "root"
   password: "dGVzdA==" # "test"
@@ -70,14 +80,14 @@ spec:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: metadata-db-secrets
+                name: mysql-credential
                 key: password
           - name: MYSQL_ALLOW_EMPTY_PASSWORD
             value: "true"
           - name: MYSQL_DATABASE
             valueFrom:
               configMapKeyRef:
-                name: metadata-db-configmap
+                name: metadata-configmap
                 key: mysql_database
         ports:
         - name: dbapi
@@ -139,22 +149,22 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: metadata-db-secrets
+              name: mysql-credential
               key: password
         - name: MYSQL_USER_NAME
           valueFrom:
             secretKeyRef:
-              name: metadata-db-secrets
+              name: mysql-credential
               key: username
         - name: MYSQL_DATABASE
           valueFrom:
             configMapKeyRef:
-              name: metadata-db-configmap
+              name: metadata-configmap
               key: mysql_database
         - name: MYSQL_PORT
           valueFrom:
             configMapKeyRef:
-              name: metadata-db-configmap
+              name: metadata-configmap
               key: mysql_port
         command: ["./server/server",
                   "--http_port=8080",
@@ -201,22 +211,22 @@ spec:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: metadata-db-secrets
+                name: mysql-credential
                 key: password
           - name: MYSQL_USER_NAME
             valueFrom:
               secretKeyRef:
-                name: metadata-db-secrets
+                name: mysql-credential
                 key: username
           - name: MYSQL_DATABASE
             valueFrom:
               configMapKeyRef:
-                name: metadata-db-configmap
+                name: metadata-configmap
                 key: mysql_database
           - name: MYSQL_PORT
             valueFrom:
               configMapKeyRef:
-                name: metadata-db-configmap
+                name: metadata-configmap
                 key: mysql_port
           command: ["/bin/metadata_store_server"]
           args: ["--grpc_port=8080",
@@ -408,6 +418,7 @@ configMapGenerator:
 resources:
 - metadata-db-pvc.yaml
 - metadata-db-configmap.yaml
+- metadata-grpc-configmap.yaml
 - metadata-db-secret.yaml
 - metadata-db-deployment.yaml
 - metadata-db-service.yaml

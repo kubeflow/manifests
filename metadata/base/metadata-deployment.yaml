@@ -21,22 +21,22 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: metadata-db-secrets
+              name: mysql-credential
               key: password
         - name: MYSQL_USER_NAME
           valueFrom:
             secretKeyRef:
-              name: metadata-db-secrets
+              name: mysql-credential
               key: username
         - name: MYSQL_DATABASE
           valueFrom:
             configMapKeyRef:
-              name: metadata-db-configmap
+              name: metadata-configmap
               key: mysql_database
         - name: MYSQL_PORT
           valueFrom:
             configMapKeyRef:
-              name: metadata-db-configmap
+              name: metadata-configmap
               key: mysql_port
         command: ["./server/server",
                   "--http_port=8080",
@@ -83,22 +83,22 @@ spec:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: metadata-db-secrets
+                name: mysql-credential
                 key: password
           - name: MYSQL_USER_NAME
             valueFrom:
               secretKeyRef:
-                name: metadata-db-secrets
+                name: mysql-credential
                 key: username
           - name: MYSQL_DATABASE
             valueFrom:
               configMapKeyRef:
-                name: metadata-db-configmap
+                name: metadata-configmap
                 key: mysql_database
           - name: MYSQL_PORT
             valueFrom:
               configMapKeyRef:
-                name: metadata-db-configmap
+                name: metadata-configmap
                 key: mysql_port
           command: ["/bin/metadata_store_server"]
           args: ["--grpc_port=8080",

@@ -22,14 +22,14 @@ spec:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: metadata-db-secrets
+                name: mysql-credential
                 key: password
           - name: MYSQL_ALLOW_EMPTY_PASSWORD
             value: "true"
           - name: MYSQL_DATABASE
             valueFrom:
               configMapKeyRef:
-                name: metadata-db-configmap
+                name: metadata-configmap
                 key: mysql_database
         ports:
         - name: dbapi
