@@ -72,7 +72,7 @@ commonLabels:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: spark-sa
+  name: spark
 `)
 	th.writeF("/manifests/spark/spark-operator/base/cr-clusterrole.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
@@ -270,7 +270,7 @@ roleRef:
   name: spark-role
 subjects:
 - kind: ServiceAccount
-  name: spark-sa
+  name: spark
 
 `)
 	th.writeF("/manifests/spark/spark-operator/base/sparkapplications.sparkoperator.k8s.io-crd.yaml", `
