@@ -8,5 +8,5 @@ roleRef:
   name: spark-role
 subjects:
 - kind: ServiceAccount
-  name: spark-sa
+  name: spark
 
