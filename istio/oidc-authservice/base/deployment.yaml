@@ -51,6 +51,10 @@ spec:
         volumeMounts:
           - name: data
             mountPath: /var/lib/authservice
+        readinessProbe:
+            httpGet:
+              path: /
+              port: 8081
       securityContext:
         fsGroup: 111
       volumes:
