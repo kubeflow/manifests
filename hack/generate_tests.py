@@ -6,7 +6,7 @@ import logging
 import os
 import subprocess
 
-TOP_LEVEL_EXCLUDES = ["docs"]
+TOP_LEVEL_EXCLUDES = ["docs", "hack", "tests"]
 
 def generate_test_name(repo_root, package_dir):
   """Generate the name of the go file to write the test to.
@@ -63,9 +63,6 @@ def find_kustomize_dirs(root):
 
   changed_dirs = set()
   for top in os.listdir(root):
-    if top.startswith("docs"):
-      print("donotsubmit")
-
     if top.startswith("."):
       logging.info("Skipping directory %s", os.path.join(root, top))
       continue
@@ -149,9 +146,6 @@ if __name__ == "__main__":
 
     test_path = os.path.join(repo_root, "tests", test_name)
 
-    test_target_name = os.path.splitext(test_name)[0]
-    test_target_name = test_target_name.replace("-", "")
     with open(test_path, "w") as test_file:
-      subprocess.check_call(["./hack/gen-test-target.sh", full_dir,
-                             test_target_name],
+      subprocess.check_call(["./hack/gen-test-target.sh", full_dir],
                             stdout=test_file, cwd=repo_root)
