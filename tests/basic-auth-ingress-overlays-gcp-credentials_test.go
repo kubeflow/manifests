@@ -52,8 +52,7 @@ metadata:
   name: basicauth-backendconfig
 spec:
   # Jupyter uses websockets so we want to increase the timeout.
-  timeoutSec: 3600
-`)
+  timeoutSec: 3600`)
 	th.writeF("/manifests/gcp/basic-auth-ingress/base/cloud-endpoint.yaml", `
 apiVersion: ctl.isla.solutions/v1
 kind: CloudEndpoint
