@@ -17,34 +17,8 @@ spec:
       containers:
       - name: container
         image: gcr.io/kubeflow-images-public/metadata:v0.1.11
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: metadata-db-secrets
-              key: password
-        - name: MYSQL_USER_NAME
-          valueFrom:
-            secretKeyRef:
-              name: metadata-db-secrets
-              key: username
-        - name: MYSQL_DATABASE
-          valueFrom:
-            configMapKeyRef:
-              name: metadata-db-configmap
-              key: mysql_database
-        - name: MYSQL_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: metadata-db-configmap
-              key: mysql_port
         command: ["./server/server",
-                  "--http_port=8080",
-                  "--mysql_service_host=metadata-db.kubeflow",
-                  "--mysql_service_port=$(MYSQL_PORT)",
-                  "--mysql_service_user=$(MYSQL_USER_NAME)",
-                  "--mysql_service_password=$(MYSQL_ROOT_PASSWORD)",
-                  "--mlmd_db_name=$(MYSQL_DATABASE)"]
+                  "--http_port=8080"]
         ports:
         - name: backendapi
           containerPort: 8080
@@ -79,35 +53,8 @@ spec:
       containers:
         - name: container
           image: gcr.io/tfx-oss-public/ml_metadata_store_server:0.15.1
-          env:
-          - name: MYSQL_ROOT_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: metadata-db-secrets
-                key: password
-          - name: MYSQL_USER_NAME
-            valueFrom:
-              secretKeyRef:
-                name: metadata-db-secrets
-                key: username
-          - name: MYSQL_DATABASE
-            valueFrom:
-              configMapKeyRef:
-                name: metadata-db-configmap
-                key: mysql_database
-          - name: MYSQL_PORT
-            valueFrom:
-              configMapKeyRef:
-                name: metadata-db-configmap
-                key: mysql_port
           command: ["/bin/metadata_store_server"]
-          args: ["--grpc_port=8080",
-                 "--mysql_config_host=metadata-db.kubeflow",
-                 "--mysql_config_database=$(MYSQL_DATABASE)",
-                 "--mysql_config_port=$(MYSQL_PORT)",
-                 "--mysql_config_user=$(MYSQL_USER_NAME)",
-                 "--mysql_config_password=$(MYSQL_ROOT_PASSWORD)"
-          ]
+          args: ["--grpc_port=8080"]
           ports:
             - name: grpc-backendapi
               containerPort: 8080

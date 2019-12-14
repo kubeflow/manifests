@@ -1,10 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: db
+  name: metadata-db
   labels:
     component: db
 spec:
+  selector:
+    matchLabels:
+      component: db
   replicas: 1
   template:
     metadata:
@@ -18,19 +21,11 @@ spec:
         args:
         - --datadir
         - /var/lib/mysql/datadir
-        env:
-          - name: MYSQL_ROOT_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: metadata-db-secrets
-                key: password
-          - name: MYSQL_ALLOW_EMPTY_PASSWORD
-            value: "true"
-          - name: MYSQL_DATABASE
-            valueFrom:
-              configMapKeyRef:
-                name: metadata-db-configmap
-                key: mysql_database
+        envFrom:
+        - configMapRef:
+            name: db-parameters
+        - secretRef:
+            name: db-secrets
         ports:
         - name: dbapi
           containerPort: 3306

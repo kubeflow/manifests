@@ -7,11 +7,6 @@ configMapGenerator:
 - name: ui-parameters
   env: params.env
 resources:
-- metadata-db-pvc.yaml
-- metadata-db-configmap.yaml
-- metadata-db-secret.yaml
-- metadata-db-deployment.yaml
-- metadata-db-service.yaml
 - metadata-deployment.yaml
 - metadata-service.yaml
 - metadata-ui-deployment.yaml
