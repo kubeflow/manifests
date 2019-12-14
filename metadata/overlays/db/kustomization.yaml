@@ -3,6 +3,9 @@ kind: Kustomization
 commonLabels:
   kustomize.component: metadata
 namespace: kubeflow
+generatorOptions:
+  # name suffix hash is not propagated correctly to base resources
+  disableNameSuffixHash: true
 configMapGenerator:
 - name: db-parameters
   env: params.env
