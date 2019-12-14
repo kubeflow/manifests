@@ -16,12 +16,12 @@ spec:
         authorizationRequest:
           allowedHeaders:
             patterns:
-              - exact: "cookie"
-              - exact: "X-Auth-Token"
+            - exact: "cookie"
+            - exact: "X-Auth-Token"
         authorizationResponse:
           allowedUpstreamHeaders:
             patterns:
-              - exact: "kubeflow-userid"
+            - exact: "kubeflow-userid"
       statusOnError:
         code: GatewayTimeout
     filterName: envoy.ext_authz
