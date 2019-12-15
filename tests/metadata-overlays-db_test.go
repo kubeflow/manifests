@@ -52,9 +52,9 @@ spec:
         - /var/lib/mysql/datadir
         envFrom:
         - configMapRef:
-            name: db-parameters
+            name: metadata-db-parameters
         - secretRef:
-            name: db-secrets
+            name: metadata-db-secrets
         ports:
         - name: dbapi
           containerPort: 3306
@@ -112,9 +112,9 @@ spec:
       - name: container
         envFrom:
           - configMapRef:
-              name: db-parameters
+              name: metadata-db-parameters
           - secretRef:
-              name: db-secrets
+              name: metadata-db-secrets
         command: ["./server/server",
                   "--http_port=8080",
                   "--mysql_service_host=$(metadata-db-service)",
@@ -143,9 +143,9 @@ spec:
         - name: container
           envFrom:
           - configMapRef:
-              name: db-parameters
+              name: metadata-db-parameters
           - secretRef:
-              name: db-secrets
+              name: metadata-db-secrets
           args: ["--grpc_port=8080",
                  "--mysql_config_host=$(metadata-db-service)",
                  "--mysql_config_database=$(MYSQL_DATABASE)",
@@ -170,10 +170,10 @@ generatorOptions:
   # name suffix hash is not propagated correctly to base resources
   disableNameSuffixHash: true
 configMapGenerator:
-- name: db-parameters
+- name: metadata-db-parameters
   env: params.env
 secretGenerator:
-- name: db-secrets
+- name: metadata-db-secrets
   env: secrets.env
 bases:
 - ../../base
