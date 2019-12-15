@@ -18,9 +18,9 @@ spec:
       - name: container
         envFrom:
           - configMapRef:
-              name: db-parameters
+              name: metadata-db-parameters
           - secretRef:
-              name: db-secrets
+              name: metadata-db-secrets
         command: ["./server/server",
                   "--http_port=8080",
                   "--mysql_service_host=$(metadata-db-service)",
@@ -49,9 +49,9 @@ spec:
         - name: container
           envFrom:
           - configMapRef:
-              name: db-parameters
+              name: metadata-db-parameters
           - secretRef:
-              name: db-secrets
+              name: metadata-db-secrets
           args: ["--grpc_port=8080",
                  "--mysql_config_host=$(metadata-db-service)",
                  "--mysql_config_database=$(MYSQL_DATABASE)",

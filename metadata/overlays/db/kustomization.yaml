@@ -7,10 +7,10 @@ generatorOptions:
   # name suffix hash is not propagated correctly to base resources
   disableNameSuffixHash: true
 configMapGenerator:
-- name: db-parameters
+- name: metadata-db-parameters
   env: params.env
 secretGenerator:
-- name: db-secrets
+- name: metadata-db-secrets
   env: secrets.env
 bases:
 - ../../base

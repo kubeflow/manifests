@@ -23,9 +23,9 @@ spec:
         - /var/lib/mysql/datadir
         envFrom:
         - configMapRef:
-            name: db-parameters
+            name: metadata-db-parameters
         - secretRef:
-            name: db-secrets
+            name: metadata-db-secrets
         ports:
         - name: dbapi
           containerPort: 3306
