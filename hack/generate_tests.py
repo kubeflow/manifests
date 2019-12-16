@@ -80,7 +80,7 @@ def find_kustomize_dirs(root):
 def remove_unmatched_tests(repo_root, package_dirs):
   """Remove any tests that don't map to a kustomization.yaml file.
 
-  This ensures tests don't linger if a pakage is deleted.
+  This ensures tests don't linger if a package is deleted.
   """
 
   # Create a set of all the expected test names
