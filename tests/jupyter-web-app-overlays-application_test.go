@@ -129,6 +129,12 @@ rules:
   - get
   - list
 - apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - list
+- apiGroups:
   - storage.k8s.io
   resources:
   - storageclasses
