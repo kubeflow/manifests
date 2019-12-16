@@ -95,7 +95,7 @@ data:
       image:
         # The container Image for the user's Jupyter Notebook
         # If readonly, this value must be a member of the list below
-        value: gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v-base-ef41372-1177829795472347138
+        value: gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v0.7.0
         # The list of available standard container Images
         options:
           - gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v0.7.0
@@ -299,16 +299,6 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name: webapp_mapping
-      prefix: /$(prefix)/
-      service: jupyter-web-app-service.$(namespace)
-      add_request_headers:
-        x-forwarded-prefix: /jupyter
   labels:
     run: jupyter-web-app
   name: service
@@ -324,8 +314,6 @@ spec:
 varReference:
 - path: spec/template/spec/containers/imagePullPolicy
   kind: Deployment
-- path: metadata/annotations/getambassador.io\/config
-  kind: Service
 - path: spec/template/spec/containers/0/env/2/value
   kind: Deployment
 - path: spec/template/spec/containers/0/env/3/value
@@ -338,8 +326,7 @@ policy=Always
 prefix=jupyter
 clusterDomain=cluster.local
 userid-header=
-userid-prefix=
-`)
+userid-prefix=`)
 	th.writeK("/manifests/jupyter/jupyter-web-app/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
