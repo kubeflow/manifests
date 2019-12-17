@@ -71,107 +71,6 @@ commonLabels:
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.7.0
 `)
-	th.writeF("/manifests/metadata/base/metadata-db-pvc.yaml", `
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mysql
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
-`)
-	th.writeF("/manifests/metadata/base/metadata-db-configmap.yaml", `
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: db-configmap
-data:
-  mysql_database: "metadb"
-  mysql_port: "3306"
-`)
-	th.writeF("/manifests/metadata/base/metadata-db-secret.yaml", `
-apiVersion: v1
-kind: Secret
-type: Opaque
-metadata:
-  name: db-secrets
-data:
-  username: "cm9vdA==" # "root"
-  password: "dGVzdA==" # "test"
-`)
-	th.writeF("/manifests/metadata/base/metadata-db-deployment.yaml", `
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: db
-  labels:
-    component: db
-spec:
-  replicas: 1
-  template:
-    metadata:
-      name: db
-      labels:
-        component: db
-    spec:
-      containers:
-      - name: db-container
-        image: mysql:8.0.3
-        args:
-        - --datadir
-        - /var/lib/mysql/datadir
-        env:
-          - name: MYSQL_ROOT_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: metadata-db-secrets
-                key: password
-          - name: MYSQL_ALLOW_EMPTY_PASSWORD
-            value: "true"
-          - name: MYSQL_DATABASE
-            valueFrom:
-              configMapKeyRef:
-                name: metadata-db-configmap
-                key: mysql_database
-        ports:
-        - name: dbapi
-          containerPort: 3306
-        readinessProbe:
-          exec:
-            command:
-            - "/bin/bash"
-            - "-c"
-            - "mysql -D $$MYSQL_DATABASE -p$$MYSQL_ROOT_PASSWORD -e 'SELECT 1'"
-          initialDelaySeconds: 5
-          periodSeconds: 2
-          timeoutSeconds: 1
-        volumeMounts:
-        - name: metadata-mysql
-          mountPath: /var/lib/mysql
-      volumes:
-      - name: metadata-mysql
-        persistentVolumeClaim:
-          claimName: metadata-mysql
-`)
-	th.writeF("/manifests/metadata/base/metadata-db-service.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
-  name: db
-  labels:
-    component: db
-spec:
-  type: ClusterIP
-  ports:
-    - port: 3306
-      protocol: TCP
-      name: dbapi
-  selector:
-    component: db
-`)
 	th.writeF("/manifests/metadata/base/metadata-deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -192,34 +91,8 @@ spec:
       containers:
       - name: container
         image: gcr.io/kubeflow-images-public/metadata:v0.1.11
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: metadata-db-secrets
-              key: password
-        - name: MYSQL_USER_NAME
-          valueFrom:
-            secretKeyRef:
-              name: metadata-db-secrets
-              key: username
-        - name: MYSQL_DATABASE
-          valueFrom:
-            configMapKeyRef:
-              name: metadata-db-configmap
-              key: mysql_database
-        - name: MYSQL_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: metadata-db-configmap
-              key: mysql_port
         command: ["./server/server",
-                  "--http_port=8080",
-                  "--mysql_service_host=metadata-db.kubeflow",
-                  "--mysql_service_port=$(MYSQL_PORT)",
-                  "--mysql_service_user=$(MYSQL_USER_NAME)",
-                  "--mysql_service_password=$(MYSQL_ROOT_PASSWORD)",
-                  "--mlmd_db_name=$(MYSQL_DATABASE)"]
+                  "--http_port=8080"]
         ports:
         - name: backendapi
           containerPort: 8080
@@ -254,35 +127,8 @@ spec:
       containers:
         - name: container
           image: gcr.io/tfx-oss-public/ml_metadata_store_server:0.15.1
-          env:
-          - name: MYSQL_ROOT_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: metadata-db-secrets
-                key: password
-          - name: MYSQL_USER_NAME
-            valueFrom:
-              secretKeyRef:
-                name: metadata-db-secrets
-                key: username
-          - name: MYSQL_DATABASE
-            valueFrom:
-              configMapKeyRef:
-                name: metadata-db-configmap
-                key: mysql_database
-          - name: MYSQL_PORT
-            valueFrom:
-              configMapKeyRef:
-                name: metadata-db-configmap
-                key: mysql_port
           command: ["/bin/metadata_store_server"]
-          args: ["--grpc_port=8080",
-                 "--mysql_config_host=metadata-db.kubeflow",
-                 "--mysql_config_database=$(MYSQL_DATABASE)",
-                 "--mysql_config_port=$(MYSQL_PORT)",
-                 "--mysql_config_user=$(MYSQL_USER_NAME)",
-                 "--mysql_config_password=$(MYSQL_ROOT_PASSWORD)"
-          ]
+          args: ["--grpc_port=8080"]
           ports:
             - name: grpc-backendapi
               containerPort: 8080
@@ -463,11 +309,6 @@ configMapGenerator:
 - name: ui-parameters
   env: params.env
 resources:
-- metadata-db-pvc.yaml
-- metadata-db-configmap.yaml
-- metadata-db-secret.yaml
-- metadata-db-deployment.yaml
-- metadata-db-service.yaml
 - metadata-deployment.yaml
 - metadata-service.yaml
 - metadata-ui-deployment.yaml
