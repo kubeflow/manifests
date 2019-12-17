@@ -13,64 +13,188 @@ import (
 	"testing"
 )
 
-func writeMetadataOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/metadata/overlays/application/application.yaml", `
-apiVersion: app.k8s.io/v1beta1
-kind: Application
+func writeMetadataOverlaysDb(th *KustTestHarness) {
+	th.writeF("/manifests/metadata/overlays/db/metadata-db-pvc.yaml", `
+apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
-  name: metadata
+  name: metadata-mysql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+`)
+	th.writeF("/manifests/metadata/overlays/db/metadata-db-deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metadata-db
+  labels:
+    component: db
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: metadata
-      app.kubernetes.io/instance: metadata-v0.7.0
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: metadata
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
-  componentKinds:
-  - group: core
-    kind: Service
-  - group: apps
-    kind: Deployment
-  - group: core
-    kind: ConfigMap
-  - group: core
-    kind: ServiceAccount
-  descriptor:
-    type: "metadata"
-    version: "alpha"
-    description: "Tracking and managing metadata of machine learning workflows in Kubeflow."
-    maintainers:
-    - name: Zhenghui Wang
-      email: zhenghui@google.com
-    owners:
-    - name: Ajay Gopinathan
-      email: ajaygopinathan@google.com
-    - name: Zhenghui Wang
-      email: zhenghui@google.com
-    keywords:
-    - "metadata"
-    links:
-    - description: Docs
-      url: "https://www.kubeflow.org/docs/components/misc/metadata/"
-  addOwnerRef: true
+      component: db
+  replicas: 1
+  template:
+    metadata:
+      name: db
+      labels:
+        component: db
+    spec:
+      containers:
+      - name: db-container
+        image: mysql:8.0.3
+        args:
+        - --datadir
+        - /var/lib/mysql/datadir
+        envFrom:
+        - configMapRef:
+            name: metadata-db-parameters
+        - secretRef:
+            name: metadata-db-secrets
+        ports:
+        - name: dbapi
+          containerPort: 3306
+        readinessProbe:
+          exec:
+            command:
+            - "/bin/bash"
+            - "-c"
+            - "mysql -D $$MYSQL_DATABASE -p$$MYSQL_ROOT_PASSWORD -e 'SELECT 1'"
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 1
+        volumeMounts:
+        - name: metadata-mysql
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: metadata-mysql
+        persistentVolumeClaim:
+          claimName: metadata-mysql
 `)
-	th.writeK("/manifests/metadata/overlays/application", `
+	th.writeF("/manifests/metadata/overlays/db/metadata-db-service.yaml", `
+apiVersion: v1
+kind: Service
+metadata:
+  name: metadata-db
+  labels:
+    component: db
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3306
+      protocol: TCP
+      name: dbapi
+  selector:
+    component: db
+`)
+	th.writeF("/manifests/metadata/overlays/db/metadata-deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+  labels:
+    component: server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: server
+  template:
+    metadata:
+      labels:
+        component: server
+    spec:
+      containers:
+      - name: container
+        envFrom:
+          - configMapRef:
+              name: metadata-db-parameters
+          - secretRef:
+              name: metadata-db-secrets
+        command: ["./server/server",
+                  "--http_port=8080",
+                  "--mysql_service_host=$(metadata-db-service)",
+                  "--mysql_service_port=$(MYSQL_PORT)",
+                  "--mysql_service_user=$(MYSQL_USER_NAME)",
+                  "--mysql_service_password=$(MYSQL_ROOT_PASSWORD)",
+                  "--mlmd_db_name=$(MYSQL_DATABASE)"]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-deployment
+  labels:
+    component: grpc-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: grpc-server
+  template:
+    metadata:
+      labels:
+        component: grpc-server
+    spec:
+      containers:
+        - name: container
+          envFrom:
+          - configMapRef:
+              name: metadata-db-parameters
+          - secretRef:
+              name: metadata-db-secrets
+          args: ["--grpc_port=8080",
+                 "--mysql_config_host=$(metadata-db-service)",
+                 "--mysql_config_database=$(MYSQL_DATABASE)",
+                 "--mysql_config_port=$(MYSQL_PORT)",
+                 "--mysql_config_user=$(MYSQL_USER_NAME)",
+                 "--mysql_config_password=$(MYSQL_ROOT_PASSWORD)"
+          ]`)
+	th.writeF("/manifests/metadata/overlays/db/params.env", `
+MYSQL_DATABASE=metadb
+MYSQL_PORT=3306
+MYSQL_ALLOW_EMPTY_PASSWORD=true`)
+	th.writeF("/manifests/metadata/overlays/db/secrets.env", `
+MYSQL_USER_NAME=root
+MYSQL_ROOT_PASSWORD=test`)
+	th.writeK("/manifests/metadata/overlays/db", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+commonLabels:
+  kustomize.component: metadata
+namespace: kubeflow
+generatorOptions:
+  # name suffix hash is not propagated correctly to base resources
+  disableNameSuffixHash: true
+configMapGenerator:
+- name: metadata-db-parameters
+  env: params.env
+secretGenerator:
+- name: metadata-db-secrets
+  env: secrets.env
 bases:
 - ../../base
 resources:
-- application.yaml
-commonLabels:
-  app.kubernetes.io/name: metadata
-  app.kubernetes.io/instance: metadata-v0.7.0
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: metadata
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
-`)
+- metadata-db-pvc.yaml
+- metadata-db-deployment.yaml
+- metadata-db-service.yaml
+patchesStrategicMerge:
+- metadata-deployment.yaml
+images:
+- name: mysql
+  newName: mysql
+  newTag: 8.0.3
+vars:
+- name: metadata-db-service
+  objref:
+    kind: Service
+    name: metadata-db
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.name`)
 	th.writeF("/manifests/metadata/base/metadata-deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -367,9 +491,9 @@ images:
 `)
 }
 
-func TestMetadataOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/metadata/overlays/application")
-	writeMetadataOverlaysApplication(th)
+func TestMetadataOverlaysDb(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/metadata/overlays/db")
+	writeMetadataOverlaysDb(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -378,7 +502,7 @@ func TestMetadataOverlaysApplication(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../metadata/overlays/application"
+	targetPath := "../metadata/overlays/db"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
