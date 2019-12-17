@@ -1,5 +1,5 @@
 # Please set project and email!
-apiVersion: kfdef.apps.kubeflow.org/v1beta1
+apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
   # If name is not set, kfctl will infer app name from the directory.
