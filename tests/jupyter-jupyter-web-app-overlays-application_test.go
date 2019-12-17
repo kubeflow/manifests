@@ -109,6 +109,12 @@ rules:
   - create
   - delete
 - apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+- apiGroups:
   - kubeflow.org
   resources:
   - notebooks
