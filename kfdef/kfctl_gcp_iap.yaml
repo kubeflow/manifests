@@ -370,7 +370,7 @@ spec:
         # value: SET_EMAIL
       - name: profile-name
         # kfctl might overwrite profile name
-        value: anonymous
+        value: anonymous-gabrielwen
       repoRef:
         name: manifests
         path: default-install
