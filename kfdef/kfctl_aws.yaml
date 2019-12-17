@@ -103,6 +103,7 @@ spec:
       overlays:
       - istio
       - application
+      - db
       repoRef:
         name: manifests
         path: metadata
