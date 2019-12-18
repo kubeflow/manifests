@@ -321,7 +321,7 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/notebook-controller
   newName: gcr.io/kubeflow-images-public/notebook-controller
-  digest: sha256:6490f737000bd1d2520ac4b8cbde2b09749cdb291b1967ddda95d05131db49db
+  digest: sha256:c40226ca344f9e7325622492de62a86ff2b8ba9cc0e49d36369dd9e613d8ef78
 configMapGenerator:
 - name: parameters
   env: params.env
