@@ -1,7 +1,7 @@
 # This is the config to install Kubeflow on an existing K8s cluster, with support
 # for multi-user and LDAP auth using Dex.
 
-apiVersion: kfdef.apps.kubeflow.org/v1beta1
+apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
   name: demo
