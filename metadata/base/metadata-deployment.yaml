@@ -52,9 +52,12 @@ spec:
     spec:
       containers:
         - name: container
+          envFrom:
+          - configMapRef:
+              name: metadata-grpc-configmap
           image: gcr.io/tfx-oss-public/ml_metadata_store_server:0.15.1
           command: ["/bin/metadata_store_server"]
-          args: ["--grpc_port=8080"]
+          args: ["--grpc_port=$(METADATA_GRPC_SERVICE_PORT)"]
           ports:
             - name: grpc-backendapi
               containerPort: 8080
