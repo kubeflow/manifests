@@ -150,7 +150,7 @@ resources:
     zone: {{ properties['zone'] }}
     clusterId: {{ CLUSTER_NAME }}
     nodePool:
-      name: gpu-pool
+      name: {{ GPU_POOL }}
       initialNodeCount: {{ properties['gpu-pool-initialNodeCount'] }}
       autoscaling:
         enabled: {{ properties['gpu-pool-enable-autoscaling'] }}
