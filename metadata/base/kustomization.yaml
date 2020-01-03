@@ -6,6 +6,8 @@ commonLabels:
 configMapGenerator:
 - name: ui-parameters
   env: params.env
+- name: metadata-grpc-configmap
+  env: grpc-params.env
 resources:
 - metadata-deployment.yaml
 - metadata-service.yaml
