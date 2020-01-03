@@ -52,7 +52,9 @@ spec:
               name: metadata-db-parameters
           - secretRef:
               name: metadata-db-secrets
-          args: ["--grpc_port=8080",
+          - configMapRef:
+              name: metadata-grpc-configmap
+          args: ["--grpc_port=$(METADATA_GRPC_SERVICE_PORT)",
                  "--mysql_config_host=$(metadata-db-service)",
                  "--mysql_config_database=$(MYSQL_DATABASE)",
                  "--mysql_config_port=$(MYSQL_PORT)",

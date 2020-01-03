@@ -126,9 +126,12 @@ spec:
     spec:
       containers:
         - name: container
+          envFrom:
+          - configMapRef:
+              name: metadata-grpc-configmap
           image: gcr.io/tfx-oss-public/ml_metadata_store_server:0.15.1
           command: ["/bin/metadata_store_server"]
-          args: ["--grpc_port=8080"]
+          args: ["--grpc_port=$(METADATA_GRPC_SERVICE_PORT)"]
           ports:
             - name: grpc-backendapi
               containerPort: 8080
@@ -299,6 +302,10 @@ spec:
 	th.writeF("/manifests/metadata/base/params.env", `
 uiClusterDomain=cluster.local
 `)
+	th.writeF("/manifests/metadata/base/grpc-params.env", `
+METADATA_GRPC_SERVICE_HOST=metadata-grpc-service
+METADATA_GRPC_SERVICE_PORT=8080
+`)
 	th.writeK("/manifests/metadata/base", `
 namePrefix: metadata-
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -308,6 +315,8 @@ commonLabels:
 configMapGenerator:
 - name: ui-parameters
   env: params.env
+- name: metadata-grpc-configmap
+  env: grpc-params.env
 resources:
 - metadata-deployment.yaml
 - metadata-service.yaml
