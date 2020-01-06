@@ -108,10 +108,11 @@ spec:
           cluster: outbound|8080||authservice.$(namespace).svc.cluster.local
           failureModeAllow: false
           timeout: 10s
-        authorizationRequest: 
+        authorizationRequest:
           allowedHeaders:
             patterns:
             - exact: "cookie"
+            - exact: "X-Auth-Token"
         authorizationResponse:
           allowedUpstreamHeaders:
             patterns:
