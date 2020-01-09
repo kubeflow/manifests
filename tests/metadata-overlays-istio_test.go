@@ -14,6 +14,51 @@ import (
 )
 
 func writeMetadataOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/metadata/overlays/istio/metadata-deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-deployment
+  labels:
+    component: grpc-server
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+`)
+	th.writeF("/manifests/metadata/overlays/istio/metadata-envoy-deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: envoy-deployment
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+`)
+	th.writeF("/manifests/metadata/overlays/istio/metadata-ui-deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+`)
 	th.writeF("/manifests/metadata/overlays/istio/virtual-service.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -70,6 +115,10 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
+patchesStrategicMerge:
+- metadata-deployment.yaml
+- metadata-envoy-deployment.yaml
+- metadata-ui-deployment.yaml
 resources:
 - virtual-service.yaml
 - virtual-service-metadata-grpc.yaml
@@ -139,7 +188,7 @@ spec:
           args: ["--grpc_port=$(METADATA_GRPC_SERVICE_PORT)"]
           ports:
             - name: grpc-backendapi
-              containerPort: 8080
+              containerPort: 8080 #The value of the port number needs to be in sync with value  specified in grpc-params.env
 `)
 	th.writeF("/manifests/metadata/base/metadata-service.yaml", `
 kind: Service
@@ -306,10 +355,6 @@ spec:
 `)
 	th.writeF("/manifests/metadata/base/params.env", `
 uiClusterDomain=cluster.local
-`)
-	th.writeF("/manifests/metadata/base/grpc-params.env", `
-METADATA_GRPC_SERVICE_HOST=metadata-grpc-service
-METADATA_GRPC_SERVICE_PORT=8080
 `)
 	th.writeK("/manifests/metadata/base", `
 namePrefix: metadata-

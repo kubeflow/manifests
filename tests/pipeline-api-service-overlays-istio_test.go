@@ -13,7 +13,26 @@ import (
 	"testing"
 )
 
-func writeApiServiceBase(th *KustTestHarness) {
+func writeApiServiceOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/pipeline/api-service/overlays/istio/deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+`)
+	th.writeK("/manifests/pipeline/api-service/overlays/istio", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+patchesStrategicMerge:
+- deployment.yaml
+`)
 	th.writeF("/manifests/pipeline/api-service/base/config-map.yaml", `
 # The configuration for the ML pipelines APIServer
 # Based on https://github.com/kubeflow/pipelines/blob/master/backend/src/apiserver/config/config.json
@@ -159,9 +178,9 @@ images:
 `)
 }
 
-func TestApiServiceBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/pipeline/api-service/base")
-	writeApiServiceBase(th)
+func TestApiServiceOverlaysIstio(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/pipeline/api-service/overlays/istio")
+	writeApiServiceOverlaysIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -170,7 +189,7 @@ func TestApiServiceBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../pipeline/api-service/base"
+	targetPath := "../pipeline/api-service/overlays/istio"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)

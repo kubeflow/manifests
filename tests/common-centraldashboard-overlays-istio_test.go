@@ -14,6 +14,17 @@ import (
 )
 
 func writeCentraldashboardOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/common/centraldashboard/overlays/istio/deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: centraldashboard
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+`)
 	th.writeF("/manifests/common/centraldashboard/overlays/istio/virtual-service.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -46,6 +57,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
+patchesStrategicMerge:
+- deployment.yaml
 resources:
 - virtual-service.yaml
 configurations:

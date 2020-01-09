@@ -36,6 +36,50 @@ spec:
         port:
           number: 80
 `)
+	th.writeF("/manifests/katib/katib-controller/overlays/istio/katib-controller-deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: katib-controller
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+`)
+	th.writeF("/manifests/katib/katib-controller/overlays/istio/katib-db-deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: katib-db
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+`)
+	th.writeF("/manifests/katib/katib-controller/overlays/istio/katib-manager-deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: katib-manager
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+`)
+	th.writeF("/manifests/katib/katib-controller/overlays/istio/katib-ui-deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: katib-ui
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+`)
 	th.writeF("/manifests/katib/katib-controller/overlays/istio/params.yaml", `
 varReference:
 - path: spec/http/route/destination/host
@@ -48,6 +92,11 @@ bases:
 - ../../base
 resources:
 - katib-ui-virtual-service.yaml
+patchesStrategicMerge:
+- katib-controller-deployment.yaml
+- katib-db-deployment.yaml
+- katib-manager-deployment.yaml
+- katib-ui-deployment.yaml
 configurations:
 - params.yaml
 `)

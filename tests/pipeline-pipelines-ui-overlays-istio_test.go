@@ -64,6 +64,17 @@ varReference:
 - path: spec/http/route/destination/host
   kind: VirtualService
 `)
+	th.writeF("/manifests/pipeline/pipelines-ui/overlays/istio/deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-ui
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+`)
 	th.writeK("/manifests/pipeline/pipelines-ui/overlays/istio", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -73,6 +84,8 @@ resources:
 - virtual-service.yaml
 configurations:
 - params.yaml
+patchesStrategicMerge:
+- deployment.yaml
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/deployment.yaml", `
 apiVersion: apps/v1

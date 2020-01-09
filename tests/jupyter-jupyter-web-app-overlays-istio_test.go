@@ -14,6 +14,17 @@ import (
 )
 
 func writeJupyterWebAppOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/jupyter/jupyter-web-app/overlays/istio/deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/overlays/istio/virtual-service.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -48,6 +59,10 @@ varReference:
 	th.writeK("/manifests/jupyter/jupyter-web-app/overlays/istio", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+bases:
+- ../../base
+patchesStrategicMerge:
+- deployment.yaml
 resources:
 - virtual-service.yaml
 configurations:

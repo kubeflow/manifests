@@ -36,6 +36,17 @@ spec:
         port:
           number: 9000
 `)
+	th.writeF("/manifests/tensorboard/overlays/istio/deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tensorboard
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+`)
 	th.writeF("/manifests/tensorboard/overlays/istio/params.yaml", `
 varReference:
 - path: spec/http/route/destination/host
@@ -48,6 +59,8 @@ bases:
 - ../../base
 resources:
 - virtual-service.yaml
+patchesStrategicMerge:
+- deployment.yaml
 configurations:
 - params.yaml
 `)

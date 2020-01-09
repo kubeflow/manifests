@@ -14,6 +14,28 @@ import (
 )
 
 func writeArgoOverlaysIstio(th *KustTestHarness) {
+	th.writeF("/manifests/argo/overlays/istio/deployment.yaml", `
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argo-ui
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workflow-controller
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+`)
 	th.writeF("/manifests/argo/overlays/istio/virtual-service.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -46,6 +68,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
 - ../../base
+patchesStrategicMerge:
+- deployment.yaml
 resources:
 - virtual-service.yaml
 configurations:
