@@ -1,0 +1,9 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kfserving-controller-manager
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"

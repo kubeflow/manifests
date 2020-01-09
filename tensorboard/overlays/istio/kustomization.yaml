@@ -4,5 +4,7 @@ bases:
 - ../../base
 resources:
 - virtual-service.yaml
+patchesStrategicMerge:
+- deployment.yaml
 configurations:
 - params.yaml

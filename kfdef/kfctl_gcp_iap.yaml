@@ -38,6 +38,7 @@ spec:
     name: application-crds
   - kustomizeConfig:
       overlays:
+      - istio
       - application
       repoRef:
         name: manifests
@@ -49,6 +50,8 @@ spec:
         path: kubeflow-roles
     name: kubeflow-roles
   - kustomizeConfig:
+      overlays:
+      - istio
       repoRef:
         name: manifests
         path: metacontroller
@@ -76,6 +79,7 @@ spec:
     name: centraldashboard
   - kustomizeConfig:
       overlays:
+      - istio
       - application
       repoRef:
         name: manifests
@@ -83,6 +87,7 @@ spec:
     name: webhook
   - kustomizeConfig:
       overlays:
+      - istio
       - application
       parameters:
       - name: webhookNamePrefix
@@ -106,6 +111,7 @@ spec:
     name: jupyter-web-app
   - kustomizeConfig:
       overlays:
+      - istio
       - application
       repoRef:
         name: manifests
@@ -140,6 +146,7 @@ spec:
     name: pytorch-job-crds
   - kustomizeConfig:
       overlays:
+      - istio
       - application
       repoRef:
         name: manifests
@@ -174,6 +181,7 @@ spec:
     name: kfserving-crds
   - kustomizeConfig:
       overlays:
+      - istio
       - application
       repoRef:
         name: manifests
@@ -181,6 +189,7 @@ spec:
     name: kfserving-install
   - kustomizeConfig:
       overlays:
+      - istio
       - application
       parameters:
       - name: usageId
@@ -207,6 +216,7 @@ spec:
     name: tf-job-crds
   - kustomizeConfig:
       overlays:
+      - istio
       - application
       repoRef:
         name: manifests
@@ -229,6 +239,7 @@ spec:
     name: katib-controller
   - kustomizeConfig:
       overlays:
+      - istio
       - application
       repoRef:
         name: manifests
@@ -236,6 +247,7 @@ spec:
     name: api-service
   - kustomizeConfig:
       overlays:
+      - istio
       - minioPd
       - application
       parameters:
@@ -251,6 +263,7 @@ spec:
     name: minio
   - kustomizeConfig:
       overlays:
+      - istio
       - mysqlPd
       - application
       parameters:
@@ -266,6 +279,7 @@ spec:
     name: mysql
   - kustomizeConfig:
       overlays:
+      - istio
       - application
       repoRef:
         name: manifests
@@ -289,6 +303,7 @@ spec:
     name: pipelines-ui
   - kustomizeConfig:
       overlays:
+      - istio
       - application
       repoRef:
         name: manifests
@@ -296,6 +311,7 @@ spec:
     name: pipelines-viewer
   - kustomizeConfig:
       overlays:
+      - istio
       - application
       repoRef:
         name: manifests
@@ -303,6 +319,7 @@ spec:
     name: scheduledworkflow
   - kustomizeConfig:
       overlays:
+      - istio
       - application
       repoRef:
         name: manifests
@@ -310,6 +327,7 @@ spec:
     name: pipeline-visualization-service
   - kustomizeConfig:
       overlays:
+      - istio
       - application
       repoRef:
         name: manifests
@@ -358,6 +376,7 @@ spec:
     name: iap-ingress
   - kustomizeConfig:
       overlays:
+      - istio
       - application
       repoRef:
         name: manifests

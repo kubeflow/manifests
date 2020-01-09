@@ -3,9 +3,4 @@ kind: Kustomization
 bases:
 - ../../base
 patchesStrategicMerge:
-- deployment.yaml
-resources:
-- virtual-service.yaml
-configurations:
-- params.yaml
-
+- statefulset.yaml

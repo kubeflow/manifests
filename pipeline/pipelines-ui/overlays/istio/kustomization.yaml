@@ -6,3 +6,5 @@ resources:
 - virtual-service.yaml
 configurations:
 - params.yaml
+patchesStrategicMerge:
+- deployment.yaml

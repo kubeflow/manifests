@@ -4,5 +4,10 @@ bases:
 - ../../base
 resources:
 - katib-ui-virtual-service.yaml
+patchesStrategicMerge:
+- katib-controller-deployment.yaml
+- katib-db-deployment.yaml
+- katib-manager-deployment.yaml
+- katib-ui-deployment.yaml
 configurations:
 - params.yaml
