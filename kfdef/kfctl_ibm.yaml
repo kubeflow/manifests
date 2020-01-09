@@ -107,8 +107,8 @@ spec:
       overlays:
       - istio
       - application
-      - db
       - ibm-storage-config
+      - db
       repoRef:
         name: manifests
         path: metadata
