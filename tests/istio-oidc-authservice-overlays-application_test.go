@@ -31,7 +31,7 @@ spec:
       app.kubernetes.io/version: v0.7.0
   componentKinds:
   - group: apps
-    kind: Deployment
+    kind: StatefulSet
   - group: core
     kind: Service
   - group: core
@@ -85,10 +85,11 @@ spec:
   ports:
   - port: 8080
     name: http-authservice
-    targetPort: http-api`)
-	th.writeF("/manifests/istio/oidc-authservice/base/deployment.yaml", `
+    targetPort: http-api
+  publishNotReadyAddresses: true`)
+	th.writeF("/manifests/istio/oidc-authservice/base/statefulset.yaml", `
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: authservice
 spec:
@@ -96,8 +97,7 @@ spec:
   selector:
     matchLabels:
       app: authservice
-  strategy:
-    type: RollingUpdate
+  serviceName: authservice
   template:
     metadata:
       annotations:
@@ -199,7 +199,7 @@ spec:
 	th.writeF("/manifests/istio/oidc-authservice/base/params.yaml", `
 varReference:
 - path: spec/template/spec/containers/env/value
-  kind: Deployment
+  kind: StatefulSet
 - path: spec/filters/filterConfig/httpService/serverUri/uri
   kind: EnvoyFilter
 - path: spec/filters/filterConfig/httpService/serverUri/cluster
@@ -220,7 +220,7 @@ kind: Kustomization
 
 resources:
 - service.yaml
-- deployment.yaml
+- statefulset.yaml
 - envoy-filter.yaml
 - pvc.yaml
 
