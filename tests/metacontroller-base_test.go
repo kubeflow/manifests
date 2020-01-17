@@ -97,6 +97,8 @@ spec:
     metadata:
       labels:
         app: metacontroller
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - command:
