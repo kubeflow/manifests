@@ -29,6 +29,8 @@ spec:
     metadata:
       labels:
         app: ml-pipeline-ui
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: ml-pipeline-ui

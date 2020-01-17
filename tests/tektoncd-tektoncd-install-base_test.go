@@ -574,6 +574,7 @@ spec:
     metadata:
       annotations:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+        sidecar.istio.io/inject: "false"
       labels:
         app: tekton-pipelines-controller
 #        app.kubernetes.io/component: controller
@@ -642,6 +643,7 @@ spec:
     metadata:
       annotations:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+        sidecar.istio.io/inject: "false"
       labels:
         app: tekton-pipelines-webhook
 #        app.kubernetes.io/component: webhook-controller

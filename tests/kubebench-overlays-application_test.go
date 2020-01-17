@@ -168,6 +168,8 @@ spec:
     metadata:
       labels:
         app: kubebench-operator
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       volumes:
       - name: kubebench-config

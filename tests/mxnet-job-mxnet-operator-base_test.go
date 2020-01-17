@@ -103,6 +103,8 @@ spec:
     metadata:
       labels:
         name: mxnet-operator
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - command:
