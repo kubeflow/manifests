@@ -45,6 +45,7 @@ spec:
       repoRef:
         name: manifests
         path: istio/istio
+    name: istio
   - kustomizeConfig:
       parameters:
       - name: namespace
