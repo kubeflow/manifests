@@ -29,6 +29,8 @@ spec:
     metadata:
       labels:
         app: fsx-csi-controller
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       serviceAccount: fsx-csi-controller-sa
 #      priorityClassName: system-cluster-critical

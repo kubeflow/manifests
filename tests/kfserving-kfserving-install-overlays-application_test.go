@@ -437,6 +437,8 @@ spec:
       labels:
         control-plane: kfserving-controller-manager
         controller-tools.k8s.io: "1.0"
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - args:

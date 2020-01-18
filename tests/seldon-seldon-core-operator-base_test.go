@@ -94,6 +94,7 @@ spec:
     metadata:
       annotations:
         prometheus.io/scrape: "true"
+        sidecar.istio.io/inject: "false"
       labels:
         app.kubernetes.io/instance: seldon-core-operator
         app.kubernetes.io/name: seldon-core-operator
