@@ -29,6 +29,8 @@ spec:
     metadata:
       labels:
         app: efs-csi-controller
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       serviceAccount: efs-csi-controller-sa
       #priorityClassName: system-cluster-critical

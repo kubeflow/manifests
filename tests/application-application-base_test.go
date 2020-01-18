@@ -79,6 +79,8 @@ spec:
     metadata:
       labels:
         app: application-controller
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: manager
