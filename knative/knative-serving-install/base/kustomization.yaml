@@ -20,19 +20,19 @@ commonLabels:
 images:
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/activator
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/activator
-  digest: sha256:0c52e0a85612bbedebf6d0de2b1951a4f762a05691f86e78079a5089d4848652
+  digest: sha256:8e606671215cc029683e8cd633ec5de9eabeaa6e9a4392ff289883304be1f418
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa
-  digest: sha256:f5514430997ed3799e0f708d657fef935e7eef2774f073a46ffb06311c8b5e76
+  digest: sha256:5e0fadf574e66fb1c893806b5c5e5f19139cc476ebf1dff9860789fe4ac5f545
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
-  digest: sha256:9b716bec384c166782f30756e0981ab11178e1a6b7a4fa6965cc6225abf8567c
+  digest: sha256:ef1f01b5fb3886d4c488a219687aac72d28e72f808691132f658259e4e02bb27
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/networking/istio
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/networking/istio
-  digest: sha256:4bc49ca99adf8e4f5c498bdd1287cdf643e4b721e69b2c4a022fe98db46486ff
+  digest: sha256:727a623ccb17676fae8058cb1691207a9658a8d71bc7603d701e23b1a6037e6c
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/webhook
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/webhook
-  digest: sha256:f59e8d9782f17b1af3060152d99b70ae08f40aa69b799180d24964e527ebb818
+  digest: sha256:1ef3328282f31704b5802c1136bd117e8598fd9f437df8209ca87366c5ce9fcb
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/controller
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/controller
-  digest: sha256:a168c9fa095c88b3e0bcbbaa6d4501a8a02ab740b360938879ae9df55964a758
+  digest: sha256:5ca13e5b3ce5e2819c4567b75c0984650a57272ece44bc1dabf930f9fe1e19a1
