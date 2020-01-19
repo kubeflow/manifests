@@ -1,10 +1,12 @@
+---
 apiVersion: caching.internal.knative.dev/v1alpha1
 kind: Image
 metadata:
   labels:
-    serving.knative.dev/release: "v0.10.0"
+    serving.knative.dev/release: "v0.11.1"
   name: queue-proxy
   namespace: knative-serving
 spec:
-  image: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:5ff357b66622c98f24c56bba0a866be5e097306b83c5e6c41c28b6e87ec64c7c
+  image: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:792f6945c7bc73a49a470a5b955c39c8bd174705743abf5fb71aa0f4c04128eb
+
 
