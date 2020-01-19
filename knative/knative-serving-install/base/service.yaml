@@ -1,25 +1,26 @@
+---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     app: activator
-    serving.knative.dev/release: "v0.10.0"
+    serving.knative.dev/release: "v0.11.1"
   name: activator-service
   namespace: knative-serving
 spec:
   ports:
-  - name: http
-    port: 80
-    protocol: TCP
-    targetPort: 8012
-  - name: http2
-    port: 81
-    protocol: TCP
-    targetPort: 8013
-  - name: metrics
-    port: 9090
-    protocol: TCP
-    targetPort: 9090
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8012
+    - name: http2
+      port: 81
+      protocol: TCP
+      targetPort: 8013
+    - name: http-metrics
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
   selector:
     app: activator
   type: ClusterIP
@@ -30,15 +31,15 @@ kind: Service
 metadata:
   labels:
     app: controller
-    serving.knative.dev/release: "v0.10.0"
+    serving.knative.dev/release: "v0.11.1"
   name: controller
   namespace: knative-serving
 spec:
   ports:
-  - name: metrics
-    port: 9090
-    protocol: TCP
-    targetPort: 9090
+    - name: http-metrics
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
   selector:
     app: controller
 
@@ -48,13 +49,14 @@ kind: Service
 metadata:
   labels:
     role: webhook
-    serving.knative.dev/release: "v0.10.0"
+    serving.knative.dev/release: "v0.11.1"
   name: webhook
   namespace: knative-serving
 spec:
   ports:
-  - port: 443
-    targetPort: 8443
+    - name: https-webhook
+      port: 443
+      targetPort: 8443
   selector:
     role: webhook
 ---
@@ -63,23 +65,22 @@ kind: Service
 metadata:
   labels:
     app: autoscaler
-    serving.knative.dev/release: "v0.10.0"
+    serving.knative.dev/release: "v0.11.1"
   name: autoscaler
   namespace: knative-serving
 spec:
   ports:
-  - name: http
-    port: 8080
-    protocol: TCP
-    targetPort: 8080
-  - name: metrics
-    port: 9090
-    protocol: TCP
-    targetPort: 9090
-  - name: custom-metrics
-    port: 443
-    protocol: TCP
-    targetPort: 8443
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: http-metrics
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+    - name: https-custom-metrics
+      port: 443
+      protocol: TCP
+      targetPort: 8443
   selector:
     app: autoscaler
-
