@@ -139,7 +139,7 @@ spec:
           args: ["--grpc_port=$(METADATA_GRPC_SERVICE_PORT)"]
           ports:
             - name: grpc-backendapi
-              containerPort: 8080
+              containerPort: 8080 #The value of the port number needs to be in sync with value  specified in grpc-params.env
 `)
 	th.writeF("/manifests/metadata/base/metadata-service.yaml", `
 kind: Service
@@ -306,10 +306,6 @@ spec:
 `)
 	th.writeF("/manifests/metadata/base/params.env", `
 uiClusterDomain=cluster.local
-`)
-	th.writeF("/manifests/metadata/base/grpc-params.env", `
-METADATA_GRPC_SERVICE_HOST=metadata-grpc-service
-METADATA_GRPC_SERVICE_PORT=8080
 `)
 	th.writeK("/manifests/metadata/base", `
 namePrefix: metadata-
