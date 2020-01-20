@@ -32,7 +32,7 @@ spec:
       kind: Secret
     - group: v1
       kind: ConfigMap
-  version: "v1alpha2"
+  version: "v1"
   description: "Seldon allows users to create ML Inference Graphs to deploy their models and serve predictions"
   icons:
   maintainers:
@@ -46,7 +46,7 @@ spec:
    - "inference"
   links:
     - description: Docs
-      url: "https://docs.seldon.io/projects/seldon-core/en/v0.3.0/"
+      url: "https://docs.seldon.io/projects/seldon-core/en/v1.0.1/"
 `)
 	th.writeK("/manifests/seldon/seldon-core-operator/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -57,14 +57,32 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: seldon-core-operator
-  app.kubernetes.io/instance: seldon-core-operator-v0.7.0
+  app.kubernetes.io/instance: seldon-core-operator-v1.0.1
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: seldon
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v1.0.1
 `)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-config-cm.yaml", `
+	th.writeF("/manifests/seldon/seldon-core-operator/base/resources.yaml", `
+---
+# Source: seldon-core-operator/templates/secret.yaml
 apiVersion: v1
+kind: Secret
+metadata:
+  name: seldon-operator-webhook-server-secret
+  namespace: kubeflow
+---
+# Source: seldon-core-operator/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: seldon-config
+  namespace: kubeflow
+  labels:
+    app.kubernetes.io/name: seldon-core-operator
+    helm.sh/chart: seldon-core-operator-0.4.1
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/managed-by: Helm
 data:
   credentials: |-
     {
@@ -76,363 +94,20 @@ data:
            "s3SecretAccessKeyName": "awsSecretAccessKey"
        }
     }
-kind: ConfigMap
-metadata:
-  labels:
-    app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
-    app.kubernetes.io/name: seldon-core-operator
-    helm.sh/chart: seldon-core-operator-0.4.1
-  name: seldon-config
-  namespace: kubeflow
-`)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-manager-sa.yaml", `
+---
+# Source: seldon-core-operator/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
-    app.kubernetes.io/name: seldon-core-operator
-    helm.sh/chart: seldon-core-operator-0.4.1
   name: seldon-manager
-  namespace: kubeflow
-`)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-controller-manager-service-svc.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
+  namespace: kubeflow  
   labels:
-    app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
-    app.kubernetes.io/name: seldon-core-operator
-    control-plane: seldon-controller-manager
-    controller-tools.k8s.io: "1.0"
-    helm.sh/chart: seldon-core-operator-0.4.1
-  name: seldon-operator-controller-manager-service
-  namespace: kubeflow
-spec:
-  ports:
-  - port: 443
-  selector:
-    control-plane: seldon-controller-manager
-    controller-tools.k8s.io: "1.0"
-`)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-controller-manager-statefulset.yaml", `
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  labels:
-    app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
-    app.kubernetes.io/name: seldon-core-operator
-    control-plane: seldon-controller-manager
-    controller-tools.k8s.io: "1.0"
-    helm.sh/chart: seldon-core-operator-0.4.1
-  name: seldon-operator-controller-manager
-  namespace: kubeflow
-spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/instance: seldon-core-operator
-      app.kubernetes.io/name: seldon-core-operator
-      control-plane: seldon-controller-manager
-      controller-tools.k8s.io: "1.0"
-  serviceName: seldon-operator-controller-manager-service
-  template:
-    metadata:
-      annotations:
-        prometheus.io/scrape: "true"
-        sidecar.istio.io/inject: "false"
-      labels:
-        app.kubernetes.io/instance: seldon-core-operator
-        app.kubernetes.io/name: seldon-core-operator
-        control-plane: seldon-controller-manager
-        controller-tools.k8s.io: "1.0"
-    spec:
-      containers:
-      - command:
-        - /manager
-        env:
-        - name: POD_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: SECRET_NAME
-          value: seldon-operator-webhook-server-secret
-        - name: AMBASSADOR_ENABLED
-          value: "true"
-        - name: AMBASSADOR_SINGLE_NAMESPACE
-          value: "false"
-        - name: ENGINE_CONTAINER_IMAGE_AND_VERSION
-          value: docker.io/seldonio/engine:0.4.1
-        - name: ENGINE_CONTAINER_IMAGE_PULL_POLICY
-          value: IfNotPresent
-        - name: ENGINE_CONTAINER_SERVICE_ACCOUNT_NAME
-          value: default
-        - name: ENGINE_CONTAINER_USER
-          value: "8888"
-        - name: ENGINE_LOG_MESSAGES_EXTERNALLY
-          value: "false"
-        - name: PREDICTIVE_UNIT_SERVICE_PORT
-          value: "9000"
-        - name: ENGINE_SERVER_GRPC_PORT
-          value: "5001"
-        - name: ENGINE_SERVER_PORT
-          value: "8000"
-        - name: ENGINE_PROMETHEUS_PATH
-          value: prometheus
-        - name: ISTIO_ENABLED
-          value: "true"
-        - name: ISTIO_GATEWAY
-          value: kubeflow-gateway
-        image: docker.io/seldonio/seldon-core-operator:0.4.1
-        imagePullPolicy: Always
-        name: manager
-        ports:
-        - containerPort: 8080
-          name: metrics
-          protocol: TCP
-        - containerPort: 9876
-          name: webhook-server
-          protocol: TCP
-        resources:
-          requests:
-            cpu: 100m
-            memory: 20Mi
-        volumeMounts:
-        - mountPath: /tmp/cert
-          name: cert
-          readOnly: true
-      serviceAccountName: seldon-manager
-      terminationGracePeriodSeconds: 10
-      volumes:
-      - name: cert
-        secret:
-          defaultMode: 420
-          secretName: seldon-operator-webhook-server-secret
-  volumeClaimTemplates: []
-`)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-manager-role-clusterrole.yaml", `
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/name: seldon-core-operator
     helm.sh/chart: seldon-core-operator-0.4.1
-  name: seldon-operator-manager-role
-rules:
-- apiGroups:
-  - apps
-  resources:
-  - deployments
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - apps
-  resources:
-  - deployments/status
-  verbs:
-  - get
-  - update
-  - patch
-- apiGroups:
-  - v1
-  resources:
-  - services
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - v1
-  resources:
-  - services/status
-  verbs:
-  - get
-  - update
-  - patch
-- apiGroups:
-  - networking.istio.io
-  resources:
-  - virtualservices
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - networking.istio.io
-  resources:
-  - virtualservices/status
-  verbs:
-  - get
-  - update
-  - patch
-- apiGroups:
-  - networking.istio.io
-  resources:
-  - destinationrules
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - networking.istio.io
-  resources:
-  - destinationrules/status
-  verbs:
-  - get
-  - update
-  - patch
-- apiGroups:
-  - autoscaling
-  resources:
-  - horizontalpodautoscalers
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - autoscaling
-  resources:
-  - horizontalpodautoscalers/status
-  verbs:
-  - get
-  - update
-  - patch
-- apiGroups:
-  - machinelearning.seldon.io
-  resources:
-  - seldondeployments
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - machinelearning.seldon.io
-  resources:
-  - seldondeployments/status
-  verbs:
-  - get
-  - update
-  - patch
-- apiGroups:
-  - machinelearning.seldon.io
-  resources:
-  - seldondeployments/finalizers
-  verbs:
-  - get
-  - update
-  - patch
-- apiGroups:
-  - admissionregistration.k8s.io
-  resources:
-  - mutatingwebhookconfigurations
-  - validatingwebhookconfigurations
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - serviceaccounts
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - services
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-`)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-manager-rolebinding-crb.yaml", `
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  labels:
-    app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
-    app.kubernetes.io/name: seldon-core-operator
-    helm.sh/chart: seldon-core-operator-0.4.1
-  name: seldon-operator-manager-rolebinding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: seldon-operator-manager-role
-subjects:
-- kind: ServiceAccount
-  name: seldon-manager
-  namespace: kubeflow
-`)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-operator-webhook-server-secret-secret.yaml", `
-apiVersion: v1
-kind: Secret
-metadata:
-  name: seldon-operator-webhook-server-secret
-  namespace: kubeflow
-`)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/seldondeployments.machinelearning.seldon.io-crd.yaml", `
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: seldon-core-operator/templates/crd.yaml
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -3651,45 +3326,358 @@ spec:
   - name: v1alpha3
     served: true
     storage: false
-
-`)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/webhook-server-service-svc.yaml", `
+---
+# Source: seldon-core-operator/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: seldon-operator-manager-role
+  labels:
+    app.kubernetes.io/name: seldon-core-operator
+    helm.sh/chart: seldon-core-operator-0.4.1
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/managed-by: Helm
+rules:
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - apps
+    resources:
+      - deployments/status
+    verbs:
+      - get
+      - update
+      - patch
+  - apiGroups:
+      - v1
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - v1
+    resources:
+      - services/status
+    verbs:
+      - get
+      - update
+      - patch
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - virtualservices
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - virtualservices/status
+    verbs:
+      - get
+      - update
+      - patch
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - destinationrules
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - destinationrules/status
+    verbs:
+      - get
+      - update
+      - patch
+  - apiGroups:
+      - autoscaling
+    resources:
+      - horizontalpodautoscalers
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - autoscaling
+    resources:
+      - horizontalpodautoscalers/status
+    verbs:
+      - get
+      - update
+      - patch
+  - apiGroups:
+      - machinelearning.seldon.io
+    resources:
+      - seldondeployments
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - machinelearning.seldon.io
+    resources:
+      - seldondeployments/status
+    verbs:
+      - get
+      - update
+      - patch
+  - apiGroups:
+      - machinelearning.seldon.io
+    resources:
+      - seldondeployments/finalizers
+    verbs:
+      - get
+      - update
+      - patch
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resources:
+      - mutatingwebhookconfigurations
+      - validatingwebhookconfigurations
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - serviceaccounts
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+---
+# Source: seldon-core-operator/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: seldon-operator-manager-rolebinding
+  labels:
+    app.kubernetes.io/name: seldon-core-operator
+    helm.sh/chart: seldon-core-operator-0.4.1
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/managed-by: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: seldon-operator-manager-role
+subjects:
+  - kind: ServiceAccount
+    name: seldon-manager
+    namespace: kubeflow
+---
+# Source: seldon-core-operator/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/instance: seldon-core-operator
-    app.kubernetes.io/managed-by: Tiller
-    app.kubernetes.io/name: seldon-core-operator
     control-plane: seldon-controller-manager
     controller-tools.k8s.io: "1.0"
+    app.kubernetes.io/name: seldon-core-operator
     helm.sh/chart: seldon-core-operator-0.4.1
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/managed-by: Helm
+  name: seldon-operator-controller-manager-service
+  namespace: kubeflow
+spec:
+  ports:
+    - port: 443
+  selector:
+    control-plane: seldon-controller-manager
+    controller-tools.k8s.io: "1.0"
+---
+# Source: seldon-core-operator/templates/webhook-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    control-plane: seldon-controller-manager
+    controller-tools.k8s.io: "1.0"
+    app.kubernetes.io/name: seldon-core-operator
+    helm.sh/chart: seldon-core-operator-0.4.1
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/managed-by: Helm
   name: webhook-server-service
   namespace: kubeflow
 spec:
   ports:
-  - port: 443
-    targetPort: 9876
+    - port: 443
+      targetPort: 9876
   selector:
     control-plane: seldon-controller-manager
+---
+# Source: seldon-core-operator/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    control-plane: seldon-controller-manager
+    controller-tools.k8s.io: "1.0"
+    app.kubernetes.io/name: seldon-core-operator
+    helm.sh/chart: seldon-core-operator-0.4.1
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/managed-by: Helm
+  name: seldon-operator-controller-manager
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      control-plane: seldon-controller-manager
+      controller-tools.k8s.io: "1.0"
+      app.kubernetes.io/name: seldon-core-operator
+      app.kubernetes.io/instance: RELEASE-NAME
+  serviceName: seldon-operator-controller-manager-service
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+      labels:
+        control-plane: seldon-controller-manager
+        controller-tools.k8s.io: "1.0"
+        app.kubernetes.io/name: seldon-core-operator
+        app.kubernetes.io/instance: RELEASE-NAME
+    spec:
+      serviceAccountName: seldon-manager
+      containers:
+        - command:
+            - /manager
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: SECRET_NAME
+              value: seldon-operator-webhook-server-secret
+            - name: AMBASSADOR_ENABLED
+              value: 'true'
+            - name: AMBASSADOR_SINGLE_NAMESPACE
+              value: 'false'
+            - name: ENGINE_CONTAINER_IMAGE_AND_VERSION
+              value: docker.io/seldonio/engine:1.0.1
+            - name: ENGINE_CONTAINER_IMAGE_PULL_POLICY
+              value: IfNotPresent
+            - name: ENGINE_CONTAINER_SERVICE_ACCOUNT_NAME
+              value: default
+            - name: ENGINE_CONTAINER_USER
+              value: '8888'
+            - name: ENGINE_LOG_MESSAGES_EXTERNALLY
+              value: 'false'
+            - name: PREDICTIVE_UNIT_SERVICE_PORT
+              value: '9000'
+            - name: ENGINE_SERVER_GRPC_PORT
+              value: '5001'
+            - name: ENGINE_SERVER_PORT
+              value: '8000'
+            - name: ENGINE_PROMETHEUS_PATH
+              value: prometheus
+            - name: ISTIO_ENABLED
+              value: 'true'
+            - name: ISTIO_GATEWAY
+              value: 'kubeflow-gateway'
+          image: docker.io/seldonio/seldon-core-operator:1.0.1
+          imagePullPolicy: IfNotPresent
+          name: manager
+          ports:
+            - containerPort: 8080
+              name: metrics
+              protocol: TCP
+            - containerPort: 9876
+              name: webhook-server
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 20Mi
+          volumeMounts:
+            - mountPath: /tmp/cert
+              name: cert
+              readOnly: true
+      terminationGracePeriodSeconds: 10
+      volumes:
+        - name: cert
+          secret:
+            defaultMode: 420
+            secretName: seldon-operator-webhook-server-secret
 `)
 	th.writeK("/manifests/seldon/seldon-core-operator/base", `
 # List of resource files that kustomize reads, modifies
 # and emits as a YAML string
 resources:
-- seldon-config-cm.yaml
-- seldon-manager-sa.yaml
-- seldon-operator-controller-manager-service-svc.yaml
-- seldon-operator-controller-manager-statefulset.yaml
-- seldon-operator-manager-role-clusterrole.yaml
-- seldon-operator-manager-rolebinding-crb.yaml
-- seldon-operator-webhook-server-secret-secret.yaml
-- seldondeployments.machinelearning.seldon.io-crd.yaml
-- webhook-server-service-svc.yaml
-images:
-- name: docker.io/seldonio/seldon-core-operator
-  newName: docker.io/seldonio/seldon-core-operator
-  newTag: 0.4.1
+- resources.yaml
 `)
 }
 
