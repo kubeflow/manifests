@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: authservice
 spec:
@@ -7,8 +7,7 @@ spec:
   selector:
     matchLabels:
       app: authservice
-  strategy:
-    type: RollingUpdate
+  serviceName: authservice
   template:
     metadata:
       annotations:

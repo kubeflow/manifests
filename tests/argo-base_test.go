@@ -200,6 +200,8 @@ spec:
       creationTimestamp: null
       labels:
         app: argo-ui
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - env:
@@ -256,6 +258,8 @@ spec:
       creationTimestamp: null
       labels:
         app: workflow-controller
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - args:

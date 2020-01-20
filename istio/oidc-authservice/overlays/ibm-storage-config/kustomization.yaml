@@ -3,7 +3,7 @@ kind: Kustomization
 bases:
 - ../../base
 patchesStrategicMerge:
-- deployment.yaml
+- statefulset.yaml
 images:
   - name: busybox
     newTag: "latest"

@@ -199,6 +199,8 @@ spec:
     metadata:
       labels:
         name: tf-job-operator
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - command:

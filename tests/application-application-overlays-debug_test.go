@@ -21,13 +21,16 @@ metadata:
   name: stateful-set
 spec:
   template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: manager
         image: gcr.io/$(project)/application-controller:latest
-        command: 
+        command:
         - /go/bin/dlv
-        args: 
+        args:
         - --listen=:2345
         - --headless=true
         - --api-version=2
@@ -115,6 +118,8 @@ spec:
     metadata:
       labels:
         app: application-controller
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: manager
