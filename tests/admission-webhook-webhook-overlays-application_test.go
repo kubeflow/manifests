@@ -292,7 +292,7 @@ namePrefix: admission-webhook-
 images:
 - name: gcr.io/kubeflow-images-public/admission-webhook
   newName: gcr.io/kubeflow-images-public/admission-webhook
-  newTag: vmaster-g6b987df8
+  newTag: vmaster-gaf96e4e3
 namespace: kubeflow
 configMapGenerator:
 - env: params.env
