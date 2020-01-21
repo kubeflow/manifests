@@ -516,6 +516,7 @@ spec:
     metadata:
       labels:
         app: cainjector
+      annotations:
     spec:
       serviceAccountName: cert-manager-cainjector
       containers:
@@ -554,7 +555,6 @@ spec:
         prometheus.io/path: "/metrics"
         prometheus.io/scrape: 'true'
         prometheus.io/port: '9402'
-        sidecar.istio.io/inject: "false"
     spec:
       serviceAccountName: cert-manager
       containers:
@@ -598,6 +598,7 @@ spec:
     metadata:
       labels:
         app: webhook
+      annotations:
     spec:
       serviceAccountName: cert-manager-webhook
       containers:
