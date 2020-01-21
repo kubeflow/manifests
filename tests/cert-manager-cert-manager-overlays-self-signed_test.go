@@ -476,8 +476,6 @@ spec:
     metadata:
       labels:
         app: cainjector
-      annotations:
-        sidecar.istio.io/inject: "false"
     spec:
       serviceAccountName: cert-manager-cainjector
       containers:
@@ -560,8 +558,6 @@ spec:
     metadata:
       labels:
         app: webhook
-      annotations:
-        sidecar.istio.io/inject: "false"
     spec:
       serviceAccountName: cert-manager-webhook
       containers:
