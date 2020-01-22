@@ -333,8 +333,9 @@ configMapGenerator:
   - params.env
   name: profiles-parameters
 images:
-- digest: sha256:3b0d4be7e59a3fa5ed1d80dccc832312caa94f3b2d36682524d3afc4e45164f0
-  name: gcr.io/kubeflow-images-public/kfam
+- name: gcr.io/kubeflow-images-public/kfam
+  newName: gcr.io/jlewi/test-image
+  newTag: test
 - name: gcr.io/kubeflow-images-public/kfam:gcr.io/jlewi/test-image
   newTag: test
 - name: gcr.io/kubeflow-images-public/profile-controller
