@@ -92,12 +92,6 @@ resources:
       masterAuthorizedNetworksConfigEnabled: false
       masterAuthorizedNetworksConfigCidr:
       - cidrBlock: 1.2.3.4/32
-    users:
-      # List users to grant appropriate GCP permissions to use Kubeflow.
-      # These can either be individual users (Google accounts) or Google
-      # Groups.
-      # - user:john@acme.com
-      # - group:data-scientists@acme.com
     # This is the name of the GCP static ip address reserved for your domain.
     # Each Kubeflow deployment in your project should use one unique ipName among all configs.
     ipName: kubeflow-ip
