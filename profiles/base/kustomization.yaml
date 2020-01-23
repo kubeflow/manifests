@@ -14,11 +14,10 @@ configMapGenerator:
 - env: params.env
   name: profiles-parameters
 images:
-- digest: sha256:3b0d4be7e59a3fa5ed1d80dccc832312caa94f3b2d36682524d3afc4e45164f0
+- digest: sha256:bb1791ac42b34a5f9566b191fb093c3d40c7f73b6282398d1151706d4c8fffec
   name: gcr.io/kubeflow-images-public/kfam
-- name: gcr.io/kubeflow-images-public/profile-controller
-  newName: gcr.io/kubeflow-images-public/profile-controller
-  newTag: vmaster-gf8a30e02
+- digest: sha256:6d97928791c8d9f29ba1fa1cefccff34680e188dbb7b591d7f32e2e8717969bc
+  name: gcr.io/kubeflow-images-public/profile-controller
 vars:
 - fieldref:
     fieldPath: data.admin
