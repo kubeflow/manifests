@@ -34,6 +34,8 @@ metadata:
   creationTimestamp: null
   name: profiles.kubeflow.org
 spec:
+  conversion:
+    strategy: None
   group: kubeflow.org
   names:
     kind: Profile
@@ -174,17 +176,21 @@ spec:
               type: array
           type: object
       type: object
-  version: v1beta1
+  version: v1
   versions:
-    - name: v1beta1
+    - name: v1
       served: true
       storage: true
+    - name: v1beta1
+      served: true
+      storage: false
 status:
   acceptedNames:
     kind: ""
     plural: ""
   conditions: []
-  storedVersions: []`)
+  storedVersions: []
+`)
 	th.writeF("/manifests/profiles/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -207,8 +213,14 @@ spec:
         image: gcr.io/kubeflow-images-public/profile-controller:v20190619-v0-219-gbd3daa8c-dirty-1ced0e
         imagePullPolicy: Always
         name: manager
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 30
       - command:
-        - /opt/kubeflow/access-management
+        - /access-management
         args:
         - "-cluster-admin"
         - $(admin)
@@ -219,6 +231,12 @@ spec:
         image: gcr.io/kubeflow-images-public/kfam:v20190612-v0-170-ga06cdb79-dirty-a33ee4
         imagePullPolicy: Always
         name: kfam
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8081
+          initialDelaySeconds: 30
+          periodSeconds: 30
       serviceAccountName: controller-service-account
 `)
 	th.writeF("/manifests/profiles/base/service.yaml", `
@@ -228,7 +246,8 @@ metadata:
   name: kfam
 spec:
   ports:
-    - port: 8081`)
+    - port: 8081
+`)
 	th.writeF("/manifests/profiles/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
@@ -273,11 +292,10 @@ configMapGenerator:
 - env: params.env
   name: profiles-parameters
 images:
-- digest: sha256:3b0d4be7e59a3fa5ed1d80dccc832312caa94f3b2d36682524d3afc4e45164f0
+- digest: sha256:bb1791ac42b34a5f9566b191fb093c3d40c7f73b6282398d1151706d4c8fffec
   name: gcr.io/kubeflow-images-public/kfam
-- name: gcr.io/kubeflow-images-public/profile-controller
-  newName: gcr.io/kubeflow-images-public/profile-controller
-  newTag: vmaster-gf8a30e02
+- digest: sha256:6d97928791c8d9f29ba1fa1cefccff34680e188dbb7b591d7f32e2e8717969bc
+  name: gcr.io/kubeflow-images-public/profile-controller
 vars:
 - fieldref:
     fieldPath: data.admin
