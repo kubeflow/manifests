@@ -2,7 +2,7 @@ ambassador:
   enabled: true
   singleNamespace: false
 certManager:
-  enabled: false
+  enabled: true
 controllerId: ''
 crd:
   create: true
