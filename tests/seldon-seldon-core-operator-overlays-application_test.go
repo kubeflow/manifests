@@ -48,19 +48,6 @@ spec:
     - description: Docs
       url: "https://docs.seldon.io/projects/seldon-core/en/v1.0.1/"
 `)
-	th.writeF("/manifests/seldon/seldon-core-operator/overlays/application/patch_manager_istio.yaml", `
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: seldon-controller-manager
-  namespace: kubeflow
-spec:
-  template:
-    metadata:
-      annotations:
-        sidecar.istio.io/inject: 'false'
-
-`)
 	th.writeK("/manifests/seldon/seldon-core-operator/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -75,9 +62,6 @@ commonLabels:
   app.kubernetes.io/component: seldon
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v1.0.1
-
-patchesStrategicMerge:
-- patch_manager_istio.yaml
 `)
 	th.writeF("/manifests/seldon/seldon-core-operator/base/resources.yaml", `
 ---
@@ -3461,6 +3445,7 @@ spec:
     metadata:
       annotations:
         prometheus.io/scrape: 'true'
+        sidecar.istio.io/inject: 'false'
       labels:
         app: seldon
         app.kubernetes.io/instance: seldon1

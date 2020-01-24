@@ -3396,6 +3396,7 @@ spec:
     metadata:
       annotations:
         prometheus.io/scrape: 'true'
+        sidecar.istio.io/inject: 'false'
       labels:
         app: seldon
         app.kubernetes.io/instance: seldon1
