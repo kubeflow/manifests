@@ -58,6 +58,7 @@ spec:
       repoRef:
         name: manifests
         path: cert-manager/cert-manager
+    name: cert-manager        
   - kustomizeConfig:
       repoRef:
         name: manifests
