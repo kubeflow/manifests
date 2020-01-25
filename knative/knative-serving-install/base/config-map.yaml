@@ -658,7 +658,7 @@ data:
     # {{ingress_namespace}}.svc.cluster.local"`. The {{gateway_namespace}}
     # is optional; when it is omitted, the system will search for
     # the gateway in the serving system namespace `knative-serving`
-    kubeflow-gateway.kubeflow.knative-ingress-gateway: "istio-ingressgateway.istio-system.svc.cluster.local"
+    gateway.kubeflow.kubeflow-gateway: "istio-ingressgateway.istio-system.svc.cluster.local"
 
     # A cluster local gateway to allow pods outside of the mesh to access
     # Services and Routes not exposing through an ingress.  If the users
