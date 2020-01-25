@@ -401,7 +401,7 @@ data:
     }
   ingress: |-
     {
-        "ingressGateway" : "knative-ingress-gateway.knative-serving",
+        "ingressGateway" : "kubeflow-gateway.kubeflow",
         "ingressService" : "istio-ingressgateway.istio-system.svc.cluster.local"
     }
   logger: |-
