@@ -64,11 +64,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: notebook-controller
-  app.kubernetes.io/instance: notebook-controller-v0.7.0
+  app.kubernetes.io/instance: notebook-controller-v0.1.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: notebook-controller
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v0.1.0
 `)
 	th.writeF("/manifests/jupyter/notebook-controller/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
@@ -213,6 +213,9 @@ spec:
   - name: v1beta1
     served: true
     storage: true
+  - name: v1
+    served: true
+    storage: false
   validation:
     openAPIV3Schema:
       properties:
@@ -321,7 +324,7 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/notebook-controller
   newName: gcr.io/kubeflow-images-public/notebook-controller
-  digest: sha256:c40226ca344f9e7325622492de62a86ff2b8ba9cc0e49d36369dd9e613d8ef78
+  digest: sha256:59ec681cedc723285d562f839daf2492695501ab81a11fc88006267a56445e1a
 configMapGenerator:
 - name: parameters
   env: params.env
