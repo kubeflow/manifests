@@ -157,6 +157,9 @@ spec:
   - name: v1beta1
     served: true
     storage: true
+  - name: v1
+    served: true
+    storage: false
   validation:
     openAPIV3Schema:
       properties:
@@ -265,7 +268,7 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/notebook-controller
   newName: gcr.io/kubeflow-images-public/notebook-controller
-  digest: sha256:c40226ca344f9e7325622492de62a86ff2b8ba9cc0e49d36369dd9e613d8ef78
+  digest: sha256:59ec681cedc723285d562f839daf2492695501ab81a11fc88006267a56445e1a
 configMapGenerator:
 - name: parameters
   env: params.env
