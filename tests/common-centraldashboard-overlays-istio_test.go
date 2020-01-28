@@ -226,9 +226,10 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/centraldashboard
   newName: gcr.io/kubeflow-images-public/centraldashboard
-  newTag: vmaster-g6b987df8
+  newTag: v1.0.0-gb1400446
 configMapGenerator:
-- env: params.env
+- envs:
+  - params.env
   name: parameters
 generatorOptions:
   disableNameSuffixHash: true
