@@ -3,7 +3,7 @@ kind: Kustomization
 bases:
 - ../../base
 patchesStrategicMerge:
-- katib-db-deployment.yaml
+- katib-mysql-deployment.yaml
 images:
   - name: mysql
     newTag: "5.6"

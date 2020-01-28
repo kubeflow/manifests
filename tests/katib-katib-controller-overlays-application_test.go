@@ -102,34 +102,34 @@ data:
   metrics-collector-sidecar: |-
     {
       "StdOut": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:e80b323"
       },
       "File": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:e80b323"
       },
       "TensorFlowEvent": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:e80b323"
       }
     }
   suggestion: |-
     {
       "random": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:e80b323"
       },
       "grid": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-chocolate:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-chocolate:e80b323"
       },
       "hyperband": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperband:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperband:e80b323"
       },
       "bayesianoptimization": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-skopt:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-skopt:e80b323"
       },
       "tpe": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:e80b323"
       },
       "nasrl": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-nasrl:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-nasrl:e80b323"
       }
     }
 `)
@@ -345,11 +345,11 @@ spec:
   selector:
     app: katib-controller
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-db-deployment.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/katib-mysql-deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: katib-db
+  name: katib-mysql
   labels:
     app: katib
     component: db
@@ -361,13 +361,13 @@ spec:
       component: db
   template:
     metadata:
-      name: katib-db
+      name: katib-mysql
       labels:
         app: katib
         component: db
     spec:
       containers:
-      - name: katib-db
+      - name: katib-mysql
         image: mysql:8
         args:
         - --datadir
@@ -376,7 +376,7 @@ spec:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: katib-db-secrets
+                name: katib-mysql-secrets
                 key: MYSQL_ROOT_PASSWORD
           - name: MYSQL_ALLOW_EMPTY_PASSWORD
             value: "true"
@@ -411,7 +411,7 @@ spec:
         persistentVolumeClaim:
           claimName: katib-mysql
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-db-pvc.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/katib-mysql-pvc.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -423,20 +423,20 @@ spec:
     requests:
       storage: 10Gi
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-db-secret.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/katib-mysql-secret.yaml", `
 apiVersion: v1
 kind: Secret
 type: Opaque
 metadata:
-  name: katib-db-secrets
+  name: katib-mysql-secrets
 data:
   MYSQL_ROOT_PASSWORD: dGVzdA== # "test"
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-db-service.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/katib-mysql-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
-  name: katib-db
+  name: katib-mysql
   labels:
     app: katib
     component: db
@@ -481,7 +481,7 @@ spec:
           - name: DB_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: katib-db-secrets
+                name: katib-mysql-secrets
                 key: MYSQL_ROOT_PASSWORD
         command:
           - './katib-db-manager'
@@ -658,10 +658,10 @@ resources:
 - katib-controller-rbac.yaml
 - katib-controller-secret.yaml
 - katib-controller-service.yaml
-- katib-db-deployment.yaml
-- katib-db-pvc.yaml
-- katib-db-secret.yaml
-- katib-db-service.yaml
+- katib-mysql-deployment.yaml
+- katib-mysql-pvc.yaml
+- katib-mysql-secret.yaml
+- katib-mysql-service.yaml
 - katib-db-manager-deployment.yaml
 - katib-db-manager-service.yaml
 - katib-ui-deployment.yaml
@@ -675,13 +675,13 @@ generatorOptions:
   disableNameSuffixHash: true
 images:
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
-  newTag: v0.7.0
+  newTag: e80b323
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
-  newTag: v0.7.0
+  newTag: e80b323
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
-  newTag: v0.7.0
+  newTag: e80b323
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
 - name: mysql
   newTag: "8"

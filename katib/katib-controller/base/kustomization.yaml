@@ -5,10 +5,10 @@ resources:
 - katib-controller-rbac.yaml
 - katib-controller-secret.yaml
 - katib-controller-service.yaml
-- katib-db-deployment.yaml
-- katib-db-pvc.yaml
-- katib-db-secret.yaml
-- katib-db-service.yaml
+- katib-mysql-deployment.yaml
+- katib-mysql-pvc.yaml
+- katib-mysql-secret.yaml
+- katib-mysql-service.yaml
 - katib-db-manager-deployment.yaml
 - katib-db-manager-service.yaml
 - katib-ui-deployment.yaml
