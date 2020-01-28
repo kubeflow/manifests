@@ -1,19 +1,12 @@
-# This is the config to install Kubeflow on an Anthos.
-# The cluster comes with customized Istio installation.
-
 apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
-metadata:
-  # User needs to set the app name, otherwise will try to infer from the directory.
-  # name: kubeflow_app
-  namespace: kubeflow
+metadata: {}
 spec:
   applications:
-  # This component is the istio resources for Kubeflow (e.g. gateway), not about installing istio.
   - kustomizeConfig:
       parameters:
       - name: clusterRbacConfig
-        value: "OFF"
+        value: 'OFF'
       - name: gatewaySelector
         value: ingress-gke-system
       repoRef:
@@ -58,7 +51,7 @@ spec:
       repoRef:
         name: manifests
         path: cert-manager/cert-manager
-    name: cert-manager        
+    name: cert-manager
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -186,7 +179,7 @@ spec:
       - name: usageId
         value: <randomly-generated-id>
       - name: reportUsage
-        value: "true"
+        value: 'true'
       repoRef:
         name: manifests
         path: common/spartakus
@@ -311,6 +304,4 @@ spec:
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
-    # An example uri that uses a PR version of the manifest repo.
-    # uri: https://github.com/kubeflow/manifests/archive/pull/PR_NUMBER/head.tar.gz
   version: master
