@@ -370,9 +370,10 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/jupyter-web-app
   newName: gcr.io/kubeflow-images-public/jupyter-web-app
-  newTag: vmaster-ge8c85064
+  newTag: v1.0.0-g56c9025a
 configMapGenerator:
-- env: params.env
+- envs:
+  - params.env
   name: parameters
 generatorOptions:
   disableNameSuffixHash: true
