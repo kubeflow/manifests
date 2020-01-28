@@ -31,7 +31,8 @@ resources:
     zone: SET_THE_ZONE
     # "1.X": picks the highest valid patch+gke.N patch in the 1.X version
     # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.zones.clusters
-    cluster-version: "1.14"
+    # TODO(https://github.com/kubeflow/manifests/issues/757): Unpin from 1.14.8
+    cluster-version: "1.14.8"
     # Set this to v1beta1 to use beta features such as private clusterss
     # and the Kubernetes stackdriver agents.
     gkeApiVersion: SET_GKE_API_VERSION
@@ -92,12 +93,6 @@ resources:
       masterAuthorizedNetworksConfigEnabled: false
       masterAuthorizedNetworksConfigCidr:
       - cidrBlock: 1.2.3.4/32
-    users:
-      # List users to grant appropriate GCP permissions to use Kubeflow.
-      # These can either be individual users (Google accounts) or Google
-      # Groups.
-      # - user:john@acme.com
-      # - group:data-scientists@acme.com
     # This is the name of the GCP static ip address reserved for your domain.
     # Each Kubeflow deployment in your project should use one unique ipName among all configs.
     ipName: kubeflow-ip
