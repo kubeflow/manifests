@@ -298,19 +298,19 @@ metadata:
   name: katib-mysql
   labels:
     app: katib
-    component: db
+    component: mysql
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: katib
-      component: db
+      component: mysql
   template:
     metadata:
       name: katib-mysql
       labels:
         app: katib
-        component: db
+        component: mysql
     spec:
       containers:
       - name: katib-mysql
@@ -385,7 +385,7 @@ metadata:
   name: katib-mysql
   labels:
     app: katib
-    component: db
+    component: mysql
 spec:
   type: ClusterIP
   ports:
@@ -394,7 +394,7 @@ spec:
       name: dbapi
   selector:
     app: katib
-    component: db
+    component: mysql
 `)
 	th.writeF("/manifests/katib/katib-controller/base/katib-db-manager-deployment.yaml", `
 apiVersion: apps/v1
