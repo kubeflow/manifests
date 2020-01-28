@@ -11,6 +11,7 @@ rules:
       - batch
       - extensions
       - policy
+      - networking.k8s.io
       - rbac.authorization.k8s.io
       - storage.k8s.io
       - kubeflow.org

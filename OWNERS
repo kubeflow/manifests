@@ -1,5 +1,6 @@
 approvers:
   - abhi-g
+  - animeshsingh
   - ashahba
   - gabrielwen
   - hougangliu
@@ -12,3 +13,5 @@ approvers:
   - swiftdiaries
   - yanniszark
   - zhenghuiwang
+reviewers:
+  - krishnadurai

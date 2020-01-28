@@ -1,13 +1,15 @@
 package tests_test
 
 import (
-	"sigs.k8s.io/kustomize/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/pkg/fs"
-	"sigs.k8s.io/kustomize/pkg/loader"
-	"sigs.k8s.io/kustomize/pkg/resmap"
-	"sigs.k8s.io/kustomize/pkg/resource"
-	"sigs.k8s.io/kustomize/pkg/target"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
+	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
+	"sigs.k8s.io/kustomize/v3/pkg/fs"
+	"sigs.k8s.io/kustomize/v3/pkg/loader"
+	"sigs.k8s.io/kustomize/v3/pkg/plugins"
+	"sigs.k8s.io/kustomize/v3/pkg/resmap"
+	"sigs.k8s.io/kustomize/v3/pkg/resource"
+	"sigs.k8s.io/kustomize/v3/pkg/target"
+	"sigs.k8s.io/kustomize/v3/pkg/validators"
 	"testing"
 )
 
@@ -49,6 +51,14 @@ resources:
 configurations:
 - params.yaml
 `)
+	th.writeF("/manifests/kubebench/base/service-account.yaml", `
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: kubebench-operator
+  name: kubebench-operator
+`)
 	th.writeF("/manifests/kubebench/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -60,7 +70,7 @@ roleRef:
   name: kubebench-operator
 subjects:
 - kind: ServiceAccount
-  name: default
+  name: kubebench-operator
 `)
 	th.writeF("/manifests/kubebench/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -69,16 +79,11 @@ metadata:
   name: kubebench-operator
 rules:
 - apiGroups:
-  - kubebench.operator
+  - kubeflow.org
   resources:
-  - kubebenchjobs.kubebench.operator
   - kubebenchjobs
   verbs:
-  - create
-  - update
-  - get
-  - list
-  - watch
+  - '*'
 - apiGroups:
   - ""
   resources:
@@ -97,6 +102,7 @@ rules:
   resources:
   - tfjobs
   - pytorchjobs
+  - mpijobs
   verbs:
   - '*'
 - apiGroups:
@@ -106,6 +112,19 @@ rules:
   verbs:
   - '*'
 `)
+	th.writeF("/manifests/kubebench/base/crd.yaml", `
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: kubebenchjobs.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    kind: KubebenchJob
+    plural: kubebenchjobs
+  scope: Namespaced
+  version: v1alpha2
+`)
 	th.writeF("/manifests/kubebench/base/config-map.yaml", `
 apiVersion: v1
 kind: ConfigMap
@@ -113,11 +132,10 @@ metadata:
   name: kubebench-config
 data:
   kubebenchconfig.yaml: |
-    """
     defaultWorkflowAgent:
       container:
         name: kubebench-workflow-agent
-        image: gcr.io/kubeflow-images-public/kubebench/workflow-agent:v0.5.0-11-gea53ad5
+        image: gcr.io/kubeflow-images-public/kubebench/workflow-agent:bc682c1
     defaultManagedVolumes:
       experimentVolume:
         name: kubebench-experiment-volume
@@ -125,23 +143,9 @@ data:
       workflowVolume:
         name: kubebench-workflow-volume
         emptyDir: {}
-    """
-`)
-	th.writeF("/manifests/kubebench/base/crd.yaml", `
-apiVersion: apiextensions.k8s.io/v1beta1
-kind: CustomResourceDefinition
-metadata:
-  name: kubebenchjobs.kubebench.operator
-spec:
-  group: kubebench.operator
-  names:
-    kind: KubebenchJob
-    plural: kubebenchjobs
-  scope: Namespaced
-  version: v1
 `)
 	th.writeF("/manifests/kubebench/base/deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kubebench-operator
@@ -149,18 +153,25 @@ spec:
   selector:
     matchLabels:
       app: kubebench-operator
-  volumes:
-    - name: kubebench-config
-      configMap:
-        name: kubebench-config
   template:
     metadata:
       labels:
         app: kubebench-operator
     spec:
+      volumes:
+      - name: kubebench-config
+        configMap:
+          name: kubebench-config
       containers:
-      - image: gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2:v0.5.0-11-gea53ad5
+      - image: gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2
         name: kubebench-operator
+        command:
+        - /app/kubebench-operator-v1alpha2
+        args:
+        - --config=/config/kubebenchconfig.yaml
+        volumeMounts:
+        - mountPath: /config
+          name: kubebench-config
       serviceAccountName: kubebench-operator
 `)
 	th.writeF("/manifests/kubebench/base/params.yaml", `
@@ -176,10 +187,11 @@ clusterDomain=cluster.local
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+- service-account.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
-- config-map.yaml
 - crd.yaml
+- config-map.yaml
 - deployment.yaml
 namespace: kubeflow
 commonLabels:
@@ -188,15 +200,10 @@ configMapGenerator:
 - name: parameters
   env: params.env
 images:
+  # NOTE: the image for workflow agent should be configured in config-map.yaml
   - name:  gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2
     newName: gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2
-    newTag: v0.5.0-11-gea53ad5
-  - name: gcr.io/kubeflow-images-public/kubebench/kubebench-controller
-    newName: gcr.io/kubeflow-images-public/kubebench/kubebench-controller
-    newTag: v0.4.0-13-g262c593
-  - name: gcr.io/kubeflow-images-public/kubebench/kubebench-example-tf-cnn-post-processor
-    newName: gcr.io/kubeflow-images-public/kubebench/kubebench-example-tf-cnn-post-processor
-    newTag: v0.4.0-13-g262c593
+    newTag: bc682c1
 vars:
 - name: clusterDomain
   objref:
@@ -217,18 +224,20 @@ func TestKubebenchOverlaysIstio(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	expected, err := m.EncodeAsYaml()
+	expected, err := m.AsYaml()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
 	targetPath := "../kubebench/overlays/istio"
 	fsys := fs.MakeRealFS()
-	_loader, loaderErr := loader.NewLoader(targetPath, fsys)
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
 	if loaderErr != nil {
 		t.Fatalf("could not load kustomize loader: %v", loaderErr)
 	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()))
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl())
+	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
+	pc := plugins.DefaultPluginConfig()
+	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
 	if err != nil {
 		th.t.Fatalf("Unexpected construction error %v", err)
 	}

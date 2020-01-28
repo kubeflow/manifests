@@ -25,7 +25,7 @@ rules:
 - apiGroups:
   - serving.knative.dev
   resources:
-  - configurations
+  - services
   verbs:
   - get
   - list
@@ -37,15 +37,15 @@ rules:
 - apiGroups:
   - serving.knative.dev
   resources:
-  - configurations/status
+  - services/status
   verbs:
   - get
   - update
   - patch
 - apiGroups:
-  - serving.knative.dev
+  - networking.istio.io
   resources:
-  - routes
+  - virtualservices
   verbs:
   - get
   - list
@@ -55,9 +55,9 @@ rules:
   - patch
   - delete
 - apiGroups:
-  - serving.knative.dev
+  - networking.istio.io
   resources:
-  - routes/status
+  - virtualservices/status
   verbs:
   - get
   - update
@@ -65,7 +65,7 @@ rules:
 - apiGroups:
   - serving.kubeflow.org
   resources:
-  - kfservices
+  - inferenceservices
   verbs:
   - get
   - list
@@ -77,7 +77,7 @@ rules:
 - apiGroups:
   - serving.kubeflow.org
   resources:
-  - kfservices/status
+  - inferenceservices/status
   verbs:
   - get
   - update
@@ -143,4 +143,67 @@ rules:
   - update
   - patch
   - delete
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+
 ---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-kfserving-admin
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-kfserving-admin: "true"
+rules: []
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-kfserving-edit
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-kfserving-admin: "true"
+rules:
+- apiGroups:
+  - serving.kubeflow.org
+  resources:
+  - inferenceservices
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-kfserving-view
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+rules:
+- apiGroups:
+  - serving.kubeflow.org
+  resources:
+  - inferenceservices
+  verbs:
+  - get
+  - list
+  - watch

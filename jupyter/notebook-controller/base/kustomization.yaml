@@ -13,26 +13,34 @@ commonLabels:
   app: notebook-controller
   kustomize.component: notebook-controller
 images:
-  - name: gcr.io/kubeflow-images-public/notebook-controller
-    newName: gcr.io/kubeflow-images-public/notebook-controller
-    newTag: v20190603-v0-175-geeca4530-e3b0c4
+- name: gcr.io/kubeflow-images-public/notebook-controller
+  newName: gcr.io/kubeflow-images-public/notebook-controller
+  newTag: vmaster-gb1400446
 configMapGenerator:
-- name: parameters
-  env: params.env
+- envs:
+  - params.env
+  name: parameters
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- name: POD_LABELS
+- fieldref:
+    fieldPath: data.POD_LABELS
+  name: POD_LABELS
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.POD_LABELS
-- name: USE_ISTIO
+- fieldref:
+    fieldPath: data.USE_ISTIO
+  name: USE_ISTIO
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
+- fieldref:
+    fieldPath: data.ISTIO_GATEWAY
+  name: ISTIO_GATEWAY
+  objref:
     apiVersion: v1
-  fieldref:
-    fieldpath: data.USE_ISTIO
+    kind: ConfigMap
+    name: parameters

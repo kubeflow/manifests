@@ -4,6 +4,7 @@ namespace: kubeflow
 commonLabels:
   app: ml-pipeline-scheduledworkflow
 resources:
+- cluster-role.yaml
 - crd.yaml
 - deployment.yaml
 - role-binding.yaml
@@ -11,4 +12,5 @@ resources:
 - service-account.yaml
 images:
 - name: gcr.io/ml-pipeline/scheduledworkflow
-  newTag: '0.1.23'
+  newTag: 0.1.31
+  newName: gcr.io/ml-pipeline/scheduledworkflow

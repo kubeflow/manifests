@@ -6,11 +6,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: jupyter-web-app
-      app.kubernetes.io/instance: jupyter-web-app
+      app.kubernetes.io/instance: jupyter-web-app-v0.7.0
       app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: jupyter
+      app.kubernetes.io/component: jupyter-web-app
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.6
+      app.kubernetes.io/version: v0.7.0
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -22,6 +22,8 @@ spec:
     kind: Role
   - group: core
     kind: ServiceAccount
+  - group: core
+    kind: Service
   - group: networking.istio.io
     kind: VirtualService
   descriptor:

@@ -16,6 +16,8 @@ spec:
       labels:
         control-plane: kfserving-controller-manager
         controller-tools.k8s.io: "1.0"
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - args:
@@ -39,7 +41,9 @@ spec:
               fieldPath: metadata.namespace
         - name: SECRET_NAME
           value: kfserving-webhook-server-secret
-        image: $(registry)/kfserving-controller:v0.1.1
+        - name: ENABLE_WEBHOOK_NAMESPACE_SELECTOR
+          value: enabled
+        image: $(registry)/kfserving-controller:0.2.2
         imagePullPolicy: Always
         name: manager
         ports:

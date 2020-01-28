@@ -6,11 +6,9 @@ commonLabels:
 configMapGenerator:
 - name: ui-parameters
   env: params.env
+- name: metadata-grpc-configmap
+  env: grpc-params.env
 resources:
-- metadata-db-pvc.yaml
-- metadata-db-secret.yaml
-- metadata-db-deployment.yaml
-- metadata-db-service.yaml
 - metadata-deployment.yaml
 - metadata-service.yaml
 - metadata-ui-deployment.yaml
@@ -18,6 +16,8 @@ resources:
 - metadata-ui-rolebinding.yaml
 - metadata-ui-sa.yaml
 - metadata-ui-service.yaml
+- metadata-envoy-deployment.yaml
+- metadata-envoy-service.yaml
 namespace: kubeflow
 vars:
 - name: ui-namespace
@@ -41,3 +41,26 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name
+- name: metadata-envoy-service
+  objref:
+    kind: Service
+    name: envoy-service
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.name
+images:
+- name: gcr.io/kubeflow-images-public/metadata
+  newName: gcr.io/kubeflow-images-public/metadata
+  newTag: v0.1.11
+- name: gcr.io/tfx-oss-public/ml_metadata_store_server
+  newName: gcr.io/tfx-oss-public/ml_metadata_store_server
+  newTag: 0.15.1
+- name: gcr.io/ml-pipeline/envoy
+  newName: gcr.io/ml-pipeline/envoy
+  newTag: metadata-grpc
+- name: mysql
+  newName: mysql
+  newTag: 8.0.3
+- name: gcr.io/kubeflow-images-public/metadata-frontend
+  newName: gcr.io/kubeflow-images-public/metadata-frontend
+  newTag: v0.1.8

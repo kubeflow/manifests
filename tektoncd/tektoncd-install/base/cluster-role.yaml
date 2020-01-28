@@ -68,6 +68,7 @@ rules:
   - pipelines
   - pipelineruns
   - pipelineresources
+  - conditions
   verbs:
   - get
   - list
@@ -131,6 +132,7 @@ rules:
   - pipelines
   - pipelineruns
   - pipelineresources
+  - conditions
   verbs:
   - create
   - delete
@@ -156,7 +158,9 @@ rules:
   - pipelines
   - pipelineruns
   - pipelineresources
+  - conditions
   verbs:
   - get
   - list
   - watch
+---

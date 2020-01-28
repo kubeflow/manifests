@@ -3,19 +3,27 @@ kind: Application
 metadata:
   name: "kfserving"
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kfserving-install
+      app.kubernetes.io/instance: kfserving-install-v0.7.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: kfserving-install
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.7.0
   type: "kfserving"
   componentKinds:
     - group: apps/v1
       kind: StatefulSet
     - group: v1
       kind: Service
-    - group: extensions/v1beta1
+    - group: apps/v1
       kind: Deployment
     - group: v1
       kind: Secret
     - group: v1
       kind: ConfigMap
-  version: "v1alpha1"
+  version: "v1alpha2"
   description: "KFServing provides a Kubernetes Custom Resource Definition for serving ML Models on arbitrary frameworks"
   icons:
   maintainers:

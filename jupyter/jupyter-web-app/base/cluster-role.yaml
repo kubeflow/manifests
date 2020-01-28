@@ -13,10 +13,17 @@ rules:
   - create
   - delete
 - apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+- apiGroups:
   - kubeflow.org
   resources:
   - notebooks
-  - poddefaults  
+  - notebooks/finalizers
+  - poddefaults
   verbs:
   - get
   - list
@@ -30,6 +37,12 @@ rules:
   - create
   - delete
   - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
   - list
 - apiGroups:
   - storage.k8s.io

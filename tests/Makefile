@@ -16,7 +16,7 @@ GOLANG_VERSION ?= 1.12.4
 GOPATH ?= $(HOME)/go
 
 # Comma seperated items within {} for more than one file
-EXCLUDE ?= istio-install-base_test.go
+# EXCLUDE ?= istio-install-base_test.go
 
 export GO111MODULE = on
 export GO = go
@@ -24,17 +24,24 @@ export GO = go
 all: test
 
 generate: clean
-	@cd .. && hack/gen-test-targets.sh && [ -n "$(EXCLUDE)" ] && rm -f tests/$(EXCLUDE) || echo done
+	../hack/generate_tests.py --all || echo done
 	$(GO) fmt ./...
 
-test:
+generate-changed-only:
+	../hack/generate_tests.py || echo done
+	$(GO) fmt ./...
+
+modules:
+	@GO111MODULE=on $(GO) mod download
+
+test: modules
 	@GO111MODULE=on $(GO) test -v .
 
 clean:
 	@rm -f $$(ls *_test.go | egrep -v 'kusttestharness_test.go|go.mod|go.sum')
 
 run-unittest-plugin:
-	cd .. && XDG_CONFIG_HOME=$$(pwd)/plugins kustomize --enable_alpha_goplugins_accept_panic_risk build profiles/overlays/test
+	cd .. && XDG_CONFIG_HOME=$$(pwd)/plugins kustomize build profiles/overlays/test --enable_alpha_plugins
 
 run-application-plugin:
-	cd .. && XDG_CONFIG_HOME=$$(pwd)/plugins kustomize --enable_alpha_goplugins_accept_panic_risk build jupyter/jupyter-web-app/overlays/application
+	cd .. && XDG_CONFIG_HOME=$$(pwd)/plugins kustomize build jupyter/jupyter-web-app/overlays/application --enable_alpha_plugins
