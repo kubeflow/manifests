@@ -248,8 +248,7 @@ status:
     kind: ""
     plural: ""
   conditions: []
-  storedVersions: []
-`)
+  storedVersions: []`)
 	th.writeF("/manifests/profiles/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -305,8 +304,7 @@ metadata:
   name: kfam
 spec:
   ports:
-    - port: 8081
-`)
+    - port: 8081`)
 	th.writeF("/manifests/profiles/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
@@ -348,11 +346,13 @@ namespace: kubeflow
 commonLabels:
   kustomize.component: profiles
 configMapGenerator:
-- env: params.env
+- envs:
+  - params.env
   name: profiles-parameters
 images:
-- digest: sha256:bb1791ac42b34a5f9566b191fb093c3d40c7f73b6282398d1151706d4c8fffec
-  name: gcr.io/kubeflow-images-public/kfam
+- name: gcr.io/kubeflow-images-public/kfam
+  newName: gcr.io/kubeflow-images-public/kfam
+  newTag: vmaster-gf3e09203
 - digest: sha256:6d97928791c8d9f29ba1fa1cefccff34680e188dbb7b591d7f32e2e8717969bc
   name: gcr.io/kubeflow-images-public/profile-controller
 vars:
