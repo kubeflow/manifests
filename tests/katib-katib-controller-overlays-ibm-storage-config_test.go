@@ -396,11 +396,11 @@ spec:
     app: katib
     component: db
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-manager-deployment.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/katib-db-manager-deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: katib-manager
+  name: katib-db-manager
   labels:
     app: katib
     component: manager
@@ -412,14 +412,14 @@ spec:
       component: manager
   template:
     metadata:
-      name: katib-manager
+      name: katib-db-manager
       labels:
         app: katib
         component: manager
     spec:
       containers:
-      - name: katib-manager
-        image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
+      - name: katib-db-manager
+        image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
         imagePullPolicy: IfNotPresent
         env:
           - name : DB_NAME
@@ -430,7 +430,7 @@ spec:
                 name: katib-db-secrets
                 key: MYSQL_ROOT_PASSWORD
         command:
-          - './katib-manager'
+          - './katib-db-manager'
         ports:
         - name: api
           containerPort: 6789
@@ -445,11 +445,11 @@ spec:
           periodSeconds: 60
           failureThreshold: 5
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-manager-service.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/katib-db-manager-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
-  name: katib-manager
+  name: katib-db-manager
   labels:
     app: katib
     component: manager
@@ -608,8 +608,8 @@ resources:
 - katib-db-pvc.yaml
 - katib-db-secret.yaml
 - katib-db-service.yaml
-- katib-manager-deployment.yaml
-- katib-manager-service.yaml
+- katib-db-manager-deployment.yaml
+- katib-db-manager-service.yaml
 - katib-ui-deployment.yaml
 - katib-ui-rbac.yaml
 - katib-ui-service.yaml
@@ -623,9 +623,9 @@ images:
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
   newTag: v0.7.0
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
-- name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
+- name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
   newTag: v0.7.0
-  newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
   newTag: v0.7.0
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
