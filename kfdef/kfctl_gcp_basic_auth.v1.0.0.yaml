@@ -22,7 +22,7 @@ spec:
   - kustomizeConfig:
       parameters:
       - name: clusterRbacConfig
-        value: 'ON'
+        value: 'OFF'
       repoRef:
         name: manifests
         path: istio/istio
@@ -69,11 +69,6 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: kubeflow-roles
-    name: kubeflow-roles
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
         path: metacontroller
     name: metacontroller
   - kustomizeConfig:
@@ -85,14 +80,14 @@ spec:
         path: argo
     name: argo
   - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: kubeflow-roles
+    name: kubeflow-roles
+  - kustomizeConfig:
       overlays:
       - istio
       - application
-      parameters:
-      - name: userid-header
-        value: X-Goog-Authenticated-User-Email
-      - name: userid-prefix
-        value: 'accounts.google.com:'
       repoRef:
         name: manifests
         path: common/centraldashboard
@@ -118,11 +113,6 @@ spec:
       overlays:
       - istio
       - application
-      parameters:
-      - name: userid-header
-        value: X-Goog-Authenticated-User-Email
-      - name: userid-prefix
-        value: 'accounts.google.com:'
       repoRef:
         name: manifests
         path: jupyter/jupyter-web-app
@@ -207,7 +197,7 @@ spec:
       - application
       parameters:
       - name: usageId
-        value: '7439583937720421527'
+        value: '2700513155662330975'
       - name: reportUsage
         value: 'true'
       repoRef:
@@ -334,6 +324,10 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: ipName
+        value: ipName
+      - name: hostname
       repoRef:
         name: manifests
         path: gcp/cloud-endpoints
@@ -344,10 +338,6 @@ spec:
       - istio
       parameters:
       - name: admin
-      - name: userid-header
-        value: X-Goog-Authenticated-User-Email
-      - name: userid-prefix
-        value: 'accounts.google.com:'
       repoRef:
         name: manifests
         path: profiles
@@ -361,20 +351,6 @@ spec:
     name: gpu-driver
   - kustomizeConfig:
       overlays:
-      - managed-cert
-      - application
-      parameters:
-      - name: namespace
-        value: istio-system
-      - name: ipName
-        value: test1-ip
-      - name: hostname
-      repoRef:
-        name: manifests
-        path: gcp/iap-ingress
-    name: iap-ingress
-  - kustomizeConfig:
-      overlays:
       - application
       repoRef:
         name: manifests
@@ -382,9 +358,38 @@ spec:
     name: seldon-core-operator
   - kustomizeConfig:
       parameters:
-      - name: user
-      - name: profile-name
-        value: anonymous
+      - name: ambassadorServiceType
+        value: NodePort
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: common/ambassador
+    name: ambassador
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: common/basic-auth
+    name: basic-auth
+  - kustomizeConfig:
+      overlays:
+      - managed-cert
+      - application
+      parameters:
+      - name: namespace
+        value: istio-system
+      - name: ipName
+      - name: hostname
+      - name: project
+      - name: ingressName
+        value: envoy-ingress
+      - name: issuer
+        value: letsencrypt-prod
+      repoRef:
+        name: manifests
+        path: gcp/basic-auth-ingress
+    name: basic-auth-ingress
+  - kustomizeConfig:
       repoRef:
         name: manifests
         path: default-install
@@ -402,8 +407,8 @@ spec:
           path: gcp/deployment_manager_configs
       enableWorkloadIdentity: true
       skipInitProject: true
-      useBasicAuth: false
+      useBasicAuth: true
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
-  version: master
+    uri: https://github.com/kubeflow/manifests/archive/v1.0-branch.tar.gz
+  version: v1.0.0
