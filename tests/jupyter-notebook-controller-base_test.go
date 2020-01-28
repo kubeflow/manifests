@@ -157,6 +157,9 @@ spec:
   - name: v1beta1
     served: true
     storage: true
+  - name: v1
+    served: true
+    storage: false
   validation:
     openAPIV3Schema:
       properties:
@@ -265,34 +268,35 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/notebook-controller
   newName: gcr.io/kubeflow-images-public/notebook-controller
-  digest: sha256:c40226ca344f9e7325622492de62a86ff2b8ba9cc0e49d36369dd9e613d8ef78
+  newTag: vmaster-gb1400446
 configMapGenerator:
-- name: parameters
-  env: params.env
+- envs:
+  - params.env
+  name: parameters
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- name: POD_LABELS
+- fieldref:
+    fieldPath: data.POD_LABELS
+  name: POD_LABELS
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.POD_LABELS
-- name: USE_ISTIO
+- fieldref:
+    fieldPath: data.USE_ISTIO
+  name: USE_ISTIO
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.USE_ISTIO
-- name: ISTIO_GATEWAY
+- fieldref:
+    fieldPath: data.ISTIO_GATEWAY
+  name: ISTIO_GATEWAY
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.ISTIO_GATEWAY
 `)
 }
 
