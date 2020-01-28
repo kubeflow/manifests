@@ -1,69 +1,3 @@
-package tests_test
-
-import (
-	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
-	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
-	"sigs.k8s.io/kustomize/v3/pkg/fs"
-	"sigs.k8s.io/kustomize/v3/pkg/loader"
-	"sigs.k8s.io/kustomize/v3/pkg/plugins"
-	"sigs.k8s.io/kustomize/v3/pkg/resmap"
-	"sigs.k8s.io/kustomize/v3/pkg/resource"
-	"sigs.k8s.io/kustomize/v3/pkg/target"
-	"sigs.k8s.io/kustomize/v3/pkg/validators"
-	"testing"
-)
-
-func writeSeldonCoreOperatorOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/seldon/seldon-core-operator/overlays/application/application.yaml", `
-apiVersion: app.k8s.io/v1beta1
-kind: Application
-metadata:
-  name: "seldon-core-operator"
-spec:
-  type: "seldon-core-operator"
-  componentKinds:
-    - group: apps/v1
-      kind: StatefulSet
-    - group: v1
-      kind: Service
-    - group: apps/v1
-      kind: Deployment
-    - group: v1
-      kind: Secret
-    - group: v1
-      kind: ConfigMap
-  version: "v1"
-  description: "Seldon allows users to create ML Inference Graphs to deploy their models and serve predictions"
-  icons:
-  maintainers:
-    - name: Seldon
-      email: dev@seldon.io
-  owners:
-    - name: Seldon
-      email: dev@seldon.io
-  keywords:
-   - "seldon"
-   - "inference"
-  links:
-    - description: Docs
-      url: "https://docs.seldon.io/projects/seldon-core/en/v1.0.1/"
-`)
-	th.writeK("/manifests/seldon/seldon-core-operator/overlays/application", `
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-bases:
-- ../../base
-resources:
-- application.yaml
-commonLabels:
-  app.kubernetes.io/name: seldon-core-operator
-  app.kubernetes.io/instance: seldon-core-operator-v1.0.1
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: seldon
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v1.0.1
-`)
-	th.writeF("/manifests/seldon/seldon-core-operator/base/resources.yaml", `
 ---
 # Source: seldon-core-operator/templates/configmap_seldon-config.yaml
 apiVersion: v1
@@ -159,7 +93,7 @@ spec:
                               type: integer
                             metrics:
                               items:
-                                description: MetricSpec specifies how to scale based on a single metric (only `+"`"+`type`+"`"+` and one other matching field should be set at once).
+                                description: MetricSpec specifies how to scale based on a single metric (only `type` and one other matching field should be set at once).
                                 properties:
                                   external:
                                     description: external refers to a global metric that is not associated with any Kubernetes object. It allows autoscaling based on information coming from components running outside of cluster (for example length of queue in cloud messaging service, or QPS from loadbalancer running outside of cluster).
@@ -3746,43 +3680,3 @@ webhooks:
     - UPDATE
     resources:
     - seldondeployments
-`)
-	th.writeK("/manifests/seldon/seldon-core-operator/base", `
-# List of resource files that kustomize reads, modifies
-# and emits as a YAML string
-resources:
-- resources.yaml
-
-`)
-}
-
-func TestSeldonCoreOperatorOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/seldon/seldon-core-operator/overlays/application")
-	writeSeldonCoreOperatorOverlaysApplication(th)
-	m, err := th.makeKustTarget().MakeCustomizedResMap()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	expected, err := m.AsYaml()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	targetPath := "../seldon/seldon-core-operator/overlays/application"
-	fsys := fs.MakeRealFS()
-	lrc := loader.RestrictionRootOnly
-	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
-	if loaderErr != nil {
-		t.Fatalf("could not load kustomize loader: %v", loaderErr)
-	}
-	rf := resmap.NewFactory(resource.NewFactory(kunstruct.NewKunstructuredFactoryImpl()), transformer.NewFactoryImpl())
-	pc := plugins.DefaultPluginConfig()
-	kt, err := target.NewKustTarget(_loader, rf, transformer.NewFactoryImpl(), plugins.NewLoader(pc, rf))
-	if err != nil {
-		th.t.Fatalf("Unexpected construction error %v", err)
-	}
-	actual, err := kt.MakeCustomizedResMap()
-	if err != nil {
-		t.Fatalf("Err: %v", err)
-	}
-	th.assertActualEqualsExpected(actual, string(expected))
-}
