@@ -93,6 +93,8 @@ subjects:
 `)
 	th.writeF("/manifests/pipeline/api-service/base/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
+# TODO: Does this need to be changed to a clusterrole?
+# see  manifests in kubeflow/pipelines
 kind: Role
 metadata:
   name: ml-pipeline
@@ -120,6 +122,13 @@ rules:
   - update
   - patch
   - delete
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - delete
+
 `)
 	th.writeF("/manifests/pipeline/api-service/base/service-account.yaml", `
 apiVersion: v1
