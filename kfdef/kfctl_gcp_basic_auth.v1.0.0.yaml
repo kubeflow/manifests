@@ -1,6 +1,7 @@
 apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
-metadata: {}
+metadata:
+  namespace: kubeflow
 spec:
   applications:
   - kustomizeConfig:
