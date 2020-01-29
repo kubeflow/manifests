@@ -202,7 +202,7 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/pytorch-operator
   newName: gcr.io/kubeflow-images-public/pytorch-operator
-  newTag: v0.7.0
+  newTag: vmaster-g047cf0f
 `)
 }
 
