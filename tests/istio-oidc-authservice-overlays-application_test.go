@@ -73,6 +73,7 @@ commonLabels:
   app.kubernetes.io/component: oidc-authservice
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v1.0.0
+`)
 	th.writeF("/manifests/istio/oidc-authservice/base/service.yaml", `
 apiVersion: v1
 kind: Service
