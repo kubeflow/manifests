@@ -97,7 +97,7 @@ resources:
       autoscaling:
         enableNodeAutoprovisioning: true
         autoprovisioningNodePoolDefaults:
-          # oauthScopes can't be set with service account
+          oauthScopes: {{ VM_OAUTH_SCOPES }}
           serviceAccount: {{ KF_VM_SA_NAME }}@{{ env['project'] }}.iam.gserviceaccount.com
           
         resourceLimits:
