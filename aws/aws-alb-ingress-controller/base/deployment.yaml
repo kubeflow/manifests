@@ -17,6 +17,8 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: alb-ingress-controller
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
         - name: alb-ingress-controller

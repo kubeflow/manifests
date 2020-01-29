@@ -100,6 +100,8 @@ spec:
     metadata:
       labels:
         app: cloud-endpoints-controller
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - image: gcr.io/cloud-solutions-group/cloud-endpoints-controller:0.2.1

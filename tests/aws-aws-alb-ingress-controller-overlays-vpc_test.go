@@ -141,6 +141,8 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: alb-ingress-controller
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
         - name: alb-ingress-controller
@@ -172,7 +174,8 @@ spec:
           # Repository location of the ALB Ingress Controller.
           image: docker.io/amazon/aws-alb-ingress-controller:v1.1.2
           imagePullPolicy: Always
-      serviceAccountName: alb-ingress-controller`)
+      serviceAccountName: alb-ingress-controller
+`)
 	th.writeF("/manifests/aws/aws-alb-ingress-controller/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount

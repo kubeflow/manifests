@@ -163,6 +163,8 @@ spec:
   template:
     metadata:
       name: tekton-dashboard
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: tekton-dashboard

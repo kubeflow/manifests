@@ -192,6 +192,8 @@ spec:
     metadata:
       labels:
         name: pytorch-operator
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - command:

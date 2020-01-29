@@ -101,6 +101,9 @@ metadata:
   name: deployment
 spec:
   template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - image: gcr.io/kubeflow-images-public/admission-webhook:v20190520-v0-139-gcee39dbc-dirty-0d8f4c
@@ -113,7 +116,7 @@ spec:
       - name: webhook-cert
         secret:
           secretName: webhook-certs
-      serviceAccountName: service-account    
+      serviceAccountName: service-account
 `)
 	th.writeF("/manifests/admission-webhook/webhook/base/mutating-webhook-configuration.yaml", `
 apiVersion: admissionregistration.k8s.io/v1beta1

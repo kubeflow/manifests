@@ -16,6 +16,8 @@ spec:
       labels:
         app: modeldb
         tier: webapp
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - image: vertaaiofficial/modeldb-frontend:kubeflow

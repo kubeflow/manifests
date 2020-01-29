@@ -93,6 +93,9 @@ spec:
   strategy:
     type: Recreate
   template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: minio
