@@ -13,6 +13,8 @@ spec:
       name: ui
       labels:
         app: metadata-ui
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - image: gcr.io/kubeflow-images-public/metadata-frontend:v0.1.8
