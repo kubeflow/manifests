@@ -43,6 +43,8 @@ spec:
       name: db
       labels:
         component: db
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: db-container
@@ -154,14 +156,17 @@ spec:
                  "--mysql_config_port=$(MYSQL_PORT)",
                  "--mysql_config_user=$(MYSQL_USER_NAME)",
                  "--mysql_config_password=$(MYSQL_ROOT_PASSWORD)"
-          ]`)
+          ]
+`)
 	th.writeF("/manifests/metadata/overlays/db/params.env", `
 MYSQL_DATABASE=metadb
 MYSQL_PORT=3306
-MYSQL_ALLOW_EMPTY_PASSWORD=true`)
+MYSQL_ALLOW_EMPTY_PASSWORD=true
+`)
 	th.writeF("/manifests/metadata/overlays/db/secrets.env", `
 MYSQL_USER_NAME=root
-MYSQL_ROOT_PASSWORD=test`)
+MYSQL_ROOT_PASSWORD=test
+`)
 	th.writeK("/manifests/metadata/overlays/db", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -196,7 +201,8 @@ vars:
     name: metadata-db
     apiVersion: v1
   fieldref:
-    fieldpath: metadata.name`)
+    fieldpath: metadata.name
+`)
 	th.writeF("/manifests/metadata/base/metadata-deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -213,6 +219,8 @@ spec:
     metadata:
       labels:
         component: server
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: container
@@ -249,6 +257,8 @@ spec:
     metadata:
       labels:
         component: grpc-server
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
         - name: container
@@ -260,7 +270,7 @@ spec:
           args: ["--grpc_port=$(METADATA_GRPC_SERVICE_PORT)"]
           ports:
             - name: grpc-backendapi
-              containerPort: 8080
+              containerPort: 8080 #The value of the port number needs to be in sync with value  specified in grpc-params.env
 `)
 	th.writeF("/manifests/metadata/base/metadata-service.yaml", `
 kind: Service
@@ -309,6 +319,8 @@ spec:
       name: ui
       labels:
         app: metadata-ui
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - image: gcr.io/kubeflow-images-public/metadata-frontend:v0.1.8
@@ -399,6 +411,8 @@ spec:
     metadata:
       labels:
         component: envoy
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: container
