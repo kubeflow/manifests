@@ -138,7 +138,7 @@ spec:
           envFrom:
           - configMapRef:
               name: metadata-grpc-configmap
-          image: gcr.io/tfx-oss-public/ml_metadata_store_server:0.15.1
+          image: gcr.io/tfx-oss-public/ml_metadata_store_server:v0.21.1
           command: ["/bin/metadata_store_server"]
           args: ["--grpc_port=$(METADATA_GRPC_SERVICE_PORT)"]
           ports:
@@ -376,7 +376,7 @@ images:
   newTag: v0.1.11
 - name: gcr.io/tfx-oss-public/ml_metadata_store_server
   newName: gcr.io/tfx-oss-public/ml_metadata_store_server
-  newTag: 0.15.1
+  newTag: v0.21.1
 - name: gcr.io/ml-pipeline/envoy
   newName: gcr.io/ml-pipeline/envoy
   newTag: metadata-grpc
