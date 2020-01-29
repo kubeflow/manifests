@@ -107,6 +107,12 @@ spec:
       containers:
       - image: gcr.io/kubeflow-images-public/centraldashboard
         imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /api/workgroup/env-info
+            port: 8082
+          initialDelaySeconds: 30
+          periodSeconds: 30
         name: centraldashboard
         ports:
         - containerPort: 8082
@@ -204,11 +210,13 @@ varReference:
 - path: spec/template/spec/containers/0/env/0/value
   kind: Deployment
 - path: spec/template/spec/containers/0/env/1/value
-  kind: Deployment`)
+  kind: Deployment
+`)
 	th.writeF("/manifests/common/centraldashboard/base/params.env", `
 clusterDomain=cluster.local
 userid-header=
-userid-prefix=`)
+userid-prefix=
+`)
 	th.writeK("/manifests/common/centraldashboard/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
