@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: iap-ingress
-      app.kubernetes.io/instance: iap-ingress-v0.7.0
+      app.kubernetes.io/instance: iap-ingress-v1.0.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: iap-ingress
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/version: v1.0.0
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -56,11 +56,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: iap-ingress
-  app.kubernetes.io/instance: iap-ingress-v0.7.0
+  app.kubernetes.io/instance: iap-ingress-v1.0.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: iap-ingress
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v1.0.0
 `)
 	th.writeF("/manifests/gcp/iap-ingress/base/backend-config.yaml", `
 apiVersion: cloud.google.com/v1beta1

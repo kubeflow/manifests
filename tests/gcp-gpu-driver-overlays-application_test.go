@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: gpu-driver
-      app.kubernetes.io/instance: gpu-driver-v0.7.0
+      app.kubernetes.io/instance: gpu-driver-v1.0.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: gpu-driver
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/version: v1.0.0
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -56,11 +56,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: gpu-driver
-  app.kubernetes.io/instance: gpu-driver-v0.7.0
+  app.kubernetes.io/instance: gpu-driver-v1.0.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: gpu-driver
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v1.0.0
 `)
 	th.writeF("/manifests/gcp/gpu-driver/base/daemon-set.yaml", `
 apiVersion: apps/v1

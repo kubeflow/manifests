@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: profiles
-      app.kubernetes.io/instance: profiles-v0.7.0
+      app.kubernetes.io/instance: profiles-v1.0.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: profiles
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/version: v1.0.0
   componentKinds:
   - group: apps
     kind: Deployment
@@ -64,11 +64,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: profiles
-  app.kubernetes.io/instance: profiles-v0.7.0
+  app.kubernetes.io/instance: profiles-v1.0.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: profiles
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v1.0.0
 `)
 	th.writeF("/manifests/profiles/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1

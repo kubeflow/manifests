@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: kubeflow
-      app.kubernetes.io/instance: kubeflow-v0.7.0
+      app.kubernetes.io/instance: kubeflow-v1.0.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: kubeflow
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/version: v1.0.0
   componentKinds:
     - group: app.k8s.io
       kind: Application
@@ -59,11 +59,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: kubeflow
-  app.kubernetes.io/instance: kubeflow-v0.7.0
+  app.kubernetes.io/instance: kubeflow-v1.0.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: kubeflow
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v1.0.0
 `)
 	th.writeF("/manifests/application/application/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1

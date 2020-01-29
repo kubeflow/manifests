@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: kfserving-crds
-      app.kubernetes.io/instance: kfserving-crds-v0.7.0
+      app.kubernetes.io/instance: kfserving-crds-v1.0.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: kfserving-crds
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/version: v1.0.0
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -56,11 +56,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: kfserving-crds
-  app.kubernetes.io/instance: kfserving-crds-v0.7.0
+  app.kubernetes.io/instance: kfserving-crds-v1.0.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: kfserving-crds
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v1.0.0
 `)
 	th.writeF("/manifests/kfserving/kfserving-crds/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1

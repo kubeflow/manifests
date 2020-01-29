@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: spartakus
-      app.kubernetes.io/instance: spartakus-v0.7.0
+      app.kubernetes.io/instance: spartakus-v1.0.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: spartakus
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/version: v1.0.0
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -58,11 +58,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: spartakus
-  app.kubernetes.io/instance: spartakus-v0.7.0
+  app.kubernetes.io/instance: spartakus-v1.0.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: spartakus
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v1.0.0
 `)
 	th.writeF("/manifests/common/spartakus/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1

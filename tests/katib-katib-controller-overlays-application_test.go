@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: katib-controller
-      app.kubernetes.io/instance: katib-controller-v0.7.0
+      app.kubernetes.io/instance: katib-controller-v1.0.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: katib
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/version: v1.0.0
   componentKinds:
   - group: core
     kind: Service
@@ -87,11 +87,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: katib-controller
-  app.kubernetes.io/instance: katib-controller-v0.7.0
+  app.kubernetes.io/instance: katib-controller-v1.0.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: katib
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v1.0.0
 `)
 	th.writeF("/manifests/katib/katib-controller/base/katib-configmap.yaml", `
 apiVersion: v1
