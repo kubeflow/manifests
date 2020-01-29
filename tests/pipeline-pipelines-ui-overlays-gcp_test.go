@@ -21,6 +21,9 @@ metadata:
   name: ml-pipeline-ui
 spec:
   template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       volumes:
       - name: gcp-sa-token
@@ -59,6 +62,8 @@ spec:
     metadata:
       labels:
         app: ml-pipeline-ui
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: ml-pipeline-ui

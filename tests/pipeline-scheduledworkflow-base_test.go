@@ -98,6 +98,9 @@ metadata:
   name: ml-pipeline-scheduledworkflow
 spec:
   template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: ml-pipeline-scheduledworkflow

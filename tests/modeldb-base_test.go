@@ -34,6 +34,8 @@ spec:
       labels:
         app: modeldb
         tier: artifact-store
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - env:
@@ -88,6 +90,8 @@ spec:
       labels:
         app: modeldb
         tier: backend
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - env:
@@ -176,6 +180,8 @@ spec:
       labels:
         app: modeldb
         tier: mysql
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - args:
@@ -245,6 +251,8 @@ spec:
       labels:
         app: modeldb
         tier: backend-proxy
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - args:
@@ -323,6 +331,8 @@ spec:
       labels:
         app: modeldb
         tier: webapp
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - image: vertaaiofficial/modeldb-frontend:kubeflow

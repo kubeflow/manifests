@@ -229,6 +229,8 @@ spec:
     metadata:
       labels:
         app: mpi-operator
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - args:

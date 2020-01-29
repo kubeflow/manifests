@@ -58,6 +58,8 @@ spec:
     metadata:
       labels:
         app: spartakus-volunteer
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - args:
