@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: notebook-controller
-      app.kubernetes.io/instance: notebook-controller-v0.7.0
+      app.kubernetes.io/instance: notebook-controller-v1.0.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: notebook-controller
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/version: v1.0.0
   componentKinds:
     - group: core
       kind: Service
@@ -35,7 +35,7 @@ spec:
       kind: Deployment
     - group: core
       kind: ServiceAccount
-  descriptor: 
+  descriptor:
     type: notebook-controller
     version: v1beta1
     description: Notebooks controller allows users to create a custom resource \"Notebook\" (jupyter notebook).
@@ -49,7 +49,7 @@ spec:
      - jupyter
      - notebook
      - notebook-controller
-     - jupyterhub  
+     - jupyterhub
     links:
     - description: About
       url: "https://github.com/kubeflow/kubeflow/tree/master/components/notebook-controller"
@@ -64,11 +64,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: notebook-controller
-  app.kubernetes.io/instance: notebook-controller-v0.7.0
+  app.kubernetes.io/instance: notebook-controller-v1.0.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: notebook-controller
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v1.0.0
 `)
 	th.writeF("/manifests/jupyter/notebook-controller/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
@@ -213,6 +213,9 @@ spec:
   - name: v1beta1
     served: true
     storage: true
+  - name: v1
+    served: true
+    storage: false
   validation:
     openAPIV3Schema:
       properties:
@@ -324,34 +327,35 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/notebook-controller
   newName: gcr.io/kubeflow-images-public/notebook-controller
-  digest: sha256:c40226ca344f9e7325622492de62a86ff2b8ba9cc0e49d36369dd9e613d8ef78
+  newTag: vmaster-gb1400446
 configMapGenerator:
-- name: parameters
-  env: params.env
+- envs:
+  - params.env
+  name: parameters
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- name: POD_LABELS
+- fieldref:
+    fieldPath: data.POD_LABELS
+  name: POD_LABELS
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.POD_LABELS
-- name: USE_ISTIO
+- fieldref:
+    fieldPath: data.USE_ISTIO
+  name: USE_ISTIO
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.USE_ISTIO
-- name: ISTIO_GATEWAY
+- fieldref:
+    fieldPath: data.ISTIO_GATEWAY
+  name: ISTIO_GATEWAY
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.ISTIO_GATEWAY
 `)
 }
 
