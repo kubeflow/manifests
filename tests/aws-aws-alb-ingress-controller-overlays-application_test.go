@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: aws-alb-ingress-controller
-      app.kubernetes.io/instance: aws-alb-ingress-controller-v0.7.0
+      app.kubernetes.io/instance: aws-alb-ingress-controller-v1.0.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: aws-alb-ingress-controller
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/version: v1.0.0
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -59,11 +59,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: aws-alb-ingress-controller
-  app.kubernetes.io/instance: aws-alb-ingress-controller-v0.7.0
+  app.kubernetes.io/instance: aws-alb-ingress-controller-v1.0.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: aws-alb-ingress-controller
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v1.0.0
 
 `)
 	th.writeF("/manifests/aws/aws-alb-ingress-controller/base/cluster-role.yaml", `

@@ -24,11 +24,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: oidc-authservice
-      app.kubernetes.io/instance: oidc-authservice-v0.7.0
+      app.kubernetes.io/instance: oidc-authservice-v1.0.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: oidc-authservice
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/version: v1.0.0
   componentKinds:
   - group: apps
     kind: StatefulSet
@@ -68,11 +68,12 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: oidc-authservice
-  app.kubernetes.io/instance: oidc-authservice-v0.7.0
+  app.kubernetes.io/instance: oidc-authservice-v1.0.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: oidc-authservice
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0`)
+  app.kubernetes.io/version: v1.0.0
+`)
 	th.writeF("/manifests/istio/oidc-authservice/base/service.yaml", `
 apiVersion: v1
 kind: Service

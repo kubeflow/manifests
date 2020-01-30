@@ -57,11 +57,11 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: seldon-core-operator
-  app.kubernetes.io/instance: seldon-core-operator-v0.7.0
+  app.kubernetes.io/instance: seldon-core-operator-v1.0.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: seldon
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v1.0.0
 `)
 	th.writeF("/manifests/seldon/seldon-core-operator/base/seldon-config-cm.yaml", `
 apiVersion: v1

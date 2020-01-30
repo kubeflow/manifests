@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: cert-manager
-      app.kubernetes.io/instance: cert-manager-v0.7.0
+      app.kubernetes.io/instance: cert-manager-v1.0.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: cert-manager
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
+      app.kubernetes.io/version: v1.0.0
   componentKinds:
   - group: rbac
     kind: ClusterRole
@@ -75,11 +75,11 @@ configurations:
 - params.yaml
 commonLabels:
   app.kubernetes.io/name: cert-manager
-  app.kubernetes.io/instance: cert-manager-v0.7.0
+  app.kubernetes.io/instance: cert-manager-v1.0.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: cert-manager
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
+  app.kubernetes.io/version: v1.0.0
 `)
 	th.writeF("/manifests/cert-manager/cert-manager/base/namespace.yaml", `
 apiVersion: v1
