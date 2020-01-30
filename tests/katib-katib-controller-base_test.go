@@ -286,6 +286,8 @@ spec:
       labels:
         app: katib
         component: mysql
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: katib-mysql
