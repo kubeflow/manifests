@@ -43,6 +43,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.ldap_user_base_dn
+- name: ldap_user_search_username
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ldap_user_search_username
 - name: ldap_group_base_dn
   objref:
     kind: ConfigMap
