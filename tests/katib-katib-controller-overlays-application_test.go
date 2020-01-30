@@ -366,7 +366,7 @@ spec:
       name: katib-mysql
       labels:
         app: katib
-        component: db
+        component: mysql
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
