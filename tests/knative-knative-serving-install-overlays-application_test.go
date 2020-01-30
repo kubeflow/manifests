@@ -23,11 +23,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: knative-serving-install
-      app.kubernetes.io/instance: knative-serving-install-v0.8.0
+      app.kubernetes.io/instance: knative-serving-install-v0.11.1
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: knative-serving-install
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.8.0
+      app.kubernetes.io/version: v0.11.1
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -56,100 +56,71 @@ resources:
 - application.yaml
 commonLabels:
   app.kubernetes.io/name: knative-serving-install
-  app.kubernetes.io/instance: knative-serving-install-v0.8.0
+  app.kubernetes.io/instance: knative-serving-install-v0.11.1
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: knative-serving-install
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.8.0
+  app.kubernetes.io/version: v0.11.1
 `)
 	th.writeF("/manifests/knative/knative-serving-install/base/gateway.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  labels:
-    networking.knative.dev/ingress-provider: istio
-    serving.knative.dev/release: "v0.8.0"
-  name: knative-ingress-gateway
-  namespace: knative-serving
-spec:
-  selector:
-    istio: ingressgateway
-  servers:
-  - hosts:
-    - '*'
-    port:
-      name: http
-      number: 80
-      protocol: HTTP
-  - hosts:
-    - '*'
-    port:
-      name: https
-      number: 443
-      protocol: HTTPS
-    tls:
-      mode: PASSTHROUGH
-
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
   labels:
     networking.knative.dev/ingress-provider: istio
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: cluster-local-gateway
   namespace: knative-serving
 spec:
   selector:
     istio: cluster-local-gateway
   servers:
-  - hosts:
-    - '*'
-    port:
-      name: http
-      number: 80
-      protocol: HTTP
-
+    - hosts:
+        - '*'
+      port:
+        name: http
+        number: 80
+        protocol: HTTP
 `)
 	th.writeF("/manifests/knative/knative-serving-install/base/cluster-role.yaml", `
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    networking.knative.dev/ingress-provider: istio
-    serving.knative.dev/controller: "true"
-    serving.knative.dev/release: "v0.8.0"
-  name: knative-serving-istio
-rules:
-- apiGroups:
-  - networking.istio.io
-  resources:
-  - virtualservices
-  - gateways
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
+    duck.knative.dev/addressable: "true"
+    serving.knative.dev/release: "v0.11.1"
+  name: knative-serving-addressable-resolver
+rules:
+  - apiGroups:
+      - serving.knative.dev
+    resources:
+      - routes
+      - routes/status
+      - services
+      - services/status
+    verbs:
+      - get
+      - list
+      - watch
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
     autoscaling.knative.dev/metric-provider: custom-metrics
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: custom-metrics-server-resources
 rules:
-- apiGroups:
-  - custom.metrics.k8s.io
-  resources:
-  - '*'
-  verbs:
-  - '*'
+  - apiGroups:
+      - custom.metrics.k8s.io
+    resources:
+      - '*'
+    verbs:
+      - '*'
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -157,28 +128,70 @@ kind: ClusterRole
 metadata:
   labels:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: knative-serving-namespaced-admin
 rules:
-- apiGroups:
-  - serving.knative.dev
-  - networking.internal.knative.dev
-  - autoscaling.internal.knative.dev
-  resources:
-  - '*'
-  verbs:
-  - '*'
-
+  - apiGroups:
+      - serving.knative.dev
+      - networking.internal.knative.dev
+      - autoscaling.internal.knative.dev
+      - caching.internal.knative.dev
+    resources:
+      - '*'
+    verbs:
+      - '*'
 ---
-aggregationRule:
-  clusterRoleSelectors:
-  - matchLabels:
-      serving.knative.dev/controller: "true"
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    serving.knative.dev/release: "v0.11.1"
+  name: knative-serving-namespaced-edit
+rules:
+  - apiGroups:
+      - serving.knative.dev
+      - networking.internal.knative.dev
+      - autoscaling.internal.knative.dev
+      - caching.internal.knative.dev
+    resources:
+      - '*'
+    verbs:
+      - create
+      - update
+      - patch
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+    serving.knative.dev/release: "v0.11.1"
+  name: knative-serving-namespaced-view
+rules:
+  - apiGroups:
+      - serving.knative.dev
+      - networking.internal.knative.dev
+      - autoscaling.internal.knative.dev
+      - caching.internal.knative.dev
+    resources:
+      - '*'
+    verbs:
+      - get
+      - list
+      - watch
+
+---
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        serving.knative.dev/controller: "true"
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    serving.knative.dev/release: "v0.11.1"
   name: knative-serving-admin
 rules: []
 ---
@@ -187,131 +200,173 @@ kind: ClusterRole
 metadata:
   labels:
     serving.knative.dev/controller: "true"
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: knative-serving-core
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  - namespaces
-  - secrets
-  - configmaps
-  - endpoints
-  - services
-  - events
-  - serviceaccounts
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - endpoints/restricted
-  verbs:
-  - create
-- apiGroups:
-  - apps
-  resources:
-  - deployments
-  - deployments/finalizers
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
-- apiGroups:
-  - admissionregistration.k8s.io
-  resources:
-  - mutatingwebhookconfigurations
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
-- apiGroups:
-  - apiextensions.k8s.io
-  resources:
-  - customresourcedefinitions
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
-- apiGroups:
-  - autoscaling
-  resources:
-  - horizontalpodautoscalers
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
-- apiGroups:
-  - serving.knative.dev
-  - autoscaling.internal.knative.dev
-  - networking.internal.knative.dev
-  resources:
-  - '*'
-  - '*/status'
-  - '*/finalizers'
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - deletecollection
-  - patch
-  - watch
-- apiGroups:
-  - caching.internal.knative.dev
-  resources:
-  - images
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - namespaces
+      - secrets
+      - configmaps
+      - endpoints
+      - services
+      - events
+      - serviceaccounts
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - patch
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - endpoints/restricted
+    verbs:
+      - create
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - deployments/finalizers
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - patch
+      - watch
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resources:
+      - mutatingwebhookconfigurations
+      - validatingwebhookconfigurations
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - patch
+      - watch
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - patch
+      - watch
+  - apiGroups:
+      - autoscaling
+    resources:
+      - horizontalpodautoscalers
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - patch
+      - watch
+  - apiGroups:
+      - serving.knative.dev
+      - autoscaling.internal.knative.dev
+      - networking.internal.knative.dev
+    resources:
+      - '*'
+      - '*/status'
+      - '*/finalizers'
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - deletecollection
+      - patch
+      - watch
+  - apiGroups:
+      - caching.internal.knative.dev
+    resources:
+      - images
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - patch
+      - watch
 
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    duck.knative.dev/podspecable: "true"
+    serving.knative.dev/release: "v0.11.1"
+  name: knative-serving-podspecable-binding
+rules:
+  - apiGroups:
+      - serving.knative.dev
+    resources:
+      - configurations
+      - services
+    verbs:
+      - list
+      - watch
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    networking.knative.dev/ingress-provider: istio
+    serving.knative.dev/controller: "true"
+    serving.knative.dev/release: "v0.11.1"
+  name: knative-serving-istio
+rules:
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - virtualservices
+      - gateways
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - patch
+      - watch
 `)
 	th.writeF("/manifests/knative/knative-serving-install/base/cluster-role-binding.yaml", `
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
     autoscaling.knative.dev/metric-provider: custom-metrics
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: custom-metrics:system:auth-delegator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: system:auth-delegator
 subjects:
-- kind: ServiceAccount
-  name: controller
-  namespace: knative-serving
+  - kind: ServiceAccount
+    name: controller
+    namespace: knative-serving
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -319,34 +374,33 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     autoscaling.knative.dev/metric-provider: custom-metrics
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: hpa-controller-custom-metrics
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: custom-metrics-server-resources
 subjects:
-- kind: ServiceAccount
-  name: horizontal-pod-autoscaler
-  namespace: kube-system
+  - kind: ServiceAccount
+    name: horizontal-pod-autoscaler
+    namespace: kube-system
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: knative-serving-controller-admin
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: knative-serving-admin
 subjects:
-- kind: ServiceAccount
-  name: controller
-  namespace: knative-serving
+  - kind: ServiceAccount
+    name: controller
+    namespace: knative-serving
 
----
 `)
 	th.writeF("/manifests/knative/knative-serving-install/base/service-role.yaml", `
 apiVersion: rbac.istio.io/v1alpha1
@@ -377,12 +431,13 @@ spec:
   - user: '*'
 `)
 	th.writeF("/manifests/knative/knative-serving-install/base/role-binding.yaml", `
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
     autoscaling.knative.dev/metric-provider: custom-metrics
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: custom-metrics-auth-reader
   namespace: kube-system
 roleRef:
@@ -390,12 +445,12 @@ roleRef:
   kind: Role
   name: extension-apiserver-authentication-reader
 subjects:
-- kind: ServiceAccount
-  name: controller
-  namespace: knative-serving
-
+  - kind: ServiceAccount
+    name: controller
+    namespace: knative-serving
 `)
 	th.writeF("/manifests/knative/knative-serving-install/base/config-map.yaml", `
+---
 apiVersion: v1
 data:
   _example: |
@@ -408,7 +463,7 @@ data:
     # This block is not actually functional configuration,
     # but serves to illustrate the available configuration
     # options and document them in a way that is accessible
-    # to users that kubectl edit this config map.
+    # to users that `+"`"+`kubectl edit`+"`"+` this config map.
     #
     # These sample configuration options may be copied out of
     # this example block and unindented to be in the data block
@@ -429,10 +484,21 @@ data:
     container-concurrency-target-percentage: "70"
 
     # The container concurrency target default is what the Autoscaler will
-    # try to maintain when the Revision specifies unlimited concurrency.
+    # try to maintain when concurrency is used as the scaling metric for a
+    # Revision and the Revision specifies unlimited concurrency.
     # Even when specifying unlimited concurrency, the autoscaler will
     # horizontally scale the application based on this target concurrency.
+    # NOTE: Only one metric can be used for autoscaling a Revision.
     container-concurrency-target-default: "100"
+
+    # The requests per second (RPS) target default is what the Autoscaler will
+    # try to maintain when RPS is used as the scaling metric for a Revision and
+    # the Revision specifies unlimited RPS. Even when specifying unlimited RPS,
+    # the autoscaler will horizontally scale the application based on this
+    # target RPS.
+    # Must be greater than 1.0.
+    # NOTE: Only one metric can be used for autoscaling a Revision.
+    requests-per-second-target-default: "200"
 
     # The target burst capacity specifies the size of burst in concurrent
     # requests that the system operator expects the system will receive.
@@ -446,10 +512,11 @@ data:
     # -1 denotes unlimited target-burst-capacity and activator will always
     # be in the request path.
     # Other negative values are invalid.
-    target-burst-capacity: "0"
+    target-burst-capacity: "200"
 
     # When operating in a stable mode, the autoscaler operates on the
     # average concurrency over the stable window.
+    # Stable window must be in whole seconds.
     stable-window: "60s"
 
     # When observed average concurrency during the panic window reaches
@@ -457,13 +524,9 @@ data:
     # enters panic mode. When operating in panic mode, the autoscaler
     # scales on the average concurrency over the panic window which is
     # panic-window-percentage of the stable-window.
+    # When computing the panic window it will be rounded to the closest
+    # whole second.
     panic-window-percentage: "10.0"
-
-    # Absolute panic window duration.
-    # Deprecated in favor of panic-window-percentage.
-    # Existing revisions will continue to scale based on panic-window
-    # but new revisions will default to panic-window-percentage.
-    panic-window: "6s"
 
     # The percentage of the container concurrency target at which to
     # enter panic mode when reached within the panic window.
@@ -472,7 +535,21 @@ data:
     # Max scale up rate limits the rate at which the autoscaler will
     # increase pod count. It is the maximum ratio of desired pods versus
     # observed pods.
+    # Cannot less or equal to 1.
+    # I.e with value of 2.0 the number of pods can at most go N to 2N
+    # over single Autoscaler period (see tick-interval), but at least N to
+    # N+1, if Autoscaler needs to scale up.
     max-scale-up-rate: "1000.0"
+
+    # Max scale down rate limits the rate at which the autoscaler will
+    # decrease pod count. It is the maximum ratio of observed pods versus
+    # desired pods.
+    # Cannot less or equal to 1.
+    # I.e. with value of 2.0 the number of pods can at most go N to N/2
+    # over single Autoscaler evaluation period (see tick-interval), but at
+    # least N to N-1, if Autoscaler needs to scale down.
+    # Not yet used // TODO(vagababov) remove once other parts are ready.
+    max-scale-down-rate: "2.0"
 
     # Scale to zero feature flag
     enable-scale-to-zero: "true"
@@ -488,12 +565,13 @@ data:
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: config-autoscaler
   namespace: knative-serving
 
 ---
 
+---
 apiVersion: v1
 data:
   _example: |
@@ -506,7 +584,7 @@ data:
     # This block is not actually functional configuration,
     # but serves to illustrate the available configuration
     # options and document them in a way that is accessible
-    # to users that kubectl edit this config map.
+    # to users that `+"`"+`kubectl edit`+"`"+` this config map.
     #
     # These sample configuration options may be copied out of
     # this example block and unindented to be in the data block
@@ -549,10 +627,17 @@ data:
     # enclosing Service or Configuration, so values such as
     # {{.Name}} are also valid.
     container-name-template: "user-container"
+
+    # container-concurrency specifies the maximum number
+    # of requests the Container can handle at once, and requests
+    # above this threshold are queued.  Setting a value of zero
+    # disables this throttling and lets through as many requests as
+    # the pod receives.
+    container-concurrency: "0"
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: config-defaults
   namespace: knative-serving
 
@@ -569,7 +654,7 @@ data:
     # This block is not actually functional configuration,
     # but serves to illustrate the available configuration
     # options and document them in a way that is accessible
-    # to users that kubectl edit this config map.
+    # to users that `+"`"+`kubectl edit`+"`"+` this config map.
     #
     # These sample configuration options may be copied out of
     # this example block and unindented to be in the data block
@@ -577,11 +662,11 @@ data:
 
     # List of repositories for which tag to digest resolving should be skipped
     registriesSkippingTagResolving: "ko.local,dev.local"
-  queueSidecarImage: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:e0654305370cf3bbbd0f56f97789c92cf5215f752b70902eba5d5fc0e88c5aca
+  queueSidecarImage: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:792f6945c7bc73a49a470a5b955c39c8bd174705743abf5fb71aa0f4c04128eb
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: config-deployment
   namespace: knative-serving
 
@@ -598,7 +683,7 @@ data:
     # This block is not actually functional configuration,
     # but serves to illustrate the available configuration
     # options and document them in a way that is accessible
-    # to users that kubectl edit this config map.
+    # to users that `+"`"+`kubectl edit`+"`"+` this config map.
     #
     # These sample configuration options may be copied out of
     # this example block and unindented to be in the data block
@@ -627,7 +712,7 @@ data:
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: config-domain
   namespace: knative-serving
 
@@ -644,7 +729,7 @@ data:
     # This block is not actually functional configuration,
     # but serves to illustrate the available configuration
     # options and document them in a way that is accessible
-    # to users that kubectl edit this config map.
+    # to users that `+"`"+`kubectl edit`+"`"+` this config map.
     #
     # These sample configuration options may be copied out of
     # this example block and unindented to be in the data block
@@ -666,60 +751,11 @@ data:
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: config-gc
   namespace: knative-serving
 
 ---
-apiVersion: v1
-data:
-  _example: |
-    ################################
-    #                              #
-    #    EXAMPLE CONFIGURATION     #
-    #                              #
-    ################################
-
-    # This block is not actually functional configuration,
-    # but serves to illustrate the available configuration
-    # options and document them in a way that is accessible
-    # to users that kubectl edit this config map.
-    #
-    # These sample configuration options may be copied out of
-    # this example block and unindented to be in the data block
-    # to actually change the configuration.
-
-    # Default Knative Gateway after v0.3. It points to the Istio
-    # standard istio-ingressgateway, instead of a custom one that we
-    # used pre-0.3.
-    gateway.knative-ingress-gateway: "istio-ingressgateway.istio-system.svc.cluster.local"
-
-    # A cluster local gateway to allow pods outside of the mesh to access
-    # Services and Routes not exposing through an ingress.  If the users
-    # do have a service mesh setup, this isn't required and can be removed.
-    #
-    # An example use case is when users want to use Istio without any
-    # sidecar injection (like Knative's istio-lean.yaml).  Since every pod
-    # is outside of the service mesh in that case, a cluster-local  service
-    # will need to be exposed to a cluster-local gateway to be accessible.
-    local-gateway.cluster-local-gateway: "cluster-local-gateway.istio-system.svc.cluster.local"
-
-    # To use only Istio service mesh and no cluster-local-gateway, replace
-    # all local-gateway.* entries the following entry.
-    local-gateway.mesh: "mesh"
-
-    # Feature flag to enable reconciling external Istio Gateways.
-    # When auto TLS feature is turned on, reconcileExternalGateway will be automatically enforced.
-    # 1. true: enabling reconciling external gateways.
-    # 2. false: disabling reconciling external gateways.
-    reconcileExternalGateway: "false"
-kind: ConfigMap
-metadata:
-  labels:
-    networking.knative.dev/ingress-provider: istio
-    serving.knative.dev/release: "v0.8.0"
-  name: config-istio
-  namespace: knative-serving
 
 ---
 apiVersion: v1
@@ -734,7 +770,7 @@ data:
     # This block is not actually functional configuration,
     # but serves to illustrate the available configuration
     # options and document them in a way that is accessible
-    # to users that kubectl edit this config map.
+    # to users that `+"`"+`kubectl edit`+"`"+` this config map.
     #
     # These sample configuration options may be copied out of
     # this example block and unindented to be in the data block
@@ -775,7 +811,7 @@ data:
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: config-logging
   namespace: knative-serving
 
@@ -792,7 +828,7 @@ data:
     # This block is not actually functional configuration,
     # but serves to illustrate the available configuration
     # options and document them in a way that is accessible
-    # to users that kubectl edit this config map.
+    # to users that `+"`"+`kubectl edit`+"`"+` this config map.
     #
     # These sample configuration options may be copied out of
     # this example block and unindented to be in the data block
@@ -824,7 +860,7 @@ data:
     # To determine the IP ranges of your cluster:
     #   IBM Cloud Private: cat cluster/config.yaml | grep service_cluster_ip_range
     #   IBM Cloud Kubernetes Service: "172.30.0.0/16,172.20.0.0/16,10.10.10.0/24"
-    #   Google Container Engine (GKE): gcloud container clusters describe XXXXXXX --zone=XXXXXX | grep -e clusterIpv4Cidr -e servicesIpv4Cidr
+    #   Google Container Engine (GKE): gcloud container clusters describe $CLUSTER_NAME --zone=$CLUSTER_ZONE | grep -e clusterIpv4Cidr -e servicesIpv4Cidr
     #   Azure Kubernetes Service (AKS): "10.0.0.0/16"
     #   Azure Container Service (ACS; deprecated): "10.244.0.0/16,10.240.0.0/16"
     #   Azure Container Service Engine (ACS-Engine; OSS): Configurable, but defaults to "10.0.0.0/16"
@@ -835,16 +871,19 @@ data:
     #
     istio.sidecar.includeOutboundIPRanges: "*"
 
-    # clusteringress.class specifies the default cluster ingress class
+    # clusteringress.class has been deprecated.   Please use ingress.class instead.
+    clusteringress.class: "istio.ingress.networking.knative.dev"
+
+    # ingress.class specifies the default ingress class
     # to use when not dictated by Route annotation.
     #
     # If not specified, will use the Istio ingress.
     #
-    # Note that changing the ClusterIngress class of an existing Route
+    # Note that changing the Ingress class of an existing Route
     # will result in undefined behavior.  Therefore it is best to only
     # update this value during the setup of Knative, to avoid getting
     # undefined behavior.
-    clusteringress.class: "istio.ingress.networking.knative.dev"
+    ingress.class: "istio.ingress.networking.knative.dev"
 
     # certificate.class specifies the default Certificate class
     # to use when not dictated by Route annotation.
@@ -869,7 +908,7 @@ data:
     # of "{{.Name}}-{{.Namespace}}.{{.Domain}}", or removing the Namespace
     # entirely from the template. When choosing a new value be thoughtful
     # of the potential for conflicts - for example, when users choose to use
-    # characters such as - in their service, or namespace, names.
+    # characters such as `+"`"+`-`+"`"+` in their service, or namespace, names.
     # {{.Annotations}} can be used for any customization in the go template if needed.
     # We strongly recommend keeping namespace part of the template to avoid domain name clashes
     # Example '{{.Name}}-{{.Namespace}}.{{ index .Annotations "sub"}}.{{.Domain}}'
@@ -880,7 +919,7 @@ data:
     # when constructing the DNS name for "tags" within the traffic blocks
     # of Routes and Configuration.  This is used in conjunction with the
     # domainTemplate above to determine the full URL for the tag.
-    tagTemplate: "{{.Name}}-{{.Tag}}"
+    tagTemplate: "{{.Tag}}-{{.Name}}"
 
     # Controls whether TLS certificates are automatically provisioned and
     # installed in the Knative ingress to terminate external TLS connection.
@@ -889,16 +928,16 @@ data:
     autoTLS: "Disabled"
 
     # Controls the behavior of the HTTP endpoint for the Knative ingress.
-    # It requires autoTLS to be enabled.
+    # It requires autoTLS to be enabled or reconcileExternalGateway in config-istio to be true.
     # 1. Enabled: The Knative ingress will be able to serve HTTP connection.
-    # 2. Disabled: The Knative ingress ter will reject HTTP traffic.
+    # 2. Disabled: The Knative ingress will reject HTTP traffic.
     # 3. Redirected: The Knative ingress will send a 302 redirect for all
     # http connections, asking the clients to use HTTPS
     httpProtocol: "Enabled"
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: config-network
   namespace: knative-serving
 
@@ -915,7 +954,7 @@ data:
     # This block is not actually functional configuration,
     # but serves to illustrate the available configuration
     # options and document them in a way that is accessible
-    # to users that kubectl edit this config map.
+    # to users that `+"`"+`kubectl edit`+"`"+` this config map.
     #
     # These sample configuration options may be copied out of
     # this example block and unindented to be in the data block
@@ -924,7 +963,7 @@ data:
     # logging.enable-var-log-collection defaults to false.
     # The fluentd daemon set will be set up to collect /var/log if
     # this flag is true.
-    logging.enable-var-log-collection: false
+    logging.enable-var-log-collection: "false"
 
     # logging.revision-url-template provides a template to use for producing the
     # logging URL that is injected into the status of each Revision.
@@ -933,7 +972,8 @@ data:
     logging.revision-url-template: |
       http://localhost:8001/api/v1/namespaces/knative-monitoring/services/kibana-logging/proxy/app/kibana#/discover?_a=(query:(match:(kubernetes.labels.serving-knative-dev%2FrevisionUID:(query:'${REVISION_UID}',type:phrase))))
 
-    # If non-empty, this enables queue proxy writing request logs to stdout.
+    # If non-empty, this enables queue proxy writing user request logs to stdout, excluding probe
+    # requests.
     # The value determines the shape of the request logs and it must be a valid go text/template.
     # It is important to keep this as a single line. Multiple lines are parsed as separate entities
     # by most collection agents and will split the request logs into multiple records.
@@ -962,14 +1002,18 @@ data:
     #
     logging.request-log-template: '{"httpRequest": {"requestMethod": "{{.Request.Method}}", "requestUrl": "{{js .Request.RequestURI}}", "requestSize": "{{.Request.ContentLength}}", "status": {{.Response.Code}}, "responseSize": "{{.Response.Size}}", "userAgent": "{{js .Request.UserAgent}}", "remoteIp": "{{js .Request.RemoteAddr}}", "serverIp": "{{.Revision.PodIP}}", "referer": "{{js .Request.Referer}}", "latency": "{{.Response.Latency}}s", "protocol": "{{.Request.Proto}}"}, "traceId": "{{index .Request.Header "X-B3-Traceid"}}"}'
 
+    # If true, this enables queue proxy writing request logs for probe requests to stdout.
+    # It uses the same template for user requests, i.e. logging.request-log-template.
+    logging.enable-probe-request-log: "false"
+
     # metrics.backend-destination field specifies the system metrics destination.
     # It supports either prometheus (the default) or stackdriver.
     # Note: Using stackdriver will incur additional charges
     metrics.backend-destination: prometheus
 
     # metrics.request-metrics-backend-destination specifies the request metrics
-    # destination. If non-empty, it enables queue proxy to send request metrics.
-    # Currently supported values: prometheus, stackdriver.
+    # destination. It enables queue proxy to send request metrics.
+    # Currently supported values: prometheus (the default), stackdriver.
     metrics.request-metrics-backend-destination: prometheus
 
     # metrics.stackdriver-project-id field specifies the stackdriver project ID. This
@@ -983,10 +1027,16 @@ data:
     # flag to "true" could cause extra Stackdriver charge.
     # If metrics.backend-destination is not Stackdriver, this is ignored.
     metrics.allow-stackdriver-custom-metrics: "false"
+
+    # profiling.enable indicates whether it is allowed to retrieve runtime profiling data from
+    # the pods via an HTTP server in the format expected by the pprof visualization tool. When
+    # enabled, the Knative Serving pods expose the profiling data on an alternate HTTP port 8008.
+    # The HTTP context root for profiling is then /debug/pprof/.
+    profiling.enable: "false"
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: config-observability
   namespace: knative-serving
 
@@ -1003,17 +1053,23 @@ data:
     # This block is not actually functional configuration,
     # but serves to illustrate the available configuration
     # options and document them in a way that is accessible
-    # to users that kubectl edit this config map.
+    # to users that `+"`"+`kubectl edit`+"`"+` this config map.
     #
     # These sample configuration options may be copied out of
     # this example block and unindented to be in the data block
     # to actually change the configuration.
     #
-    # If true we enable adding spans within our applications.
-    enable: "false"
+    # This may be "zipkin" or "stackdriver", the default is "none"
+    backend: "none"
 
     # URL to zipkin collector where traces are sent.
+    # This must be specified when backend is "zipkin"
     zipkin-endpoint: "http://zipkin.istio-system.svc.cluster.local:9411/api/v2/spans"
+
+    # The GCP project into which stackdriver metrics will be written
+    # when backend is "stackdriver".  If unspecified, the project-id
+    # is read from GCP metadata when running on GCP.
+    stackdriver-project-id: "my-project"
 
     # Enable zipkin debug mode. This allows all spans to be sent to the server
     # bypassing sampling.
@@ -1024,18 +1080,78 @@ data:
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: config-tracing
   namespace: knative-serving
 
 ---
+
+apiVersion: v1
+data:
+    ################################
+    #                              #
+    #    EXAMPLE CONFIGURATION     #
+    #                              #
+    ################################
+
+    # This block is not actually functional configuration,
+    # but serves to illustrate the available configuration
+    # options and document them in a way that is accessible
+    # to users that `+"`"+`kubectl edit`+"`"+` this config map.
+    #
+    # These sample configuration options may be copied out of
+    # this example block and unindented to be in the data block
+    # to actually change the configuration.
+
+    # Default Knative Gateway after v0.3. It points to the Istio
+    # standard istio-ingressgateway, instead of a custom one that we
+    # used pre-0.3. The configuration format should be `+"`"+`gateway.
+    # {{gateway_namespace}}.{{gateway_name}}: "{{ingress_name}}.
+    # {{ingress_namespace}}.svc.cluster.local"`+"`"+`. The {{gateway_namespace}}
+    # is optional; when it is omitted, the system will search for
+    # the gateway in the serving system namespace `+"`"+`knative-serving`+"`"+`
+    gateway.kubeflow.kubeflow-gateway: "istio-ingressgateway.istio-system.svc.cluster.local"
+
+    # A cluster local gateway to allow pods outside of the mesh to access
+    # Services and Routes not exposing through an ingress.  If the users
+    # do have a service mesh setup, this isn't required and can be removed.
+    #
+    # An example use case is when users want to use Istio without any
+    # sidecar injection (like Knative's istio-lean.yaml).  Since every pod
+    # is outside of the service mesh in that case, a cluster-local  service
+    # will need to be exposed to a cluster-local gateway to be accessible.
+    # The configuration format should be `+"`"+`local-gateway.{{local_gateway_namespace}}.
+    # {{local_gateway_name}}: "{{cluster_local_gateway_name}}.
+    # {{cluster_local_gateway_namespace}}.svc.cluster.local"`+"`"+`. The
+    # {{local_gateway_namespace}} is optional; when it is omitted, the system
+    # will search for the local gateway in the serving system namespace
+    # `+"`"+`knative-serving`+"`"+`
+    local-gateway.knative-serving.cluster-local-gateway: "cluster-local-gateway.istio-system.svc.cluster.local"
+
+    # To use only Istio service mesh and no cluster-local-gateway, replace
+    # all local-gateway.* entries by the following entry.
+    local-gateway.mesh: "mesh"
+
+    # Feature flag to enable reconciling external Istio Gateways.
+    # When auto TLS feature is turned on, reconcileExternalGateway will be automatically enforced.
+    # 1. true: enabling reconciling external gateways.
+    # 2. false: disabling reconciling external gateways.
+    reconcileExternalGateway: "false"
+kind: ConfigMap
+metadata:
+  labels:
+    networking.knative.dev/ingress-provider: istio
+    serving.knative.dev/release: "v0.11.1"
+  name: config-istio
+  namespace: knative-serving
 `)
 	th.writeF("/manifests/knative/knative-serving-install/base/deployment.yaml", `
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: activator
   namespace: knative-serving
 spec:
@@ -1051,59 +1167,62 @@ spec:
       labels:
         app: activator
         role: activator
-        serving.knative.dev/release: "v0.8.0"
+        serving.knative.dev/release: "v0.11.1"
     spec:
       containers:
-      - args:
-        - -logtostderr=false
-        - -stderrthreshold=FATAL
-        env:
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: SYSTEM_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: CONFIG_LOGGING_NAME
-          value: config-logging
-        - name: CONFIG_OBSERVABILITY_NAME
-          value: config-observability
-        - name: METRICS_DOMAIN
-          value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:88d864eb3c47881cf7ac058479d1c735cc3cf4f07a11aad0621cd36dcd9ae3c6
-        livenessProbe:
-          httpGet:
-            httpHeaders:
-            - name: k-kubelet-probe
-              value: activator
-            path: /healthz
-            port: 8012
-        name: activator
-        ports:
-        - containerPort: 8012
-          name: http1-port
-        - containerPort: 8013
-          name: h2c-port
-        - containerPort: 9090
-          name: metrics-port
-        readinessProbe:
-          httpGet:
-            httpHeaders:
-            - name: k-kubelet-probe
-              value: activator
-            path: /healthz
-            port: 8012
-        resources:
-          limits:
-            cpu: 1000m
-            memory: 600Mi
-          requests:
-            cpu: 300m
-            memory: 60Mi
-        securityContext:
-          allowPrivilegeEscalation: false
+        - env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CONFIG_LOGGING_NAME
+              value: config-logging
+            - name: CONFIG_OBSERVABILITY_NAME
+              value: config-observability
+            - name: METRICS_DOMAIN
+              value: knative.dev/internal/serving
+          image: gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:8e606671215cc029683e8cd633ec5de9eabeaa6e9a4392ff289883304be1f418
+          livenessProbe:
+            httpGet:
+              httpHeaders:
+                - name: k-kubelet-probe
+                  value: activator
+              path: /healthz
+              port: 8012
+          name: activator
+          ports:
+            - containerPort: 8012
+              name: http1
+            - containerPort: 8013
+              name: h2c
+            - containerPort: 9090
+              name: metrics
+            - containerPort: 8008
+              name: profiling
+          readinessProbe:
+            httpGet:
+              httpHeaders:
+                - name: k-kubelet-probe
+                  value: activator
+              path: /healthz
+              port: 8012
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 600Mi
+            requests:
+              cpu: 300m
+              memory: 60Mi
+          securityContext:
+            allowPrivilegeEscalation: false
       serviceAccountName: controller
       terminationGracePeriodSeconds: 300
 ---
@@ -1112,7 +1231,7 @@ kind: Deployment
 metadata:
   labels:
     autoscaling.knative.dev/autoscaler-provider: hpa
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: autoscaler-hpa
   namespace: knative-serving
 spec:
@@ -1126,43 +1245,43 @@ spec:
         sidecar.istio.io/inject: "false"
       labels:
         app: autoscaler-hpa
-        serving.knative.dev/release: "v0.8.0"
+        serving.knative.dev/release: "v0.11.1"
     spec:
       containers:
-      - env:
-        - name: SYSTEM_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: CONFIG_LOGGING_NAME
-          value: config-logging
-        - name: CONFIG_OBSERVABILITY_NAME
-          value: config-observability
-        - name: METRICS_DOMAIN
-          value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa@sha256:a7801c3cf4edecfa51b7bd2068f97941f6714f7922cb4806245377c2b336b723
-        name: autoscaler-hpa
-        ports:
-        - containerPort: 9090
-          name: metrics
-        resources:
-          limits:
-            cpu: 1000m
-            memory: 1000Mi
-          requests:
-            cpu: 100m
-            memory: 100Mi
-        securityContext:
-          allowPrivilegeEscalation: false
+        - env:
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CONFIG_LOGGING_NAME
+              value: config-logging
+            - name: CONFIG_OBSERVABILITY_NAME
+              value: config-observability
+            - name: METRICS_DOMAIN
+              value: knative.dev/serving
+          image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa@sha256:5e0fadf574e66fb1c893806b5c5e5f19139cc476ebf1dff9860789fe4ac5f545
+          name: autoscaler-hpa
+          ports:
+            - containerPort: 9090
+              name: metrics
+            - containerPort: 8008
+              name: profiling
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1000Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          securityContext:
+            allowPrivilegeEscalation: false
       serviceAccountName: controller
-
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: autoscaler
   namespace: knative-serving
 spec:
@@ -1178,64 +1297,65 @@ spec:
         traffic.sidecar.istio.io/includeInboundPorts: 8080,9090
       labels:
         app: autoscaler
-        serving.knative.dev/release: "v0.8.0"
+        serving.knative.dev/release: "v0.11.1"
     spec:
       containers:
-      - args:
-        - --secure-port=8443
-        - --cert-dir=/tmp
-        env:
-        - name: SYSTEM_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: CONFIG_LOGGING_NAME
-          value: config-logging
-        - name: CONFIG_OBSERVABILITY_NAME
-          value: config-observability
-        - name: METRICS_DOMAIN
-          value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:aeaacec4feedee309293ac21da13e71a05a2ad84b1d5fcc01ffecfa6cfbb2870
-        livenessProbe:
-          httpGet:
-            httpHeaders:
-            - name: k-kubelet-probe
-              value: autoscaler
-            path: /healthz
-            port: 8080
-        name: autoscaler
-        ports:
-        - containerPort: 8080
-          name: websocket
-        - containerPort: 9090
-          name: metrics
-        - containerPort: 8443
-          name: custom-metrics
-        readinessProbe:
-          httpGet:
-            httpHeaders:
-            - name: k-kubelet-probe
-              value: autoscaler
-            path: /healthz
-            port: 8080
-        resources:
-          limits:
-            cpu: 300m
-            memory: 400Mi
-          requests:
-            cpu: 30m
-            memory: 40Mi
-        securityContext:
-          allowPrivilegeEscalation: false
+        - args:
+            - --secure-port=8443
+            - --cert-dir=/tmp
+          env:
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CONFIG_LOGGING_NAME
+              value: config-logging
+            - name: CONFIG_OBSERVABILITY_NAME
+              value: config-observability
+            - name: METRICS_DOMAIN
+              value: knative.dev/serving
+          image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:ef1f01b5fb3886d4c488a219687aac72d28e72f808691132f658259e4e02bb27
+          livenessProbe:
+            httpGet:
+              httpHeaders:
+                - name: k-kubelet-probe
+                  value: autoscaler
+              path: /healthz
+              port: 8080
+          name: autoscaler
+          ports:
+            - containerPort: 8080
+              name: websocket
+            - containerPort: 9090
+              name: metrics
+            - containerPort: 8443
+              name: custom-metrics
+            - containerPort: 8008
+              name: profiling
+          readinessProbe:
+            httpGet:
+              httpHeaders:
+                - name: k-kubelet-probe
+                  value: autoscaler
+              path: /healthz
+              port: 8080
+          resources:
+            limits:
+              cpu: 300m
+              memory: 400Mi
+            requests:
+              cpu: 30m
+              memory: 40Mi
+          securityContext:
+            allowPrivilegeEscalation: false
       serviceAccountName: controller
-
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     networking.knative.dev/ingress-provider: istio
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: networking-istio
   namespace: knative-serving
 spec:
@@ -1249,41 +1369,43 @@ spec:
         sidecar.istio.io/inject: "false"
       labels:
         app: networking-istio
+        serving.knative.dev/release: "v0.11.1"
     spec:
       containers:
-      - env:
-        - name: SYSTEM_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: CONFIG_LOGGING_NAME
-          value: config-logging
-        - name: CONFIG_OBSERVABILITY_NAME
-          value: config-observability
-        - name: METRICS_DOMAIN
-          value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/networking/istio@sha256:057c999bccfe32e9889616b571dc8d389c742ff66f0b5516bad651f05459b7bc
-        name: networking-istio
-        ports:
-        - containerPort: 9090
-          name: metrics
-        resources:
-          limits:
-            cpu: 1000m
-            memory: 1000Mi
-          requests:
-            cpu: 100m
-            memory: 100Mi
-        securityContext:
-          allowPrivilegeEscalation: false
+        - env:
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CONFIG_LOGGING_NAME
+              value: config-logging
+            - name: CONFIG_OBSERVABILITY_NAME
+              value: config-observability
+            - name: METRICS_DOMAIN
+              value: knative.dev/serving
+          image: gcr.io/knative-releases/knative.dev/serving/cmd/networking/istio@sha256:727a623ccb17676fae8058cb1691207a9658a8d71bc7603d701e23b1a6037e6c
+          name: networking-istio
+          ports:
+            - containerPort: 9090
+              name: metrics
+            - containerPort: 8008
+              name: profiling
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1000Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          securityContext:
+            allowPrivilegeEscalation: false
       serviceAccountName: controller
-
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: webhook
   namespace: knative-serving
 spec:
@@ -1300,42 +1422,43 @@ spec:
       labels:
         app: webhook
         role: webhook
-        serving.knative.dev/release: "v0.8.0"
+        serving.knative.dev/release: "v0.11.1"
     spec:
       containers:
-      - env:
-        - name: SYSTEM_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: CONFIG_LOGGING_NAME
-          value: config-logging
-        - name: CONFIG_OBSERVABILITY_NAME
-          value: config-observability
-        - name: METRICS_DOMAIN
-          value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:c2076674618933df53e90cf9ddd17f5ddbad513b8c95e955e45e37be7ca9e0e8
-        name: webhook
-        ports:
-        - containerPort: 9090
-          name: metrics-port
-        resources:
-          limits:
-            cpu: 200m
-            memory: 200Mi
-          requests:
-            cpu: 20m
-            memory: 20Mi
-        securityContext:
-          allowPrivilegeEscalation: false
+        - env:
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CONFIG_LOGGING_NAME
+              value: config-logging
+            - name: CONFIG_OBSERVABILITY_NAME
+              value: config-observability
+            - name: METRICS_DOMAIN
+              value: knative.dev/serving
+          image: gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:1ef3328282f31704b5802c1136bd117e8598fd9f437df8209ca87366c5ce9fcb
+          name: webhook
+          ports:
+            - containerPort: 9090
+              name: metrics
+            - containerPort: 8008
+              name: profiling
+          resources:
+            limits:
+              cpu: 200m
+              memory: 200Mi
+            requests:
+              cpu: 20m
+              memory: 20Mi
+          securityContext:
+            allowPrivilegeEscalation: false
       serviceAccountName: controller
-
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: controller
   namespace: knative-serving
 spec:
@@ -1349,72 +1472,76 @@ spec:
         sidecar.istio.io/inject: "false"
       labels:
         app: controller
-        serving.knative.dev/release: "v0.8.0"
+        serving.knative.dev/release: "v0.11.1"
     spec:
       containers:
-      - env:
-        - name: SYSTEM_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: CONFIG_LOGGING_NAME
-          value: config-logging
-        - name: CONFIG_OBSERVABILITY_NAME
-          value: config-observability
-        - name: METRICS_DOMAIN
-          value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256:3b096e55fa907cff53d37dadc5d20c29cea9bb18ed9e921a588fee17beb937df
-        name: controller
-        ports:
-        - containerPort: 9090
-          name: metrics
-        resources:
-          limits:
-            cpu: 1000m
-            memory: 1000Mi
-          requests:
-            cpu: 100m
-            memory: 100Mi
-        securityContext:
-          allowPrivilegeEscalation: false
+        - env:
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CONFIG_LOGGING_NAME
+              value: config-logging
+            - name: CONFIG_OBSERVABILITY_NAME
+              value: config-observability
+            - name: METRICS_DOMAIN
+              value: knative.dev/internal/serving
+          image: gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256:5ca13e5b3ce5e2819c4567b75c0984650a57272ece44bc1dabf930f9fe1e19a1
+          name: controller
+          ports:
+            - containerPort: 9090
+              name: metrics
+            - containerPort: 8008
+              name: profiling
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1000Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          securityContext:
+            allowPrivilegeEscalation: false
       serviceAccountName: controller
-
 ---
 
 `)
 	th.writeF("/manifests/knative/knative-serving-install/base/service-account.yaml", `
+---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: controller
   namespace: knative-serving
 
+
 `)
 	th.writeF("/manifests/knative/knative-serving-install/base/service.yaml", `
+---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     app: activator
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: activator-service
   namespace: knative-serving
 spec:
   ports:
-  - name: http
-    port: 80
-    protocol: TCP
-    targetPort: 8012
-  - name: http2
-    port: 81
-    protocol: TCP
-    targetPort: 8013
-  - name: metrics
-    port: 9090
-    protocol: TCP
-    targetPort: 9090
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8012
+    - name: http2
+      port: 81
+      protocol: TCP
+      targetPort: 8013
+    - name: http-metrics
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
   selector:
     app: activator
   type: ClusterIP
@@ -1425,15 +1552,15 @@ kind: Service
 metadata:
   labels:
     app: controller
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: controller
   namespace: knative-serving
 spec:
   ports:
-  - name: metrics
-    port: 9090
-    protocol: TCP
-    targetPort: 9090
+    - name: http-metrics
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
   selector:
     app: controller
 
@@ -1443,43 +1570,41 @@ kind: Service
 metadata:
   labels:
     role: webhook
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: webhook
   namespace: knative-serving
 spec:
   ports:
-  - port: 443
-    targetPort: 8443
+    - name: https-webhook
+      port: 443
+      targetPort: 8443
   selector:
     role: webhook
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     app: autoscaler
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: autoscaler
   namespace: knative-serving
 spec:
   ports:
-  - name: http
-    port: 8080
-    protocol: TCP
-    targetPort: 8080
-  - name: metrics
-    port: 9090
-    protocol: TCP
-    targetPort: 9090
-  - name: custom-metrics
-    port: 443
-    protocol: TCP
-    targetPort: 8443
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: http-metrics
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+    - name: https-custom-metrics
+      port: 443
+      protocol: TCP
+      targetPort: 8443
   selector:
     app: autoscaler
-
----
 `)
 	th.writeF("/manifests/knative/knative-serving-install/base/apiservice.yaml", `
 apiVersion: apiregistration.k8s.io/v1beta1
@@ -1487,7 +1612,7 @@ kind: APIService
 metadata:
   labels:
     autoscaling.knative.dev/metric-provider: custom-metrics
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: v1beta1.custom.metrics.k8s.io
 spec:
   group: custom.metrics.k8s.io
@@ -1499,37 +1624,108 @@ spec:
   version: v1beta1
   versionPriority: 100
 
+
 `)
 	th.writeF("/manifests/knative/knative-serving-install/base/image.yaml", `
+---
 apiVersion: caching.internal.knative.dev/v1alpha1
 kind: Image
 metadata:
   labels:
-    serving.knative.dev/release: "v0.8.0"
+    serving.knative.dev/release: "v0.11.1"
   name: queue-proxy
   namespace: knative-serving
 spec:
-  image: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:e0654305370cf3bbbd0f56f97789c92cf5215f752b70902eba5d5fc0e88c5aca
+  image: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:792f6945c7bc73a49a470a5b955c39c8bd174705743abf5fb71aa0f4c04128eb
+
 
 `)
 	th.writeF("/manifests/knative/knative-serving-install/base/hpa.yaml", `
+---
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
+  labels:
+    serving.knative.dev/release: "v0.11.1"
   name: activator
   namespace: knative-serving
 spec:
   maxReplicas: 20
   metrics:
-  - resource:
-      name: cpu
-      targetAverageUtilization: 100
-    type: Resource
+    - resource:
+        name: cpu
+        targetAverageUtilization: 100
+      type: Resource
   minReplicas: 1
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: activator
+---
+
+
+`)
+	th.writeF("/manifests/knative/knative-serving-install/base/webhook-configuration.yaml", `
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  labels:
+    serving.knative.dev/release: "v0.11.1"
+  name: webhook.serving.knative.dev
+webhooks:
+  - admissionReviewVersions:
+      - v1beta1
+    clientConfig:
+      service:
+        name: webhook
+        namespace: knative-serving
+    failurePolicy: Fail
+    name: webhook.serving.knative.dev
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  labels:
+    serving.knative.dev/release: "v0.11.1"
+  name: validation.webhook.serving.knative.dev
+webhooks:
+  - admissionReviewVersions:
+      - v1beta1
+    clientConfig:
+      service:
+        name: webhook
+        namespace: knative-serving
+    failurePolicy: Fail
+    name: validation.webhook.serving.knative.dev
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  labels:
+    serving.knative.dev/release: "v0.11.1"
+  name: config.webhook.serving.knative.dev
+webhooks:
+  - admissionReviewVersions:
+      - v1beta1
+    clientConfig:
+      service:
+        name: webhook
+        namespace: knative-serving
+    failurePolicy: Fail
+    name: config.webhook.serving.knative.dev
+    namespaceSelector:
+      matchExpressions:
+        - key: serving.knative.dev/release
+          operator: Exists
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    serving.knative.dev/release: "v0.11.1"
+  name: webhook-certs
+  namespace: knative-serving
 
 `)
 	th.writeK("/manifests/knative/knative-serving-install/base", `
@@ -1550,27 +1746,28 @@ resources:
 - apiservice.yaml
 - image.yaml
 - hpa.yaml
+- webhook-configuration.yaml
 commonLabels:
   kustomize.component: knative
 images:
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/activator
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/activator
-  digest: sha256:88d864eb3c47881cf7ac058479d1c735cc3cf4f07a11aad0621cd36dcd9ae3c6
+  digest: sha256:8e606671215cc029683e8cd633ec5de9eabeaa6e9a4392ff289883304be1f418
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa
-  digest: sha256:a7801c3cf4edecfa51b7bd2068f97941f6714f7922cb4806245377c2b336b723
+  digest: sha256:5e0fadf574e66fb1c893806b5c5e5f19139cc476ebf1dff9860789fe4ac5f545
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
-  digest: sha256:aeaacec4feedee309293ac21da13e71a05a2ad84b1d5fcc01ffecfa6cfbb2870
+  digest: sha256:ef1f01b5fb3886d4c488a219687aac72d28e72f808691132f658259e4e02bb27
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/networking/istio
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/networking/istio
-  digest: sha256:057c999bccfe32e9889616b571dc8d389c742ff66f0b5516bad651f05459b7bc
+  digest: sha256:727a623ccb17676fae8058cb1691207a9658a8d71bc7603d701e23b1a6037e6c
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/webhook
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/webhook
-  digest: sha256:c2076674618933df53e90cf9ddd17f5ddbad513b8c95e955e45e37be7ca9e0e8
+  digest: sha256:1ef3328282f31704b5802c1136bd117e8598fd9f437df8209ca87366c5ce9fcb
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/controller
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/controller
-  digest: sha256:3b096e55fa907cff53d37dadc5d20c29cea9bb18ed9e921a588fee17beb937df
+  digest: sha256:5ca13e5b3ce5e2819c4567b75c0984650a57272ece44bc1dabf930f9fe1e19a1
 `)
 }
 

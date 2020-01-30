@@ -6,11 +6,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: knative-serving-crds
-      app.kubernetes.io/instance: knative-serving-crds-v0.8.0
+      app.kubernetes.io/instance: knative-serving-crds-v0.11.1
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: knative-serving-crds
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.8.0
+      app.kubernetes.io/version: v0.11.1
   componentKinds:
   - group: core
     kind: ConfigMap
