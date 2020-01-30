@@ -30,6 +30,8 @@ spec:
     metadata:
       labels:
         app: basic-auth-login
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: app
@@ -53,6 +55,8 @@ spec:
     metadata:
       labels:
         app: basic-auth
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: app

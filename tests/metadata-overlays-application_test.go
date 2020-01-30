@@ -87,6 +87,8 @@ spec:
     metadata:
       labels:
         component: server
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: container
@@ -123,6 +125,8 @@ spec:
     metadata:
       labels:
         component: grpc-server
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
         - name: container
@@ -134,7 +138,7 @@ spec:
           args: ["--grpc_port=$(METADATA_GRPC_SERVICE_PORT)"]
           ports:
             - name: grpc-backendapi
-              containerPort: 8080
+              containerPort: 8080 #The value of the port number needs to be in sync with value  specified in grpc-params.env
 `)
 	th.writeF("/manifests/metadata/base/metadata-service.yaml", `
 kind: Service
@@ -183,6 +187,8 @@ spec:
       name: ui
       labels:
         app: metadata-ui
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - image: gcr.io/kubeflow-images-public/metadata-frontend:v0.1.8
@@ -273,6 +279,8 @@ spec:
     metadata:
       labels:
         component: envoy
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: container

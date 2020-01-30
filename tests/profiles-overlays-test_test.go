@@ -206,6 +206,9 @@ metadata:
 spec:
   replicas: 1
   template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - command:
@@ -299,8 +302,9 @@ configMapGenerator:
   - params.env
   name: profiles-parameters
 images:
-- digest: sha256:bb1791ac42b34a5f9566b191fb093c3d40c7f73b6282398d1151706d4c8fffec
-  name: gcr.io/kubeflow-images-public/kfam
+- name: gcr.io/kubeflow-images-public/kfam
+  newName: gcr.io/kubeflow-images-public/kfam
+  newTag: vmaster-gf3e09203
 - name: gcr.io/kubeflow-images-public/profile-controller
   newName: gcr.io/kubeflow-images-public/profile-controller
   newTag: vmaster-g34aa47c2

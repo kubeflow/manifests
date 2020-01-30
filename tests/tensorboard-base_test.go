@@ -27,6 +27,8 @@ spec:
     metadata:
       labels:
         app: tensorboard
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - args:

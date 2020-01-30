@@ -77,6 +77,8 @@ spec:
     metadata:
       labels:
         app: ml-pipeline-visualizationserver
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - image: gcr.io/ml-pipeline/visualization-server
