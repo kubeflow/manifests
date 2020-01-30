@@ -1,15 +1,30 @@
 apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
+  name: kubeflow-aws
   namespace: kubeflow
 spec:
   applications:
   - kustomizeConfig:
       parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/istio-crds
+    name: istio-crds
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/istio-install
+    name: istio-install
+  - kustomizeConfig:
+      parameters:
       - name: clusterRbacConfig
-        value: 'OFF'
-      - name: gatewaySelector
-        value: ingress-gke-system
+        value: "OFF"
       repoRef:
         name: manifests
         path: istio/istio
@@ -52,7 +67,7 @@ spec:
       repoRef:
         name: manifests
         path: cert-manager/cert-manager
-    name: cert-manager
+    name: cert-manager        
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -84,15 +99,18 @@ spec:
       - application
       repoRef:
         name: manifests
-        path: admission-webhook/bootstrap
-    name: bootstrap
+        path: admission-webhook/webhook
+    name: webhook
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: webhookNamePrefix
+        value: admission-webhook-
       repoRef:
         name: manifests
-        path: admission-webhook/webhook
-    name: webhook
+        path: admission-webhook/bootstrap
+    name: bootstrap
   - kustomizeConfig:
       overlays:
       - istio
@@ -143,44 +161,10 @@ spec:
       overlays:
       - application
       parameters:
-      - name: namespace
-        value: knative-serving
-      repoRef:
-        name: manifests
-        path: knative/knative-serving-crds
-    name: knative-crds
-  - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: namespace
-        value: knative-serving
-      repoRef:
-        name: manifests
-        path: knative/knative-serving-install
-    name: knative-install
-  - kustomizeConfig:
-      overlays:
-      - application
-      repoRef:
-        name: manifests
-        path: kfserving/kfserving-crds
-    name: kfserving-crds
-  - kustomizeConfig:
-      overlays:
-      - application
-      repoRef:
-        name: manifests
-        path: kfserving/kfserving-install
-    name: kfserving-install
-  - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
       - name: usageId
         value: <randomly-generated-id>
       - name: reportUsage
-        value: 'true'
+        value: "true"
       repoRef:
         name: manifests
         path: common/spartakus
@@ -287,10 +271,14 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      repoRef:
+        name: manifests
+        path: pipeline/pipeline-visualization-service
+    name: pipeline-visualization-service
+  - kustomizeConfig:
+      overlays:
+      - application
       - istio
-      parameters:
-      - name: admin
-        value: johnDoe@acme.com
       repoRef:
         name: manifests
         path: profiles
@@ -301,7 +289,52 @@ spec:
       repoRef:
         name: manifests
         path: seldon/seldon-core-operator
-    name: seldon-core-operator
+    name: seldon-core
+  - kustomizeConfig:
+      overlays:
+      - application
+      repoRef:
+        name: manifests
+        path: mpi-job/mpi-operator
+    name: mpi-operator
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: aws/istio-ingress
+    name: istio-ingress
+  - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: clusterName
+        value: kubeflow-aws
+      repoRef:
+        name: manifests
+        path: aws/aws-alb-ingress-controller
+    name: aws-alb-ingress-controller
+  - kustomizeConfig:
+      overlays:
+      - application
+      repoRef:
+        name: manifests
+        path: aws/nvidia-device-plugin
+    name: nvidia-device-plugin
+  plugins:
+  - kind: KfAwsPlugin
+    metadata:
+      name: aws
+    spec:
+      auth:
+        basicAuth:
+          password:
+            name: password
+          username: admin
+      region: us-west-2
+      roles:
+      - eksctl-kubeflow-aws-nodegroup-ng-a2-NodeInstanceRole-xxxxxxx
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/master.tar.gz

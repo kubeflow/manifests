@@ -6,10 +6,24 @@ spec:
   applications:
   - kustomizeConfig:
       parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/istio-crds
+    name: istio-crds
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/istio-install
+    name: istio-install
+  - kustomizeConfig:
+      parameters:
       - name: clusterRbacConfig
         value: 'OFF'
-      - name: gatewaySelector
-        value: ingress-gke-system
       repoRef:
         name: manifests
         path: istio/istio
@@ -84,15 +98,18 @@ spec:
       - application
       repoRef:
         name: manifests
-        path: admission-webhook/bootstrap
-    name: bootstrap
+        path: admission-webhook/webhook
+    name: webhook
   - kustomizeConfig:
       overlays:
       - application
+      parameters:
+      - name: webhookNamePrefix
+        value: admission-webhook-
       repoRef:
         name: manifests
-        path: admission-webhook/webhook
-    name: webhook
+        path: admission-webhook/bootstrap
+    name: bootstrap
   - kustomizeConfig:
       overlays:
       - istio
@@ -121,6 +138,9 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: injectGcpCredentials
+        value: 'true'
       repoRef:
         name: manifests
         path: jupyter/notebook-controller
@@ -178,7 +198,7 @@ spec:
       - application
       parameters:
       - name: usageId
-        value: <randomly-generated-id>
+        value: '2700513155662330975'
       - name: reportUsage
         value: 'true'
       repoRef:
@@ -230,8 +250,13 @@ spec:
     name: api-service
   - kustomizeConfig:
       overlays:
+      - minioPd
       - application
       parameters:
+      - name: minioPd
+        value: test1-storage-artifact-store
+      - name: minioPvName
+        value: minio-pv
       - name: minioPvcName
         value: minio-pv-claim
       repoRef:
@@ -240,8 +265,13 @@ spec:
     name: minio
   - kustomizeConfig:
       overlays:
+      - mysqlPd
       - application
       parameters:
+      - name: mysqlPd
+        value: test1-storage-metadata-store
+      - name: mysqlPvName
+        value: mysql-pv
       - name: mysqlPvcName
         value: mysql-pv-claim
       repoRef:
@@ -264,6 +294,7 @@ spec:
     name: pipelines-runner
   - kustomizeConfig:
       overlays:
+      - gcp
       - istio
       - application
       repoRef:
@@ -287,10 +318,27 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      repoRef:
+        name: manifests
+        path: pipeline/pipeline-visualization-service
+    name: pipeline-visualization-service
+  - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: ipName
+        value: ipName
+      - name: hostname
+      repoRef:
+        name: manifests
+        path: gcp/cloud-endpoints
+    name: cloud-endpoints
+  - kustomizeConfig:
+      overlays:
+      - application
       - istio
       parameters:
       - name: admin
-        value: johnDoe@acme.com
       repoRef:
         name: manifests
         path: profiles
@@ -300,9 +348,68 @@ spec:
       - application
       repoRef:
         name: manifests
+        path: gcp/gpu-driver
+    name: gpu-driver
+  - kustomizeConfig:
+      overlays:
+      - application
+      repoRef:
+        name: manifests
         path: seldon/seldon-core-operator
     name: seldon-core-operator
+  - kustomizeConfig:
+      parameters:
+      - name: ambassadorServiceType
+        value: NodePort
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: common/ambassador
+    name: ambassador
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: common/basic-auth
+    name: basic-auth
+  - kustomizeConfig:
+      overlays:
+      - managed-cert
+      - application
+      parameters:
+      - name: namespace
+        value: istio-system
+      - name: ipName
+      - name: hostname
+      - name: project
+      - name: ingressName
+        value: envoy-ingress
+      - name: issuer
+        value: letsencrypt-prod
+      repoRef:
+        name: manifests
+        path: gcp/basic-auth-ingress
+    name: basic-auth-ingress
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: default-install
+    name: default-install
+  plugins:
+  - kind: KfGcpPlugin
+    metadata:
+      creationTimestamp: null
+      name: gcp
+    spec:
+      createPipelinePersistentStorage: true
+      deploymentManagerConfig:
+        repoRef:
+          name: manifests
+          path: gcp/deployment_manager_configs
+      enableWorkloadIdentity: true
+      skipInitProject: true
+      useBasicAuth: true
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
-  version: master
+    uri: https://github.com/kubeflow/manifests/archive/v1.0-branch.tar.gz
+  version: v1.0.0
