@@ -16,7 +16,7 @@ spec:
     spec:
       serviceAccountName: dex
       containers:
-      - image: quay.io/coreos/dex:v2.9.0
+      - image: quay.io/dexidp/dex:v2.21.0
         name: dex
         command: ["dex", "serve", "/etc/dex/cfg/config.yaml"]
         ports:

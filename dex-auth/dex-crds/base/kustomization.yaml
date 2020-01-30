@@ -78,7 +78,3 @@ vars:
     fieldpath: data.application_secret
 configurations:
 - params.yaml
-images:
-- name: quay.io/coreos/dex
-  newName: gcr.io/arrikto/dexidp/dex
-  newTag: 4bede5eb80822fc3a7fc9edca0ed2605cd339d17
