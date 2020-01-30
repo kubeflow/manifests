@@ -82,7 +82,67 @@ rules:
   - get
   - list
   - watch
-`)
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-notebook-ui-admin
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-tfjobs-admin: "true"
+rules: []
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-notebook-ui-edit
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-tfjobs-admin: "true"
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - notebooks
+  - notebooks/finalizers
+  - poddefaults
+  verbs:
+  - get
+  - list
+  - create
+  - delete
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-notebook-ui-view
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - notebooks
+  - notebooks/finalizers
+  - poddefaults
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - list`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/config-map.yaml", `
 apiVersion: v1
 data:
