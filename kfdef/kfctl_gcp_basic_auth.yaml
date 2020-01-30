@@ -1,9 +1,6 @@
-# Please set project and email!
 apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
-  # If name is not set, kfctl will infer app name from the directory.
-  # name: myapp2
   namespace: kubeflow
 spec:
   applications:
@@ -26,7 +23,7 @@ spec:
   - kustomizeConfig:
       parameters:
       - name: clusterRbacConfig
-        value: "OFF"
+        value: 'OFF'
       repoRef:
         name: manifests
         path: istio/istio
@@ -69,7 +66,7 @@ spec:
       repoRef:
         name: manifests
         path: cert-manager/cert-manager
-    name: cert-manager        
+    name: cert-manager
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -143,7 +140,7 @@ spec:
       - application
       parameters:
       - name: injectGcpCredentials
-        value: "true"
+        value: 'true'
       repoRef:
         name: manifests
         path: jupyter/notebook-controller
@@ -201,9 +198,9 @@ spec:
       - application
       parameters:
       - name: usageId
-        value: "2700513155662330975"
+        value: '2700513155662330975'
       - name: reportUsage
-        value: "true"
+        value: 'true'
       repoRef:
         name: manifests
         path: common/spartakus
@@ -342,8 +339,6 @@ spec:
       - istio
       parameters:
       - name: admin
-        # email will be auto-filled.
-        # value: SET_EMAIL
       repoRef:
         name: manifests
         path: profiles
@@ -385,14 +380,8 @@ spec:
       - name: namespace
         value: istio-system
       - name: ipName
-        # ipName will be auto-filled based on app name if not set.
-        # value: test1-ip
       - name: hostname
-        # hostname will be auto-filled if not set.
-        # value: <deployName>.endpoints.<project>.cloud.goog
       - name: project
-        # Project will be auto-filled.
-        # value: SET_PROJECT
       - name: ingressName
         value: envoy-ingress
       - name: issuer
@@ -420,19 +409,6 @@ spec:
       enableWorkloadIdentity: true
       skipInitProject: true
       useBasicAuth: true
-      # email should  be set the google account of the person setting up Kubeflow.
-      # If its not set kfctl generate will try to set it automatically based on the default
-      # gcloud config
-      # email: <your_email@gmail.com>
-      #
-      # Project should be set to the GCP project you want to use.
-      # If you run kfctl init --config=<path>/kfctl_gcp_iap.yaml
-      # kfctl will try to automatically set it.
-      # project: <your project>
-      #
-      # User can specify which zone to deploy to. If not set, will try to auto-fill
-      # this field based on default config in gcloud.
-      # zone: us-east1-d
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
