@@ -53,7 +53,7 @@ data:
           # as dex, THIS OPTION MAY BE REMOVED WITHOUT WARNING IN A FUTURE RELEASE.
           #
           insecureNoSSL: true
-          # If a custom certificate isn't provide, this option can be used to turn on
+          # If a custom certificate isn't provided, this option can be used to turn on
           # TLS certificate checks. As noted, it is insecure and shouldn't be used outside
           # of explorative phases.
           #
@@ -82,7 +82,7 @@ data:
             filter: "(objectClass=posixAccount)"
             # username attribute used for comparing user entries. This will be translated
             # and combine with the other filter as "(<attr>=<username>)".
-            username: mail
+            username: $(ldap_user_search_username)
             # The following three fields are direct mappings of attributes on the user entry.
             # String representation of the user.
             idAttr: uid
@@ -147,6 +147,7 @@ ldap_host=ldap.auth.svc.cluster.local:389
 ldap_bind_dn=cn=admin,dc=example,dc=org
 ldap_bind_pw=admin
 ldap_user_base_dn=ou=People,dc=example,dc=org
+ldap_user_search_username=mail
 ldap_group_base_dn=ou=Groups,dc=example,dc=org
 client_id=ldapdexapp
 oidc_redirect_uris=['http://login.example.org:5555/callback/onprem-cluster']
@@ -198,6 +199,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.ldap_user_base_dn
+- name: ldap_user_search_username
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ldap_user_search_username
 - name: ldap_group_base_dn
   objref:
     kind: ConfigMap
