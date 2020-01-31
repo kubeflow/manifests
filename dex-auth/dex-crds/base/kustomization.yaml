@@ -78,3 +78,7 @@ vars:
     fieldpath: data.application_secret
 configurations:
 - params.yaml
+images:
+- name: quay.io/dexidp/dex
+  newName: quay.io/dexidp/dex
+  newTag: v2.21.0
