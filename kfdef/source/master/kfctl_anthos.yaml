@@ -4,7 +4,7 @@
 apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
-  name: kfctl_anthos
+  name: kfctl-anthos
 spec:
   applications:
   # This component is the istio resources for Kubeflow (e.g. gateway), not about installing istio.
