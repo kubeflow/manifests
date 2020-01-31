@@ -382,19 +382,19 @@ metadata:
   name: katib-db-manager
   labels:
     app: katib
-    component: manager
+    component: db-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: katib
-      component: manager
+      component: db-manager
   template:
     metadata:
       name: katib-db-manager
       labels:
         app: katib
-        component: manager
+        component: db-manager
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
@@ -433,7 +433,7 @@ metadata:
   name: katib-db-manager
   labels:
     app: katib
-    component: manager
+    component: db-manager
 spec:
   type: ClusterIP
   ports:
@@ -442,7 +442,7 @@ spec:
       name: api
   selector:
     app: katib
-    component: manager
+    component: db-manager
 `)
 	th.writeF("/manifests/katib/katib-controller/base/katib-ui-deployment.yaml", `
 apiVersion: apps/v1

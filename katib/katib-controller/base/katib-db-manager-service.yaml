@@ -4,7 +4,7 @@ metadata:
   name: katib-db-manager
   labels:
     app: katib
-    component: manager
+    component: db-manager
 spec:
   type: ClusterIP
   ports:
@@ -13,4 +13,4 @@ spec:
       name: api
   selector:
     app: katib
-    component: manager
+    component: db-manager
