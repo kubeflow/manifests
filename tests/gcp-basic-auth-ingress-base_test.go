@@ -224,7 +224,6 @@ apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:
-    certmanager.k8s.io/issuer: $(issuer)
     ingress.kubernetes.io/ssl-redirect: "true"
     kubernetes.io/ingress.global-static-ip-name: $(ipName)
     kubernetes.io/tls-acme: "true"
@@ -388,7 +387,6 @@ ipName=
 secretName=envoy-ingress-tls
 privateGKECluster=false
 ingressName=envoy-ingress
-issuer=letsencrypt-prod
 istioNamespace=istio-system
 `)
 	th.writeK("/manifests/gcp/basic-auth-ingress/base", `
@@ -471,13 +469,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.ingressName
-- name: issuer
-  objref:
-    kind: ConfigMap
-    name: basic-auth-ingress-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.issuer
 - name: istioNamespace
   objref:
     kind: ConfigMap
