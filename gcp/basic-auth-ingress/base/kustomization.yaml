@@ -77,13 +77,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.ingressName
-- name: issuer
-  objref:
-    kind: ConfigMap
-    name: basic-auth-ingress-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.issuer
 - name: istioNamespace
   objref:
     kind: ConfigMap
