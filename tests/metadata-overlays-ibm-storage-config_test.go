@@ -265,8 +265,7 @@ uiClusterDomain=cluster.local
 `)
 	th.writeF("/manifests/metadata/base/grpc-params.env", `
 METADATA_GRPC_SERVICE_HOST=metadata-grpc-service
-METADATA_GRPC_SERVICE_PORT=8080
-`)
+METADATA_GRPC_SERVICE_PORT=8080`)
 	th.writeK("/manifests/metadata/base", `
 namePrefix: metadata-
 apiVersion: kustomize.config.k8s.io/v1beta1
