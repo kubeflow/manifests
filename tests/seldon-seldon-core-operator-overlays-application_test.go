@@ -3581,14 +3581,6 @@ webhooks:
       path: /mutate-machinelearning-seldon-io-v1-seldondeployment
   failurePolicy: Fail
   name: mseldondeployment.kb.io
-  namespaceSelector:
-    matchExpressions:
-    - key: seldon.io/controller-id
-      operator: DoesNotExist
-  objectSelector:
-    matchExpressions:
-    - key: seldon.io/controller-id
-      operator: DoesNotExist
   rules:
   - apiGroups:
     - machinelearning.seldon.io
@@ -3607,14 +3599,6 @@ webhooks:
       path: /mutate-machinelearning-seldon-io-v1alpha2-seldondeployment
   failurePolicy: Fail
   name: mseldondeployment.kb.io
-  namespaceSelector:
-    matchExpressions:
-    - key: seldon.io/controller-id
-      operator: DoesNotExist
-  objectSelector:
-    matchExpressions:
-    - key: seldon.io/controller-id
-      operator: DoesNotExist
   rules:
   - apiGroups:
     - machinelearning.seldon.io
@@ -3633,14 +3617,6 @@ webhooks:
       path: /mutate-machinelearning-seldon-io-v1alpha3-seldondeployment
   failurePolicy: Fail
   name: mseldondeployment.kb.io
-  namespaceSelector:
-    matchExpressions:
-    - key: seldon.io/controller-id
-      operator: DoesNotExist
-  objectSelector:
-    matchExpressions:
-    - key: seldon.io/controller-id
-      operator: DoesNotExist
   rules:
   - apiGroups:
     - machinelearning.seldon.io
@@ -3676,14 +3652,6 @@ webhooks:
       path: /validate-machinelearning-seldon-io-v1-seldondeployment
   failurePolicy: Fail
   name: vseldondeployment.kb.io
-  namespaceSelector:
-    matchExpressions:
-    - key: seldon.io/controller-id
-      operator: DoesNotExist
-  objectSelector:
-    matchExpressions:
-    - key: seldon.io/controller-id
-      operator: DoesNotExist
   rules:
   - apiGroups:
     - machinelearning.seldon.io
@@ -3702,14 +3670,6 @@ webhooks:
       path: /validate-machinelearning-seldon-io-v1alpha2-seldondeployment
   failurePolicy: Fail
   name: vseldondeployment.kb.io
-  namespaceSelector:
-    matchExpressions:
-    - key: seldon.io/controller-id
-      operator: DoesNotExist
-  objectSelector:
-    matchExpressions:
-    - key: seldon.io/controller-id
-      operator: DoesNotExist
   rules:
   - apiGroups:
     - machinelearning.seldon.io
@@ -3728,14 +3688,6 @@ webhooks:
       path: /validate-machinelearning-seldon-io-v1alpha3-seldondeployment
   failurePolicy: Fail
   name: vseldondeployment.kb.io
-  namespaceSelector:
-    matchExpressions:
-    - key: seldon.io/controller-id
-      operator: DoesNotExist
-  objectSelector:
-    matchExpressions:
-    - key: seldon.io/controller-id
-      operator: DoesNotExist
   rules:
   - apiGroups:
     - machinelearning.seldon.io
