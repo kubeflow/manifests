@@ -1,10 +1,6 @@
-# This is the config to install Kubeflow on an existing K8s cluster, with support
-# for multi-user and LDAP auth using Dex.
-
 apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
-  name: demo
   namespace: kubeflow
 spec:
   applications:
@@ -20,7 +16,6 @@ spec:
         name: manifests
         path: application/application
     name: application
-  # Istio install. If not needed, comment out istio-crds and istio-install.
   - kustomizeConfig:
       parameters:
       - name: namespace
@@ -37,11 +32,10 @@ spec:
         name: manifests
         path: istio-1-3-1/istio-install-1-3-1
     name: istio-install
-  # This component is the istio resources for Kubeflow (e.g. gateway), not about installing istio
   - kustomizeConfig:
       parameters:
       - name: clusterRbacConfig
-        value: "ON"
+        value: 'ON'
       repoRef:
         name: manifests
         path: istio/istio
@@ -109,7 +103,6 @@ spec:
         value: '["/login/oidc"]'
       - name: static_email
         value: admin@kubeflow.org
-      # Password is "12341234", 12-round bcrypt-hashed.
       - name: static_password_hash
         value: $2y$12$ruoM7FqXrpVgaol44eRZW.4HWS8SAvg6KYVVSCIwKQPBmTpCm.EeO
       repoRef:
@@ -204,7 +197,7 @@ spec:
       - name: usageId
         value: <randomly-generated-id>
       - name: reportUsage
-        value: "true"
+        value: 'true'
       repoRef:
         name: manifests
         path: common/spartakus

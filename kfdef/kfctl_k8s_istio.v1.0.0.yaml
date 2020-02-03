@@ -1,19 +1,29 @@
-# This is the config to install Kubeflow on an Anthos.
-# The cluster comes with customized Istio installation.
-
 apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
-  name: kfctl-anthos
+  namespace: kubeflow
 spec:
   applications:
-  # This component is the istio resources for Kubeflow (e.g. gateway), not about installing istio.
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/istio-crds
+    name: istio-crds
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/istio-install
+    name: istio-install
   - kustomizeConfig:
       parameters:
       - name: clusterRbacConfig
-        value: "OFF"
-      - name: gatewaySelector
-        value: ingress-gke-system
+        value: 'OFF'
       repoRef:
         name: manifests
         path: istio/istio
@@ -56,7 +66,7 @@ spec:
       repoRef:
         name: manifests
         path: cert-manager/cert-manager
-    name: cert-manager        
+    name: cert-manager
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -184,7 +194,7 @@ spec:
       - name: usageId
         value: <randomly-generated-id>
       - name: reportUsage
-        value: "true"
+        value: 'true'
       repoRef:
         name: manifests
         path: common/spartakus
@@ -291,6 +301,13 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      repoRef:
+        name: manifests
+        path: pipeline/pipeline-visualization-service
+    name: pipeline-visualization-service
+  - kustomizeConfig:
+      overlays:
+      - application
       - istio
       parameters:
       - name: admin
@@ -308,7 +325,5 @@ spec:
     name: seldon-core-operator
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
-    # An example uri that uses a PR version of the manifest repo.
-    # uri: https://github.com/kubeflow/manifests/archive/pull/PR_NUMBER/head.tar.gz
-  version: master
+    uri: https://github.com/kubeflow/manifests/archive/v1.0-branch.tar.gz
+  version: v1.0.0

@@ -51,7 +51,7 @@ class KFDefBuilder:
           basename, _ = os.path.splitext(new_name)
           new_name = basename + ext
 
-          new_file = os.path.join(kfdef_dir, new_name)
+          new_file = os.path.join(kfdef_dir, new_name.replace("-", "_"))
           logging.info(f"Processing file: {f} -> {new_file}")
 
           with open(os.path.join(temp_dir, f)) as hf:
