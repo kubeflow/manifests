@@ -3585,8 +3585,8 @@ webhooks:
     matchExpressions:
     - key: seldon.io/controller-id
       operator: DoesNotExist
-    - key: serving.kubeflow.org/inferenceservice
-      operator: Exists
+    matchLabels:
+      serving.kubeflow.org/inferenceservice: enabled
   rules:
   - apiGroups:
     - machinelearning.seldon.io
@@ -3609,8 +3609,8 @@ webhooks:
     matchExpressions:
     - key: seldon.io/controller-id
       operator: DoesNotExist
-    - key: serving.kubeflow.org/inferenceservice
-      operator: Exists
+    matchLabels:
+      serving.kubeflow.org/inferenceservice: enabled
   rules:
   - apiGroups:
     - machinelearning.seldon.io
@@ -3633,8 +3633,8 @@ webhooks:
     matchExpressions:
     - key: seldon.io/controller-id
       operator: DoesNotExist
-    - key: serving.kubeflow.org/inferenceservice
-      operator: Exists
+    matchLabels:
+      serving.kubeflow.org/inferenceservice: enabled
   rules:
   - apiGroups:
     - machinelearning.seldon.io
@@ -3674,8 +3674,8 @@ webhooks:
     matchExpressions:
     - key: seldon.io/controller-id
       operator: DoesNotExist
-    - key: serving.kubeflow.org/inferenceservice
-      operator: Exists
+    matchLabels:
+      serving.kubeflow.org/inferenceservice: enabled
   rules:
   - apiGroups:
     - machinelearning.seldon.io
@@ -3698,8 +3698,8 @@ webhooks:
     matchExpressions:
     - key: seldon.io/controller-id
       operator: DoesNotExist
-    - key: serving.kubeflow.org/inferenceservice
-      operator: Exists
+    matchLabels:
+      serving.kubeflow.org/inferenceservice: enabled
   rules:
   - apiGroups:
     - machinelearning.seldon.io
@@ -3722,8 +3722,8 @@ webhooks:
     matchExpressions:
     - key: seldon.io/controller-id
       operator: DoesNotExist
-    - key: serving.kubeflow.org/inferenceservice
-      operator: Exists
+    matchLabels:
+      serving.kubeflow.org/inferenceservice: enabled
   rules:
   - apiGroups:
     - machinelearning.seldon.io
