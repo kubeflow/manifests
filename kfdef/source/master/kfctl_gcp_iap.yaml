@@ -3,7 +3,7 @@ apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
   # kustomize requires a name.
-  name: kfctl_gcp_iap
+  name: kfctl-gcp-iap
 spec:
   applications:
   - kustomizeConfig:
