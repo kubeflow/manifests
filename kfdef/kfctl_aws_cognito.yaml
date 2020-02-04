@@ -1,7 +1,6 @@
 apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
-  name: kubeflow-aws
   namespace: kubeflow
 spec:
   applications:
@@ -24,7 +23,7 @@ spec:
   - kustomizeConfig:
       parameters:
       - name: clusterRbacConfig
-        value: "OFF"
+        value: 'OFF'
       repoRef:
         name: manifests
         path: istio/istio
@@ -41,6 +40,33 @@ spec:
         name: manifests
         path: application/application
     name: application
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: cert-manager
+      repoRef:
+        name: manifests
+        path: cert-manager/cert-manager-crds
+    name: cert-manager-crds
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: kube-system
+      repoRef:
+        name: manifests
+        path: cert-manager/cert-manager-kube-system-resources
+    name: cert-manager-kube-system-resources
+  - kustomizeConfig:
+      overlays:
+      - self-signed
+      - application
+      parameters:
+      - name: namespace
+        value: cert-manager
+      repoRef:
+        name: manifests
+        path: cert-manager/cert-manager
+    name: cert-manager
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -137,7 +163,7 @@ spec:
       - name: usageId
         value: <randomly-generated-id>
       - name: reportUsage
-        value: "true"
+        value: 'true'
       repoRef:
         name: manifests
         path: common/spartakus

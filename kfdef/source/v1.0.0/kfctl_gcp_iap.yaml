@@ -2,7 +2,7 @@
 apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
-  name: kfctl_gcp_iap
+  name: kfctl-gcp-iap
 spec:
   repos:
   - name: manifests

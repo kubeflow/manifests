@@ -1,23 +1,9 @@
-# This is the config to install Kubeflow on an Anthos.
-# The cluster comes with customized Istio installation.
-
 apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
-  name: kfctl-anthos
+  namespace: kubeflow
 spec:
   applications:
-  # This component is the istio resources for Kubeflow (e.g. gateway), not about installing istio.
-  - kustomizeConfig:
-      parameters:
-      - name: clusterRbacConfig
-        value: "OFF"
-      - name: gatewaySelector
-        value: ingress-gke-system
-      repoRef:
-        name: manifests
-        path: istio/istio
-    name: istio
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -30,6 +16,30 @@ spec:
         name: manifests
         path: application/application
     name: application
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio-1-3-1/istio-crds-1-3-1
+    name: istio-crds
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio-1-3-1/istio-install-1-3-1
+    name: istio-install
+  - kustomizeConfig:
+      parameters:
+      - name: clusterRbacConfig
+        value: 'ON'
+      repoRef:
+        name: manifests
+        path: istio/istio
+    name: istio
   - kustomizeConfig:
       parameters:
       - name: namespace
@@ -56,12 +66,49 @@ spec:
       repoRef:
         name: manifests
         path: cert-manager/cert-manager
-    name: cert-manager        
+    name: cert-manager
   - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: namespace
+        value: istio-system
+      - name: userid-header
+        value: kubeflow-userid
+      - name: oidc_provider
+        value: http://dex.auth.svc.cluster.local:5556/dex
+      - name: oidc_redirect_uri
+        value: /login/oidc
+      - name: oidc_auth_url
+        value: /dex/auth
+      - name: skip_auth_uri
+        value: /dex
+      - name: client_id
+        value: kubeflow-oidc-authservice
       repoRef:
         name: manifests
-        path: metacontroller
-    name: metacontroller
+        path: istio/oidc-authservice
+    name: oidc-authservice
+  - kustomizeConfig:
+      overlays:
+      - istio
+      parameters:
+      - name: namespace
+        value: auth
+      - name: issuer
+        value: http://dex.auth.svc.cluster.local:5556/dex
+      - name: client_id
+        value: kubeflow-oidc-authservice
+      - name: oidc_redirect_uris
+        value: '["/login/oidc"]'
+      - name: static_email
+        value: admin@kubeflow.org
+      - name: static_password_hash
+        value: $2y$12$ruoM7FqXrpVgaol44eRZW.4HWS8SAvg6KYVVSCIwKQPBmTpCm.EeO
+      repoRef:
+        name: manifests
+        path: dex-auth/dex-crds
+    name: dex
   - kustomizeConfig:
       overlays:
       - istio
@@ -79,19 +126,16 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: userid-header
+        value: kubeflow-userid
       repoRef:
         name: manifests
         path: common/centraldashboard
     name: centraldashboard
   - kustomizeConfig:
       overlays:
-      - application
-      repoRef:
-        name: manifests
-        path: admission-webhook/bootstrap
-    name: bootstrap
-  - kustomizeConfig:
-      overlays:
+      - cert-manager
       - application
       repoRef:
         name: manifests
@@ -101,6 +145,9 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: userid-header
+        value: kubeflow-userid
       repoRef:
         name: manifests
         path: jupyter/jupyter-web-app
@@ -147,44 +194,10 @@ spec:
       overlays:
       - application
       parameters:
-      - name: namespace
-        value: knative-serving
-      repoRef:
-        name: manifests
-        path: knative/knative-serving-crds
-    name: knative-crds
-  - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
-      - name: namespace
-        value: knative-serving
-      repoRef:
-        name: manifests
-        path: knative/knative-serving-install
-    name: knative-install
-  - kustomizeConfig:
-      overlays:
-      - application
-      repoRef:
-        name: manifests
-        path: kfserving/kfserving-crds
-    name: kfserving-crds
-  - kustomizeConfig:
-      overlays:
-      - application
-      repoRef:
-        name: manifests
-        path: kfserving/kfserving-install
-    name: kfserving-install
-  - kustomizeConfig:
-      overlays:
-      - application
-      parameters:
       - name: usageId
         value: <randomly-generated-id>
       - name: reportUsage
-        value: "true"
+        value: 'true'
       repoRef:
         name: manifests
         path: common/spartakus
@@ -291,10 +304,17 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      repoRef:
+        name: manifests
+        path: pipeline/pipeline-visualization-service
+    name: pipeline-visualization-service
+  - kustomizeConfig:
+      overlays:
+      - application
       - istio
       parameters:
-      - name: admin
-        value: johnDoe@acme.com
+      - name: userid-header
+        value: kubeflow-userid
       repoRef:
         name: manifests
         path: profiles
@@ -308,7 +328,5 @@ spec:
     name: seldon-core-operator
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
-    # An example uri that uses a PR version of the manifest repo.
-    # uri: https://github.com/kubeflow/manifests/archive/pull/PR_NUMBER/head.tar.gz
-  version: master
+    uri: https://github.com/kubeflow/manifests/archive/v1.0-branch.tar.gz
+  version: v1.0.0
