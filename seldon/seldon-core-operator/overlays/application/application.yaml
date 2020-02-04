@@ -15,7 +15,7 @@ spec:
       kind: Secret
     - group: v1
       kind: ConfigMap
-  version: "v1alpha2"
+  version: "v1"
   description: "Seldon allows users to create ML Inference Graphs to deploy their models and serve predictions"
   icons:
   maintainers:
@@ -29,4 +29,4 @@ spec:
    - "inference"
   links:
     - description: Docs
-      url: "https://docs.seldon.io/projects/seldon-core/en/v0.3.0/"
+      url: "https://docs.seldon.io/projects/seldon-core/en/v1.0.1/"
