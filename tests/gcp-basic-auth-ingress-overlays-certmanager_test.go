@@ -295,7 +295,6 @@ metadata:
   annotations:
     ingress.kubernetes.io/ssl-redirect: "true"
     kubernetes.io/ingress.global-static-ip-name: $(ipName)
-    kubernetes.io/tls-acme: "true"
     networking.gke.io/managed-certificates: gke-certificate
   name: $(ingressName)
 spec:
