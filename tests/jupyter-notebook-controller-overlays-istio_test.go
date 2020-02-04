@@ -262,6 +262,12 @@ spec:
           - name: POD_LABELS
             value: $(POD_LABELS)
         imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 30
       serviceAccountName: service-account
 `)
 	th.writeF("/manifests/jupyter/notebook-controller/base/service-account.yaml", `
