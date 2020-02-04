@@ -66,7 +66,12 @@ data:
         "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:e80b323"
       },
       "TensorFlowEvent": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:e80b323"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:e80b323",
+        "resources": {
+          "limits": {
+            "memory": "1Gi"
+          }
+        }
       }
     }
   suggestion: |-
@@ -87,7 +92,13 @@ data:
         "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:e80b323"
       },
       "nasrl": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-nasrl:e80b323"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-nasrl:e80b323",
+        "imagePullPolicy": "Always",
+        "resources": {
+          "limits": {
+            "memory": "200Mi"
+          }
+        }
       }
     }
 `)
@@ -107,6 +118,9 @@ spec:
     metadata:
       labels:
         app: katib-controller
+      annotations:
+        sidecar.istio.io/inject: "false"
+        prometheus.io/scrape: "true"
     spec:
       serviceAccountName: katib-controller
       containers:
@@ -114,9 +128,14 @@ spec:
         image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
         imagePullPolicy: IfNotPresent
         command: ["./katib-controller"]
+        args:
+          - '--webhook-port=8443'
         ports:
-        - containerPort: 443
+        - containerPort: 8443
           name: webhook
+          protocol: TCP
+        - containerPort: 8080
+          name: metrics
           protocol: TCP
         env:
         - name: KATIB_CORE_NAMESPACE
@@ -190,13 +209,10 @@ rules:
   resources:
   - experiments
   - experiments/status
-  - experiments/finalizers
   - trials
   - trials/status
-  - trials/finalizers
   - suggestions
   - suggestions/status
-  - suggestions/finalizers
   verbs:
   - "*"
 - apiGroups:
@@ -295,11 +311,19 @@ apiVersion: v1
 kind: Service
 metadata:
   name: katib-controller
+  annotations:
+    prometheus.io/port: "8080"
+    prometheus.io/scheme: http
+    prometheus.io/scrape: "true"
 spec:
   ports:
   - port: 443
     protocol: TCP
-    targetPort: 443
+    targetPort: 8443
+    name: webhook
+  - name: metrics
+    port: 8080
+    targetPort: 8080
   selector:
     app: katib-controller
 `)
@@ -350,7 +374,7 @@ spec:
             command:
             - "/bin/bash"
             - "-c"
-            - "mysql -D ${MYSQL_DATABASE} -p${MYSQL_ROOT_PASSWORD} -e 'SELECT 1'"
+            - "mysql -D ${MYSQL_DATABASE} -u root -p${MYSQL_ROOT_PASSWORD} -e 'SELECT 1'"
           initialDelaySeconds: 5
           periodSeconds: 10
           timeoutSeconds: 1
@@ -371,12 +395,32 @@ spec:
         persistentVolumeClaim:
           claimName: katib-mysql
 `)
+	th.writeF("/manifests/katib/katib-controller/base/katib-mysql-pv.yaml", `
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: katib-mysql
+  labels:
+    type: local
+    app: katib
+spec:
+  storageClassName: katib
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /tmp/katib
+`)
 	th.writeF("/manifests/katib/katib-controller/base/katib-mysql-pvc.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: katib-mysql
+  labels:
+    app: katib
 spec:
+  storageClassName: katib
   accessModes:
     - ReadWriteOnce
   resources:
@@ -506,14 +550,16 @@ spec:
         imagePullPolicy: IfNotPresent
         command:
           - './katib-ui'
+        args:
+          - '--port=8080'
         env:
-          - name: KATIB_CORE_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
+        - name: KATIB_CORE_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         ports:
         - name: ui
-          containerPort: 80
+          containerPort: 8080
       serviceAccountName: katib-ui
 `)
 	th.writeF("/manifests/katib/katib-controller/base/katib-ui-rbac.yaml", `
@@ -526,6 +572,7 @@ rules:
   - ""
   resources:
   - configmaps
+  - namespaces
   verbs:
   - "*"
 - apiGroups:
@@ -567,6 +614,7 @@ spec:
     - port: 80
       protocol: TCP
       name: ui
+      targetPort: 8080
   selector:
     app: katib
     component: ui
@@ -588,10 +636,10 @@ data:
         spec:
           containers:
           - name: {{.Trial}}
-            image: docker.io/katib/mxnet-mnist-example
+            image: docker.io/kubeflowkatib/mxnet-mnist
             command:
-            - "python"
-            - "/mxnet/example/image-classification/train_mnist.py"
+            - "python3"
+            - "/opt/mxnet-mnist/mnist.py"
             - "--batch-size=64"
             {{- with .HyperParameters}}
             {{- range .}}
@@ -621,6 +669,7 @@ resources:
 - katib-controller-secret.yaml
 - katib-controller-service.yaml
 - katib-mysql-deployment.yaml
+- katib-mysql-pv.yaml
 - katib-mysql-pvc.yaml
 - katib-mysql-secret.yaml
 - katib-mysql-service.yaml
