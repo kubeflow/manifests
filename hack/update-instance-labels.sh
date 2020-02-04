@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# TODO(jlewi): This script is outdated. You probably want to use
+# kubeflow/testing/py/kubeflow/testing/tools/applications.py
+# see https://github.com/kubeflow/testing/pull/596
 
 # Replace 'app.kubernetes.io/version: v0.7.x' with 'app.kubernetes.io/version: v1.0.0'
 grep -rl --exclude-dir={kfdef,gatekeeper,gcp/deployment_manager_configs,aws/infra_configs,docs,hack,plugins} 'app.kubernetes.io/version: v0.7' ./ \

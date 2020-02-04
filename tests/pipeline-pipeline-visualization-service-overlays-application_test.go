@@ -20,47 +20,47 @@ kind: Application
 metadata:
   name: pipeline-visualization-service
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: pipeline-visualization-service
-      app.kubernetes.io/instance: pipeline-visualization-service-0.1.31
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: pipeline-visualization-service
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: 0.1.31
+  addOwnerRef: true
   componentKinds:
   - group: core
     kind: ConfigMap
   - group: apps
     kind: Deployment
   descriptor:
-    type: pipeline-visualization-service
-    version: v1beta1
-    description: ""
-    maintainers: []
-    owners: []
+    description: ''
     keywords:
-     - pipeline-visualization-service
-     - kubeflow
+    - pipeline-visualization-service
+    - kubeflow
     links:
     - description: About
-      url: ""
-  addOwnerRef: true
+      url: ''
+    maintainers: []
+    owners: []
+    type: pipeline-visualization-service
+    version: v1beta1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: pipeline-visualization-service
+      app.kubernetes.io/instance: pipeline-visualization-service-0.2.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: pipeline-visualization-service
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: 0.2.0
 `)
 	th.writeK("/manifests/pipeline/pipeline-visualization-service/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
 bases:
 - ../../base
+commonLabels:
+  app.kubernetes.io/component: pipeline-visualization-service
+  app.kubernetes.io/instance: pipeline-visualization-service-0.2.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/name: pipeline-visualization-service
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: 0.2.0
+kind: Kustomization
 resources:
 - application.yaml
-commonLabels:
-  app.kubernetes.io/name: pipeline-visualization-service
-  app.kubernetes.io/instance: pipeline-visualization-service-0.1.31
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: pipeline-visualization-service
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.1.31
 `)
 	th.writeF("/manifests/pipeline/pipeline-visualization-service/base/deployment.yaml", `
 apiVersion: apps/v1

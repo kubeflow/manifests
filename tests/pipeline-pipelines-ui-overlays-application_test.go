@@ -20,47 +20,47 @@ kind: Application
 metadata:
   name: pipelines-ui
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: pipelines-ui
-      app.kubernetes.io/instance: pipelines-ui-0.1.31
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: pipelines-ui
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: 0.1.31
+  addOwnerRef: true
   componentKinds:
   - group: core
     kind: ConfigMap
   - group: apps
     kind: Deployment
   descriptor:
-    type: pipelines-ui
-    version: v1beta1
-    description: ""
-    maintainers: []
-    owners: []
+    description: ''
     keywords:
-     - pipelines-ui
-     - kubeflow
+    - pipelines-ui
+    - kubeflow
     links:
     - description: About
-      url: ""
-  addOwnerRef: true
+      url: ''
+    maintainers: []
+    owners: []
+    type: pipelines-ui
+    version: v1beta1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: pipelines-ui
+      app.kubernetes.io/instance: pipelines-ui-0.2.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: pipelines-ui
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: 0.2.0
 `)
 	th.writeK("/manifests/pipeline/pipelines-ui/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
 bases:
 - ../../base
+commonLabels:
+  app.kubernetes.io/component: pipelines-ui
+  app.kubernetes.io/instance: pipelines-ui-0.2.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/name: pipelines-ui
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: 0.2.0
+kind: Kustomization
 resources:
 - application.yaml
-commonLabels:
-  app.kubernetes.io/name: pipelines-ui
-  app.kubernetes.io/instance: pipelines-ui-0.1.31
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: pipelines-ui
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.1.31
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/deployment.yaml", `
 apiVersion: apps/v1
