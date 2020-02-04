@@ -130,10 +130,6 @@ metadata:
   name: kubeflow-notebook-ui-admin
   labels:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
-aggregationRule:
-  clusterRoleSelectors:
-  - matchLabels:
-      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-tfjobs-admin: "true"
 rules: []
 
 ---
@@ -144,7 +140,6 @@ metadata:
   name: kubeflow-notebook-ui-edit
   labels:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
-    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-tfjobs-admin: "true"
 rules:
 - apiGroups:
   - kubeflow.org
@@ -177,11 +172,13 @@ rules:
   - get
   - list
 - apiGroups:
-  - ""
+  - storage.k8s.io
   resources:
-  - events
+  - storageclasses
   verbs:
-  - list`)
+  - get
+  - list
+  - watch`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/config-map.yaml", `
 apiVersion: v1
 data:
