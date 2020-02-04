@@ -73,7 +73,7 @@ spec:
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
-            path: /api/workgroup/env-info
+            path: /healthz
             port: 8082
           initialDelaySeconds: 30
           periodSeconds: 30
