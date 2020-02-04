@@ -20,47 +20,47 @@ kind: Application
 metadata:
   name: pipelines-viewer
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: pipelines-viewer
-      app.kubernetes.io/instance: pipelines-viewer-0.1.31
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: pipelines-viewer
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: 0.1.31
+  addOwnerRef: true
   componentKinds:
   - group: core
     kind: ConfigMap
   - group: apps
     kind: Deployment
   descriptor:
-    type: pipelines-viewer
-    version: v1beta1
-    description: ""
-    maintainers: []
-    owners: []
+    description: ''
     keywords:
-     - pipelines-viewer
-     - kubeflow
+    - pipelines-viewer
+    - kubeflow
     links:
     - description: About
-      url: ""
-  addOwnerRef: true
+      url: ''
+    maintainers: []
+    owners: []
+    type: pipelines-viewer
+    version: v1beta1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: pipelines-viewer
+      app.kubernetes.io/instance: pipelines-viewer-0.2.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: pipelines-viewer
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: 0.2.0
 `)
 	th.writeK("/manifests/pipeline/pipelines-viewer/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
 bases:
 - ../../base
+commonLabels:
+  app.kubernetes.io/component: pipelines-viewer
+  app.kubernetes.io/instance: pipelines-viewer-0.2.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/name: pipelines-viewer
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: 0.2.0
+kind: Kustomization
 resources:
 - application.yaml
-commonLabels:
-  app.kubernetes.io/name: pipelines-viewer
-  app.kubernetes.io/instance: pipelines-viewer-0.1.31
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: pipelines-viewer
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.1.31
 `)
 	th.writeF("/manifests/pipeline/pipelines-viewer/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
