@@ -6,6 +6,7 @@ resources:
 - katib-controller-secret.yaml
 - katib-controller-service.yaml
 - katib-mysql-deployment.yaml
+- katib-mysql-pv.yaml
 - katib-mysql-pvc.yaml
 - katib-mysql-secret.yaml
 - katib-mysql-service.yaml
