@@ -12,7 +12,7 @@ kebab-case-2-PascalCase() {
   local a=$1 b='' array
   IFS='-' read -r -a array <<< "$a"
   for element in "${array[@]}"; do
-    part="${element}"
+    part="${element//./_}"
     part="$(tr '[:lower:]' '[:upper:]' <<< ${part:0:1})${part:1}"
     b+=$part
   done
@@ -45,7 +45,7 @@ gen-target-start() {
 
 gen-target-middle() {
   local directory=$1
-  for i in $(echo $(cat $directory/kustomization.yaml | grep '^- .*yaml$' | sed 's/^- //') $(cat $directory/kustomization.yaml | grep '  path: ' | sed 's/^.*: \(.*\)$/\1/') $(cat $directory/kustomization.yaml | sed '1,/^[ \t]*files:/d;/^[^ \t]/,$d' | sed 's/^[ \t]*- //') params.env secrets.env kustomization.yaml | sed 's/ /\\n/g' | sort | uniq | awk '{gsub(/\\n/,"\n")}1'); do
+  for i in $(echo $(cat $directory/kustomization.yaml | grep '^- .*yaml$' | sed 's/^- //') $(cat $directory/kustomization.yaml | grep '  path: ' | sed 's/^.*: \(.*\)$/\1/') $(cat $directory/kustomization.yaml | sed '1,/^[ \t]*files:/d;/^[^ \t]/,$d' | sed 's/^[ \t]*- //') params.env secrets.env grpc-params.env kustomization.yaml | sed 's/ /\\n/g' | sort | uniq | awk '{gsub(/\\n/,"\n")}1'); do
     file=$i
     if [[ -f $directory/$file ]]; then
       case $file in
@@ -56,6 +56,9 @@ gen-target-middle() {
           gen-target-resource $file $directory
           ;;
         params.env)
+          gen-target-resource $file $directory
+          ;;
+        grpc-params.env)
           gen-target-resource $file $directory
           ;;
         secrets.env)
