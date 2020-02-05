@@ -469,7 +469,7 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/jupyter-web-app
   newName: gcr.io/kubeflow-images-public/jupyter-web-app
-  newTag: v1.0.0-g7b97c3f8
+  newTag: v1.0.0-g2bd63238
 configMapGenerator:
 - envs:
   - params.env
