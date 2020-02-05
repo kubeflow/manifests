@@ -6,7 +6,7 @@ import logging
 import os
 import subprocess
 
-TOP_LEVEL_EXCLUDES = ["docs", "hack", "tests"]
+TOP_LEVEL_EXCLUDES = ["docs", "hack", "tests", "kfdef"]
 
 def generate_test_name(repo_root, package_dir):
   """Generate the name of the go file to write the test to.

@@ -20,14 +20,7 @@ kind: Application
 metadata:
   name: metadata
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: metadata
-      app.kubernetes.io/instance: metadata-v1.0.0
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: metadata
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v1.0.0
+  addOwnerRef: true
   componentKinds:
   - group: core
     kind: Service
@@ -38,38 +31,45 @@ spec:
   - group: core
     kind: ServiceAccount
   descriptor:
-    type: "metadata"
-    version: "alpha"
-    description: "Tracking and managing metadata of machine learning workflows in Kubeflow."
-    maintainers:
-    - name: Zhenghui Wang
-      email: zhenghui@google.com
-    owners:
-    - name: Ajay Gopinathan
-      email: ajaygopinathan@google.com
-    - name: Zhenghui Wang
-      email: zhenghui@google.com
+    description: Tracking and managing metadata of machine learning workflows in Kubeflow.
     keywords:
-    - "metadata"
+    - metadata
     links:
     - description: Docs
-      url: "https://www.kubeflow.org/docs/components/misc/metadata/"
-  addOwnerRef: true
+      url: https://www.kubeflow.org/docs/components/misc/metadata/
+    maintainers:
+    - email: zhenghui@google.com
+      name: Zhenghui Wang
+    owners:
+    - email: ajaygopinathan@google.com
+      name: Ajay Gopinathan
+    - email: zhenghui@google.com
+      name: Zhenghui Wang
+    type: metadata
+    version: alpha
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: metadata
+      app.kubernetes.io/instance: metadata-0.2.1
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: metadata
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: 0.2.1
 `)
 	th.writeK("/manifests/metadata/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
 bases:
 - ../../base
+commonLabels:
+  app.kubernetes.io/component: metadata
+  app.kubernetes.io/instance: metadata-0.2.1
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/name: metadata
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: 0.2.1
+kind: Kustomization
 resources:
 - application.yaml
-commonLabels:
-  app.kubernetes.io/name: metadata
-  app.kubernetes.io/instance: metadata-v1.0.0
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: metadata
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v1.0.0
 `)
 	th.writeF("/manifests/metadata/base/metadata-deployment.yaml", `
 apiVersion: apps/v1
@@ -134,7 +134,7 @@ spec:
           args: ["--grpc_port=$(METADATA_GRPC_SERVICE_PORT)"]
           ports:
             - name: grpc-backendapi
-              containerPort: 8080
+              containerPort: 8080 #The value of the port number needs to be in sync with value  specified in grpc-params.env
 `)
 	th.writeF("/manifests/metadata/base/metadata-service.yaml", `
 kind: Service
@@ -304,8 +304,7 @@ uiClusterDomain=cluster.local
 `)
 	th.writeF("/manifests/metadata/base/grpc-params.env", `
 METADATA_GRPC_SERVICE_HOST=metadata-grpc-service
-METADATA_GRPC_SERVICE_PORT=8080
-`)
+METADATA_GRPC_SERVICE_PORT=8080`)
 	th.writeK("/manifests/metadata/base", `
 namePrefix: metadata-
 apiVersion: kustomize.config.k8s.io/v1beta1
