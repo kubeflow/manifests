@@ -50,11 +50,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: metadata
-      app.kubernetes.io/instance: metadata-0.8.0
+      app.kubernetes.io/instance: metadata-0.2.1
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: metadata
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: 0.8.0
+      app.kubernetes.io/version: 0.2.1
 `)
 	th.writeK("/manifests/metadata/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -62,11 +62,11 @@ bases:
 - ../../base
 commonLabels:
   app.kubernetes.io/component: metadata
-  app.kubernetes.io/instance: metadata-0.8.0
+  app.kubernetes.io/instance: metadata-0.2.1
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/name: metadata
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.8.0
+  app.kubernetes.io/version: 0.2.1
 kind: Kustomization
 resources:
 - application.yaml
