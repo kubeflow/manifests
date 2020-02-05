@@ -12,7 +12,12 @@ data:
         "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:e80b323"
       },
       "TensorFlowEvent": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:e80b323"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:e80b323",
+        "resources": {
+          "limits": {
+            "memory": "1Gi"
+          }
+        }
       }
     }
   suggestion: |-
@@ -33,6 +38,12 @@ data:
         "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:e80b323"
       },
       "nasrl": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-nasrl:e80b323"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-nasrl:e80b323",
+        "imagePullPolicy": "Always",
+        "resources": {
+          "limits": {
+            "memory": "200Mi"
+          }
+        }
       }
     }
