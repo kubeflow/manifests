@@ -274,7 +274,7 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/notebook-controller
   newName: gcr.io/kubeflow-images-public/notebook-controller
-  newTag: v1.0.0-g3ec0de71
+  newTag: v1.0.0-g2bd63238
 configMapGenerator:
 - envs:
   - params.env
