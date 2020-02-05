@@ -20,47 +20,47 @@ kind: Application
 metadata:
   name: kfserving-crds
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: kfserving-crds
-      app.kubernetes.io/instance: kfserving-crds-v1.0.0
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: kfserving-crds
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v1.0.0
+  addOwnerRef: true
   componentKinds:
   - group: core
     kind: ConfigMap
   - group: apps
     kind: Deployment
   descriptor:
-    type: kfserving-crds
-    version: v1beta1
-    description: ""
-    maintainers: []
-    owners: []
+    description: ''
     keywords:
-     - kfserving-crds
-     - kubeflow
+    - kfserving-crds
+    - kubeflow
     links:
     - description: About
-      url: ""
-  addOwnerRef: true
+      url: ''
+    maintainers: []
+    owners: []
+    type: kfserving-crds
+    version: v1beta1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: kfserving-crds
+      app.kubernetes.io/instance: kfserving-crds-0.2.2
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: kfserving-crds
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: 0.2.2
 `)
 	th.writeK("/manifests/kfserving/kfserving-crds/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
 bases:
 - ../../base
+commonLabels:
+  app.kubernetes.io/component: kfserving-crds
+  app.kubernetes.io/instance: kfserving-crds-0.2.2
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/name: kfserving-crds
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: 0.2.2
+kind: Kustomization
 resources:
 - application.yaml
-commonLabels:
-  app.kubernetes.io/name: kfserving-crds
-  app.kubernetes.io/instance: kfserving-crds-v1.0.0
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: kfserving-crds
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v1.0.0
 `)
 	th.writeF("/manifests/kfserving/kfserving-crds/base/crd.yaml", `
 apiVersion: apiextensions.k8s.io/v1beta1
