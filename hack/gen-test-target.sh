@@ -12,7 +12,7 @@ kebab-case-2-PascalCase() {
   local a=$1 b='' array
   IFS='-' read -r -a array <<< "$a"
   for element in "${array[@]}"; do
-    part="${element}"
+    part="${element//./_}"
     part="$(tr '[:lower:]' '[:upper:]' <<< ${part:0:1})${part:1}"
     b+=$part
   done

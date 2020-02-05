@@ -354,7 +354,8 @@ data:
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
         "cpuLimit": "1"
-    }`)
+    }
+`)
 	th.writeF("/manifests/kfserving/kfserving-install/base/secret.yaml", `
 apiVersion: v1
 kind: Secret
