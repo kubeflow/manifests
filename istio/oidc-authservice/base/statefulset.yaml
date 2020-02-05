@@ -34,7 +34,7 @@ spec:
           - name: OIDC_AUTH_URL
             value: $(oidc_auth_url)
           - name: OIDC_SCOPES
-            value: "profile email groups"
+            value: $(oidc_scopes)
           - name: REDIRECT_URL
             value: $(oidc_redirect_uri)
           - name: SKIP_AUTH_URI
