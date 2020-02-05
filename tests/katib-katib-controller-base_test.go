@@ -358,32 +358,12 @@ spec:
         persistentVolumeClaim:
           claimName: katib-mysql
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-mysql-pv.yaml", `
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: katib-mysql
-  labels:
-    type: local
-    app: katib
-spec:
-  storageClassName: katib
-  capacity:
-    storage: 10Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: /tmp/katib
-`)
 	th.writeF("/manifests/katib/katib-controller/base/katib-mysql-pvc.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: katib-mysql
-  labels:
-    app: katib
 spec:
-  storageClassName: katib
   accessModes:
     - ReadWriteOnce
   resources:
@@ -634,7 +614,6 @@ resources:
 - katib-controller-secret.yaml
 - katib-controller-service.yaml
 - katib-mysql-deployment.yaml
-- katib-mysql-pv.yaml
 - katib-mysql-pvc.yaml
 - katib-mysql-secret.yaml
 - katib-mysql-service.yaml
