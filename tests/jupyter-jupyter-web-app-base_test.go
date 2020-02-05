@@ -430,7 +430,7 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/jupyter-web-app
   newName: gcr.io/kubeflow-images-public/jupyter-web-app
-  newTag: vmaster-gc80316d3
+  newTag: vmaster-gdfd447a5
 configMapGenerator:
 - envs:
   - params.env
