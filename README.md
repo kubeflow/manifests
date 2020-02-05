@@ -8,7 +8,7 @@ See [Best Practices](./docs/KustomizeBestPractices.md) for details on how kustom
 
 
 ## Kfctl Processing
-Kfctl traverses directories under manifests to find and build kustomize targets based on the configuration file `app.yaml`. The contents of app.yaml is the result of running kustomize on the base and specific overlays in the kubeflow [config](https://github.com/kubeflow/kubeflow/tree/master/bootstrap/config) directory. The overlays reflect what options are chosen when calling `kfctl init...`.  The kustomize package manager in kfctl will then read app.yaml and apply the packages, components and componentParams to kustomize in the following way:
+Kfctl traverses directories under manifests/kfdef to find and build kustomize targets based on the configuration file `app.yaml`. The contents of app.yaml is the result of running kustomize on the base and specific overlays in the kubeflow/manifests [kfdef](https://github.com/kubeflow/manifests/tree/master/kfdef) directory. The overlays reflect what options are chosen when calling `kfctl init...`.  The kustomize package manager in kfctl will then read app.yaml and apply the packages, components and componentParams to kustomize in the following way:
 
 - **packages**
   - are always top-level directories under the manifests repo
