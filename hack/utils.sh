@@ -109,14 +109,18 @@ get-target-name() {
 # Given the path /manifests/tf-training/tf-job-operator/base
 # get-target-dirname will return base
 #
+# Given the path /manifests/tf-training/tf-job-operator/base/core
+# get-target-dirname will return base/core
+#
 get-target-dirname() {
+  IFS='/' read -r -a path <<< "$1"
+  parentdir=""
+  if [[ "${path[@]: -2:1}" == "base" ]]; then
+    parentdir="base/"
+  fi
+  if [[ "${path[@]: -2:1}" == "overlays" ]]; then
+    parentdir="overlays/"
+  fi
   local b=$(basename $1)
-  case $b in
-    base)
-      echo base
-      ;;
-    *)
-      echo overlays/$b
-      ;;
-  esac
+  echo $parentdir$b
 }

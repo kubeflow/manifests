@@ -70,7 +70,10 @@ def find_kustomize_dirs(root):
     if top in TOP_LEVEL_EXCLUDES:
       continue
 
-    for child, _, files in os.walk(os.path.join(root, top)):
+    for child, dirs, files in os.walk(os.path.join(root, top)):
+      # skip kustomization.yaml in parent folder
+      if dirs:
+        continue
       for f in files:
         if f == "kustomization.yaml":
           changed_dirs.add(child)

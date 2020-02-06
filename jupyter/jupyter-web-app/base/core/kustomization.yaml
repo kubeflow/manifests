@@ -11,6 +11,9 @@ resources:
 - service.yaml
 namePrefix: jupyter-web-app-
 namespace: kubeflow
+commonLabels:
+  app: jupyter-web-app
+  kustomize.component: jupyter-web-app
 images:
 - name: gcr.io/kubeflow-images-public/jupyter-web-app
   newName: gcr.io/kubeflow-images-public/jupyter-web-app

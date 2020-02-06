@@ -71,7 +71,7 @@ commonLabels:
 }
 
 func TestJupyterWebAppBaseIstio(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/jupyter/jupyter-web-app/overlays/istio")
+	th := NewKustTestHarness(t, "/manifests/jupyter/jupyter-web-app/base/istio")
 	writeJupyterWebAppBaseIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {

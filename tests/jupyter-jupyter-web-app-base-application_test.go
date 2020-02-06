@@ -89,7 +89,7 @@ commonLabels:
 }
 
 func TestJupyterWebAppBaseApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/jupyter/jupyter-web-app/overlays/application")
+	th := NewKustTestHarness(t, "/manifests/jupyter/jupyter-web-app/base/application")
 	writeJupyterWebAppBaseApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {

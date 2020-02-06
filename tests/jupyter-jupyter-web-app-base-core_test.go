@@ -434,6 +434,9 @@ resources:
 - service.yaml
 namePrefix: jupyter-web-app-
 namespace: kubeflow
+commonLabels:
+  app: jupyter-web-app
+  kustomize.component: jupyter-web-app
 images:
 - name: gcr.io/kubeflow-images-public/jupyter-web-app
   newName: gcr.io/kubeflow-images-public/jupyter-web-app
@@ -508,7 +511,7 @@ commonLabels:
 }
 
 func TestJupyterWebAppBaseCore(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/jupyter/jupyter-web-app/overlays/core")
+	th := NewKustTestHarness(t, "/manifests/jupyter/jupyter-web-app/base/core")
 	writeJupyterWebAppBaseCore(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
