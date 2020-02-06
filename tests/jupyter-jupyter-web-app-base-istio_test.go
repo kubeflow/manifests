@@ -13,8 +13,8 @@ import (
 	"testing"
 )
 
-func writeJupyterJupyterWebAppIstio(th *KustTestHarness) {
-	th.writeF("/manifests/jupyter/jupyter-web-app/istio/virtual-service.yaml", `
+func writeJupyterWebAppBaseIstio(th *KustTestHarness) {
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/istio/virtual-service.yaml", `
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
@@ -40,12 +40,12 @@ spec:
         port:
           number: 80
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/istio/params.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/istio/params.yaml", `
 varReference:
 - path: spec/http/route/destination/host
   kind: VirtualService
 `)
-	th.writeK("/manifests/jupyter/jupyter-web-app/istio", `
+	th.writeK("/manifests/jupyter/jupyter-web-app/base/istio", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -53,11 +53,26 @@ resources:
 configurations:
 - params.yaml
 `)
+	th.writeK("/manifests/jupyter/jupyter-web-app/base", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- application
+- core
+- istio
+commonLabels:
+  app.kubernetes.io/name: jupyter-web-app
+  app.kubernetes.io/instance: jupyter-web-app-v0.7.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: jupyter-web-app
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.7.0
+`)
 }
 
-func TestJupyterJupyterWebAppIstio(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/jupyter/overlays/istio")
-	writeJupyterJupyterWebAppIstio(th)
+func TestJupyterWebAppBaseIstio(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/jupyter/jupyter-web-app/overlays/istio")
+	writeJupyterWebAppBaseIstio(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -66,7 +81,7 @@ func TestJupyterJupyterWebAppIstio(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../jupyter/jupyter-web-app/istio"
+	targetPath := "../jupyter/jupyter-web-app/base/istio"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)

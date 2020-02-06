@@ -13,8 +13,8 @@ import (
 	"testing"
 )
 
-func writeJupyterJupyterWebAppApplication(th *KustTestHarness) {
-	th.writeF("/manifests/jupyter/jupyter-web-app/application/application.yaml", `
+func writeJupyterWebAppBaseApplication(th *KustTestHarness) {
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/application/application.yaml", `
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
@@ -65,17 +65,32 @@ spec:
   addOwnerRef: true
 
 `)
-	th.writeK("/manifests/jupyter/jupyter-web-app/application", `
+	th.writeK("/manifests/jupyter/jupyter-web-app/base/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - application.yaml
 `)
+	th.writeK("/manifests/jupyter/jupyter-web-app/base", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- application
+- core
+- istio
+commonLabels:
+  app.kubernetes.io/name: jupyter-web-app
+  app.kubernetes.io/instance: jupyter-web-app-v0.7.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: jupyter-web-app
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.7.0
+`)
 }
 
-func TestJupyterJupyterWebAppApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/jupyter/overlays/application")
-	writeJupyterJupyterWebAppApplication(th)
+func TestJupyterWebAppBaseApplication(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/jupyter/jupyter-web-app/overlays/application")
+	writeJupyterWebAppBaseApplication(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -84,7 +99,7 @@ func TestJupyterJupyterWebAppApplication(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../jupyter/jupyter-web-app/application"
+	targetPath := "../jupyter/jupyter-web-app/base/application"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)

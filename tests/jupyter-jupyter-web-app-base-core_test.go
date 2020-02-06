@@ -13,47 +13,8 @@ import (
 	"testing"
 )
 
-func writeJupyterWebAppOverlaysIstio(th *KustTestHarness) {
-	th.writeF("/manifests/jupyter/jupyter-web-app/overlays/istio/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: jupyter-web-app
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - headers:
-      request:
-        add:
-          x-forwarded-prefix: /jupyter
-    match:
-    - uri:
-        prefix: /jupyter/
-    rewrite:
-      uri: /
-    route:
-    - destination:
-        host: jupyter-web-app-service.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 80
-`)
-	th.writeF("/manifests/jupyter/jupyter-web-app/overlays/istio/params.yaml", `
-varReference:
-- path: spec/http/route/destination/host
-  kind: VirtualService
-`)
-	th.writeK("/manifests/jupyter/jupyter-web-app/overlays/istio", `
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-- virtual-service.yaml
-configurations:
-- params.yaml
-`)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/cluster-role-binding.yaml", `
+func writeJupyterWebAppBaseCore(th *KustTestHarness) {
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/core/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -66,7 +27,7 @@ subjects:
 - kind: ServiceAccount
   name: service-account
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/cluster-role.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/core/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -180,7 +141,7 @@ rules:
   - list
   - watch
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/config-map.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/core/config-map.yaml", `
 apiVersion: v1
 data:
   spawner_ui_config.yaml: |
@@ -316,7 +277,7 @@ kind: ConfigMap
 metadata:
   name: config
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/deployment.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/core/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -358,7 +319,7 @@ spec:
           name: config
         name: config-volume
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/role-binding.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/core/role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
@@ -371,7 +332,7 @@ subjects:
 - kind: ServiceAccount
   name: jupyter-notebook
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/role.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/core/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
@@ -408,13 +369,13 @@ rules:
   verbs:
   - '*'
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/service-account.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/core/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: service-account
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/service.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/core/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -439,7 +400,7 @@ spec:
     targetPort: 5000
   type: ClusterIP
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/core/params.yaml", `
 varReference:
 - path: spec/template/spec/containers/imagePullPolicy
   kind: Deployment
@@ -450,7 +411,7 @@ varReference:
 - path: spec/template/spec/containers/0/env/3/value
   kind: Deployment
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.env", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/core/params.env", `
 UI=default
 ROK_SECRET_NAME=secret-rok-{username}
 policy=Always
@@ -459,7 +420,7 @@ clusterDomain=cluster.local
 userid-header=
 userid-prefix=
 `)
-	th.writeK("/manifests/jupyter/jupyter-web-app/base", `
+	th.writeK("/manifests/jupyter/jupyter-web-app/base/core", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -473,9 +434,6 @@ resources:
 - service.yaml
 namePrefix: jupyter-web-app-
 namespace: kubeflow
-commonLabels:
-  app: jupyter-web-app
-  kustomize.component: jupyter-web-app
 images:
 - name: gcr.io/kubeflow-images-public/jupyter-web-app
   newName: gcr.io/kubeflow-images-public/jupyter-web-app
@@ -532,11 +490,26 @@ vars:
 configurations:
 - params.yaml
 `)
+	th.writeK("/manifests/jupyter/jupyter-web-app/base", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- application
+- core
+- istio
+commonLabels:
+  app.kubernetes.io/name: jupyter-web-app
+  app.kubernetes.io/instance: jupyter-web-app-v0.7.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: jupyter-web-app
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.7.0
+`)
 }
 
-func TestJupyterWebAppOverlaysIstio(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/jupyter/jupyter-web-app/overlays/istio")
-	writeJupyterWebAppOverlaysIstio(th)
+func TestJupyterWebAppBaseCore(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/jupyter/jupyter-web-app/overlays/core")
+	writeJupyterWebAppBaseCore(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -545,7 +518,7 @@ func TestJupyterWebAppOverlaysIstio(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../jupyter/jupyter-web-app/overlays/istio"
+	targetPath := "../jupyter/jupyter-web-app/base/core"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
