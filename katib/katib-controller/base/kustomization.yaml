@@ -22,13 +22,13 @@ generatorOptions:
   disableNameSuffixHash: true
 images:
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
-  newTag: e80b323
+  newTag: v0.8.0
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
-  newTag: e80b323
+  newTag: v0.8.0
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
-  newTag: e80b323
+  newTag: v0.8.0
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
 - name: mysql
   newTag: "8"
