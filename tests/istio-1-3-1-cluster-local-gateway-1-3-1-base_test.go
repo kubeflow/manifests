@@ -61,9 +61,6 @@ spec:
   template:
     metadata:
       labels:
-        chart: gateways
-        heritage: Helm
-        release: RELEASE-NAME
         app: cluster-local-gateway
         istio: cluster-local-gateway
       annotations:
@@ -273,7 +270,6 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    release: RELEASE-NAME
     app: cluster-local-gateway
     istio: cluster-local-gateway
   ports:
