@@ -8,7 +8,7 @@ See [Best Practices](./docs/KustomizeBestPractices.md) for details on how kustom
 
 
 ## Kfctl Processing
-Kfctl traverses directories under manifests to find and build kustomize targets based on the configuration file `app.yaml`. The contents of app.yaml is the result of running kustomize on the base and specific overlays in the kubeflow [config](https://github.com/kubeflow/kubeflow/tree/master/bootstrap/config) directory. The overlays reflect what options are chosen when calling `kfctl init...`.  The kustomize package manager in kfctl will then read app.yaml and apply the packages, components and componentParams to kustomize in the following way:
+Kfctl traverses directories under manifests/kfdef to find and build kustomize targets based on the configuration file `app.yaml`. The contents of app.yaml is the result of running kustomize on the base and specific overlays in the kubeflow/manifests [kfdef](https://github.com/kubeflow/manifests/tree/master/kfdef) directory. The overlays reflect what options are chosen when calling `kfctl init...`.  The kustomize package manager in kfctl will then read app.yaml and apply the packages, components and componentParams to kustomize in the following way:
 
 - **packages**
   - are always top-level directories under the manifests repo
@@ -126,81 +126,102 @@ cd manifests/<target>/base
 kustomize build | tee <output file>
 ```
 
-Kustomize inputs to kfctl based on app.yaml which is derived from files under config/ such as [kfctl_default.yaml](https://github.com/kubeflow/kubeflow/blob/master/bootstrap/config/kfctl_default.yaml)):
+Kustomize inputs to kfctl based on app.yaml which is derived from files under kfdef/ such as [kfdef/kfctl_k8s_istio.yaml](https://github.com/kubeflow/manifests/blob/master/kfdef/kfctl_k8s_istio.yaml):
 
 ```
-apiVersion: kfdef.apps.kubeflow.org/v1alpha1
+apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
-  creationTimestamp: null
-  name: kubeflow
   namespace: kubeflow
 spec:
-  appdir: /Users/kdkasrav/kubeflow
-  componentParams:
-    ambassador:
-    - name: ambassadorServiceType
-      value: NodePort
-  components:
-  - metacontroller
-  - ambassador
-  - argo
-  - centraldashboard
-  - jupyter-web-app
-  - katib
-  - notebook-controller
-  - pipeline
-  - profiles
-  - pytorch-operator
-  - tensorboard
-  - tf-job-operator
-  - application
-  manifestsRepo: /Users/kdkasrav/kubeflow/.cache/manifests/pull/13/head
-  packageManager: kustomize@pull/13
-  packages:
-  - application
-  - argo
-  - common
-  - examples
-  - gcp
-  - jupyter
-  - katib
-  - metacontroller
-  - modeldb
-  - mpi-job
-  - pipeline
-  - profiles
-  - pytorch-job
-  - seldon
-  - tensorboard
-  - tf-serving
-  - tf-training
-  repo: /Users/kdkasrav/kubeflow/.cache/kubeflow/pull/2971/head/kubeflow
-  useBasicAuth: false
-  useIstio: false
-  version: pull/2971
+  applications:
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/istio-crds
+    name: istio-crds
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/istio-install
+    name: istio-install
+  - kustomizeConfig:
+      parameters:
+      - name: clusterRbacConfig
+        value: 'OFF'
+      repoRef:
+        name: manifests
+        path: istio/istio
+    name: istio
+  ......  
+    - kustomizeConfig:
+      overlays:
+      - application
+      - istio
+      parameters:
+      - name: admin
+        value: johnDoe@acme.com
+      repoRef:
+        name: manifests
+        path: profiles
+    name: profiles
+  - kustomizeConfig:
+      overlays:
+      - application
+      repoRef:
+        name: manifests
+        path: seldon/seldon-core-operator
+    name: seldon-core-operator
+  repos:
+  - name: manifests
+    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
+  version: master
 ```
 
 Outputs from kfctl (no platform specified):
 ```
-kustomize/
-├── ambassador.yaml
-├── api-service.yaml
-├── argo.yaml
-├── centraldashboard.yaml
-├── jupyter-web-app.yaml
-├── katib.yaml
-├── metacontroller.yaml
-├── minio.yaml
-├── mysql.yaml
-├── notebook-controller.yaml
-├── persistent-agent.yaml
-├── pipelines-runner.yaml
-├── pipelines-ui.yaml
-├── pipelines-viewer.yaml
-├── pytorch-operator.yaml
-├── scheduledworkflow.yaml
-├── tensorboard.yaml
-└── tf-job-operator.yaml
+kustomize
+├── api-service
+│   ├── base
+│   │   ├── config-map.yaml
+│   │   ├── deployment.yaml
+│   │   ├── kustomization.yaml
+│   │   ├── role-binding.yaml
+│   │   ├── role.yaml
+│   │   ├── service-account.yaml
+│   │   └── service.yaml
+│   ├── kustomization.yaml
+│   └── overlays
+│       └── application
+│           ├── application.yaml
+│           └── kustomization.yaml
+├── argo
+│   ├── base
+│   │   ├── cluster-role-binding.yaml
+│   │   ├── cluster-role.yaml
+│   │   ├── config-map.yaml
+│   │   ├── crd.yaml
+│   │   ├── deployment.yaml
+│   │   ├── kustomization.yaml
+│   │   ├── params.env
+│   │   ├── params.yaml
+│   │   ├── service-account.yaml
+│   │   └── service.yaml
+│   ├── kustomization.yaml
+│   └── overlays
+│       ├── application
+│       │   ├── application.yaml
+│       │   └── kustomization.yaml
+│       └── istio
+│           ├── kustomization.yaml
+│           ├── params.yaml
+│           └── virtual-service.yaml
+......
 ```
 
