@@ -223,6 +223,27 @@ spec:
                 values:
                 - "s390x"
 `)
+	th.writeF("/manifests/istio-1-3-1/cluster-local-gateway-1-3-1/base/horizontal-pod-autoscaler.yaml", `
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: cluster-local-gateway
+    istio: cluster-local-gateway
+  name: cluster-local-gateway
+spec:
+  maxReplicas: 5
+  metrics:
+  - resource:
+      name: cpu
+      targetAverageUtilization: 80
+    type: Resource
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: cluster-local-gateway
+`)
 	th.writeF("/manifests/istio-1-3-1/cluster-local-gateway-1-3-1/base/namespace.yaml", `
 apiVersion: v1
 kind: Namespace
@@ -329,6 +350,7 @@ resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - deployment.yaml
+- horizontal-pod-autoscaler.yaml
 - namespace.yaml
 - pod-disruption-budget.yaml
 - service-account.yaml
