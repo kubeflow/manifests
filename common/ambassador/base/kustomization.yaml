@@ -15,7 +15,8 @@ images:
   newTag: 0.37.0
 configMapGenerator:
 - name: ambassador-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 patchesJson6902:

@@ -6,7 +6,8 @@ resources:
 - vpc.yaml
 configMapGenerator:
 - name: alb-ingress-controller-vpc-parameters
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: VPC_ID
   objref:

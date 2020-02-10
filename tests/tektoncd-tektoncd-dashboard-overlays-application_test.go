@@ -72,7 +72,8 @@ resources:
 - application.yaml
 configMapGenerator:
 - name: tektoncd-dashboard-app-parameters
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: generateName
   objref:

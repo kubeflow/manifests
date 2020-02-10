@@ -17,7 +17,8 @@ images:
   newTag: v1.1-debian-cloudwatch
 configMapGenerator:
 - name: fluentd-cloud-watch-parameters
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: CLUSTER_NAME
   objref:

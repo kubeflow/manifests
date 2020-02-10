@@ -4,7 +4,8 @@ patchesStrategicMerge:
 - ingress.yaml
 configMapGenerator:
 - name: istio-ingress-cognito-parameters
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: CognitoUserPoolArn
   objref:

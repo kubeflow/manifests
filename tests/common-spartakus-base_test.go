@@ -102,7 +102,8 @@ images:
   newTag: v1.1.0
 configMapGenerator:
 - name: spartakus-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:

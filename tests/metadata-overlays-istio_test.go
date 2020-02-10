@@ -326,7 +326,8 @@ commonLabels:
   kustomize.component: metadata
 configMapGenerator:
 - name: ui-parameters
-  env: params.env
+  envs:
+  - params.env
 - name: metadata-grpc-configmap
   env: grpc-params.env
 resources:

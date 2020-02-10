@@ -219,7 +219,8 @@ images:
   newTag: 0.2.1
 configMapGenerator:
 - name: cloud-endpoints-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:

@@ -9,7 +9,8 @@ secretGenerator:
   namespace: istio-system
 configMapGenerator:
 - name: istio-ingress-oidc-parameters
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: oidcIssuer
   objref:

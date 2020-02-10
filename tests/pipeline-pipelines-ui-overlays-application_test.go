@@ -207,7 +207,8 @@ resources:
 - service.yaml
 configMapGenerator:
 - name: ui-parameters
-  env: params.env
+  envs:
+  - params.env
 images:
 - name: gcr.io/ml-pipeline/frontend
   newTag: 0.2.0

@@ -63,7 +63,8 @@ resources:
 - application.yaml
 configMapGenerator:
 - name: tektoncd-install-parameters
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: generateName
   objref:
@@ -771,7 +772,8 @@ resources:
 namespace: tekton-pipelines
 configMapGenerator:
 - name: tektoncd-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:

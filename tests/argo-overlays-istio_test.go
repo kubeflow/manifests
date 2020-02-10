@@ -407,7 +407,8 @@ images:
   newTag: v2.3.0
 configMapGenerator:
 - name: workflow-controller-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:

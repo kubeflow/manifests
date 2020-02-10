@@ -223,7 +223,8 @@ resources:
 
 configMapGenerator:
 - name: keycloak-gatekeeper-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 

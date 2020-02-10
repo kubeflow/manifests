@@ -197,7 +197,8 @@ resources:
 namespace: kubeflow
 configMapGenerator:
 - name: istio-parameters
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: clusterRbacConfig
   objref:

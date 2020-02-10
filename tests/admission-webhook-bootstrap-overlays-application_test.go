@@ -308,7 +308,8 @@ namespace: kubeflow
 configMapGenerator:
 - name: config-map
   behavior: merge
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: webhookNamePrefix
   objref:

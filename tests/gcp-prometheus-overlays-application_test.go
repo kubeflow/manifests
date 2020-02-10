@@ -356,7 +356,8 @@ commonLabels:
   kustomize.component: prometheus
 configMapGenerator:
 - name: prometheus-parameters
-  env: params.env
+  envs:
+  - params.env
 images:
 - name: gcr.io/stackdriver-prometheus/stackdriver-prometheus
   newName: gcr.io/stackdriver-prometheus/stackdriver-prometheus

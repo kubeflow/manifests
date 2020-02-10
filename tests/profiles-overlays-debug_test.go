@@ -55,7 +55,8 @@ patchesStrategicMerge:
 - deployment.yaml
 configMapGenerator:
 - name: parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:

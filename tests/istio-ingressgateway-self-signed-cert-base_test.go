@@ -46,7 +46,8 @@ resources:
 
 configMapGenerator:
 - name: ingressgateway-self-signed-cert-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 

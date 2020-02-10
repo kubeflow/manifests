@@ -272,7 +272,8 @@ images:
   newTag: 0.1.0
 configMapGenerator:
 - name: mpi-operator-config
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:

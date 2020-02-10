@@ -495,7 +495,8 @@ commonLabels:
   kustomize.component: kfserving
 configMapGenerator:
 - name: kfserving-parameters
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: registry
   objref:

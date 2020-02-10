@@ -55,7 +55,8 @@ resources:
 - virtual-service.yaml
 configMapGenerator:
 - name: tektoncd-dashboard-parameters
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: namespace
   objref:

@@ -157,7 +157,8 @@ commonLabels:
   kustomize.component: tensorboard
 configMapGenerator:
 - name: parameters
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: namespace
   objref:

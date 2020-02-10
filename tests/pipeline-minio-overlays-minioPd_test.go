@@ -63,7 +63,8 @@ patchesStrategicMerge:
 configMapGenerator:
 - name: pipeline-minio-parameters
   behavior: merge
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:
@@ -174,7 +175,8 @@ resources:
 - persistent-volume-claim.yaml
 configMapGenerator:
 - name: pipeline-minio-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:

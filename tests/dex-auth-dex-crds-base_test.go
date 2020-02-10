@@ -183,7 +183,8 @@ resources:
 - service.yaml
 configMapGenerator:
 - name: dex-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:

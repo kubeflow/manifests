@@ -661,7 +661,8 @@ images:
   newTag: 1.0.0
 configMapGenerator:
 - name: parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:

@@ -166,7 +166,8 @@ patchesStrategicMerge:
 configMapGenerator:
 - name: dex-parameters
   behavior: merge
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:
@@ -377,7 +378,8 @@ resources:
 - service.yaml
 configMapGenerator:
 - name: dex-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:

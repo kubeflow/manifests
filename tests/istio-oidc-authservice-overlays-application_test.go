@@ -228,7 +228,8 @@ namespace: istio-system
 
 configMapGenerator:
 - name: oidc-authservice-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 

@@ -78,7 +78,8 @@ patchesStrategicMerge:
 configMapGenerator:
 - name: admission-webhook-parameters
   behavior: merge
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 

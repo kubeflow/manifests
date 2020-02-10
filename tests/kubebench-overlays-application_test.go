@@ -211,7 +211,8 @@ commonLabels:
   kustomize.component: kubebench
 configMapGenerator:
 - name: parameters
-  env: params.env
+  envs:
+  - params.env
 images:
   # NOTE: the image for workflow agent should be configured in config-map.yaml
   - name:  gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2

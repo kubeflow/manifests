@@ -54,7 +54,8 @@ resources:
 - vpc.yaml
 configMapGenerator:
 - name: alb-ingress-controller-vpc-parameters
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: VPC_ID
   objref:
@@ -202,7 +203,8 @@ images:
   newTag: v1.1.2
 configMapGenerator:
 - name: alb-ingress-controller-parameters
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: CLUSTER_NAME
   objref:

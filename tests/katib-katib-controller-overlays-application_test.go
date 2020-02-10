@@ -705,7 +705,8 @@ resources:
 - trial-template-configmap.yaml
 configMapGenerator:
 - name: katib-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 images:

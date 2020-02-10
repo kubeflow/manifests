@@ -123,7 +123,8 @@ commonLabels:
   kustomize.component: cert-manager
 configMapGenerator:
 - name: cert-manager-kube-params-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:

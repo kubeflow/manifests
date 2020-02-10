@@ -42,7 +42,8 @@ resources:
 - profile-instance.yaml
 configMapGenerator:
 - name: default-install-parameters
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: user
   objref:
