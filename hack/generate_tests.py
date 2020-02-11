@@ -27,8 +27,14 @@ def get_changed_dirs():
   """Return a list of directories of changed kustomization packages."""
   # Generate a list of the files which have changed with respect to the upstream
   # branch
+
+  # TODO(jlewi): Upstream doesn't seem to work in some cases. I think
+  # upstream might end up referring to the
+  origin = os.getenv("REMOTE_ORIGIN", "@{upstream}")
+  logging.info("Using %s as remote origin; you can override using environment "
+               "variable REMOTE_ORIGIN", origin)
   modified_files = subprocess.check_output(
-    ["git", "diff", "--name-only", "@{upstream}"])
+    ["git", "diff", "--name-only", origin])
 
   repo_root = subprocess.check_output(["git", "rev-parse", "--show-toplevel"])
   repo_root = repo_root.decode()

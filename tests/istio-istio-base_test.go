@@ -151,7 +151,9 @@ metadata:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-istio-admin: "true"
 rules:
-- apiGroups: ["istio.io"]
+- apiGroups: 
+  - istio.io
+  - networking.istio.io
   resources: ["*"]
   verbs:
   - get
@@ -172,7 +174,9 @@ metadata:
   labels:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
 rules:
-- apiGroups: ["istio.io"]
+- apiGroups:
+  - istio.io
+  - networking.istio.io
   resources: ["*"]
   verbs:
   - get
