@@ -48,8 +48,6 @@ spec:
           value: IfNotPresent
         - name: ENGINE_CONTAINER_SERVICE_ACCOUNT_NAME
           value: default
-        - name: ENGINE_CONTAINER_USER
-          value: "8888"
         - name: ENGINE_LOG_MESSAGES_EXTERNALLY
           value: "false"
         - name: PREDICTIVE_UNIT_SERVICE_PORT
