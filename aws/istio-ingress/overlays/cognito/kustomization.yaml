@@ -34,5 +34,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.certArn
+namespace: istio-system
 configurations:
 - params.yaml
