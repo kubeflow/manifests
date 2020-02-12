@@ -24,17 +24,22 @@ spec:
               mountPath: /config-volume
             - name: fluentdconf
               mountPath: /fluentd/etc
+        - name: update-log-driver
+          image: busybox
+          command: ['sh','-c','']
       containers:
         - name: fluentd-cloudwatch
-          image: fluent/fluentd-kubernetes-daemonset:v1.1-debian-cloudwatch
+          image: fluent/fluentd-kubernetes-daemonset
           env:
             - name: REGION
               value: $(REGION)
             - name: CLUSTER_NAME
               value: $(CLUSTER_NAME)
+            - name: CI_VERSION
+              value: "k8s/1.0.1"
           resources:
             limits:
-              memory: 200Mi
+              memory: 400Mi
             requests:
               cpu: 100m
               memory: 200Mi
@@ -51,6 +56,9 @@ spec:
             - name: runlogjournal
               mountPath: /run/log/journal
               readOnly: true
+            - name: dmesg
+              mountPath: /var/log/dmesg
+              readOnly: true
       volumes:
         - name: config-volume
           configMap:
@@ -66,3 +74,6 @@ spec:
         - name: runlogjournal
           hostPath:
             path: /run/log/journal
+        - name: dmesg
+          hostPath:
+            path: /var/log/dmesg

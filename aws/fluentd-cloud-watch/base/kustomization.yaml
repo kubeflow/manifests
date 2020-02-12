@@ -14,7 +14,7 @@ generatorOptions:
 images:
 - name: fluent/fluentd-kubernetes-daemonset
   newName: fluent/fluentd-kubernetes-daemonset
-  newTag: v1.1-debian-cloudwatch
+  newTag: v1.7.3-debian-cloudwatch-1.0
 configMapGenerator:
 - name: fluentd-cloud-watch-parameters
   env: params.env
