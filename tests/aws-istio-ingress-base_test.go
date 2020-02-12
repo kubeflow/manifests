@@ -20,10 +20,9 @@ kind: Ingress
 metadata:
   annotations:
     kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/scheme: $(loadBalancerScheme)
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
   name: istio-ingress
-  namespace: istio-system
 spec:
   rules:
     - http:
@@ -33,6 +32,8 @@ spec:
               servicePort: 80
             path: /*
 `)
+	th.writeF("/manifests/aws/istio-ingress/base/params.env", `
+loadBalancerScheme=internet-facing`)
 	th.writeK("/manifests/aws/istio-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -40,7 +41,19 @@ resources:
 - ingress.yaml
 commonLabels:
   kustomize.component: istio-ingress
-`)
+configMapGenerator:
+- name: istio-ingress-parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: loadBalancerScheme
+  objref:
+    kind: ConfigMap
+    name: istio-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.loadBalancerScheme`)
 }
 
 func TestIstioIngressBase(t *testing.T) {
