@@ -13,7 +13,7 @@ generatorOptions:
 images:
 - name: docker.io/amazon/aws-alb-ingress-controller
   newName: docker.io/amazon/aws-alb-ingress-controller
-  newTag: v1.1.2
+  newTag: v1.1.5
 configMapGenerator:
 - name: alb-ingress-controller-parameters
   env: params.env

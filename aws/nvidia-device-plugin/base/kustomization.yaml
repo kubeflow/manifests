@@ -8,4 +8,4 @@ commonLabels:
 images:
 - name: nvidia/k8s-device-plugin
   newName: nvidia/k8s-device-plugin
-  newTag: 1.0.0-beta
+  newTag: 1.0.0-beta4

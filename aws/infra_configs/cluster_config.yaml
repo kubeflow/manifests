@@ -7,7 +7,7 @@ metadata:
   # AWS_CLUSTER_NAME and AWS_REGION will override `name` and `region` here.
   name: your_cluster_name
   region: your_cluster_region
-  version: '1.13'
+  version: '1.14'
 # If your region has multiple availability zones, you can specify 3 of them.
 # cluster AZs must be set explicitly for single AZ nodegroup example to work
 #availabilityZones: ["us-west-2b", "us-west-2c", "us-west-2d"]
