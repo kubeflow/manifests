@@ -89,7 +89,7 @@ spec:
           operator: Exists
           effect: NoSchedule
       containers:
-        - image: nvidia/k8s-device-plugin:1.0.0-beta
+        - image: nvidia/k8s-device-plugin:1.0.0-beta4
           name: nvidia-device-plugin-ctr
           securityContext:
             allowPrivilegeEscalation: false
@@ -114,7 +114,7 @@ commonLabels:
 images:
 - name: nvidia/k8s-device-plugin
   newName: nvidia/k8s-device-plugin
-  newTag: 1.0.0-beta
+  newTag: 1.0.0-beta4
 `)
 }
 

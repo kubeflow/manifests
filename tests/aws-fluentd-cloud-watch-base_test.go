@@ -24,7 +24,8 @@ rules:
     resources:
       - namespaces
       - pods
-    verbs: ["get", "list", "watch"]`)
+    verbs: ["get", "list", "watch"]
+`)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -37,7 +38,8 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: fluentd
-    namespace: kube-system`)
+    namespace: kube-system
+`)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/configmap.yaml", `
 apiVersion: v1
 kind: ConfigMap
@@ -49,6 +51,8 @@ data:
   fluent.conf: |
     @include containers.conf
     @include systemd.conf
+    @include host.conf
+
     <match fluent.**>
       @type null
     </match>
@@ -58,6 +62,7 @@ data:
       @id in_tail_container_logs
       @label @containers
       path /var/log/containers/*.log
+      exclude_path ["/var/log/containers/cloudwatch-agent*", "/var/log/containers/fluentd*"]
       pos_file /var/log/fluentd-containers.log.pos
       tag *
       read_from_head true
@@ -66,11 +71,61 @@ data:
         time_format %Y-%m-%dT%H:%M:%S.%NZ
       </parse>
     </source>
+
+    <source>
+      @type tail
+      @id in_tail_cwagent_logs
+      @label @cwagentlogs
+      path /var/log/containers/cloudwatch-agent*
+      pos_file /var/log/cloudwatch-agent.log.pos
+      tag *
+      read_from_head true
+      <parse>
+        @type json
+        time_format %Y-%m-%dT%H:%M:%S.%NZ
+      </parse>
+    </source>
+
+    <source>
+      @type tail
+      @id in_tail_fluentd_logs
+      @label @fluentdlogs
+      path /var/log/containers/fluentd*
+      pos_file /var/log/fluentd.log.pos
+      tag *
+      read_from_head true
+      <parse>
+        @type json
+        time_format %Y-%m-%dT%H:%M:%S.%NZ
+      </parse>
+    </source>
+
+    <label @fluentdlogs>
+      <filter **>
+        @type kubernetes_metadata
+        @id filter_kube_metadata_fluentd
+      </filter>
+
+      <filter **>
+        @type record_transformer
+        @id filter_fluentd_stream_transformer
+        <record>
+          stream_name ${tag_parts[3]}
+        </record>
+      </filter>
+
+      <match **>
+        @type relabel
+        @label @NORMAL
+      </match>
+    </label>
+
     <label @containers>
       <filter **>
         @type kubernetes_metadata
         @id filter_kube_metadata
       </filter>
+
       <filter **>
         @type record_transformer
         @id filter_containers_stream_transformer
@@ -78,11 +133,57 @@ data:
           stream_name ${tag_parts[3]}
         </record>
       </filter>
+
+      <filter **>
+        @type concat
+        key log
+        multiline_start_regexp /^\S/
+        separator ""
+        flush_interval 5
+        timeout_label @NORMAL
+      </filter>
+
+      <match **>
+        @type relabel
+        @label @NORMAL
+      </match>
+    </label>
+
+    <label @cwagentlogs>
+      <filter **>
+        @type kubernetes_metadata
+        @id filter_kube_metadata_cwagent
+      </filter>
+
+      <filter **>
+        @type record_transformer
+        @id filter_cwagent_stream_transformer
+        <record>
+          stream_name ${tag_parts[3]}
+        </record>
+      </filter>
+
+      <filter **>
+        @type concat
+        key log
+        multiline_start_regexp /^\d{4}[-/]\d{1,2}[-/]\d{1,2}/
+        separator ""
+        flush_interval 5
+        timeout_label @NORMAL
+      </filter>
+
+      <match **>
+        @type relabel
+        @label @NORMAL
+      </match>
+    </label>
+
+    <label @NORMAL>
       <match **>
         @type cloudwatch_logs
         @id out_cloudwatch_logs_containers
         region "#{ENV.fetch('REGION')}"
-        log_group_name "/eks/#{ENV.fetch('CLUSTER_NAME')}/containers"
+        log_group_name "/aws/containerinsights/#{ENV.fetch('CLUSTER_NAME')}/application"
         log_stream_name_key stream_name
         remove_log_stream_name_key true
         auto_create_stream true
@@ -104,11 +205,16 @@ data:
         field_map {"MESSAGE": "message", "_HOSTNAME": "hostname", "_SYSTEMD_UNIT": "systemd_unit"}
         field_map_strict true
       </entry>
-      path /run/log/journal
-      pos_file /var/log/fluentd-journald-kubelet.pos
+      path /var/log/journal
+      <storage>
+        @type local
+        persistent true
+        path /var/log/fluentd-journald-kubelet-pos.json
+      </storage>
       read_from_head true
       tag kubelet.service
     </source>
+
     <source>
       @type systemd
       @id in_systemd_kubeproxy
@@ -118,11 +224,16 @@ data:
         field_map {"MESSAGE": "message", "_HOSTNAME": "hostname", "_SYSTEMD_UNIT": "systemd_unit"}
         field_map_strict true
       </entry>
-      path /run/log/journal
-      pos_file /var/log/fluentd-journald-kubeproxy.pos
+      path /var/log/journal
+      <storage>
+        @type local
+        persistent true
+        path /var/log/fluentd-journald-kubeproxy-pos.json
+      </storage>
       read_from_head true
       tag kubeproxy.service
     </source>
+
     <source>
       @type systemd
       @id in_systemd_docker
@@ -132,12 +243,22 @@ data:
         field_map {"MESSAGE": "message", "_HOSTNAME": "hostname", "_SYSTEMD_UNIT": "systemd_unit"}
         field_map_strict true
       </entry>
-      path /run/log/journal
-      pos_file /var/log/fluentd-journald-docker.pos
+      path /var/log/journal
+      <storage>
+        @type local
+        persistent true
+        path /var/log/fluentd-journald-docker-pos.json
+      </storage>
       read_from_head true
       tag docker.service
     </source>
+
     <label @systemd>
+      <filter **>
+        @type kubernetes_metadata
+        @id filter_kube_metadata_systemd
+      </filter>
+
       <filter **>
         @type record_transformer
         @id filter_systemd_stream_transformer
@@ -145,11 +266,12 @@ data:
           stream_name ${tag}-${record["hostname"]}
         </record>
       </filter>
+
       <match **>
         @type cloudwatch_logs
         @id out_cloudwatch_logs_systemd
         region "#{ENV.fetch('REGION')}"
-        log_group_name "/eks/#{ENV.fetch('CLUSTER_NAME')}/systemd"
+        log_group_name "/aws/containerinsights/#{ENV.fetch('CLUSTER_NAME')}/dataplane"
         log_stream_name_key stream_name
         auto_create_stream true
         remove_log_stream_name_key true
@@ -160,7 +282,78 @@ data:
           retry_forever true
         </buffer>
       </match>
-    </label>`)
+    </label>
+  host.conf: |
+    <source>
+      @type tail
+      @id in_tail_dmesg
+      @label @hostlogs
+      path /var/log/dmesg
+      pos_file /var/log/dmesg.log.pos
+      tag host.dmesg
+      read_from_head true
+      <parse>
+        @type syslog
+      </parse>
+    </source>
+
+    <source>
+      @type tail
+      @id in_tail_secure
+      @label @hostlogs
+      path /var/log/secure
+      pos_file /var/log/secure.log.pos
+      tag host.secure
+      read_from_head true
+      <parse>
+        @type syslog
+      </parse>
+    </source>
+
+    <source>
+      @type tail
+      @id in_tail_messages
+      @label @hostlogs
+      path /var/log/messages
+      pos_file /var/log/messages.log.pos
+      tag host.messages
+      read_from_head true
+      <parse>
+        @type syslog
+      </parse>
+    </source>
+
+    <label @hostlogs>
+      <filter **>
+        @type kubernetes_metadata
+        @id filter_kube_metadata_host
+      </filter>
+
+      <filter **>
+        @type record_transformer
+        @id filter_containers_stream_transformer_host
+        <record>
+          stream_name ${tag}-${record["host"]}
+        </record>
+      </filter>
+
+      <match host.**>
+        @type cloudwatch_logs
+        @id out_cloudwatch_logs_host_logs
+        region "#{ENV.fetch('REGION')}"
+        log_group_name "/aws/containerinsights/#{ENV.fetch('CLUSTER_NAME')}/host"
+        log_stream_name_key stream_name
+        remove_log_stream_name_key true
+        auto_create_stream true
+        <buffer>
+          flush_interval 5
+          chunk_limit_size 2m
+          queued_chunks_limit_size 32
+          retry_forever true
+        </buffer>
+      </match>
+    </label>
+`)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/daemonset.yaml", `
 apiVersion: apps/v1
 kind: DaemonSet
@@ -188,17 +381,22 @@ spec:
               mountPath: /config-volume
             - name: fluentdconf
               mountPath: /fluentd/etc
+        - name: update-log-driver
+          image: busybox
+          command: ['sh','-c','']
       containers:
         - name: fluentd-cloudwatch
-          image: fluent/fluentd-kubernetes-daemonset:v1.1-debian-cloudwatch
+          image: fluent/fluentd-kubernetes-daemonset
           env:
             - name: REGION
               value: $(REGION)
             - name: CLUSTER_NAME
               value: $(CLUSTER_NAME)
+            - name: CI_VERSION
+              value: "k8s/1.0.1"
           resources:
             limits:
-              memory: 200Mi
+              memory: 400Mi
             requests:
               cpu: 100m
               memory: 200Mi
@@ -215,6 +413,9 @@ spec:
             - name: runlogjournal
               mountPath: /run/log/journal
               readOnly: true
+            - name: dmesg
+              mountPath: /var/log/dmesg
+              readOnly: true
       volumes:
         - name: config-volume
           configMap:
@@ -230,12 +431,16 @@ spec:
         - name: runlogjournal
           hostPath:
             path: /run/log/journal
+        - name: dmesg
+          hostPath:
+            path: /var/log/dmesg
 `)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: fluentd`)
+  name: fluentd
+`)
 	th.writeF("/manifests/aws/fluentd-cloud-watch/base/params.env", `
 region=us-west-2
 clusterName=
@@ -257,7 +462,7 @@ generatorOptions:
 images:
 - name: fluent/fluentd-kubernetes-daemonset
   newName: fluent/fluentd-kubernetes-daemonset
-  newTag: v1.1-debian-cloudwatch
+  newTag: v1.7.3-debian-cloudwatch-1.0
 configMapGenerator:
 - name: fluentd-cloud-watch-parameters
   env: params.env

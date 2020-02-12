@@ -46,6 +46,6 @@ spec:
             # List of regions: http://docs.aws.amazon.com/general/latest/gr/rande.html#vpc_region
             # - --aws-region=us-west-1
           # Repository location of the ALB Ingress Controller.
-          image: docker.io/amazon/aws-alb-ingress-controller:v1.1.2
+          image: docker.io/amazon/aws-alb-ingress-controller
           imagePullPolicy: Always
       serviceAccountName: alb-ingress-controller
