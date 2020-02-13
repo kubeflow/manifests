@@ -327,113 +327,6 @@ spec:
   selector:
     app: katib-controller
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-mysql-deployment.yaml", `
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: katib-mysql
-  labels:
-    app: katib
-    component: mysql
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: katib
-      component: mysql
-  template:
-    metadata:
-      name: katib-mysql
-      labels:
-        app: katib
-        component: mysql
-      annotations:
-        sidecar.istio.io/inject: "false"
-    spec:
-      containers:
-      - name: katib-mysql
-        image: mysql:8
-        args:
-        - --datadir
-        - /var/lib/mysql/datadir
-        env:
-          - name: MYSQL_ROOT_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: katib-mysql-secrets
-                key: MYSQL_ROOT_PASSWORD
-          - name: MYSQL_ALLOW_EMPTY_PASSWORD
-            value: "true"
-          - name: MYSQL_DATABASE
-            value: "katib"
-        ports:
-        - name: dbapi
-          containerPort: 3306
-        readinessProbe:
-          exec:
-            command:
-            - "/bin/bash"
-            - "-c"
-            - "mysql -D ${MYSQL_DATABASE} -u root -p${MYSQL_ROOT_PASSWORD} -e 'SELECT 1'"
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          timeoutSeconds: 1
-        livenessProbe:
-          exec:
-            command:
-            - "/bin/bash"
-            - "-c"
-            - "mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}"
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-        volumeMounts:
-        - name: katib-mysql
-          mountPath: /var/lib/mysql
-      volumes:
-      - name: katib-mysql
-        persistentVolumeClaim:
-          claimName: katib-mysql
-`)
-	th.writeF("/manifests/katib/katib-controller/base/katib-mysql-pvc.yaml", `
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: katib-mysql
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
-`)
-	th.writeF("/manifests/katib/katib-controller/base/katib-mysql-secret.yaml", `
-apiVersion: v1
-kind: Secret
-type: Opaque
-metadata:
-  name: katib-mysql-secrets
-data:
-  MYSQL_ROOT_PASSWORD: dGVzdA== # "test"
-`)
-	th.writeF("/manifests/katib/katib-controller/base/katib-mysql-service.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
-  name: katib-mysql
-  labels:
-    app: katib
-    component: mysql
-spec:
-  type: ClusterIP
-  ports:
-    - port: 3306
-      protocol: TCP
-      name: dbapi
-  selector:
-    app: katib
-    component: mysql
-`)
 	th.writeF("/manifests/katib/katib-controller/base/katib-db-manager-deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -461,14 +354,6 @@ spec:
       - name: katib-db-manager
         image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
         imagePullPolicy: IfNotPresent
-        env:
-          - name : DB_NAME
-            value: "mysql"
-          - name: DB_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: katib-mysql-secrets
-                key: MYSQL_ROOT_PASSWORD
         command:
           - './katib-db-manager'
         ports:
@@ -650,10 +535,6 @@ resources:
 - katib-controller-rbac.yaml
 - katib-controller-secret.yaml
 - katib-controller-service.yaml
-- katib-mysql-deployment.yaml
-- katib-mysql-pvc.yaml
-- katib-mysql-secret.yaml
-- katib-mysql-service.yaml
 - katib-db-manager-deployment.yaml
 - katib-db-manager-service.yaml
 - katib-ui-deployment.yaml
@@ -675,9 +556,6 @@ images:
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
   newTag: v0.8.0
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
-- name: mysql
-  newTag: "8"
-  newName: mysql
 vars:
 - name: clusterDomain
   objref:
