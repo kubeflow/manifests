@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: katib-db-manager
+spec:
+    spec:
+      containers:
+      - name: katib-db-manager
+        env:
+          - name : DB_NAME
+            value: "mysql"
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: katib-mysql-secrets
+                key: MYSQL_ROOT_PASSWORD
