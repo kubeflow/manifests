@@ -263,6 +263,7 @@ spec:
       - application
       - istio
       - ibm-storage-config
+      - db
       repoRef:
         name: manifests
         path: katib/katib-controller

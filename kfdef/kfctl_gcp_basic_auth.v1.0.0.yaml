@@ -253,6 +253,7 @@ spec:
       overlays:
       - application
       - istio
+      - db
       repoRef:
         name: manifests
         path: katib/katib-controller
