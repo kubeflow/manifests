@@ -9,3 +9,7 @@ resources:
 - katib-mysql-service.yaml
 patchesStrategicMerge:
 - katib-db-manager-deployment.yaml
+images:
+- name: mysql
+  newTag: "8"
+  newName: mysql

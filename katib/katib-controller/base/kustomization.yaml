@@ -26,9 +26,6 @@ images:
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
   newTag: v0.8.0
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
-- name: mysql
-  newTag: "8"
-  newName: mysql
 vars:
 - name: clusterDomain
   objref:
