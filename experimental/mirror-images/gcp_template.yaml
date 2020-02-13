@@ -1,0 +1,9 @@
+apiVersion: replication.utils.kubeflow.org/v1alpha1
+kind: Replication
+spec:
+  patterns:
+  - src:
+      exclude: gcr.io
+    # change to the gcr registry as image replication destination
+    dest: <target_gcr_registry>
+  context: gs://kubeflow-examples/image-replicate/replicate-context.tar.gz
