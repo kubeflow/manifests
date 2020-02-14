@@ -26,6 +26,14 @@ spec:
   # This component is the istio resources for Kubeflow (e.g. gateway), not about installing istio.
   - kustomizeConfig:
       parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/cluster-local-gateway
+    name: cluster-local-gateway
+  - kustomizeConfig:
+      parameters:
       - name: clusterRbacConfig
         value: "OFF"
       repoRef:
@@ -44,6 +52,33 @@ spec:
         name: manifests
         path: application/application
     name: application
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: cert-manager
+      repoRef:
+        name: manifests
+        path: cert-manager/cert-manager-crds
+    name: cert-manager-crds
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: kube-system
+      repoRef:
+        name: manifests
+        path: cert-manager/cert-manager-kube-system-resources
+    name: cert-manager-kube-system-resources
+  - kustomizeConfig:
+      overlays:
+      - self-signed
+      - application
+      parameters:
+      - name: namespace
+        value: cert-manager
+      repoRef:
+        name: manifests
+        path: cert-manager/cert-manager
+    name: cert-manager
   - kustomizeConfig:
       repoRef:
         name: manifests
