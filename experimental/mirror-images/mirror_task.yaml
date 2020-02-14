@@ -2,7 +2,7 @@ apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
   creationTimestamp: null
-  name: images-replication
+  name: mirror-image
 spec:
   inputs:
     params:
