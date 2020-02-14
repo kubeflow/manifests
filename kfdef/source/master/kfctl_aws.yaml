@@ -22,6 +22,14 @@ spec:
     name: istio-install
   - kustomizeConfig:
       parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/cluster-local-gateway
+    name: cluster-local-gateway
+  - kustomizeConfig:
+      parameters:
       - name: clusterRbacConfig
         value: "OFF"
       repoRef:

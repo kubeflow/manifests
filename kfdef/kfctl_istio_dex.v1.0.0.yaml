@@ -34,6 +34,14 @@ spec:
     name: istio-install
   - kustomizeConfig:
       parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio-1-3-1/cluster-local-gateway-1-3-1
+    name: cluster-local-gateway
+  - kustomizeConfig:
+      parameters:
       - name: clusterRbacConfig
         value: 'ON'
       repoRef:
@@ -190,6 +198,40 @@ spec:
         name: manifests
         path: pytorch-job/pytorch-operator
     name: pytorch-operator
+  - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: namespace
+        value: knative-serving
+      repoRef:
+        name: manifests
+        path: knative/knative-serving-crds
+    name: knative-crds
+  - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: namespace
+        value: knative-serving
+      repoRef:
+        name: manifests
+        path: knative/knative-serving-install
+    name: knative-install
+  - kustomizeConfig:
+      overlays:
+      - application
+      repoRef:
+        name: manifests
+        path: kfserving/kfserving-crds
+    name: kfserving-crds
+  - kustomizeConfig:
+      overlays:
+      - application
+      repoRef:
+        name: manifests
+        path: kfserving/kfserving-install
+    name: kfserving-install
   - kustomizeConfig:
       overlays:
       - application
