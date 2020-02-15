@@ -23,7 +23,7 @@ spec:
   - kustomizeConfig:
       parameters:
       - name: clusterRbacConfig
-        value: "OFF"
+        value: "ON"
       repoRef:
         name: manifests
         path: istio/istio
@@ -97,6 +97,9 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: userid-header
+        value: kubeflow-userid
       repoRef:
         name: manifests
         path: common/centraldashboard
@@ -293,6 +296,9 @@ spec:
       overlays:
       - application
       - istio
+      parameters:
+      - name: userid-header
+        value: kubeflow-userid
       repoRef:
         name: manifests
         path: profiles
@@ -321,6 +327,20 @@ spec:
         name: manifests
         path: aws/istio-ingress
     name: istio-ingress
+  - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: origin-header
+        value: x-amzn-oidc-header
+      - name: custom-header
+        value: kubeflow-userid
+      - name: istio-namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: aws/aws-istio-authz-adaptor
+    name: aws-istio-authz-adaptor
   - kustomizeConfig:
       overlays:
       - application
