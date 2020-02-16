@@ -12,10 +12,8 @@ spec:
       app.kubernetes.io/part-of: kubeflow
       app.kubernetes.io/version: v1.0.0
   componentKinds:
-  - group: rbac.authorization.k8s.io
-    kind: ClusterRole
-  - group: rbac.authorization.k8s.io
-    kind: ClusterRoleBinding
+  # Do not select any cluster scoped resources
+  # as that will cause problems.
   - group: apps
     kind: Deployment
   - group: core
