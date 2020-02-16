@@ -29,8 +29,8 @@ spec:
       app.kubernetes.io/part-of: webhook
       app.kubernetes.io/version: v0.7.0
   componentKinds:
-  - group: admissionregistration.k8s.io
-    kind: MutatingWebhookConfiguration
+  # Do not select any cluster scoped resources
+  # as that will cause problems.
   - group: core
     kind: ConfigMap
   - group: apps
