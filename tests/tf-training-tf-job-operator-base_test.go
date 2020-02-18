@@ -216,7 +216,7 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/tf_operator
   newName: gcr.io/kubeflow-images-public/tf_operator
-  newTag: vmaster-g92389064
+  newTag: vmaster-g00ea3ece
 `)
 }
 
