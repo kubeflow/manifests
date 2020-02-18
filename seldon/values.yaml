@@ -19,7 +19,7 @@ engine:
     pullPolicy: IfNotPresent
     registry: docker.io
     repository: seldonio/engine
-    tag: 1.0.1
+    tag: 1.0.2
   logMessagesExternally: false
   port: 8000
   prometheus:
@@ -33,11 +33,18 @@ image:
   pullPolicy: IfNotPresent
   registry: docker.io
   repository: seldonio/seldon-core-operator
-  tag: 1.0.1
+  tag: 1.0.2
 istio:
   enabled: true
   gateway: kubeflow-gateway
   tlsMode: ''
+kubeflow:
+  true
+manager:
+  memoryRequest: 200Mi
+  memoryLimit: 300Mi
+  cpuRequest: 100m
+  cpuLimit: 500m
 predictiveUnit:
   port: 9000
 predictor_servers:

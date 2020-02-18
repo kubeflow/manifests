@@ -84,9 +84,9 @@ kind: ConfigMap
 metadata:
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
     control-plane: seldon-controller-manager
   name: seldon-config
   namespace: 'kubeflow'
@@ -97,9 +97,9 @@ kind: ServiceAccount
 metadata:
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
   name: 'seldon-manager'
   namespace: 'kubeflow'
 ---
@@ -112,9 +112,9 @@ metadata:
   creationTimestamp: null
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
   name: seldondeployments.machinelearning.seldon.io
 spec:
   group: machinelearning.seldon.io
@@ -3069,9 +3069,9 @@ metadata:
   creationTimestamp: null
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
   name: seldon-manager-role-kubeflow
 rules:
 - apiGroups:
@@ -3238,9 +3238,9 @@ metadata:
   creationTimestamp: null
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
   name: seldon-manager-sas-role-kubeflow
 rules:
 - apiGroups:
@@ -3274,9 +3274,9 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
   name: seldon-manager-rolebinding-kubeflow
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -3293,9 +3293,9 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
   name: seldon-manager-sas-rolebinding-kubeflow
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -3312,9 +3312,9 @@ kind: Role
 metadata:
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
   name: seldon-leader-election-role
   namespace: 'kubeflow'
 rules:
@@ -3352,9 +3352,9 @@ metadata:
   creationTimestamp: null
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
   name: seldon-manager-cm-role
   namespace: 'kubeflow'
 rules:
@@ -3373,9 +3373,9 @@ kind: RoleBinding
 metadata:
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
   name: seldon-leader-election-rolebinding
   namespace: 'kubeflow'
 roleRef:
@@ -3393,9 +3393,9 @@ kind: RoleBinding
 metadata:
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
   name: seldon-manager-cm-rolebinding
   namespace: 'kubeflow'
 roleRef:
@@ -3413,9 +3413,9 @@ kind: Service
 metadata:
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
   name: seldon-webhook-service
   namespace: 'kubeflow'
 spec:
@@ -3435,9 +3435,9 @@ kind: Deployment
 metadata:
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
     control-plane: seldon-controller-manager
   name: seldon-controller-manager
   namespace: 'kubeflow'
@@ -3481,7 +3481,7 @@ spec:
         - name: AMBASSADOR_SINGLE_NAMESPACE
           value: 'false'
         - name: ENGINE_CONTAINER_IMAGE_AND_VERSION
-          value: 'docker.io/seldonio/engine:1.0.1'
+          value: 'docker.io/seldonio/engine:1.0.2'
         - name: ENGINE_CONTAINER_IMAGE_PULL_POLICY
           value: 'IfNotPresent'
         - name: ENGINE_CONTAINER_SERVICE_ACCOUNT_NAME
@@ -3504,7 +3504,7 @@ spec:
           value: 'kubeflow-gateway'
         - name: ISTIO_TLS_MODE
           value: ''
-        image: 'docker.io/seldonio/seldon-core-operator:1.0.1'
+        image: 'docker.io/seldonio/seldon-core-operator:1.0.2'
         imagePullPolicy: 'IfNotPresent'
         name: manager
         ports:
@@ -3516,11 +3516,11 @@ spec:
           protocol: TCP
         resources:
           limits:
-            cpu: 100m
-            memory: 30Mi
+            cpu: 500m
+            memory: 300Mi
           requests:
             cpu: 100m
-            memory: 20Mi
+            memory: 200Mi
         volumeMounts:
         - mountPath: /tmp/k8s-webhook-server/serving-certs
           name: cert
@@ -3539,9 +3539,9 @@ kind: Certificate
 metadata:
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
   name: seldon-serving-cert
   namespace: 'kubeflow'
 spec:
@@ -3560,9 +3560,9 @@ kind: Issuer
 metadata:
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
   name: seldon-selfsigned-issuer
   namespace: 'kubeflow'
 spec:
@@ -3577,19 +3577,19 @@ metadata:
   creationTimestamp: null
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
   name: seldon-mutating-webhook-configuration-kubeflow
 webhooks:
 - clientConfig:
-    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCRENDQWV5Z0F3SUJBZ0lRREpTUVN2d0RJbzdaTCtybngwNmJSakFOQmdrcWhraUc5dzBCQVFzRkFEQWMKTVJvd0dBWURWUVFERXhGamRYTjBiMjB0YldWMGNtbGpjeTFqWVRBZUZ3MHlNREF5TURNd05qSTBOVFZhRncweQpNVEF5TURJd05qSTBOVFZhTUJ3eEdqQVlCZ05WQkFNVEVXTjFjM1J2YlMxdFpYUnlhV056TFdOaE1JSUJJakFOCkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXRldldVOVFvN2lGUnlzMS9TTlh2VmFkSGFVSFIKTmVaSW9FQnVvN0RXRFI1cnFlbk9Ubmdpc1BrYzE5VDVTelpLRWtZVk52TnIrZ1RsUEo2OXE4N241VzRlc3UxbgpKa045SVAzWHA4enBtQ0FXTnQvaHFrOFJNZ0hFVml0Vkh6czdEVS9UMW5DRnAwRmltQTVUUkVNK1hyUU1EVFBmCkNVYnUycFh5UU44WHkrQmdHTWJDcXpIUmZ1Z1YrbHJDMHRxZzd2djZDWGRmdExyM3dvdlRKQXVOcjhjdkRUaEkKc3dYY3ZGdXFrdkhvM3hEWlgrQksyeTMwd1NmUnFoYWMwWjZGNlVESWdqbFRka0w0N0N1c2RISDNWeUZKczFxUApTLzRuN29iV2FsZG5DSDFUWlZtZmZIc3EvTjZJZ0F6TDE3RGlLUS9yWG9GV3RxZEM3Vmhtb3JnT093SURBUUFCCm8wSXdRREFPQmdOVkhROEJBZjhFQkFNQ0FxUXdIUVlEVlIwbEJCWXdGQVlJS3dZQkJRVUhBd0VHQ0NzR0FRVUYKQndNQ01BOEdBMVVkRXdFQi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFDZHh2aElVR2ZWMQpKRHc4eTdpUUt5NmRZMFc1L3hrR2JFeDc1YXNpSzA3SmJPYnFQeGJlUVJ3RGRYcm02U2JSVUphbjFkMmFYWjlTCmVHejhRUVIvUzVyQmFnN0lMUlREdmx6bmoxMnJ3RzVCZTRkYlJES25KNWdGdUU4M0hMYTZneU1rZ0NYUjNGenYKWG84eTA0L09yVGRGRlhLVWNnRHlBK2dQQlFkNFFSNUtBdVN4Z1dCR2RjbmUwdkNyS3FsRERhVGtMd3ZWVDE1ZgpvaWpzQ01GQ1drY0pzVEtyVzcxZ1cxZ0pmcHEzS0VNN1YxNERIbHVkSlJ0bXM2SlBITHFNdS8zWEpCWENzNTdsCkdVYTRCZnUzTVVmQmdESTFjYThnYzluT3Y2NTZrL2lBTnZuRHQyZGdBeDJscDVLbEp3cWRMMTVZN0llUVJieVAKb3J6WndESGIwTEE9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
+    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQU1WZ1FaclZBc3NacEVIZFROUTRvTkl3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF3TWpFNE1EZ3hOalUwV2hjTgpNakV3TWpFM01EZ3hOalUwV2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFNN1lna1B4NlI5Q1pzS3JyZ3p6TXdpajREcWQKV2NoVC9sWFpzR0owWTgwTEUwbU1NNXRrekhCTzY4ajVCdUk1dWxTZlBZcEJYN2I3VjI5M3VwamZvcWNRT2QxTwpSUk9LcVdoSkgvcDkyakxKL0xvSmFOL3NLRlBFNS9zUnRjSS8zSWxTUlB1dHdIdHd0WUVwSitUUFpIZms4QkJICmIrM2pHUTdxaHk2K055dElwd2ppZUdEU1ZCaW9qTUJ2MXEwL2FjVVhENnFhdEN6RUcvcjB6NHBJV2U3TTRXSnMKOGxDYm9OVGxLNVp6YUhwUWVRQWk0VlI0b3ZHYmprd2dVT0NFbDZaTjV6dTdTNGZPSm40K2xYbGxpVElIZ1V1bQpvQ20yc0xvcU04LzErY1VZVVFhcWg2UjNlNkZCZWVnMlJ1V2pnblRYZ01nYVY5SlJkK1hpd0lTVVp1a0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQVhnVHhpbVVrWQpRZjdybXo1RjFYbys3dk4vOGxxSWV4TEowT2hNbjBRaUV4eXBtTTlLdkExUFdZOFRSdVZZVVUrZU9mTDZ4bHNHCkRRTXlxWE1kd1VXQlFMR1U2RVVWSkRXWmxGYmFPSjFHakNGck10V2NKcGNPTTU4UU5CTi9oVEd4bzRlOTB4em4KUFVsakN4NTZqaE9XckVWQklOVUl6Y1J4MVl2cEtUSit2clpjQ250NXVVUS95dnlEZW9PYzJqYnNOMEIveUtSMwpJVnRLaC93T0NFUU5mc244L3FDajJkTzgyZ1FGTkN6NE5MZ3dmdmEvWCszMVdjTWhmQ1ZuOEY0aVU0d1FoR01IClJtMlhpZU1pNG1LTUdWT3RlYWdpMDU0WEU3SzUwL3hCKy9KWi9WTXF5ZHAzZVREY1NJMTNLTFFDWjJJbTl5QngKRDUrVVlwd2dOU0t4Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
     service:
       name: seldon-webhook-service
       namespace: 'kubeflow'
       path: /mutate-machinelearning-seldon-io-v1-seldondeployment
   failurePolicy: Fail
-  name: mseldondeployment.kb.io
+  name: v1.mseldondeployment.kb.io
   namespaceSelector:
     matchExpressions:
     - key: seldon.io/controller-id
@@ -3607,13 +3607,13 @@ webhooks:
     resources:
     - seldondeployments
 - clientConfig:
-    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCRENDQWV5Z0F3SUJBZ0lRREpTUVN2d0RJbzdaTCtybngwNmJSakFOQmdrcWhraUc5dzBCQVFzRkFEQWMKTVJvd0dBWURWUVFERXhGamRYTjBiMjB0YldWMGNtbGpjeTFqWVRBZUZ3MHlNREF5TURNd05qSTBOVFZhRncweQpNVEF5TURJd05qSTBOVFZhTUJ3eEdqQVlCZ05WQkFNVEVXTjFjM1J2YlMxdFpYUnlhV056TFdOaE1JSUJJakFOCkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXRldldVOVFvN2lGUnlzMS9TTlh2VmFkSGFVSFIKTmVaSW9FQnVvN0RXRFI1cnFlbk9Ubmdpc1BrYzE5VDVTelpLRWtZVk52TnIrZ1RsUEo2OXE4N241VzRlc3UxbgpKa045SVAzWHA4enBtQ0FXTnQvaHFrOFJNZ0hFVml0Vkh6czdEVS9UMW5DRnAwRmltQTVUUkVNK1hyUU1EVFBmCkNVYnUycFh5UU44WHkrQmdHTWJDcXpIUmZ1Z1YrbHJDMHRxZzd2djZDWGRmdExyM3dvdlRKQXVOcjhjdkRUaEkKc3dYY3ZGdXFrdkhvM3hEWlgrQksyeTMwd1NmUnFoYWMwWjZGNlVESWdqbFRka0w0N0N1c2RISDNWeUZKczFxUApTLzRuN29iV2FsZG5DSDFUWlZtZmZIc3EvTjZJZ0F6TDE3RGlLUS9yWG9GV3RxZEM3Vmhtb3JnT093SURBUUFCCm8wSXdRREFPQmdOVkhROEJBZjhFQkFNQ0FxUXdIUVlEVlIwbEJCWXdGQVlJS3dZQkJRVUhBd0VHQ0NzR0FRVUYKQndNQ01BOEdBMVVkRXdFQi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFDZHh2aElVR2ZWMQpKRHc4eTdpUUt5NmRZMFc1L3hrR2JFeDc1YXNpSzA3SmJPYnFQeGJlUVJ3RGRYcm02U2JSVUphbjFkMmFYWjlTCmVHejhRUVIvUzVyQmFnN0lMUlREdmx6bmoxMnJ3RzVCZTRkYlJES25KNWdGdUU4M0hMYTZneU1rZ0NYUjNGenYKWG84eTA0L09yVGRGRlhLVWNnRHlBK2dQQlFkNFFSNUtBdVN4Z1dCR2RjbmUwdkNyS3FsRERhVGtMd3ZWVDE1ZgpvaWpzQ01GQ1drY0pzVEtyVzcxZ1cxZ0pmcHEzS0VNN1YxNERIbHVkSlJ0bXM2SlBITHFNdS8zWEpCWENzNTdsCkdVYTRCZnUzTVVmQmdESTFjYThnYzluT3Y2NTZrL2lBTnZuRHQyZGdBeDJscDVLbEp3cWRMMTVZN0llUVJieVAKb3J6WndESGIwTEE9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
+    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQU1WZ1FaclZBc3NacEVIZFROUTRvTkl3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF3TWpFNE1EZ3hOalUwV2hjTgpNakV3TWpFM01EZ3hOalUwV2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFNN1lna1B4NlI5Q1pzS3JyZ3p6TXdpajREcWQKV2NoVC9sWFpzR0owWTgwTEUwbU1NNXRrekhCTzY4ajVCdUk1dWxTZlBZcEJYN2I3VjI5M3VwamZvcWNRT2QxTwpSUk9LcVdoSkgvcDkyakxKL0xvSmFOL3NLRlBFNS9zUnRjSS8zSWxTUlB1dHdIdHd0WUVwSitUUFpIZms4QkJICmIrM2pHUTdxaHk2K055dElwd2ppZUdEU1ZCaW9qTUJ2MXEwL2FjVVhENnFhdEN6RUcvcjB6NHBJV2U3TTRXSnMKOGxDYm9OVGxLNVp6YUhwUWVRQWk0VlI0b3ZHYmprd2dVT0NFbDZaTjV6dTdTNGZPSm40K2xYbGxpVElIZ1V1bQpvQ20yc0xvcU04LzErY1VZVVFhcWg2UjNlNkZCZWVnMlJ1V2pnblRYZ01nYVY5SlJkK1hpd0lTVVp1a0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQVhnVHhpbVVrWQpRZjdybXo1RjFYbys3dk4vOGxxSWV4TEowT2hNbjBRaUV4eXBtTTlLdkExUFdZOFRSdVZZVVUrZU9mTDZ4bHNHCkRRTXlxWE1kd1VXQlFMR1U2RVVWSkRXWmxGYmFPSjFHakNGck10V2NKcGNPTTU4UU5CTi9oVEd4bzRlOTB4em4KUFVsakN4NTZqaE9XckVWQklOVUl6Y1J4MVl2cEtUSit2clpjQ250NXVVUS95dnlEZW9PYzJqYnNOMEIveUtSMwpJVnRLaC93T0NFUU5mc244L3FDajJkTzgyZ1FGTkN6NE5MZ3dmdmEvWCszMVdjTWhmQ1ZuOEY0aVU0d1FoR01IClJtMlhpZU1pNG1LTUdWT3RlYWdpMDU0WEU3SzUwL3hCKy9KWi9WTXF5ZHAzZVREY1NJMTNLTFFDWjJJbTl5QngKRDUrVVlwd2dOU0t4Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
     service:
       name: seldon-webhook-service
       namespace: 'kubeflow'
       path: /mutate-machinelearning-seldon-io-v1alpha2-seldondeployment
   failurePolicy: Fail
-  name: mseldondeployment.kb.io
+  name: v1alpha2.mseldondeployment.kb.io
   namespaceSelector:
     matchExpressions:
     - key: seldon.io/controller-id
@@ -3631,13 +3631,13 @@ webhooks:
     resources:
     - seldondeployments
 - clientConfig:
-    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCRENDQWV5Z0F3SUJBZ0lRREpTUVN2d0RJbzdaTCtybngwNmJSakFOQmdrcWhraUc5dzBCQVFzRkFEQWMKTVJvd0dBWURWUVFERXhGamRYTjBiMjB0YldWMGNtbGpjeTFqWVRBZUZ3MHlNREF5TURNd05qSTBOVFZhRncweQpNVEF5TURJd05qSTBOVFZhTUJ3eEdqQVlCZ05WQkFNVEVXTjFjM1J2YlMxdFpYUnlhV056TFdOaE1JSUJJakFOCkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXRldldVOVFvN2lGUnlzMS9TTlh2VmFkSGFVSFIKTmVaSW9FQnVvN0RXRFI1cnFlbk9Ubmdpc1BrYzE5VDVTelpLRWtZVk52TnIrZ1RsUEo2OXE4N241VzRlc3UxbgpKa045SVAzWHA4enBtQ0FXTnQvaHFrOFJNZ0hFVml0Vkh6czdEVS9UMW5DRnAwRmltQTVUUkVNK1hyUU1EVFBmCkNVYnUycFh5UU44WHkrQmdHTWJDcXpIUmZ1Z1YrbHJDMHRxZzd2djZDWGRmdExyM3dvdlRKQXVOcjhjdkRUaEkKc3dYY3ZGdXFrdkhvM3hEWlgrQksyeTMwd1NmUnFoYWMwWjZGNlVESWdqbFRka0w0N0N1c2RISDNWeUZKczFxUApTLzRuN29iV2FsZG5DSDFUWlZtZmZIc3EvTjZJZ0F6TDE3RGlLUS9yWG9GV3RxZEM3Vmhtb3JnT093SURBUUFCCm8wSXdRREFPQmdOVkhROEJBZjhFQkFNQ0FxUXdIUVlEVlIwbEJCWXdGQVlJS3dZQkJRVUhBd0VHQ0NzR0FRVUYKQndNQ01BOEdBMVVkRXdFQi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFDZHh2aElVR2ZWMQpKRHc4eTdpUUt5NmRZMFc1L3hrR2JFeDc1YXNpSzA3SmJPYnFQeGJlUVJ3RGRYcm02U2JSVUphbjFkMmFYWjlTCmVHejhRUVIvUzVyQmFnN0lMUlREdmx6bmoxMnJ3RzVCZTRkYlJES25KNWdGdUU4M0hMYTZneU1rZ0NYUjNGenYKWG84eTA0L09yVGRGRlhLVWNnRHlBK2dQQlFkNFFSNUtBdVN4Z1dCR2RjbmUwdkNyS3FsRERhVGtMd3ZWVDE1ZgpvaWpzQ01GQ1drY0pzVEtyVzcxZ1cxZ0pmcHEzS0VNN1YxNERIbHVkSlJ0bXM2SlBITHFNdS8zWEpCWENzNTdsCkdVYTRCZnUzTVVmQmdESTFjYThnYzluT3Y2NTZrL2lBTnZuRHQyZGdBeDJscDVLbEp3cWRMMTVZN0llUVJieVAKb3J6WndESGIwTEE9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
+    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQU1WZ1FaclZBc3NacEVIZFROUTRvTkl3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF3TWpFNE1EZ3hOalUwV2hjTgpNakV3TWpFM01EZ3hOalUwV2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFNN1lna1B4NlI5Q1pzS3JyZ3p6TXdpajREcWQKV2NoVC9sWFpzR0owWTgwTEUwbU1NNXRrekhCTzY4ajVCdUk1dWxTZlBZcEJYN2I3VjI5M3VwamZvcWNRT2QxTwpSUk9LcVdoSkgvcDkyakxKL0xvSmFOL3NLRlBFNS9zUnRjSS8zSWxTUlB1dHdIdHd0WUVwSitUUFpIZms4QkJICmIrM2pHUTdxaHk2K055dElwd2ppZUdEU1ZCaW9qTUJ2MXEwL2FjVVhENnFhdEN6RUcvcjB6NHBJV2U3TTRXSnMKOGxDYm9OVGxLNVp6YUhwUWVRQWk0VlI0b3ZHYmprd2dVT0NFbDZaTjV6dTdTNGZPSm40K2xYbGxpVElIZ1V1bQpvQ20yc0xvcU04LzErY1VZVVFhcWg2UjNlNkZCZWVnMlJ1V2pnblRYZ01nYVY5SlJkK1hpd0lTVVp1a0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQVhnVHhpbVVrWQpRZjdybXo1RjFYbys3dk4vOGxxSWV4TEowT2hNbjBRaUV4eXBtTTlLdkExUFdZOFRSdVZZVVUrZU9mTDZ4bHNHCkRRTXlxWE1kd1VXQlFMR1U2RVVWSkRXWmxGYmFPSjFHakNGck10V2NKcGNPTTU4UU5CTi9oVEd4bzRlOTB4em4KUFVsakN4NTZqaE9XckVWQklOVUl6Y1J4MVl2cEtUSit2clpjQ250NXVVUS95dnlEZW9PYzJqYnNOMEIveUtSMwpJVnRLaC93T0NFUU5mc244L3FDajJkTzgyZ1FGTkN6NE5MZ3dmdmEvWCszMVdjTWhmQ1ZuOEY0aVU0d1FoR01IClJtMlhpZU1pNG1LTUdWT3RlYWdpMDU0WEU3SzUwL3hCKy9KWi9WTXF5ZHAzZVREY1NJMTNLTFFDWjJJbTl5QngKRDUrVVlwd2dOU0t4Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
     service:
       name: seldon-webhook-service
       namespace: 'kubeflow'
       path: /mutate-machinelearning-seldon-io-v1alpha3-seldondeployment
   failurePolicy: Fail
-  name: mseldondeployment.kb.io
+  name: v1alpha3.mseldondeployment.kb.io
   namespaceSelector:
     matchExpressions:
     - key: seldon.io/controller-id
@@ -3666,19 +3666,19 @@ metadata:
   creationTimestamp: null
   labels:
     app: seldon
-    app.kubernetes.io/instance: 'RELEASE-NAME'
+    app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.0.1'
+    app.kubernetes.io/version: '1.0.2'
   name: seldon-validating-webhook-configuration-kubeflow
 webhooks:
 - clientConfig:
-    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCRENDQWV5Z0F3SUJBZ0lRREpTUVN2d0RJbzdaTCtybngwNmJSakFOQmdrcWhraUc5dzBCQVFzRkFEQWMKTVJvd0dBWURWUVFERXhGamRYTjBiMjB0YldWMGNtbGpjeTFqWVRBZUZ3MHlNREF5TURNd05qSTBOVFZhRncweQpNVEF5TURJd05qSTBOVFZhTUJ3eEdqQVlCZ05WQkFNVEVXTjFjM1J2YlMxdFpYUnlhV056TFdOaE1JSUJJakFOCkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXRldldVOVFvN2lGUnlzMS9TTlh2VmFkSGFVSFIKTmVaSW9FQnVvN0RXRFI1cnFlbk9Ubmdpc1BrYzE5VDVTelpLRWtZVk52TnIrZ1RsUEo2OXE4N241VzRlc3UxbgpKa045SVAzWHA4enBtQ0FXTnQvaHFrOFJNZ0hFVml0Vkh6czdEVS9UMW5DRnAwRmltQTVUUkVNK1hyUU1EVFBmCkNVYnUycFh5UU44WHkrQmdHTWJDcXpIUmZ1Z1YrbHJDMHRxZzd2djZDWGRmdExyM3dvdlRKQXVOcjhjdkRUaEkKc3dYY3ZGdXFrdkhvM3hEWlgrQksyeTMwd1NmUnFoYWMwWjZGNlVESWdqbFRka0w0N0N1c2RISDNWeUZKczFxUApTLzRuN29iV2FsZG5DSDFUWlZtZmZIc3EvTjZJZ0F6TDE3RGlLUS9yWG9GV3RxZEM3Vmhtb3JnT093SURBUUFCCm8wSXdRREFPQmdOVkhROEJBZjhFQkFNQ0FxUXdIUVlEVlIwbEJCWXdGQVlJS3dZQkJRVUhBd0VHQ0NzR0FRVUYKQndNQ01BOEdBMVVkRXdFQi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFDZHh2aElVR2ZWMQpKRHc4eTdpUUt5NmRZMFc1L3hrR2JFeDc1YXNpSzA3SmJPYnFQeGJlUVJ3RGRYcm02U2JSVUphbjFkMmFYWjlTCmVHejhRUVIvUzVyQmFnN0lMUlREdmx6bmoxMnJ3RzVCZTRkYlJES25KNWdGdUU4M0hMYTZneU1rZ0NYUjNGenYKWG84eTA0L09yVGRGRlhLVWNnRHlBK2dQQlFkNFFSNUtBdVN4Z1dCR2RjbmUwdkNyS3FsRERhVGtMd3ZWVDE1ZgpvaWpzQ01GQ1drY0pzVEtyVzcxZ1cxZ0pmcHEzS0VNN1YxNERIbHVkSlJ0bXM2SlBITHFNdS8zWEpCWENzNTdsCkdVYTRCZnUzTVVmQmdESTFjYThnYzluT3Y2NTZrL2lBTnZuRHQyZGdBeDJscDVLbEp3cWRMMTVZN0llUVJieVAKb3J6WndESGIwTEE9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
+    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQU1WZ1FaclZBc3NacEVIZFROUTRvTkl3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF3TWpFNE1EZ3hOalUwV2hjTgpNakV3TWpFM01EZ3hOalUwV2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFNN1lna1B4NlI5Q1pzS3JyZ3p6TXdpajREcWQKV2NoVC9sWFpzR0owWTgwTEUwbU1NNXRrekhCTzY4ajVCdUk1dWxTZlBZcEJYN2I3VjI5M3VwamZvcWNRT2QxTwpSUk9LcVdoSkgvcDkyakxKL0xvSmFOL3NLRlBFNS9zUnRjSS8zSWxTUlB1dHdIdHd0WUVwSitUUFpIZms4QkJICmIrM2pHUTdxaHk2K055dElwd2ppZUdEU1ZCaW9qTUJ2MXEwL2FjVVhENnFhdEN6RUcvcjB6NHBJV2U3TTRXSnMKOGxDYm9OVGxLNVp6YUhwUWVRQWk0VlI0b3ZHYmprd2dVT0NFbDZaTjV6dTdTNGZPSm40K2xYbGxpVElIZ1V1bQpvQ20yc0xvcU04LzErY1VZVVFhcWg2UjNlNkZCZWVnMlJ1V2pnblRYZ01nYVY5SlJkK1hpd0lTVVp1a0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQVhnVHhpbVVrWQpRZjdybXo1RjFYbys3dk4vOGxxSWV4TEowT2hNbjBRaUV4eXBtTTlLdkExUFdZOFRSdVZZVVUrZU9mTDZ4bHNHCkRRTXlxWE1kd1VXQlFMR1U2RVVWSkRXWmxGYmFPSjFHakNGck10V2NKcGNPTTU4UU5CTi9oVEd4bzRlOTB4em4KUFVsakN4NTZqaE9XckVWQklOVUl6Y1J4MVl2cEtUSit2clpjQ250NXVVUS95dnlEZW9PYzJqYnNOMEIveUtSMwpJVnRLaC93T0NFUU5mc244L3FDajJkTzgyZ1FGTkN6NE5MZ3dmdmEvWCszMVdjTWhmQ1ZuOEY0aVU0d1FoR01IClJtMlhpZU1pNG1LTUdWT3RlYWdpMDU0WEU3SzUwL3hCKy9KWi9WTXF5ZHAzZVREY1NJMTNLTFFDWjJJbTl5QngKRDUrVVlwd2dOU0t4Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
     service:
       name: seldon-webhook-service
       namespace: 'kubeflow'
       path: /validate-machinelearning-seldon-io-v1-seldondeployment
   failurePolicy: Fail
-  name: vseldondeployment.kb.io
+  name: v1.vseldondeployment.kb.io
   namespaceSelector:
     matchExpressions:
     - key: seldon.io/controller-id
@@ -3696,13 +3696,13 @@ webhooks:
     resources:
     - seldondeployments
 - clientConfig:
-    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCRENDQWV5Z0F3SUJBZ0lRREpTUVN2d0RJbzdaTCtybngwNmJSakFOQmdrcWhraUc5dzBCQVFzRkFEQWMKTVJvd0dBWURWUVFERXhGamRYTjBiMjB0YldWMGNtbGpjeTFqWVRBZUZ3MHlNREF5TURNd05qSTBOVFZhRncweQpNVEF5TURJd05qSTBOVFZhTUJ3eEdqQVlCZ05WQkFNVEVXTjFjM1J2YlMxdFpYUnlhV056TFdOaE1JSUJJakFOCkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXRldldVOVFvN2lGUnlzMS9TTlh2VmFkSGFVSFIKTmVaSW9FQnVvN0RXRFI1cnFlbk9Ubmdpc1BrYzE5VDVTelpLRWtZVk52TnIrZ1RsUEo2OXE4N241VzRlc3UxbgpKa045SVAzWHA4enBtQ0FXTnQvaHFrOFJNZ0hFVml0Vkh6czdEVS9UMW5DRnAwRmltQTVUUkVNK1hyUU1EVFBmCkNVYnUycFh5UU44WHkrQmdHTWJDcXpIUmZ1Z1YrbHJDMHRxZzd2djZDWGRmdExyM3dvdlRKQXVOcjhjdkRUaEkKc3dYY3ZGdXFrdkhvM3hEWlgrQksyeTMwd1NmUnFoYWMwWjZGNlVESWdqbFRka0w0N0N1c2RISDNWeUZKczFxUApTLzRuN29iV2FsZG5DSDFUWlZtZmZIc3EvTjZJZ0F6TDE3RGlLUS9yWG9GV3RxZEM3Vmhtb3JnT093SURBUUFCCm8wSXdRREFPQmdOVkhROEJBZjhFQkFNQ0FxUXdIUVlEVlIwbEJCWXdGQVlJS3dZQkJRVUhBd0VHQ0NzR0FRVUYKQndNQ01BOEdBMVVkRXdFQi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFDZHh2aElVR2ZWMQpKRHc4eTdpUUt5NmRZMFc1L3hrR2JFeDc1YXNpSzA3SmJPYnFQeGJlUVJ3RGRYcm02U2JSVUphbjFkMmFYWjlTCmVHejhRUVIvUzVyQmFnN0lMUlREdmx6bmoxMnJ3RzVCZTRkYlJES25KNWdGdUU4M0hMYTZneU1rZ0NYUjNGenYKWG84eTA0L09yVGRGRlhLVWNnRHlBK2dQQlFkNFFSNUtBdVN4Z1dCR2RjbmUwdkNyS3FsRERhVGtMd3ZWVDE1ZgpvaWpzQ01GQ1drY0pzVEtyVzcxZ1cxZ0pmcHEzS0VNN1YxNERIbHVkSlJ0bXM2SlBITHFNdS8zWEpCWENzNTdsCkdVYTRCZnUzTVVmQmdESTFjYThnYzluT3Y2NTZrL2lBTnZuRHQyZGdBeDJscDVLbEp3cWRMMTVZN0llUVJieVAKb3J6WndESGIwTEE9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
+    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQU1WZ1FaclZBc3NacEVIZFROUTRvTkl3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF3TWpFNE1EZ3hOalUwV2hjTgpNakV3TWpFM01EZ3hOalUwV2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFNN1lna1B4NlI5Q1pzS3JyZ3p6TXdpajREcWQKV2NoVC9sWFpzR0owWTgwTEUwbU1NNXRrekhCTzY4ajVCdUk1dWxTZlBZcEJYN2I3VjI5M3VwamZvcWNRT2QxTwpSUk9LcVdoSkgvcDkyakxKL0xvSmFOL3NLRlBFNS9zUnRjSS8zSWxTUlB1dHdIdHd0WUVwSitUUFpIZms4QkJICmIrM2pHUTdxaHk2K055dElwd2ppZUdEU1ZCaW9qTUJ2MXEwL2FjVVhENnFhdEN6RUcvcjB6NHBJV2U3TTRXSnMKOGxDYm9OVGxLNVp6YUhwUWVRQWk0VlI0b3ZHYmprd2dVT0NFbDZaTjV6dTdTNGZPSm40K2xYbGxpVElIZ1V1bQpvQ20yc0xvcU04LzErY1VZVVFhcWg2UjNlNkZCZWVnMlJ1V2pnblRYZ01nYVY5SlJkK1hpd0lTVVp1a0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQVhnVHhpbVVrWQpRZjdybXo1RjFYbys3dk4vOGxxSWV4TEowT2hNbjBRaUV4eXBtTTlLdkExUFdZOFRSdVZZVVUrZU9mTDZ4bHNHCkRRTXlxWE1kd1VXQlFMR1U2RVVWSkRXWmxGYmFPSjFHakNGck10V2NKcGNPTTU4UU5CTi9oVEd4bzRlOTB4em4KUFVsakN4NTZqaE9XckVWQklOVUl6Y1J4MVl2cEtUSit2clpjQ250NXVVUS95dnlEZW9PYzJqYnNOMEIveUtSMwpJVnRLaC93T0NFUU5mc244L3FDajJkTzgyZ1FGTkN6NE5MZ3dmdmEvWCszMVdjTWhmQ1ZuOEY0aVU0d1FoR01IClJtMlhpZU1pNG1LTUdWT3RlYWdpMDU0WEU3SzUwL3hCKy9KWi9WTXF5ZHAzZVREY1NJMTNLTFFDWjJJbTl5QngKRDUrVVlwd2dOU0t4Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
     service:
       name: seldon-webhook-service
       namespace: 'kubeflow'
       path: /validate-machinelearning-seldon-io-v1alpha2-seldondeployment
   failurePolicy: Fail
-  name: vseldondeployment.kb.io
+  name: v1alpha2.vseldondeployment.kb.io
   namespaceSelector:
     matchExpressions:
     - key: seldon.io/controller-id
@@ -3720,13 +3720,13 @@ webhooks:
     resources:
     - seldondeployments
 - clientConfig:
-    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCRENDQWV5Z0F3SUJBZ0lRREpTUVN2d0RJbzdaTCtybngwNmJSakFOQmdrcWhraUc5dzBCQVFzRkFEQWMKTVJvd0dBWURWUVFERXhGamRYTjBiMjB0YldWMGNtbGpjeTFqWVRBZUZ3MHlNREF5TURNd05qSTBOVFZhRncweQpNVEF5TURJd05qSTBOVFZhTUJ3eEdqQVlCZ05WQkFNVEVXTjFjM1J2YlMxdFpYUnlhV056TFdOaE1JSUJJakFOCkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXRldldVOVFvN2lGUnlzMS9TTlh2VmFkSGFVSFIKTmVaSW9FQnVvN0RXRFI1cnFlbk9Ubmdpc1BrYzE5VDVTelpLRWtZVk52TnIrZ1RsUEo2OXE4N241VzRlc3UxbgpKa045SVAzWHA4enBtQ0FXTnQvaHFrOFJNZ0hFVml0Vkh6czdEVS9UMW5DRnAwRmltQTVUUkVNK1hyUU1EVFBmCkNVYnUycFh5UU44WHkrQmdHTWJDcXpIUmZ1Z1YrbHJDMHRxZzd2djZDWGRmdExyM3dvdlRKQXVOcjhjdkRUaEkKc3dYY3ZGdXFrdkhvM3hEWlgrQksyeTMwd1NmUnFoYWMwWjZGNlVESWdqbFRka0w0N0N1c2RISDNWeUZKczFxUApTLzRuN29iV2FsZG5DSDFUWlZtZmZIc3EvTjZJZ0F6TDE3RGlLUS9yWG9GV3RxZEM3Vmhtb3JnT093SURBUUFCCm8wSXdRREFPQmdOVkhROEJBZjhFQkFNQ0FxUXdIUVlEVlIwbEJCWXdGQVlJS3dZQkJRVUhBd0VHQ0NzR0FRVUYKQndNQ01BOEdBMVVkRXdFQi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFDZHh2aElVR2ZWMQpKRHc4eTdpUUt5NmRZMFc1L3hrR2JFeDc1YXNpSzA3SmJPYnFQeGJlUVJ3RGRYcm02U2JSVUphbjFkMmFYWjlTCmVHejhRUVIvUzVyQmFnN0lMUlREdmx6bmoxMnJ3RzVCZTRkYlJES25KNWdGdUU4M0hMYTZneU1rZ0NYUjNGenYKWG84eTA0L09yVGRGRlhLVWNnRHlBK2dQQlFkNFFSNUtBdVN4Z1dCR2RjbmUwdkNyS3FsRERhVGtMd3ZWVDE1ZgpvaWpzQ01GQ1drY0pzVEtyVzcxZ1cxZ0pmcHEzS0VNN1YxNERIbHVkSlJ0bXM2SlBITHFNdS8zWEpCWENzNTdsCkdVYTRCZnUzTVVmQmdESTFjYThnYzluT3Y2NTZrL2lBTnZuRHQyZGdBeDJscDVLbEp3cWRMMTVZN0llUVJieVAKb3J6WndESGIwTEE9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
+    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQU1WZ1FaclZBc3NacEVIZFROUTRvTkl3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF3TWpFNE1EZ3hOalUwV2hjTgpNakV3TWpFM01EZ3hOalUwV2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFNN1lna1B4NlI5Q1pzS3JyZ3p6TXdpajREcWQKV2NoVC9sWFpzR0owWTgwTEUwbU1NNXRrekhCTzY4ajVCdUk1dWxTZlBZcEJYN2I3VjI5M3VwamZvcWNRT2QxTwpSUk9LcVdoSkgvcDkyakxKL0xvSmFOL3NLRlBFNS9zUnRjSS8zSWxTUlB1dHdIdHd0WUVwSitUUFpIZms4QkJICmIrM2pHUTdxaHk2K055dElwd2ppZUdEU1ZCaW9qTUJ2MXEwL2FjVVhENnFhdEN6RUcvcjB6NHBJV2U3TTRXSnMKOGxDYm9OVGxLNVp6YUhwUWVRQWk0VlI0b3ZHYmprd2dVT0NFbDZaTjV6dTdTNGZPSm40K2xYbGxpVElIZ1V1bQpvQ20yc0xvcU04LzErY1VZVVFhcWg2UjNlNkZCZWVnMlJ1V2pnblRYZ01nYVY5SlJkK1hpd0lTVVp1a0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQVhnVHhpbVVrWQpRZjdybXo1RjFYbys3dk4vOGxxSWV4TEowT2hNbjBRaUV4eXBtTTlLdkExUFdZOFRSdVZZVVUrZU9mTDZ4bHNHCkRRTXlxWE1kd1VXQlFMR1U2RVVWSkRXWmxGYmFPSjFHakNGck10V2NKcGNPTTU4UU5CTi9oVEd4bzRlOTB4em4KUFVsakN4NTZqaE9XckVWQklOVUl6Y1J4MVl2cEtUSit2clpjQ250NXVVUS95dnlEZW9PYzJqYnNOMEIveUtSMwpJVnRLaC93T0NFUU5mc244L3FDajJkTzgyZ1FGTkN6NE5MZ3dmdmEvWCszMVdjTWhmQ1ZuOEY0aVU0d1FoR01IClJtMlhpZU1pNG1LTUdWT3RlYWdpMDU0WEU3SzUwL3hCKy9KWi9WTXF5ZHAzZVREY1NJMTNLTFFDWjJJbTl5QngKRDUrVVlwd2dOU0t4Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
     service:
       name: seldon-webhook-service
       namespace: 'kubeflow'
       path: /validate-machinelearning-seldon-io-v1alpha3-seldondeployment
   failurePolicy: Fail
-  name: vseldondeployment.kb.io
+  name: v1alpha3.vseldondeployment.kb.io
   namespaceSelector:
     matchExpressions:
     - key: seldon.io/controller-id
