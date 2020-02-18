@@ -59,10 +59,11 @@ class KFDefBuilder:
 
           # Remove the name. Kustomize requires a name but we don't want
           # a name so that kfctl will fill it in based on the app directory
-          del spec["metadata"]["name"]
+          if os.environ.get("OPERATOR_KFDEF", "").lower() != "true":
+            del spec["metadata"]["name"]
 
           with open(new_file, "w") as hf:
-            yaml.safe_dump(spec, hf)
+            yaml.safe_dump(spec, hf, default_flow_style = False)
 
 if __name__ == "__main__":
 

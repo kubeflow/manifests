@@ -1,6 +1,8 @@
 This directory contains kustomization packages that are used to generate the YAML specs for the KFDef.
 
 The script `hack/build_kfdef_specs.py` is used to run kustomize and output the YAML files.
+By default *metadata.name* is not generated. However, `OPERATOR_KFDEF` environment variable can be
+set to `true` for building the KubeFlow operator version of kfdefs that contain *metadata.name*.
 
 ## Subdirectories
 
