@@ -53,6 +53,16 @@ spec:
         - secretRef:
             name: metadata-db-secrets
         image: gcr.io/kubeflow-images-public/metadata:v0.1.11
+        livenessProbe:
+          httpGet:
+            httpHeaders:
+            - name: ContentType
+              value: application/json
+            path: /api/v1alpha1/artifact_types
+            port: backendapi
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 2
         name: container
         ports:
         - containerPort: 8080
