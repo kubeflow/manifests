@@ -414,5 +414,5 @@ spec:
       useBasicAuth: false
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/v1.0-branch.tar.gz
+    uri: https://github.com/kubeflow/manifests/archive/v1.0.0.tar.gz
   version: v1.0.0
