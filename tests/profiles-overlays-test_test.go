@@ -307,7 +307,7 @@ images:
   newTag: vmaster-gf3e09203
 - name: gcr.io/kubeflow-images-public/profile-controller
   newName: gcr.io/kubeflow-images-public/profile-controller
-  newTag: vmaster-g34aa47c2
+  newTag: vmaster-g915b84be
 vars:
 - fieldref:
     fieldPath: data.admin
