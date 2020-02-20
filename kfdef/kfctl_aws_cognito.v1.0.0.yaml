@@ -382,5 +382,5 @@ spec:
       - eksctl-kubeflow-aws-nodegroup-ng-a2-NodeInstanceRole-xxxxx
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/v1.0-branch.tar.gz
+    uri: https://github.com/kubeflow/manifests/archive/v1.0.0.tar.gz
   version: v1.0.0

@@ -7,7 +7,7 @@ metadata:
 spec:
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/v1.0-branch.tar.gz
+    uri: https://github.com/kubeflow/manifests/archive/v1.0.0.tar.gz
     # To get manifest at a PR:
     #uri: https://github.com/kubeflow/manifests/archive/pull/235/head.tar.gz
   version: v1.0.0
