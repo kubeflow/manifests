@@ -1,0 +1,36 @@
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: iam.cnrm.cloud.google.com/v1alpha1
+kind: IAMServiceAccount
+metadata:
+  name: kubeflow1-admin # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"cluster-name","value":"kubeflow1"}]}}
+  namespace: "kunming-dev5" # {"type":"string","x-kustomize":{"setter":{"name":"project-id","value":"kunming-dev5"}}}
+spec:
+  displayName: kubeflow admin service account
+  projectRoles:
+  - roles/source.admin
+  - roles/servicemanagement.admin
+  - roles/compute.networkAdmin
+  - roles/cloudbuild.builds.editor
+  - roles/viewer
+  - roles/storage.admin
+  - roles/bigquery.admin
+  - roles/dataflow.admin
+  - roles/ml.admin
+  - roles/dataproc.editor
+  - roles/cloudsql.admin
+  - roles/logging.logWriter
+  - roles/monitoring.metricWriter
+  - roles/monitoring.viewer
