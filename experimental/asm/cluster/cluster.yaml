@@ -16,36 +16,23 @@ apiVersion: identity.cnrm.cloud.google.com/v1alpha2
 kind: IdentityNamespace
 metadata:
   name: default
-  namespace: "kunming-dev5" # {"type":"string","x-kustomize":{"setter":{"name":"project-id","value":"kunming-dev5"}}}
+  namespace: "test-project" # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.core.project","value":"test-project"}}}
 spec: {}
 ---
 apiVersion: container.cnrm.cloud.google.com/v1alpha2
 kind: ContainerCluster
 metadata:
-  clusterName: "kunming-dev5/us-central1-a/kubeflow1" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"project-id","value":"kunming-dev5"},{"name":"cluster-name","value":"kubeflow1"},{"name":"gcloud.compute.zone","value":"us-central1-a"}]}}
-  name: kubeflow1 # {"type":"string","x-kustomize":{"setter":{"name":"cluster-name","value":"kubeflow1"}}}
-  namespace: "kunming-dev5" # {"type":"string","x-kustomize":{"setter":{"name":"project-id","value":"kunming-dev5"}}}
+  clusterName: "test-project/us-central1-a/test-cluster" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"test-project"},{"name":"cluster-name","value":"test-cluster"},{"name":"gcloud.compute.zone","value":"us-central1-a"}]}}
+  name: test-cluster # {"type":"string","x-kustomize":{"setter":{"name":"cluster-name","value":"test-cluster"}}}
+  namespace: "test-project" # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.core.project","value":"test-project"}}}
 spec:
-  initialClusterVersion: 1.14
-  resourceLabels:
-    application: kubeflow
+  minMasterVersion: 1.14.10-gke.24
   location: us-central1-a # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.compute.zone","value":"us-central1-a"}}}
   workloadIdentity:
     identityNamespace: default
   labels:
-    mesh_id: "kunming-dev5_us-central1-a_kubeflow1" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"project-id","value":"kunming-dev5"},{"name":"cluster-name","value":"kubeflow1"},{"name":"gcloud.compute.zone","value":"us-central1-a"}]}}
+    mesh_id: "test-project_us-central1-a_test-cluster" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"test-project"},{"name":"cluster-name","value":"test-cluster"},{"name":"gcloud.compute.zone","value":"us-central1-a"}]}}
   loggingService: logging.googleapis.com/kubernetes
   monitoringService: monitoring.googleapis.com/kubernetes
-  addonsConfig:
-    horizontalPodAutoscaling:
-      disabled: false
-    httpLoadBalancing:
-      disabled: false
-    cloudrunConfig:
-      disabled: true # {"type":"boolean","x-kustomize":{"setter":{"name":"cloud-run-disabled","value":"true"}}}
-  ipAllocationPolicy:
-    useIpAliases: true
-  masterAuth:
-    username: admin
   network: default
   subnetwork: default

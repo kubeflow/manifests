@@ -15,32 +15,21 @@
 apiVersion: install.istio.io/v1alpha2
 kind: IstioControlPlane
 metadata:
-  clusterName: "kunming-dev5/us-central1-a/kubeflow1" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"project-id","value":"kunming-dev5"},{"name":"cluster-name","value":"kubeflow1"},{"name":"gcloud.compute.zone","value":"us-central1-a"}]}}
+  clusterName: "test-project/us-central1-a/test-cluster" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"test-project"},{"name":"cluster-name","value":"test-cluster"},{"name":"gcloud.compute.zone","value":"us-central1-a"}]}}
 spec:
   profile: asm
-  hub: gcr.io/gke-release/asm
-  tag: 1.4.2-asm.2
+  hub: gcr.io/asm-testing
+  tag: 1.4.5-asm-test.7
   values:
     gateways:
       istio-ingressgateway:
         type: NodePort
     global:
-      meshID: "kunming-dev5_us-central1-a_kubeflow1" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"project-id","value":"kunming-dev5"},{"name":"cluster-name","value":"kubeflow1"},{"name":"gcloud.compute.zone","value":"us-central1-a"}]}}
-      trustDomain: "kunming-dev5.svc.id.goog" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"project-id","value":"kunming-dev5"}]}}
-      controlPlaneSecurityEnabled: true
-      mtls:
-        enabled: true
+      meshID: "test-project_us-central1-a_test-cluster" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"test-project"},{"name":"cluster-name","value":"test-cluster"},{"name":"gcloud.compute.zone","value":"us-central1-a"}]}}
+      trustDomain: "test-project.svc.id.goog" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"test-project"}]}}
       sds:
         token:
-          aud: "kunming-dev5.svc.id.goog" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"project-id","value":"kunming-dev5"}]}}
-      useMCP: true
-    telemetry:
-      v2:
-        stackdriver:
-          topology: true
+          aud: "test-project.svc.id.goog" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"test-project"}]}}
     nodeagent:
       env:
-        CA_ADDR: meshca.googleapis.com:443
-        CA_PROVIDER: GoogleCA
-        GKE_CLUSTER_URL: "https://container.googleapis.com/v1/projects/kunming-dev5/locations/us-central1-a/clusters/kubeflow1" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"project-id","value":"kunming-dev5"},{"name":"cluster-name","value":"kubeflow1"},{"name":"gcloud.compute.zone","value":"us-central1-a"}]}}
-        PLUGINS: GoogleTokenExchange
+        GKE_CLUSTER_URL: "https://container.googleapis.com/v1/projects/test-project/locations/us-central1-a/clusters/test-cluster" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"test-project"},{"name":"cluster-name","value":"test-cluster"},{"name":"gcloud.compute.zone","value":"us-central1-a"}]}}

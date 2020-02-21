@@ -108,3 +108,7 @@ metadata:
   name: default
 spec:
   mode: $(clusterRbacConfig)
+  exclusion:
+    namespaces:
+    - kubeflow
+    - istio-system
