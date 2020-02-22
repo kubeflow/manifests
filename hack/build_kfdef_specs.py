@@ -62,7 +62,7 @@ class KFDefBuilder:
           del spec["metadata"]["name"]
 
           with open(new_file, "w") as hf:
-            yaml.safe_dump(spec, hf)
+            yaml.safe_dump(spec, hf, default_flow_style = False)
 
 if __name__ == "__main__":
 
