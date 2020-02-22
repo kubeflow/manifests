@@ -5,4 +5,4 @@ metadata:
 spec:
   template: authzadaptor
   params:
-    key: request.headers["x-amzn-oidc-data"] | "unknown"
+    key: request.headers["$(origin-header)"] | "unknown"

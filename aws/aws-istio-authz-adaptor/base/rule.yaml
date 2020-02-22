@@ -6,7 +6,7 @@ spec:
   # restrict the rule to the ingress gateway proxy workload only
   match: context.reporter.kind == "outbound" && source.labels["istio"] == "ingressgateway"
   actions:
-  - handler: authzadaptor-handler.$(namespace)
+  - handler: authzadaptor-handler.$(istio-namespace)
     instances: ["authzadaptor-instance"]
     # assign a name to the action
     name: action
