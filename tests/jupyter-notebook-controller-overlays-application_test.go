@@ -287,6 +287,12 @@ spec:
           - name: POD_LABELS
             value: $(POD_LABELS)
         imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 30
       serviceAccountName: service-account
 `)
 	th.writeF("/manifests/jupyter/notebook-controller/base/service-account.yaml", `
@@ -327,7 +333,7 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/notebook-controller
   newName: gcr.io/kubeflow-images-public/notebook-controller
-  newTag: vmaster-gb1400446
+  newTag: vmaster-gb629b36b
 configMapGenerator:
 - envs:
   - params.env

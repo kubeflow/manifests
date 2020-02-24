@@ -447,10 +447,8 @@ apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:
-    certmanager.k8s.io/issuer: $(issuer)
     ingress.kubernetes.io/ssl-redirect: "true"
     kubernetes.io/ingress.global-static-ip-name: $(ipName)
-    kubernetes.io/tls-acme: "true"
     networking.gke.io/managed-certificates: gke-certificate
   name: envoy-ingress
 spec:
@@ -602,7 +600,6 @@ appName=kubeflow
 hostname=
 ingressName=envoy-ingress
 ipName=
-issuer=letsencrypt-prod
 oauthSecretName=kubeflow-oauth
 project=
 adminSaSecretName=admin-gcp-sa
@@ -677,13 +674,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.ingressName
-- name: issuer
-  objref:
-    kind: ConfigMap
-    name: parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.issuer
 - name: oauthSecretName
   objref:
     kind: ConfigMap

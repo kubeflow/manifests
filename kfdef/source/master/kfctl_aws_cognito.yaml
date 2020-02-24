@@ -1,7 +1,7 @@
 apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
-  name: kubeflow-aws-cognito
+  name: kfctl-aws-cognito
 spec:
   applications:
   - kustomizeConfig:
@@ -22,12 +22,28 @@ spec:
     name: istio-install
   - kustomizeConfig:
       parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/cluster-local-gateway
+    name: cluster-local-gateway
+  - kustomizeConfig:
+      parameters:
       - name: clusterRbacConfig
-        value: "OFF"
+        value: "ON"
       repoRef:
         name: manifests
         path: istio/istio
     name: istio
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/add-anonymous-user-filter
+    name: add-anonymous-user-filter
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -66,7 +82,7 @@ spec:
       repoRef:
         name: manifests
         path: cert-manager/cert-manager
-    name: cert-manager        
+    name: cert-manager
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -89,6 +105,9 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: userid-header
+        value: kubeflow-userid
       repoRef:
         name: manifests
         path: common/centraldashboard
@@ -114,6 +133,9 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: userid-header
+        value: kubeflow-userid
       repoRef:
         name: manifests
         path: jupyter/jupyter-web-app
@@ -282,6 +304,9 @@ spec:
       overlays:
       - application
       - istio
+      parameters:
+      - name: userid-header
+        value: kubeflow-userid
       repoRef:
         name: manifests
         path: profiles
@@ -310,6 +335,20 @@ spec:
         name: manifests
         path: aws/istio-ingress
     name: istio-ingress
+  - kustomizeConfig:
+      overlays:
+      - application
+      parameters:
+      - name: origin-header
+        value: x-amzn-oidc-header
+      - name: custom-header
+        value: kubeflow-userid
+      - name: istio-namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: aws/aws-istio-authz-adaptor
+    name: aws-istio-authz-adaptor
   - kustomizeConfig:
       overlays:
       - application

@@ -2,7 +2,7 @@
 apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
-  name: kfctl_gcp_basic_auth
+  name: kfctl-gcp-basic-auth
 spec:
   applications:
   - kustomizeConfig:
@@ -21,6 +21,14 @@ spec:
         name: manifests
         path: istio/istio-install
     name: istio-install
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/cluster-local-gateway
+    name: cluster-local-gateway
   - kustomizeConfig:
       parameters:
       - name: clusterRbacConfig

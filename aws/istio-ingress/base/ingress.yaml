@@ -3,10 +3,9 @@ kind: Ingress
 metadata:
   annotations:
     kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/scheme: $(loadBalancerScheme)
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
   name: istio-ingress
-  namespace: istio-system
 spec:
   rules:
     - http:

@@ -20,47 +20,47 @@ kind: Application
 metadata:
   name: pipelines-runner
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: pipelines-runner
-      app.kubernetes.io/instance: pipelines-runner-0.1.31
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: pipelines-runner
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: 0.1.31
+  addOwnerRef: true
   componentKinds:
   - group: core
     kind: ConfigMap
   - group: apps
     kind: Deployment
   descriptor:
-    type: pipelines-runner
-    version: v1beta1
-    description: ""
-    maintainers: []
-    owners: []
+    description: ''
     keywords:
-     - pipelines-runner
-     - kubeflow
+    - pipelines-runner
+    - kubeflow
     links:
     - description: About
-      url: ""
-  addOwnerRef: true
+      url: ''
+    maintainers: []
+    owners: []
+    type: pipelines-runner
+    version: v1beta1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: pipelines-runner
+      app.kubernetes.io/instance: pipelines-runner-0.2.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: pipelines-runner
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: 0.2.0
 `)
 	th.writeK("/manifests/pipeline/pipelines-runner/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
 bases:
 - ../../base
+commonLabels:
+  app.kubernetes.io/component: pipelines-runner
+  app.kubernetes.io/instance: pipelines-runner-0.2.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/name: pipelines-runner
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: 0.2.0
+kind: Kustomization
 resources:
 - application.yaml
-commonLabels:
-  app.kubernetes.io/name: pipelines-runner
-  app.kubernetes.io/instance: pipelines-runner-0.1.31
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: pipelines-runner
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.1.31
 `)
 	th.writeF("/manifests/pipeline/pipelines-runner/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1

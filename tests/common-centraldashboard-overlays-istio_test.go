@@ -111,7 +111,7 @@ spec:
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
-            path: /api/workgroup/env-info
+            path: /healthz
             port: 8082
           initialDelaySeconds: 30
           periodSeconds: 30
@@ -212,13 +212,11 @@ varReference:
 - path: spec/template/spec/containers/0/env/0/value
   kind: Deployment
 - path: spec/template/spec/containers/0/env/1/value
-  kind: Deployment
-`)
+  kind: Deployment`)
 	th.writeF("/manifests/common/centraldashboard/base/params.env", `
 clusterDomain=cluster.local
 userid-header=
-userid-prefix=
-`)
+userid-prefix=`)
 	th.writeK("/manifests/common/centraldashboard/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -236,7 +234,7 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/centraldashboard
   newName: gcr.io/kubeflow-images-public/centraldashboard
-  newTag: vmaster-gb1400446
+  newTag: vmaster-g0cb184ad
 configMapGenerator:
 - envs:
   - params.env

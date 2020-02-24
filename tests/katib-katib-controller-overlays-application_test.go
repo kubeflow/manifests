@@ -20,14 +20,7 @@ kind: Application
 metadata:
   name: katib-controller
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: katib-controller
-      app.kubernetes.io/instance: katib-controller-v0.7.0
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: katib
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
+  addOwnerRef: true
   componentKinds:
   - group: core
     kind: Service
@@ -44,54 +37,62 @@ spec:
   - group: kubeflow.org
     kind: Trial
   descriptor:
-    type: "katib"
-    version: "v1alpha3"
-    description: "Katib is a service for hyperparameter tuning and neural architecture search."
-    maintainers:
-    - name: Ce Gao
-      email: gaoce@caicloud.io
-    - name: Johnu George
-      email: johnugeo@cisco.com
-    - name: Hougang Liu
-      email: liuhougang6@126.com
-    - name: Richard Liu
-      email: ricliu@google.com
-    - name: YujiOshima
-      email: yuji.oshima0x3fd@gmail.com
-    owners:
-    - name: Ce Gao
-      email: gaoce@caicloud.io
-    - name: Johnu George
-      email: johnugeo@cisco.com
-    - name: Hougang Liu
-      email: liuhougang6@126.com
-    - name: Richard Liu
-      email: ricliu@google.com
-    - name: YujiOshima
-      email: yuji.oshima0x3fd@gmail.com
+    description: Katib is a service for hyperparameter tuning and neural architecture
+      search.
     keywords:
     - katib
     - katib-controller
     - hyperparameter tuning
     links:
     - description: About
-      url: "https://github.com/kubeflow/katib"
-  addOwnerRef: true
+      url: https://github.com/kubeflow/katib
+    maintainers:
+    - email: gaoce@caicloud.io
+      name: Ce Gao
+    - email: johnugeo@cisco.com
+      name: Johnu George
+    - email: liuhougang6@126.com
+      name: Hougang Liu
+    - email: ricliu@google.com
+      name: Richard Liu
+    - email: yuji.oshima0x3fd@gmail.com
+      name: YujiOshima
+    owners:
+    - email: gaoce@caicloud.io
+      name: Ce Gao
+    - email: johnugeo@cisco.com
+      name: Johnu George
+    - email: liuhougang6@126.com
+      name: Hougang Liu
+    - email: ricliu@google.com
+      name: Richard Liu
+    - email: yuji.oshima0x3fd@gmail.com
+      name: YujiOshima
+    type: katib
+    version: v1alpha3
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: katib
+      app.kubernetes.io/instance: katib-controller-0.8.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: katib-controller
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: 0.8.0
 `)
 	th.writeK("/manifests/katib/katib-controller/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
 bases:
 - ../../base
+commonLabels:
+  app.kubernetes.io/component: katib
+  app.kubernetes.io/instance: katib-controller-0.8.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/name: katib-controller
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: 0.8.0
+kind: Kustomization
 resources:
 - application.yaml
-commonLabels:
-  app.kubernetes.io/name: katib-controller
-  app.kubernetes.io/instance: katib-controller-v0.7.0
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: katib
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
 `)
 	th.writeF("/manifests/katib/katib-controller/base/katib-configmap.yaml", `
 apiVersion: v1
@@ -102,34 +103,45 @@ data:
   metrics-collector-sidecar: |-
     {
       "StdOut": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:v0.8.0"
       },
       "File": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:v0.8.0"
       },
       "TensorFlowEvent": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:v0.8.0",
+        "resources": {
+          "limits": {
+            "memory": "1Gi"
+          }
+        }
       }
     }
   suggestion: |-
     {
       "random": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:v0.8.0"
       },
       "grid": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-chocolate:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-chocolate:v0.8.0"
       },
       "hyperband": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperband:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperband:v0.8.0"
       },
       "bayesianoptimization": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-skopt:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-skopt:v0.8.0"
       },
       "tpe": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:v0.8.0"
       },
       "nasrl": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-nasrl:v0.7.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-nasrl:v0.8.0",
+        "imagePullPolicy": "Always",
+        "resources": {
+          "limits": {
+            "memory": "200Mi"
+          }
+        }
       }
     }
 `)
@@ -151,6 +163,7 @@ spec:
         app: katib-controller
       annotations:
         sidecar.istio.io/inject: "false"
+        prometheus.io/scrape: "true"
     spec:
       serviceAccountName: katib-controller
       containers:
@@ -158,9 +171,14 @@ spec:
         image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
         imagePullPolicy: IfNotPresent
         command: ["./katib-controller"]
+        args:
+          - '--webhook-port=8443'
         ports:
-        - containerPort: 443
+        - containerPort: 8443
           name: webhook
+          protocol: TCP
+        - containerPort: 8080
+          name: metrics
           protocol: TCP
         env:
         - name: KATIB_CORE_NAMESPACE
@@ -234,13 +252,10 @@ rules:
   resources:
   - experiments
   - experiments/status
-  - experiments/finalizers
   - trials
   - trials/status
-  - trials/finalizers
   - suggestions
   - suggestions/status
-  - suggestions/finalizers
   verbs:
   - "*"
 - apiGroups:
@@ -339,39 +354,47 @@ apiVersion: v1
 kind: Service
 metadata:
   name: katib-controller
+  annotations:
+    prometheus.io/port: "8080"
+    prometheus.io/scheme: http
+    prometheus.io/scrape: "true"
 spec:
   ports:
   - port: 443
     protocol: TCP
-    targetPort: 443
+    targetPort: 8443
+    name: webhook
+  - name: metrics
+    port: 8080
+    targetPort: 8080
   selector:
     app: katib-controller
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-db-deployment.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/katib-mysql-deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: katib-db
+  name: katib-mysql
   labels:
     app: katib
-    component: db
+    component: mysql
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: katib
-      component: db
+      component: mysql
   template:
     metadata:
-      name: katib-db
+      name: katib-mysql
       labels:
         app: katib
-        component: db
+        component: mysql
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
       containers:
-      - name: katib-db
+      - name: katib-mysql
         image: mysql:8
         args:
         - --datadir
@@ -380,7 +403,7 @@ spec:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: katib-db-secrets
+                name: katib-mysql-secrets
                 key: MYSQL_ROOT_PASSWORD
           - name: MYSQL_ALLOW_EMPTY_PASSWORD
             value: "true"
@@ -394,7 +417,7 @@ spec:
             command:
             - "/bin/bash"
             - "-c"
-            - "mysql -D ${MYSQL_DATABASE} -p${MYSQL_ROOT_PASSWORD} -e 'SELECT 1'"
+            - "mysql -D ${MYSQL_DATABASE} -u root -p${MYSQL_ROOT_PASSWORD} -e 'SELECT 1'"
           initialDelaySeconds: 5
           periodSeconds: 10
           timeoutSeconds: 1
@@ -415,7 +438,7 @@ spec:
         persistentVolumeClaim:
           claimName: katib-mysql
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-db-pvc.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/katib-mysql-pvc.yaml", `
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -427,23 +450,23 @@ spec:
     requests:
       storage: 10Gi
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-db-secret.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/katib-mysql-secret.yaml", `
 apiVersion: v1
 kind: Secret
 type: Opaque
 metadata:
-  name: katib-db-secrets
+  name: katib-mysql-secrets
 data:
   MYSQL_ROOT_PASSWORD: dGVzdA== # "test"
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-db-service.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/katib-mysql-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
-  name: katib-db
+  name: katib-mysql
   labels:
     app: katib
-    component: db
+    component: mysql
 spec:
   type: ClusterIP
   ports:
@@ -452,34 +475,34 @@ spec:
       name: dbapi
   selector:
     app: katib
-    component: db
+    component: mysql
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-manager-deployment.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/katib-db-manager-deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: katib-manager
+  name: katib-db-manager
   labels:
     app: katib
-    component: manager
+    component: db-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: katib
-      component: manager
+      component: db-manager
   template:
     metadata:
-      name: katib-manager
+      name: katib-db-manager
       labels:
         app: katib
-        component: manager
+        component: db-manager
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
       containers:
-      - name: katib-manager
-        image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
+      - name: katib-db-manager
+        image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
         imagePullPolicy: IfNotPresent
         env:
           - name : DB_NAME
@@ -487,10 +510,10 @@ spec:
           - name: DB_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: katib-db-secrets
+                name: katib-mysql-secrets
                 key: MYSQL_ROOT_PASSWORD
         command:
-          - './katib-manager'
+          - './katib-db-manager'
         ports:
         - name: api
           containerPort: 6789
@@ -505,14 +528,14 @@ spec:
           periodSeconds: 60
           failureThreshold: 5
 `)
-	th.writeF("/manifests/katib/katib-controller/base/katib-manager-service.yaml", `
+	th.writeF("/manifests/katib/katib-controller/base/katib-db-manager-service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
-  name: katib-manager
+  name: katib-db-manager
   labels:
     app: katib
-    component: manager
+    component: db-manager
 spec:
   type: ClusterIP
   ports:
@@ -521,7 +544,7 @@ spec:
       name: api
   selector:
     app: katib
-    component: manager
+    component: db-manager
 `)
 	th.writeF("/manifests/katib/katib-controller/base/katib-ui-deployment.yaml", `
 apiVersion: apps/v1
@@ -552,14 +575,16 @@ spec:
         imagePullPolicy: IfNotPresent
         command:
           - './katib-ui'
+        args:
+          - '--port=8080'
         env:
-          - name: KATIB_CORE_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
+        - name: KATIB_CORE_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         ports:
         - name: ui
-          containerPort: 80
+          containerPort: 8080
       serviceAccountName: katib-ui
 `)
 	th.writeF("/manifests/katib/katib-controller/base/katib-ui-rbac.yaml", `
@@ -572,6 +597,7 @@ rules:
   - ""
   resources:
   - configmaps
+  - namespaces
   verbs:
   - "*"
 - apiGroups:
@@ -613,6 +639,7 @@ spec:
     - port: 80
       protocol: TCP
       name: ui
+      targetPort: 8080
   selector:
     app: katib
     component: ui
@@ -634,10 +661,10 @@ data:
         spec:
           containers:
           - name: {{.Trial}}
-            image: docker.io/katib/mxnet-mnist-example
+            image: docker.io/kubeflowkatib/mxnet-mnist
             command:
-            - "python"
-            - "/mxnet/example/image-classification/train_mnist.py"
+            - "python3"
+            - "/opt/mxnet-mnist/mnist.py"
             - "--batch-size=64"
             {{- with .HyperParameters}}
             {{- range .}}
@@ -666,12 +693,12 @@ resources:
 - katib-controller-rbac.yaml
 - katib-controller-secret.yaml
 - katib-controller-service.yaml
-- katib-db-deployment.yaml
-- katib-db-pvc.yaml
-- katib-db-secret.yaml
-- katib-db-service.yaml
-- katib-manager-deployment.yaml
-- katib-manager-service.yaml
+- katib-mysql-deployment.yaml
+- katib-mysql-pvc.yaml
+- katib-mysql-secret.yaml
+- katib-mysql-service.yaml
+- katib-db-manager-deployment.yaml
+- katib-db-manager-service.yaml
 - katib-ui-deployment.yaml
 - katib-ui-rbac.yaml
 - katib-ui-service.yaml
@@ -683,13 +710,13 @@ generatorOptions:
   disableNameSuffixHash: true
 images:
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
-  newTag: v0.7.0
+  newTag: v0.8.0
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
-- name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
-  newTag: v0.7.0
-  newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-manager
+- name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
+  newTag: v0.8.0
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
-  newTag: v0.7.0
+  newTag: v0.8.0
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
 - name: mysql
   newTag: "8"

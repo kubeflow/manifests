@@ -148,6 +148,64 @@ rules:
   - get
   - list
   - watch
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-notebook-ui-admin
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+rules: []
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-notebook-ui-edit
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - notebooks
+  - notebooks/finalizers
+  - poddefaults
+  verbs:
+  - get
+  - list
+  - create
+  - delete
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-notebook-ui-view
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - notebooks
+  - notebooks/finalizers
+  - poddefaults
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - storageclasses
+  verbs:
+  - get
+  - list
+  - watch
 `)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/config-map.yaml", `
 apiVersion: v1
@@ -176,10 +234,10 @@ data:
         value: gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v-base-ef41372-1177829795472347138
         # The list of available standard container Images
         options:
-          - gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v0.7.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-gpu:v0.7.0
-          - gcr.io/kubeflow-images-public/tensorflow-2.0.0a0-notebook-cpu:v0.7.0
-          - gcr.io/kubeflow-images-public/tensorflow-2.0.0a0-notebook-gpu:v0.7.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-cpu:1.0.0
+          - gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-gpu:1.0.0
+          - gcr.io/kubeflow-images-public/tensorflow-2.1.0-notebook-cpu:1.0.0
+          - gcr.io/kubeflow-images-public/tensorflow-2.1.0-notebook-gpu:1.0.0
         # By default, custom container Images are allowed
         # Uncomment the following line to only enable standard container Images
         readOnly: false
@@ -259,10 +317,17 @@ data:
         #       class:
         #         value: {none}
         readOnly: false
-      extraResources:
-        # Extra Resource Limits for user's Notebook
-        # e.x. "{'nvidia.com/gpu': 2}"
-        value: "{}"
+      gpus:
+        # Number of GPUs to be assigned to the Notebook Container
+        value:
+          # values: "none", "1", "2", "4", "8"
+          num: "none"
+          # Determines what the UI will show and send to the backend
+          vendors:
+            - limitsKey: "nvidia.com/gpu"
+              uiName: "NVIDIA"
+          # Values: "" or a `+"`"+`limits-key`+"`"+` from the vendors list
+          vendor: ""
         readOnly: false
       shm:
         value: true
@@ -410,7 +475,8 @@ varReference:
 - path: spec/template/spec/containers/0/env/2/value
   kind: Deployment
 - path: spec/template/spec/containers/0/env/3/value
-  kind: Deployment`)
+  kind: Deployment
+`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.env", `
 UI=default
 ROK_SECRET_NAME=secret-rok-{username}
@@ -418,7 +484,8 @@ policy=Always
 prefix=jupyter
 clusterDomain=cluster.local
 userid-header=
-userid-prefix=`)
+userid-prefix=
+`)
 	th.writeK("/manifests/jupyter/jupyter-web-app/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -439,7 +506,7 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/jupyter-web-app
   newName: gcr.io/kubeflow-images-public/jupyter-web-app
-  newTag: vmaster-g56c9025a
+  newTag: vmaster-g0c496710
 configMapGenerator:
 - envs:
   - params.env

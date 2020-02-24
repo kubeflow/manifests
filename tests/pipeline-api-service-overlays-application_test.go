@@ -20,47 +20,47 @@ kind: Application
 metadata:
   name: api-service
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: api-service
-      app.kubernetes.io/instance: api-service-0.1.31
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: api-service
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: 0.1.31
+  addOwnerRef: true
   componentKinds:
   - group: core
     kind: ConfigMap
   - group: apps
     kind: Deployment
   descriptor:
-    type: api-service
-    version: v1beta1
-    description: ""
-    maintainers: []
-    owners: []
+    description: ''
     keywords:
-     - api-service
-     - kubeflow
+    - api-service
+    - kubeflow
     links:
     - description: About
-      url: ""
-  addOwnerRef: true
+      url: ''
+    maintainers: []
+    owners: []
+    type: api-service
+    version: v1beta1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: api-service
+      app.kubernetes.io/instance: api-service-0.2.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: api-service
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: 0.2.0
 `)
 	th.writeK("/manifests/pipeline/api-service/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
 bases:
 - ../../base
+commonLabels:
+  app.kubernetes.io/component: api-service
+  app.kubernetes.io/instance: api-service-0.2.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/name: api-service
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: 0.2.0
+kind: Kustomization
 resources:
 - application.yaml
-commonLabels:
-  app.kubernetes.io/name: api-service
-  app.kubernetes.io/instance: api-service-0.1.31
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: api-service
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.1.31
 `)
 	th.writeF("/manifests/pipeline/api-service/base/config-map.yaml", `
 # The configuration for the ML pipelines APIServer
@@ -141,6 +141,8 @@ subjects:
 `)
 	th.writeF("/manifests/pipeline/api-service/base/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
+# TODO: Does this need to be changed to a clusterrole?
+# see  manifests in kubeflow/pipelines
 kind: Role
 metadata:
   name: ml-pipeline
@@ -168,6 +170,13 @@ rules:
   - update
   - patch
   - delete
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - delete
+
 `)
 	th.writeF("/manifests/pipeline/api-service/base/service-account.yaml", `
 apiVersion: v1
@@ -205,7 +214,7 @@ resources:
 - service.yaml
 images:
 - name: gcr.io/ml-pipeline/api-server
-  newTag: 0.1.31
+  newTag: 0.2.0
   newName: gcr.io/ml-pipeline/api-server
 `)
 }

@@ -20,47 +20,47 @@ kind: Application
 metadata:
   name: persistent-agent
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: persistent-agent
-      app.kubernetes.io/instance: persistent-agent-0.1.31
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/component: persistent-agent
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: 0.1.31
+  addOwnerRef: true
   componentKinds:
   - group: core
     kind: ConfigMap
   - group: apps
     kind: Deployment
   descriptor:
-    type: persistent-agent
-    version: v1beta1
-    description: ""
-    maintainers: []
-    owners: []
+    description: ''
     keywords:
-     - persistent-agent
-     - kubeflow
+    - persistent-agent
+    - kubeflow
     links:
     - description: About
-      url: ""
-  addOwnerRef: true
+      url: ''
+    maintainers: []
+    owners: []
+    type: persistent-agent
+    version: v1beta1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: persistent-agent
+      app.kubernetes.io/instance: persistent-agent-0.2.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: persistent-agent
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: 0.2.0
 `)
 	th.writeK("/manifests/pipeline/persistent-agent/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
 bases:
 - ../../base
+commonLabels:
+  app.kubernetes.io/component: persistent-agent
+  app.kubernetes.io/instance: persistent-agent-0.2.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/name: persistent-agent
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: 0.2.0
+kind: Kustomization
 resources:
 - application.yaml
-commonLabels:
-  app.kubernetes.io/name: persistent-agent
-  app.kubernetes.io/instance: persistent-agent-0.1.31
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: persistent-agent
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.1.31
 `)
 	th.writeF("/manifests/pipeline/persistent-agent/base/clusterrole-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -139,7 +139,7 @@ resources:
 - service-account.yaml
 images:
 - name: gcr.io/ml-pipeline/persistenceagent
-  newTag: 0.1.31
+  newTag: 0.2.0
   newName: gcr.io/ml-pipeline/persistenceagent
 `)
 }

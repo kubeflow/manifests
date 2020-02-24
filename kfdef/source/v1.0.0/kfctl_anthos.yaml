@@ -3,7 +3,7 @@
 apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
-  name: kfctl_anthos
+  name: kfctl-anthos
 spec:
   repos:
   - name: manifests

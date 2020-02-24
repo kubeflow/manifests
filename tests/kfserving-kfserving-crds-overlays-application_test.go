@@ -675,7 +675,8 @@ status:
     kind: ""
     plural: ""
   conditions: []
-  storedVersions: []`)
+  storedVersions: []
+`)
 	th.writeK("/manifests/kfserving/kfserving-crds/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
