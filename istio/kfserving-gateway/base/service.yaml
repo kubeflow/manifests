@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kfserving-ingressgateway
+  labels:
+    app: kfserving-ingressgateway
+    kfserving: ingressgateway
+spec:
+  type: LoadBalancer
+  selector:
+    app: kfserving-ingressgateway
+    kfserving: ingressgateway
+  ports:
+    - name: http2
+      nodePort: 32380
+      port: 80
+      targetPort: 80
+    - name: https
+      nodePort: 32390
+      port: 443
+    - name: tcp
+      nodePort: 32400
+      port: 31400
+    - name: tcp-pilot-grpc-tls
+      port: 15011
+      targetPort: 15011
+    - name: tcp-citadel-grpc-tls
+      port: 8060
+      targetPort: 8060
+    - name: tcp-dns-tls
+      port: 853
+      targetPort: 853
+    - name: http2-prometheus
+      port: 15030
+      targetPort: 15030
+    - name: http2-grafana
+      port: 15031
+      targetPort: 15031
