@@ -15,7 +15,7 @@ import (
 
 func writeKfservingGatewayBase(th *KustTestHarness) {
 	th.writeF("/manifests/istio/kfserving-gateway/base/deployment.yaml", `
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kfserving-ingressgateway
@@ -23,7 +23,6 @@ metadata:
     app: kfserving-ingressgateway
     kfserving: ingressgateway
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: kfserving-ingressgateway
@@ -35,126 +34,155 @@ spec:
         kfserving: ingressgateway
       annotations:
         sidecar.istio.io/inject: "false"
-        scheduler.alpha.kubernetes.io/critical-pod: ""
     spec:
       serviceAccountName: istio-ingressgateway-service-account
       containers:
         - name: istio-proxy
-          image: "docker.io/istio/proxyv2:1.0.2"
+          image: "docker.io/istio/proxyv2:1.1.6"
           imagePullPolicy: IfNotPresent
           ports:
+            - containerPort: 15020
             - containerPort: 80
             - containerPort: 443
             - containerPort: 31400
-            - containerPort: 15011
-            - containerPort: 8060
-            - containerPort: 853
+            - containerPort: 15029
             - containerPort: 15030
             - containerPort: 15031
+            - containerPort: 15032
+            - containerPort: 15443
+            - containerPort: 15090
+              protocol: TCP
+              name: http-envoy-prom
           args:
-            - proxy
-            - router
-            - -v
-            - "2"
-            - --discoveryRefreshDelay
-            - "1s" #discoveryRefreshDelay
-            - --drainDuration
-            - "45s" #drainDuration
-            - --parentShutdownDuration
-            - "1m0s" #parentShutdownDuration
-            - --connectTimeout
-            - "10s" #connectTimeout
-            - --serviceCluster
-            - kfserving-ingressgateway
-            - --zipkinAddress
-            - zipkin:9411
-            - --statsdUdpAddress
-            - istio-statsd-prom-bridge:9125
-            - --proxyAdminPort
-            - "15000"
-            - --controlPlaneAuthPolicy
-            - NONE
-            - --discoveryAddress
-            - istio-pilot:8080
+          - proxy
+          - router
+          - --domain
+          - $(POD_NAMESPACE).svc.cluster.local
+          - --log_output_level=default:info
+          - --drainDuration
+          - '45s' #drainDuration
+          - --parentShutdownDuration
+          - '1m0s' #parentShutdownDuration
+          - --connectTimeout
+          - '10s' #connectTimeout
+          - --serviceCluster
+          - kfserving-ingressgateway
+          - --zipkinAddress
+          - zipkin:9411
+          - --proxyAdminPort
+          - "15000"
+          - --statusPort
+          - "15020"
+          - --controlPlaneAuthPolicy
+          - NONE
+          - --discoveryAddress
+          - istio-pilot:15010
+          readinessProbe:
+            failureThreshold: 30
+            httpGet:
+              path: /healthz/ready
+              port: 15020
+              scheme: HTTP
+            initialDelaySeconds: 1
+            periodSeconds: 2
+            successThreshold: 1
+            timeoutSeconds: 1
           resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
             requests:
               cpu: 10m
+              memory: 40Mi
+
           env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: metadata.name
-            - name: POD_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: metadata.namespace
-            - name: INSTANCE_IP
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: status.podIP
-            - name: ISTIO_META_POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: INSTANCE_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: HOST_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.hostIP
+          - name: ISTIO_META_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: ISTIO_META_CONFIG_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: ISTIO_META_ROUTER_MODE
+            value: sni-dnat
           volumeMounts:
-            - name: istio-certs
-              mountPath: /etc/certs
-              readOnly: true
-            - name: ingressgateway-certs
-              mountPath: "/etc/istio/ingressgateway-certs"
-              readOnly: true
-            - name: ingressgateway-ca-certs
-              mountPath: "/etc/istio/ingressgateway-ca-certs"
-              readOnly: true
+          - name: istio-certs
+            mountPath: /etc/certs
+            readOnly: true
+          - name: ingressgateway-certs
+            mountPath: "/etc/istio/ingressgateway-certs"
+            readOnly: true
+          - name: ingressgateway-ca-certs
+            mountPath: "/etc/istio/ingressgateway-ca-certs"
+            readOnly: true
       volumes:
-        - name: istio-certs
-          secret:
-            secretName: istio.istio-ingressgateway-service-account
-            optional: true
-        - name: ingressgateway-certs
-          secret:
-            secretName: "istio-ingressgateway-certs"
-            optional: true
-        - name: ingressgateway-ca-certs
-          secret:
-            secretName: "istio-ingressgateway-ca-certs"
-            optional: true
-      affinity:
+      - name: istio-certs
+        secret:
+          secretName: istio.istio-ingressgateway-service-account
+          optional: true
+      - name: ingressgateway-certs
+        secret:
+          secretName: "istio-ingressgateway-certs"
+          optional: true
+      - name: ingressgateway-ca-certs
+        secret:
+          secretName: "istio-ingressgateway-ca-certs"
+          optional: true
+      affinity:      
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-              - matchExpressions:
-                  - key: beta.kubernetes.io/arch
-                    operator: In
-                    values:
-                      - amd64
-                      - ppc64le
-                      - s390x
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - ppc64le
+                - s390x
           preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 2
-              preference:
-                matchExpressions:
-                  - key: beta.kubernetes.io/arch
-                    operator: In
-                    values:
-                      - amd64
-            - weight: 2
-              preference:
-                matchExpressions:
-                  - key: beta.kubernetes.io/arch
-                    operator: In
-                    values:
-                      - ppc64le
-            - weight: 2
-              preference:
-                matchExpressions:
-                  - key: beta.kubernetes.io/arch
-                    operator: In
-                    values:
-                      - s390x
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - ppc64le
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - s390x
 `)
 	th.writeF("/manifests/istio/kfserving-gateway/base/service.yaml", `
 apiVersion: v1
@@ -170,6 +198,9 @@ spec:
     app: kfserving-ingressgateway
     kfserving: ingressgateway
   ports:
+    - name: status-port
+      port: 15020
+      targetPort: 15020
     - name: http2
       nodePort: 32380
       port: 80
@@ -189,12 +220,21 @@ spec:
     - name: tcp-dns-tls
       port: 853
       targetPort: 853
+    - name: https-kiali
+      port: 15029
+      targetPort: 15029
     - name: http2-prometheus
       port: 15030
       targetPort: 15030
     - name: http2-grafana
       port: 15031
       targetPort: 15031
+    - name: https-tracing
+      port: 15032
+      targetPort: 15032
+    - name: tls
+      port: 15443
+      targetPort: 15443
 `)
 	th.writeK("/manifests/istio/kfserving-gateway/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
