@@ -28,11 +28,13 @@ metadata:
 	th.writeF("/manifests/aws/istio-ingress/overlays/secure/params.yaml", `
 varReference:
 - path: metadata/annotations
-  kind: Ingress`)
+  kind: Ingress
+`)
 	th.writeF("/manifests/aws/istio-ingress/overlays/secure/params.env", `
 certArn=
 hostname=
-inboundCidrs=`)
+inboundCidrs=
+`)
 	th.writeK("/manifests/aws/istio-ingress/overlays/secure", `
 bases:
 - ../../base
@@ -81,15 +83,21 @@ metadata:
   name: istio-ingress
 spec:
   rules:
-    - http:
-        paths:
-          - backend:
-              serviceName: istio-ingressgateway
-              servicePort: 80
-            path: /*
+  - http:
+      paths:
+      - backend:
+          serviceName: istio-ingressgateway
+          servicePort: 80
+        path: /*
+`)
+	th.writeF("/manifests/aws/istio-ingress/base/params.yaml", `
+varReference:
+- path: metadata/annotations
+  kind: Ingress
 `)
 	th.writeF("/manifests/aws/istio-ingress/base/params.env", `
-loadBalancerScheme=internet-facing`)
+loadBalancerScheme=internet-facing
+`)
 	th.writeK("/manifests/aws/istio-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -109,7 +117,10 @@ vars:
     name: istio-ingress-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.loadBalancerScheme`)
+    fieldpath: data.loadBalancerScheme
+configurations:
+- params.yaml
+`)
 }
 
 func TestIstioIngressOverlaysSecure(t *testing.T) {
