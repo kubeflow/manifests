@@ -150,7 +150,7 @@ metadata:
 spec:
   template: authzadaptor
   params:
-    key: request.headers["x-amzn-oidc-data"] | "unknown"
+    key: request.headers["$(origin-header)"] | "unknown"
 `)
 	th.writeF("/manifests/aws/aws-istio-authz-adaptor/base/rule.yaml", `
 apiVersion: config.istio.io/v1alpha2
@@ -161,7 +161,7 @@ spec:
   # restrict the rule to the ingress gateway proxy workload only
   match: context.reporter.kind == "outbound" && source.labels["istio"] == "ingressgateway"
   actions:
-  - handler: authzadaptor-handler.$(namespace)
+  - handler: authzadaptor-handler.$(istio-namespace)
     instances: ["authzadaptor-instance"]
     # assign a name to the action
     name: action
@@ -209,7 +209,7 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- name: namespace
+- name: istio-namespace
   objref:
     kind: ConfigMap
     name: aws-authzadaptor-parameters
