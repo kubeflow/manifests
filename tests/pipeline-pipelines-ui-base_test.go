@@ -95,17 +95,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ml-pipeline-ui
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name: pipelineui-mapping
-      prefix: /pipeline
-      rewrite: /pipeline
-      timeout_ms: 300000
-      service: $(service).$(ui-namespace)
-      use_websocket: true
   labels:
     app: ml-pipeline-ui
 spec:
@@ -119,17 +108,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ml-pipeline-tensorboard-ui
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name: pipeline-tensorboard-ui-mapping
-      prefix: /data
-      rewrite: /data
-      timeout_ms: 300000
-      service: $(service).$(ui-namespace)
-      use_websocket: true
   labels:
     app: ml-pipeline-tensorboard-ui
 spec:
@@ -138,11 +116,6 @@ spec:
     targetPort: 3000
   selector:
     app: ml-pipeline-tensorboard-ui
-`)
-	th.writeF("/manifests/pipeline/pipelines-ui/base/params.yaml", `
-varReference:
-- path: metadata/annotations/getambassador.io\/config
-  kind: Service
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/params.env", `
 uiClusterDomain=cluster.local
@@ -193,8 +166,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name
-configurations:
-- params.yaml
 `)
 }
 
