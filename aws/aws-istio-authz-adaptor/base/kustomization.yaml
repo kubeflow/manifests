@@ -21,7 +21,7 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- name: namespace
+- name: istio-namespace
   objref:
     kind: ConfigMap
     name: aws-authzadaptor-parameters
