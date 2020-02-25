@@ -1,16 +1,18 @@
-apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
+apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   annotations:
-    kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: $(loadBalancerScheme)
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    kubernetes.io/ingress.class: alb
+  labels:
+    kustomize.component: istio-ingress
   name: istio-ingress
 spec:
   rules:
-    - http:
-        paths:
-          - backend:
-              serviceName: istio-ingressgateway
-              servicePort: 80
-            path: /*
+  - http:
+      paths:
+      - backend:
+          serviceName: istio-ingressgateway
+          servicePort: 80
+        path: /*

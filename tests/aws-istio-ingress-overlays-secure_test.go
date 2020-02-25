@@ -90,6 +90,11 @@ spec:
               servicePort: 80
             path: /*
 `)
+	th.writeF("/manifests/aws/istio-ingress/base/params.yaml", `
+varReference:
+- path: metadata/annotations
+  kind: Ingress
+`)
 	th.writeF("/manifests/aws/istio-ingress/base/params.env", `
 loadBalancerScheme=internet-facing
 `)
@@ -113,6 +118,8 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.loadBalancerScheme
+configurations:
+- params.yaml
 `)
 }
 
