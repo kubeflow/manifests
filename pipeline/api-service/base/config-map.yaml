@@ -9,12 +9,14 @@ data:
       "DBConfig": {
         "DriverName": "mysql",
         "DataSourceName": "",
-        "DBName": "mlpipeline"
+        "DBName": "mlpipeline",
+        "GroupConcatMaxLen": "4194304"
       },
-      "ObjectStoreConfig":{
+      "ObjectStoreConfig": {
         "AccessKey": "minio",
         "SecretAccessKey": "minio123",
-        "BucketName": "mlpipeline"
+        "BucketName": "mlpipeline",
+        "PipelineFolder": "pipelines"
       },
       "InitConnectionTimeout": "6m",
       "DefaultPipelineRunnerServiceAccount": "kf-user",
