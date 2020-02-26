@@ -24,6 +24,7 @@ metadata:
     alb.ingress.kubernetes.io/auth-idp-cognito: '{"Issuer":"$(oidcIssuer)","AuthorizationEndpoint":"$(oidcAuthorizationEndpoint)","TokenEndpoint":"$(oidcTokenEndpoint)","UserInfoEndpoint":"$(oidcUserInfoEndpoint)","SecretName":"$(oidcSecretName)"}'
     alb.ingress.kubernetes.io/certificate-arn: $(certArn)
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/auth-scope: 'email openid profile'
 `)
 	th.writeF("/manifests/aws/istio-ingress/overlays/oidc/params.yaml", `
 varReference:
