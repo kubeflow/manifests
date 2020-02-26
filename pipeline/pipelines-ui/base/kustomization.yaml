@@ -43,5 +43,3 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name
-configurations:
-- params.yaml
