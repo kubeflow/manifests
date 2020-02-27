@@ -1797,6 +1797,11 @@ spec:
         app: nodeagent
         istio: nodeagent
     spec:
+      tolerations:
+      - effect: NoExecute
+        operator: Exists
+      - effect: NoSchedule
+        operator: Exists
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
