@@ -312,7 +312,7 @@ spec:
     spec:
       serviceAccountName: dex
       containers:
-      - image: quay.io/dexidp/dex:v2.21.0
+      - image: quay.io/dexidp/dex:v2.22.0
         name: dex
         command: ["dex", "serve", "/etc/dex/cfg/config.yaml"]
         ports:

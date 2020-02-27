@@ -81,4 +81,4 @@ configurations:
 images:
 - name: quay.io/dexidp/dex
   newName: quay.io/dexidp/dex
-  newTag: v2.21.0
+  newTag: v2.22.0
