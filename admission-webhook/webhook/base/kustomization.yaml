@@ -24,23 +24,29 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 vars:
+# These vars are used to substitute in the namespace, service name and
+# deployment name into the mutating WebHookConfiguration.
+# Since its a CR kustomize isn't aware of those fields and won't
+# transform them.
+# We need the var names to be relatively unique so that when we
+# compose with other applications they won't conflict.
 - fieldref:
     fieldPath: data.namespace
-  name: namespace
+  name: podDefaultsNamespace
   objref:
     apiVersion: v1
     kind: ConfigMap
     name: admission-webhook-parameters
 - fieldref:
     fieldPath: metadata.name
-  name: serviceName
+  name: podDefaultsServiceName
   objref:
     apiVersion: v1
     kind: Service
     name: service
 - fieldref:
     fieldPath: metadata.name
-  name: deploymentName
+  name: podDefaultsDeploymentName
   objref:
     apiVersion: apps/v1
     kind: Deployment

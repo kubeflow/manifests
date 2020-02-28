@@ -5,6 +5,9 @@ metadata:
 spec:
   selector:
     matchLabels:
+      # TODO(jlewi): We should probably rename the app to PodDefaults
+      # as that is what the admission controller is actually doing.
+      # webhook is generic and uninformative.      
       app.kubernetes.io/name: webhook
       app.kubernetes.io/instance: webhook-v1.0.0
       app.kubernetes.io/managed-by: kfctl

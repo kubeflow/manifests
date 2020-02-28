@@ -8,7 +8,18 @@ import os
 import shutil
 import subprocess
 
-SEARCH_DIRS = ["tests/legacy_kustomizations/"]
+# Search dirs should be directories to search for kustomization packages
+# that we want to test. These should be kustomization's that are doing
+# non-trivial transformations (e.g. combining multiple packages, applying
+# patches) etc... The point of the unittests is to make it easy for reviewers
+# to verify that the expected output is correct and verify the actual output
+# matches the expected output.
+SEARCH_DIRS = [
+  "stacks",
+  # TODO(https://github.com/kubeflow/manifests/issues/1052): Remove this
+  # after the move to v3 is done.
+  "tests/legacy_kustomizations",
+  ]
 
 # The subdirectory to story the expected manifests in
 # We use a subdirectory of test_data because we could potentially
