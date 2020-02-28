@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: centraldashboard
+spec:
+  template:
+    spec:
+        containers:
+          - name: centraldashboard
+            envFrom:
+              configMapRef: 
+                name: kubeflow-config
+            env:
+            - name: USERID_HEADER
+              valueFrom:
+                configMapKeyRef:
+                  name: kubeflow-config
+                  key: userid-header
+            - name: USERID_PREFIX
+              valueFrom:
+                configMapKeyRef:
+                  name: kubeflow-config
+                  key: userid-prefix
+            - name: PROFILES_KFAM_SERVICE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: kubeflow-config
+                  key: profiles_kfam_service_host
