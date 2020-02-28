@@ -21,5 +21,4 @@ vars:
   objref:
     apiVersion: v1
     kind: ConfigMap
-    name: kubeflow-config  
-
+    name: kubeflow-config
