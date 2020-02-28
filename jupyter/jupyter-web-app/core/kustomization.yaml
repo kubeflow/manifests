@@ -1,0 +1,30 @@
+# TODO(https://github.com/kubeflow/manifests/issues/774): 
+# The core package is intended to be used as part of the migration as we
+# work on #774. The purpose of this package is to define a kustomization
+# package that contains the shared bits to be reused across jupyter/jupyter-web-app/base
+# (which is the legacy package) and overlays/stacks which will be the new one.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- cluster-role-binding.yaml
+- cluster-role.yaml
+- deployment.yaml
+- role-binding.yaml
+- role.yaml
+- service-account.yaml
+- service.yaml
+namePrefix: jupyter-web-app-
+namespace: kubeflow
+commonLabels:
+  app: jupyter-web-app
+  kustomize.component: jupyter-web-app
+images:
+- name: gcr.io/kubeflow-images-public/jupyter-web-app
+  newName: gcr.io/kubeflow-images-public/jupyter-web-app
+  newTag: vmaster-gd9be4b9e
+configMapGenerator:
+# We need the name to be unique without the suffix because the original name is what
+# gets used with patches
+- name: jupyter-web-app-config
+  files:
+  - configs/spawner_ui_config.yaml
