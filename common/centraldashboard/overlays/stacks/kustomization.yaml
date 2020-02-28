@@ -1,6 +1,4 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
-bases:
-- base
 commonLabels:
   app.kubernetes.io/component: centraldashboard
   app.kubernetes.io/instance: centraldashboard-v1.0.0
@@ -11,6 +9,7 @@ commonLabels:
 kind: Kustomization
 namespace: kubeflow
 resources:
+- ../../base
 # TODO(jlewi): istio and application are really patches
 # not "overlays" in that they are expected to be used as mixins.
 # Perhaps move this into mixins to make this more obvious.
@@ -19,5 +18,5 @@ resources:
 patchesStrategicMerge:
 # Pull in the patch which will configure central dashboard using a kubeflow
 # configmap
-- ../../mixins/deployment_kf_config.yaml
+- deployment_kf_config.yaml
 
