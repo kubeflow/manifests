@@ -18,20 +18,24 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- fieldref:
-    fieldPath: metadata.namespace
-  name: namespace
-  objref:
-    apiVersion: v1
-    kind: Service
-    name: centraldashboard
-- fieldref:
-    fieldPath: data.clusterDomain
-  name: clusterDomain
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: parameters
+# TODO(jlewi): This is commented out because when we combine applicaitons
+# we can't have multiple vars with the same name
+#- fieldref:
+#    fieldPath: metadata.namespace
+# name: namespace
+#  objref:
+#    apiVersion: v1
+#    kind: Service
+#    name: centraldashboard
+# TODO(jlewi): This is commented out because when we combine applicaitons
+# we can't have multiple vars with the same name    
+#- fieldref:
+#    fieldPath: data.clusterDomain
+#  name: clusterDomain
+#  objref:
+#    apiVersion: v1
+#    kind: ConfigMap
+#    name: parameters
 # We shouldn't need these vars anymore because we set the environment variables from a global configmap
 #- fieldref:
 #    fieldPath: data.userid-header
