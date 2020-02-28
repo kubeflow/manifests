@@ -1,13 +1,10 @@
+# TODO(https://github.com/kubeflow/manifests/issues/774): 
+# This is a legacy package. Hopefully we can get rid of it once
+# 774 is complete.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- cluster-role-binding.yaml
-- cluster-role.yaml
-- deployment.yaml
-- role-binding.yaml
-- role.yaml
-- service-account.yaml
-- service.yaml
+- ../core
 namePrefix: jupyter-web-app-
 namespace: kubeflow
 commonLabels:
@@ -45,15 +42,13 @@ vars:
     apiVersion: v1
     kind: ConfigMap
     name: parameters
-# TODO(jlewi): This is commented out because when we combine applicaitons
-# we can't have multiple vars with the same name
-#- fieldref:
-#    fieldPath: metadata.namespace
-#  name: namespace
-#  objref:
-#    apiVersion: v1
-#    kind: Service
-#    name: service
+- fieldref:
+    fieldPath: metadata.namespace
+  name: namespace
+  objref:
+    apiVersion: v1
+    kind: Service
+    name: service
 - fieldref:
     fieldPath: data.userid-header
   name: userid-header
