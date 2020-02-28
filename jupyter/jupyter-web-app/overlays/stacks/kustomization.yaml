@@ -33,3 +33,5 @@ resources:
 # merge in additional patches
 - ../istio
 - ../application
+patchesStrategicMerge:
+- deployment_patch.yaml
