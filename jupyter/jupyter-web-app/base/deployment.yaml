@@ -22,7 +22,10 @@ spec:
               name: parameters
               key: UI
         - name: USERID_HEADER
-          value: $(userid-header)
+          valueFrom:
+            configMapKeyRef:
+              name: kubeflow-config
+              key: userid-header
         - name: USERID_PREFIX
           value: $(userid-prefix)
         image: gcr.io/kubeflow-images-public/jupyter-web-app
