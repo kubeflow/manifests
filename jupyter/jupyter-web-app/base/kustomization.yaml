@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml
-- config-map.yaml
 - deployment.yaml
 - role-binding.yaml
 - role.yaml

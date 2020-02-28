@@ -11,3 +11,10 @@ resources:
 patchesStrategicMerge:
 # Patch in modifications to the global config
 - kubeflow-config.yaml
+configMapGenerator:    
+- name: jupyter-web-app-config
+  # TODO(jlewi): I think merge only applies to the keys but not the
+  # contents of the file; so the entire contents of the file are replaced.
+  behavior: merge
+  files:
+  - configs/spawner_ui_config.yaml
