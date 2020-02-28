@@ -22,7 +22,15 @@ configMapGenerator:
 - envs:
   - params.env
   name: parameters
+# We need the name to be unique without the suffix because the original name is what
+# gets used with patches
+- name: jupyter-web-app-config
+  files:
+  - configs/spawner_ui_config.yaml
+  
 generatorOptions:
+  # TODO(jlewi): Why are we setting disableNameSuffixHash true? Don't we want a content hash so that if the config map
+  # changes we would update the configmap?
   disableNameSuffixHash: true
 vars:
 - fieldref:
