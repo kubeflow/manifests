@@ -27,6 +27,8 @@ configMapGenerator:
   files:
   - configs/spawner_ui_config.yaml
 generatorOptions:
+  # TODO(jlewi): Why are we setting disableNameSuffixHash true? Don't we want a content hash so that if the config map
+  # changes we would update the configmap?
   disableNameSuffixHash: true
 vars:
 - fieldref:
