@@ -53,20 +53,15 @@ vars:
     apiVersion: v1
     kind: ConfigMap
     name: parameters
-- fieldref:
-    fieldPath: data.clusterDomain
-  name: clusterDomain
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: parameters
-- fieldref:
-    fieldPath: metadata.namespace
-  name: namespace
-  objref:
-    apiVersion: v1
-    kind: Service
-    name: service
+# TODO(jlewi): This is commented out because when we combine applicaitons
+# we can't have multiple vars with the same name
+#- fieldref:
+#    fieldPath: metadata.namespace
+#  name: namespace
+#  objref:
+#    apiVersion: v1
+#    kind: Service
+#    name: service
 - fieldref:
     fieldPath: data.userid-header
   name: userid-header
