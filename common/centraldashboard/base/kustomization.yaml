@@ -32,19 +32,20 @@ vars:
     apiVersion: v1
     kind: ConfigMap
     name: parameters
-- fieldref:
-    fieldPath: data.userid-header
-  name: userid-header
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: parameters
-- fieldref:
-    fieldPath: data.userid-prefix
-  name: userid-prefix
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: parameters
+# We shouldn't need these vars anymore because we set the environment variables from a global configmap
+#- fieldref:
+#    fieldPath: data.userid-header
+#  name: userid-header
+#  objref:
+#    apiVersion: v1
+#    kind: ConfigMap
+#    name: parameters
+#- fieldref:
+#    fieldPath: data.userid-prefix
+#  name: userid-prefix
+#  objref:
+#    apiVersion: v1
+#    kind: ConfigMap
+#    name: parameters
 configurations:
 - params.yaml
