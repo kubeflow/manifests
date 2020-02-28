@@ -4,3 +4,22 @@ resources:
   # List the Kubeflow applications that should be included
   - config
   - ../../common/centraldashboard
+  - ../../jupyter/jupyter-web-app
+vars:
+# We need to define vars at the top level otherwise we will get
+# conflicts. 
+- fieldref:
+    fieldPath: data.clusterDomain
+  name: clusterDomain
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kubeflow-config
+- fieldref:
+    fieldPath: metadata.namespace
+  name: namespace
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kubeflow-config  
+
