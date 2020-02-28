@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+resources:
+  # List the Kubeflow applications that should be included  
+  - ../../application/v3
+  - ../../common/centraldashboard/base_v3
+  - ../../jupyter/jupyter-web-app/base_v3
+  - ../../profiles/base_v3
+configMapGenerator:
+- envs:
+  - ./config/params.env
+  name: kubeflow-config
+vars:
+# We need to define vars at the top level otherwise we will get
+# conflicts. 
+- fieldref:
+    fieldPath: data.clusterDomain
+  name: clusterDomain
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kubeflow-config
+- fieldref:
+    fieldPath: metadata.namespace
+  name: namespace
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kubeflow-config

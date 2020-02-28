@@ -54,13 +54,6 @@ vars:
     kind: ConfigMap
     name: parameters
 - fieldref:
-    fieldPath: data.clusterDomain
-  name: clusterDomain
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: parameters
-- fieldref:
     fieldPath: metadata.namespace
   name: namespace
   objref:

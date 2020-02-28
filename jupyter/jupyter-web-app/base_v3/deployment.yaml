@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - env:
+        - name: ROK_SECRET_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: ROK_SECRET_NAME
+        - name: UI
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: UI
+        - name: USERID_HEADER
+          valueFrom:
+            configMapKeyRef:
+              name: kubeflow-config
+              key: userid-header
+        - name: USERID_PREFIX
+          value: $(userid-prefix)
+        image: gcr.io/kubeflow-images-public/jupyter-web-app
+        imagePullPolicy: $(policy)
+        name: jupyter-web-app
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - mountPath: /etc/config
+          name: config-volume
+      serviceAccountName: service-account
+      volumes:
+      - configMap:
+          name: jupyter-web-app-config
+        name: config-volume
