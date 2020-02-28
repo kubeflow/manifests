@@ -14,8 +14,8 @@ resources:
 # TODO(jlewi): istio and application are really patches
 # not "overlays" in that they are expected to be used as mixins.
 # Perhaps move this into mixins to make this more obvious.
-- ../../overlays/istio/virtual-service.yaml
-- ../../overlays/application/application.yaml
+- ../../overlays/istio
+- ../../overlays/application
 patchesStrategicMerge:
 # Pull in the patch which will configure central dashboard using a kubeflow
 # configmap
