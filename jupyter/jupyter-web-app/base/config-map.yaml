@@ -1,3 +1,6 @@
+kind: ConfigMap
+metadata:
+  name: config
 apiVersion: v1
 data:
   spawner_ui_config.yaml: |
@@ -129,6 +132,3 @@ data:
         #   - default-editor
         value: []
         readOnly: false
-kind: ConfigMap
-metadata:
-  name: config
