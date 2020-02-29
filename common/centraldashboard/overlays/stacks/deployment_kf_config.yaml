@@ -7,9 +7,6 @@ spec:
     spec:
         containers:
           - name: centraldashboard
-            envFrom:
-              configMapRef: 
-                name: kubeflow-config
             env:
             - name: USERID_HEADER
               valueFrom:

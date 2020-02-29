@@ -1,13 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- clusterrole-binding.yaml
-- clusterrole.yaml
-- deployment.yaml
-- role-binding.yaml
-- role.yaml
-- service-account.yaml
-- service.yaml
+- ../core
+patchesStrategicMerge:
+- deployment_patch.yaml
 namespace: kubeflow
 commonLabels:
   kustomize.component: centraldashboard
@@ -22,38 +18,33 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-# TODO(jlewi): This is commented out because when we combine applicaitons
-# we can't have multiple vars with the same name
-#- fieldref:
-#    fieldPath: metadata.namespace
-# name: namespace
-#  objref:
-#    apiVersion: v1
-#    kind: Service
-#    name: centraldashboard
-# TODO(jlewi): This is commented out because when we combine applicaitons
-# we can't have multiple vars with the same name    
-#- fieldref:
-#    fieldPath: data.clusterDomain
-#  name: clusterDomain
-#  objref:
-#    apiVersion: v1
-#    kind: ConfigMap
-#    name: parameters
-# We shouldn't need these vars anymore because we set the environment variables from a global configmap
-#- fieldref:
-#    fieldPath: data.userid-header
-#  name: userid-header
-#  objref:
-#    apiVersion: v1
-#    kind: ConfigMap
-#    name: parameters
-#- fieldref:
-#    fieldPath: data.userid-prefix
-#  name: userid-prefix
-#  objref:
-#    apiVersion: v1
-#    kind: ConfigMap
-#    name: parameters
+- fieldref:
+    fieldPath: metadata.namespace
+  name: namespace
+  objref:
+    apiVersion: v1
+    kind: Service
+    name: centraldashboard
+- fieldref:
+    fieldPath: data.clusterDomain
+  name: clusterDomain
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: parameters
+- fieldref:
+    fieldPath: data.userid-header
+  name: userid-header
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: parameters
+- fieldref:
+    fieldPath: data.userid-prefix
+  name: userid-prefix
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: parameters
 configurations:
 - params.yaml
