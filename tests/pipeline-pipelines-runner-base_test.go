@@ -26,6 +26,10 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: pipeline-runner
+# temporarily switched to kf-user, because pipeline-runner isn't bound to workload identity by default
+- kind: ServiceAccount
+  name: kf-user
+  namespace: kubeflow
 `)
 	th.writeF("/manifests/pipeline/pipelines-runner/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
