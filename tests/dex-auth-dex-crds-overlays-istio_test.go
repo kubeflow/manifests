@@ -174,7 +174,7 @@ spec:
     spec:
       serviceAccountName: dex
       containers:
-      - image: quay.io/coreos/dex:v2.9.0
+      - image: quay.io/dexidp/dex:v2.22.0
         name: dex
         command: ["dex", "serve", "/etc/dex/cfg/config.yaml"]
         ports:
@@ -308,10 +308,6 @@ vars:
     fieldpath: data.application_secret
 configurations:
 - params.yaml
-images:
-- name: quay.io/coreos/dex
-  newName: gcr.io/arrikto/dexidp/dex
-  newTag: 4bede5eb80822fc3a7fc9edca0ed2605cd339d17
 `)
 }
 
