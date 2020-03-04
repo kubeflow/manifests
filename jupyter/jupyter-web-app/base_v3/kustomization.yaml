@@ -27,14 +27,14 @@ commonLabels:
   kustomize.component: jupyter-web-app
 namespace: kubeflow
 resources:
-- ../../base/cluster-role-binding.yaml
-- ../../base/cluster-role.yaml
-- ../../base/deployment.yaml
-- ../../base/role-binding.yaml
-- ../../base/role.yaml
-- ../../base/service-account.yaml
-- ../../base/service.yaml
-- ../istio/virtual-service.yaml 
-- ../application/application.yaml
+- ../base/cluster-role-binding.yaml
+- ../base/cluster-role.yaml
+- ../base/deployment.yaml
+- ../base/role-binding.yaml
+- ../base/role.yaml
+- ../base/service-account.yaml
+- ../base/service.yaml
+- ../overlays/istio/virtual-service.yaml 
+- ../overlays/application/application.yaml
 patchesStrategicMerge:
 - deployment_patch.yaml
