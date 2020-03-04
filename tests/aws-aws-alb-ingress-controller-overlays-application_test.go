@@ -75,7 +75,6 @@ rules:
   - apiGroups:
       - ""
       - extensions
-      - networking.k8s.io
     resources:
       - configmaps
       - endpoints
@@ -115,7 +114,8 @@ roleRef:
   name: alb-ingress-controller
 subjects:
   - kind: ServiceAccount
-    name: alb-ingress-controller`)
+    name: alb-ingress-controller
+`)
 	th.writeF("/manifests/aws/aws-alb-ingress-controller/base/deployment.yaml", `
 # Application Load Balancer (ALB) Ingress Controller Deployment Manifest.
 # This manifest details sensible defaults for deploying an ALB Ingress Controller.
@@ -165,16 +165,18 @@ spec:
             # List of regions: http://docs.aws.amazon.com/general/latest/gr/rande.html#vpc_region
             # - --aws-region=us-west-1
           # Repository location of the ALB Ingress Controller.
-          image: docker.io/amazon/aws-alb-ingress-controller:v1.1.2
+          image: docker.io/amazon/aws-alb-ingress-controller
           imagePullPolicy: Always
       serviceAccountName: alb-ingress-controller`)
 	th.writeF("/manifests/aws/aws-alb-ingress-controller/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: alb-ingress-controller`)
+  name: alb-ingress-controller
+`)
 	th.writeF("/manifests/aws/aws-alb-ingress-controller/base/params.env", `
-clusterName=`)
+clusterName=
+`)
 	th.writeK("/manifests/aws/aws-alb-ingress-controller/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -191,7 +193,7 @@ generatorOptions:
 images:
 - name: docker.io/amazon/aws-alb-ingress-controller
   newName: docker.io/amazon/aws-alb-ingress-controller
-  newTag: v1.1.2
+  newTag: v1.1.5
 configMapGenerator:
 - name: alb-ingress-controller-parameters
   env: params.env

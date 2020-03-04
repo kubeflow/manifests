@@ -13,91 +13,61 @@ import (
 	"testing"
 )
 
-func writeIstioIngressOverlaysOidc(th *KustTestHarness) {
-	th.writeF("/manifests/aws/istio-ingress/overlays/oidc/ingress.yaml", `
+func writeIstioIngressOverlaysSecure(th *KustTestHarness) {
+	th.writeF("/manifests/aws/istio-ingress/overlays/secure/ingress.yaml", `
 apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: istio-ingress
   annotations:
-    alb.ingress.kubernetes.io/auth-type: oidc
-    alb.ingress.kubernetes.io/auth-idp-cognito: '{"Issuer":"$(oidcIssuer)","AuthorizationEndpoint":"$(oidcAuthorizationEndpoint)","TokenEndpoint":"$(oidcTokenEndpoint)","UserInfoEndpoint":"$(oidcUserInfoEndpoint)","SecretName":"$(oidcSecretName)"}'
     alb.ingress.kubernetes.io/certificate-arn: $(certArn)
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
-    alb.ingress.kubernetes.io/auth-scope: 'email openid profile'
+    alb.ingress.kubernetes.io/inbound-cidrs: $(inboundCidrs)
+    external-dns.alpha.kubernetes.io/hostname: $(hostname)
 `)
-	th.writeF("/manifests/aws/istio-ingress/overlays/oidc/params.yaml", `
+	th.writeF("/manifests/aws/istio-ingress/overlays/secure/params.yaml", `
 varReference:
 - path: metadata/annotations
   kind: Ingress
 `)
-	th.writeF("/manifests/aws/istio-ingress/overlays/oidc/params.env", `
-oidcIssuer=
-oidcAuthorizationEndpoint=
-oidcTokenEndpoint=
-oidcUserInfoEndpoint=
-oidcSecretName=istio-oidc-secret
+	th.writeF("/manifests/aws/istio-ingress/overlays/secure/params.env", `
 certArn=
+hostname=
+inboundCidrs=
 `)
-	th.writeF("/manifests/aws/istio-ingress/overlays/oidc/secrets.env", `
-clientId=
-clientSecret=
-`)
-	th.writeK("/manifests/aws/istio-ingress/overlays/oidc", `
+	th.writeK("/manifests/aws/istio-ingress/overlays/secure", `
 bases:
 - ../../base
 patchesStrategicMerge:
 - ingress.yaml
-#- oidc-secret.yaml
-secretGenerator:
-- name: istio-oidc-secret
-  env: secrets.env
 configMapGenerator:
-- name: istio-ingress-oidc-parameters
+- name: istio-ingress-parameters
+  behavior: merge
   env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
 vars:
-- name: oidcIssuer
-  objref:
-    kind: ConfigMap
-    name: istio-ingress-oidc-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.oidcIssuer
-- name: oidcAuthorizationEndpoint
-  objref:
-    kind: ConfigMap
-    name: istio-ingress-oidc-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.oidcAuthorizationEndpoint
-- name: oidcTokenEndpoint
-  objref:
-    kind: ConfigMap
-    name: istio-ingress-oidc-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.oidcTokenEndpoint
-- name: oidcUserInfoEndpoint
-  objref:
-    kind: ConfigMap
-    name: istio-ingress-oidc-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.oidcUserInfoEndpoint
-- name: oidcSecretName
-  objref:
-    kind: ConfigMap
-    name: istio-ingress-oidc-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.oidcSecretName
 - name: certArn
   objref:
     kind: ConfigMap
-    name: istio-ingress-oidc-parameters
+    name: istio-ingress-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.certArn
+- name: hostname
+  objref:
+    kind: ConfigMap
+    name: istio-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.hostname
+- name: inboundCidrs
+  objref:
+    kind: ConfigMap
+    name: istio-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.inboundCidrs
 namespace: istio-system
 configurations:
 - params.yaml
@@ -153,9 +123,9 @@ configurations:
 `)
 }
 
-func TestIstioIngressOverlaysOidc(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/aws/istio-ingress/overlays/oidc")
-	writeIstioIngressOverlaysOidc(th)
+func TestIstioIngressOverlaysSecure(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/aws/istio-ingress/overlays/secure")
+	writeIstioIngressOverlaysSecure(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -164,7 +134,7 @@ func TestIstioIngressOverlaysOidc(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../aws/istio-ingress/overlays/oidc"
+	targetPath := "../aws/istio-ingress/overlays/secure"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)

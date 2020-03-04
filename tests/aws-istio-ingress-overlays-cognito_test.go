@@ -19,10 +19,7 @@ apiVersion: extensions/v1beta1 # networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: istio-ingress
-  namespace: istio-system
   annotations:
-    kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/auth-type: cognito
     alb.ingress.kubernetes.io/auth-idp-cognito: '{"UserPoolArn":"$(CognitoUserPoolArn)","UserPoolClientId":"$(CognitoAppClientId)", "UserPoolDomain":"$(CognitoUserPoolDomain)"}'
     alb.ingress.kubernetes.io/certificate-arn: $(certArn)
@@ -31,12 +28,14 @@ metadata:
 	th.writeF("/manifests/aws/istio-ingress/overlays/cognito/params.yaml", `
 varReference:
 - path: metadata/annotations
-  kind: Ingress`)
+  kind: Ingress
+`)
 	th.writeF("/manifests/aws/istio-ingress/overlays/cognito/params.env", `
 CognitoUserPoolArn=
 CognitoAppClientId=
 CognitoUserPoolDomain=
-certArn=`)
+certArn=
+`)
 	th.writeK("/manifests/aws/istio-ingress/overlays/cognito", `
 bases:
 - ../../base
@@ -74,6 +73,7 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.certArn
+namespace: istio-system
 configurations:
 - params.yaml
 `)
@@ -83,18 +83,25 @@ kind: Ingress
 metadata:
   annotations:
     kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/scheme: $(loadBalancerScheme)
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
   name: istio-ingress
-  namespace: istio-system
 spec:
   rules:
-    - http:
-        paths:
-          - backend:
-              serviceName: istio-ingressgateway
-              servicePort: 80
-            path: /*
+  - http:
+      paths:
+      - backend:
+          serviceName: istio-ingressgateway
+          servicePort: 80
+        path: /*
+`)
+	th.writeF("/manifests/aws/istio-ingress/base/params.yaml", `
+varReference:
+- path: metadata/annotations
+  kind: Ingress
+`)
+	th.writeF("/manifests/aws/istio-ingress/base/params.env", `
+loadBalancerScheme=internet-facing
 `)
 	th.writeK("/manifests/aws/istio-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -103,6 +110,21 @@ resources:
 - ingress.yaml
 commonLabels:
   kustomize.component: istio-ingress
+configMapGenerator:
+- name: istio-ingress-parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: loadBalancerScheme
+  objref:
+    kind: ConfigMap
+    name: istio-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.loadBalancerScheme
+configurations:
+- params.yaml
 `)
 }
 

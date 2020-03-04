@@ -4,3 +4,18 @@ resources:
 - ingress.yaml
 commonLabels:
   kustomize.component: istio-ingress
+configMapGenerator:
+- name: istio-ingress-parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: loadBalancerScheme
+  objref:
+    kind: ConfigMap
+    name: istio-ingress-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.loadBalancerScheme
+configurations:
+- params.yaml
