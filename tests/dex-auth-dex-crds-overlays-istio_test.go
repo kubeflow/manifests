@@ -100,7 +100,7 @@ data:
     enablePasswordDB: true
     grpc:
       # Cannot be the same address as an HTTP(S) service.
-      addr: 127.0.0.1:5557
+      addr: 0.0.0.0:5557
       reflection: true
     staticPasswords:
     - email: $(static_email)
