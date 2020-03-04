@@ -184,6 +184,27 @@ spec:
                 values:
                 - s390x
 `)
+	th.writeF("/manifests/istio/kfserving-gateway/base/horizontal-pod-autoscaler.yaml", `
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: kfserving-ingressgateway
+    kfserving: ingressgateway
+  name: kfserving-ingressgateway
+spec:
+  maxReplicas: 5
+  metrics:
+  - resource:
+      name: cpu
+      targetAverageUtilization: 80
+    type: Resource
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: kfserving-ingressgateway
+`)
 	th.writeF("/manifests/istio/kfserving-gateway/base/service.yaml", `
 apiVersion: v1
 kind: Service
@@ -242,6 +263,7 @@ kind: Kustomization
 namespace: istio-system
 resources:
 - deployment.yaml
+- horizontal-pod-autoscaler.yaml
 - service.yaml
 `)
 }
