@@ -4,7 +4,7 @@ resources:
   # List the Kubeflow applications that should be included
   - config
   - ../../common/centraldashboard/overlays/stacks
-  - ../../jupyter/jupyter-web-app/overlays/stacks
+  - ../../jupyter/jupyter-web-app/base_v3
 vars:
 # We need to define vars at the top level otherwise we will get
 # conflicts. 

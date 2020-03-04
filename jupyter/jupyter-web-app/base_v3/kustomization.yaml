@@ -36,5 +36,11 @@ resources:
 - ../base/service.yaml
 - ../overlays/istio/virtual-service.yaml 
 - ../overlays/application/application.yaml
+configMapGenerator:
+# We need the name to be unique without the suffix because the original name is what
+# gets used with patches
+- name: jupyter-web-app-config
+  files:
+  - ../base/configs/spawner_ui_config.yaml
 patchesStrategicMerge:
 - deployment_patch.yaml
