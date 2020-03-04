@@ -27,20 +27,20 @@ commonLabels:
   kustomize.component: jupyter-web-app
 namespace: kubeflow
 resources:
-- ../base/cluster-role-binding.yaml
-- ../base/cluster-role.yaml
-- ../base/deployment.yaml
-- ../base/role-binding.yaml
-- ../base/role.yaml
-- ../base/service-account.yaml
-- ../base/service.yaml
-- ../overlays/istio/virtual-service.yaml 
-- ../overlays/application/application.yaml
+- cluster-role-binding.yaml
+- cluster-role.yaml
+- deployment.yaml
+- role-binding.yaml
+- role.yaml
+- service-account.yaml
+- service.yaml
+- ../overlays/istio
+- ../overlays/application
 configMapGenerator:
 # We need the name to be unique without the suffix because the original name is what
 # gets used with patches
 - name: jupyter-web-app-config
   files:
-  - ../base/configs/spawner_ui_config.yaml
+  - configs/spawner_ui_config.yaml
 patchesStrategicMerge:
 - deployment_patch.yaml
