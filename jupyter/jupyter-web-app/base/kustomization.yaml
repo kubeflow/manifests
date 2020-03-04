@@ -4,13 +4,16 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- cluster-role-binding.yaml
-- cluster-role.yaml
-- deployment.yaml
-- role-binding.yaml
-- role.yaml
-- service-account.yaml
-- service.yaml
+# TODO(jlewi): We can't depend on base because of the deployment_patch.
+# but maybe if we changed that to use ConfigMapRef then the patch would correctly
+# override the patch applied in base_v3
+- ../base_v3/cluster-role-binding.yaml
+- ../base_v3/cluster-role.yaml
+- ../base_v3/deployment.yaml
+- ../base_v3/role-binding.yaml
+- ../base_v3/role.yaml
+- ../base_v3/service-account.yaml
+- ../base_v3/service.yaml
 namePrefix: jupyter-web-app-
 namespace: kubeflow
 commonLabels:
@@ -28,7 +31,7 @@ configMapGenerator:
 # gets used with patches
 - name: jupyter-web-app-config
   files:
-  - configs/spawner_ui_config.yaml  
+  - ../base_v3/configs/spawner_ui_config.yaml  
 generatorOptions:
   # TODO(jlewi): Why are we setting disableNameSuffixHash true? Don't we want a content hash so that if the config map
   # changes we would update the configmap?
