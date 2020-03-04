@@ -1,6 +1,8 @@
 package tests_test
 
 import (
+	"testing"
+
 	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/v3/pkg/fs"
@@ -10,7 +12,6 @@ import (
 	"sigs.k8s.io/kustomize/v3/pkg/resource"
 	"sigs.k8s.io/kustomize/v3/pkg/target"
 	"sigs.k8s.io/kustomize/v3/pkg/validators"
-	"testing"
 )
 
 func writeDexCrdsOverlaysIstio(th *KustTestHarness) {
@@ -97,6 +98,10 @@ data:
     oauth2:
       skipApprovalScreen: true
     enablePasswordDB: true
+    grpc:
+      # Cannot be the same address as an HTTP(S) service.
+      addr: 127.0.0.1:5557
+      reflection: true
     staticPasswords:
     - email: $(static_email)
       hash: $(static_password_hash)
