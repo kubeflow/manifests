@@ -264,6 +264,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      - multi-user
       repoRef:
         name: manifests
         path: pipeline/api-service

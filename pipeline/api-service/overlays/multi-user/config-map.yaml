@@ -1,0 +1,27 @@
+# The configuration for the ML pipelines APIServer
+# Based on https://github.com/kubeflow/pipelines/blob/master/backend/src/apiserver/config/config.json
+apiVersion: v1
+data:
+  # apiserver assumes the config is named config.json
+  # temporarily switched to kf-user, because pipeline-runner isn't bound to workload identity by default
+  config.json: |
+    {
+      "DBConfig": {
+        "DriverName": "mysql",
+        "DataSourceName": "",
+        "DBName": "mlpipeline"
+      },
+      "ObjectStoreConfig":{
+        "AccessKey": "minio",
+        "SecretAccessKey": "minio123",
+        "BucketName": "mlpipeline"
+      },
+      "InitConnectionTimeout": "6m",
+      "DefaultPipelineRunnerServiceAccount": "kf-user",
+      "ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_HOST": "ml-pipeline-ml-pipeline-visualizationserver",
+      "ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_PORT": 8888,
+      "MULTIUSER": true
+    }
+kind: ConfigMap
+metadata:
+  name: ml-pipeline-config
