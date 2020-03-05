@@ -1,0 +1,9 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-scheduledworkflow
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
