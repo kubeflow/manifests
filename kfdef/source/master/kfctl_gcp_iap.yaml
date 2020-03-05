@@ -438,7 +438,8 @@ spec:
       # zone: us-east1-d
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
+    # uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
+    uri: https://github.com/Bobgy/manifests/archive/kfp-multi-user.tar.gz
     # To get manifest at a PR:
     #uri: https://github.com/kubeflow/manifests/archive/pull/235/head.tar.gz
   version: master
