@@ -348,6 +348,11 @@ spec:
         path: pipeline/pipeline-visualization-service
     name: pipeline-visualization-service
   - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: pipeline/istio-multi-user
+    name: pipeline-istio-multi-user
+  - kustomizeConfig:
       overlays:
       - application
       repoRef:
