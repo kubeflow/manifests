@@ -695,7 +695,7 @@ func TestKatibControllerOverlaysDb(t *testing.T) {
 	}
 	targetPath := "../katib/katib-controller/overlays/db"
 	fsys := fs.MakeRealFS()
-	lrc := loader.RestrictionRootOnly
+	lrc := loader.RestrictionNone
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
 	if loaderErr != nil {
 		t.Fatalf("could not load kustomize loader: %v", loaderErr)
