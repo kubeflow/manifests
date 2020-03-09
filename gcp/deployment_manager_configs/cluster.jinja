@@ -66,6 +66,10 @@ resources:
       # We need 1.10.2 to support Stackdriver GKE.
       loggingService: logging.googleapis.com/kubernetes
       monitoringService: monitoring.googleapis.com/kubernetes
+      network: properties['networkConfig']['network']
+      {% if properties['networkConfig']['subnetwork'] is defined %}
+      subnetwork: properties['networkConfig']['subnetwork']
+      {% endif %}
       {% if properties['enable_tpu'] %}
       enable_tpu: {{ properties['enable_tpu'] }}
       ipAllocationPolicy:
@@ -80,11 +84,20 @@ resources:
       {% endif %}
       {% if properties['securityConfig']['privatecluster'] %}
       ipAllocationPolicy:
+        {% if properties['networkConfig']['subnetwork'] is not defined %}
         createSubnetwork: true
+        {% endif %}
         useIpAliases: true
+        {% if properties['networkConfig']['clusterSecondaryRangeName'] is defined %}
+        clusterSecondaryRangeName: properties['networkConfig']['clusterSecondaryRangeName']
+        {% endif %}
+        {% if properties['networkConfig']['servicesSecondaryRangeName'] is defined %}
+        clusterSecondaryRangeName: properties['networkConfig']['servicesSecondaryRangeName']
+        {% endif %}
       privateClusterConfig:
         masterIpv4CidrBlock: {{ properties['securityConfig']['masterIpv4CidrBlock'] }}
         enablePrivateNodes: true
+        enablePrivateEndpoint: {{ properties['securityConfig']['enablePrivateEndpoint'] }}
       masterAuthorizedNetworksConfig:
         enabled: {{ properties['securityConfig']['masterAuthorizedNetworksConfigEnabled'] }}
         {% if properties['securityConfig']['masterAuthorizedNetworksConfigEnabled'] %}

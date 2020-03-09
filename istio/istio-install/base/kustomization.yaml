@@ -31,6 +31,9 @@ images:
 - name: docker.io/istio/citadel
   newName: docker.io/istio/citadel
   newTag: 1.1.6
+- name: docker.io/istio/proxy_init
+  newName: docker.io/istio/proxy_init
+  newTag: 1.1.6
 - name: docker.io/istio/sidecar_injector
   newName: docker.io/istio/sidecar_injector
   newTag: 1.1.6

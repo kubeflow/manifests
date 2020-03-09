@@ -93,6 +93,17 @@ resources:
       masterAuthorizedNetworksConfigEnabled: false
       masterAuthorizedNetworksConfigCidr:
       - cidrBlock: 1.2.3.4/32
+      # When set to true, the cluster will have private endpoint: k8s master will only accept requests from private IP.
+      enablePrivateEndpoint: false
+    networkConfig:
+      # If you need custom firewall & routing rules around cluster nodes, change to pre-configured private VPC.
+      network: default
+
+      # To use customized subnetwork, uncomment field "subnetwork, clusterSecondaryRangeName and servicesSecondaryRangeName"
+      # subnetwork:
+      # clusterSecondaryRangeName:
+      # servicesSecondaryRangeName:
+
     # This is the name of the GCP static ip address reserved for your domain.
     # Each Kubeflow deployment in your project should use one unique ipName among all configs.
     ipName: kubeflow-ip
