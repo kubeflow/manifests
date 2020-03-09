@@ -66,9 +66,9 @@ resources:
       # We need 1.10.2 to support Stackdriver GKE.
       loggingService: logging.googleapis.com/kubernetes
       monitoringService: monitoring.googleapis.com/kubernetes
-      network: properties['networkConfig']['network']
+      network: "{{ properties['networkConfig']['network'] }}"
       {% if properties['networkConfig']['subnetwork'] is defined %}
-      subnetwork: properties['networkConfig']['subnetwork']
+      subnetwork: "{{ properties['networkConfig']['subnetwork'] }}"
       {% endif %}
       {% if properties['enable_tpu'] %}
       enable_tpu: {{ properties['enable_tpu'] }}
@@ -89,10 +89,10 @@ resources:
         {% endif %}
         useIpAliases: true
         {% if properties['networkConfig']['clusterSecondaryRangeName'] is defined %}
-        clusterSecondaryRangeName: properties['networkConfig']['clusterSecondaryRangeName']
+        clusterSecondaryRangeName: "{{ properties['networkConfig']['clusterSecondaryRangeName'] }}"
         {% endif %}
         {% if properties['networkConfig']['servicesSecondaryRangeName'] is defined %}
-        clusterSecondaryRangeName: properties['networkConfig']['servicesSecondaryRangeName']
+        clusterSecondaryRangeName: "{{ properties['networkConfig']['servicesSecondaryRangeName'] }}"
         {% endif %}
       privateClusterConfig:
         masterIpv4CidrBlock: {{ properties['securityConfig']['masterIpv4CidrBlock'] }}
