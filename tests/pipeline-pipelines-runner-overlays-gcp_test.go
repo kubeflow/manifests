@@ -13,54 +13,25 @@ import (
 	"testing"
 )
 
-func writePipelinesRunnerOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/pipeline/pipelines-runner/overlays/application/application.yaml", `
-apiVersion: app.k8s.io/v1beta1
-kind: Application
+func writePipelinesRunnerOverlaysGcp(th *KustTestHarness) {
+	th.writeF("/manifests/pipeline/pipelines-runner/overlays/gcp/cluster-role-binding.yaml", `
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
 metadata:
-  name: pipelines-runner
-spec:
-  addOwnerRef: true
-  componentKinds:
-  - group: core
-    kind: ConfigMap
-  - group: apps
-    kind: Deployment
-  descriptor:
-    description: ''
-    keywords:
-    - pipelines-runner
-    - kubeflow
-    links:
-    - description: About
-      url: ''
-    maintainers: []
-    owners: []
-    type: pipelines-runner
-    version: v1beta1
-  selector:
-    matchLabels:
-      app.kubernetes.io/component: pipelines-runner
-      app.kubernetes.io/instance: pipelines-runner-0.2.0
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/name: pipelines-runner
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: 0.2.0
+  name: pipeline-runner
+subjects:
+# temporarily switched to kf-user, because pipeline-runner isn't bound to workload identity by default
+- kind: ServiceAccount
+  name: kf-user
+  namespace: kubeflow
 `)
-	th.writeK("/manifests/pipeline/pipelines-runner/overlays/application", `
+	th.writeK("/manifests/pipeline/pipelines-runner/overlays/gcp", `
 apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
 bases:
 - ../../base
-commonLabels:
-  app.kubernetes.io/component: pipelines-runner
-  app.kubernetes.io/instance: pipelines-runner-0.2.0
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/name: pipelines-runner
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.2.0
-kind: Kustomization
-resources:
-- application.yaml
+patchesStrategicMerge:
+- cluster-role-binding.yaml
 `)
 	th.writeF("/manifests/pipeline/pipelines-runner/base/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -172,9 +143,9 @@ resources:
 `)
 }
 
-func TestPipelinesRunnerOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/pipeline/pipelines-runner/overlays/application")
-	writePipelinesRunnerOverlaysApplication(th)
+func TestPipelinesRunnerOverlaysGcp(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/pipeline/pipelines-runner/overlays/gcp")
+	writePipelinesRunnerOverlaysGcp(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -183,7 +154,7 @@ func TestPipelinesRunnerOverlaysApplication(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../pipeline/pipelines-runner/overlays/application"
+	targetPath := "../pipeline/pipelines-runner/overlays/gcp"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)

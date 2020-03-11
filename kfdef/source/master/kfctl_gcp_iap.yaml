@@ -272,6 +272,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      - gcp
       repoRef:
         name: manifests
         path: pipeline/api-service
@@ -316,6 +317,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      - gcp
       repoRef:
         name: manifests
         path: pipeline/pipelines-runner

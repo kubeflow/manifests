@@ -13,54 +13,28 @@ import (
 	"testing"
 )
 
-func writeApiServiceOverlaysApplication(th *KustTestHarness) {
-	th.writeF("/manifests/pipeline/api-service/overlays/application/application.yaml", `
-apiVersion: app.k8s.io/v1beta1
-kind: Application
+func writeApiServiceOverlaysGcp(th *KustTestHarness) {
+	th.writeF("/manifests/pipeline/api-service/overlays/gcp/deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: api-service
+  name: ml-pipeline
 spec:
-  addOwnerRef: true
-  componentKinds:
-  - group: core
-    kind: ConfigMap
-  - group: apps
-    kind: Deployment
-  descriptor:
-    description: ''
-    keywords:
-    - api-service
-    - kubeflow
-    links:
-    - description: About
-      url: ''
-    maintainers: []
-    owners: []
-    type: api-service
-    version: v1beta1
-  selector:
-    matchLabels:
-      app.kubernetes.io/component: api-service
-      app.kubernetes.io/instance: api-service-0.2.0
-      app.kubernetes.io/managed-by: kfctl
-      app.kubernetes.io/name: api-service
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: 0.2.0
+  template:
+    spec:
+      containers:
+      - name: ml-pipeline-api-server
+        env:
+        - name: DEFAULTPIPELINERUNNERSERVICEACCOUNT
+          value: 'kf-user'
 `)
-	th.writeK("/manifests/pipeline/api-service/overlays/application", `
+	th.writeK("/manifests/pipeline/api-service/overlays/gcp", `
 apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
 bases:
 - ../../base
-commonLabels:
-  app.kubernetes.io/component: api-service
-  app.kubernetes.io/instance: api-service-0.2.0
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/name: api-service
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.2.0
-kind: Kustomization
-resources:
-- application.yaml
+patchesStrategicMerge:
+- deployment.yaml
 `)
 	th.writeF("/manifests/pipeline/api-service/base/config-map.yaml", `
 # The configuration for the ML pipelines APIServer
@@ -219,9 +193,9 @@ images:
 `)
 }
 
-func TestApiServiceOverlaysApplication(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/pipeline/api-service/overlays/application")
-	writeApiServiceOverlaysApplication(th)
+func TestApiServiceOverlaysGcp(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/pipeline/api-service/overlays/gcp")
+	writeApiServiceOverlaysGcp(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -230,7 +204,7 @@ func TestApiServiceOverlaysApplication(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../pipeline/api-service/overlays/application"
+	targetPath := "../pipeline/api-service/overlays/gcp"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
