@@ -27,5 +27,7 @@ resources:
 - crd-cleanup-job.yaml
 - deploy.yaml
 - operator-sa.yaml
+- role.yaml
+- rolebinding.yaml
 - sparkapplications.sparkoperator.k8s.io-crd.yaml
 - scheduledsparkapplications.sparkoperator.k8s.io-crd.yaml
