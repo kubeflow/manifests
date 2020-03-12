@@ -13,8 +13,8 @@ import (
 	"testing"
 )
 
-func writePipelinesRunnerOverlaysGcp(th *KustTestHarness) {
-	th.writeF("/manifests/pipeline/pipelines-runner/overlays/gcp/cluster-role-binding.yaml", `
+func writePipelinesRunnerOverlaysUseKfUser(th *KustTestHarness) {
+	th.writeF("/manifests/pipeline/pipelines-runner/overlays/use-kf-user/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -25,7 +25,7 @@ subjects:
   name: kf-user
   namespace: kubeflow
 `)
-	th.writeK("/manifests/pipeline/pipelines-runner/overlays/gcp", `
+	th.writeK("/manifests/pipeline/pipelines-runner/overlays/use-kf-user", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -143,9 +143,9 @@ resources:
 `)
 }
 
-func TestPipelinesRunnerOverlaysGcp(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/pipeline/pipelines-runner/overlays/gcp")
-	writePipelinesRunnerOverlaysGcp(th)
+func TestPipelinesRunnerOverlaysUseKfUser(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/pipeline/pipelines-runner/overlays/use-kf-user")
+	writePipelinesRunnerOverlaysUseKfUser(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -154,7 +154,7 @@ func TestPipelinesRunnerOverlaysGcp(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../pipeline/pipelines-runner/overlays/gcp"
+	targetPath := "../pipeline/pipelines-runner/overlays/use-kf-user"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)

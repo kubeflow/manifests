@@ -9,4 +9,4 @@ spec:
       - name: ml-pipeline-api-server
         env:
         - name: DEFAULTPIPELINERUNNERSERVICEACCOUNT
-          value: 'kf-user'
+          value: kf-user

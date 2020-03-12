@@ -13,8 +13,8 @@ import (
 	"testing"
 )
 
-func writeApiServiceOverlaysGcp(th *KustTestHarness) {
-	th.writeF("/manifests/pipeline/api-service/overlays/gcp/deployment.yaml", `
+func writeApiServiceOverlaysUseKfUser(th *KustTestHarness) {
+	th.writeF("/manifests/pipeline/api-service/overlays/use-kf-user/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -26,9 +26,9 @@ spec:
       - name: ml-pipeline-api-server
         env:
         - name: DEFAULTPIPELINERUNNERSERVICEACCOUNT
-          value: 'kf-user'
+          value: kf-user
 `)
-	th.writeK("/manifests/pipeline/api-service/overlays/gcp", `
+	th.writeK("/manifests/pipeline/api-service/overlays/use-kf-user", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
@@ -193,9 +193,9 @@ images:
 `)
 }
 
-func TestApiServiceOverlaysGcp(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/pipeline/api-service/overlays/gcp")
-	writeApiServiceOverlaysGcp(th)
+func TestApiServiceOverlaysUseKfUser(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/pipeline/api-service/overlays/use-kf-user")
+	writeApiServiceOverlaysUseKfUser(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -204,7 +204,7 @@ func TestApiServiceOverlaysGcp(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../pipeline/api-service/overlays/gcp"
+	targetPath := "../pipeline/api-service/overlays/use-kf-user"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
