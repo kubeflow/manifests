@@ -73,7 +73,6 @@ spec:
   mode: ON_WITH_EXCLUSION
   exclusion:
     namespaces:
-    - kubeflow
     - istio-system
 `)
 	th.writeK("/manifests/istio/iap-gateway/base", `

@@ -56,5 +56,4 @@ spec:
   mode: ON_WITH_EXCLUSION
   exclusion:
     namespaces:
-    - kubeflow
     - istio-system
