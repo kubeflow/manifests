@@ -170,8 +170,7 @@ spec:
   mode: $(clusterRbacConfig)
   exclusion:
     namespaces:
-    - kubeflow
-    - istio-system
+    - istio-system # Accessing Istio services won't require an rbac policy.
 `)
 	th.writeF("/manifests/istio/istio/base/cluster-roles.yaml", `
 ---
