@@ -28,6 +28,7 @@ spec:
     minCpuPlatform: 'Intel Broadwell'
     metadata:
       disable-legacy-endpoints: "true"
+    serviceAccount: test-cluster-vm@test-project.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"partialSetters":[{"name":"cluster-name","value":"test-cluster",{"name":"gcloud.core.project","value":"test-project"}]}}
     workloadMetadataConfig:
       nodeMetadata: GKE_METADATA_SERVER
   clusterRef:

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# TODO(kunming): kustomize this config to include all the options we currently offer through DM
+
 apiVersion: identity.cnrm.cloud.google.com/v1alpha2
 kind: IdentityNamespace
 metadata:
