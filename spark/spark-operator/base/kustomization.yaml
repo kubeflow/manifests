@@ -11,7 +11,7 @@ commonLabels:
 # creating patches.
 images:
 - name: gcr.io/spark-operator/spark-operator
-  newTag: v1beta2-1.0.0-2.4.4
+  newTag: v1beta2-1.1.0-2.4.5
 
 # Value of this field is prepended to the
 # names of all resources
@@ -24,7 +24,6 @@ resources:
 - spark-sa.yaml
 - cr-clusterrole.yaml
 - crb.yaml
-- crd-cleanup-job.yaml
 - deploy.yaml
 - operator-sa.yaml
 - role.yaml

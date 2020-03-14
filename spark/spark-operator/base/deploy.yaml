@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: sparkoperator
-      app.kubernetes.io/version: v1beta2-1.0.0-2.4.4
+      app.kubernetes.io/version: v1beta2-1.1.0-2.4.5
   strategy:
     type: Recreate
   template:
@@ -21,7 +21,7 @@ spec:
         pending: []
       labels:
         app.kubernetes.io/name: sparkoperator
-        app.kubernetes.io/version: v1beta2-1.0.0-2.4.4
+        app.kubernetes.io/version: v1beta2-1.1.0-2.4.5
     spec:
       containers:
       - args:
@@ -36,7 +36,7 @@ spec:
         - -metrics-port=10254
         - -metrics-endpoint=/metrics
         - -metrics-prefix=
-        image: gcr.io/spark-operator/spark-operator:v1beta2-1.0.0-2.4.4
+        image: gcr.io/spark-operator/spark-operator:v1beta2-1.1.0-2.4.5
         imagePullPolicy: IfNotPresent
         name: sparkoperator
         ports:
