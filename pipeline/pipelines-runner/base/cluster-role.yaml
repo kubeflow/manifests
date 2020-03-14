@@ -83,5 +83,9 @@ rules:
   - networking.istio.io
   resources:
   - virtualservices
+- apiGroups:
+  - "sparkoperator.k8s.io"
+  resources:
+  - sparkapplications
   verbs:
   - '*'
