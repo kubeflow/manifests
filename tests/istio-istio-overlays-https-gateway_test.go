@@ -168,6 +168,9 @@ metadata:
   name: default
 spec:
   mode: $(clusterRbacConfig)
+  exclusion:
+    namespaces:
+    - istio-system # Accessing Istio services won't require an rbac policy.
 `)
 	th.writeF("/manifests/istio/istio/base/cluster-roles.yaml", `
 ---
@@ -231,10 +234,12 @@ varReference:
 - path: spec/mode
   kind: ClusterRbacConfig
 - path: spec/selector
-  kind: Gateway`)
+  kind: Gateway
+`)
 	th.writeF("/manifests/istio/istio/base/params.env", `
-clusterRbacConfig=ON
-gatewaySelector=ingressgateway`)
+clusterRbacConfig=ON_WITH_EXCLUSION
+gatewaySelector=ingressgateway
+`)
 	th.writeK("/manifests/istio/istio/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
