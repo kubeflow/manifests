@@ -29,16 +29,14 @@ metadata:
 	th.writeF("/manifests/aws/istio-ingress/overlays/oidc/params.yaml", `
 varReference:
 - path: metadata/annotations
-  kind: Ingress
-`)
+  kind: Ingress`)
 	th.writeF("/manifests/aws/istio-ingress/overlays/oidc/params.env", `
 oidcIssuer=
 oidcAuthorizationEndpoint=
 oidcTokenEndpoint=
 oidcUserInfoEndpoint=
 oidcSecretName=istio-oidc-secret
-certArn=
-`)
+certArn=`)
 	th.writeF("/manifests/aws/istio-ingress/overlays/oidc/secrets.env", `
 clientId=
 clientSecret=
@@ -123,11 +121,9 @@ spec:
 	th.writeF("/manifests/aws/istio-ingress/base/params.yaml", `
 varReference:
 - path: metadata/annotations
-  kind: Ingress
-`)
+  kind: Ingress`)
 	th.writeF("/manifests/aws/istio-ingress/base/params.env", `
-loadBalancerScheme=internet-facing
-`)
+loadBalancerScheme=internet-facing`)
 	th.writeK("/manifests/aws/istio-ingress/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -149,8 +145,7 @@ vars:
   fieldref:
     fieldpath: data.loadBalancerScheme
 configurations:
-- params.yaml
-`)
+- params.yaml`)
 }
 
 func TestIstioIngressOverlaysOidc(t *testing.T) {

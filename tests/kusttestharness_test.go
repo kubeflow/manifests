@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package tests_test
+package tests
 
 // A collection of utilities used in target tests.
 
@@ -52,7 +52,8 @@ func NewFakeLoader(initialDir string) FakeLoader {
 	// Create fake filesystem and inject it into initial Loader.
 	fSys := fs.MakeFakeFS()
 	fSys.Mkdir(initialDir)
-	lrc := loader.RestrictionRootOnly
+	// lrc := loader.RestrictionRootOnly
+	lrc := loader.RestrictionNone
 	ldr, err := loader.NewLoader(lrc, validators.MakeFakeValidator(), initialDir, fSys)
 	if err != nil {
 		log.Fatalf("Unable to make loader: %v", err)
@@ -136,6 +137,8 @@ func (th *KustTestHarness) writeF(dir string, content string) {
 	}
 }
 
+// TODO(jlewi): Why is the test harness creating a kustomize file? Is this because
+// we are relying on kfctl to generate the kustomization.YAML file?
 func (th *KustTestHarness) writeK(dir string, content string) {
 	th.writeF(filepath.Join(dir, pgmconfig.KustomizationFileNames[0]), `
 apiVersion: kustomize.config.k8s.io/v1beta1

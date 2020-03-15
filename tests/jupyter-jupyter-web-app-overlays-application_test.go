@@ -68,8 +68,6 @@ spec:
 	th.writeK("/manifests/jupyter/jupyter-web-app/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-bases:
-- ../../base
 resources:
 - application.yaml
 commonLabels:
@@ -80,7 +78,7 @@ commonLabels:
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.7.0
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/cluster-role-binding.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/../base_v3/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -93,7 +91,7 @@ subjects:
 - kind: ServiceAccount
   name: service-account
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/cluster-role.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/../base_v3/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -206,143 +204,7 @@ rules:
   - get
   - list
   - watch`)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/config-map.yaml", `
-apiVersion: v1
-data:
-  spawner_ui_config.yaml: |
-    # Configuration file for the Jupyter UI.
-    #
-    # Each Jupyter UI option is configured by two keys: 'value' and 'readOnly'
-    # - The 'value' key contains the default value
-    # - The 'readOnly' key determines if the option will be available to users
-    #
-    # If the 'readOnly' key is present and set to 'true', the respective option
-    # will be disabled for users and only set by the admin. Also when a
-    # Notebook is POSTED to the API if a necessary field is not present then
-    # the value from the config will be used.
-    #
-    # If the 'readOnly' key is missing (defaults to 'false'), the respective option
-    # will be available for users to edit.
-    #
-    # Note that some values can be templated. Such values are the names of the
-    # Volumes as well as their StorageClass
-    spawnerFormDefaults:
-      image:
-        # The container Image for the user's Jupyter Notebook
-        # If readonly, this value must be a member of the list below
-        value: gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v-base-ef41372-1177829795472347138
-        # The list of available standard container Images
-        options:
-          - gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-cpu:1.0.0
-          - gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-gpu:1.0.0
-          - gcr.io/kubeflow-images-public/tensorflow-2.1.0-notebook-cpu:1.0.0
-          - gcr.io/kubeflow-images-public/tensorflow-2.1.0-notebook-gpu:1.0.0
-        # By default, custom container Images are allowed
-        # Uncomment the following line to only enable standard container Images
-        readOnly: false
-      cpu:
-        # CPU for user's Notebook
-        value: '0.5'
-        readOnly: false
-      memory:
-        # Memory for user's Notebook
-        value: 1.0Gi
-        readOnly: false
-      workspaceVolume:
-        # Workspace Volume to be attached to user's Notebook
-        # Each Workspace Volume is declared with the following attributes:
-        # Type, Name, Size, MountPath and Access Mode
-        value:
-          type:
-            # The Type of the Workspace Volume
-            # Supported values: 'New', 'Existing'
-            value: New
-          name:
-            # The Name of the Workspace Volume
-            # Note that this is a templated value. Special values:
-            # {notebook-name}: Replaced with the name of the Notebook. The frontend
-            #                  will replace this value as the user types the name
-            value: 'workspace-{notebook-name}'
-          size:
-            # The Size of the Workspace Volume (in Gi)
-            value: '10Gi'
-          mountPath:
-            # The Path that the Workspace Volume will be mounted
-            value: /home/jovyan
-          accessModes:
-            # The Access Mode of the Workspace Volume
-            # Supported values: 'ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'
-            value: ReadWriteOnce
-          class:
-            # The StrageClass the PVC will use if type is New. Special values are:
-            # {none}: default StorageClass
-            # {empty}: empty string ""
-            value: '{none}'
-        readOnly: false
-      dataVolumes:
-        # List of additional Data Volumes to be attached to the user's Notebook
-        value: []
-        # Each Data Volume is declared with the following attributes:
-        # Type, Name, Size, MountPath and Access Mode
-        #
-        # For example, a list with 2 Data Volumes:
-        # value:
-        #   - value:
-        #       type:
-        #         value: New
-        #       name:
-        #         value: '{notebook-name}-vol-1'
-        #       size:
-        #         value: '10Gi'
-        #       class:
-        #         value: standard
-        #       mountPath:
-        #         value: /home/jovyan/vol-1
-        #       accessModes:
-        #         value: ReadWriteOnce
-        #       class:
-        #         value: {none}
-        #   - value:
-        #       type:
-        #         value: New
-        #       name:
-        #         value: '{notebook-name}-vol-2'
-        #       size:
-        #         value: '10Gi'
-        #       mountPath:
-        #         value: /home/jovyan/vol-2
-        #       accessModes:
-        #         value: ReadWriteMany
-        #       class:
-        #         value: {none}
-        readOnly: false
-      gpus:
-        # Number of GPUs to be assigned to the Notebook Container
-        value:
-          # values: "none", "1", "2", "4", "8"
-          num: "none"
-          # Determines what the UI will show and send to the backend
-          vendors:
-            - limitsKey: "nvidia.com/gpu"
-              uiName: "NVIDIA"
-          # Values: "" or a `+"`"+`limits-key`+"`"+` from the vendors list
-          vendor: ""
-        readOnly: false
-      shm:
-        value: true
-        readOnly: false
-      configurations:
-        # List of labels to be selected, these are the labels from PodDefaults
-        # value:
-        #   - add-gcp-secret
-        #   - default-editor
-        value: []
-        readOnly: false
-kind: ConfigMap
-metadata:
-  name: config
-`)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/deployment.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/../base_v3/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -355,23 +217,7 @@ spec:
         sidecar.istio.io/inject: "false"
     spec:
       containers:
-      - env:
-        - name: ROK_SECRET_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: parameters
-              key: ROK_SECRET_NAME
-        - name: UI
-          valueFrom:
-            configMapKeyRef:
-              name: parameters
-              key: UI
-        - name: USERID_HEADER
-          value: $(userid-header)
-        - name: USERID_PREFIX
-          value: $(userid-prefix)
-        image: gcr.io/kubeflow-images-public/jupyter-web-app:v0.5.0
-        imagePullPolicy: $(policy)
+      - image: gcr.io/kubeflow-images-public/jupyter-web-app        
         name: jupyter-web-app
         ports:
         - containerPort: 5000
@@ -381,10 +227,10 @@ spec:
       serviceAccountName: service-account
       volumes:
       - configMap:
-          name: config
+          name: jupyter-web-app-config
         name: config-volume
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/role-binding.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/../base_v3/role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
@@ -397,7 +243,7 @@ subjects:
 - kind: ServiceAccount
   name: jupyter-notebook
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/role.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/../base_v3/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
@@ -434,13 +280,13 @@ rules:
   verbs:
   - '*'
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/service-account.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/../base_v3/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: service-account
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/service.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/../base_v3/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -465,6 +311,34 @@ spec:
     targetPort: 5000
   type: ClusterIP
 `)
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/deployment_patch.yaml", `
+# TODO(https://github.com/kubeflow/manifests/issues/774): This is a patch
+# that pulls out from core the parts that should be in pulled into stacks.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+spec:
+  template:
+    spec:
+      containers:
+      - name: jupyter-web-app
+        imagePullPolicy: $(policy)
+        env:
+        - name: ROK_SECRET_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: ROK_SECRET_NAME
+        - name: UI
+          valueFrom:
+            configMapKeyRef:
+              name: parameters
+              key: UI
+        - name: USERID_HEADER
+          value: $(userid-header)
+        - name: USERID_PREFIX
+          value: $(userid-prefix)`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.yaml", `
 varReference:
 - path: spec/template/spec/containers/imagePullPolicy
@@ -475,6 +349,135 @@ varReference:
   kind: Deployment
 - path: spec/template/spec/containers/0/env/3/value
   kind: Deployment`)
+	th.writeF("/manifests/jupyter/jupyter-web-app/base/../base_v3/configs/spawner_ui_config.yaml", `
+# Configuration file for the Jupyter UI.
+#
+# Each Jupyter UI option is configured by two keys: 'value' and 'readOnly'
+# - The 'value' key contains the default value
+# - The 'readOnly' key determines if the option will be available to users
+#
+# If the 'readOnly' key is present and set to 'true', the respective option
+# will be disabled for users and only set by the admin. Also when a
+# Notebook is POSTED to the API if a necessary field is not present then
+# the value from the config will be used.
+#
+# If the 'readOnly' key is missing (defaults to 'false'), the respective option
+# will be available for users to edit.
+#
+# Note that some values can be templated. Such values are the names of the
+# Volumes as well as their StorageClass
+spawnerFormDefaults:
+  image:
+    # The container Image for the user's Jupyter Notebook
+    # If readonly, this value must be a member of the list below
+    value: gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v-base-ef41372-1177829795472347138
+    # The list of available standard container Images
+    options:
+      - gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-cpu:1.0.0
+      - gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-gpu:1.0.0
+      - gcr.io/kubeflow-images-public/tensorflow-2.1.0-notebook-cpu:1.0.0
+      - gcr.io/kubeflow-images-public/tensorflow-2.1.0-notebook-gpu:1.0.0
+    # By default, custom container Images are allowed
+    # Uncomment the following line to only enable standard container Images
+    readOnly: false
+  cpu:
+    # CPU for user's Notebook
+    value: '0.5'
+    readOnly: false
+  memory:
+    # Memory for user's Notebook
+    value: 1.0Gi
+    readOnly: false
+  workspaceVolume:
+    # Workspace Volume to be attached to user's Notebook
+    # Each Workspace Volume is declared with the following attributes:
+    # Type, Name, Size, MountPath and Access Mode
+    value:
+      type:
+        # The Type of the Workspace Volume
+        # Supported values: 'New', 'Existing'
+        value: New
+      name:
+        # The Name of the Workspace Volume
+        # Note that this is a templated value. Special values:
+        # {notebook-name}: Replaced with the name of the Notebook. The frontend
+        #                  will replace this value as the user types the name
+        value: 'workspace-{notebook-name}'
+      size:
+        # The Size of the Workspace Volume (in Gi)
+        value: '10Gi'
+      mountPath:
+        # The Path that the Workspace Volume will be mounted
+        value: /home/jovyan
+      accessModes:
+        # The Access Mode of the Workspace Volume
+        # Supported values: 'ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'
+        value: ReadWriteOnce
+      class:
+        # The StrageClass the PVC will use if type is New. Special values are:
+        # {none}: default StorageClass
+        # {empty}: empty string ""
+        value: '{none}'
+    readOnly: false
+  dataVolumes:
+    # List of additional Data Volumes to be attached to the user's Notebook
+    value: []
+    # Each Data Volume is declared with the following attributes:
+    # Type, Name, Size, MountPath and Access Mode
+    #
+    # For example, a list with 2 Data Volumes:
+    # value:
+    #   - value:
+    #       type:
+    #         value: New
+    #       name:
+    #         value: '{notebook-name}-vol-1'
+    #       size:
+    #         value: '10Gi'
+    #       class:
+    #         value: standard
+    #       mountPath:
+    #         value: /home/jovyan/vol-1
+    #       accessModes:
+    #         value: ReadWriteOnce
+    #       class:
+    #         value: {none}
+    #   - value:
+    #       type:
+    #         value: New
+    #       name:
+    #         value: '{notebook-name}-vol-2'
+    #       size:
+    #         value: '10Gi'
+    #       mountPath:
+    #         value: /home/jovyan/vol-2
+    #       accessModes:
+    #         value: ReadWriteMany
+    #       class:
+    #         value: {none}
+    readOnly: false
+  gpus:
+    # Number of GPUs to be assigned to the Notebook Container
+    value:
+      # values: "none", "1", "2", "4", "8"
+      num: "none"
+      # Determines what the UI will show and send to the backend
+      vendors:
+        - limitsKey: "nvidia.com/gpu"
+          uiName: "NVIDIA"
+      # Values: "" or a `+"`"+`limits-key`+"`"+` from the vendors list
+      vendor: ""
+    readOnly: false
+  shm:
+    value: true
+    readOnly: false
+  configurations:
+    # List of labels to be selected, these are the labels from PodDefaults
+    # value:
+    #   - add-gcp-secret
+    #   - default-editor
+    value: []
+    readOnly: false`)
 	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.env", `
 UI=default
 ROK_SECRET_NAME=secret-rok-{username}
@@ -484,17 +487,22 @@ clusterDomain=cluster.local
 userid-header=
 userid-prefix=`)
 	th.writeK("/manifests/jupyter/jupyter-web-app/base", `
+# TODO(https://github.com/kubeflow/manifests/issues/774): 
+# This is a legacy package. Hopefully we can get rid of it once
+# 774 is complete.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- cluster-role-binding.yaml
-- cluster-role.yaml
-- config-map.yaml
-- deployment.yaml
-- role-binding.yaml
-- role.yaml
-- service-account.yaml
-- service.yaml
+# TODO(jlewi): We can't depend on base because of the deployment_patch.
+# but maybe if we changed that to use ConfigMapRef then the patch would correctly
+# override the patch applied in base_v3
+- ../base_v3/cluster-role-binding.yaml
+- ../base_v3/cluster-role.yaml
+- ../base_v3/deployment.yaml
+- ../base_v3/role-binding.yaml
+- ../base_v3/role.yaml
+- ../base_v3/service-account.yaml
+- ../base_v3/service.yaml
 namePrefix: jupyter-web-app-
 namespace: kubeflow
 commonLabels:
@@ -507,9 +515,18 @@ images:
 configMapGenerator:
 - envs:
   - params.env
-  name: parameters
+  name: parameters  
+# We need the name to be unique without the suffix because the original name is what
+# gets used with patches
+- name: jupyter-web-app-config
+  files:
+  - ../base_v3/configs/spawner_ui_config.yaml  
 generatorOptions:
+  # TODO(jlewi): Why are we setting disableNameSuffixHash true? Don't we want a content hash so that if the config map
+  # changes we would update the configmap?
   disableNameSuffixHash: true
+patchesStrategicMerge:
+- deployment_patch.yaml
 vars:
 - fieldref:
     fieldPath: data.policy
@@ -521,13 +538,6 @@ vars:
 - fieldref:
     fieldPath: data.prefix
   name: prefix
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: parameters
-- fieldref:
-    fieldPath: data.clusterDomain
-  name: clusterDomain
   objref:
     apiVersion: v1
     kind: ConfigMap

@@ -1,6 +1,7 @@
-package tests_test
+package base_v3
 
 import (
+	"github.com/kubeflow/manifests/tests"
 	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/v3/pkg/fs"
@@ -13,47 +14,8 @@ import (
 	"testing"
 )
 
-func writeJupyterWebAppOverlaysIstio(th *KustTestHarness) {
-	th.writeF("/manifests/jupyter/jupyter-web-app/overlays/istio/virtual-service.yaml", `
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: jupyter-web-app
-spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - headers:
-      request:
-        add:
-          x-forwarded-prefix: /jupyter
-    match:
-    - uri:
-        prefix: /jupyter/
-    rewrite:
-      uri: /
-    route:
-    - destination:
-        host: jupyter-web-app-service.$(namespace).svc.$(clusterDomain)
-        port:
-          number: 80
-`)
-	th.writeF("/manifests/jupyter/jupyter-web-app/overlays/istio/params.yaml", `
-varReference:
-- path: spec/http/route/destination/host
-  kind: VirtualService
-`)
-	th.writeK("/manifests/jupyter/jupyter-web-app/overlays/istio", `
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-- virtual-service.yaml
-configurations:
-- params.yaml
-`)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/../base_v3/cluster-role-binding.yaml", `
+func writeJupyterJupyterWebAppBase_v3(th *tests.KustTestHarness) {
+	th.writeF("/manifests/jupyter/jupyter-web-app/base_v3/cluster-role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -66,7 +28,7 @@ subjects:
 - kind: ServiceAccount
   name: service-account
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/../base_v3/cluster-role.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base_v3/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -179,7 +141,7 @@ rules:
   - get
   - list
   - watch`)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/../base_v3/deployment.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base_v3/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -205,7 +167,7 @@ spec:
           name: jupyter-web-app-config
         name: config-volume
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/../base_v3/role-binding.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base_v3/role-binding.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
@@ -218,7 +180,7 @@ subjects:
 - kind: ServiceAccount
   name: jupyter-notebook
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/../base_v3/role.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base_v3/role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
@@ -255,13 +217,13 @@ rules:
   verbs:
   - '*'
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/../base_v3/service-account.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base_v3/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: service-account
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/../base_v3/service.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base_v3/service.yaml", `
 apiVersion: v1
 kind: Service
 metadata:
@@ -286,7 +248,7 @@ spec:
     targetPort: 5000
   type: ClusterIP
 `)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/deployment_patch.yaml", `
+	th.writeF("/manifests/jupyter/jupyter-web-app/base_v3/deployment_patch.yaml", `
 # TODO(https://github.com/kubeflow/manifests/issues/774): This is a patch
 # that pulls out from core the parts that should be in pulled into stacks.
 apiVersion: apps/v1
@@ -297,34 +259,19 @@ spec:
   template:
     spec:
       containers:
-      - name: jupyter-web-app
-        imagePullPolicy: $(policy)
+      - name: jupyter-web-app        
         env:
-        - name: ROK_SECRET_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: parameters
-              key: ROK_SECRET_NAME
-        - name: UI
-          valueFrom:
-            configMapKeyRef:
-              name: parameters
-              key: UI
         - name: USERID_HEADER
-          value: $(userid-header)
+          valueFrom:
+            configMapKeyRef:
+              name: kubeflow-config
+              key: userid-header
         - name: USERID_PREFIX
-          value: $(userid-prefix)`)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.yaml", `
-varReference:
-- path: spec/template/spec/containers/imagePullPolicy
-  kind: Deployment
-- path: metadata/annotations/getambassador.io\/config
-  kind: Service
-- path: spec/template/spec/containers/0/env/2/value
-  kind: Deployment
-- path: spec/template/spec/containers/0/env/3/value
-  kind: Deployment`)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/../base_v3/configs/spawner_ui_config.yaml", `
+          valueFrom:
+            configMapKeyRef:
+              name: kubeflow-config
+              key: userid-prefix`)
+	th.writeF("/manifests/jupyter/jupyter-web-app/base_v3/configs/spawner_ui_config.yaml", `
 # Configuration file for the Jupyter UI.
 #
 # Each Jupyter UI option is configured by two keys: 'value' and 'readOnly'
@@ -453,99 +400,58 @@ spawnerFormDefaults:
     #   - default-editor
     value: []
     readOnly: false`)
-	th.writeF("/manifests/jupyter/jupyter-web-app/base/params.env", `
-UI=default
-ROK_SECRET_NAME=secret-rok-{username}
-policy=Always
-prefix=jupyter
-clusterDomain=cluster.local
-userid-header=
-userid-prefix=`)
-	th.writeK("/manifests/jupyter/jupyter-web-app/base", `
-# TODO(https://github.com/kubeflow/manifests/issues/774): 
-# This is a legacy package. Hopefully we can get rid of it once
-# 774 is complete.
+	th.writeK("/manifests/jupyter/jupyter-web-app/base_v3", `
+# TODO(https://github.com/kubeflow/manifests/issues/774):
+# This is a new kustomization file intended to get rid of the
+# need to rely on kfctl to build the kustomization.yaml file.
+# We might want to eventually move it to jupyter/jupyter-web-app/kustomization.yaml
+# We currently don't do that because we don't want to interfere with existing behavior.
+#
+# This kustomization.yaml file doesn't depend on base/kustomization.yaml
+# because that file contains changes that won't work with the new stack kustomize
+# packages that we want to define. For example, we can't define vars namespace, clusterDomain
+# etc... because we want those to be defined at the stack level and reused across applications.
+# We don't want to modify jupyter-web-app/kustomization.yaml because that would
+# break the existing KFDef files. So we want to make the stacks work 
+# and then replace it.
 apiVersion: kustomize.config.k8s.io/v1beta1
+commonLabels:
+  app.kubernetes.io/component: jupyter-web-app
+  app.kubernetes.io/instance: jupyter-web-app-v1.0.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/name: jupyter-web-app
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v1.0.0
 kind: Kustomization
-resources:
-# TODO(jlewi): We can't depend on base because of the deployment_patch.
-# but maybe if we changed that to use ConfigMapRef then the patch would correctly
-# override the patch applied in base_v3
-- ../base_v3/cluster-role-binding.yaml
-- ../base_v3/cluster-role.yaml
-- ../base_v3/deployment.yaml
-- ../base_v3/role-binding.yaml
-- ../base_v3/role.yaml
-- ../base_v3/service-account.yaml
-- ../base_v3/service.yaml
 namePrefix: jupyter-web-app-
 namespace: kubeflow
 commonLabels:
   app: jupyter-web-app
   kustomize.component: jupyter-web-app
-images:
-- name: gcr.io/kubeflow-images-public/jupyter-web-app
-  newName: gcr.io/kubeflow-images-public/jupyter-web-app
-  newTag: vmaster-gd9be4b9e
+namespace: kubeflow
+resources:
+- cluster-role-binding.yaml
+- cluster-role.yaml
+- deployment.yaml
+- role-binding.yaml
+- role.yaml
+- service-account.yaml
+- service.yaml
+- ../overlays/istio
+- ../overlays/application
 configMapGenerator:
-- envs:
-  - params.env
-  name: parameters  
 # We need the name to be unique without the suffix because the original name is what
 # gets used with patches
 - name: jupyter-web-app-config
   files:
-  - ../base_v3/configs/spawner_ui_config.yaml  
-generatorOptions:
-  # TODO(jlewi): Why are we setting disableNameSuffixHash true? Don't we want a content hash so that if the config map
-  # changes we would update the configmap?
-  disableNameSuffixHash: true
+  - configs/spawner_ui_config.yaml
 patchesStrategicMerge:
-- deployment_patch.yaml
-vars:
-- fieldref:
-    fieldPath: data.policy
-  name: policy
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: parameters
-- fieldref:
-    fieldPath: data.prefix
-  name: prefix
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: parameters
-- fieldref:
-    fieldPath: metadata.namespace
-  name: namespace
-  objref:
-    apiVersion: v1
-    kind: Service
-    name: service
-- fieldref:
-    fieldPath: data.userid-header
-  name: userid-header
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: parameters
-- fieldref:
-    fieldPath: data.userid-prefix
-  name: userid-prefix
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: parameters
-configurations:
-- params.yaml
-`)
+- deployment_patch.yaml`)
 }
 
-func TestJupyterWebAppOverlaysIstio(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/jupyter/jupyter-web-app/overlays/istio")
-	writeJupyterWebAppOverlaysIstio(th)
+func TestJupyterJupyterWebAppBase_v3(t *testing.T) {
+	th := tests.NewKustTestHarness(t, "/manifests/jupyter/overlays/base_v3")
+	writeJupyterJupyterWebAppBase_v3(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -554,7 +460,7 @@ func TestJupyterWebAppOverlaysIstio(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../jupyter/jupyter-web-app/overlays/istio"
+	targetPath := "../jupyter/jupyter-web-app/base_v3"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)

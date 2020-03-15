@@ -44,81 +44,22 @@ varReference:
 	th.writeK("/manifests/common/centraldashboard/overlays/istio", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-bases:
-- ../../base
 resources:
 - virtual-service.yaml
 configurations:
 - params.yaml
 
 `)
-	th.writeF("/manifests/common/centraldashboard/base/clusterrole-binding.yaml", `
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  labels:
-    app: centraldashboard
-  name: centraldashboard
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: centraldashboard
-subjects:
-- kind: ServiceAccount
-  name: centraldashboard
-  namespace: $(namespace)
-`)
-	th.writeF("/manifests/common/centraldashboard/base/clusterrole.yaml", `
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    app: centraldashboard
-  name: centraldashboard
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - events
-  - namespaces
-  - nodes
-  verbs:
-  - get
-  - list
-  - watch
-`)
-	th.writeF("/manifests/common/centraldashboard/base/deployment.yaml", `
+	th.writeF("/manifests/common/centraldashboard/base/deployment_patch.yaml", `
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: centraldashboard
   name: centraldashboard
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: centraldashboard
   template:
-    metadata:
-      labels:
-        app: centraldashboard
-      annotations:
-        sidecar.istio.io/inject: "false"
     spec:
       containers:
-      - image: gcr.io/kubeflow-images-public/centraldashboard
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 8082
-          initialDelaySeconds: 30
-          periodSeconds: 30
-        name: centraldashboard
-        ports:
-        - containerPort: 8082
-          protocol: TCP
+      - name: centraldashboard
         env:
         - name: USERID_HEADER
           value: $(userid-header)
@@ -126,82 +67,6 @@ spec:
           value: $(userid-prefix)
         - name: PROFILES_KFAM_SERVICE_HOST
           value: profiles-kfam.kubeflow
-      serviceAccountName: centraldashboard
-`)
-	th.writeF("/manifests/common/centraldashboard/base/role-binding.yaml", `
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  labels:
-    app: centraldashboard
-  name: centraldashboard
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: centraldashboard
-subjects:
-- kind: ServiceAccount
-  name: centraldashboard
-  namespace: $(namespace)
-`)
-	th.writeF("/manifests/common/centraldashboard/base/role.yaml", `
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  labels:
-    app: centraldashboard
-  name: centraldashboard
-rules:
-- apiGroups:
-  - ""
-  - "app.k8s.io"
-  resources:
-  - applications
-  - pods
-  - pods/exec
-  - pods/log
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - get
-`)
-	th.writeF("/manifests/common/centraldashboard/base/service-account.yaml", `
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: centraldashboard
-`)
-	th.writeF("/manifests/common/centraldashboard/base/service.yaml", `
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name: centralui-mapping
-      prefix: /
-      rewrite: /
-      service: centraldashboard.$(namespace)
-  labels:
-    app: centraldashboard
-  name: centraldashboard
-spec:
-  ports:
-  - port: 80
-    protocol: TCP
-    targetPort: 8082
-  selector:
-    app: centraldashboard
-  sessionAffinity: None
-  type: ClusterIP
 `)
 	th.writeF("/manifests/common/centraldashboard/base/params.yaml", `
 varReference:
@@ -221,13 +86,9 @@ userid-prefix=`)
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- clusterrole-binding.yaml
-- clusterrole.yaml
-- deployment.yaml
-- role-binding.yaml
-- role.yaml
-- service-account.yaml
-- service.yaml
+- ../base_v3
+patchesStrategicMerge:
+- deployment_patch.yaml
 namespace: kubeflow
 commonLabels:
   kustomize.component: centraldashboard

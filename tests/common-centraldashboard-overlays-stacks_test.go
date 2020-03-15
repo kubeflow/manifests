@@ -13,7 +13,58 @@ import (
 	"testing"
 )
 
-func writeCentraldashboardBase(th *KustTestHarness) {
+func writeCentraldashboardOverlaysStacks(th *KustTestHarness) {
+	th.writeF("/manifests/common/centraldashboard/overlays/stacks/deployment_kf_config.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: centraldashboard
+spec:
+  template:
+    spec:
+        containers:
+          - name: centraldashboard
+            env:
+            - name: USERID_HEADER
+              valueFrom:
+                configMapKeyRef:
+                  name: kubeflow-config
+                  key: userid-header
+            - name: USERID_PREFIX
+              valueFrom:
+                configMapKeyRef:
+                  name: kubeflow-config
+                  key: userid-prefix
+            - name: PROFILES_KFAM_SERVICE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: kubeflow-config
+                  key: profiles_kfam_service_host
+`)
+	th.writeK("/manifests/common/centraldashboard/overlays/stacks", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+commonLabels:
+  app.kubernetes.io/component: centraldashboard
+  app.kubernetes.io/instance: centraldashboard-v1.0.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/name: centraldashboard
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v1.0.0
+kind: Kustomization
+namespace: kubeflow
+resources:
+- ../../core
+# TODO(jlewi): istio and application are really patches
+# not "overlays" in that they are expected to be used as mixins.
+# Perhaps move this into mixins to make this more obvious.
+- ../../overlays/istio
+- ../../overlays/application
+patchesStrategicMerge:
+# Pull in the patch which will configure central dashboard using a kubeflow
+# configmap
+- deployment_kf_config.yaml
+
+`)
 	th.writeF("/manifests/common/centraldashboard/base/deployment_patch.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -100,9 +151,9 @@ configurations:
 `)
 }
 
-func TestCentraldashboardBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/common/centraldashboard/base")
-	writeCentraldashboardBase(th)
+func TestCentraldashboardOverlaysStacks(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/common/centraldashboard/overlays/stacks")
+	writeCentraldashboardOverlaysStacks(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -111,7 +162,7 @@ func TestCentraldashboardBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../common/centraldashboard/base"
+	targetPath := "../common/centraldashboard/overlays/stacks"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
