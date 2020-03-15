@@ -198,10 +198,11 @@ func hint(a, b string) string {
 	return "X"
 }
 
-func (th *KustTestHarness) assertActualEqualsExpected(
-	m resmap.ResMap, expected string) {
+// AssertActualEqualsExpected asserts that the result of kustomize build matches
+// the expected golden YAML.
+func AssertActualEqualsExpected(t *testing.T, m resmap.ResMap, expected string) {
 	if m == nil {
-		th.t.Fatalf("Map should not be nil.")
+		t.Fatalf("Map should not be nil.")
 	}
 	// Ignore leading linefeed in expected value
 	// to ease readability of tests.
@@ -210,15 +211,20 @@ func (th *KustTestHarness) assertActualEqualsExpected(
 	}
 	actual, err := m.AsYaml()
 	if err != nil {
-		th.t.Fatalf("Unexpected err: %v", err)
+		t.Fatalf("Unexpected err: %v", err)
 	}
 	if string(actual) != expected {
-		th.reportDiffAndFail(actual, expected)
+		ReportDiffAndFail(t, actual, expected)
 	}
 }
 
+func (th *KustTestHarness) assertActualEqualsExpected(
+	m resmap.ResMap, expected string) {
+	AssertActualEqualsExpected(th.t, m, expected)
+}
+
 // Pretty printing of file differences.
-func (th *KustTestHarness) reportDiffAndFail(actual []byte, expected string) {
+func ReportDiffAndFail(t *testing.T, actual []byte, expected string) {
 	sE, maxLen := convertToArray(expected)
 	sA, _ := convertToArray(string(actual))
 	fmt.Println("===== ACTUAL BEGIN ========================================")
@@ -245,5 +251,10 @@ func (th *KustTestHarness) reportDiffAndFail(actual []byte, expected string) {
 			fmt.Printf(format, "X", sE[i], "")
 		}
 	}
-	th.t.Fatalf("Expected not equal to actual")
+	t.Fatalf("Expected not equal to actual")
+}
+
+// Pretty printing of file differences.
+func (th *KustTestHarness) reportDiffAndFail(actual []byte, expected string) {
+	ReportDiffAndFail(th.t, actual, expected)
 }
