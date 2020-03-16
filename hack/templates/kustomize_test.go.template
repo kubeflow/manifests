@@ -1,4 +1,4 @@
-package base_v3
+package {{package}}
 
 import (
 	"github.com/kubeflow/manifests/tests"
@@ -7,8 +7,8 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../jupyter/jupyter-web-app/base_v3",
-		Expected: "test_data/expected/",
+		Package: "{{package_dir}}",
+		Expected: "test_data/expected",
 	}
 
 	tests.RunTestCase(t, testCase)

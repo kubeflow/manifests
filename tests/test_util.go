@@ -57,7 +57,10 @@ func RunTestCase(t *testing.T, testCase *KustomizeTestCase) {
 	}
 
 	fsys := fs.MakeRealFS()
-	lrc := loader.RestrictionRootOnly
+	// We don't want to enforce the security check.
+	// This is equivalent to running:
+	// kustomize build --load_restrictor none 
+	lrc := loader.RestrictionNone
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), testCase.Package, fsys)
 	if loaderErr != nil {
 		t.Fatalf("could not load kustomize loader: %v", loaderErr)
