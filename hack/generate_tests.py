@@ -4,9 +4,15 @@
 import argparse
 import logging
 import os
+import shutil
 import subprocess
 
 TOP_LEVEL_EXCLUDES = ["docs", "hack", "kfdef", "stacks", "tests"]
+
+# The subdirectory to story the expected manifests in
+# We use a subdirectory of test_data because we could potentially
+# have more than one version of a manifest.
+KUSTOMIZE_OUTPUT_DIR = "test_data/expected"
 
 def generate_test_name(repo_root, package_dir):
   """Generate the name of the go file to write the test to.
@@ -22,6 +28,27 @@ def generate_test_name(repo_root, package_dir):
   name = "-".join(pieces) + "_test.go"
 
   return name
+
+def run_kustomize_build(repo_root, package_dir):
+  """Run kustomize build and store the output in the test directory."""
+
+  rpath = os.path.relpath(package_dir, repo_root)
+
+  output_dir = os.path.join(repo_root, "tests", rpath, KUSTOMIZE_OUTPUT_DIR)
+
+  if os.path.exists(output_dir):
+    # Remove any previous version of the directory so that we ensure
+    # that all files in that directory are from the new run
+    # of kustomize build -o
+    logging.info("Removing directory %s", output_dir)
+    shutil.rmtree(output_dir)
+
+  logging.info("Creating directory %s", output_dir)
+  os.makedirs(output_dir)
+
+  subprocess.check_call(["kustomize", "build", "--load_restrictor", "none",
+                         "-o", output_dir], cwd=os.path.join(repo_root,
+                                                             package_dir))
 
 def get_changed_dirs():
   """Return a list of directories of changed kustomization packages."""
@@ -150,8 +177,9 @@ if __name__ == "__main__":
     test_name = generate_test_name(repo_root, full_dir)
     logging.info("Regenerating test %s for %s ", test_name, full_dir)
 
+    run_kustomize_build(repo_root, full_dir)
     test_path = os.path.join(repo_root, "tests", test_name)
 
-    with open(test_path, "w") as test_file:
-      subprocess.check_call(["./hack/gen-test-target.sh", full_dir],
-                            stdout=test_file, cwd=repo_root)
+    #with open(test_path, "w") as test_file:
+      #subprocess.check_call(["./hack/gen-test-target.sh", full_dir],
+                            #stdout=test_file, cwd=repo_root)
