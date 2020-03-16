@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  ambassadorServiceType: ClusterIP
+kind: ConfigMap
+metadata:
+  labels:
+    kustomize.component: ambassador
+  name: ambassador-parameters
+  namespace: istio-system

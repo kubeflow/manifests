@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: notebook-controller
+    app.kubernetes.io/component: notebook-controller
+    app.kubernetes.io/instance: notebook-controller-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: notebook-controller
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: notebook-controller
+  name: notebook-controller-deployment
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: notebook-controller
+      app.kubernetes.io/component: notebook-controller
+      app.kubernetes.io/instance: notebook-controller-v1.0.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: notebook-controller
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v1.0.0
+      kustomize.component: notebook-controller
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: notebook-controller
+        app.kubernetes.io/component: notebook-controller
+        app.kubernetes.io/instance: notebook-controller-v1.0.0
+        app.kubernetes.io/managed-by: kfctl
+        app.kubernetes.io/name: notebook-controller
+        app.kubernetes.io/part-of: kubeflow
+        app.kubernetes.io/version: v1.0.0
+        kustomize.component: notebook-controller
+    spec:
+      containers:
+      - command:
+        - /manager
+        env:
+        - name: USE_ISTIO
+          value: "false"
+        - name: POD_LABELS
+          value: gcp-cred-secret=user-gcp-sa,gcp-cred-secret-filename=user-gcp-sa.json
+        image: gcr.io/kubeflow-images-public/notebook-controller:vmaster-gf39279c0
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        name: manager
+      serviceAccountName: notebook-controller-service-account

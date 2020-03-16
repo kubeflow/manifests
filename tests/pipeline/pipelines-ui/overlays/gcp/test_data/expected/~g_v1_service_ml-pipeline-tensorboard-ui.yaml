@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ml-pipeline-tensorboard-ui
+  name: ml-pipeline-tensorboard-ui
+  namespace: kubeflow
+spec:
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    app: ml-pipeline-tensorboard-ui

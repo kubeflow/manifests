@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ml-pipeline-ui
+    app.kubernetes.io/component: pipelines-ui
+    app.kubernetes.io/instance: pipelines-ui-0.2.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: pipelines-ui
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: 0.2.0
+  name: ml-pipeline-ui
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-ui
+      app.kubernetes.io/component: pipelines-ui
+      app.kubernetes.io/instance: pipelines-ui-0.2.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: pipelines-ui
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: 0.2.0
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: ml-pipeline-ui
+        app.kubernetes.io/component: pipelines-ui
+        app.kubernetes.io/instance: pipelines-ui-0.2.0
+        app.kubernetes.io/managed-by: kfctl
+        app.kubernetes.io/name: pipelines-ui
+        app.kubernetes.io/part-of: kubeflow
+        app.kubernetes.io/version: 0.2.0
+    spec:
+      containers:
+      - image: gcr.io/ml-pipeline/frontend:0.2.0
+        imagePullPolicy: IfNotPresent
+        name: ml-pipeline-ui
+        ports:
+        - containerPort: 3000
+      serviceAccountName: ml-pipeline-ui

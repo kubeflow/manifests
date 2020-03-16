@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: mxnet
+    app.kubernetes.io/instance: mxnet-operator-v0.7.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: mxnet-operator
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.7.0
+    kustomize.component: mxnet-operator
+  name: mxnet-operator
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: mxnet
+      app.kubernetes.io/instance: mxnet-operator-v0.7.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: mxnet-operator
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.7.0
+      kustomize.component: mxnet-operator
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app.kubernetes.io/component: mxnet
+        app.kubernetes.io/instance: mxnet-operator-v0.7.0
+        app.kubernetes.io/managed-by: kfctl
+        app.kubernetes.io/name: mxnet-operator
+        app.kubernetes.io/part-of: kubeflow
+        app.kubernetes.io/version: v0.7.0
+        kustomize.component: mxnet-operator
+        name: mxnet-operator
+    spec:
+      containers:
+      - command:
+        - /opt/kubeflow/mxnet-operator.v1beta1
+        - --alsologtostderr
+        - -v=1
+        env:
+        - name: MY_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        image: mxjob/mxnet-operator:v1beta1
+        imagePullPolicy: Always
+        name: mxnet-operator
+      serviceAccountName: mxnet-operator

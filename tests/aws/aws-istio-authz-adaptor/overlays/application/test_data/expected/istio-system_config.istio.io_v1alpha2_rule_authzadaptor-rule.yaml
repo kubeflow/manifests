@@ -1,0 +1,24 @@
+apiVersion: config.istio.io/v1alpha2
+kind: rule
+metadata:
+  labels:
+    app.kubernetes.io/component: aws-istio-authz-adaptor
+    app.kubernetes.io/instance: aws-istio-authz-adaptor-0.1
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: aws-istio-authz-adaptor
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: "0.1"
+    kustomize.component: aws-authzadaptor
+  name: authzadaptor-rule
+  namespace: istio-system
+spec:
+  actions:
+  - handler: authzadaptor-handler.istio-system
+    instances:
+    - authzadaptor-instance
+    name: action
+  match: context.reporter.kind == "outbound" && source.labels["istio"] == "ingressgateway"
+  requestHeaderOperations:
+  - name: kubeflow-userid
+    values:
+    - action.output.email

@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  gateway.kubeflow.kubeflow-gateway: istio-ingressgateway.istio-system.svc.cluster.local
+  local-gateway.knative-serving.cluster-local-gateway: cluster-local-gateway.istio-system.svc.cluster.local
+  local-gateway.mesh: mesh
+  reconcileExternalGateway: "false"
+kind: ConfigMap
+metadata:
+  labels:
+    kustomize.component: knative
+    networking.knative.dev/ingress-provider: istio
+    serving.knative.dev/release: v0.11.1
+  name: config-istio
+  namespace: knative-serving

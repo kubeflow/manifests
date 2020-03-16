@@ -1,0 +1,21 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: metadata-ui
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /metadata
+    rewrite:
+      uri: /metadata
+    route:
+    - destination:
+        host: metadata-ui.kubeflow.svc.cluster.local
+        port:
+          number: 80
+    timeout: 300s

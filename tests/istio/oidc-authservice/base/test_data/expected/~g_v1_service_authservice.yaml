@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: authservice
+  namespace: istio-system
+spec:
+  ports:
+  - name: http-authservice
+    port: 8080
+    targetPort: http-api
+  publishNotReadyAddresses: true
+  selector:
+    app: authservice
+  type: ClusterIP

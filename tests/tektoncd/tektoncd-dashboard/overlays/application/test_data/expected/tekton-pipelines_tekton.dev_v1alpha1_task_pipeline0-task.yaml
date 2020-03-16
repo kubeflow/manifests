@@ -1,0 +1,39 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  labels:
+    app: tekton-dashboard
+    app.kubernetes.io/component: tektoncd
+    app.kubernetes.io/instance: tektoncd-dashboard-v0.7.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: tektoncd-dashboard
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.7.0
+  name: pipeline0-task
+  namespace: tekton-pipelines
+spec:
+  inputs:
+    params:
+    - default: /workspace/git-source
+      description: The path to the resource files to apply
+      name: pathToResourceFiles
+    - default: .
+      description: The directory from which resources are to be applied
+      name: apply-directory
+    - default: tekton-pipelines
+      description: The namespace in which to create the resources being imported
+      name: target-namespace
+    resources:
+    - name: git-source
+      type: git
+  steps:
+  - args:
+    - apply
+    - -f
+    - ${inputs.params.pathToResourceFiles}/${inputs.params.apply-directory}
+    - -n
+    - ${inputs.params.target-namespace}
+    command:
+    - kubectl
+    image: lachlanevenson/k8s-kubectl
+    name: kubectl-apply

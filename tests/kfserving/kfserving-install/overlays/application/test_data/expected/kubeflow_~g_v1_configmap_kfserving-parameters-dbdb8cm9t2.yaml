@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  registry: gcr.io/kfserving
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: kfserving-install
+    app.kubernetes.io/instance: kfserving-install-v0.7.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: kfserving-install
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.7.0
+    kustomize.component: kfserving
+  name: kfserving-parameters-dbdb8cm9t2
+  namespace: kubeflow

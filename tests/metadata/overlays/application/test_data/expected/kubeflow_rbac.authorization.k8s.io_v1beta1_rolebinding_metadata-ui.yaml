@@ -1,0 +1,22 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  labels:
+    app: metadata-ui
+    app.kubernetes.io/component: metadata
+    app.kubernetes.io/instance: metadata-0.2.1
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: metadata
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: 0.2.1
+    kustomize.component: metadata
+  name: metadata-ui
+  namespace: kubeflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: metadata-ui
+subjects:
+- kind: ServiceAccount
+  name: ui
+  namespace: kubeflow

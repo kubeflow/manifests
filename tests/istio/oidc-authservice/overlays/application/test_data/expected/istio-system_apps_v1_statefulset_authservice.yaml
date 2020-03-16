@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app.kubernetes.io/component: oidc-authservice
+    app.kubernetes.io/instance: oidc-authservice-v0.7.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: oidc-authservice
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.7.0
+  name: authservice
+  namespace: istio-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authservice
+      app.kubernetes.io/component: oidc-authservice
+      app.kubernetes.io/instance: oidc-authservice-v0.7.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: oidc-authservice
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.7.0
+  serviceName: authservice
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: authservice
+        app.kubernetes.io/component: oidc-authservice
+        app.kubernetes.io/instance: oidc-authservice-v0.7.0
+        app.kubernetes.io/managed-by: kfctl
+        app.kubernetes.io/name: oidc-authservice
+        app.kubernetes.io/part-of: kubeflow
+        app.kubernetes.io/version: v0.7.0
+    spec:
+      containers:
+      - env:
+        - name: USERID_HEADER
+          value: ""
+        - name: USERID_PREFIX
+          value: ""
+        - name: USERID_CLAIM
+          value: email
+        - name: OIDC_PROVIDER
+          value: ""
+        - name: OIDC_AUTH_URL
+          value: ""
+        - name: OIDC_SCOPES
+          value: profile email groups
+        - name: REDIRECT_URL
+          value: ""
+        - name: SKIP_AUTH_URI
+          value: ""
+        - name: PORT
+          value: "8080"
+        - name: CLIENT_ID
+          value: ldapdexapp
+        - name: CLIENT_SECRET
+          value: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
+        - name: STORE_PATH
+          value: /var/lib/authservice/data.db
+        image: gcr.io/arrikto/kubeflow/oidc-authservice:28c59ef
+        imagePullPolicy: Always
+        name: authservice
+        ports:
+        - containerPort: 8080
+          name: http-api
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8081
+        volumeMounts:
+        - mountPath: /var/lib/authservice
+          name: data
+      securityContext:
+        fsGroup: 111
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: authservice-pvc
