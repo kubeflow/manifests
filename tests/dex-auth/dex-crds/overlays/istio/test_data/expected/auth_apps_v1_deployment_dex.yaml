@@ -20,7 +20,7 @@ spec:
         - dex
         - serve
         - /etc/dex/cfg/config.yaml
-        image: gcr.io/arrikto/dexidp/dex:4bede5eb80822fc3a7fc9edca0ed2605cd339d17
+        image: quay.io/dexidp/dex:v2.22.0
         name: dex
         ports:
         - containerPort: 5556
