@@ -51,6 +51,27 @@ def run_kustomize_build(repo_root, package_dir):
                          "-o", output_dir], cwd=os.path.join(repo_root,
                                                              package_dir))
 
+def run_kustomize_build(repo_root, package_dir):
+  """Run kustomize build and store the output in the test directory."""
+
+  rpath = os.path.relpath(package_dir, repo_root)
+
+  output_dir = os.path.join(repo_root, "tests", rpath, KUSTOMIZE_OUTPUT_DIR)
+
+  if os.path.exists(output_dir):
+    # Remove any previous version of the directory so that we ensure
+    # that all files in that directory are from the new run
+    # of kustomize build -o
+    logging.info("Removing directory %s", output_dir)
+    shutil.rmtree(output_dir)
+
+  logging.info("Creating directory %s", output_dir)
+  os.makedirs(output_dir)
+
+  subprocess.check_call(["kustomize", "build", "--load_restrictor", "none",
+                         "-o", output_dir], cwd=os.path.join(repo_root,
+                                                             package_dir))
+
 def get_changed_dirs():
   """Return a list of directories of changed kustomization packages."""
   # Generate a list of the files which have changed with respect to the upstream
