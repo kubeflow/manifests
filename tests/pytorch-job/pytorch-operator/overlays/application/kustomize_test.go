@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../../pytorch-job/pytorch-operator/overlays/application",
+		Package: "../../../../../pytorch-job/pytorch-operator/overlays/application",
 		Expected: "test_data/expected",
 	}
 

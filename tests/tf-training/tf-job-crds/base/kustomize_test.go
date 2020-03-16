@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../tf-training/tf-job-crds/base",
+		Package: "../../../../tf-training/tf-job-crds/base",
 		Expected: "test_data/expected",
 	}
 

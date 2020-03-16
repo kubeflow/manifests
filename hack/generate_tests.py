@@ -15,20 +15,20 @@ TOP_LEVEL_EXCLUDES = ["docs", "hack", "kfdef", "stacks", "tests"]
 # have more than one version of a manifest.
 KUSTOMIZE_OUTPUT_DIR = "test_data/expected"
 
-def generate_test_name(repo_root, package_dir):
-  """Generate the name of the go file to write the test to.
+TEST_NAME = "kustomize_test.go"
+
+def generate_test_path(repo_root, kustomize_rpath):
+  """Generate the full path of the  test.go file for a particular package
 
   Args:
     repo_root: Root of the repository
-    package_dir: Full path to the kustomize directory.
+    kustomize_rpath: The relative path (relative to repo root) of the
+      kustomize package to generate the test for.
   """
 
-  rpath = os.path.relpath(package_dir, repo_root)
-
-  pieces = rpath.split(os.path.sep)
-  name = "-".join(pieces) + "_test.go"
-
-  return name
+  test_path = os.path.join(repo_root, "tests", kustomize_rpath,
+                           TEST_NAME)
+  return test_path
 
 def run_kustomize_build(repo_root, package_dir):
   """Run kustomize build and store the output in the test directory."""
@@ -121,23 +121,44 @@ def remove_unmatched_tests(repo_root, package_dirs):
   expected_tests = set()
 
   for d in package_dirs:
-    expected_tests.add(generate_test_name(repo_root, d))
+    rpath = os.path.relpath(d, repo_root)
+    expected_tests.add(generate_test_path(repo_root, rpath))
 
   tests_dir = os.path.join(repo_root, "tests")
-  for name in os.listdir(tests_dir):
-    if not name.endswith("_test.go"):
+
+  possible_empty_dirs = []
+
+  # Walk the tests directory
+  for root, dirs, files in os.walk(tests_dir):
+    if not files:
+      possible_empty_dirs.append(root)
+
+    for f in files:
+      if f != TEST_NAME:
+        continue
+
+      full_test = os.path.join(root, f)
+      if full_test not in expected_tests:
+       logging.info("Removing unexpected test: %s", full_test)
+       os.unlink(full_test)
+       possible_empty_dirs.append(root)
+
+  # Prune directories that only contain test_data but no more tests
+  for d in possible_empty_dirs:
+    if not os.path.exists(d):
+      # Might have been a subdirectory of a directory that was deleted.
       continue
 
-    # TODO(jlewi): we should rename and remove "_test.go" from the filename.
-    if name in ["kusttestharness_test.go"]:
-      logging.info("Ignoring %s", name)
+    items = os.listdir(d)
+
+    if len(items) > 1:
       continue
 
-    if not name in expected_tests:
-      test_file = os.path.join(tests_dir, name)
-      logging.info("Deleting test %s; doesn't map to kustomization file",
-                   test_file)
-      os.unlink(test_file)
+    if len(items) == 1 and items[0] != "test_data":
+      continue
+
+    logging.info("Removing directory: %s", d)
+    shutil.rmtree(d)
 
 if __name__ == "__main__":
 
@@ -180,15 +201,17 @@ if __name__ == "__main__":
     this_dir, "templates"))
   env = jinja2.Environment(loader=loader)
   template = env.get_template("kustomize_test.go.template")
-  for full_dir in changed_dirs:
-    test_name = generate_test_name(repo_root, full_dir)
-    logging.info("Regenerating test %s for %s ", test_name, full_dir)
 
+  for full_dir in changed_dirs:
+    # Get the relative path of the kustomize directory.
+    # This is the path relative to the repo root.
     rpath = os.path.relpath(full_dir, repo_root)
+
+    test_path = generate_test_path(repo_root, rpath)
+    logging.info("Regenerating test %s for %s ", test_path, full_dir)
 
     # Generate the kustomize output
     run_kustomize_build(repo_root, full_dir)
-    test_path = os.path.join(repo_root, "tests", rpath, "kustomize_test.go")
 
     # Create the go test file.
     # TODO(jlewi): We really shouldn't need to redo this if it already

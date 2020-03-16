@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../seldon/seldon-core-operator/base",
+		Package: "../../../../seldon/seldon-core-operator/base",
 		Expected: "test_data/expected",
 	}
 

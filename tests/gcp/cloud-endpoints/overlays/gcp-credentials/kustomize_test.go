@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../../gcp/cloud-endpoints/overlays/gcp-credentials",
+		Package: "../../../../../gcp/cloud-endpoints/overlays/gcp-credentials",
 		Expected: "test_data/expected",
 	}
 
