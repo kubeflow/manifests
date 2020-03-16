@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Issuer
+metadata:
+  labels:
+    app: seldon
+    app.kubernetes.io/component: seldon
+    app.kubernetes.io/instance: seldon-1.15
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: seldon-core-operator
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: "1.15"
+  name: seldon-selfsigned-issuer
+  namespace: kubeflow
+spec:
+  selfSigned: {}

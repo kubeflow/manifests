@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  admin: anonymous
+  gcp-sa: ""
+  userid-header: ""
+  userid-prefix: ""
+kind: ConfigMap
+metadata:
+  labels:
+    kustomize.component: profiles
+  name: profiles-profiles-parameters-tf7b8dmggt
+  namespace: kubeflow

@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: tekton-dashboard
+    app.kubernetes.io/component: tektoncd
+    app.kubernetes.io/instance: tektoncd-dashboard-v0.7.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: tektoncd-dashboard
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.7.0
+  name: tekton-dashboard
+  namespace: tekton-pipelines
+spec:
+  ports:
+  - name: http
+    port: 9097
+    protocol: TCP
+    targetPort: 9097
+  selector:
+    app: tekton-dashboard
+    app.kubernetes.io/component: tektoncd
+    app.kubernetes.io/instance: tektoncd-dashboard-v0.7.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: tektoncd-dashboard
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.7.0

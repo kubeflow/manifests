@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  project: ""
+kind: ConfigMap
+metadata:
+  name: application-controller-parameters
+  namespace: kubeflow

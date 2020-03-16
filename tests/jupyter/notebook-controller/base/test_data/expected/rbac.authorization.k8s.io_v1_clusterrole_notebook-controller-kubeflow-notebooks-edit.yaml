@@ -1,0 +1,24 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-notebooks-admin: "true"
+  name: notebook-controller-kubeflow-notebooks-edit
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - notebooks
+  - notebooks/status
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update

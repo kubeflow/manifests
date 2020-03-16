@@ -1,0 +1,20 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: ml-pipeline-scheduledworkflow
+    app.kubernetes.io/component: scheduledworkflow
+    app.kubernetes.io/instance: scheduledworkflow-0.2.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: scheduledworkflow
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: 0.2.0
+  name: ml-pipeline-scheduledworkflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: ml-pipeline-scheduledworkflow
+  namespace: kubeflow

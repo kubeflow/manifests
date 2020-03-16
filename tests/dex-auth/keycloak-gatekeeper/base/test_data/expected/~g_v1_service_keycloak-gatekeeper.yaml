@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak-gatekeeper
+  namespace: auth
+spec:
+  ports:
+  - name: http
+    nodePort: 32004
+    port: 5554
+    protocol: TCP
+    targetPort: http
+  selector:
+    app: keycloak-gatekeeper
+  type: NodePort

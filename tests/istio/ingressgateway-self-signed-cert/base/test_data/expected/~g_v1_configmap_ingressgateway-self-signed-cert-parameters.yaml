@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  domain: example.org
+kind: ConfigMap
+metadata:
+  name: ingressgateway-self-signed-cert-parameters
+  namespace: istio-system

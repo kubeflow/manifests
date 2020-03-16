@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ml-pipeline-ui
+  name: ml-pipeline-ui
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-ui
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: ml-pipeline-ui
+    spec:
+      containers:
+      - env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /etc/credentials/user-gcp-sa.json
+        image: gcr.io/ml-pipeline/frontend:0.2.0
+        imagePullPolicy: IfNotPresent
+        name: ml-pipeline-ui
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - mountPath: /etc/credentials
+          name: gcp-sa-token
+          readOnly: true
+      serviceAccountName: ml-pipeline-ui
+      volumes:
+      - name: gcp-sa-token
+        secret:
+          secretName: user-gcp-sa

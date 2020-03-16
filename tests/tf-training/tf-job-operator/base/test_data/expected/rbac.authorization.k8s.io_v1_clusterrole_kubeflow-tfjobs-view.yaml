@@ -1,0 +1,17 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    kustomize.component: tf-job-operator
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+  name: kubeflow-tfjobs-view
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - tfjobs
+  - tfjobs/status
+  verbs:
+  - get
+  - list
+  - watch

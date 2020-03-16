@@ -1,0 +1,24 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    app: tekton-dashboard
+    app.kubernetes.io/component: tektoncd
+    app.kubernetes.io/instance: tektoncd-dashboard-v0.7.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: tektoncd-dashboard
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.7.0
+  name: extensions.dashboard.tekton.dev
+spec:
+  group: dashboard.tekton.dev
+  names:
+    categories:
+    - all
+    - tekton-pipelines
+    kind: Extension
+    plural: extensions
+  scope: Namespaced
+  subresources:
+    status: {}
+  version: v1alpha1

@@ -1,0 +1,19 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: cluster-local-gateway
+    kustomize.component: cluster-local-gateway
+  name: cluster-local-gateway-istio-system
+rules:
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - virtualservices
+  - destinationrules
+  - gateways
+  verbs:
+  - get
+  - watch
+  - list
+  - update

@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "true"
+    kubernetes.io/ingress.global-static-ip-name: ""
+    networking.gke.io/managed-certificates: gke-certificate
+  labels:
+    kustomize.component: iap-ingress
+  name: envoy-ingress
+  namespace: kubeflow
+spec:
+  rules:
+  - host: ""
+    http:
+      paths:
+      - backend:
+          serviceName: istio-ingressgateway
+          servicePort: 80
+        path: /*

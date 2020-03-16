@@ -2,11 +2,18 @@
 """Regenerate tests for only the files that have changed."""
 
 import argparse
+import jinja2
 import logging
 import os
+import shutil
 import subprocess
 
-TOP_LEVEL_EXCLUDES = ["docs", "hack", "tests", "kfdef"]
+TOP_LEVEL_EXCLUDES = ["docs", "hack", "kfdef", "stacks", "tests"]
+
+# The subdirectory to story the expected manifests in
+# We use a subdirectory of test_data because we could potentially
+# have more than one version of a manifest.
+KUSTOMIZE_OUTPUT_DIR = "test_data/expected"
 
 def generate_test_name(repo_root, package_dir):
   """Generate the name of the go file to write the test to.
@@ -22,6 +29,27 @@ def generate_test_name(repo_root, package_dir):
   name = "-".join(pieces) + "_test.go"
 
   return name
+
+def run_kustomize_build(repo_root, package_dir):
+  """Run kustomize build and store the output in the test directory."""
+
+  rpath = os.path.relpath(package_dir, repo_root)
+
+  output_dir = os.path.join(repo_root, "tests", rpath, KUSTOMIZE_OUTPUT_DIR)
+
+  if os.path.exists(output_dir):
+    # Remove any previous version of the directory so that we ensure
+    # that all files in that directory are from the new run
+    # of kustomize build -o
+    logging.info("Removing directory %s", output_dir)
+    shutil.rmtree(output_dir)
+
+  logging.info("Creating directory %s", output_dir)
+  os.makedirs(output_dir)
+
+  subprocess.check_call(["kustomize", "build", "--load_restrictor", "none",
+                         "-o", output_dir], cwd=os.path.join(repo_root,
+                                                             package_dir))
 
 def get_changed_dirs():
   """Return a list of directories of changed kustomization packages."""
@@ -112,6 +140,7 @@ def remove_unmatched_tests(repo_root, package_dirs):
       os.unlink(test_file)
 
 if __name__ == "__main__":
+
   logging.basicConfig(
       level=logging.INFO,
       format=('%(levelname)s|%(asctime)s'
@@ -146,12 +175,45 @@ if __name__ == "__main__":
   else:
     changed_dirs = get_changed_dirs()
 
+  this_dir = os.path.dirname(__file__)
+  loader = jinja2.FileSystemLoader(searchpath=os.path.join(
+    this_dir, "templates"))
+  env = jinja2.Environment(loader=loader)
+  template = env.get_template("kustomize_test.go.template")
   for full_dir in changed_dirs:
     test_name = generate_test_name(repo_root, full_dir)
     logging.info("Regenerating test %s for %s ", test_name, full_dir)
 
-    test_path = os.path.join(repo_root, "tests", test_name)
+    rpath = os.path.relpath(full_dir, repo_root)
 
+    # Generate the kustomize output
+    run_kustomize_build(repo_root, full_dir)
+    test_path = os.path.join(repo_root, "tests", rpath, "kustomize_test.go")
+
+    # Create the go test file.
+    # TODO(jlewi): We really shouldn't need to redo this if it already
+    # exists.
+
+    # The go package name will be the final directory in the path
+    package_name = os.path.basename(full_dir)
+    # Go package names replace hyphens with underscores
+    package_name = package_name.replace("-", "_")
+
+    # We need to construct the path relative to the _test.go file of
+    # the kustomize package. This path with consist of ".." entries repeated
+    # enough times to get to the root of the repo. We then add the relative
+    # path to the kustomize package.
+    pieces = rpath.split(os.path.sep)
+
+    p = [".."] * len(pieces)
+    p.append("..")
+    p.append(rpath)
+    package_dir = os.path.join(*p)
+    # The package dir is the relative path to the kustomize directory
+    test_contents = template.render({"package": package_name,
+                                     "package_dir":package_dir})
+
+
+    logging.info("Writing file: %s", test_path)
     with open(test_path, "w") as test_file:
-      subprocess.check_call(["./hack/gen-test-target.sh", full_dir],
-                            stdout=test_file, cwd=repo_root)
+      test_file.write(test_contents)

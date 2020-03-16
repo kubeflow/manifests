@@ -1,0 +1,21 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    app: mixer
+    istio: mixer-adapter
+    package: cloudwatch
+  name: cloudwatches.config.istio.io
+spec:
+  group: config.istio.io
+  names:
+    categories:
+    - istio-io
+    - policy-istio-io
+    kind: cloudwatch
+    plural: cloudwatches
+    singular: cloudwatch
+  scope: Namespaced
+  version: v1alpha2

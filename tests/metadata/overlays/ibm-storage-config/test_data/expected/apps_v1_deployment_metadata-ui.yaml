@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: metadata-ui
+    kustomize.component: metadata
+  name: metadata-ui
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: metadata-ui
+      kustomize.component: metadata
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: metadata-ui
+        kustomize.component: metadata
+      name: ui
+    spec:
+      containers:
+      - image: gcr.io/kubeflow-images-public/metadata-frontend:v0.1.8
+        imagePullPolicy: IfNotPresent
+        name: metadata-ui
+        ports:
+        - containerPort: 3000
+      serviceAccountName: metadata-ui

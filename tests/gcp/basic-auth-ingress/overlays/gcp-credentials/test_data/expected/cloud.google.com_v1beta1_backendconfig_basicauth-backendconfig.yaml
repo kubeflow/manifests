@@ -1,0 +1,9 @@
+apiVersion: cloud.google.com/v1beta1
+kind: BackendConfig
+metadata:
+  labels:
+    kustomize.component: basic-auth-ingress
+  name: basicauth-backendconfig
+  namespace: kubeflow
+spec:
+  timeoutSec: 3600

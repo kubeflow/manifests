@@ -1,0 +1,13 @@
+apiVersion: v1
+data:
+  application_secret: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
+  client_id: ldapdexapp
+  client_listen_addr: 'http://127.0.0.1:5555 # Set to HTTPS if TLS is configured'
+  client_redirect_uri: http://login.example.org:5555/callback/onprem-cluster
+  cluster_name: onprem-cluster
+  issuer: http://dex.example.com:32000
+  k8s_master_uri: https://k8s.example.com:443
+kind: ConfigMap
+metadata:
+  name: dex-authn-parameters-d294tgcb6b
+  namespace: auth
