@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../../cert-manager/cert-manager/overlays/letsencrypt",
+		Package: "../../../../../cert-manager/cert-manager/overlays/letsencrypt",
 		Expected: "test_data/expected",
 	}
 

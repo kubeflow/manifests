@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../../tf-training/tf-job-crds/overlays/application",
+		Package: "../../../../../tf-training/tf-job-crds/overlays/application",
 		Expected: "test_data/expected",
 	}
 

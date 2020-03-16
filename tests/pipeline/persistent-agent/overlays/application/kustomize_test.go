@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../../pipeline/persistent-agent/overlays/application",
+		Package: "../../../../../pipeline/persistent-agent/overlays/application",
 		Expected: "test_data/expected",
 	}
 

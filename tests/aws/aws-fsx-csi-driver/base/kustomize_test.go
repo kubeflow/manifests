@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../aws/aws-fsx-csi-driver/base",
+		Package: "../../../../aws/aws-fsx-csi-driver/base",
 		Expected: "test_data/expected",
 	}
 

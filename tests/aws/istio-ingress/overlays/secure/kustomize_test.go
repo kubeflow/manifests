@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../../aws/istio-ingress/overlays/secure",
+		Package: "../../../../../aws/istio-ingress/overlays/secure",
 		Expected: "test_data/expected",
 	}
 

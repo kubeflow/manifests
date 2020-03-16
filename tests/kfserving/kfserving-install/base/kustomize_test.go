@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../kfserving/kfserving-install/base",
+		Package: "../../../../kfserving/kfserving-install/base",
 		Expected: "test_data/expected",
 	}
 
