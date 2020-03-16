@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../gcp/basic-auth-ingress/base",
+		Package: "../../../../gcp/basic-auth-ingress/base",
 		Expected: "test_data/expected",
 	}
 

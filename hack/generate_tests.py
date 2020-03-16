@@ -17,6 +17,12 @@ KUSTOMIZE_OUTPUT_DIR = "test_data/expected"
 
 TEST_NAME = "kustomize_test.go"
 
+# List of directories that we should always regenerate tests for.
+# These should be examples or other test cases that are the result
+# of many individual kustomize packages. As a result they almost always
+# need to be regenerated
+ALWAYS_REGENERATE = [ "stacks/examples"]
+
 def generate_test_path(repo_root, kustomize_rpath):
   """Generate the full path of the  test.go file for a particular package
 
@@ -92,8 +98,13 @@ def get_changed_dirs():
 
   return changed_dirs
 
-def find_kustomize_dirs(root):
-  """Find all kustomization directories in root"""
+def find_kustomize_dirs(root, top_excludes=None):
+  """Find all kustomization directories in root
+
+  Args:
+   root: Root of directory to search for kustomization.yaml files
+   top_excludes: (Optional) A list of top level directories to search
+  """
 
   changed_dirs = set()
   for top in os.listdir(root):
@@ -101,7 +112,7 @@ def find_kustomize_dirs(root):
       logging.info("Skipping directory %s", os.path.join(root, top))
       continue
 
-    if top in TOP_LEVEL_EXCLUDES:
+    if top_excludes and top in top_excludes:
       continue
 
     for child, _, files in os.walk(os.path.join(root, top)):
@@ -187,7 +198,7 @@ if __name__ == "__main__":
   repo_root = repo_root.strip()
 
   # Get a list of package directories
-  package_dirs = find_kustomize_dirs(repo_root)
+  package_dirs = find_kustomize_dirs(repo_root, top_excludes=TOP_LEVEL_EXCLUDES)
 
   remove_unmatched_tests(repo_root, package_dirs)
 
@@ -195,6 +206,10 @@ if __name__ == "__main__":
     changed_dirs = package_dirs
   else:
     changed_dirs = get_changed_dirs()
+
+  for d in ALWAYS_REGENERATE:
+    dirs = find_kustomize_dirs(os.path.join(repo_root, d))
+    changed_dirs = changed_dirs.union(dirs)
 
   this_dir = os.path.dirname(__file__)
   loader = jinja2.FileSystemLoader(searchpath=os.path.join(

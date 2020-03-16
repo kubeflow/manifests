@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../mpi-job/mpi-operator/base",
+		Package: "../../../../mpi-job/mpi-operator/base",
 		Expected: "test_data/expected",
 	}
 
