@@ -9,7 +9,7 @@ commonLabels:
 kind: Kustomization
 namespace: kubeflow
 resources:
-- ../../core
+- ../../base_v3
 # TODO(jlewi): istio and application are really patches
 # not "overlays" in that they are expected to be used as mixins.
 # Perhaps move this into mixins to make this more obvious.
