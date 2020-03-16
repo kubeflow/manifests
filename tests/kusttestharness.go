@@ -19,7 +19,6 @@ package tests
 // A collection of utilities used in target tests.
 
 import (
-	"fmt"
 	"log"
 	"path/filepath"
 	"sigs.k8s.io/kustomize/v3/pkg/fs"
@@ -221,37 +220,6 @@ func AssertActualEqualsExpected(t *testing.T, m resmap.ResMap, expected string) 
 func (th *KustTestHarness) assertActualEqualsExpected(
 	m resmap.ResMap, expected string) {
 	AssertActualEqualsExpected(th.t, m, expected)
-}
-
-// Pretty printing of file differences.
-func ReportDiffAndFail(t *testing.T, actual []byte, expected string) {
-	sE, maxLen := convertToArray(expected)
-	sA, _ := convertToArray(string(actual))
-	fmt.Println("===== ACTUAL BEGIN ========================================")
-	fmt.Print(string(actual))
-	fmt.Println("===== ACTUAL END ==========================================")
-	format := fmt.Sprintf("%%s  %%-%ds %%s\n", maxLen+4)
-	limit := 0
-	if len(sE) < len(sA) {
-		limit = len(sE)
-	} else {
-		limit = len(sA)
-	}
-	fmt.Printf(format, " ", "EXPECTED", "ACTUAL")
-	fmt.Printf(format, " ", "--------", "------")
-	for i := 0; i < limit; i++ {
-		fmt.Printf(format, hint(sE[i], sA[i]), sE[i], sA[i])
-	}
-	if len(sE) < len(sA) {
-		for i := len(sE); i < len(sA); i++ {
-			fmt.Printf(format, "X", "", sA[i])
-		}
-	} else {
-		for i := len(sA); i < len(sE); i++ {
-			fmt.Printf(format, "X", sE[i], "")
-		}
-	}
-	t.Fatalf("Expected not equal to actual")
 }
 
 // Pretty printing of file differences.
