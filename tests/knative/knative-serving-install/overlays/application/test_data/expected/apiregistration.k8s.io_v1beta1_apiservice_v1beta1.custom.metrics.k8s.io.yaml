@@ -1,0 +1,23 @@
+apiVersion: apiregistration.k8s.io/v1beta1
+kind: APIService
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-serving-install
+    app.kubernetes.io/instance: knative-serving-install-v0.11.1
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: knative-serving-install
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.11.1
+    autoscaling.knative.dev/metric-provider: custom-metrics
+    kustomize.component: knative
+    serving.knative.dev/release: v0.11.1
+  name: v1beta1.custom.metrics.k8s.io
+spec:
+  group: custom.metrics.k8s.io
+  groupPriorityMinimum: 100
+  insecureSkipTLSVerify: true
+  service:
+    name: autoscaler
+    namespace: knative-serving
+  version: v1beta1
+  versionPriority: 100

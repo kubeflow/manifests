@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dex
+  namespace: auth
+spec:
+  ports:
+  - name: dex
+    nodePort: 32000
+    port: 5556
+    protocol: TCP
+    targetPort: 5556
+  selector:
+    app: dex
+  type: NodePort

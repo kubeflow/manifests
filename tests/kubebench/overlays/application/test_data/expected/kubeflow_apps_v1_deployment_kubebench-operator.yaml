@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: kubebench
+    app.kubernetes.io/instance: kubebench-v0.7.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: kubebench
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.7.0
+    kustomize.component: kubebench
+  name: kubebench-operator
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: kubebench-operator
+      app.kubernetes.io/component: kubebench
+      app.kubernetes.io/instance: kubebench-v0.7.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: kubebench
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.7.0
+      kustomize.component: kubebench
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: kubebench-operator
+        app.kubernetes.io/component: kubebench
+        app.kubernetes.io/instance: kubebench-v0.7.0
+        app.kubernetes.io/managed-by: kfctl
+        app.kubernetes.io/name: kubebench
+        app.kubernetes.io/part-of: kubeflow
+        app.kubernetes.io/version: v0.7.0
+        kustomize.component: kubebench
+    spec:
+      containers:
+      - args:
+        - --config=/config/kubebenchconfig.yaml
+        command:
+        - /app/kubebench-operator-v1alpha2
+        image: gcr.io/kubeflow-images-public/kubebench/kubebench-operator-v1alpha2:bc682c1
+        name: kubebench-operator
+        volumeMounts:
+        - mountPath: /config
+          name: kubebench-config
+      serviceAccountName: kubebench-operator
+      volumes:
+      - configMap:
+          name: kubebench-config
+        name: kubebench-config

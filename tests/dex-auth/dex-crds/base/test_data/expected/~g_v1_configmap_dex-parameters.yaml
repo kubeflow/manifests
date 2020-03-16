@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  application_secret: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
+  client_id: ldapdexapp
+  dex_domain: dex.example.com
+  issuer: http://dex.example.com:32000
+  oidc_redirect_uris: '[''http://login.example.org:5555/callback/onprem-cluster'']'
+  static_email: admin@example.com
+  static_password_hash: $2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W
+  static_user_id: 08a8684b-db88-4b73-90a9-3cd1661f5466
+  static_username: admin
+kind: ConfigMap
+metadata:
+  name: dex-parameters
+  namespace: auth

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ldap-admin
+  namespace: auth
+spec:
+  ports:
+  - nodePort: 32006
+    port: 80
+    targetPort: 80
+  selector:
+    app: ldap
+  type: NodePort

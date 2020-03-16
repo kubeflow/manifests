@@ -1,0 +1,17 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    app: certmanager
+    kustomize.component: istio-crds
+  name: issuers.certmanager.k8s.io
+spec:
+  group: certmanager.k8s.io
+  names:
+    kind: Issuer
+    plural: issuers
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
