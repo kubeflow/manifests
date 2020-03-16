@@ -14061,7 +14061,7 @@ metadata:
     app: istio-ingressgateway
     istio: ingressgateway
 spec:
-  type: NodePort
+  type: $(service_type)
   selector:
     release: istio
     app: istio-ingressgateway
@@ -14073,16 +14073,13 @@ spec:
       targetPort: 15020
     -
       name: http2
-      nodePort: 31380
       port: 80
       targetPort: 80
     -
       name: https
-      nodePort: 31390
       port: 443
     -
       name: tcp
-      nodePort: 31400
       port: 31400
     -
       name: https-kiali
@@ -17401,6 +17398,13 @@ spec:
         maxRequestsPerConnection: 10000
 ---
 `)
+	th.writeF("/manifests/istio/istio-install/base/params.yaml", `
+varReference:
+- path: spec/type
+  kind: Service
+`)
+	th.writeF("/manifests/istio/istio-install/base/params.env", `
+service_type=NodePort`)
 	th.writeK("/manifests/istio/istio-install/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -17441,7 +17445,22 @@ images:
 - name: docker.io/jaegertracing/all-in-one
   newName: docker.io/jaegertracing/all-in-one
   newTag: '1.9'
-`)
+
+configMapGenerator:
+- name: istio-install-parameters
+  env: params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: service_type
+  objref:
+    kind: ConfigMap
+    name: istio-install-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.service_type
+configurations:
+- params.yaml`)
 }
 
 func TestIstioInstallBase(t *testing.T) {

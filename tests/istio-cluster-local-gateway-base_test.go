@@ -28,8 +28,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: cluster-local-gateway-service-account
-  namespace: $(namespace)
-`)
+  namespace: $(namespace)`)
 	th.writeF("/manifests/istio/cluster-local-gateway/base/cluster-role.yaml", `
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -52,8 +51,7 @@ rules:
     verbs: ['get', 'watch', 'list']
   - apiGroups: ["extensions", "apps"]
     resources: ["replicasets"]
-    verbs: ["get", "list", "watch"]
-`)
+    verbs: ["get", "list", "watch"]`)
 	th.writeF("/manifests/istio/cluster-local-gateway/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -212,8 +210,7 @@ spec:
               - key: beta.kubernetes.io/arch
                 operator: In
                 values:
-                - s390x
-`)
+                - s390x`)
 	th.writeF("/manifests/istio/cluster-local-gateway/base/horizontal-pod-autoscaler.yaml", `
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
@@ -233,8 +230,7 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: cluster-local-gateway
-`)
+    name: cluster-local-gateway`)
 	th.writeF("/manifests/istio/cluster-local-gateway/base/namespace.yaml", `
 apiVersion: v1
 kind: Namespace
@@ -255,8 +251,7 @@ spec:
   selector:
     matchLabels:
       app: cluster-local-gateway
-      istio: cluster-local-gateway
-`)
+      istio: cluster-local-gateway`)
 	th.writeF("/manifests/istio/cluster-local-gateway/base/service-account.yaml", `
 apiVersion: v1
 kind: ServiceAccount
@@ -268,8 +263,7 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: istio-multi
-`)
+  name: istio-multi`)
 	th.writeF("/manifests/istio/cluster-local-gateway/base/service.yaml", `
 apiVersion: v1
 kind: Service
@@ -318,8 +312,7 @@ spec:
     -
       name: http2-tracing
       port: 15032
-      targetPort: 15032
-`)
+      targetPort: 15032`)
 	th.writeF("/manifests/istio/cluster-local-gateway/base/params.yaml", `
 varReference:
 - path: metadata/name

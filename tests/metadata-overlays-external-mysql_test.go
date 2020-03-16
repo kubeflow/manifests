@@ -83,8 +83,7 @@ spec:
 MYSQL_HOST=external_host
 MYSQL_DATABASE=metadb
 MYSQL_PORT=3306
-MYSQL_ALLOW_EMPTY_PASSWORD=true
-`)
+MYSQL_ALLOW_EMPTY_PASSWORD=true`)
 	th.writeF("/manifests/metadata/overlays/external-mysql/secrets.env", `
 MYSQL_USERNAME=root
 MYSQ_PASSWORD=test
@@ -103,8 +102,7 @@ secretGenerator:
 bases:
 - ../../base
 patchesStrategicMerge:
-- metadata-deployment.yaml
-`)
+- metadata-deployment.yaml`)
 	th.writeF("/manifests/metadata/base/metadata-deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -346,8 +344,7 @@ uiClusterDomain=cluster.local
 `)
 	th.writeF("/manifests/metadata/base/grpc-params.env", `
 METADATA_GRPC_SERVICE_HOST=metadata-grpc-service
-METADATA_GRPC_SERVICE_PORT=8080
-`)
+METADATA_GRPC_SERVICE_PORT=8080`)
 	th.writeK("/manifests/metadata/base", `
 namePrefix: metadata-
 apiVersion: kustomize.config.k8s.io/v1beta1

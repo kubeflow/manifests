@@ -141,13 +141,12 @@ kind: Service
 metadata:
   name: dex
 spec:
-  type: NodePort
+  type: $(service_type)
   ports:
   - name: dex
     port: 5556
     protocol: TCP
     targetPort: 5556
-    nodePort: 32000
   selector:
     app: dex
 `)
@@ -157,6 +156,8 @@ varReference:
   kind: Deployment
 - path: data/config.yaml
   kind: ConfigMap
+- path: spec/type
+  kind: Service
 `)
 	th.writeF("/manifests/dex-auth/dex-crds/base/params.env", `
 # Dex Server Parameters (some params are shared with client)
@@ -170,7 +171,7 @@ static_user_id=08a8684b-db88-4b73-90a9-3cd1661f5466
 client_id=ldapdexapp
 oidc_redirect_uris=['http://login.example.org:5555/callback/onprem-cluster']
 application_secret=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
-`)
+service_type=NodePort`)
 	th.writeK("/manifests/dex-auth/dex-crds/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -250,8 +251,19 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.application_secret
+- name: service_type
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.service_type
 configurations:
 - params.yaml
+images:
+- name: quay.io/dexidp/dex
+  newName: quay.io/dexidp/dex
+  newTag: v2.22.0
 `)
 }
 

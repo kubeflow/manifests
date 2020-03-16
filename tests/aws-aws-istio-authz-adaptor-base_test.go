@@ -37,8 +37,7 @@ spec:
         name: authzadaptor
         ports:
         - containerPort: 9070
-          protocol: TCP
-`)
+          protocol: TCP`)
 	th.writeF("/manifests/aws/aws-istio-authz-adaptor/base/service.yaml", `
 apiVersion: v1
 kind: Service
@@ -51,8 +50,7 @@ spec:
     targetPort: 9070
   selector:
     run: authzadaptor
-  type: ClusterIP
-`)
+  type: ClusterIP`)
 	th.writeF("/manifests/aws/aws-istio-authz-adaptor/base/template.yaml", `
 # this config is created through command
 # mixgen template -d $REPO_ROOT/authzadaptor/template_handler_service.descriptor_set -o $REPO_ROOT/authzadaptor/template.yaml -n authzadaptor
@@ -89,8 +87,7 @@ spec:
   connection:
     address: authzadaptor:9070
   params:
-    valid_duration: 1s
-`)
+    valid_duration: 1s`)
 	th.writeF("/manifests/aws/aws-istio-authz-adaptor/base/instance.yaml", `
 apiVersion: config.istio.io/v1alpha2
 kind: instance
@@ -99,8 +96,7 @@ metadata:
 spec:
   template: authzadaptor
   params:
-    key: request.headers["$(origin-header)"] | "unknown"
-`)
+    key: request.headers["$(origin-header)"] | "unknown"`)
 	th.writeF("/manifests/aws/aws-istio-authz-adaptor/base/rule.yaml", `
 apiVersion: config.istio.io/v1alpha2
 kind: rule
@@ -118,8 +114,7 @@ spec:
   # set  header to the output value of action "action" in the request
   - name: $(custom-header)
     values:
-    - action.output.email
-`)
+    - action.output.email`)
 	th.writeF("/manifests/aws/aws-istio-authz-adaptor/base/params.yaml", `
 varReference:
 - path: spec/actions/handler
@@ -127,13 +122,11 @@ varReference:
 - path: spec/requestHeaderOperations/name
   kind: rule
 - path: spec/params/key
-  kind: instance
-`)
+  kind: instance`)
 	th.writeF("/manifests/aws/aws-istio-authz-adaptor/base/params.env", `
 origin-header=x-amzn-oidc-header
 custom-header=kubeflow-userid
-istio-namespace=istio-system
-`)
+istio-namespace=istio-system`)
 	th.writeK("/manifests/aws/aws-istio-authz-adaptor/base", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -180,8 +173,7 @@ vars:
   fieldref:
     fieldpath: data.custom-header
 configurations:
-- params.yaml
-`)
+- params.yaml`)
 }
 
 func TestAwsIstioAuthzAdaptorBase(t *testing.T) {

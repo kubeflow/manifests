@@ -47,13 +47,11 @@ metadata:
 	th.writeF("/manifests/pipeline/api-service/overlays/external-mysql/params.yaml", `
 varReference:
 - path: data
-  kind: ConfigMap
-`)
+  kind: ConfigMap`)
 	th.writeF("/manifests/pipeline/api-service/overlays/external-mysql/params.env", `
 mysqlHost=
 mysqlUser=
-mysqlPassword=
-`)
+mysqlPassword=`)
 	th.writeK("/manifests/pipeline/api-service/overlays/external-mysql", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -89,8 +87,7 @@ vars:
   fieldref:
     fieldpath: data.mysqlPassword
 configurations:
-- params.yaml
-`)
+- params.yaml`)
 	th.writeF("/manifests/pipeline/api-service/base/config-map.yaml", `
 # The configuration for the ML pipelines APIServer
 # Based on https://github.com/kubeflow/pipelines/blob/master/backend/src/apiserver/config/config.json
