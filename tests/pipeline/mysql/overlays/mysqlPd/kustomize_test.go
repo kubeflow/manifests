@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../../pipeline/mysql/overlays/mysqlPd",
+		Package: "../../../../../pipeline/mysql/overlays/mysqlPd",
 		Expected: "test_data/expected",
 	}
 

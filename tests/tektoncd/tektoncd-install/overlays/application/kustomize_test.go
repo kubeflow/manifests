@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../../tektoncd/tektoncd-install/overlays/application",
+		Package: "../../../../../tektoncd/tektoncd-install/overlays/application",
 		Expected: "test_data/expected",
 	}
 

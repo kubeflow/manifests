@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../jupyter/notebook-controller/base",
+		Package: "../../../../jupyter/notebook-controller/base",
 		Expected: "test_data/expected",
 	}
 

@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../gcp/prometheus/base",
+		Package: "../../../../gcp/prometheus/base",
 		Expected: "test_data/expected",
 	}
 
