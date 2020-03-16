@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   annotations:
-    alb.ingress.kubernetes.io/auth-idp-cognito: '{"Issuer":"","AuthorizationEndpoint":"","TokenEndpoint":"","UserInfoEndpoint":"","SecretName":"istio-oidc-secret"}'
+    alb.ingress.kubernetes.io/auth-idp-oidc: '{"Issuer":"","AuthorizationEndpoint":"","TokenEndpoint":"","UserInfoEndpoint":"","SecretName":"istio-oidc-secret"}'
     alb.ingress.kubernetes.io/auth-scope: email openid profile
     alb.ingress.kubernetes.io/auth-type: oidc
     alb.ingress.kubernetes.io/certificate-arn: ""

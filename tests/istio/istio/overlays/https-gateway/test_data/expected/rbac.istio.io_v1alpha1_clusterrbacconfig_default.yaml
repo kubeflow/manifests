@@ -4,4 +4,7 @@ metadata:
   name: default
   namespace: kubeflow
 spec:
-  mode: "ON"
+  exclusion:
+    namespaces:
+    - istio-system
+  mode: ON_WITH_EXCLUSION
