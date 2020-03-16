@@ -15,6 +15,7 @@ import (
 	"sigs.k8s.io/kustomize/v3/pkg/resource"
 	"sigs.k8s.io/kustomize/v3/pkg/target"
 	"sigs.k8s.io/kustomize/v3/pkg/validators"
+	"strings"
 	"testing"
 )
 
@@ -109,6 +110,19 @@ func RunTestCase(t *testing.T, testCase *KustomizeTestCase) {
 	}
 }
 
+func convertToArray(x string) ([]string, int) {
+	a := strings.Split(strings.TrimSuffix(x, "\n"), "\n")
+	maxLen := 0
+	for i, v := range a {
+		z := tabToSpace(v)
+		if len(z) > maxLen {
+			maxLen = len(z)
+		}
+		a[i] = z
+	}
+	return a, maxLen
+}
+
 // expectedResource represents an expected Kubernetes resource to be generated
 // from the kustomize package.
 type expectedResource struct {
@@ -160,4 +174,23 @@ func ReportDiffAndFail(t *testing.T, actual []byte, expected string) {
 		}
 	}
 	t.Fatalf("Expected not equal to actual")
+}
+
+func tabToSpace(input string) string {
+	var result []string
+	for _, i := range input {
+		if i == 9 {
+			result = append(result, "  ")
+		} else {
+			result = append(result, string(i))
+		}
+	}
+	return strings.Join(result, "")
+}
+
+func hint(a, b string) string {
+	if a == b {
+		return " "
+	}
+	return "X"
 }
