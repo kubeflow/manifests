@@ -16,7 +16,7 @@ workflows:
 
   # Run the e2e tests to ensure that changes to manifests don't break deployments.
   - py_func: kubeflow.kfctl.testing.ci.kfctl_e2e_workflow.create_workflow
-    name: kfctl-go-iap
+    name: e2e
     job_types:
       - presubmit
       - postsubmit
