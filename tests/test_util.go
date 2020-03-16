@@ -25,7 +25,6 @@ type KustomizeTestCase struct {
 	Expected string
 }
 
-
 // RunTestCase runs the specified test case
 func RunTestCase(t *testing.T, testCase *KustomizeTestCase) {
 	expected := map[string]*expectedResource{}
@@ -59,7 +58,7 @@ func RunTestCase(t *testing.T, testCase *KustomizeTestCase) {
 	fsys := fs.MakeRealFS()
 	// We don't want to enforce the security check.
 	// This is equivalent to running:
-	// kustomize build --load_restrictor none 
+	// kustomize build --load_restrictor none
 	lrc := loader.RestrictionNone
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), testCase.Package, fsys)
 	if loaderErr != nil {
