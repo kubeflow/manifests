@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../kubebench/overlays/istio",
+		Package: "../../../../kubebench/overlays/istio",
 		Expected: "test_data/expected",
 	}
 

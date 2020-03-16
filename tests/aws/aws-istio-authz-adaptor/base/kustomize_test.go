@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../aws/aws-istio-authz-adaptor/base",
+		Package: "../../../../aws/aws-istio-authz-adaptor/base",
 		Expected: "test_data/expected",
 	}
 

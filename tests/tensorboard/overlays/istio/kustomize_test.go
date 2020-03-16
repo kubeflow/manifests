@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../tensorboard/overlays/istio",
+		Package: "../../../../tensorboard/overlays/istio",
 		Expected: "test_data/expected",
 	}
 

@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../../spark/spark-operator/overlays/application",
+		Package: "../../../../../spark/spark-operator/overlays/application",
 		Expected: "test_data/expected",
 	}
 
