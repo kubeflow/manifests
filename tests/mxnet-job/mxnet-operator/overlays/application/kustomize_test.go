@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../../mxnet-job/mxnet-operator/overlays/application",
+		Package: "../../../../../mxnet-job/mxnet-operator/overlays/application",
 		Expected: "test_data/expected",
 	}
 

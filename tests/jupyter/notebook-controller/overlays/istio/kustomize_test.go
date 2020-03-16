@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../../jupyter/notebook-controller/overlays/istio",
+		Package: "../../../../../jupyter/notebook-controller/overlays/istio",
 		Expected: "test_data/expected",
 	}
 

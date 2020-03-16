@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../istio/istio-install/base",
+		Package: "../../../../istio/istio-install/base",
 		Expected: "test_data/expected",
 	}
 

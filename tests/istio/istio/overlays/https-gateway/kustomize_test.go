@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../../istio/istio/overlays/https-gateway",
+		Package: "../../../../../istio/istio/overlays/https-gateway",
 		Expected: "test_data/expected",
 	}
 
