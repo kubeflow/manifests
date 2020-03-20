@@ -1,3 +1,4 @@
+---
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -16,23 +17,3 @@ spec:
         name: http
         number: 80
         protocol: HTTP
-
----
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  labels:
-    networking.knative.dev/ingress-provider: istio
-  name: knative-ingress-gateway
-  namespace: knative-serving
-spec:
-  selector:
-     app: kfserving-ingressgateway
-     kfserving: ingressgateway
-  servers:
-  - hosts:
-    - '*'
-    port:
-      name: http
-      number: 80
-      protocol: HTTP

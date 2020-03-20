@@ -63,6 +63,7 @@ commonLabels:
   app.kubernetes.io/version: v0.11.1
 `)
 	th.writeF("/manifests/knative/knative-serving-install/base/gateway.yaml", `
+---
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -81,26 +82,6 @@ spec:
         name: http
         number: 80
         protocol: HTTP
-
----
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  labels:
-    networking.knative.dev/ingress-provider: istio
-  name: knative-ingress-gateway
-  namespace: knative-serving
-spec:
-  selector:
-     app: kfserving-ingressgateway
-     kfserving: ingressgateway
-  servers:
-  - hosts:
-    - '*'
-    port:
-      name: http
-      number: 80
-      protocol: HTTP
 `)
 	th.writeF("/manifests/knative/knative-serving-install/base/cluster-role.yaml", `
 ---
@@ -1129,7 +1110,7 @@ data:
     # {{ingress_namespace}}.svc.cluster.local"`+"`"+`. The {{gateway_namespace}}
     # is optional; when it is omitted, the system will search for
     # the gateway in the serving system namespace `+"`"+`knative-serving`+"`"+`
-    gateway.knative-serving.knative-ingress-gateway: "kfserving-ingressgateway.istio-system.svc.cluster.local"
+    gateway.kubeflow.kubeflow-gateway: "istio-ingressgateway.istio-system.svc.cluster.local"
 
     # A cluster local gateway to allow pods outside of the mesh to access
     # Services and Routes not exposing through an ingress.  If the users
