@@ -30,14 +30,6 @@ spec:
     name: cluster-local-gateway
   - kustomizeConfig:
       parameters:
-      - name: namespace
-        value: istio-system
-      repoRef:
-        name: manifests
-        path: istio/kfserving-gateway
-    name: kfserving-gateway
-  - kustomizeConfig:
-      parameters:
       - name: clusterRbacConfig
         value: 'ON'
       repoRef:

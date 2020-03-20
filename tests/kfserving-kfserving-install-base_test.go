@@ -344,8 +344,8 @@ data:
     }
   ingress: |-
     {
-        "ingressGateway" : "knative-ingress-gateway.knative-serving",
-        "ingressService" : "kfserving-ingressgateway.istio-system.svc.cluster.local"
+        "ingressGateway" : "kubeflow-gateway.kubeflow",
+        "ingressService" : "istio-ingressgateway.istio-system.svc.cluster.local"
     }
   logger: |-
     {
