@@ -36,7 +36,7 @@ data:
         "BucketName": "mlpipeline"
       },
       "InitConnectionTimeout": "6m",
-      "DefaultPipelineRunnerServiceAccount": "kf-user",
+      "DefaultPipelineRunnerServiceAccount": "pipeline-runner",
       "ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_HOST": "ml-pipeline-ml-pipeline-visualizationserver",
       "ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_PORT": 8888
     }
@@ -97,7 +97,6 @@ configurations:
 apiVersion: v1
 data:
   # apiserver assumes the config is named config.json
-  # temporarily switched to kf-user, because pipeline-runner isn't bound to workload identity by default
   config.json: |
     {
       "DBConfig": {
@@ -111,7 +110,7 @@ data:
         "BucketName": "mlpipeline"
       },
       "InitConnectionTimeout": "6m",
-      "DefaultPipelineRunnerServiceAccount": "kf-user",
+      "DefaultPipelineRunnerServiceAccount": "pipeline-runner",
       "ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_HOST": "ml-pipeline-ml-pipeline-visualizationserver",
       "ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_PORT": 8888
     }
