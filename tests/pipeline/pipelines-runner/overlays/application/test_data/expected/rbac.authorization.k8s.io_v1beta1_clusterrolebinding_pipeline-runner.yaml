@@ -18,6 +18,3 @@ subjects:
 - kind: ServiceAccount
   name: pipeline-runner
   namespace: kubeflow
-- kind: ServiceAccount
-  name: kf-user
-  namespace: kubeflow

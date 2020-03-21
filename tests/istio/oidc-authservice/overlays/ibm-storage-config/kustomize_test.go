@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../../istio/oidc-authservice/overlays/ibm-storage-config",
+		Package:  "../../../../../istio/oidc-authservice/overlays/ibm-storage-config",
 		Expected: "test_data/expected",
 	}
 

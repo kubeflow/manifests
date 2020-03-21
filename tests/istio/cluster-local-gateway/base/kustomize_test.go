@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../istio/cluster-local-gateway/base",
+		Package:  "../../../../istio/cluster-local-gateway/base",
 		Expected: "test_data/expected",
 	}
 

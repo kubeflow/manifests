@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../pytorch-job/pytorch-job-crds/base",
+		Package:  "../../../../pytorch-job/pytorch-job-crds/base",
 		Expected: "test_data/expected",
 	}
 

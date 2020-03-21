@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../istio/iap-gateway/base",
+		Package:  "../../../../istio/iap-gateway/base",
 		Expected: "test_data/expected",
 	}
 

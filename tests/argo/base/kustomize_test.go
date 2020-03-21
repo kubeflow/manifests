@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../argo/base",
+		Package:  "../../../argo/base",
 		Expected: "test_data/expected",
 	}
 

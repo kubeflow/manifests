@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../../pipeline/minio/overlays/minioPd",
+		Package:  "../../../../../pipeline/minio/overlays/minioPd",
 		Expected: "test_data/expected",
 	}
 
