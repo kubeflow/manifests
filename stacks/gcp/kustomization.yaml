@@ -5,6 +5,7 @@ resources:
   - config
   - ../../common/centraldashboard/base_v3
   - ../../jupyter/jupyter-web-app/base_v3
+  - ../../profiles/base_v3
 vars:
 # We need to define vars at the top level otherwise we will get
 # conflicts. 
