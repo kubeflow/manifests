@@ -5,7 +5,7 @@
 There are two goals for the unittests:
 
 1. Verify that kustomizations are applied correctly (kubeflow/manifests#1014)
-1. Verify that various conventiosn are enforced (kubeflow/manifests#1015)
+1. Verify that various conventions are enforced (kubeflow/manifests#1015)
 
 ### Verifying Kustomizations Are Applied Correctly
 

@@ -86,7 +86,7 @@ func RunTestCase(t *testing.T, testCase *KustomizeTestCase) {
 		e, ok := expected[rKey]
 
 		if !ok {
-			t.Errorf("Expected resources missing resource: %v", rKey)
+			t.Errorf("Actual output included an unexpected resource; resource: %v", rKey)
 			continue
 		}
 

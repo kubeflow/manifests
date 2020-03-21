@@ -160,6 +160,23 @@ def remove_unmatched_tests(repo_root, package_dirs):
     logging.info("Removing directory: %s", d)
     shutil.rmtree(d)
 
+def write_go_test(test_path, package_name, package_dir):
+  """Write the go test file.
+
+  Args:
+    test_path: Path for the go file
+    package_name: The name for the go package the test should live in
+    package_dir: The path to the kustomize package being tested; this
+      should be the relative path to the kustomize directory.
+  """
+  test_contents = template.render({"package": package_name,
+                                   "package_dir":package_dir})
+
+
+  logging.info("Writing file: %s", test_path)
+  with open(test_path, "w") as test_file:
+    test_file.write(test_contents)
+
 if __name__ == "__main__":
 
   logging.basicConfig(
@@ -232,11 +249,5 @@ if __name__ == "__main__":
     p.append("..")
     p.append(rpath)
     package_dir = os.path.join(*p)
-    # The package dir is the relative path to the kustomize directory
-    test_contents = template.render({"package": package_name,
-                                     "package_dir":package_dir})
 
-
-    logging.info("Writing file: %s", test_path)
-    with open(test_path, "w") as test_file:
-      test_file.write(test_contents)
+    write_go_test(test_path, package_name, package_dir)
