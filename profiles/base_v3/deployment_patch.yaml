@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
       - command:
-        - "/bin/dash -c /manager -userid-header ${USERID_HEADER} -userid-prefix ${USERID_PREFIX} -workload-identity ${WORKLOAD_IDENTITY}"
+        - "/bin/dash -c \"/manager -userid-header ${USERID_HEADER} -userid-prefix ${USERID_PREFIX} -workload-identity ${WORKLOAD_IDENTITY}\""
         args: []
         name: manager
         env:
@@ -27,7 +27,7 @@ spec:
               name: profiles-config
               key: gcp-sa
       - command:
-        - "/bin/dash -c /access-management -cluster-admin ${CLUSTER_ADMIN} -userid-prefix ${USERID_PREFIX}"
+        - "/bin/dash -c \"/access-management -cluster-admin ${CLUSTER_ADMIN} -userid-prefix ${USERID_PREFIX}\""
         args: []
         name: kfam
         env:
