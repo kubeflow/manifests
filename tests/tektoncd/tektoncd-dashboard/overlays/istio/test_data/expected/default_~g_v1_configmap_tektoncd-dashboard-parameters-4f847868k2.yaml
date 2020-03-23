@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  clusterDomain: cluster.local
+  namespace: ""
+kind: ConfigMap
+metadata:
+  name: tektoncd-dashboard-parameters-4f847868k2

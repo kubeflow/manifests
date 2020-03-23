@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: mpijob
+    app.kubernetes.io/instance: mpi-operator
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: mpi-operator
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.7
+    kustomize.component: mpi-operator
+  name: mpi-operator
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mpi-operator
+      app.kubernetes.io/component: mpijob
+      app.kubernetes.io/instance: mpi-operator
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: mpi-operator
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.7
+      kustomize.component: mpi-operator
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: mpi-operator
+        app.kubernetes.io/component: mpijob
+        app.kubernetes.io/instance: mpi-operator
+        app.kubernetes.io/managed-by: kfctl
+        app.kubernetes.io/name: mpi-operator
+        app.kubernetes.io/part-of: kubeflow
+        app.kubernetes.io/version: v0.7
+        kustomize.component: mpi-operator
+    spec:
+      containers:
+      - args:
+        - --gpus-per-node
+        - "8"
+        - --kubectl-delivery-image
+        - mpioperator/kubectl-delivery:latest
+        image: mpioperator/mpi-operator:0.1.0
+        imagePullPolicy: Always
+        name: mpi-operator
+      serviceAccountName: mpi-operator

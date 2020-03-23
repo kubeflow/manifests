@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  uiClusterDomain: cluster.local
+kind: ConfigMap
+metadata:
+  name: ui-parameters-hb792fcf5d
+  namespace: kubeflow

@@ -1,0 +1,28 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    kustomize.component: cluster-local-gateway
+  name: istio-reader
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  - pods
+  - services
+  - endpoints
+  - replicationcontrollers
+  verbs:
+  - get
+  - watch
+  - list
+- apiGroups:
+  - extensions
+  - apps
+  resources:
+  - replicasets
+  verbs:
+  - get
+  - list
+  - watch

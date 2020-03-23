@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: admission-webhook
+    kustomize.component: admission-webhook
+  name: admission-webhook-deployment
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: admission-webhook
+      kustomize.component: admission-webhook
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: admission-webhook
+        kustomize.component: admission-webhook
+    spec:
+      containers:
+      - image: gcr.io/kubeflow-images-public/admission-webhook:vmaster-gaf96e4e3
+        name: admission-webhook
+        volumeMounts:
+        - mountPath: /etc/webhook/certs
+          name: webhook-cert
+          readOnly: true
+      serviceAccountName: admission-webhook-service-account
+      volumes:
+      - name: webhook-cert
+        secret:
+          secretName: webhook-certs

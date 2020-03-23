@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  clusterRbacConfig: ON_WITH_EXCLUSION
+  gatewaySelector: ingressgateway
+kind: ConfigMap
+metadata:
+  name: istio-parameters-cm9hckfgmb
+  namespace: kubeflow

@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  namespace: cert-manager
+kind: ConfigMap
+metadata:
+  labels:
+    kustomize.component: cert-manager
+  name: cert-manager-parameters
+  namespace: cert-manager

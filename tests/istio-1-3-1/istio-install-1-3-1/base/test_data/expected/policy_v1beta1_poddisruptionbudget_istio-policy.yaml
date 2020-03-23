@@ -1,0 +1,16 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: policy
+    istio: mixer
+    istio-mixer-type: policy
+    version: 1.1.0
+  name: istio-policy
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: policy
+      istio: mixer
+      istio-mixer-type: policy

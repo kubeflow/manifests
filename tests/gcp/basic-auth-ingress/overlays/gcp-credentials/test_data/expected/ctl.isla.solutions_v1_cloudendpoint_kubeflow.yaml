@@ -1,0 +1,12 @@
+apiVersion: ctl.isla.solutions/v1
+kind: CloudEndpoint
+metadata:
+  labels:
+    kustomize.component: basic-auth-ingress
+  name: kubeflow
+  namespace: kubeflow
+spec:
+  project: ""
+  targetIngress:
+    name: envoy-ingress
+    namespace: istio-system
