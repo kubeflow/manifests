@@ -262,6 +262,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      - multi-user
       repoRef:
         name: manifests
         path: pipeline/api-service
@@ -285,6 +286,7 @@ spec:
       overlays:
       - mysqlPd
       - application
+      - multi-user
       parameters:
       - name: mysqlPd
         value: test1-storage-metadata-store
@@ -299,6 +301,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      - multi-user
       repoRef:
         name: manifests
         path: pipeline/persistent-agent
@@ -315,6 +318,7 @@ spec:
       - gcp
       - istio
       - application
+      - multi-user
       repoRef:
         name: manifests
         path: pipeline/pipelines-ui
@@ -329,6 +333,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      - multi-user
       repoRef:
         name: manifests
         path: pipeline/scheduledworkflow
@@ -340,6 +345,11 @@ spec:
         name: manifests
         path: pipeline/pipeline-visualization-service
     name: pipeline-visualization-service
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: pipeline/istio-multi-user
+    name: pipeline-istio-multi-user
   - kustomizeConfig:
       overlays:
       - application
