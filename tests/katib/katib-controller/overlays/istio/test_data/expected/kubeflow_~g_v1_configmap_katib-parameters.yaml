@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  clusterDomain: cluster.local
+kind: ConfigMap
+metadata:
+  name: katib-parameters
+  namespace: kubeflow

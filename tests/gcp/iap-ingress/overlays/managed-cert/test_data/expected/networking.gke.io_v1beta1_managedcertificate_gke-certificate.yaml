@@ -1,0 +1,10 @@
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  labels:
+    kustomize.component: iap-ingress
+  name: gke-certificate
+  namespace: kubeflow
+spec:
+  domains:
+  - ""

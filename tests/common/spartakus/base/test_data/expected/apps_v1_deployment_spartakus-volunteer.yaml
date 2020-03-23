@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: spartakus
+    kustomize.component: spartakus
+  name: spartakus-volunteer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      kustomize.component: spartakus
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: spartakus-volunteer
+        kustomize.component: spartakus
+    spec:
+      containers:
+      - args:
+        - volunteer
+        - --cluster-id=unknown_cluster
+        - --database=https://stats-collector.kubeflow.org
+        image: gcr.io/google_containers/spartakus-amd64:v1.1.0
+        name: volunteer
+      serviceAccountName: spartakus

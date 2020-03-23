@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: dex-authenticator
+  name: dex-authenticator
+  namespace: auth
+spec:
+  ports:
+  - name: http
+    nodePort: 32002
+    port: 5555
+    protocol: TCP
+    targetPort: 5555
+  selector:
+    app: dex-authenticator
+  type: NodePort

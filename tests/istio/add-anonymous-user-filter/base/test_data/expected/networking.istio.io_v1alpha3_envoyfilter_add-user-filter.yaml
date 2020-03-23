@@ -1,0 +1,20 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: add-user-filter
+  namespace: istio-system
+spec:
+  filters:
+  - filterConfig:
+      inlineCode: |
+        function envoy_on_request(request_handle)
+            request_handle:headers():add("kubeflow-userid","anonymous@kubeflow.org")
+        end
+    filterName: envoy.lua
+    filterType: HTTP
+    insertPosition:
+      index: FIRST
+    listenerMatch:
+      listenerType: GATEWAY
+  workloadLabels:
+    app: istio-ingressgateway

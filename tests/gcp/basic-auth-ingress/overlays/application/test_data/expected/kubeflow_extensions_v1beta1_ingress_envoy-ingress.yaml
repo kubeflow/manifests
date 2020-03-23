@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "true"
+    kubernetes.io/ingress.global-static-ip-name: ""
+    networking.gke.io/managed-certificates: gke-certificate
+  labels:
+    app.kubernetes.io/component: basic-auth-ingress
+    app.kubernetes.io/instance: basic-auth-ingress-v0.7.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: basic-auth-ingress
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.7.0
+    kustomize.component: basic-auth-ingress
+  name: envoy-ingress
+  namespace: kubeflow
+spec:
+  rules:
+  - host: ""
+    http:
+      paths:
+      - backend:
+          serviceName: ambassador
+          servicePort: 80
+        path: /*

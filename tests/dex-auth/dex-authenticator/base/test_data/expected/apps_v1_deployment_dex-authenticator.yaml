@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dex-authenticator
+    env: dev
+  name: dex-authenticator
+  namespace: auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dex-authenticator
+  template:
+    metadata:
+      labels:
+        app: dex-authenticator
+    spec:
+      containers:
+      - args:
+        - --config
+        - config.yaml
+        image: mintel/dex-k8s-authenticator:1.2.0
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+        name: dex-k8s-authenticator
+        ports:
+        - containerPort: 5555
+          name: http
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+        resources: {}
+        volumeMounts:
+        - mountPath: /app/config.yaml
+          name: config
+          subPath: config.yaml
+        - mountPath: /app/idp_ca.pem
+          name: idp-ca
+          subPath: ca.pem
+        - mountPath: /app/k8s_ca.pem
+          name: k8s-ca
+          subPath: k8s_ca.pem
+      volumes:
+      - configMap:
+          name: dex-authenticator-cm
+        name: config
+      - configMap:
+          name: ca
+        name: idp-ca
+      - configMap:
+          name: k8s-ca
+        name: k8s-ca

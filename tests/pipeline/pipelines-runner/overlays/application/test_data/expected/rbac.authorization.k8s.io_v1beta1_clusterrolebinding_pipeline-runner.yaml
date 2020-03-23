@@ -1,0 +1,20 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: pipeline-runner
+    app.kubernetes.io/component: pipelines-runner
+    app.kubernetes.io/instance: pipelines-runner-0.2.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: pipelines-runner
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: 0.2.0
+  name: pipeline-runner
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: pipeline-runner
+subjects:
+- kind: ServiceAccount
+  name: pipeline-runner
+  namespace: kubeflow

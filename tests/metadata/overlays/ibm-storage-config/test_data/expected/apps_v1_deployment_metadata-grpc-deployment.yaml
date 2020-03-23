@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    component: grpc-server
+    kustomize.component: metadata
+  name: metadata-grpc-deployment
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: grpc-server
+      kustomize.component: metadata
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        component: grpc-server
+        kustomize.component: metadata
+    spec:
+      containers:
+      - args:
+        - --grpc_port=$(METADATA_GRPC_SERVICE_PORT)
+        command:
+        - /bin/metadata_store_server
+        envFrom:
+        - configMapRef:
+            name: metadata-metadata-grpc-configmap-2dd6h7mhg6
+        image: gcr.io/tfx-oss-public/ml_metadata_store_server:v0.21.1
+        name: container
+        ports:
+        - containerPort: 8080
+          name: grpc-backendapi
