@@ -36,6 +36,10 @@ spec:
           initialDelaySeconds: 30
           periodSeconds: 30
         name: manager
+        ports:
+        - containerPort: 8080
+          name: manager-http
+          protocol: TCP
       - args:
         - -cluster-admin
         - anonymous
@@ -54,4 +58,8 @@ spec:
           initialDelaySeconds: 30
           periodSeconds: 30
         name: kfam
+        ports:
+        - containerPort: 8081
+          name: kfam-http
+          protocol: TCP
       serviceAccountName: profiles-controller-service-account
