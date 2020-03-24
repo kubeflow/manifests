@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../../aws/nvidia-device-plugin/overlays/application",
+		Package:  "../../../../../aws/nvidia-device-plugin/overlays/application",
 		Expected: "test_data/expected",
 	}
 

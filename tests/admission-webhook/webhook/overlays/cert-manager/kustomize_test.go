@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../../admission-webhook/webhook/overlays/cert-manager",
+		Package:  "../../../../../admission-webhook/webhook/overlays/cert-manager",
 		Expected: "test_data/expected",
 	}
 

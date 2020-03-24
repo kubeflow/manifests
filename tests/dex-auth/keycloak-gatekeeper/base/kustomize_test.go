@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../dex-auth/keycloak-gatekeeper/base",
+		Package:  "../../../../dex-auth/keycloak-gatekeeper/base",
 		Expected: "test_data/expected",
 	}
 

@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../../aws/aws-alb-ingress-controller/overlays/application",
+		Package:  "../../../../../aws/aws-alb-ingress-controller/overlays/application",
 		Expected: "test_data/expected",
 	}
 

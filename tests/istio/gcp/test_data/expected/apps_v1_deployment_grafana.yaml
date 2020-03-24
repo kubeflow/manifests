@@ -1,0 +1,152 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: grafana
+    chart: grafana
+    heritage: Tiller
+    release: istio
+  name: grafana
+  namespace: istio-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+      chart: grafana
+      heritage: Tiller
+      release: istio
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: grafana
+        chart: grafana
+        heritage: Tiller
+        release: istio
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - ppc64le
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - s390x
+            weight: 2
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - ppc64le
+                - s390x
+      containers:
+      - env:
+        - name: GRAFANA_PORT
+          value: "3000"
+        - name: GF_AUTH_BASIC_ENABLED
+          value: "false"
+        - name: GF_AUTH_ANONYMOUS_ENABLED
+          value: "true"
+        - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+          value: Admin
+        - name: GF_PATHS_DATA
+          value: /data/grafana
+        image: grafana/grafana:6.0.2
+        imagePullPolicy: IfNotPresent
+        name: grafana
+        ports:
+        - containerPort: 3000
+        readinessProbe:
+          httpGet:
+            path: /login
+            port: 3000
+        resources:
+          requests:
+            cpu: 10m
+        volumeMounts:
+        - mountPath: /data/grafana
+          name: data
+        - mountPath: /var/lib/grafana/dashboards/istio/galley-dashboard.json
+          name: dashboards-istio-galley-dashboard
+          readOnly: true
+          subPath: galley-dashboard.json
+        - mountPath: /var/lib/grafana/dashboards/istio/istio-mesh-dashboard.json
+          name: dashboards-istio-istio-mesh-dashboard
+          readOnly: true
+          subPath: istio-mesh-dashboard.json
+        - mountPath: /var/lib/grafana/dashboards/istio/istio-performance-dashboard.json
+          name: dashboards-istio-istio-performance-dashboard
+          readOnly: true
+          subPath: istio-performance-dashboard.json
+        - mountPath: /var/lib/grafana/dashboards/istio/istio-service-dashboard.json
+          name: dashboards-istio-istio-service-dashboard
+          readOnly: true
+          subPath: istio-service-dashboard.json
+        - mountPath: /var/lib/grafana/dashboards/istio/istio-workload-dashboard.json
+          name: dashboards-istio-istio-workload-dashboard
+          readOnly: true
+          subPath: istio-workload-dashboard.json
+        - mountPath: /var/lib/grafana/dashboards/istio/mixer-dashboard.json
+          name: dashboards-istio-mixer-dashboard
+          readOnly: true
+          subPath: mixer-dashboard.json
+        - mountPath: /var/lib/grafana/dashboards/istio/pilot-dashboard.json
+          name: dashboards-istio-pilot-dashboard
+          readOnly: true
+          subPath: pilot-dashboard.json
+        - mountPath: /etc/grafana/provisioning/datasources/datasources.yaml
+          name: config
+          subPath: datasources.yaml
+        - mountPath: /etc/grafana/provisioning/dashboards/dashboardproviders.yaml
+          name: config
+          subPath: dashboardproviders.yaml
+      securityContext:
+        fsGroup: 472
+        runAsUser: 472
+      volumes:
+      - configMap:
+          name: istio-grafana
+        name: config
+      - emptyDir: {}
+        name: data
+      - configMap:
+          name: istio-grafana-configuration-dashboards-galley-dashboard
+        name: dashboards-istio-galley-dashboard
+      - configMap:
+          name: istio-grafana-configuration-dashboards-istio-mesh-dashboard
+        name: dashboards-istio-istio-mesh-dashboard
+      - configMap:
+          name: istio-grafana-configuration-dashboards-istio-performance-dashboard
+        name: dashboards-istio-istio-performance-dashboard
+      - configMap:
+          name: istio-grafana-configuration-dashboards-istio-service-dashboard
+        name: dashboards-istio-istio-service-dashboard
+      - configMap:
+          name: istio-grafana-configuration-dashboards-istio-workload-dashboard
+        name: dashboards-istio-istio-workload-dashboard
+      - configMap:
+          name: istio-grafana-configuration-dashboards-mixer-dashboard
+        name: dashboards-istio-mixer-dashboard
+      - configMap:
+          name: istio-grafana-configuration-dashboards-pilot-dashboard
+        name: dashboards-istio-pilot-dashboard

@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../../gcp/gpu-driver/overlays/application",
+		Package:  "../../../../../gcp/gpu-driver/overlays/application",
 		Expected: "test_data/expected",
 	}
 
