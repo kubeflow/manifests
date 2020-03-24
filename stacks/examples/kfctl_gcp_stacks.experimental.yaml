@@ -5,6 +5,12 @@ metadata:
   namespace: kubeflow
 spec:
   applications:
+  # TODO(jlewi): This should be replaced by ACM when its ready.
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: istio/gcp
+    name: stack
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -13,19 +19,19 @@ spec:
   plugins:
   # TODO(jlewi): The plugin is currently commented out because we don't want to run the
   # generate logic
-  #- kind: KfGcpPlugin
-  #  metadata:
-  #    creationTimestamp: null
-  #    name: gcp
-  #  spec:
-  #    createPipelinePersistentStorage: true
-  #    deploymentManagerConfig:
-  #      repoRef:
-  #        name: manifests
-  #        path: gcp/deployment_manager_configs
-  #    enableWorkloadIdentity: true
-  #    skipInitProject: true
-  #    useBasicAuth: false
+  - kind: KfGcpPlugin
+   metadata:
+     creationTimestamp: null
+     name: gcp
+   spec:
+     createPipelinePersistentStorage: true
+     deploymentManagerConfig:
+       repoRef:
+         name: manifests
+         path: gcp/deployment_manager_configs
+     enableWorkloadIdentity: true
+     skipInitProject: true
+     useBasicAuth: false
   repos:
   - name: manifests
     uri: https://github.com/jlewi/manifests/archive/stacks.tar.gz    
