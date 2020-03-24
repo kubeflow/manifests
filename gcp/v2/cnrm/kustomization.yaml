@@ -1,0 +1,10 @@
+resources:
+- cluster.yaml
+- compute-address.yaml
+- disk.yaml
+- kf-admin-policy.yaml
+- kf-admin-sa.yaml
+- kf-user-policy.yaml
+- kf-user-sa.yaml
+- kf-vm-policy.yaml
+- kf-vm-sa.yaml

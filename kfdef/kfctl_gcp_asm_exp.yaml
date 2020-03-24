@@ -399,10 +399,6 @@ spec:
       name: gcp
     spec:
       createPipelinePersistentStorage: true
-      deploymentManagerConfig:
-        repoRef:
-          name: manifests
-          path: experimental/gcp/deployment_manager_configs
       enableWorkloadIdentity: true
       skipInitProject: true
       useBasicAuth: false

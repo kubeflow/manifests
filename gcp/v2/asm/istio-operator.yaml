@@ -1,0 +1,35 @@
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: install.istio.io/v1alpha2
+kind: IstioControlPlane
+metadata:
+  clusterName: "project-id/us-east1-d/cluster-name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"cluster-name","value":"cluster-name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
+spec:
+  profile: asm
+  hub: gcr.io/asm-testing
+  tag: 1.4.5-asm-test.7
+  values:
+    gateways:
+      istio-ingressgateway:
+        type: NodePort
+    global:
+      meshID: "project-id_us-east1-d_cluster-name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"cluster-name","value":"cluster-name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
+      trustDomain: "project-id.svc.id.goog" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
+      sds:
+        token:
+          aud: "project-id.svc.id.goog" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
+    nodeagent:
+      env:
+        GKE_CLUSTER_URL: "https://container.googleapis.com/v1/projects/project-id/locations/us-east1-d/clusters/cluster-name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"cluster-name","value":"cluster-name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
