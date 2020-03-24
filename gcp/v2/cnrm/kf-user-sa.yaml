@@ -12,23 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: iam.cnrm.cloud.google.com/v1alpha1
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
 kind: IAMServiceAccount
 metadata:
-  name: test-cluster-user # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"cluster-name","value":"test-cluster"}]}}
-  namespace: "test-project" # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.core.project","value":"test-project"}}}
+  name: cluster-name-user # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"cluster-name","value":"cluster-name"}]}}
+  namespace: "project-id" # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.core.project","value":"project-id"}}}
 spec:
   displayName: kubeflow user service account
-  projectRoles:
-  - roles/cloudbuild.builds.editor
-  - roles/viewer
-  - roles/source.admin
-  - roles/storage.admin
-  - roles/bigquery.admin
-  - roles/dataflow.admin
-  - roles/ml.admin
-  - roles/dataproc.editor
-  - roles/cloudsql.admin
-  - roles/logging.logWriter
-  - roles/monitoring.metricWriter
-  - roles/monitoring.viewer

@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: container.cnrm.cloud.google.com/v1alpha2
+apiVersion: container.cnrm.cloud.google.com/v1beta1
 kind: ContainerNodePool
 metadata:
-  clusterName: "test-project/us-central1-a/test-cluster" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"test-project"},{"name":"cluster-name","value":"test-cluster"},{"name":"gcloud.compute.zone","value":"us-central1-a"}]}}
-  name: test-cluster-cpu-pool-v1 # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"cluster-name","value":"test-cluster"}]}}
-  namespace: "test-project" # {"type":"string","x-kustomize":{"setter":{"name":"gcloud.core.project","value":"test-project"}}}
+  clusterName: "project-id/us-east1-d/cluster-name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"cluster-name","value":"cluster-name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
+  name: cluster-name-cpu-pool-v1 # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"cluster-name","value":"cluster-name"}]}}
+  namespace: "project-id" # {"type":"string","x-kustomize":{"setter":{"name":"gcloud.core.project","value":"project-id"}}}
 spec:
   initialNodeCount: 2
   autoscaling:
@@ -28,8 +28,9 @@ spec:
     minCpuPlatform: 'Intel Broadwell'
     metadata:
       disable-legacy-endpoints: "true"
-    serviceAccount: test-cluster-vm@test-project.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"partialSetters":[{"name":"cluster-name","value":"test-cluster",{"name":"gcloud.core.project","value":"test-project"}]}}
+    serviceAccountRef:
+      name: cluster-name-vm@project-id.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"cluster-name","value":"cluster-name"},{"name":"gcloud.core.project","value":"project-id"}]}}
     workloadMetadataConfig:
       nodeMetadata: GKE_METADATA_SERVER
   clusterRef:
-    name: test-cluster # {"type":"string","x-kustomize":{"setter":{"name":"cluster-name","value":"test-cluster"}}}
+    name: cluster-name # {"type":"string","x-kustomize":{"setter":{"name":"cluster-name","value":"cluster-name"}}}
