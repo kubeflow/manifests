@@ -1,5 +1,15 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namePrefix: profiles-
+commonLabels:
+  kustomize.component: profiles
+images:
+- name: gcr.io/kubeflow-images-public/kfam
+  newName: gcr.io/kubeflow-images-public/kfam
+  newTag: vmaster-gf3e09203
+- name: gcr.io/kubeflow-images-public/profile-controller
+  newName: gcr.io/kubeflow-images-public/profile-controller
+  newTag: vmaster-g34aa47c2
 resources:
 - ../base/cluster-role-binding.yaml
 - ../base/crd.yaml
