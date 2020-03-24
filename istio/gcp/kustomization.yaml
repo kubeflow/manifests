@@ -7,6 +7,4 @@ resources:
 # TODO(jlewi): Adding cluster-local-gateway duplicates the
 # ClusterRole resource istio-reader
 #- ../cluster-local-gateway/base
-# TODO(jlewi): How do we set cluster rbac config
-# on
 - ../istio/base
