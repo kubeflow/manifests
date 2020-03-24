@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../pipeline/mysql/base",
+		Package:  "../../../../pipeline/mysql/base",
 		Expected: "test_data/expected",
 	}
 

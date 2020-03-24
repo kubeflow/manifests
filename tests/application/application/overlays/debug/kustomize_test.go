@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../../application/application/overlays/debug",
+		Package:  "../../../../../application/application/overlays/debug",
 		Expected: "test_data/expected",
 	}
 

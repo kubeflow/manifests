@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../aws/fluentd-cloud-watch/base",
+		Package:  "../../../../aws/fluentd-cloud-watch/base",
 		Expected: "test_data/expected",
 	}
 

@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../../dex-auth/dex-crds/overlays/istio",
+		Package:  "../../../../../dex-auth/dex-crds/overlays/istio",
 		Expected: "test_data/expected",
 	}
 

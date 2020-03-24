@@ -1,0 +1,11 @@
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: cluster-name-user-dataflow
+spec:
+  member: serviceAccount:cluster-name-user@project-id.iam.gserviceaccount.com
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    external: projects/project-id
+    kind: Project
+  role: roles/dataflow.admin

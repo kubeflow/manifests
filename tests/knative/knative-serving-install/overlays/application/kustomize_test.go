@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../../knative/knative-serving-install/overlays/application",
+		Package:  "../../../../../knative/knative-serving-install/overlays/application",
 		Expected: "test_data/expected",
 	}
 
