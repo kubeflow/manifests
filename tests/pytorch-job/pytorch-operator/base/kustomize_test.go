@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../pytorch-job/pytorch-operator/base",
+		Package:  "../../../../pytorch-job/pytorch-operator/base",
 		Expected: "test_data/expected",
 	}
 

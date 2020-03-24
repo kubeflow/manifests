@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../../katib/katib-crds/overlays/application",
+		Package:  "../../../../../katib/katib-crds/overlays/application",
 		Expected: "test_data/expected",
 	}
 
