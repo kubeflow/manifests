@@ -43,6 +43,9 @@ spec:
         name: manager
         ports:
         - containerPort: 2345
+        - containerPort: 8080
+          name: manager-http
+          protocol: TCP
         securityContext:
           privileged: true
       - args:
@@ -63,4 +66,8 @@ spec:
           initialDelaySeconds: 30
           periodSeconds: 30
         name: kfam
+        ports:
+        - containerPort: 8081
+          name: kfam-http
+          protocol: TCP
       serviceAccountName: profiles-controller-service-account
