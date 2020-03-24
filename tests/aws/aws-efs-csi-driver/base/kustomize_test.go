@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../aws/aws-efs-csi-driver/base",
+		Package:  "../../../../aws/aws-efs-csi-driver/base",
 		Expected: "test_data/expected",
 	}
 

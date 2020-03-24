@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: security
+    chart: security
+    heritage: Tiller
+    istio: citadel
+    release: istio
+  name: istio-citadel
+  namespace: istio-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: security
+      chart: security
+      heritage: Tiller
+      istio: citadel
+      release: istio
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: security
+        chart: security
+        heritage: Tiller
+        istio: citadel
+        release: istio
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - ppc64le
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - s390x
+            weight: 2
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - ppc64le
+                - s390x
+      containers:
+      - args:
+        - --append-dns-names=true
+        - --grpc-port=8060
+        - --grpc-hostname=citadel
+        - --citadel-storage-namespace=istio-system
+        - --custom-dns-names=istio-pilot-service-account.istio-system:istio-pilot.istio-system
+        - --monitoring-port=15014
+        - --self-signed-ca=true
+        image: docker.io/istio/citadel:1.1.6
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /version
+            port: 15014
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        name: citadel
+        resources:
+          requests:
+            cpu: 10m
+      serviceAccountName: istio-citadel-service-account

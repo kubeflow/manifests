@@ -1,0 +1,73 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    helm.sh/hook: post-install
+    helm.sh/hook-delete-policy: hook-succeeded
+  labels:
+    app: security
+    chart: security
+    heritage: Tiller
+    release: istio
+  name: istio-security-post-install-1.1.6
+  namespace: istio-system
+spec:
+  template:
+    metadata:
+      labels:
+        app: security
+        chart: security
+        heritage: Tiller
+        release: istio
+      name: istio-security-post-install
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - ppc64le
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - s390x
+            weight: 2
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - ppc64le
+                - s390x
+      containers:
+      - command:
+        - /bin/bash
+        - /tmp/security/run.sh
+        - /tmp/security/custom-resources.yaml
+        image: docker.io/istio/kubectl:1.1.6
+        imagePullPolicy: IfNotPresent
+        name: kubectl
+        volumeMounts:
+        - mountPath: /tmp/security
+          name: tmp-configmap-security
+      restartPolicy: OnFailure
+      serviceAccountName: istio-security-post-install-account
+      volumes:
+      - configMap:
+          name: istio-security-custom-resources
+        name: tmp-configmap-security

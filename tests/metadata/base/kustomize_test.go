@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../metadata/base",
+		Package:  "../../../metadata/base",
 		Expected: "test_data/expected",
 	}
 

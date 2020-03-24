@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations: null
+  labels:
+    app: jaeger
+    chart: tracing
+    heritage: Tiller
+    release: istio
+  name: tracing
+  namespace: istio-system
+spec:
+  ports:
+  - name: http-query
+    port: 80
+    protocol: TCP
+    targetPort: 16686
+  selector:
+    app: jaeger

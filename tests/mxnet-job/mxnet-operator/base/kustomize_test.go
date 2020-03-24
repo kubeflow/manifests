@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../mxnet-job/mxnet-operator/base",
+		Package:  "../../../../mxnet-job/mxnet-operator/base",
 		Expected: "test_data/expected",
 	}
 

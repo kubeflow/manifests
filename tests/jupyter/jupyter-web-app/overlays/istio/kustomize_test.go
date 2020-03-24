@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../../jupyter/jupyter-web-app/overlays/istio",
+		Package:  "../../../../../jupyter/jupyter-web-app/overlays/istio",
 		Expected: "test_data/expected",
 	}
 

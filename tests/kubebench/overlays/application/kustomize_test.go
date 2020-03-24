@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../kubebench/overlays/application",
+		Package:  "../../../../kubebench/overlays/application",
 		Expected: "test_data/expected",
 	}
 
