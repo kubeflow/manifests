@@ -1,0 +1,19 @@
+# This kustomize package contains a complete install
+# of the application CR and controller for use with
+# http://bit.ly/kf_kustomize_v3
+# TODO(jlewi): Once we migrate fully to stacks we might want
+# to refactor and cleanup the manifests.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resource:
+- ../application-crds/base
+- ../application/cluster-role.yaml
+- ../application/cluster-role-binding.yaml
+- ../application/service-account.yaml
+- ../application/service.yaml
+- ../application/stateful-set.yaml
+images:
+- name: gcr.io/kubeflow-images-public/kubernetes-sigs/application
+  newName: gcr.io/kubeflow-images-public/kubernetes-sigs/application
+  newTag: 1.0-beta
+
