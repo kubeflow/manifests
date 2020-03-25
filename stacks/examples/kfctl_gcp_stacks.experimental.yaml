@@ -10,28 +10,28 @@ spec:
       repoRef:
         name: manifests
         path: istio/gcp
-    name: stack
+    name: istio-stack
   - kustomizeConfig:
       repoRef:
         name: manifests
         path: stacks/gcp
-    name: stack
+    name: kubeflow-apps
   plugins:
   # TODO(jlewi): The plugin is currently commented out because we don't want to run the
   # generate logic
   - kind: KfGcpPlugin
-   metadata:
-     creationTimestamp: null
-     name: gcp
-   spec:
-     createPipelinePersistentStorage: true
-     deploymentManagerConfig:
-       repoRef:
-         name: manifests
-         path: gcp/deployment_manager_configs
-     enableWorkloadIdentity: true
-     skipInitProject: true
-     useBasicAuth: false
+    metadata:
+      creationTimestamp: null
+      name: gcp
+    spec:
+      createPipelinePersistentStorage: true
+      deploymentManagerConfig:
+        repoRef:
+          name: manifests
+          path: gcp/deployment_manager_configs
+      enableWorkloadIdentity: true
+      skipInitProject: true
+      useBasicAuth: false
   repos:
   - name: manifests
     uri: https://github.com/jlewi/manifests/archive/stacks.tar.gz    
