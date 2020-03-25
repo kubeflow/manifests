@@ -4,12 +4,11 @@ metadata:
   labels:
     app: centraldashboard
     app.kubernetes.io/component: centraldashboard
-    app.kubernetes.io/instance: centraldashboard-v0.7.0
+    app.kubernetes.io/instance: centraldashboard-v1.0.0
     app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: centraldashboard
     app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.7.0
-    kustomize.component: centraldashboard
+    app.kubernetes.io/version: v1.0.0
   name: centraldashboard
   namespace: kubeflow
 spec:
@@ -18,12 +17,11 @@ spec:
     matchLabels:
       app: centraldashboard
       app.kubernetes.io/component: centraldashboard
-      app.kubernetes.io/instance: centraldashboard-v0.7.0
+      app.kubernetes.io/instance: centraldashboard-v1.0.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: centraldashboard
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
-      kustomize.component: centraldashboard
+      app.kubernetes.io/version: v1.0.0
   template:
     metadata:
       annotations:
@@ -31,22 +29,30 @@ spec:
       labels:
         app: centraldashboard
         app.kubernetes.io/component: centraldashboard
-        app.kubernetes.io/instance: centraldashboard-v0.7.0
+        app.kubernetes.io/instance: centraldashboard-v1.0.0
         app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: centraldashboard
         app.kubernetes.io/part-of: kubeflow
-        app.kubernetes.io/version: v0.7.0
-        kustomize.component: centraldashboard
+        app.kubernetes.io/version: v1.0.0
     spec:
       containers:
       - env:
         - name: USERID_HEADER
-          value: ""
+          valueFrom:
+            configMapKeyRef:
+              key: userid-header
+              name: kubeflow-config
         - name: USERID_PREFIX
-          value: ""
+          valueFrom:
+            configMapKeyRef:
+              key: userid-prefix
+              name: kubeflow-config
         - name: PROFILES_KFAM_SERVICE_HOST
-          value: profiles-kfam.kubeflow
-        image: gcr.io/kubeflow-images-public/centraldashboard:vmaster-gf39279c0
+          valueFrom:
+            configMapKeyRef:
+              key: profiles_kfam_service_host
+              name: kubeflow-config
+        image: gcr.io/kubeflow-images-public/centraldashboard
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
