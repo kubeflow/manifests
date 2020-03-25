@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  admin: ""
+  gcp-sa: ""
+kind: ConfigMap
+metadata:
+  labels:
+    kustomize.component: profiles
+  name: profiles-profiles-config-4mgcmtgk6t

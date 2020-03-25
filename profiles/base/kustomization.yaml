@@ -1,3 +1,7 @@
+# TODO(jlewi): This kustomization.yaml is deprecated. We want the
+# base_v3 version. This version uses a bunch of problematic patterns e.g.
+# i) Using vars to do command line substitution
+# ii) Not using a configmap to make application and global config available
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
