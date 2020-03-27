@@ -35,7 +35,7 @@ modules:
 	@GO111MODULE=on $(GO) mod download
 
 test: modules
-	@GO111MODULE=on $(GO) test -v .
+	@GO111MODULE=on $(GO) test -v github.com/kubeflow/manifests/tests/...
 
 clean:
 	@rm -f $$(ls *_test.go | egrep -v 'kusttestharness_test.go|go.mod|go.sum')

@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  clusterDomain: cluster.local
+  namespace: ""
+kind: ConfigMap
+metadata:
+  labels:
+    kustomize.component: tensorboard
+  name: parameters-mdbt8k6574
+  namespace: kubeflow

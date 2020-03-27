@@ -1,0 +1,17 @@
+apiVersion: v1
+data:
+  custom-header: kubeflow-userid
+  istio-namespace: istio-system
+  origin-header: x-amzn-oidc-header
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: aws-istio-authz-adaptor
+    app.kubernetes.io/instance: aws-istio-authz-adaptor-0.1
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: aws-istio-authz-adaptor
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: "0.1"
+    kustomize.component: aws-authzadaptor
+  name: aws-authzadaptor-parameters
+  namespace: istio-system

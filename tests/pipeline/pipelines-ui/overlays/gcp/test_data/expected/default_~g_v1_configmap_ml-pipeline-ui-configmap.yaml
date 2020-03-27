@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  viewer-pod-template.json: |-
+    {
+    "spec": {
+        "serviceAccountName": "kf-user"
+    }
+    }
+kind: ConfigMap
+metadata:
+  name: ml-pipeline-ui-configmap

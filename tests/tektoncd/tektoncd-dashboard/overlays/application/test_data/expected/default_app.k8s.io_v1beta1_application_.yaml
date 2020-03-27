@@ -1,0 +1,41 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  labels:
+    app: tekton-dashboard
+    app.kubernetes.io/component: tektoncd
+    app.kubernetes.io/instance: tektoncd-dashboard-v0.7.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: tektoncd-dashboard
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.7.0
+  name: ""
+spec:
+  addOwnerRef: true
+  componentKinds:
+  - group: apps
+    kind: Deployment
+  - group: core
+    kind: ServiceAccount
+  - group: core
+    kind: Service
+  - group: tekton.dev
+    kind: Pipeline
+  - group: tekton.dev
+    kind: Task
+  descriptor:
+    description: installs tektoncd pipeline dashboard
+    keywords:
+    - tektoncd-dashboard
+    - kubeflow
+    links:
+    - description: About
+      url: https://kubeflow.org
+    maintainers:
+    - email: kam.d.kasravi@intel.com
+      name: Kam Kasravi
+    owners:
+    - email: kam.d.kasravi@intel.com
+      name: Kam Kasravi
+    type: tektoncd-dashboard
+    version: v1beta1

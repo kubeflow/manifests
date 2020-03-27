@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    ksonnet.io/component: prometheus
+    kustomize.component: prometheus
+    name: prometheus
+  name: prometheus
+  namespace: stackdriver
+spec:
+  ports:
+  - name: prometheus
+    port: 9090
+    protocol: TCP
+  selector:
+    app: prometheus
+    kustomize.component: prometheus
+  type: ClusterIP

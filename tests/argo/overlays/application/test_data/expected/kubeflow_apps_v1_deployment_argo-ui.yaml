@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: argo-ui
+    app.kubernetes.io/component: argo
+    app.kubernetes.io/instance: argo-v2.3.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: argo
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v2.3.0
+    kustomize.component: argo
+  name: argo-ui
+  namespace: kubeflow
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: argo-ui
+      app.kubernetes.io/component: argo
+      app.kubernetes.io/instance: argo-v2.3.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: argo
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v2.3.0
+      kustomize.component: argo
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      creationTimestamp: null
+      labels:
+        app: argo-ui
+        app.kubernetes.io/component: argo
+        app.kubernetes.io/instance: argo-v2.3.0
+        app.kubernetes.io/managed-by: kfctl
+        app.kubernetes.io/name: argo
+        app.kubernetes.io/part-of: kubeflow
+        app.kubernetes.io/version: v2.3.0
+        kustomize.component: argo
+    spec:
+      containers:
+      - env:
+        - name: ARGO_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: IN_CLUSTER
+          value: "true"
+        - name: ENABLE_WEB_CONSOLE
+          value: "false"
+        - name: BASE_HREF
+          value: /argo/
+        image: argoproj/argoui:v2.3.0
+        imagePullPolicy: IfNotPresent
+        name: argo-ui
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8001
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: argo-ui
+      serviceAccountName: argo-ui
+      terminationGracePeriodSeconds: 30

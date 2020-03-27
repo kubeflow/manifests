@@ -1,0 +1,16 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: telemetry
+    istio: mixer
+    istio-mixer-type: telemetry
+    version: 1.1.0
+  name: istio-telemetry
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: telemetry
+      istio: mixer
+      istio-mixer-type: telemetry
