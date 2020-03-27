@@ -12,8 +12,6 @@ spec:
       parameters:
       - name: clusterRbacConfig
         value: "OFF"
-      - name: gatewaySelector
-        value: ingress-gke-system
       repoRef:
         name: manifests
         path: istio/istio
@@ -79,6 +77,11 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: userid-header
+        value: X-Goog-Authenticated-User-Email
+      - name: userid-prefix
+        value: 'accounts.google.com:'
       repoRef:
         name: manifests
         path: common/centraldashboard
@@ -101,6 +104,11 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: userid-header
+        value: X-Goog-Authenticated-User-Email
+      - name: userid-prefix
+        value: 'accounts.google.com:'
       repoRef:
         name: manifests
         path: jupyter/jupyter-web-app
@@ -294,7 +302,10 @@ spec:
       - istio
       parameters:
       - name: admin
-        value: johnDoe@acme.com
+      - name: userid-header
+        value: X-Goog-Authenticated-User-Email
+      - name: userid-prefix
+        value: 'accounts.google.com:'
       repoRef:
         name: manifests
         path: profiles
