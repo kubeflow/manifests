@@ -8,6 +8,7 @@ spec:
     matchLabels:
       app.kubernetes.io/name: sparkoperator
       app.kubernetes.io/version: v1beta2-1.1.0-2.4.5
+      kustomize.component: spark-operator
   strategy:
     type: Recreate
   template:
@@ -22,6 +23,7 @@ spec:
       labels:
         app.kubernetes.io/name: sparkoperator
         app.kubernetes.io/version: v1beta2-1.1.0-2.4.5
+        kustomize.component: spark-operator
     spec:
       containers:
       - args:
