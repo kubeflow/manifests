@@ -70,5 +70,7 @@ rules:
   resources:
   - sparkapplications
   - scheduledsparkapplications
+  - sparkapplications/status
+  - scheduledsparkapplications/status
   verbs:
   - '*'
