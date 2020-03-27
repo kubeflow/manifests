@@ -1,6 +1,6 @@
 apiVersion: v1
 data:
-  spawner_ui_config.yaml: |
+  spawner_ui_config.yaml: |-
     # Configuration file for the Jupyter UI.
     #
     # Each Jupyter UI option is configured by two keys: 'value' and 'readOnly'
@@ -21,7 +21,7 @@ data:
       image:
         # The container Image for the user's Jupyter Notebook
         # If readonly, this value must be a member of the list below
-        value: gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v-base-ef41372-1177829795472347138
+        value: gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-cpu:1.0.0
         # The list of available standard container Images
         options:
           - gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-cpu:1.0.0
@@ -131,4 +131,14 @@ data:
         readOnly: false
 kind: ConfigMap
 metadata:
-  name: config
+  labels:
+    app: jupyter-web-app
+    app.kubernetes.io/component: jupyter-web-app
+    app.kubernetes.io/instance: jupyter-web-app-v0.7.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: jupyter-web-app
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.7.0
+    kustomize.component: jupyter-web-app
+  name: jupyter-web-app-jupyter-web-app-config
+  namespace: kubeflow
