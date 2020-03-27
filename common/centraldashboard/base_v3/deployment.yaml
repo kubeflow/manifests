@@ -3,32 +3,21 @@ kind: Deployment
 metadata:
   labels:
     app: centraldashboard
-    kustomize.component: centraldashboard
   name: centraldashboard
-  namespace: kubeflow
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: centraldashboard
-      kustomize.component: centraldashboard
   template:
     metadata:
-      annotations:
-        sidecar.istio.io/inject: "false"
       labels:
         app: centraldashboard
-        kustomize.component: centraldashboard
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
-      - env:
-        - name: USERID_HEADER
-          value: ""
-        - name: USERID_PREFIX
-          value: ""
-        - name: PROFILES_KFAM_SERVICE_HOST
-          value: profiles-kfam.kubeflow
-        image: gcr.io/kubeflow-images-public/centraldashboard:vmaster-gf39279c0
+      - image: gcr.io/kubeflow-images-public/centraldashboard
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:

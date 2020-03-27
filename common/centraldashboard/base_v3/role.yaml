@@ -1,18 +1,25 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
   labels:
     app: centraldashboard
-    kustomize.component: centraldashboard
   name: centraldashboard
 rules:
 - apiGroups:
   - ""
+  - "app.k8s.io"
   resources:
-  - events
-  - namespaces
-  - nodes
+  - applications
+  - pods
+  - pods/exec
+  - pods/log
   verbs:
   - get
   - list
   - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get

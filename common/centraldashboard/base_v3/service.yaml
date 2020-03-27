@@ -9,12 +9,10 @@ metadata:
       name: centralui-mapping
       prefix: /
       rewrite: /
-      service: centraldashboard.kubeflow
+      service: centraldashboard.$(namespace)
   labels:
     app: centraldashboard
-    kustomize.component: centraldashboard
   name: centraldashboard
-  namespace: kubeflow
 spec:
   ports:
   - port: 80
@@ -22,6 +20,5 @@ spec:
     targetPort: 8082
   selector:
     app: centraldashboard
-    kustomize.component: centraldashboard
   sessionAffinity: None
   type: ClusterIP
