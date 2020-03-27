@@ -77,3 +77,9 @@ rules:
   - get
   - list
   - watch
+- apiGroups:
+  - sparkoperator.k8s.io
+  resources:
+  - sparkapplications
+  verbs:
+  - '*'
