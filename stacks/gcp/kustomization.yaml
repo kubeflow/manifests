@@ -3,8 +3,7 @@ kind: Kustomization
 namespace: kubeflow
 resources:
   # List the Kubeflow applications that should be included  
-  - ../../application/v3
-  - ../../common/centraldashboard/base_v3
+  - ../../common/centraldashboard/overlays/stacks
   - ../../jupyter/jupyter-web-app/base_v3
   - ../../profiles/base_v3
 configMapGenerator:

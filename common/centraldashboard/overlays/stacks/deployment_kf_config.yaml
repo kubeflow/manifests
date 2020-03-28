@@ -18,8 +18,3 @@ spec:
                 configMapKeyRef:
                   name: kubeflow-config
                   key: userid-prefix
-            - name: PROFILES_KFAM_SERVICE_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: kubeflow-config
-                  key: profiles_kfam_service_host

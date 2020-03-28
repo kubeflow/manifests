@@ -5,6 +5,7 @@
 # to refactor and cleanup the manifests.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: kubeflow
 nameprefix: application-controller-
 resources:
 - ../application-crds/base
