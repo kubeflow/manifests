@@ -10,13 +10,27 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: istio/gcp
+        path: istio/gcp-1-1-6
     name: istio-stack
+  # Create Kubeflow specific ISTIO resources.
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: istio/base
+    name: kubeflow-istio      
+  # Install controllers that other applications depend on
+  # e.g. metacontroller and application controller.
   - kustomizeConfig:
       repoRef:
         name: manifests
         path: metacontroller/base
     name: metacontroller
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: application/v3
+    name: application
+  # Install GCP ingress related packages
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -26,7 +40,8 @@ spec:
       repoRef:
         name: manifests
         path: gcp/iap-ingress/v3
-    name: iap-ingress    
+    name: iap-ingress
+  # Install Kubeflow applications.
   - kustomizeConfig:
       repoRef:
         name: manifests
