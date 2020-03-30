@@ -31,13 +31,13 @@ images:
   newName: gcr.io/kubeflow-images-public/jupyter-web-app
   newTag: vmaster-gd9be4b9e
 resources:
-- cluster-role-binding.yaml
-- cluster-role.yaml
-- deployment.yaml
-- role-binding.yaml
-- role.yaml
-- service-account.yaml
-- service.yaml
+- ../base/cluster-role-binding.yaml
+- ../base/cluster-role.yaml
+- ../base/deployment.yaml
+- ../base/role-binding.yaml
+- ../base/role.yaml
+- ../base/service-account.yaml
+- ../base/service.yaml
 - ../overlays/istio
 - ../overlays/application
 configMapGenerator:
@@ -45,6 +45,6 @@ configMapGenerator:
 # gets used with patches
 - name: jupyter-web-app-config
   files:
-  - configs/spawner_ui_config.yaml
+  - ../base/configs/spawner_ui_config.yaml
 patchesStrategicMerge:
 - deployment_patch.yaml
