@@ -2,6 +2,7 @@ apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
   name: application-controller-kubeflow
+  namespace: kubeflow
 spec:
   addOwnerRef: true
   componentKinds:
