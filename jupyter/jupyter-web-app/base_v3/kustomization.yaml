@@ -45,6 +45,6 @@ configMapGenerator:
 # gets used with patches
 - name: jupyter-web-app-config
   files:
-  - configs/spawner_ui_config.yaml
+  - ../base/configs/spawner_ui_config.yaml
 patchesStrategicMerge:
 - deployment_patch.yaml
