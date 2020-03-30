@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    kustomize.component: iap-ingress
+  name: kf-admin-iap
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kf-admin-iap
+subjects:
+- kind: ServiceAccount
+  name: kf-admin
+  namespace: istio-system
