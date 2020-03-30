@@ -22,17 +22,30 @@ spec:
     spec:
       containers:
       - env:
+        - name: ROK_SECRET_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: ROK_SECRET_NAME
+              name: parameters
+        - name: UI
+          valueFrom:
+            configMapKeyRef:
+              key: UI
+              name: parameters
         - name: USERID_HEADER
+          value: $(userid-header)
           valueFrom:
             configMapKeyRef:
               key: userid-header
               name: kubeflow-config
         - name: USERID_PREFIX
+          value: $(userid-prefix)
           valueFrom:
             configMapKeyRef:
               key: userid-prefix
               name: kubeflow-config
         image: gcr.io/kubeflow-images-public/jupyter-web-app:vmaster-gd9be4b9e
+        imagePullPolicy: $(policy)
         name: jupyter-web-app
         ports:
         - containerPort: 5000
@@ -42,5 +55,5 @@ spec:
       serviceAccountName: jupyter-web-app-service-account
       volumes:
       - configMap:
-          name: jupyter-web-app-jupyter-web-app-config-d2m28hb5d2
+          name: jupyter-web-app-jupyter-web-app-config-c985h26hb9
         name: config-volume

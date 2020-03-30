@@ -21,7 +21,11 @@ data:
       image:
         # The container Image for the user's Jupyter Notebook
         # If readonly, this value must be a member of the list below
+    <<<<<<< HEAD
         value: gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-cpu:1.0.0
+    =======
+        value: gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v-base-ef41372-1177829795472347138
+    >>>>>>> eb1216f... * Move the jupyter configs back to the base directory so that
         # The list of available standard container Images
         options:
           - gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-cpu:1.0.0
@@ -134,9 +138,5 @@ metadata:
   labels:
     app: jupyter-web-app
     kustomize.component: jupyter-web-app
-<<<<<<< HEAD:tests/jupyter/jupyter-web-app/overlays/application/test_data/expected/kubeflow_~g_v1_configmap_jupyter-web-app-jupyter-web-app-config.yaml
-  name: jupyter-web-app-jupyter-web-app-config
-=======
-  name: jupyter-web-app-jupyter-web-app-config-d2m28hb5d2
->>>>>>> f6e3f3d... jupyter web app manifest version v3:tests/jupyter/jupyter-web-app/base_v3/test_data/expected/~g_v1_configmap_jupyter-web-app-jupyter-web-app-config-d2m28hb5d2.yaml
+  name: jupyter-web-app-jupyter-web-app-config-c985h26hb9
   namespace: kubeflow
