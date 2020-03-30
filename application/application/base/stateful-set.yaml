@@ -21,6 +21,8 @@ spec:
         image: gcr.io/kubeflow-images-public/kubernetes-sigs/application
         imagePullPolicy: Always
         env:
+        # TODO(https://github.com/kubeflow/manifests/issues/1043)
+        # Do we really need this?
         - name: project
           value: $(project)
       serviceAccountName: service-account
