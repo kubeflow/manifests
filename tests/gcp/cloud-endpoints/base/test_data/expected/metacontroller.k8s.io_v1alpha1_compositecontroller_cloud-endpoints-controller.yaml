@@ -5,6 +5,7 @@ metadata:
     app: cloud-endpoints-controller
     kustomize.component: cloud-endpoints
   name: cloud-endpoints-controller
+  namespace: kubeflow
 spec:
   childResources: []
   clientConfig:

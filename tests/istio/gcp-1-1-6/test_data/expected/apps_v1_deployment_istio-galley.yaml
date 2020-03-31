@@ -1,0 +1,133 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: galley
+    chart: galley
+    heritage: Tiller
+    istio: galley
+    release: istio
+  name: istio-galley
+  namespace: istio-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: galley
+      chart: galley
+      heritage: Tiller
+      istio: galley
+      release: istio
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: galley
+        chart: galley
+        heritage: Tiller
+        istio: galley
+        release: istio
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - ppc64le
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - s390x
+            weight: 2
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - ppc64le
+                - s390x
+      containers:
+      - command:
+        - /usr/local/bin/galley
+        - server
+        - --meshConfigFile=/etc/mesh-config/mesh
+        - --livenessProbeInterval=1s
+        - --livenessProbePath=/healthliveness
+        - --readinessProbePath=/healthready
+        - --readinessProbeInterval=1s
+        - --deployment-namespace=istio-system
+        - --insecure=true
+        - --validation-webhook-config-file
+        - /etc/config/validatingwebhookconfiguration.yaml
+        - --monitoringPort=15014
+        - --log_output_level=default:info
+        - --enable-validation=true
+        image: docker.io/istio/galley:1.1.6
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /usr/local/bin/galley
+            - probe
+            - --probe-path=/healthliveness
+            - --interval=10s
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        name: galley
+        ports:
+        - containerPort: 443
+        - containerPort: 15014
+        - containerPort: 9901
+        readinessProbe:
+          exec:
+            command:
+            - /usr/local/bin/galley
+            - probe
+            - --probe-path=/healthready
+            - --interval=10s
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          requests:
+            cpu: 10m
+        volumeMounts:
+        - mountPath: /etc/certs
+          name: certs
+          readOnly: true
+        - mountPath: /etc/config
+          name: config
+          readOnly: true
+        - mountPath: /etc/mesh-config
+          name: mesh-config
+          readOnly: true
+      serviceAccountName: istio-galley-service-account
+      volumes:
+      - name: certs
+        secret:
+          secretName: istio.istio-galley-service-account
+      - configMap:
+          name: istio-galley-configuration
+        name: config
+      - configMap:
+          name: istio
+        name: mesh-config

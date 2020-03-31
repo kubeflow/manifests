@@ -18,3 +18,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kf-admin
+  namespace: kubeflow
