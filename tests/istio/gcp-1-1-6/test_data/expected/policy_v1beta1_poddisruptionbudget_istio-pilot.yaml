@@ -1,0 +1,18 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: pilot
+    chart: pilot
+    heritage: Tiller
+    istio: pilot
+    release: istio
+  name: istio-pilot
+  namespace: istio-system
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: pilot
+      istio: pilot
+      release: istio

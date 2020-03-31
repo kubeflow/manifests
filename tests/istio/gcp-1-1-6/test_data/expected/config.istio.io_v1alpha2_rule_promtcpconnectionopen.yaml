@@ -1,0 +1,16 @@
+apiVersion: config.istio.io/v1alpha2
+kind: rule
+metadata:
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+  name: promtcpconnectionopen
+  namespace: istio-system
+spec:
+  actions:
+  - handler: prometheus
+    instances:
+    - tcpconnectionsopened.metric
+  match: context.protocol == "tcp" && ((connection.event | "na") == "open")

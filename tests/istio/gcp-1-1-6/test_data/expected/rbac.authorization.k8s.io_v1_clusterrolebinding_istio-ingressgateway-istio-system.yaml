@@ -1,0 +1,17 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: ingressgateway
+    chart: gateways
+    heritage: Tiller
+    release: istio
+  name: istio-ingressgateway-istio-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: istio-ingressgateway-istio-system
+subjects:
+- kind: ServiceAccount
+  name: istio-ingressgateway-service-account
+  namespace: istio-system
