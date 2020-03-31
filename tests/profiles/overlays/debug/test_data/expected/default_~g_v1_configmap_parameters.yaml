@@ -1,6 +1,0 @@
-apiVersion: v1
-data:
-  project: ""
-kind: ConfigMap
-metadata:
-  name: parameters

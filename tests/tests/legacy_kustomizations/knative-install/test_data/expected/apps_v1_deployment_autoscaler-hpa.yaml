@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-serving-install
+    app.kubernetes.io/instance: knative-serving-install-v0.8.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: knative-serving-install
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.8.0
+    autoscaling.knative.dev/autoscaler-provider: hpa
+    kustomize.component: knative
+    serving.knative.dev/release: v0.11.1
+  name: autoscaler-hpa
+  namespace: knative-serving
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: autoscaler-hpa
+      app.kubernetes.io/component: knative-serving-install
+      app.kubernetes.io/instance: knative-serving-install-v0.8.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: knative-serving-install
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.8.0
+      kustomize.component: knative
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: autoscaler-hpa
+        app.kubernetes.io/component: knative-serving-install
+        app.kubernetes.io/instance: knative-serving-install-v0.8.0
+        app.kubernetes.io/managed-by: kfctl
+        app.kubernetes.io/name: knative-serving-install
+        app.kubernetes.io/part-of: kubeflow
+        app.kubernetes.io/version: v0.8.0
+        kustomize.component: knative
+        serving.knative.dev/release: v0.11.1
+    spec:
+      containers:
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: METRICS_DOMAIN
+          value: knative.dev/serving
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa@sha256:5e0fadf574e66fb1c893806b5c5e5f19139cc476ebf1dff9860789fe4ac5f545
+        name: autoscaler-hpa
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8008
+          name: profiling
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1000Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+      serviceAccountName: controller

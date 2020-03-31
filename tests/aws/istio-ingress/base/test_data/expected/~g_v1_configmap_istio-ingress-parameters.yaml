@@ -1,8 +1,0 @@
-apiVersion: v1
-data:
-  loadBalancerScheme: internet-facing
-kind: ConfigMap
-metadata:
-  labels:
-    kustomize.component: istio-ingress
-  name: istio-ingress-parameters

@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/path: /metrics
+    prometheus.io/port: "8443"
+    prometheus.io/scrape: "true"
+  labels:
+    app: tf-job-operator
+    app.kubernetes.io/component: tfjob
+    app.kubernetes.io/instance: tf-job-operator-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: tf-job-operator
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: tf-job-operator
+  name: tf-job-operator
+  namespace: kubeflow
+spec:
+  ports:
+  - name: monitoring-port
+    port: 8443
+    targetPort: 8443
+  selector:
+    app.kubernetes.io/component: tfjob
+    app.kubernetes.io/instance: tf-job-operator-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: tf-job-operator
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: tf-job-operator
+    name: tf-job-operator
+  type: ClusterIP

@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cloud-endpoints-controller
+    app.kubernetes.io/component: cloud-endpoints
+    app.kubernetes.io/instance: cloud-endpoints-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: cloud-endpoints
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: cloud-endpoints
+  name: cloud-endpoints-controller
+  namespace: kubeflow
+spec:
+  ports:
+  - name: http
+    port: 80
+  selector:
+    app: cloud-endpoints-controller
+    app.kubernetes.io/component: cloud-endpoints
+    app.kubernetes.io/instance: cloud-endpoints-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: cloud-endpoints
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: cloud-endpoints
+  type: ClusterIP

@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+bases:
+- ../../../istio/istio-crds/base
+configMapGenerator: []
+configurations: []
+kind: Kustomization
+namespace: istio-system
+patches: []
+patchesStrategicMerge: []
+resources: []

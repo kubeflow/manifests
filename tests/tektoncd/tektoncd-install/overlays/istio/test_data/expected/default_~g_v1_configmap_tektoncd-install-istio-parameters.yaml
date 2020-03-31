@@ -1,7 +1,0 @@
-apiVersion: v1
-data:
-  clusterDomain: cluster.local
-  namespace: ""
-kind: ConfigMap
-metadata:
-  name: tektoncd-install-istio-parameters
