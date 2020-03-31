@@ -264,6 +264,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      - use-kf-user
       repoRef:
         name: manifests
         path: pipeline/api-service
@@ -308,6 +309,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      - use-kf-user
       repoRef:
         name: manifests
         path: pipeline/pipelines-runner
