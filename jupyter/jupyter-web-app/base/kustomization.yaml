@@ -1,6 +1,12 @@
+# TODO(https://github.com/kubeflow/manifests/issues/774): 
+# This is a legacy package. Hopefully we can get rid of it once
+# 774 is complete.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+# TODO(jlewi): We can't depend on base because of the deployment_patch.
+# but maybe if we changed that to use ConfigMapRef then the patch would correctly
+# override the patch applied in base_v3
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - deployment.yaml
@@ -20,14 +26,18 @@ images:
 configMapGenerator:
 - envs:
   - params.env
-  name: parameters
+  name: parameters  
 # We need the name to be unique without the suffix because the original name is what
 # gets used with patches
 - name: jupyter-web-app-config
   files:
-  - configs/spawner_ui_config.yaml
+  - ./configs/spawner_ui_config.yaml  
 generatorOptions:
+  # TODO(jlewi): Why are we setting disableNameSuffixHash true? Don't we want a content hash so that if the config map
+  # changes we would update the configmap?
   disableNameSuffixHash: true
+patchesStrategicMerge:
+- deployment_patch.yaml
 vars:
 - fieldref:
     fieldPath: data.policy
