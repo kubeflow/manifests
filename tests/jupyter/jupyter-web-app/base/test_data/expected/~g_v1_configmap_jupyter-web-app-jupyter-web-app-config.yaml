@@ -21,11 +21,7 @@ data:
       image:
         # The container Image for the user's Jupyter Notebook
         # If readonly, this value must be a member of the list below
-    <<<<<<< HEAD
         value: gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-cpu:1.0.0
-    =======
-        value: gcr.io/kubeflow-images-public/tensorflow-1.14.0-notebook-cpu:v-base-ef41372-1177829795472347138
-    >>>>>>> eb1216f... * Move the jupyter configs back to the base directory so that
         # The list of available standard container Images
         options:
           - gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-cpu:1.0.0
