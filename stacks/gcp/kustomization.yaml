@@ -5,6 +5,7 @@ resources:
   # List the Kubeflow applications that should be included  
   - ../../common/centraldashboard/overlays/stacks
   - ../../jupyter/jupyter-web-app/base_v3
+  - ../../jupyter/notebook-controller/base_v3
   - ../../profiles/base_v3
 configMapGenerator:
 - envs:
