@@ -7,6 +7,8 @@ resources:
   - ../../jupyter/jupyter-web-app/base_v3
   - ../../jupyter/notebook-controller/base_v3
   - ../../profiles/base_v3
+  - ../../pytorch-job/pytorch-job-crds/overlays/application
+  - ../../pytorch-job/pytorch-operator/overlays/application
   - ../../tf-training/tf-job-crds/overlays/application
   - ../../tf-training/tf-job-operator/overlays/application
 configMapGenerator:
