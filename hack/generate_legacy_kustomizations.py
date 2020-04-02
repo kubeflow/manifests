@@ -1,4 +1,7 @@
-"""Generate legacy kustomize unittests.
+"""Generate legacy kustomization YAMLs.
+
+This script generates kustomization YAMLs based on the kustomizations created
+by kfctl to be used in unittests.
 
 Prior to the big kustomize v3 refactor (see http://bit.ly/kf_kustomize_v3 and
 https://github.com/kubeflow/manifests/issues/774) the kustomization.yaml
@@ -36,55 +39,11 @@ import yaml
 # the tests manually
 APPS_TO_SKIP = ["mysql", "minio"]
 
-def build_configmap_patch(kustomize_dir):
-  kustomize_file = os.path.join(kustomize_dir, "kustomization.yaml")
-
-  with open(kustomize_file) as hf:
-    kustomize = yaml.load(hf)
-
-  params = {}
-  config_maps = []
-
-  for g in kustomize.get("configMapGenerator", []):
-    p_files = g.get("envs", [])
-
-    if "env" in g:
-      p_files.append(g["env"])
-
-    for p_file in p_files:
-      # If there is a params.env file add it as a config map patch
-      params_path = os.path.join(kustomize_dir, p_file)
-
-      if os.path.exists(params_path):
-        with open(params_path) as hf:
-          while True:
-            line = hf.readline()
-            if not line:
-              break
-            if not "=" in line:
-              continue
-            line = line.strip()
-            key, value = line.split("=", 1)
-            params[key] = value
-
-
-    # Generate a config map patch
-    patch = {
-      "apiVersion": "v1",
-      "kind": "ConfigMap",
-      "data": params,
-      "metadata": {
-        "name": g["name"],
-      }
-    }
-
-    config_maps.append(patch)
-
-  return config_maps
-
 def build_configmap_generators(kustomize_dir):
-  """If the file has a configmap generator we need to
+  """Return a dictionary mapping configMapGenerator name to files.
 
+  The dictionary will be used to copy over the files to the test directory
+  and generate an updated configMapGenerator in the kustomization.yaml
 
   Returns:
    dict: config map name to list of files used for the configmap generator
@@ -171,8 +130,6 @@ class GenerateLegacyTests:
         kustomization[f] = new
 
       # Build any patches for configmaps
-      # config_patches = build_configmap_patch(os.path.join(kustomize_dir, d, "base"))
-
       generators = build_configmap_generators(os.path.join(kustomize_dir, d, "base"))
 
       app_test_dir = os.path.join(test_path, d)
