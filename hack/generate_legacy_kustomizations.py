@@ -37,6 +37,13 @@ import yaml
 # Which apps to skip. These are apps which had some edge case that it wasn't
 # worth dealing with.  It would just make more sense to generate
 # the tests manually
+#
+# mysql and minio don't work because we need to combine the configMapGenerators
+# in base and in an overlay to properly define all the parameters.
+# We are in the process of getting rid of all the KFDef magic (
+# https://github.com/kubeflow/manifests/issues/774) and checking in the
+# actual kustomization.yaml files. So fixing it for these two packages didn't
+# seem worth it.
 APPS_TO_SKIP = ["mysql", "minio"]
 
 def build_configmap_generators(kustomize_dir):
