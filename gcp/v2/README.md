@@ -1,6 +1,8 @@
-# Kubeflow on KCC Installation Guide
+# Alpha: Kubeflow on KCC Installation Guide
 
-This instruction explains how to setup kubeflow on top of KCC and ASM.
+This instruction explains how to set up Kubeflow on top of Config Connector (KCC) and Anthos Service Mesh (ASM).
+Compared with the currently documented GCP deployment, this architecture uses KCC instead of Deployment Manager, and service mesh in the form of ASM instead of open source Istio.
+
 Assume using IAP to protect the kubeflow UI endpoint.
 
 ### Benefits of using  KCC
@@ -17,7 +19,7 @@ With KCC users can manage their Google Cloud infrastructure the same way as mana
 
 
 #### Step 0: Setup KCC
-If you don't have a running KCC controller yet, follow [KCC instructions](https://cloud.google.com/config-connector/docs/how-to/install-upgrade-uninstall) to create a KCC conroller for your organization.
+If you don't have a running KCC controller yet, follow [KCC instructions](https://cloud.google.com/config-connector/docs/how-to/install-upgrade-uninstall) to create a KCC controller for your organization.
 We recommend “Namespaced mode” for KCC controller setup.
 
 From now on assume your KCC controller was hosted in project `kcc-host-project-id`.
@@ -27,9 +29,10 @@ Kfctl | anthoscli | ACP
 #### Step 1: Create GCP resources through KCC
 * Install kpt
 
-  `gcloud components install kpt alpha`
-
-  `gcloud components update`
+  ```
+  gcloud components install kpt alpha
+  gcloud components update
+  ```
 
 * Set project-id / zone / cluster name
 
@@ -37,11 +40,11 @@ Kfctl | anthoscli | ACP
   
   Choose a cluster name `export CLUSTER_NAME=choose-name`
 
-  `kpt cfg set v2 gcloud.core.project $(gcloud config get-value project)`
-
-  `kpt cfg set v2 cluster-name $(CLUSTER_NAME)`
-
-  `kpt cfg set v2 gcloud.compute.zone $(gcloud config get-value compute/zone)`
+  ```
+  kpt cfg set v2 gcloud.core.project $(gcloud config get-value project)
+  kpt cfg set v2 cluster-name $(CLUSTER_NAME)
+  kpt cfg set v2 gcloud.compute.zone $(gcloud config get-value compute/zone)
+  ```
 
 * Connect kubectl to KCC cluster
 
@@ -49,7 +52,7 @@ Kfctl | anthoscli | ACP
 
 * Apply CNRM resources
 
-  `kubectl apply -n <kubeflow-project-id> -f - | kustomize build v2/cnrm`
+  `kustomize build v2/cnrm | kubectl apply -n <kubeflow-project-id> -f -`
 
 
 #### Step 2: Install ASM
@@ -68,16 +71,18 @@ Install ASM on the newly created kubeflow cluster `CLUSTER_NAME`
   `istioctl manifest apply -f v2/asm/istio-operator.yaml`
 
 	
-#### Step 3: Install ASM
+#### Step 3: Deploy Kubeflow components
 
 * [Setup Environment Variables for IAP](https://www.kubeflow.org/docs/gke/deploy/oauth-setup/)
 	
-	`export CLIENT_ID=`
-	
-	`export CLIENT_SECRET=`
+	```
+	export CLIENT_ID=
+	export CLIENT_SECRET=
+  ```
 
 * Install Kubeflow on the newly created cluster
 
-  `mkdir $(CLUSTER_NAME) && cd $(CLUSTER_NAME)`
-
-  `kfctl apply -V -f https://raw.githubusercontent.com/kubeflow/manifests/master/kfdef/kfctl_gcp_asm_exp.yaml`
+  ```
+  mkdir $(CLUSTER_NAME) && cd $(CLUSTER_NAME)
+  kfctl apply -V -f https://raw.githubusercontent.com/kubeflow/manifests/master/kfdef/kfctl_gcp_asm_exp.yaml
+  ```
