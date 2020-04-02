@@ -19,11 +19,8 @@ images:
   newName: gcr.io/kubeflow-images-public/kfam
   newTag: vmaster-gf3e09203
 - name: gcr.io/kubeflow-images-public/profile-controller
-  newName: gcr.io/gongyuan-pipeline-test/dev/profile-controller
-  digest: sha256:aed20a272baa1986918b7da20a5d1289e6e5c5036566b76f88f0dbbabb9b2f6d
-  # TODO: merge profile controller change to master
-  # newName: gcr.io/kubeflow-images-public/profile-controller
-  # newTag: vmaster-g34aa47c2
+  newName: gcr.io/kubeflow-images-public/profile-controller
+  newTag: vmaster-g34aa47c2
 vars:
 - fieldref:
     fieldPath: data.admin
