@@ -1,0 +1,21 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: profile-controller
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: profile-controller
+        image: python:2.7
+        command: ["python", "/hooks/sync.py"]
+        volumeMounts:
+        - name: hooks
+          mountPath: /hooks
+        ports:
+        - containerPort: 80
+      volumes:
+      - name: hooks
+        configMap:
+          name: kubeflow-pipelines-profile-controller
