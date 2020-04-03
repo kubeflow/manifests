@@ -264,7 +264,6 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
-      - use-kf-user
       - multi-user
       repoRef:
         name: manifests

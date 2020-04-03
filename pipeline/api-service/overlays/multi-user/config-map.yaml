@@ -17,7 +17,7 @@ data:
         "BucketName": "mlpipeline"
       },
       "InitConnectionTimeout": "6m",
-      "DefaultPipelineRunnerServiceAccount": "kf-user",
+      "DefaultPipelineRunnerServiceAccount": "default-editor",
       "ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_HOST": "ml-pipeline-ml-pipeline-visualizationserver",
       "ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_PORT": 8888,
       "MULTIUSER": true
