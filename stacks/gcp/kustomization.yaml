@@ -5,7 +5,7 @@ resources:
   # List the Kubeflow applications that should be included 
   # TODO(https://github.com/kubeflow/manifests/issues/1073): 
   # We need to switch the admission webhook to use cert-manager.
-  - ../../admission-webhook/webhook/overlays/application
+  - ../../admission-webhook/webhook/v3
   - ../../common/centraldashboard/overlays/stacks
   - ../../gcp/gpu-driver/overlays/application/
   - ../../jupyter/jupyter-web-app/base_v3
