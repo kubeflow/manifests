@@ -1,3 +1,9 @@
+# This overlay uses CertManager to provision a certificate for the
+# PodDefaults admission controller. This is preferred over the old
+# way of using "bootstrap" which was running a shell script to create
+# the certificate.
+# TODO(jlewi): We should eventually refactor the manifests to delete
+# bootstrap and use certmanager by default.
 bases:
 - ../../base
 
