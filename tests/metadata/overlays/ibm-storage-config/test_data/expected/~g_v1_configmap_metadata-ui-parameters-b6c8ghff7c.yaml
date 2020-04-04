@@ -1,9 +1,0 @@
-apiVersion: v1
-data:
-  uiClusterDomain: cluster.local
-kind: ConfigMap
-metadata:
-  labels:
-    kustomize.component: metadata
-  name: metadata-ui-parameters-b6c8ghff7c
-  namespace: kubeflow

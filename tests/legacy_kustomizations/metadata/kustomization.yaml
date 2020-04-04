@@ -1,0 +1,48 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+bases:
+- ../../../metadata/base
+commonLabels:
+  app.kubernetes.io/component: metadata
+  app.kubernetes.io/instance: metadata-0.2.1
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/name: metadata
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: 0.2.1
+  kustomize.component: metadata
+configMapGenerator:
+- behavior: merge
+  envs:
+  - params_0.env
+  name: ui-parameters
+- behavior: merge
+  envs:
+  - params_1.env
+  name: metadata-grpc-configmap
+configurations:
+- ../../../metadata/overlays/istio/params.yaml
+generatorOptions:
+  disableNameSuffixHash: true
+images:
+- name: mysql
+  newName: mysql
+  newTag: 8.0.3
+kind: Kustomization
+namespace: kubeflow
+patches: []
+patchesStrategicMerge:
+- ../../../metadata/overlays/db/metadata-deployment.yaml
+resources:
+- ../../../metadata/overlays/istio/virtual-service.yaml
+- ../../../metadata/overlays/istio/virtual-service-metadata-grpc.yaml
+- ../../../metadata/overlays/application/application.yaml
+- ../../../metadata/overlays/db/metadata-db-pvc.yaml
+- ../../../metadata/overlays/db/metadata-db-deployment.yaml
+- ../../../metadata/overlays/db/metadata-db-service.yaml
+vars:
+- fieldref:
+    fieldPath: metadata.name
+  name: metadata-db-service
+  objref:
+    apiVersion: v1
+    kind: Service
+    name: metadata-db

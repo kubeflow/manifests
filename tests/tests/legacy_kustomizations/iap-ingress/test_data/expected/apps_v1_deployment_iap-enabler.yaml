@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: iap-ingress
+    app.kubernetes.io/instance: iap-ingress-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: iap-ingress
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: iap-ingress
+  name: iap-enabler
+  namespace: istio-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: iap-ingress
+      app.kubernetes.io/instance: iap-ingress-v1.0.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: iap-ingress
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v1.0.0
+      kustomize.component: iap-ingress
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: iap-ingress
+        app.kubernetes.io/instance: iap-ingress-v1.0.0
+        app.kubernetes.io/managed-by: kfctl
+        app.kubernetes.io/name: iap-ingress
+        app.kubernetes.io/part-of: kubeflow
+        app.kubernetes.io/version: v1.0.0
+        kustomize.component: iap-ingress
+        service: iap-enabler
+    spec:
+      containers:
+      - command:
+        - bash
+        - /var/envoy-config/setup_backend.sh
+        env:
+        - name: NAMESPACE
+          value: istio-system
+        - name: SERVICE
+          value: istio-ingressgateway
+        - name: INGRESS_NAME
+          value: envoy-ingress
+        - name: ENVOY_ADMIN
+          value: http://localhost:8001
+        - name: USE_ISTIO
+          value: "true"
+        image: gcr.io/kubeflow-images-public/ingress-setup:latest
+        name: iap
+        volumeMounts:
+        - mountPath: /var/envoy-config/
+          name: config-volume
+      restartPolicy: Always
+      serviceAccountName: kf-admin
+      volumes:
+      - configMap:
+          name: envoy-config
+        name: config-volume

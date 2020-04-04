@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+bases:
+- ../../../pipeline/pipeline-visualization-service/base
+commonLabels:
+  app.kubernetes.io/component: pipeline-visualization-service
+  app.kubernetes.io/instance: pipeline-visualization-service-0.2.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/name: pipeline-visualization-service
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: 0.2.0
+configMapGenerator: []
+configurations: []
+kind: Kustomization
+namespace: kubeflow
+patches: []
+patchesStrategicMerge: []
+resources:
+- ../../../pipeline/pipeline-visualization-service/overlays/application/application.yaml

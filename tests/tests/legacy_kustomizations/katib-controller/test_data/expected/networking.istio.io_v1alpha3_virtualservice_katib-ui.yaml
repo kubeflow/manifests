@@ -1,0 +1,28 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  labels:
+    app.kubernetes.io/component: katib
+    app.kubernetes.io/instance: katib-controller-0.8.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: katib-controller
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: 0.8.0
+  name: katib-ui
+  namespace: kubeflow
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /katib/
+    rewrite:
+      uri: /katib/
+    route:
+    - destination:
+        host: katib-ui.kubeflow.svc.cluster.local
+        port:
+          number: 80
