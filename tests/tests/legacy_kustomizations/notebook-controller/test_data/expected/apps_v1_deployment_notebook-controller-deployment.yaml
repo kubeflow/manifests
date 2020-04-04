@@ -45,8 +45,6 @@ spec:
           value: "false"
         - name: ISTIO_GATEWAY
           value: kubeflow/kubeflow-gateway
-        - name: POD_LABELS
-          value: gcp-cred-secret=user-gcp-sa,gcp-cred-secret-filename=user-gcp-sa.json
         image: gcr.io/kubeflow-images-public/notebook-controller:vmaster-gf39279c0
         imagePullPolicy: Always
         livenessProbe:

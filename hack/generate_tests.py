@@ -17,12 +17,6 @@ KUSTOMIZE_OUTPUT_DIR = "test_data/expected"
 
 TEST_NAME = "kustomize_test.go"
 
-# List of directories that we should always regenerate tests for.
-# These should be examples or other test cases that are the result
-# of many individual kustomize packages. As a result they almost always
-# need to be regenerated
-ALWAYS_REGENERATE = [ "stacks/examples"]
-
 def generate_test_path(repo_root, kustomize_rpath):
   """Generate the full path of the  test.go file for a particular package
 
@@ -175,10 +169,6 @@ if __name__ == "__main__":
   remove_unmatched_tests(repo_root, package_dirs)
 
   changed_dirs = package_dirs
-
-  for d in ALWAYS_REGENERATE:
-    dirs = find_kustomize_dirs(os.path.join(repo_root, d))
-    changed_dirs = changed_dirs.union(dirs)
 
   this_dir = os.path.dirname(__file__)
   loader = jinja2.FileSystemLoader(searchpath=os.path.join(
