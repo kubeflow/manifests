@@ -1,0 +1,16 @@
+# TODO(https://github.com/kubeflow/manifests/issues/1052): Refactor
+# and cleanup the kustomization once the v3 migration is done.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+# With v3 we want to always use cert-manager to get the
+# self-signed certificate
+- ../overlays/cert-manager/
+- ../overlays/application/application.yaml
+commonLabels:
+  app.kubernetes.io/name: poddefaults
+  app.kubernetes.io/instance: poddefaults-v0.7.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/component: poddefaults
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v0.7.0
