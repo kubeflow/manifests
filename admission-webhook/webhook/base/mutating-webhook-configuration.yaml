@@ -6,10 +6,10 @@ webhooks:
 - clientConfig:
     caBundle: ""
     service:
-      name: $(admissionWebhookServiceName)
-      namespace: $(admissionWebhookNamespace)
+      name: $(podDefaultsServiceName)
+      namespace: $(podDefaultsNamespace)
       path: /apply-poddefault
-  name: $(admissionWebhookDeploymentName).kubeflow.org
+  name: $(podDefaultsDeploymentName).kubeflow.org
   rules:
   - apiGroups:
     - ""
