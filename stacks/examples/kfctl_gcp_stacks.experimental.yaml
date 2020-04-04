@@ -5,6 +5,8 @@ metadata:
   namespace: kubeflow
 spec:
   applications:
+  # One of the primary reasons for splitting out packages into separate kustomize
+  # directories is when the resources needed to be installed in a different namespace.  
   # TODO(jlewi): This should be replaced by ACM when its ready.
   # Its a separate package because it needs to be in a different namespace
   - kustomizeConfig:
@@ -41,6 +43,22 @@ spec:
         name: manifests
         path: gcp/iap-ingress/v3
     name: iap-ingress
+  # Certmanager gets installed in a different namespace so it needs to be a separate package
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: cert-manager/cert-manager-crds/base
+    name: cert-manager-crds
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: cert-manager/cert-manager-kube-system-resources/base
+    name: cert-manager-kube-system-resources
+  - kustomizeConfig:      
+      repoRef:
+        name: manifests
+        path: cert-manager/cert-manager/v3
+    name: cert-manager
   # Install Kubeflow applications.
   - kustomizeConfig:
       repoRef:
