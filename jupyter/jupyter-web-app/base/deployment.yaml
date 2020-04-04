@@ -10,26 +10,7 @@ spec:
         sidecar.istio.io/inject: "false"
     spec:
       containers:
-      - env:
-        - name: ROK_SECRET_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: parameters
-              key: ROK_SECRET_NAME
-        - name: UI
-          valueFrom:
-            configMapKeyRef:
-              name: parameters
-              key: UI
-        - name: USERID_HEADER
-          valueFrom:
-            configMapKeyRef:
-              name: kubeflow-config
-              key: userid-header
-        - name: USERID_PREFIX
-          value: $(userid-prefix)
-        image: gcr.io/kubeflow-images-public/jupyter-web-app
-        imagePullPolicy: $(policy)
+      - image: gcr.io/kubeflow-images-public/jupyter-web-app        
         name: jupyter-web-app
         ports:
         - containerPort: 5000
