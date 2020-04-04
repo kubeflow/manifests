@@ -1,7 +1,0 @@
-apiVersion: v1
-data:
-  profile-name: anonymous
-  user: anonymous
-kind: ConfigMap
-metadata:
-  name: default-install-parameters-t69dc84g24

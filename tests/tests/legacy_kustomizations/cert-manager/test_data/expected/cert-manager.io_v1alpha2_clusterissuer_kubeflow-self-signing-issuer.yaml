@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  labels:
+    app.kubernetes.io/component: cert-manager
+    app.kubernetes.io/instance: cert-manager-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: cert-manager
+  name: kubeflow-self-signing-issuer
+  namespace: cert-manager
+spec:
+  selfSigned: {}

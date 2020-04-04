@@ -1,0 +1,18 @@
+apiVersion: v1
+data:
+  namespace: kubeflow
+  secretName: admin-gcp-sa
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    app: cloud-endpoints-controller
+    app.kubernetes.io/component: cloud-endpoints
+    app.kubernetes.io/instance: cloud-endpoints-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: cloud-endpoints
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: cloud-endpoints
+  name: cloud-endpoints-parameters
+  namespace: kubeflow

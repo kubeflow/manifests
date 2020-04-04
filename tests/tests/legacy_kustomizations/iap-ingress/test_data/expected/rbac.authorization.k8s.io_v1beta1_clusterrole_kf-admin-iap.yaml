@@ -1,0 +1,47 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: iap-ingress
+    app.kubernetes.io/instance: iap-ingress-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: iap-ingress
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: iap-ingress
+  name: kf-admin-iap
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - configmaps
+  - secrets
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+- apiGroups:
+  - extensions
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - update
+  - patch
+- apiGroups:
+  - authentication.istio.io
+  resources:
+  - policies
+  verbs:
+  - '*'
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - gateways
+  - virtualservices
+  verbs:
+  - '*'

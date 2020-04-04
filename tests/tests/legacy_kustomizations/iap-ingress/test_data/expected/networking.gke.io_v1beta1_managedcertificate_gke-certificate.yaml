@@ -1,0 +1,16 @@
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  labels:
+    app.kubernetes.io/component: iap-ingress
+    app.kubernetes.io/instance: iap-ingress-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: iap-ingress
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: iap-ingress
+  name: gke-certificate
+  namespace: istio-system
+spec:
+  domains:
+  - kf-v1-0210.endpoints.jlewi-dev.cloud.goog

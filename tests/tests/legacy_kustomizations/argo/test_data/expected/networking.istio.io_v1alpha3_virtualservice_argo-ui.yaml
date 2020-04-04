@@ -1,0 +1,28 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  labels:
+    app.kubernetes.io/component: argo
+    app.kubernetes.io/instance: argo-v2.3.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: argo
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v2.3.0
+  name: argo-ui
+  namespace: kubeflow
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /argo/
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: argo-ui.kubeflow.svc.cluster.local
+        port:
+          number: 80

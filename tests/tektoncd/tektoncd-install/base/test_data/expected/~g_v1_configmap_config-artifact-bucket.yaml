@@ -1,6 +1,0 @@
-apiVersion: v1
-data: null
-kind: ConfigMap
-metadata:
-  name: config-artifact-bucket
-  namespace: tekton-pipelines

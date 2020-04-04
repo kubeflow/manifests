@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: whoami
+    app.kubernetes.io/component: iap-ingress
+    app.kubernetes.io/instance: iap-ingress-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: iap-ingress
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: iap-ingress
+  name: whoami-app
+  namespace: istio-system
+spec:
+  ports:
+  - port: 80
+    targetPort: 8081
+  selector:
+    app: whoami
+    app.kubernetes.io/component: iap-ingress
+    app.kubernetes.io/instance: iap-ingress-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: iap-ingress
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: iap-ingress
+  type: ClusterIP

@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+bases:
+- ../../../cert-manager/cert-manager/base
+commonLabels:
+  app.kubernetes.io/component: cert-manager
+  app.kubernetes.io/instance: cert-manager-v1.0.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/name: cert-manager
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v1.0.0
+  kustomize.component: cert-manager
+configMapGenerator:
+- behavior: merge
+  envs:
+  - params_0.env
+  name: cert-manager-parameters
+configurations:
+- ../../../cert-manager/cert-manager/overlays/application/params.yaml
+kind: Kustomization
+namespace: cert-manager
+patches: []
+patchesStrategicMerge: []
+resources:
+- ../../../cert-manager/cert-manager/overlays/self-signed/cluster-issuer.yaml
+- ../../../cert-manager/cert-manager/overlays/application/application.yaml

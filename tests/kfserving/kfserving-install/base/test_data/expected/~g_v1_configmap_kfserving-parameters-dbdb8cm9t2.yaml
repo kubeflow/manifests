@@ -1,9 +1,0 @@
-apiVersion: v1
-data:
-  registry: gcr.io/kfserving
-kind: ConfigMap
-metadata:
-  labels:
-    kustomize.component: kfserving
-  name: kfserving-parameters-dbdb8cm9t2
-  namespace: kubeflow
