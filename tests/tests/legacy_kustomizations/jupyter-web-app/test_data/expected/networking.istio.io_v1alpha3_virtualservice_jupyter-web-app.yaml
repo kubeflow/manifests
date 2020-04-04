@@ -27,6 +27,6 @@ spec:
       uri: /
     route:
     - destination:
-        host: jupyter-web-app-service.kubeflow.svc.cluster.local
+        host: jupyter-web-app-service.kubeflow.svc.$(clusterDomain)
         port:
           number: 80
