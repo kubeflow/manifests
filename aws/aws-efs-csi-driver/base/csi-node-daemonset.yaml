@@ -1,3 +1,5 @@
+---
+# Node Service
 kind: DaemonSet
 apiVersion: apps/v1
 metadata:
@@ -11,14 +13,16 @@ spec:
       labels:
         app: efs-csi-node
     spec:
-      serviceAccount: efs-csi-node-sa
+      nodeSelector:
+        beta.kubernetes.io/os: linux
       hostNetwork: true
+      tolerations:
+        - operator: Exists
       containers:
         - name: efs-plugin
           securityContext:
             privileged: true
           image: amazon/aws-efs-csi-driver:latest
-          imagePullPolicy: Always
           args:
             - --endpoint=$(CSI_ENDPOINT)
             - --logtostderr
@@ -32,16 +36,24 @@ spec:
               mountPropagation: "Bidirectional"
             - name: plugin-dir
               mountPath: /csi
-            - name: device-dir
-              mountPath: /dev
+            - name: efs-state-dir
+              mountPath: /var/run/efs
+          ports:
+            - containerPort: 9809
+              name: healthz
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: healthz
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 2
+            failureThreshold: 5
         - name: csi-driver-registrar
-          image: quay.io/k8scsi/driver-registrar:v0.4.2
-          imagePullPolicy: Always
+          image: quay.io/k8scsi/csi-node-driver-registrar:v1.1.0
           args:
             - --csi-address=$(ADDRESS)
-            - --mode=node-register
-            - --driver-requires-attachment=true
-            - --pod-info-mount-version="v1"
             - --kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)
             - --v=5
           env:
@@ -58,20 +70,30 @@ spec:
               mountPath: /csi
             - name: registration-dir
               mountPath: /registration
+        - name: liveness-probe
+          imagePullPolicy: Always
+          image: quay.io/k8scsi/livenessprobe:v1.1.0
+          args:
+            - --csi-address=/csi/csi.sock
+            - --health-port=9809
+          volumeMounts:
+            - mountPath: /csi
+              name: plugin-dir
       volumes:
         - name: kubelet-dir
           hostPath:
             path: /var/lib/kubelet
             type: Directory
+        - name: registration-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins_registry/
+            type: Directory
         - name: plugin-dir
           hostPath:
             path: /var/lib/kubelet/plugins/efs.csi.aws.com/
             type: DirectoryOrCreate
-        - name: registration-dir
+        - name: efs-state-dir
           hostPath:
-            path: /var/lib/kubelet/plugins/
-            type: Directory
-        - name: device-dir
-          hostPath:
-            path: /dev
-            type: Directory
+            path: /var/run/efs
+            type: DirectoryOrCreate
+
