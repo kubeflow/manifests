@@ -52,10 +52,6 @@ spec:
               name: jupyter-web-app-parameters
         - name: USERID_HEADER
           value: X-Goog-Authenticated-User-Email
-          valueFrom:
-            configMapKeyRef:
-              key: userid-header
-              name: kubeflow-config
         - name: USERID_PREFIX
           value: 'accounts.google.com:'
         image: gcr.io/kubeflow-images-public/jupyter-web-app:vmaster-gd9be4b9e
