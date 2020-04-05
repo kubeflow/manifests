@@ -17,4 +17,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: centraldashboard
-  namespace: $(namespace)
+  namespace: kubeflow
