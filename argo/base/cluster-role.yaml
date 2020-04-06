@@ -44,6 +44,12 @@ rules:
   - watch
   - update
   - patch
+- apiGroups:
+  - sparkoperator.k8s.io
+  resources:
+  - sparkapplications
+  verbs:
+  - '*'
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
@@ -77,9 +83,3 @@ rules:
   - get
   - list
   - watch
-- apiGroups:
-  - sparkoperator.k8s.io
-  resources:
-  - sparkapplications
-  verbs:
-  - '*'
