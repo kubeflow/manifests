@@ -42,14 +42,6 @@ spec:
       containers:
       - command:
         - ./katib-db-manager
-        env:
-        - name: DB_NAME
-          value: mysql
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: MYSQL_ROOT_PASSWORD
-              name: katib-mysql-secrets
         image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager:v0.8.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
