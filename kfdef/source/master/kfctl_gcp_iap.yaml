@@ -356,7 +356,7 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: pipelines/profile-controller
+        path: pipeline/profile-controller
     name: pipeline-profile-controller
   - kustomizeConfig:
       overlays:
