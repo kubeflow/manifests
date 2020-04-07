@@ -309,6 +309,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      - use-kf-user
       repoRef:
         name: manifests
         path: pipeline/pipelines-runner
@@ -350,6 +351,11 @@ spec:
         name: manifests
         path: pipeline/istio-multi-user
     name: pipeline-istio-multi-user
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: pipelines/profile-controller
+    name: pipeline-profile-controller
   - kustomizeConfig:
       overlays:
       - application
