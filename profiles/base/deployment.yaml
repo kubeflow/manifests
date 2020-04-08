@@ -22,12 +22,13 @@ spec:
         image: gcr.io/kubeflow-images-public/profile-controller:v20190619-v0-219-gbd3daa8c-dirty-1ced0e
         imagePullPolicy: Always
         name: manager
-        livenessProbe:
-          httpGet:
-            path: /metrics
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 30
+        # disabled temporarily, because it doesn't work with istio sidecar
+        # livenessProbe:
+        #   httpGet:
+        #     path: /metrics
+        #     port: 8080
+        #   initialDelaySeconds: 30
+        #   periodSeconds: 30
         ports:
         - containerPort: 8080
           protocol: TCP
