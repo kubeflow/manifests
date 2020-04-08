@@ -15,6 +15,12 @@ rules:
   - get
   - list
 - apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - list
+- apiGroups:
   - "kubeflow.org"
   resources:
   - viewers
