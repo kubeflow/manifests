@@ -1,0 +1,21 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: notebook-controller
+    app.kubernetes.io/component: notebook-controller
+    app.kubernetes.io/instance: notebook-controller-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: notebook-controller
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: notebook-controller
+  name: notebook-controller-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: notebook-controller-role
+subjects:
+- kind: ServiceAccount
+  name: notebook-controller-service-account
+  namespace: kubeflow

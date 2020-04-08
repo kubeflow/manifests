@@ -52,7 +52,7 @@ require (
 	k8s.io/kubernetes v1.16.2
 	k8s.io/utils v0.0.0-20191030222137-2b95a09bc58d // indirect
 	sigs.k8s.io/controller-runtime v0.4.0
-	sigs.k8s.io/kustomize/v3 v3.1.0
+	sigs.k8s.io/kustomize/v3 v3.2.0
 )
 
 replace (
@@ -89,5 +89,5 @@ replace (
 	k8s.io/sample-apiserver => k8s.io/sample-apiserver v0.0.0-20190620085408-1aef9010884e
 	sigs.k8s.io/application => sigs.k8s.io/application v0.0.0-20190404151855-67ae7f915d4e
 	sigs.k8s.io/controller-runtime => sigs.k8s.io/controller-runtime v0.2.0
-	sigs.k8s.io/kustomize/v3 => sigs.k8s.io/kustomize/v3 v3.1.0
+	sigs.k8s.io/kustomize/v3 => sigs.k8s.io/kustomize/v3 v3.2.0
 )
