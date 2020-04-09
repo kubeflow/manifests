@@ -12,5 +12,5 @@ metadata:
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: 0.2.1
     kustomize.component: metadata
-  name: metadata-ui-parameters-b6c8ghff7c
+  name: metadata-ui-parameters
   namespace: kubeflow

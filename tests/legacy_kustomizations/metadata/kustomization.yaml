@@ -17,7 +17,7 @@ configMapGenerator:
 - behavior: merge
   envs:
   - params_1.env
-  name: metadata-grpc-configmap
+  name: grpc-configmap
 configurations:
 - ../../../metadata/overlays/istio/params.yaml
 generatorOptions:
