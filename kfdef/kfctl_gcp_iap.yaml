@@ -336,6 +336,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      - use-kf-user
       repoRef:
         name: manifests
         path: pipeline/pipeline-visualization-service
