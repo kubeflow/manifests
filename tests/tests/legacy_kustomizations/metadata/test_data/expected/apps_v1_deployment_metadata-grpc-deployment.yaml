@@ -54,7 +54,7 @@ spec:
         - secretRef:
             name: metadata-db-secrets
         - configMapRef:
-            name: metadata-metadata-grpc-configmap-2dd6h7mhg6
+            name: metadata-grpc-configmap
         image: gcr.io/tfx-oss-public/ml_metadata_store_server:v0.21.1
         name: container
         ports:
