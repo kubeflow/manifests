@@ -10,7 +10,5 @@ resources:
 - service-account.yaml
 images:
 - name: gcr.io/ml-pipeline/persistenceagent
-  # newTag: 0.3.0
-  newTag: eb69a6b8ae2d82cd8574ed11f04af4607756061c
-  # newName: gcr.io/ml-pipeline/persistenceagent
-  newName: gcr.io/ml-pipeline-test/persistenceagent
+  newTag: 0.4.0
+  newName: gcr.io/ml-pipeline/persistenceagent

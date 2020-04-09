@@ -12,10 +12,10 @@ configMapGenerator:
   env: params.env
 images:
 - name: gcr.io/ml-pipeline/frontend
-  # newTag: 0.3.0
-  newTag: eb69a6b8ae2d82cd8574ed11f04af4607756061c
+  # newTag: 0.4.0
   # newName: gcr.io/ml-pipeline/frontend
-  newName: gcr.io/ml-pipeline-test/frontend
+  newName: gcr.io/gongyuan-pipeline-test/dev/frontend
+  digest: sha256:08e5c370e8f5dd6ec2962b7c5eaf3ef9380a09754c508dac25cf1e65ecda6068
 vars:
 - name: ui-namespace
   objref:
