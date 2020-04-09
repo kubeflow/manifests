@@ -13,5 +13,5 @@ metadata:
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: 0.2.1
     kustomize.component: metadata
-  name: metadata-metadata-grpc-configmap-2dd6h7mhg6
+  name: metadata-grpc-configmap
   namespace: kubeflow
