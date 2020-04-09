@@ -35,7 +35,7 @@ spec:
         app.kubernetes.io/version: 0.2.0
     spec:
       containers:
-      - image: gcr.io/ml-pipeline/visualization-server:0.2.0
+      - image: gcr.io/ml-pipeline/visualization-server:0.2.5
         imagePullPolicy: IfNotPresent
         name: ml-pipeline-visualizationserver
         ports:

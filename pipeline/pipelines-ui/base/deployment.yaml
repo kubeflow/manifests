@@ -20,8 +20,6 @@ spec:
         image: gcr.io/ml-pipeline/frontend
         imagePullPolicy: IfNotPresent
         env:
-        - name: DEPLOYMENT
-          value: KUBEFLOW
         - name: ALLOW_CUSTOM_VISUALIZATIONS
           value: "true"
         ports:

@@ -40,7 +40,9 @@ spec:
           value: /etc/credentials/user-gcp-sa.json
         - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
           value: /etc/config/viewer-pod-template.json
-        image: gcr.io/ml-pipeline/frontend:0.2.0
+        - name: ALLOW_CUSTOM_VISUALIZATIONS
+          value: "true"
+        image: gcr.io/ml-pipeline/frontend:0.2.5
         imagePullPolicy: IfNotPresent
         name: ml-pipeline-ui
         ports:
