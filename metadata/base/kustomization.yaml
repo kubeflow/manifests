@@ -24,6 +24,9 @@ resources:
 - metadata-envoy-service.yaml
 namespace: kubeflow
 vars:
+# These vars are used internally for the kustomize package.
+# i.e to substitute values into fields kustomize isn't aware of.
+# The names should be unique enough that we don't get conflicts with other packages
 - name: ui-namespace
   objref:
     kind: Service
@@ -38,7 +41,7 @@ vars:
     version: v1
   fieldref:
     fieldpath: data.uiClusterDomain
-- name: service
+- name: metadata-service
   objref:
     kind: Service
     name: ui
