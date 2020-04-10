@@ -128,7 +128,7 @@ spec:
         - name: container
           envFrom:
           - configMapRef:
-              name: metadata-grpc-configmap
+              name: grpc-configmap
           image: gcr.io/tfx-oss-public/ml_metadata_store_server:v0.21.1
           command: ["/bin/metadata_store_server"]
           args: ["--grpc_port=$(METADATA_GRPC_SERVICE_PORT)"]
@@ -304,7 +304,8 @@ uiClusterDomain=cluster.local
 `)
 	th.writeF("/manifests/metadata/base/grpc-params.env", `
 METADATA_GRPC_SERVICE_HOST=metadata-grpc-service
-METADATA_GRPC_SERVICE_PORT=8080`)
+METADATA_GRPC_SERVICE_PORT=8080
+`)
 	th.writeK("/manifests/metadata/base", `
 namePrefix: metadata-
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -314,8 +315,12 @@ commonLabels:
 configMapGenerator:
 - name: ui-parameters
   env: params.env
-- name: metadata-grpc-configmap
+- name: grpc-configmap
   env: grpc-params.env
+generatorOptions:
+  # TFX pipelines use metadata-grpc-configmap for finding grpc server host and
+  # port at runtime. Because they don't know the suffix, we have to disable it.
+  disableNameSuffixHash: true
 resources:
 - metadata-deployment.yaml
 - metadata-service.yaml

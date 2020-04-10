@@ -147,21 +147,24 @@ spec:
           - secretRef:
               name: metadata-db-secrets
           - configMapRef:
-              name: metadata-grpc-configmap
+              name: grpc-configmap
           args: ["--grpc_port=$(METADATA_GRPC_SERVICE_PORT)",
                  "--mysql_config_host=$(metadata-db-service)",
                  "--mysql_config_database=$(MYSQL_DATABASE)",
                  "--mysql_config_port=$(MYSQL_PORT)",
                  "--mysql_config_user=$(MYSQL_USER_NAME)",
                  "--mysql_config_password=$(MYSQL_ROOT_PASSWORD)"
-          ]`)
+          ]
+`)
 	th.writeF("/manifests/metadata/overlays/db/params.env", `
 MYSQL_DATABASE=metadb
 MYSQL_PORT=3306
-MYSQL_ALLOW_EMPTY_PASSWORD=true`)
+MYSQL_ALLOW_EMPTY_PASSWORD=true
+`)
 	th.writeF("/manifests/metadata/overlays/db/secrets.env", `
 MYSQL_USER_NAME=root
-MYSQL_ROOT_PASSWORD=test`)
+MYSQL_ROOT_PASSWORD=test
+`)
 	th.writeK("/manifests/metadata/overlays/db", `
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -196,7 +199,8 @@ vars:
     name: metadata-db
     apiVersion: v1
   fieldref:
-    fieldpath: metadata.name`)
+    fieldpath: metadata.name
+`)
 	th.writeF("/manifests/metadata/base/metadata-deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -254,13 +258,13 @@ spec:
         - name: container
           envFrom:
           - configMapRef:
-              name: metadata-grpc-configmap
+              name: grpc-configmap
           image: gcr.io/tfx-oss-public/ml_metadata_store_server:v0.21.1
           command: ["/bin/metadata_store_server"]
           args: ["--grpc_port=$(METADATA_GRPC_SERVICE_PORT)"]
           ports:
             - name: grpc-backendapi
-              containerPort: 8080
+              containerPort: 8080 #The value of the port number needs to be in sync with value  specified in grpc-params.env
 `)
 	th.writeF("/manifests/metadata/base/metadata-service.yaml", `
 kind: Service
@@ -441,8 +445,12 @@ commonLabels:
 configMapGenerator:
 - name: ui-parameters
   env: params.env
-- name: metadata-grpc-configmap
+- name: grpc-configmap
   env: grpc-params.env
+generatorOptions:
+  # TFX pipelines use metadata-grpc-configmap for finding grpc server host and
+  # port at runtime. Because they don't know the suffix, we have to disable it.
+  disableNameSuffixHash: true
 resources:
 - metadata-deployment.yaml
 - metadata-service.yaml

@@ -53,7 +53,7 @@ spec:
           - secretRef:
               name: metadata-db-secrets
           - configMapRef:
-              name: metadata-grpc-configmap
+              name: grpc-configmap
           args: ["--grpc_port=$(METADATA_GRPC_SERVICE_PORT)",
                  "--mysql_config_host=$(metadata-db-service)",
                  "--mysql_config_database=$(MYSQL_DATABASE)",
