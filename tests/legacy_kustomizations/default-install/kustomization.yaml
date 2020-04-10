@@ -5,7 +5,7 @@ configMapGenerator:
 - behavior: merge
   envs:
   - params_0.env
-  name: default-install-parameters
+  name: default-install-config
 configurations: []
 kind: Kustomization
 namespace: kubeflow

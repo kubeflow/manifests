@@ -12,7 +12,7 @@ configMapGenerator:
 - behavior: merge
   envs:
   - params_0.env
-  name: spartakus-parameters
+  name: spartakus-config
 configurations: []
 kind: Kustomization
 namespace: kubeflow
