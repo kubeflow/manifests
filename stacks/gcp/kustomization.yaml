@@ -15,6 +15,7 @@ resources:
   - ../../pytorch-job/pytorch-operator/overlays/application
   - ../../tf-training/tf-job-crds/overlays/application
   - ../../tf-training/tf-job-operator/overlays/application
+  - ../../default-install/base
 configMapGenerator:
 - envs:
   - ./config/params.env
