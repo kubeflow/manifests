@@ -49,17 +49,6 @@ spec:
         path: application/application
     name: application
   - kustomizeConfig:
-      overlays:
-      - self-signed
-      - application
-      parameters:
-      - name: namespace
-        value: cert-manager
-      repoRef:
-        name: manifests
-        path: cert-manager/cert-manager
-    name: cert-manager
-  - kustomizeConfig:
       repoRef:
         name: manifests
         path: metacontroller
