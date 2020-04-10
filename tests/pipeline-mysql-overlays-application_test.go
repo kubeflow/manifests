@@ -41,11 +41,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: mysql
-      app.kubernetes.io/instance: mysql-0.2.0
+      app.kubernetes.io/instance: mysql-0.2.5
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: mysql
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: 0.2.0
+      app.kubernetes.io/version: 0.2.5
 `)
 	th.writeK("/manifests/pipeline/mysql/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -53,11 +53,11 @@ bases:
 - ../../base
 commonLabels:
   app.kubernetes.io/component: mysql
-  app.kubernetes.io/instance: mysql-0.2.0
+  app.kubernetes.io/instance: mysql-0.2.5
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/name: mysql
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.2.0
+  app.kubernetes.io/version: 0.2.5
 kind: Kustomization
 resources:
 - application.yaml
@@ -108,13 +108,15 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 20Gi`)
+      storage: 20Gi
+`)
 	th.writeF("/manifests/pipeline/mysql/base/params.yaml", `
 varReference:
 - path: spec/template/spec/volumes/persistentVolumeClaim/claimName
   kind: Deployment
 - path: metadata/name
-  kind: PersistentVolumeClaim`)
+  kind: PersistentVolumeClaim
+`)
 	th.writeF("/manifests/pipeline/mysql/base/params.env", `
 mysqlPvcName=
 `)

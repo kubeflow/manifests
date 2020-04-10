@@ -41,11 +41,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: persistent-agent
-      app.kubernetes.io/instance: persistent-agent-0.2.0
+      app.kubernetes.io/instance: persistent-agent-0.2.5
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: persistent-agent
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: 0.2.0
+      app.kubernetes.io/version: 0.2.5
 `)
 	th.writeK("/manifests/pipeline/persistent-agent/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -53,11 +53,11 @@ bases:
 - ../../base
 commonLabels:
   app.kubernetes.io/component: persistent-agent
-  app.kubernetes.io/instance: persistent-agent-0.2.0
+  app.kubernetes.io/instance: persistent-agent-0.2.5
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/name: persistent-agent
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.2.0
+  app.kubernetes.io/version: 0.2.5
 kind: Kustomization
 resources:
 - application.yaml
@@ -136,7 +136,7 @@ resources:
 - service-account.yaml
 images:
 - name: gcr.io/ml-pipeline/persistenceagent
-  newTag: 0.2.0
+  newTag: 0.2.5
   newName: gcr.io/ml-pipeline/persistenceagent
 `)
 }

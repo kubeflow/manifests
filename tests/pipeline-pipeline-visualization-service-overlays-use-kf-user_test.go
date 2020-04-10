@@ -13,7 +13,25 @@ import (
 	"testing"
 )
 
-func writePipelineVisualizationServiceBase(th *KustTestHarness) {
+func writePipelineVisualizationServiceOverlaysUseKfUser(th *KustTestHarness) {
+	th.writeF("/manifests/pipeline/pipeline-visualization-service/overlays/use-kf-user/deployment.yaml", `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-visualizationserver
+spec:
+  template:
+    spec:
+      serviceAccountName: kf-user
+`)
+	th.writeK("/manifests/pipeline/pipeline-visualization-service/overlays/use-kf-user", `
+apiVersion: kustomize.config.k8s.io/v1beta1
+bases:
+- ../../base
+kind: Kustomization
+patchesStrategicMerge:
+- deployment.yaml
+`)
 	th.writeF("/manifests/pipeline/pipeline-visualization-service/base/deployment.yaml", `
 apiVersion: apps/v1
 kind: Deployment
@@ -67,9 +85,9 @@ images:
 `)
 }
 
-func TestPipelineVisualizationServiceBase(t *testing.T) {
-	th := NewKustTestHarness(t, "/manifests/pipeline/pipeline-visualization-service/base")
-	writePipelineVisualizationServiceBase(th)
+func TestPipelineVisualizationServiceOverlaysUseKfUser(t *testing.T) {
+	th := NewKustTestHarness(t, "/manifests/pipeline/pipeline-visualization-service/overlays/use-kf-user")
+	writePipelineVisualizationServiceOverlaysUseKfUser(th)
 	m, err := th.makeKustTarget().MakeCustomizedResMap()
 	if err != nil {
 		t.Fatalf("Err: %v", err)
@@ -78,7 +96,7 @@ func TestPipelineVisualizationServiceBase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Err: %v", err)
 	}
-	targetPath := "../pipeline/pipeline-visualization-service/base"
+	targetPath := "../pipeline/pipeline-visualization-service/overlays/use-kf-user"
 	fsys := fs.MakeRealFS()
 	lrc := loader.RestrictionRootOnly
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), targetPath, fsys)
