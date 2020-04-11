@@ -11,7 +11,13 @@ data:
             def sync(self, parent, children):
                 # Compute status based on observed state.
                 desired_status = {
-                    "kubeflow-pipelines-config-ready": len(children["Secret.v1"]) > 0 and len(children["ConfigMap.v1"]) > 0 and "True" or "False"
+                    "kubeflow-pipelines-config-ready": \
+                      len(children["Secret.v1"]) > 0 and \
+                      len(children["ConfigMap.v1"]) > 0 and \
+                      len(children["ServiceAccount.v1"]) > 0 and \
+                      len(children["Deployment.apps/v1"]) > 0 and \
+                      len(children["Service.v1"]) > 0 and \
+                      "True" or "False"
                 }
 
                 # Generate the desired child object(s).
@@ -22,26 +28,82 @@ data:
                     "apiVersion": "v1",
                     "kind": "Secret",
                     "metadata": {
-                    "name": "mlpipeline-minio-artifact",
-                    "namespace": namespace
+                        "name": "mlpipeline-minio-artifact",
+                        "namespace": namespace,
                     },
                     "data": {
                         "accesskey": "bWluaW8=", # base64 for minio
-                        "secretkey": "bWluaW8xMjM=" # base64 for minio123
-                    }
+                        "secretkey": "bWluaW8xMjM=", # base64 for minio123
+                    },
                 },
                 {
                     "apiVersion": "v1",
                     "kind": "ConfigMap",
                     "metadata": {
-                    "name": "metadata-grpc-configmap",
-                    "namespace": namespace
+                        "name": "metadata-grpc-configmap",
+                        "namespace": namespace,
                     },
                     "data": {
-                    "METADATA_GRPC_SERVICE_HOST": "metadata-grpc-service.kubeflow",
-                    "METADATA_GRPC_SERVICE_PORT": "8080"
-                    }
-                }
+                        "METADATA_GRPC_SERVICE_HOST": "metadata-grpc-service.kubeflow",
+                        "METADATA_GRPC_SERVICE_PORT": "8080",
+                    },
+                },
+                {
+                    "apiVersion": "v1",
+                    "kind": "ServiceAccount",
+                    "metadata": {
+                        "name": "ml-pipeline-visualizationserver",
+                        "namespace": namespace,
+                    },
+                },
+                {
+                    "apiVersion": "apps/v1",
+                    "kind": "Deployment",
+                    "metadata": {
+                        "labels": {"app": "ml-pipeline-visualizationserver"},
+                        "name": "ml-pipeline-visualizationserver",
+                        "namespace": namespace,
+                    },
+                    "spec": {
+                        "selector": {
+                            "matchLabels": {"app": "ml-pipeline-visualizationserver"},
+                        },
+                        "template": {
+                            "metadata": {
+                                "labels": {"app": "ml-pipeline-visualizationserver"},
+                                "annotations": {"sidecar.istio.io/inject": "false"},
+                            },
+                            "spec": {
+                                "containers": [{
+                                    "image": "gcr.io/ml-pipeline/visualization-server:0.4.0",
+                                    "imagePullPolicy": "IfNotPresent",
+                                    "name": "ml-pipeline-visualizationserver",
+                                    "ports": [{"containerPort": 8888}],
+                                }],
+                                "serviceAccountName": "ml-pipeline-visualizationserver",
+                            },
+                        },
+                    },
+                },
+                {
+                    "apiVersion": "v1",
+                    "kind": "Service",
+                    "metadata": {
+                        "name": "ml-pipeline-visualizationserver",
+                        "namespace": namespace,
+                    },
+                    "spec": {
+                        "ports": [{
+                            "name": "http",
+                            "port": 8888,
+                            "protocol": "TCP",
+                            "targetPort": 8888,
+                        }],
+                        "selector": {
+                            "app": "ml-pipeline-visualizationserver",
+                        },
+                    },
+                },
                 ]
                 print('Received request', parent, desired_resources)
 
