@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  project: jlewi-dev
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: kubeflow
+    app.kubernetes.io/instance: kubeflow-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: kubeflow
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+  name: application-controller-parameters
+  namespace: kubeflow

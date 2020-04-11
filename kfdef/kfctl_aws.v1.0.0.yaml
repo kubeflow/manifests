@@ -350,14 +350,6 @@ spec:
         path: mpi-job/mpi-operator
     name: mpi-operator
   - kustomizeConfig:
-      parameters:
-      - name: namespace
-        value: istio-system
-      repoRef:
-        name: manifests
-        path: aws/istio-ingress
-    name: istio-ingress
-  - kustomizeConfig:
       overlays:
       - application
       parameters:

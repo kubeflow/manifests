@@ -8,7 +8,18 @@ import os
 import shutil
 import subprocess
 
-TOP_LEVEL_EXCLUDES = ["docs", "hack", "kfdef", "stacks", "tests"]
+# Search dirs should be directories to search for kustomization packages
+# that we want to test. These should be kustomization's that are doing
+# non-trivial transformations (e.g. combining multiple packages, applying
+# patches) etc... The point of the unittests is to make it easy for reviewers
+# to verify that the expected output is correct and verify the actual output
+# matches the expected output.
+SEARCH_DIRS = [
+  "stacks",
+  # TODO(https://github.com/kubeflow/manifests/issues/1052): Remove this
+  # after the move to v3 is done.
+  "tests/legacy_kustomizations",
+  ]
 
 # The subdirectory to story the expected manifests in
 # We use a subdirectory of test_data because we could potentially
@@ -50,61 +61,20 @@ def run_kustomize_build(repo_root, package_dir):
   subprocess.check_call(["kustomize", "build", "--load_restrictor", "none",
                          "-o", output_dir], cwd=os.path.join(repo_root,
                                                              package_dir))
+def find_kustomize_dirs(search_dirs):
+  """Find all kustomization directories in search_dirs.
 
-def get_changed_dirs():
-  """Return a list of directories of changed kustomization packages."""
-  # Generate a list of the files which have changed with respect to the upstream
-  # branch
-
-  # TODO(jlewi): Upstream doesn't seem to work in some cases. I think
-  # upstream might end up referring to the
-  origin = os.getenv("REMOTE_ORIGIN", "@{upstream}")
-  logging.info("Using %s as remote origin; you can override using environment "
-               "variable REMOTE_ORIGIN", origin)
-  modified_files = subprocess.check_output(
-    ["git", "diff", "--name-only", origin])
-
-  repo_root = subprocess.check_output(["git", "rev-parse", "--show-toplevel"])
-  repo_root = repo_root.decode()
-  repo_root = repo_root.strip()
-
-  modified_files = modified_files.decode().split()
-  changed_dirs = set()
-  for f in modified_files:
-    changed_dir = os.path.dirname(os.path.join(repo_root, f))
-    # Check if its a kustomization directory by looking for a kustomization
-    # file
-    if not os.path.exists(os.path.join(repo_root, changed_dir,
-                                       "kustomization.yaml")):
-      continue
-
-    changed_dirs.add(changed_dir)
-
-    # If the base package changes then we need to regenerate all the overlays
-    # We assume that the base package is named "base".
-
-    if os.path.basename(changed_dir) == "base":
-      parent_dir = os.path.dirname(changed_dir)
-      for root, _, files in os.walk(parent_dir):
-        for f in files:
-          if f == "kustomization.yaml":
-            changed_dirs.add(root)
-
-  return changed_dirs
-
-def find_kustomize_dirs(root):
-  """Find all kustomization directories in root"""
+  Args:
+    search_dirs: A list of directories to recursively search for
+     kustomization.yaml files which will be used to
+       1. generate expected output
+       2. generate tests
+  """
 
   changed_dirs = set()
-  for top in os.listdir(root):
-    if top.startswith("."):
-      logging.info("Skipping directory %s", os.path.join(root, top))
-      continue
 
-    if top in TOP_LEVEL_EXCLUDES:
-      continue
-
-    for child, _, files in os.walk(os.path.join(root, top)):
+  for s in search_dirs:
+    for child, _, files in os.walk(s):
       for f in files:
         if f == "kustomization.yaml":
           changed_dirs.add(child)
@@ -193,7 +163,7 @@ if __name__ == "__main__":
       "--all",
       dest = "all_tests",
       action = "store_true",
-      help="Regenerate all tests")
+      help="(Deprecated) this parameter has no effect")
 
   parser.set_defaults(all_tests=False)
 
@@ -204,14 +174,12 @@ if __name__ == "__main__":
   repo_root = repo_root.strip()
 
   # Get a list of package directories
-  package_dirs = find_kustomize_dirs(repo_root)
+  full_search_dirs = [os.path.join(repo_root, s) for s in SEARCH_DIRS]
+  package_dirs = find_kustomize_dirs(full_search_dirs)
 
   remove_unmatched_tests(repo_root, package_dirs)
 
-  if args.all_tests:
-    changed_dirs = package_dirs
-  else:
-    changed_dirs = get_changed_dirs()
+  changed_dirs = package_dirs
 
   this_dir = os.path.dirname(__file__)
   loader = jinja2.FileSystemLoader(searchpath=os.path.join(

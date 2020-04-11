@@ -1,8 +1,0 @@
-apiVersion: v1
-data:
-  mysqlHost: ""
-  mysqlPassword: ""
-  mysqlUser: ""
-kind: ConfigMap
-metadata:
-  name: pipeline-external-mysql-parameters

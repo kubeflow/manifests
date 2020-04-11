@@ -1,3 +1,5 @@
+# TODO(https://github.com/kubeflow/manifests/issues/1052): Cleanup this up
+# once kustomize_v3 migration is done.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -9,6 +11,8 @@ resources:
 - service.yaml
 namePrefix: notebook-controller-
 namespace: kubeflow
+patchesStrategicMerge:
+- deployment_patch.yaml
 commonLabels:
   app: notebook-controller
   kustomize.component: notebook-controller
@@ -23,13 +27,6 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- fieldref:
-    fieldPath: data.POD_LABELS
-  name: POD_LABELS
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: parameters
 - fieldref:
     fieldPath: data.USE_ISTIO
   name: USE_ISTIO

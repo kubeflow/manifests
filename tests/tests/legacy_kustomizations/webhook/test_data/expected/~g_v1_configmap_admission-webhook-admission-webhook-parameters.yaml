@@ -1,0 +1,17 @@
+apiVersion: v1
+data:
+  namespace: kubeflow
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    app: admission-webhook
+    app.kubernetes.io/component: webhook
+    app.kubernetes.io/instance: webhook-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: webhook
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: admission-webhook
+  name: admission-webhook-admission-webhook-parameters
+  namespace: kubeflow

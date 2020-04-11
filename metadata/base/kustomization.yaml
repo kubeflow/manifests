@@ -6,8 +6,12 @@ commonLabels:
 configMapGenerator:
 - name: ui-parameters
   env: params.env
-- name: metadata-grpc-configmap
+- name: grpc-configmap
   env: grpc-params.env
+generatorOptions:
+  # TFX pipelines use metadata-grpc-configmap for finding grpc server host and
+  # port at runtime. Because they don't know the suffix, we have to disable it.
+  disableNameSuffixHash: true
 resources:
 - metadata-deployment.yaml
 - metadata-service.yaml

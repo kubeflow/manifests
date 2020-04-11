@@ -19,6 +19,9 @@ spec:
       - name: ml-pipeline-ui
         image: gcr.io/ml-pipeline/frontend
         imagePullPolicy: IfNotPresent
+        env:
+        - name: ALLOW_CUSTOM_VISUALIZATIONS
+          value: "true"
         ports:
         - containerPort: 3000
       serviceAccountName: ml-pipeline-ui

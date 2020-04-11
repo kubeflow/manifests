@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: jaeger
+    chart: tracing
+    heritage: Tiller
+    jaeger-infra: agent-service
+    release: istio
+  name: jaeger-agent
+  namespace: istio-system
+spec:
+  clusterIP: None
+  ports:
+  - name: agent-zipkin-thrift
+    port: 5775
+    protocol: UDP
+    targetPort: 5775
+  - name: agent-compact
+    port: 6831
+    protocol: UDP
+    targetPort: 6831
+  - name: agent-binary
+    port: 6832
+    protocol: UDP
+    targetPort: 6832
+  selector:
+    app: jaeger

@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  clusterRbacConfig: "ON"
+  gatewaySelector: ingressgateway
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels: {}
+  name: istio-parameters-797cg68672
+  namespace: kubeflow

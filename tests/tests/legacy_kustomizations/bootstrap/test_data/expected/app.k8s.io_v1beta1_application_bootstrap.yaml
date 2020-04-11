@@ -1,0 +1,41 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  labels:
+    app.kubernetes.io/component: bootstrap
+    app.kubernetes.io/instance: bootstrap-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: bootstrap
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+  name: bootstrap
+  namespace: kubeflow
+spec:
+  addOwnerRef: true
+  componentKinds:
+  - group: core
+    kind: ConfigMap
+  - group: apps
+    kind: StatefulSet
+  - group: core
+    kind: ServiceAccount
+  descriptor:
+    description: Bootstraps the admission-webhook controller
+    keywords:
+    - admission-webhook
+    - kubeflow
+    links:
+    - description: About
+      url: https://github.com/kubeflow/kubeflow/tree/master/components/admission-webhook
+    maintainers: []
+    owners: []
+    type: bootstrap
+    version: v1beta1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: bootstrap
+      app.kubernetes.io/instance: bootstrap-v0.7.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: bootstrap
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.7.0
