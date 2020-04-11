@@ -210,6 +210,14 @@ spec:
         path: kfserving/kfserving-install
     name: kfserving-install
   - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio/kfserving-gateway
+    name: kfserving-gateway
+  - kustomizeConfig:
       overlays:
       - application
       parameters:
