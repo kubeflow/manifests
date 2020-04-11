@@ -1,0 +1,14 @@
+apiVersion: kfupgrade.apps.kubeflow.org/v1alpha1
+kind: KfUpgrade
+metadata:
+  name: kf-upgrade-v1.0.2
+spec:
+  currentKfDef:
+    # Replace with the name of your Kubeflow app
+    name: kubeflow-app
+    version: v1.0.0
+  newKfDef:
+    # Replace with the name of your kubeflow app
+    name: kubeflow-app
+    version: v1.0.2
+  baseConfigPath: https://raw.githubusercontent.com/kubeflow/manifests/v1.0-branch/kfdef/kfctl_gcp_iap.v1.0.2.yaml
