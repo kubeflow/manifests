@@ -262,8 +262,9 @@ spec:
       overlays:
       - application
       - istio
-      - ibm-storage-config
       - db
+      - db-manager
+      - ibm-storage-config
       repoRef:
         name: manifests
         path: katib/katib-controller

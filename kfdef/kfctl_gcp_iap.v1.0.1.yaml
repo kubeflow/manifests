@@ -263,6 +263,8 @@ spec:
       overlays:
       - application
       - istio
+      - db
+      - db-manager
       repoRef:
         name: manifests
         path: katib/katib-controller
@@ -270,6 +272,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      - use-kf-user
       repoRef:
         name: manifests
         path: pipeline/api-service
@@ -314,6 +317,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      - use-kf-user
       repoRef:
         name: manifests
         path: pipeline/pipelines-runner
