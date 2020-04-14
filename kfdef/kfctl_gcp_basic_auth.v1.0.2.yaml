@@ -145,7 +145,7 @@ spec:
       overlays:
       - istio
       - application
-      - db
+      - db-mysql
       repoRef:
         name: manifests
         path: metadata
@@ -253,6 +253,8 @@ spec:
       overlays:
       - application
       - istio
+      - db-mysql
+      - db-manager
       repoRef:
         name: manifests
         path: katib/katib-controller

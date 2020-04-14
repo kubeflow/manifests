@@ -171,7 +171,7 @@ spec:
       overlays:
       - istio
       - application
-      - db
+      - db-mysql
       repoRef:
         name: manifests
         path: metadata
@@ -276,7 +276,7 @@ spec:
       overlays:
       - application
       - istio
-      - db
+      - db-mysql
       - db-manager
       repoRef:
         name: manifests
