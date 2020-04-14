@@ -38,8 +38,10 @@ data:
       },
       "InitConnectionTimeout": "6m",
       "DefaultPipelineRunnerServiceAccount": "pipeline-runner",
-      "VisualizationServiceName": "ml-pipeline-visualizationserver",
-      "VisualizationServicePort": 8888
+      "VisualizationService":{
+        "Name": "ml-pipeline-visualizationserver",
+        "Port": 8888
+      }
     }
 kind: ConfigMap
 metadata:
@@ -112,8 +114,10 @@ data:
       },
       "InitConnectionTimeout": "6m",
       "DefaultPipelineRunnerServiceAccount": "pipeline-runner",
-      "VisualizationServiceName": "ml-pipeline-visualizationserver",
-      "VisualizationServicePort": 8888
+      "VisualizationService":{
+        "Name": "ml-pipeline-visualizationserver",
+        "Port": 8888
+      }
     }
 kind: ConfigMap
 metadata:
