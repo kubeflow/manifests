@@ -266,6 +266,8 @@ spec:
       overlays:
       - application
       - istio
+      - db
+      - db-manager
       - ibm-storage-config
       repoRef:
         name: manifests

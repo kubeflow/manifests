@@ -264,6 +264,7 @@ spec:
       - application
       - istio
       - db
+      - db-manager
       repoRef:
         name: manifests
         path: katib/katib-controller

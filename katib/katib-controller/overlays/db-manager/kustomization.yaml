@@ -1,0 +1,10 @@
+namespace: kubeflow
+bases:
+- ../base
+resources:
+- katib-db-manager-deployment.yaml
+- katib-db-manager-service.yaml
+images:
+- name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
+  newTag: v0.8.0
+  newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
