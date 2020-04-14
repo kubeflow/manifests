@@ -50,11 +50,10 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - persistentvolumes
   - persistentvolumeclaims
   verbs:
-  - create
-  - delete
-  - get
+  - '*'
 - apiGroups:
   - snapshot.storage.k8s.io
   resources:
@@ -102,6 +101,18 @@ rules:
   - batch
   resources:
   - jobs
+  verbs:
+  - '*'
+- apiGroups:
+  - machinelearning.seldon.io
+  resources:
+  - seldondeployments
+  verbs:
+  - '*'
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - virtualservices
   verbs:
   - '*'
 `)
