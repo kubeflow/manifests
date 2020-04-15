@@ -17,6 +17,14 @@ spec:
     resource: configmaps
     updateStrategy:
       method: OnDelete
+  - apiVersion: apps/v1
+    resource: deployments
+    updateStrategy:
+      method: InPlace
+  - apiVersion: v1
+    resource: services
+    updateStrategy:
+      method: InPlace
   hooks:
     sync:
       webhook:
