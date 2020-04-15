@@ -14,7 +14,6 @@ data:
                     "kubeflow-pipelines-config-ready": \
                       len(children["Secret.v1"]) > 0 and \
                       len(children["ConfigMap.v1"]) > 0 and \
-                      len(children["ServiceAccount.v1"]) > 0 and \
                       len(children["Deployment.apps/v1"]) > 0 and \
                       len(children["Service.v1"]) > 0 and \
                       "True" or "False"
@@ -49,14 +48,6 @@ data:
                     },
                 },
                 {
-                    "apiVersion": "v1",
-                    "kind": "ServiceAccount",
-                    "metadata": {
-                        "name": "ml-pipeline-visualizationserver",
-                        "namespace": namespace,
-                    },
-                },
-                {
                     "apiVersion": "apps/v1",
                     "kind": "Deployment",
                     "metadata": {
@@ -80,7 +71,7 @@ data:
                                     "name": "ml-pipeline-visualizationserver",
                                     "ports": [{"containerPort": 8888}],
                                 }],
-                                "serviceAccountName": "ml-pipeline-visualizationserver",
+                                "serviceAccountName": "default-editor",
                             },
                         },
                     },
