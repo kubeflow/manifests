@@ -5,11 +5,17 @@ metadata:
 data:
    # Temporary workarounds:
    # 1. Using default-editor because default-viewer isn't bound to workload identity
-   # TODO:
-   # 1. Set up default-viewer with only read access with workload identity
+   # 2. Disable istio sidecar because UI server needs to proxy user email for verification
    viewer-pod-template.json:  |-
     {
     "spec": {
         "serviceAccountName": "default-editor"
+    },
+    "template": {
+      "metadata": {
+        "annotations": {
+          "sidecar.istio.io/inject": "false"
+        }
+      }
     }
     }
