@@ -1,6 +1,8 @@
 package tests_test
 
 import (
+	"testing"
+
 	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/v3/pkg/fs"
@@ -10,7 +12,6 @@ import (
 	"sigs.k8s.io/kustomize/v3/pkg/resource"
 	"sigs.k8s.io/kustomize/v3/pkg/target"
 	"sigs.k8s.io/kustomize/v3/pkg/validators"
-	"testing"
 )
 
 func writeApiServiceOverlaysExternalMysql(th *KustTestHarness) {
@@ -37,8 +38,10 @@ data:
       },
       "InitConnectionTimeout": "6m",
       "DefaultPipelineRunnerServiceAccount": "pipeline-runner",
-      "ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_HOST": "ml-pipeline-ml-pipeline-visualizationserver",
-      "ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_PORT": 8888
+      "VisualizationService":{
+        "Name": "ml-pipeline-visualizationserver",
+        "Port": 8888
+      }
     }
 kind: ConfigMap
 metadata:
@@ -111,8 +114,10 @@ data:
       },
       "InitConnectionTimeout": "6m",
       "DefaultPipelineRunnerServiceAccount": "pipeline-runner",
-      "ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_HOST": "ml-pipeline-ml-pipeline-visualizationserver",
-      "ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_PORT": 8888
+      "VisualizationService":{
+        "Name": "ml-pipeline-visualizationserver",
+        "Port": 8888
+      }
     }
 kind: ConfigMap
 metadata:

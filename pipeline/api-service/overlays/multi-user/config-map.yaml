@@ -19,8 +19,10 @@ data:
       },
       "InitConnectionTimeout": "6m",
       "DefaultPipelineRunnerServiceAccount": "default-editor",
-      "ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_HOST": "ml-pipeline-ml-pipeline-visualizationserver",
-      "ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_PORT": 8888,
+      "VisualizationService":{
+        "Name": "ml-pipeline-visualizationserver",
+        "Port": 8888
+      }
       "MULTIUSER": true
     }
 kind: ConfigMap
