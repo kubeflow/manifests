@@ -15,7 +15,7 @@ images:
   # newTag: 0.4.0
   # newName: gcr.io/ml-pipeline/frontend
   newName: gcr.io/gongyuan-pipeline-test/dev/frontend
-  digest: sha256:08e5c370e8f5dd6ec2962b7c5eaf3ef9380a09754c508dac25cf1e65ecda6068
+  digest: sha256:488c62e1446208d583dc02106e5743845f06be87173350521fae3b03f0a22c1e
 vars:
 - name: ui-namespace
   objref:

@@ -22,6 +22,12 @@ spec:
         env:
         - name: DEPLOYMENT
           value: KUBEFLOW
+        - name: ARTIFACTS_SERVICE_PROXY_NAME
+          value: ml-pipeline-ui-artifact
+        - name: ARTIFACTS_SERVICE_PROXY_PORT
+          value: '80'
+        - name: ARTIFACTS_SERVICE_PROXY_ENABLED
+          value: 'true'
         ports:
         - containerPort: 3000
       serviceAccountName: ml-pipeline-ui

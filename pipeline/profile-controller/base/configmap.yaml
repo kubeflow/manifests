@@ -95,6 +95,55 @@ data:
                         },
                     },
                 },
+                # Artifact fetcher related resources below.
+                {
+                    "apiVersion": "apps/v1",
+                    "kind": "Deployment",
+                    "metadata": {
+                        "labels": { "app": "ml-pipeline-ui-artifact" },
+                        "name": "ml-pipeline-ui-artifact",
+                        "namespace": namespace,
+                    },
+                    "spec": {
+                        "selector": {
+                            "matchLabels": { "app": "ml-pipeline-ui-artifact" }
+                        },
+                        "template": {
+                            "metadata": {
+                                "labels": { "app": "ml-pipeline-ui-artifact" },
+                                "annotations": { "sidecar.istio.io/inject": "false" }
+                            },
+                            "spec": {
+                                "containers": [
+                                    {
+                                        "name": "ml-pipeline-ui-artifact",
+                                        "image": "gcr.io/gongyuan-pipeline-test/dev/frontend@sha256:488c62e1446208d583dc02106e5743845f06be87173350521fae3b03f0a22c1e",
+                                        "imagePullPolicy": "IfNotPresent",
+                                        "ports": [
+                                            { "containerPort": 3000 }
+                                        ]
+                                    }
+                                ],
+                                "serviceAccountName": "default-editor"
+                            }
+                        }
+                    }
+                },
+                {
+                    "apiVersion": "v1",
+                    "kind": "Service",
+                    "metadata": {
+                        "name": "ml-pipeline-ui-artifact",
+                        "namespace": namespace,
+                        "labels": { "app": "ml-pipeline-ui-artifact" }
+                    },
+                    "spec": {
+                        "ports": [
+                            { "port": 80, "targetPort": 3000 }
+                        ],
+                        "selector": { "app": "ml-pipeline-ui-artifact" }
+                    }
+                },
                 ]
                 print('Received request', parent, desired_resources)
 
