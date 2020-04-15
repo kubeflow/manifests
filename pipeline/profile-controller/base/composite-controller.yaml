@@ -17,18 +17,6 @@ spec:
     resource: configmaps
     updateStrategy:
       method: OnDelete
-  - apiVersion: v1
-    resource: serviceaccounts
-    updateStrategy:
-      method: OnDelete
-  - apiVersion: apps/v1
-    resource: deployments
-    updateStrategy:
-      method: OnDelete
-  - apiVersion: v1
-    resource: services
-    updateStrategy:
-      method: OnDelete
   hooks:
     sync:
       webhook:
