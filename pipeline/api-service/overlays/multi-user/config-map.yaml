@@ -22,7 +22,7 @@ data:
       "VisualizationService":{
         "Name": "ml-pipeline-visualizationserver",
         "Port": 8888
-      }
+      },
       "MULTIUSER": true
     }
 kind: ConfigMap
