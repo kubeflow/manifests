@@ -16,8 +16,14 @@ spec:
       containers:
       - args:
         - volunteer
-        - --cluster-id=$(usageId)
+        - --cluster-id=$(USAGE_ID)
         - --database=https://stats-collector.kubeflow.org
         image: gcr.io/google_containers/spartakus-amd64:v1.1.0
         name: volunteer
+        env:
+        - name: USAGE_ID
+          valueFrom:
+            configMapKeyRef:
+              name: spartakus-config
+              key: usageId
       serviceAccountName: spartakus
