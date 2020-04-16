@@ -43,10 +43,19 @@ spec:
       - args:
         - --enable-leader-election
         - --webhook-port=443
+        - --create-resources=$(CREATE_RESOURCES)
         - ""
         command:
         - /manager
         env:
+        - name: WATCH_NAMESPACE
+          value: ""
+        - name: RELATED_IMAGE_EXECUTOR
+          value: ""
+        - name: RELATED_IMAGE_ENGINE
+          value: ""
+        - name: CREATE_RESOURCES
+          value: "false"
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:
@@ -58,7 +67,7 @@ spec:
         - name: AMBASSADOR_SINGLE_NAMESPACE
           value: "false"
         - name: ENGINE_CONTAINER_IMAGE_AND_VERSION
-          value: docker.io/seldonio/engine:1.0.2
+          value: docker.io/seldonio/engine:1.1.0
         - name: ENGINE_CONTAINER_IMAGE_PULL_POLICY
           value: IfNotPresent
         - name: ENGINE_CONTAINER_SERVICE_ACCOUNT_NAME
@@ -69,19 +78,41 @@ spec:
           value: "false"
         - name: PREDICTIVE_UNIT_SERVICE_PORT
           value: "9000"
+        - name: PREDICTIVE_UNIT_DEFAULT_ENV_SECRET_REF_NAME
+          value: ""
         - name: ENGINE_SERVER_GRPC_PORT
           value: "5001"
         - name: ENGINE_SERVER_PORT
           value: "8000"
         - name: ENGINE_PROMETHEUS_PATH
-          value: prometheus
+          value: /prometheus
         - name: ISTIO_ENABLED
           value: "true"
         - name: ISTIO_GATEWAY
-          value: kubeflow-gateway
+          value: istio-system/seldon-gateway
         - name: ISTIO_TLS_MODE
           value: ""
-        image: docker.io/seldonio/seldon-core-operator:1.0.2
+        - name: USE_EXECUTOR
+          value: "true"
+        - name: EXECUTOR_CONTAINER_IMAGE_AND_VERSION
+          value: docker.io/seldonio/seldon-core-executor:1.1.0
+        - name: EXECUTOR_CONTAINER_IMAGE_PULL_POLICY
+          value: IfNotPresent
+        - name: EXECUTOR_PROMETHEUS_PATH
+          value: /prometheus
+        - name: EXECUTOR_SERVER_GRPC_PORT
+          value: "5001"
+        - name: EXECUTOR_SERVER_PORT
+          value: "8000"
+        - name: EXECUTOR_CONTAINER_USER
+          value: "8888"
+        - name: EXECUTOR_CONTAINER_SERVICE_ACCOUNT_NAME
+          value: default
+        - name: EXECUTOR_REQUEST_LOGGER_DEFAULT_ENDPOINT_PREFIX
+          value: http://default-broker.
+        - name: DEFAULT_USER_ID
+          value: ""
+        image: docker.io/seldonio/seldon-core-operator:1.1.0
         imagePullPolicy: IfNotPresent
         name: manager
         ports:
