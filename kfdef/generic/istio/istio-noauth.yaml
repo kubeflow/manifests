@@ -14477,6 +14477,7 @@ spec:
                 operator: In
                 values:
                 - amd64
+                - arm64
                 - ppc64le
                 - s390x
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -14487,6 +14488,13 @@ spec:
                 operator: In
                 values:
                 - amd64
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
           - weight: 2
             preference:
               matchExpressions:
@@ -14669,6 +14677,7 @@ spec:
                 operator: In
                 values:
                 - amd64
+                - arm64
                 - ppc64le
                 - s390x
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -14679,6 +14688,13 @@ spec:
                 operator: In
                 values:
                 - amd64
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
           - weight: 2
             preference:
               matchExpressions:
@@ -14795,6 +14811,7 @@ spec:
                 operator: In
                 values:
                 - amd64
+                - arm64
                 - ppc64le
                 - s390x
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -14805,6 +14822,13 @@ spec:
                 operator: In
                 values:
                 - amd64
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
           - weight: 2
             preference:
               matchExpressions:
@@ -15965,6 +15989,7 @@ spec:
                 operator: In
                 values:
                 - amd64
+                - arm64
                 - ppc64le
                 - s390x
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -15975,6 +16000,13 @@ spec:
                 operator: In
                 values:
                 - amd64
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
           - weight: 2
             preference:
               matchExpressions:
@@ -16134,6 +16166,7 @@ spec:
                 operator: In
                 values:
                 - amd64
+                - arm64
                 - ppc64le
                 - s390x
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -16144,6 +16177,13 @@ spec:
                 operator: In
                 values:
                 - amd64
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
           - weight: 2
             preference:
               matchExpressions:
@@ -16306,6 +16346,7 @@ spec:
                 operator: In
                 values:
                 - amd64
+                - arm64
                 - ppc64le
                 - s390x
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -16316,6 +16357,13 @@ spec:
                 operator: In
                 values:
                 - amd64
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
           - weight: 2
             preference:
               matchExpressions:
@@ -16430,6 +16478,7 @@ spec:
                 operator: In
                 values:
                 - amd64
+                - arm64
                 - ppc64le
                 - s390x
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -16440,6 +16489,13 @@ spec:
                 operator: In
                 values:
                 - amd64
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
           - weight: 2
             preference:
               matchExpressions:
@@ -16558,6 +16614,7 @@ spec:
                 operator: In
                 values:
                 - amd64
+                - arm64
                 - ppc64le
                 - s390x
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -16568,6 +16625,13 @@ spec:
                 operator: In
                 values:
                 - amd64
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
           - weight: 2
             preference:
               matchExpressions:
@@ -16639,6 +16703,7 @@ spec:
                 operator: In
                 values:
                 - amd64
+                - arm64
                 - ppc64le
                 - s390x
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -16649,6 +16714,13 @@ spec:
                 operator: In
                 values:
                 - amd64
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
           - weight: 2
             preference:
               matchExpressions:
@@ -16811,6 +16883,7 @@ spec:
                 operator: In
                 values:
                 - amd64
+                - arm64
                 - ppc64le
                 - s390x
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -16821,6 +16894,13 @@ spec:
                 operator: In
                 values:
                 - amd64
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
           - weight: 2
             preference:
               matchExpressions:
@@ -17091,6 +17171,7 @@ spec:
                 operator: In
                 values:
                 - amd64
+                - arm64
                 - ppc64le
                 - s390x
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -17101,6 +17182,13 @@ spec:
                 operator: In
                 values:
                 - amd64
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
           - weight: 2
             preference:
               matchExpressions:
@@ -17189,6 +17277,7 @@ spec:
                 operator: In
                 values:
                 - amd64
+                - arm64
                 - ppc64le
                 - s390x
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -17199,6 +17288,13 @@ spec:
                 operator: In
                 values:
                 - amd64
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
           - weight: 2
             preference:
               matchExpressions:
@@ -17277,6 +17373,7 @@ spec:
                 operator: In
                 values:
                 - amd64
+                - arm64
                 - ppc64le
                 - s390x
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -17287,6 +17384,13 @@ spec:
                 operator: In
                 values:
                 - amd64
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
           - weight: 2
             preference:
               matchExpressions:
@@ -17399,6 +17503,7 @@ spec:
                 operator: In
                 values:
                 - amd64
+                - arm64
                 - ppc64le
                 - s390x
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -17409,6 +17514,13 @@ spec:
                 operator: In
                 values:
                 - amd64
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
           - weight: 2
             preference:
               matchExpressions:
@@ -17498,6 +17610,7 @@ spec:
                 operator: In
                 values:
                 - amd64
+                - arm64
                 - ppc64le
                 - s390x
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -17508,6 +17621,13 @@ spec:
                 operator: In
                 values:
                 - amd64
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
           - weight: 2
             preference:
               matchExpressions:
