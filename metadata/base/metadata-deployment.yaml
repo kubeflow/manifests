@@ -54,7 +54,7 @@ spec:
         - name: container
           envFrom:
           - configMapRef:
-              name: metadata-grpc-configmap
+              name: grpc-configmap
           image: gcr.io/tfx-oss-public/ml_metadata_store_server:v0.21.1
           command: ["/bin/metadata_store_server"]
           args: ["--grpc_port=$(METADATA_GRPC_SERVICE_PORT)"]

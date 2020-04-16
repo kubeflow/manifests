@@ -26,15 +26,36 @@ spec:
       - name: gcp-sa-token
         secret:
           secretName: user-gcp-sa
+      - name: config-volume
+        configMap:
+          name: ml-pipeline-ui-configmap
       containers:
       - name: ml-pipeline-ui
         env:
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /etc/credentials/user-gcp-sa.json
+        - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
+          value: /etc/config/viewer-pod-template.json
         volumeMounts:
         - name: gcp-sa-token
           mountPath: "/etc/credentials"
           readOnly: true
+        - name: config-volume
+          mountPath: /etc/config
+          readOnly: true
+`)
+	th.writeF("/manifests/pipeline/pipelines-ui/overlays/gcp/configmap.yaml", `
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ml-pipeline-ui-configmap
+data:   
+   viewer-pod-template.json:  |-
+    {
+    "spec": {
+        "serviceAccountName": "kf-user"
+    }
+    }
 `)
 	th.writeK("/manifests/pipeline/pipelines-ui/overlays/gcp", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -43,6 +64,8 @@ bases:
 - ../../base
 patchesStrategicMerge:
 - deployment.yaml
+resources:
+- configmap.yaml
 `)
 	th.writeF("/manifests/pipeline/pipelines-ui/base/deployment.yaml", `
 apiVersion: apps/v1
@@ -64,6 +87,9 @@ spec:
       - name: ml-pipeline-ui
         image: gcr.io/ml-pipeline/frontend
         imagePullPolicy: IfNotPresent
+        env:
+        - name: ALLOW_CUSTOM_VISUALIZATIONS
+          value: "true"
         ports:
         - containerPort: 3000
       serviceAccountName: ml-pipeline-ui
@@ -190,7 +216,7 @@ configMapGenerator:
   env: params.env
 images:
 - name: gcr.io/ml-pipeline/frontend
-  newTag: 0.2.0
+  newTag: 0.2.5
   newName: gcr.io/ml-pipeline/frontend
 vars:
 - name: ui-namespace

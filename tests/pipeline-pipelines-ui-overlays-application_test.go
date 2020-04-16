@@ -41,11 +41,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: pipelines-ui
-      app.kubernetes.io/instance: pipelines-ui-0.2.0
+      app.kubernetes.io/instance: pipelines-ui-0.2.5
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: pipelines-ui
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: 0.2.0
+      app.kubernetes.io/version: 0.2.5
 `)
 	th.writeK("/manifests/pipeline/pipelines-ui/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -53,11 +53,11 @@ bases:
 - ../../base
 commonLabels:
   app.kubernetes.io/component: pipelines-ui
-  app.kubernetes.io/instance: pipelines-ui-0.2.0
+  app.kubernetes.io/instance: pipelines-ui-0.2.5
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/name: pipelines-ui
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.2.0
+  app.kubernetes.io/version: 0.2.5
 kind: Kustomization
 resources:
 - application.yaml
@@ -82,6 +82,9 @@ spec:
       - name: ml-pipeline-ui
         image: gcr.io/ml-pipeline/frontend
         imagePullPolicy: IfNotPresent
+        env:
+        - name: ALLOW_CUSTOM_VISUALIZATIONS
+          value: "true"
         ports:
         - containerPort: 3000
       serviceAccountName: ml-pipeline-ui
@@ -208,7 +211,7 @@ configMapGenerator:
   env: params.env
 images:
 - name: gcr.io/ml-pipeline/frontend
-  newTag: 0.2.0
+  newTag: 0.2.5
   newName: gcr.io/ml-pipeline/frontend
 vars:
 - name: ui-namespace

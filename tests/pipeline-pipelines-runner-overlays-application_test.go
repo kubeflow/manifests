@@ -41,11 +41,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: pipelines-runner
-      app.kubernetes.io/instance: pipelines-runner-0.2.0
+      app.kubernetes.io/instance: pipelines-runner-0.2.5
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: pipelines-runner
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: 0.2.0
+      app.kubernetes.io/version: 0.2.5
 `)
 	th.writeK("/manifests/pipeline/pipelines-runner/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -53,11 +53,11 @@ bases:
 - ../../base
 commonLabels:
   app.kubernetes.io/component: pipelines-runner
-  app.kubernetes.io/instance: pipelines-runner-0.2.0
+  app.kubernetes.io/instance: pipelines-runner-0.2.5
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/name: pipelines-runner
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.2.0
+  app.kubernetes.io/version: 0.2.5
 kind: Kustomization
 resources:
 - application.yaml
@@ -98,11 +98,10 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - persistentvolumes
   - persistentvolumeclaims
   verbs:
-  - create
-  - delete
-  - get
+  - '*'
 - apiGroups:
   - snapshot.storage.k8s.io
   resources:
@@ -150,6 +149,18 @@ rules:
   - batch
   resources:
   - jobs
+  verbs:
+  - '*'
+- apiGroups:
+  - machinelearning.seldon.io
+  resources:
+  - seldondeployments
+  verbs:
+  - '*'
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - virtualservices
   verbs:
   - '*'
 `)
