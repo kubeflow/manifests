@@ -1,0 +1,22 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  labels:
+    app.kubernetes.io/component: seldon
+    app.kubernetes.io/instance: seldon-1.15
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: seldon-core-operator
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: "1.15"
+  name: seldon-gateway
+  namespace: kubeflow
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - '*'
+    port:
+      name: http
+      number: 80
+      protocol: HTTP
