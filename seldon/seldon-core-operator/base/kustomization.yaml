@@ -2,4 +2,4 @@
 # and emits as a YAML string
 resources:
 - resources.yaml
-
+- gateway.yaml
