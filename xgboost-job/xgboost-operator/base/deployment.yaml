@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deployment
+spec:
+  template:
+    metadata:
+      labels:
+        app: xgboost-operator
+    spec:
+      containers:
+      - name: xgboost-operator
+        command:
+        - /root/manager
+        - -mode=in-cluster
+        image: gcr.io/kubeflow-images-public/xgboost-operator:v1.0
+        imagePullPolicy: Always
+      serviceAccountName: service-account
