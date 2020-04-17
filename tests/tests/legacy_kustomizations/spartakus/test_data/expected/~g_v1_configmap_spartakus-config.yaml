@@ -12,5 +12,5 @@ metadata:
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: v1.0.0
     kustomize.component: spartakus
-  name: spartakus-parameters
+  name: spartakus-config
   namespace: kubeflow

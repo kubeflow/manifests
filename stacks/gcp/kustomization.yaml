@@ -8,6 +8,7 @@ resources:
   - ../../admission-webhook/webhook/v3
   - ../../common/centraldashboard/overlays/stacks
   - ../../gcp/gpu-driver/overlays/application/
+  - ../../kubeflow-roles/base
   - ../../jupyter/jupyter-web-app/base_v3
   - ../../jupyter/notebook-controller/base_v3
   - ../../profiles/base_v3
@@ -15,6 +16,8 @@ resources:
   - ../../pytorch-job/pytorch-operator/overlays/application
   - ../../tf-training/tf-job-crds/overlays/application
   - ../../tf-training/tf-job-operator/overlays/application
+  # This package will create a profile resource so it needs to be installed after the profiles CR
+  - ../../default-install/base
 configMapGenerator:
 - envs:
   - ./config/params.env
