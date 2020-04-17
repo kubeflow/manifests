@@ -11,6 +11,3 @@ commonLabels:
 kind: Kustomization
 resources:
 - application.yaml
-
-patchesStrategicMerge:
-- istio_gateway_patch.yaml
