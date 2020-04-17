@@ -89,7 +89,7 @@ spec:
         - name: ISTIO_ENABLED
           value: "true"
         - name: ISTIO_GATEWAY
-          value: istio-system/seldon-gateway
+          value: kubeflow/kubeflow-gateway
         - name: ISTIO_TLS_MODE
           value: ""
         - name: USE_EXECUTOR
