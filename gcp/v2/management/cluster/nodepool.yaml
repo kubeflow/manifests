@@ -1,0 +1,29 @@
+apiVersion: container.cnrm.cloud.google.com/v1alpha2
+kind: ContainerNodePool
+metadata:
+  clusterName: "project-id/us-central1-f/cluster-name" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"cluster-name","value":"cluster-name"},{"name":"gcloud.compute.zone","value":"us-central1-f"}]}}
+  name: default-pool
+  namespace: "project-id" # {"type":"string","x-kustomize":{"setter":{"name":"gcloud.core.project","value":"project-id"}}}
+spec:
+  autoscaling:
+    minNodeCount: 1
+    maxNodeCount: 3
+  nodeConfig:
+    diskSizeGb: 100
+    diskType: pd-standard
+    machineType: n1-standard-4
+    preemptible: false
+    oauthScopes:
+    - https://www.googleapis.com/auth/devstorage.read_only
+    - https://www.googleapis.com/auth/logging.write
+    - https://www.googleapis.com/auth/monitoring
+    - https://www.googleapis.com/auth/servicecontrol
+    - https://www.googleapis.com/auth/service.management.readonly
+    - https://www.googleapis.com/auth/trace.append
+    metadata:
+      disable-legacy-endpoints: "true"
+  management:
+    autoRepair: true
+    autoUpgrade: true
+  clusterRef:
+    name: cluster-name # {"type":"string","x-kustomize":{"setter":{"name":"cluster-name","value":"cluster-name"}}}

@@ -23,6 +23,13 @@ export GO = go
 
 all: test
 
+# Reset various kpt values to default values
+# TODO(jlewi): We should add a test to make sure changed values don't get checked in
+# We don't run it in generate because we don't want to force all developers to install kpt
+gcp-reset:
+	kpt cfg set ../gcp/v2/ cluster-name cluster-name
+	kpt cfg set ../gcp/v2/ gcloud.core.project project-id
+
 generate: clean
 	../hack/generate_tests.py --all || echo done
 	$(GO) fmt ./...

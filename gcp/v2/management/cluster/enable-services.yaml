@@ -1,0 +1,8 @@
+# GKE
+apiVersion: cnrm.cloud.google.com/v1alpha1
+kind: CloudService
+metadata:
+  name: gke
+  namespace: "project-id" # {"type":"string","x-kustomize":{"setter":{"name":"gcloud.core.project","value":"project-id"}}}
+spec:
+  service: container.googleapis.com
