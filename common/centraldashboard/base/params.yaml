@@ -7,3 +7,7 @@ varReference:
   kind: Deployment
 - path: spec/template/spec/containers/0/env/1/value
   kind: Deployment
+- path: subjects/namespace
+  kind: ClusterRoleBinding
+- path: subjects/namespace
+  kind: RoleBinding
