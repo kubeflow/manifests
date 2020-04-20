@@ -25,9 +25,13 @@ spec:
     maintainers:
     - name: Lei Su
       email: suleisl2000@hotmail.com
+    - name: Yuan Tang
+      email: terrytangyuan@gmail.com
     owners:
     - name: Lei Su
       email: suleisl2000@hotmail.com
+    - name: Yuan Tang
+      email: terrytangyuan@gmail.com
     keywords:
     - "MXjob"
     - "mxnet-operator"
