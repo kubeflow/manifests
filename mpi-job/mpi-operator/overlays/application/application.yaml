@@ -22,6 +22,16 @@ spec:
     type: "mpi-operator"
     version: "v1alpha1"
     description: "Mpi-operator allows users to create and manage the \"MPIJob\" custom resource."
+    maintainers:
+    - name: Rong Ou
+      email: rong.ou@gmail.com
+    - name: Yuan Tang
+      email: terrytangyuan@gmail.com
+    owners:
+    - name: Rong Ou
+      email: rong.ou@gmail.com
+    - name: Yuan Tang
+      email: terrytangyuan@gmail.com
     keywords:
     - "mpijob"
     - "mpi-operator"
