@@ -32,12 +32,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: userid-header
-              name: kubeflow-config-988m2m9m87
+              name: kubeflow-config-78t9btmhbc
         - name: USERID_PREFIX
           valueFrom:
             configMapKeyRef:
               key: userid-prefix
-              name: kubeflow-config-988m2m9m87
+              name: kubeflow-config-78t9btmhbc
         - name: WORKLOAD_IDENTITY
           valueFrom:
             configMapKeyRef:
@@ -68,12 +68,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: userid-header
-              name: kubeflow-config-988m2m9m87
+              name: kubeflow-config-78t9btmhbc
         - name: USERID_PREFIX
           valueFrom:
             configMapKeyRef:
               key: userid-prefix
-              name: kubeflow-config-988m2m9m87
+              name: kubeflow-config-78t9btmhbc
         - name: CLUSTER_ADMIN
           valueFrom:
             configMapKeyRef:

@@ -1,10 +1,6 @@
-apiVersion: v1
-data:
-  clusterDomain: cluster.local
-  katib-ui-clusterDomain: cluster.local
-kind: ConfigMap
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
 metadata:
-  annotations: {}
   labels:
     app.kubernetes.io/component: katib
     app.kubernetes.io/instance: katib-controller-0.8.0
@@ -12,5 +8,12 @@ metadata:
     app.kubernetes.io/name: katib-controller
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: 0.8.0
-  name: katib-parameters
+  name: katib-ui
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: katib-ui
+subjects:
+- kind: ServiceAccount
+  name: katib-ui
   namespace: kubeflow
