@@ -1,0 +1,43 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+resources:
+  - ../base/katib-configmap.yaml
+  - ../base/katib-controller-deployment.yaml
+  - ../base/katib-controller-rbac.yaml
+  - ../base/katib-controller-secret.yaml
+  - ../base/katib-controller-service.yaml
+  - ../base/katib-mysql-deployment.yaml
+  - ../base/katib-mysql-pvc.yaml
+  - ../base/katib-mysql-secret.yaml
+  - ../base/katib-mysql-service.yaml
+  - ../base/katib-db-manager-deployment.yaml
+  - ../base/katib-db-manager-service.yaml
+  - ../base/katib-ui-deployment.yaml
+  - ../base/katib-ui-rbac.yaml
+  - ../base/katib-ui-service.yaml
+  - ../base/trial-template-configmap.yaml
+  - ../overlays/application/application.yaml
+  - ../overlays/istio/katib-ui-virtual-service.yaml
+images:
+  - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
+    newTag: v0.8.0
+    newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
+  - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
+    newTag: v0.8.0
+    newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
+  - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
+    newTag: v0.8.0
+    newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
+  - name: mysql
+    newTag: "8"
+    newName: mysql
+commonLabels:
+  app.kubernetes.io/component: katib
+  app.kubernetes.io/instance: katib-controller-0.8.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/name: katib-controller
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: 0.8.0
+configurations:
+  - params.yaml

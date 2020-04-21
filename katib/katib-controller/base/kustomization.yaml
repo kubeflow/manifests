@@ -34,14 +34,14 @@ images:
   newTag: "8"
   newName: mysql
 vars:
-- name: clusterDomain
+- name: katib-ui-clusterDomain
   objref:
     kind: ConfigMap
     name: katib-parameters
     apiVersion: v1
   fieldref:
-    fieldpath: data.clusterDomain
-- name: namespace
+    fieldpath: data.katib-ui-clusterDomain
+- name: katib-ui-namespace
   objref:
     kind: Service
     name: katib-ui
