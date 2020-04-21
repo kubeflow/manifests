@@ -1,7 +1,7 @@
 This directory contains configurations and guidelines on setting up metadata services to connect to a [Google CloudSQL](https://cloud.google.com/sql) instance.
 You will get all the benefits of using CloudSQL comparing to managing your own MySQL server in a Kubernetes cluster.
 
-Prerequisites:
+#### Prerequisites
 - Install [kustomize](https://github.com/kubernetes-sigs/kustomize) for building Kubernetes configurations.
 - Install [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) for managing workloads on Kubernetes clusters.
 
