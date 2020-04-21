@@ -1,7 +1,6 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRoleBinding
 metadata:
-  creationTimestamp: null
   labels:
     app: seldon
     app.kubernetes.io/component: seldon
@@ -10,14 +9,12 @@ metadata:
     app.kubernetes.io/name: seldon-core-operator
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: "1.15"
-  name: seldon-manager-cm-role
+  name: seldon-webhook-rolebinding-kubeflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: seldon-webhook-role-kubeflow
+subjects:
+- kind: ServiceAccount
+  name: seldon-manager
   namespace: kubeflow
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  verbs:
-  - get
-  - list
-  - watch
