@@ -93,3 +93,9 @@ rules:
   - virtualservices
   verbs:
   - '*'
+- apiGroups:
+  - sparkoperator.k8s.io
+  resources:
+  - sparkapplications
+  verbs:
+  - '*'
