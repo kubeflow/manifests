@@ -50,3 +50,9 @@ rules:
   - watch
   - update
   - patch
+- apiGroups:
+  - sparkoperator.k8s.io
+  resources:
+  - sparkapplications
+  verbs:
+  - '*'
