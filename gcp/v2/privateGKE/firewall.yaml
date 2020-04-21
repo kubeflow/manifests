@@ -1,0 +1,95 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeFirewall
+metadata:
+  name: deny-egress
+spec:
+  deny:
+    - protocol: tcp
+      ports:
+        - "0-65535"
+  destinationRanges:
+    - 0.0.0.0/0
+  direction: EGRESS
+  priority: 1100
+  networkRef:
+    name: gke-no-internet-network
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeFirewall
+metadata:
+  name: allow-healthcheck-ingress
+spec:
+  allow:
+    - protocol: tcp
+      ports:
+        - "80"
+        - "443"
+  sourceRanges:
+    - 130.211.0.0/22
+    - 35.191.0.0/16
+  direction: INGRESS
+  networkRef:
+    name: gke-no-internet-network
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeFirewall
+metadata:
+  name: allow-healthcheck-egress
+spec:
+  allow:
+    - protocol: tcp
+      ports:
+        - "80"
+        - "443"
+  destinationRanges:
+    - 130.211.0.0/22
+    - 35.191.0.0/16
+  direction: EGRESS
+  networkRef:
+    name: gke-no-internet-network
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeFirewall
+metadata:
+  name: allow-google-apis-egress
+spec:
+  allow:
+    - protocol: tcp
+      ports:
+        - "0-65535"
+  destinationRanges:
+    - 199.36.153.4/30
+  direction: EGRESS
+  networkRef:
+    name: gke-no-internet-network
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeFirewall
+metadata:
+  name: allow-master-node-egress
+spec:
+  allow:
+    - protocol: tcp
+      ports:
+        - "443"
+        - "10250"
+  destinationRanges:
+    - 172.16.0.0/28
+  direction: EGRESS
+  networkRef:
+    name: gke-no-internet-network
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeFirewall
+metadata:
+  name: allow-internal-egress
+spec:
+  allow:
+    - protocol: tcp
+      ports:
+        - "0-65535"
+  destinationRanges:
+    - 10.0.0.0/8
+  direction: EGRESS
+  networkRef:
+    name: gke-no-internet-network

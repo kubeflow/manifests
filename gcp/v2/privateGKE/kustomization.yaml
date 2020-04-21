@@ -1,0 +1,5 @@
+resources:
+- compute-network.yaml
+- dns-gcr.yaml
+- dns-google-apis.yaml
+- firewall.yaml
