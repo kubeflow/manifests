@@ -130,6 +130,7 @@ spec:
       overlays:
       - istio
       - application
+      - aws
       parameters:
       - name: userid-header
         value: kubeflow-userid
