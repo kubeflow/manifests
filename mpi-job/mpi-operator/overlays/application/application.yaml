@@ -10,7 +10,7 @@ spec:
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: mpijob
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7
+      app.kubernetes.io/version: v1.0
   componentKinds:
   - group: apps
     kind: Deployment
@@ -20,7 +20,7 @@ spec:
     kind: MPIJob
   descriptor:
     type: "mpi-operator"
-    version: "v1alpha1"
+    version: "v1"
     description: "Mpi-operator allows users to create and manage the \"MPIJob\" custom resource."
     maintainers:
     - name: Rong Ou
