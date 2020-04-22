@@ -10,5 +10,3 @@ commonLabels:
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/component: xgboostjob
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.6
-
