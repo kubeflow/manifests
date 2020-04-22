@@ -12,10 +12,11 @@ commonLabels:
 images:
 - name: mpioperator/mpi-operator
   newName: mpioperator/mpi-operator
-  newTag: 0.1.0
+  newTag: latest
 configMapGenerator:
 - name: mpi-operator-config
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:
@@ -26,3 +27,10 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.kubectl-delivery-image
+- name: lock-namespace
+  objref:
+    kind: ConfigMap
+    name: mpi-operator-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.lock-namespace
