@@ -26,12 +26,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: userid-header
-              name: kubeflow-config-d2dm9cgdk2
+              name: kubeflow-config-4bkkg42k5m
         - name: USERID_PREFIX
           valueFrom:
             configMapKeyRef:
               key: userid-prefix
-              name: kubeflow-config-d2dm9cgdk2
+              name: kubeflow-config-4bkkg42k5m
         image: gcr.io/kubeflow-images-public/jupyter-web-app:vmaster-gd9be4b9e
         name: jupyter-web-app
         ports:
