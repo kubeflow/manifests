@@ -1,4 +1,3 @@
-#!/usr/bin/python
 """Regenerate tests for only the files that have changed."""
 
 import argparse
@@ -58,7 +57,7 @@ def run_kustomize_build(repo_root, package_dir):
   logging.info("Creating directory %s", output_dir)
   os.makedirs(output_dir)
 
-  subprocess.check_call(["kustomize", "build", "--load_restrictor", "none",
+  subprocess.check_call([os.environ.get("KUSTOMIZE_BIN", "kustomize"), "build", "--load_restrictor", "none",
                          "-o", output_dir], cwd=os.path.join(repo_root,
                                                              package_dir))
 def find_kustomize_dirs(search_dirs):
