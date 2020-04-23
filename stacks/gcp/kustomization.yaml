@@ -16,8 +16,6 @@ resources:
   - ../../pytorch-job/pytorch-operator/overlays/application
   - ../../tf-training/tf-job-crds/overlays/application
   - ../../tf-training/tf-job-operator/overlays/application
-  - ../../katib/katib-crds/v3
-  - ../../katib/katib-controller/v3
   # This package will create a profile resource so it needs to be installed after the profiles CR
   - ../../default-install/base
 configMapGenerator:
@@ -41,17 +39,3 @@ vars:
     apiVersion: v1
     kind: ConfigMap
     name: kubeflow-config
-- name: katib-ui-clusterDomain
-  objref:
-    kind: ConfigMap
-    name: kubeflow-config
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.katib-ui-clusterDomain
-- name: katib-ui-namespace
-  objref:
-    kind: Service
-    name: katib-ui
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.namespace

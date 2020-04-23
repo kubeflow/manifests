@@ -8,8 +8,7 @@ resources:
   - ../overlays/application/application.yaml
 commonLabels:
   app.kubernetes.io/component: katib
-  app.kubernetes.io/instance: katib-crds-0.8.0
+  app.kubernetes.io/instance: katib-crds
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/name: katib-crds
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.8.0
