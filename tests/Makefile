@@ -14,6 +14,8 @@
 #
 GOLANG_VERSION ?= 1.12.4
 GOPATH ?= $(HOME)/go
+PYTHON_BIN ?= python
+export KUSTOMIZE_BIN ?= kustomize
 
 # Comma seperated items within {} for more than one file
 # EXCLUDE ?= istio-install-base_test.go
@@ -24,11 +26,11 @@ export GO = go
 all: test
 
 generate: clean
-	../hack/generate_tests.py --all || echo done
+	$(PYTHON_BIN) ../hack/generate_tests.py --all || echo done
 	$(GO) fmt ./...
 
 generate-changed-only:
-	../hack/generate_tests.py || echo done
+	$(PYTHON_BIN) ../hack/generate_tests.py || echo done
 	$(GO) fmt ./...
 
 modules:
