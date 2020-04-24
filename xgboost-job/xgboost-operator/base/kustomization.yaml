@@ -10,10 +10,8 @@ resources:
 namespace: kubeflow
 nameprefix: xgboost-operator-
 configMapGenerator:
-- name: parameters
+- name: xgboost-operator-config
   env: params.env
-generatorOptions:
-  disableNameSuffixHash: true
 images:
   - name: gcr.io/kubeflow-images-public/xgboost-operator
     newName: gcr.io/kubeflow-images-public/xgboost-operator
