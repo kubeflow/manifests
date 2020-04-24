@@ -9,6 +9,9 @@ metadata:
     istio: ingressgateway
     release: istio
 spec:
+  # TODO(jlewi):  Why are we hardcoding the ports here? With ASM I believe the service
+  # gets created by the gateway defined by ASM.
+  # 
   ports:
     - name: status-port
       port: 15020

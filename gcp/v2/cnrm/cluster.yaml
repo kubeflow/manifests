@@ -24,7 +24,7 @@ metadata:
   namespace: "project-id" # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.core.project","value":"project-id"}}}
 spec:
   initialNodeCount: 2
-  minMasterVersion: 1.14.10-gke.24
+  minMasterVersion: "1.14.10-gke.36"
   location: us-east1-d # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.compute.zone","value":"us-east1-d"}}}
   workloadIdentityConfig:
     identityNamespace: project-id.svc.id.goog # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
