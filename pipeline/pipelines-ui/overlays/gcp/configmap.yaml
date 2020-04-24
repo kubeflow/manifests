@@ -8,14 +8,10 @@ data:
    # 2. Disable istio sidecar because UI server needs to proxy user email for verification
    viewer-pod-template.json:  |-
     {
+    "metadata": {	
+      "annotations": { "sidecar.istio.io/inject": "false" }	
+    },
     "spec": {
         "serviceAccountName": "default-editor"
-    },
-    "template": {
-      "metadata": {
-        "annotations": {
-          "sidecar.istio.io/inject": "false"
-        }
-      }
     }
     }
