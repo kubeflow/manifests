@@ -2,6 +2,7 @@
 # after the refactor is done.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: cert-manager
 commonLabels:
   app.kubernetes.io/name: cert-manager
   app.kubernetes.io/instance: cert-manager-v0.7.0

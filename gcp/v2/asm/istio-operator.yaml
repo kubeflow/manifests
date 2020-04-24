@@ -15,21 +15,25 @@
 apiVersion: install.istio.io/v1alpha2
 kind: IstioControlPlane
 metadata:
-  clusterName: "project-id/us-east1-d/cluster-name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"cluster-name","value":"cluster-name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
+  clusterName: "jlewi-dev/us-central1/kf-bp-0420-002" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"cluster-name","value":"kf-bp-0420-002"},{"name":"location","value":"us-central1"}]}}
 spec:
   profile: asm
-  hub: gcr.io/asm-testing
-  tag: 1.4.5-asm-test.7
+  hub: gcr.io/gke-release/asm
+  tag: 1.4.7-asm.0
   values:
     gateways:
       istio-ingressgateway:
         type: NodePort
     global:
-      meshID: "project-id_us-east1-d_cluster-name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"cluster-name","value":"cluster-name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
-      trustDomain: "project-id.svc.id.goog" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
+      #meshID: "jlewi-dev_us-central1_kf-bp-0420-002" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"cluster-name","value":"kf-bp-0420-002"},{"name":"location","value":"us-central1"}]}}
+      meshID: "jlewi-dev_us-central1_kf-bp-0420-002" # 
+      trustDomain: "jlewi-dev.svc.id.goog" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
       sds:
         token:
-          aud: "project-id.svc.id.goog" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
+          aud: "jlewi-dev.svc.id.goog" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
+      proxy:
+        env:
+          GCP_METADATA: "jlewi-dev|147474701642|asm-cluster|us-central1" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"gcloud.project.projectNumber","value":"147474701642"},{"name":"cluster-name","value":"asm-cluster"},{"name":"gcloud.compute.zone","value":"us-central1-c"}]}}
     nodeagent:
       env:
-        GKE_CLUSTER_URL: "https://container.googleapis.com/v1/projects/project-id/locations/us-east1-d/clusters/cluster-name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"cluster-name","value":"cluster-name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
+        GKE_CLUSTER_URL: "https://container.googleapis.com/v1/projects/jlewi-dev/locations/us-central1/clusters/kf-bp-0420-002" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"cluster-name","value":"kf-bp-0420-002"},{"name":"location","value":"us-central1"}]}}
