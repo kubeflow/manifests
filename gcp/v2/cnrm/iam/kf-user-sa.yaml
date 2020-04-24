@@ -15,7 +15,7 @@
 apiVersion: iam.cnrm.cloud.google.com/v1beta1
 kind: IAMServiceAccount
 metadata:
-  name: cluster-name-admin # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"cluster-name","value":"cluster-name"}]}}
+  name: kf-name-user # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-name"}]}}
   namespace: "project-id" # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.core.project","value":"project-id"}}}
 spec:
-  displayName: kubeflow admin service account
+  displayName: kubeflow user service account

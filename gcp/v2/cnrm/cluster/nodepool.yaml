@@ -15,8 +15,8 @@
 apiVersion: container.cnrm.cloud.google.com/v1beta1
 kind: ContainerNodePool
 metadata:
-  clusterName: "project-id/us-east1-d/cluster-name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"cluster-name","value":"cluster-name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
-  name: cluster-name-cpu-pool-v1 # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"cluster-name","value":"cluster-name"}]}}
+  clusterName: "project-id/us-east1-d/kf-name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"name","value":"kf-name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
+  name: kf-name-cpu-pool-v1 # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-name"}]}}
   namespace: "project-id" # {"type":"string","x-kustomize":{"setter":{"name":"gcloud.core.project","value":"project-id"}}}
 spec:
   initialNodeCount: 2
@@ -29,8 +29,8 @@ spec:
     metadata:
       disable-legacy-endpoints: "true"
     serviceAccountRef:
-      name: cluster-name-vm@project-id.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"cluster-name","value":"cluster-name"},{"name":"gcloud.core.project","value":"project-id"}]}}
+      name: kf-name-vm@project-id.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-name"},{"name":"gcloud.core.project","value":"project-id"}]}}
     workloadMetadataConfig:
       nodeMetadata: GKE_METADATA_SERVER
   clusterRef:
-    name: cluster-name # {"type":"string","x-kustomize":{"setter":{"name":"cluster-name","value":"cluster-name"}}}
+    name: kf-name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kf-name"}}}
