@@ -12,7 +12,7 @@ configMapGenerator:
   env: params.env
 images:
 - name: gcr.io/ml-pipeline/frontend
-  # newTag: 0.4.0
+  # newTag: 0.5.0
   # newName: gcr.io/ml-pipeline/frontend
   newName: gcr.io/gongyuan-pipeline-test/dev/frontend
   digest: sha256:488c62e1446208d583dc02106e5743845f06be87173350521fae3b03f0a22c1e

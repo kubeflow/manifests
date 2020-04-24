@@ -12,7 +12,7 @@ resources:
 - service.yaml
 images:
 - name: gcr.io/ml-pipeline/api-server
-  newTag: 0.4.0
+  newTag: 0.5.0
   newName: gcr.io/ml-pipeline/api-server
 configurations:
 - params.yaml

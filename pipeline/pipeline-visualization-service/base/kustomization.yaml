@@ -8,5 +8,5 @@ resources:
 - service.yaml
 images:
 - name: gcr.io/ml-pipeline/visualization-server
-  newTag: 0.4.0
+  newTag: 0.5.0
   newName: gcr.io/ml-pipeline/visualization-server
