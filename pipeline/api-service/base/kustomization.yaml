@@ -12,8 +12,10 @@ resources:
 - service.yaml
 images:
 - name: gcr.io/ml-pipeline/api-server
-  newTag: 0.5.0
-  newName: gcr.io/ml-pipeline/api-server
+  # newTag: 0.5.0
+  # newName: gcr.io/ml-pipeline/api-server
+  newName: gcr.io/ml-pipeline-test/257504cb9835326e785b7f6e77fbaa409e368899/api-server
+  digest: sha256:e783d99f73159e48ab8da745c6dbbcc4030da31820d0f95764b3ba9e4ed1209e
 configurations:
 - params.yaml
 vars:
