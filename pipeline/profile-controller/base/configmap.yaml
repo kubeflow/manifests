@@ -12,10 +12,13 @@ data:
                 # Compute status based on observed state.
                 desired_status = {
                     "kubeflow-pipelines-config-ready": \
-                      len(children["Secret.v1"]) > 0 and \
-                      len(children["ConfigMap.v1"]) > 0 and \
-                      len(children["Deployment.apps/v1"]) > 0 and \
-                      len(children["Service.v1"]) > 0 and \
+                      len(children["Secret.v1"]) == 1 and \
+                      len(children["ConfigMap.v1"]) == 1 and \
+                      len(children["Deployment.apps/v1"]) == 2 and \
+                      len(children["Service.v1"]) == 2 and \
+                      len(children["DestinationRule.networking.istio.io/v1alpha3"]) == 1 and \
+                      len(children["ServiceRole.rbac.istio.io/v1alpha1"]) == 1 and \
+                      len(children["ServiceRoleBinding.rbac.istio.io/v1alpha1"]) == 1 and \
                       "True" or "False"
                 }
 
@@ -47,6 +50,7 @@ data:
                         "METADATA_GRPC_SERVICE_PORT": "8080",
                     },
                 },
+                # Visualization server related manifests below
                 {
                     "apiVersion": "apps/v1",
                     "kind": "Deployment",
@@ -62,7 +66,6 @@ data:
                         "template": {
                             "metadata": {
                                 "labels": {"app": "ml-pipeline-visualizationserver"},
-                                "annotations": {"sidecar.istio.io/inject": "false"},
                             },
                             "spec": {
                                 "containers": [{
@@ -75,6 +78,46 @@ data:
                             },
                         },
                     },
+                },
+                {
+                    "apiVersion": "networking.istio.io/v1alpha3",
+                    "kind": "DestinationRule",
+                    "metadata": {
+                        "name": "ml-pipeline-visualizationserver",
+                        "namespace": namespace,
+                    },
+                    "spec": {
+                        "host": "ml-pipeline-visualizationserver",
+                        "trafficPolicy": { "tls": { "mode": "ISTIO_MUTUAL" } }
+                    }
+                },
+                {
+                    "apiVersion": "rbac.istio.io/v1alpha1",
+                    "kind": "ServiceRole",
+                    "metadata": {
+                        "name": "ml-pipeline-visualizationserver",
+                        "namespace": namespace,
+                    },
+                    "spec": {
+                        "rules": [{ "services": ["ml-pipeline-visualizationserver.*"] }]
+                    }
+                },
+                {
+                    "apiVersion": "rbac.istio.io/v1alpha1",
+                    "kind": "ServiceRoleBinding",
+                    "metadata": {
+                        "name": "ml-pipeline-visualizationserver",
+                        "namespace": namespace,
+                    },
+                    "spec": {
+                        "subjects": [
+                            { "properties": { "source.principal": "cluster.local/ns/kubeflow/sa/ml-pipeline" } }
+                        ],
+                        "roleRef": {
+                            "kind": "ServiceRole",
+                            "name": "ml-pipeline-visualizationserver"
+                        }
+                    }
                 },
                 {
                     "apiVersion": "v1",
@@ -111,7 +154,6 @@ data:
                         "template": {
                             "metadata": {
                                 "labels": { "app": "ml-pipeline-ui-artifact" },
-                                "annotations": { "sidecar.istio.io/inject": "false" }
                             },
                             "spec": {
                                 "containers": [

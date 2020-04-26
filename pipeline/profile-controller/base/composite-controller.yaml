@@ -25,6 +25,18 @@ spec:
     resource: services
     updateStrategy:
       method: InPlace
+  - apiVersion: networking.istio.io/v1alpha3
+    resource: destinationrules
+    updateStrategy:
+      method: InPlace
+  - apiVersion: rbac.istio.io/v1alpha1
+    resource: serviceroles
+    updateStrategy:
+      method: InPlace
+  - apiVersion: rbac.istio.io/v1alpha1
+    resource: servicerolebindings
+    updateStrategy:
+      method: InPlace
   hooks:
     sync:
       webhook:
