@@ -138,9 +138,12 @@ data:
                         "labels": { "app": "ml-pipeline-ui-artifact" }
                     },
                     "spec": {
-                        "ports": [
-                            { "port": 80, "targetPort": 3000 }
-                        ],
+                        "ports": [{
+                            "name": "http", # name is required to let istio understand request protocol
+                            "port": 80,
+                            "protocol": "TCP",
+                            "targetPort": 3000
+                        }],
                         "selector": { "app": "ml-pipeline-ui-artifact" }
                     }
                 },
