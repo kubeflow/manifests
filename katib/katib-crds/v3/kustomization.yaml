@@ -1,12 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
-bases:
-- ../../base
+kind: Kustomization
+namespace: kubeflow
+resources:
+  - ../base/experiment-crd.yaml
+  - ../base/suggestion-crd.yaml
+  - ../base/trial-crd.yaml
+  - ../overlays/application/application.yaml
 commonLabels:
   app.kubernetes.io/component: katib
   app.kubernetes.io/instance: katib-crds
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/name: katib-crds
   app.kubernetes.io/part-of: kubeflow
-kind: Kustomization
-resources:
-- application.yaml

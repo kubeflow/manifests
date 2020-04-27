@@ -41,7 +41,7 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterDomain
-- name: namespace
+- name: katib-ui-namespace
   objref:
     kind: Service
     name: katib-ui
