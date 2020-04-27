@@ -12,5 +12,7 @@ resources:
 - service-account.yaml
 images:
 - name: gcr.io/ml-pipeline/viewer-crd-controller
-  newTag: 0.5.0
-  newName: gcr.io/ml-pipeline/viewer-crd-controller
+  # newTag: 0.5.0
+  # newName: gcr.io/ml-pipeline/viewer-crd-controller
+  newName: gcr.io/ml-pipeline-test/58186e4be9d2a7a99ab154950383b6f8a452cebd/viewer-crd-controller
+  digest: sha256:c7ec231f861d7a7c6357bbfabf2e4acb8f5bacb4226c93bb75ed4153f292c59e
