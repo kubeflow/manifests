@@ -4,7 +4,6 @@ metadata:
   name: mysql
 spec:
   ports:
-  - name: mysql
-    port: 3306
+  - port: 3306 # We cannot have name: mysql here, because some requests fail with it.
     protocol: TCP
     targetPort: 3306
