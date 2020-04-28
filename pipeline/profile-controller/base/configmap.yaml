@@ -159,7 +159,7 @@ data:
                                 "containers": [
                                     {
                                         "name": "ml-pipeline-ui-artifact",
-                                        "image": "gcr.io/ml-pipeline-test/ee9dacf7a3bb93241af2f7277814bb32adf138fb/frontend@sha256:2aadcb8617792f5db325c615b04887fb4642924a39a6e78b30ffa95fb0df7ede",
+                                        "image": "gcr.io/gongyuan-pipeline-test/dev/frontend@sha256:ee2fb833105b10ff866b78169b6c56884cafdcf8bc57d684ad2fc7cda757afb6",
                                         "imagePullPolicy": "IfNotPresent",
                                         "ports": [
                                             { "containerPort": 3000 }

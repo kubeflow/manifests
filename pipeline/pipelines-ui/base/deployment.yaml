@@ -28,6 +28,8 @@ spec:
           value: '80'
         - name: ARTIFACTS_SERVICE_PROXY_ENABLED
           value: 'true'
+        - name: ENABLE_AUTHZ
+          value: 'true'
         ports:
         - containerPort: 3000
       serviceAccountName: ml-pipeline-ui
