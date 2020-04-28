@@ -1,10 +1,8 @@
+# This kustomize package defines CNRM resources to create the GCP resources needed
+# to deploy Kubeflow.
+namespace: "project-id" # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.core.project","value":"project-id"}}}
 resources:
-- cluster.yaml
-- compute-address.yaml
-- disk.yaml
-- kf-admin-policy.yaml
-- kf-admin-sa.yaml
-- kf-user-policy.yaml
-- kf-user-sa.yaml
-- kf-vm-policy.yaml
-- kf-vm-sa.yaml
+- cluster
+- ingress
+- iam
+- pipelines
