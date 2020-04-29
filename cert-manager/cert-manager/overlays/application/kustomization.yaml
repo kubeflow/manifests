@@ -1,15 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
 bases:
 - ../../base
-resources:
-- application.yaml
+commonLabels:
+  app.kubernetes.io/component: cert-manager
+  app.kubernetes.io/name: cert-manager
 configurations:
 - params.yaml
-commonLabels:
-  app.kubernetes.io/name: cert-manager
-  app.kubernetes.io/instance: cert-manager
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: cert-manager
-  app.kubernetes.io/part-of: kubeflow
-  
+kind: Kustomization
+resources:
+- application.yaml

@@ -4,11 +4,7 @@ metadata:
   labels:
     app: centraldashboard
     app.kubernetes.io/component: centraldashboard
-    app.kubernetes.io/instance: centraldashboard-v1.0.0
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: centraldashboard
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v1.0.0
   name: centraldashboard
   namespace: kubeflow
 spec:
@@ -17,11 +13,7 @@ spec:
     matchLabels:
       app: centraldashboard
       app.kubernetes.io/component: centraldashboard
-      app.kubernetes.io/instance: centraldashboard-v1.0.0
-      app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: centraldashboard
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v1.0.0
   template:
     metadata:
       annotations:
@@ -29,11 +21,7 @@ spec:
       labels:
         app: centraldashboard
         app.kubernetes.io/component: centraldashboard
-        app.kubernetes.io/instance: centraldashboard-v1.0.0
-        app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: centraldashboard
-        app.kubernetes.io/part-of: kubeflow
-        app.kubernetes.io/version: v1.0.0
     spec:
       containers:
       - env:

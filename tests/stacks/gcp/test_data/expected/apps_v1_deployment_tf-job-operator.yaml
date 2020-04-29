@@ -3,11 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: tfjob
-    app.kubernetes.io/instance: tf-job-operator-v0.7.0
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: tf-job-operator
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.7.0
     kustomize.component: tf-job-operator
   name: tf-job-operator
   namespace: kubeflow
@@ -16,11 +12,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: tfjob
-      app.kubernetes.io/instance: tf-job-operator-v0.7.0
-      app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: tf-job-operator
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
       kustomize.component: tf-job-operator
   template:
     metadata:
@@ -28,11 +20,7 @@ spec:
         sidecar.istio.io/inject: "false"
       labels:
         app.kubernetes.io/component: tfjob
-        app.kubernetes.io/instance: tf-job-operator-v0.7.0
-        app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: tf-job-operator
-        app.kubernetes.io/part-of: kubeflow
-        app.kubernetes.io/version: v0.7.0
         kustomize.component: tf-job-operator
         name: tf-job-operator
     spec:
