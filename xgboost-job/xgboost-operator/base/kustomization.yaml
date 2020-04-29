@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- cluster-role.yaml
+- cluster-role-binding.yaml
+- crd.yaml
+- deployment.yaml
+- service-account.yaml
+- service.yaml
+namespace: kubeflow
+nameprefix: xgboost-operator-
+configMapGenerator:
+- name: xgboost-operator-config
+  env: params.env
+images:
+  - name: gcr.io/kubeflow-images-public/xgboost-operator
+    newName: gcr.io/kubeflow-images-public/xgboost-operator
+    newTag: 8e29825
