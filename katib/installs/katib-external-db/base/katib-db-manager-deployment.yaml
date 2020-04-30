@@ -32,4 +32,4 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: katib-mysql-secrets
-                key: DB_USER
+                key: DB_PASSWORD
