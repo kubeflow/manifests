@@ -6,11 +6,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: argo
-      app.kubernetes.io/instance: argo-v2.3.0
+      app.kubernetes.io/instance: argo-v2.8.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: argo
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v2.3.0
+      app.kubernetes.io/version: v2.8.0
   componentKinds:
   - group: core
     kind: ConfigMap
@@ -35,4 +35,3 @@ spec:
     - description: About
       url: https://github.com/argoproj/argo
   addOwnerRef: true
-

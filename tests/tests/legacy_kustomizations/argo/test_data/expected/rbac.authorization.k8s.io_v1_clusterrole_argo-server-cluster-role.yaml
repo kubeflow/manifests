@@ -1,8 +1,7 @@
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app: argo
     app.kubernetes.io/component: argo
     app.kubernetes.io/instance: argo-v2.3.0
     app.kubernetes.io/managed-by: kfctl
@@ -10,20 +9,8 @@ metadata:
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: v2.3.0
     kustomize.component: argo
-  name: argo
+  name: argo-server-cluster-role
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  - pods/exec
-  verbs:
-  - create
-  - get
-  - list
-  - watch
-  - update
-  - patch
 - apiGroups:
   - ""
   resources:
@@ -35,24 +22,38 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - persistentvolumeclaims
+  - secrets
   verbs:
-  - create
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/exec
+  - pods/log
+  verbs:
+  - get
+  - list
+  - watch
   - delete
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
 - apiGroups:
   - argoproj.io
   resources:
   - workflows
-  - workflows/finalizers
+  - workflowtemplates
+  - cronworkflows
+  - clusterworkflowtemplates
   verbs:
+  - create
   - get
   - list
   - watch
   - update
   - patch
-- apiGroups:
-  - sparkoperator.k8s.io
-  resources:
-  - sparkapplications
-  verbs:
-  - '*'
+  - delete

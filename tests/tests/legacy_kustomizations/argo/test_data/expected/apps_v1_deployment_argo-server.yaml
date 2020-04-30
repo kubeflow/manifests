@@ -9,12 +9,12 @@ metadata:
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: v2.3.0
     kustomize.component: argo
-  name: workflow-controller
+  name: argo-server
   namespace: kubeflow
 spec:
   selector:
     matchLabels:
-      app: workflow-controller
+      app: argo-server
       app.kubernetes.io/component: argo
       app.kubernetes.io/instance: argo-v2.3.0
       app.kubernetes.io/managed-by: kfctl
@@ -25,7 +25,7 @@ spec:
   template:
     metadata:
       labels:
-        app: workflow-controller
+        app: argo-server
         app.kubernetes.io/component: argo
         app.kubernetes.io/instance: argo-v2.3.0
         app.kubernetes.io/managed-by: kfctl
@@ -36,10 +36,17 @@ spec:
     spec:
       containers:
       - args:
-        - --configmap
-        - workflow-controller-configmap
-        command:
-        - workflow-controller
-        image: argoproj/workflow-controller:v2.8.0-rc3
-        name: workflow-controller
-      serviceAccountName: argo
+        - server
+        image: argoproj/argocli:v2.8.0-rc3
+        name: argo-server
+        ports:
+        - containerPort: 2746
+          name: web
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 2746
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 20
+      serviceAccountName: argo-server

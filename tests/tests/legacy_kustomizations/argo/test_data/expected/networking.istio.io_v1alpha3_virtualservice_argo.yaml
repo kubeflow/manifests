@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/name: argo
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: v2.3.0
-  name: argo-ui
+  name: argo
   namespace: kubeflow
 spec:
   gateways:
@@ -23,6 +23,6 @@ spec:
       uri: /
     route:
     - destination:
-        host: argo-ui.kubeflow.svc.cluster.local
+        host: argo.kubeflow.svc.cluster.local
         port:
-          number: 80
+          number: 2746
