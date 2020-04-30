@@ -21,4 +21,4 @@ spec:
       volumes:
       - name: hooks
         configMap:
-          name: kubeflow-pipelines-profile-controller
+          name: profile-controller
