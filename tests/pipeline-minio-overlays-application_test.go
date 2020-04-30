@@ -41,11 +41,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: minio
-      app.kubernetes.io/instance: minio-0.2.5
+      app.kubernetes.io/instance: minio-0.5.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: minio
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: 0.2.5
+      app.kubernetes.io/version: 0.5.0
 `)
 	th.writeK("/manifests/pipeline/minio/overlays/application", `
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -53,11 +53,11 @@ bases:
 - ../../base
 commonLabels:
   app.kubernetes.io/component: minio
-  app.kubernetes.io/instance: minio-0.2.5
+  app.kubernetes.io/instance: minio-0.5.0
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/name: minio
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.2.5
+  app.kubernetes.io/version: 0.5.0
 kind: Kustomization
 resources:
 - application.yaml

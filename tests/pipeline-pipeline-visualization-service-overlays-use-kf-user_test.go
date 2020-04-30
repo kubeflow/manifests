@@ -80,7 +80,7 @@ resources:
 - service.yaml
 images:
 - name: gcr.io/ml-pipeline/visualization-server
-  newTag: 0.2.5
+  newTag: 0.5.0
   newName: gcr.io/ml-pipeline/visualization-server
 `)
 }
