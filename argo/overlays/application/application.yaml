@@ -31,4 +31,3 @@ spec:
     - description: About
       url: https://github.com/argoproj/argo
   addOwnerRef: true
-

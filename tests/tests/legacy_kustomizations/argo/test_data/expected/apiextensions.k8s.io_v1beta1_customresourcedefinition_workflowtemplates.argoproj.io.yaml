@@ -1,8 +1,7 @@
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRoleBinding
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
 metadata:
   labels:
-    app: argo-ui
     app.kubernetes.io/component: argo
     app.kubernetes.io/instance: argo-v2.3.0
     app.kubernetes.io/managed-by: kfctl
@@ -10,12 +9,13 @@ metadata:
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: v2.3.0
     kustomize.component: argo
-  name: argo-ui
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: argo-ui
-subjects:
-- kind: ServiceAccount
-  name: argo-ui
-  namespace: kubeflow
+  name: workflowtemplates.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: WorkflowTemplate
+    plural: workflowtemplates
+    shortNames:
+    - wftmpl
+  scope: Namespaced
+  version: v1alpha1

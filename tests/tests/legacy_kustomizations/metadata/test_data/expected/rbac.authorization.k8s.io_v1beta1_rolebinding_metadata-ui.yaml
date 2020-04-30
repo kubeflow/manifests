@@ -18,5 +18,5 @@ roleRef:
   name: metadata-ui
 subjects:
 - kind: ServiceAccount
-  name: ui
+  name: metadata-ui
   namespace: kubeflow

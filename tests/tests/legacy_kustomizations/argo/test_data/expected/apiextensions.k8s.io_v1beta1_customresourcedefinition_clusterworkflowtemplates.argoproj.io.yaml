@@ -9,23 +9,14 @@ metadata:
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: v2.3.0
     kustomize.component: argo
-  name: workflows.argoproj.io
+  name: clusterworkflowtemplates.argoproj.io
 spec:
-  additionalPrinterColumns:
-  - JSONPath: .status.phase
-    description: Status of the workflow
-    name: Status
-    type: string
-  - JSONPath: .status.startedAt
-    description: When the workflow was started
-    format: date-time
-    name: Age
-    type: date
   group: argoproj.io
   names:
-    kind: Workflow
-    plural: workflows
+    kind: ClusterWorkflowTemplate
+    plural: clusterworkflowtemplates
     shortNames:
-    - wf
-  scope: Namespaced
+    - clusterwftmpl
+    - cwft
+  scope: Cluster
   version: v1alpha1
