@@ -5,6 +5,11 @@ metadata:
 spec:
   applications:
   - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: kubeflow-namespace
+    name: kubeflow-namespace
+  - kustomizeConfig:
       parameters:
       - name: namespace
         value: istio-system
