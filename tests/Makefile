@@ -32,7 +32,7 @@ gcp-reset:
 	kpt cfg set ../gcp/v2/ cluster-name cluster-name
 	kpt cfg set ../gcp/v2/ gcloud.core.project project-id
 
-generate: clean
+generate:
 	$(PYTHON_BIN) ../hack/generate_tests.py --all || echo done
 	$(GO) fmt ./...
 
@@ -45,9 +45,6 @@ modules:
 
 test: modules
 	@GO111MODULE=on $(GO) test -v github.com/kubeflow/manifests/tests/...
-
-clean:
-	@rm -f $$(ls *_test.go | egrep -v 'kusttestharness_test.go|go.mod|go.sum')
 
 run-unittest-plugin:
 	cd .. && XDG_CONFIG_HOME=$$(pwd)/plugins kustomize build profiles/overlays/test --enable_alpha_plugins

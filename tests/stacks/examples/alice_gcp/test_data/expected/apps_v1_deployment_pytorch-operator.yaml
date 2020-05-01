@@ -3,11 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: pytorch
-    app.kubernetes.io/instance: pytorch-operator-v0.7.0
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: pytorch-operator
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.7.0
     kustomize.component: pytorch-operator
   name: pytorch-operator
   namespace: kubeflow
@@ -16,11 +12,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: pytorch
-      app.kubernetes.io/instance: pytorch-operator-v0.7.0
-      app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: pytorch-operator
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
       kustomize.component: pytorch-operator
       name: pytorch-operator
   template:
@@ -29,11 +21,7 @@ spec:
         sidecar.istio.io/inject: "false"
       labels:
         app.kubernetes.io/component: pytorch
-        app.kubernetes.io/instance: pytorch-operator-v0.7.0
-        app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: pytorch-operator
-        app.kubernetes.io/part-of: kubeflow
-        app.kubernetes.io/version: v0.7.0
         kustomize.component: pytorch-operator
         name: pytorch-operator
     spec:

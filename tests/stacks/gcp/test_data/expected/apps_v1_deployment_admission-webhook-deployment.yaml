@@ -4,11 +4,7 @@ metadata:
   labels:
     app: admission-webhook
     app.kubernetes.io/component: poddefaults
-    app.kubernetes.io/instance: poddefaults-v0.7.0
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: poddefaults
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.7.0
     kustomize.component: admission-webhook
   name: admission-webhook-deployment
   namespace: kubeflow
@@ -17,11 +13,7 @@ spec:
     matchLabels:
       app: admission-webhook
       app.kubernetes.io/component: poddefaults
-      app.kubernetes.io/instance: poddefaults-v0.7.0
-      app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: poddefaults
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.7.0
       kustomize.component: admission-webhook
   template:
     metadata:
@@ -30,11 +22,7 @@ spec:
       labels:
         app: admission-webhook
         app.kubernetes.io/component: poddefaults
-        app.kubernetes.io/instance: poddefaults-v0.7.0
-        app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: poddefaults
-        app.kubernetes.io/part-of: kubeflow
-        app.kubernetes.io/version: v0.7.0
         kustomize.component: admission-webhook
     spec:
       containers:

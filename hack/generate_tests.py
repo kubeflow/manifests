@@ -80,55 +80,6 @@ def find_kustomize_dirs(search_dirs):
 
   return changed_dirs
 
-def remove_unmatched_tests(repo_root, package_dirs):
-  """Remove any tests that don't map to a kustomization.yaml file.
-
-  This ensures tests don't linger if a package is deleted.
-  """
-
-  # Create a set of all the expected test names
-  expected_tests = set()
-
-  for d in package_dirs:
-    rpath = os.path.relpath(d, repo_root)
-    expected_tests.add(generate_test_path(repo_root, rpath))
-
-  tests_dir = os.path.join(repo_root, "tests")
-
-  possible_empty_dirs = []
-
-  # Walk the tests directory
-  for root, dirs, files in os.walk(tests_dir):
-    if not files:
-      possible_empty_dirs.append(root)
-
-    for f in files:
-      if f != TEST_NAME:
-        continue
-
-      full_test = os.path.join(root, f)
-      if full_test not in expected_tests:
-       logging.info("Removing unexpected test: %s", full_test)
-       os.unlink(full_test)
-       possible_empty_dirs.append(root)
-
-  # Prune directories that only contain test_data but no more tests
-  for d in possible_empty_dirs:
-    if not os.path.exists(d):
-      # Might have been a subdirectory of a directory that was deleted.
-      continue
-
-    items = os.listdir(d)
-
-    if len(items) > 1:
-      continue
-
-    if len(items) == 1 and items[0] != "test_data":
-      continue
-
-    logging.info("Removing directory: %s", d)
-    shutil.rmtree(d)
-
 def write_go_test(test_path, package_name, package_dir):
   """Write the go test file.
 
@@ -175,8 +126,6 @@ if __name__ == "__main__":
   # Get a list of package directories
   full_search_dirs = [os.path.join(repo_root, s) for s in SEARCH_DIRS]
   package_dirs = find_kustomize_dirs(full_search_dirs)
-
-  remove_unmatched_tests(repo_root, package_dirs)
 
   changed_dirs = package_dirs
 
