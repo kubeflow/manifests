@@ -21,6 +21,7 @@ require (
 	github.com/go-openapi/jsonpointer v0.19.2 // indirect
 	github.com/gogo/protobuf v1.2.2-0.20190730201129-28a6bbf47e48
 	github.com/google/go-cmp v0.3.0
+	github.com/google/martian v2.1.0+incompatible
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
 	github.com/hashicorp/go-getter v1.0.2
 	github.com/imdario/mergo v0.3.7

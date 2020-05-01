@@ -8,11 +8,7 @@ metadata:
   labels:
     app: pytorch-operator
     app.kubernetes.io/component: pytorch
-    app.kubernetes.io/instance: pytorch-operator-v0.7.0
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: pytorch-operator
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.7.0
     kustomize.component: pytorch-operator
   name: pytorch-operator
   namespace: kubeflow
@@ -23,11 +19,7 @@ spec:
     targetPort: 8443
   selector:
     app.kubernetes.io/component: pytorch
-    app.kubernetes.io/instance: pytorch-operator-v0.7.0
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: pytorch-operator
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.7.0
     kustomize.component: pytorch-operator
     name: pytorch-operator
   type: ClusterIP

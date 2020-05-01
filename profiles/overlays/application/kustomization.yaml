@@ -1,13 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
 bases:
 - ../../base
+commonLabels:
+  app.kubernetes.io/component: profiles
+  app.kubernetes.io/name: profiles
+kind: Kustomization
 resources:
 - application.yaml
-commonLabels:
-  app.kubernetes.io/name: profiles
-  app.kubernetes.io/instance: profiles-v0.7.0
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/component: profiles
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.7.0
