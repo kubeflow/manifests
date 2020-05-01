@@ -402,8 +402,8 @@ data:
     }
   ingress: |-
     {
-        "ingressGateway" : "knative-ingress-gateway.knative-serving",
-        "ingressService" : "kfserving-ingressgateway.istio-system.svc.cluster.local"
+        "ingressGateway" : "kubeflow-gateway.kubeflow",
+        "ingressService" : "istio-ingressgateway.istio-system.svc.cluster.local"
     }
   logger: |-
     {
@@ -412,7 +412,8 @@ data:
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
         "cpuLimit": "1"
-    }`)
+    }
+`)
 	th.writeF("/manifests/kfserving/kfserving-install/base/secret.yaml", `
 apiVersion: v1
 kind: Secret
