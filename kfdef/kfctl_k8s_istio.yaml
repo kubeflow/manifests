@@ -353,5 +353,4 @@ spec:
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
-
   version: master
