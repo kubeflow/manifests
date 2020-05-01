@@ -352,6 +352,6 @@ spec:
     name: seldon-core-operator
   repos:
   - name: manifests
-    uri: /Users/efedorenko/work/kubeflowmanifests
+    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
 
   version: master
