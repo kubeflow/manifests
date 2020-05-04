@@ -34,4 +34,4 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: katib-mysql-secrets
-                key: KATB_MYSQL_DB_PORT
+                key: KATIB_MYSQL_DB_PORT

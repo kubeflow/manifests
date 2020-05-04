@@ -2,8 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
 resources:
-  - ../../../components/katib-controller
-  - ../../../components/katib-db-manager
+  - ../../components/katib-controller
+  - ../../components/katib-db-manager
 patchesStrategicMerge:
   - katib-db-manager-deployment.yaml
 secretGenerator:
