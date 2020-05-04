@@ -8,12 +8,15 @@
 **Table of Contents**
 
 - [Layout package to support composability](#layout-package-to-support-composability)
+- [Reuse patches](#reuse-patches)
+  - [Disable security check for file outside of directory root](#disable-security-check-for-file-outside-of-directory-root)
 - [Command Line substitution](#command-line-substitution)
 - [Eschew vars](#eschew-vars)
   - [Internal subsitution of fields Kustomize isn't aware of](#internal-subsitution-of-fields-kustomize-isnt-aware-of)
   - [Global substitution](#global-substitution)
 - [Have separate packages for CR's and instances of the custom resource](#have-separate-packages-for-crs-and-instances-of-the-custom-resource)
 - [CommonLabels should be immutable](#commonlabels-should-be-immutable)
+  - [Resource file naming](#resource-file-naming)
 - [Removing common attributes across resources](#removing-common-attributes-across-resources)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -28,13 +31,45 @@ components/
           /app-front
           /app-backend
           /app-db
-installs
+installs/
           /app-standalone
           /app-onprem
 ```
 
 Defining separate packages for each component makes it easier to use composition to define new configurations; e.g. using an external database as opposed
 to a database running in cluster.
+
+## Reuse patches
+
+We encourage reusing patches across kustomize packages when it makes sense. For example suppose we
+have an onprem and standalone version of our application but both of them want to reuse
+a common patch to use an external database. We could lay the packages out like so
+
+```
+components/
+          /patches/
+                  /deployment-external-db.yaml
+installs/
+        /app-standalone
+        /app-onprem
+```
+
+The kustomization files for app-standalone could then look like the following
+
+```
+apiVersion: kustomize.config.k8s.io/v1beta1
+...
+patchesStrategicMerge:
+- ../../components/patches/deployment-external-db.yaml
+```
+
+### Disable security check for file outside of directory root
+
+To support the above layout we need to disable [kustomizes' security check](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/FAQ.md#security-file-foo-is-not-in-or-below-bar) by running with the `load_restrictor` flag: 
+
+```
+kustomize build --load_restrictor none $target
+```
 
 ## Command Line substitution
 
@@ -127,7 +162,7 @@ problems during upgrades.
 
 For more info see [kubeflow/manifests#1131](https://github.com/kubeflow/manifests/issues/1131)
 
-###Resource file naming
+### Resource file naming
 
   Resources should be organized by kind, where the resource is in a file that is the lower-case hyphenized form of the Resource kind. For example: a Deployment would go in a file named deployment.yaml. A ClusterRoleBinding would go in a file called cluster-role-binding.yaml. If there are multiple resources within a kustomize target (eg more than one deployment), you may want to maintain a single resource per file and add a prefix|suffix of the resource name to the filename. For example the file name would be `<kind>-<name>.yaml`. See below for an example.
 
