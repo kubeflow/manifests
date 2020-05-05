@@ -40,6 +40,8 @@ spec:
       name: Richard Liu
     - email: yuji.oshima0x3fd@gmail.com
       name: YujiOshima
+    - email: andrey.velichkevich@gmail.com
+      name: Andrey Velichkevich
     owners:
     - email: gaoce@caicloud.io
       name: Ce Gao
@@ -51,6 +53,8 @@ spec:
       name: Richard Liu
     - email: yuji.oshima0x3fd@gmail.com
       name: YujiOshima
+    - email: andrey.velichkevich@gmail.com
+      name: Andrey Velichkevich
     type: katib
     version: v1alpha3
   selector:
