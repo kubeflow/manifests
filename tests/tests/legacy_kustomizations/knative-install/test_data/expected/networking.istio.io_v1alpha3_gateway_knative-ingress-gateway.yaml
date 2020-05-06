@@ -10,6 +10,7 @@ metadata:
     app.kubernetes.io/version: v0.8.0
     kustomize.component: knative
     networking.knative.dev/ingress-provider: istio
+    serving.knative.dev/release: v0.11.1
   name: knative-ingress-gateway
   namespace: knative-serving
 spec:

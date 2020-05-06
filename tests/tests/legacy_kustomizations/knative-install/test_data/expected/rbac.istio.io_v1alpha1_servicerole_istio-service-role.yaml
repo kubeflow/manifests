@@ -9,6 +9,7 @@ metadata:
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: v0.8.0
     kustomize.component: knative
+    serving.knative.dev/release: v0.11.1
   name: istio-service-role
   namespace: knative-serving
 spec:

@@ -12,5 +12,5 @@ metadata:
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: 0.2.2
     kustomize.component: kfserving
-  name: kfserving-config-dbdb8cm9t2
+  name: kfserving-config
   namespace: kubeflow

@@ -9,6 +9,8 @@ resources:
 - service.yaml
 commonLabels:
   kustomize.component: kfserving
+generatorOptions:
+  disableNameSuffixHash: true
 configMapGenerator:
 - envs:
   - params.env

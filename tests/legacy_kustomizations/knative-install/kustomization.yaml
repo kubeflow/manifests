@@ -8,6 +8,7 @@ commonLabels:
   app.kubernetes.io/name: knative-serving-install
   app.kubernetes.io/part-of: kubeflow
   app.kubernetes.io/version: v0.8.0
+  serving.knative.dev/release: v0.11.1
 configMapGenerator: []
 configurations: []
 kind: Kustomization

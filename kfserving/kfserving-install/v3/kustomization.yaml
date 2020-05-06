@@ -9,7 +9,6 @@ commonLabels:
   app.kuberenets.io/name: kfserving-install
   app.kuberenets.io/managed-by: kfctl
   app.kuberenets.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.2.2
 configMapGenerator:
 - envs:
   - ../base/params.env

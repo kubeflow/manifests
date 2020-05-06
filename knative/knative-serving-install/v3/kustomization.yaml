@@ -4,12 +4,12 @@ namespace: knative-serving
 commonLabels:
   app: knative-install
   kustomize.component: knative
-  app.kubernetes.io/component: knative-install
-  app.kuberenets.io/instance: knative-install-v0.11.1
-  app.kuberenets.io/name: knative-install
+  app.kubernetes.io/component: knative-serving-install
+  app.kuberenets.io/instance: knative-serving-install-v0.11.1
+  app.kuberenets.io/name: knative-serving-install
   app.kuberenets.io/managed-by: kfctl
   app.kuberenets.io/part-of: kubeflow
-  app.kubernetes.io/version: v0.11.1
+  serving.knative.dev/release: v0.11.1
 configMapGenerator:
   - name: config-autoscaler
     files:

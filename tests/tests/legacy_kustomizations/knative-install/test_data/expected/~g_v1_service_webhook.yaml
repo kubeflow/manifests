@@ -27,3 +27,4 @@ spec:
     app.kubernetes.io/version: v0.8.0
     kustomize.component: knative
     role: webhook
+    serving.knative.dev/release: v0.11.1
