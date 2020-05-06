@@ -3,4 +3,4 @@ kind: Namespace
 metadata:
   name: kubeflow
   labels:
-      istio-injection: enabled
+    istio-injection: enabled
