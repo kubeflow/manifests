@@ -13,7 +13,9 @@ metadata:
   namespace: kubeflow
 spec:
   ports:
-  - port: 80
+  - name: http
+    port: 80
+    protocol: TCP
     targetPort: 3000
   selector:
     app: ml-pipeline-tensorboard-ui

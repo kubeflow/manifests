@@ -13,7 +13,7 @@ spec:
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: "false"
+        sidecar.istio.io/inject: "true"
       labels:
         kustomize.component: profiles
     spec:
@@ -32,12 +32,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: userid-header
-              name: kubeflow-config-4bkkg42k5m
+              name: kubeflow-config
         - name: USERID_PREFIX
           valueFrom:
             configMapKeyRef:
               key: userid-prefix
-              name: kubeflow-config-4bkkg42k5m
+              name: kubeflow-config
         - name: WORKLOAD_IDENTITY
           valueFrom:
             configMapKeyRef:
@@ -54,7 +54,6 @@ spec:
         name: manager
         ports:
         - containerPort: 8080
-          name: manager-http
           protocol: TCP
       - args: null
         command:
@@ -68,12 +67,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: userid-header
-              name: kubeflow-config-4bkkg42k5m
+              name: kubeflow-config
         - name: USERID_PREFIX
           valueFrom:
             configMapKeyRef:
               key: userid-prefix
-              name: kubeflow-config-4bkkg42k5m
+              name: kubeflow-config
         - name: CLUSTER_ADMIN
           valueFrom:
             configMapKeyRef:
@@ -81,15 +80,8 @@ spec:
               name: profiles-profiles-config-4mgcmtgk6t
         image: gcr.io/kubeflow-images-public/kfam:vmaster-gf3e09203
         imagePullPolicy: Always
-        livenessProbe:
-          httpGet:
-            path: /metrics
-            port: 8081
-          initialDelaySeconds: 30
-          periodSeconds: 30
         name: kfam
         ports:
         - containerPort: 8081
-          name: kfam-http
           protocol: TCP
       serviceAccountName: profiles-controller-service-account

@@ -1,5 +1,5 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: RoleBinding
+kind: ClusterRole
 metadata:
   labels:
     app: ml-pipeline
@@ -10,12 +10,33 @@ metadata:
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: 0.2.0
   name: ml-pipeline
-  namespace: kubeflow
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: ml-pipeline
-subjects:
-- kind: ServiceAccount
-  name: ml-pipeline
-  namespace: kubeflow
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - scheduledworkflows
+  verbs:
+  - create
+  - get
+  - list
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - delete

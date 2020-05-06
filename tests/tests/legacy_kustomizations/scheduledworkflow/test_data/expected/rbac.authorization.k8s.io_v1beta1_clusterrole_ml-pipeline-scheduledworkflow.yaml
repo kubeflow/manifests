@@ -1,16 +1,15 @@
 apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: Role
+kind: ClusterRole
 metadata:
   labels:
-    app: ml-pipeline
-    app.kubernetes.io/component: api-service
-    app.kubernetes.io/instance: api-service-0.2.0
+    app: ml-pipeline-scheduledworkflow
+    app.kubernetes.io/component: scheduledworkflow
+    app.kubernetes.io/instance: scheduledworkflow-0.2.0
     app.kubernetes.io/managed-by: kfctl
-    app.kubernetes.io/name: api-service
+    app.kubernetes.io/name: scheduledworkflow
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: 0.2.0
-  name: ml-pipeline
-  namespace: kubeflow
+  name: ml-pipeline-scheduledworkflow
 rules:
 - apiGroups:
   - argoproj.io
@@ -32,12 +31,7 @@ rules:
   - create
   - get
   - list
+  - watch
   - update
   - patch
-  - delete
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
   - delete

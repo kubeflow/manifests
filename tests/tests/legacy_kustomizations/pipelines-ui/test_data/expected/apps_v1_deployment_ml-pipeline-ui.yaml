@@ -40,9 +40,19 @@ spec:
           value: /etc/credentials/user-gcp-sa.json
         - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
           value: /etc/config/viewer-pod-template.json
+        - name: DEPLOYMENT
+          value: KUBEFLOW
+        - name: ARTIFACTS_SERVICE_PROXY_NAME
+          value: ml-pipeline-ui-artifact
+        - name: ARTIFACTS_SERVICE_PROXY_PORT
+          value: "80"
+        - name: ARTIFACTS_SERVICE_PROXY_ENABLED
+          value: "true"
+        - name: ENABLE_AUTHZ
+          value: "true"
         - name: ALLOW_CUSTOM_VISUALIZATIONS
           value: "true"
-        image: gcr.io/ml-pipeline/frontend:0.2.5
+        image: gcr.io/gongyuan-pipeline-test/dev/frontend@sha256:ee2fb833105b10ff866b78169b6c56884cafdcf8bc57d684ad2fc7cda757afb6
         imagePullPolicy: IfNotPresent
         name: ml-pipeline-ui
         ports:

@@ -13,7 +13,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: cluster-admin
+  name: ml-pipeline-scheduledworkflow
 subjects:
 - kind: ServiceAccount
   name: ml-pipeline-scheduledworkflow

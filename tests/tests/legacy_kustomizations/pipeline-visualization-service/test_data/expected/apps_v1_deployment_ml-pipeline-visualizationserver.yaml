@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/name: pipeline-visualization-service
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: 0.2.0
-  name: ml-pipeline-ml-pipeline-visualizationserver
+  name: ml-pipeline-visualizationserver
   namespace: kubeflow
 spec:
   selector:
@@ -35,8 +35,9 @@ spec:
         app.kubernetes.io/version: 0.2.0
     spec:
       containers:
-      - image: gcr.io/ml-pipeline/visualization-server:0.2.5
+      - image: gcr.io/ml-pipeline/visualization-server:0.5.0
         imagePullPolicy: IfNotPresent
         name: ml-pipeline-visualizationserver
         ports:
         - containerPort: 8888
+      serviceAccountName: ml-pipeline-visualizationserver
