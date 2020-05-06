@@ -8,7 +8,6 @@ resources:
 - service-role.yaml
 - service-role-binding.yaml
 - role-binding.yaml
-- config-map.yaml
 - deployment.yaml
 - service-account.yaml
 - service.yaml
@@ -37,3 +36,38 @@ images:
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/controller
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/controller
   digest: sha256:5ca13e5b3ce5e2819c4567b75c0984650a57272ece44bc1dabf930f9fe1e19a1
+configMapGenerator:
+  - name: config-autoscaler
+    files:
+    - _example=configs/autoscaler.example
+  - name: config-defaults
+    files:
+    - _example=configs/defaults.example
+  - name: config-deployment
+    files:
+    - _example=configs/deployment.example
+  - name: config-domain
+    files:
+    - _example=configs/domain.example
+  - name: config-gc
+    files:
+    - _example=configs/gc.example
+  - name: config-logging
+    files:
+    - _example=configs/logging.example
+  - name: config-network
+    files:
+    - _example=configs/network.example
+  - name: config-observability
+    files:
+    - _example=configs/observability.example
+  - name: config-tracing
+    files:
+    - _example=configs/tracing.example
+  - name: config-istio
+    files:
+    - configs/gateway.knative-serving.knative-ingress-gateway
+    - configs/local-gateway.knative-serving.cluster-local-gateway
+    - configs/local-gateway.mesh
+    - configs/reconcileExternalGateway
+    
