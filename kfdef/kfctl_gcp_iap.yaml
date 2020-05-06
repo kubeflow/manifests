@@ -444,5 +444,5 @@ spec:
       useBasicAuth: false
   repos:
   - name: manifests
-    uri: https://github.com/Bobgy/manifests/archive/kfp-multi-user.tar.gz
+    uri: https://github.com/Bobgy/manifests/archive/kfp-multi-user-master.tar.gz
   version: master
