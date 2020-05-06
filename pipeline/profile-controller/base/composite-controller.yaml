@@ -6,8 +6,8 @@ spec:
   generateSelector: true
   resyncPeriodSeconds: 10
   parentResource:
-    apiVersion: kubeflow.org/v1
-    resource: profiles
+    apiVersion: v1
+    resource: namespaces
   childResources:
   - apiVersion: v1
     resource: secrets
