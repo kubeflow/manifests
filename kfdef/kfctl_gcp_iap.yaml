@@ -7,8 +7,8 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: kubeflow-namespace
-    name: kubeflow-namespace
+        path: namespaces
+    name: namespaces
   - kustomizeConfig:
       parameters:
       - name: namespace
