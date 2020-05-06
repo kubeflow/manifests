@@ -12,7 +12,7 @@ configMapGenerator:
 - behavior: merge
   envs:
   - params_0.env
-  name: kfserving-parameters
+  name: kfserving-config
 configurations: []
 kind: Kustomization
 namespace: kubeflow
