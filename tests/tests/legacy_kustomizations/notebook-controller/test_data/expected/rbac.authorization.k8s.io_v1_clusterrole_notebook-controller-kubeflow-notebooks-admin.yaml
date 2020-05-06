@@ -1,0 +1,19 @@
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-notebooks-admin: "true"
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: notebook-controller
+    app.kubernetes.io/component: notebook-controller
+    app.kubernetes.io/instance: notebook-controller-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: notebook-controller
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: notebook-controller
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+  name: notebook-controller-kubeflow-notebooks-admin
+rules: []

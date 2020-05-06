@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app.kubernetes.io/component: bootstrap
+    app.kubernetes.io/instance: bootstrap-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: bootstrap
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: admission-webhook-bootstrap
+  name: admission-webhook-bootstrap-stateful-set
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: bootstrap
+      app.kubernetes.io/instance: bootstrap-v1.0.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: bootstrap
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v1.0.0
+      kustomize.component: admission-webhook-bootstrap
+  serviceName: service
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app.kubernetes.io/component: bootstrap
+        app.kubernetes.io/instance: bootstrap-v1.0.0
+        app.kubernetes.io/managed-by: kfctl
+        app.kubernetes.io/name: bootstrap
+        app.kubernetes.io/part-of: kubeflow
+        app.kubernetes.io/version: v1.0.0
+        kustomize.component: admission-webhook-bootstrap
+    spec:
+      containers:
+      - command:
+        - sh
+        - /var/webhook-config/create_ca.sh
+        image: gcr.io/kubeflow-images-public/ingress-setup:latest
+        name: bootstrap
+        volumeMounts:
+        - mountPath: /var/webhook-config/
+          name: admission-webhook-config
+      restartPolicy: Always
+      serviceAccountName: admission-webhook-bootstrap-service-account
+      volumes:
+      - configMap:
+          name: admission-webhook-bootstrap-config-map
+        name: admission-webhook-config
+  volumeClaimTemplates: []

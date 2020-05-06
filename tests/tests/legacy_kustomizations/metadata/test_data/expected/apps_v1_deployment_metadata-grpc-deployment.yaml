@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: metadata
+    app.kubernetes.io/instance: metadata-0.2.1
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: metadata
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: 0.2.1
+    component: grpc-server
+    kustomize.component: metadata
+  name: metadata-grpc-deployment
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: metadata
+      app.kubernetes.io/instance: metadata-0.2.1
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: metadata
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: 0.2.1
+      component: grpc-server
+      kustomize.component: metadata
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app.kubernetes.io/component: metadata
+        app.kubernetes.io/instance: metadata-0.2.1
+        app.kubernetes.io/managed-by: kfctl
+        app.kubernetes.io/name: metadata
+        app.kubernetes.io/part-of: kubeflow
+        app.kubernetes.io/version: 0.2.1
+        component: grpc-server
+        kustomize.component: metadata
+    spec:
+      containers:
+      - args:
+        - --grpc_port=$(METADATA_GRPC_SERVICE_PORT)
+        - --mysql_config_host=metadata-db
+        - --mysql_config_database=$(MYSQL_DATABASE)
+        - --mysql_config_port=$(MYSQL_PORT)
+        - --mysql_config_user=$(MYSQL_USER_NAME)
+        - --mysql_config_password=$(MYSQL_ROOT_PASSWORD)
+        command:
+        - /bin/metadata_store_server
+        envFrom:
+        - configMapRef:
+            name: metadata-db-parameters
+        - secretRef:
+            name: metadata-db-secrets
+        - configMapRef:
+            name: metadata-grpc-configmap
+        image: gcr.io/tfx-oss-public/ml_metadata_store_server:v0.21.1
+        name: container
+        ports:
+        - containerPort: 8080
+          name: grpc-backendapi

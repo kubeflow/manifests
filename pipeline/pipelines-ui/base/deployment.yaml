@@ -30,6 +30,8 @@ spec:
           value: 'true'
         - name: ENABLE_AUTHZ
           value: 'true'
+        - name: ALLOW_CUSTOM_VISUALIZATIONS
+          value: 'true'
         ports:
         - containerPort: 3000
       serviceAccountName: ml-pipeline-ui

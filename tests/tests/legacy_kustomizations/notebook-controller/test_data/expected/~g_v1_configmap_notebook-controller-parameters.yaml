@@ -1,0 +1,19 @@
+apiVersion: v1
+data:
+  ISTIO_GATEWAY: kubeflow/kubeflow-gateway
+  POD_LABELS: gcp-cred-secret=user-gcp-sa,gcp-cred-secret-filename=user-gcp-sa.json
+  USE_ISTIO: "false"
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    app: notebook-controller
+    app.kubernetes.io/component: notebook-controller
+    app.kubernetes.io/instance: notebook-controller-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: notebook-controller
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: notebook-controller
+  name: notebook-controller-parameters
+  namespace: kubeflow

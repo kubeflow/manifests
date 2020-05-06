@@ -1,7 +1,8 @@
+---
 kind: DaemonSet
 apiVersion: apps/v1
 metadata:
-  name: fsx-csi-node-ds
+  name: fsx-csi-node
 spec:
   selector:
     matchLabels:
@@ -11,7 +12,9 @@ spec:
       labels:
         app: fsx-csi-node
     spec:
-      serviceAccount: fsx-csi-node-sa
+      nodeSelector:
+        kubernetes.io/os: linux
+        kubernetes.io/arch: amd64
       hostNetwork: true
       containers:
         - name: fsx-plugin
@@ -31,15 +34,22 @@ spec:
               mountPropagation: "Bidirectional"
             - name: plugin-dir
               mountPath: /csi
-            - name: device-dir
-              mountPath: /dev
+          ports:
+            - containerPort: 9810
+              name: healthz
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: healthz
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 2
         - name: csi-driver-registrar
-          image: quay.io/k8scsi/driver-registrar:v0.4.2
+          image: quay.io/k8scsi/csi-node-driver-registrar:v1.1.0
           args:
             - --csi-address=$(ADDRESS)
-            - --mode=node-register
-            - --driver-requires-attachment=true
-            - --pod-info-mount-version="v1"
             - --kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)
             - --v=5
           env:
@@ -56,20 +66,25 @@ spec:
               mountPath: /csi
             - name: registration-dir
               mountPath: /registration
+        - name: liveness-probe
+          imagePullPolicy: Always
+          image: quay.io/k8scsi/livenessprobe:v1.1.0
+          args:
+            - --csi-address=/csi/csi.sock
+            - --health-port=9810
+          volumeMounts:
+            - mountPath: /csi
+              name: plugin-dir
       volumes:
         - name: kubelet-dir
           hostPath:
             path: /var/lib/kubelet
             type: Directory
+        - name: registration-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins_registry/
+            type: Directory
         - name: plugin-dir
           hostPath:
             path: /var/lib/kubelet/plugins/fsx.csi.aws.com/
             type: DirectoryOrCreate
-        - name: registration-dir
-          hostPath:
-            path: /var/lib/kubelet/plugins/
-            type: Directory
-        - name: device-dir
-          hostPath:
-            path: /dev
-            type: Directory

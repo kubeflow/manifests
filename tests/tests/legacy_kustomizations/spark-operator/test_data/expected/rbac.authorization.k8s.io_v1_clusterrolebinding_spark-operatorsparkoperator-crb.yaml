@@ -1,0 +1,20 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: spark-operator
+    app.kubernetes.io/instance: spark-operator-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: sparkoperator
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: spark-operator
+  name: spark-operatorsparkoperator-crb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: spark-operatoroperator-cr
+subjects:
+- kind: ServiceAccount
+  name: spark-operatoroperator-sa
+  namespace: kubeflow

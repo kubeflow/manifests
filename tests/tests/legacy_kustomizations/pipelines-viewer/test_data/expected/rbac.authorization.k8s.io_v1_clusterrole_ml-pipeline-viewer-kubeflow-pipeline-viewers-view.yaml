@@ -1,0 +1,22 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: ml-pipeline-viewer-crd
+    app.kubernetes.io/component: pipelines-viewer
+    app.kubernetes.io/instance: pipelines-viewer-0.2.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: pipelines-viewer
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: 0.2.0
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+  name: ml-pipeline-viewer-kubeflow-pipeline-viewers-view
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - viewers
+  verbs:
+  - get
+  - list
+  - watch

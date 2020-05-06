@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    kustomize.component: profiles
+  name: profiles-deployment
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      kustomize.component: profiles
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        kustomize.component: profiles
+    spec:
+      containers:
+      - args: null
+        command:
+        - /manager
+        - -userid-header
+        - $(USERID_HEADER)
+        - -userid-prefix
+        - $(USERID_PREFIX)
+        - -workload-identity
+        - $(WORKLOAD_IDENTITY)
+        env:
+        - name: USERID_HEADER
+          valueFrom:
+            configMapKeyRef:
+              key: userid-header
+              name: kubeflow-config-988m2m9m87
+        - name: USERID_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              key: userid-prefix
+              name: kubeflow-config-988m2m9m87
+        - name: WORKLOAD_IDENTITY
+          valueFrom:
+            configMapKeyRef:
+              key: gcp-sa
+              name: profiles-profiles-config-4mgcmtgk6t
+        image: gcr.io/kubeflow-images-public/profile-controller:vmaster-g34aa47c2
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        name: manager
+        ports:
+        - containerPort: 8080
+          name: manager-http
+          protocol: TCP
+      - args: null
+        command:
+        - /access-management
+        - -cluster-admin
+        - $(CLUSTER_ADMIN)
+        - -userid-prefix
+        - $(USERID_PREFIX)
+        env:
+        - name: USERID_HEADER
+          valueFrom:
+            configMapKeyRef:
+              key: userid-header
+              name: kubeflow-config-988m2m9m87
+        - name: USERID_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              key: userid-prefix
+              name: kubeflow-config-988m2m9m87
+        - name: CLUSTER_ADMIN
+          valueFrom:
+            configMapKeyRef:
+              key: admin
+              name: profiles-profiles-config-4mgcmtgk6t
+        image: gcr.io/kubeflow-images-public/kfam:vmaster-gf3e09203
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8081
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        name: kfam
+        ports:
+        - containerPort: 8081
+          name: kfam-http
+          protocol: TCP
+      serviceAccountName: profiles-controller-service-account

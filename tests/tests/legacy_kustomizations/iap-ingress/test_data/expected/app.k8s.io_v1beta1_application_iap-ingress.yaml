@@ -1,0 +1,40 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  labels:
+    app.kubernetes.io/component: iap-ingress
+    app.kubernetes.io/instance: iap-ingress-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: iap-ingress
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: iap-ingress
+  name: iap-ingress
+  namespace: istio-system
+spec:
+  addOwnerRef: true
+  componentKinds:
+  - group: core
+    kind: ConfigMap
+  - group: apps
+    kind: Deployment
+  descriptor:
+    description: ""
+    keywords:
+    - iap-ingress
+    - kubeflow
+    links:
+    - description: About
+      url: ""
+    maintainers: []
+    owners: []
+    type: iap-ingress
+    version: v1beta1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: iap-ingress
+      app.kubernetes.io/instance: iap-ingress-v0.7.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: iap-ingress
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.7.0

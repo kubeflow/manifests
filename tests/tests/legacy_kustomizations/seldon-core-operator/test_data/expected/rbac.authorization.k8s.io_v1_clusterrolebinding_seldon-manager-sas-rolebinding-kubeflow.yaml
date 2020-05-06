@@ -1,0 +1,20 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: seldon
+    app.kubernetes.io/component: seldon
+    app.kubernetes.io/instance: seldon-1.15
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: seldon-core-operator
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: "1.15"
+  name: seldon-manager-sas-rolebinding-kubeflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: seldon-manager-sas-role-kubeflow
+subjects:
+- kind: ServiceAccount
+  name: seldon-manager
+  namespace: kubeflow

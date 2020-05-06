@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ml-pipeline-tensorboard-ui
+    app.kubernetes.io/component: pipelines-ui
+    app.kubernetes.io/instance: pipelines-ui-0.2.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: pipelines-ui
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: 0.2.0
+  name: ml-pipeline-tensorboard-ui
+  namespace: kubeflow
+spec:
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    app: ml-pipeline-tensorboard-ui
+    app.kubernetes.io/component: pipelines-ui
+    app.kubernetes.io/instance: pipelines-ui-0.2.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: pipelines-ui
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: 0.2.0

@@ -1,0 +1,19 @@
+apiVersion: cloud.google.com/v1beta1
+kind: BackendConfig
+metadata:
+  labels:
+    app.kubernetes.io/component: iap-ingress
+    app.kubernetes.io/instance: iap-ingress-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: iap-ingress
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: iap-ingress
+  name: iap-backendconfig
+  namespace: istio-system
+spec:
+  iap:
+    enabled: true
+    oauthclientCredentials:
+      secretName: kubeflow-oauth
+  timeoutSec: 3600

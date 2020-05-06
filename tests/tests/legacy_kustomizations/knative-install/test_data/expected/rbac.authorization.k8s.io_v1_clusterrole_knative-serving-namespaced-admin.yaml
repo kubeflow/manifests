@@ -1,0 +1,24 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-serving-install
+    app.kubernetes.io/instance: knative-serving-install-v0.8.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: knative-serving-install
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.8.0
+    kustomize.component: knative
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    serving.knative.dev/release: v0.11.1
+  name: knative-serving-namespaced-admin
+rules:
+- apiGroups:
+  - serving.knative.dev
+  - networking.internal.knative.dev
+  - autoscaling.internal.knative.dev
+  - caching.internal.knative.dev
+  resources:
+  - '*'
+  verbs:
+  - '*'

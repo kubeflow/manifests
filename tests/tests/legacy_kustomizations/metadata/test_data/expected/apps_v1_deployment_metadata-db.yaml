@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: metadata
+    app.kubernetes.io/instance: metadata-0.2.1
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: metadata
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: 0.2.1
+    component: db
+    kustomize.component: metadata
+  name: metadata-db
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: metadata
+      app.kubernetes.io/instance: metadata-0.2.1
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: metadata
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: 0.2.1
+      component: db
+      kustomize.component: metadata
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app.kubernetes.io/component: metadata
+        app.kubernetes.io/instance: metadata-0.2.1
+        app.kubernetes.io/managed-by: kfctl
+        app.kubernetes.io/name: metadata
+        app.kubernetes.io/part-of: kubeflow
+        app.kubernetes.io/version: 0.2.1
+        component: db
+        kustomize.component: metadata
+      name: db
+    spec:
+      containers:
+      - args:
+        - --datadir
+        - /var/lib/mysql/datadir
+        envFrom:
+        - configMapRef:
+            name: metadata-db-parameters
+        - secretRef:
+            name: metadata-db-secrets
+        image: mysql:8.0.3
+        name: db-container
+        ports:
+        - containerPort: 3306
+          name: dbapi
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - mysql -D $$MYSQL_DATABASE -p$$MYSQL_ROOT_PASSWORD -e 'SELECT 1'
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: metadata-mysql
+      volumes:
+      - name: metadata-mysql
+        persistentVolumeClaim:
+          claimName: metadata-mysql

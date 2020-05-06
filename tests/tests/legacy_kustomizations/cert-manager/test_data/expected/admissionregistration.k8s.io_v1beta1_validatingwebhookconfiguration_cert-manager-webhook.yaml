@@ -1,0 +1,38 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-apiserver-ca: "true"
+  labels:
+    app: webhook
+    app.kubernetes.io/component: cert-manager
+    app.kubernetes.io/instance: cert-manager-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: cert-manager
+  name: cert-manager-webhook
+webhooks:
+- clientConfig:
+    caBundle: ""
+    service:
+      name: kubernetes
+      namespace: default
+      path: /apis/webhook.cert-manager.io/v1beta1/validations
+  failurePolicy: Fail
+  name: webhook.certmanager.k8s.io
+  rules:
+  - apiGroups:
+    - cert-manager.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - certificates
+    - issuers
+    - clusterissuers
+    - certificaterequests
+  sideEffects: None

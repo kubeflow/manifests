@@ -15,7 +15,8 @@ data:
         "AccessKey": "minio",
         "SecretAccessKey": "minio123",
         "BucketName": "mlpipeline",
-        "PipelinePath": "pipelines"
+        "PipelinePath": "pipelines",
+        "Secure": false
       },
       "InitConnectionTimeout": "6m",
       "DefaultPipelineRunnerServiceAccount": "default-editor",

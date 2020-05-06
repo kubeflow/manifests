@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+bases:
+- ../../../common/spartakus/base
+commonLabels:
+  app.kubernetes.io/component: spartakus
+  app.kubernetes.io/instance: spartakus-v1.0.0
+  app.kubernetes.io/managed-by: kfctl
+  app.kubernetes.io/name: spartakus
+  app.kubernetes.io/part-of: kubeflow
+  app.kubernetes.io/version: v1.0.0
+configMapGenerator:
+- behavior: merge
+  envs:
+  - params_0.env
+  name: spartakus-config
+configurations: []
+kind: Kustomization
+namespace: kubeflow
+patches: []
+patchesStrategicMerge: []
+resources:
+- ../../../common/spartakus/overlays/application/application.yaml

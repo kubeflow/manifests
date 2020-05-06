@@ -1,3 +1,4 @@
+# TODO(jlewi): We should switch to using a configmap generator to load from external files.
 ---
 apiVersion: v1
 data:

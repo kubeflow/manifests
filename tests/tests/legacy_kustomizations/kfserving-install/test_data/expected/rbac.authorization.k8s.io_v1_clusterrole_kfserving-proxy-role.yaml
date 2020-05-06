@@ -1,0 +1,25 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: kfserving-install
+    app.kubernetes.io/instance: kfserving-install-0.2.2
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: kfserving-install
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: 0.2.2
+    kustomize.component: kfserving
+  name: kfserving-proxy-role
+rules:
+- apiGroups:
+  - authentication.k8s.io
+  resources:
+  - tokenreviews
+  verbs:
+  - create
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create

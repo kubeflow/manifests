@@ -1,0 +1,19 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: katib
+    app.kubernetes.io/instance: katib-controller-0.8.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: katib-controller
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: 0.8.0
+  name: katib-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: katib-controller
+subjects:
+- kind: ServiceAccount
+  name: katib-controller
+  namespace: kubeflow

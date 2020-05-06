@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: profiles
+    app.kubernetes.io/instance: profiles-v1.0.0
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: profiles
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v1.0.0
+    kustomize.component: profiles
+  name: profiles-deployment
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: profiles
+      app.kubernetes.io/instance: profiles-v1.0.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: profiles
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v1.0.0
+      kustomize.component: profiles
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app.kubernetes.io/component: profiles
+        app.kubernetes.io/instance: profiles-v1.0.0
+        app.kubernetes.io/managed-by: kfctl
+        app.kubernetes.io/name: profiles
+        app.kubernetes.io/part-of: kubeflow
+        app.kubernetes.io/version: v1.0.0
+        kustomize.component: profiles
+    spec:
+      containers:
+      - args:
+        - -userid-header
+        - X-Goog-Authenticated-User-Email
+        - -userid-prefix
+        - 'accounts.google.com:'
+        - -workload-identity
+        - kf-v1-0210-user@jlewi-dev.iam.gserviceaccount.com
+        command:
+        - /manager
+        image: gcr.io/kubeflow-images-public/profile-controller:vmaster-g34aa47c2
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        name: manager
+        ports:
+        - containerPort: 8080
+          name: manager-http
+          protocol: TCP
+      - args:
+        - -cluster-admin
+        - jlewi@google.com
+        - -userid-header
+        - X-Goog-Authenticated-User-Email
+        - -userid-prefix
+        - 'accounts.google.com:'
+        command:
+        - /access-management
+        image: gcr.io/kubeflow-images-public/kfam:vmaster-gf3e09203
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8081
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        name: kfam
+        ports:
+        - containerPort: 8081
+          name: kfam-http
+          protocol: TCP
+      serviceAccountName: profiles-controller-service-account

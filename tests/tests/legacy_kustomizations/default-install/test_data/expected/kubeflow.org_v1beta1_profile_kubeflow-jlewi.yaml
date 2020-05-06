@@ -1,0 +1,9 @@
+apiVersion: kubeflow.org/v1beta1
+kind: Profile
+metadata:
+  name: kubeflow-jlewi
+  namespace: kubeflow
+spec:
+  owner:
+    kind: User
+    name: jlewi@google.com

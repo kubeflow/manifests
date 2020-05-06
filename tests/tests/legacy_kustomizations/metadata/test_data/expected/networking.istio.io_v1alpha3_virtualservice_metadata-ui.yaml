@@ -1,0 +1,30 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  labels:
+    app.kubernetes.io/component: metadata
+    app.kubernetes.io/instance: metadata-0.2.1
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: metadata
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: 0.2.1
+    kustomize.component: metadata
+  name: metadata-ui
+  namespace: kubeflow
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /metadata
+    rewrite:
+      uri: /metadata
+    route:
+    - destination:
+        host: metadata-ui.kubeflow.svc.cluster.local
+        port:
+          number: 80
+    timeout: 300s

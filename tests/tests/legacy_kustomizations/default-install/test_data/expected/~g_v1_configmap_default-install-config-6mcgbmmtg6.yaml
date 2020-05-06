@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  profile-name: kubeflow-jlewi
+  user: jlewi@google.com
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels: {}
+  name: default-install-config-6mcgbmmtg6
+  namespace: kubeflow

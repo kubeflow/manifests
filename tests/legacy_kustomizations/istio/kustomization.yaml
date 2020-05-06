@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+bases:
+- ../../../istio/istio/base
+configMapGenerator:
+- behavior: merge
+  envs:
+  - params_0.env
+  name: istio-parameters
+configurations: []
+kind: Kustomization
+namespace: kubeflow
+patches: []
+patchesStrategicMerge: []
+resources: []
