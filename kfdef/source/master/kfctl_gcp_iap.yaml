@@ -7,6 +7,11 @@ metadata:
 spec:
   applications:
   - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: namespaces
+    name: namespaces
+  - kustomizeConfig:
       parameters:
       - name: namespace
         value: istio-system
