@@ -1,5 +1,17 @@
 # Manifests
-This repo is a [bespoke configuration](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/glossary.md#bespoke-configuration) of kustomize targets used by kubeflow. These targets are traversed by kubeflow's CLI `kfctl`. Each target is compatible with the kustomize CLI and can be processed independently by kubectl or the kustomize command.
+
+This repo contains [kustomize](https://kustomize.io/) packages for deploying Kubeflow applications. 
+
+
+If you are a contributor authoring or editing the packages please see [Best Practices](./docs/KustomizeBestPractices.md).
+
+
+# Obsolete information
+
+The information below is obsolete. It pertains to using `kfctl` to generate `kustomization.yaml`. This was how things worked through Kubeflow 1.0.0.
+
+As described in [kubeflow/manifests#1062](https://github.com/kubeflow/manifests/issues/1062) we are working on fixing this in Kubeflow 1.1.0.
+
 
 ## Organization
 Subdirectories within the repo hold kustomize targets (base or overlay subdirectory). Overlays contain additional functionality and multiple overlays may be mixed into the base (described below). Both base and overlay targets are processed by kfctl during generate and apply phases and is detailed in [Kfctl Processing](#kfctl-processing).
