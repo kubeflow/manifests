@@ -14,7 +14,7 @@ class Controller(BaseHTTPRequestHandler):
 
         # Compute status based on observed state.
         desired_status = {
-            "kubeflow-pipelines-config-ready": \
+            "kubeflow-pipelines-ready": \
                 len(children["Secret.v1"]) == 1 and \
                 len(children["ConfigMap.v1"]) == 1 and \
                 len(children["Deployment.apps/v1"]) == 2 and \
@@ -72,7 +72,7 @@ class Controller(BaseHTTPRequestHandler):
                     },
                     "spec": {
                         "containers": [{
-                            "image": "gcr.io/ml-pipeline/visualization-server:0.5.0",
+                            "image": "gcr.io/ml-pipeline/visualization-server:0.5.1",
                             "imagePullPolicy": "IfNotPresent",
                             "name": "ml-pipeline-visualizationserver",
                             "ports": [{"containerPort": 8888}],
@@ -162,7 +162,7 @@ class Controller(BaseHTTPRequestHandler):
                         "containers": [
                             {
                                 "name": "ml-pipeline-ui-artifact",
-                                "image": "gcr.io/gongyuan-pipeline-test/dev/frontend@sha256:ee2fb833105b10ff866b78169b6c56884cafdcf8bc57d684ad2fc7cda757afb6",
+                                "image": "gcr.io/ml-pipeline/frontend:0.5.1",
                                 "imagePullPolicy": "IfNotPresent",
                                 "ports": [
                                     { "containerPort": 3000 }
