@@ -18,7 +18,6 @@ SEARCH_DIRS = [
   # TODO(https://github.com/kubeflow/manifests/issues/1052): Remove this
   # after the move to v3 is done.
   "tests/legacy_kustomizations",
-  "katib/installs",
   ]
 
 # The subdirectory to story the expected manifests in
