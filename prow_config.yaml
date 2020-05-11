@@ -1,5 +1,5 @@
 # This file configures the workflows to trigger in our Prow jobs.
-# see kubeflow/testing/py/run_e2e_workflow.py
+# see https://github.com/kubeflow/testing/blob/master/py/kubeflow/testing/run_e2e_workflow.py
 python_paths:
   # Need to place kubeflow/testing in front of kubeflow/testing so that the package can
   # be correctly located.
