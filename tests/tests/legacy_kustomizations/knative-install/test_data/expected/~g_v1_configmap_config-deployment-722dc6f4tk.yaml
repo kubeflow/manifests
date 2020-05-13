@@ -15,25 +15,10 @@ data:
     # These sample configuration options may be copied out of
     # this example block and unindented to be in the data block
     # to actually change the configuration.
-    #
-    # This may be "zipkin" or "stackdriver", the default is "none"
-    backend: "none"
 
-    # URL to zipkin collector where traces are sent.
-    # This must be specified when backend is "zipkin"
-    zipkin-endpoint: "http://zipkin.istio-system.svc.cluster.local:9411/api/v2/spans"
-
-    # The GCP project into which stackdriver metrics will be written
-    # when backend is "stackdriver".  If unspecified, the project-id
-    # is read from GCP metadata when running on GCP.
-    stackdriver-project-id: "my-project"
-
-    # Enable zipkin debug mode. This allows all spans to be sent to the server
-    # bypassing sampling.
-    debug: "false"
-
-    # Percentage (0-1) of requests to trace
-    sample-rate: "0.1"
+    # List of repositories for which tag to digest resolving should be skipped
+    registriesSkippingTagResolving: "ko.local,dev.local"
+    queueSidecarImage: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:792f6945c7bc73a49a470a5b955c39c8bd174705743abf5fb71aa0f4c04128eb
 kind: ConfigMap
 metadata:
   labels:
@@ -45,5 +30,5 @@ metadata:
     app.kubernetes.io/version: v0.8.0
     kustomize.component: knative
     serving.knative.dev/release: v0.11.1
-  name: config-tracing
+  name: config-deployment-722dc6f4tk
   namespace: knative-serving

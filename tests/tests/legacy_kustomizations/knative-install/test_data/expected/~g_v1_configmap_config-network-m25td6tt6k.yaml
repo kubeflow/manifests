@@ -127,5 +127,5 @@ metadata:
     app.kubernetes.io/version: v0.8.0
     kustomize.component: knative
     serving.knative.dev/release: v0.11.1
-  name: config-network
+  name: config-network-m25td6tt6k
   namespace: knative-serving

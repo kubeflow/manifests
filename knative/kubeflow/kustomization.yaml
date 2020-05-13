@@ -2,48 +2,48 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: knative-serving
 commonLabels:
-  app: knative-install
+  app: knative
   kustomize.component: knative
-  app.kubernetes.io/component: knative-serving-install
-  app.kuberenets.io/instance: knative-serving-install-v0.11.1
-  app.kuberenets.io/name: knative-serving-install
+  app.kubernetes.io/component: knative-serving
+  app.kuberenets.io/instance: knative-serving-v0.11.1
+  app.kuberenets.io/name: knative-serving
   app.kuberenets.io/managed-by: kfctl
   app.kuberenets.io/part-of: kubeflow
   serving.knative.dev/release: v0.11.1
 configMapGenerator:
   - name: config-autoscaler
     files:
-    - _example=../base/configs/autoscaler.example
+    - _example=../knative-serving-install/base/configs/autoscaler.example
   - name: config-defaults
     files:
-    - _example=../base/configs/defaults.example
+    - _example=../knative-serving-install/base/configs/defaults.example
   - name: config-deployment
     files:
-    - _example=../base/configs/deployment.example
+    - _example=../knative-serving-install/base/configs/deployment.example
   - name: config-domain
     files:
-    - _example=../base/configs/domain.example
+    - _example=../knative-serving-install/base/configs/domain.example
   - name: config-gc
     files:
-    - _example=../base/configs/gc.example
+    - _example=../knative-serving-install/base/configs/gc.example
   - name: config-logging
     files:
-    - _example=../base/configs/logging.example
+    - _example=../knative-serving-install/base/configs/logging.example
   - name: config-network
     files:
-    - _example=../base/configs/network.example
+    - _example=../knative-serving-install/base/configs/network.example
   - name: config-observability
     files:
-    - _example=../base/configs/observability.example
+    - _example=../knative-serving-install/base/configs/observability.example
   - name: config-tracing
     files:
-    - _example=../base/configs/tracing.example
+    - _example=../knative-serving-install/base/configs/tracing.example
   - name: config-istio
     files:
-    - ../base/configs/gateway.knative-serving.knative-ingress-gateway
-    - ../base/configs/local-gateway.knative-serving.cluster-local-gateway
-    - ../base/configs/local-gateway.mesh
-    - ../base/configs/reconcileExternalGateway
+    - ../knative-serving-install/base/configs/gateway.knative-serving.knative-ingress-gateway
+    - ../knative-serving-install/base/configs/local-gateway.knative-serving.cluster-local-gateway
+    - ../knative-serving-install/base/configs/local-gateway.mesh
+    - ../knative-serving-install/base/configs/reconcileExternalGateway
 images:
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/activator
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/activator
@@ -64,17 +64,19 @@ images:
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/controller
   digest: sha256:5ca13e5b3ce5e2819c4567b75c0984650a57272ece44bc1dabf930f9fe1e19a1
 resources:
-- ../base/gateway.yaml
-- ../base/cluster-role.yaml
-- ../base/cluster-role-binding.yaml
-- ../base/service-role.yaml
-- ../base/service-role-binding.yaml
-- ../base/role-binding.yaml
-- ../base/deployment.yaml
-- ../base/service-account.yaml
-- ../base/service.yaml
-- ../base/apiservice.yaml
-- ../base/image.yaml
-- ../base/hpa.yaml
-- ../base/webhook-configuration.yaml
-- ../overlays/application
+- ../knative-serving-crds/base
+- ../knative-serving-crds/overlays/application
+- ../knative-serving-install/base/gateway.yaml
+- ../knative-serving-install/base/cluster-role.yaml
+- ../knative-serving-install/base/cluster-role-binding.yaml
+- ../knative-serving-install/base/service-role.yaml
+- ../knative-serving-install/base/service-role-binding.yaml
+- ../knative-serving-install/base/role-binding.yaml
+- ../knative-serving-install/base/deployment.yaml
+- ../knative-serving-install/base/service-account.yaml
+- ../knative-serving-install/base/service.yaml
+- ../knative-serving-install/base/apiservice.yaml
+- ../knative-serving-install/base/image.yaml
+- ../knative-serving-install/base/hpa.yaml
+- ../knative-serving-install/base/webhook-configuration.yaml
+- ../knative-serving-install/overlays/application

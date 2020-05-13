@@ -19,5 +19,5 @@ metadata:
     app.kubernetes.io/version: v0.8.0
     kustomize.component: knative
     serving.knative.dev/release: v0.11.1
-  name: config-istio
+  name: config-istio-t72g6gt48b
   namespace: knative-serving

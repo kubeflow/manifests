@@ -1,0 +1,50 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+commonLabels:
+  app: kfserving
+  kustomize.component: kfserving
+  app.kubernetes.io/component: kfserving
+  app.kuberenets.io/instance: kfserving-v0.2.2
+  app.kuberenets.io/name: kfserving
+  app.kuberenets.io/managed-by: kfctl
+  app.kuberenets.io/part-of: kubeflow
+configMapGenerator:
+- envs:
+  - ../kfserving-install/base/params.env
+  name: kfserving-config
+- name: inferenceservice-config
+  files:
+  - ../kfserving-install/base/configs/credentials
+  - ../kfserving-install/base/configs/explainers
+  - ../kfserving-install/base/configs/ingress
+  - ../kfserving-install/base/configs/logger
+  - ../kfserving-install/base/configs/predictors
+  - ../kfserving-install/base/configs/storageInitializer
+  - ../kfserving-install/base/configs/transformers
+vars:
+- name: registry
+  objref:
+    kind: ConfigMap
+    name: kfserving-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.registry
+images:
+- name: gcr.io/kubebuilder/kube-rbac-proxy
+  newName: gcr.io/kubebuilder/kube-rbac-proxy
+  newTag: v0.4.0
+- name: $(registry)/kfserving-controller
+  newName: $(registry)/kfserving-controller
+  newTag: 0.2.2
+resources:
+- ../kfserving-crds/base
+- ../kfserving-crds/overlays/application
+- ../kfserving-install/base/cluster-role-binding.yaml
+- ../kfserving-install/base/cluster-role.yaml
+- ../kfserving-install/base/secret.yaml
+- ../kfserving-install/base/statefulset.yaml
+- ../kfserving-install/base/service.yaml
+- ../kfserving-install/overlays/application
+configurations:
+- ../kfserving-install/base/params.yaml

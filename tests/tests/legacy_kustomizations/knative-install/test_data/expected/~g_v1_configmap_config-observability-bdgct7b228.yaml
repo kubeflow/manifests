@@ -100,5 +100,5 @@ metadata:
     app.kubernetes.io/version: v0.8.0
     kustomize.component: knative
     serving.knative.dev/release: v0.11.1
-  name: config-observability
+  name: config-observability-bdgct7b228
   namespace: knative-serving
