@@ -10,7 +10,7 @@ resources:
 commonLabels:
   kustomize.component: kfserving
 generatorOptions:
-  disableNameSuffixHash: true
+ disableNameSuffixHash: true
 configMapGenerator:
 - envs:
   - params.env

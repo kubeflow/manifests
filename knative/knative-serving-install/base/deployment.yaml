@@ -221,7 +221,7 @@ spec:
         sidecar.istio.io/inject: "false"
       labels:
         app: networking-istio
-        serving.knative.dev/release: "v0.11.1"
+        serving.knative.dev/release: "v0.11.2"
     spec:
       containers:
         - env:
@@ -235,7 +235,7 @@ spec:
               value: config-observability
             - name: METRICS_DOMAIN
               value: knative.dev/serving
-          image: gcr.io/knative-releases/knative.dev/serving/cmd/networking/istio@sha256:727a623ccb17676fae8058cb1691207a9658a8d71bc7603d701e23b1a6037e6c
+          image: gcr.io/knative-releases/knative.dev/serving/cmd/networking/istio@sha256:61461fa789e19895d7d1e5ab96d8bb52a63788e0607e1bd2948b9570efeb6a8f
           name: networking-istio
           ports:
             - containerPort: 9090

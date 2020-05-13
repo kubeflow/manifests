@@ -1,23 +1,15 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: knative-serving
-resources:
-- gateway.yaml
-- cluster-role.yaml
-- cluster-role-binding.yaml
-- service-role.yaml
-- service-role-binding.yaml
-- role-binding.yaml
-- config-map.yaml
-- deployment.yaml
-- service-account.yaml
-- service.yaml
-- apiservice.yaml
-- image.yaml
-- hpa.yaml
-- webhook-configuration.yaml
 commonLabels:
+  app: knative
   kustomize.component: knative
+  app.kubernetes.io/component: knative-serving
+  app.kuberenets.io/instance: knative-serving-v0.11.1
+  app.kuberenets.io/name: knative-serving
+  app.kuberenets.io/managed-by: kfctl
+  app.kuberenets.io/part-of: kubeflow
+  serving.knative.dev/release: v0.11.1
 images:
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/activator
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/activator
@@ -37,3 +29,21 @@ images:
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/controller
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/controller
   digest: sha256:5ca13e5b3ce5e2819c4567b75c0984650a57272ece44bc1dabf930f9fe1e19a1
+resources:
+- ../knative-serving-crds/base
+- ../knative-serving-crds/overlays/application
+- ../knative-serving-install/base/gateway.yaml
+- ../knative-serving-install/base/cluster-role.yaml
+- ../knative-serving-install/base/cluster-role-binding.yaml
+- ../knative-serving-install/base/service-role.yaml
+- ../knative-serving-install/base/service-role-binding.yaml
+- ../knative-serving-install/base/role-binding.yaml
+- ../knative-serving-install/base/config-map.yaml
+- ../knative-serving-install/base/deployment.yaml
+- ../knative-serving-install/base/service-account.yaml
+- ../knative-serving-install/base/service.yaml
+- ../knative-serving-install/base/apiservice.yaml
+- ../knative-serving-install/base/image.yaml
+- ../knative-serving-install/base/hpa.yaml
+- ../knative-serving-install/base/webhook-configuration.yaml
+- ../knative-serving-install/overlays/application
