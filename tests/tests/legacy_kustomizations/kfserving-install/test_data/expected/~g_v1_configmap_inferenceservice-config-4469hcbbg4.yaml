@@ -107,5 +107,5 @@ metadata:
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: 0.2.2
     kustomize.component: kfserving
-  name: inferenceservice-config
+  name: inferenceservice-config-4469hcbbg4
   namespace: kubeflow

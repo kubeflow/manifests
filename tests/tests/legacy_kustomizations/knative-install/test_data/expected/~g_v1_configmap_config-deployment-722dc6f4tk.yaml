@@ -16,19 +16,9 @@ data:
     # this example block and unindented to be in the data block
     # to actually change the configuration.
 
-    # Delay after revision creation before considering it for GC
-    stale-revision-create-delay: "24h"
-
-    # Duration since a route has been pointed at a revision before it should be GC'd
-    # This minus lastpinned-debounce be longer than the controller resync period (10 hours)
-    stale-revision-timeout: "15h"
-
-    # Minimum number of generations of revisions to keep before considering for GC
-    stale-revision-minimum-generations: "1"
-
-    # To avoid constant updates, we allow an existing annotation to be stale by this
-    # amount before we update the timestamp
-    stale-revision-lastpinned-debounce: "5h"
+    # List of repositories for which tag to digest resolving should be skipped
+    registriesSkippingTagResolving: "ko.local,dev.local"
+  queueSidecarImage: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:792f6945c7bc73a49a470a5b955c39c8bd174705743abf5fb71aa0f4c04128eb
 kind: ConfigMap
 metadata:
   labels:
@@ -40,5 +30,5 @@ metadata:
     app.kubernetes.io/version: v0.8.0
     kustomize.component: knative
     serving.knative.dev/release: v0.11.1
-  name: config-gc
+  name: config-deployment-722dc6f4tk
   namespace: knative-serving

@@ -16,5 +16,5 @@ metadata:
     kustomize.component: knative
     networking.knative.dev/ingress-provider: istio
     serving.knative.dev/release: v0.11.1
-  name: config-istio
+  name: config-istio-t72g6gt48b
   namespace: knative-serving
