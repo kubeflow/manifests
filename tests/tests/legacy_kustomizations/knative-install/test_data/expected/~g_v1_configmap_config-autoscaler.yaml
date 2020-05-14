@@ -120,5 +120,5 @@ metadata:
     app.kubernetes.io/version: v0.8.0
     kustomize.component: knative
     serving.knative.dev/release: v0.11.1
-  name: config-autoscaler-b864879g7b
+  name: config-autoscaler
   namespace: knative-serving

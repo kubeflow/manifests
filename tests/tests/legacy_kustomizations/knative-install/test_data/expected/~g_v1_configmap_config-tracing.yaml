@@ -15,27 +15,25 @@ data:
     # These sample configuration options may be copied out of
     # this example block and unindented to be in the data block
     # to actually change the configuration.
+    #
+    # This may be "zipkin" or "stackdriver", the default is "none"
+    backend: "none"
 
-    # Default value for domain.
-    # Although it will match all routes, it is the least-specific rule so it
-    # will only be used if no other domain matches.
-    example.com: |
+    # URL to zipkin collector where traces are sent.
+    # This must be specified when backend is "zipkin"
+    zipkin-endpoint: "http://zipkin.istio-system.svc.cluster.local:9411/api/v2/spans"
 
-    # These are example settings of domain.
-    # example.org will be used for routes having app=nonprofit.
-    example.org: |
-      selector:
-        app: nonprofit
+    # The GCP project into which stackdriver metrics will be written
+    # when backend is "stackdriver".  If unspecified, the project-id
+    # is read from GCP metadata when running on GCP.
+    stackdriver-project-id: "my-project"
 
-    # Routes having domain suffix of 'svc.cluster.local' will not be exposed
-    # through Ingress. You can define your own label selector to assign that
-    # domain suffix to your Route here, or you can set the label
-    #    "serving.knative.dev/visibility=cluster-local"
-    # to achieve the same effect.  This shows how to make routes having
-    # the label app=secret only exposed to the local cluster.
-    svc.cluster.local: |
-      selector:
-        app: secret
+    # Enable zipkin debug mode. This allows all spans to be sent to the server
+    # bypassing sampling.
+    debug: "false"
+
+    # Percentage (0-1) of requests to trace
+    sample-rate: "0.1"
 kind: ConfigMap
 metadata:
   labels:
@@ -47,5 +45,5 @@ metadata:
     app.kubernetes.io/version: v0.8.0
     kustomize.component: knative
     serving.knative.dev/release: v0.11.1
-  name: config-domain-t265bmdt62
+  name: config-tracing
   namespace: knative-serving
