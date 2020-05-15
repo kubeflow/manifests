@@ -23,7 +23,7 @@ spec:
     maintainers:
       - name: Jiaxin Shan
         email: shjiaxin@amazon.com
-      owners:
+    owners:
       - name: Jiaxin Shan
         email: shjiaxin@amazon.com
     keywords:
