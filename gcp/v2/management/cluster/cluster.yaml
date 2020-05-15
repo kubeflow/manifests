@@ -21,7 +21,6 @@ spec:
   ipAllocationPolicy:
     useIpAliases: true
   releaseChannel:
-    # TODO(jlewi): Should we switch to a stable channel?
-    channel: RAPID
+    channel: stable
   clusterTelemetry:
     type: enabled
