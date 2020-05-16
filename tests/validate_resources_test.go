@@ -102,9 +102,9 @@ func TestNoStatus(t *testing.T) {
 	// Directories to exclude. Thee paths should be relative to rootDir.
 	// Subdirectories won't be searched
 	excludes := map[string]bool{
-		"tests":   true,
-		".git":    true,
-		".github": true,
+		"tests":                  true,
+		".git":                   true,
+		".github":                true,
 		"profiles/overlays/test": true,
 		// Skip cnrm-install. We don't install this with ACM so we don't need to fix it.
 		// It seems like if this is an issue it should eventually get fixed in upstream cnrm configs.
