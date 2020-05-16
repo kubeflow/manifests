@@ -154,9 +154,3 @@ spec:
     - name: v1beta1
       served: true
       storage: false
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []

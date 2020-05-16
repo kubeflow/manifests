@@ -1367,12 +1367,6 @@ spec:
   - name: v1alpha2
     served: true
     storage: true
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []
 
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
@@ -1575,12 +1569,6 @@ spec:
   - name: v1alpha2
     served: true
     storage: true
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []
 
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
@@ -1764,12 +1752,6 @@ spec:
   - name: v1alpha2
     served: true
     storage: true
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []
 
 ---
 
@@ -2008,12 +1990,6 @@ spec:
   - name: v1alpha2
     served: true
     storage: true
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []
 
 ---
 
@@ -5336,9 +5312,3 @@ spec:
   - name: v1alpha2
     served: true
     storage: true
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []

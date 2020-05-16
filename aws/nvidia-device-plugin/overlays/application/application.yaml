@@ -21,11 +21,11 @@ spec:
     version: v1.0.0-beta
     description: Nvidia Device Plugin for GPU nodes
     maintainers:
-      - name: Jiaxin Shan
-        email: shjiaxin@amazon.com
-      owners:
-      - name: Jiaxin Shan
-        email: shjiaxin@amazon.com
+    - name: Jiaxin Shan
+      email: shjiaxin@amazon.com
+    owners:
+    - name: Jiaxin Shan
+      email: shjiaxin@amazon.com
     keywords:
      - aws
      - nvidia

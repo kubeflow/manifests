@@ -21,11 +21,11 @@ spec:
     version: v0.1
     description: Authorization adpator to append header for AWS application load balancer
     maintainers:
-      - name: Jiaxin Shan
-        email: shjiaxin@amazon.com
-      owners:
-      - name: Jiaxin Shan
-        email: shjiaxin@amazon.com
+    - name: Jiaxin Shan
+      email: shjiaxin@amazon.com
+    owners:
+    - name: Jiaxin Shan
+      email: shjiaxin@amazon.com
     keywords:
      - aws
      - istio
