@@ -6,7 +6,8 @@ patchesStrategicMerge:
 - config-map.yaml
 configMapGenerator:
 - name: pipeline-external-mysql-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:
