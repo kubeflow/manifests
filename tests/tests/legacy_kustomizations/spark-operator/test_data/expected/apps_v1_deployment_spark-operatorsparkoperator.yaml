@@ -31,8 +31,6 @@ spec:
         prometheus.io/port: "10254"
         prometheus.io/scrape: "true"
         sidecar.istio.io/inject: "false"
-      initializers:
-        pending: []
       labels:
         app.kubernetes.io/component: spark-operator
         app.kubernetes.io/instance: spark-operator-v1.0.0
