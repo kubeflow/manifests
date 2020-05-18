@@ -1653,9 +1653,3 @@ spec:
   - name: v1alpha2
     served: true
     storage: true
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []
