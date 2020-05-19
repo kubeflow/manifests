@@ -9,7 +9,7 @@ commonLabels:
   app.kuberenets.io/name: knative-serving
   app.kuberenets.io/managed-by: kfctl
   app.kuberenets.io/part-of: kubeflow
-  serving.knative.dev/release: v0.11.1
+  serving.knative.dev/release: v0.11.2
 images:
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/activator
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/activator
