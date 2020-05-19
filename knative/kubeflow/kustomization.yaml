@@ -19,7 +19,7 @@ images:
   digest: sha256:5e0fadf574e66fb1c893806b5c5e5f19139cc476ebf1dff9860789fe4ac5f545
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
-  digest: sha256:ef1f01b5fb3886d4c488a219687aac72d28e72f808691132f658259e4e02bb27
+  digest: sha256:998a405454832cda18a4bf956d26d610a2df2130a39b834b597a89a3153c8c15
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/networking/istio
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/networking/istio
   digest: sha256:61461fa789e19895d7d1e5ab96d8bb52a63788e0607e1bd2948b9570efeb6a8f
