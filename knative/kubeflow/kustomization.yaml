@@ -28,7 +28,7 @@ images:
   digest: sha256:d07560cd5548640cc79abc819608844527351f10e8b0a847988f9eb602c18972
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/controller
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/controller
-  digest: sha256:5ca13e5b3ce5e2819c4567b75c0984650a57272ece44bc1dabf930f9fe1e19a1
+  digest: sha256:1e77bdab30c8d0f0df299f5fa93d6f99eb63071b9d3329937dff0c6acb99e059
 resources:
 - ../knative-serving-crds/base
 - ../knative-serving-crds/overlays/application
