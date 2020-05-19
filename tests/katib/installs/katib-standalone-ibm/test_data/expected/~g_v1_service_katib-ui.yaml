@@ -4,10 +4,7 @@ metadata:
   labels:
     app: katib
     app.kubernetes.io/component: katib
-    app.kubernetes.io/instance: katib-controller
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: katib-controller
-    app.kubernetes.io/part-of: kubeflow
     component: ui
   name: katib-ui
   namespace: kubeflow
@@ -20,9 +17,6 @@ spec:
   selector:
     app: katib
     app.kubernetes.io/component: katib
-    app.kubernetes.io/instance: katib-controller
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: katib-controller
-    app.kubernetes.io/part-of: kubeflow
     component: ui
   type: ClusterIP

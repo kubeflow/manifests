@@ -11,7 +11,4 @@ secretGenerator:
   env: secrets.env
 commonLabels:
   app.kubernetes.io/component: katib
-  app.kubernetes.io/instance: katib-controller
-  app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/name: katib-controller
-  app.kubernetes.io/part-of: kubeflow

@@ -6,11 +6,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: aws-istio-authz-adaptor
-      app.kubernetes.io/instance: aws-istio-authz-adaptor-0.1
+      app.kubernetes.io/instance: aws-istio-authz-adaptor-v1.0.0
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/component: aws-istio-authz-adaptor
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: "0.1"
+      app.kubernetes.io/version: v1.0.0
   componentKinds:
   - group: apps
     kind: Service
@@ -18,10 +18,14 @@ spec:
     kind: Deployment
   descriptor:
     type: aws-istio-authz-adaptor
-    version: "0.1"
+    version: v0.1
     description: Authorization adpator to append header for AWS application load balancer
-    maintainers: []
-    owners: []
+    maintainers:
+    - name: Jiaxin Shan
+      email: shjiaxin@amazon.com
+    owners:
+    - name: Jiaxin Shan
+      email: shjiaxin@amazon.com
     keywords:
      - aws
      - istio

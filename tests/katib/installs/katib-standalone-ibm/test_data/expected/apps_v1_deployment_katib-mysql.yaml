@@ -4,10 +4,7 @@ metadata:
   labels:
     app: katib
     app.kubernetes.io/component: katib
-    app.kubernetes.io/instance: katib-controller
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: katib-controller
-    app.kubernetes.io/part-of: kubeflow
     component: mysql
   name: katib-mysql
   namespace: kubeflow
@@ -17,10 +14,7 @@ spec:
     matchLabels:
       app: katib
       app.kubernetes.io/component: katib
-      app.kubernetes.io/instance: katib-controller
-      app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: katib-controller
-      app.kubernetes.io/part-of: kubeflow
       component: mysql
   template:
     metadata:
@@ -29,10 +23,7 @@ spec:
       labels:
         app: katib
         app.kubernetes.io/component: katib
-        app.kubernetes.io/instance: katib-controller
-        app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: katib-controller
-        app.kubernetes.io/part-of: kubeflow
         component: mysql
       name: katib-mysql
     spec:

@@ -7,10 +7,7 @@ metadata:
     prometheus.io/scrape: "true"
   labels:
     app.kubernetes.io/component: katib
-    app.kubernetes.io/instance: katib-controller
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: katib-controller
-    app.kubernetes.io/part-of: kubeflow
   name: katib-controller
   namespace: kubeflow
 spec:
@@ -25,7 +22,4 @@ spec:
   selector:
     app: katib-controller
     app.kubernetes.io/component: katib
-    app.kubernetes.io/instance: katib-controller
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: katib-controller
-    app.kubernetes.io/part-of: kubeflow

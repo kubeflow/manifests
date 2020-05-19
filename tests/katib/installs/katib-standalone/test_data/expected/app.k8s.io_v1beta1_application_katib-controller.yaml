@@ -3,10 +3,7 @@ kind: Application
 metadata:
   labels:
     app.kubernetes.io/component: katib
-    app.kubernetes.io/instance: katib-controller
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: katib-controller
-    app.kubernetes.io/part-of: kubeflow
   name: katib-controller
   namespace: kubeflow
 spec:
@@ -47,6 +44,8 @@ spec:
       name: Richard Liu
     - email: yuji.oshima0x3fd@gmail.com
       name: YujiOshima
+    - email: andrey.velichkevich@gmail.com
+      name: Andrey Velichkevich
     owners:
     - email: gaoce@caicloud.io
       name: Ce Gao
@@ -58,6 +57,8 @@ spec:
       name: Richard Liu
     - email: yuji.oshima0x3fd@gmail.com
       name: YujiOshima
+    - email: andrey.velichkevich@gmail.com
+      name: Andrey Velichkevich
     type: katib
     version: v1alpha3
   selector:

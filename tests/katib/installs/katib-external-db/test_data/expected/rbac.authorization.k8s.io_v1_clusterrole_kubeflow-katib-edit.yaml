@@ -3,10 +3,7 @@ kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/component: katib
-    app.kubernetes.io/instance: katib-controller
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: katib-controller
-    app.kubernetes.io/part-of: kubeflow
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-katib-admin: "true"
   name: kubeflow-katib-edit

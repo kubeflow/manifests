@@ -4,10 +4,7 @@ metadata:
   labels:
     app: katib-controller
     app.kubernetes.io/component: katib
-    app.kubernetes.io/instance: katib-controller
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: katib-controller
-    app.kubernetes.io/part-of: kubeflow
   name: katib-controller
   namespace: kubeflow
 spec:
@@ -16,10 +13,7 @@ spec:
     matchLabels:
       app: katib-controller
       app.kubernetes.io/component: katib
-      app.kubernetes.io/instance: katib-controller
-      app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: katib-controller
-      app.kubernetes.io/part-of: kubeflow
   template:
     metadata:
       annotations:
@@ -28,10 +22,7 @@ spec:
       labels:
         app: katib-controller
         app.kubernetes.io/component: katib
-        app.kubernetes.io/instance: katib-controller
-        app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: katib-controller
-        app.kubernetes.io/part-of: kubeflow
     spec:
       containers:
       - args:
