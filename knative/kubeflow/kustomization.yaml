@@ -13,7 +13,7 @@ commonLabels:
 images:
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/activator
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/activator
-  digest: sha256:8e606671215cc029683e8cd633ec5de9eabeaa6e9a4392ff289883304be1f418
+  digest: sha256:c51023e62e351d5910f92ee941b4929eb82539e62636dd3ccb4a016d73e86b2e
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa
   digest: sha256:75da5ff75bc1e71799d039846b1bbd632343894c88feaa59914cfeeb1b213c81
