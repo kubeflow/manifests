@@ -5,7 +5,7 @@ commonLabels:
   app: knative
   kustomize.component: knative
   app.kubernetes.io/component: knative-serving
-  app.kuberenets.io/instance: knative-serving-v0.11.1
+  app.kuberenets.io/instance: knative-serving-v0.11.2
   app.kuberenets.io/name: knative-serving
   app.kuberenets.io/managed-by: kfctl
   app.kuberenets.io/part-of: kubeflow
