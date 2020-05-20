@@ -4,6 +4,7 @@ bases:
 commonLabels:
   app.kubernetes.io/component: argo
   app.kubernetes.io/name: argo
+  app.kubernetes.io/part-of: kubeflow
 kind: Kustomization
 resources:
 - application.yaml
