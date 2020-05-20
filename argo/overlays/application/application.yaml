@@ -7,7 +7,6 @@ spec:
     matchLabels:
       app.kubernetes.io/name: argo
       app.kubernetes.io/component: argo
-      app.kubernetes.io/part-of: kubeflow
   componentKinds:
   - group: core
     kind: ConfigMap

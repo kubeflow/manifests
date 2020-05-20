@@ -14,7 +14,6 @@ commonLabels:
   kustomize.component: argo
   app.kubernetes.io/component: argo
   app.kubernetes.io/name: argo
-  app.kubernetes.io/part-of: kubeflow
 images:
 - name: argoproj/argoui
   newName: argoproj/argoui

@@ -40,4 +40,3 @@ spec:
     matchLabels:
       app.kubernetes.io/component: argo
       app.kubernetes.io/name: argo
-      app.kubernetes.io/part-of: kubeflow
