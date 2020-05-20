@@ -25,8 +25,7 @@ spec:
       istio-ingressgateway:
         type: NodePort
     global:
-      #meshID: "jlewi-dev_us-central1_kf-bp-0420-002" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"name","value":"kf-bp-0420-002"},{"name":"location","value":"us-central1"}]}}
-      meshID: "jlewi-dev_us-central1_kf-bp-0420-002" # 
+      meshID: "jlewi-dev_us-central1_kf-bp-0420-002" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"name","value":"kf-bp-0420-002"},{"name":"location","value":"us-central1"}]}}
       trustDomain: "jlewi-dev.svc.id.goog" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
       sds:
         token:
