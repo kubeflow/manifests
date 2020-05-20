@@ -3,56 +3,21 @@ module github.com/kubeflow/manifests/tests
 go 1.13
 
 require (
-	cloud.google.com/go v0.38.0
-	github.com/MakeNowJust/heredoc v1.0.0 // indirect
-	github.com/PuerkitoBio/purell v1.1.1 // indirect
-	github.com/Sirupsen/logrus v0.0.0-00010101000000-000000000000 // indirect
-	github.com/aws/aws-sdk-go v1.17.7
-	github.com/cenkalti/backoff v2.2.1+incompatible
-	github.com/chai2010/gettext-go v0.0.0-20170215093142-bf70f2a70fb1 // indirect
-	github.com/deckarep/golang-set v1.7.1
-	github.com/docker/docker v1.13.1 // indirect
-	github.com/docker/spdystream v0.0.0-20181023171402-6480d4af844c // indirect
-	github.com/elazarl/goproxy v0.0.0-20190711103511-473e67f1d7d2 // indirect
-	github.com/elazarl/goproxy/ext v0.0.0-20190711103511-473e67f1d7d2 // indirect
-	github.com/fatih/color v1.7.0
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
-	github.com/go-logr/logr v0.1.0
-	github.com/go-openapi/jsonpointer v0.19.2 // indirect
-	github.com/gogo/protobuf v1.2.2-0.20190730201129-28a6bbf47e48
-	github.com/google/go-cmp v0.3.0
+	github.com/gogo/protobuf v1.2.2-0.20190730201129-28a6bbf47e48 // indirect
+	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/google/martian v2.1.0+incompatible
-	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
-	github.com/hashicorp/go-getter v1.0.2
-	github.com/imdario/mergo v0.3.7
-	github.com/kubernetes-sigs/application v0.8.0
-	github.com/onrik/logrus v0.2.1
-	github.com/operator-framework/operator-sdk v0.13.0
-	github.com/otiai10/copy v1.0.2
+	github.com/json-iterator/go v1.1.7 // indirect
 	github.com/pkg/errors v0.8.1
-	github.com/prometheus/common v0.6.0
-	github.com/sirupsen/logrus v1.4.2
-	github.com/spf13/cobra v0.0.5
-	github.com/spf13/pflag v1.0.5
-	github.com/spf13/viper v1.4.0
-	go.uber.org/zap v1.12.0 // indirect
-	golang.org/dl v0.0.0-20191220003028-84da647cadd0 // indirect
-	golang.org/x/crypto v0.0.0
-	golang.org/x/net v0.0.0-20190812203447-cdfb69ac37fc
-	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
-	google.golang.org/api v0.10.0
-	google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55
-	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
-	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2 // indirect
-	gopkg.in/yaml.v2 v2.2.4
-	k8s.io/api v0.0.0
-	k8s.io/apiextensions-apiserver v0.0.0
+	github.com/spf13/pflag v1.0.5 // indirect
+	golang.org/x/text v0.3.2 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20191120175047-4206685974f2
+	k8s.io/api v0.0.0 // indirect
 	k8s.io/apimachinery v0.0.0
-	k8s.io/cli-runtime v0.0.0
-	k8s.io/client-go v12.0.0+incompatible
-	k8s.io/kubernetes v1.16.2
-	k8s.io/utils v0.0.0-20191030222137-2b95a09bc58d // indirect
-	sigs.k8s.io/controller-runtime v0.4.0
+	k8s.io/client-go v12.0.0+incompatible // indirect
+	k8s.io/klog v1.0.0 // indirect
+	k8s.io/kube-openapi v0.0.0-20190918143330-0270cf2f1c1d // indirect
+	sigs.k8s.io/kustomize/kyaml v0.1.11
 	sigs.k8s.io/kustomize/v3 v3.2.0
 )
 
