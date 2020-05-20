@@ -1,13 +1,15 @@
 package tests
 
 import (
+	"bytes"
 	"github.com/ghodss/yaml"
 	"io/ioutil"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"os"
 	"path/filepath"
-	"regexp"
+	"sigs.k8s.io/kustomize/kyaml/kio"
+	kyaml "sigs.k8s.io/kustomize/kyaml/yaml"
 	"sigs.k8s.io/kustomize/v3/pkg/types"
+	"strings"
 	"testing"
 )
 
@@ -94,9 +96,21 @@ func TestCommonLabelsImmutable(t *testing.T) {
 	}
 }
 
-// TestNoStatus is a test to try to ensure we don't include status in resources
-// as this causes validation issues: https://github.com/kubeflow/manifests/issues/1174
-func TestNoStatus(t *testing.T) {
+// TestValidK8sResources reads all the K8s resources and performs a bunch of validation checks.
+//
+// Currently the following checks are performed:
+//  i) ensure we don't include status in resources
+//     as this causes validation issues: https://github.com/kubeflow/manifests/issues/1174
+//
+//  ii) ensure that if annotations are present it is not empty.
+//  Having empty annotations https://github.com/GoogleContainerTools/kpt/issues/541 causes problems for kpt and
+//  ACM.  Offending YAML looks like
+//      metadata:
+// 		 name: kf-admin-iap
+//       annotations:
+//      rules:
+//        ...
+func TestValidK8sResources(t *testing.T) {
 	rootDir := ".."
 
 	// Directories to exclude. Thee paths should be relative to rootDir.
@@ -108,6 +122,7 @@ func TestNoStatus(t *testing.T) {
 		"profiles/overlays/test": true,
 		// Skip cnrm-install. We don't install this with ACM so we don't need to fix it.
 		// It seems like if this is an issue it should eventually get fixed in upstream cnrm configs.
+		// The CNRM directory has lots of CRDS with non empty status.
 		"gcp/v2/management/cnrm-install": true,
 	}
 
@@ -139,24 +154,66 @@ func TestNoStatus(t *testing.T) {
 			t.Errorf("Error reading %v; error: %v", path, err)
 		}
 
-		u := &unstructured.Unstructured{}
+		input := bytes.NewReader(data)
+		reader := kio.ByteReader{
+			Reader: input,
+			// We need to disable adding reader annotations because
+			// we want to run some checks about whether annotations are set and
+			// adding those annotations interferes with that.
+			OmitReaderAnnotations: true,
+		}
 
-		if err = yaml.Unmarshal(data, u); err != nil {
-			if match, _ := regexp.MatchString(".*Object 'Kind' is missing.*", err.Error()); match {
-				t.Logf("Skipping %v; not a K8s resource;", path)
-				return nil
-			}
+		nodes, err := reader.Read()
+
+		if err != nil {
 			t.Errorf("Error unmarshaling %v; error: %v", path, err)
 		}
 
-		if _, ok := u.UnstructuredContent()["status"]; ok {
-			t.Errorf("Path %v; has status field", path)
+		for _, n := range nodes {
+			//root := n
+
+			m, err := n.GetMeta()
+			// Skip objects with no metadata
+			if err != nil {
+				continue
+			}
+
+			// Skip Kustomization
+			if strings.ToLower(m.Kind) == "kustomization" {
+				continue
+			}
+			if m.Name == "" || m.Kind == "" {
+				continue
+			}
+
+			// Ensure status isn't set
+			f := n.Field("status")
+
+			if !kyaml.IsFieldEmpty(f) {
+				t.Errorf("Path %v; resource %v; has status field", path, m.Name)
+			}
+
+			metadata := n.Field("metadata")
+
+			checkEmptyAnnotations := func() {
+				annotations := metadata.Value.Field("annotations")
+
+				if annotations == nil {
+					return
+				}
+
+				if kyaml.IsFieldEmpty(annotations) {
+					t.Errorf("Path %v; resource %v; has empty annotations; if no annotations are present the field shouldn't be present", path, m.Name)
+					return
+				}
+			}
+
+			checkEmptyAnnotations()
 		}
 		return nil
 	})
 
 	if err != nil {
 		t.Errorf("error walking the path %v; error: %v", rootDir, err)
-
 	}
 }
