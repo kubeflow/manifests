@@ -3,13 +3,13 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: knative-serving-install
-    app.kubernetes.io/instance: knative-serving-install-v0.8.0
+    app.kubernetes.io/instance: knative-serving-install
     app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-serving-install
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: v0.8.0
     kustomize.component: knative
-    serving.knative.dev/release: v0.11.1
+    serving.knative.dev/release: v0.11.2
   name: autoscaler
   namespace: knative-serving
 spec:
@@ -18,13 +18,13 @@ spec:
     matchLabels:
       app: autoscaler
       app.kubernetes.io/component: knative-serving-install
-      app.kubernetes.io/instance: knative-serving-install-v0.8.0
+      app.kubernetes.io/instance: knative-serving-install
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: knative-serving-install
       app.kubernetes.io/part-of: kubeflow
       app.kubernetes.io/version: v0.8.0
       kustomize.component: knative
-      serving.knative.dev/release: v0.11.1
+      serving.knative.dev/release: v0.11.2
   template:
     metadata:
       annotations:
@@ -34,13 +34,13 @@ spec:
       labels:
         app: autoscaler
         app.kubernetes.io/component: knative-serving-install
-        app.kubernetes.io/instance: knative-serving-install-v0.8.0
+        app.kubernetes.io/instance: knative-serving-install
         app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: knative-serving-install
         app.kubernetes.io/part-of: kubeflow
         app.kubernetes.io/version: v0.8.0
         kustomize.component: knative
-        serving.knative.dev/release: v0.11.1
+        serving.knative.dev/release: v0.11.2
     spec:
       containers:
       - args:
@@ -57,7 +57,7 @@ spec:
           value: config-observability
         - name: METRICS_DOMAIN
           value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:ef1f01b5fb3886d4c488a219687aac72d28e72f808691132f658259e4e02bb27
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:998a405454832cda18a4bf956d26d610a2df2130a39b834b597a89a3153c8c15
         livenessProbe:
           httpGet:
             httpHeaders:

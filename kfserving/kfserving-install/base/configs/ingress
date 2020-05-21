@@ -1,4 +1,0 @@
-{
-    "ingressGateway" : "kubeflow-gateway.kubeflow",
-    "ingressService" : "istio-ingressgateway.istio-system.svc.cluster.local"
-}

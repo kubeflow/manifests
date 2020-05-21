@@ -11,7 +11,7 @@ metadata:
     duck.knative.dev/addressable: "true"
     duck.knative.dev/podspecable: "true"
     knative.dev/crd-install: "true"
-    serving.knative.dev/release: v0.11.1
+    serving.knative.dev/release: v0.11.2
   name: services.serving.knative.dev
 spec:
   additionalPrinterColumns:

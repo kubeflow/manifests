@@ -3,11 +3,11 @@ bases:
 - ../../../kfserving/kfserving-crds/base
 commonLabels:
   app.kubernetes.io/component: kfserving-crds
-  app.kubernetes.io/instance: kfserving-crds-0.2.2
+  app.kubernetes.io/instance: kfserving-crds
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/name: kfserving-crds
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.2.2
+  app.kubernetes.io/version: v0.3.0
 configMapGenerator: []
 configurations: []
 kind: Kustomization

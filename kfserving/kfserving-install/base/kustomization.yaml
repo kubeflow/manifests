@@ -1,12 +1,16 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: kubeflow
+namespace: kfserving-system
 resources:
+- namespace.yaml
+- cert.yaml
+- config-map.yaml
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - secret.yaml
 - statefulset.yaml
 - service.yaml
+- webhook.yaml
 commonLabels:
   kustomize.component: kfserving
 generatorOptions:
@@ -15,15 +19,6 @@ configMapGenerator:
 - envs:
   - params.env
   name: kfserving-config
-- name: inferenceservice-config
-  files:
-  - configs/predictors
-  - configs/transformers
-  - configs/credentials
-  - configs/ingress
-  - configs/logger
-  - configs/storageInitializer
-  - configs/explainers
 vars:
 - name: registry
   objref:
@@ -40,4 +35,4 @@ images:
   newTag: v0.4.0
 - name: $(registry)/kfserving-controller
   newName: $(registry)/kfserving-controller
-  newTag: 0.2.2
+  newTag: v0.3.0

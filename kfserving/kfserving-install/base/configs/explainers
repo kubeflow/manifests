@@ -1,9 +1,0 @@
-{
-    "alibi": {
-        "image" : "gcr.io/kfserving/alibi-explainer",
-        "defaultImageVersion": "0.2.2",
-        "allowedImageVersions": [
-            "0.2.2"
-        ]
-    }
-}

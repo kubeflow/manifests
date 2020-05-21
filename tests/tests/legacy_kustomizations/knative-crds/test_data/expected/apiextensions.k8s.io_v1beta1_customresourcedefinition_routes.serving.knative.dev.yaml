@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/version: v0.8.0
     duck.knative.dev/addressable: "true"
     knative.dev/crd-install: "true"
-    serving.knative.dev/release: v0.11.1
+    serving.knative.dev/release: v0.11.2
   name: routes.serving.knative.dev
 spec:
   additionalPrinterColumns:
