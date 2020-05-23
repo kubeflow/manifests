@@ -17659,7 +17659,6 @@ kind: Service
 metadata:
   name: jaeger-query
   namespace: istio-system
-  annotations:
   labels:
     app: jaeger
     jaeger-infra: jaeger-service

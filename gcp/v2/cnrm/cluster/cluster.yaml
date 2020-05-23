@@ -23,7 +23,24 @@ metadata:
   name: kf-name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kf-name"}}}
 spec:
   initialNodeCount: 2
-  minMasterVersion: "1.14.10-gke.36"
+  clusterAutoscaling:
+    enabled: true
+    autoProvisioningDefaults:
+      oauthScopes:
+      - https://www.googleapis.com/auth/logging.write
+      - https://www.googleapis.com/auth/monitoring
+      - https://www.googleapis.com/auth/devstorage.read_only
+      serviceAccountRef:
+        name: kf-name-vm # {"type":"string","x-kustomize":{"partialSetters":[{"name":"name","value":"kf-name"}]}}
+    resourceLimits:
+    - resourceType: cpu
+      maximum: 128
+    - resourceType: memory
+      maximum: 2000
+    - resourceType: nvidia-tesla-k80
+      maximum: 16
+  releaseChannel:
+    channel: stable
   location: us-east1-d # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.compute.zone","value":"us-east1-d"}}}
   workloadIdentityConfig:
     identityNamespace: project-id.svc.id.goog # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
