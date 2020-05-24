@@ -3,6 +3,8 @@ kind: Kustomization
 namespace: auth
 bases:
 - ../../base
+resources:
+- virtual-service.yaml
 
 patchesStrategicMerge:
 - config-map.yaml
@@ -14,6 +16,13 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 vars:
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 - name: github_client_id
   objref:
     kind: ConfigMap
@@ -28,13 +37,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.github_client_secret
-- name: github_redirect_uri
-  objref:
-    kind: ConfigMap
-    name: dex-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.github_redirect_uri
 - name: github_org_name
   objref:
     kind: ConfigMap
@@ -42,6 +44,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.github_org_name
+- name: github_hostname
+  objref:
+    kind: ConfigMap
+    name: dex-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.github_hostname
 - name: github_use_login_as_id
   objref:
     kind: ConfigMap

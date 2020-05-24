@@ -25,14 +25,17 @@ data:
           # Credentials can be string literals or pulled from the environment.
           clientID: $(github_client_id)
           clientSecret: $(github_client_secret)
-          # e.g., http://127.0.0.1:5556/dex/callback
-          redirectURI: $(github_redirect_uri)
+          redirectURI: http://dex.auth.svc.cluster.local:5556/dex/callback
           # Optional organizations and teams, communicated through the "groups" scope.
           #
           # NOTE: This is an EXPERIMENTAL config option and will likely change.
           #
           orgs:
           - name: $(github_org_name)
+          # Required ONLY for GitHub Enterprise.
+          # This is the Hostname of the GitHub Enterprise account listed on the
+          # management console. Ensure this domain is routable on your network.
+          hostName: $(github_hostname)
           # Flag which indicates that all user groups and teams should be loaded.
           loadAllGroups: false
           # flag which will switch from using the internal GitHub id to the users handle (@mention) as the user id.
