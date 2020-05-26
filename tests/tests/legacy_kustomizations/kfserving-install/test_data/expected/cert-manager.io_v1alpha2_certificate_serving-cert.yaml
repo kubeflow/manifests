@@ -12,9 +12,9 @@ metadata:
   name: serving-cert
   namespace: kubeflow
 spec:
-  commonName: kfserving-webhook-server-service.kfserving-system.svc
+  commonName: kfserving-webhook-server-service.kubeflow.svc
   dnsNames:
-  - kfserving-webhook-server-service.kfserving-system.svc
+  - kfserving-webhook-server-service.kubeflow.svc
   issuerRef:
     kind: Issuer
     name: selfsigned-issuer

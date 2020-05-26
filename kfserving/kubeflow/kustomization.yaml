@@ -1,10 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: kfserving-system
+namespace: kubeflow
 resources:
 - ../kfserving-crds/base
 - ../kfserving-crds/overlays/application
-- ../kfserving-install/base/namespace.yaml
 - ../kfserving-install/base/cert.yaml
 - ../kfserving-install/base/config-map.yaml
 - ../kfserving-install/base/cluster-role-binding.yaml

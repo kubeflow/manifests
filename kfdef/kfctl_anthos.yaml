@@ -177,9 +177,6 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
-      parameters:
-      - name: namespace
-        value: kfserving-system
       repoRef:
         name: manifests
         path: kfserving/kfserving-install

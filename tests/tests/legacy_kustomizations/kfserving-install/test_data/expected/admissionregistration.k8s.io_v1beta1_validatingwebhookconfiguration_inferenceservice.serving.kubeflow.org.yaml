@@ -2,7 +2,7 @@ apiVersion: admissionregistration.k8s.io/v1beta1
 kind: ValidatingWebhookConfiguration
 metadata:
   annotations:
-    cert-manager.io/inject-ca-from: kfserving-system/serving-cert
+    cert-manager.io/inject-ca-from: kubeflow/serving-cert
   creationTimestamp: null
   labels:
     app.kubernetes.io/component: kfserving-install
@@ -13,7 +13,6 @@ metadata:
     app.kubernetes.io/version: v0.3.0
     kustomize.component: kfserving
   name: inferenceservice.serving.kubeflow.org
-  namespace: kfserving-system
 webhooks:
 - clientConfig:
     caBundle: Cg==
