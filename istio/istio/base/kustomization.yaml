@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
 - kf-istio-resources.yaml
 - cluster-roles.yaml
-namespace: kubeflow
 configMapGenerator:
 - name: istio-parameters
   env: params.env
@@ -22,5 +21,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.gatewaySelector
+- name: namespace
+  objref:
+    kind: ConfigMap
+    name: istio-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.namespace
 configurations:
 - params.yaml
