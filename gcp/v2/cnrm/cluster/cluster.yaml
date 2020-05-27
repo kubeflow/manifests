@@ -50,6 +50,10 @@ spec:
     machineType: n1-standard-8
     metadata:
       disable-legacy-endpoints: "true"
+    oauthScopes:
+      - https://www.googleapis.com/auth/logging.write
+      - https://www.googleapis.com/auth/monitoring
+      - https://www.googleapis.com/auth/devstorage.read_only
     serviceAccountRef:
       name: kf-name-vm # {"type":"string","x-kustomize":{"partialSetters":[{"name":"name","value":"kf-name"}]}}
     workloadMetadataConfig:
