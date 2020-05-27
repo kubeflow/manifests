@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-serving-install
     app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.8.0
+    app.kubernetes.io/version: v0.11.2
     kustomize.component: knative
     serving.knative.dev/release: v0.11.2
   name: queue-proxy

@@ -41,6 +41,8 @@ spec:
               fieldPath: metadata.namespace
         - name: SECRET_NAME
           value: kfserving-webhook-server-cert
+        - name: ENABLE_WEBHOOK_NAMESPACE_SELECTOR
+          value: enabled
         image: $(registry)/kfserving-controller:v0.3.0
         imagePullPolicy: Always
         name: manager
