@@ -12,7 +12,7 @@ metadata:
   namespace: kubeflow
 spec:
   gateways:
-  - kubeflow-gateway
+  - istio-system/kubeflow-gateway
   hosts:
   - '*'
   http:

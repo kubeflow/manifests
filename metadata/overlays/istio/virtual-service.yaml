@@ -4,7 +4,7 @@ metadata:
   name: metadata-ui
 spec:
   gateways:
-  - kubeflow-gateway
+  - istio-system/kubeflow-gateway
   hosts:
   - '*'
   http:

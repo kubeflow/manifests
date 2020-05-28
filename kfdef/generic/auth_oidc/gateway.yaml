@@ -39,7 +39,7 @@ spec:
   hosts:
   - "*"
   gateways:
-  - kubeflow-gateway
+  - istio-system/kubeflow-gateway
   http:
     - match:
         - port: 5556

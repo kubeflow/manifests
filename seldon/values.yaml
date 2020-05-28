@@ -12,7 +12,7 @@ ambassador:
 # You must make sure you create the seldon-gateway as well
 istio:
   enabled: true
-  gateway: kubeflow/kubeflow-gateway
+  gateway: istio-system/kubeflow-gateway
   tlsMode: ""
 
 # ## Install with Cert Manager

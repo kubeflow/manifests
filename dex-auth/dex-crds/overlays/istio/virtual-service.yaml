@@ -8,7 +8,7 @@ metadata:
   name: dex
 spec:
   gateways:
-  - kubeflow/kubeflow-gateway
+  - istio-system/kubeflow-gateway
   hosts:
   - '*'
   http:

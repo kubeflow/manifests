@@ -12,7 +12,7 @@ data:
       hosts:
       - "*"
       gateways:
-      - kubeflow-gateway
+      - istio-system/kubeflow-gateway
       http:
       - match:
         - uri:

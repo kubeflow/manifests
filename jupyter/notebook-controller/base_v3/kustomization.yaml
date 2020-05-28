@@ -7,7 +7,7 @@ commonLabels:
 configMapGenerator:
 - literals:
   - USE_ISTIO=true
-  - ISTIO_GATEWAY=kubeflow/kubeflow-gateway
+  - ISTIO_GATEWAY=istio-system/kubeflow-gateway
   name: notebook-controller-config
 images:
 - name: gcr.io/kubeflow-images-public/notebook-controller

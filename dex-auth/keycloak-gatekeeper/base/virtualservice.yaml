@@ -4,7 +4,7 @@ metadata:
   name: keycloak-gatekeeper
 spec:
   gateways:
-  - kubeflow/kubeflow-gateway
+  - istio-system/kubeflow-gateway
   hosts:
   - '*'
   http:

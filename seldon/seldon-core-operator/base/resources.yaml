@@ -4718,7 +4718,7 @@ spec:
         - name: ISTIO_ENABLED
           value: 'true'
         - name: ISTIO_GATEWAY
-          value: 'kubeflow/kubeflow-gateway'
+          value: 'istio-system/kubeflow-gateway'
         - name: ISTIO_TLS_MODE
           value: ''
         - name: USE_EXECUTOR

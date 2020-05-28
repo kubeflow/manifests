@@ -108,7 +108,7 @@ metadata:
   name: jupyter-web-app
 spec:
   gateways:
-  - kubeflow-gateway
+  - istio-system/kubeflow-gateway
   hosts:
   - '*'
   http:

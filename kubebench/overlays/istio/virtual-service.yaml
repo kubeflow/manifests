@@ -4,7 +4,7 @@ metadata:
   name: kubebench-dashboard
 spec:
   gateways:
-  - kubeflow-gateway
+  - istio-system/kubeflow-gateway
   hosts:
   - '*'
   http:
