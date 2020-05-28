@@ -32,7 +32,7 @@ data:
           #
           orgs:
           - name: $(github_org_name)
-          # Required ONLY for GitHub Enterprise.
+          # Required ONLY for GitHub Enterprise. Leave it empty when using github.com.
           # This is the Hostname of the GitHub Enterprise account listed on the
           # management console. Ensure this domain is routable on your network.
           hostName: $(github_hostname)
