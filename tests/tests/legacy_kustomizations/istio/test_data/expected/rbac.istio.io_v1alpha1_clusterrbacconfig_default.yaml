@@ -2,7 +2,7 @@ apiVersion: rbac.istio.io/v1alpha1
 kind: ClusterRbacConfig
 metadata:
   name: default
-  namespace: kubeflow
+  namespace: istio-system
 spec:
   exclusion:
     namespaces:

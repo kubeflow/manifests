@@ -8,7 +8,7 @@ configMapGenerator:
   name: istio-parameters
 configurations: []
 kind: Kustomization
-namespace: kubeflow
+namespace: istio-system
 patches: []
 patchesStrategicMerge: []
 resources: []

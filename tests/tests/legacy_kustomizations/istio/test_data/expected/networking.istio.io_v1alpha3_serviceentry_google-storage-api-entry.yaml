@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
   name: google-storage-api-entry
-  namespace: kubeflow
+  namespace: istio-system
 spec:
   hosts:
   - storage.googleapis.com

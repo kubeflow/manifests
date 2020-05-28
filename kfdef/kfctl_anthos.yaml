@@ -6,6 +6,8 @@ spec:
   applications:
   - kustomizeConfig:
       parameters:
+      - name: namespace
+        value: istio-system
       - name: clusterRbacConfig
         value: 'OFF'
       repoRef:
