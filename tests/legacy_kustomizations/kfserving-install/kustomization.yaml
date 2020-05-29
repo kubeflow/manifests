@@ -3,16 +3,16 @@ bases:
 - ../../../kfserving/kfserving-install/base
 commonLabels:
   app.kubernetes.io/component: kfserving-install
-  app.kubernetes.io/instance: kfserving-install-0.2.2
+  app.kubernetes.io/instance: kfserving-install
   app.kubernetes.io/managed-by: kfctl
   app.kubernetes.io/name: kfserving-install
   app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: 0.2.2
+  app.kubernetes.io/version: v0.3.0
 configMapGenerator:
 - behavior: merge
   envs:
   - params_0.env
-  name: kfserving-parameters
+  name: kfserving-config
 configurations: []
 kind: Kustomization
 namespace: kubeflow

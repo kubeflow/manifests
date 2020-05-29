@@ -3,13 +3,13 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: knative-serving-install
-    app.kubernetes.io/instance: knative-serving-install-v0.8.0
+    app.kubernetes.io/instance: knative-serving-install
     app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-serving-install
     app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.8.0
+    app.kubernetes.io/version: v0.11.2
     kustomize.component: knative
-    serving.knative.dev/release: v0.11.1
+    serving.knative.dev/release: v0.11.2
   name: webhook
   namespace: knative-serving
 spec:
@@ -18,13 +18,14 @@ spec:
     matchLabels:
       app: webhook
       app.kubernetes.io/component: knative-serving-install
-      app.kubernetes.io/instance: knative-serving-install-v0.8.0
+      app.kubernetes.io/instance: knative-serving-install
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: knative-serving-install
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.8.0
+      app.kubernetes.io/version: v0.11.2
       kustomize.component: knative
       role: webhook
+      serving.knative.dev/release: v0.11.2
   template:
     metadata:
       annotations:
@@ -33,14 +34,14 @@ spec:
       labels:
         app: webhook
         app.kubernetes.io/component: knative-serving-install
-        app.kubernetes.io/instance: knative-serving-install-v0.8.0
+        app.kubernetes.io/instance: knative-serving-install
         app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: knative-serving-install
         app.kubernetes.io/part-of: kubeflow
-        app.kubernetes.io/version: v0.8.0
+        app.kubernetes.io/version: v0.11.2
         kustomize.component: knative
         role: webhook
-        serving.knative.dev/release: v0.11.1
+        serving.knative.dev/release: v0.11.2
     spec:
       containers:
       - env:
@@ -54,7 +55,7 @@ spec:
           value: config-observability
         - name: METRICS_DOMAIN
           value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:1ef3328282f31704b5802c1136bd117e8598fd9f437df8209ca87366c5ce9fcb
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:d07560cd5548640cc79abc819608844527351f10e8b0a847988f9eb602c18972
         name: webhook
         ports:
         - containerPort: 9090

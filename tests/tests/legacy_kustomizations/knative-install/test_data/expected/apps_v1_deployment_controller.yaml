@@ -3,13 +3,13 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: knative-serving-install
-    app.kubernetes.io/instance: knative-serving-install-v0.8.0
+    app.kubernetes.io/instance: knative-serving-install
     app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-serving-install
     app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.8.0
+    app.kubernetes.io/version: v0.11.2
     kustomize.component: knative
-    serving.knative.dev/release: v0.11.1
+    serving.knative.dev/release: v0.11.2
   name: controller
   namespace: knative-serving
 spec:
@@ -18,12 +18,13 @@ spec:
     matchLabels:
       app: controller
       app.kubernetes.io/component: knative-serving-install
-      app.kubernetes.io/instance: knative-serving-install-v0.8.0
+      app.kubernetes.io/instance: knative-serving-install
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: knative-serving-install
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.8.0
+      app.kubernetes.io/version: v0.11.2
       kustomize.component: knative
+      serving.knative.dev/release: v0.11.2
   template:
     metadata:
       annotations:
@@ -31,13 +32,13 @@ spec:
       labels:
         app: controller
         app.kubernetes.io/component: knative-serving-install
-        app.kubernetes.io/instance: knative-serving-install-v0.8.0
+        app.kubernetes.io/instance: knative-serving-install
         app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: knative-serving-install
         app.kubernetes.io/part-of: kubeflow
-        app.kubernetes.io/version: v0.8.0
+        app.kubernetes.io/version: v0.11.2
         kustomize.component: knative
-        serving.knative.dev/release: v0.11.1
+        serving.knative.dev/release: v0.11.2
     spec:
       containers:
       - env:
@@ -51,7 +52,7 @@ spec:
           value: config-observability
         - name: METRICS_DOMAIN
           value: knative.dev/internal/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256:5ca13e5b3ce5e2819c4567b75c0984650a57272ece44bc1dabf930f9fe1e19a1
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256:1e77bdab30c8d0f0df299f5fa93d6f99eb63071b9d3329937dff0c6acb99e059
         name: controller
         ports:
         - containerPort: 9090

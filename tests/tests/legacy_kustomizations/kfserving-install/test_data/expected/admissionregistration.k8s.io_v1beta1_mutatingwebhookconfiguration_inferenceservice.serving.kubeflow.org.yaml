@@ -1,0 +1,56 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: kubeflow/serving-cert
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/component: kfserving-install
+    app.kubernetes.io/instance: kfserving-install
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: kfserving-install
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.3.0
+    kustomize.component: kfserving
+  name: inferenceservice.serving.kubeflow.org
+webhooks:
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: kfserving-webhook-server-service
+      namespace: kubeflow
+      path: /mutate-inferenceservices
+  failurePolicy: Fail
+  name: inferenceservice.kfserving-webhook-server.defaulter
+  rules:
+  - apiGroups:
+    - serving.kubeflow.org
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - inferenceservices
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: kfserving-webhook-server-service
+      namespace: kubeflow
+      path: /mutate-pods
+  failurePolicy: Fail
+  name: inferenceservice.kfserving-webhook-server.pod-mutator
+  namespaceSelector:
+    matchExpressions:
+    - key: control-plane
+      operator: DoesNotExist
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - pods
