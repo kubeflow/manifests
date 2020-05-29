@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    serving.knative.dev/release: "v0.11.1"
+    serving.knative.dev/release: "v0.11.2"
   name: activator
   namespace: knative-serving
 spec:
@@ -19,7 +19,7 @@ spec:
       labels:
         app: activator
         role: activator
-        serving.knative.dev/release: "v0.11.1"
+        serving.knative.dev/release: "v0.11.2"
     spec:
       containers:
         - env:
@@ -83,7 +83,7 @@ kind: Deployment
 metadata:
   labels:
     autoscaling.knative.dev/autoscaler-provider: hpa
-    serving.knative.dev/release: "v0.11.1"
+    serving.knative.dev/release: "v0.11.2"
   name: autoscaler-hpa
   namespace: knative-serving
 spec:
@@ -97,7 +97,7 @@ spec:
         sidecar.istio.io/inject: "false"
       labels:
         app: autoscaler-hpa
-        serving.knative.dev/release: "v0.11.1"
+        serving.knative.dev/release: "v0.11.2"
     spec:
       containers:
         - env:
@@ -133,7 +133,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    serving.knative.dev/release: "v0.11.1"
+    serving.knative.dev/release: "v0.11.2"
   name: autoscaler
   namespace: knative-serving
 spec:
@@ -149,7 +149,7 @@ spec:
         traffic.sidecar.istio.io/includeInboundPorts: 8080,9090
       labels:
         app: autoscaler
-        serving.knative.dev/release: "v0.11.1"
+        serving.knative.dev/release: "v0.11.2"
     spec:
       containers:
         - args:
@@ -207,7 +207,7 @@ kind: Deployment
 metadata:
   labels:
     networking.knative.dev/ingress-provider: istio
-    serving.knative.dev/release: "v0.11.1"
+    serving.knative.dev/release: "v0.11.2"
   name: networking-istio
   namespace: knative-serving
 spec:
@@ -257,7 +257,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    serving.knative.dev/release: "v0.11.1"
+    serving.knative.dev/release: "v0.11.2"
   name: webhook
   namespace: knative-serving
 spec:
@@ -274,7 +274,7 @@ spec:
       labels:
         app: webhook
         role: webhook
-        serving.knative.dev/release: "v0.11.1"
+        serving.knative.dev/release: "v0.11.2"
     spec:
       containers:
         - env:
@@ -310,7 +310,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    serving.knative.dev/release: "v0.11.1"
+    serving.knative.dev/release: "v0.11.2"
   name: controller
   namespace: knative-serving
 spec:
@@ -324,7 +324,7 @@ spec:
         sidecar.istio.io/inject: "false"
       labels:
         app: controller
-        serving.knative.dev/release: "v0.11.1"
+        serving.knative.dev/release: "v0.11.2"
     spec:
       containers:
         - env:

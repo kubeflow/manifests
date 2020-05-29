@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: v0.8.0
     knative.dev/crd-install: "true"
-    serving.knative.dev/release: v0.11.1
+    serving.knative.dev/release: v0.11.2
   name: ingresses.networking.internal.knative.dev
 spec:
   additionalPrinterColumns:

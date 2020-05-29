@@ -3,11 +3,11 @@ kind: StatefulSet
 metadata:
   labels:
     app.kubernetes.io/component: kfserving-install
-    app.kubernetes.io/instance: kfserving-install-0.2.2
+    app.kubernetes.io/instance: kfserving-install
     app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: kfserving-install
     app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: 0.2.2
+    app.kubernetes.io/version: v0.3.0
     control-plane: kfserving-controller-manager
     controller-tools.k8s.io: "1.0"
     kustomize.component: kfserving
@@ -17,11 +17,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: kfserving-install
-      app.kubernetes.io/instance: kfserving-install-0.2.2
+      app.kubernetes.io/instance: kfserving-install
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: kfserving-install
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: 0.2.2
+      app.kubernetes.io/version: v0.3.0
       control-plane: kfserving-controller-manager
       controller-tools.k8s.io: "1.0"
       kustomize.component: kfserving
@@ -32,11 +32,11 @@ spec:
         sidecar.istio.io/inject: "false"
       labels:
         app.kubernetes.io/component: kfserving-install
-        app.kubernetes.io/instance: kfserving-install-0.2.2
+        app.kubernetes.io/instance: kfserving-install
         app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: kfserving-install
         app.kubernetes.io/part-of: kubeflow
-        app.kubernetes.io/version: 0.2.2
+        app.kubernetes.io/version: v0.3.0
         control-plane: kfserving-controller-manager
         controller-tools.k8s.io: "1.0"
         kustomize.component: kfserving
@@ -62,14 +62,14 @@ spec:
             fieldRef:
               fieldPath: metadata.namespace
         - name: SECRET_NAME
-          value: kfserving-webhook-server-secret
+          value: kfserving-webhook-server-cert
         - name: ENABLE_WEBHOOK_NAMESPACE_SELECTOR
           value: enabled
-        image: gcr.io/kfserving/kfserving-controller:0.2.2
+        image: gcr.io/kfserving/kfserving-controller:v0.3.0
         imagePullPolicy: Always
         name: manager
         ports:
-        - containerPort: 9876
+        - containerPort: 443
           name: webhook-server
           protocol: TCP
         resources:
@@ -80,7 +80,7 @@ spec:
             cpu: 100m
             memory: 200Mi
         volumeMounts:
-        - mountPath: /tmp/cert
+        - mountPath: /tmp/k8s-webhook-server/serving-certs
           name: cert
           readOnly: true
       terminationGracePeriodSeconds: 10
@@ -88,5 +88,4 @@ spec:
       - name: cert
         secret:
           defaultMode: 420
-          secretName: kfserving-webhook-server-secret
-  volumeClaimTemplates: []
+          secretName: kfserving-webhook-server-cert

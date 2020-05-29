@@ -3,14 +3,14 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: knative-serving-install
-    app.kubernetes.io/instance: knative-serving-install-v0.8.0
+    app.kubernetes.io/instance: knative-serving-install
     app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-serving-install
     app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.8.0
+    app.kubernetes.io/version: v0.11.2
     autoscaling.knative.dev/autoscaler-provider: hpa
     kustomize.component: knative
-    serving.knative.dev/release: v0.11.1
+    serving.knative.dev/release: v0.11.2
   name: autoscaler-hpa
   namespace: knative-serving
 spec:
@@ -19,12 +19,13 @@ spec:
     matchLabels:
       app: autoscaler-hpa
       app.kubernetes.io/component: knative-serving-install
-      app.kubernetes.io/instance: knative-serving-install-v0.8.0
+      app.kubernetes.io/instance: knative-serving-install
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: knative-serving-install
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.8.0
+      app.kubernetes.io/version: v0.11.2
       kustomize.component: knative
+      serving.knative.dev/release: v0.11.2
   template:
     metadata:
       annotations:
@@ -32,13 +33,13 @@ spec:
       labels:
         app: autoscaler-hpa
         app.kubernetes.io/component: knative-serving-install
-        app.kubernetes.io/instance: knative-serving-install-v0.8.0
+        app.kubernetes.io/instance: knative-serving-install
         app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: knative-serving-install
         app.kubernetes.io/part-of: kubeflow
-        app.kubernetes.io/version: v0.8.0
+        app.kubernetes.io/version: v0.11.2
         kustomize.component: knative
-        serving.knative.dev/release: v0.11.1
+        serving.knative.dev/release: v0.11.2
     spec:
       containers:
       - env:
@@ -52,7 +53,7 @@ spec:
           value: config-observability
         - name: METRICS_DOMAIN
           value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa@sha256:5e0fadf574e66fb1c893806b5c5e5f19139cc476ebf1dff9860789fe4ac5f545
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa@sha256:75da5ff75bc1e71799d039846b1bbd632343894c88feaa59914cfeeb1b213c81
         name: autoscaler-hpa
         ports:
         - containerPort: 9090

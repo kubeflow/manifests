@@ -4,7 +4,7 @@ kind: Service
 metadata:
   labels:
     app: activator
-    serving.knative.dev/release: "v0.11.1"
+    serving.knative.dev/release: "v0.11.2"
   name: activator-service
   namespace: knative-serving
 spec:
@@ -31,7 +31,7 @@ kind: Service
 metadata:
   labels:
     app: controller
-    serving.knative.dev/release: "v0.11.1"
+    serving.knative.dev/release: "v0.11.2"
   name: controller
   namespace: knative-serving
 spec:
@@ -49,7 +49,7 @@ kind: Service
 metadata:
   labels:
     role: webhook
-    serving.knative.dev/release: "v0.11.1"
+    serving.knative.dev/release: "v0.11.2"
   name: webhook
   namespace: knative-serving
 spec:
@@ -65,7 +65,7 @@ kind: Service
 metadata:
   labels:
     app: autoscaler
-    serving.knative.dev/release: "v0.11.1"
+    serving.knative.dev/release: "v0.11.2"
   name: autoscaler
   namespace: knative-serving
 spec:
