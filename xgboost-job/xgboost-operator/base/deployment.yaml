@@ -2,11 +2,13 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: deployment
+  labels:
+    app: xgboost-operator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: xgboost-operator
+      app: xgboost-operator
   template:
     metadata:
       labels:
