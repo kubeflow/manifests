@@ -1,20 +1,20 @@
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeRouter
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
 spec:
   description: Router to allow outbound internet access
   region: us-central1 # {"type":"string","x-kustomize":{"setter":{"name":"gcloud.compute.region","value":"us-central1"}}}
   networkRef:
-    name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+    name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
 ---
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeRouterNAT
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
 spec:
   region: us-central1 # {"type":"string","x-kustomize":{"setter":{"name":"gcloud.compute.region","value":"us-central1"}}}
   routerRef:
-    name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+    name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
   natIpAllocateOption: AUTO_ONLY
   sourceSubnetworkIpRangesToNat: ALL_SUBNETWORKS_ALL_IP_RANGES

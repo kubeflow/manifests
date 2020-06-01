@@ -1,7 +1,7 @@
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: kfname-deny-egress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kfname"}]}}
 spec:
   description: "Deny all internet traffic by default"
   deny:
@@ -13,14 +13,14 @@ spec:
   direction: EGRESS
   priority: 1100
   networkRef:
-    name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+    name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
   # Enable logging to help debugging
   enableLogging: false # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"false"}}}
 ---
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: kfname-health-ingress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kfname"}]}}
 spec:
   description: "Allow health check ingress"
   allow:
@@ -35,14 +35,14 @@ spec:
   - 35.191.0.0/16
   direction: INGRESS
   networkRef:
-    name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+    name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
   # Enable logging to help debugging
   enableLogging: false # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"false"}}}
 ---
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: kfname-health-egress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kfname"}]}}
 spec:
   description: "Allow health check egress"
   allow:
@@ -57,14 +57,14 @@ spec:
   - 35.191.0.0/16
   direction: EGRESS
   networkRef:
-    name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+    name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
   # Enable logging to help debugging
   enableLogging: false # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"false"}}}
 ---
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: kfname-apis-egress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kfname"}]}}
 spec:
   description: "Allow egress to google APIs"
   allow:
@@ -75,14 +75,14 @@ spec:
   - 199.36.153.4/30
   direction: EGRESS
   networkRef:
-    name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+    name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
   # Enable logging to help debugging
   enableLogging: false # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"false"}}}
 ---
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: kfname-master-egress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kfname"}]}}
 spec:
   description: "Allow master node egress"
   allow:
@@ -99,14 +99,14 @@ spec:
 
   direction: EGRESS
   networkRef:
-    name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+    name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
   # Enable logging to help debugging
   enableLogging: false # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"false"}}}
 ---
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: kfname-int-egress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kfname"}]}}
 spec:
   description: "Allow traffic to internal ips"
   allow:
@@ -119,7 +119,7 @@ spec:
   - 192.168.0.0/16
   direction: EGRESS
   networkRef:
-    name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+    name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
   # Enable logging to help debugging
   enableLogging: false # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"false"}}}
 ---
@@ -129,8 +129,9 @@ spec:
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: kfname-istio # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kfname"}]}}
 spec:
+  description: "Allow traffic to ISTIO webhook"
   allow:
   - protocol: tcp
     ports:
@@ -141,9 +142,31 @@ spec:
   - 172.16.0.32/28
   direction: INGRESS
   networkRef:
-    name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+    name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
   # Enable logging to help debugging
   enableLogging: false # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"false"}}}
+---
+# Per https://docs.cert-manager.io/en/release-0.11/getting-started/webhook.html#running-on-private-gke-clusters
+# We need an extra firewall rule to allow certmanager webhooks.
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeFirewall
+metadata:
+  name: kfname-cm # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kfname"}]}}
+spec:
+  description: "Allow traffic to cert manager webhook"
+  allow:
+  - protocol: tcp
+    ports:    
+    - "443"
+    - "6443"
+  sourceRanges:
+  - 172.16.0.32/28
+  direction: INGRESS
+  networkRef:
+    name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
+  # Enable logging to help debugging
+  enableLogging: false # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"false"}}}
+
 ---
 # Allow traffic to DockerHub so we can pull docker images.
 #
@@ -154,7 +177,7 @@ spec:
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: kfname-dockerhub # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kfname"}]}}
 spec:
   description: "Allow egress to dockerhub and quay.io"
   allow:
@@ -197,6 +220,39 @@ spec:
   - "13.35.101.104"
   direction: EGRESS
   networkRef:
-    name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+    name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
+  # Enable logging to help debugging
+  enableLogging: false # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"false"}}}
+
+---
+
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeFirewall
+metadata:
+  name: kfname-iap-jwks # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kfname"}]}}
+spec:
+  description: "Allow traffic to www.gstatic.com to get IAP JWKs"
+  allow:
+  - protocol: tcp
+    ports:
+    - "443"
+  # JWKS should be served on www.gstatic.com and parallel domains
+  # g0.static.com
+  # g1.static.com
+  # g2.static.com
+  # g3.static.com
+  # The actual addresses appear to be the 172 addreses not the static
+  destinationRanges:
+  - "172.217.6.163"
+  - "172.217.6.131"
+  - "172.217.9.163"
+  - "172.217.1.131"
+  - "172.217.212.94"
+  - "172.217.204.94"
+  - "23.217.138.110"
+  - "23.202.231.169"
+  direction: EGRESS
+  networkRef:
+    name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
   # Enable logging to help debugging
   enableLogging: false # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"false"}}}

@@ -2,8 +2,8 @@
 apiVersion: container.cnrm.cloud.google.com/v1beta1
 kind: ContainerCluster
 metadata:
-  clusterName: "project-id/us-central1/name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"name","value":"name"},{"name":"location","value":"us-central1"}]}}
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  clusterName: "project-id/us-central1/kfname" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"name","value":"kfname"},{"name":"location","value":"us-central1"}]}}
+  name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
 spec:
   # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters#Cluster.PrivateClusterConfig
   # This is the least secure config because it allows access to master from all public IPs.
@@ -34,6 +34,6 @@ spec:
     #subnetworkName: gcp-private-0527 # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"gcp-private-0527"}}}
   # Create the clsuter in the private network we created.
   networkRef:
-    name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+    name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
   subnetworkRef:
-    name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+    name: kfname # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kfname"}}}
