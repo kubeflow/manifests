@@ -8,3 +8,6 @@ images:
   - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
     newTag: v0.8.0
     newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
+commonLabels:
+  app.kubernetes.io/component: katib
+  app.kubernetes.io/name: katib-controller
