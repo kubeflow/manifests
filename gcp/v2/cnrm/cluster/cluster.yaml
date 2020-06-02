@@ -17,10 +17,10 @@
 apiVersion: container.cnrm.cloud.google.com/v1beta1
 kind: ContainerCluster
 metadata:
-  clusterName: "project-id/us-east1-d/kf-name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"name","value":"kf-name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
+  clusterName: "project-id/us-east1-d/name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"name","value":"name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
   labels:
-    mesh_id: "project-id_us-east1-d_kf-name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"name","value":"kf-name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
-  name: kf-name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kf-name"}}}
+    mesh_id: "project-id_us-east1-d_name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"name","value":"name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
+  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
 spec:
   initialNodeCount: 2
   clusterAutoscaling:
@@ -31,7 +31,7 @@ spec:
       - https://www.googleapis.com/auth/monitoring
       - https://www.googleapis.com/auth/devstorage.read_only
       serviceAccountRef:
-        name: kf-name-vm # {"type":"string","x-kustomize":{"partialSetters":[{"name":"name","value":"kf-name"}]}}
+        name: name-vm # {"type":"string","x-kustomize":{"partialSetters":[{"name":"name","value":"name"}]}}
     resourceLimits:
     - resourceType: cpu
       maximum: 128
@@ -51,10 +51,10 @@ spec:
     metadata:
       disable-legacy-endpoints: "true"
     oauthScopes:
-      - https://www.googleapis.com/auth/logging.write
-      - https://www.googleapis.com/auth/monitoring
-      - https://www.googleapis.com/auth/devstorage.read_only
+    - https://www.googleapis.com/auth/logging.write
+    - https://www.googleapis.com/auth/monitoring
+    - https://www.googleapis.com/auth/devstorage.read_only
     serviceAccountRef:
-      name: kf-name-vm # {"type":"string","x-kustomize":{"partialSetters":[{"name":"name","value":"kf-name"}]}}
+      name: name-vm # {"type":"string","x-kustomize":{"partialSetters":[{"name":"name","value":"name"}]}}
     workloadMetadataConfig:
       nodeMetadata: GKE_METADATA_SERVER

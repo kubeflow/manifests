@@ -5,5 +5,6 @@ spec:
   - src:
       exclude: gcr.io
     # change to the gcr registry as image replication destination
-    dest: <target_gcr_registry>
+    dest: gcr.io/gcp-private-dev   # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"gcp-private-dev"}]}}
+  # Use the existing public context
   context: gs://kubeflow-examples/image-replicate/replicate-context.tar.gz

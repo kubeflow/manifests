@@ -8,8 +8,8 @@ spec:
   visibility: private
   privateVisibilityConfig:
     networks:
-      - networkRef:
-          name: gke-no-internet-network
+    - networkRef:
+        name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
 ---
 apiVersion: dns.cnrm.cloud.google.com/v1beta1
 kind: DNSRecordSet
@@ -22,7 +22,7 @@ spec:
   managedZoneRef:
     name: google-apis
   rrdatas:
-    - "restricted.googleapis.com."
+  - "restricted.googleapis.com."
 ---
 apiVersion: dns.cnrm.cloud.google.com/v1beta1
 kind: DNSRecordSet
@@ -35,7 +35,7 @@ spec:
   managedZoneRef:
     name: google-apis
   rrdatas:
-    - "199.36.153.4"
-    - "199.36.153.5"
-    - "199.36.153.6"
-    - "199.36.153.7"
+  - "199.36.153.4"
+  - "199.36.153.5"
+  - "199.36.153.6"
+  - "199.36.153.7"
