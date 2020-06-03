@@ -10,3 +10,6 @@ images:
   - name: mysql
     newTag: "8"
     newName: mysql
+commonLabels:
+  app.kubernetes.io/component: katib
+  app.kubernetes.io/name: katib-controller
