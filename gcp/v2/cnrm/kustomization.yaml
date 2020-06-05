@@ -6,3 +6,4 @@ resources:
 - ingress
 - iam
 - pipelines
+- gcp-services.yaml

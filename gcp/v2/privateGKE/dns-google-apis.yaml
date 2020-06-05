@@ -1,7 +1,7 @@
 apiVersion: dns.cnrm.cloud.google.com/v1beta1
 kind: DNSManagedZone
 metadata:
-  name: google-apis
+  name: name-goog-apis # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
 spec:
   description: "private zone for Google APIs"
   dnsName: "googleapis.com."
@@ -14,26 +14,26 @@ spec:
 apiVersion: dns.cnrm.cloud.google.com/v1beta1
 kind: DNSRecordSet
 metadata:
-  name: restricted-google-apis-cname
+  name: name-goog-cname # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
 spec:
   name: "*.googleapis.com."
   type: "CNAME"
   ttl: 300
   managedZoneRef:
-    name: google-apis
+    name: name-goog-apis # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
   rrdatas:
   - "restricted.googleapis.com."
 ---
 apiVersion: dns.cnrm.cloud.google.com/v1beta1
 kind: DNSRecordSet
 metadata:
-  name: restricted-google-apis-a
+  name: name-goog-a # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
 spec:
   name: "restricted.googleapis.com."
   type: "A"
   ttl: 300
   managedZoneRef:
-    name: google-apis
+    name: name-goog-apis # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
   rrdatas:
   - "199.36.153.4"
   - "199.36.153.5"

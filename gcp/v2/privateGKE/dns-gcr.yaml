@@ -1,7 +1,7 @@
 apiVersion: dns.cnrm.cloud.google.com/v1beta1
 kind: DNSManagedZone
 metadata:
-  name: gcr-io
+  name: name-gcr # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
 spec:
   description: "private zone for GCR.io"
   dnsName: "gcr.io."
@@ -14,26 +14,26 @@ spec:
 apiVersion: dns.cnrm.cloud.google.com/v1beta1
 kind: DNSRecordSet
 metadata:
-  name: gcr-io-cname
+  name: name-gcr-cname # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
 spec:
   name: "*.gcr.io."
   type: "CNAME"
   ttl: 300
   managedZoneRef:
-    name: gcr-io
+    name: name-gcr # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
   rrdatas:
   - "gcr.io."
 ---
 apiVersion: dns.cnrm.cloud.google.com/v1beta1
 kind: DNSRecordSet
 metadata:
-  name: gcr-io-a
+  name: name-gcr-a # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
 spec:
   name: "gcr.io."
   type: "A"
   ttl: 300
   managedZoneRef:
-    name: gcr-io
+    name: name-gcr # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
   rrdatas:
   - "199.36.153.4"
   - "199.36.153.5"

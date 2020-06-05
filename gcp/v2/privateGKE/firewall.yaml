@@ -1,7 +1,7 @@
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: name-deny-egress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
 spec:
   description: "Deny all internet traffic by default"
   deny:
@@ -20,7 +20,7 @@ spec:
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: name-health-ingress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
 spec:
   description: "Allow health check ingress"
   allow:
@@ -42,7 +42,7 @@ spec:
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: name-health-egress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
 spec:
   description: "Allow health check egress"
   allow:
@@ -64,7 +64,7 @@ spec:
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: name-apis-egress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
 spec:
   description: "Allow egress to google APIs"
   allow:
@@ -82,7 +82,7 @@ spec:
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: name-master-egress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
 spec:
   description: "Allow master node egress"
   allow:
@@ -106,7 +106,7 @@ spec:
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: name-int-egress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
 spec:
   description: "Allow traffic to internal ips"
   allow:
@@ -129,14 +129,36 @@ spec:
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: name-istio # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
 spec:
+  description: "Allow traffic to ISTIO webhook"
   allow:
   - protocol: tcp
     ports:
     # In ASM 1.4 the port is 9443. Starting in ASM 1.5 the port is 15017
     - "15017"
     - "9443"
+  sourceRanges:
+  - 172.16.0.32/28
+  direction: INGRESS
+  networkRef:
+    name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  # Enable logging to help debugging
+  enableLogging: false # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"false"}}}
+---
+# Per https://docs.cert-manager.io/en/release-0.11/getting-started/webhook.html#running-on-private-gke-clusters
+# We need an extra firewall rule to allow certmanager webhooks.
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeFirewall
+metadata:
+  name: name-cm # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
+spec:
+  description: "Allow traffic to cert manager webhook"
+  allow:
+  - protocol: tcp
+    ports:
+    - "443"
+    - "6443"
   sourceRanges:
   - 172.16.0.32/28
   direction: INGRESS
@@ -154,7 +176,7 @@ spec:
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: name-dockerhub # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
 spec:
   description: "Allow egress to dockerhub and quay.io"
   allow:
@@ -195,6 +217,37 @@ spec:
   - "13.35.101.91"
   - "13.35.101.101"
   - "13.35.101.104"
+  direction: EGRESS
+  networkRef:
+    name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  # Enable logging to help debugging
+  enableLogging: false # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"false"}}}
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeFirewall
+metadata:
+  name: name-iap-jwks # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
+spec:
+  description: "Allow traffic to www.gstatic.com to get IAP JWKs"
+  allow:
+  - protocol: tcp
+    ports:
+    - "443"
+  # JWKS should be served on www.gstatic.com and parallel domains
+  # g0.static.com
+  # g1.static.com
+  # g2.static.com
+  # g3.static.com
+  # The actual addresses appear to be the 172 addreses not the static
+  destinationRanges:
+  - "172.217.6.163"
+  - "172.217.6.131"
+  - "172.217.9.163"
+  - "172.217.1.131"
+  - "172.217.212.94"
+  - "172.217.204.94"
+  - "23.217.138.110"
+  - "23.202.231.169"
   direction: EGRESS
   networkRef:
     name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
