@@ -10,14 +10,14 @@ spec:
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeSubnetwork
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: name # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
 spec:
   ipCidrRange: 10.10.10.0/24
   region: us-central1 # {"type":"string","x-kustomize":{"setter":{"name":"gcloud.compute.region","value":"us-central1"}}}
   description: kubeflow private subnet
   privateIpGoogleAccess: true
   networkRef:
-    name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+    name: name # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
   logConfig:
     aggregationInterval: INTERVAL_10_MIN
     flowSampling: 0.5
@@ -31,9 +31,28 @@ spec:
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeRoute
 metadata:
-  name: google-apis
+  name: name-google-apis # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
 spec:
   destRange: 199.36.153.4/30
   networkRef:
-    name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+    name: name # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
+  nextHopGateway: default-internet-gateway
+  priority: 1000
+---
+# We need a default internet route in order to allow outbound internet access using CloudNat
+# Without outbound internet access ISTIO will be unable to download the
+# jwks keys. In this case you can manually set the jwks keys in the ISTIO policy
+# but you would have to manually rotate them as they expire.
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeRoute
+metadata:
+  name: name-internet # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
+spec:
+  description: "internet-route for IAP JWKS"
+  destRange: 0.0.0.0/0
+  networkRef:
+    name: name # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
+  # Important this must be higher priority then the Google APIs route
+  # because otherwise we will end up trying to route calls to google APIs over public internet and we will have problems.
+  priority: 1100
   nextHopGateway: default-internet-gateway
