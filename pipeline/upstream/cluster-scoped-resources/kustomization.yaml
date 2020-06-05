@@ -13,7 +13,8 @@ resources:
 # Used by Kustomize
 configMapGenerator:
   - name: pipeline-cluster-scoped-install-config
-    env: params.env
+    envs:
+    - params.env
 
 vars:
   - name: NAMESPACE

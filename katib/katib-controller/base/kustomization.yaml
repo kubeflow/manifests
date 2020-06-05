@@ -18,7 +18,8 @@ resources:
 - trial-template-configmap-labeled.yaml
 configMapGenerator:
 - name: katib-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 images:

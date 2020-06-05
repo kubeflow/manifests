@@ -24,7 +24,8 @@ patchesStrategicMerge:
 # Used by Kustomize
 configMapGenerator:
   - name: pipeline-install-config
-    env: params.env
+    envs:
+    - params.env
     behavior: merge
 
 vars:
