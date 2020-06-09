@@ -7,7 +7,7 @@ generatorOptions:
   disableNameSuffixHash: true
 resources:
 # Users start by inheriting the gcp stack and then customizing it
-- ../../gcp
+- ../../generic
 patchesStrategicMerge:
 # Patch in modifications to the global config
 - kubeflow-config.yaml

@@ -7,7 +7,6 @@ metadata:
   # config map.
   name: kubeflow-config
 data:
-  # For GCP we can use these to define GCP
-  # parameters that should be common across applications
+  # Examples of overriding config.
   project: alice-gcp
   zone: us-east1-d
