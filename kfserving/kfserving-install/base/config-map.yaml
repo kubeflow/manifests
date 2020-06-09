@@ -13,7 +13,7 @@ data:
   explainers: |-
     {
         "alibi": {
-            "image" : "gcr.io/kfserving/alibi-explainer",
+            "image" : "docker.io/seldonio/kfserving-alibiexplainer",
             "defaultImageVersion": "v0.3.0",
             "allowedImageVersions": [
                "v0.3.0"
