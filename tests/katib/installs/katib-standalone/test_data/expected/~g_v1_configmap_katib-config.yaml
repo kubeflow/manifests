@@ -3,13 +3,13 @@ data:
   metrics-collector-sidecar: |-
     {
       "StdOut": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:v0.8.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:5df1bd2"
       },
       "File": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:v0.8.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:5df1bd2"
       },
       "TensorFlowEvent": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:v0.8.0",
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:5df1bd2",
         "resources": {
           "limits": {
             "memory": "1Gi"
@@ -20,28 +20,34 @@ data:
   suggestion: |-
     {
       "random": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:v0.8.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:5df1bd2"
       },
       "grid": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-chocolate:v0.8.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-chocolate:5df1bd2"
       },
       "hyperband": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperband:v0.8.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperband:5df1bd2"
       },
       "bayesianoptimization": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-skopt:v0.8.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-skopt:5df1bd2"
       },
       "tpe": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:v0.8.0"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:5df1bd2"
       },
-      "nasrl": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-nasrl:v0.8.0",
+      "enas": {
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-enas:5df1bd2",
         "imagePullPolicy": "Always",
         "resources": {
           "limits": {
             "memory": "200Mi"
           }
         }
+      },
+      "cmaes": {
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-goptuna:5df1bd2"
+      },
+      "darts": {
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-darts:5df1bd2"
       }
     }
 kind: ConfigMap
