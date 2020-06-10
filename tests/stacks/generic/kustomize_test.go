@@ -1,4 +1,4 @@
-package gcp
+package generic
 
 import (
 	"github.com/kubeflow/manifests/tests"
@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../stacks/gcp",
+		Package:  "../../../stacks/generic",
 		Expected: "test_data/expected",
 	}
 
