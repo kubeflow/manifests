@@ -43,7 +43,7 @@ spec:
                       type:
                         type: string
                     required:
-                    - src
+                      - src
                     type: object
                   type: array
                 keywords:
@@ -223,8 +223,8 @@ spec:
                   type:
                     type: string
                 required:
-                - type
-                - status
+                  - type
+                  - status
                 type: object
               type: array
             observedGeneration:
