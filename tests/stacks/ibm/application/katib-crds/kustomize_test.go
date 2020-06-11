@@ -1,0 +1,15 @@
+package katib_crds
+
+import (
+	"github.com/kubeflow/manifests/tests"
+	"testing"
+)
+
+func TestKustomize(t *testing.T) {
+	testCase := &tests.KustomizeTestCase{
+		Package:  "../../../../../stacks/ibm/application/katib-crds",
+		Expected: "test_data/expected",
+	}
+
+	tests.RunTestCase(t, testCase)
+}

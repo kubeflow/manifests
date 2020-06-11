@@ -20,7 +20,6 @@ resources:
 - ../knative-serving-install/base/webhook-configuration.yaml
 - ../knative-serving-install/overlays/application
 commonLabels:
-  app: knative
   kustomize.component: knative
   app.kubernetes.io/component: knative-serving-install
   app.kuberenets.io/instance: knative-serving-install

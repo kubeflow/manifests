@@ -21,6 +21,8 @@ commonLabels:
   app.kuberenets.io/name: kfserving-install
   app.kuberenets.io/managed-by: kfctl
   app.kuberenets.io/part-of: kubeflow
+generatorOptions:
+ disableNameSuffixHash: true
 configMapGenerator:
 - envs:
   - ../kfserving-install/base/params.env
