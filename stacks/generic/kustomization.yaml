@@ -7,7 +7,6 @@ resources:
   # We need to switch the admission webhook to use cert-manager.
   - ../../admission-webhook/webhook/v3
   - ../../common/centraldashboard/overlays/stacks
-  - ../../gcp/gpu-driver/overlays/application/
   - ../../kubeflow-roles/base
   - ../../jupyter/jupyter-web-app/base_v3
   - ../../jupyter/notebook-controller/base_v3

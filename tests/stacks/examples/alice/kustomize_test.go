@@ -1,4 +1,4 @@
-package alice_gcp
+package alice
 
 import (
 	"github.com/kubeflow/manifests/tests"
@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../stacks/examples/alice_gcp",
+		Package:  "../../../../stacks/examples/alice",
 		Expected: "test_data/expected",
 	}
 
