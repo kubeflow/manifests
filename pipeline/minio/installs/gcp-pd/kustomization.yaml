@@ -11,20 +11,20 @@ resources:
 patchesStrategicMerge:
 - persistent-volume-claim.yaml
 configMapGenerator:
-- name: pipeline-minio-parameters
+- name: pipeline-minio-install-config
   env: params.env
 vars:
 - name: kfpMinioPd
   objref:
     kind: ConfigMap
-    name: pipeline-minio-parameters
+    name: pipeline-minio-install-config
     apiVersion: v1
   fieldref:
     fieldpath: data.minioPd
 - name: kfpMinioPvName
   objref:
     kind: ConfigMap
-    name: pipeline-minio-parameters
+    name: pipeline-minio-install-config
     apiVersion: v1
   fieldref:
     fieldpath: data.minioPvName
