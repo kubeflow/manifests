@@ -4,6 +4,7 @@ resources:
 - ../../upstream/base/pipeline/cluster-scoped
 - ../../upstream/base/pipeline
 - virtual-service.yaml
+- ../../metadata-writer/base_v3
 images:
 - name: gcr.io/ml-pipeline/api-server
   newTag: 1.0.0-rc.1
@@ -17,9 +18,8 @@ images:
   newTag: 1.0.0-rc.1
 - name: gcr.io/ml-pipeline/visualization-server
   newTag: 1.0.0-rc.1
-# TODO: include metadata writer
-# - name: gcr.io/ml-pipeline/metadata-writer
-#   newTag: 1.0.0-rc.1
+- name: gcr.io/ml-pipeline/metadata-writer
+  newTag: 1.0.0-rc.1
 # TODO: include cache server
 # - name: gcr.io/ml-pipeline/cache-server
 #   newTag: 1.0.0-rc.1
