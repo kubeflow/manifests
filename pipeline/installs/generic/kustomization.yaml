@@ -41,13 +41,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.bucketName
-- name: KFP_UI_CLUSTER_DOMAIN
-  objref:
-    kind: ConfigMap
-    name: pipeline-install-config
-    version: v1
-  fieldref:
-    fieldpath: data.uiClusterDomain
 - name: KFP_UI_NAMESPACE
   objref:
     kind: Service
