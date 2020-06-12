@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - ../../upstream/base/pipeline/cluster-scoped
 - ../../upstream/base/pipeline
+- virtual-service.yaml
 images:
 - name: gcr.io/ml-pipeline/api-server
   newTag: 1.0.0-rc.1
@@ -32,13 +33,7 @@ secretGenerator:
 - name: mysql-secret
   env: params-db-secret.env
 vars:
-- name: NAMESPACE
-  objref:
-    kind: Deployment
-    apiVersion: apps/v1
-    name: ml-pipeline
-  fieldref:
-    fieldpath: metadata.namespace
+# TODO: replace BUCKET_NAME with a configmap value reference
 - name: BUCKET_NAME
   objref:
     kind: ConfigMap
@@ -46,3 +41,26 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.bucketName
+- name: KFP_UI_CLUSTER_DOMAIN
+  objref:
+    kind: ConfigMap
+    name: pipeline-install-config
+    version: v1
+  fieldref:
+    fieldpath: data.uiClusterDomain
+- name: KFP_UI_NAMESPACE
+  objref:
+    kind: Service
+    name: ml-pipeline-ui
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.namespace
+- name: KFP_UI_SERVICE
+  objref:
+    kind: Service
+    name: ml-pipeline-ui
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.name
+configurations:
+- params.yaml

@@ -1,0 +1,21 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ml-pipeline-ui
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /pipeline
+    rewrite:
+      uri: /pipeline
+    route:
+    - destination:
+        host: $(KFP_UI_SERVICE).$(KFP_UI_NAMESPACE).svc.$(KFP_UI_CLUSTER_DOMAIN)
+        port:
+          number: 80
+    timeout: 300s
