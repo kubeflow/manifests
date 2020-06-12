@@ -7,6 +7,7 @@ commonLabels:
 resources:
 - ../../../upstream/env/platform-agnostic/mysql
 - ../../overlays/application/application.yaml
+- ./configmap.yaml
 images:
 - name: gcr.io/ml-pipeline/mysql
   newTag: '5.6'

@@ -8,6 +8,7 @@ resources:
 - ../../../upstream/env/platform-agnostic/mysql
 - ../../overlays/application/application.yaml
 - persistent-volume.yaml
+- ../generic/configmap.yaml
 patchesStrategicMerge:
 - persistent-volume-claim.yaml
 images:

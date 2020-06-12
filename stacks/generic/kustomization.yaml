@@ -18,6 +18,7 @@ resources:
   - ../../argo/base_v3
   - ../../pipeline/minio/installs/generic
   - ../../pipeline/mysql/installs/generic
+  - ../../pipeline/installs/generic
   # This package will create a profile resource so it needs to be installed after the profiles CR
   - ../../default-install/base
 configMapGenerator:
