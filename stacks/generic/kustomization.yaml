@@ -16,6 +16,7 @@ resources:
   - ../../tf-training/tf-job-crds/overlays/application
   - ../../tf-training/tf-job-operator/overlays/application
   - ../../argo/base_v3
+  - ../../pipeline/minio/installs/generic
   # This package will create a profile resource so it needs to be installed after the profiles CR
   - ../../default-install/base
 configMapGenerator:
