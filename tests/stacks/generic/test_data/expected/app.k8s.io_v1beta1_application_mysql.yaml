@@ -1,7 +1,12 @@
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: minio
+  labels:
+    app: mysql
+    app.kubernetes.io/component: mysql
+    app.kubernetes.io/name: mysql
+  name: mysql
+  namespace: kubeflow
 spec:
   addOwnerRef: true
   componentKinds:
@@ -10,18 +15,18 @@ spec:
   - group: apps
     kind: Deployment
   descriptor:
-    description: ''
+    description: ""
     keywords:
-    - minio
+    - mysql
     - kubeflow
     links:
     - description: About
-      url: ''
+      url: ""
     maintainers: []
     owners: []
-    type: minio
+    type: mysql
     version: v1beta1
   selector:
     matchLabels:
-      app.kubernetes.io/component: minio
-      app.kubernetes.io/name: minio
+      app.kubernetes.io/component: mysql
+      app.kubernetes.io/name: mysql
