@@ -15,8 +15,12 @@ resources:
   - ../../pytorch-job/pytorch-operator/overlays/application
   - ../../tf-training/tf-job-crds/overlays/application
   - ../../tf-training/tf-job-operator/overlays/application
+  - ../../argo/base_v3
+  - ../../pipeline/minio/installs/generic
+  - ../../pipeline/mysql/installs/generic
   # This package will create a profile resource so it needs to be installed after the profiles CR
   - ../../default-install/base
+  - ../../katib/installs/katib-standalone
 configMapGenerator:
 - envs:
   - ./config/params.env
@@ -38,3 +42,10 @@ vars:
     apiVersion: v1
     kind: ConfigMap
     name: kubeflow-config
+- fieldref:
+    fieldpath: metadata.namespace
+  name: katib-ui-namespace
+  objref:
+    kind: Service
+    name: katib-ui
+    apiVersion: v1
