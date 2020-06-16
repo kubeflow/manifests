@@ -6,7 +6,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      name: xgboost-operator
+      app: xgboost-operator
   template:
     metadata:
       labels:
