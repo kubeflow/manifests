@@ -13,3 +13,5 @@ patchesStrategicMerge:
 - scheduled-workflow/deployment-patch.yaml
 - viewer-crd-deployment-patch.yaml
 - persistence-agent-deployment-patch.yaml
+- metadata-writer-deployment-patch.yaml
+- cache-deployment-patch.yaml

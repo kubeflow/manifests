@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ml-pipeline-persistenceagent
+  name: metadata-writer
 spec:
   template:
     spec:
       containers:
-      - name: ml-pipeline-persistenceagent
+      - name: main
         env:
-        - name: NAMESPACE
+        - name: NAMESPACE_TO_WATCH
           value: ''
           valueFrom: null
