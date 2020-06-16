@@ -7,11 +7,14 @@ resources:
 - pipelines-ui
 - pipelines-profile-controller
 - scheduled-workflow
+- persistence-agent
+- cache
+- metadata-writer
 patchesStrategicMerge:
 - api-service/deployment-patch.yaml
 - pipelines-ui/deployment-patch.yaml
 - scheduled-workflow/deployment-patch.yaml
-- viewer-crd-deployment-patch.yaml
-- persistence-agent-deployment-patch.yaml
-- metadata-writer-deployment-patch.yaml
-- cache-deployment-patch.yaml
+- viewer-controller/deployment-patch.yaml
+- persistence-agent/deployment-patch.yaml
+- metadata-writer/deployment-patch.yaml
+- cache/deployment-patch.yaml
