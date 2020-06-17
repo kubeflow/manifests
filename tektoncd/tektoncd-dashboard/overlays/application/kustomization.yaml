@@ -6,7 +6,8 @@ commonLabels:
   app.kubernetes.io/component: tektoncd
   app.kubernetes.io/name: tektoncd-dashboard
 configMapGenerator:
-- env: params.env
+- envs:
+  - params.env
   name: tektoncd-dashboard-app-parameters
 configurations:
 - params.yaml

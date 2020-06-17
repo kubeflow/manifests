@@ -6,7 +6,8 @@ commonLabels:
   kustomize.component: istio-ingress
 configMapGenerator:
 - name: istio-ingress-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:
