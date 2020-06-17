@@ -15,7 +15,7 @@ spec:
       uri: /pipeline
     route:
     - destination:
-        host: $(KFP_UI_SERVICE).$(KFP_UI_NAMESPACE).svc.$(clusterDomain)
+        host: ml-pipeline-ui.$(kfp-ui-namespace).svc.$(clusterDomain)
         port:
           number: 80
     timeout: 300s
