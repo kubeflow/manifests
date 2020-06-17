@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: minio
     app.kubernetes.io/name: minio
-  name: minio-pv-claim
+  name: minio-pvc
   namespace: kubeflow
 spec:
   accessModes:

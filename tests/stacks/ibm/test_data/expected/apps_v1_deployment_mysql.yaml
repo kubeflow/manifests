@@ -17,8 +17,6 @@ spec:
     type: Recreate
   template:
     metadata:
-      annotations:
-        sidecar.istio.io/inject: "false"
       labels:
         app: mysql
         app.kubernetes.io/component: mysql
@@ -28,7 +26,7 @@ spec:
       - env:
         - name: MYSQL_ALLOW_EMPTY_PASSWORD
           value: "true"
-        image: mysql:5.6
+        image: gcr.io/ml-pipeline/mysql:5.6
         name: mysql
         ports:
         - containerPort: 3306

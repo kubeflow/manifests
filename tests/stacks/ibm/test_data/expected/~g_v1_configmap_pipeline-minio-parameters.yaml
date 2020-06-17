@@ -5,7 +5,6 @@ kind: ConfigMap
 metadata:
   annotations: {}
   labels:
-    app: minio
     app.kubernetes.io/component: minio
     app.kubernetes.io/name: minio
   name: pipeline-minio-parameters

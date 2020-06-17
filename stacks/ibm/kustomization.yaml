@@ -22,6 +22,7 @@ resources:
   - ../../pytorch-job/pytorch-operator/overlays/application
   - ../../tf-training/tf-job-crds/overlays/application
   - ../../tf-training/tf-job-operator/overlays/application
+  - ../../katib/installs/katib-standalone-ibm
   - ../../seldon/seldon-core-operator/overlays/application
 configMapGenerator:
 - name: pipeline-mysql-parameters
@@ -60,3 +61,10 @@ vars:
     apiVersion: v1
     kind: ConfigMap
     name: kubeflow-config
+- fieldref:
+    fieldpath: metadata.namespace
+  name: katib-ui-namespace
+  objref:
+    kind: Service
+    name: katib-ui
+    apiVersion: v1

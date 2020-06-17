@@ -7,6 +7,7 @@ resources:
 - ../../../upstream/env/platform-agnostic/minio/
 - ../../../upstream/base/argo/minio-artifact-secret.yaml # TODO: move it to minio/ folder
 - ../../overlays/application/application.yaml
+- persistent-volume-claim.yaml
 patchesStrategicMerge:
 - deployment-patch.yaml
 generatorOptions:

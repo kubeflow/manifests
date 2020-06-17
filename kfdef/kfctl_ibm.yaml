@@ -94,16 +94,6 @@ spec:
         name: manifests
         path: stacks/ibm/application/tensorboard
     name: tensorboard
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: katib/installs/katib-standalone-ibm
-    name: katib
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: stacks/ibm/application/katib-controller
-    name: katib-controller
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
