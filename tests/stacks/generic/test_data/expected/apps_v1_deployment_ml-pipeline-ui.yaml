@@ -22,7 +22,7 @@ spec:
               fieldPath: metadata.namespace
         - name: ALLOW_CUSTOM_VISUALIZATIONS
           value: "true"
-        image: gcr.io/ml-pipeline/frontend:1.0.0-rc.1
+        image: gcr.io/ml-pipeline/frontend:1.0.0-rc.2
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
