@@ -2,17 +2,17 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
 resources:
-- ../kfserving-crds/base
-- ../kfserving-crds/overlays/application
-- ../kfserving-install/base/cert.yaml
-- ../kfserving-install/base/config-map.yaml
-- ../kfserving-install/base/cluster-role-binding.yaml
-- ../kfserving-install/base/cluster-role.yaml
-- ../kfserving-install/base/secret.yaml
-- ../kfserving-install/base/statefulset.yaml
-- ../kfserving-install/base/service.yaml
-- ../kfserving-install/base/webhook.yaml
-- ../kfserving-install/overlays/application
+- ../../kfserving-crds/base
+- ../../kfserving-crds/overlays/application
+- ../../kfserving-install/base/cert.yaml
+- ../../kfserving-install/base/config-map.yaml
+- ../../kfserving-install/base/cluster-role-binding.yaml
+- ../../kfserving-install/base/cluster-role.yaml
+- ../../kfserving-install/base/secret.yaml
+- ../../kfserving-install/base/statefulset.yaml
+- ../../kfserving-install/base/service.yaml
+- ../../kfserving-install/base/webhook.yaml
+- ../../kfserving-install/overlays/application
 commonLabels:
   app: kfserving
   kustomize.component: kfserving
@@ -25,7 +25,7 @@ generatorOptions:
  disableNameSuffixHash: true
 configMapGenerator:
 - envs:
-  - ../kfserving-install/base/params.env
+  - ../../kfserving-install/base/params.env
   name: kfserving-config
 vars:
 - name: registry
@@ -36,7 +36,7 @@ vars:
   fieldref:
     fieldpath: data.registry
 configurations:
-- ../kfserving-install/base/params.yaml
+- ../../kfserving-install/base/params.yaml
 images:
 - name: gcr.io/kubebuilder/kube-rbac-proxy
   newName: gcr.io/kubebuilder/kube-rbac-proxy

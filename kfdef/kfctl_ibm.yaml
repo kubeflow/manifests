@@ -75,12 +75,12 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: knative/kubeflow
+        path: knative/installs/generic
     name: knative
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: kfserving/kubeflow
+        path: kfserving/installs/generic
     name: kfserving
   # Spartakus is a separate applications so that kfctl can remove it
   # to disable usage reporting
@@ -97,8 +97,8 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/application/katib-crds
-    name: katib-crds
+        path: katib/installs/katib-standalone-ibm
+    name: katib
   - kustomizeConfig:
       repoRef:
         name: manifests

@@ -10,8 +10,8 @@ resources:
   - application/profiles
   - ../../argo/base_v3
   - ../../pipeline/api-service/overlays/application
-  - ../../pipeline/minio/overlays/application
-  - ../../pipeline/mysql/overlays/application
+  - ../../pipeline/minio/installs/ibm
+  - ../../pipeline/mysql/installs/ibm
   - ../../pipeline/persistent-agent/overlays/application
   - ../../pipeline/pipelines-runner/overlays/application
   - application/pipelines-ui
