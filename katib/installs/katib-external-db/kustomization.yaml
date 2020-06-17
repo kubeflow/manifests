@@ -9,7 +9,8 @@ patchesStrategicMerge:
   - katib-db-manager-deployment.yaml
 secretGenerator:
   - name: katib-mysql-secrets
-    env: secrets.env
+    envs:
+    - secrets.env
 commonLabels:
   app.kubernetes.io/component: katib
   app.kubernetes.io/name: katib-controller

@@ -16,7 +16,8 @@ images:
   newName: gcr.io/ml-pipeline/mysql
 configMapGenerator:
 - name: pipeline-mysql-install-config
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: kfpMysqlPd
   objref:

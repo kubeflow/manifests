@@ -5,7 +5,8 @@ commonLabels:
   app.kubernetes.io/component: kubeflow
   app.kubernetes.io/name: tektoncd-install
 configMapGenerator:
-- env: params.env
+- envs:
+  - params.env
   name: tektoncd-install-parameters
 configurations:
 - params.yaml
