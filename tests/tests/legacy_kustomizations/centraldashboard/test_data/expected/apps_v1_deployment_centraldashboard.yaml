@@ -46,7 +46,7 @@ spec:
           value: 'accounts.google.com:'
         - name: PROFILES_KFAM_SERVICE_HOST
           value: profiles-kfam.kubeflow
-        image: gcr.io/kubeflow-images-public/centraldashboard:vmaster-gf39279c0
+        image: gcr.io/kubeflow-images-public/centraldashboard:vmaster-g3cc31748
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
