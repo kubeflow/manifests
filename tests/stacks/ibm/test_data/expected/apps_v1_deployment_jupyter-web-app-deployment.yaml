@@ -4,11 +4,7 @@ metadata:
   labels:
     app: jupyter-web-app
     app.kubernetes.io/component: jupyter-web-app
-    app.kubernetes.io/instance: jupyter-web-app-v1.0.0
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: jupyter-web-app
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v1.0.0
     kustomize.component: jupyter-web-app
   name: jupyter-web-app-deployment
   namespace: kubeflow
@@ -18,11 +14,7 @@ spec:
     matchLabels:
       app: jupyter-web-app
       app.kubernetes.io/component: jupyter-web-app
-      app.kubernetes.io/instance: jupyter-web-app-v1.0.0
-      app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: jupyter-web-app
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v1.0.0
       kustomize.component: jupyter-web-app
   template:
     metadata:
@@ -31,11 +23,7 @@ spec:
       labels:
         app: jupyter-web-app
         app.kubernetes.io/component: jupyter-web-app
-        app.kubernetes.io/instance: jupyter-web-app-v1.0.0
-        app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: jupyter-web-app
-        app.kubernetes.io/part-of: kubeflow
-        app.kubernetes.io/version: v1.0.0
         kustomize.component: jupyter-web-app
     spec:
       containers:
