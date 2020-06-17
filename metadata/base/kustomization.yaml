@@ -5,9 +5,11 @@ commonLabels:
   kustomize.component: metadata
 configMapGenerator:
 - name: ui-parameters
-  env: params.env
+  envs:
+  - params.env
 - name: grpc-configmap
-  env: grpc-params.env
+  envs:
+  - grpc-params.env
 generatorOptions:
   # TFX pipelines use metadata-grpc-configmap for finding grpc server host and
   # port at runtime. Because they don't know the suffix, we have to disable it.

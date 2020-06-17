@@ -2,7 +2,8 @@
 # one ConfigMap resource (it's a generator of n maps).
 configMapGenerator:
 - name: istio-install-parameters
-  env: params.env
+  envs:
+  - params.env
 
 # Images modify the tags for images without
 # creating patches.

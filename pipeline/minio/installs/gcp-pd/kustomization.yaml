@@ -12,7 +12,8 @@ patchesStrategicMerge:
 - persistent-volume-claim.yaml
 configMapGenerator:
 - name: pipeline-minio-install-config
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: kfpMinioPd
   objref:

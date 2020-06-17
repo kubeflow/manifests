@@ -8,5 +8,6 @@ bases:
 # Change the value in params.env to yours.
 configMapGenerator:
   - name: pipeline-cluster-scoped-install-config
-    env: params.env
+    envs:
+    - params.env
     behavior: merge

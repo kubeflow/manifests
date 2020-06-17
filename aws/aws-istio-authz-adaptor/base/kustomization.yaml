@@ -17,7 +17,8 @@ images:
   newTag: "0.1"
 configMapGenerator:
   - name: aws-authzadaptor-parameters
-    env: params.env
+    envs:
+    - params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:
