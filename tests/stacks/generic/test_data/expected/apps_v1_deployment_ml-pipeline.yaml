@@ -23,7 +23,10 @@ spec:
         - name: OBJECTSTORECONFIG_SECURE
           value: "false"
         - name: OBJECTSTORECONFIG_BUCKETNAME
-          value: mlpipeline
+          valueFrom:
+            configMapKeyRef:
+              key: bucketName
+              name: pipeline-install-config-2829cc67f8
         - name: DBCONFIG_USER
           valueFrom:
             secretKeyRef:
@@ -37,19 +40,19 @@ spec:
         - name: DBCONFIG_DBNAME
           valueFrom:
             configMapKeyRef:
-              key: pipeline_db
-              name: mysql-configmap
+              key: pipelineDb
+              name: pipeline-install-config-2829cc67f8
         - name: DBCONFIG_HOST
           valueFrom:
             configMapKeyRef:
-              key: host
-              name: mysql-configmap
+              key: dbHost
+              name: pipeline-install-config-2829cc67f8
         - name: DBCONFIG_PORT
           valueFrom:
             configMapKeyRef:
-              key: port
-              name: mysql-configmap
-        image: gcr.io/ml-pipeline/api-server:1.0.0-rc.1
+              key: dbPort
+              name: pipeline-install-config-2829cc67f8
+        image: gcr.io/ml-pipeline/api-server:1.0.0-rc.2
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:

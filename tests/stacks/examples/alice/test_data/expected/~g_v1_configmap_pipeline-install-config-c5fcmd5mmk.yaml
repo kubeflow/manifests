@@ -1,7 +1,0 @@
-apiVersion: v1
-data:
-  bucketName: mlpipeline
-kind: ConfigMap
-metadata:
-  name: pipeline-install-config-c5fcmd5mmk
-  namespace: kubeflow
