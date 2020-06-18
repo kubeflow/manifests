@@ -3,7 +3,7 @@ kind: VirtualService
 metadata:
   name: kubebench-dashboard
 spec:
-  gateways:
+  gateways: # {"$kpt-set":"kubeflow-gateway"}
   - kubeflow-gateway
   hosts:
   - '*'

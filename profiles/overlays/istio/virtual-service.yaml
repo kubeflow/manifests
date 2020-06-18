@@ -3,7 +3,7 @@ kind: VirtualService
 metadata:
   name: kfam
 spec:
-  gateways:
+  gateways: # {"$kpt-set":"kubeflow-gateway"}
   - kubeflow-gateway
   hosts:
   - '*'

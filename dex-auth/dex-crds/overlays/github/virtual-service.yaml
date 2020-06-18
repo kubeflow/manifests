@@ -7,7 +7,7 @@ kind: VirtualService
 metadata:
   name: dex
 spec:
-  gateways:
+  gateways: # {"$kpt-set":"kubeflow-gateway"}
   - kubeflow/kubeflow-gateway
   hosts:
   - '*'

@@ -3,7 +3,7 @@ kind: VirtualService
 metadata:
   name: ml-pipeline-tensorboard-ui
 spec:
-  gateways:
+  gateways: # {"$kpt-set":"kubeflow-gateway"}
   - kubeflow-gateway
   hosts:
   - '*'
@@ -25,7 +25,7 @@ kind: VirtualService
 metadata:
   name: ml-pipeline-ui
 spec:
-  gateways:
+  gateways: # {"$kpt-set":"kubeflow-gateway"}
   - kubeflow-gateway
   hosts:
   - '*'

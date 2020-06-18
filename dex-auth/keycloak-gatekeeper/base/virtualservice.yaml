@@ -3,7 +3,7 @@ kind: VirtualService
 metadata:
   name: keycloak-gatekeeper
 spec:
-  gateways:
+  gateways: # {"$kpt-set":"kubeflow-gateway"}
   - kubeflow/kubeflow-gateway
   hosts:
   - '*'

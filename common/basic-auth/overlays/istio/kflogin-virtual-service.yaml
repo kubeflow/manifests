@@ -3,7 +3,7 @@ kind: VirtualService
 metadata:
   name: basic-auth-login
 spec:
-  gateways:
+  gateways: # {"$kpt-set":"kubeflow-gateway"}
   - kubeflow-gateway
   hosts:
   - '*'

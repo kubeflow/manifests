@@ -20,7 +20,7 @@ metadata:
 spec:
   hosts:
   - "*"
-  gateways:
+  gateways: # {"$kpt-set":"kubeflow-gateway"}
   - "kubeflow-gateway"
   http:
   - match:
