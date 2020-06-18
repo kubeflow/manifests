@@ -8,7 +8,8 @@ commonLabels:
   kustomize.component: metadata
 configMapGenerator:
 - name: metadata-db-parameters
-  env: params.env
+  envs:
+  - params.env
 bases:
 - ../../base
 patchesStrategicMerge:
