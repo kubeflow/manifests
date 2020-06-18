@@ -32,12 +32,10 @@ images:
 # Used by Kustomize
 configMapGenerator:
 - name: pipeline-install-config
-  envs:
-  - params.env
+  envs: ["params.env"]
 secretGenerator:
 - name: mysql-secret
-  envs:
-  - params-db-secret.env
+  envs: ["params-db-secret.env"]
 vars:
 - name: kfp-namespace
   objref:

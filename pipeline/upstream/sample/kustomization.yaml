@@ -14,14 +14,12 @@ commonLabels:
 # Used by Kustomize
 configMapGenerator:
   - name: pipeline-install-config
-    envs:
-    - params.env
+    envs: ["params.env"]
     behavior: merge
 
 secretGenerator:
   - name: mysql-secret
-    envs:
-    - params-db-secret.env
+    envs: ["params-db-secret.env"]
     behavior: merge
 
 # !!! If you want to customize the namespace,
