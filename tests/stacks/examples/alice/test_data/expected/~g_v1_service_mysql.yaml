@@ -10,6 +10,8 @@ metadata:
 spec:
   ports:
   - port: 3306
+    protocol: TCP
+    targetPort: 3306
   selector:
     app: mysql
     app.kubernetes.io/component: mysql

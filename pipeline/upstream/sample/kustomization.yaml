@@ -14,18 +14,16 @@ commonLabels:
 # Used by Kustomize
 configMapGenerator:
   - name: pipeline-install-config
-    envs:
-    - params.env
+    envs: ["params.env"]
     behavior: merge
 
 secretGenerator:
   - name: mysql-secret
-    envs:
-    - params-db-secret.env
+    envs: ["params-db-secret.env"]
     behavior: merge
 
 # !!! If you want to customize the namespace,
-# please also update sample/params.env and sample/cluster-scoped-resources/params.env
+# please also update sample/cluster-scoped-resources/kustomization.yaml's namespace field to the same value
 namespace: kubeflow
 
 #### Customization ###
