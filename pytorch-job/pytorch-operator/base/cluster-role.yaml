@@ -10,6 +10,7 @@ rules:
   resources:
   - pytorchjobs
   - pytorchjobs/status
+  - pytorchjobs/finalizers
   verbs:
   - '*'
 - apiGroups:
@@ -56,6 +57,7 @@ rules:
   resources:
   - pytorchjobs
   - pytorchjobs/status
+  - pytorchjobs/finalizers
   verbs:
   - get
   - list
@@ -80,6 +82,7 @@ rules:
   resources:
   - pytorchjobs
   - pytorchjobs/status
+  - pytorchjobs/finalizers
   verbs:
   - get
   - list

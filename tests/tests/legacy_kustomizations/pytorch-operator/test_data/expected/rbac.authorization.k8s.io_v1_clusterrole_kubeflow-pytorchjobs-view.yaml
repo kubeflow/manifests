@@ -17,6 +17,7 @@ rules:
   resources:
   - pytorchjobs
   - pytorchjobs/status
+  - pytorchjobs/finalizers
   verbs:
   - get
   - list
