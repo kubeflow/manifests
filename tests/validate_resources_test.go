@@ -96,6 +96,18 @@ func TestCommonLabelsImmutable(t *testing.T) {
 	}
 }
 
+// deprecatedK8s represents a K8s resource that should be replaced by a new type.
+type deprecatedK8s struct {
+	oldVersion string
+	oldKind    string
+	newVersion string
+	newKind    string
+}
+
+func versionAndKind(version string, kind string) string {
+	return version + "/" + kind
+}
+
 // TestValidK8sResources reads all the K8s resources and performs a bunch of validation checks.
 //
 // Currently the following checks are performed:
@@ -124,6 +136,27 @@ func TestValidK8sResources(t *testing.T) {
 		// It seems like if this is an issue it should eventually get fixed in upstream cnrm configs.
 		// The CNRM directory has lots of CRDS with non empty status.
 		"gcp/v2/management/cnrm-install": true,
+	}
+
+	deprecated := []deprecatedK8s{
+		{
+			oldVersion: "extensions/v1beta1",
+			oldKind:    "Ingress",
+			newVersion: "networking.k8s.io/v1beta1",
+			newKind:    "Ingress",
+		},
+		{
+			oldVersion: "extensions/v1beta1",
+			oldKind:    "Deployment",
+			newVersion: "apps/v1",
+			newKind:    "Deployment",
+		},
+	}
+
+	deprecatedMap := map[string]string{}
+
+	for _, d := range deprecated {
+		deprecatedMap[versionAndKind(d.oldVersion, d.oldKind)] = versionAndKind(d.newVersion, d.newKind)
 	}
 
 	err := filepath.Walk("..", func(path string, info os.FileInfo, err error) error {
@@ -184,6 +217,12 @@ func TestValidK8sResources(t *testing.T) {
 			}
 			if m.Name == "" || m.Kind == "" {
 				continue
+			}
+
+			// Check if its a deprecated K8s resource
+			vAndK := versionAndKind(m.APIVersion, m.Kind)
+			if v, ok := deprecatedMap[vAndK]; ok {
+				t.Errorf("Path %v; resource %v; has version and kind %v which should be changed to %v", path, m.Name, vAndK, v)
 			}
 
 			// Ensure status isn't set
