@@ -92,7 +92,6 @@ func TestCommonLabelsImmutable(t *testing.T) {
 
 	if err != nil {
 		t.Errorf("error walking the path %v; error: %v", rootDir, err)
-
 	}
 }
 
