@@ -10,6 +10,9 @@ webhooks:
       namespace: $(podDefaultsNamespace)
       path: /apply-poddefault
   name: $(podDefaultsDeploymentName).kubeflow.org
+  namespaceSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: kubeflow-profile
   rules:
   - apiGroups:
     - ""

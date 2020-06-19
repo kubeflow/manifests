@@ -19,6 +19,9 @@ webhooks:
       namespace: kubeflow
       path: /apply-poddefault
   name: admission-webhook-deployment.kubeflow.org
+  namespaceSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: kubeflow-profile
   rules:
   - apiGroups:
     - ""
