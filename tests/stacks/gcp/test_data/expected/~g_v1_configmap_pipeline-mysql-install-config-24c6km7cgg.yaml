@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  mysqlPd: dls-kf-storage-metadata-store
+  mysqlPvName: mysql-pv
+kind: ConfigMap
+metadata:
+  labels:
+    app: mysql
+    app.kubernetes.io/component: mysql
+    app.kubernetes.io/name: mysql
+  name: pipeline-mysql-install-config-24c6km7cgg
+  namespace: kubeflow
