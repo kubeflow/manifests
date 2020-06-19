@@ -21,7 +21,7 @@ SEARCH_DIRS = [
   "katib/installs",
   ]
 
-# The subdirectory to story the expected manifests in
+# The subdirectory to store the expected manifests in
 # We use a subdirectory of test_data because we could potentially
 # have more than one version of a manifest.
 KUSTOMIZE_OUTPUT_DIR = "test_data/expected"
