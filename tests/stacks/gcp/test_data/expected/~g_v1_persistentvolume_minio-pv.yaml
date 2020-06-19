@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    app.kubernetes.io/component: minio
+    app.kubernetes.io/name: minio
+  name: minio-pv
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 20Gi
+  gcePersistentDisk:
+    fsType: ext4
+    pdName: dls-kf-storage-artifact-store
