@@ -8,9 +8,6 @@ resources:
 - ../../../upstream/env/platform-agnostic/mysql
 - ../../overlays/application/application.yaml
 - persistent-volume.yaml
-# TODO(https://github.com/kubeflow/gcp-blueprints/issues/55): This configmap doesn't exist; jlewi commented
-# it out so the manifests would build but we need to figure out the correct long term fix.
-# - ../generic/configmap.yaml
 patchesStrategicMerge:
 - persistent-volume-claim.yaml
 images:
