@@ -1,0 +1,19 @@
+apiVersion: apiregistration.k8s.io/v1beta1
+kind: APIService
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from-secret: cert-manager/cert-manager-webhook-tls
+  labels:
+    app: webhook
+    app.kubernetes.io/component: cert-manager
+    app.kubernetes.io/name: cert-manager
+    kustomize.component: cert-manager
+  name: v1beta1.webhook.cert-manager.io
+spec:
+  group: webhook.cert-manager.io
+  groupPriorityMinimum: 1000
+  service:
+    name: cert-manager-webhook
+    namespace: cert-manager
+  version: v1beta1
+  versionPriority: 15

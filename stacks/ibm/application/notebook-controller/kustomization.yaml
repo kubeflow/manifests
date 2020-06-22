@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+commonLabels:
+  app.kubernetes.io/component: notebook-controller
+  app.kubernetes.io/name: notebook-controller
+resources:
+- base
+- ../../../../jupyter/notebook-controller/overlays/application/application.yaml
