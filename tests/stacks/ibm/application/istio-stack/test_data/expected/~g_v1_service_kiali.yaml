@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: kiali
+    chart: kiali
+    heritage: Tiller
+    release: istio
+  name: kiali
+  namespace: istio-system
+spec:
+  ports:
+  - name: http-kiali
+    port: 20001
+    protocol: TCP
+  selector:
+    app: kiali

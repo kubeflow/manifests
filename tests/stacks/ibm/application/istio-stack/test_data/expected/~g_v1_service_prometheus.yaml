@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+  labels:
+    app: prometheus
+    chart: prometheus
+    heritage: Tiller
+    release: istio
+  name: prometheus
+  namespace: istio-system
+spec:
+  ports:
+  - name: http-prometheus
+    port: 9090
+    protocol: TCP
+  selector:
+    app: prometheus
