@@ -45,7 +45,7 @@ spec:
           value: "false"
         - name: ISTIO_GATEWAY
           value: kubeflow/kubeflow-gateway
-        image: gcr.io/kubeflow-images-public/notebook-controller:vmaster-gf39279c0
+        image: gcr.io/kubeflow-images-public/notebook-controller:vmaster-g3e735947
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
