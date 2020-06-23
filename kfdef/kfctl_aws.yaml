@@ -5,46 +5,6 @@ metadata:
 spec:
   applications:
   - kustomizeConfig:
-      parameters:
-      - name: namespace
-        value: istio-system
-      repoRef:
-        name: manifests
-        path: istio/istio-crds
-    name: istio-crds
-  - kustomizeConfig:
-      parameters:
-      - name: namespace
-        value: istio-system
-      repoRef:
-        name: manifests
-        path: istio/istio-install
-    name: istio-install
-  - kustomizeConfig:
-      parameters:
-      - name: namespace
-        value: istio-system
-      repoRef:
-        name: manifests
-        path: istio/cluster-local-gateway
-    name: cluster-local-gateway
-  - kustomizeConfig:
-      parameters:
-      - name: clusterRbacConfig
-        value: 'OFF'
-      repoRef:
-        name: manifests
-        path: istio/istio
-    name: istio
-  - kustomizeConfig:
-      parameters:
-      - name: namespace
-        value: istio-system
-      repoRef:
-        name: manifests
-        path: istio/add-anonymous-user-filter
-    name: add-anonymous-user-filter
-  - kustomizeConfig:
       repoRef:
         name: manifests
         path: application/application-crds
@@ -56,6 +16,38 @@ spec:
         name: manifests
         path: application/application
     name: application
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio-1-3-1/istio-crds-1-3-1
+    name: istio-crds
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio-1-3-1/istio-install-1-3-1
+    name: istio-install
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: istio-1-3-1/cluster-local-gateway-1-3-1
+    name: cluster-local-gateway
+  - kustomizeConfig:
+      parameters:
+      - name: clusterRbacConfig
+        value: 'ON'
+      repoRef:
+        name: manifests
+        path: istio/istio
+    name: istio
   - kustomizeConfig:
       parameters:
       - name: namespace
@@ -90,6 +82,44 @@ spec:
     name: metacontroller
   - kustomizeConfig:
       overlays:
+      - application
+      parameters:
+      - name: namespace
+        value: istio-system
+      - name: userid-header
+        value: kubeflow-userid
+      - name: oidc_provider
+        value: http://dex.auth.svc.cluster.local:5556/dex
+      - name: oidc_redirect_uri
+        value: /login/oidc
+      - name: oidc_auth_url
+        value: /dex/auth
+      - name: skip_auth_uri
+        value: /dex
+      - name: client_id
+        value: kubeflow-oidc-authservice
+      repoRef:
+        name: manifests
+        path: istio/oidc-authservice
+    name: oidc-authservice
+  - kustomizeConfig:
+      overlays:
+      - istio
+      parameters:
+      - name: namespace
+        value: auth
+      - name: issuer
+        value: http://dex.auth.svc.cluster.local:5556/dex
+      - name: client_id
+        value: kubeflow-oidc-authservice
+      - name: oidc_redirect_uris
+        value: '["/login/oidc"]'
+      repoRef:
+        name: manifests
+        path: dex-auth/dex-crds
+    name: dex
+  - kustomizeConfig:
+      overlays:
       - istio
       - application
       repoRef:
@@ -105,12 +135,16 @@ spec:
       overlays:
       - istio
       - application
+      parameters:
+      - name: userid-header
+        value: kubeflow-userid
       repoRef:
         name: manifests
         path: common/centraldashboard
     name: centraldashboard
   - kustomizeConfig:
       overlays:
+      - cert-manager
       - application
       repoRef:
         name: manifests
@@ -332,6 +366,9 @@ spec:
       overlays:
       - application
       - istio
+      parameters:
+      - name: userid-header
+        value: kubeflow-userid
       repoRef:
         name: manifests
         path: profiles
@@ -350,6 +387,14 @@ spec:
         name: manifests
         path: mpi-job/mpi-operator
     name: mpi-operator
+  - kustomizeConfig:
+      parameters:
+      - name: namespace
+        value: istio-system
+      repoRef:
+        name: manifests
+        path: aws/istio-ingress
+    name: istio-ingress
   - kustomizeConfig:
       overlays:
       - application
@@ -374,9 +419,8 @@ spec:
     spec:
       auth:
         basicAuth:
-          password:
-            name: password
-          username: admin
+          password: 12341234
+          username: admin@kubeflow.org
       region: us-west-2
       roles:
       - eksctl-kubeflow-aws-nodegroup-ng-a2-NodeInstanceRole-xxxxxxx
