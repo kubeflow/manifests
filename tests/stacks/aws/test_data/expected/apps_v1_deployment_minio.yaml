@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: minio
+    app.kubernetes.io/component: minio
+    app.kubernetes.io/name: minio
+  name: minio
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: minio
+      app.kubernetes.io/component: minio
+      app.kubernetes.io/name: minio
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: minio
+        app.kubernetes.io/component: minio
+        app.kubernetes.io/name: minio
+    spec:
+      containers:
+      - args:
+        - server
+        - /data
+        env:
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: accesskey
+              name: mlpipeline-minio-artifact
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: secretkey
+              name: mlpipeline-minio-artifact
+        image: gcr.io/ml-pipeline/minio:RELEASE.2019-08-14T20-37-41Z-license-compliance
+        name: minio
+        ports:
+        - containerPort: 9000
+        volumeMounts:
+        - mountPath: /data
+          name: data
+          subPath: minio
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: minio-pvc
