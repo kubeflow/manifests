@@ -1,0 +1,17 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: admission-webhook
+    app.kubernetes.io/component: poddefaults
+    app.kubernetes.io/name: poddefaults
+    kustomize.component: admission-webhook
+  name: admission-webhook-cluster-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admission-webhook-cluster-role
+subjects:
+- kind: ServiceAccount
+  name: admission-webhook-service-account
+  namespace: kubeflow

@@ -1,0 +1,51 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  labels:
+    app.kubernetes.io/component: mxnet
+    app.kubernetes.io/name: mxnet-operator
+  name: mxnet-operator
+  namespace: kubeflow
+spec:
+  addOwnerRef: true
+  componentKinds:
+  - group: apps
+    kind: Deployment
+  - group: core
+    kind: ServiceAccount
+  - group: kubeflow.org
+    kind: MXJob
+  descriptor:
+    description: mxnet-operator allows users to create and manage the "MXJob" custom
+      resource.
+    keywords:
+    - MXjob
+    - mxnet-operator
+    - mxnet-training
+    links:
+    - description: About
+      url: https://github.com/kubeflow/mxnet-operator
+    maintainers:
+    - email: suleisl2000@hotmail.com
+      name: Lei Su
+    - email: terrytangyuan@gmail.com
+      name: Yuan Tang
+    - email: seedjeffwan@gmail.com
+      name: Jiaxin Shan
+    owners:
+    - email: suleisl2000@hotmail.com
+      name: Lei Su
+    - email: terrytangyuan@gmail.com
+      name: Yuan Tang
+    - email: seedjeffwan@gmail.com
+      name: Jiaxin Shan
+    type: mxnet-operator
+    version: v1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: mxnet
+      app.kubernetes.io/instance: mxnet-operator-v1.0.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: mxnet-operator
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v1.0.0
