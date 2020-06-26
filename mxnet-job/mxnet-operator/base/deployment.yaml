@@ -13,9 +13,7 @@ spec:
     spec:
       containers:
       - command:
-        - /opt/kubeflow/mxnet-operator.v1beta1
-        - --alsologtostderr
-        - -v=1
+        - /opt/kubeflow/mxnet-operator.v1
         env:
         - name: MY_POD_NAMESPACE
           valueFrom:
