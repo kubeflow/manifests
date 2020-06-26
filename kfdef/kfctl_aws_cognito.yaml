@@ -243,6 +243,13 @@ spec:
       - application
       repoRef:
         name: manifests
+        path: mxnet-job/mxnet-operator
+    name: mxnet-operator
+  - kustomizeConfig:
+      overlays:
+      - application
+      repoRef:
+        name: manifests
         path: katib/katib-crds
     name: katib-crds
   - kustomizeConfig:
