@@ -429,8 +429,10 @@ spec:
           password: 12341234
           username: admin@kubeflow.org
       region: us-west-2
-      roles:
-      - eksctl-kubeflow-aws-nodegroup-ng-a2-NodeInstanceRole-xxxxxxx
+      enablePodIamPolicy: true
+      # If you don't use IAM Role for Service Account, you can still use node instance roles.
+      #roles:
+      #- eksctl-kubeflow-aws-nodegroup-ng-a2-NodeInstanceRole-xxxxxxx
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
