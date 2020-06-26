@@ -405,8 +405,10 @@ spec:
           cognitoUserPoolArn: arn:aws:cognito-idp:us-west-2:xxxxx:userpool/us-west-2_xxxxxx
           cognitoUserPoolDomain: your-user-pool
       region: us-west-2
-      roles:
-      - eksctl-kubeflow-aws-nodegroup-ng-a2-NodeInstanceRole-xxxxx
+      enablePodIamPolicy: true
+      # If you don't use IAM Role for Service Account, you can still use node instance roles.
+      #roles:
+      #- eksctl-kubeflow-aws-nodegroup-ng-a2-NodeInstanceRole-xxxxxxx
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
