@@ -61,7 +61,7 @@ spec:
       repoRef:
         name: manifests
         path: stacks/ibm
-    name: kubeflow-app
+    name: kubeflow-apps
   - kustomizeConfig:
       repoRef:
         name: manifests
