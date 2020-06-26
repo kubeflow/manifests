@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: profiles-controller-service-account
+  annotations:
+    iam.gke.io/gcp-service-account: name-admin@project-id.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"},{"name":"gcloud.core.project","value":"project-id"}]}}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ml-pipeline-ui
+  annotations:
+    iam.gke.io/gcp-service-account: name-user@project-id.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"},{"name":"gcloud.core.project","value":"project-id"}]}}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ml-pipeline-visualizationserver
+  annotations:
+    iam.gke.io/gcp-service-account: name-user@project-id.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"},{"name":"gcloud.core.project","value":"project-id"}]}}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pipeline-runner
+  annotations:
+    iam.gke.io/gcp-service-account: name-user@project-id.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"},{"name":"gcloud.core.project","value":"project-id"}]}}
