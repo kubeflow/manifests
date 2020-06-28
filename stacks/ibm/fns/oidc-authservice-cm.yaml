@@ -5,7 +5,7 @@ metadata:
   annotations:
     config.kubernetes.io/function: |
       container:
-        image: adrian555/fn:latest
+        image: aipipeline/kpt-fn:latest
 spec:
   configMaps:
   - name: oidc-authservice-config
