@@ -20,3 +20,5 @@ configMapGenerator:
   - application_secret=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
   - skip_auth_uri=/dex
   - namespace=istio-system
+  - userid-header=kubeflow-userid
+  - userid-prefix=
