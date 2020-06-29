@@ -165,3 +165,17 @@ spec:
     apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
     kind: Project
     external: projects/project-id # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicy
+metadata:
+  name: name-admin-workload-identity-users # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
+spec:
+  resourceRef:
+    apiVersion: iam.cnrm.cloud.google.com/v1beta1
+    kind: IAMServiceAccount
+    name: name-admin # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
+  bindings:
+  - role: roles/iam.workloadIdentityUser
+    members:
+    - serviceAccount:project-id.svc.id.goog[kubeflow/profiles-controller-service-account] # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
