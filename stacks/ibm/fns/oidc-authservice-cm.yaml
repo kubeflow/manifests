@@ -8,7 +8,7 @@ metadata:
         image: aipipeline/kpt-fn:latest
 spec:
   configMaps:
-  - name: oidc-authservice-config
+  - name: oidc-authservice-parameters
     behavior: merge
     literals:
     - application_secret="<the-client-secret-of-oidc-service>"
