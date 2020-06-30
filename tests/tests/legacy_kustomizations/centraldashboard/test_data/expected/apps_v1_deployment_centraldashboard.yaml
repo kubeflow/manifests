@@ -46,6 +46,8 @@ spec:
           value: 'accounts.google.com:'
         - name: PROFILES_KFAM_SERVICE_HOST
           value: profiles-kfam.kubeflow
+        - name: REGISTRATION_FLOW
+          value: "true"
         image: gcr.io/kubeflow-images-public/centraldashboard:vmaster-gf39279c0
         imagePullPolicy: IfNotPresent
         livenessProbe:
