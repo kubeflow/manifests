@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../../stacks/ibm/application/cert-manager-kube-system-resources",
+		Package:  "../../../../../stacks/ibm/application/cert-manager-kube-system-resources",
 		Expected: "test_data/expected",
 	}
 

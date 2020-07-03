@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../tests/legacy_kustomizations/kubeflow-roles",
+		Package:  "../../../../tests/legacy_kustomizations/kubeflow-roles",
 		Expected: "test_data/expected",
 	}
 

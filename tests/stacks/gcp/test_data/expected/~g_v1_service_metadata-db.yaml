@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    component: db
+    kustomize.component: metadata
+  name: metadata-db
+  namespace: kubeflow
+spec:
+  ports:
+  - name: dbapi
+    port: 3306
+    protocol: TCP
+  selector:
+    component: db
+    kustomize.component: metadata
+  type: ClusterIP

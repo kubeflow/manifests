@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../katib/installs/katib-standalone",
+		Package:  "../../../../katib/installs/katib-standalone",
 		Expected: "test_data/expected",
 	}
 

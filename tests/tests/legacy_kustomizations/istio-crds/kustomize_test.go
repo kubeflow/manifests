@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../tests/legacy_kustomizations/istio-crds",
+		Package:  "../../../../tests/legacy_kustomizations/istio-crds",
 		Expected: "test_data/expected",
 	}
 

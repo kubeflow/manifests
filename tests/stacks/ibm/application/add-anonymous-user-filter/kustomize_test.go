@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../../stacks/ibm/application/add-anonymous-user-filter",
+		Package:  "../../../../../stacks/ibm/application/add-anonymous-user-filter",
 		Expected: "test_data/expected",
 	}
 

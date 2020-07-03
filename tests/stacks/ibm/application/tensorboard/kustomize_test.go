@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../../stacks/ibm/application/tensorboard",
+		Package:  "../../../../../stacks/ibm/application/tensorboard",
 		Expected: "test_data/expected",
 	}
 
