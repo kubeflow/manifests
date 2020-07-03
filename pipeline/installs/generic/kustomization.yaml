@@ -5,34 +5,15 @@ resources:
 - ../../upstream/base/pipeline/cluster-scoped
 - ../../upstream/base/pipeline
 - virtual-service.yaml
-- ../../metadata-writer/base_v3
 - ../../cache/base_v3
-images:
-- name: gcr.io/ml-pipeline/api-server
-  newTag: 1.0.0-rc.2
-- name: gcr.io/ml-pipeline/persistenceagent
-  newTag: 1.0.0-rc.2
-- name: gcr.io/ml-pipeline/scheduledworkflow
-  newTag: 1.0.0-rc.2
-- name: gcr.io/ml-pipeline/frontend
-  newTag: 1.0.0-rc.2
-- name: gcr.io/ml-pipeline/viewer-crd-controller
-  newTag: 1.0.0-rc.2
-- name: gcr.io/ml-pipeline/visualization-server
-  newTag: 1.0.0-rc.2
-- name: gcr.io/ml-pipeline/metadata-writer
-  newTag: 1.0.0-rc.2
-- name: gcr.io/ml-pipeline/cache-server
-  newTag: 1.0.0-rc.2
-- name: gcr.io/ml-pipeline/cache-deployer
-  newTag: 1.0.0-rc.2
-# Used by Kustomize
 configMapGenerator:
 - name: pipeline-install-config
-  env: params.env
+  envs:
+  - ./params.env
 secretGenerator:
 - name: mysql-secret
-  env: params-db-secret.env
+  envs:
+  - ./params-db-secret.env
 vars:
 - name: kfp-ui-namespace
   objref:

@@ -1,11 +1,12 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  name: xgboostjobs.xgboostjob.kubeflow.org
+  name: xgboostjobs.kubeflow.org
 spec:
-  group: xgboostjob.kubeflow.org
+  group: kubeflow.org
   names:
     kind: XGBoostJob
+    singular: xgboostjob
     plural: xgboostjobs
   scope: Namespaced
   validation:

@@ -36,11 +36,11 @@ gcp-reset:
 	kpt cfg set ../gcp/v2/ name name
 
 generate:
-	$(PYTHON_BIN) ../hack/generate_tests.py --all || echo done
+	$(PYTHON_BIN) ../hack/generate_tests.py --all
 	$(GO) fmt ./...
 
 generate-changed-only:
-	$(PYTHON_BIN) ../hack/generate_tests.py || echo done
+	$(PYTHON_BIN) ../hack/generate_tests.py
 	$(GO) fmt ./...
 
 modules:

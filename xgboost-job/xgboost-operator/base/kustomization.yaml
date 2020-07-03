@@ -8,11 +8,12 @@ resources:
 - service-account.yaml
 - service.yaml
 namespace: kubeflow
-nameprefix: xgboost-operator-
+namePrefix: xgboost-operator-
 configMapGenerator:
-- name: xgboost-operator-config
-  env: params.env
+- envs:
+  - params.env
+  name: xgboost-operator-config
 images:
-  - name: gcr.io/kubeflow-images-public/xgboost-operator
-    newName: gcr.io/kubeflow-images-public/xgboost-operator
-    newTag: 8e29825
+- name: gcr.io/kubeflow-images-public/xgboost-operator
+  newName: gcr.io/kubeflow-images-public/xgboost-operator
+  newTag: vmaster-g8f8c3f96

@@ -22,5 +22,6 @@ rules:
   resources:
   - experiments
   - trials
+  - suggestions
   verbs:
   - '*'

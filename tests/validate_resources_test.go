@@ -2,15 +2,16 @@ package tests
 
 import (
 	"bytes"
-	"github.com/ghodss/yaml"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
+	"testing"
+
+	"github.com/ghodss/yaml"
 	"sigs.k8s.io/kustomize/kyaml/kio"
 	kyaml "sigs.k8s.io/kustomize/kyaml/yaml"
 	"sigs.k8s.io/kustomize/v3/pkg/types"
-	"strings"
-	"testing"
 )
 
 const (
@@ -92,8 +93,19 @@ func TestCommonLabelsImmutable(t *testing.T) {
 
 	if err != nil {
 		t.Errorf("error walking the path %v; error: %v", rootDir, err)
-
 	}
+}
+
+// deprecatedK8s represents a K8s resource that should be replaced by a new type.
+type deprecatedK8s struct {
+	oldVersion string
+	oldKind    string
+	newVersion string
+	newKind    string
+}
+
+func versionAndKind(version string, kind string) string {
+	return version + "/" + kind
 }
 
 // TestValidK8sResources reads all the K8s resources and performs a bunch of validation checks.
@@ -124,6 +136,27 @@ func TestValidK8sResources(t *testing.T) {
 		// It seems like if this is an issue it should eventually get fixed in upstream cnrm configs.
 		// The CNRM directory has lots of CRDS with non empty status.
 		"gcp/v2/management/cnrm-install": true,
+	}
+
+	deprecated := []deprecatedK8s{
+		{
+			oldVersion: "extensions/v1beta1",
+			oldKind:    "Ingress",
+			newVersion: "networking.k8s.io/v1beta1",
+			newKind:    "Ingress",
+		},
+		{
+			oldVersion: "extensions/v1beta1",
+			oldKind:    "Deployment",
+			newVersion: "apps/v1",
+			newKind:    "Deployment",
+		},
+	}
+
+	deprecatedMap := map[string]string{}
+
+	for _, d := range deprecated {
+		deprecatedMap[versionAndKind(d.oldVersion, d.oldKind)] = versionAndKind(d.newVersion, d.newKind)
 	}
 
 	err := filepath.Walk("..", func(path string, info os.FileInfo, err error) error {
@@ -186,6 +219,12 @@ func TestValidK8sResources(t *testing.T) {
 				continue
 			}
 
+			// Check if its a deprecated K8s resource
+			vAndK := versionAndKind(m.APIVersion, m.Kind)
+			if v, ok := deprecatedMap[vAndK]; ok {
+				t.Errorf("Path %v; resource %v; has version and kind %v which should be changed to %v", path, m.Name, vAndK, v)
+			}
+
 			// Ensure status isn't set
 			f := n.Field("status")
 
@@ -209,6 +248,124 @@ func TestValidK8sResources(t *testing.T) {
 			}
 
 			checkEmptyAnnotations()
+		}
+		return nil
+	})
+
+	if err != nil {
+		t.Errorf("error walking the path %v; error: %v", rootDir, err)
+	}
+}
+
+// TestCheckWebhookSelector is a test to try to ensure all the mutating webhooks
+// have either namespaceSeletor or objectSelector to avoid issues per
+// https://github.com/kubeflow/manifests/issues/1213.
+func TestCheckWebhookSelector(t *testing.T) {
+	rootDir := ".."
+
+	// Directories to exclude. Thee paths should be relative to rootDir.
+	// Subdirectories won't be searched
+	excludes := map[string]bool{
+		"tests":   true,
+		".git":    true,
+		".github": true,
+	}
+
+	err := filepath.Walk("..", func(path string, info os.FileInfo, err error) error {
+		relPath, err := filepath.Rel(rootDir, path)
+
+		if err != nil {
+			t.Fatalf("Could not compute relative path(%v, %v); error: %v", rootDir, path, err)
+		}
+
+		if _, ok := excludes[relPath]; ok {
+			return filepath.SkipDir
+		}
+
+		// skip directories
+		if info.IsDir() {
+			return nil
+		}
+
+		// Skip non YAML files
+		ext := filepath.Ext(info.Name())
+
+		if ext != ".yaml" && ext != ".yml" {
+			return nil
+		}
+		data, err := ioutil.ReadFile(path)
+
+		if err != nil {
+			t.Errorf("Error reading %v; error: %v", path, err)
+		}
+
+		input := bytes.NewReader(data)
+		reader := kio.ByteReader{
+			Reader: input,
+		}
+
+		nodes, err := reader.Read()
+
+		if err != nil {
+			t.Errorf("Error unmarshaling %v; error: %v", path, err)
+		}
+
+		for _, n := range nodes {
+			//root := n
+
+			m, err := n.GetMeta()
+			// Skip objects with no metadata
+			if err != nil {
+				continue
+			}
+
+			// Skip objects with no name or kind
+			if m.Name == "" || m.Kind == "" {
+				continue
+			}
+
+			// Skip non-mutating webhook files
+			if strings.ToLower(m.Kind) != "mutatingwebhookconfiguration" {
+				continue
+			}
+
+			// Ensure objectSelector or namespaceSelector is set for pod resource
+			if webhooks := n.Field("webhooks"); webhooks != nil {
+				webhookElements, err := webhooks.Value.Elements()
+				// Skip webhooks with no element
+				if err != nil {
+					continue
+				}
+				for _, w := range webhookElements {
+					if kyaml.IsFieldEmpty(w.Field("namespaceSelector")) && kyaml.IsFieldEmpty(w.Field("objectSelector")) {
+						// If there's no objectSelector or namespaceSelector, make sure the mutating webhook doesn't
+						// have any rule for pods.
+						if rules := w.Field("rules"); rules != nil {
+							ruleElements, err := rules.Value.Elements()
+							if err != nil {
+								continue
+							}
+							for _, rule := range ruleElements {
+								if resources := rule.Field("resources"); resources != nil {
+									resourceElements, err := resources.Value.Elements()
+									if err != nil {
+										continue
+									}
+									for _, resource := range resourceElements {
+										resourceString, err := resource.String()
+										if err != nil {
+											continue
+										}
+										if strings.TrimSpace(resourceString) == "pods" || strings.TrimSpace(resourceString) == "*" {
+											t.Errorf("Path %v; resource %v; does not have objectSelector or namespaceSelector is for mutating webhook on pods", path, m.Name)
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 		return nil
 	})

@@ -15,20 +15,22 @@ resources:
 - katib-ui-rbac.yaml
 - katib-ui-service.yaml
 - trial-template-configmap.yaml
+- trial-template-configmap-labeled.yaml
 configMapGenerator:
 - name: katib-parameters
-  env: params.env
+  envs:
+  - params.env
 generatorOptions:
   disableNameSuffixHash: true
 images:
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
-  newTag: v0.8.0
+  newTag: 917164a
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
-  newTag: v0.8.0
+  newTag: 917164a
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
 - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
-  newTag: v0.8.0
+  newTag: 917164a
   newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
 - name: mysql
   newTag: "8"

@@ -5,14 +5,14 @@ commonLabels:
   app.kubernetes.io/name: minio
 resources:
 - ../../../upstream/env/platform-agnostic/minio/
-- ../../../upstream/base/argo/minio-artifact-secret.yaml # TODO: move it to minio/ folder
 - persistent-volume.yaml
 - ../../overlays/application/application.yaml
 patchesStrategicMerge:
 - persistent-volume-claim.yaml
 configMapGenerator:
 - name: pipeline-minio-install-config
-  env: params.env
+  envs:
+  - params.env
 vars:
 - name: kfpMinioPd
   objref:

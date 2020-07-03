@@ -1,0 +1,1 @@
+Note: the approach to have the `base` in a sub-directory is to avoid the problem of current `namePrefix` incapability to skip adding to certain resources. In this case, they are `VirtualService` and `Application`. For these, we want the name to be `notebook-controller` instead of `notebook-controller-notebook-controller`.

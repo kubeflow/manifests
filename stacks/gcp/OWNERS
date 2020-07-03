@@ -1,0 +1,6 @@
+# Owners file should only contain Googlers
+# since these are Google's oppinionated configs.
+approvers:
+- bobgy
+- jlewi
+- rmgogogo

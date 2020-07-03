@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  clusterDomain: cluster.local
+  userid-header: kubeflow-userid
+  userid-prefix: ""
+kind: ConfigMap
+metadata:
+  name: kubeflow-config-d7dttg89h2
+  namespace: kubeflow

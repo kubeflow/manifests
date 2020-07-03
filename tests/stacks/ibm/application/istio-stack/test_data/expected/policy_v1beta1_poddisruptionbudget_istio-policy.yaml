@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: policy
+    chart: mixer
+    heritage: Tiller
+    istio: mixer
+    istio-mixer-type: policy
+    release: istio
+    version: 1.1.0
+  name: istio-policy
+  namespace: istio-system
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: policy
+      istio: mixer
+      istio-mixer-type: policy
+      release: istio

@@ -4,10 +4,12 @@ commonLabels:
   kustomize.component: metadata
 configMapGenerator:
 - name: metadata-db-parameters
-  env: params.env
+  envs:
+  - params.env
 secretGenerator:
 - name: metadata-db-secrets
-  env: secrets.env
+  envs:
+  - secrets.env
 bases:
 - ../../base
 patchesStrategicMerge:

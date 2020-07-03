@@ -4,6 +4,7 @@ This repo contains [kustomize](https://kustomize.io/) packages for deploying Kub
 
 
 If you are a contributor authoring or editing the packages please see [Best Practices](./docs/KustomizeBestPractices.md).
+Note, please use [kustomize v3.2.1](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv3.2.1) with manifests in this repo, before #538 is fixed which will allow latest kustomize to be used.
 
 
 # Obsolete information
