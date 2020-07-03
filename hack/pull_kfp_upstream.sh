@@ -8,7 +8,7 @@ set -ex
 
 # Please edit the following version before running the script to pull new
 # pipelines version.
-export PIPELINES_VERSION=1.0.0-rc.2
+export PIPELINES_VERSION=1.0.0-rc.3
 export PIPELINES_SRC_REPO=https://github.com/kubeflow/pipelines.git
 # Pulling for the first time
 # kpt pkg get $PIPELINES_SRC_REPO/manifests/kustomize@$PIPELINES_VERSION pipeline/upstream
