@@ -5,3 +5,6 @@ resources:
 - kf-admin-sa.yaml
 - kf-user-policy.yaml
 - kf-user-sa.yaml
+- kf-admin-wi-bindings.yaml
+- kf-user-wi-bindings.yaml
+- kf-admin-owns-user-policy.yaml
