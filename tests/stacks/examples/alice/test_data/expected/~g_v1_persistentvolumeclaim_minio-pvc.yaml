@@ -12,5 +12,3 @@ spec:
   resources:
     requests:
       storage: 20Gi
-  storageClassName: ""
-  volumeName: minio-pv

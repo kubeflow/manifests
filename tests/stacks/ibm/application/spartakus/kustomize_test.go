@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../../stacks/ibm/application/spartakus",
+		Package: "../../../../../stacks/ibm/application/spartakus",
 		Expected: "test_data/expected",
 	}
 

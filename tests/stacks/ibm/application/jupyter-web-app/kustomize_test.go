@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../../stacks/ibm/application/jupyter-web-app",
+		Package: "../../../../../stacks/ibm/application/jupyter-web-app",
 		Expected: "test_data/expected",
 	}
 

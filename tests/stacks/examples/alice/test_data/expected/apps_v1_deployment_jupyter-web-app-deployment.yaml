@@ -26,12 +26,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: userid-header
-              name: kubeflow-config-988m2m9m87
+              name: kubeflow-config-4bkkg42k5m
         - name: USERID_PREFIX
           valueFrom:
             configMapKeyRef:
               key: userid-prefix
-              name: kubeflow-config-988m2m9m87
+              name: kubeflow-config-4bkkg42k5m
         image: gcr.io/kubeflow-images-public/jupyter-web-app:vmaster-gd9be4b9e
         name: jupyter-web-app
         ports:
@@ -42,5 +42,5 @@ spec:
       serviceAccountName: jupyter-web-app-service-account
       volumes:
       - configMap:
-          name: jupyter-web-app-jupyter-web-app-config-dhcbh64467
+          name: jupyter-web-app-jupyter-web-app-config-5cc2fchd2g
         name: config-volume

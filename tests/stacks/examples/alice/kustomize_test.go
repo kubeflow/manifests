@@ -1,4 +1,4 @@
-package scheduledworkflow
+package alice
 
 import (
 	"github.com/kubeflow/manifests/tests"
@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../tests/legacy_kustomizations/scheduledworkflow",
+		Package: "../../../../stacks/examples/alice",
 		Expected: "test_data/expected",
 	}
 

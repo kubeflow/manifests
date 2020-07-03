@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package:  "../../../../tests/legacy_kustomizations/katib-controller",
+		Package: "../../../../tests/legacy_kustomizations/katib-controller",
 		Expected: "test_data/expected",
 	}
 
