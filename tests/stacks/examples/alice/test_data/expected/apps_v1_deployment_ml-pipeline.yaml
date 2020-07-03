@@ -62,6 +62,9 @@ spec:
             secretKeyRef:
               key: secretkey
               name: mlpipeline-minio-artifact
+        envFrom:
+        - configMapRef:
+            name: pipeline-api-server-config-f4t72426kt
         image: gcr.io/ml-pipeline/api-server:1.0.0-rc.3
         imagePullPolicy: IfNotPresent
         livenessProbe:
