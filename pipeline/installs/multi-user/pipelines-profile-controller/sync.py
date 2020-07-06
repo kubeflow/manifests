@@ -14,6 +14,10 @@
 
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import json
+import os
+
+kfp_version = os.environ["KFP_VERSION"]
+disable_istio_sidecar = os.environ.get("DISABLE_ISTIO_SIDECAR") == "true"
 
 
 class Controller(BaseHTTPRequestHandler):
@@ -92,13 +96,19 @@ class Controller(BaseHTTPRequestHandler):
                             "labels": {
                                 "app": "ml-pipeline-visualizationserver"
                             },
+                            "annotations": disable_istio_sidecar and {
+                                "sidecar.istio.io/inject": "false"
+                            } or {},
                         },
                         "spec": {
                             "containers": [{
                                 "image":
-                                "gcr.io/ml-pipeline/visualization-server:0.5.1",
-                                "imagePullPolicy": "IfNotPresent",
-                                "name": "ml-pipeline-visualizationserver",
+                                "gcr.io/ml-pipeline/visualization-server:" +
+                                kfp_version,
+                                "imagePullPolicy":
+                                "IfNotPresent",
+                                "name":
+                                "ml-pipeline-visualizationserver",
                                 "ports": [{
                                     "containerPort": 8888
                                 }],
@@ -199,12 +209,18 @@ class Controller(BaseHTTPRequestHandler):
                             "labels": {
                                 "app": "ml-pipeline-ui-artifact"
                             },
+                            "annotations": disable_istio_sidecar and {
+                                "sidecar.istio.io/inject": "false"
+                            } or {},
                         },
                         "spec": {
                             "containers": [{
-                                "name": "ml-pipeline-ui-artifact",
-                                "image": "gcr.io/ml-pipeline/frontend:0.5.1",
-                                "imagePullPolicy": "IfNotPresent",
+                                "name":
+                                "ml-pipeline-ui-artifact",
+                                "image":
+                                "gcr.io/ml-pipeline/frontend:" + kfp_version,
+                                "imagePullPolicy":
+                                "IfNotPresent",
                                 "ports": [{
                                     "containerPort": 3000
                                 }]
