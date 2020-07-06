@@ -141,19 +141,3 @@ spec:
     apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
     kind: Project
     external: projects/project-id # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
----
-apiVersion: iam.cnrm.cloud.google.com/v1beta1
-kind: IAMPolicy
-metadata:
-  name: name-user-workload-identity-users # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
-spec:
-  resourceRef:
-    apiVersion: iam.cnrm.cloud.google.com/v1beta1
-    kind: IAMServiceAccount
-    name: name-user # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
-  bindings:
-  - role: roles/iam.workloadIdentityUser
-    members:
-    - serviceAccount:project-id.svc.id.goog[kubeflow/ml-pipeline-ui] # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
-    - serviceAccount:project-id.svc.id.goog[kubeflow/ml-pipeline-visualizationserver] # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
-    - serviceAccount:project-id.svc.id.goog[kubeflow/pipeline-runner] # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
