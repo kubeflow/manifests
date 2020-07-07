@@ -9,6 +9,9 @@ resources:
 - deployment.yaml
 - composite-controller.yaml
 configMapGenerator:
-- name: profile-controller
+- name: profile-controller-code
   files:
   - sync.py
+- name: profile-controller-env
+  envs:
+  - params.env
