@@ -72,24 +72,24 @@ spec:
         readinessProbe:
           exec:
             command:
-            - wget
-            - -q # quiet
-            - -S # show server response
-            - -O
-            - "-" # Redirect output to stdout
-            - http://localhost:8888/apis/v1beta1/healthz
+              - wget
+              - -q # quiet
+              - -S # show server response
+              - -O
+              - "-" # Redirect output to stdout
+              - http://localhost:8888/apis/v1beta1/healthz
           initialDelaySeconds: 3
           periodSeconds: 5
           timeoutSeconds: 2
         livenessProbe:
           exec:
             command:
-            - wget
-            - -q # quiet
-            - -S # show server response
-            - -O
-            - "-" # Redirect output to stdout
-            - http://localhost:8888/apis/v1beta1/healthz
+              - wget
+              - -q # quiet
+              - -S # show server response
+              - -O
+              - "-" # Redirect output to stdout
+              - http://localhost:8888/apis/v1beta1/healthz
           initialDelaySeconds: 3
           periodSeconds: 5
           timeoutSeconds: 2

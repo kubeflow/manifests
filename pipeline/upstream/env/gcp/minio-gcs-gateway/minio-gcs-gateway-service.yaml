@@ -4,8 +4,8 @@ metadata:
   name: minio-service
 spec:
   ports:
-  - port: 9000
-    targetPort: 9000
-    protocol: TCP
+    - port: 9000
+      targetPort: 9000
+      protocol: TCP
   selector:
     app: minio

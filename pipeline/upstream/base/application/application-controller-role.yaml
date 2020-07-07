@@ -3,19 +3,19 @@ kind: Role
 metadata:
   name: application-manager-role
 rules:
-- apiGroups:
-  - '*'
-  resources:
-  - '*'
-  verbs:
-  - get
-  - list
-  - update
-  - patch
-  - watch
-- apiGroups:
-  - app.k8s.io
-  resources:
-  - '*'
-  verbs:
-  - '*'
+  - apiGroups:
+      - '*'
+    resources:
+      - '*'
+    verbs:
+      - get
+      - list
+      - update
+      - patch
+      - watch
+  - apiGroups:
+      - app.k8s.io
+    resources:
+      - '*'
+    verbs:
+      - '*'

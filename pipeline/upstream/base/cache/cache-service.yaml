@@ -6,5 +6,5 @@ spec:
   selector:
     app: cache-server
   ports:
-  - port: 443
-    targetPort: webhook-api
+    - port: 443
+      targetPort: webhook-api
