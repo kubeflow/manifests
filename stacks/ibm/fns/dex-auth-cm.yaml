@@ -1,0 +1,20 @@
+apiVersion: v1alpha1
+kind: ConfigMapMerge
+metadata:
+  name: dex-auth-merge
+  annotations:
+    config.kubernetes.io/function: |
+      container:
+        image: aipipeline/kpt-fn:latest
+spec:
+  configMaps:
+  - name: dex-parameters
+    behavior: merge
+    literals:
+    - application_secret="<the-client-secret-of-oidc-service>"
+    - github_client_id="<github oauth app client id>"
+    - github_client_secret="<github oauth app client secret>"
+    - github_hostname="github.ibm.com"
+    - github_org_name="whitewater-analytics"
+    - oidc_provider="http://dex.auth.svc.cluster.local:5556/dex"
+    - oidc_redirect_uris='["/login/oidc"]'
