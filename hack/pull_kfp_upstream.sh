@@ -10,11 +10,15 @@ set -ex
 # pipelines version.
 export PIPELINES_VERSION=1.0.0-rc.3
 export PIPELINES_SRC_REPO=https://github.com/kubeflow/pipelines.git
-# Pulling for the first time
-# kpt pkg get $PIPELINES_SRC_REPO/manifests/kustomize@$PIPELINES_VERSION pipeline/upstream
 
-# Updates
-kpt pkg update pipeline/upstream/@$PIPELINES_VERSION --strategy force-delete-replace
+if [ -d pipeline/upstream ]; then
+    # Updates
+    kpt pkg update pipeline/upstream/@$PIPELINES_VERSION --strategy force-delete-replace
+else
+    # Pulling for the first time
+    kpt pkg get $PIPELINES_SRC_REPO/manifests/kustomize@$PIPELINES_VERSION pipeline/upstream
+fi
+
 # Before kubeflow/pipelines/manifests/kustomize supports kustomize v3.5+, we
 # have to convert kustomization.yaml env to envs syntax, so that it is compatible
 # with latest kustomize used in kubeflow/manifests.
