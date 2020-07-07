@@ -9,6 +9,7 @@ resources:
 - ../../overlays/application/application.yaml
 patchesStrategicMerge:
 - persistent-volume-claim.yaml
+- ../generic/deployment-patch.yaml
 configMapGenerator:
 - name: pipeline-minio-install-config
   envs:

@@ -9,6 +9,7 @@ resources:
 - persistent-volume-claim.yaml
 patchesStrategicMerge:
 - deployment-patch.yaml
+- ../generic/deployment-patch.yaml
 generatorOptions:
   disableNameSuffixHash: true
 configMapGenerator:
