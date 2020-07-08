@@ -51,6 +51,8 @@ spec:
       source.principal: cluster.local/ns/kubeflow/sa/ml-pipeline-scheduledworkflow
   - properties:
       source.principal: cluster.local/ns/kubeflow/sa/ml-pipeline-viewer-crd-service-account
+  - properties:
+      source.principal: cluster.local/ns/kubeflow/sa/kubeflow-pipelines-cache
   roleRef:
     kind: ServiceRole
     name: ml-pipeline-services
