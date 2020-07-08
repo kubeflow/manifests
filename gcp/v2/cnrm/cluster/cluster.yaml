@@ -42,7 +42,7 @@ spec:
   releaseChannel:
     # Per https://github.com/GoogleCloudPlatform/k8s-config-connector/issues/194
     # use upper case for the channels
-    channel: STABLE
+    channel: REGULAR
   location: us-east1-d # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.compute.zone","value":"us-east1-d"}}}
   workloadIdentityConfig:
     identityNamespace: project-id.svc.id.goog # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
