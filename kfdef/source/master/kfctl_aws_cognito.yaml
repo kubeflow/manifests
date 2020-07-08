@@ -10,7 +10,7 @@ spec:
         value: istio-system
       repoRef:
         name: manifests
-        path: istio-1-3-1/istio-crds-1-3-1
+        path: istio/istio-crds
     name: istio-crds
   - kustomizeConfig:
       parameters:
@@ -18,7 +18,7 @@ spec:
         value: istio-system
       repoRef:
         name: manifests
-        path: istio-1-3-1/istio-install-1-3-1
+        path: istio/istio-install
     name: istio-install
   - kustomizeConfig:
       parameters:
@@ -26,7 +26,7 @@ spec:
         value: istio-system
       repoRef:
         name: manifests
-        path: istio-1-3-1/cluster-local-gateway-1-3-1
+        path: istio/cluster-local-gateway
     name: cluster-local-gateway
   - kustomizeConfig:
       parameters:
