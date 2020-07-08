@@ -23,8 +23,10 @@ resources:
   # This package will create a profile resource so it needs to be installed after the profiles CR
   - ../../default-install/base
   - ../../katib/installs/katib-standalone
+  - istio-authorization-config.yaml
 patchesStrategicMerge:
   - workload-identity-bindings-patch.yaml
+  - profiles-deployment-patch.yaml
 configMapGenerator:
 - envs:
   - ./config/params.env
