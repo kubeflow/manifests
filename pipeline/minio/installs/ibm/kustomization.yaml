@@ -4,12 +4,10 @@ commonLabels:
   app.kubernetes.io/component: minio
   app.kubernetes.io/name: minio
 resources:
-- ../../../upstream/env/platform-agnostic/minio/
-- ../../overlays/application/application.yaml
+- ../generic
 - persistent-volume-claim.yaml
 patchesStrategicMerge:
 - deployment-patch.yaml
-- ../generic/deployment-patch.yaml
 generatorOptions:
   disableNameSuffixHash: true
 configMapGenerator:
