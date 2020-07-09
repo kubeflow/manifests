@@ -27,6 +27,7 @@ resources:
 patchesStrategicMerge:
   - workload-identity-bindings-patch.yaml
   - profiles-deployment-patch.yaml
+  - central-dashboard-deployment-patch.yaml
 configMapGenerator:
 - envs:
   - ./config/params.env
