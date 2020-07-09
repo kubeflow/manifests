@@ -96,3 +96,25 @@ spec:
   trafficPolicy:
     tls:
       mode: ISTIO_MUTUAL
+---
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRole
+metadata:
+  name: cache-server
+  namespace: kubeflow
+spec:
+  rules:
+  - services:
+    - cache-server.kubeflow.svc.cluster.local
+---
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRoleBinding
+metadata:
+  name: bind-cache-server-admission-webhook
+  namespace: kubeflow
+spec:
+  subjects:
+  - user: "*"
+  roleRef:
+    kind: ServiceRole
+    name: cache-server
