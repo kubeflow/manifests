@@ -3,6 +3,9 @@ kind: Service
 metadata:
   labels:
     app: ml-pipeline-ui
+    app.kubernetes.io/component: ml-pipeline-service
+    app.kubernetes.io/name: kubeflow-pipelines
+    app.kubernetes.io/part-of: kubeflow-pipelines
   name: ml-pipeline-ui
   namespace: kubeflow
 spec:
@@ -13,3 +16,6 @@ spec:
     targetPort: 3000
   selector:
     app: ml-pipeline-ui
+    app.kubernetes.io/component: ml-pipeline-service
+    app.kubernetes.io/name: kubeflow-pipelines
+    app.kubernetes.io/part-of: kubeflow-pipelines

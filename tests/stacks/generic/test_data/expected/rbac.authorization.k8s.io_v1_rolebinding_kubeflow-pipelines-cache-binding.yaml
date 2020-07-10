@@ -1,6 +1,10 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
+  labels:
+    app.kubernetes.io/component: ml-pipeline-service
+    app.kubernetes.io/name: kubeflow-pipelines
+    app.kubernetes.io/part-of: kubeflow-pipelines
   name: kubeflow-pipelines-cache-binding
   namespace: kubeflow
 roleRef:

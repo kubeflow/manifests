@@ -3,6 +3,9 @@ kind: Deployment
 metadata:
   labels:
     app: metadata-writer
+    app.kubernetes.io/component: ml-pipeline-service
+    app.kubernetes.io/name: kubeflow-pipelines
+    app.kubernetes.io/part-of: kubeflow-pipelines
   name: metadata-writer
   namespace: kubeflow
 spec:
@@ -10,10 +13,16 @@ spec:
   selector:
     matchLabels:
       app: metadata-writer
+      app.kubernetes.io/component: ml-pipeline-service
+      app.kubernetes.io/name: kubeflow-pipelines
+      app.kubernetes.io/part-of: kubeflow-pipelines
   template:
     metadata:
       labels:
         app: metadata-writer
+        app.kubernetes.io/component: ml-pipeline-service
+        app.kubernetes.io/name: kubeflow-pipelines
+        app.kubernetes.io/part-of: kubeflow-pipelines
     spec:
       containers:
       - env:

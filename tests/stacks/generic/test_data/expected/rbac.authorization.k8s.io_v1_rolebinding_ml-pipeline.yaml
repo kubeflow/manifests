@@ -3,6 +3,9 @@ kind: RoleBinding
 metadata:
   labels:
     app: ml-pipeline
+    app.kubernetes.io/component: ml-pipeline-service
+    app.kubernetes.io/name: kubeflow-pipelines
+    app.kubernetes.io/part-of: kubeflow-pipelines
   name: ml-pipeline
   namespace: kubeflow
 roleRef:

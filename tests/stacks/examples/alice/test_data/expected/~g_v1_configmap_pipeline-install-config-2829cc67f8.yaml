@@ -8,5 +8,9 @@ data:
   pipelineDb: mlpipeline
 kind: ConfigMap
 metadata:
+  labels:
+    app.kubernetes.io/component: ml-pipeline-service
+    app.kubernetes.io/name: kubeflow-pipelines
+    app.kubernetes.io/part-of: kubeflow-pipelines
   name: pipeline-install-config-2829cc67f8
   namespace: kubeflow
