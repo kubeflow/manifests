@@ -16,6 +16,28 @@ spec:
     spec:
       containers:
       - env:
+        - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
+          value: /etc/config/viewer-pod-template.json
+        - name: DEPLOYMENT
+          value: KUBEFLOW
+        - name: ARTIFACTS_SERVICE_PROXY_NAME
+          value: ml-pipeline-ui-artifact
+        - name: ARTIFACTS_SERVICE_PROXY_PORT
+          value: "80"
+        - name: ARTIFACTS_SERVICE_PROXY_ENABLED
+          value: "true"
+        - name: ENABLE_AUTHZ
+          value: "true"
+        - name: KUBEFLOW_USERID_HEADER
+          valueFrom:
+            configMapKeyRef:
+              key: userid-header
+              name: kubeflow-config-4bkkg42k5m
+        - name: KUBEFLOW_USERID_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              key: userid-prefix
+              name: kubeflow-config-4bkkg42k5m
         - name: MINIO_NAMESPACE
           valueFrom:
             fieldRef:
@@ -61,4 +83,12 @@ spec:
           initialDelaySeconds: 3
           periodSeconds: 5
           timeoutSeconds: 2
+        volumeMounts:
+        - mountPath: /etc/config
+          name: config-volume
+          readOnly: true
       serviceAccountName: ml-pipeline-ui
+      volumes:
+      - configMap:
+          name: ml-pipeline-ui-configmap
+        name: config-volume
