@@ -1,0 +1,48 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: kubeflow-pipelines-profile-controller
+  name: kubeflow-pipelines-profile-controller
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubeflow-pipelines-profile-controller
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: kubeflow-pipelines-profile-controller
+    spec:
+      containers:
+      - command:
+        - python
+        - /hooks/sync.py
+        env:
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: accesskey
+              name: mlpipeline-minio-artifact
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: secretkey
+              name: mlpipeline-minio-artifact
+        envFrom:
+        - configMapRef:
+            name: kubeflow-pipelines-profile-controller-env-822cf46mft
+        image: python:3.7
+        name: profile-controller
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /hooks
+          name: hooks
+      volumes:
+      - configMap:
+          name: kubeflow-pipelines-profile-controller-code-m828g88mtm
+        name: hooks
