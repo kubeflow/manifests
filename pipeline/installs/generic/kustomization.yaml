@@ -10,10 +10,14 @@ resources:
 - ../../upstream/base/pipeline
 - virtual-service.yaml
 - ../../cache/base_v3
+- application.yaml
 configMapGenerator:
 - name: pipeline-install-config
   envs:
   - ./params.env
+- name: pipeline-upstream-install-config
+  envs:
+  - ../../upstream/base/params.env
 secretGenerator:
 - name: mysql-secret
   envs:
@@ -26,5 +30,12 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace
+- name: kfp-app-version
+  objref:
+    kind: ConfigMap
+    name: pipeline-upstream-install-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.appVersion
 configurations:
 - params.yaml
