@@ -54,18 +54,6 @@ class Controller(BaseHTTPRequestHandler):
         desired_resources = [
             {
                 "apiVersion": "v1",
-                "kind": "Secret",
-                "metadata": {
-                    "name": "mlpipeline-minio-artifact",
-                    "namespace": namespace,
-                },
-                "data": {
-                    "accesskey": base64.b64encode(mlpipeline_minio_access_key),
-                    "secretkey": base64.b64encode(mlpipeline_minio_secret_key),
-                },
-            },
-            {
-                "apiVersion": "v1",
                 "kind": "ConfigMap",
                 "metadata": {
                     "name": "metadata-grpc-configmap",
@@ -258,7 +246,21 @@ class Controller(BaseHTTPRequestHandler):
                 }
             },
         ]
-        print('Received request', parent, desired_resources)
+        print('Received request:', parent)
+        print('Desired resources except secrets:', desired_resources)
+        # Moved after the print argument because this is sensitive data.
+        desired_resources.append({
+            "apiVersion": "v1",
+            "kind": "Secret",
+            "metadata": {
+                "name": "mlpipeline-minio-artifact",
+                "namespace": namespace,
+            },
+            "data": {
+                "accesskey": base64.b64encode(mlpipeline_minio_access_key),
+                "secretkey": base64.b64encode(mlpipeline_minio_secret_key),
+            },
+        })
 
         return {"status": desired_status, "children": desired_resources}
 
