@@ -15,9 +15,12 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 import os
+import base64
 
 kfp_version = os.environ["KFP_VERSION"]
 disable_istio_sidecar = os.environ.get("DISABLE_ISTIO_SIDECAR") == "true"
+mlpipeline_minio_access_key = os.environ.get("MINIO_ACCESS_KEY")
+mlpipeline_minio_secret_key = os.environ.get("MINIO_SECRET_KEY")
 
 
 class Controller(BaseHTTPRequestHandler):
@@ -49,18 +52,6 @@ class Controller(BaseHTTPRequestHandler):
         # parent is a namespace
         namespace = parent.get("metadata", {}).get("name")
         desired_resources = [
-            {
-                "apiVersion": "v1",
-                "kind": "Secret",
-                "metadata": {
-                    "name": "mlpipeline-minio-artifact",
-                    "namespace": namespace,
-                },
-                "data": {
-                    "accesskey": "bWluaW8=",  # base64 for minio
-                    "secretkey": "bWluaW8xMjM=",  # base64 for minio123
-                },
-            },
             {
                 "apiVersion": "v1",
                 "kind": "ConfigMap",
@@ -255,7 +246,21 @@ class Controller(BaseHTTPRequestHandler):
                 }
             },
         ]
-        print('Received request', parent, desired_resources)
+        print('Received request:', parent)
+        print('Desired resources except secrets:', desired_resources)
+        # Moved after the print argument because this is sensitive data.
+        desired_resources.append({
+            "apiVersion": "v1",
+            "kind": "Secret",
+            "metadata": {
+                "name": "mlpipeline-minio-artifact",
+                "namespace": namespace,
+            },
+            "data": {
+                "accesskey": base64.b64encode(mlpipeline_minio_access_key),
+                "secretkey": base64.b64encode(mlpipeline_minio_secret_key),
+            },
+        })
 
         return {"status": desired_status, "children": desired_resources}
 
