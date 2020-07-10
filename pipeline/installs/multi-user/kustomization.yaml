@@ -30,4 +30,4 @@ patchesJson6902:
     version: v1beta1
     kind: Application
     name: kubeflow-pipelines
-  path: application-json-patch.yaml
+  path: application-patch.json
