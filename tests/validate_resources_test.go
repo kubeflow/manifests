@@ -225,6 +225,11 @@ func TestValidK8sResources(t *testing.T) {
 				t.Errorf("Path %v; resource %v; has version and kind %v which should be changed to %v", path, m.Name, vAndK, v)
 			}
 
+			//Skip Custom resource Definitions as they can have a status field
+			if m.Kind == "CustomResourceDefinition" {
+				continue
+			}
+
 			// Ensure status isn't set
 			f := n.Field("status")
 
