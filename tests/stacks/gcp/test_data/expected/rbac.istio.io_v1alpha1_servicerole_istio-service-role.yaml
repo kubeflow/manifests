@@ -1,0 +1,15 @@
+apiVersion: rbac.istio.io/v1alpha1
+kind: ServiceRole
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-serving-install
+    app.kubernetes.io/name: knative-serving-install
+    kustomize.component: knative
+  name: istio-service-role
+  namespace: kubeflow
+spec:
+  rules:
+  - methods:
+    - '*'
+    services:
+    - '*'

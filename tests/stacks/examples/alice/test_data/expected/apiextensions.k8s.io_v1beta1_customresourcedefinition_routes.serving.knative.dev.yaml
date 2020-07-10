@@ -1,0 +1,46 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-serving-install
+    app.kubernetes.io/name: knative-serving-install
+    duck.knative.dev/addressable: "true"
+    knative.dev/crd-install: "true"
+    kustomize.component: knative
+    serving.knative.dev/release: v0.11.2
+  name: routes.serving.knative.dev
+spec:
+  additionalPrinterColumns:
+  - JSONPath: .status.url
+    name: URL
+    type: string
+  - JSONPath: .status.conditions[?(@.type=='Ready')].status
+    name: Ready
+    type: string
+  - JSONPath: .status.conditions[?(@.type=='Ready')].reason
+    name: Reason
+    type: string
+  group: serving.knative.dev
+  names:
+    categories:
+    - all
+    - knative
+    - serving
+    kind: Route
+    plural: routes
+    shortNames:
+    - rt
+    singular: route
+  scope: Namespaced
+  subresources:
+    status: {}
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+  - name: v1beta1
+    served: true
+    storage: false
+  - name: v1
+    served: true
+    storage: false
