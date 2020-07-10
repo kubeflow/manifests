@@ -6,3 +6,5 @@ commonLabels:
 resources:
 - ../../../upstream/env/platform-agnostic/minio/
 - ../../overlays/application/application.yaml
+patchesStrategicMerge:
+- deployment-patch.yaml
