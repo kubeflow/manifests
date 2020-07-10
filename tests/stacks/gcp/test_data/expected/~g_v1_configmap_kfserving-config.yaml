@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  registry: gcr.io/kfserving
+kind: ConfigMap
+metadata:
+  labels:
+    app: kfserving
+    app.kubernetes.io/component: kfserving-install
+    app.kubernetes.io/name: kfserving-install
+    kustomize.component: kfserving
+  name: kfserving-config
+  namespace: kubeflow

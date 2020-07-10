@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-serving-install
+    app.kubernetes.io/name: knative-serving-install
+    istio-injection: enabled
+    kustomize.component: knative
+    serving.knative.dev/release: v0.11.2
+  name: knative-serving
