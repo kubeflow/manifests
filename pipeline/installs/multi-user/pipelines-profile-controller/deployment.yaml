@@ -16,6 +16,17 @@ spec:
         envFrom:
         - configMapRef:
             name: profile-controller-env
+        env:
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mlpipeline-minio-artifact
+              key: accesskey
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mlpipeline-minio-artifact
+              key: secretkey
         volumeMounts:
         - name: hooks
           mountPath: /hooks
