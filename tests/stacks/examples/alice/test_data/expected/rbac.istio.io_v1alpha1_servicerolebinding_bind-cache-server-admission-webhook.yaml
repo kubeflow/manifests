@@ -1,0 +1,11 @@
+apiVersion: rbac.istio.io/v1alpha1
+kind: ServiceRoleBinding
+metadata:
+  name: bind-cache-server-admission-webhook
+  namespace: kubeflow
+spec:
+  roleRef:
+    kind: ServiceRole
+    name: cache-server
+  subjects:
+  - user: '*'
