@@ -11,6 +11,7 @@ resources:
 - persistence-agent
 - cache
 - metadata-writer
+- istio-authorization-config.yaml
 patchesStrategicMerge:
 - api-service/deployment-patch.yaml
 - pipelines-ui/deployment-patch.yaml
