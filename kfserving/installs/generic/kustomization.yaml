@@ -17,10 +17,7 @@ commonLabels:
   app: kfserving
   kustomize.component: kfserving
   app.kubernetes.io/component: kfserving-install
-  app.kuberenets.io/instance: kfserving-install
-  app.kuberenets.io/name: kfserving-install
-  app.kuberenets.io/managed-by: kfctl
-  app.kuberenets.io/part-of: kubeflow
+  app.kubernetes.io/name: kfserving-install  
 generatorOptions:
  disableNameSuffixHash: true
 configMapGenerator:

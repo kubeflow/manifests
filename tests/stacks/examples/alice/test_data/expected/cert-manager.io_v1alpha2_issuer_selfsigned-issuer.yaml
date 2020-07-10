@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Issuer
+metadata:
+  labels:
+    app: kfserving
+    app.kubernetes.io/component: kfserving-install
+    app.kubernetes.io/name: kfserving-install
+    kustomize.component: kfserving
+  name: selfsigned-issuer
+  namespace: kubeflow
+spec:
+  selfSigned: {}
