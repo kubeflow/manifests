@@ -22,8 +22,10 @@ data:
 
     kfp_version = os.environ["KFP_VERSION"]
     disable_istio_sidecar = os.environ.get("DISABLE_ISTIO_SIDECAR") == "true"
-    mlpipeline_minio_access_key = os.environ.get("MINIO_ACCESS_KEY")
-    mlpipeline_minio_secret_key = os.environ.get("MINIO_SECRET_KEY")
+    mlpipeline_minio_access_key = base64.b64encode(
+        bytes(os.environ.get("MINIO_ACCESS_KEY"), 'utf-8')).decode('utf-8')
+    mlpipeline_minio_secret_key = base64.b64encode(
+        bytes(os.environ.get("MINIO_SECRET_KEY"), 'utf-8')).decode('utf-8')
 
 
     class Controller(BaseHTTPRequestHandler):
@@ -260,8 +262,8 @@ data:
                     "namespace": namespace,
                 },
                 "data": {
-                    "accesskey": base64.b64encode(mlpipeline_minio_access_key),
-                    "secretkey": base64.b64encode(mlpipeline_minio_secret_key),
+                    "accesskey": mlpipeline_minio_access_key,
+                    "secretkey": mlpipeline_minio_secret_key,
                 },
             })
 
@@ -284,5 +286,7 @@ kind: ConfigMap
 metadata:
   labels:
     app: kubeflow-pipelines-profile-controller
-  name: kubeflow-pipelines-profile-controller-code-m828g88mtm
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+  name: kubeflow-pipelines-profile-controller-code-gd97t2m5f5
   namespace: kubeflow

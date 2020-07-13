@@ -1,6 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
+commonLabels:
+  app.kubernetes.io/name: kubeflow-pipelines
+  app.kubernetes.io/component: ml-pipeline
 resources:
 - ../generic
 - api-service
@@ -20,3 +23,10 @@ patchesStrategicMerge:
 - persistence-agent/deployment-patch.yaml
 - metadata-writer/deployment-patch.yaml
 - cache/deployment-patch.yaml
+patchesJson6902:
+- target:
+    group: app.k8s.io
+    version: v1beta1
+    kind: Application
+    name: kubeflow-pipelines
+  path: application-patch.json
