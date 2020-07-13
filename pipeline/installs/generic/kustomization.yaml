@@ -3,8 +3,7 @@ kind: Kustomization
 namespace: kubeflow
 commonLabels:
   app.kubernetes.io/name: kubeflow-pipelines
-  app.kubernetes.io/component: ml-pipeline-service
-  app.kubernetes.io/part-of: kubeflow-pipelines
+  app.kubernetes.io/component: ml-pipeline
 resources:
 - ../../upstream/base/pipeline/cluster-scoped
 - ../../upstream/base/pipeline
