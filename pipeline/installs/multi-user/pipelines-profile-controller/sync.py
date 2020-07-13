@@ -19,8 +19,10 @@ import base64
 
 kfp_version = os.environ["KFP_VERSION"]
 disable_istio_sidecar = os.environ.get("DISABLE_ISTIO_SIDECAR") == "true"
-mlpipeline_minio_access_key = base64.b64encode(bytes(os.environ.get("MINIO_ACCESS_KEY"), 'utf-8'))
-mlpipeline_minio_secret_key = base64.b64encode(bytes(os.environ.get("MINIO_SECRET_KEY"), 'utf-8'))
+mlpipeline_minio_access_key = base64.b64encode(
+    bytes(os.environ.get("MINIO_ACCESS_KEY"), 'utf-8')).decode('utf-8')
+mlpipeline_minio_secret_key = base64.b64encode(
+    bytes(os.environ.get("MINIO_SECRET_KEY"), 'utf-8')).decode('utf-8')
 
 
 class Controller(BaseHTTPRequestHandler):
