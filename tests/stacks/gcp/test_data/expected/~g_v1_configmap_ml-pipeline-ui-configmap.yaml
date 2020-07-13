@@ -10,5 +10,7 @@ kind: ConfigMap
 metadata:
   labels:
     app: ml-pipeline-ui
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
   name: ml-pipeline-ui-configmap
   namespace: kubeflow
