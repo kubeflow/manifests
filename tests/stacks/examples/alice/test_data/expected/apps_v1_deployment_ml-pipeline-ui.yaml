@@ -3,16 +3,22 @@ kind: Deployment
 metadata:
   labels:
     app: ml-pipeline-ui
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
   name: ml-pipeline-ui
   namespace: kubeflow
 spec:
   selector:
     matchLabels:
       app: ml-pipeline-ui
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
   template:
     metadata:
       labels:
         app: ml-pipeline-ui
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
     spec:
       containers:
       - env:
@@ -32,12 +38,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: userid-header
-              name: kubeflow-config-4bkkg42k5m
+              name: kubeflow-config-bmh8k74f52
         - name: KUBEFLOW_USERID_PREFIX
           valueFrom:
             configMapKeyRef:
               key: userid-prefix
-              name: kubeflow-config-4bkkg42k5m
+              name: kubeflow-config-bmh8k74f52
         - name: MINIO_NAMESPACE
           valueFrom:
             fieldRef:

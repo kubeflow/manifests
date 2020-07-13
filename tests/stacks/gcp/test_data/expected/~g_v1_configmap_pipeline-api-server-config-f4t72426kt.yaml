@@ -6,5 +6,8 @@ data:
   VISUALIZATIONSERVICE_PORT: "8888"
 kind: ConfigMap
 metadata:
+  labels:
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
   name: pipeline-api-server-config-f4t72426kt
   namespace: kubeflow

@@ -3,16 +3,22 @@ kind: Deployment
 metadata:
   labels:
     app: ml-pipeline-viewer-crd
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
   name: ml-pipeline-viewer-crd
   namespace: kubeflow
 spec:
   selector:
     matchLabels:
       app: ml-pipeline-viewer-crd
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
   template:
     metadata:
       labels:
         app: ml-pipeline-viewer-crd
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
     spec:
       containers:
       - env:

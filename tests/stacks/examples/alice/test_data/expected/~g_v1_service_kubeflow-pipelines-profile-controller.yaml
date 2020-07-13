@@ -3,6 +3,8 @@ kind: Service
 metadata:
   labels:
     app: kubeflow-pipelines-profile-controller
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
   name: kubeflow-pipelines-profile-controller
   namespace: kubeflow
 spec:
@@ -13,3 +15,5 @@ spec:
     targetPort: 80
   selector:
     app: kubeflow-pipelines-profile-controller
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines

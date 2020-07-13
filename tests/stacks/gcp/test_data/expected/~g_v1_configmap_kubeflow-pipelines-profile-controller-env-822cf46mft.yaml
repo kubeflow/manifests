@@ -6,5 +6,7 @@ kind: ConfigMap
 metadata:
   labels:
     app: kubeflow-pipelines-profile-controller
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
   name: kubeflow-pipelines-profile-controller-env-822cf46mft
   namespace: kubeflow
