@@ -40,10 +40,10 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: seldon
-      app.kubernetes.io/instance: seldon-1.15
+      app.kubernetes.io/instance: seldon-1.2.1
       app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: seldon
       app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: "1.15"
+      app.kubernetes.io/version: 1.2.1
   type: seldon-core-operator
   version: v1
