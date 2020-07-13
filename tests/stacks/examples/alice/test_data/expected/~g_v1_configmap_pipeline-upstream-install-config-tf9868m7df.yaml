@@ -11,8 +11,7 @@ data:
 kind: ConfigMap
 metadata:
   labels:
-    app.kubernetes.io/component: ml-pipeline-service
+    app.kubernetes.io/component: ml-pipeline
     app.kubernetes.io/name: kubeflow-pipelines
-    app.kubernetes.io/part-of: kubeflow-pipelines
   name: pipeline-upstream-install-config-tf9868m7df
   namespace: kubeflow

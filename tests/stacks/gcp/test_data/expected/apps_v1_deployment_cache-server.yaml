@@ -3,9 +3,8 @@ kind: Deployment
 metadata:
   labels:
     app: cache-server
-    app.kubernetes.io/component: ml-pipeline-service
+    app.kubernetes.io/component: ml-pipeline
     app.kubernetes.io/name: kubeflow-pipelines
-    app.kubernetes.io/part-of: kubeflow-pipelines
   name: cache-server
   namespace: kubeflow
 spec:
@@ -13,16 +12,14 @@ spec:
   selector:
     matchLabels:
       app: cache-server
-      app.kubernetes.io/component: ml-pipeline-service
+      app.kubernetes.io/component: ml-pipeline
       app.kubernetes.io/name: kubeflow-pipelines
-      app.kubernetes.io/part-of: kubeflow-pipelines
   template:
     metadata:
       labels:
         app: cache-server
-        app.kubernetes.io/component: ml-pipeline-service
+        app.kubernetes.io/component: ml-pipeline
         app.kubernetes.io/name: kubeflow-pipelines
-        app.kubernetes.io/part-of: kubeflow-pipelines
     spec:
       containers:
       - args:
