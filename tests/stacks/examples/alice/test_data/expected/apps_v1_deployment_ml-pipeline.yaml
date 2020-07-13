@@ -25,6 +25,16 @@ spec:
     spec:
       containers:
       - env:
+        - name: KUBEFLOW_USERID_HEADER
+          valueFrom:
+            configMapKeyRef:
+              key: userid-header
+              name: kubeflow-config-4bkkg42k5m
+        - name: KUBEFLOW_USERID_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              key: userid-prefix
+              name: kubeflow-config-4bkkg42k5m
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:
@@ -71,6 +81,9 @@ spec:
             secretKeyRef:
               key: secretkey
               name: mlpipeline-minio-artifact
+        envFrom:
+        - configMapRef:
+            name: pipeline-api-server-config-f4t72426kt
         image: gcr.io/ml-pipeline/api-server:1.0.0-rc.3
         imagePullPolicy: IfNotPresent
         livenessProbe:
