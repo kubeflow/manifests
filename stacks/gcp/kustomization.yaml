@@ -20,7 +20,6 @@ resources:
   - ../../pipeline/mysql/installs/gcp-pd
   - ../../pipeline/installs/generic
   - ../../metadata/v3
-  - ../../knative/installs/generic
   - ../../kfserving/installs/generic
   # This package will create a profile resource so it needs to be installed after the profiles CR
   - ../../default-install/base
