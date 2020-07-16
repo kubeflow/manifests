@@ -12,10 +12,10 @@ spec: {}
 apiVersion: container.cnrm.cloud.google.com/v1alpha2
 kind: ContainerCluster
 metadata:
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+  name: name # {"$kpt-set":"name"}
 spec:
   # Use a regional cluster. Regional offer higher availability and the cluster management fee is the same.
-  location: us-central1-f
+  location: us-central1-f # {"$kpt-set":"mgmt-location"}
   workloadIdentity:
     identityNamespace: default
   ipAllocationPolicy:

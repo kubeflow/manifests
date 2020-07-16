@@ -10,8 +10,8 @@ metadata:
 spec:
   imageMappings:
   - src: quay.io/jetstack
-    dest: gcr.io/project-id/mirror/quay.io/jetstack # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
+    dest: gcr.io/project-id/mirror/quay.io/jetstack # {"$kpt-set":"jetstack"}
   - src: gcr.io/kubeflow-images-public
-    dest: gcr.io/project-id/mirror/gcr.io/kubeflow-images-public # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
+    dest: gcr.io/project-id/mirror/gcr.io/kubeflow-images-public # {"$kpt-set":"kubeflow-images-public"}
   - src: metacontroller
-    dest: gcr.io/project-id/mirror/metacontroller # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
+    dest: gcr.io/project-id/mirror/metacontroller # {"$kpt-set":"image-mirror-metacontroller"}

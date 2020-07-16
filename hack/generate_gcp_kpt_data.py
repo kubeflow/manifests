@@ -29,7 +29,10 @@ class Generator:
       src = os.path.join(repo_root, "gcp", s)
       if not os.path.exists(src):
         continue
-      shutil.copytree(src, os.path.join(data_dir, "gcp", s))
+      if os.path.isdir(src):
+        shutil.copytree(src, os.path.join(data_dir, "gcp", s))
+      else:
+        shutil.copyfile(src, os.path.join(data_dir, "gcp", s))
 
     # Run a bunch of kpt commands. We want to change all the setters
     # unique values so we can see how the substitutions play out
@@ -40,14 +43,14 @@ class Generator:
       "gcloud.compute.region": "testRegion",
       "location": "testLocation",
       "name": "testKptName",
-      "log-firewalls": "kptLogFirewalls",
+      "log-firewalls": "true",
+      "mgmt-name": "testMgmtName",
     }
 
     for k, v in setters.items():
       command = [kpt, "cfg", "set", ".", k, v]
       logging.info("Executing:\n%s", " ".join(command))
-      subprocess.check_call(command, cwd=data_dir)
-
+      subprocess.check_call(command, cwd=os.path.join(data_dir, "gcp"))
 
 if __name__ == "__main__":
 
