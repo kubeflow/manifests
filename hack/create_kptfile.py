@@ -112,6 +112,24 @@ class KptCreator:
       path)
 
   @staticmethod
+  def create_subst_stacks(path):
+    create_setter("name", "name", path)
+    create_setter("gcloud.core.project", "project-id", path)
+
+     # Admin service account ref
+    create_subst("admin-sa-ref",
+                 "name-admin@project-id.iam.gserviceaccount.com",
+                 "${name}-admin@${gcloud.core.project}.iam.gserviceaccount.com",
+                 path)
+
+    # User service account ref
+    create_subst("user-sa-ref",
+                 "name-user@project-id.iam.gserviceaccount.com",
+                 "${name}-user@${gcloud.core.project}.iam.gserviceaccount.com",
+                 path)
+
+
+  @staticmethod
   def create_subst(path):
     # Service account substitutions
     create_setter("gcloud.core.project", "project-id", path)
