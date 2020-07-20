@@ -46,7 +46,7 @@ spec:
     - name: Kubeflow Pipelines
       url: https://github.com/kubeflow/pipelines
     type: Kubeflow Pipelines
-    version: 1.0.0-rc.3
+    version: 1.0.0
   selector:
     matchLabels:
       app.kubernetes.io/application: kubeflow-pipelines

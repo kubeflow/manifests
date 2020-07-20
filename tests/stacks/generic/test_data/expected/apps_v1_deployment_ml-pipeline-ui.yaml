@@ -22,6 +22,8 @@ spec:
     spec:
       containers:
       - env:
+        - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
+          value: /etc/config/viewer-pod-template.json
         - name: MINIO_NAMESPACE
           valueFrom:
             fieldRef:
@@ -38,7 +40,7 @@ spec:
               name: mlpipeline-minio-artifact
         - name: ALLOW_CUSTOM_VISUALIZATIONS
           value: "true"
-        image: gcr.io/ml-pipeline/frontend:1.0.0-rc.3
+        image: gcr.io/ml-pipeline/frontend:1.0.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
@@ -67,4 +69,12 @@ spec:
           initialDelaySeconds: 3
           periodSeconds: 5
           timeoutSeconds: 2
+        volumeMounts:
+        - mountPath: /etc/config
+          name: config-volume
+          readOnly: true
       serviceAccountName: ml-pipeline-ui
+      volumes:
+      - configMap:
+          name: ml-pipeline-ui-configmap
+        name: config-volume
