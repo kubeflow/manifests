@@ -1,0 +1,35 @@
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-user-workload-identity-user-ml-pipeline-ui # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:customerProject.svc.id.goog[kubeflow/ml-pipeline-ui] # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/iam.workloadIdentityUser
+  resourceRef:
+    apiVersion: iam.cnrm.cloud.google.com/v1beta1
+    kind: IAMServiceAccount
+    name: testKptName-user # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-user-workload-identity-user-ml-pipeline-visualizationserver # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:customerProject.svc.id.goog[kubeflow/ml-pipeline-visualizationserver] # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/iam.workloadIdentityUser
+  resourceRef:
+    apiVersion: iam.cnrm.cloud.google.com/v1beta1
+    kind: IAMServiceAccount
+    name: testKptName-user # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-user-workload-identity-user-pipeline-runner # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:customerProject.svc.id.goog[kubeflow/pipeline-runner] # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/iam.workloadIdentityUser
+  resourceRef:
+    apiVersion: iam.cnrm.cloud.google.com/v1beta1
+    kind: IAMServiceAccount
+    name: testKptName-user # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
