@@ -1,0 +1,167 @@
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-admin-source # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:testKptName-admin@customerProject.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"},{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/source.admin
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: projects/customerProject # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-admin-servicemanagement # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:testKptName-admin@customerProject.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"},{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/servicemanagement.admin
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: projects/customerProject # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-admin-network # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:testKptName-admin@customerProject.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"},{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/compute.networkAdmin
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: projects/customerProject # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-admin-cloudbuild # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:testKptName-admin@customerProject.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"},{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/cloudbuild.builds.editor
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: projects/customerProject # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-admin-viewer # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:testKptName-admin@customerProject.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"},{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/viewer
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: projects/customerProject # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-admin-storage # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:testKptName-admin@customerProject.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"},{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/storage.admin
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: projects/customerProject # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-admin-bigquery # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:testKptName-admin@customerProject.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"},{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/bigquery.admin
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: projects/customerProject # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-admin-dataflow # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:testKptName-admin@customerProject.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"},{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/dataflow.admin
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: projects/customerProject # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-admin-ml # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:testKptName-admin@customerProject.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"},{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/ml.admin
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: projects/customerProject # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-admin-dataproc # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:testKptName-admin@customerProject.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"},{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/dataproc.editor
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: projects/customerProject # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-admin-cloudsql # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:testKptName-admin@customerProject.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"},{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/cloudsql.admin
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: projects/customerProject # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-admin-logging # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:testKptName-admin@customerProject.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"},{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/logging.logWriter
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: projects/customerProject # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-admin-metricwriter # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:testKptName-admin@customerProject.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"},{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/monitoring.metricWriter
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: projects/customerProject # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: testKptName-admin-monitoringviewer # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+spec:
+  member: serviceAccount:testKptName-admin@customerProject.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"},{"name":"gcloud.core.project","value":"customerProject"}]}}
+  role: roles/monitoring.viewer
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: projects/customerProject # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"}]}}
