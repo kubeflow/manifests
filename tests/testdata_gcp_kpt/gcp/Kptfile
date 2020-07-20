@@ -766,18 +766,18 @@ openAPI:
             ref: '#/definitions/io.k8s.cli.setters.location'
           - marker: ${name}
             ref: '#/definitions/io.k8s.cli.setters.name'
-    io.k8s.cli.substitutions.image-mirror-quay.io.jetstack:
+    io.k8s.cli.substitutions.image-mirror-quay-io-jetstack:
       x-k8s-cli:
         substitution:
-          name: image-mirror-quay.io.jetstack
+          name: image-mirror-quay-io-jetstack
           pattern: gcr.io/${gcloud.core.project}/mirror/quay.io/jetstack
           values:
           - marker: ${gcloud.core.project}
             ref: '#/definitions/io.k8s.cli.setters.gcloud.core.project'
-    io.k8s.cli.substitutions.image-mirror-gcr.io.kubeflow-images-public:
+    io.k8s.cli.substitutions.image-mirror-kubeflow-images-public:
       x-k8s-cli:
         substitution:
-          name: image-mirror-gcr.io.kubeflow-images-public
+          name: image-mirror-kubeflow-images-public
           pattern: gcr.io/${gcloud.core.project}/mirror/gcr.io/kubeflow-images-public
           values:
           - marker: ${gcloud.core.project}
