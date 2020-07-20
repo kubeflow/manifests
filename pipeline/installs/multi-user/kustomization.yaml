@@ -18,6 +18,7 @@ resources:
 patchesStrategicMerge:
 - api-service/deployment-patch.yaml
 - pipelines-ui/deployment-patch.yaml
+- pipelines-ui/configmap-patch.yaml
 - scheduled-workflow/deployment-patch.yaml
 - viewer-controller/deployment-patch.yaml
 - persistence-agent/deployment-patch.yaml

@@ -26,7 +26,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: gcr.io/ml-pipeline/persistenceagent:1.0.0-rc.3
+        image: gcr.io/ml-pipeline/persistenceagent:1.0.0
         imagePullPolicy: IfNotPresent
         name: ml-pipeline-persistenceagent
       serviceAccountName: ml-pipeline-persistenceagent
