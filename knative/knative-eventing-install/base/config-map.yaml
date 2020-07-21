@@ -1,0 +1,130 @@
+apiVersion: v1
+data:
+  default-ch-config: |
+    clusterDefault:
+      apiVersion: messaging.knative.dev/v1alpha1
+      kind: InMemoryChannel
+    namespaceDefaults:
+      some-namespace:
+        apiVersion: messaging.knative.dev/v1alpha1
+        kind: InMemoryChannel
+kind: ConfigMap
+metadata:
+  name: default-ch-webhook
+  namespace: knative-eventing
+---
+apiVersion: v1
+data:
+  loglevel.controller: info
+  loglevel.webhook: info
+  zap-logger-config: |
+    {
+      "level": "info",
+      "development": false,
+      "outputPaths": ["stdout"],
+      "errorOutputPaths": ["stderr"],
+      "encoding": "json",
+      "encoderConfig": {
+        "timeKey": "ts",
+        "levelKey": "level",
+        "nameKey": "logger",
+        "callerKey": "caller",
+        "messageKey": "msg",
+        "stacktraceKey": "stacktrace",
+        "lineEnding": "",
+        "levelEncoder": "",
+        "timeEncoder": "iso8601",
+        "durationEncoder": "",
+        "callerEncoder": ""
+      }
+    }
+kind: ConfigMap
+metadata:
+  name: config-logging
+  namespace: knative-eventing
+
+---
+apiVersion: v1
+data:
+  _example: |
+    ################################
+    #                              #
+    #    EXAMPLE CONFIGURATION     #
+    #                              #
+    ################################
+
+    # This block is not actually functional configuration,
+    # but serves to illustrate the available configuration
+    # options and document them in a way that is accessible
+    # to users that `kubectl edit` this config map.
+    #
+    # These sample configuration options may be copied out of
+    # this example block and unindented to be in the data block
+    # to actually change the configuration.
+
+    # metrics.backend-destination field specifies the system metrics destination.
+    # It supports either prometheus (the default) or stackdriver.
+    # Note: Using stackdriver will incur additional charges
+    metrics.backend-destination: prometheus
+
+    # metrics.request-metrics-backend-destination specifies the request metrics
+    # destination. If non-empty, it enables queue proxy to send request metrics.
+    # Currently supported values: prometheus, stackdriver.
+    metrics.request-metrics-backend-destination: prometheus
+
+    # metrics.stackdriver-project-id field specifies the stackdriver project ID. This
+    # field is optional. When running on GCE, application default credentials will be
+    # used if this field is not provided.
+    metrics.stackdriver-project-id: "<your stackdriver project id>"
+
+    # metrics.allow-stackdriver-custom-metrics indicates whether it is allowed to send metrics to
+    # Stackdriver using "global" resource type and custom metric type if the
+    # metrics are not supported by "knative_broker", "knative_trigger", and "knative_source" resource types.
+    # Setting this flag to "true" could cause extra Stackdriver charge.
+    # If metrics.backend-destination is not Stackdriver, this is ignored.
+    metrics.allow-stackdriver-custom-metrics: "false"
+kind: ConfigMap
+metadata:
+  name: config-observability
+  namespace: knative-eventing
+
+---
+apiVersion: v1
+data:
+  _example: |
+    ################################
+    #                              #
+    #    EXAMPLE CONFIGURATION     #
+    #                              #
+    ################################
+    # This block is not actually functional configuration,
+    # but serves to illustrate the available configuration
+    # options and document them in a way that is accessible
+    # to users that `kubectl edit` this config map.
+    #
+    # These sample configuration options may be copied out of
+    # this example block and unindented to be in the data block
+    # to actually change the configuration.
+    #
+    # This may be "zipkin" or "stackdriver", the default is "none"
+    backend: "none"
+
+    # URL to zipkin collector where traces are sent.
+    # This must be specified when backend is "zipkin"
+    zipkin-endpoint: "http://zipkin.istio-system.svc.cluster.local:9411/api/v2/spans"
+
+    # The GCP project into which stackdriver metrics will be written
+    # when backend is "stackdriver".  If unspecified, the project-id
+    # is read from GCP metadata when running on GCP.
+    stackdriver-project-id: "my-project"
+
+    # Enable zipkin debug mode. This allows all spans to be sent to the server
+    # bypassing sampling.
+    debug: "false"
+
+    # Percentage (0-1) of requests to trace
+    sample-rate: "0.1"
+kind: ConfigMap
+metadata:
+  name: config-tracing
+  namespace: knative-eventing
