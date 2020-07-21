@@ -1,0 +1,38 @@
+apiVersion: kpt.dev/v1alpha1
+kind: Kptfile
+metadata:
+  name: gcp
+packageMetadata:
+  shortDescription: sample description
+openAPI:
+  definitions:
+    io.k8s.cli.setters.name:
+      x-k8s-cli:
+        setter:
+          name: name
+          value: name
+    io.k8s.cli.setters.gcloud.core.project:
+      x-k8s-cli:
+        setter:
+          name: gcloud.core.project
+          value: project-id
+    io.k8s.cli.substitutions.admin-sa-ref:
+      x-k8s-cli:
+        substitution:
+          name: admin-sa-ref
+          pattern: ${name}-admin@${gcloud.core.project}.iam.gserviceaccount.com
+          values:
+          - marker: ${name}
+            ref: '#/definitions/io.k8s.cli.setters.name'
+          - marker: ${gcloud.core.project}
+            ref: '#/definitions/io.k8s.cli.setters.gcloud.core.project'
+    io.k8s.cli.substitutions.user-sa-ref:
+      x-k8s-cli:
+        substitution:
+          name: user-sa-ref
+          pattern: ${name}-user@${gcloud.core.project}.iam.gserviceaccount.com
+          values:
+          - marker: ${name}
+            ref: '#/definitions/io.k8s.cli.setters.name'
+          - marker: ${gcloud.core.project}
+            ref: '#/definitions/io.k8s.cli.setters.gcloud.core.project'
