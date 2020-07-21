@@ -15,22 +15,21 @@
 apiVersion: container.cnrm.cloud.google.com/v1beta1
 kind: ContainerNodePool
 metadata:
-  clusterName: "customerProject/testZone/testKptName" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"customerProject"},{"name":"name","value":"testKptName"},{"name":"gcloud.compute.zone","value":"testZone"}]}}
-  name: testKptName-cpu-pool-v1 # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
-  namespace: "customerProject" # {"type":"string","x-kustomize":{"setter":{"name":"gcloud.core.project","value":"customerProject"}}}
+  clusterName: "customerProject/testLocation/testKptName" # {"$kpt-set":"cluster-name"}
+  name: testKptName-cpu-pool-v1 # {"$kpt-set":"node-pool-cpu"}
 spec:
   initialNodeCount: 2
   autoscaling:
     minNodeCount: 2
-    maxNodeCount: 8 # {"type":"integer","x-kustomize":{"setter":{"name":"max-nodes","value":"8"}}}
+    maxNodeCount: 8
   nodeConfig:
     machineType: n1-standard-8
     minCpuPlatform: 'Intel Broadwell'
     metadata:
       disable-legacy-endpoints: "true"
     serviceAccountRef:
-      name: testKptName-vm@customerProject.iam.gserviceaccount.com # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"},{"name":"gcloud.core.project","value":"customerProject"}]}}
+      name: testKptName-vm@customerProject.iam.gserviceaccount.com # {"$kpt-set":"vm-sa-ref"}
     workloadMetadataConfig:
       nodeMetadata: GKE_METADATA_SERVER
   clusterRef:
-    name: testKptName # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"testKptName"}}}
+    name: testKptName # {"$kpt-set":"name"}

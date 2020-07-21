@@ -1,7 +1,7 @@
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeAddress
 metadata:
-  name: name-ip # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"name"}]}}
+  name: name-ip # {"$kpt-set":"name-ip"}
   labels:
     label-one: "value-one"
 spec:

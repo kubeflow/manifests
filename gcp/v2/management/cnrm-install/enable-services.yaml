@@ -3,6 +3,6 @@ apiVersion: cnrm.cloud.google.com/v1alpha1
 kind: CloudService
 metadata:
   name: cloudresourcemanager.googleapis.com
-  namespace: "project-id" # {"type":"string","x-kustomize":{"setter":{"name":"gcloud.core.project","value":"project-id"}}}
+  namespace: "mgmt-project-id" # {"$kpt-set":"mgmt-project"}
 spec:
   service: cloudresourcemanager.googleapis.com

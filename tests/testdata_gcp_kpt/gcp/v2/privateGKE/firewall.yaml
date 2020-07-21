@@ -1,7 +1,7 @@
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: testKptName-deny-egress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+  name: testKptName-deny-egress # {"$kpt-set":"name-deny-egress"}
 spec:
   description: "Deny all internet traffic by default"
   deny:
@@ -13,14 +13,14 @@ spec:
   direction: EGRESS
   priority: 1100
   networkRef:
-    name: testKptName # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"testKptName"}}}
+    name: testKptName # {"$kpt-set":"name"}
   # Enable logging to help debugging
-  enableLogging: kptLogFirewalls # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"kptLogFirewalls"}}}
+  enableLogging: true # {"$kpt-set":"log-firewalls"}
 ---
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: testKptName-health-ingress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+  name: testKptName-health-ingress # {"$kpt-set":"name-health-ingress"}
 spec:
   description: "Allow health check ingress"
   allow:
@@ -35,14 +35,14 @@ spec:
   - 35.191.0.0/16
   direction: INGRESS
   networkRef:
-    name: testKptName # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"testKptName"}}}
+    name: testKptName # {"$kpt-set":"name"}
   # Enable logging to help debugging
-  enableLogging: kptLogFirewalls # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"kptLogFirewalls"}}}
+  enableLogging: true # {"$kpt-set":"log-firewalls"}
 ---
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: testKptName-health-egress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+  name: testKptName-health-egress # {"$kpt-set":"name-health-egress"}
 spec:
   description: "Allow health check egress"
   allow:
@@ -57,14 +57,14 @@ spec:
   - 35.191.0.0/16
   direction: EGRESS
   networkRef:
-    name: testKptName # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"testKptName"}}}
+    name: testKptName # {"$kpt-set":"name"}
   # Enable logging to help debugging
-  enableLogging: kptLogFirewalls # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"kptLogFirewalls"}}}
+  enableLogging: true # {"$kpt-set":"log-firewalls"}
 ---
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: testKptName-apis-egress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+  name: testKptName-apis-egress # {"$kpt-set":"name-apis-egress"}
 spec:
   description: "Allow egress to google APIs"
   allow:
@@ -75,14 +75,14 @@ spec:
   - 199.36.153.4/30
   direction: EGRESS
   networkRef:
-    name: testKptName # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"testKptName"}}}
+    name: testKptName # {"$kpt-set":"name"}
   # Enable logging to help debugging
-  enableLogging: kptLogFirewalls # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"kptLogFirewalls"}}}
+  enableLogging: true # {"$kpt-set":"log-firewalls"}
 ---
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: testKptName-master-egress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+  name: testKptName-master-egress # {"$kpt-set":"name-master-egress"}
 spec:
   description: "Allow master node egress"
   allow:
@@ -99,14 +99,14 @@ spec:
 
   direction: EGRESS
   networkRef:
-    name: testKptName # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"testKptName"}}}
+    name: testKptName # {"$kpt-set":"name"}
   # Enable logging to help debugging
-  enableLogging: kptLogFirewalls # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"kptLogFirewalls"}}}
+  enableLogging: true # {"$kpt-set":"log-firewalls"}
 ---
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: testKptName-int-egress # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+  name: testKptName-int-egress # {"$kpt-set":"name-int-egress"}
 spec:
   description: "Allow traffic to internal ips"
   allow:
@@ -119,9 +119,9 @@ spec:
   - 192.168.0.0/16
   direction: EGRESS
   networkRef:
-    name: testKptName # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"testKptName"}}}
+    name: testKptName # {"$kpt-set":"name"}
   # Enable logging to help debugging
-  enableLogging: kptLogFirewalls # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"kptLogFirewalls"}}}
+  enableLogging: true # {"$kpt-set":"log-firewalls"}
 ---
 # Per https://istio.io/docs/setup/platform-setup/gke/
 # GKE will not automatically create a rule allowing traffic to the istio side car
@@ -129,7 +129,7 @@ spec:
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: testKptName-istio # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+  name: testKptName-istio # {"$kpt-set":"name-istio"}
 spec:
   description: "Allow traffic to ISTIO webhook"
   allow:
@@ -142,16 +142,16 @@ spec:
   - 172.16.0.32/28
   direction: INGRESS
   networkRef:
-    name: testKptName # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"testKptName"}}}
+    name: testKptName # {"$kpt-set":"name"}
   # Enable logging to help debugging
-  enableLogging: kptLogFirewalls # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"kptLogFirewalls"}}}
+  enableLogging: true # {"$kpt-set":"log-firewalls"}
 ---
 # Per https://docs.cert-manager.io/en/release-0.11/getting-started/webhook.html#running-on-private-gke-clusters
 # We need an extra firewall rule to allow certmanager webhooks.
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: testKptName-cm # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+  name: testKptName-cm # {"$kpt-set":"name-cm"}
 spec:
   description: "Allow traffic to cert manager webhook"
   allow:
@@ -163,9 +163,9 @@ spec:
   - 172.16.0.32/28
   direction: INGRESS
   networkRef:
-    name: testKptName # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"testKptName"}}}
+    name: testKptName # {"$kpt-set":"name"}
   # Enable logging to help debugging
-  enableLogging: kptLogFirewalls # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"kptLogFirewalls"}}}
+  enableLogging: true # {"$kpt-set":"log-firewalls"}
 ---
 # Allow traffic to DockerHub so we can pull docker images.
 #
@@ -176,7 +176,7 @@ spec:
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: testKptName-dockerhub # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+  name: testKptName-dockerhub # {"$kpt-set":"name-dockerhub"}
 spec:
   description: "Allow egress to dockerhub and quay.io"
   allow:
@@ -219,14 +219,14 @@ spec:
   - "13.35.101.104"
   direction: EGRESS
   networkRef:
-    name: testKptName # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"testKptName"}}}
+    name: testKptName # {"$kpt-set":"name"}
   # Enable logging to help debugging
-  enableLogging: kptLogFirewalls # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"kptLogFirewalls"}}}
+  enableLogging: true # {"$kpt-set":"log-firewalls"}
 ---
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: testKptName-iap-jwks # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"testKptName"}]}}
+  name: testKptName-iap-jwks # {"$kpt-set":"name-iap-jwks"}
 spec:
   description: "Allow traffic to www.gstatic.com to get IAP JWKs"
   allow:
@@ -250,6 +250,6 @@ spec:
   - "23.202.231.169"
   direction: EGRESS
   networkRef:
-    name: testKptName # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"testKptName"}}}
+    name: testKptName # {"$kpt-set":"name"}
   # Enable logging to help debugging
-  enableLogging: kptLogFirewalls # {"type":"bool","x-kustomize":{"setter":{"name":"log-firewalls","value":"kptLogFirewalls"}}}
+  enableLogging: true # {"$kpt-set":"log-firewalls"}
