@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  issuer: kubeflow-self-signing-issuer
+  namespace: kubeflow
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    app: admission-webhook
+    app.kubernetes.io/component: poddefaults
+    app.kubernetes.io/name: poddefaults
+    kustomize.component: admission-webhook
+  name: admission-webhook-admission-webhook-parameters
+  namespace: kubeflow

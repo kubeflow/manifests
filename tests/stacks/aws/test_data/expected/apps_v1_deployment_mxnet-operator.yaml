@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: mxnet
+    app.kubernetes.io/name: mxnet-operator
+    kustomize.component: mxnet-operator
+  name: mxnet-operator
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: mxnet
+      app.kubernetes.io/name: mxnet-operator
+      kustomize.component: mxnet-operator
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app.kubernetes.io/component: mxnet
+        app.kubernetes.io/name: mxnet-operator
+        kustomize.component: mxnet-operator
+        name: mxnet-operator
+    spec:
+      containers:
+      - command:
+        - /opt/kubeflow/mxnet-operator.v1
+        env:
+        - name: MY_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        image: kubeflow/mxnet-operator:v1.0.0-20200625
+        imagePullPolicy: Always
+        name: mxnet-operator
+      serviceAccountName: mxnet-operator

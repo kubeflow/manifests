@@ -1,0 +1,59 @@
+apiVersion: v1
+data:
+  metrics-collector-sidecar: |-
+    {
+      "StdOut": {
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:c3b38d8"
+      },
+      "File": {
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:c3b38d8"
+      },
+      "TensorFlowEvent": {
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:c3b38d8",
+        "resources": {
+          "limits": {
+            "memory": "1Gi"
+          }
+        }
+      }
+    }
+  suggestion: |-
+    {
+      "random": {
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:c3b38d8"
+      },
+      "grid": {
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-chocolate:c3b38d8"
+      },
+      "hyperband": {
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperband:c3b38d8"
+      },
+      "bayesianoptimization": {
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-skopt:c3b38d8"
+      },
+      "tpe": {
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:c3b38d8"
+      },
+      "enas": {
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-enas:c3b38d8",
+        "imagePullPolicy": "Always",
+        "resources": {
+          "limits": {
+            "memory": "200Mi"
+          }
+        }
+      },
+      "cmaes": {
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-goptuna:c3b38d8"
+      },
+      "darts": {
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-darts:c3b38d8"
+      }
+    }
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: katib
+    app.kubernetes.io/name: katib-controller
+  name: katib-config
+  namespace: kubeflow
