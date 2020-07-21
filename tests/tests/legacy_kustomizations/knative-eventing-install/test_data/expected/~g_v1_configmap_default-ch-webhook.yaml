@@ -1,0 +1,23 @@
+apiVersion: v1
+data:
+  default-ch-config: |
+    clusterDefault:
+      apiVersion: messaging.knative.dev/v1alpha1
+      kind: InMemoryChannel
+    namespaceDefaults:
+      some-namespace:
+        apiVersion: messaging.knative.dev/v1alpha1
+        kind: InMemoryChannel
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-eventing-install
+    app.kubernetes.io/instance: knative-eventing-install
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: knative-eventing-install
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.11.0
+    kustomize.component: knative
+    serving.knative.dev/release: v0.11.0
+  name: default-ch-webhook
+  namespace: knative-serving

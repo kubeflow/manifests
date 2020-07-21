@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-eventing-install
+    app.kubernetes.io/instance: knative-eventing-install
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: knative-eventing-install
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.11.0
+    eventing.knative.dev/release: v0.11.0
+    kustomize.component: knative
+    messaging.knative.dev/channel: in-memory-channel
+    messaging.knative.dev/role: dispatcher
+    serving.knative.dev/release: v0.11.0
+  name: imc-dispatcher
+  namespace: knative-serving
+spec:
+  ports:
+  - name: http-dispatcher
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/component: knative-eventing-install
+    app.kubernetes.io/instance: knative-eventing-install
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: knative-eventing-install
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.11.0
+    kustomize.component: knative
+    messaging.knative.dev/channel: in-memory-channel
+    messaging.knative.dev/role: dispatcher
+    serving.knative.dev/release: v0.11.0
