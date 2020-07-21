@@ -1,38 +1,50 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  labels:
+    app: tekton-dashboard
+    app.kubernetes.io/component: tekton-dashboard
+    app.kubernetes.io/version: v0.7.1
+    dashboard.tekton.dev/release: v0.7.1
+    version: v0.7.1
   name: tekton-dashboard
+  namespace: tekton-pipelines
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: tekton-dashboard
   template:
     metadata:
+      labels:
+        app: tekton-dashboard
+        app.kubernetes.io/component: tekton-dashboard
+        app.kubernetes.io/version: v0.7.1
       name: tekton-dashboard
-      annotations:
-        sidecar.istio.io/inject: "false"
     spec:
       containers:
-      - name: tekton-dashboard
-        image: gcr.io/tekton-nightly/dashboard@sha256:e3e63e7a5e11a14927008cf61f6e6a1bfc36e9e13608e9c044570c162198f01d
-        ports:
-        - containerPort: 9097
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 9097
-        readinessProbe:
-          httpGet:
-            path: /readiness
-            port: 9097
-        resources:
+      - args:
+        - --port=9097
+        - --web-dir=/var/run/ko
+        - --csrf-secure-cookie=false
         env:
-        - name: PORT
-          value: "9097"
-        - name: WEB_RESOURCES_DIR
-          value: /var/run/ko/web
-        - name: PIPELINE_RUN_SERVICE_ACCOUNT
-          value: ""
         - name: INSTALLED_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        image: gcr.io/tekton-releases/github.com/tektoncd/dashboard/cmd/dashboard@sha256:4c1d0c9d3bd805c07f57ae6974bc7179b03d67fa83870ea8a71415d19c261a38
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 9097
+        name: tekton-dashboard
+        ports:
+        - containerPort: 9097
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 9097
+      securityContext:
+        runAsNonRoot: true
       serviceAccountName: tekton-dashboard
+      volumes: []
