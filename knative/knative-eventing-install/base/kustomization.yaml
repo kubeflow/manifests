@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: knative-eventing
+resources:
+- cluster-role.yaml
+- cluster-role-binding.yaml
+- secret.yaml
+- config-map.yaml
+- deployment.yaml
+- service-account.yaml
+- service.yaml
+- webhook-configuration.yaml
+commonLabels:
+  kustomize.component: knative
+images:
+- name: gcr.io/knative-releases/knative.dev/eventing/cmd/controller
+  newName: gcr.io/knative-releases/knative.dev/eventing/cmd/controller
+  digest: sha256:d071a79973911f45ffd9021ad7e7cc6f4e262b3f1edb77d9bfdcf91b0d657b4e
+- name: gcr.io/knative-releases/knative.dev/eventing/cmd/sources_controller
+  newName: gcr.io/knative-releases/knative.dev/eventing/cmd/sources_controller
+  digest: sha256:0df4cfcf82998eccf687a08a456f60578190e68175a441bcd3c26de7a4869739
+- name: gcr.io/knative-releases/knative.dev/eventing/cmd/webhook
+  newName: gcr.io/knative-releases/knative.dev/eventing/cmd/webhook
+  digest: sha256:75b2dfaaf279b98c2e90b02414b2255aebbc58b23beeba838feba57b09da12b6
+- name: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_controller
+  newName: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_controller
+  digest: sha256:67cf35921e6ba4d8d5027637bdb9f0bec328e0ba5706fb0ea4eb32187a77bd0b
+- name: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_dispatcher
+  newName: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_dispatcher
+  digest: sha256:f5402f075154adfdfb72bf3e4e1a755df6eb57e0e5c7770450210c3b0270d38f
