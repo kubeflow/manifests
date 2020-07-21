@@ -2,7 +2,6 @@ bases:
 - ../../base
 patchesStrategicMerge:
 - ingress.yaml
-#- oidc-secret.yaml
 secretGenerator:
 - name: istio-oidc-secret
   envs:

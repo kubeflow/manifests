@@ -1,0 +1,38 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: aws-alb-ingress-controller
+    kustomize.component: aws-alb-ingress-controller
+  name: alb-ingress-controller
+rules:
+- apiGroups:
+  - ""
+  - extensions
+  resources:
+  - configmaps
+  - endpoints
+  - events
+  - ingresses
+  - ingresses/status
+  - services
+  verbs:
+  - create
+  - get
+  - list
+  - update
+  - watch
+  - patch
+- apiGroups:
+  - ""
+  - extensions
+  resources:
+  - nodes
+  - pods
+  - secrets
+  - services
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
