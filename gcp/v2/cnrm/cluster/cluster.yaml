@@ -17,10 +17,10 @@
 apiVersion: container.cnrm.cloud.google.com/v1beta1
 kind: ContainerCluster
 metadata:
-  clusterName: "project-id/us-east1-d/name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"name","value":"name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
+  clusterName: "project-id/us-east1-d/name" # {"$kpt-set":"cluster-name"}
   labels:
-    mesh_id: "project-id_us-east1-d_name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"name","value":"name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
-  name: name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"name"}}}
+    mesh_id: "project-id_us-east1-d_name" # {"$kpt-set":"mesh-id"}
+  name: name # {"$kpt-set":"name"}
 spec:
   initialNodeCount: 2
   clusterAutoscaling:
@@ -31,7 +31,7 @@ spec:
       - https://www.googleapis.com/auth/monitoring
       - https://www.googleapis.com/auth/devstorage.read_only
       serviceAccountRef:
-        name: name-vm # {"type":"string","x-kustomize":{"partialSetters":[{"name":"name","value":"name"}]}}
+        name: name-vm # {"$kpt-set":"name-vm"}
     resourceLimits:
     - resourceType: cpu
       maximum: 128
@@ -42,10 +42,10 @@ spec:
   releaseChannel:
     # Per https://github.com/GoogleCloudPlatform/k8s-config-connector/issues/194
     # use upper case for the channels
-    channel: STABLE
-  location: us-east1-d # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.compute.zone","value":"us-east1-d"}}}
+    channel: REGULAR
+  location: us-east1-d # {"$kpt-set":"location"}
   workloadIdentityConfig:
-    identityNamespace: project-id.svc.id.goog # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
+    identityNamespace: project-id.svc.id.goog # {"$kpt-set":"identity-ns"}
   loggingService: logging.googleapis.com/kubernetes
   monitoringService: monitoring.googleapis.com/kubernetes
   nodeConfig:
@@ -57,6 +57,6 @@ spec:
     - https://www.googleapis.com/auth/monitoring
     - https://www.googleapis.com/auth/devstorage.read_only
     serviceAccountRef:
-      name: name-vm # {"type":"string","x-kustomize":{"partialSetters":[{"name":"name","value":"name"}]}}
+      name: name-vm # {"$kpt-set":"name-vm"}
     workloadMetadataConfig:
       nodeMetadata: GKE_METADATA_SERVER
