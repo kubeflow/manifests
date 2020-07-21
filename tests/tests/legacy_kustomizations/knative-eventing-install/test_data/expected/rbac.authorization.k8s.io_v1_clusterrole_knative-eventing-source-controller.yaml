@@ -1,0 +1,106 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-eventing-install
+    app.kubernetes.io/instance: knative-eventing-install
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: knative-eventing-install
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.11.0
+    eventing.knative.dev/release: v0.11.0
+    kustomize.component: knative
+    serving.knative.dev/release: v0.11.0
+  name: knative-eventing-source-controller
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  - configmaps
+  - services
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - sources.eventing.knative.dev
+  resources:
+  - cronjobsources
+  - cronjobsources/status
+  - cronjobsources/finalizers
+  - containersources
+  - containersources/status
+  - containersources/finalizers
+  - sinkbindings
+  - sinkbindings/status
+  - sinkbindings/finalizers
+  - apiserversources
+  - apiserversources/status
+  - apiserversources/finalizers
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - serving.knative.dev
+  resources:
+  - services
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - eventing.knative.dev
+  resources:
+  - eventtypes
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create

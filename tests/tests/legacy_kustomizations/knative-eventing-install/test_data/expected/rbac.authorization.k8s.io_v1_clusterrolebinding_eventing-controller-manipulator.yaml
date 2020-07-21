@@ -1,0 +1,22 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-eventing-install
+    app.kubernetes.io/instance: knative-eventing-install
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: knative-eventing-install
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.11.0
+    eventing.knative.dev/release: v0.11.0
+    kustomize.component: knative
+    serving.knative.dev/release: v0.11.0
+  name: eventing-controller-manipulator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: channelable-manipulator
+subjects:
+- kind: ServiceAccount
+  name: eventing-controller
+  namespace: knative-serving

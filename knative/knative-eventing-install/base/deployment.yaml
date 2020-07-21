@@ -1,0 +1,245 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    eventing.knative.dev/release: "v0.11.0"
+  name: eventing-controller
+  namespace: knative-eventing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eventing-controller
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: eventing-controller
+        eventing.knative.dev/release: "v0.11.0"
+    spec:
+      containers:
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: METRICS_DOMAIN
+          value: knative.dev/eventing
+        - name: BROKER_INGRESS_IMAGE
+          value: gcr.io/knative-releases/knative.dev/eventing/cmd/broker/ingress@sha256:0f671b2c3f6ea952cb314b7e7d7ec929702c41c47f59cce1044cf7daa6212d2c
+        - name: BROKER_INGRESS_SERVICE_ACCOUNT
+          value: eventing-broker-ingress
+        - name: BROKER_FILTER_IMAGE
+          value: gcr.io/knative-releases/knative.dev/eventing/cmd/broker/filter@sha256:4cde6893d8763c1c8c52625338d698d5bf6857cf2c37e8e187c5d5a84d75514d
+        - name: BROKER_FILTER_SERVICE_ACCOUNT
+          value: eventing-broker-filter
+        image: gcr.io/knative-releases/knative.dev/eventing/cmd/controller@sha256:d071a79973911f45ffd9021ad7e7cc6f4e262b3f1edb77d9bfdcf91b0d657b4e
+        name: eventing-controller
+        ports:
+        - containerPort: 9090
+          name: metrics
+        terminationMessagePolicy: FallbackToLogsOnError
+        volumeMounts:
+        - mountPath: /etc/config-logging
+          name: config-logging
+      serviceAccountName: eventing-controller
+      volumes:
+      - configMap:
+          name: config-logging
+        name: config-logging
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    eventing.knative.dev/release: "v0.11.0"
+  name: sources-controller
+  namespace: knative-eventing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sources-controller
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: sources-controller
+        eventing.knative.dev/release: "v0.11.0"
+    spec:
+      containers:
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: METRICS_DOMAIN
+          value: knative.dev/sources
+        - name: CRONJOB_RA_IMAGE
+          value: gcr.io/knative-releases/knative.dev/eventing/cmd/cronjob_receive_adapter@sha256:481f28c916ee68db2d2729e050bc94c88d8f39c95039de98f6400ee0ee2aca28
+        - name: APISERVER_RA_IMAGE
+          value: gcr.io/knative-releases/knative.dev/eventing/cmd/apiserver_receive_adapter@sha256:d6783c20324e19554b3cd8c3b1823c2bbaca71c657da7df73e582a00d618f5de
+        image: gcr.io/knative-releases/knative.dev/eventing/cmd/sources_controller@sha256:0df4cfcf82998eccf687a08a456f60578190e68175a441bcd3c26de7a4869739
+        name: controller
+        ports:
+        - containerPort: 9090
+          name: metrics
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        volumeMounts:
+        - mountPath: /etc/config-logging
+          name: config-logging
+      serviceAccountName: eventing-source-controller
+      volumes:
+      - configMap:
+          name: config-logging
+        name: config-logging
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    eventing.knative.dev/release: "v0.11.0"
+  name: eventing-webhook
+  namespace: knative-eventing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eventing-webhook
+      role: eventing-webhook
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: eventing-webhook
+        role: eventing-webhook
+    spec:
+      containers:
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: METRICS_DOMAIN
+          value: knative.dev/eventing
+        - name: WEBHOOK_NAME
+          value: eventing-webhook
+        image: gcr.io/knative-releases/knative.dev/eventing/cmd/webhook@sha256:75b2dfaaf279b98c2e90b02414b2255aebbc58b23beeba838feba57b09da12b6
+        name: eventing-webhook
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 20m
+            memory: 20Mi
+        terminationMessagePolicy: FallbackToLogsOnError
+      serviceAccountName: eventing-webhook
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    eventing.knative.dev/release: "v0.11.0"
+  name: imc-controller
+  namespace: knative-eventing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      messaging.knative.dev/channel: in-memory-channel
+      messaging.knative.dev/role: controller
+  template:
+    metadata:
+      labels:
+        messaging.knative.dev/channel: in-memory-channel
+        messaging.knative.dev/role: controller
+    spec:
+      containers:
+      - env:
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: METRICS_DOMAIN
+          value: knative.dev/inmemorychannel-controller
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_controller@sha256:67cf35921e6ba4d8d5027637bdb9f0bec328e0ba5706fb0ea4eb32187a77bd0b
+        name: controller
+        ports:
+        - containerPort: 9090
+          name: metrics
+        volumeMounts:
+        - mountPath: /etc/config-logging
+          name: config-logging
+      serviceAccountName: imc-controller
+      volumes:
+      - configMap:
+          name: config-logging
+        name: config-logging
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    eventing.knative.dev/release: "v0.11.0"
+  name: imc-dispatcher
+  namespace: knative-eventing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      messaging.knative.dev/channel: in-memory-channel
+      messaging.knative.dev/role: dispatcher
+  template:
+    metadata:
+      labels:
+        messaging.knative.dev/channel: in-memory-channel
+        messaging.knative.dev/role: dispatcher
+    spec:
+      containers:
+      - env:
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: METRICS_DOMAIN
+          value: knative.dev/inmemorychannel-dispatcher
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_dispatcher@sha256:f5402f075154adfdfb72bf3e4e1a755df6eb57e0e5c7770450210c3b0270d38f
+        name: dispatcher
+        ports:
+        - containerPort: 9090
+          name: metrics
+        volumeMounts:
+        - mountPath: /etc/config-logging
+          name: config-logging
+      serviceAccountName: imc-dispatcher
+      volumes:
+      - configMap:
+          name: config-logging
+        name: config-logging

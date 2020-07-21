@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: knative-eventing
+resources:
+- ../../knative-eventing-crds/base
+- ../../knative-eventing-crds/overlays/application
+- ../../knative-eventing-install/base
+- ../../knative-eventing-install/overlays/application
+commonLabels:
+  kustomize.component: knative
+  app.kubernetes.io/component: knative-eventing-install
+  app.kubernetes.io/name: knative-eventing-install
