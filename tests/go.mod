@@ -3,6 +3,7 @@ module github.com/kubeflow/manifests/tests
 go 1.13
 
 require (
+	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/gogo/protobuf v1.2.2-0.20190730201129-28a6bbf47e48 // indirect
 	github.com/golang/protobuf v1.3.2 // indirect
