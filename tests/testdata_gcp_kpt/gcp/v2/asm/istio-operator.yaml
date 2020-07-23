@@ -19,7 +19,7 @@ metadata:
 spec:
   profile: asm
   hub: gcr.io/gke-release/asm
-  tag: 1.4.7-asm.0
+  tag: 1.4.10-asm.15
   values:
     gateways:
       istio-ingressgateway:

@@ -11,37 +11,31 @@ openAPI:
         setter:
           name: gcloud.core.project
           value: customerProject
-          isSet: true
     io.k8s.cli.setters.name:
       x-k8s-cli:
         setter:
           name: name
           value: testKptName
-          isSet: true
     io.k8s.cli.setters.gcloud.compute.zone:
       x-k8s-cli:
         setter:
           name: gcloud.compute.zone
           value: testZone
-          isSet: true
     io.k8s.cli.setters.gcloud.compute.region:
       x-k8s-cli:
         setter:
           name: gcloud.compute.region
           value: testRegion
-          isSet: true
     io.k8s.cli.setters.location:
       x-k8s-cli:
         setter:
           name: location
           value: testLocation
-          isSet: true
     io.k8s.cli.setters.log-firewalls:
       x-k8s-cli:
         setter:
           name: log-firewalls
           value: "true"
-          isSet: true
     io.k8s.cli.substitutions.name-storage-metadata-store:
       x-k8s-cli:
         substitution:
@@ -703,7 +697,6 @@ openAPI:
         setter:
           name: gcloud.project.projectNumber
           value: "999911112222"
-          isSet: true
     io.k8s.cli.substitutions.asm-gcp-metadata:
       x-k8s-cli:
         substitution:
@@ -840,7 +833,6 @@ openAPI:
         setter:
           name: mgmt-name
           value: testMgmtName
-          isSet: true
     io.k8s.cli.setters.mgmt-project:
       x-k8s-cli:
         setter:
