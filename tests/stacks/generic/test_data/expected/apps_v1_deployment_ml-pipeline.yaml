@@ -3,16 +3,22 @@ kind: Deployment
 metadata:
   labels:
     app: ml-pipeline
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
   name: ml-pipeline
   namespace: kubeflow
 spec:
   selector:
     matchLabels:
       app: ml-pipeline
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
   template:
     metadata:
       labels:
         app: ml-pipeline
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
     spec:
       containers:
       - env:
@@ -62,7 +68,7 @@ spec:
             secretKeyRef:
               key: secretkey
               name: mlpipeline-minio-artifact
-        image: gcr.io/ml-pipeline/api-server:1.0.0-rc.3
+        image: gcr.io/ml-pipeline/api-server:1.0.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:

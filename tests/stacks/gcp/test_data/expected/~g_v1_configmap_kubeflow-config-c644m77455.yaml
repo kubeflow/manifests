@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  clusterDomain: cluster.local
+  userid-header: x-goog-authenticated-user-email
+  userid-prefix: 'accounts.google.com:'
+kind: ConfigMap
+metadata:
+  name: kubeflow-config-c644m77455
+  namespace: kubeflow

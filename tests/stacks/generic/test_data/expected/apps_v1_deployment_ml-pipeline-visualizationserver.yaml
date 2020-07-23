@@ -3,19 +3,25 @@ kind: Deployment
 metadata:
   labels:
     app: ml-pipeline-visualizationserver
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
   name: ml-pipeline-visualizationserver
   namespace: kubeflow
 spec:
   selector:
     matchLabels:
       app: ml-pipeline-visualizationserver
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
   template:
     metadata:
       labels:
         app: ml-pipeline-visualizationserver
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
     spec:
       containers:
-      - image: gcr.io/ml-pipeline/visualization-server:1.0.0-rc.3
+      - image: gcr.io/ml-pipeline/visualization-server:1.0.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:

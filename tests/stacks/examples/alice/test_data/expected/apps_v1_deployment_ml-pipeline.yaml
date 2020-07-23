@@ -3,19 +3,35 @@ kind: Deployment
 metadata:
   labels:
     app: ml-pipeline
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
   name: ml-pipeline
   namespace: kubeflow
 spec:
   selector:
     matchLabels:
       app: ml-pipeline
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
   template:
     metadata:
       labels:
         app: ml-pipeline
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
     spec:
       containers:
       - env:
+        - name: KUBEFLOW_USERID_HEADER
+          valueFrom:
+            configMapKeyRef:
+              key: userid-header
+              name: kubeflow-config-bmh8k74f52
+        - name: KUBEFLOW_USERID_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              key: userid-prefix
+              name: kubeflow-config-bmh8k74f52
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:
@@ -62,7 +78,10 @@ spec:
             secretKeyRef:
               key: secretkey
               name: mlpipeline-minio-artifact
-        image: gcr.io/ml-pipeline/api-server:1.0.0-rc.3
+        envFrom:
+        - configMapRef:
+            name: pipeline-api-server-config-f4t72426kt
+        image: gcr.io/ml-pipeline/api-server:1.0.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:

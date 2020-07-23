@@ -3,19 +3,47 @@ kind: Deployment
 metadata:
   labels:
     app: ml-pipeline-ui
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
   name: ml-pipeline-ui
   namespace: kubeflow
 spec:
   selector:
     matchLabels:
       app: ml-pipeline-ui
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
   template:
     metadata:
       labels:
         app: ml-pipeline-ui
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
     spec:
       containers:
       - env:
+        - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
+          value: /etc/config/viewer-pod-template.json
+        - name: DEPLOYMENT
+          value: KUBEFLOW
+        - name: ARTIFACTS_SERVICE_PROXY_NAME
+          value: ml-pipeline-ui-artifact
+        - name: ARTIFACTS_SERVICE_PROXY_PORT
+          value: "80"
+        - name: ARTIFACTS_SERVICE_PROXY_ENABLED
+          value: "true"
+        - name: ENABLE_AUTHZ
+          value: "true"
+        - name: KUBEFLOW_USERID_HEADER
+          valueFrom:
+            configMapKeyRef:
+              key: userid-header
+              name: kubeflow-config-c644m77455
+        - name: KUBEFLOW_USERID_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              key: userid-prefix
+              name: kubeflow-config-c644m77455
         - name: MINIO_NAMESPACE
           valueFrom:
             fieldRef:
@@ -32,7 +60,7 @@ spec:
               name: mlpipeline-minio-artifact
         - name: ALLOW_CUSTOM_VISUALIZATIONS
           value: "true"
-        image: gcr.io/ml-pipeline/frontend:1.0.0-rc.3
+        image: gcr.io/ml-pipeline/frontend:1.0.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
@@ -61,4 +89,12 @@ spec:
           initialDelaySeconds: 3
           periodSeconds: 5
           timeoutSeconds: 2
+        volumeMounts:
+        - mountPath: /etc/config
+          name: config-volume
+          readOnly: true
       serviceAccountName: ml-pipeline-ui
+      volumes:
+      - configMap:
+          name: ml-pipeline-ui-configmap
+        name: config-volume
