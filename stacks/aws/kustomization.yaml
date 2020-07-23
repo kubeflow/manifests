@@ -8,7 +8,7 @@ resources:
   - ../../admission-webhook/webhook/v3
   - ../../common/centraldashboard/overlays/stacks
   - ../../kubeflow-roles/base
-  - ../../jupyter/jupyter-web-app/base_v3
+  - ../../jupyter/jupyter-web-app/overlays/aws
   - ../../jupyter/notebook-controller/base_v3
   - ../../profiles/base_v3
   # Training Operators

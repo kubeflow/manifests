@@ -5,4 +5,5 @@ resources:
 - cluster-role.yaml
 configMapGenerator:
 - name: pipeline-api-server-config
-  env: params.env
+  envs:
+  - params.env

@@ -42,5 +42,5 @@ spec:
       serviceAccountName: jupyter-web-app-service-account
       volumes:
       - configMap:
-          name: jupyter-web-app-jupyter-web-app-config-dhcbh64467
+          name: jupyter-web-app-jupyter-web-app-config-t6dm9hd6mm
         name: config-volume
