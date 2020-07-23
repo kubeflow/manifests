@@ -6,7 +6,7 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/kfam
   newName: gcr.io/kubeflow-images-public/kfam
-  newTag: vmaster-gf3e09203
+  newTag: vmaster-g9f3bfd00
 - name: gcr.io/kubeflow-images-public/profile-controller
   newName: gcr.io/kubeflow-images-public/profile-controller
   newTag: vmaster-g34aa47c2
@@ -20,10 +20,10 @@ resources:
 - ../overlays/application/application.yaml
 patchesStrategicMerge:
 - deployment_patch.yaml
-configMapGenerator:
 # We need the name to be unique without the suffix because the original name is what
 # gets used with patches
-- name: profiles-config
-  literals:
+configMapGenerator:
+- literals:
   - admin=
   - gcp-sa=
+  name: profiles-config
