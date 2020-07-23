@@ -31,7 +31,6 @@ resources:
   # AWS components
   - ../../aws/aws-alb-ingress-controller/base_v3
   - ../../aws/nvidia-device-plugin/overlays/application
-  - ../../aws/istio-ingress/base_v3
   # Kubernetes resources - anonymous user
   - ../../default-install/base
 generatorOptions:
