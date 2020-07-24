@@ -24,7 +24,7 @@ resources:
   # Meta data has been included.
   - ../../pipeline/minio/installs/generic
   - ../../pipeline/mysql/installs/generic
-  - ../../pipeline/installs/generic
+  - ../../pipeline/installs/multi-user
   - ../../argo/base_v3
   # Serving components
   - ../../seldon/seldon-core-operator/overlays/application
