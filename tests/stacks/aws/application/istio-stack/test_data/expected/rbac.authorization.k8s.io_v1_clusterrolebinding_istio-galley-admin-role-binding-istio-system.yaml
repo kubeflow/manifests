@@ -1,0 +1,17 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: galley
+    chart: galley
+    heritage: Tiller
+    release: istio
+  name: istio-galley-admin-role-binding-istio-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: istio-galley-istio-system
+subjects:
+- kind: ServiceAccount
+  name: istio-galley-service-account
+  namespace: istio-system

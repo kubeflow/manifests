@@ -59,9 +59,7 @@ spec:
               key: password
               name: mysql-secret-fd5gktm75t
         - name: NAMESPACE_TO_WATCH
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
+          value: ""
         image: gcr.io/ml-pipeline/cache-server:1.0.0
         imagePullPolicy: Always
         name: server

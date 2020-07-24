@@ -4,6 +4,7 @@ data:
   clusterDomain: cluster.local
   istio-namespace: istio-system
   userid-header: kubeflow-userid
+  userid-prefix: ""
 kind: ConfigMap
 metadata:
   name: kubeflow-config

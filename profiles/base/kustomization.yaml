@@ -21,7 +21,7 @@ configMapGenerator:
 images:
 - name: gcr.io/kubeflow-images-public/kfam
   newName: gcr.io/kubeflow-images-public/kfam
-  newTag: vmaster-gf3e09203
+  newTag: vmaster-g9f3bfd00
 - name: gcr.io/kubeflow-images-public/profile-controller
   newName: gcr.io/kubeflow-images-public/profile-controller
   newTag: vmaster-ga49f658f

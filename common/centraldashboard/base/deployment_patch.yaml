@@ -16,3 +16,5 @@ spec:
           value: profiles-kfam.kubeflow
         - name: REGISTRATION_FLOW
           value: $(registration-flow)
+        - name: DASHBOARD_LINKS_CONFIGMAP
+          value: centraldashboard-links-config

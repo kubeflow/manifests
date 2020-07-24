@@ -22,6 +22,9 @@ spec:
     spec:
       containers:
       - env:
+        - name: NAMESPACE
+          value: ""
+          valueFrom: null
         - name: MAX_NUM_VIEWERS
           value: "50"
         - name: MINIO_NAMESPACE
