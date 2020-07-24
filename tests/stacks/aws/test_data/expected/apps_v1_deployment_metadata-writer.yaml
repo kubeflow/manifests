@@ -24,9 +24,7 @@ spec:
       containers:
       - env:
         - name: NAMESPACE_TO_WATCH
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
+          value: ""
         image: gcr.io/ml-pipeline/metadata-writer:1.0.0
         name: main
       serviceAccountName: kubeflow-pipelines-metadata-writer

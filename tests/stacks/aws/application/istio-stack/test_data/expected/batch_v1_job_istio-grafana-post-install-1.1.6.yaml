@@ -1,0 +1,72 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    helm.sh/hook: post-install
+    helm.sh/hook-delete-policy: hook-succeeded
+  labels:
+    app: grafana
+    chart: grafana
+    heritage: Tiller
+    release: istio
+  name: istio-grafana-post-install-1.1.6
+  namespace: istio-system
+spec:
+  template:
+    metadata:
+      labels:
+        app: istio-grafana
+        chart: grafana
+        heritage: Tiller
+        release: istio
+      name: istio-grafana-post-install
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - ppc64le
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - s390x
+            weight: 2
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - ppc64le
+                - s390x
+      containers:
+      - command:
+        - /bin/bash
+        - /tmp/grafana/run.sh
+        - /tmp/grafana/custom-resources.yaml
+        image: docker.io/istio/kubectl:1.1.6
+        name: kubectl
+        volumeMounts:
+        - mountPath: /tmp/grafana
+          name: tmp-configmap-grafana
+      restartPolicy: OnFailure
+      serviceAccountName: istio-grafana-post-install-account
+      volumes:
+      - configMap:
+          name: istio-grafana-custom-resources
+        name: tmp-configmap-grafana

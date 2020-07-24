@@ -1,0 +1,15 @@
+apiVersion: rbac.istio.io/v1alpha1
+kind: ServiceRole
+metadata:
+  labels:
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+  name: ml-pipeline-services
+  namespace: kubeflow
+spec:
+  rules:
+  - services:
+    - ml-pipeline.kubeflow.svc.cluster.local
+    - ml-pipeline-ui.kubeflow.svc.cluster.local
+    - ml-pipeline-visualizationserver.kubeflow.svc.cluster.local
+    - mysql.kubeflow.svc.cluster.local
