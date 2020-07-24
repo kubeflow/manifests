@@ -17,16 +17,16 @@ images:
   newName: seedjeffwan/istio-adapter
   newTag: "0.1"
 configMapGenerator:
-  - name: aws-authzadaptor-parameters
-    env: params.env
+- name: aws-authzadaptor-config
+  envs:
+  - ../base/params.env
 generatorOptions:
   disableNameSuffixHash: true
 vars:
 - name: istio-namespace
   objref:
     kind: ConfigMap
-    name: kubeflow-config
-    namespace: kubeflow
+    name: aws-authzadaptor-config
     apiVersion: v1
   fieldref:
     fieldpath: data.istio-namespace
@@ -40,10 +40,9 @@ vars:
 - name: custom-header
   objref:
     kind: ConfigMap
-    name: kubeflow-config
-    namespace: kubeflow
+    name: aws-authzadaptor-config
     apiVersion: v1
   fieldref:
-    fieldpath: data.userid-header
+    fieldpath: data.custom-header
 configurations:
-- params.yaml
+- ../base/params.yaml

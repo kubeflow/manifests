@@ -1,0 +1,53 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: istio-system
+resources:
+- ../../../../aws/istio-ingress/base/ingress.yaml
+commonLabels:
+  kustomize.component: istio-ingress
+patchesStrategicMerge:
+- ../../../../aws/istio-ingress/overlays/cognito/ingress.yaml
+generatorOptions:
+  disableNameSuffixHash: true
+configMapGenerator:
+- envs:
+  - ../../../../aws/istio-ingress/overlays/cognito/params.env
+  name: istio-ingress-config
+vars:
+- name: loadBalancerScheme
+  objref:
+    kind: ConfigMap
+    name: istio-ingress-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.loadBalancerScheme
+- name: CognitoUserPoolArn
+  objref:
+    kind: ConfigMap
+    name: istio-ingress-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.CognitoUserPoolArn
+- name: CognitoAppClientId
+  objref:
+    kind: ConfigMap
+    name: istio-ingress-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.CognitoAppClientId
+- name: CognitoUserPoolDomain
+  objref:
+    kind: ConfigMap
+    name: istio-ingress-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.CognitoUserPoolDomain
+- name: certArn
+  objref:
+    kind: ConfigMap
+    name: istio-ingress-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.certArn
+configurations:
+- ../../../../aws/istio-ingress/overlays/cognito/params.yaml

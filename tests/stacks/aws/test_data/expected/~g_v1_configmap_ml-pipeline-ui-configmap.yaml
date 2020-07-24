@@ -3,7 +3,7 @@ data:
   viewer-pod-template.json: |-
     {
         "spec": {
-            "serviceAccountName": "kubeflow-pipelines-viewer"
+            "serviceAccountName": "default-editor"
         }
     }
 kind: ConfigMap

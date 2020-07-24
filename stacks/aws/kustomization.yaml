@@ -8,7 +8,7 @@ resources:
   - ../../admission-webhook/webhook/v3
   - ../../common/centraldashboard/overlays/stacks
   - ../../kubeflow-roles/base
-  - ../../jupyter/jupyter-web-app/base_v3
+  - ./application/jupyter-web-app
   - ../../jupyter/notebook-controller/base_v3
   - ../../profiles/base_v3
   # Training Operators
@@ -24,14 +24,13 @@ resources:
   # Meta data has been included.
   - ../../pipeline/minio/installs/generic
   - ../../pipeline/mysql/installs/generic
-  - ../../pipeline/installs/generic
+  - ../../pipeline/installs/multi-user
   - ../../argo/base_v3
   # Serving components
   - ../../seldon/seldon-core-operator/overlays/application
   # AWS components
   - ../../aws/aws-alb-ingress-controller/base_v3
   - ../../aws/nvidia-device-plugin/overlays/application
-  - ../../aws/istio-ingress/base_v3
   # Kubernetes resources - anonymous user
   - ../../default-install/base
 generatorOptions:
