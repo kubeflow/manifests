@@ -1,0 +1,40 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  labels:
+    app: aws-alb-ingress-controller
+    kustomize.component: aws-alb-ingress-controller
+  name: aws-alb-ingress-controller
+  namespace: kubeflow
+spec:
+  addOwnerRef: true
+  componentKinds:
+  - group: apps
+    kind: Deployment
+  - group: core
+    kind: ServiceAccount
+  descriptor:
+    description: Application Load Balancer (ALB) Ingress Controller Deployment Manifest
+      provides sensible defaults for deploying an ALB Ingress Controller
+    keywords:
+    - aws
+    - kubeflow
+    links:
+    - description: About
+      url: https://github.com/kubernetes-sigs/aws-alb-ingress-controller
+    maintainers:
+    - email: shjiaxin@amazon.com
+      name: Jiaxin Shan
+    owners:
+    - email: shjiaxin@amazon.com
+      name: Jiaxin Shan
+    type: aws-alb-ingress-controller
+    version: v1beta1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: aws-alb-ingress-controller
+      app.kubernetes.io/instance: aws-alb-ingress-controller-v1.0.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: aws-alb-ingress-controller
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v1.0.0

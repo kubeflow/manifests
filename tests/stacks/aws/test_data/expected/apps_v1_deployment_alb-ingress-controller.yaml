@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: aws-alb-ingress-controller
+    kustomize.component: aws-alb-ingress-controller
+  name: alb-ingress-controller
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: aws-alb-ingress-controller
+      app.kubernetes.io/name: alb-ingress-controller
+      kustomize.component: aws-alb-ingress-controller
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: aws-alb-ingress-controller
+        app.kubernetes.io/name: alb-ingress-controller
+        kustomize.component: aws-alb-ingress-controller
+    spec:
+      containers:
+      - args:
+        - --ingress-class=alb
+        - --cluster-name=$(CLUSTER_NAME)
+        env:
+        - name: CLUSTER_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: cluster-name
+              name: aws-alb-ingress-controller-config
+        image: docker.io/amazon/aws-alb-ingress-controller:v1.1.5
+        imagePullPolicy: Always
+        name: alb-ingress-controller
+      serviceAccountName: alb-ingress-controller

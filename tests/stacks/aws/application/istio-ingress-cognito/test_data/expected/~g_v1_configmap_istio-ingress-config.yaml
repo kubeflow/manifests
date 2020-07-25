@@ -1,0 +1,13 @@
+apiVersion: v1
+data:
+  CognitoAppClientId: ""
+  CognitoUserPoolArn: ""
+  CognitoUserPoolDomain: ""
+  certArn: ""
+  loadBalancerScheme: internet-facing
+kind: ConfigMap
+metadata:
+  labels:
+    kustomize.component: istio-ingress
+  name: istio-ingress-config
+  namespace: istio-system

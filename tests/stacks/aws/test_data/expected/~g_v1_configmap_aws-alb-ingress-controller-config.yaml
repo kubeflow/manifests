@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  cluster-name: test
+kind: ConfigMap
+metadata:
+  labels:
+    app: aws-alb-ingress-controller
+    kustomize.component: aws-alb-ingress-controller
+  name: aws-alb-ingress-controller-config
+  namespace: kubeflow
