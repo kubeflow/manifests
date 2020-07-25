@@ -56,6 +56,11 @@ spec:
         name: manifests
         path: stacks/ibm/application/dex-auth
     name: dex-auth
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: metacontroller/base
+    name: metacontroller
   # Install kubeflow applications.
   - kustomizeConfig:
       repoRef:

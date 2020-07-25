@@ -51,17 +51,17 @@ spec:
         name: manifests
         path: stacks/ibm/application/cert-manager
     name: cert-manager
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: metacontroller/base
+    name: metacontroller
   # Install Kubeflow applications.
   - kustomizeConfig:
       repoRef:
         name: manifests
         path: stacks/ibm/multi-user
     name: kubeflow-apps
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: metacontroller/base
-    name: metacontroller
   - kustomizeConfig:
       repoRef:
         name: manifests
