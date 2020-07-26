@@ -4,6 +4,11 @@ metadata:
   namespace: kubeflow
 spec:
   applications:
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: namespaces/base
+    name: namespaces
   # Install istio in a different namespace: istio-system
   # Remove this application if istio is already installed
   - kustomizeConfig:
