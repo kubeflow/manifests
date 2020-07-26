@@ -8,10 +8,10 @@ resources:
   - ../application/jupyter-web-app
   - ../application/notebook-controller
   - ../application/profiles
-  - ../../../argo/base_v3
   - ../../../pipeline/minio/installs/ibm
   - ../../../pipeline/mysql/installs/ibm
   - ../../../pipeline/installs/multi-user
+  - ../../../argo/base_v3
   - ../application/metadata
   - ../../../pytorch-job/pytorch-job-crds/overlays/application
   - ../../../pytorch-job/pytorch-operator/overlays/application
@@ -38,7 +38,7 @@ configMapGenerator:
   - admin=example@kubeflow.org
 - name: kubeflow-config
   envs:
-  - ../config/params.env
+  - ./config/params.env
 vars:
 # We need to define vars at the top level otherwise we will get
 # conflicts. 
