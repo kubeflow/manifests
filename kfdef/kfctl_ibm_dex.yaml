@@ -19,7 +19,7 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/application/istio
+        path: istio/istio/base
     name: istio
   - kustomizeConfig:
       repoRef:
