@@ -4,6 +4,11 @@ metadata:
   namespace: kubeflow
 spec:
   applications:
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: namespaces/base
+    name: namespaces
   # Install istio in a different namespace: istio-system
   # Remove this application if istio is already installed
   - kustomizeConfig:
@@ -56,17 +61,17 @@ spec:
         name: manifests
         path: stacks/ibm/application/dex-auth
     name: dex-auth
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: metacontroller/base
+    name: metacontroller
   # Install kubeflow applications.
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm
+        path: stacks/ibm/multi-user
     name: kubeflow-apps
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: stacks/ibm/application/metadata
-    name: metadata
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -94,5 +99,5 @@ spec:
     name: tensorboard
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
-  version: master
+    uri: https://github.com/kubeflow/manifests/archive/v1.1.0.tar.gz
+  version: v1.1.0
