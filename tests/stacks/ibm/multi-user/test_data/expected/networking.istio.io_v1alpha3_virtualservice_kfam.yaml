@@ -1,0 +1,28 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  labels:
+    app.kubernetes.io/component: profiles
+    app.kubernetes.io/name: profiles
+  name: kfam
+  namespace: kubeflow
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - headers:
+      request:
+        add:
+          x-forwarded-prefix: /kfam
+    match:
+    - uri:
+        prefix: /kfam/
+    rewrite:
+      uri: /kfam/
+    route:
+    - destination:
+        host: profiles-kfam.kubeflow.svc.cluster.local
+        port:
+          number: 8081

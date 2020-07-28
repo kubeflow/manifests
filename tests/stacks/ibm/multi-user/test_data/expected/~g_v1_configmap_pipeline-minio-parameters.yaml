@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  minioPvcName: minio-pv-claim
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: minio
+    app.kubernetes.io/name: minio
+  name: pipeline-minio-parameters
+  namespace: kubeflow
