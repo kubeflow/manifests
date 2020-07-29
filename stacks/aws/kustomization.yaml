@@ -33,6 +33,8 @@ resources:
   - ../../aws/nvidia-device-plugin/overlays/application
   # Kubernetes resources - anonymous user
   - ../../default-install/base
+  # Metadata
+  - ../../metadata/v3
 generatorOptions:
   disableNameSuffixHash: true
 configMapGenerator:
