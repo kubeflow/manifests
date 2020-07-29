@@ -7,6 +7,11 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
+        path: namespaces/base
+    name: namespaces
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
         path: application/v3
     name: application
   - kustomizeConfig:
@@ -74,11 +79,6 @@ spec:
         name: manifests
         path: aws/istio-ingress/base_v3
     name: istio-ingress
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: metadata/v3
-    name: metadata
   - kustomizeConfig:
       repoRef:
         name: manifests
