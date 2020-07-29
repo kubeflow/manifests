@@ -94,3 +94,11 @@ openAPI:
             ref: '#/definitions/io.k8s.cli.setters.name'
           - marker: ${gcloud.core.project}
             ref: '#/definitions/io.k8s.cli.setters.gcloud.core.project'
+    io.k8s.cli.substitutions.wi-pool:
+      x-k8s-cli:
+        substitution:
+          name: wi-pool
+          pattern: ${gcloud.core.project}.svc.id.goog
+          values:
+          - marker: ${gcloud.core.project}
+            ref: '#/definitions/io.k8s.cli.setters.gcloud.core.project'
