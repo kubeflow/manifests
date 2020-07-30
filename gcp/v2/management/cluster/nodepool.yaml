@@ -24,7 +24,7 @@ spec:
     metadata:
       disable-legacy-endpoints: "true"
     workloadMetadataConfig:
-        mode: GKE_METADATA
+      mode: GKE_METADATA
   management:
     autoRepair: true
     autoUpgrade: true
