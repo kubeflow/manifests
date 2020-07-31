@@ -16,5 +16,5 @@ spec:
   - kind: CompositeController
     group: metacontroller.k8s.io
   - kind: ClusterRbacConfig
-    group: gbac.istio.io
+    group: rbac.istio.io
  
