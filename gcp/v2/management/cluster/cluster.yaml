@@ -1,26 +1,23 @@
-# TODO(jlewi): Do we still need IdentityNamespace? Isn't it automatically set for each project
-apiVersion: identity.cnrm.cloud.google.com/v1alpha2
-kind: IdentityNamespace
-metadata:
-  name: default
-spec: {}
----
 # TODO(jlewi): Use a regional cluster? There should no longer be any cost savings to using zonal
 #
 # User specific values should be defined in a patch inside the blueprint package.
 # Exception is the name since that needs to be changed in teh base package as well.
-apiVersion: container.cnrm.cloud.google.com/v1alpha2
+apiVersion: container.cnrm.cloud.google.com/v1beta1
 kind: ContainerCluster
 metadata:
-  name: name # {"$kpt-set":"name"}
+  name: NAME # {"$kpt-set":"name"}
+  # N.B. AnthosCLI doesn't appear to support this annotation yet  (anthos CLI 0.2.4)
+  # cnrm.cloud.google.com/remove-default-node-pool: "true"
+  annotations:
+    # Annotation required by anthoscli
+    gke.io/cluster: "bootstrap://"
 spec:
   # Use a regional cluster. Regional offer higher availability and the cluster management fee is the same.
-  location: us-central1-f # {"$kpt-set":"mgmt-location"}
-  workloadIdentity:
-    identityNamespace: default
-  ipAllocationPolicy:
-    useIpAliases: true
+  location: us-east1 # {"$kpt-set":"location"}
+  initialNodeCount: 3
+  # See https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#sharing_identities_across_clusters
+  # Currently there is only one pool per project
+  workloadIdentityConfig:
+    identityNamespace: project-id.svc.id.goog # {"$kpt-set":"wi-pool"}
   releaseChannel:
-    channel: stable
-  clusterTelemetry:
-    type: enabled
+    channel: REGULAR
