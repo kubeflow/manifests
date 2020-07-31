@@ -21,10 +21,10 @@ spawnerFormDefaults:
     value: 527798164940.dkr.ecr.us-west-2.amazonaws.com/tensorflow-1.15.2-notebook-cpu:1.0.0
     # The list of available standard container Images
     options:
-      - 527798164940.dkr.ecr.us-west-2.amazonaws.com/tensorflow-1.15.2-notebook-cpu:1.0.0
-      - 527798164940.dkr.ecr.us-west-2.amazonaws.com/tensorflow-1.15.2-notebook-gpu:1.0.0
-      - 527798164940.dkr.ecr.us-west-2.amazonaws.com/tensorflow-2.1.0-notebook-cpu:1.0.0
-      - 527798164940.dkr.ecr.us-west-2.amazonaws.com/tensorflow-2.1.0-notebook-gpu:1.0.0
+      - 527798164940.dkr.ecr.us-west-2.amazonaws.com/tensorflow-1.15.2-notebook-cpu:1.1.0
+      - 527798164940.dkr.ecr.us-west-2.amazonaws.com/tensorflow-1.15.2-notebook-gpu:1.1.0
+      - 527798164940.dkr.ecr.us-west-2.amazonaws.com/tensorflow-2.1.0-notebook-cpu:1.1.0
+      - 527798164940.dkr.ecr.us-west-2.amazonaws.com/tensorflow-2.1.0-notebook-gpu:1.1.0
       - gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-cpu:1.0.0
       - gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-gpu:1.0.0
       - gcr.io/kubeflow-images-public/tensorflow-2.1.0-notebook-cpu:1.0.0
