@@ -50,7 +50,7 @@ spec:
             secretKeyRef:
               key: MYSQL_ROOT_PASSWORD
               name: katib-mysql-secrets
-        image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager:c3b38d8
+        image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager:ce89cbf
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
