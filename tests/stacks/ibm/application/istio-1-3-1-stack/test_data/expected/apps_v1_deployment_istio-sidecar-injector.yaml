@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: sidecarInjectorWebhook
+    istio: sidecar-injector
+  name: istio-sidecar-injector
+  namespace: istio-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      istio: sidecar-injector
+  strategy:
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: sidecarInjectorWebhook
+        istio: sidecar-injector
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - ppc64le
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - s390x
+            weight: 2
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - ppc64le
+                - s390x
+      containers:
+      - args:
+        - --caCertFile=/etc/istio/certs/root-cert.pem
+        - --tlsCertFile=/etc/istio/certs/cert-chain.pem
+        - --tlsKeyFile=/etc/istio/certs/key.pem
+        - --injectConfig=/etc/istio/inject/config
+        - --meshConfig=/etc/istio/config/mesh
+        - --healthCheckInterval=2s
+        - --healthCheckFile=/health
+        image: gcr.io/istio-release/sidecar_injector:release-1.3-latest-daily
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /usr/local/bin/sidecar-injector
+            - probe
+            - --probe-path=/health
+            - --interval=4s
+          initialDelaySeconds: 4
+          periodSeconds: 4
+        name: sidecar-injector-webhook
+        readinessProbe:
+          exec:
+            command:
+            - /usr/local/bin/sidecar-injector
+            - probe
+            - --probe-path=/health
+            - --interval=4s
+          initialDelaySeconds: 4
+          periodSeconds: 4
+        resources:
+          requests:
+            cpu: 10m
+        volumeMounts:
+        - mountPath: /etc/istio/config
+          name: config-volume
+          readOnly: true
+        - mountPath: /etc/istio/certs
+          name: certs
+          readOnly: true
+        - mountPath: /etc/istio/inject
+          name: inject-config
+          readOnly: true
+      serviceAccountName: istio-sidecar-injector-service-account
+      volumes:
+      - configMap:
+          name: istio
+        name: config-volume
+      - name: certs
+        secret:
+          secretName: istio.istio-sidecar-injector-service-account
+      - configMap:
+          items:
+          - key: config
+            path: config
+          - key: values
+            path: values
+          name: istio-sidecar-injector
+        name: inject-config
