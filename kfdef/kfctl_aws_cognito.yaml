@@ -17,12 +17,12 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: istio/cluster-local-gateway/base_v3
+        path: stacks/aws/application/cluster-local-gateway
     name: cluster-local-gateway
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/aws/application/cognito-istio
+        path: stacks/aws/application/istio
     name: istio
   - kustomizeConfig:
       repoRef:

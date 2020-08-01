@@ -5,6 +5,7 @@ resources:
 - ../base/statefulset.yaml
 - ../base/envoy-filter.yaml
 - ../base/pvc.yaml
+- ../overlays/application/application.yaml
 namespace: istio-system
 configMapGenerator:
 - name: oidc-authservice-config
