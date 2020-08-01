@@ -14,7 +14,7 @@
 #
 GOLANG_VERSION ?= 1.12.4
 GOPATH ?= $(HOME)/go
-PYTHON_BIN ?= python
+PYTHON_BIN ?= python3
 export KUSTOMIZE_BIN ?= kustomize
 
 # Comma seperated items within {} for more than one file
