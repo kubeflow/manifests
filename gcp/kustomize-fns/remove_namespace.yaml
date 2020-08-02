@@ -1,0 +1,20 @@
+# Define a transform to remove namespace from cluster scoped resources
+apiVersion: v1alpha1 
+kind: RemoveNamespace
+metadata:
+  name: remove-namespace
+  annotations:
+    config.kubernetes.io/function: |
+      container:
+        image: gcr.io/kubeflow-images-public/kpt-fns:v1.1-rc.0-18-gb6c9607-dirty@sha256:3b9db194e5e5857a9437170106e4fc01327ce21573549a10d31b5540d5151f6b
+spec:
+  clusterKinds:
+  - kind: Profile
+    group: kubeflow.org
+  - kind: ClusterIssuer
+    group: cert-manager.io
+  - kind: CompositeController
+    group: metacontroller.k8s.io
+  - kind: ClusterRbacConfig
+    group: rbac.istio.io
+ 
