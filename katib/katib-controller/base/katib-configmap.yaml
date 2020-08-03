@@ -6,13 +6,13 @@ data:
   metrics-collector-sidecar: |-
     {
       "StdOut": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:c3b38d8"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:ce89cbf"
       },
       "File": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:c3b38d8"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/file-metrics-collector:ce89cbf"
       },
       "TensorFlowEvent": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:c3b38d8",
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/tfevent-metrics-collector:ce89cbf",
         "resources": {
           "limits": {
             "memory": "1Gi"
@@ -23,22 +23,22 @@ data:
   suggestion: |-
     {
       "random": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:c3b38d8"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:ce89cbf"
       },
       "grid": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-chocolate:c3b38d8"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-chocolate:ce89cbf"
       },
       "hyperband": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperband:c3b38d8"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperband:ce89cbf"
       },
       "bayesianoptimization": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-skopt:c3b38d8"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-skopt:ce89cbf"
       },
       "tpe": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:c3b38d8"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-hyperopt:ce89cbf"
       },
       "enas": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-enas:c3b38d8",
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-enas:ce89cbf",
         "imagePullPolicy": "Always",
         "resources": {
           "limits": {
@@ -47,9 +47,9 @@ data:
         }
       },
       "cmaes": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-goptuna:c3b38d8"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-goptuna:ce89cbf"
       },
       "darts": {
-        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-darts:c3b38d8"
+        "image": "gcr.io/kubeflow-images-public/katib/v1alpha3/suggestion-darts:ce89cbf"
       }
     }

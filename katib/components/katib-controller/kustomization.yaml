@@ -16,10 +16,10 @@ resources:
   - ../../katib-controller/overlays/istio/katib-ui-virtual-service.yaml
 images:
   - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
-    newTag: c3b38d8
+    newTag: ce89cbf
     newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
   - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
-    newTag: c3b38d8
+    newTag: ce89cbf
     newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
 commonLabels:
   app.kubernetes.io/component: katib
