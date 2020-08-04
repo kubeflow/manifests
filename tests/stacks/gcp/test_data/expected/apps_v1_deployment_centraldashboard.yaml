@@ -29,13 +29,13 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: userid-header
-              name: kubeflow-config-988m2m9m87
+              name: kubeflow-config-c644m77455
         - name: USERID_PREFIX
           valueFrom:
             configMapKeyRef:
               key: userid-prefix
-              name: kubeflow-config-988m2m9m87
-        image: gcr.io/kubeflow-images-public/centraldashboard:vmaster-gf39279c0
+              name: kubeflow-config-c644m77455
+        image: gcr.io/kubeflow-images-public/centraldashboard:vmaster-gd601b2d0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app.kubernetes.io/component: aws-nvidia-device-plugin
+    app.kubernetes.io/name: aws-nvidia-device-plugin
+    kustomize.component: nvidia-device-plugin
+  name: nvidia-device-plugin-daemonset
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: aws-nvidia-device-plugin
+      app.kubernetes.io/name: aws-nvidia-device-plugin
+      kustomize.component: nvidia-device-plugin
+  template:
+    metadata:
+      annotations:
+        scheduler.alpha.kubernetes.io/critical-pod: ""
+      labels:
+        app.kubernetes.io/component: aws-nvidia-device-plugin
+        app.kubernetes.io/name: aws-nvidia-device-plugin
+        kustomize.component: nvidia-device-plugin
+    spec:
+      containers:
+      - image: nvidia/k8s-device-plugin:1.0.0-beta4
+        name: nvidia-device-plugin-ctr
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - mountPath: /var/lib/kubelet/device-plugins
+          name: device-plugin
+      tolerations:
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoSchedule
+        key: nvidia.com/gpu
+        operator: Exists
+      volumes:
+      - hostPath:
+          path: /var/lib/kubelet/device-plugins
+        name: device-plugin
+  updateStrategy:
+    type: RollingUpdate

@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-eventing-install
+    app.kubernetes.io/instance: knative-eventing-install
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: knative-eventing-install
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.11.0
+    eventing.knative.dev/release: v0.11.0
+    kustomize.component: knative
+    role: eventing-webhook
+    serving.knative.dev/release: v0.11.0
+  name: eventing-webhook
+  namespace: knative-serving
+spec:
+  ports:
+  - name: https-webhook
+    port: 443
+    targetPort: 8443
+  selector:
+    app.kubernetes.io/component: knative-eventing-install
+    app.kubernetes.io/instance: knative-eventing-install
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: knative-eventing-install
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.11.0
+    kustomize.component: knative
+    role: eventing-webhook
+    serving.knative.dev/release: v0.11.0

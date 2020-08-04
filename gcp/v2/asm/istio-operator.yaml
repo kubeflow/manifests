@@ -15,24 +15,24 @@
 apiVersion: install.istio.io/v1alpha2
 kind: IstioControlPlane
 metadata:
-  clusterName: "project-id/us-central1/name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"name","value":"name"},{"name":"location","value":"us-central1"}]}}
+  clusterName: "project-id/us-central1/name" # {"$kpt-set":"asm-cluster-name"}
 spec:
   profile: asm
   hub: gcr.io/gke-release/asm
-  tag: 1.4.7-asm.0
+  tag: 1.4.10-asm.15
   values:
     gateways:
       istio-ingressgateway:
         type: NodePort
     global:
-      meshID: "project-id_us-central1_name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"name","value":"name"},{"name":"location","value":"us-central1"}]}}
-      trustDomain: "project-id.svc.id.goog" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
+      meshID: "project-id_us-central1_name" # {"$kpt-set":"asm-mesh-id"}
+      trustDomain: "project-id.svc.id.goog" # {"$kpt-set":"identity-ns"}
       sds:
         token:
-          aud: "project-id.svc.id.goog" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
+          aud: "project-id.svc.id.goog" # {"$kpt-set":"identity-ns"}
       proxy:
         env:
-          GCP_METADATA: "project-id|147474701642|name|us-central1-c" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"gcloud.project.projectNumber","value":"147474701642"},{"name":"name","value":"name"},{"name":"gcloud.compute.zone","value":"us-central1-c"}]}}
+          GCP_METADATA: "project-id|147474701642|name|us-central1-c" # {"$kpt-set":"asm-gcp-metadata"}
     nodeagent:
       env:
-        GKE_CLUSTER_URL: "https://container.googleapis.com/v1/projects/project-id/locations/us-central1/clusters/name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"name","value":"name"},{"name":"location","value":"us-central1"}]}}
+        GKE_CLUSTER_URL: "https://container.googleapis.com/v1/projects/project-id/locations/us-central1/clusters/name" # {"$kpt-set":"asm-cluster-url"}

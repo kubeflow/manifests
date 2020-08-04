@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-eventing-install
+    app.kubernetes.io/instance: knative-eventing-install
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: knative-eventing-install
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.11.0
+    eventing.knative.dev/release: v0.11.0
+    kustomize.component: knative
+    serving.knative.dev/release: v0.11.0
+  name: sources-controller
+  namespace: knative-serving
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sources-controller
+      app.kubernetes.io/component: knative-eventing-install
+      app.kubernetes.io/instance: knative-eventing-install
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: knative-eventing-install
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.11.0
+      kustomize.component: knative
+      serving.knative.dev/release: v0.11.0
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: sources-controller
+        app.kubernetes.io/component: knative-eventing-install
+        app.kubernetes.io/instance: knative-eventing-install
+        app.kubernetes.io/managed-by: kfctl
+        app.kubernetes.io/name: knative-eventing-install
+        app.kubernetes.io/part-of: kubeflow
+        app.kubernetes.io/version: v0.11.0
+        eventing.knative.dev/release: v0.11.0
+        kustomize.component: knative
+        serving.knative.dev/release: v0.11.0
+    spec:
+      containers:
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: METRICS_DOMAIN
+          value: knative.dev/sources
+        - name: CRONJOB_RA_IMAGE
+          value: gcr.io/knative-releases/knative.dev/eventing/cmd/cronjob_receive_adapter@sha256:481f28c916ee68db2d2729e050bc94c88d8f39c95039de98f6400ee0ee2aca28
+        - name: APISERVER_RA_IMAGE
+          value: gcr.io/knative-releases/knative.dev/eventing/cmd/apiserver_receive_adapter@sha256:d6783c20324e19554b3cd8c3b1823c2bbaca71c657da7df73e582a00d618f5de
+        image: gcr.io/knative-releases/knative.dev/eventing/cmd/sources_controller@sha256:0df4cfcf82998eccf687a08a456f60578190e68175a441bcd3c26de7a4869739
+        name: controller
+        ports:
+        - containerPort: 9090
+          name: metrics
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        volumeMounts:
+        - mountPath: /etc/config-logging
+          name: config-logging
+      serviceAccountName: eventing-source-controller
+      volumes:
+      - configMap:
+          name: config-logging
+        name: config-logging

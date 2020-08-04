@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: metadata
+    app.kubernetes.io/name: metadata
+    component: envoy
+    kustomize.component: metadata
+  name: metadata-envoy-deployment
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: metadata
+      app.kubernetes.io/name: metadata
+      component: envoy
+      kustomize.component: metadata
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app.kubernetes.io/component: metadata
+        app.kubernetes.io/name: metadata
+        component: envoy
+        kustomize.component: metadata
+    spec:
+      containers:
+      - image: gcr.io/ml-pipeline/envoy:metadata-grpc
+        name: container
+        ports:
+        - containerPort: 9090
+          name: md-envoy
+        - containerPort: 9901
+          name: envoy-admin

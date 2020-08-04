@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: auth
+resources:
+- ../../../../dex-auth/dex-crds/overlays/github
+configMapGenerator:
+- name: dex-parameters
+  behavior: merge
+  literals:
+  - issuer="http://dex.auth.svc.cluster.local:5556/dex"
+  - oidc_redirect_uris=["/login/oidc"]
+  - static_password_hash=$2b$10$ztyRMtzZ.CgC7KKeHsJuku03GWTjt0d0ClcCz4J2qG2FdVnJB8a8a
+  - client_id=kubeflow-oidc-authservice

@@ -1,0 +1,30 @@
+apiVersion: v1
+data:
+  config.yaml: |
+    issuer: http://dex.auth.svc.cluster.local:5556/dex
+    storage:
+      type: kubernetes
+      config:
+        inCluster: true
+    web:
+      http: 0.0.0.0:5556
+    logger:
+      level: "debug"
+      format: text
+    oauth2:
+      skipApprovalScreen: true
+    enablePasswordDB: true
+    staticPasswords:
+    - email: admin@example.com
+      hash: $2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W
+      username: admin
+      userID: 08a8684b-db88-4b73-90a9-3cd1661f5466
+    staticClients:
+    - id: kubeflow-oidc-authservice
+      redirectURIs: ["/login/oidc"]
+      name: 'Dex Login Application'
+      secret: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
+kind: ConfigMap
+metadata:
+  name: dex
+  namespace: auth

@@ -1,0 +1,23 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    app: mixer
+    istio: mixer-adapter
+    kustomize.component: istio-crds
+    package: adapter
+  name: adapters.config.istio.io
+spec:
+  group: config.istio.io
+  names:
+    categories:
+    - istio-io
+    - policy-istio-io
+    kind: adapter
+    plural: adapters
+    singular: adapter
+  scope: Namespaced
+  versions:
+  - name: v1alpha2
+    served: true
+    storage: true

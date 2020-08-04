@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-eventing-install
+    app.kubernetes.io/instance: knative-eventing-install
+    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/name: knative-eventing-install
+    app.kubernetes.io/part-of: kubeflow
+    app.kubernetes.io/version: v0.11.0
+    eventing.knative.dev/release: v0.11.0
+    kustomize.component: knative
+    serving.knative.dev/release: v0.11.0
+  name: eventing-webhook
+  namespace: knative-serving
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eventing-webhook
+      app.kubernetes.io/component: knative-eventing-install
+      app.kubernetes.io/instance: knative-eventing-install
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: knative-eventing-install
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.11.0
+      kustomize.component: knative
+      role: eventing-webhook
+      serving.knative.dev/release: v0.11.0
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: eventing-webhook
+        app.kubernetes.io/component: knative-eventing-install
+        app.kubernetes.io/instance: knative-eventing-install
+        app.kubernetes.io/managed-by: kfctl
+        app.kubernetes.io/name: knative-eventing-install
+        app.kubernetes.io/part-of: kubeflow
+        app.kubernetes.io/version: v0.11.0
+        kustomize.component: knative
+        role: eventing-webhook
+        serving.knative.dev/release: v0.11.0
+    spec:
+      containers:
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: METRICS_DOMAIN
+          value: knative.dev/eventing
+        - name: WEBHOOK_NAME
+          value: eventing-webhook
+        image: gcr.io/knative-releases/knative.dev/eventing/cmd/webhook@sha256:75b2dfaaf279b98c2e90b02414b2255aebbc58b23beeba838feba57b09da12b6
+        name: eventing-webhook
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 20m
+            memory: 20Mi
+        terminationMessagePolicy: FallbackToLogsOnError
+      serviceAccountName: eventing-webhook

@@ -21,5 +21,6 @@ rules:
   - ""
   resources:
   - secrets
+  - configmaps
   verbs:
   - get

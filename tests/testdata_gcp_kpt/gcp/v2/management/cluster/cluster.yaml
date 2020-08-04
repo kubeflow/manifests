@@ -1,0 +1,26 @@
+# TODO(jlewi): Do we still need IdentityNamespace? Isn't it automatically set for each project
+apiVersion: identity.cnrm.cloud.google.com/v1alpha2
+kind: IdentityNamespace
+metadata:
+  name: default
+spec: {}
+---
+# TODO(jlewi): Use a regional cluster? There should no longer be any cost savings to using zonal
+#
+# User specific values should be defined in a patch inside the blueprint package.
+# Exception is the name since that needs to be changed in teh base package as well.
+apiVersion: container.cnrm.cloud.google.com/v1alpha2
+kind: ContainerCluster
+metadata:
+  name: testKptName # {"$kpt-set":"name"}
+spec:
+  # Use a regional cluster. Regional offer higher availability and the cluster management fee is the same.
+  location: us-central1-f # {"$kpt-set":"mgmt-location"}
+  workloadIdentity:
+    identityNamespace: default
+  ipAllocationPolicy:
+    useIpAliases: true
+  releaseChannel:
+    channel: stable
+  clusterTelemetry:
+    type: enabled

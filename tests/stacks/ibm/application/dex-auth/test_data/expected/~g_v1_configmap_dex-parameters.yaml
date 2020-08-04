@@ -1,0 +1,23 @@
+apiVersion: v1
+data:
+  application_secret: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
+  client_id: kubeflow-oidc-authservice
+  dex_domain: dex.example.com
+  github_client_id: ""
+  github_client_secret: ""
+  github_hostname: ""
+  github_org_name: ""
+  github_use_login_as_id: "false"
+  issuer: http://dex.auth.svc.cluster.local:5556/dex
+  namespace: auth
+  oidc_redirect_uris: '["/login/oidc"]'
+  static_email: admin@example.com
+  static_password_hash: $2b$10$ztyRMtzZ.CgC7KKeHsJuku03GWTjt0d0ClcCz4J2qG2FdVnJB8a8a
+  static_user_id: 08a8684b-db88-4b73-90a9-3cd1661f5466
+  static_username: admin
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels: {}
+  name: dex-parameters
+  namespace: auth

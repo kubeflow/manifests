@@ -17,6 +17,8 @@ spec:
     type: Recreate
   template:
     metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
       labels:
         app: minio
         app.kubernetes.io/component: minio
@@ -28,9 +30,15 @@ spec:
         - /data
         env:
         - name: MINIO_ACCESS_KEY
-          value: minio
+          valueFrom:
+            secretKeyRef:
+              key: accesskey
+              name: mlpipeline-minio-artifact
         - name: MINIO_SECRET_KEY
-          value: minio123
+          valueFrom:
+            secretKeyRef:
+              key: secretkey
+              name: mlpipeline-minio-artifact
         image: gcr.io/ml-pipeline/minio:RELEASE.2019-08-14T20-37-41Z-license-compliance
         name: minio
         ports:

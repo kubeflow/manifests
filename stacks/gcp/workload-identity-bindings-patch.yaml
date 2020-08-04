@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: profiles-controller-service-account
+  annotations:
+    iam.gke.io/gcp-service-account: name-admin@project-id.iam.gserviceaccount.com # {"$kpt-set":"admin-sa-ref"}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ml-pipeline-ui
+  annotations:
+    iam.gke.io/gcp-service-account: name-user@project-id.iam.gserviceaccount.com # {"$kpt-set":"user-sa-ref"}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ml-pipeline-visualizationserver
+  annotations:
+    iam.gke.io/gcp-service-account: name-user@project-id.iam.gserviceaccount.com # {"$kpt-set":"user-sa-ref"}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pipeline-runner
+  annotations:
+    iam.gke.io/gcp-service-account: name-user@project-id.iam.gserviceaccount.com # {"$kpt-set":"user-sa-ref"}

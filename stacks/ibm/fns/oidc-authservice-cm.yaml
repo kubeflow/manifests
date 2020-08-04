@@ -1,0 +1,14 @@
+apiVersion: v1alpha1
+kind: ConfigMapMerge
+metadata:
+  name: oidc-authservice-merge
+  annotations:
+    config.kubernetes.io/function: |
+      container:
+        image: aipipeline/kpt-fn:latest
+spec:
+  configMaps:
+  - name: oidc-authservice-parameters
+    behavior: merge
+    literals:
+    - application_secret="<the-client-secret-of-oidc-service>"

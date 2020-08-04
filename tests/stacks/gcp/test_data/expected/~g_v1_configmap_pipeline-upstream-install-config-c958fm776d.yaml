@@ -1,0 +1,17 @@
+apiVersion: v1
+data:
+  appName: pipeline
+  appVersion: 1.0.0
+  bucketName: mlpipeline
+  cacheDb: cachedb
+  dbHost: mysql
+  dbPort: "3306"
+  mlmdDb: metadb
+  pipelineDb: mlpipeline
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+  name: pipeline-upstream-install-config-c958fm776d
+  namespace: kubeflow

@@ -1,0 +1,36 @@
+apiVersion: iam.cnrm.cloud.google.com/v1alpha1
+kind: IAMServiceAccount
+metadata:
+  name: cnrm-controller-manager
+spec:
+  displayName: Service Account for CNRM
+  projectRoles:
+  - roles/source.reader
+---
+apiVersion: iam.cnrm.cloud.google.com/v1alpha1
+kind: IAMPolicy
+metadata:
+  name: cnrm-controller-manager
+spec:
+  resourceRef:
+    apiVersion: iam.cnrm.cloud.google.com/v1alpha1
+    kind: IAMServiceAccount
+    name: cnrm-controller-manager
+  bindings:
+  - role: roles/iam.workloadIdentityUser
+    members:
+    - serviceAccount:root-270714.svc.id.goog[cnrm-system/cnrm-controller-manager]
+---
+# TODO(jlewi): Should we scope this to a folder not an organization and
+# create an appropriate setter
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: cnrm-controller-manager:project
+spec:
+  member: serviceAccount:cnrm-controller-manager@root-270714.iam.gserviceaccount.com
+  role: roles/resourcemanager.projectCreator
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Organization
+    external: organizations/190265346736

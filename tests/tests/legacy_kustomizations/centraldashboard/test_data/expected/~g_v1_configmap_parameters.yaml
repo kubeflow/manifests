@@ -1,6 +1,7 @@
 apiVersion: v1
 data:
   clusterDomain: cluster.local
+  registration-flow: "true"
   userid-header: X-Goog-Authenticated-User-Email
   userid-prefix: 'accounts.google.com:'
 kind: ConfigMap

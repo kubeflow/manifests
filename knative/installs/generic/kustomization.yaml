@@ -1,0 +1,45 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: knative-serving
+resources:
+- ../../knative-serving-crds/base
+- ../../knative-serving-crds/overlays/application
+- ../../knative-serving-install/base/gateway.yaml
+- ../../knative-serving-install/base/cluster-role.yaml
+- ../../knative-serving-install/base/cluster-role-binding.yaml
+- ../../knative-serving-install/base/service-role.yaml
+- ../../knative-serving-install/base/service-role-binding.yaml
+- ../../knative-serving-install/base/role-binding.yaml
+- ../../knative-serving-install/base/config-map.yaml
+- ../../knative-serving-install/base/deployment.yaml
+- ../../knative-serving-install/base/service-account.yaml
+- ../../knative-serving-install/base/service.yaml
+- ../../knative-serving-install/base/apiservice.yaml
+- ../../knative-serving-install/base/image.yaml
+- ../../knative-serving-install/base/hpa.yaml
+- ../../knative-serving-install/base/webhook-configuration.yaml
+- ../../knative-serving-install/overlays/application
+commonLabels:
+  kustomize.component: knative
+  app.kubernetes.io/component: knative-serving-install
+  app.kubernetes.io/name: knative-serving-install  
+images:
+- name: gcr.io/knative-releases/knative.dev/serving/cmd/activator
+  newName: gcr.io/knative-releases/knative.dev/serving/cmd/activator
+  digest: sha256:c51023e62e351d5910f92ee941b4929eb82539e62636dd3ccb4a016d73e86b2e
+- name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa
+  newName: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler-hpa
+  digest: sha256:75da5ff75bc1e71799d039846b1bbd632343894c88feaa59914cfeeb1b213c81
+- name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
+  newName: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
+  digest: sha256:998a405454832cda18a4bf956d26d610a2df2130a39b834b597a89a3153c8c15
+- name: gcr.io/knative-releases/knative.dev/serving/cmd/networking/istio
+  newName: gcr.io/knative-releases/knative.dev/serving/cmd/networking/istio
+  digest: sha256:61461fa789e19895d7d1e5ab96d8bb52a63788e0607e1bd2948b9570efeb6a8f
+- name: gcr.io/knative-releases/knative.dev/serving/cmd/webhook
+  newName: gcr.io/knative-releases/knative.dev/serving/cmd/webhook
+  digest: sha256:d07560cd5548640cc79abc819608844527351f10e8b0a847988f9eb602c18972
+- name: gcr.io/knative-releases/knative.dev/serving/cmd/controller
+  newName: gcr.io/knative-releases/knative.dev/serving/cmd/controller
+  digest: sha256:1e77bdab30c8d0f0df299f5fa93d6f99eb63071b9d3329937dff0c6acb99e059
+

@@ -1,0 +1,14 @@
+apiVersion: rbac.istio.io/v1alpha1
+kind: ServiceRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+  name: bind-cache-server-admission-webhook
+  namespace: kubeflow
+spec:
+  roleRef:
+    kind: ServiceRole
+    name: cache-server
+  subjects:
+  - user: '*'
