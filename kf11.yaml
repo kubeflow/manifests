@@ -1,0 +1,49 @@
+apiVersion: kfdef.apps.kubeflow.org/v1
+kind: KfDef
+metadata:
+  clusterName: kubemlops-kf-11-rc2
+  creationTimestamp: null
+  name: kubeflowmanifests
+  namespace: kubeflow
+spec:
+  applications:
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: namespaces/base
+    name: namespaces
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: application/v3
+    name: application
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/cert-manager-crds
+    name: cert-manager-crds
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/cert-manager-kube-system-resources
+    name: cert-manager-kube-system-resources
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/cert-manager
+    name: cert-manager
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/generic
+    name: kubeflow-apps
+  repos:
+  - name: manifests
+    uri: https://github.com/kubeflow/manifests/archive/v1.1-rc.2.tar.gz
+  version: v1.1-rc.2
+status:
+  reposCache:
+  - localPath: '".cache/manifests/manifests-1.1-rc.2"'
+    name: manifests
+  - localPath: '".cache/manifests/manifests-1.1-rc.2"'
+    name: manifests
