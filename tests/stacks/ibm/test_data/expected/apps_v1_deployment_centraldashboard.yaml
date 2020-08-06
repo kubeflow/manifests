@@ -35,7 +35,7 @@ spec:
             configMapKeyRef:
               key: userid-prefix
               name: kubeflow-config-d7dttg89h2
-        image: gcr.io/kubeflow-images-public/centraldashboard:vmaster-gd601b2d0
+        image: gcr.io/kubeflow-images-public/centraldashboard:vmaster-g8097cfeb
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
