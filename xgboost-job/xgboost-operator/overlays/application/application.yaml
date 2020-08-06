@@ -17,7 +17,7 @@ spec:
     kind: Deployment
   - group: core
     kind: ServiceAccount
-  - group: kubeflow.org
+  - group: xgboostjob.kubeflow.org
     kind: XGBoostJob
   descriptor: 
     type: xgboostjob
