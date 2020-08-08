@@ -13,12 +13,8 @@
 # and then replace it.
 apiVersion: kustomize.config.k8s.io/v1beta1
 commonLabels:
-  app.kubernetes.io/component: jupyter-web-app
-  app.kubernetes.io/instance: jupyter-web-app-v1.0.0
-  app.kubernetes.io/managed-by: kfctl
-  app.kubernetes.io/name: jupyter-web-app
-  app.kubernetes.io/part-of: kubeflow
-  app.kubernetes.io/version: v1.0.0
+  app: jupyter-web-app
+  kustomize.component: jupyter-web-app
 kind: Kustomization
 namePrefix: jupyter-web-app-
 namespace: kubeflow
@@ -29,7 +25,7 @@ namespace: kubeflow
 images:
 - name: gcr.io/kubeflow-images-public/jupyter-web-app
   newName: gcr.io/kubeflow-images-public/jupyter-web-app
-  newTag: vmaster-gd9be4b9e
+  newTag: v1.1.0-gd3377cbd
 resources:
 - ../base/cluster-role-binding.yaml
 - ../base/cluster-role.yaml
@@ -40,11 +36,11 @@ resources:
 - ../base/service.yaml
 - ../overlays/istio
 - ../overlays/application
-configMapGenerator:
 # We need the name to be unique without the suffix because the original name is what
 # gets used with patches
-- name: jupyter-web-app-config
-  files:
+configMapGenerator:
+- files:
   - ../base/configs/spawner_ui_config.yaml
+  name: jupyter-web-app-config
 patchesStrategicMerge:
 - deployment_patch.yaml
