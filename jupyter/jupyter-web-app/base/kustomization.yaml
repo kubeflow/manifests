@@ -3,10 +3,10 @@
 # 774 is complete.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-resources:
 # TODO(jlewi): We can't depend on base because of the deployment_patch.
 # but maybe if we changed that to use ConfigMapRef then the patch would correctly
 # override the patch applied in base_v3
+resources:
 - cluster-role-binding.yaml
 - cluster-role.yaml
 - deployment.yaml
@@ -22,19 +22,19 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/jupyter-web-app
   newName: gcr.io/kubeflow-images-public/jupyter-web-app
-  newTag: vmaster-gd9be4b9e
+  newTag: vmaster-g845af298
+# We need the name to be unique without the suffix because the original name is what
+# gets used with patches
 configMapGenerator:
 - envs:
   - params.env
   name: parameters
-# We need the name to be unique without the suffix because the original name is what
-# gets used with patches
-- name: jupyter-web-app-config
-  files:
+- files:
   - configs/spawner_ui_config.yaml
-generatorOptions:
+  name: jupyter-web-app-config
   # TODO(jlewi): Why are we setting disableNameSuffixHash true? Don't we want a content hash so that if the config map
   # changes we would update the configmap?
+generatorOptions:
   disableNameSuffixHash: true
 patchesStrategicMerge:
 - deployment_patch.yaml
