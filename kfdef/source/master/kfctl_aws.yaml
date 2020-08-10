@@ -257,13 +257,6 @@ spec:
     name: spartakus
   - kustomizeConfig:
       overlays:
-      - istio
-      repoRef:
-        name: manifests
-        path: tensorboard
-    name: tensorboard
-  - kustomizeConfig:
-      overlays:
       - application
       repoRef:
         name: manifests
