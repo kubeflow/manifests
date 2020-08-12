@@ -1,0 +1,7 @@
+# GKE
+apiVersion: cnrm.cloud.google.com/v1alpha1
+kind: CloudService
+metadata:
+  name: gke
+spec:
+  service: container.googleapis.com

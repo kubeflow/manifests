@@ -21,10 +21,10 @@ configMapGenerator:
 images:
 - name: gcr.io/kubeflow-images-public/kfam
   newName: gcr.io/kubeflow-images-public/kfam
-  newTag: vmaster-gf3e09203
+  newTag: v1.1.0-g9f3bfd00
 - name: gcr.io/kubeflow-images-public/profile-controller
   newName: gcr.io/kubeflow-images-public/profile-controller
-  newTag: vmaster-ga49f658f
+  newTag: v1.1.0-ga49f658f
 vars:
 - fieldref:
     fieldPath: data.admin

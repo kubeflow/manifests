@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  static_email: admin@example.com
+  static_password_hash: $2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W
+kind: ConfigMap
+metadata:
+  name: dex-config
+  namespace: auth

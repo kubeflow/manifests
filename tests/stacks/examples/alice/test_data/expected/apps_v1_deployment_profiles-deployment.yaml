@@ -32,12 +32,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: userid-header
-              name: kubeflow-config-4bkkg42k5m
+              name: kubeflow-config-bmh8k74f52
         - name: USERID_PREFIX
           valueFrom:
             configMapKeyRef:
               key: userid-prefix
-              name: kubeflow-config-4bkkg42k5m
+              name: kubeflow-config-bmh8k74f52
         - name: WORKLOAD_IDENTITY
           valueFrom:
             configMapKeyRef:
@@ -68,18 +68,18 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: userid-header
-              name: kubeflow-config-4bkkg42k5m
+              name: kubeflow-config-bmh8k74f52
         - name: USERID_PREFIX
           valueFrom:
             configMapKeyRef:
               key: userid-prefix
-              name: kubeflow-config-4bkkg42k5m
+              name: kubeflow-config-bmh8k74f52
         - name: CLUSTER_ADMIN
           valueFrom:
             configMapKeyRef:
               key: admin
               name: profiles-profiles-config-4mgcmtgk6t
-        image: gcr.io/kubeflow-images-public/kfam:vmaster-gf3e09203
+        image: gcr.io/kubeflow-images-public/kfam:v1.1.0-g9f3bfd00
         imagePullPolicy: Always
         livenessProbe:
           httpGet:

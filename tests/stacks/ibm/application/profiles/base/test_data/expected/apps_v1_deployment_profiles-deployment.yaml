@@ -62,6 +62,8 @@ spec:
         - $(CLUSTER_ADMIN)
         - -userid-prefix
         - $(USERID_PREFIX)
+        - -userid-header
+        - $(USERID_HEADER)
         env:
         - name: USERID_HEADER
           valueFrom:

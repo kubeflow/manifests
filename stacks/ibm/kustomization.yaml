@@ -8,16 +8,11 @@ resources:
   - application/jupyter-web-app
   - application/notebook-controller
   - application/profiles
-  - ../../argo/base_v3
-  - ../../pipeline/api-service/overlays/application
   - ../../pipeline/minio/installs/ibm
   - ../../pipeline/mysql/installs/ibm
-  - ../../pipeline/persistent-agent/overlays/application
-  - ../../pipeline/pipelines-runner/overlays/application
-  - application/pipelines-ui
-  - ../../pipeline/pipelines-viewer/overlays/application
-  - ../../pipeline/scheduledworkflow/overlays/application
-  - ../../pipeline/pipeline-visualization-service/overlays/application
+  - ../../pipeline/installs/generic
+  - ../../argo/base_v3
+  - application/metadata
   - ../../pytorch-job/pytorch-job-crds/overlays/application
   - ../../pytorch-job/pytorch-operator/overlays/application
   - ../../tf-training/tf-job-crds/overlays/application

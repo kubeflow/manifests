@@ -1,0 +1,8 @@
+# cloudresourcemanager, used for creating projects
+apiVersion: cnrm.cloud.google.com/v1alpha1
+kind: CloudService
+metadata:
+  name: cloudresourcemanager.googleapis.com
+  namespace: "mgmt-project-id" # {"$kpt-set":"mgmt-project"}
+spec:
+  service: cloudresourcemanager.googleapis.com
