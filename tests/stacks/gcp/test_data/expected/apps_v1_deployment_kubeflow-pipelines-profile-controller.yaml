@@ -28,6 +28,11 @@ spec:
         - python
         - /hooks/sync.py
         env:
+        - name: KFP_VERSION
+          valueFrom:
+            configMapKeyRef:
+              key: appVersion
+              name: pipeline-upstream-install-config
         - name: MINIO_ACCESS_KEY
           valueFrom:
             secretKeyRef:
@@ -40,7 +45,7 @@ spec:
               name: mlpipeline-minio-artifact
         envFrom:
         - configMapRef:
-            name: kubeflow-pipelines-profile-controller-env-822cf46mft
+            name: kubeflow-pipelines-profile-controller-env-mgh6th2gff
         image: python:3.7
         name: profile-controller
         ports:
