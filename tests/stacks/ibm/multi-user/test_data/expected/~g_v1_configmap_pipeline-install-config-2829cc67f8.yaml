@@ -11,5 +11,5 @@ metadata:
   labels:
     app.kubernetes.io/component: ml-pipeline
     app.kubernetes.io/name: kubeflow-pipelines
-  name: pipeline-install-config
+  name: pipeline-install-config-2829cc67f8
   namespace: kubeflow
