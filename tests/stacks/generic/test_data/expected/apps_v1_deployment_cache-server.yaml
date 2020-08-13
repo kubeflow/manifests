@@ -37,27 +37,27 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: cacheDb
-              name: pipeline-install-config-2829cc67f8
+              name: pipeline-install-config
         - name: DBCONFIG_HOST_NAME
           valueFrom:
             configMapKeyRef:
               key: dbHost
-              name: pipeline-install-config-2829cc67f8
+              name: pipeline-install-config
         - name: DBCONFIG_PORT
           valueFrom:
             configMapKeyRef:
               key: dbPort
-              name: pipeline-install-config-2829cc67f8
+              name: pipeline-install-config
         - name: DBCONFIG_USER
           valueFrom:
             secretKeyRef:
               key: username
-              name: mysql-secret-fd5gktm75t
+              name: mysql-secret
         - name: DBCONFIG_PASSWORD
           valueFrom:
             secretKeyRef:
               key: password
-              name: mysql-secret-fd5gktm75t
+              name: mysql-secret
         - name: NAMESPACE_TO_WATCH
           valueFrom:
             fieldRef:
