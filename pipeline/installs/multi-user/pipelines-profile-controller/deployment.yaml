@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: profile-controller
+  name: kubeflow-pipelines-profile-controller
 spec:
   replicas: 1
   template:
@@ -15,8 +15,13 @@ spec:
         command: ["python", "/hooks/sync.py"]
         envFrom:
         - configMapRef:
-            name: profile-controller-env
+            name: kubeflow-pipelines-profile-controller-env
         env:
+        - name: KFP_VERSION
+          valueFrom:
+            configMapKeyRef:
+              name: pipeline-upstream-install-config
+              key: appVersion
         - name: MINIO_ACCESS_KEY
           valueFrom:
             secretKeyRef:
@@ -35,4 +40,4 @@ spec:
       volumes:
       - name: hooks
         configMap:
-          name: profile-controller-code
+          name: kubeflow-pipelines-profile-controller-code
