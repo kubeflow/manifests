@@ -21,10 +21,6 @@ secretGenerator:
 - name: mysql-secret
   envs:
   - ./params-db-secret.env
-generatorOptions:
-  # Workaround: disable suffix hash, because pipelines-profile-controller/deployment.yaml
-  # cannot get suffix hash added for a ConfigMapKeyRef to pipeline-upstream-install-config.
-  disableNameSuffixHash: true
 vars:
 - name: kfp-ui-namespace
   objref:
