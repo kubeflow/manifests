@@ -17,6 +17,11 @@ spec:
         - configMapRef:
             name: profile-controller-env
         env:
+        - name: KFP_VERSION
+          valueFrom:
+            configMapKeyRef:
+              name: pipeline-upstream-install-config
+              key: appVersion
         - name: MINIO_ACCESS_KEY
           valueFrom:
             secretKeyRef:
