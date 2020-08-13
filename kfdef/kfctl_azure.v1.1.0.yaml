@@ -7,6 +7,7 @@ metadata:
   namespace: kubeflow
 spec:
   applications:
+  # It is expected to have Istio 1.6.x installed in istio-system namespace
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -20,30 +21,40 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/application/cert-manager-crds
+        path: stacks/azure/application/cert-manager-crds
     name: cert-manager-crds
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/application/cert-manager-kube-system-resources
+        path: stacks/azure/application/cert-manager-kube-system-resources
     name: cert-manager-kube-system-resources
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/application/cert-manager
+        path: stacks/azure/application/istio
+    name: istio
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/azure/application/add-anonymous-user-filter-istio-1.6
+    name: add-anonymous-user-filter
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/azure/application/cert-manager
     name: cert-manager
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/generic
+        path: metacontroller/base
+    name: metacontroller
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/azure
     name: kubeflow-apps
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/v1.1-rc.2.tar.gz
-  version: v1.1-rc.2
-status:
-  reposCache:
-  - localPath: '".cache/manifests/manifests-1.1-rc.2"'
-    name: manifests
-  - localPath: '".cache/manifests/manifests-1.1-rc.2"'
-    name: manifests
+    uri: /Users/efedorenko/work/kubeflowmanifests
+  version: v1.1-branch
+
