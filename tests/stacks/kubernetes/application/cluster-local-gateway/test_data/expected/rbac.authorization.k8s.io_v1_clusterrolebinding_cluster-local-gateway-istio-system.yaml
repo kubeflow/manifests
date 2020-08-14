@@ -1,0 +1,15 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: cluster-local-gateway
+    kustomize.component: cluster-local-gateway
+  name: cluster-local-gateway-istio-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-local-gateway-istio-system
+subjects:
+- kind: ServiceAccount
+  name: cluster-local-gateway-service-account
+  namespace: istio-system
