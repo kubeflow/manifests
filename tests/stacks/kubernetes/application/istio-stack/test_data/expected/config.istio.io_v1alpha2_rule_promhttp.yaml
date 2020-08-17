@@ -1,0 +1,20 @@
+apiVersion: config.istio.io/v1alpha2
+kind: rule
+metadata:
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+  name: promhttp
+  namespace: istio-system
+spec:
+  actions:
+  - handler: prometheus
+    instances:
+    - requestcount.metric
+    - requestduration.metric
+    - requestsize.metric
+    - responsesize.metric
+  match: (context.protocol == "http" || context.protocol == "grpc") && (match((request.useragent
+    | "-"), "kube-probe*") == false)

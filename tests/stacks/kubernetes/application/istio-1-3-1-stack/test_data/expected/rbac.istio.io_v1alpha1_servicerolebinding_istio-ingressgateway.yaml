@@ -1,0 +1,11 @@
+apiVersion: rbac.istio.io/v1alpha1
+kind: ServiceRoleBinding
+metadata:
+  name: istio-ingressgateway
+  namespace: istio-system
+spec:
+  roleRef:
+    kind: ServiceRole
+    name: istio-ingressgateway
+  subjects:
+  - user: '*'

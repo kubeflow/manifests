@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app.kubernetes.io/component: oidc-authservice
+    app.kubernetes.io/name: oidc-authservice
+  name: authservice
+  namespace: istio-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authservice
+      app.kubernetes.io/component: oidc-authservice
+      app.kubernetes.io/name: oidc-authservice
+  serviceName: authservice
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: authservice
+        app.kubernetes.io/component: oidc-authservice
+        app.kubernetes.io/name: oidc-authservice
+    spec:
+      containers:
+      - env:
+        - name: USERID_HEADER
+          value: kubeflow-userid
+        - name: USERID_PREFIX
+          value: ""
+        - name: USERID_CLAIM
+          value: email
+        - name: OIDC_PROVIDER
+          value: http://dex.auth.svc.cluster.local:5556/dex
+        - name: OIDC_AUTH_URL
+          value: /dex/auth
+        - name: OIDC_SCOPES
+          value: profile email groups
+        - name: REDIRECT_URL
+          value: /login/oidc
+        - name: SKIP_AUTH_URI
+          value: /dex
+        - name: PORT
+          value: "8080"
+        - name: CLIENT_ID
+          value: kubeflow-oidc-authservice
+        - name: CLIENT_SECRET
+          value: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
+        - name: STORE_PATH
+          value: /var/lib/authservice/data.db
+        image: gcr.io/arrikto/kubeflow/oidc-authservice:28c59ef
+        imagePullPolicy: Always
+        name: authservice
+        ports:
+        - containerPort: 8080
+          name: http-api
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8081
+        volumeMounts:
+        - mountPath: /var/lib/authservice
+          name: data
+      securityContext:
+        fsGroup: 111
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: authservice-pvc
