@@ -1,0 +1,156 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    app.kubernetes.io/component: mpijob
+    app.kubernetes.io/name: mpi-operator
+    kustomize.component: mpi-operator
+  name: mpijobs.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    kind: MPIJob
+    plural: mpijobs
+    shortNames:
+    - mj
+    - mpij
+    singular: mpijob
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            description: Only one of gpus, processingUnits, or replicas should be
+              specified
+            oneOf:
+            - properties:
+                gpus:
+                  description: Valid values are 1, 2, 4, or any multiple of 8
+                  oneOf:
+                  - enum:
+                    - 1
+                    - 2
+                    - 4
+                    type: integer
+                  - minimum: 8
+                    multipleOf: 8
+                    type: integer
+                  title: Total number of GPUs
+                gpusPerNode:
+                  description: Defaults to the number of GPUs per worker
+                  minimum: 1
+                  title: The maximum number of GPUs available per node
+                  type: integer
+                slotsPerWorker:
+                  description: Defaults to the number of processing units per worker
+                  minimum: 1
+                  title: The number of slots per worker used in hostfile
+                  type: integer
+              required:
+              - gpus
+            - properties:
+                processingResourceType:
+                  description: Defaults to 'nvidia.com/gpu'
+                  enum:
+                  - nvidia.com/gpu
+                  - cpu
+                  title: The processing resource type, e.g. 'nvidia.com/gpu' or 'cpu'
+                  type: string
+                processingUnits:
+                  description: Valid values are 1, 2, 4, or any multiple of 8
+                  oneOf:
+                  - enum:
+                    - 1
+                    - 2
+                    - 4
+                    type: integer
+                  - minimum: 8
+                    multipleOf: 8
+                    type: integer
+                  title: Total number of processing units
+                processingUnitsPerNode:
+                  description: Defaults to the number of processing units per worker
+                  minimum: 1
+                  title: The maximum number of processing units available per node
+                  type: integer
+                slotsPerWorker:
+                  description: Defaults to the number of processing units per worker
+                  minimum: 1
+                  title: The number of slots per worker used in hostfile
+                  type: integer
+              required:
+              - processingUnits
+            - properties:
+                processingResourceType:
+                  description: Defaults to 'nvidia.com/gpu'
+                  enum:
+                  - nvidia.com/gpu
+                  - cpu
+                  title: The processing resource type, e.g. 'nvidia.com/gpu' or 'cpu'
+                  type: string
+                replicas:
+                  description: The processing resource limit should be specified for
+                    each replica
+                  minimum: 1
+                  title: Total number of replicas
+                  type: integer
+                slotsPerWorker:
+                  description: Defaults to the number of processing units per worker
+                  minimum: 1
+                  title: The number of slots per worker used in hostfile
+                  type: integer
+              required:
+              - replicas
+            title: The MPIJob spec
+    served: false
+    storage: false
+  - name: v1alpha2
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              mpiReplicaSpecs:
+                properties:
+                  Launcher:
+                    properties:
+                      replicas:
+                        maximum: 1
+                        minimum: 1
+                        type: integer
+                  Worker:
+                    properties:
+                      replicas:
+                        minimum: 1
+                        type: integer
+              slotsPerWorker:
+                minimum: 1
+                type: integer
+    served: true
+    storage: false
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              mpiReplicaSpecs:
+                properties:
+                  Launcher:
+                    properties:
+                      replicas:
+                        maximum: 1
+                        minimum: 1
+                        type: integer
+                  Worker:
+                    properties:
+                      replicas:
+                        minimum: 1
+                        type: integer
+              slotsPerWorker:
+                minimum: 1
+                type: integer
+    served: true
+    storage: true
