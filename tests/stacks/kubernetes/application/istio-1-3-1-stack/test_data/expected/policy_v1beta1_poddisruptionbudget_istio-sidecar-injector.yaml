@@ -1,0 +1,14 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: sidecarInjectorWebhook
+    istio: sidecar-injector
+  name: istio-sidecar-injector
+  namespace: istio-system
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: sidecarInjectorWebhook
+      istio: sidecar-injector

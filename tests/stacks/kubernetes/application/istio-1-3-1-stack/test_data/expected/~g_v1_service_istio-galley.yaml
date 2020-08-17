@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: galley
+    istio: galley
+  name: istio-galley
+  namespace: istio-system
+spec:
+  ports:
+  - name: https-validation
+    port: 443
+  - name: http-monitoring
+    port: 15014
+  - name: grpc-mcp
+    port: 9901
+  selector:
+    istio: galley

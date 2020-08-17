@@ -1,0 +1,168 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: istio-mixer
+    chart: mixer
+    heritage: Tiller
+    istio: mixer
+    release: istio
+  name: istio-policy
+  namespace: istio-system
+spec:
+  selector:
+    matchLabels:
+      istio: mixer
+      istio-mixer-type: policy
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: policy
+        chart: mixer
+        heritage: Tiller
+        istio: mixer
+        istio-mixer-type: policy
+        release: istio
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - ppc64le
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - s390x
+            weight: 2
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - ppc64le
+                - s390x
+      containers:
+      - args:
+        - --monitoringPort=15014
+        - --address
+        - unix:///sock/mixer.socket
+        - --log_output_level=default:info
+        - --configStoreURL=mcp://istio-galley.istio-system.svc:9901
+        - --configDefaultNamespace=istio-system
+        - --useAdapterCRDs=true
+        - --trace_zipkin_url=http://zipkin:9411/api/v1/spans
+        env:
+        - name: GODEBUG
+          value: gctrace=1
+        - name: GOMAXPROCS
+          value: "6"
+        image: docker.io/istio/mixer:1.1.6
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /version
+            port: 15014
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        name: mixer
+        ports:
+        - containerPort: 15014
+        - containerPort: 42422
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 10m
+            memory: 100Mi
+        volumeMounts:
+        - mountPath: /etc/certs
+          name: istio-certs
+          readOnly: true
+        - mountPath: /sock
+          name: uds-socket
+      - args:
+        - proxy
+        - --domain
+        - $(POD_NAMESPACE).svc.cluster.local
+        - --serviceCluster
+        - istio-policy
+        - --templateFile
+        - /etc/istio/proxy/envoy_policy.yaml.tmpl
+        - --controlPlaneAuthPolicy
+        - NONE
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: INSTANCE_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        image: docker.io/istio/proxyv2:1.1.6
+        imagePullPolicy: IfNotPresent
+        name: istio-proxy
+        ports:
+        - containerPort: 9091
+        - containerPort: 15004
+        - containerPort: 15090
+          name: http-envoy-prom
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 40Mi
+        volumeMounts:
+        - mountPath: /etc/certs
+          name: istio-certs
+          readOnly: true
+        - mountPath: /sock
+          name: uds-socket
+        - mountPath: /var/run/secrets/istio.io/policy/adapter
+          name: policy-adapter-secret
+          readOnly: true
+      serviceAccountName: istio-mixer-service-account
+      volumes:
+      - name: istio-certs
+        secret:
+          optional: true
+          secretName: istio.istio-mixer-service-account
+      - emptyDir: {}
+        name: uds-socket
+      - name: policy-adapter-secret
+        secret:
+          optional: true
+          secretName: policy-adapter-secret
