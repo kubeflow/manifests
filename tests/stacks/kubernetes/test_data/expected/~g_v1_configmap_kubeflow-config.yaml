@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  cluster-name: ""
+  clusterDomain: cluster.local
+  istio-namespace: istio-system
+  userid-header: kubeflow-userid
+  userid-prefix: ""
+kind: ConfigMap
+metadata:
+  name: kubeflow-config
+  namespace: kubeflow
