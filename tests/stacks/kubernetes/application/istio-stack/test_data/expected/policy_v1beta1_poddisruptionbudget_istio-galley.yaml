@@ -1,0 +1,18 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: galley
+    chart: galley
+    heritage: Tiller
+    istio: galley
+    release: istio
+  name: istio-galley
+  namespace: istio-system
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: galley
+      istio: galley
+      release: istio
