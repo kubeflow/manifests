@@ -15,7 +15,7 @@ namePrefix: admission-webhook-
 images:
 - name: gcr.io/kubeflow-images-public/admission-webhook
   newName: gcr.io/kubeflow-images-public/admission-webhook
-  newTag: vmaster-gaf96e4e3
+  newTag: vmaster-ge5452b6f
 namespace: kubeflow
 configMapGenerator:
 - envs:
@@ -23,13 +23,13 @@ configMapGenerator:
   name: admission-webhook-parameters
 generatorOptions:
   disableNameSuffixHash: true
-vars:
 # These vars are used to substitute in the namespace, service name and
 # deployment name into the mutating WebHookConfiguration.
 # Since its a CR kustomize isn't aware of those fields and won't
 # transform them.
 # We need the var names to be relatively unique so that when we
 # compose with other applications they won't conflict.
+vars:
 - fieldref:
     fieldPath: data.namespace
   name: podDefaultsNamespace
