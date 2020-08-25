@@ -43,6 +43,33 @@ spec:
                 Important: Run "make" to regenerate code after modifying this file'
               properties:
                 spec:
+                  properties:
+                    containers:
+                      items:
+                        properties:
+                          resources:
+                            properties:
+                              limits:
+                                properties:
+                                  memory:
+                                    type: string
+                                    pattern: '^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
+                                  cpu:
+                                    type: string
+                                    pattern: '^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
+                                type: object
+                              requests:
+                                properties:
+                                  memory:
+                                    type: string
+                                    pattern: '^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
+                                  cpu:
+                                    type: string
+                                    pattern: '^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
+                                type: object
+                            type: object
+                        type: object
+                      type: array
                   type: object
               type: object
           type: object
