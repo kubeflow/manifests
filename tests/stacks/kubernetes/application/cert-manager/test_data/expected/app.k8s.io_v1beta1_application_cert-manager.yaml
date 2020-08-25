@@ -8,6 +8,7 @@ metadata:
   name: cert-manager
   namespace: cert-manager
 spec:
+  addOwnerRef: true
   componentKinds:
   - group: rbac
     kind: ClusterRole
