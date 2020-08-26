@@ -1,9 +1,8 @@
 package add_anonymous_user_filter
 
 import (
-	"testing"
-
 	"github.com/kubeflow/manifests/tests"
+	"testing"
 )
 
 func TestKustomize(t *testing.T) {
