@@ -14,8 +14,7 @@ spec:
   - group: core
     kind: ServiceAccount
   descriptor:
-    description: Application Load Balancer (ALB) Ingress Controller Deployment Manifest
-      provides sensible defaults for deploying an ALB Ingress Controller
+    description: Application Load Balancer (ALB) Ingress Controller Deployment Manifest provides sensible defaults for deploying an ALB Ingress Controller
     keywords:
     - aws
     - kubeflow

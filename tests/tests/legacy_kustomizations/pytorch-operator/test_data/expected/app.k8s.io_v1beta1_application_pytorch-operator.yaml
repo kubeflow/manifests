@@ -24,8 +24,7 @@ spec:
   - group: kubeflow.org
     kind: PyTorchJob
   descriptor:
-    description: Pytorch-operator allows users to create and manage the "PyTorchJob"
-      custom resource.
+    description: Pytorch-operator allows users to create and manage the "PyTorchJob" custom resource.
     keywords:
     - pytorchjob
     - pytorch-operator

@@ -24,8 +24,7 @@ spec:
   - group: kubeflow.org
     kind: SparkOperator
   descriptor:
-    description: Spark-operator allows users to create and manage the "SparkApplication"
-      custom resource.
+    description: Spark-operator allows users to create and manage the "SparkApplication" custom resource.
     keywords:
     - spark
     maintainers:

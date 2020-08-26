@@ -66,8 +66,7 @@ spec:
               description: the destination that should receive events.
               properties:
                 ref:
-                  description: a reference to a Kubernetes object from which to retrieve
-                    the target URI.
+                  description: a reference to a Kubernetes object from which to retrieve the target URI.
                   properties:
                     apiVersion:
                       minLength: 1
@@ -84,8 +83,7 @@ spec:
                   - name
                   type: object
                 uri:
-                  description: the target URI or, if ref is provided, a relative URI
-                    reference that will be combined with ref to produce a target URI.
+                  description: the target URI or, if ref is provided, a relative URI reference that will be combined with ref to produce a target URI.
                   type: string
               type: object
           required:

@@ -9,7 +9,7 @@ metadata:
       name: centralui-mapping
       prefix: /
       rewrite: /
-      service: centraldashboard.$(namespace)
+      service: centraldashboard.kubeflow
   labels:
     app: centraldashboard
     app.kubernetes.io/component: centraldashboard

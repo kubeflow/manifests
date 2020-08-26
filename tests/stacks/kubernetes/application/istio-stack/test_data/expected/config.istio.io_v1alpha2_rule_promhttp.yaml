@@ -16,5 +16,4 @@ spec:
     - requestduration.metric
     - requestsize.metric
     - responsesize.metric
-  match: (context.protocol == "http" || context.protocol == "grpc") && (match((request.useragent
-    | "-"), "kube-probe*") == false)
+  match: (context.protocol == "http" || context.protocol == "grpc") && (match((request.useragent | "-"), "kube-probe*") == false)

@@ -18,8 +18,7 @@ spec:
   - group: networking.istio.io
     kind: EnvoyFilter
   descriptor:
-    description: Provides OIDC-based authentication for Kubeflow Applications, at
-      the Istio Gateway.
+    description: Provides OIDC-based authentication for Kubeflow Applications, at the Istio Gateway.
     keywords:
     - oidc
     - authservice

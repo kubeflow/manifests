@@ -28,8 +28,7 @@ spec:
   - group: networking.istio.io
     kind: VirtualService
   descriptor:
-    description: Provides a UI which allows the user to create/conect/delete jupyter
-      notebooks.
+    description: Provides a UI which allows the user to create/conect/delete jupyter notebooks.
     keywords:
     - jupyterhub
     - jupyter ui

@@ -33,15 +33,15 @@ spec:
         env:
         - name: DB_NAME
           value: mysql
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              key: DB_USER
-              name: katib-mysql-secrets-kmcg6hfkfg
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               key: DB_PASSWORD
+              name: katib-mysql-secrets-kmcg6hfkfg
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: DB_USER
               name: katib-mysql-secrets-kmcg6hfkfg
         - name: KATIB_MYSQL_DB_DATABASE
           valueFrom:

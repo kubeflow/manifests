@@ -22,15 +22,14 @@ spec:
     spec:
       containers:
       - env:
-        - name: NAMESPACE
-          value: ""
-          valueFrom: null
         - name: MAX_NUM_VIEWERS
           value: "50"
         - name: MINIO_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        - name: NAMESPACE
+          value: ""
         image: gcr.io/ml-pipeline/viewer-crd-controller:1.0.0
         imagePullPolicy: Always
         name: ml-pipeline-viewer-crd

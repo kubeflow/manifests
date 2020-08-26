@@ -22,8 +22,7 @@ spec:
   - group: kubeflow.org
     kind: Trial
   descriptor:
-    description: Katib is a service for hyperparameter tuning and neural architecture
-      search.
+    description: Katib is a service for hyperparameter tuning and neural architecture search.
     keywords:
     - katib
     - katib-controller
