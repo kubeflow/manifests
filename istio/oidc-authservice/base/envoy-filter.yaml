@@ -4,7 +4,7 @@ metadata:
   name: authn-filter
 spec:
   workloadLabels:
-    istio: ingressgateway
+    istio: $(gatewaySelector)
   filters:
   - filterConfig:
       httpService:
