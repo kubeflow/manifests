@@ -5,3 +5,5 @@ varReference:
   kind: EnvoyFilter
 - path: spec/filters/filterConfig/httpService/serverUri/cluster
   kind: EnvoyFilter
+- path: spec/workloadLabels/istio
+  kind: EnvoyFilter
