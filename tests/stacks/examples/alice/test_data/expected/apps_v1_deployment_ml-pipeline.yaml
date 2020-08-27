@@ -22,6 +22,16 @@ spec:
     spec:
       containers:
       - env:
+        - name: KUBEFLOW_USERID_HEADER
+          valueFrom:
+            configMapKeyRef:
+              key: userid-header
+              name: kubeflow-config-bmh8k74f52
+        - name: KUBEFLOW_USERID_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              key: userid-prefix
+              name: kubeflow-config-bmh8k74f52
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:
@@ -68,16 +78,6 @@ spec:
             secretKeyRef:
               key: secretkey
               name: mlpipeline-minio-artifact
-        - name: KUBEFLOW_USERID_HEADER
-          valueFrom:
-            configMapKeyRef:
-              key: userid-header
-              name: kubeflow-config-bmh8k74f52
-        - name: KUBEFLOW_USERID_PREFIX
-          valueFrom:
-            configMapKeyRef:
-              key: userid-prefix
-              name: kubeflow-config-bmh8k74f52
         envFrom:
         - configMapRef:
             name: pipeline-api-server-config-f4t72426kt

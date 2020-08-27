@@ -15,7 +15,8 @@ spec:
   - group: kubeflow.org
     kind: MPIJob
   descriptor:
-    description: Mpi-operator allows users to create and manage the "MPIJob" custom resource.
+    description: Mpi-operator allows users to create and manage the "MPIJob" custom
+      resource.
     keywords:
     - mpijob
     - mpi-operator

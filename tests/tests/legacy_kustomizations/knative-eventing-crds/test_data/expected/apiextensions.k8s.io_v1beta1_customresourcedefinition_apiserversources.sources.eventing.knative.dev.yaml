@@ -50,7 +50,8 @@ spec:
         spec:
           properties:
             mode:
-              description: 'Mode controls the content of the event payload. One of: ''Ref'' (only references of resources), ''Resource'' (full resource).'
+              description: 'Mode controls the content of the event payload. One of:
+                ''Ref'' (only references of resources), ''Resource'' (full resource).'
               type: string
             resources:
               items:
@@ -59,10 +60,12 @@ spec:
                     description: API version of the objects to watch.
                     type: string
                   controller:
-                    description: 'If true, emits the managing controller ref. Only supported for mode=Ref. More info: https://kubernetes.io/docs/concepts/workloads/controllers/garbage-collection/'
+                    description: 'If true, emits the managing controller ref. Only
+                      supported for mode=Ref. More info: https://kubernetes.io/docs/concepts/workloads/controllers/garbage-collection/'
                     type: boolean
                   controllerSelector:
-                    description: Controller selector restricting the list of objects to watch by a controlling owner reference of the specified kind.
+                    description: Controller selector restricting the list of objects
+                      to watch by a controlling owner reference of the specified kind.
                     properties:
                       apiVersion:
                         description: API version of the controlling owner reference.
@@ -75,18 +78,21 @@ spec:
                     description: Kind of the objects to watch.
                     type: string
                   labelSelector:
-                    description: 'Label selector restricting this  list of objects to watch by their labels. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/'
+                    description: 'Label selector restricting this  list of objects
+                      to watch by their labels. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/'
                     type: object
               type: array
             serviceAccountName:
-              description: 'name of the ServiceAccount to use to run the receive adapter. More info: https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/.'
+              description: 'name of the ServiceAccount to use to run the receive adapter.
+                More info: https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/.'
               type: string
             sink:
               anyOf:
               - description: the destination that should receive events.
                 properties:
                   ref:
-                    description: a reference to a Kubernetes object from which to retrieve the target URI.
+                    description: a reference to a Kubernetes object from which to
+                      retrieve the target URI.
                     properties:
                       apiVersion:
                         minLength: 1
@@ -103,10 +109,12 @@ spec:
                     - name
                     type: object
                   uri:
-                    description: the target URI. If ref is provided, this must be relative URI reference.
+                    description: the target URI. If ref is provided, this must be
+                      relative URI reference.
                     type: string
                 type: object
-              - description: 'DEPRECATED: a reference to a Kubernetes object from which to retrieve the target URI.'
+              - description: 'DEPRECATED: a reference to a Kubernetes object from
+                  which to retrieve the target URI.'
                 properties:
                   apiVersion:
                     minLength: 1

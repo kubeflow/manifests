@@ -22,7 +22,8 @@ spec:
     name: Timestamp
     type: string
   - JSONPath: .spec.monitored_resource_type
-    description: Optional expression to compute the type of the monitored resource this log entry is being recorded on
+    description: Optional expression to compute the type of the monitored resource
+      this log entry is being recorded on
     name: Res Type
     type: string
   - JSONPath: .metadata.creationTimestamp

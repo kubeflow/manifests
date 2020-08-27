@@ -26,7 +26,8 @@ spec:
   - group: core
     kind: ServiceAccount
   descriptor:
-    description: Automatically provision and manage TLS certificates in Kubernetes https://jetstack.io.
+    description: Automatically provision and manage TLS certificates in Kubernetes
+      https://jetstack.io.
     keywords:
     - cert-manager
     links:

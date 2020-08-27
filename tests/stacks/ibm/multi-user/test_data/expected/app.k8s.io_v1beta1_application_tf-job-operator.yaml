@@ -18,7 +18,8 @@ spec:
   - group: kubeflow.org
     kind: TFJob
   descriptor:
-    description: Tf-operator allows users to create and manage the "TFJob" custom resource.
+    description: Tf-operator allows users to create and manage the "TFJob" custom
+      resource.
     keywords:
     - tfjob
     - tf-operator

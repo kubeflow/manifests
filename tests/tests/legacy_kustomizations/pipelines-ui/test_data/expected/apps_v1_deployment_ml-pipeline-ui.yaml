@@ -36,12 +36,12 @@ spec:
     spec:
       containers:
       - env:
-        - name: ALLOW_CUSTOM_VISUALIZATIONS
-          value: "true"
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /etc/credentials/user-gcp-sa.json
         - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
           value: /etc/config/viewer-pod-template.json
+        - name: ALLOW_CUSTOM_VISUALIZATIONS
+          value: "true"
         image: gcr.io/ml-pipeline/frontend:0.2.5
         imagePullPolicy: IfNotPresent
         name: ml-pipeline-ui

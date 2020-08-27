@@ -20,7 +20,8 @@ spec:
     kind: Secret
   - group: v1
     kind: ConfigMap
-  description: KFServing provides a Kubernetes Custom Resource Definition for serving ML Models on arbitrary frameworks
+  description: KFServing provides a Kubernetes Custom Resource Definition for serving
+    ML Models on arbitrary frameworks
   icons: null
   keywords:
   - kfserving

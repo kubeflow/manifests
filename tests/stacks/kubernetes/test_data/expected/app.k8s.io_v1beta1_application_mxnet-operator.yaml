@@ -16,7 +16,8 @@ spec:
   - group: kubeflow.org
     kind: MXJob
   descriptor:
-    description: mxnet-operator allows users to create and manage the "MXJob" custom resource.
+    description: mxnet-operator allows users to create and manage the "MXJob" custom
+      resource.
     keywords:
     - MXjob
     - mxnet-operator

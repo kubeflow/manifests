@@ -20,7 +20,8 @@ spec:
   - group: core
     kind: ServiceAccount
   descriptor:
-    description: Notebooks controller allows users to create a custom resource \"Notebook\" (jupyter notebook).
+    description: Notebooks controller allows users to create a custom resource \"Notebook\"
+      (jupyter notebook).
     keywords:
     - jupyter
     - notebook

@@ -18,7 +18,8 @@ spec:
     kind: Secret
   - group: v1
     kind: ConfigMap
-  description: Seldon allows users to create ML Inference Graphs to deploy their models and serve predictions
+  description: Seldon allows users to create ML Inference Graphs to deploy their models
+    and serve predictions
   icons: null
   keywords:
   - seldon

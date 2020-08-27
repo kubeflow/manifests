@@ -49,10 +49,12 @@ spec:
               items:
                 properties:
                   filter:
-                    description: the destination of the filter expression that is guarding the branch.
+                    description: the destination of the filter expression that is
+                      guarding the branch.
                     properties:
                       ref:
-                        description: a reference to a Kubernetes object from which to retrieve the target URI.
+                        description: a reference to a Kubernetes object from which
+                          to retrieve the target URI.
                         properties:
                           apiVersion:
                             minLength: 1
@@ -69,18 +71,23 @@ spec:
                         - name
                         type: object
                       uri:
-                        description: the target URI or, if ref is provided, a relative URI reference that will be combined with ref to produce a target URI.
+                        description: the target URI or, if ref is provided, a relative
+                          URI reference that will be combined with ref to produce
+                          a target URI.
                         type: string
                     type: object
                   reply:
                     anyOf:
                     - properties:
                         uri:
-                          description: the target URI or, if ref is provided, a relative URI reference that will be combined with ref to produce a target URI.
+                          description: the target URI or, if ref is provided, a relative
+                            URI reference that will be combined with ref to produce
+                            a target URI.
                           minLength: 1
                           type: string
                       type: object
-                    - description: a reference to a Kubernetes object from which to retrieve the target URI.
+                    - description: a reference to a Kubernetes object from which to
+                        retrieve the target URI.
                       properties:
                         ref:
                           properties:
@@ -99,7 +106,8 @@ spec:
                           - name
                           type: object
                       type: object
-                    - description: a reference to a Kubernetes object from which to retrieve the target URI.
+                    - description: a reference to a Kubernetes object from which to
+                        retrieve the target URI.
                       properties:
                         apiVersion:
                           minLength: 1
@@ -111,12 +119,15 @@ spec:
                           minLength: 1
                           type: string
                       type: object
-                    description: a reference to where the result of the subscriber of this branch gets sent to. If not specified, the result is sent to the Parallel reply.
+                    description: a reference to where the result of the subscriber
+                      of this branch gets sent to. If not specified, the result is
+                      sent to the Parallel reply.
                   subscriber:
                     description: the destination of the events if the filter passes.
                     properties:
                       ref:
-                        description: a reference to a Kubernetes object from which to retrieve the target URI.
+                        description: a reference to a Kubernetes object from which
+                          to retrieve the target URI.
                         properties:
                           apiVersion:
                             minLength: 1
@@ -133,7 +144,9 @@ spec:
                         - name
                         type: object
                       uri:
-                        description: the target URI or, if ref is provided, a relative URI reference that will be combined with ref to produce a target URI.
+                        description: the target URI or, if ref is provided, a relative
+                          URI reference that will be combined with ref to produce
+                          a target URI.
                         type: string
                     type: object
                 required:
@@ -141,7 +154,9 @@ spec:
                 type: object
               type: array
             channelTemplate:
-              description: specifies which Channel to use. If left unspecified, it is set to the default Channel for the namespace (or cluster, in case there are no defaults for the namespace).
+              description: specifies which Channel to use. If left unspecified, it
+                is set to the default Channel for the namespace (or cluster, in case
+                there are no defaults for the namespace).
               properties:
                 apiVersion:
                   minLength: 1
@@ -159,11 +174,14 @@ spec:
               anyOf:
               - properties:
                   uri:
-                    description: the target URI or, if ref is provided, a relative URI reference that will be combined with ref to produce a target URI.
+                    description: the target URI or, if ref is provided, a relative
+                      URI reference that will be combined with ref to produce a target
+                      URI.
                     minLength: 1
                     type: string
                 type: object
-              - description: a reference to a Kubernetes object from which to retrieve the target URI.
+              - description: a reference to a Kubernetes object from which to retrieve
+                  the target URI.
                 properties:
                   ref:
                     properties:
@@ -182,7 +200,8 @@ spec:
                     - name
                     type: object
                 type: object
-              - description: a reference to a Kubernetes object from which to retrieve the target URI.
+              - description: a reference to a Kubernetes object from which to retrieve
+                  the target URI.
                 properties:
                   apiVersion:
                     minLength: 1
@@ -194,7 +213,8 @@ spec:
                     minLength: 1
                     type: string
                 type: object
-              description: a reference to where the result of a branch subscriber gets sent to when the branch does not have a reply.
+              description: a reference to where the result of a branch subscriber
+                gets sent to when the branch does not have a reply.
               type: object
           required:
           - branches

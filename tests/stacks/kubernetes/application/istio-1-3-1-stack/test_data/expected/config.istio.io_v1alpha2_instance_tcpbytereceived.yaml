@@ -9,7 +9,9 @@ spec:
   compiledTemplate: metric
   params:
     dimensions:
-      connection_security_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
+      connection_security_policy: conditional((context.reporter.kind | "inbound")
+        == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls",
+        "none"))
       destination_app: destination.labels["app"] | "unknown"
       destination_principal: destination.principal | "unknown"
       destination_service: destination.service.host | "unknown"
@@ -18,7 +20,8 @@ spec:
       destination_version: destination.labels["version"] | "unknown"
       destination_workload: destination.workload.name | "unknown"
       destination_workload_namespace: destination.workload.namespace | "unknown"
-      reporter: conditional((context.reporter.kind | "inbound") == "outbound", "source", "destination")
+      reporter: conditional((context.reporter.kind | "inbound") == "outbound", "source",
+        "destination")
       response_flags: context.proxy_error_code | "-"
       source_app: source.labels["app"] | "unknown"
       source_principal: source.principal | "unknown"
