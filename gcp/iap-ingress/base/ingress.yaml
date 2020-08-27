@@ -2,11 +2,14 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:
-    ingress.kubernetes.io/ssl-redirect: "true"
+    kubernetes.io/ingress.allow-http: "false" 
     kubernetes.io/ingress.global-static-ip-name: $(ipName)
     networking.gke.io/managed-certificates: gke-certificate
   name: envoy-ingress
 spec:
+  backend:
+    serviceName: istio-ingressgateway
+    servicePort: 80
   rules:
   - host: $(hostname)
     http:
