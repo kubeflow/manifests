@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: spartakus
+    app.kubernetes.io/component: spartakus
+    app.kubernetes.io/name: spartakus
+    kustomize.component: spartakus
+  name: spartakus-volunteer
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: spartakus
+      app.kubernetes.io/name: spartakus
+      kustomize.component: spartakus
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: spartakus-volunteer
+        app.kubernetes.io/component: spartakus
+        app.kubernetes.io/name: spartakus
+        kustomize.component: spartakus
+    spec:
+      containers:
+      - args:
+        - volunteer
+        - --cluster-id=$(USAGE_ID)
+        - --database=https://stats-collector.kubeflow.org
+        env:
+        - name: USAGE_ID
+          valueFrom:
+            configMapKeyRef:
+              key: usageId
+              name: spartakus-config
+        image: gcr.io/google_containers/spartakus-amd64:v1.1.0
+        name: volunteer
+      serviceAccountName: spartakus
