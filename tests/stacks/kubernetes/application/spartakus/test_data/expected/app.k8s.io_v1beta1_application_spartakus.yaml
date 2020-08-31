@@ -1,0 +1,37 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  labels:
+    app.kubernetes.io/component: spartakus
+    app.kubernetes.io/name: spartakus
+  name: spartakus
+  namespace: kubeflow
+spec:
+  addOwnerRef: true
+  componentKinds:
+  - group: core
+    kind: ConfigMap
+  - group: apps
+    kind: Deployment
+  - group: core
+    kind: ServiceAccount
+  descriptor:
+    description: ""
+    keywords:
+    - spartakus
+    - kubeflow
+    links:
+    - description: About
+      url: ""
+    maintainers: []
+    owners: []
+    type: spartakus
+    version: v1beta1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: spartakus
+      app.kubernetes.io/instance: spartakus-v0.7.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: spartakus
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.7.0
