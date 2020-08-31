@@ -1,0 +1,17 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  labels:
+    app: spartakus
+    app.kubernetes.io/component: spartakus
+    app.kubernetes.io/name: spartakus
+    kustomize.component: spartakus
+  name: spartakus
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
