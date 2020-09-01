@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  kubectl-delivery-image: mpioperator/kubectl-delivery:latest
+  lock-namespace: kubeflow
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: mpijob
+    app.kubernetes.io/name: mpi-operator
+    kustomize.component: mpi-operator
+  name: mpi-operator-config
+  namespace: kubeflow

@@ -1,7 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
-nameprefix: kubeflow-pipelines-
 commonLabels:
   app: kubeflow-pipelines-profile-controller
 resources:
@@ -9,9 +8,9 @@ resources:
 - deployment.yaml
 - composite-controller.yaml
 configMapGenerator:
-- name: profile-controller-code
+- name: kubeflow-pipelines-profile-controller-code
   files:
   - sync.py
-- name: profile-controller-env
+- name: kubeflow-pipelines-profile-controller-env
   envs:
   - params.env

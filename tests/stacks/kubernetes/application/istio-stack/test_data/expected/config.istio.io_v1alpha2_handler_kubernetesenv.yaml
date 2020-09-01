@@ -1,0 +1,13 @@
+apiVersion: config.istio.io/v1alpha2
+kind: handler
+metadata:
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+  name: kubernetesenv
+  namespace: istio-system
+spec:
+  compiledAdapter: kubernetesenv
+  params: null
