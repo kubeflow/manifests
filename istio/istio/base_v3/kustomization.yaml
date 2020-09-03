@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - ../base/kf-istio-resources.yaml
 - ../base/cluster-roles.yaml
+- ../base/istio-rules.yaml
 namespace: kubeflow
 generatorOptions:
   disableNameSuffixHash: true
