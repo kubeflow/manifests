@@ -40,3 +40,4 @@ spec:
     links:
     - description: About
       url: "https://github.com/kubeflow/mpi-operator"
+  addOwnerRef: true

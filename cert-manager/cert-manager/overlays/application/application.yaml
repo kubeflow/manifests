@@ -32,3 +32,4 @@ spec:
     links:
     - description: About
       url: "https://github.com/jetstack/cert-manager"
+  addOwnerRef: true
