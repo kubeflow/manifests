@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  disable-affinity-assistant: "false"
+  disable-home-env-overwrite: "true"
+  disable-working-directory-overwrite: "true"
+  running-in-environment-with-injected-sidecars: "true"
+kind: ConfigMap
+metadata:
+  name: feature-flags
+  namespace: tekton-pipelines

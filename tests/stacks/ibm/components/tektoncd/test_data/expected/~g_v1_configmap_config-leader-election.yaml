@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  leaseDuration: 15s
+  renewDeadline: 10s
+  resourceLock: leases
+  retryPeriod: 2s
+kind: ConfigMap
+metadata:
+  name: config-leader-election
+  namespace: tekton-pipelines
