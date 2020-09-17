@@ -25,14 +25,14 @@ spec:
       istio-ingressgateway:
         type: NodePort
     global:
-      meshID: "project-id_us-central1_name" # {"$kpt-set":"asm-mesh-id"}
+      meshID: "proj-147474701642" # {"$kpt-set":"asm-mesh-id"}
       trustDomain: "project-id.svc.id.goog" # {"$kpt-set":"identity-ns"}
       sds:
         token:
           aud: "project-id.svc.id.goog" # {"$kpt-set":"identity-ns"}
       proxy:
         env:
-          GCP_METADATA: "project-id|147474701642|name|us-central1-c" # {"$kpt-set":"asm-gcp-metadata"}
+          GCP_METADATA: "project-id|147474701642|name|us-east1-d" # {"$kpt-set":"asm-gcp-metadata"}
     nodeagent:
       env:
         GKE_CLUSTER_URL: "https://container.googleapis.com/v1/projects/project-id/locations/us-central1/clusters/name" # {"$kpt-set":"asm-cluster-url"}

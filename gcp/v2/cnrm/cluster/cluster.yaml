@@ -19,7 +19,7 @@ kind: ContainerCluster
 metadata:
   clusterName: "project-id/us-east1-d/name" # {"$kpt-set":"cluster-name"}
   labels:
-    mesh_id: "project-id_us-east1-d_name" # {"$kpt-set":"mesh-id"}
+    mesh_id: "proj-147474701642" # {"$kpt-set":"asm-mesh-id"}
   name: name # {"$kpt-set":"name"}
 spec:
   initialNodeCount: 2
