@@ -1,0 +1,31 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: kubeflow/admission-webhook-cert
+  labels:
+    app: admission-webhook
+    app.kubernetes.io/component: poddefaults
+    app.kubernetes.io/name: poddefaults
+    kustomize.component: admission-webhook
+  name: admission-webhook-mutating-webhook-configuration
+webhooks:
+- clientConfig:
+    caBundle: ""
+    service:
+      name: admission-webhook-service
+      namespace: kubeflow
+      path: /apply-poddefault
+  name: admission-webhook-deployment.kubeflow.org
+  namespaceSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: kubeflow-profile
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    resources:
+    - pods

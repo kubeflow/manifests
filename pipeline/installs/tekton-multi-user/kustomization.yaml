@@ -1,0 +1,36 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+commonLabels:
+  app.kubernetes.io/name: kubeflow-pipelines
+  app.kubernetes.io/component: ml-pipeline
+resources:
+- ../multi-user
+patchesStrategicMerge:
+- metadata-writer-clusterrole.yaml
+- ml-pipeline-apiserver-clusterrole.yaml
+- ml-pipeline-persistenceagent-clusterrole.yaml
+- ml-pipeline-ui-clusterrole.yaml
+- cache-deployer-clusterrole.yaml
+- scheduled-workflow-clusterrole.yaml
+configMapGenerator:
+- name: kubeflow-pipelines-profile-controller-code
+  behavior: replace
+  files:
+  - sync.py
+images:
+- name: gcr.io/ml-pipeline/api-server
+  newName: docker.io/aipipeline/api-server
+  newTag: 1.0.0
+- name: gcr.io/ml-pipeline/persistenceagent
+  newName: docker.io/aipipeline/persistenceagent
+  newTag: 1.0.0
+- name: gcr.io/ml-pipeline/frontend
+  newName: docker.io/aipipeline/frontend
+  newTag: 1.0.0
+- name: gcr.io/ml-pipeline/metadata-writer
+  newName: docker.io/aipipeline/metadata-writer
+  newTag: 1.0.0
+- name: gcr.io/ml-pipeline/scheduledworkflow
+  newName: docker.io/aipipeline/scheduledworkflow
+  newTag: 1.0.0

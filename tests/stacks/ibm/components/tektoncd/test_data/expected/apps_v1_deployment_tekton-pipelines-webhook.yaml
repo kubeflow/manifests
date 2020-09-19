@@ -42,7 +42,7 @@ spec:
           value: webhook-certs
         - name: METRICS_DOMAIN
           value: tekton.dev/pipeline
-        image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook:v0.14.0@sha256:b1d98165d35e4964165364b922f402ebdfb0a929becf7f7ba3214258bf3f0249
+        image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook:v0.14.0
         name: webhook
         ports:
         - containerPort: 9090

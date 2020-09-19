@@ -1,0 +1,46 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  labels:
+    app.kubernetes.io/component: tfjob
+    app.kubernetes.io/name: tf-job-crds
+  name: tf-job-crds
+  namespace: kubeflow
+spec:
+  addOwnerRef: true
+  componentKinds:
+  - group: core
+    kind: Service
+  - group: apps
+    kind: Deployment
+  - group: core
+    kind: ServiceAccount
+  - group: kubeflow.org
+    kind: TFJob
+  descriptor:
+    description: Tf-job-crds contains the "TFJob" custom resource definition.
+    keywords:
+    - tfjob
+    - tf-operator
+    - tf-training
+    links:
+    - description: About
+      url: https://github.com/kubeflow/tf-operator
+    - description: Docs
+      url: https://www.kubeflow.org/docs/reference/tfjob/v1/tensorflow/
+    maintainers:
+    - email: ricliu@google.com
+      name: Richard Liu
+    owners:
+    - email: ricliu@google.com
+      name: Richard Liu
+    type: tf-job-crds
+    version: v1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: tfjob
+      app.kubernetes.io/instance: tf-job-crds-v0.7.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: tf-job-crds
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.7.0

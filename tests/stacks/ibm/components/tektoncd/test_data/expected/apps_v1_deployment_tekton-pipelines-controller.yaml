@@ -27,17 +27,17 @@ spec:
       containers:
       - args:
         - -kubeconfig-writer-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/kubeconfigwriter:v0.14.0@sha256:89444bb105cdecfe28370422c1e33ee222729e8659051c8e343a764dc6057c1e
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/kubeconfigwriter:v0.14.0
         - -creds-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/creds-init:v0.14.0@sha256:6199d2b27b7ee9bde8c3b909a5527a0c8fc30a83387957f32ba0ae23c9d340f2
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/creds-init:v0.14.0
         - -git-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.14.0@sha256:4c673db1f46dafbc030f2a79c9d4449c776e75804c83dd404e48204d89da554e
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.14.0
         - -entrypoint-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/entrypoint:v0.14.0@sha256:0449b862f7afbe88064f957239b71c55939053e754e74538a51392fe0a347990
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/entrypoint:v0.14.0
         - -imagedigest-exporter-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/imagedigestexporter:v0.14.0@sha256:a37bea1f48f705119c47a15fe4c4f0cce61a00b45cffedf5ef77b1a5f943644b
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/imagedigestexporter:v0.14.0
         - -pr-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/pullrequest-init:v0.14.0@sha256:1a778bdb6359f473128d3ed50c1e4639555bf5808fffbac5a3dd07158e7f05a0
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/pullrequest-init:v0.14.0
         - -build-gcs-fetcher-image
         - gcr.io/tekton-releases/github.com/tektoncd/pipeline/vendor/github.com/googlecloudplatform/cloud-builders/gcs-fetcher/cmd/gcs-fetcher:v0.14.0@sha256:08976f7b76b1d0d82c702988a1d44dbc2bbd7ccae1fa04f909fa438ba1d29ef0
         - -affinity-assistant-image
@@ -67,7 +67,7 @@ spec:
           value: config-leader-election
         - name: METRICS_DOMAIN
           value: tekton.dev/pipeline
-        image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller:v0.14.0@sha256:5a4b87f4a4ca709c856b9a2dc537592ffe90f247581a74faf8bdd74f44d330ec
+        image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller:v0.14.0
         name: tekton-pipelines-controller
         volumeMounts:
         - mountPath: /etc/config-logging
