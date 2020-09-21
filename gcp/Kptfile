@@ -698,7 +698,6 @@ openAPI:
         setter:
           name: gcloud.project.projectNumber
           value: "projectNumber"
-          isSet: true
     io.k8s.cli.substitutions.asm-gcp-metadata:
       x-k8s-cli:
         substitution:
