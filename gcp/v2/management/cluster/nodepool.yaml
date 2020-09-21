@@ -29,4 +29,4 @@ spec:
     autoRepair: true
     autoUpgrade: true
   clusterRef:
-    name: NAME # {"$kpt-set":"name"}
+    name: name # {"$kpt-set":"name"}
