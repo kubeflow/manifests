@@ -37,6 +37,13 @@ gcp-reset:
 	kpt cfg set ../gcp/ gcloud.compute.zone ZONE
 	kpt cfg set ../gcp/ gcloud.compute.region REGION
 	kpt cfg set ../gcp/ name name
+	kpt cfg set ../gcp/ location location
+	yq d -i ../gcp/Kptfile  openAPI.definitions["io.k8s.cli.setters.gcloud.core.project"].["x-k8s-cli"].["setter"].["isSet"]
+	yq d -i ../gcp/Kptfile  openAPI.definitions["io.k8s.cli.setters.gcloud.project.projectNumber"].["x-k8s-cli"].["setter"].["isSet"]
+	yq d -i ../gcp/Kptfile  openAPI.definitions["io.k8s.cli.setters.gcloud.compute.zone"].["x-k8s-cli"].["setter"].["isSet"]
+	yq d -i ../gcp/Kptfile  openAPI.definitions["io.k8s.cli.setters.gcloud.compute.region"].["x-k8s-cli"].["setter"].["isSet"]
+	yq d -i ../gcp/Kptfile  openAPI.definitions["io.k8s.cli.setters.location"].["x-k8s-cli"].["setter"].["isSet"]
+	yq d -i ../gcp/Kptfile  openAPI.definitions["io.k8s.cli.setters.name"].["x-k8s-cli"].["setter"].["isSet"]
 
 generate:
 	$(PYTHON_BIN) ../hack/generate_tests.py --all
