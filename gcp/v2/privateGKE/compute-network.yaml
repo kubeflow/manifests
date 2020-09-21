@@ -13,7 +13,7 @@ metadata:
   name: name # {"$kpt-set":"name"}
 spec:
   ipCidrRange: 10.10.10.0/24
-  region: us-central1 # {"$kpt-set":"gcloud.compute.region"}
+  region: REGION # {"$kpt-set":"gcloud.compute.region"}
   description: kubeflow private subnet
   privateIpGoogleAccess: true
   networkRef:

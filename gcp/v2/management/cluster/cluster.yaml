@@ -5,7 +5,7 @@
 apiVersion: container.cnrm.cloud.google.com/v1beta1
 kind: ContainerCluster
 metadata:
-  name: NAME # {"$kpt-set":"name"}
+  name: name # {"$kpt-set":"name"}
   # N.B. AnthosCLI doesn't appear to support this annotation yet  (anthos CLI 0.2.4)
   # cnrm.cloud.google.com/remove-default-node-pool: "true"
   annotations:

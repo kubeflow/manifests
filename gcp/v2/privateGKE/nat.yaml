@@ -4,7 +4,7 @@ metadata:
   name: name # {"$kpt-set":"name"}
 spec:
   description: Router to allow outbound internet access
-  region: us-central1 # {"$kpt-set":"gcloud.compute.region"}
+  region: REGION # {"$kpt-set":"gcloud.compute.region"}
   networkRef:
     name: name # {"$kpt-set":"name"}
 ---
@@ -13,7 +13,7 @@ kind: ComputeRouterNAT
 metadata:
   name: name # {"$kpt-set":"name"}
 spec:
-  region: us-central1 # {"$kpt-set":"gcloud.compute.region"}
+  region: REGION # {"$kpt-set":"gcloud.compute.region"}
   routerRef:
     name: name # {"$kpt-set":"name"}
   natIpAllocateOption: AUTO_ONLY
