@@ -5,7 +5,7 @@
 apiVersion: container.cnrm.cloud.google.com/v1beta1
 kind: ContainerCluster
 metadata:
-  name: NAME # {"$kpt-set":"name"}
+  name: name # {"$kpt-set":"name"}
   # N.B. AnthosCLI doesn't appear to support this annotation yet  (anthos CLI 0.2.4)
   # cnrm.cloud.google.com/remove-default-node-pool: "true"
   annotations:
@@ -13,7 +13,7 @@ metadata:
     gke.io/cluster: "bootstrap://"
 spec:
   # Use a regional cluster. Regional offer higher availability and the cluster management fee is the same.
-  location: us-east1 # {"$kpt-set":"location"}
+  location: location # {"$kpt-set":"location"}
   initialNodeCount: 3
   # See https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#sharing_identities_across_clusters
   # Currently there is only one pool per project

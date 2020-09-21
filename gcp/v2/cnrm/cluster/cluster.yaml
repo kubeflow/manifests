@@ -17,9 +17,9 @@
 apiVersion: container.cnrm.cloud.google.com/v1beta1
 kind: ContainerCluster
 metadata:
-  clusterName: "project-id/us-east1-d/name" # {"$kpt-set":"cluster-name"}
+  clusterName: "project-id/location/name" # {"$kpt-set":"cluster-name"}
   labels:
-    mesh_id: "project-id_us-east1-d_name" # {"$kpt-set":"mesh-id"}
+    mesh_id: "proj-projectNumber" # {"$kpt-set":"asm-mesh-id"}
   name: name # {"$kpt-set":"name"}
 spec:
   initialNodeCount: 2
@@ -43,7 +43,7 @@ spec:
     # Per https://github.com/GoogleCloudPlatform/k8s-config-connector/issues/194
     # use upper case for the channels
     channel: REGULAR
-  location: us-east1-d # {"$kpt-set":"location"}
+  location: location # {"$kpt-set":"location"}
   workloadIdentityConfig:
     identityNamespace: project-id.svc.id.goog # {"$kpt-set":"identity-ns"}
   loggingService: logging.googleapis.com/kubernetes

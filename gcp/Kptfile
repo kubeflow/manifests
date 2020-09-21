@@ -20,17 +20,17 @@ openAPI:
       x-k8s-cli:
         setter:
           name: gcloud.compute.zone
-          value: us-east1-d
+          value: ZONE
     io.k8s.cli.setters.gcloud.compute.region:
       x-k8s-cli:
         setter:
           name: gcloud.compute.region
-          value: us-central1
+          value: REGION
     io.k8s.cli.setters.location:
       x-k8s-cli:
         setter:
           name: location
-          value: us-east1-d
+          value: location
     io.k8s.cli.setters.log-firewalls:
       x-k8s-cli:
         setter:
@@ -696,7 +696,7 @@ openAPI:
       x-k8s-cli:
         setter:
           name: gcloud.project.projectNumber
-          value: "147474701642"
+          value: projectNumber
     io.k8s.cli.substitutions.asm-gcp-metadata:
       x-k8s-cli:
         substitution:
@@ -727,26 +727,10 @@ openAPI:
       x-k8s-cli:
         substitution:
           name: asm-mesh-id
-          pattern: ${gcloud.core.project}_${location}_${name}
+          pattern: proj-${gcloud.project.projectNumber}
           values:
-          - marker: ${gcloud.core.project}
-            ref: '#/definitions/io.k8s.cli.setters.gcloud.core.project'
-          - marker: ${location}
-            ref: '#/definitions/io.k8s.cli.setters.location'
-          - marker: ${name}
-            ref: '#/definitions/io.k8s.cli.setters.name'
-    io.k8s.cli.substitutions.mesh-id:
-      x-k8s-cli:
-        substitution:
-          name: mesh-id
-          pattern: ${gcloud.core.project}_${location}_${name}
-          values:
-          - marker: ${gcloud.core.project}
-            ref: '#/definitions/io.k8s.cli.setters.gcloud.core.project'
-          - marker: ${location}
-            ref: '#/definitions/io.k8s.cli.setters.location'
-          - marker: ${name}
-            ref: '#/definitions/io.k8s.cli.setters.name'
+          - marker: ${gcloud.project.projectNumber}
+            ref: '#/definitions/io.k8s.cli.setters.gcloud.project.projectNumber'
     io.k8s.cli.substitutions.asm-cluster-name:
       x-k8s-cli:
         substitution:
