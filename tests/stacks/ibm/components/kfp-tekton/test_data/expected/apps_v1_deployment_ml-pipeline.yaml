@@ -22,6 +22,51 @@ spec:
     spec:
       containers:
       - env:
+        - name: ARTIFACT_BUCKET
+          valueFrom:
+            configMapKeyRef:
+              key: artifact_bucket
+              name: kfp-tekton-config
+        - name: ARTIFACT_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              key: artifact_endpoint
+              name: kfp-tekton-config
+        - name: ARTIFACT_ENDPOINT_SCHEME
+          valueFrom:
+            configMapKeyRef:
+              key: artifact_endpoint_scheme
+              name: kfp-tekton-config
+        - name: ARCHIVE_LOGS
+          valueFrom:
+            configMapKeyRef:
+              key: archive_logs
+              name: kfp-tekton-config
+        - name: TRACK_ARTIFACTS
+          valueFrom:
+            configMapKeyRef:
+              key: track_artifacts
+              name: kfp-tekton-config
+        - name: STRIP_EOF
+          valueFrom:
+            configMapKeyRef:
+              key: strip_eof
+              name: kfp-tekton-config
+        - name: ARTIFACT_SCRIPT
+          valueFrom:
+            configMapKeyRef:
+              key: artifact_script
+              name: kfp-tekton-config
+        - name: ARTIFACT_IMAGE
+          valueFrom:
+            configMapKeyRef:
+              key: artifact_image
+              name: kfp-tekton-config
+        - name: INJECT_DEFAULT_SCRIPT
+          valueFrom:
+            configMapKeyRef:
+              key: inject_default_script
+              name: kfp-tekton-config
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:

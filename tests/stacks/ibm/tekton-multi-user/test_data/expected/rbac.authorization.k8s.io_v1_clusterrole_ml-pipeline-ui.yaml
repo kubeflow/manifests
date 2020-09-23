@@ -44,3 +44,12 @@ rules:
   verbs:
   - get
   - list
+- apiGroups:
+  - tekton.dev
+  resources:
+  - pipelineruns
+  - taskruns
+  - conditions
+  verbs:
+  - get
+  - list

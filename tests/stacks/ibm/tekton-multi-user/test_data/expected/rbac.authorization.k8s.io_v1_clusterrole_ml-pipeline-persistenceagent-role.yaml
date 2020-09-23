@@ -22,3 +22,13 @@ rules:
   - get
   - list
   - watch
+- apiGroups:
+  - tekton.dev
+  resources:
+  - pipelineruns
+  - taskruns
+  - conditions
+  verbs:
+  - get
+  - list
+  - watch

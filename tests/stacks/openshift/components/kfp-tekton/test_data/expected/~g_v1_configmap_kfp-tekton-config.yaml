@@ -1,0 +1,31 @@
+apiVersion: v1
+data:
+  archive_logs: "false"
+  artifact_bucket: mlpipeline
+  artifact_endpoint: minio-service.kubeflow:9000
+  artifact_endpoint_scheme: http://
+  artifact_image: minio/mc
+  artifact_script: |-
+    #!/usr/bin/env sh
+    push_artifact() {
+        tar -cvzf $1.tgz $2
+        mc cp $1.tgz storage/$ARTIFACT_BUCKET/artifacts/$PIPELINERUN/$PIPELINETASK/$1.tgz
+    }
+    push_log() {
+        cat /var/log/containers/$PODNAME*$NAMESPACE*step-main*.log > step-main.log
+        push_artifact main-log step-main.log
+    }
+    strip_eof() {
+        awk 'NF' $2 | head -c -1 > $1_temp_save && cp $1_temp_save $2
+    }
+    mc config host add storage ${ARTIFACT_ENDPOINT_SCHEME}${ARTIFACT_ENDPOINT} $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY
+  inject_default_script: "true"
+  strip_eof: "false"
+  track_artifacts: "true"
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+  name: kfp-tekton-config
+  namespace: kubeflow

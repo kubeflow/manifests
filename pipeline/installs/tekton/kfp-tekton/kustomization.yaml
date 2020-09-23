@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
 - ../../generic
 - catalog-condition.yaml
+- kfp-pipeline-config.yaml
 
 patchesStrategicMerge:
 - metadata-writer-role.yaml
@@ -12,3 +13,5 @@ patchesStrategicMerge:
 - ml-pipeline-ui-role.yaml
 - pipeline-runner-role.yaml
 - scheduledworkflow-role.yaml
+- ml-pipeline-deployment-patch.yaml
+- metadata-writer-deployment-patch.yaml

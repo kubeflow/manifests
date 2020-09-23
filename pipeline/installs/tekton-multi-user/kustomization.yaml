@@ -6,6 +6,7 @@ commonLabels:
   app.kubernetes.io/component: ml-pipeline
 resources:
 - ../multi-user
+- ../tekton/kfp-tekton/kfp-pipeline-config.yaml
 patchesStrategicMerge:
 - metadata-writer-clusterrole.yaml
 - ml-pipeline-apiserver-clusterrole.yaml
@@ -13,6 +14,8 @@ patchesStrategicMerge:
 - ml-pipeline-ui-clusterrole.yaml
 - cache-deployer-clusterrole.yaml
 - scheduled-workflow-clusterrole.yaml
+- ../tekton/kfp-tekton/ml-pipeline-deployment-patch.yaml
+- ../tekton/kfp-tekton/metadata-writer-deployment-patch.yaml
 configMapGenerator:
 - name: kubeflow-pipelines-profile-controller-code
   behavior: replace

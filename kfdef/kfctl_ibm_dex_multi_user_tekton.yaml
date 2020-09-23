@@ -4,28 +4,28 @@ metadata:
   namespace: kubeflow
 spec:
   applications:
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: namespaces/base
+    name: namespaces
   # Install istio in a different namespace: istio-system
   # Remove this application if istio is already installed
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/application/istio-stack
+        path: stacks/ibm/application/istio-1-3-1-stack
     name: istio-stack
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/application/cluster-local-gateway
+        path: stacks/ibm/application/cluster-local-gateway-1-3-1
     name: cluster-local-gateway
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/application/istio
+        path: istio/istio/base
     name: istio
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: stacks/ibm/application/add-anonymous-user-filter
-    name: add-anonymous-user-filter
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -54,6 +54,21 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
+        path: stacks/ibm/application/oidc-authservice
+    name: oidc-authservice
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/dex-auth
+    name: dex-auth
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: metacontroller/base
+    name: metacontroller
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
         path: tektoncd/tektoncd-install/base
     name: tektoncd-install
   - kustomizeConfig:
@@ -61,17 +76,12 @@ spec:
         name: manifests
         path: tektoncd/tektoncd-dashboard/base
     name: tektoncd-dashboard
-  # Install Kubeflow applications.
+  # Install kubeflow applications.
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/tekton
+        path: stacks/ibm/tekton-multi-user
     name: kubeflow-apps
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: metacontroller/base
-    name: metacontroller
   - kustomizeConfig:
       repoRef:
         name: manifests

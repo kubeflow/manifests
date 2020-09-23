@@ -23,6 +23,11 @@ spec:
     spec:
       containers:
       - env:
+        - name: ARCHIVE_LOGS
+          valueFrom:
+            configMapKeyRef:
+              key: archive_logs
+              name: kfp-tekton-config
         - name: NAMESPACE_TO_WATCH
           valueFrom:
             fieldRef:

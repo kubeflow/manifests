@@ -10,8 +10,7 @@ resources:
   - ../application/profiles
   - ../../../pipeline/minio/installs/ibm
   - ../../../pipeline/mysql/installs/ibm
-  - ../../../pipeline/installs/multi-user
-  - ../../../argo/base_v3
+  - ../../../pipeline/installs/tekton-multi-user
   - ../application/metadata
   - ../../../pytorch-job/pytorch-job-crds/overlays/application
   - ../../../pytorch-job/pytorch-operator/overlays/application
@@ -28,10 +27,6 @@ configMapGenerator:
   behavior: merge
   literals:
   - minioPvcName=minio-pv-claim
-- name: workflow-controller-parameters
-  behavior: merge
-  literals:
-  - containerRuntimeExecutor=pns
 - name: profiles-config
   behavior: merge
   literals:

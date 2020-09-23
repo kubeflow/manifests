@@ -250,6 +250,38 @@ data:
                         }
                     }
                 },
+                {
+                    "apiVersion": "tekton.dev/v1alpha1",
+                    "kind": "Condition",
+                    "metadata": {
+                        "name": "super-condition",
+                        "namespace": namespace,
+                    },
+                    "spec": {
+                        "check": {
+                            "image": "python:alpine3.6",
+                            "script": ("python -c 'import sys\ninput1=str.rstrip(sys.argv[1])\n"
+                                       "input2=str.rstrip(sys.argv[2])\ntry:\n  input1=int(input1)\n"
+                                       "  input2=int(input2)\nexcept:\n  input1=str(input1)\nsys.exit(0)"
+                                       " if (input1 $(params.operator) input2) else sys.exit(1)' "
+                                       "'$(params.operand1)' '$(params.operand2)'")
+                        },
+                        "params": [
+                            {
+                                "name": "operand1",
+                                "type": "string"
+                            },
+                            {
+                                "name": "operand2",
+                                "type": "string"
+                            },
+                            {
+                                "name": "operator",
+                                "type": "string"
+                            }
+                        ]
+                    }
+                },
             ]
             print('Received request:', parent)
             print('Desired resources except secrets:', desired_resources)
@@ -284,9 +316,10 @@ data:
     HTTPServer(("", 80), Controller).serve_forever()
 kind: ConfigMap
 metadata:
+  annotations: {}
   labels:
     app: kubeflow-pipelines-profile-controller
     app.kubernetes.io/component: ml-pipeline
     app.kubernetes.io/name: kubeflow-pipelines
-  name: kubeflow-pipelines-profile-controller-code-gd97t2m5f5
+  name: kubeflow-pipelines-profile-controller-code-gg2h6k2fch
   namespace: kubeflow
