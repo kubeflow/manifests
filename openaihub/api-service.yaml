@@ -1,35 +1,27 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: openaihub-ui
+  name: openaihub-api
   namespace: kubeflow
   labels:
-    service: openaihub-ui
+    service: openaihub-api
+    environment: dev
   annotations:
     getambassador.io/config: |-
       ---
       apiVersion: ambassador/v0
       kind:  Mapping
-      name: openaihub-ui
-      prefix: /aiops
-      rewrite: /aiops
+      name: openaihub-api
+      prefix: /apis
+      rewrite: /apis
       timeout_ms: 300000
-      service: openaihub-ui.kubeflow
-      use_websocket: true
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name: openaihub-ui-static
-      prefix: /static
-      rewrite: /static
-      timeout_ms: 300000
-      service: openaihub-ui.kubeflow
+      service: openaihub-api.kubeflow
       use_websocket: true
 spec:
-  ports:
-  - port: 80
-    protocol: TCP
-    targetPort: 3000
   type: NodePort
+  ports:
+  - name: openaihub-api
+    port: 80
+    targetPort: 8080
   selector:
-    service: openaihub-ui
+    service: openaihub-api

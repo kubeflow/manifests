@@ -94,6 +94,11 @@ spec:
         name: manifests
         path: stacks/ibm/application/spartakus
     name: spartakus
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/openaihub
+    name: openaihub
   repos:
   - name: manifests
     uri: https://github.com/IBM/manifests/archive/master.tar.gz
