@@ -101,5 +101,5 @@ spec:
     name: openaihub
   repos:
   - name: manifests
-    uri: https://github.com/IBM/manifests/archive/master.tar.gz
+    uri: https://github.com/moficodes/manifests/archive/master.tar.gz
   version: master
