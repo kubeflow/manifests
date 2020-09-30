@@ -1,0 +1,41 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+commonLabels:
+  kustomize.component: katib
+configMapGenerator:
+- name: katib-db-parameters
+  env: params.env
+secretGenerator:
+- name: katib-db-secrets
+  env: secrets.env
+
+vars:
+- name: mysql-username
+  objref:
+    kind: ConfigMap
+    name: katib-db-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.mysql-username
+- name: mysql-host
+  objref:
+    kind: ConfigMap
+    name: katib-db-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.mysql-host
+- name: mysql-database
+  objref:
+    kind: ConfigMap
+    name: katib-db-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.mysql-database
+configurations:
+- params.yaml
+
+bases:
+- ../../base
+
+patchesStrategicMerge:
+- katib-db-manager-deployment.yaml
