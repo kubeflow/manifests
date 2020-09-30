@@ -6,11 +6,11 @@ commonLabels:
   app.kubernetes.io/name: openaihub
   kustomize.component: openaihub
 resources:
-  - ../../../../api-deploymnet.yaml
-  - ../../../../api-service.yaml
-  - ../../../../ui-deploymnet.yaml
-  - ../../../../ui-service.yaml
-  - ../../../../virtual-service.yaml
-  - ../../../../service-account.yaml
-  - ../../../../cluster-role-binding.yaml
-  - ../../../../cluster-role.yaml
+  - ../../../../openaihub/api-deploymnet.yaml
+  - ../../../../openaihub/api-service.yaml
+  - ../../../../openaihub/ui-deploymnet.yaml
+  - ../../../../openaihub/ui-service.yaml
+  - ../../../../openaihub/virtual-service.yaml
+  - ../../../../openaihub/service-account.yaml
+  - ../../../../openaihub/cluster-role-binding.yaml
+  - ../../../../openaihub/cluster-role.yaml
