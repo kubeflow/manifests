@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openaihub-ui
+  namespace: kubeflow
+  labels:
+    service: openaihub-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: openaihub-ui
+  template:
+    metadata:
+      name: openaihub-ui
+      labels:
+        service: openaihub-ui
+    spec:
+      containers:
+      - name: openaihub-ui
+        # You can use your own webapp image below
+        image: ibmandrewbutler/open-ui:add-homepage
+        imagePullPolicy: Always
+        env:
+        - name: REACT_APP_BRAND
+          value: OpenAIHub
+        - name: REACT_APP_RUN
+          value: "true"
+        - name: REACT_APP_UPLOAD
+          value: "true"
+        - name: REACT_APP_BASE_PATH
+          value: /os
+        ports:
+        - containerPort: 3000

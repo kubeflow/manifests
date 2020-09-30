@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openaihub-api
+  namespace: kubeflow
+  labels:
+    service: openaihub-api
+    environment: dev
+spec:
+  selector:
+    matchLabels:
+       service: openaihub-api
+       environment: dev
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        service: openaihub-api
+        environment: dev
+#        version: v0.1.0-rc1
+        version: v0.1.21-dataset
+    spec:
+      serviceAccountName: openaihub-api
+      containers:
+      - name: openaihub-api-server
+        image: docker.io/aipipeline/openaihub-api:nightly-master
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        resources:
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        livenessProbe:
+          httpGet:
+            path: /apis/v1alpha1/health_check?check_database=true&check_object_store=true
+            port: 8080
+          initialDelaySeconds: 120
+          timeoutSeconds: 10
+          periodSeconds: 60
+          failureThreshold: 3

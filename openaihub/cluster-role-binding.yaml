@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: openaihub-api-access
+subjects:
+- kind: ServiceAccount
+  name: openaihub-api
+  namespace: kubeflow
+roleRef:
+  kind: ClusterRole
+  name: openaihub-api-access
+  apiGroup: rbac.authorization.k8s.io
