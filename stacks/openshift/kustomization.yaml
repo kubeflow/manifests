@@ -3,5 +3,3 @@ kind: Kustomization
 namespace: kubeflow
 resources:
   - application/openshift/openshift-scc
-  - application/istio-stack
-  - application/istio
