@@ -71,12 +71,12 @@ spec:
   #       name: manifests
   #       path: spark/spark-operator/overlays/application
   #   name: spark-operator
-    - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: stacks/azure
+  - kustomizeConfig:
+    repoRef:
+      name: manifests
+      path: stacks/azure
     name: kubeflow-apps
-  # - kustomizeConfig:
+# - kustomizeConfig:
   #     repoRef:
   #       name: manifests
   #       path: knative/installs/generic
