@@ -62,5 +62,5 @@ spec:
     name: kubeflow-apps
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/v1.1-branch.tar.gz
+    uri: https://github.com/sudivate/manifests/blob/sudivate-azure-oidc
   version: v1.1-branch
