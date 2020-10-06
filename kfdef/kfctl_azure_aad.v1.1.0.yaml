@@ -3,8 +3,7 @@ kind: KfDef
 metadata:
   namespace: kubeflow
 spec:
-  applications:
-  # It is expected to have Istio 1.6.x installed in istio-system namespace
+  applications:  
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -19,7 +18,7 @@ spec:
       repoRef:
         name: manifests
         path: stacks/azure/application/istio-1-3-1-stack
-  name: istio-stack
+    name: istio-stack
   - kustomizeConfig: 
       repoRef:
         name: manifests
@@ -29,12 +28,7 @@ spec:
       repoRef:
         name: manifests
         path: stacks/azure/application/istio
-    name: istio
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: stacks/azure/application/add-anonymous-user-filter-istio-1.6
-    name: add-anonymous-user-filter-2  
+    name: istio 
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -67,5 +61,5 @@ spec:
     name: kubeflow-apps
   repos:
   - name: manifests
-    uri: /home/sudivate/kfmanifest/manifests/kfdef/
+    uri: https://github.com/kubeflow/manifests/archive/v1.1-branch.tar.gz    
   version: v1.1-branch
