@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: istio-system
+resources:
+- ../../../../istio/oidc-authservice/overlays/application
+configMapGenerator:
+- name: oidc-authservice-parameters
+  behavior: merge
+  literals:
+  - client_id=<client_id>
+  - oidc_provider=https://login.microsoftonline.com/<tenant_id>/v2.0
+  - oidc_redirect_uri=https://<load_balancer_ip or domain_name>/login/oidc
+  - oidc_auth_url=https://login.microsoftonline.com/<tenant_id>/oauth2/v2.0/authorize
+  - application_secret=<app_secret>
+  - skip_auth_uri=
+  - namespace=istio-system
+  - userid-header=kubeflow-userid
+  - userid-prefix=
