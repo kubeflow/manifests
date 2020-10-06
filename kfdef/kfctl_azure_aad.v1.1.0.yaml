@@ -15,6 +15,11 @@ spec:
         name: manifests
         path: application/v3
     name: application
+  - kustomizeConfig:
+    repoRef:
+      name: manifests
+      path: stacks/azure/application/istio-1-3-1-stack
+  name: istio-stack
   - kustomizeConfig: 
       repoRef:
         name: manifests
@@ -26,10 +31,10 @@ spec:
         path: stacks/azure/application/istio
     name: istio
   - kustomizeConfig:
-    repoRef:
-      name: manifests
-      path: stacks/azure/application/add-anonymous-user-filter-istio-1.6
-    name: add-anonymous-user-filter  
+      repoRef:
+        name: manifests
+        path: stacks/azure/application/add-anonymous-user-filter-istio-1.6
+    name: add-anonymous-user-filter-2  
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -56,11 +61,11 @@ spec:
         path: stacks/azure/application/oidc-authservice
     name: oidc-authservice
   - kustomizeConfig:
-    repoRef:
-      name: manifests
-      path: stacks/azure
+      repoRef:
+        name: manifests
+        path: stacks/azure
     name: kubeflow-apps
   repos:
   - name: manifests
-    uri: https://github.com/sudivate/manifests/blob/sudivate-azure-oidc
+    uri: /home/sudivate/kfmanifest/manifests/kfdef/
   version: v1.1-branch
