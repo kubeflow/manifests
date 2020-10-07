@@ -3,8 +3,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: istio-system
 resources:
-- ../../../../istio/oidc-authservice/overlays/application
+- ../../../../istio/oidc-authservice/base
+- service-account.yaml
 - vs.yaml
+patches:
+- path: sts-patch.yaml
 configMapGenerator:
 - name: oidc-authservice-parameters
   behavior: merge

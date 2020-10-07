@@ -43,6 +43,7 @@ users:
 - system:serviceaccount:$(ISTIO-NAMESPACE):prometheus
 #Component: istio/cluster-local-gateway
 - system:serviceaccount:$(ISTIO-NAMESPACE):cluster-local-gateway-service-account
+- system:serviceaccount:$(ISTIO-NAMESPACE):oidc-authservice-service-account
 volumes:
 - configMap
 - downwardAPI
