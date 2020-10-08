@@ -6,8 +6,8 @@ metadata:
   creationTimestamp: null
   labels:
     app: kfserving
-    app.kubernetes.io/component: kfserving-install
-    app.kubernetes.io/name: kfserving-install
+    app.kubernetes.io/component: kfserving
+    app.kubernetes.io/name: kfserving
     kustomize.component: kfserving
   name: inferenceservice.serving.kubeflow.org
 webhooks:
@@ -41,6 +41,10 @@ webhooks:
     matchExpressions:
     - key: control-plane
       operator: DoesNotExist
+  objectSelector:
+    matchExpressions:
+    - key: serving.kubeflow.org/inferenceservice
+      operator: Exists
   rules:
   - apiGroups:
     - ""
