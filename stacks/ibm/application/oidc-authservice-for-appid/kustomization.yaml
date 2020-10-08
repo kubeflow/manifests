@@ -6,6 +6,9 @@ resources:
 - ../../../../istio/oidc-authservice/base
 - service-account.yaml
 - vs.yaml
+commonLabels:
+  app.kubernetes.io/component: oidc-authservice
+  app.kubernetes.io/name: oidc-authservice
 patches:
 - path: sts-patch.yaml
 configMapGenerator:
