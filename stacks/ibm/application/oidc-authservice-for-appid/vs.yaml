@@ -10,7 +10,7 @@ spec:
   http:
   - match:
     - uri:
-        prefix: /authservice
+        prefix: /login
     route:
     - destination:
         host: authservice.istio-system.svc.cluster.local
