@@ -7,8 +7,8 @@ metadata:
     prometheus.io/scrape: "true"
   labels:
     app: kfserving
-    app.kubernetes.io/component: kfserving-install
-    app.kubernetes.io/name: kfserving-install
+    app.kubernetes.io/component: kfserving
+    app.kubernetes.io/name: kfserving
     control-plane: controller-manager
     controller-tools.k8s.io: "1.0"
     kustomize.component: kfserving
@@ -21,8 +21,8 @@ spec:
     targetPort: https
   selector:
     app: kfserving
-    app.kubernetes.io/component: kfserving-install
-    app.kubernetes.io/name: kfserving-install
+    app.kubernetes.io/component: kfserving
+    app.kubernetes.io/name: kfserving
     control-plane: controller-manager
     controller-tools.k8s.io: "1.0"
     kustomize.component: kfserving
