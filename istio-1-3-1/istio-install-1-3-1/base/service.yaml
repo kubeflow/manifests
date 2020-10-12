@@ -44,6 +44,7 @@ metadata:
   name: istio-ingressgateway
   annotations:
     beta.cloud.google.com/backend-config: '{"ports": {"http2":"iap-backendconfig"}}'
+    cloud.google.com/neg: '{"ingress": false}'
   labels:
     app: istio-ingressgateway
     istio: ingressgateway
