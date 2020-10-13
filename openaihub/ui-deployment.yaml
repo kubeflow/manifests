@@ -19,7 +19,7 @@ spec:
       containers:
       - name: openaihub-ui
         # You can use your own webapp image below
-        image: ibmandrewbutler/open-ui:add-homepage
+        image: aipipeline/openaihub-ui:nightly-origin-master
         imagePullPolicy: Always
         env:
         - name: REACT_APP_BRAND
