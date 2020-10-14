@@ -6,5 +6,5 @@ kind: ConfigMap
 metadata:
   annotations: {}
   labels: {}
-  name: istio-parameters-t6hhgfg9k2
+  name: istio-config
   namespace: kubeflow

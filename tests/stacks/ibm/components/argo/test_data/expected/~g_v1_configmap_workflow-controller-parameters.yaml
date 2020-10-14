@@ -1,0 +1,23 @@
+apiVersion: v1
+data:
+  artifactRepositoryAccessKeySecretKey: accesskey
+  artifactRepositoryAccessKeySecretName: mlpipeline-minio-artifact
+  artifactRepositoryBucket: mlpipeline
+  artifactRepositoryEndpoint: minio-service.kubeflow:9000
+  artifactRepositoryInsecure: "true"
+  artifactRepositoryKeyPrefix: artifacts
+  artifactRepositorySecretKeySecretKey: secretkey
+  artifactRepositorySecretKeySecretName: mlpipeline-minio-artifact
+  clusterDomain: cluster.local
+  containerRuntimeExecutor: pns
+  executorImage: argoproj/argoexec:v2.3.0
+  namespace: ""
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: argo
+    app.kubernetes.io/name: argo
+    kustomize.component: argo
+  name: workflow-controller-parameters
+  namespace: kubeflow
