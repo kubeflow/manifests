@@ -2,6 +2,7 @@ apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
   namespace: kubeflow
+  name: kubeflow-openaihub
 spec:
   applications:
   # Install istio in a different namespace: istio-system
@@ -21,6 +22,11 @@ spec:
         name: manifests
         path: stacks/ibm/application/istio
     name: istio
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/openaihub
+    name: openaihub
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -75,11 +81,6 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/application/spark-operator
-    name: spark-operator
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
         path: knative/installs/generic
     name: knative
   - kustomizeConfig:
@@ -87,18 +88,6 @@ spec:
         name: manifests
         path: kfserving/installs/generic
     name: kfserving
-  # Spartakus is a separate applications so that kfctl can remove it
-  # to disable usage reporting
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: stacks/ibm/application/spartakus
-    name: spartakus
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: stacks/ibm/application/openaihub
-    name: openaihub
   repos:
   - name: manifests
     uri: https://github.com/moficodes/manifests/archive/master.tar.gz
