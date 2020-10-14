@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: kubeflow
 resources:
   - application/openshift/openshift-scc
-#  - ../../argo/base_v3
+  - ../../common/centraldashboard/overlays/stacks
 configMapGenerator:
 - name: kubeflow-config
   envs:
