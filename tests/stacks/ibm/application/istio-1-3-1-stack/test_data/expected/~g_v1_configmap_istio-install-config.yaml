@@ -3,5 +3,5 @@ data:
   namespace: istio-system
 kind: ConfigMap
 metadata:
-  name: istio-install-parameters-5kmkd2f29g
+  name: istio-install-config
   namespace: istio-system
