@@ -1,0 +1,209 @@
+---
+# Source: dlf-chart/charts/csi-nfs-chart/templates/csi-nodeplugin-nfsplugin.yaml
+# This YAML file contains driver-registrar & csi driver nodeplugin API objects
+# that are necessary to run CSI nodeplugin for nfs
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: csi-nodeplugin-nfsplugin
+  labels:
+    app.kubernetes.io/name: "dlf"
+  namespace: dlf
+spec:
+  selector:
+    matchLabels:
+      app: csi-nodeplugin-nfsplugin
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "dlf"
+        app: csi-nodeplugin-nfsplugin
+    spec:
+      serviceAccountName: csi-nodeplugin
+      hostNetwork: true
+      containers:
+        - name: node-driver-registrar
+          image: "quay.io/k8scsi/csi-node-driver-registrar:v2.0.1"
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "rm -rf /registration/csi-nfsplugin /registration/csi-nfsplugin-reg.sock"]
+          args:
+            - --v=10
+            - --csi-address=/plugin/csi.sock
+            - --kubelet-registration-path=/var/lib/kubelet/plugins/csi-nfsplugin/csi.sock
+          env:
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /plugin
+            - name: registration-dir
+              mountPath: /registration
+        - name: nfs
+          securityContext:
+            privileged: true
+            capabilities:
+              add: ["SYS_ADMIN"]
+            allowPrivilegeEscalation: true
+          image: "yiannisgkoufas/csi-nfs:dev-full-amd64"
+          args :
+            - "--nodeid=$(NODE_ID)"
+            - "--endpoint=$(CSI_ENDPOINT)"
+          env:
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: CSI_ENDPOINT
+              value: unix://plugin/csi.sock
+          imagePullPolicy: "IfNotPresent"
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /plugin
+            - name: pods-mount-dir
+              mountPath: /var/lib/kubelet/pods
+              mountPropagation: "Bidirectional"
+      volumes:
+        - name: plugin-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins/csi-nfsplugin
+            type: DirectoryOrCreate
+        - name: pods-mount-dir
+          hostPath:
+            path: /var/lib/kubelet/pods
+            type: Directory
+        - hostPath:
+            path: /var/lib/kubelet/plugins_registry
+            type: Directory
+          name: registration-dir
+---
+# Source: dlf-chart/charts/csi-s3-chart/templates/csi-s3.yaml
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: csi-s3
+  labels:
+    app.kubernetes.io/name: "dlf"
+  namespace: dlf
+spec:
+  selector:
+    matchLabels:
+      app: csi-s3
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "dlf"
+        app: csi-s3
+    spec:
+      serviceAccountName: csi-s3
+      hostNetwork: true
+      containers:
+        - name: driver-registrar
+          image: "quay.io/k8scsi/csi-node-driver-registrar:v2.0.1"
+          imagePullPolicy: Always
+          args:
+            - --v=5
+            - --csi-address=/csi/csi.sock
+            - --kubelet-registration-path=/var/lib/kubelet/plugins/csi-s3/csi.sock
+          securityContext:
+            # This is necessary only for systems with SELinux, where
+            # non-privileged sidecar containers cannot access unix domain socket
+            # created by privileged CSI driver container.
+            privileged: true
+          env:
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+            - mountPath: /registration
+              name: registration-dir
+            - mountPath: /csi-data-dir
+              name: csi-data-dir
+        - name: csi-s3
+          image: "yiannisgkoufas/csi-s3:dev-full-amd64"
+          imagePullPolicy: Always
+          args:
+            - "--v=5"
+            - "--endpoint=$(CSI_ENDPOINT)"
+            - "--nodeid=$(KUBE_NODE_NAME)"
+          env:
+            - name: CSI_ENDPOINT
+              value: unix:///csi/csi.sock
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: cheap
+              value: "off"
+          securityContext:
+            privileged: true
+          #          ports:
+          #            - containerPort: 9898
+          #              name: healthz
+          #              protocol: TCP
+          #          TODO make it configurable and build it for ppc64le
+          #          livenessProbe:
+          #            failureThreshold: 5
+          #            httpGet:
+          #              path: /healthz
+          #              port: healthz
+          #            initialDelaySeconds: 10
+          #            timeoutSeconds: 3
+          #            periodSeconds: 2
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+            - mountPath: /var/lib/kubelet/pods
+              mountPropagation: Bidirectional
+              name: mountpoint-dir
+            - mountPath: /var/lib/kubelet/plugins
+              mountPropagation: Bidirectional
+              name: plugins-dir
+            - mountPath: /csi-data-dir
+              name: csi-data-dir
+            - mountPath: /dev
+              name: dev-dir
+          ##TODO make it configurable and build it for ppc64le
+      #        - name: liveness-probe
+      #          volumeMounts:
+      #            - mountPath: /csi
+      #              name: socket-dir
+      #          image: quay.io/k8scsi/livenessprobe:v1.1.0
+      #          args:
+      #            - --csi-address=/csi/csi.sock
+      #            - --health-port=9898
+      volumes:
+        - hostPath:
+            path: /var/lib/kubelet/plugins/csi-s3
+            type: DirectoryOrCreate
+          name: socket-dir
+        - hostPath:
+            path: /var/lib/kubelet/pods
+            type: DirectoryOrCreate
+          name: mountpoint-dir
+        - hostPath:
+            path: /var/lib/kubelet/plugins_registry
+            type: Directory
+          name: registration-dir
+        - hostPath:
+            path: /var/lib/kubelet/plugins
+            type: Directory
+          name: plugins-dir
+        - hostPath:
+            # 'path' is where PV data is persisted on host.
+            # using /tmp is also possible while the PVs will not available after plugin container recreation or host reboot
+            path: /var/lib/csi-s3/
+            type: DirectoryOrCreate
+          name: csi-data-dir
+        - hostPath:
+            path: /dev
+            type: Directory
+          name: dev-dir

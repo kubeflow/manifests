@@ -1,0 +1,8 @@
+---
+# Source: dlf-chart/templates/namespace.yaml
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: dlf
+  labels:
+    app.kubernetes.io/name: "dlf"

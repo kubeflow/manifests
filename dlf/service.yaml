@@ -1,0 +1,66 @@
+---
+# Source: dlf-chart/charts/csi-nfs-chart/templates/csi-attacher-nfsplugin.yaml
+# This YAML file contains attacher & csi driver API objects that are necessary
+# to run external CSI attacher for nfs
+kind: Service
+apiVersion: v1
+metadata:
+  name: csi-attacher-nfsplugin
+  namespace: dlf
+  labels:
+    app: csi-attacher-nfsplugin
+    app.kubernetes.io/name: "dlf"
+spec:
+  selector:
+    app: csi-attacher-nfsplugin
+  ports:
+    - name: dummy
+      port: 12345
+---
+# Source: dlf-chart/charts/csi-s3-chart/templates/attacher.yaml
+# needed for StatefulSet
+kind: Service
+apiVersion: v1
+metadata:
+  name: csi-attacher-s3
+  namespace: dlf
+  labels:
+    app: csi-attacher-s3
+    app.kubernetes.io/name: "dlf"
+spec:
+  selector:
+    app: csi-attacher-s3
+  ports:
+    - name: dummy
+      port: 12345
+---
+# Source: dlf-chart/charts/csi-s3-chart/templates/provisioner.yaml
+kind: Service
+apiVersion: v1
+metadata:
+  name: csi-provisioner-s3
+  namespace: dlf
+  labels:
+    app: csi-provisioner-s3
+    app.kubernetes.io/name: "dlf"
+spec:
+  selector:
+    app: csi-provisioner-s3
+  ports:
+    - name: dummy
+      port: 12345
+---
+# Source: dlf-chart/charts/dataset-operator-chart/templates/apps/operator.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: webhook-server
+  labels:
+    app.kubernetes.io/name: "dlf"
+  namespace: dlf
+spec:
+  selector:
+    name: dataset-operator
+  ports:
+    - port: 443
+      targetPort: webhook-api

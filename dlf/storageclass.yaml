@@ -1,0 +1,26 @@
+---
+# Source: dlf-chart/charts/csi-s3-chart/templates/storageclass.yaml
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: csi-s3
+  labels:
+    app.kubernetes.io/name: "dlf"
+provisioner: ch.ctrox.csi.s3-driver
+parameters:
+  # specify which mounter to use
+  # can be set to s3fs, goofys
+  # OTHER OPTIONS NOT WORKING!
+  mounter: goofys
+
+  csi.storage.k8s.io/provisioner-secret-name: ${pvc.name}
+  csi.storage.k8s.io/provisioner-secret-namespace: ${pvc.namespace}
+
+  csi.storage.k8s.io/controller-publish-secret-name: ${pvc.name}
+  csi.storage.k8s.io/controller-publish-secret-namespace: ${pvc.namespace}
+
+  csi.storage.k8s.io/node-stage-secret-name: ${pvc.name}
+  csi.storage.k8s.io/node-stage-secret-namespace: ${pvc.namespace}
+
+  csi.storage.k8s.io/node-publish-secret-name: ${pvc.name}
+  csi.storage.k8s.io/node-publish-secret-namespace: ${pvc.namespace}

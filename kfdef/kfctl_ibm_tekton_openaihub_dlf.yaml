@@ -1,0 +1,99 @@
+apiVersion: kfdef.apps.kubeflow.org/v1
+kind: KfDef
+metadata:
+  namespace: kubeflow
+  name: kubeflow-openaihub
+spec:
+  applications:
+  # Install istio in a different namespace: istio-system
+  # Remove this application if istio is already installed
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/istio-stack
+    name: istio-stack
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/cluster-local-gateway
+    name: cluster-local-gateway
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/istio
+    name: istio
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/openaihub
+    name: openaihub
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/dlf
+    name: dlf
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/add-anonymous-user-filter
+    name: add-anonymous-user-filter
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: application/v3
+    name: application
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/bootstrap
+    name: bootstrap
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/cert-manager-crds
+    name: cert-manager-crds
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/cert-manager-kube-system-resources
+    name: cert-manager-kube-system-resources
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/cert-manager
+    name: cert-manager
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: tektoncd/tektoncd-install/base
+    name: tektoncd-install
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: tektoncd/tektoncd-dashboard/base
+    name: tektoncd-dashboard
+  # Install Kubeflow applications.
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/tekton
+    name: kubeflow-apps
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: metacontroller/base
+    name: metacontroller
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: knative/installs/generic
+    name: knative
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: kfserving/installs/generic
+    name: kfserving
+  repos:
+  - name: manifests
+    uri: https://github.com/moficodes/manifests/archive/master.tar.gz
+  version: master

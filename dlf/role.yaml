@@ -1,0 +1,52 @@
+---
+# Source: dlf-chart/charts/csi-s3-chart/templates/attacher-rbac.yaml
+# Attacher must be able to work with configmaps or leases in the current namespace
+# if (and only if) leadership election is enabled
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  # replace with non-default namespace name
+  namespace: dlf
+  name: external-attacher-cfg
+  labels:
+    app.kubernetes.io/name: "dlf"
+rules:
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "watch", "list", "delete", "update", "create"]
+---
+# Source: dlf-chart/charts/csi-s3-chart/templates/provisioner-rbac.yaml
+# Provisioner must be able to work with endpoints in current namespace
+# if (and only if) leadership election is enabled
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  # replace with non-default namespace name
+  namespace: dlf
+  name: external-provisioner-cfg
+  labels:
+    app.kubernetes.io/name: "dlf"
+rules:
+  # Only one of the following rules for endpoints or leases is required based on
+  # what is set for `--leader-election-type`. Endpoints are deprecated in favor of Leases.
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get", "watch", "list", "delete", "update", "create"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "watch", "list", "delete", "update", "create"]
+  # Permissions for CSIStorageCapacity are only needed enabling the publishing
+  # of storage capacity information.
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["csistoragecapacities"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  # The GET permissions below are needed for walking up the ownership chain
+  # for CSIStorageCapacity. They are sufficient for deployment via
+  # StatefulSet (only needs to get Pod) and Deployment (needs to get
+  # Pod and then ReplicaSet to find the Deployment).
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get"]
+  - apiGroups: ["apps"]
+    resources: ["replicasets"]
+    verbs: ["get"]

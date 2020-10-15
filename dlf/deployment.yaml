@@ -1,0 +1,54 @@
+---
+# Source: dlf-chart/charts/dataset-operator-chart/templates/apps/operator.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataset-operator
+  labels:
+    app.kubernetes.io/name: "dlf"
+  namespace: dlf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: dataset-operator
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        name: dataset-operator
+        app.kubernetes.io/name: "dlf"
+    spec:
+      serviceAccountName: dataset-operator
+      containers:
+        - name: dataset-operator
+          # Replace this with the built image name
+          image: "yiannisgkoufas/dataset-operator:latest-amd64"
+          command:
+            - dataset-operator
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8443
+              name: webhook-api
+          env:
+            - name: WATCH_NAMESPACE
+              value: ""
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "dataset-operator"
+            - name: OPERATOR_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          volumeMounts:
+            - name: webhook-tls-certs
+              mountPath: /run/secrets/tls
+              readOnly: true
+      volumes:
+        - name: webhook-tls-certs
+          secret:
+            secretName: webhook-server-tls

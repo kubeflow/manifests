@@ -1,0 +1,27 @@
+---
+# Source: dlf-chart/charts/dataset-operator-chart/templates/apps/create-certificates.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: generate-keys
+  labels:
+    app.kubernetes.io/name: "dlf"
+  namespace: dlf
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "dlf"
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: dataset-operator
+      containers:
+        - name: generate-keys
+          image: "yiannisgkoufas/generate-keys:latest-amd64"
+          imagePullPolicy: Always
+          env:
+            - name: DATASET_OPERATOR_NAMESPACE
+              value: dlf
+      restartPolicy: Never
+  backoffLimit: 4

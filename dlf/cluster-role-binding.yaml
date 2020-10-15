@@ -1,0 +1,103 @@
+---
+# Source: dlf-chart/charts/csi-nfs-chart/templates/csi-attacher-rbac.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: csi-attacher-role-nfs
+  labels:
+    app.kubernetes.io/name: "dlf"
+  namespace: dlf
+subjects:
+  - kind: ServiceAccount
+    name: csi-attacher-nfs
+    namespace: dlf
+roleRef:
+  kind: ClusterRole
+  name: external-attacher-runner-nfs
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: dlf-chart/charts/csi-nfs-chart/templates/csi-nodeplugin-rbac.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: csi-nodeplugin
+  labels:
+    app.kubernetes.io/name: "dlf"
+  namespace: dlf
+subjects:
+  - kind: ServiceAccount
+    name: csi-nodeplugin
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: csi-nodeplugin
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: dlf-chart/charts/csi-s3-chart/templates/attacher-rbac.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: csi-attacher-role
+  labels:
+    app.kubernetes.io/name: "dlf"
+subjects:
+  - kind: ServiceAccount
+    name: csi-attacher
+    # replace with non-default namespace name
+    namespace: dlf
+roleRef:
+  kind: ClusterRole
+  name: external-attacher-runner
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: dlf-chart/charts/csi-s3-chart/templates/csi-s3.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: csi-s3
+  labels:
+    app.kubernetes.io/name: "dlf"
+  namespace: dlf
+subjects:
+  - kind: ServiceAccount
+    name: csi-s3
+    namespace: dlf
+roleRef:
+  kind: ClusterRole
+  name: csi-s3
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: dlf-chart/charts/csi-s3-chart/templates/provisioner-rbac.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: csi-provisioner-role
+  labels:
+    app.kubernetes.io/name: "dlf"
+  namespace: dlf
+subjects:
+  - kind: ServiceAccount
+    name: csi-provisioner
+    # replace with non-default namespace name
+    namespace: dlf
+roleRef:
+  kind: ClusterRole
+  name: external-provisioner-runner
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: dlf-chart/charts/dataset-operator-chart/templates/rbac/role_binding.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: dataset-operator
+  labels:
+    app.kubernetes.io/name: "dlf"
+  namespace: dlf
+subjects:
+- kind: ServiceAccount
+  name: dataset-operator
+  namespace: dlf
+roleRef:
+  kind: ClusterRole
+  name: dataset-operator
+  apiGroup: rbac.authorization.k8s.io

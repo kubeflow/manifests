@@ -1,0 +1,38 @@
+---
+# Source: dlf-chart/charts/csi-s3-chart/templates/attacher-rbac.yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: csi-attacher-role-cfg
+  # replace with non-default namespace name
+  namespace: dlf
+  labels:
+    app.kubernetes.io/name: "dlf"
+subjects:
+  - kind: ServiceAccount
+    name: csi-attacher
+    # replace with non-default namespace name
+    namespace: dlf
+roleRef:
+  kind: Role
+  name: external-attacher-cfg
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: dlf-chart/charts/csi-s3-chart/templates/provisioner-rbac.yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: csi-provisioner-role-cfg
+  # replace with non-default namespace name
+  namespace: dlf
+  labels:
+    app.kubernetes.io/name: "dlf"
+subjects:
+  - kind: ServiceAccount
+    name: csi-provisioner
+    # replace with non-default namespace name
+    namespace: dlf
+roleRef:
+  kind: Role
+  name: external-provisioner-cfg
+  apiGroup: rbac.authorization.k8s.io
