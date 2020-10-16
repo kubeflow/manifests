@@ -16,6 +16,7 @@ spec:
       labels:
         service: openaihub-ui
     spec:
+      serviceAccountName: openaihub-api
       containers:
       - name: openaihub-ui
         # You can use your own webapp image below

@@ -40,6 +40,9 @@ users:
 - system:serviceaccount:$(NAMESPACE):kfserving
 # for admission-webhook
 - system:serviceaccount:$(NAMESPACE):admission-webhook-service-account
+# for openaihub
+- system:serviceaccount:$(NAMESPACE):openaihub-ui
+- system:serviceaccount:$(NAMESPACE):openaihub-api
 volumes:
 - configMap
 - downwardAPI
