@@ -24,6 +24,7 @@ spec:
         command: ["./server/server",
                   "--http_port=8080",
                   "--mysql_service_host=$(MYSQL_HOST)",
+                  "--mlmd_db_name=$(MYSQL_DATABASE)",
                   "--mysql_service_port=$(MYSQL_PORT)",
                   "--mysql_service_user=$(MYSQL_USERNAME)",
                   "--mysql_service_password=$(MYSQL_PASSWORD)"]
