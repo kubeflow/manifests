@@ -1,9 +1,9 @@
 # Metadata Kustomization for Azure
 
-This directory contains configurations and guidelines on settting up metadata service to connect to an [Azure MySQL](https://docs.microsoft.com/en-us/azure/mysql/) database.
+This directory contains configurations and guidelines on setting up metadata service to connect to an [Azure MySQL](https://docs.microsoft.com/en-us/azure/mysql/) database.
 
 #### 1. Create an Azure MySQL database
-Create an Azure MySQL data base following the [guidance](https://docs.microsoft.com/en-us/azure/mysql/quickstart-create-mysql-server-database-using-azure-portal) using Azure Portal. Alternatively, you could also use Azure CLI by following [steps](https://docs.microsoft.com/en-us/azure/mysql/quickstart-create-mysql-server-database-using-azure-cli) here. Take notes for ```server name:```, ```Admin username```, ```Password```. 
+Create an Azure MySQL data base following the [guidance](https://docs.microsoft.com/en-us/azure/mysql/quickstart-create-mysql-server-database-using-azure-portal) using Azure Portal. Alternatively, you could also use Azure CLI by following [steps](https://docs.microsoft.com/en-us/azure/mysql/quickstart-create-mysql-server-database-using-azure-cli) here. Take notes for ```Server Name```, ```Admin username```, and ```Password```. 
 
 By default the server created is protected with a firewall and is not accessible publicly. Follow the [guidance](https://docs.microsoft.com/en-us/azure/mysql/quickstart-create-mysql-server-database-using-azure-portal#configure-a-server-level-firewall-rule) to allow database to be accessible from external IP addresses. Based on your configuration, you might also enable all IP addresses, and disable ```Enforce SSL connection```.
 
@@ -13,10 +13,10 @@ Follow the [installation document for Azure AKS](https://www.kubeflow.org/docs/a
 
 Edit the Azure stack at ```/stacks/azure``` and make change under ```resources``` from ```- ../../metadata/v3``` to ```../../metadata/overlays/azure``` to use Azure MySQL.
 
-Edit ```params.env``` to provide parameters to config map as follows (change the db name to the server name you used):
+Edit ```params.env``` to provide parameters to config map as follows (change the ```[db_name]``` to the server name you used):
 ```
 MYSQL_HOST=[db_name].mysql.database.azure.com
-MYSQL_DATABASE=metadb
+MYSQL_DATABASE=mlmetadata
 MYSQL_PORT=3306
 MYSQL_ALLOW_EMPTY_PASSWORD=true
 ```
@@ -28,4 +28,4 @@ MYSQL_PASSWORD=[admin_password]
 ```
 
 #### 3. Run Kubeflow Installation
-```kfctl apply -V -f ${kfctl_azure.yaml}```
+```kfctl apply -V -f kfctl_azure.yaml```
