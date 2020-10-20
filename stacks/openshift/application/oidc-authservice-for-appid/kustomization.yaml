@@ -11,6 +11,11 @@ commonLabels:
   app.kubernetes.io/name: oidc-authservice
 patches:
 - path: sts-patch.yaml
+- path: container-env-vars.yaml
+  target:
+    version: v1
+    kind: StatefulSet
+    name: authservice
 configMapGenerator:
 - name: oidc-authservice-parameters
   behavior: merge
