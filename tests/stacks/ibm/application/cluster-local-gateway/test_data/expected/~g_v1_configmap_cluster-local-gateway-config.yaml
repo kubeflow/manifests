@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  namespace: istio-system
+kind: ConfigMap
+metadata:
+  labels:
+    kustomize.component: cluster-local-gateway
+  name: cluster-local-gateway-config
+  namespace: istio-system

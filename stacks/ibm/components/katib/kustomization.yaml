@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+resources:
+  - ../../../../katib/installs/katib-standalone-ibm
+vars:
+- fieldref:
+    fieldpath: metadata.namespace
+  name: katib-ui-namespace
+  objref:
+    kind: Service
+    name: katib-ui
+    apiVersion: v1
