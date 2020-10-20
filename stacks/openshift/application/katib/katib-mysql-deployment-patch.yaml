@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: katib-mysql
+spec:
+  template:
+    spec:
+      containers:
+      - name: katib-mysql
+        env:
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: katib-mysql-secrets
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: katib-mysql-secrets
+              key: MYSQL_PASSWORD
+        - name: MYSQL_LOWER_CASE_TABLE_NAMES
+          value: '1'
