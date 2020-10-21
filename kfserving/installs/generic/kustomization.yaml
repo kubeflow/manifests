@@ -21,4 +21,4 @@ images:
   newTag: v0.4.0
 - name: gcr.io/kfserving/kfserving-controller
   newName: gcr.io/kfserving/kfserving-controller
-  newTag: v0.4.0
+  newTag: v0.4.1

@@ -97,6 +97,18 @@ rules:
 - apiGroups:
   - networking.istio.io
   resources:
+  - virtualservices/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - networking.istio.io
+  resources:
   - virtualservices/status
   verbs:
   - get
@@ -117,6 +129,18 @@ rules:
 - apiGroups:
   - serving.knative.dev
   resources:
+  - services/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - serving.knative.dev
+  resources:
   - services/status
   verbs:
   - get
@@ -126,6 +150,7 @@ rules:
   - serving.kubeflow.org
   resources:
   - inferenceservices
+  - inferenceservices/finalizers
   verbs:
   - create
   - delete

@@ -22,7 +22,7 @@ spec:
       kind: RoleBinding
   descriptor:
     type: kfserving
-    version: v0.4.0
+    version: v0.4.1
     description: |-
       KFServing provides a Kubernetes Custom Resource Definition for serving ML Models on arbitrary frameworks
     maintainers:
