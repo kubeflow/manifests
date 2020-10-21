@@ -1,0 +1,6 @@
+- op: replace
+  path: /spec/ports/0/port
+  value: 8443
+- op: replace
+  path: /spec/ports/0/targePort
+  value: 8443
