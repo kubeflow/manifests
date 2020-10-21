@@ -1,0 +1,6 @@
+- op: replace
+  path: /spec/template/spec/containers/0/args/1
+  value: --webhook-port=8443
+- op: replace
+  path: /spec/template/spec/containers/0/ports/0/containerPort
+  value: 8443
