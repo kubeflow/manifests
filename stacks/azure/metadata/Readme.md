@@ -11,7 +11,7 @@ By default the server created is protected with a firewall and is not accessible
 Follow the [installation document for Azure AKS](https://www.kubeflow.org/docs/azure/deploy/install-kubeflow/) until the step to build and apply the ```CONFIG_URI```. Download your configuration file, so that you can customize the configuration before deploying Kubeflow by running ```wget -O kfctl_azure.yaml ${CONFIG_URI}```, where the ```${CONFIG_URL}``` should be the one you specified in the previous steps. Run
 ```kfctl build -V -f kfctl_azure.yaml```.
 
-Edit the Azure stack at ```/stacks/azure``` and make change under ```resources``` from ```- ../../metadata/v3``` to ```../../metadata/overlays/azure``` to use Azure MySQL.
+Edit the Azure stack at ```/stacks/azure``` and make change under ```resources``` from ```- ../../metadata/v3``` to ```metadata``` to use Azure MySQL.
 
 Edit ```params.env``` to provide parameters to config map as follows (change the ```[db_name]``` to the server name you used):
 ```

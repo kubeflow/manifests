@@ -11,6 +11,6 @@ secretGenerator:
   envs:
   - secrets.env
 bases:
-- ../../base
+- ../../../metadata/base/
 patchesStrategicMerge:
 - metadata-deployment.yaml
