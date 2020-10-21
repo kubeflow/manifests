@@ -63,6 +63,8 @@ spec:
         - $(CLUSTER_ADMIN)
         - -userid-prefix
         - $(USERID_PREFIX)
+        - -userid-header
+        - $(USERID_HEADER)
         env:
         - name: USERID_HEADER
           valueFrom:
@@ -79,7 +81,7 @@ spec:
             configMapKeyRef:
               key: admin
               name: profiles-profiles-config-4mgcmtgk6t
-        image: gcr.io/kubeflow-images-public/kfam:vmaster-gf3e09203
+        image: gcr.io/kubeflow-images-public/kfam:v1.1.0-g9f3bfd00
         imagePullPolicy: Always
         livenessProbe:
           httpGet:

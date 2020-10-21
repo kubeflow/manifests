@@ -1,0 +1,16 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: cluster-local-gateway
+    istio: cluster-local-gateway
+    kustomize.component: cluster-local-gateway
+  name: cluster-local-gateway
+  namespace: istio-system
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: cluster-local-gateway
+      istio: cluster-local-gateway
+      kustomize.component: cluster-local-gateway

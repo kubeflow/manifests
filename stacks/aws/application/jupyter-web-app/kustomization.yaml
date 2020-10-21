@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+resources:
+- ../../../../jupyter/jupyter-web-app/base_v3
+configMapGenerator:
+- name: jupyter-web-app-config
+  behavior: merge
+  files:
+  - ./configs/spawner_ui_config.yaml

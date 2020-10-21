@@ -93,22 +93,22 @@ class KptCreator:
   @staticmethod
   def create_subst_mgmt(path):
     # Management cluster is using us-central1
-    create_setter("mgmt-location", "us-central1-f", path)
-    create_setter("mgmt-name", "mgmt-name", path)
-    create_setter("mgmt-project", "mgmt-project-id", path)
+    create_setter("location", "us-central1-f", path)
+    create_setter("name", "name", path)
+    create_setter("gcloud.core.project", "project", path)
 
-    create_subst("mgmt-cluster-name",
-                 "mgmt-project-id/mgmt-location/mgmt-name",
-                 "${mgmt-project}/${mgmt-location}/${mgmt-name}", path)
+    create_subst("cluster-name",
+                 "project-id/mgmt-location/mgmt-name",
+                 "${gcloud.core.project}/${location}/${name}", path)
 
-    create_subst("mgmt-pool",
+    create_subst("pool",
                  "name-pool",
-                 "${mgmt-name}-pool", path)
+                 "${name}-pool", path)
 
     create_subst(
-      "mgmt-cnrm-sa",
+      "cnrm-sa",
       "serviceAccount:mgmt-project-id.svc.id.goog[cnrm-system/cnrm-controller-manager]",
-      "serviceAccount:${mgmt-project}.svc.id.goog[cnrm-system/cnrm-controller-manager]",
+      "serviceAccount:${gcloud.core.project}.svc.id.goog[cnrm-system/cnrm-controller-manager]",
       path)
 
   @staticmethod
