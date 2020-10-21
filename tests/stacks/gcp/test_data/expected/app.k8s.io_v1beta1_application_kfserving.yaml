@@ -39,7 +39,7 @@ spec:
     - email: johnugeo@cisco.com
       name: Johnu George
     type: kfserving
-    version: v0.4.0
+    version: v0.4.1
   selector:
     matchLabels:
       app.kubernetes.io/component: kfserving

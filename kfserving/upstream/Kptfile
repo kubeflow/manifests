@@ -5,7 +5,7 @@ metadata:
 upstream:
   type: git
   git:
-    commit: c1e2fa478f1fb8db6e5c4069e0bab86a557332d5
+    commit: 3a96bd34ed562c5beabf7e4d84af1257694cffde
     repo: https://github.com/kubeflow/kfserving
-    directory: /install/v0.4.0
+    directory: /install/v0.4.1
     ref: master

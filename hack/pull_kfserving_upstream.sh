@@ -8,7 +8,7 @@ set -ex
 
 # Please edit the following version before running the script to pull new
 # kfserving version.
-export KFSERVING_VERSION=v0.4.0
+export KFSERVING_VERSION=v0.4.1
 export KFSERVING_SRC_REPO=https://github.com/kubeflow/kfserving.git
 
 if [ -d kfserving/upstream ]; then
