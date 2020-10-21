@@ -1,0 +1,57 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+resources:
+- ../../../../seldon/seldon-core-operator/overlays/application
+
+#patchesJson6902:
+patches:
+- target:
+    kind: MutatingWebhookConfiguration
+    version: v1beta1
+    group: admissionregistration.k8s.io
+    name: seldon-mutating-webhook-configuration-kubeflow
+  path: patchport.yaml
+
+- target:
+    kind: ValidatingWebhookConfiguration
+    version: v1beta1
+    group: admissionregistration.k8s.io
+    name: seldon-validating-webhook-configuration-kubeflow
+  path: vpatchport.yaml
+
+- target:
+    kind: Service
+    version: v1
+    name: seldon-webhook-service
+  path: resourcepatchport.yaml
+
+- target:
+    kind: Deployment
+    group: apps
+    version: v1
+    name: seldon-controller-manager
+  path: deploymentpatchport.yaml
+
+configMapGenerator:
+- envs:
+  - ../../config/params.env
+  name: kubeflow-config
+vars:
+# We need to define vars at the top level otherwise we will get
+# conflicts.
+- fieldref:
+    fieldPath: data.clusterDomain
+  name: clusterDomain
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kubeflow-config
+- fieldref:
+    fieldPath: metadata.namespace
+  name: namespace
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kubeflow-config
+
