@@ -3,11 +3,11 @@ kind: Kustomization
 namespace: kubeflow
 resources:
 - ../../../../jupyter/notebook-controller/base_v3
+
+patchesStrategicMerge:
+- ./configs/addfsgroup-env.yaml
+
 configMapGenerator:
-- name: notebook-controller-config
-  behavior: merge
-  files:
-  - ./configs/addfsgroup-env.yaml
 - name: kubeflow-config
   envs:
   - ../../config/params.env
@@ -29,7 +29,3 @@ vars:
     kind: ConfigMap
     name: kubeflow-config
 
-images:
-- name: gcr.io/kubeflow-images-public/notebook-controller
-  newTag: v1.0.0
-  newName: quay.io/kubeflow/notebook-controller
