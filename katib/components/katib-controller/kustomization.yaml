@@ -11,10 +11,10 @@ resources:
   - ../../katib-controller/base/katib-ui-rbac.yaml
   - ../../katib-controller/base/katib-ui-service.yaml
   - ../../katib-controller/base/trial-template-configmap.yaml
-  - ../../katib-controller/base/trial-template-configmap-labeled.yaml
   - ../../katib-controller/overlays/application/application.yaml
   - ../../katib-controller/overlays/istio/katib-ui-virtual-service.yaml
 images:
+  # TODO: Change images
   - name: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller
     newTag: ce89cbf
     newName: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-controller

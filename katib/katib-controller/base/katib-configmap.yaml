@@ -3,6 +3,7 @@ kind: ConfigMap
 metadata:
   name: katib-config
 data:
+  # TODO: change images
   metrics-collector-sidecar: |-
     {
       "StdOut": {

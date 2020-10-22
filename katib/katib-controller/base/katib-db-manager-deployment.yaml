@@ -22,6 +22,7 @@ spec:
     spec:
       containers:
       - name: katib-db-manager
+      # TODO change image
         image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-db-manager
         imagePullPolicy: IfNotPresent
         env:

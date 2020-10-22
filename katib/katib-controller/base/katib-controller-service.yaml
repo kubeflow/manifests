@@ -8,12 +8,12 @@ metadata:
     prometheus.io/scrape: "true"
 spec:
   ports:
-  - port: 443
-    protocol: TCP
-    targetPort: 8443
-    name: webhook
-  - name: metrics
-    port: 8080
-    targetPort: 8080
+    - port: 443
+      protocol: TCP
+      targetPort: 8443
+      name: webhook
+    - name: metrics
+      port: 8080
+      targetPort: 8080
   selector:
     app: katib-controller
