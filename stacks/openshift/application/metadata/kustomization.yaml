@@ -8,6 +8,15 @@ resources:
 patchesStrategicMerge:
 - metadata-db-deployment.yaml
 
+patches:
+- target:
+    kind: Deployment
+    version: v1
+    group: apps
+    name: metadata-db
+  path: patchdb.yaml
+
+
 configMapGenerator:
 - name: kubeflow-config
   envs:
