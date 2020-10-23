@@ -5,6 +5,12 @@ metadata:
   namespace: kubeflow
 spec:
   applications:
+# This needs to be first to set up permissions
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/application/openshift/openshift-scc
+    name: openshift-scc
   - kustomizeConfig:
       repoRef:
         name: manifests
