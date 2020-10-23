@@ -16,7 +16,11 @@ OIDC auth service:
 
 ## How to use
 
-Create a secret prior to kubeflow deployment by filling parameters accordingly:
+1. Create the namespace `istio-system` if you don't have it:
+```SHELL
+kubectl create namespace istio-system
+```
+2. Create a secret prior to kubeflow deployment by filling parameters accordingly:
 ```SHELL
 kubectl create secret generic appid-application-configuration -n istio-system \
   --from-literal=clientId=<clientId> \
@@ -24,7 +28,6 @@ kubectl create secret generic appid-application-configuration -n istio-system \
   --from-literal=oAuthServerUrl=<oAuthServerUrl> \
   --from-literal=oidcRedirectUrl=https://<routeFQDN>/login/oidc
 ```
-
 * `<oAuthServerUrl>` - fill in the value of `oAuthServerUrl`
 * `<clientId>` - fill in the value of `clientId`
 * `<secret>` - fill in the value of `secret`
