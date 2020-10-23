@@ -16,7 +16,7 @@ OIDC auth service:
 
 ## How to use
 
-1. Create the namespace `istio-system` if you don't have it:
+1. Create the namespace `istio-system` if not exist:
 ```SHELL
 kubectl create namespace istio-system
 ```
@@ -31,13 +31,14 @@ kubectl create secret generic appid-application-configuration -n istio-system \
 * `<oAuthServerUrl>` - fill in the value of `oAuthServerUrl`
 * `<clientId>` - fill in the value of `clientId`
 * `<secret>` - fill in the value of `secret`
-* `<routeFQDN>` - fill in the public endpoint of istio ingressgateway.
+* `<routeFQDN>` - fill in the FQDN of OpenShift Route of istio ingress gateway
 
-Notice that the environment variable `REDIRECT_URL` should be updated with the
-actual FQDN of public endpoint of istio ingressgateway, either via ingress or
-route. And please keep the path to `/login/oidc`.
+Notice that it recommend using HTTPS for the value of `oidcRedirectUrl`, which
+requires additional setup:
+1. enable [TLS passthrough](https://docs.openshift.com/enterprise/3.0/architecture/core_concepts/routes.html#passthrough-termination) mode for the route.
+2. expose kubeflow dashboard over HTTPS by following steps of [this section](https://www.kubeflow.org/docs/ibm/deploy/authentication/#exposing-the-kubeflow-dashboard-with-dns-and-tls-termination).
 
 After deploying Kubeflow successfully, you will need to add the value of
-`oidcRedirectUrl` to the IBM Cloud AppID instance under the _Authentication 
-Settings_ of the _Manage Authentication_ menu. Or AppID won't redirect authenticated requests
-back to Kubeflow.
+`https://<routeFQDN>/login/oidc` to the IBM Cloud AppID instance under the
+_Authentication Settings_ of the _Manage Authentication_ menu. Or AppID won't
+redirect authenticated requests back to Kubeflow.
