@@ -5,6 +5,14 @@ resources:
 - ../../../../pipeline/minio/installs/generic
 - ../../../../pipeline/mysql/installs/generic
 - ../../../../pipeline/installs/multi-user
+# Disabling tls traffic in Destination Rule because of issue: https://github.com/kubeflow/kubeflow/issues/5271
+patches:
+- target:
+    kind: DestinationRule
+    version: v1alpha3
+    group: networking.istio.io
+    name: ml-pipeline-ui
+  path: patchuirule.yaml
 
 configMapGenerator:
 - name: kubeflow-pipelines-profile-controller-code
