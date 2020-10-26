@@ -22,7 +22,7 @@ vars:
     fieldPath: metadata.namespace
   name: namespace
   objref:
-    apiVersion: v1alpha3
+    apiVersion: networking.istio.io/v1alpha3
     kind: VirtualService
     name: kfam
 #This image we created to disable sidecar injection, keeping it out for now
