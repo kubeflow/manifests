@@ -22,11 +22,11 @@ vars:
     fieldPath: metadata.namespace
   name: namespace
   objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: kubeflow-config
-
-images:
-- name: gcr.io/kubeflow-images-public/profile-controller
-  newName: quay.io/kubeflow/profile-controller
-  newTag: v0.7.0
+    apiVersion: v1alpha3
+    kind: VirtualService
+    name: kfam
+#This image we created to disable sidecar injection, keeping it out for now
+#images:
+#- name: gcr.io/kubeflow-images-public/profile-controller
+#  newName: quay.io/kubeflow/profile-controller
+#  newTag: v0.7.0
