@@ -19,23 +19,25 @@ configMapGenerator:
   behavior: replace
   files:
   - sync.py
-- envs:
-  - ../../config/params.env
-  name: kubeflow-config
-vars:
+#commenting these out for now since pipelines has to be installed in main kustomize because of
+# the dependency on profiles
+#- envs:
+#  - ../../config/params.env
+#  name: kubeflow-config
+#vars:
 # We need to define vars at the top level otherwise we will get
 # conflicts.
-- fieldref:
-    fieldPath: data.clusterDomain
-  name: clusterDomain
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: kubeflow-config
-- fieldref:
-    fieldPath: metadata.namespace
-  name: namespace
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: kubeflow-config
+#- fieldref:
+#    fieldPath: data.clusterDomain
+#  name: clusterDomain
+#  objref:
+#    apiVersion: v1
+#    kind: ConfigMap
+#    name: kubeflow-config
+#- fieldref:
+#    fieldPath: metadata.namespace
+#  name: namespace
+#  objref:
+#    apiVersion: v1
+#    kind: ConfigMap
+#    name: kubeflow-config
