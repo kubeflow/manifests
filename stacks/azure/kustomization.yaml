@@ -31,6 +31,8 @@ resources:
   - ../../default-install/base
   # Metadata
   - ../../metadata/v3
+  # Uncomment the line below if you want to use Azure MySQL
+  # - ./metadata
 configMapGenerator:
 - name: workflow-controller-parameters
   behavior: merge
