@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: kubeflow
 resources:
 - ../../../../istio/istio/base
+
 configMapGenerator:
 - name: istio-parameters
   behavior: merge

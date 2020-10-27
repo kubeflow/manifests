@@ -4,3 +4,4 @@ namespace: istio-system
 resources:
 - ../../../../istio/istio-crds/base
 - ../../../../istio/istio-install/base
+- ingressgateway.route.yaml
