@@ -54,13 +54,8 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/application/oidc-authservice
+        path: stacks/ibm/application/oidc-authservice-appid
     name: oidc-authservice
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: stacks/ibm/application/dex-auth
-    name: dex-auth
   - kustomizeConfig:
       repoRef:
         name: manifests
