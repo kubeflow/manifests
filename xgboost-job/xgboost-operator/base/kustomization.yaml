@@ -16,4 +16,4 @@ configMapGenerator:
 images:
 - name: gcr.io/kubeflow-images-public/xgboost-operator
   newName: gcr.io/kubeflow-images-public/xgboost-operator
-  newTag: v0.1.0
+  newTag: vmaster-g56c2c075
