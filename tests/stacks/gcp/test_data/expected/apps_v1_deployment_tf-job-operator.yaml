@@ -38,6 +38,6 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: gcr.io/kubeflow-images-public/tf_operator:vmaster-ga2ae7bff
+        image: gcr.io/kubeflow-images-public/tf_operator:vmaster-gda226016
         name: tf-job-operator
       serviceAccountName: tf-job-operator
