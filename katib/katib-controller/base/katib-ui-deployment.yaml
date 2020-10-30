@@ -22,8 +22,7 @@ spec:
     spec:
       containers:
         - name: katib-ui
-          # TODO: Change image
-          image: gcr.io/kubeflow-images-public/katib/v1alpha3/katib-ui
+          image: docker.io/kubeflowkatib/katib-ui
           imagePullPolicy: IfNotPresent
           command:
             - "./katib-ui"

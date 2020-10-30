@@ -60,7 +60,7 @@ spec:
     - email: andrey.velichkevich@gmail.com
       name: Andrey Velichkevich
     type: katib
-    version: v1alpha3
+    version: v1beta1
   selector:
     matchLabels:
       app.kubernetes.io/component: katib
