@@ -7196,3 +7196,9 @@ spec:
   - name: v1alpha3
     served: true
     storage: false
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

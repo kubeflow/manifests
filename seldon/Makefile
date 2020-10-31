@@ -1,4 +1,5 @@
 
+# Copy values.yaml from desired seldon-core release and modify
 # If updating values.yaml
 # certManager: true
 # Istio.enabled: true
