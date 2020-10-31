@@ -7,7 +7,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.2.1'
+    app.kubernetes.io/version: '1.4.0'
   name: 'seldon-manager'
   namespace: 'kubeflow'
 ---
@@ -16,7 +16,7 @@ apiVersion: v1
 data:
   credentials: '{"gcs":{"gcsCredentialFileName":"gcloud-application-credentials.json"},"s3":{"s3AccessKeyIDName":"awsAccessKeyID","s3SecretAccessKeyName":"awsSecretAccessKey"}}'
   explainer: '{"image":"seldonio/alibiexplainer:1.2.1"}'
-  predictor_servers: '{"MLFLOW_SERVER":{"grpc":{"defaultImageVersion":"1.2.1","image":"seldonio/mlflowserver_grpc"},"rest":{"defaultImageVersion":"1.2.1","image":"seldonio/mlflowserver_rest"}},"SKLEARN_SERVER":{"grpc":{"defaultImageVersion":"1.2.1","image":"seldonio/sklearnserver_grpc"},"rest":{"defaultImageVersion":"1.2.1","image":"seldonio/sklearnserver_rest"}},"TENSORFLOW_SERVER":{"grpc":{"defaultImageVersion":"1.2.1","image":"seldonio/tfserving-proxy_grpc"},"rest":{"defaultImageVersion":"1.2.1","image":"seldonio/tfserving-proxy_rest"},"tensorflow":true,"tfImage":"tensorflow/serving:2.1.0"},"XGBOOST_SERVER":{"grpc":{"defaultImageVersion":"1.2.1","image":"seldonio/xgboostserver_grpc"},"rest":{"defaultImageVersion":"1.2.1","image":"seldonio/xgboostserver_rest"}}}'
+  predictor_servers: '{"MLFLOW_SERVER":{"grpc":{"defaultImageVersion":"1.2.1","image":"seldonio/mlflowserver_grpc"},"rest":{"defaultImageVersion":"1.2.1","image":"seldonio/mlflowserver_rest"}},"SKLEARN_SERVER":{"grpc":{"defaultImageVersion":"1.2.1","image":"seldonio/sklearnserver_grpc"},"protocols":{"kfserving":{"defaultImageVersion":"0.1.0","image":"seldonio/mlserver"}},"rest":{"defaultImageVersion":"1.2.1","image":"seldonio/sklearnserver_rest"}},"TENSORFLOW_SERVER":{"grpc":{"defaultImageVersion":"1.2.1","image":"seldonio/tfserving-proxy_grpc"},"rest":{"defaultImageVersion":"1.2.1","image":"seldonio/tfserving-proxy_rest"},"tensorflow":true,"tfImage":"tensorflow/serving:2.1.0"},"TRITON_SERVER":{"grpc":{"defaultImageVersion":"20.08-py3","image":"nvcr.io/nvidia/tritonserver"},"rest":{"defaultImageVersion":"20.08-py3","image":"nvcr.io/nvidia/tritonserver"}},"XGBOOST_SERVER":{"grpc":{"defaultImageVersion":"1.2.1","image":"seldonio/xgboostserver_grpc"},"protocols":{"kfserving":{"defaultImageVersion":"0.1.0","image":"seldonio/mlserver"}},"rest":{"defaultImageVersion":"1.2.1","image":"seldonio/xgboostserver_rest"}}}'
   storageInitializer: '{"cpuLimit":"1","cpuRequest":"100m","image":"gcr.io/kfserving/storage-initializer:0.2.2","memoryLimit":"1Gi","memoryRequest":"100Mi"}'
 kind: ConfigMap
 metadata:
@@ -24,7 +24,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.2.1'
+    app.kubernetes.io/version: '1.4.0'
     control-plane: seldon-controller-manager
   name: seldon-config
   namespace: 'kubeflow'
@@ -41,7 +41,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.2.1'
+    app.kubernetes.io/version: '1.4.0'
   name: seldondeployments.machinelearning.seldon.io
 spec:
   group: machinelearning.seldon.io
@@ -307,7 +307,184 @@ spec:
                           required:
                           - maxReplicas
                           type: object
+                        kedaSpec:
+                          description: SeldonScaledObjectSpec is the spec for a KEDA ScaledObject resource
+                          properties:
+                            advanced:
+                              description: AdvancedConfig specifies advance scaling options
+                              properties:
+                                horizontalPodAutoscalerConfig:
+                                  description: HorizontalPodAutoscalerConfig specifies horizontal scale config
+                                  properties:
+                                    behavior:
+                                      description: HorizontalPodAutoscalerBehavior configures the scaling behavior of the target in both Up and Down directions (scaleUp and scaleDown fields respectively).
+                                      properties:
+                                        scaleDown:
+                                          description: scaleDown is scaling policy for scaling Down. If not set, the default value is to allow to scale down to minReplicas pods, with a 300 second stabilization window (i.e., the highest recommendation for the last 300sec is used).
+                                          properties:
+                                            policies:
+                                              description: policies is a list of potential scaling polices which can be used during scaling. At least one policy must be specified, otherwise the HPAScalingRules will be discarded as invalid
+                                              items:
+                                                description: HPAScalingPolicy is a single policy which must hold true for a specified past interval.
+                                                properties:
+                                                  periodSeconds:
+                                                    description: PeriodSeconds specifies the window of time for which the policy should hold true. PeriodSeconds must be greater than zero and less than or equal to 1800 (30 min).
+                                                    format: int32
+                                                    type: integer
+                                                  type:
+                                                    description: Type is used to specify the scaling policy.
+                                                    type: string
+                                                  value:
+                                                    description: Value contains the amount of change which is permitted by the policy. It must be greater than zero
+                                                    format: int32
+                                                    type: integer
+                                                required:
+                                                - periodSeconds
+                                                - type
+                                                - value
+                                                type: object
+                                              type: array
+                                            selectPolicy:
+                                              description: selectPolicy is used to specify which policy should be used. If not set, the default value MaxPolicySelect is used.
+                                              type: string
+                                            stabilizationWindowSeconds:
+                                              description: 'StabilizationWindowSeconds is the number of seconds for which past recommendations should be considered while scaling up or scaling down. StabilizationWindowSeconds must be greater than or equal to zero and less than or equal to 3600 (one hour). If not set, use the default values: - For scale up: 0 (i.e. no stabilization is done). - For scale down: 300 (i.e. the stabilization window is 300 seconds long).'
+                                              format: int32
+                                              type: integer
+                                          type: object
+                                        scaleUp:
+                                          description: 'scaleUp is scaling policy for scaling Up. If not set, the default value is the higher of:   * increase no more than 4 pods per 60 seconds   * double the number of pods per 60 seconds No stabilization is used.'
+                                          properties:
+                                            policies:
+                                              description: policies is a list of potential scaling polices which can be used during scaling. At least one policy must be specified, otherwise the HPAScalingRules will be discarded as invalid
+                                              items:
+                                                description: HPAScalingPolicy is a single policy which must hold true for a specified past interval.
+                                                properties:
+                                                  periodSeconds:
+                                                    description: PeriodSeconds specifies the window of time for which the policy should hold true. PeriodSeconds must be greater than zero and less than or equal to 1800 (30 min).
+                                                    format: int32
+                                                    type: integer
+                                                  type:
+                                                    description: Type is used to specify the scaling policy.
+                                                    type: string
+                                                  value:
+                                                    description: Value contains the amount of change which is permitted by the policy. It must be greater than zero
+                                                    format: int32
+                                                    type: integer
+                                                required:
+                                                - periodSeconds
+                                                - type
+                                                - value
+                                                type: object
+                                              type: array
+                                            selectPolicy:
+                                              description: selectPolicy is used to specify which policy should be used. If not set, the default value MaxPolicySelect is used.
+                                              type: string
+                                            stabilizationWindowSeconds:
+                                              description: 'StabilizationWindowSeconds is the number of seconds for which past recommendations should be considered while scaling up or scaling down. StabilizationWindowSeconds must be greater than or equal to zero and less than or equal to 3600 (one hour). If not set, use the default values: - For scale up: 0 (i.e. no stabilization is done). - For scale down: 300 (i.e. the stabilization window is 300 seconds long).'
+                                              format: int32
+                                              type: integer
+                                          type: object
+                                      type: object
+                                    resourceMetrics:
+                                      items:
+                                        description: ResourceMetricSource indicates how to scale on a resource metric known to Kubernetes, as specified in requests and limits, describing each pod in the current scale target (e.g. CPU or memory).  The values will be averaged together before being compared to the target.  Such metrics are built in to Kubernetes, and have special scaling options on top of those available to normal per-pod metrics using the "pods" source.  Only one "target" type should be set.
+                                        properties:
+                                          name:
+                                            description: name is the name of the resource in question.
+                                            type: string
+                                          target:
+                                            description: target specifies the target value for the given metric
+                                            properties:
+                                              averageUtilization:
+                                                description: averageUtilization is the target value of the average of the resource metric across all relevant pods, represented as a percentage of the requested value of the resource for the pods. Currently only valid for Resource metric source type
+                                                format: int32
+                                                type: integer
+                                              averageValue:
+                                                anyOf:
+                                                - type: integer
+                                                - type: string
+                                                description: averageValue is the target value of the average of the metric across all relevant pods (as a quantity)
+                                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                x-kubernetes-int-or-string: true
+                                              type:
+                                                description: type represents whether the metric type is Utilization, Value, or AverageValue
+                                                type: string
+                                              value:
+                                                anyOf:
+                                                - type: integer
+                                                - type: string
+                                                description: value is the target value of the metric (as a quantity).
+                                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                x-kubernetes-int-or-string: true
+                                            required:
+                                            - type
+                                            type: object
+                                        required:
+                                        - name
+                                        - target
+                                        type: object
+                                      type: array
+                                  type: object
+                                restoreToOriginalReplicaCount:
+                                  type: boolean
+                              type: object
+                            cooldownPeriod:
+                              format: int32
+                              type: integer
+                            maxReplicaCount:
+                              format: int32
+                              type: integer
+                            minReplicaCount:
+                              format: int32
+                              type: integer
+                            pollingInterval:
+                              format: int32
+                              type: integer
+                            triggers:
+                              items:
+                                description: ScaleTriggers reference the scaler that will be used
+                                properties:
+                                  authenticationRef:
+                                    description: ScaledObjectAuthRef points to the TriggerAuthentication object that is used to authenticate the scaler with the environment
+                                    properties:
+                                      name:
+                                        type: string
+                                    required:
+                                    - name
+                                    type: object
+                                  metadata:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                  name:
+                                    type: string
+                                  type:
+                                    type: string
+                                required:
+                                - metadata
+                                - type
+                                type: object
+                              type: array
+                          required:
+                          - triggers
+                          type: object
                         metadata:
+                          type: object
+                        pdbSpec:
+                          properties:
+                            maxUnavailable:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              description: An eviction is allowed if at most "maxUnavailable" pods in the deployment corresponding to a componentSpec are unavailable after the eviction, i.e. even in absence of the evicted pod. For example, one can prevent all voluntary evictions by specifying 0. MaxUnavailable and MinAvailable are mutually exclusive.
+                              x-kubernetes-int-or-string: true
+                            minAvailable:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              description: An eviction is allowed if at least "minAvailable" pods in the deployment corresponding to a componentSpec will still be available after the eviction, i.e. even in the absence of the evicted pod.  So for example you can prevent all voluntary evictions by specifying "100%".
+                              x-kubernetes-int-or-string: true
                           type: object
                         replicas:
                           format: int32
@@ -1022,6 +1199,7 @@ spec:
                                           type: string
                                       required:
                                       - containerPort
+                                      - protocol
                                       type: object
                                     type: array
                                     x-kubernetes-list-map-keys:
@@ -1191,18 +1369,18 @@ spec:
                                         description: The Windows specific settings applied to all containers. If unspecified, the options from the PodSecurityContext will be used. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence.
                                         properties:
                                           gmsaCredentialSpec:
-                                            description: GMSACredentialSpec is where the GMSA admission webhook (https://github.com/kubernetes-sigs/windows-gmsa) inlines the contents of the GMSA credential spec named by the GMSACredentialSpecName field. This field is alpha-level and is only honored by servers that enable the WindowsGMSA feature flag.
+                                            description: GMSACredentialSpec is where the GMSA admission webhook (https://github.com/kubernetes-sigs/windows-gmsa) inlines the contents of the GMSA credential spec named by the GMSACredentialSpecName field.
                                             type: string
                                           gmsaCredentialSpecName:
-                                            description: GMSACredentialSpecName is the name of the GMSA credential spec to use. This field is alpha-level and is only honored by servers that enable the WindowsGMSA feature flag.
+                                            description: GMSACredentialSpecName is the name of the GMSA credential spec to use.
                                             type: string
                                           runAsUserName:
-                                            description: The UserName in Windows to run the entrypoint of the container process. Defaults to the user specified in image metadata if unspecified. May also be set in PodSecurityContext. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence. This field is beta-level and may be disabled with the WindowsRunAsUserName feature flag.
+                                            description: The UserName in Windows to run the entrypoint of the container process. Defaults to the user specified in image metadata if unspecified. May also be set in PodSecurityContext. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence.
                                             type: string
                                         type: object
                                     type: object
                                   startupProbe:
-                                    description: 'StartupProbe indicates that the Pod has successfully initialized. If specified, no other probes are executed until this completes successfully. If this probe fails, the Pod will be restarted, just as if the livenessProbe failed. This can be used to provide different probe parameters at the beginning of a Pod''s lifecycle, when it might take a long time to load data or warm a cache, than during steady-state operation. This cannot be updated. This is an alpha feature enabled by the StartupProbe feature flag. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
+                                    description: 'StartupProbe indicates that the Pod has successfully initialized. If specified, no other probes are executed until this completes successfully. If this probe fails, the Pod will be restarted, just as if the livenessProbe failed. This can be used to provide different probe parameters at the beginning of a Pod''s lifecycle, when it might take a long time to load data or warm a cache, than during steady-state operation. This cannot be updated. This is a beta feature enabled by the StartupProbe feature flag. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
                                     properties:
                                       exec:
                                         description: One and only one of the following should be specified. Exec specifies the action to take.
@@ -1302,7 +1480,7 @@ spec:
                                     description: Whether this container should allocate a TTY for itself, also requires 'stdin' to be true. Default is false.
                                     type: boolean
                                   volumeDevices:
-                                    description: volumeDevices is the list of block devices to be used by the container. This is a beta feature.
+                                    description: volumeDevices is the list of block devices to be used by the container.
                                     items:
                                       description: volumeDevice describes a mapping of a raw block device within a container.
                                       properties:
@@ -1932,13 +2110,13 @@ spec:
                                         description: The Windows specific settings applied to all containers. If unspecified, the options from the PodSecurityContext will be used. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence.
                                         properties:
                                           gmsaCredentialSpec:
-                                            description: GMSACredentialSpec is where the GMSA admission webhook (https://github.com/kubernetes-sigs/windows-gmsa) inlines the contents of the GMSA credential spec named by the GMSACredentialSpecName field. This field is alpha-level and is only honored by servers that enable the WindowsGMSA feature flag.
+                                            description: GMSACredentialSpec is where the GMSA admission webhook (https://github.com/kubernetes-sigs/windows-gmsa) inlines the contents of the GMSA credential spec named by the GMSACredentialSpecName field.
                                             type: string
                                           gmsaCredentialSpecName:
-                                            description: GMSACredentialSpecName is the name of the GMSA credential spec to use. This field is alpha-level and is only honored by servers that enable the WindowsGMSA feature flag.
+                                            description: GMSACredentialSpecName is the name of the GMSA credential spec to use.
                                             type: string
                                           runAsUserName:
-                                            description: The UserName in Windows to run the entrypoint of the container process. Defaults to the user specified in image metadata if unspecified. May also be set in PodSecurityContext. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence. This field is beta-level and may be disabled with the WindowsRunAsUserName feature flag.
+                                            description: The UserName in Windows to run the entrypoint of the container process. Defaults to the user specified in image metadata if unspecified. May also be set in PodSecurityContext. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence.
                                             type: string
                                         type: object
                                     type: object
@@ -2046,7 +2224,7 @@ spec:
                                     description: Whether this container should allocate a TTY for itself, also requires 'stdin' to be true. Default is false.
                                     type: boolean
                                   volumeDevices:
-                                    description: volumeDevices is the list of block devices to be used by the container. This is a beta feature.
+                                    description: volumeDevices is the list of block devices to be used by the container.
                                     items:
                                       description: volumeDevice describes a mapping of a raw block device within a container.
                                       properties:
@@ -2492,6 +2670,7 @@ spec:
                                           type: string
                                       required:
                                       - containerPort
+                                      - protocol
                                       type: object
                                     type: array
                                     x-kubernetes-list-map-keys:
@@ -2661,18 +2840,18 @@ spec:
                                         description: The Windows specific settings applied to all containers. If unspecified, the options from the PodSecurityContext will be used. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence.
                                         properties:
                                           gmsaCredentialSpec:
-                                            description: GMSACredentialSpec is where the GMSA admission webhook (https://github.com/kubernetes-sigs/windows-gmsa) inlines the contents of the GMSA credential spec named by the GMSACredentialSpecName field. This field is alpha-level and is only honored by servers that enable the WindowsGMSA feature flag.
+                                            description: GMSACredentialSpec is where the GMSA admission webhook (https://github.com/kubernetes-sigs/windows-gmsa) inlines the contents of the GMSA credential spec named by the GMSACredentialSpecName field.
                                             type: string
                                           gmsaCredentialSpecName:
-                                            description: GMSACredentialSpecName is the name of the GMSA credential spec to use. This field is alpha-level and is only honored by servers that enable the WindowsGMSA feature flag.
+                                            description: GMSACredentialSpecName is the name of the GMSA credential spec to use.
                                             type: string
                                           runAsUserName:
-                                            description: The UserName in Windows to run the entrypoint of the container process. Defaults to the user specified in image metadata if unspecified. May also be set in PodSecurityContext. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence. This field is beta-level and may be disabled with the WindowsRunAsUserName feature flag.
+                                            description: The UserName in Windows to run the entrypoint of the container process. Defaults to the user specified in image metadata if unspecified. May also be set in PodSecurityContext. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence.
                                             type: string
                                         type: object
                                     type: object
                                   startupProbe:
-                                    description: 'StartupProbe indicates that the Pod has successfully initialized. If specified, no other probes are executed until this completes successfully. If this probe fails, the Pod will be restarted, just as if the livenessProbe failed. This can be used to provide different probe parameters at the beginning of a Pod''s lifecycle, when it might take a long time to load data or warm a cache, than during steady-state operation. This cannot be updated. This is an alpha feature enabled by the StartupProbe feature flag. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
+                                    description: 'StartupProbe indicates that the Pod has successfully initialized. If specified, no other probes are executed until this completes successfully. If this probe fails, the Pod will be restarted, just as if the livenessProbe failed. This can be used to provide different probe parameters at the beginning of a Pod''s lifecycle, when it might take a long time to load data or warm a cache, than during steady-state operation. This cannot be updated. This is a beta feature enabled by the StartupProbe feature flag. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
                                     properties:
                                       exec:
                                         description: One and only one of the following should be specified. Exec specifies the action to take.
@@ -2772,7 +2951,7 @@ spec:
                                     description: Whether this container should allocate a TTY for itself, also requires 'stdin' to be true. Default is false.
                                     type: boolean
                                   volumeDevices:
-                                    description: volumeDevices is the list of block devices to be used by the container. This is a beta feature.
+                                    description: volumeDevices is the list of block devices to be used by the container.
                                     items:
                                       description: volumeDevice describes a mapping of a raw block device within a container.
                                       properties:
@@ -2877,6 +3056,9 @@ spec:
                                   description: "A special supplemental group that applies to all containers in a pod. Some volume types allow the Kubelet to change the ownership of that volume to be owned by the pod: \n 1. The owning GID will be the FSGroup 2. The setgid bit is set (new files created in the volume will be owned by FSGroup) 3. The permission bits are OR'd with rw-rw---- \n If unset, the Kubelet will not modify the ownership and permissions of any volume."
                                   format: int64
                                   type: integer
+                                fsGroupChangePolicy:
+                                  description: 'fsGroupChangePolicy defines behavior of changing ownership and permission of the volume before being exposed inside Pod. This field will only apply to volume types which support fsGroup based ownership(and permissions). It will have no effect on ephemeral volume types such as: secret, configmaps and emptydir. Valid values are "OnRootMismatch" and "Always". If not specified defaults to "Always".'
+                                  type: string
                                 runAsGroup:
                                   description: The GID to run the entrypoint of the container process. Uses runtime default if unset. May also be set in SecurityContext.  If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence for that container.
                                   format: int64
@@ -2930,13 +3112,13 @@ spec:
                                   description: The Windows specific settings applied to all containers. If unspecified, the options within a container's SecurityContext will be used. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence.
                                   properties:
                                     gmsaCredentialSpec:
-                                      description: GMSACredentialSpec is where the GMSA admission webhook (https://github.com/kubernetes-sigs/windows-gmsa) inlines the contents of the GMSA credential spec named by the GMSACredentialSpecName field. This field is alpha-level and is only honored by servers that enable the WindowsGMSA feature flag.
+                                      description: GMSACredentialSpec is where the GMSA admission webhook (https://github.com/kubernetes-sigs/windows-gmsa) inlines the contents of the GMSA credential spec named by the GMSACredentialSpecName field.
                                       type: string
                                     gmsaCredentialSpecName:
-                                      description: GMSACredentialSpecName is the name of the GMSA credential spec to use. This field is alpha-level and is only honored by servers that enable the WindowsGMSA feature flag.
+                                      description: GMSACredentialSpecName is the name of the GMSA credential spec to use.
                                       type: string
                                     runAsUserName:
-                                      description: The UserName in Windows to run the entrypoint of the container process. Defaults to the user specified in image metadata if unspecified. May also be set in PodSecurityContext. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence. This field is beta-level and may be disabled with the WindowsRunAsUserName feature flag.
+                                      description: The UserName in Windows to run the entrypoint of the container process. Defaults to the user specified in image metadata if unspecified. May also be set in PodSecurityContext. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence.
                                       type: string
                                   type: object
                               type: object
@@ -2980,7 +3162,7 @@ spec:
                                 type: object
                               type: array
                             topologySpreadConstraints:
-                              description: TopologySpreadConstraints describes how a group of pods ought to spread across topology domains. Scheduler will schedule pods in a way which abides by the constraints. This field is alpha-level and is only honored by clusters that enables the EvenPodsSpread feature. All topologySpreadConstraints are ANDed.
+                              description: TopologySpreadConstraints describes how a group of pods ought to spread across topology domains. Scheduler will schedule pods in a way which abides by the constraints. This field is only honored by clusters that enable the EvenPodsSpread feature. All topologySpreadConstraints are ANDed.
                               items:
                                 description: TopologySpreadConstraint specifies how to spread matching pods among the given topology.
                                 properties:
@@ -3429,6 +3611,7 @@ spec:
                                   type: string
                               required:
                               - containerPort
+                              - protocol
                               type: object
                             type: array
                             x-kubernetes-list-map-keys:
@@ -3598,18 +3781,18 @@ spec:
                                 description: The Windows specific settings applied to all containers. If unspecified, the options from the PodSecurityContext will be used. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence.
                                 properties:
                                   gmsaCredentialSpec:
-                                    description: GMSACredentialSpec is where the GMSA admission webhook (https://github.com/kubernetes-sigs/windows-gmsa) inlines the contents of the GMSA credential spec named by the GMSACredentialSpecName field. This field is alpha-level and is only honored by servers that enable the WindowsGMSA feature flag.
+                                    description: GMSACredentialSpec is where the GMSA admission webhook (https://github.com/kubernetes-sigs/windows-gmsa) inlines the contents of the GMSA credential spec named by the GMSACredentialSpecName field.
                                     type: string
                                   gmsaCredentialSpecName:
-                                    description: GMSACredentialSpecName is the name of the GMSA credential spec to use. This field is alpha-level and is only honored by servers that enable the WindowsGMSA feature flag.
+                                    description: GMSACredentialSpecName is the name of the GMSA credential spec to use.
                                     type: string
                                   runAsUserName:
-                                    description: The UserName in Windows to run the entrypoint of the container process. Defaults to the user specified in image metadata if unspecified. May also be set in PodSecurityContext. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence. This field is beta-level and may be disabled with the WindowsRunAsUserName feature flag.
+                                    description: The UserName in Windows to run the entrypoint of the container process. Defaults to the user specified in image metadata if unspecified. May also be set in PodSecurityContext. If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence.
                                     type: string
                                 type: object
                             type: object
                           startupProbe:
-                            description: 'StartupProbe indicates that the Pod has successfully initialized. If specified, no other probes are executed until this completes successfully. If this probe fails, the Pod will be restarted, just as if the livenessProbe failed. This can be used to provide different probe parameters at the beginning of a Pod''s lifecycle, when it might take a long time to load data or warm a cache, than during steady-state operation. This cannot be updated. This is an alpha feature enabled by the StartupProbe feature flag. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
+                            description: 'StartupProbe indicates that the Pod has successfully initialized. If specified, no other probes are executed until this completes successfully. If this probe fails, the Pod will be restarted, just as if the livenessProbe failed. This can be used to provide different probe parameters at the beginning of a Pod''s lifecycle, when it might take a long time to load data or warm a cache, than during steady-state operation. This cannot be updated. This is a beta feature enabled by the StartupProbe feature flag. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
                             properties:
                               exec:
                                 description: One and only one of the following should be specified. Exec specifies the action to take.
@@ -3709,7 +3892,7 @@ spec:
                             description: Whether this container should allocate a TTY for itself, also requires 'stdin' to be true. Default is false.
                             type: boolean
                           volumeDevices:
-                            description: volumeDevices is the list of block devices to be used by the container. This is a beta feature.
+                            description: volumeDevices is the list of block devices to be used by the container.
                             items:
                               description: volumeDevice describes a mapping of a raw block device within a container.
                               properties:
@@ -4052,6 +4235,11 @@ spec:
                     type: integer
                   shadow:
                     type: boolean
+                  ssl:
+                    properties:
+                      certSecretName:
+                        type: string
+                    type: object
                   svcOrchSpec:
                     properties:
                       env:
@@ -4172,6 +4360,8 @@ spec:
             replicas:
               format: int32
               type: integer
+            serverType:
+              type: string
             transport:
               type: string
           required:
@@ -4248,7 +4438,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.2.1'
+    app.kubernetes.io/version: '1.4.0'
   name: seldon-manager-role-kubeflow
 rules:
 - apiGroups:
@@ -4314,6 +4504,38 @@ rules:
   - autoscaling
   resources:
   - horizontalpodautoscalers/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - keda.sh
+  resources:
+  - scaledobjects
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - keda.sh
+  resources:
+  - scaledobjects/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - keda.sh
+  resources:
+  - scaledobjects/status
   verbs:
   - get
   - patch
@@ -4387,6 +4609,26 @@ rules:
   - patch
   - update
 - apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
   - v1
   resources:
   - namespaces
@@ -4424,7 +4666,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.2.1'
+    app.kubernetes.io/version: '1.4.0'
   name: seldon-manager-sas-role-kubeflow
 rules:
 - apiGroups:
@@ -4460,7 +4702,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.2.1'
+    app.kubernetes.io/version: '1.4.0'
   name: seldon-manager-rolebinding-kubeflow
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -4479,7 +4721,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.2.1'
+    app.kubernetes.io/version: '1.4.0'
   name: seldon-manager-sas-rolebinding-kubeflow
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -4498,7 +4740,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.2.1'
+    app.kubernetes.io/version: '1.4.0'
   name: seldon-leader-election-role
   namespace: 'kubeflow'
 rules:
@@ -4537,7 +4779,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.2.1'
+    app.kubernetes.io/version: '1.4.0'
   name: seldon-leader-election-rolebinding
   namespace: 'kubeflow'
 roleRef:
@@ -4557,7 +4799,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.2.1'
+    app.kubernetes.io/version: '1.4.0'
   name: seldon-webhook-service
   namespace: 'kubeflow'
 spec:
@@ -4579,7 +4821,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.2.1'
+    app.kubernetes.io/version: '1.4.0'
     control-plane: seldon-controller-manager
   name: seldon-controller-manager
   namespace: 'kubeflow'
@@ -4641,6 +4883,8 @@ spec:
           value: ''
         - name: RELATED_IMAGE_EXPLAINER
           value: ''
+        - name: RELATED_IMAGE_MOCK_CLASSIFIER
+          value: ''
         - name: MANAGER_CREATE_RESOURCES
           value: 'false'
         - name: POD_NAMESPACE
@@ -4677,6 +4921,8 @@ spec:
           value: '/prometheus'
         - name: ISTIO_ENABLED
           value: 'true'
+        - name: KEDA_ENABLED
+          value: 'false'
         - name: ISTIO_GATEWAY
           value: '$(SERVICE_NAMESPACE)/kubeflow-gateway'
         - name: ISTIO_TLS_MODE
@@ -4701,6 +4947,22 @@ spec:
           value: 'http://default-broker'
         - name: DEFAULT_USER_ID
           value: '8888'
+        - name: EXECUTOR_DEFAULT_CPU_REQUEST
+          value: '500m'
+        - name: EXECUTOR_DEFAULT_MEMORY_REQUEST
+          value: '512Mi'
+        - name: EXECUTOR_DEFAULT_CPU_LIMIT
+          value: '500m'
+        - name: EXECUTOR_DEFAULT_MEMORY_LIMIT
+          value: '512Mi'
+        - name: ENGINE_DEFAULT_CPU_REQUEST
+          value: '500m'
+        - name: ENGINE_DEFAULT_MEMORY_REQUEST
+          value: '512Mi'
+        - name: ENGINE_DEFAULT_CPU_LIMIT
+          value: '500m'
+        - name: ENGINE_DEFAULT_MEMORY_LIMIT
+          value: '512Mi'
         image: 'docker.io/seldonio/seldon-core-operator:1.2.1'
         imagePullPolicy: 'IfNotPresent'
         name: manager
@@ -4738,7 +5000,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.2.1'
+    app.kubernetes.io/version: '1.4.0'
   name: seldon-serving-cert
   namespace: 'kubeflow'
 spec:
@@ -4759,7 +5021,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.2.1'
+    app.kubernetes.io/version: '1.4.0'
   name: seldon-selfsigned-issuer
   namespace: 'kubeflow'
 spec:
@@ -4776,11 +5038,11 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.2.1'
+    app.kubernetes.io/version: '1.4.0'
   name: seldon-mutating-webhook-configuration-kubeflow
 webhooks:
 - clientConfig:
-    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQU9CZGZ4N0xmZXVEZnJ2QXFUK0hDWDh3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF3TnpFd01UYzFOREV4V2hjTgpNakV3TnpFd01UYzFOREV4V2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFLSEVLQ09YVW1LN2FRS1VHL0ZjbTMwSTVmVnYKTVJlc3dGbi9yb3pxR1I2Rm5HSm9zbjFiZStJY05PZkdvUERUNkJ4T2pYRXVvczRvQjFabjNXamZZL3ZaVnNCagpjSjdCWld3TzZlUmwrUEZNOUV5S0ZwTVhncnVHdjRBTlpOZ3BrejkyYURBTTV2S1RSYng0QUVCRFdjQlgxWE93CjdEdFZrOVNpY0Q5cTdMVGYzWDBYSHF1SlRiQTNmNXhJbndEMWp2ZjltMzdZanNIRnZva3ZscGR3MFpicFhjeWYKVFozYWw0SVJ5SmU3TWJDaTV4Wm9PcmZ0R1NzT2IrNnRTemVKbU5nVjM2N3ZHbnliSEJSSmlUVTBYeGJid3hEawpjazIvNnFFMXgzOWxxUlYvOWNURWk4UE1DbU9oV0dkeFQ3cTJQS1NmeVBhSm50VWVnUndXcjZIdDRVY0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQXRMcldyeGxmMgpuU2pjNEFvK3FJaHBITXZYc21nVFJXbFNKNXR0aW1tZHE0TkpwWDBMeWJQRmVoQ2RGOTUweXRvejIxMVFZbENECmVKd3k1YXY1eHA2NTdKZ0h0ckRWb1djTmxFUnNMa0JOOElaTlI2THdJdkMrbFZjYzU0RGVRWU5XbG5neSttYnMKT3FoYWlQVXVoWTRjZW9TeENlNDlYSHVnQko4VVdZUTUwcWl4Y1hmRjdzK1JQLzZuQXRhVDRrbWVkek1HckxFbwp1a3JzcXNaOWV5SHNDYmtKTW0rcHROWWtXMUhzU29ORlhHRnZYTE5GTEllZVJpa0hyRk15Tmg3dVhwQjI2cTVrCnVES2lvL0dNNitIRG5GN1p5VXVYTVEyOWhjc1VZZ2tBcVFJZGhKWnV5R281WmpjK1VNL3hyMlFwc0tYSjBmUXoKVHpvR3I0L1JzdTRBCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
+    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQUppU0VlblBTaU5uYnhyZ2hoa0tScjR3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF4TURNeE1EazBNakl3V2hjTgpNakV4TURNeE1EazBNakl3V2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFMNzdQWnpJMjBhNVpFZGFXOSs3Ynkzb0M1K1kKazdzWXlXczYza2ZFU2g2ejZleHpERXpwbm12QVRIcENuWWRRWGF0YWNoNmV2RVlvQ1gvTytHQlZqRC85Vkc2VAplTTk4eE1WSnhrZUZablJIa1phRGhQNFpjVHJ1Ymc0azdtQXFsbUNKdjZKdVprZUIyTFhVa0k4ZmFGa3hJNmtmCnRnSERWK3JlNlBiUTJOTloxaXdERnpMdEU1SjU0ZkljN1BLR1hldGpDVUhwWFZxRG0waDN5emhhRzA4dUZ6Nk8KU2R6dnB6ZG50VnFqd2IrN3ZVVXFWaSsvQ2VWR1k2RElqdFRxaVNueHp1dksvM01sNU81dVNvVXVyK0Q2dVJmbQpIaUM5K1hkSE5pVXhzOG02TUNINVBGTFVKUW1uV1hSYm9SdzhMMjhMeHpuQ25RREk5SFE1cGV4SWRna0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ0o2K0Z1ZE5NWgpNeGMydnVwaVZhY3dlMW1ydnJSc09iTDYrWnNXbDFXQ1BOUjhkZVRLbk5zZlFSYks0SDBGZXptZHd2Q09CQVBhCkU2cTIyYnJvYW5WOTVhb01tUXp5bmp0N1RzdjE1VmFvRXAxVEFEWVFGQzJyem1VQ2Nrc1crbjhHeDVRYW1QbU8KYUxmMGpVQ3JGVytWdVp1OXNpcmdLcEhidWFtTzBVc3NjT3dQRzhXMnZLWWh6NUtRZis5YjJGemt5L1hIcHUxbAp3Uno2eWQrdThOMDU1eDRISGgwdmk5ZW5xRGtYcjdxOHZ3dGZCVE1pY1JhUW5NbW9JYXFpYzVibGhaRXB1Q1R4CkJxdDk0N1NsTWFkZDh2V0tycU8walpmRnpCcXhvWWRhV3Z1a2tSOUN6T2d0b0JUaUpGUG5WeUdzYStRN3lQY2cKVDJ3M0lvK0NDTW1iCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
     service:
       name: seldon-webhook-service
       namespace: 'kubeflow'
@@ -4804,7 +5066,7 @@ webhooks:
     resources:
     - seldondeployments
 - clientConfig:
-    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQU9CZGZ4N0xmZXVEZnJ2QXFUK0hDWDh3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF3TnpFd01UYzFOREV4V2hjTgpNakV3TnpFd01UYzFOREV4V2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFLSEVLQ09YVW1LN2FRS1VHL0ZjbTMwSTVmVnYKTVJlc3dGbi9yb3pxR1I2Rm5HSm9zbjFiZStJY05PZkdvUERUNkJ4T2pYRXVvczRvQjFabjNXamZZL3ZaVnNCagpjSjdCWld3TzZlUmwrUEZNOUV5S0ZwTVhncnVHdjRBTlpOZ3BrejkyYURBTTV2S1RSYng0QUVCRFdjQlgxWE93CjdEdFZrOVNpY0Q5cTdMVGYzWDBYSHF1SlRiQTNmNXhJbndEMWp2ZjltMzdZanNIRnZva3ZscGR3MFpicFhjeWYKVFozYWw0SVJ5SmU3TWJDaTV4Wm9PcmZ0R1NzT2IrNnRTemVKbU5nVjM2N3ZHbnliSEJSSmlUVTBYeGJid3hEawpjazIvNnFFMXgzOWxxUlYvOWNURWk4UE1DbU9oV0dkeFQ3cTJQS1NmeVBhSm50VWVnUndXcjZIdDRVY0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQXRMcldyeGxmMgpuU2pjNEFvK3FJaHBITXZYc21nVFJXbFNKNXR0aW1tZHE0TkpwWDBMeWJQRmVoQ2RGOTUweXRvejIxMVFZbENECmVKd3k1YXY1eHA2NTdKZ0h0ckRWb1djTmxFUnNMa0JOOElaTlI2THdJdkMrbFZjYzU0RGVRWU5XbG5neSttYnMKT3FoYWlQVXVoWTRjZW9TeENlNDlYSHVnQko4VVdZUTUwcWl4Y1hmRjdzK1JQLzZuQXRhVDRrbWVkek1HckxFbwp1a3JzcXNaOWV5SHNDYmtKTW0rcHROWWtXMUhzU29ORlhHRnZYTE5GTEllZVJpa0hyRk15Tmg3dVhwQjI2cTVrCnVES2lvL0dNNitIRG5GN1p5VXVYTVEyOWhjc1VZZ2tBcVFJZGhKWnV5R281WmpjK1VNL3hyMlFwc0tYSjBmUXoKVHpvR3I0L1JzdTRBCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
+    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQUppU0VlblBTaU5uYnhyZ2hoa0tScjR3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF4TURNeE1EazBNakl3V2hjTgpNakV4TURNeE1EazBNakl3V2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFMNzdQWnpJMjBhNVpFZGFXOSs3Ynkzb0M1K1kKazdzWXlXczYza2ZFU2g2ejZleHpERXpwbm12QVRIcENuWWRRWGF0YWNoNmV2RVlvQ1gvTytHQlZqRC85Vkc2VAplTTk4eE1WSnhrZUZablJIa1phRGhQNFpjVHJ1Ymc0azdtQXFsbUNKdjZKdVprZUIyTFhVa0k4ZmFGa3hJNmtmCnRnSERWK3JlNlBiUTJOTloxaXdERnpMdEU1SjU0ZkljN1BLR1hldGpDVUhwWFZxRG0waDN5emhhRzA4dUZ6Nk8KU2R6dnB6ZG50VnFqd2IrN3ZVVXFWaSsvQ2VWR1k2RElqdFRxaVNueHp1dksvM01sNU81dVNvVXVyK0Q2dVJmbQpIaUM5K1hkSE5pVXhzOG02TUNINVBGTFVKUW1uV1hSYm9SdzhMMjhMeHpuQ25RREk5SFE1cGV4SWRna0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ0o2K0Z1ZE5NWgpNeGMydnVwaVZhY3dlMW1ydnJSc09iTDYrWnNXbDFXQ1BOUjhkZVRLbk5zZlFSYks0SDBGZXptZHd2Q09CQVBhCkU2cTIyYnJvYW5WOTVhb01tUXp5bmp0N1RzdjE1VmFvRXAxVEFEWVFGQzJyem1VQ2Nrc1crbjhHeDVRYW1QbU8KYUxmMGpVQ3JGVytWdVp1OXNpcmdLcEhidWFtTzBVc3NjT3dQRzhXMnZLWWh6NUtRZis5YjJGemt5L1hIcHUxbAp3Uno2eWQrdThOMDU1eDRISGgwdmk5ZW5xRGtYcjdxOHZ3dGZCVE1pY1JhUW5NbW9JYXFpYzVibGhaRXB1Q1R4CkJxdDk0N1NsTWFkZDh2V0tycU8walpmRnpCcXhvWWRhV3Z1a2tSOUN6T2d0b0JUaUpGUG5WeUdzYStRN3lQY2cKVDJ3M0lvK0NDTW1iCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
     service:
       name: seldon-webhook-service
       namespace: 'kubeflow'
@@ -4828,7 +5090,7 @@ webhooks:
     resources:
     - seldondeployments
 - clientConfig:
-    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQU9CZGZ4N0xmZXVEZnJ2QXFUK0hDWDh3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF3TnpFd01UYzFOREV4V2hjTgpNakV3TnpFd01UYzFOREV4V2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFLSEVLQ09YVW1LN2FRS1VHL0ZjbTMwSTVmVnYKTVJlc3dGbi9yb3pxR1I2Rm5HSm9zbjFiZStJY05PZkdvUERUNkJ4T2pYRXVvczRvQjFabjNXamZZL3ZaVnNCagpjSjdCWld3TzZlUmwrUEZNOUV5S0ZwTVhncnVHdjRBTlpOZ3BrejkyYURBTTV2S1RSYng0QUVCRFdjQlgxWE93CjdEdFZrOVNpY0Q5cTdMVGYzWDBYSHF1SlRiQTNmNXhJbndEMWp2ZjltMzdZanNIRnZva3ZscGR3MFpicFhjeWYKVFozYWw0SVJ5SmU3TWJDaTV4Wm9PcmZ0R1NzT2IrNnRTemVKbU5nVjM2N3ZHbnliSEJSSmlUVTBYeGJid3hEawpjazIvNnFFMXgzOWxxUlYvOWNURWk4UE1DbU9oV0dkeFQ3cTJQS1NmeVBhSm50VWVnUndXcjZIdDRVY0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQXRMcldyeGxmMgpuU2pjNEFvK3FJaHBITXZYc21nVFJXbFNKNXR0aW1tZHE0TkpwWDBMeWJQRmVoQ2RGOTUweXRvejIxMVFZbENECmVKd3k1YXY1eHA2NTdKZ0h0ckRWb1djTmxFUnNMa0JOOElaTlI2THdJdkMrbFZjYzU0RGVRWU5XbG5neSttYnMKT3FoYWlQVXVoWTRjZW9TeENlNDlYSHVnQko4VVdZUTUwcWl4Y1hmRjdzK1JQLzZuQXRhVDRrbWVkek1HckxFbwp1a3JzcXNaOWV5SHNDYmtKTW0rcHROWWtXMUhzU29ORlhHRnZYTE5GTEllZVJpa0hyRk15Tmg3dVhwQjI2cTVrCnVES2lvL0dNNitIRG5GN1p5VXVYTVEyOWhjc1VZZ2tBcVFJZGhKWnV5R281WmpjK1VNL3hyMlFwc0tYSjBmUXoKVHpvR3I0L1JzdTRBCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
+    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQUppU0VlblBTaU5uYnhyZ2hoa0tScjR3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF4TURNeE1EazBNakl3V2hjTgpNakV4TURNeE1EazBNakl3V2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFMNzdQWnpJMjBhNVpFZGFXOSs3Ynkzb0M1K1kKazdzWXlXczYza2ZFU2g2ejZleHpERXpwbm12QVRIcENuWWRRWGF0YWNoNmV2RVlvQ1gvTytHQlZqRC85Vkc2VAplTTk4eE1WSnhrZUZablJIa1phRGhQNFpjVHJ1Ymc0azdtQXFsbUNKdjZKdVprZUIyTFhVa0k4ZmFGa3hJNmtmCnRnSERWK3JlNlBiUTJOTloxaXdERnpMdEU1SjU0ZkljN1BLR1hldGpDVUhwWFZxRG0waDN5emhhRzA4dUZ6Nk8KU2R6dnB6ZG50VnFqd2IrN3ZVVXFWaSsvQ2VWR1k2RElqdFRxaVNueHp1dksvM01sNU81dVNvVXVyK0Q2dVJmbQpIaUM5K1hkSE5pVXhzOG02TUNINVBGTFVKUW1uV1hSYm9SdzhMMjhMeHpuQ25RREk5SFE1cGV4SWRna0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ0o2K0Z1ZE5NWgpNeGMydnVwaVZhY3dlMW1ydnJSc09iTDYrWnNXbDFXQ1BOUjhkZVRLbk5zZlFSYks0SDBGZXptZHd2Q09CQVBhCkU2cTIyYnJvYW5WOTVhb01tUXp5bmp0N1RzdjE1VmFvRXAxVEFEWVFGQzJyem1VQ2Nrc1crbjhHeDVRYW1QbU8KYUxmMGpVQ3JGVytWdVp1OXNpcmdLcEhidWFtTzBVc3NjT3dQRzhXMnZLWWh6NUtRZis5YjJGemt5L1hIcHUxbAp3Uno2eWQrdThOMDU1eDRISGgwdmk5ZW5xRGtYcjdxOHZ3dGZCVE1pY1JhUW5NbW9JYXFpYzVibGhaRXB1Q1R4CkJxdDk0N1NsTWFkZDh2V0tycU8walpmRnpCcXhvWWRhV3Z1a2tSOUN6T2d0b0JUaUpGUG5WeUdzYStRN3lQY2cKVDJ3M0lvK0NDTW1iCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
     service:
       name: seldon-webhook-service
       namespace: 'kubeflow'
@@ -4863,11 +5125,11 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.2.1'
+    app.kubernetes.io/version: '1.4.0'
   name: seldon-validating-webhook-configuration-kubeflow
 webhooks:
 - clientConfig:
-    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQU9CZGZ4N0xmZXVEZnJ2QXFUK0hDWDh3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF3TnpFd01UYzFOREV4V2hjTgpNakV3TnpFd01UYzFOREV4V2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFLSEVLQ09YVW1LN2FRS1VHL0ZjbTMwSTVmVnYKTVJlc3dGbi9yb3pxR1I2Rm5HSm9zbjFiZStJY05PZkdvUERUNkJ4T2pYRXVvczRvQjFabjNXamZZL3ZaVnNCagpjSjdCWld3TzZlUmwrUEZNOUV5S0ZwTVhncnVHdjRBTlpOZ3BrejkyYURBTTV2S1RSYng0QUVCRFdjQlgxWE93CjdEdFZrOVNpY0Q5cTdMVGYzWDBYSHF1SlRiQTNmNXhJbndEMWp2ZjltMzdZanNIRnZva3ZscGR3MFpicFhjeWYKVFozYWw0SVJ5SmU3TWJDaTV4Wm9PcmZ0R1NzT2IrNnRTemVKbU5nVjM2N3ZHbnliSEJSSmlUVTBYeGJid3hEawpjazIvNnFFMXgzOWxxUlYvOWNURWk4UE1DbU9oV0dkeFQ3cTJQS1NmeVBhSm50VWVnUndXcjZIdDRVY0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQXRMcldyeGxmMgpuU2pjNEFvK3FJaHBITXZYc21nVFJXbFNKNXR0aW1tZHE0TkpwWDBMeWJQRmVoQ2RGOTUweXRvejIxMVFZbENECmVKd3k1YXY1eHA2NTdKZ0h0ckRWb1djTmxFUnNMa0JOOElaTlI2THdJdkMrbFZjYzU0RGVRWU5XbG5neSttYnMKT3FoYWlQVXVoWTRjZW9TeENlNDlYSHVnQko4VVdZUTUwcWl4Y1hmRjdzK1JQLzZuQXRhVDRrbWVkek1HckxFbwp1a3JzcXNaOWV5SHNDYmtKTW0rcHROWWtXMUhzU29ORlhHRnZYTE5GTEllZVJpa0hyRk15Tmg3dVhwQjI2cTVrCnVES2lvL0dNNitIRG5GN1p5VXVYTVEyOWhjc1VZZ2tBcVFJZGhKWnV5R281WmpjK1VNL3hyMlFwc0tYSjBmUXoKVHpvR3I0L1JzdTRBCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
+    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQUppU0VlblBTaU5uYnhyZ2hoa0tScjR3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF4TURNeE1EazBNakl3V2hjTgpNakV4TURNeE1EazBNakl3V2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFMNzdQWnpJMjBhNVpFZGFXOSs3Ynkzb0M1K1kKazdzWXlXczYza2ZFU2g2ejZleHpERXpwbm12QVRIcENuWWRRWGF0YWNoNmV2RVlvQ1gvTytHQlZqRC85Vkc2VAplTTk4eE1WSnhrZUZablJIa1phRGhQNFpjVHJ1Ymc0azdtQXFsbUNKdjZKdVprZUIyTFhVa0k4ZmFGa3hJNmtmCnRnSERWK3JlNlBiUTJOTloxaXdERnpMdEU1SjU0ZkljN1BLR1hldGpDVUhwWFZxRG0waDN5emhhRzA4dUZ6Nk8KU2R6dnB6ZG50VnFqd2IrN3ZVVXFWaSsvQ2VWR1k2RElqdFRxaVNueHp1dksvM01sNU81dVNvVXVyK0Q2dVJmbQpIaUM5K1hkSE5pVXhzOG02TUNINVBGTFVKUW1uV1hSYm9SdzhMMjhMeHpuQ25RREk5SFE1cGV4SWRna0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ0o2K0Z1ZE5NWgpNeGMydnVwaVZhY3dlMW1ydnJSc09iTDYrWnNXbDFXQ1BOUjhkZVRLbk5zZlFSYks0SDBGZXptZHd2Q09CQVBhCkU2cTIyYnJvYW5WOTVhb01tUXp5bmp0N1RzdjE1VmFvRXAxVEFEWVFGQzJyem1VQ2Nrc1crbjhHeDVRYW1QbU8KYUxmMGpVQ3JGVytWdVp1OXNpcmdLcEhidWFtTzBVc3NjT3dQRzhXMnZLWWh6NUtRZis5YjJGemt5L1hIcHUxbAp3Uno2eWQrdThOMDU1eDRISGgwdmk5ZW5xRGtYcjdxOHZ3dGZCVE1pY1JhUW5NbW9JYXFpYzVibGhaRXB1Q1R4CkJxdDk0N1NsTWFkZDh2V0tycU8walpmRnpCcXhvWWRhV3Z1a2tSOUN6T2d0b0JUaUpGUG5WeUdzYStRN3lQY2cKVDJ3M0lvK0NDTW1iCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
     service:
       name: seldon-webhook-service
       namespace: 'kubeflow'
@@ -4891,7 +5153,7 @@ webhooks:
     resources:
     - seldondeployments
 - clientConfig:
-    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQU9CZGZ4N0xmZXVEZnJ2QXFUK0hDWDh3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF3TnpFd01UYzFOREV4V2hjTgpNakV3TnpFd01UYzFOREV4V2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFLSEVLQ09YVW1LN2FRS1VHL0ZjbTMwSTVmVnYKTVJlc3dGbi9yb3pxR1I2Rm5HSm9zbjFiZStJY05PZkdvUERUNkJ4T2pYRXVvczRvQjFabjNXamZZL3ZaVnNCagpjSjdCWld3TzZlUmwrUEZNOUV5S0ZwTVhncnVHdjRBTlpOZ3BrejkyYURBTTV2S1RSYng0QUVCRFdjQlgxWE93CjdEdFZrOVNpY0Q5cTdMVGYzWDBYSHF1SlRiQTNmNXhJbndEMWp2ZjltMzdZanNIRnZva3ZscGR3MFpicFhjeWYKVFozYWw0SVJ5SmU3TWJDaTV4Wm9PcmZ0R1NzT2IrNnRTemVKbU5nVjM2N3ZHbnliSEJSSmlUVTBYeGJid3hEawpjazIvNnFFMXgzOWxxUlYvOWNURWk4UE1DbU9oV0dkeFQ3cTJQS1NmeVBhSm50VWVnUndXcjZIdDRVY0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQXRMcldyeGxmMgpuU2pjNEFvK3FJaHBITXZYc21nVFJXbFNKNXR0aW1tZHE0TkpwWDBMeWJQRmVoQ2RGOTUweXRvejIxMVFZbENECmVKd3k1YXY1eHA2NTdKZ0h0ckRWb1djTmxFUnNMa0JOOElaTlI2THdJdkMrbFZjYzU0RGVRWU5XbG5neSttYnMKT3FoYWlQVXVoWTRjZW9TeENlNDlYSHVnQko4VVdZUTUwcWl4Y1hmRjdzK1JQLzZuQXRhVDRrbWVkek1HckxFbwp1a3JzcXNaOWV5SHNDYmtKTW0rcHROWWtXMUhzU29ORlhHRnZYTE5GTEllZVJpa0hyRk15Tmg3dVhwQjI2cTVrCnVES2lvL0dNNitIRG5GN1p5VXVYTVEyOWhjc1VZZ2tBcVFJZGhKWnV5R281WmpjK1VNL3hyMlFwc0tYSjBmUXoKVHpvR3I0L1JzdTRBCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
+    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQUppU0VlblBTaU5uYnhyZ2hoa0tScjR3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF4TURNeE1EazBNakl3V2hjTgpNakV4TURNeE1EazBNakl3V2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFMNzdQWnpJMjBhNVpFZGFXOSs3Ynkzb0M1K1kKazdzWXlXczYza2ZFU2g2ejZleHpERXpwbm12QVRIcENuWWRRWGF0YWNoNmV2RVlvQ1gvTytHQlZqRC85Vkc2VAplTTk4eE1WSnhrZUZablJIa1phRGhQNFpjVHJ1Ymc0azdtQXFsbUNKdjZKdVprZUIyTFhVa0k4ZmFGa3hJNmtmCnRnSERWK3JlNlBiUTJOTloxaXdERnpMdEU1SjU0ZkljN1BLR1hldGpDVUhwWFZxRG0waDN5emhhRzA4dUZ6Nk8KU2R6dnB6ZG50VnFqd2IrN3ZVVXFWaSsvQ2VWR1k2RElqdFRxaVNueHp1dksvM01sNU81dVNvVXVyK0Q2dVJmbQpIaUM5K1hkSE5pVXhzOG02TUNINVBGTFVKUW1uV1hSYm9SdzhMMjhMeHpuQ25RREk5SFE1cGV4SWRna0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ0o2K0Z1ZE5NWgpNeGMydnVwaVZhY3dlMW1ydnJSc09iTDYrWnNXbDFXQ1BOUjhkZVRLbk5zZlFSYks0SDBGZXptZHd2Q09CQVBhCkU2cTIyYnJvYW5WOTVhb01tUXp5bmp0N1RzdjE1VmFvRXAxVEFEWVFGQzJyem1VQ2Nrc1crbjhHeDVRYW1QbU8KYUxmMGpVQ3JGVytWdVp1OXNpcmdLcEhidWFtTzBVc3NjT3dQRzhXMnZLWWh6NUtRZis5YjJGemt5L1hIcHUxbAp3Uno2eWQrdThOMDU1eDRISGgwdmk5ZW5xRGtYcjdxOHZ3dGZCVE1pY1JhUW5NbW9JYXFpYzVibGhaRXB1Q1R4CkJxdDk0N1NsTWFkZDh2V0tycU8walpmRnpCcXhvWWRhV3Z1a2tSOUN6T2d0b0JUaUpGUG5WeUdzYStRN3lQY2cKVDJ3M0lvK0NDTW1iCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
     service:
       name: seldon-webhook-service
       namespace: 'kubeflow'
@@ -4915,7 +5177,7 @@ webhooks:
     resources:
     - seldondeployments
 - clientConfig:
-    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQU9CZGZ4N0xmZXVEZnJ2QXFUK0hDWDh3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF3TnpFd01UYzFOREV4V2hjTgpNakV3TnpFd01UYzFOREV4V2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFLSEVLQ09YVW1LN2FRS1VHL0ZjbTMwSTVmVnYKTVJlc3dGbi9yb3pxR1I2Rm5HSm9zbjFiZStJY05PZkdvUERUNkJ4T2pYRXVvczRvQjFabjNXamZZL3ZaVnNCagpjSjdCWld3TzZlUmwrUEZNOUV5S0ZwTVhncnVHdjRBTlpOZ3BrejkyYURBTTV2S1RSYng0QUVCRFdjQlgxWE93CjdEdFZrOVNpY0Q5cTdMVGYzWDBYSHF1SlRiQTNmNXhJbndEMWp2ZjltMzdZanNIRnZva3ZscGR3MFpicFhjeWYKVFozYWw0SVJ5SmU3TWJDaTV4Wm9PcmZ0R1NzT2IrNnRTemVKbU5nVjM2N3ZHbnliSEJSSmlUVTBYeGJid3hEawpjazIvNnFFMXgzOWxxUlYvOWNURWk4UE1DbU9oV0dkeFQ3cTJQS1NmeVBhSm50VWVnUndXcjZIdDRVY0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQXRMcldyeGxmMgpuU2pjNEFvK3FJaHBITXZYc21nVFJXbFNKNXR0aW1tZHE0TkpwWDBMeWJQRmVoQ2RGOTUweXRvejIxMVFZbENECmVKd3k1YXY1eHA2NTdKZ0h0ckRWb1djTmxFUnNMa0JOOElaTlI2THdJdkMrbFZjYzU0RGVRWU5XbG5neSttYnMKT3FoYWlQVXVoWTRjZW9TeENlNDlYSHVnQko4VVdZUTUwcWl4Y1hmRjdzK1JQLzZuQXRhVDRrbWVkek1HckxFbwp1a3JzcXNaOWV5SHNDYmtKTW0rcHROWWtXMUhzU29ORlhHRnZYTE5GTEllZVJpa0hyRk15Tmg3dVhwQjI2cTVrCnVES2lvL0dNNitIRG5GN1p5VXVYTVEyOWhjc1VZZ2tBcVFJZGhKWnV5R281WmpjK1VNL3hyMlFwc0tYSjBmUXoKVHpvR3I0L1JzdTRBCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
+    caBundle: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lSQUppU0VlblBTaU5uYnhyZ2hoa0tScjR3RFFZSktvWklodmNOQVFFTEJRQXcKSERFYU1CZ0dBMVVFQXhNUlkzVnpkRzl0TFcxbGRISnBZM010WTJFd0hoY05NakF4TURNeE1EazBNakl3V2hjTgpNakV4TURNeE1EazBNakl3V2pBY01Sb3dHQVlEVlFRREV4RmpkWE4wYjIwdGJXVjBjbWxqY3kxallUQ0NBU0l3CkRRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFMNzdQWnpJMjBhNVpFZGFXOSs3Ynkzb0M1K1kKazdzWXlXczYza2ZFU2g2ejZleHpERXpwbm12QVRIcENuWWRRWGF0YWNoNmV2RVlvQ1gvTytHQlZqRC85Vkc2VAplTTk4eE1WSnhrZUZablJIa1phRGhQNFpjVHJ1Ymc0azdtQXFsbUNKdjZKdVprZUIyTFhVa0k4ZmFGa3hJNmtmCnRnSERWK3JlNlBiUTJOTloxaXdERnpMdEU1SjU0ZkljN1BLR1hldGpDVUhwWFZxRG0waDN5emhhRzA4dUZ6Nk8KU2R6dnB6ZG50VnFqd2IrN3ZVVXFWaSsvQ2VWR1k2RElqdFRxaVNueHp1dksvM01sNU81dVNvVXVyK0Q2dVJmbQpIaUM5K1hkSE5pVXhzOG02TUNINVBGTFVKUW1uV1hSYm9SdzhMMjhMeHpuQ25RREk5SFE1cGV4SWRna0NBd0VBCkFhTkNNRUF3RGdZRFZSMFBBUUgvQkFRREFnS2tNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUYKQlFjREFqQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ0o2K0Z1ZE5NWgpNeGMydnVwaVZhY3dlMW1ydnJSc09iTDYrWnNXbDFXQ1BOUjhkZVRLbk5zZlFSYks0SDBGZXptZHd2Q09CQVBhCkU2cTIyYnJvYW5WOTVhb01tUXp5bmp0N1RzdjE1VmFvRXAxVEFEWVFGQzJyem1VQ2Nrc1crbjhHeDVRYW1QbU8KYUxmMGpVQ3JGVytWdVp1OXNpcmdLcEhidWFtTzBVc3NjT3dQRzhXMnZLWWh6NUtRZis5YjJGemt5L1hIcHUxbAp3Uno2eWQrdThOMDU1eDRISGgwdmk5ZW5xRGtYcjdxOHZ3dGZCVE1pY1JhUW5NbW9JYXFpYzVibGhaRXB1Q1R4CkJxdDk0N1NsTWFkZDh2V0tycU8walpmRnpCcXhvWWRhV3Z1a2tSOUN6T2d0b0JUaUpGUG5WeUdzYStRN3lQY2cKVDJ3M0lvK0NDTW1iCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K'
     service:
       name: seldon-webhook-service
       namespace: 'kubeflow'
