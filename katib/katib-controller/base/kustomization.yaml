@@ -23,13 +23,13 @@ generatorOptions:
   disableNameSuffixHash: true
 images:
   - name: docker.io/kubeflowkatib/katib-controller
-    newTag: ce89cbf
+    newTag: v1beta1-e294a90
     newName: docker.io/kubeflowkatib/katib-controller
   - name: docker.io/kubeflowkatib/katib-db-manager
-    newTag: ce89cbf
+    newTag: v1beta1-e294a90
     newName: docker.io/kubeflowkatib/katib-db-manager
   - name: docker.io/kubeflowkatib/katib-ui
-    newTag: ce89cbf
+    newTag: v1beta1-e294a90
     newName: docker.io/kubeflowkatib/katib-ui
   - name: mysql
     newTag: "8"

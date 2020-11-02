@@ -37,7 +37,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: docker.io/kubeflowkatib/katib-ui:ce89cbf
+        image: docker.io/kubeflowkatib/katib-ui:v1beta1-e294a90
         imagePullPolicy: IfNotPresent
         name: katib-ui
         ports:
