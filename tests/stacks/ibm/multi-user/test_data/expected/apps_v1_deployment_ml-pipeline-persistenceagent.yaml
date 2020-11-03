@@ -24,7 +24,9 @@ spec:
       - env:
         - name: NAMESPACE
           value: ""
-        image: gcr.io/ml-pipeline/persistenceagent:1.0.0
+        - name: TTL_SECONDS_AFTER_WORKFLOW_FINISH
+          value: "86400"
+        image: gcr.io/ml-pipeline/persistenceagent:1.0.4
         imagePullPolicy: IfNotPresent
         name: ml-pipeline-persistenceagent
       serviceAccountName: ml-pipeline-persistenceagent

@@ -21,7 +21,7 @@ spec:
         app.kubernetes.io/name: kubeflow-pipelines
     spec:
       containers:
-      - image: gcr.io/ml-pipeline/visualization-server:1.0.0
+      - image: gcr.io/ml-pipeline/visualization-server:1.0.4
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:

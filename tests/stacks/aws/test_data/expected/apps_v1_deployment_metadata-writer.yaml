@@ -25,6 +25,6 @@ spec:
       - env:
         - name: NAMESPACE_TO_WATCH
           value: ""
-        image: gcr.io/ml-pipeline/metadata-writer:1.0.0
+        image: gcr.io/ml-pipeline/metadata-writer:1.0.4
         name: main
       serviceAccountName: kubeflow-pipelines-metadata-writer

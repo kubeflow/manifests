@@ -81,7 +81,7 @@ spec:
         envFrom:
         - configMapRef:
             name: pipeline-api-server-config-f4t72426kt
-        image: gcr.io/ml-pipeline/api-server:1.0.0
+        image: gcr.io/ml-pipeline/api-server:1.0.4
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
