@@ -38,7 +38,7 @@
       local srcRootDir = testDir + "/src";
       // The directory containing the kubeflow/manifests repo
       local srcDir = srcRootDir + "/kubeflow/manifests";
-      local testWorkerImage = "527798164940.dkr.ecr.us-west-2.amazonaws.com/aws-kubeflow-ci/test-worker:latest";
+      local testWorkerImage = "527798164940.dkr.ecr.us-west-2.amazonaws.com/aws-kubeflow-ci/test-worker:v1.1-branch";
       local golangImage = "golang:1.9.4-stretch";
       // TODO(jose5918) Build our own helm image
       local pythonImage = "python:3.6-jessie";
