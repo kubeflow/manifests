@@ -5,7 +5,7 @@ metadata:
 upstream:
     type: git
     git:
-        commit: 181c35002490cf7f1b5af8c88cb8b7cf29332f2b
+        commit: b604c6171244cc1cd80bfdc46248eaebf5f985d6
         repo: https://github.com/kubeflow/pipelines
         directory: /manifests/kustomize
-        ref: 1.0.0
+        ref: 1.0.4
