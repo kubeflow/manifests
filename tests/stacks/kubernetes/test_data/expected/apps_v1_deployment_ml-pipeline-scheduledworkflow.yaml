@@ -24,7 +24,7 @@ spec:
       - env:
         - name: NAMESPACE
           value: ""
-        image: gcr.io/ml-pipeline/scheduledworkflow:1.0.0
+        image: gcr.io/ml-pipeline/scheduledworkflow:1.0.4
         imagePullPolicy: IfNotPresent
         name: ml-pipeline-scheduledworkflow
       serviceAccountName: ml-pipeline-scheduledworkflow

@@ -32,7 +32,7 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: appVersion
-              name: pipeline-upstream-install-config-c958fm776d
+              name: pipeline-upstream-install-config-d7hkh24mdg
         - name: MINIO_ACCESS_KEY
           valueFrom:
             secretKeyRef:

@@ -8,7 +8,7 @@ set -ex
 
 # Please edit the following version before running the script to pull new
 # pipelines version.
-export PIPELINES_VERSION=1.0.0
+export PIPELINES_VERSION=1.0.4
 export PIPELINES_SRC_REPO=https://github.com/kubeflow/pipelines.git
 
 if [ -d pipeline/upstream ]; then
