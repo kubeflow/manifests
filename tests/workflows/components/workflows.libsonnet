@@ -66,6 +66,7 @@
         // command: List to pass as the container command.
         buildTemplate(step_name, image, command):: {
           name: step_name,
+          activeDeadlineSeconds: 1800,  // Set 30 minute timeout for each template
           container: {
             command: command,
             image: image,
@@ -129,7 +130,6 @@
             ],
           },
         },  // buildTemplate
-
         apiVersion: "argoproj.io/v1alpha1",
         kind: "Workflow",
         metadata: {
@@ -138,7 +138,8 @@
         },
         spec: {
           entrypoint: "e2e",
-          ttlSecondsAfterFinished: 3600,
+          ttlSecondsAfterFinished: 8*60*60,
+          onExit: "exit-handler",
           volumes: [
             {
               name: "github-token",
@@ -161,12 +162,25 @@
                   name: "checkout",
                   template: "checkout",
                 }],
-                [
-                  {
-                    name: "run-tests",
-                    template: "run-tests",
-                  },
-                ],
+                // [
+                //   {
+                //     name: "run-tests",
+                //     template: "run-tests",
+                //   },
+                // ],
+              ],
+            },
+            {
+              name: "exit-handler",
+              steps: [
+                // [{
+                //     name: "copy-artifacts",
+                //     template: "copy-artifacts",
+                // }],
+                [{
+                    name: "test-dir-delete",
+                    template: "test-dir-delete",                    
+                }],
               ],
             },
             {
@@ -176,10 +190,12 @@
                   "/usr/local/bin/checkout.sh",
                   srcRootDir,
                 ],
-                env: prow_env + [{
-                  name: "EXTRA_REPOS",
-                  value: "kubeflow/testing@HEAD",
-                }],
+                env: prow_env 
+                // + [{
+                //   name: "EXTRA_REPOS",
+                //   value: "kubeflow/testing@HEAD",
+                // }]
+                ,
                 image: testWorkerImage,
                 volumeMounts: [
                   {
@@ -189,9 +205,15 @@
                 ],
               },
             },  // checkout
-            $.parts(namespace, name, overrides).e2e(prow_env, bucket).buildTemplate("run-tests", testWorkerImage, [
-              "tests/scripts/run-tests.sh",
-            ]),  // run-tests
+            // $.parts(namespace, name, overrides).e2e(prow_env, bucket).buildTemplate("run-tests", testWorkerImage, [
+            //   "tests/scripts/run-tests.sh",
+            // ]),  // run-tests
+            // $.parts(namespace, name, overrides).e2e(prow_env, bucket).buildTemplate("copy-artifacts", testWorkerImage, [
+            //   "python3 -m kubeflow.testing.cloudprovider.aws.prow_artifacts --artifacts_dir=" + outputDir + " copy_artifacts_to_s3 --bucket=" + bucket,
+            // ]),  // copy-artifacts         
+            $.parts(namespace, name, overrides).e2e(prow_env, bucket).buildTemplate("test-dir-delete", testWorkerImage, [
+              "python3 -m tests.scripts.run_with_retry --retries=5 -- rm -rf " + testDir,
+            ]),  // test-dir-delete
           ],  // templates
         },
       },  // e2e
