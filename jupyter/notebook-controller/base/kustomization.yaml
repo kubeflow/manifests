@@ -19,7 +19,7 @@ commonLabels:
 images:
 - name: gcr.io/kubeflow-images-public/notebook-controller
   newName: gcr.io/kubeflow-images-public/notebook-controller
-  newTag: vmaster-g845af298
+  newTag: vmaster-g6eb007d0
 configMapGenerator:
 - envs:
   - params.env
