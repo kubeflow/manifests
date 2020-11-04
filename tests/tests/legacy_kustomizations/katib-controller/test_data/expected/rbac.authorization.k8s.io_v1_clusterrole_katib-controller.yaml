@@ -19,6 +19,8 @@ rules:
   - secrets
   - events
   - namespaces
+  - persistentvolumes
+  - persistentvolumeclaims
   verbs:
   - '*'
 - apiGroups:
@@ -75,5 +77,19 @@ rules:
   resources:
   - tfjobs
   - pytorchjobs
+  - mpijobs
+  verbs:
+  - '*'
+- apiGroups:
+  - tekton.dev
+  resources:
+  - pipelineruns
+  verbs:
+  - '*'
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - roles
+  - rolebindings
   verbs:
   - '*'
