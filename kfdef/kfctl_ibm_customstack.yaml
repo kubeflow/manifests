@@ -63,52 +63,52 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/admission-webhook
+        path: stacks/ibm/application/admission-webhook
     name: kubeflow-apps
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/profile-control-plane
+        path: stacks/ibm/application/profile-control-plane
     name: kubeflow-apps
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/metadata
+        path: stacks/ibm/application/metadata
     name: kubeflow-apps
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/argo
+        path: stacks/ibm/application/argo
     name: kubeflow-apps
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/katib
+        path: stacks/ibm/application/katib
     name: kubeflow-apps
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/pipelines
+        path: stacks/ibm/application/pipelines
     name: kubeflow-apps
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/notebooks
+        path: stacks/ibm/application/notebooks
     name: kubeflow-apps
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/pytorch-job
+        path: stacks/ibm/application/pytorch-job
     name: kubeflow-apps
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/tf-job
+        path: stacks/ibm/application/tf-job
     name: kubeflow-apps
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/seldon-core-operator
+        path: stacks/ibm/application/seldon-core-operator
     name: kubeflow-apps
   # other applications
   - kustomizeConfig:
@@ -140,5 +140,5 @@ spec:
     name: spartakus
   repos:
   - name: manifests
-    uri: https://github.com/IBM/manifests/archive/master.tar.gz
+    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
   version: master
