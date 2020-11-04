@@ -16,17 +16,9 @@
 
   // default parameters.
   defaultParams:: {
-    project:: "kubeflow-ci",
-    zone:: "us-east1-d",
-    // Default registry to use.
-    //registry:: "gcr.io/" + $.defaultParams.project,
-
     // The image tag to use.
     // Defaults to a value based on the name.
     versionTag:: null,
-
-    // The name of the secret containing GCP credentials.
-    gcpCredentialsSecretName:: "kubeflow-testing-credentials",
   },
 
   parts(namespace, name, overrides):: {
@@ -46,7 +38,7 @@
       local srcRootDir = testDir + "/src";
       // The directory containing the kubeflow/manifests repo
       local srcDir = srcRootDir + "/kubeflow/manifests";
-      local testWorkerImage = "gcr.io/kubeflow-ci/test-worker-py3:e9afed1-dirty";
+      local testWorkerImage = "527798164940.dkr.ecr.us-west-2.amazonaws.com/aws-kubeflow-ci/test-worker:v1.1-branch";
       local golangImage = "golang:1.9.4-stretch";
       // TODO(jose5918) Build our own helm image
       local pythonImage = "python:3.6-jessie";
@@ -67,20 +59,7 @@
       local k8sPy = srcDir;
       local kubeflowPy = srcRootDir + "/kubeflow/testing/py";
 
-      local project = params.project;
-      // GKE cluster to use
-      // We need to truncate the cluster to no more than 40 characters because
-      // cluster names can be a max of 40 characters.
-      // We expect the suffix of the cluster name to be unique salt.
-      // We prepend a z because cluster name must start with an alphanumeric character
-      // and if we cut the prefix we might end up starting with "-" or other invalid
-      // character for first character.
-      local cluster =
-        if std.length(name) > 40 then
-          "z" + std.substr(name, std.length(name) - 39, 39)
-        else
-          name;
-      local zone = params.zone;
+      local cluster = params.cluster_name;
       {
         // Build an Argo template to execute a particular command.
         // step_name: Name for the template
@@ -107,20 +86,30 @@
                 value: cluster,
               },
               {
-                name: "GCP_ZONE",
-                value: zone,
-              },
-              {
-                name: "GCP_PROJECT",
-                value: project,
-              },
-              {
                 name: "DEPLOY_NAMESPACE",
                 value: deployNamespace,
               },
               {
-                name: "GOOGLE_APPLICATION_CREDENTIALS",
-                value: "/secret/gcp-credentials/key.json",
+                name: "AWS_ACCESS_KEY_ID",
+                valueFrom: {
+                  secretKeyRef: {
+                    name: "aws-credentials",
+                    key: "AWS_ACCESS_KEY_ID",
+                  },
+                },
+              },
+              {
+                name: "AWS_SECRET_ACCESS_KEY",
+                valueFrom: {
+                  secretKeyRef: {
+                    name: "aws-credentials",
+                    key: "AWS_SECRET_ACCESS_KEY",
+                  },
+                },
+              },
+              {
+                name: "AWS_DEFAULT_REGION",
+                value: "us-west-2",
               },
               {
                 name: "GIT_TOKEN",
@@ -137,14 +126,6 @@
                 name: dataVolume,
                 mountPath: mountPath,
               },
-              {
-                name: "github-token",
-                mountPath: "/secret/github-token",
-              },
-              {
-                name: "gcp-credentials",
-                mountPath: "/secret/gcp-credentials",
-              },
             ],
           },
         },  // buildTemplate
@@ -157,17 +138,12 @@
         },
         spec: {
           entrypoint: "e2e",
+          ttlSecondsAfterFinished: 3600,
           volumes: [
             {
               name: "github-token",
               secret: {
                 secretName: "github-token",
-              },
-            },
-            {
-              name: "gcp-credentials",
-              secret: {
-                secretName: params.gcpCredentialsSecretName,
               },
             },
             {
