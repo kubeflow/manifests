@@ -1,5 +1,10 @@
 apiVersion: v1
 data:
+<<<<<<< HEAD
+=======
+  appName: pipeline
+  appVersion: 1.0.0
+>>>>>>> 53d50fe774576d3e199a21133abfc105f5f642d9
   bucketName: mlpipeline
   cacheDb: cachedb
   dbHost: mysql
@@ -11,5 +16,9 @@ metadata:
   labels:
     app.kubernetes.io/component: ml-pipeline
     app.kubernetes.io/name: kubeflow-pipelines
+<<<<<<< HEAD
   name: pipeline-install-config-2829cc67f8
+=======
+  name: pipeline-upstream-install-config-c958fm776d
+>>>>>>> 53d50fe774576d3e199a21133abfc105f5f642d9
   namespace: kubeflow
