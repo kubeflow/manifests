@@ -58,58 +58,53 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/base
-    name: kubeflow-apps
+        path: stacks/ibm/application/admission-webhook
+    name: admission-webhook
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/admission-webhook
-    name: kubeflow-apps
+        path: stacks/ibm/application/profile-control-plane
+    name: profile-control-plane
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/profile-control-plane
-    name: kubeflow-apps
+        path: stacks/ibm/application/metadata
+    name: metadata
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/metadata
-    name: kubeflow-apps
+        path: stacks/ibm/application/argo
+    name: argo
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/argo
-    name: kubeflow-apps
+        path: stacks/ibm/application/katib
+    name: katib
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/katib
-    name: kubeflow-apps
+        path: stacks/ibm/application/pipelines
+    name: pipelines
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/pipelines
-    name: kubeflow-apps
+        path: stacks/ibm/application/notebooks
+    name: notebooks
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/notebooks
-    name: kubeflow-apps
+        path: stacks/ibm/application/pytorch-job
+    name: pytorch-job
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/pytorch-job
-    name: kubeflow-apps
+        path: stacks/ibm/application/tf-job
+    name: tf-job
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/components/tf-job
-    name: kubeflow-apps
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: stacks/ibm/components/seldon-core-operator
-    name: kubeflow-apps
+        path: stacks/ibm/application/seldon-core-operator
+    name: seldon-core-operator
   # other applications
   - kustomizeConfig:
       repoRef:
@@ -140,5 +135,5 @@ spec:
     name: spartakus
   repos:
   - name: manifests
-    uri: https://github.com/IBM/manifests/archive/master.tar.gz
+    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
   version: master
