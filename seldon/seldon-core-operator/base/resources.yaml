@@ -4428,12 +4428,6 @@ spec:
   - name: v1alpha3
     served: true
     storage: false
-status:
-  acceptedNames:
-    kind: ''
-    plural: ''
-  conditions: []
-  storedVersions: []
 ---
 # Source: seldon-core-operator/templates/clusterrole_seldon-manager-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
