@@ -4,17 +4,17 @@ metadata:
   name: trials.kubeflow.org
 spec:
   additionalPrinterColumns:
-  - JSONPath: .status.conditions[-1:].type
-    name: Type
-    type: string
-  - JSONPath: .status.conditions[-1:].status
-    name: Status
-    type: string
-  - JSONPath: .metadata.creationTimestamp
-    name: Age
-    type: date
+    - JSONPath: .status.conditions[-1:].type
+      name: Type
+      type: string
+    - JSONPath: .status.conditions[-1:].status
+      name: Status
+      type: string
+    - JSONPath: .metadata.creationTimestamp
+      name: Age
+      type: date
   group: kubeflow.org
-  version: v1alpha3
+  version: v1beta1
   scope: Namespaced
   subresources:
     status: {}
@@ -23,6 +23,6 @@ spec:
     singular: trial
     plural: trials
     categories:
-    - all
-    - kubeflow
-    - katib
+      - all
+      - kubeflow
+      - katib

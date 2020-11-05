@@ -68,7 +68,7 @@ spec:
             secretKeyRef:
               key: secretkey
               name: mlpipeline-minio-artifact
-        image: gcr.io/ml-pipeline/api-server:1.0.0
+        image: gcr.io/ml-pipeline/api-server:1.0.4
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:

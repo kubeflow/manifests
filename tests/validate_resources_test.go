@@ -311,6 +311,10 @@ func TestCheckWebhookSelector(t *testing.T) {
 		nodes, err := reader.Read()
 
 		if err != nil {
+			if strings.Contains(err.Error(), "wrong Node Kind for") {
+				t.Logf("Skipping non SequenceNode yaml %v", path)
+				return nil
+			}
 			t.Errorf("Error unmarshaling %v; error: %v", path, err)
 		}
 
