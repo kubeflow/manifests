@@ -12,13 +12,11 @@ workflows:
     job_types:
       - presubmit
       - postsubmit
-      - periodic  
   - py_func: kubeflow.kfctl.testing.ci.kfctl_e2e_workflow.create_workflow
     name: e2e
     job_types:
       - presubmit
       - postsubmit
-      - periodic 
     include_dirs:
       - admission-webhook/*
       - application/*
@@ -55,3 +53,13 @@ workflows:
     kwargs:
       build_and_apply: false
       config_path: https://raw.githubusercontent.com/kubeflow/manifests/master/kfdef/kfctl_istio_dex.yaml
+
+  ####################################### AWS Specific Tests
+  - py_func: kubeflow.kfctl.testing.ci.kfctl_e2e_workflow.create_workflow
+    name: aws-e2e
+    job_types:
+      - periodic
+    kwargs:
+      build_and_apply: false
+      config_path: https://raw.githubusercontent.com/kubeflow/manifests/master/kfdef/kfctl_aws.yaml
+    
