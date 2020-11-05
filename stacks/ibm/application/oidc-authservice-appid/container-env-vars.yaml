@@ -1,0 +1,32 @@
+- op: replace
+  path: /spec/template/spec/containers/0/env/3
+  value:
+    name: OIDC_PROVIDER
+    valueFrom:
+      secretKeyRef:
+        key: oAuthServerUrl
+        name: appid-application-configuration
+- op: replace
+  path: /spec/template/spec/containers/0/env/6
+  value:
+    name: REDIRECT_URL
+    valueFrom:
+      secretKeyRef:
+        key: oidcRedirectUrl
+        name: appid-application-configuration
+- op: replace
+  path: /spec/template/spec/containers/0/env/9
+  value:
+    name: CLIENT_ID
+    valueFrom:
+      secretKeyRef:
+        key: clientId
+        name: appid-application-configuration
+- op: replace
+  path: /spec/template/spec/containers/0/env/10
+  value:
+    name: CLIENT_SECRET
+    valueFrom:
+      secretKeyRef:
+        key: secret
+        name: appid-application-configuration
