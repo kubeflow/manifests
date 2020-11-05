@@ -3,14 +3,14 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: kfserving
-    app.kubernetes.io/component: kfserving-install
-    app.kubernetes.io/name: kfserving-install
+    app.kubernetes.io/component: kfserving
+    app.kubernetes.io/name: kfserving
     kustomize.component: kfserving
-  name: manager-rolebinding
+  name: kfserving-manager-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: manager-role
+  name: kfserving-manager-role
 subjects:
 - kind: ServiceAccount
   name: default

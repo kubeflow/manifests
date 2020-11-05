@@ -3,8 +3,8 @@ kind: ClusterRole
 metadata:
   labels:
     app: kfserving
-    app.kubernetes.io/component: kfserving-install
-    app.kubernetes.io/name: kfserving-install
+    app.kubernetes.io/component: kfserving
+    app.kubernetes.io/name: kfserving
     kustomize.component: kfserving
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-kfserving-admin: "true"
