@@ -64,7 +64,7 @@ spec:
       repoRef:
         name: manifests
         path: stacks/ibm/application/profile-control-plane
-    name: profile-control-plane
+    name: kubeflow-apps
   - kustomizeConfig:
       repoRef:
         name: manifests

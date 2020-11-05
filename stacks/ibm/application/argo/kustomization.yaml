@@ -28,3 +28,4 @@ vars:
     apiVersion: v1
     kind: ConfigMap
     name: kubeflow-config
+    
