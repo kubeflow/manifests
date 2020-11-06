@@ -1,0 +1,25 @@
+apiVersion: v1
+data:
+  config.yaml: "issuer: http://dex.auth.svc.cluster.local:5556/dex\nstorage:\n  type:
+    kubernetes\n  config:\n    inCluster: true\nweb:\n  http: 0.0.0.0:5556\nlogger:\n
+    \ level: \"debug\"\n  format: text\nconnectors:\n  - type: github\n    # Required
+    field for connector id.\n    id: github\n    # Required field for connector name.\n
+    \   name: GitHub\n    config:\n      # Credentials can be string literals or pulled
+    from the environment.\n      clientID: \n      clientSecret: \n      redirectURI:
+    http://dex.auth.svc.cluster.local:5556/dex/callback\n      # Optional organizations
+    and teams, communicated through the \"groups\" scope.\n      #\n      # NOTE:
+    This is an EXPERIMENTAL config option and will likely change.\n      #\n      orgs:\n
+    \     - name: \n      # Required ONLY for GitHub Enterprise. Leave it empty when
+    using github.com.\n      # This is the Hostname of the GitHub Enterprise account
+    listed on the\n      # management console. Ensure this domain is routable on your
+    network.\n      hostName: \n      # Flag which indicates that all user groups
+    and teams should be loaded.\n      loadAllGroups: false\n      # flag which will
+    switch from using the internal GitHub id to the users handle (@mention) as the
+    user id.\n      # It is possible for a user to change their own user name but
+    it is very rare for them to do so\n      useLoginAsID: false\nstaticClients:\n-
+    id: kubeflow-oidc-authservice\n  redirectURIs: [\"/login/oidc\"]\n  name: 'Dex
+    Login Application'\n  secret: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok\n"
+kind: ConfigMap
+metadata:
+  name: dex
+  namespace: auth

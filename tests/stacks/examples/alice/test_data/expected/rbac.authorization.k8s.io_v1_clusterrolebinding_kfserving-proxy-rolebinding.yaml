@@ -13,5 +13,5 @@ roleRef:
   name: kfserving-proxy-role
 subjects:
 - kind: ServiceAccount
-  name: default
+  name: kfserving
   namespace: kubeflow

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: security
+    chart: security
+    heritage: Tiller
+    istio: citadel
+    release: istio
+  name: istio-citadel
+  namespace: istio-system
+spec:
+  ports:
+  - name: grpc-citadel
+    port: 8060
+    protocol: TCP
+    targetPort: 8060
+  - name: http-monitoring
+    port: 15014
+  selector:
+    istio: citadel

@@ -1,0 +1,28 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/component: tekton-pipelines-controller
+  name: tekton-pipelines-controller
+  namespace: tekton-pipelines
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resourceNames:
+  - config-logging
+  - config-observability
+  - config-artifact-bucket
+  - config-artifact-pvc
+  - feature-flags
+  - config-leader-election
+  resources:
+  - configmaps
+  verbs:
+  - get

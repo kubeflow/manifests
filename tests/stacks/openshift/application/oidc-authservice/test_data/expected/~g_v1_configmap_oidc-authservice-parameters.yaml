@@ -1,0 +1,20 @@
+apiVersion: v1
+data:
+  application_secret: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
+  client_id: kubeflow-oidc-authservice
+  gatewaySelector: ingressgateway
+  namespace: istio-system
+  oidc_auth_url: /dex/auth
+  oidc_provider: http://dex.auth.svc.cluster.local:5556/dex
+  oidc_redirect_uri: /login/oidc
+  skip_auth_uri: /dex
+  userid-header: kubeflow-userid
+  userid-prefix: ""
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: oidc-authservice
+    app.kubernetes.io/name: oidc-authservice
+  name: oidc-authservice-parameters
+  namespace: istio-system

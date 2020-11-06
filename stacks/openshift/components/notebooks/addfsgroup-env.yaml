@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notebook-controller-deployment
+  namespace: kubeflow
+spec:
+  template:
+    spec:
+      containers:
+        - name: manager
+          env:
+            - name: ADD_FSGROUP
+              value: "false"

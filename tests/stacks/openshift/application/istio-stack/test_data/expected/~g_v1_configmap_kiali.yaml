@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  config.yaml: "istio_namespace: istio-system\nserver:\n  port: 20001\nexternal_services:\n
+    \ istio:\n    url_service_version: http://istio-pilot:8080/version\n  jaeger:\n
+    \   url: \n  grafana:\n    url: \n"
+kind: ConfigMap
+metadata:
+  labels:
+    app: kiali
+    chart: kiali
+    heritage: Tiller
+    release: istio
+  name: kiali
+  namespace: istio-system

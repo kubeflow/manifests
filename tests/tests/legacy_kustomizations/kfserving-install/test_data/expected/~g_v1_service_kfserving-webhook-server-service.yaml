@@ -14,7 +14,7 @@ metadata:
 spec:
   ports:
   - port: 443
-    targetPort: 443
+    targetPort: 9443
   selector:
     app.kubernetes.io/component: kfserving-install
     app.kubernetes.io/instance: kfserving-install

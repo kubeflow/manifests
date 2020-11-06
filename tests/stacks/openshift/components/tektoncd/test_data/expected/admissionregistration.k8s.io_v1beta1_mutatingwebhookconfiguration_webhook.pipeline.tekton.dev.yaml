@@ -1,0 +1,17 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  labels:
+    app.kubernetes.io/component: tekton-pipelines-webhook
+    pipeline.tekton.dev/release: v0.14.0
+  name: webhook.pipeline.tekton.dev
+webhooks:
+- admissionReviewVersions:
+  - v1beta1
+  clientConfig:
+    service:
+      name: tekton-pipelines-webhook
+      namespace: tekton-pipelines
+  failurePolicy: Fail
+  name: webhook.pipeline.tekton.dev
+  sideEffects: None

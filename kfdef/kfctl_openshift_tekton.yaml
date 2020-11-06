@@ -1,0 +1,132 @@
+apiVersion: kfdef.apps.kubeflow.org/v1
+kind: KfDef
+metadata:
+  namespace: kubeflow
+spec:
+  applications:
+  # openshift specific, uncomment this component if on openshift clusters
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: openshift/openshift-scc/base
+    name: openshift-scc
+  # istio related components
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/application/istio-stack
+    name: istio-stack
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/application/cluster-local-gateway
+    name: cluster-local-gateway
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/application/istio
+    name: istio
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/application/add-anonymous-user-filter
+    name: add-anonymous-user-filter
+  # application
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: application/v3
+    name: application
+  # cert-manager
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/application/cert-manager-crds
+    name: cert-manager-crds
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/application/cert-manager-kube-system-resources
+    name: cert-manager-kube-system-resources
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/application/cert-manager
+    name: cert-manager
+  # bootstrap
+  # - kustomizeConfig:
+  #     repoRef:
+  #       name: manifests
+  #       path: stacks/openshift/application/bootstrap
+  #   name: bootstrap
+  # kubeflow apps
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/base
+    name: kubeflow-apps
+  # - kustomizeConfig:
+  #     repoRef:
+  #       name: manifests
+  #       path: stacks/openshift/components/admission-webhook
+  #   name: kubeflow-apps
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/components/profile-control-plane
+    name: kubeflow-apps
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/components/tektoncd
+    name: kubeflow-apps
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/components/kfp-tekton
+    name: kubeflow-apps
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/components/metadata
+    name: kubeflow-apps
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/components/notebooks
+    name: kubeflow-apps
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/components/pytorch-job
+    name: kubeflow-apps
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/components/tf-job
+    name: kubeflow-apps
+  # others:
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: metacontroller/base
+    name: metacontroller
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/application/spark-operator
+    name: spark-operator
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: knative/installs/generic
+    name: knative
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: kfserving/installs/generic
+    name: kfserving
+  repos:
+  - name: manifests
+    uri: https://github.com/IBM/manifests/archive/openshift.tar.gz
+  version: master

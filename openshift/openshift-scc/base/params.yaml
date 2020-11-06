@@ -1,0 +1,5 @@
+varReference:
+- path: users
+  kind: SecurityContextConstraints
+- path: metadata/name
+  kind: SecurityContextConstraints

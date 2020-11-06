@@ -9,6 +9,7 @@ resources:
 - secret.yaml
 - statefulset.yaml
 - service.yaml
+- service-account.yaml
 - webhook.yaml
 commonLabels:
   kustomize.component: kfserving

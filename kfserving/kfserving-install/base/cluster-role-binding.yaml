@@ -8,7 +8,7 @@ roleRef:
   name: kfserving-proxy-role
 subjects:
 - kind: ServiceAccount
-  name: default
+  name: kfserving
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -20,4 +20,4 @@ roleRef:
   name: manager-role
 subjects:
 - kind: ServiceAccount
-  name: default
+  name: kfserving

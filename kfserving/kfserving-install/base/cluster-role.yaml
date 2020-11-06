@@ -26,6 +26,7 @@ rules:
   - serving.knative.dev
   resources:
   - services
+  - services/finalizers
   verbs:
   - get
   - list
