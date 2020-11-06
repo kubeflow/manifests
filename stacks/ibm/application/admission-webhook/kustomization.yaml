@@ -1,21 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
-commonLabels:
-  app.kubernetes.io/component: metadata
-  app.kubernetes.io/name: metadata
-  kustomize.component: metadata
 resources:
-- ../../../../metadata/overlays/db
-- ../../../../metadata/overlays/application/application.yaml
-- ../../../../metadata/overlays/istio/virtual-service.yaml
-- ../../../../metadata/overlays/istio/virtual-service-metadata-grpc.yaml
-configurations:
-- ../../../../metadata/overlays/istio/params.yaml
-images:
-  - name: mysql
-    newTag: "5.6"
-    newName: mysql
+- ../../../../admission-webhook/webhook/v3
 configMapGenerator:
 - name: kubeflow-config
   envs:
@@ -37,3 +24,4 @@ vars:
     apiVersion: v1
     kind: ConfigMap
     name: kubeflow-config
+    

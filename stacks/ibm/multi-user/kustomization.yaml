@@ -36,26 +36,9 @@ configMapGenerator:
   behavior: merge
   literals:
   - admin=example@kubeflow.org
-- name: kubeflow-config
-  envs:
-  - ./config/params.env
 vars:
 # We need to define vars at the top level otherwise we will get
 # conflicts. 
-- fieldref:
-    fieldPath: data.clusterDomain
-  name: clusterDomain
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: kubeflow-config
-- fieldref:
-    fieldPath: metadata.namespace
-  name: namespace
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: kubeflow-config
 - fieldref:
     fieldpath: metadata.namespace
   name: katib-ui-namespace

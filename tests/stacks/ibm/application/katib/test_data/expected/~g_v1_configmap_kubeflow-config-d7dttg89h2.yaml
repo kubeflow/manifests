@@ -5,9 +5,5 @@ data:
   userid-prefix: ""
 kind: ConfigMap
 metadata:
-  labels:
-    app.kubernetes.io/component: metadata
-    app.kubernetes.io/name: metadata
-    kustomize.component: metadata
   name: kubeflow-config-d7dttg89h2
   namespace: kubeflow

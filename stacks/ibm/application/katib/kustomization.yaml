@@ -1,21 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
-commonLabels:
-  app.kubernetes.io/component: metadata
-  app.kubernetes.io/name: metadata
-  kustomize.component: metadata
 resources:
-- ../../../../metadata/overlays/db
-- ../../../../metadata/overlays/application/application.yaml
-- ../../../../metadata/overlays/istio/virtual-service.yaml
-- ../../../../metadata/overlays/istio/virtual-service-metadata-grpc.yaml
-configurations:
-- ../../../../metadata/overlays/istio/params.yaml
-images:
-  - name: mysql
-    newTag: "5.6"
-    newName: mysql
+  - ../../../../katib/installs/katib-standalone-ibm
 configMapGenerator:
 - name: kubeflow-config
   envs:
@@ -23,6 +10,13 @@ configMapGenerator:
 vars:
 # We need to define vars at the top level otherwise we will get
 # conflicts. 
+- fieldref:
+    fieldpath: metadata.namespace
+  name: katib-ui-namespace
+  objref:
+    kind: Service
+    name: katib-ui
+    apiVersion: v1
 - fieldref:
     fieldPath: data.clusterDomain
   name: clusterDomain
@@ -37,3 +31,4 @@ vars:
     apiVersion: v1
     kind: ConfigMap
     name: kubeflow-config
+    
