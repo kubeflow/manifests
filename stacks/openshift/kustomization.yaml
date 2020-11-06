@@ -28,3 +28,7 @@ vars:
     kind: ConfigMap
     name: kubeflow-config
 
+images:
+- name: gcr.io/kubeflow-images-public/profile-controller
+  newName: quay.io/kubeflow/profile-controller
+  newTag: v0.7.0
