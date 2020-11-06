@@ -1,0 +1,3 @@
+- op: replace
+  path: /spec/template/spec/containers/0/readinessProbe/exec/command/2
+  value: "mysql -D $$MYSQL_DATABASE -u$$MYSQL_USER_NAME -p$$MYSQL_ROOT_PASSWORD -e 'SELECT 1'" 

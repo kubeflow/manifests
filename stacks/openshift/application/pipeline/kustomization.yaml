@@ -1,0 +1,45 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+resources:
+- ../../../../pipeline/minio/installs/generic
+- ../../../../pipeline/mysql/installs/generic
+# For now we dont have authentication and istio injection disabled
+# TODO tie into OCP oauth
+#- ../../../../pipeline/installs/multi-user
+- ../../../../pipeline/installs/generic
+# Disabling tls traffic in Destination Rule because of issue: https://github.com/kubeflow/kubeflow/issues/5271
+patches:
+- target:
+    kind: DestinationRule
+    version: v1alpha3
+    group: networking.istio.io
+    name: ml-pipeline-ui
+  path: patchuirule.yaml
+
+#Only for multi-user
+configMapGenerator:
+#- name: kubeflow-pipelines-profile-controller-code
+#  behavior: replace
+#  files:
+#  - sync.py
+#commenting these out for now since pipelines has to be installed in main kustomize because of
+# the dependency on profiles
+- name: kubeflow-config
+  envs:
+  - ../../config/params.env
+vars:
+- fieldref:
+    fieldPath: data.clusterDomain
+  name: clusterDomain
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kubeflow-config
+- fieldref:
+    fieldPath: metadata.namespace
+  name: namespace
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kubeflow-config
