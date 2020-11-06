@@ -31,4 +31,4 @@ vars:
 images:
 - name: gcr.io/kubeflow-images-public/profile-controller
   newName: quay.io/kubeflow/profile-controller
-  newTag: v0.7.0
+  newTag: v1.1.0

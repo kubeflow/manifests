@@ -42,7 +42,7 @@ users:
 - system:serviceaccount:istio-system:istio-galley-service-account
 - system:serviceaccount:istio-system:prometheus
 #Component: istio/cluster-local-gateway
-- system:serviceaccount:cluster-local-gateway-service-account
+- system:serviceaccount:istio-system:cluster-local-gateway-service-account
 volumes:
 - configMap
 - downwardAPI
