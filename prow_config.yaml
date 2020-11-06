@@ -12,11 +12,13 @@ workflows:
     job_types:
       - presubmit
       - postsubmit
+      - periodic
   - py_func: kubeflow.kfctl.testing.ci.kfctl_e2e_workflow.create_workflow
     name: e2e
     job_types:
       - presubmit
       - postsubmit
+      - periodic
     include_dirs:
       - admission-webhook/*
       - application/*
