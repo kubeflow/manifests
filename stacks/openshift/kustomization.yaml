@@ -1,0 +1,33 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+resources:
+  - ../../common/centraldashboard/overlays/stacks
+#profiles is here since namespace was not being replaced for the virtual service and pipeline depends on it
+  - ../../profiles/base_v3
+configMapGenerator:
+- name: kubeflow-config
+  envs:
+  - ./config/params.env
+# We need to define vars at the top level otherwise we will get
+# conflicts.
+vars:
+- fieldref:
+    fieldPath: data.clusterDomain
+  name: clusterDomain
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kubeflow-config
+- fieldref:
+    fieldPath: metadata.namespace
+  name: namespace
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kubeflow-config
+
+images:
+- name: gcr.io/kubeflow-images-public/profile-controller
+  newName: quay.io/kubeflow/profile-controller
+  newTag: v1.1.0

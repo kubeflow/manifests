@@ -1,0 +1,12 @@
+- op: replace
+  path: /spec/template/spec/containers/0/livenessProbe/exec/command/2
+  value: 'mysqladmin ping -uroot'
+- op: replace
+  path: /spec/template/spec/containers/0/readinessProbe/exec/command/2
+  value: 'mysql -D ${MYSQL_DATABASE} -uroot -e ''SELECT 1'''
+- op: remove
+  path: /spec/template/spec/containers/0/args
+- op: replace
+  path: /spec/template/spec/containers/0/volumeMounts/0/mountPath
+  value: /var/lib/mysql/data
+

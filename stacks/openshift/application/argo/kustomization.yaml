@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+resources:
+- ../../../../argo/base_v3
+configMapGenerator:
+- name: workflow-controller-parameters
+  behavior: merge
+  literals:
+  - containerRuntimeExecutor=k8sapi
+- name: kubeflow-config
+  envs:
+  - ../../config/params.env
+# We need to define vars at the top level otherwise we will get
+# conflicts.
+vars:
+- fieldref:
+    fieldPath: data.clusterDomain
+  name: clusterDomain
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kubeflow-config
+- fieldref:
+    fieldPath: metadata.namespace
+  name: namespace
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kubeflow-config
+
+
