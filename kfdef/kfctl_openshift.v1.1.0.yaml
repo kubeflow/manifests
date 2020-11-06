@@ -82,11 +82,11 @@ spec:
         path: stacks/openshift/application/katib
     name: katib
   # commenting this out since it is included in kubeflow-apps
-  #- kustomizeConfig:
-  #    repoRef:
-  #      name: manifests
-  #      path: stacks/openshift/application/pipeline
-  #  name: pipeline
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift/application/pipeline
+    name: pipeline
   - kustomizeConfig:
       repoRef:
         name: manifests

@@ -5,7 +5,6 @@ resources:
   - ../../common/centraldashboard/overlays/stacks
 #profiles is here since namespace was not being replaced for the virtual service and pipeline depends on it
   - ../../profiles/base_v3
-  - application/pipeline
 configMapGenerator:
 - name: kubeflow-config
   envs:

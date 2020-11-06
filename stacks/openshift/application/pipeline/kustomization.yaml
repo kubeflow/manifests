@@ -4,7 +4,10 @@ namespace: kubeflow
 resources:
 - ../../../../pipeline/minio/installs/generic
 - ../../../../pipeline/mysql/installs/generic
-- ../../../../pipeline/installs/multi-user
+# For now we dont have authentication and istio injection disabled
+# TODO tie into OCP oauth
+#- ../../../../pipeline/installs/multi-user
+- ../../../../pipeline/installs/generic
 # Disabling tls traffic in Destination Rule because of issue: https://github.com/kubeflow/kubeflow/issues/5271
 patches:
 - target:
@@ -14,30 +17,29 @@ patches:
     name: ml-pipeline-ui
   path: patchuirule.yaml
 
+#Only for multi-user
 configMapGenerator:
-- name: kubeflow-pipelines-profile-controller-code
-  behavior: replace
-  files:
-  - sync.py
+#- name: kubeflow-pipelines-profile-controller-code
+#  behavior: replace
+#  files:
+#  - sync.py
 #commenting these out for now since pipelines has to be installed in main kustomize because of
 # the dependency on profiles
-#- envs:
-#  - ../../config/params.env
-#  name: kubeflow-config
-#vars:
-# We need to define vars at the top level otherwise we will get
-# conflicts.
-#- fieldref:
-#    fieldPath: data.clusterDomain
-#  name: clusterDomain
-#  objref:
-#    apiVersion: v1
-#    kind: ConfigMap
-#    name: kubeflow-config
-#- fieldref:
-#    fieldPath: metadata.namespace
-#  name: namespace
-#  objref:
-#    apiVersion: v1
-#    kind: ConfigMap
-#    name: kubeflow-config
+- name: kubeflow-config
+  envs:
+  - ../../config/params.env
+vars:
+- fieldref:
+    fieldPath: data.clusterDomain
+  name: clusterDomain
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kubeflow-config
+- fieldref:
+    fieldPath: metadata.namespace
+  name: namespace
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kubeflow-config
