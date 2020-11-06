@@ -45,7 +45,12 @@ rules:
 - apiGroups:
   - ""
   resources:
+<<<<<<< HEAD:tests/stacks/gcp/test_data/expected/rbac.authorization.k8s.io_v1_clusterrole_kfserving-manager-role.yaml
   - namespaces
+=======
+  - inferenceservices
+  - inferenceservices/finalizers
+>>>>>>> update clusterrole:tests/stacks/gcp/test_data/expected/rbac.authorization.k8s.io_v1_clusterrole_manager-role.yaml
   verbs:
   - get
   - list
