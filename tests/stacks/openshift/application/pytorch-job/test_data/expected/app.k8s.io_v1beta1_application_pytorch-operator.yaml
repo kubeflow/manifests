@@ -1,0 +1,49 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  labels:
+    app.kubernetes.io/component: pytorch
+    app.kubernetes.io/name: pytorch-operator
+  name: pytorch-operator
+  namespace: kubeflow
+spec:
+  addOwnerRef: true
+  componentKinds:
+  - group: core
+    kind: Service
+  - group: apps
+    kind: Deployment
+  - group: core
+    kind: ConfigMap
+  - group: core
+    kind: ServiceAccount
+  - group: kubeflow.org
+    kind: PyTorchJob
+  descriptor:
+    description: Pytorch-operator allows users to create and manage the "PyTorchJob"
+      custom resource.
+    keywords:
+    - pytorchjob
+    - pytorch-operator
+    - pytorch-training
+    links:
+    - description: About
+      url: https://github.com/kubeflow/pytorch-operator
+    - description: Docs
+      url: https://www.kubeflow.org/docs/reference/pytorchjob/v1/pytorch/
+    maintainers:
+    - email: johnugeo@cisco.com
+      name: Johnu George
+    owners:
+    - email: johnugeo@cisco.com
+      name: Johnu George
+    type: pytorch-operator
+    version: v1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: pytorch
+      app.kubernetes.io/instance: pytorch-operator-v0.7.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: pytorch-operator
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.7.0

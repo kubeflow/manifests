@@ -38,7 +38,7 @@ spec:
             secretKeyRef:
               key: MYSQL_ROOT_PASSWORD
               name: katib-mysql-secrets
-        image: docker.io/kubeflowkatib/katib-db-manager:v1beta1-6dc1af8
+        image: docker.io/kubeflowkatib/katib-db-manager:v1beta1-a96ff59
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
