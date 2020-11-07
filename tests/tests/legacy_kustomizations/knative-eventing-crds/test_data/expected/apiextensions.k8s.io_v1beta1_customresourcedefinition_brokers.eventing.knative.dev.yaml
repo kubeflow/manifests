@@ -2,14 +2,10 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   labels:
-    app.kubernetes.io/component: knative-eventing-crds
-    app.kubernetes.io/instance: knative-eventing-crds-v0.11.0
-    app.kubernetes.io/managed-by: kfctl
+    app.kubernetes.io/instance: knative-eventing-crds
     app.kubernetes.io/name: knative-eventing-crds
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.11.0
     duck.knative.dev/addressable: "true"
-    eventing.knative.dev/release: v0.11.0
+    eventing.knative.dev/release: v0.14.2
     knative.dev/crd-install: "true"
   name: brokers.eventing.knative.dev
 spec:
@@ -26,6 +22,12 @@ spec:
   - JSONPath: .metadata.creationTimestamp
     name: Age
     type: date
+  conversion:
+    strategy: Webhook
+    webhookClientConfig:
+      service:
+        name: eventing-webhook
+        namespace: knative-eventing
   group: eventing.knative.dev
   names:
     categories:
@@ -35,29 +37,18 @@ spec:
     kind: Broker
     plural: brokers
     singular: broker
+  preserveUnknownFields: false
   scope: Namespaced
   subresources:
     status: {}
   validation:
     openAPIV3Schema:
-      properties:
-        spec:
-          properties:
-            channelTemplateSpec:
-              properties:
-                apiVersion:
-                  minLength: 1
-                  type: string
-                kind:
-                  minLength: 1
-                  type: string
-                spec:
-                  type: object
-              required:
-              - apiVersion
-              - kind
-              type: object
+      type: object
+      x-kubernetes-preserve-unknown-fields: true
   versions:
   - name: v1alpha1
     served: true
     storage: true
+  - name: v1beta1
+    served: true
+    storage: false

@@ -3,13 +3,9 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: knative-serving-install
-    app.kubernetes.io/instance: knative-serving-install
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-serving-install
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.11.2
     kustomize.component: knative
-    serving.knative.dev/release: v0.11.2
+    serving.knative.dev/release: v0.14.3
   name: activator
   namespace: knative-serving
 spec:
@@ -17,33 +13,25 @@ spec:
     matchLabels:
       app: activator
       app.kubernetes.io/component: knative-serving-install
-      app.kubernetes.io/instance: knative-serving-install
-      app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: knative-serving-install
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.11.2
       kustomize.component: knative
       role: activator
-      serving.knative.dev/release: v0.11.2
   template:
     metadata:
       annotations:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
-        sidecar.istio.io/inject: "false"
       labels:
         app: activator
         app.kubernetes.io/component: knative-serving-install
-        app.kubernetes.io/instance: knative-serving-install
-        app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: knative-serving-install
-        app.kubernetes.io/part-of: kubeflow
-        app.kubernetes.io/version: v0.11.2
         kustomize.component: knative
         role: activator
-        serving.knative.dev/release: v0.11.2
+        serving.knative.dev/release: v0.14.3
     spec:
       containers:
       - env:
+        - name: GOGC
+          value: "500"
         - name: POD_NAME
           valueFrom:
             fieldRef:
@@ -62,13 +50,12 @@ spec:
           value: config-observability
         - name: METRICS_DOMAIN
           value: knative.dev/internal/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:c51023e62e351d5910f92ee941b4929eb82539e62636dd3ccb4a016d73e86b2e
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:ffa3d72ee6c2eeb2357999248191a643405288061b7080381f22875cb703e929
         livenessProbe:
           httpGet:
             httpHeaders:
             - name: k-kubelet-probe
               value: activator
-            path: /healthz
             port: 8012
         name: activator
         ports:
@@ -85,7 +72,6 @@ spec:
             httpHeaders:
             - name: k-kubelet-probe
               value: activator
-            path: /healthz
             port: 8012
         resources:
           limits:

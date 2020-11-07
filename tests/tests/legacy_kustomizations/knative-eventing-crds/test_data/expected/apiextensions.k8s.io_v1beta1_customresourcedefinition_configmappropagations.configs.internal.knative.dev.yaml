@@ -1,0 +1,47 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    app.kubernetes.io/instance: knative-eventing-crds
+    app.kubernetes.io/name: knative-eventing-crds
+    eventing.knative.dev/release: v0.14.2
+    knative.dev/crd-install: "true"
+  name: configmappropagations.configs.internal.knative.dev
+spec:
+  additionalPrinterColumns:
+  - JSONPath: .status.conditions[?(@.type=="Ready")].status
+    name: Ready
+    type: string
+  - JSONPath: .status.conditions[?(@.type=="Ready")].reason
+    name: Reason
+    type: string
+  - JSONPath: .spec.originalNamespace
+    name: OriginalNamespace
+    type: string
+  group: configs.internal.knative.dev
+  names:
+    categories:
+    - knative-internal
+    kind: ConfigMapPropagation
+    plural: configmappropagations
+    shortNames:
+    - kcmp
+    - cmp
+    singular: configmappropagation
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      properties:
+        spec:
+          properties:
+            originalNamespace:
+              description: The namespace where original ConfigMaps exist in.
+              type: string
+          required:
+          - originalNamespace
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true

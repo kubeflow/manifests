@@ -27,12 +27,10 @@ kind: ConfigMap
 metadata:
   labels:
     app.kubernetes.io/component: knative-eventing-install
-    app.kubernetes.io/instance: knative-eventing-install
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-eventing-install
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.11.0
+    eventing.knative.dev/release: v0.14.2
+    knative.dev/config-category: eventing
+    knative.dev/config-propagation: original
     kustomize.component: knative
-    serving.knative.dev/release: v0.11.0
   name: config-logging
-  namespace: knative-serving
+  namespace: knative-eventing
