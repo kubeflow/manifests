@@ -1,0 +1,20 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  labels:
+    app: seldon
+    app.kubernetes.io/component: seldon
+    app.kubernetes.io/instance: seldon-core
+    app.kubernetes.io/name: seldon-core-operator
+    app.kubernetes.io/version: 1.4.0
+  name: seldon-serving-cert
+  namespace: kubeflow
+spec:
+  commonName: seldon-webhook-service.kubeflow.svc
+  dnsNames:
+  - seldon-webhook-service.kubeflow.svc.cluster.local
+  - seldon-webhook-service.kubeflow.svc
+  issuerRef:
+    kind: Issuer
+    name: seldon-selfsigned-issuer
+  secretName: seldon-webhook-server-cert
