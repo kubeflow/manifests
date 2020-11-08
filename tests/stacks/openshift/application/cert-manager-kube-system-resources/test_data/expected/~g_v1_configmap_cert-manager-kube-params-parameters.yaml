@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  certManagerNamespace: cert-manager
+kind: ConfigMap
+metadata:
+  labels:
+    kustomize.component: cert-manager
+  name: cert-manager-kube-params-parameters
+  namespace: kube-system

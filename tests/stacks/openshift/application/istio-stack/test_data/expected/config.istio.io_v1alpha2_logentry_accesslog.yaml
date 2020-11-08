@@ -1,0 +1,58 @@
+apiVersion: config.istio.io/v1alpha2
+kind: logentry
+metadata:
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+  name: accesslog
+  namespace: istio-system
+spec:
+  monitored_resource_type: '"global"'
+  severity: '"Info"'
+  timestamp: request.time
+  variables:
+    apiClaims: request.auth.raw_claims | ""
+    apiKey: request.api_key | request.headers["x-api-key"] | ""
+    clientTraceId: request.headers["x-client-trace-id"] | ""
+    connection_security_policy: conditional((context.reporter.kind | "inbound") ==
+      "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
+    destinationApp: destination.labels["app"] | ""
+    destinationIp: destination.ip | ip("0.0.0.0")
+    destinationName: destination.name | ""
+    destinationNamespace: destination.namespace | ""
+    destinationOwner: destination.owner | ""
+    destinationPrincipal: destination.principal | ""
+    destinationServiceHost: destination.service.host | ""
+    destinationWorkload: destination.workload.name | ""
+    grpcMessage: response.grpc_message | ""
+    grpcStatus: response.grpc_status | ""
+    httpAuthority: request.headers[":authority"] | request.host | ""
+    latency: response.duration | "0ms"
+    method: request.method | ""
+    permissiveResponseCode: rbac.permissive.response_code | "none"
+    permissiveResponsePolicyID: rbac.permissive.effective_policy_id | "none"
+    protocol: request.scheme | context.protocol | "http"
+    receivedBytes: request.total_size | 0
+    referer: request.referer | ""
+    reporter: conditional((context.reporter.kind | "inbound") == "outbound", "source",
+      "destination")
+    requestId: request.headers["x-request-id"] | ""
+    requestSize: request.size | 0
+    requestedServerName: connection.requested_server_name | ""
+    responseCode: response.code | 0
+    responseFlags: context.proxy_error_code | ""
+    responseSize: response.size | 0
+    responseTimestamp: response.time
+    sentBytes: response.total_size | 0
+    sourceApp: source.labels["app"] | ""
+    sourceIp: source.ip | ip("0.0.0.0")
+    sourceName: source.name | ""
+    sourceNamespace: source.namespace | ""
+    sourceOwner: source.owner | ""
+    sourcePrincipal: source.principal | ""
+    sourceWorkload: source.workload.name | ""
+    url: request.path | ""
+    userAgent: request.useragent | ""
+    xForwardedFor: request.headers["x-forwarded-for"] | "0.0.0.0"

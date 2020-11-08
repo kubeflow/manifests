@@ -8,7 +8,7 @@ data:
         spec:
           containers:
             - name: training-container
-              image: docker.io/kubeflowkatib/mxnet-mnist:v1beta1-6dc1af8
+              image: docker.io/kubeflowkatib/mxnet-mnist:v1beta1-a96ff59
               command:
                 - "python3"
                 - "/opt/mxnet-mnist/mnist.py"
@@ -25,7 +25,7 @@ data:
         spec:
           containers:
             - name: training-container
-              image: docker.io/kubeflowkatib/enas-cnn-cifar10-cpu:v1beta1-6dc1af8
+              image: docker.io/kubeflowkatib/enas-cnn-cifar10-cpu:v1beta1-a96ff59
               command:
                 - python3
                 - -u

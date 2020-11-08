@@ -80,6 +80,7 @@ rules:
   - tekton.dev
   resources:
   - pipelineruns
+  - taskruns
   verbs:
   - '*'
 - apiGroups:
