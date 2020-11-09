@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: metadata-writer
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+  name: metadata-writer
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metadata-writer
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
+  template:
+    metadata:
+      labels:
+        app: metadata-writer
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
+    spec:
+      containers:
+      - env:
+        - name: NAMESPACE_TO_WATCH
+          value: ""
+        image: gcr.io/ml-pipeline/metadata-writer:1.0.4
+        name: main
+      serviceAccountName: kubeflow-pipelines-metadata-writer
