@@ -1,0 +1,467 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    cnrm.cloud.google.com/operator-version: 1.29.0
+  labels:
+    cnrm.cloud.google.com/operator-system: "true"
+  name: configconnector-operator-system
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    cnrm.cloud.google.com/operator-version: 1.29.0
+    controller-gen.kubebuilder.io/version: v0.2.4
+  creationTimestamp: null
+  labels:
+    cnrm.cloud.google.com/operator-system: "true"
+  name: configconnectorcontexts.core.cnrm.cloud.google.com
+spec:
+  group: core.cnrm.cloud.google.com
+  names:
+    kind: ConfigConnectorContext
+    listKind: ConfigConnectorContextList
+    plural: configconnectorcontexts
+    singular: configconnectorcontext
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      description: ConfigConnectorContext is the Schema for the ConfigConnectorContexts
+        API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: ConfigConnectorContextSpec defines the desired state of ConfigConnectorContext
+          properties:
+            googleServiceAccount:
+              description: The Google Service Account to be used by Config Connector
+                to authenticate with Google Cloud APIs in the associated namespace.
+              type: string
+            requestProjectPolicy:
+              description: Specifies which project to use for preconditions, quota,
+                and billing for requests made to Google Cloud APIs for resources in
+                the associated namespace. Must be one of 'SERVICE_ACCOUNT_PROJECT'
+                or 'RESOURCE_PROJECT'. Defaults to 'SERVICE_ACCOUNT_PROJECT'. If set
+                to 'SERVICE_ACCOUNT_PROJECT', uses the project that the Google Service
+                Account belongs to. If set to 'RESOURCE_PROJECT', uses the project
+                that the resource belongs to.
+              enum:
+              - SERVICE_ACCOUNT_PROJECT
+              - RESOURCE_PROJECT
+              type: string
+          required:
+          - googleServiceAccount
+          type: object
+        status:
+          description: ConfigConnectorContextStatus defines the observed state of
+            ConfigConnectorContext
+          properties:
+            errors:
+              items:
+                type: string
+              type: array
+            healthy:
+              type: boolean
+          required:
+          - healthy
+          type: object
+      required:
+      - spec
+      type: object
+  version: v1beta1
+  versions:
+  - name: v1beta1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    cnrm.cloud.google.com/operator-version: 1.29.0
+    controller-gen.kubebuilder.io/version: v0.2.4
+  creationTimestamp: null
+  labels:
+    cnrm.cloud.google.com/operator-system: "true"
+  name: configconnectors.core.cnrm.cloud.google.com
+spec:
+  group: core.cnrm.cloud.google.com
+  names:
+    kind: ConfigConnector
+    listKind: ConfigConnectorList
+    plural: configconnectors
+    singular: configconnector
+  scope: Cluster
+  validation:
+    openAPIV3Schema:
+      description: ConfigConnector is the Schema for the configconnectors API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          anyOf:
+          - oneOf:
+            - not:
+                required:
+                - googleServiceAccount
+              required:
+              - credentialSecretName
+            - not:
+                required:
+                - credentialSecretName
+              required:
+              - googleServiceAccount
+            properties:
+              mode:
+                enum:
+                - cluster
+          - not:
+              anyOf:
+              - required:
+                - googleServiceAccount
+              - required:
+                - credentialSecretName
+            properties:
+              mode:
+                enum:
+                - namespaced
+          description: ConfigConnectorSpec defines the desired state of ConfigConnector
+          properties:
+            credentialSecretName:
+              description: The Kubernetes secret that contains the Google Service
+                Account Key's credentials to be used by ConfigConnector to authenticate
+                with Google Cloud APIs. This field is used only when in cluster mode.
+                It's recommended to use `googleServiceAccount` when running ConfigConnector
+                in Google Kubernetes Engine (GKE) clusters with Workload Identity
+                enabled. This field cannot be specified together with `googleServiceAccount`.
+              type: string
+            googleServiceAccount:
+              description: The Google Service Account to be used by Config Connector
+                to authenticate with Google Cloud APIs. This field is used only when
+                running in cluster mode with Workload Identity enabled. See Google
+                Kubernetes Engine (GKE) workload-identity (https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity)
+                for details. This field cannot be specified together with `credentialSecretName`.
+                For namespaced mode, use `googleServiceAccount` in ConfigConnectorContext
+                CRD to specify the Google Service Account to be used to authenticate
+                with Google Cloud APIs per namespace.
+              type: string
+            mode:
+              description: The mode that Config Connector will run in. This can be
+                either 'cluster' or 'namespaced'. The default is 'namespaced'. Cluster
+                mode uses a single Google Service Account to create and manage resources,
+                even if you are using Config Connector to manage multiple Projects.
+                You must specify either `credentialSecretName` or `googleServiceAccount`
+                when in cluster mode, but not both. Namespaced mode allows you to
+                use different Google service accounts for different Projects. When
+                in namespaced mode, you must create a ConfigConnectorContext object
+                per namespace that you want to enable Config Connector in, and each
+                must set `googleServiceAccount` to specify the Google Service Account
+                to be used to authenticate with Google Cloud APIs for the namespace.
+              enum:
+              - cluster
+              - namespaced
+              type: string
+          type: object
+        status:
+          description: ConfigConnectorStatus defines the observed state of ConfigConnector
+          properties:
+            errors:
+              items:
+                type: string
+              type: array
+            healthy:
+              type: boolean
+          required:
+          - healthy
+          type: object
+      type: object
+  version: v1beta1
+  versions:
+  - name: v1beta1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    cnrm.cloud.google.com/operator-version: 1.29.0
+  labels:
+    cnrm.cloud.google.com/operator-system: "true"
+  name: configconnector-operator
+  namespace: configconnector-operator-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    cnrm.cloud.google.com/operator-version: 1.29.0
+  creationTimestamp: null
+  labels:
+    cnrm.cloud.google.com/operator-system: "true"
+  name: configconnector-operator-manager-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - events
+  - events
+  - namespaces
+  - secrets
+  - serviceaccounts
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - mutatingwebhookconfigurations
+  - validatingwebhookconfigurations
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+  - deletecollection
+- apiGroups:
+  - core.cnrm.cloud.google.com
+  resources:
+  - configconnectors
+  - configconnectorcontexts
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - core.cnrm.cloud.google.com
+  resources:
+  - configconnectors/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  - rolebindings
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterroles
+  - roles
+  verbs:
+  - create
+  - delete
+  - escalate
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resourceNames:
+  - cnrm-admin
+  - cnrm-manager-cluster-role
+  - cnrm-manager-ns-role
+  - cnrm-recorder-role
+  - cnrm-webhook-role
+  resources:
+  - clusterroles
+  verbs:
+  - bind
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    cnrm.cloud.google.com/operator-version: 1.29.0
+  labels:
+    cnrm.cloud.google.com/operator-system: "true"
+  name: configconnector-operator-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: configconnector-operator-manager-role
+subjects:
+- kind: ServiceAccount
+  name: configconnector-operator
+  namespace: configconnector-operator-system
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    cnrm.cloud.google.com/operator-version: 1.29.0
+  labels:
+    cnrm.cloud.google.com/operator-system: "true"
+  name: configconnector-operator-service
+  namespace: configconnector-operator-system
+spec:
+  ports:
+  - name: controller-manager
+    port: 443
+  selector:
+    cnrm.cloud.google.com/component: configconnector-operator
+    cnrm.cloud.google.com/operator-system: "true"
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    cnrm.cloud.google.com/operator-version: 1.29.0
+  labels:
+    cnrm.cloud.google.com/component: configconnector-operator
+    cnrm.cloud.google.com/operator-system: "true"
+  name: configconnector-operator
+  namespace: configconnector-operator-system
+spec:
+  selector:
+    matchLabels:
+      cnrm.cloud.google.com/component: configconnector-operator
+      cnrm.cloud.google.com/operator-system: "true"
+  serviceName: configconnector-operator-service
+  template:
+    metadata:
+      annotations:
+        cnrm.cloud.google.com/operator-version: 1.29.0
+      labels:
+        cnrm.cloud.google.com/component: configconnector-operator
+        cnrm.cloud.google.com/operator-system: "true"
+    spec:
+      containers:
+      - args:
+        - --local-repo=/configconnector-operator/channels
+        command:
+        - /configconnector-operator/manager
+        image: gcr.io/gke-release/cnrm/operator:737484d
+        name: manager
+        resources:
+          limits:
+            memory: 200Mi
+          requests:
+            cpu: 50m
+            memory: 100Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - all
+          runAsGroup: 1000
+          runAsNonRoot: true
+          runAsUser: 1000
+      serviceAccountName: configconnector-operator
+      terminationGracePeriodSeconds: 10

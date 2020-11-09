@@ -1,13 +1,12 @@
 # Configuration for installing KCC in the management cluster.
 
-Configs are a copy of the CNRM install (see [docs](https://cloud.google.com/config-connector/docs/how-to/install-upgrade-uninstall#namespaced-mode))
+Configs are a copy of the CNRM operator install (see [docs](https://cloud.google.com/config-connector/docs/how-to/advanced-install#manual))
 
 To update:
 
-1. Download the the latest GCS install bundle listed on (https://cloud.google.com/config-connector/docs/how-to/install-upgrade-uninstall#namespaced-mode)
+1. Download the the latest GCS install bundle listed on (https://cloud.google.com/config-connector/docs/how-to/advanced-install#manual)
 
-1. Copy the system components for the workload identity install bundle to `install-system`
-1. Copy the per namespace components to the template stored in the blueprint repo.
+1. Copy the operator-system/configconnector-operator.yaml to `install-system`
 1. Edit "0-cnrm-system.yaml" to add the kpt setter; change
 
      ```
