@@ -1,0 +1,34 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+resources:
+  - ../../../../pipeline/minio/installs/ibm
+  - ../../../../pipeline/mysql/installs/ibm
+  - ../../../../pipeline/installs/tekton-multi-user
+configMapGenerator:
+- name: pipeline-mysql-parameters
+  behavior: merge
+  literals:
+  - mysqlPvcName=mysql-pv-claim
+- name: pipeline-minio-parameters
+  behavior: merge
+  literals:
+  - minioPvcName=minio-pv-claim
+- name: kubeflow-config
+  envs:
+  - ../../config/params.env
+vars:
+- fieldref:
+    fieldPath: data.clusterDomain
+  name: clusterDomain
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kubeflow-config
+- fieldref:
+    fieldPath: metadata.namespace
+  name: namespace
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kubeflow-config

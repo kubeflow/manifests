@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kubeflow-pipelines-profile-controller
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+  name: kubeflow-pipelines-profile-controller
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubeflow-pipelines-profile-controller
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: kubeflow-pipelines-profile-controller
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
+    spec:
+      containers:
+      - command:
+        - python
+        - /hooks/sync.py
+        env:
+        - name: KFP_VERSION
+          valueFrom:
+            configMapKeyRef:
+              key: appVersion
+              name: pipeline-upstream-install-config-d7hkh24mdg
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: accesskey
+              name: mlpipeline-minio-artifact
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: secretkey
+              name: mlpipeline-minio-artifact
+        envFrom:
+        - configMapRef:
+            name: kubeflow-pipelines-profile-controller-env-mgh6th2gff
+        image: python:3.7
+        name: profile-controller
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /hooks
+          name: hooks
+      volumes:
+      - configMap:
+          name: kubeflow-pipelines-profile-controller-code-gg2h6k2fch
+        name: hooks
