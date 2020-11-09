@@ -10,7 +10,7 @@ openAPI:
       x-k8s-cli:
         setter:
           name: location
-          value: us-east1
+          value: LOCATION
           isSet: true
     io.k8s.cli.setters.name:
       x-k8s-cli:
@@ -44,26 +44,10 @@ openAPI:
           values:
           - marker: ${name}
             ref: '#/definitions/io.k8s.cli.setters.name'
-    io.k8s.cli.substitutions.cnrm-sa:
-      x-k8s-cli:
-        substitution:
-          name: cnrm-sa
-          pattern: serviceAccount:cnrm-controller-manager@${gcloud.core.project}.iam.gserviceaccount.com
-          values:
-          - marker: ${gcloud.core.project}
-            ref: '#/definitions/io.k8s.cli.setters.gcloud.core.project'
     io.k8s.cli.substitutions.cnrm-wi:
       x-k8s-cli:
         substitution:
           name: cnrm-wi
-          pattern: serviceAccount:${gcloud.core.project}.svc.id.goog[cnrm-system/cnrm-controller-manager]
-          values:
-          - marker: ${gcloud.core.project}
-            ref: '#/definitions/io.k8s.cli.setters.gcloud.core.project'
-    io.k8s.cli.substitutions.cnrm-systm-wi:
-      x-k8s-cli:
-        substitution:
-          name: cnrm-systm-wi
           pattern: serviceAccount:${gcloud.core.project}.svc.id.goog[cnrm-system/cnrm-controller-manager]
           values:
           - marker: ${gcloud.core.project}
