@@ -24,10 +24,10 @@ vars:
 # These vars are used internally for the kustomize package.
 # i.e to substitute values into fields kustomize isn't aware of.
 # The names should be unique enough that we don't get conflicts with other packages
-- name: ui-namespace
+- name: metadata-namespace
   objref:
     kind: Service
-    name: ui
+    name: envoy-service
     apiVersion: v1
   fieldref:
     fieldpath: metadata.namespace

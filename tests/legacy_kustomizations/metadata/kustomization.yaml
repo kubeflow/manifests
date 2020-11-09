@@ -32,7 +32,6 @@ patches: []
 patchesStrategicMerge:
 - ../../../metadata/overlays/db/metadata-deployment.yaml
 resources:
-- ../../../metadata/overlays/istio/virtual-service.yaml
 - ../../../metadata/overlays/istio/virtual-service-metadata-grpc.yaml
 - ../../../metadata/overlays/application/application.yaml
 - ../../../metadata/overlays/db/metadata-db-pvc.yaml
