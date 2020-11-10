@@ -54,29 +54,76 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/application/oidc-authservice
+        path: stacks/ibm/application/oidc-authservice-appid
     name: oidc-authservice
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: stacks/ibm/application/dex-auth
-    name: dex-auth
   - kustomizeConfig:
       repoRef:
         name: manifests
         path: metacontroller/base
     name: metacontroller
-  # Install kubeflow applications.
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/multi-user
+        path: tektoncd/tektoncd-install/base
+    name: tektoncd-install
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: tektoncd/tektoncd-dashboard/base
+    name: tektoncd-dashboard
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/admission-webhook
+    name: admission-webhook
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/profile-control-plane
     name: kubeflow-apps
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/application/spark-operator
-    name: spark-operator
+        path: stacks/ibm/application/metadata
+    name: metadata
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/katib
+    name: katib
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/kfp-tekton-multi-user
+    name: kfp-tekton-multi-user
+  # Switch the above kfp-tekton to
+  # the below applications if you want to
+  # run KFP with Argo
+  # - kustomizeConfig:
+  #     repoRef:
+  #       name: manifests
+  #       path: stacks/ibm/application/argo
+  #   name: argo
+  # - kustomizeConfig:
+  #     repoRef:
+  #       name: manifests
+  #       path: stacks/ibm/application/kfp-argo-multi-user
+  #   name: kfp-argo-multi-user
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/notebooks
+    name: notebooks
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/pytorch-job
+    name: pytorch-job
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/tf-job
+    name: tf-job
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -92,6 +139,17 @@ spec:
         name: manifests
         path: stacks/ibm/application/spartakus
     name: spartakus
+  # Optional applications
+  # - kustomizeConfig:
+  #     repoRef:
+  #       name: manifests
+  #       path: stacks/ibm/application/seldon-core-operator
+  #   name: seldon-core-operator
+  # - kustomizeConfig:
+  #     repoRef:
+  #       name: manifests
+  #       path: stacks/ibm/application/spark-operator
+  #   name: spark-operator
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/v1.2-branch.tar.gz
