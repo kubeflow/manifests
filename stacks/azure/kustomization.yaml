@@ -10,7 +10,6 @@ resources:
   - ../../profiles/base_v3
   - ./application/spark-operator
   - ./application/spartakus
-  - ./application/tensorboard
   # Training Operators
   - ../../pytorch-job/pytorch-job-crds/overlays/application
   - ../../pytorch-job/pytorch-operator/overlays/application
