@@ -42,12 +42,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: userid-header
-              name: kubeflow-config-d7dttg89h2
+              name: kubeflow-config-bk4bc7m928
         - name: USERID_PREFIX
           valueFrom:
             configMapKeyRef:
               key: userid-prefix
-              name: kubeflow-config-d7dttg89h2
+              name: kubeflow-config-bk4bc7m928
         image: gcr.io/kubeflow-images-public/jupyter-web-app:vmaster-gd9be4b9e
         imagePullPolicy: Always
         name: jupyter-web-app
