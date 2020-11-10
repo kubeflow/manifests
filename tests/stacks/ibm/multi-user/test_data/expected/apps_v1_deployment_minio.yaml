@@ -1,6 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
+    sidecar.istio.io/inject: "false"
   labels:
     app: minio
     app.kubernetes.io/component: minio

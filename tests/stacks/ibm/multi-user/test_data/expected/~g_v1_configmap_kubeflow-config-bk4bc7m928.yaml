@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  cluster-name: ""
+  clusterDomain: cluster.local
+  istio-namespace: istio-system
+  userid-header: kubeflow-userid
+  userid-prefix: ""
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: metadata
+    app.kubernetes.io/name: metadata
+    kustomize.component: metadata
+  name: kubeflow-config-bk4bc7m928
+  namespace: kubeflow
