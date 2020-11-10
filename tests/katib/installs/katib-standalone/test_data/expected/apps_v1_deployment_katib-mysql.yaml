@@ -16,6 +16,8 @@ spec:
       app.kubernetes.io/component: katib
       app.kubernetes.io/name: katib-controller
       component: mysql
+  strategy:
+    type: Recreate
   template:
     metadata:
       annotations:

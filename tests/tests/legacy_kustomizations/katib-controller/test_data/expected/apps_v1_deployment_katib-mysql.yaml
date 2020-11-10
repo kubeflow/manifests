@@ -24,6 +24,8 @@ spec:
       app.kubernetes.io/part-of: kubeflow
       app.kubernetes.io/version: 0.8.0
       component: mysql
+  strategy:
+    type: Recreate
   template:
     metadata:
       annotations:

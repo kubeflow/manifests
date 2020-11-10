@@ -5,10 +5,12 @@ metadata:
   labels:
     component: db
 spec:
+  replicas: 1
   selector:
     matchLabels:
       component: db
-  replicas: 1
+  strategy:
+    type: Recreate
   template:
     metadata:
       name: db
