@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: metadata-writer
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+  name: metadata-writer
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metadata-writer
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
+  template:
+    metadata:
+      labels:
+        app: metadata-writer
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
+    spec:
+      containers:
+      - env:
+        - name: ARCHIVE_LOGS
+          valueFrom:
+            configMapKeyRef:
+              key: archive_logs
+              name: kfp-tekton-config
+        - name: NAMESPACE_TO_WATCH
+          value: ""
+        image: docker.io/aipipeline/metadata-writer:0.4.0
+        name: main
+      serviceAccountName: kubeflow-pipelines-metadata-writer
