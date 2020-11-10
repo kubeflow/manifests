@@ -91,9 +91,9 @@ spec:
         name: manifests
         path: stacks/ibm/application/kfp-tekton
     name: kfp-tekton
-  # Switch the above kfp-tekton to
+  # Default on IBM Cloud is Kubeflow Pipelines with Tekton. Switch the above kfp-tekton to
   # the below applications if you want to
-  # run KFP with Argo
+  # run Kubeflow Pipelines with Argo
   # - kustomizeConfig:
   #     repoRef:
   #       name: manifests
@@ -141,7 +141,7 @@ spec:
         name: manifests
         path: stacks/ibm/application/spartakus
     name: spartakus
-  # Optional applications
+  # Optional applications: Uncomment the following lines if you want to run Seldon or Spark on IBM Cloud.
   # - kustomizeConfig:
   #     repoRef:
   #       name: manifests
