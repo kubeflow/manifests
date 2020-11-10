@@ -33,7 +33,7 @@ workflows:
       - istio/*
       - jupyter/*
       - katib/*
-      - kfdef/*
+      - kfdef/kfctl_istio_dex*
       - kfserving/*
       - knative/*
       - kubebench/*
