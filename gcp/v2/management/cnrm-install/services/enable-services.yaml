@@ -6,4 +6,3 @@ metadata:
     cnrm.cloud.google.com/deletion-policy: abandon
     cnrm.cloud.google.com/disable-dependent-services: "false"
   name: cloudresourcemanager.googleapis.com
-  namespace: caip-bp-admin

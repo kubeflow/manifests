@@ -1,10 +1,3 @@
-# GKE
-#apiVersion: cnrm.cloud.google.com/v1alpha1
-#kind: CloudService
-#metadata:
-#  name: gke
-#spec:
-#  service: container.googleapis.com
 apiVersion: serviceusage.cnrm.cloud.google.com/v1beta1
 kind: Service
 metadata:
@@ -13,4 +6,5 @@ metadata:
     cnrm.cloud.google.com/deletion-policy: "abandon"
     # this is unnecessary with the deletion-policy of 'abandon', but useful if the abandon policy is removed.
     cnrm.cloud.google.com/disable-dependent-services: "false"
+  # GKE
   name: container.googleapis.com
