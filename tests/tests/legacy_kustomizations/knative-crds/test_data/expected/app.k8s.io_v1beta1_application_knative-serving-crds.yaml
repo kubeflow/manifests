@@ -3,11 +3,7 @@ kind: Application
 metadata:
   labels:
     app.kubernetes.io/component: knative-serving-crds
-    app.kubernetes.io/instance: knative-serving-crds-v0.8.0
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-serving-crds
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.8.0
   name: knative-serving-crds
   namespace: knative-serving
 spec:
@@ -32,8 +28,4 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: knative-serving-crds
-      app.kubernetes.io/instance: knative-serving-crds
-      app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: knative-serving-crds
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.11.2

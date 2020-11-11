@@ -60,16 +60,22 @@ data:
     # disables this throttling and lets through as many requests as
     # the pod receives.
     container-concurrency: "0"
+
+    # The container concurrency max limit is an operator setting ensuring that
+    # the individual revisions cannot have arbitrary large concurrency
+    # values, or autoscaling targets. `container-concurrency` default setting
+    # must be at or below this value.
+    # Must be greater than 1.
+    container-concurrency-max-limit: "1000"
+
+    # feature flag indicates whether to enable multi container support or not
+    enable-multi-container: "false"
 kind: ConfigMap
 metadata:
   labels:
     app.kubernetes.io/component: knative-serving-install
-    app.kubernetes.io/instance: knative-serving-install
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-serving-install
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.11.2
     kustomize.component: knative
-    serving.knative.dev/release: v0.11.2
+    serving.knative.dev/release: v0.14.3
   name: config-defaults
   namespace: knative-serving

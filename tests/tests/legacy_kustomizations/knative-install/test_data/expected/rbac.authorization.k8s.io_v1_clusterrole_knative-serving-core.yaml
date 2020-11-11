@@ -3,14 +3,10 @@ kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/component: knative-serving-install
-    app.kubernetes.io/instance: knative-serving-install
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-serving-install
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.11.2
     kustomize.component: knative
     serving.knative.dev/controller: "true"
-    serving.knative.dev/release: v0.11.2
+    serving.knative.dev/release: v0.14.3
   name: knative-serving-core
 rules:
 - apiGroups:
@@ -68,6 +64,7 @@ rules:
   - apiextensions.k8s.io
   resources:
   - customresourcedefinitions
+  - customresourcedefinitions/status
   verbs:
   - get
   - list
@@ -80,6 +77,18 @@ rules:
   - autoscaling
   resources:
   - horizontalpodautoscalers
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
   verbs:
   - get
   - list

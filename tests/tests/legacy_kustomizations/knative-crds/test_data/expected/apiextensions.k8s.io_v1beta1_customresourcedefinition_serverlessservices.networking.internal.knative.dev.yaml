@@ -3,19 +3,18 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     app.kubernetes.io/component: knative-serving-crds
-    app.kubernetes.io/instance: knative-serving-crds-v0.8.0
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-serving-crds
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.8.0
     knative.dev/crd-install: "true"
-    serving.knative.dev/release: v0.11.2
+    serving.knative.dev/release: v0.14.3
   name: serverlessservices.networking.internal.knative.dev
 spec:
   additionalPrinterColumns:
   - JSONPath: .spec.mode
     name: Mode
     type: string
+  - JSONPath: .spec.numActivators
+    name: Activators
+    type: integer
   - JSONPath: .status.serviceName
     name: ServiceName
     type: string

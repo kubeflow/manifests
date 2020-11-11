@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-eventing-install
+    app.kubernetes.io/name: knative-eventing-install
+    eventing.knative.dev/brokerRole: filter
+    eventing.knative.dev/release: v0.14.2
+    kustomize.component: knative
+  name: broker-filter
+  namespace: knative-eventing
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  - name: http-metrics
+    port: 9090
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    app.kubernetes.io/component: knative-eventing-install
+    app.kubernetes.io/name: knative-eventing-install
+    eventing.knative.dev/brokerRole: filter
+    kustomize.component: knative
