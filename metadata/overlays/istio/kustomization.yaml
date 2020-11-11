@@ -3,7 +3,6 @@ kind: Kustomization
 bases:
 - ../../base
 resources:
-- virtual-service.yaml
 - virtual-service-metadata-grpc.yaml
 configurations:
 - params.yaml
