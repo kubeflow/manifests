@@ -3,13 +3,9 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: knative-serving-install
-    app.kubernetes.io/instance: knative-serving-install
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-serving-install
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.11.2
     kustomize.component: knative
-    serving.knative.dev/release: v0.11.2
+    serving.knative.dev/release: v0.14.3
   name: autoscaler
   namespace: knative-serving
 spec:
@@ -18,29 +14,18 @@ spec:
     matchLabels:
       app: autoscaler
       app.kubernetes.io/component: knative-serving-install
-      app.kubernetes.io/instance: knative-serving-install
-      app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: knative-serving-install
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.11.2
       kustomize.component: knative
-      serving.knative.dev/release: v0.11.2
   template:
     metadata:
       annotations:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
-        sidecar.istio.io/inject: "false"
-        traffic.sidecar.istio.io/includeInboundPorts: 8080,9090
       labels:
         app: autoscaler
         app.kubernetes.io/component: knative-serving-install
-        app.kubernetes.io/instance: knative-serving-install
-        app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: knative-serving-install
-        app.kubernetes.io/part-of: kubeflow
-        app.kubernetes.io/version: v0.11.2
         kustomize.component: knative
-        serving.knative.dev/release: v0.11.2
+        serving.knative.dev/release: v0.14.3
     spec:
       containers:
       - args:
@@ -57,13 +42,12 @@ spec:
           value: config-observability
         - name: METRICS_DOMAIN
           value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:998a405454832cda18a4bf956d26d610a2df2130a39b834b597a89a3153c8c15
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:f89fd23889c3e0ca3d8e42c9b189dc2f93aa5b3a91c64e8aab75e952a210eeb3
         livenessProbe:
           httpGet:
             httpHeaders:
             - name: k-kubelet-probe
               value: autoscaler
-            path: /healthz
             port: 8080
         name: autoscaler
         ports:
@@ -80,7 +64,6 @@ spec:
             httpHeaders:
             - name: k-kubelet-probe
               value: autoscaler
-            path: /healthz
             port: 8080
         resources:
           limits:

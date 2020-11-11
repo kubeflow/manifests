@@ -3,44 +3,27 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: knative-eventing-install
-    app.kubernetes.io/instance: knative-eventing-install
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-eventing-install
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.11.0
-    eventing.knative.dev/release: v0.11.0
+    eventing.knative.dev/release: v0.14.2
     kustomize.component: knative
-    serving.knative.dev/release: v0.11.0
   name: eventing-controller
-  namespace: knative-serving
+  namespace: knative-eventing
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: eventing-controller
       app.kubernetes.io/component: knative-eventing-install
-      app.kubernetes.io/instance: knative-eventing-install
-      app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: knative-eventing-install
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.11.0
       kustomize.component: knative
-      serving.knative.dev/release: v0.11.0
   template:
     metadata:
-      annotations:
-        sidecar.istio.io/inject: "false"
       labels:
         app: eventing-controller
         app.kubernetes.io/component: knative-eventing-install
-        app.kubernetes.io/instance: knative-eventing-install
-        app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: knative-eventing-install
-        app.kubernetes.io/part-of: kubeflow
-        app.kubernetes.io/version: v0.11.0
-        eventing.knative.dev/release: v0.11.0
+        eventing.knative.dev/release: v0.14.2
         kustomize.component: knative
-        serving.knative.dev/release: v0.11.0
     spec:
       containers:
       - env:
@@ -54,25 +37,24 @@ spec:
           value: config-observability
         - name: METRICS_DOMAIN
           value: knative.dev/eventing
-        - name: BROKER_INGRESS_IMAGE
-          value: gcr.io/knative-releases/knative.dev/eventing/cmd/broker/ingress@sha256:0f671b2c3f6ea952cb314b7e7d7ec929702c41c47f59cce1044cf7daa6212d2c
-        - name: BROKER_INGRESS_SERVICE_ACCOUNT
-          value: eventing-broker-ingress
-        - name: BROKER_FILTER_IMAGE
-          value: gcr.io/knative-releases/knative.dev/eventing/cmd/broker/filter@sha256:4cde6893d8763c1c8c52625338d698d5bf6857cf2c37e8e187c5d5a84d75514d
-        - name: BROKER_FILTER_SERVICE_ACCOUNT
-          value: eventing-broker-filter
-        image: gcr.io/knative-releases/knative.dev/eventing/cmd/controller@sha256:d071a79973911f45ffd9021ad7e7cc6f4e262b3f1edb77d9bfdcf91b0d657b4e
+        - name: PING_IMAGE
+          value: gcr.io/knative-releases/knative.dev/eventing/cmd/ping/adapter@sha256:c7272752928f6eeb9a66cf47c00b2d295ffb8517f2033dbbc8a5f461f6adafc2
+        - name: JOB_RUNNER_IMAGE
+          value: gcr.io/knative-releases/knative.dev/eventing/cmd/ping/jobrunner@sha256:b47877189b1e0f23c2617875574b16505251ae45ea091969332266621af99af8
+        - name: APISERVER_RA_IMAGE
+          value: gcr.io/knative-releases/knative.dev/eventing/cmd/apiserver_receive_adapter@sha256:717e08da76235229c5664240351ece8c70767768437c0a6d498210cdcc182f14
+        image: gcr.io/knative-releases/knative.dev/eventing/cmd/controller@sha256:c99f08229c464407e5ba11f942d29b969e0f7dd2e242973d50d480cc45eebf28
         name: eventing-controller
         ports:
         - containerPort: 9090
           name: metrics
+        - containerPort: 8008
+          name: profiling
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        securityContext:
+          allowPrivilegeEscalation: false
         terminationMessagePolicy: FallbackToLogsOnError
-        volumeMounts:
-        - mountPath: /etc/config-logging
-          name: config-logging
       serviceAccountName: eventing-controller
-      volumes:
-      - configMap:
-          name: config-logging
-        name: config-logging

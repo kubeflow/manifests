@@ -3,14 +3,10 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     app.kubernetes.io/component: knative-serving-crds
-    app.kubernetes.io/instance: knative-serving-crds-v0.8.0
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-serving-crds
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.8.0
     duck.knative.dev/addressable: "true"
     knative.dev/crd-install: "true"
-    serving.knative.dev/release: v0.11.2
+    serving.knative.dev/release: v0.14.3
   name: routes.serving.knative.dev
 spec:
   additionalPrinterColumns:
@@ -23,6 +19,12 @@ spec:
   - JSONPath: .status.conditions[?(@.type=='Ready')].reason
     name: Reason
     type: string
+  conversion:
+    strategy: Webhook
+    webhookClientConfig:
+      service:
+        name: webhook
+        namespace: knative-serving
   group: serving.knative.dev
   names:
     categories:
@@ -34,16 +36,21 @@ spec:
     shortNames:
     - rt
     singular: route
+  preserveUnknownFields: false
   scope: Namespaced
   subresources:
     status: {}
+  validation:
+    openAPIV3Schema:
+      type: object
+      x-kubernetes-preserve-unknown-fields: true
   versions:
   - name: v1alpha1
     served: true
-    storage: true
+    storage: false
   - name: v1beta1
     served: true
     storage: false
   - name: v1
     served: true
-    storage: false
+    storage: true

@@ -1,12 +1,12 @@
 aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
-      duck.knative.dev/addressable: "true"
+      duck.knative.dev/addressable: 'true'
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
+    eventing.knative.dev/release: v0.14.2
   name: addressable-resolver
 rules: []
 ---
@@ -14,12 +14,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    duck.knative.dev/addressable: "true"
-    eventing.knative.dev/release: "v0.11.0"
+    duck.knative.dev/addressable: 'true'
+    eventing.knative.dev/release: v0.14.2
   name: service-addressable-resolver
 rules:
 - apiGroups:
-  - ""
+  - ''
   resources:
   - services
   verbs:
@@ -31,8 +31,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    duck.knative.dev/addressable: "true"
-    eventing.knative.dev/release: "v0.11.0"
+    duck.knative.dev/addressable: 'true'
+    eventing.knative.dev/release: v0.14.2
   name: serving-addressable-resolver
 rules:
 - apiGroups:
@@ -51,8 +51,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    duck.knative.dev/addressable: "true"
-    eventing.knative.dev/release: "v0.11.0"
+    duck.knative.dev/addressable: 'true'
+    eventing.knative.dev/release: v0.14.2
   name: channel-addressable-resolver
 rules:
 - apiGroups:
@@ -64,13 +64,19 @@ rules:
   - get
   - list
   - watch
+- apiGroups:
+  - messaging.knative.dev
+  resources:
+  - channels/finalizers
+  verbs:
+  - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    duck.knative.dev/addressable: "true"
-    eventing.knative.dev/release: "v0.11.0"
+    duck.knative.dev/addressable: 'true'
+    eventing.knative.dev/release: v0.14.2
   name: broker-addressable-resolver
 rules:
 - apiGroups:
@@ -87,8 +93,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    duck.knative.dev/addressable: "true"
-    eventing.knative.dev/release: "v0.11.0"
+    duck.knative.dev/addressable: 'true'
+    eventing.knative.dev/release: v0.14.2
   name: messaging-addressable-resolver
 rules:
 - apiGroups:
@@ -107,8 +113,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    duck.knative.dev/addressable: "true"
-    eventing.knative.dev/release: "v0.11.0"
+    duck.knative.dev/addressable: 'true'
+    eventing.knative.dev/release: v0.14.2
   name: flows-addressable-resolver
 rules:
 - apiGroups:
@@ -122,17 +128,16 @@ rules:
   - get
   - list
   - watch
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
+    eventing.knative.dev/release: v0.14.2
   name: eventing-broker-filter
 rules:
 - apiGroups:
-  - ""
+  - ''
   resources:
   - configmaps
   verbs:
@@ -153,11 +158,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
+    eventing.knative.dev/release: v0.14.2
   name: eventing-broker-ingress
 rules:
 - apiGroups:
-  - ""
+  - ''
   resources:
   - configmaps
   verbs:
@@ -169,38 +174,36 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
+    eventing.knative.dev/release: v0.14.2
   name: eventing-config-reader
 rules:
 - apiGroups:
-  - ""
+  - ''
   resources:
   - configmaps
   verbs:
   - get
   - list
   - watch
-
 ---
 aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
-      duck.knative.dev/channelable: "true"
+      duck.knative.dev/channelable: 'true'
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
+    eventing.knative.dev/release: v0.14.2
   name: channelable-manipulator
 rules: []
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
-    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    eventing.knative.dev/release: v0.14.2
+    rbac.authorization.k8s.io/aggregate-to-admin: 'true'
   name: knative-eventing-namespaced-admin
 rules:
 - apiGroups:
@@ -214,8 +217,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
-    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    eventing.knative.dev/release: v0.14.2
+    rbac.authorization.k8s.io/aggregate-to-admin: 'true'
   name: knative-messaging-namespaced-admin
 rules:
 - apiGroups:
@@ -229,12 +232,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
-    rbac.authorization.k8s.io/aggregate-to-admin: "true"
-  name: knative-eventing-sources-namespaced-admin
+    eventing.knative.dev/release: v0.14.2
+    rbac.authorization.k8s.io/aggregate-to-admin: 'true'
+  name: knative-flows-namespaced-admin
 rules:
 - apiGroups:
-  - sources.eventing.knative.dev
+  - flows.knative.dev
   resources:
   - '*'
   verbs:
@@ -244,14 +247,29 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
-    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    eventing.knative.dev/release: v0.14.2
+    rbac.authorization.k8s.io/aggregate-to-admin: 'true'
+  name: knative-sources-namespaced-admin
+rules:
+- apiGroups:
+  - sources.knative.dev
+  resources:
+  - '*'
+  verbs:
+  - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    eventing.knative.dev/release: v0.14.2
+    rbac.authorization.k8s.io/aggregate-to-edit: 'true'
   name: knative-eventing-namespaced-edit
 rules:
 - apiGroups:
   - eventing.knative.dev
   - messaging.knative.dev
-  - sources.eventing.knative.dev
+  - flows.knative.dev
   resources:
   - '*'
   verbs:
@@ -264,39 +282,40 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
-    rbac.authorization.k8s.io/aggregate-to-view: "true"
+    eventing.knative.dev/release: v0.14.2
+    rbac.authorization.k8s.io/aggregate-to-view: 'true'
   name: knative-eventing-namespaced-view
 rules:
 - apiGroups:
   - eventing.knative.dev
   - messaging.knative.dev
-  - sources.eventing.knative.dev
+  - sources.knative.dev
+  - flows.knative.dev
   resources:
   - '*'
   verbs:
   - get
   - list
   - watch
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
+    eventing.knative.dev/release: v0.14.2
   name: knative-eventing-controller
 rules:
 - apiGroups:
-  - ""
+  - ''
   resources:
   - namespaces
   - secrets
   - configmaps
   - services
+  - endpoints
   - events
   - serviceaccounts
-  verbs:
+  verbs: &ref_0
   - get
   - list
   - create
@@ -308,26 +327,12 @@ rules:
   - apps
   resources:
   - deployments
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
+  verbs: *ref_0
 - apiGroups:
   - rbac.authorization.k8s.io
   resources:
   - rolebindings
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
+  verbs: *ref_0
 - apiGroups:
   - eventing.knative.dev
   resources:
@@ -337,14 +342,7 @@ rules:
   - triggers/status
   - eventtypes
   - eventtypes/status
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
+  verbs: *ref_0
 - apiGroups:
   - eventing.knative.dev
   resources:
@@ -363,14 +361,7 @@ rules:
   - parallels/status
   - subscriptions
   - subscriptions/status
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
+  verbs: *ref_0
 - apiGroups:
   - flows.knative.dev
   resources:
@@ -378,20 +369,20 @@ rules:
   - sequences/status
   - parallels
   - parallels/status
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
+  verbs: *ref_0
 - apiGroups:
   - messaging.knative.dev
   resources:
   - sequences/finalizers
   - parallels/finalizers
   - channels/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - flows.knative.dev
+  resources:
+  - sequences/finalizers
+  - parallels/finalizers
   verbs:
   - update
 - apiGroups:
@@ -402,17 +393,55 @@ rules:
   - get
   - list
   - watch
-
 ---
-aggregationRule:
-  clusterRoleSelectors:
-  - matchLabels:
-      duck.knative.dev/podspecable: "true"
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
+    eventing.knative.dev/release: v0.14.2
+  name: knative-eventing-jobrunner
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - sources.knative.dev
+  resources:
+  - pingsources
+  - pingsources/status
+  verbs:
+  - get
+  - list
+  - watch
+  - patch
+- apiGroups:
+  - sources.knative.dev
+  resources:
+  - pingsources/finalizers
+  verbs:
+  - patch
+- apiGroups:
+  - ''
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+---
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      duck.knative.dev/podspecable: 'true'
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    eventing.knative.dev/release: v0.14.2
   name: podspecable-binding
 rules: []
 ---
@@ -420,8 +449,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    duck.knative.dev/addressable: "true"
-    eventing.knative.dev/release: "v0.11.0"
+    duck.knative.dev/podspecable: 'true'
+    eventing.knative.dev/release: v0.14.2
   name: builtin-podspecable-binding
 rules:
 - apiGroups:
@@ -447,12 +476,12 @@ rules:
 aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
-      duck.knative.dev/source: "true"
+      duck.knative.dev/source: 'true'
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
+    eventing.knative.dev/release: v0.14.2
   name: source-observer
 rules: []
 ---
@@ -460,36 +489,36 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    duck.knative.dev/source: "true"
-    eventing.knative.dev/release: "v0.11.0"
+    duck.knative.dev/source: 'true'
+    eventing.knative.dev/release: v0.14.2
   name: eventing-sources-source-observer
 rules:
 - apiGroups:
-  - sources.eventing.knative.dev
+  - sources.knative.dev
   resources:
-  - containersources
-  - cronjobsources
   - apiserversources
+  - pingsources
+  - sinkbindings
+  - containersources
   verbs:
   - get
   - list
   - watch
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
-  name: knative-eventing-source-controller
+    eventing.knative.dev/release: v0.14.2
+  name: knative-eventing-sources-controller
 rules:
 - apiGroups:
-  - ""
+  - ''
   resources:
   - secrets
   - configmaps
   - services
-  verbs:
+  verbs: &ref_0
   - get
   - list
   - create
@@ -501,90 +530,54 @@ rules:
   - apps
   resources:
   - deployments
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
+  verbs: *ref_0
 - apiGroups:
-  - sources.eventing.knative.dev
+  - sources.knative.dev
   resources:
-  - cronjobsources
-  - cronjobsources/status
-  - cronjobsources/finalizers
-  - containersources
-  - containersources/status
-  - containersources/finalizers
   - sinkbindings
   - sinkbindings/status
   - sinkbindings/finalizers
   - apiserversources
   - apiserversources/status
   - apiserversources/finalizers
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
+  - pingsources
+  - pingsources/status
+  - pingsources/finalizers
+  - containersources
+  - containersources/status
+  - containersources/finalizers
+  verbs: *ref_0
 - apiGroups:
   - serving.knative.dev
   resources:
   - services
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
+  verbs: *ref_0
 - apiGroups:
   - eventing.knative.dev
   resources:
   - eventtypes
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
+  verbs: *ref_0
 - apiGroups:
-  - ""
+  - ''
   resources:
   - events
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - delete
-  - patch
-  - watch
+  verbs: *ref_0
 - apiGroups:
   - authorization.k8s.io
   resources:
   - subjectaccessreviews
   verbs:
   - create
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
+    eventing.knative.dev/release: v0.14.2
   name: knative-eventing-webhook
 rules:
 - apiGroups:
-  - ""
+  - ''
   resources:
   - configmaps
   verbs:
@@ -592,7 +585,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - ""
+  - ''
   resources:
   - secrets
   verbs:
@@ -618,7 +611,7 @@ rules:
   resources:
   - mutatingwebhookconfigurations
   - validatingwebhookconfigurations
-  verbs:
+  verbs: &ref_0
   - get
   - list
   - create
@@ -627,11 +620,16 @@ rules:
   - patch
   - watch
 - apiGroups:
-  - sources.eventing.knative.dev
+  - sources.knative.dev
   resources:
   - sinkbindings
   - sinkbindings/status
   - sinkbindings/finalizers
+  verbs: *ref_0
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
   verbs:
   - get
   - list
@@ -641,13 +639,57 @@ rules:
   - patch
   - watch
 ---
-# in-memory-channel.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    duck.knative.dev/addressable: "true"
-    eventing.knative.dev/release: "v0.11.0"
+    eventing.knative.dev/release: v0.14.2
+  name: knative-eventing-channel-broker-controller
+rules:
+- apiGroups:
+  - configs.internal.knative.dev
+  resources:
+  - configmappropagations
+  - configmappropagations/status
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - configs.internal.knative.dev
+  resources:
+  - configmappropagations/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - ''
+  resources:
+  - namespaces/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    duck.knative.dev/addressable: 'true'
+    eventing.knative.dev/release: v0.14.2
   name: imc-addressable-resolver
 rules:
 - apiGroups:
@@ -664,8 +706,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    duck.knative.dev/channelable: "true"
-    eventing.knative.dev/release: "v0.11.0"
+    duck.knative.dev/channelable: 'true'
+    eventing.knative.dev/release: v0.14.2
   name: imc-channelable-manipulator
 rules:
 - apiGroups:
@@ -680,13 +722,12 @@ rules:
   - watch
   - update
   - patch
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
+    eventing.knative.dev/release: v0.14.2
   name: imc-controller
 rules:
 - apiGroups:
@@ -706,10 +747,11 @@ rules:
   verbs:
   - update
 - apiGroups:
-  - ""
+  - ''
   resources:
   - services
-  verbs:
+  - serviceaccounts
+  verbs: &ref_0
   - get
   - list
   - watch
@@ -717,7 +759,7 @@ rules:
   - update
   - patch
 - apiGroups:
-  - ""
+  - ''
   resources:
   - endpoints
   verbs:
@@ -725,16 +767,25 @@ rules:
   - list
   - watch
 - apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - rolebindings
+  verbs: *ref_0
+- apiGroups:
   - apps
   resources:
   - deployments
+  verbs: *ref_0
+- apiGroups:
+  - apps
+  resources:
   - deployments/status
   verbs:
   - get
   - list
   - watch
 - apiGroups:
-  - ""
+  - ''
   resources:
   - configmaps
   verbs:
@@ -742,19 +793,23 @@ rules:
   - list
   - watch
 - apiGroups:
-  - ""
+  - ''
   resources:
   - events
   verbs:
   - create
   - patch
-
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs: *ref_0
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    eventing.knative.dev/release: "v0.11.0"
+    eventing.knative.dev/release: v0.14.2
   name: imc-dispatcher
 rules:
 - apiGroups:
@@ -767,7 +822,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - ""
+  - ''
   resources:
   - configmaps
   verbs:
@@ -775,8 +830,26 @@ rules:
   - list
   - watch
 - apiGroups:
+  - ''
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
   - messaging.knative.dev
   resources:
   - inmemorychannels/status
   verbs:
   - update
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch

@@ -3,45 +3,30 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: knative-serving-install
-    app.kubernetes.io/instance: knative-serving-install
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-serving-install
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.11.2
     kustomize.component: knative
-    serving.knative.dev/release: v0.11.2
+    serving.knative.dev/release: v0.14.3
   name: webhook
   namespace: knative-serving
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: webhook
       app.kubernetes.io/component: knative-serving-install
-      app.kubernetes.io/instance: knative-serving-install
-      app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: knative-serving-install
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.11.2
       kustomize.component: knative
       role: webhook
-      serving.knative.dev/release: v0.11.2
   template:
     metadata:
       annotations:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
-        sidecar.istio.io/inject: "false"
       labels:
         app: webhook
         app.kubernetes.io/component: knative-serving-install
-        app.kubernetes.io/instance: knative-serving-install
-        app.kubernetes.io/managed-by: kfctl
         app.kubernetes.io/name: knative-serving-install
-        app.kubernetes.io/part-of: kubeflow
-        app.kubernetes.io/version: v0.11.2
         kustomize.component: knative
         role: webhook
-        serving.knative.dev/release: v0.11.2
+        serving.knative.dev/release: v0.14.3
     spec:
       containers:
       - env:
@@ -55,13 +40,15 @@ spec:
           value: config-observability
         - name: METRICS_DOMAIN
           value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:d07560cd5548640cc79abc819608844527351f10e8b0a847988f9eb602c18972
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:7e6df0fda229a13219bbc90ff72a10434a0c64cd7fe13dc534b914247d1087f4
         name: webhook
         ports:
         - containerPort: 9090
           name: metrics
         - containerPort: 8008
           name: profiling
+        - containerPort: 8443
+          name: https-webhook
         resources:
           limits:
             cpu: 200m

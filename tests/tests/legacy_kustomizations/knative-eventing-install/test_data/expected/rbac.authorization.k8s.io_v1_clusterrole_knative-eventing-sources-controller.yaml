@@ -3,15 +3,10 @@ kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/component: knative-eventing-install
-    app.kubernetes.io/instance: knative-eventing-install
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-eventing-install
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.11.0
-    eventing.knative.dev/release: v0.11.0
+    eventing.knative.dev/release: v0.14.2
     kustomize.component: knative
-    serving.knative.dev/release: v0.11.0
-  name: knative-eventing-source-controller
+  name: knative-eventing-sources-controller
 rules:
 - apiGroups:
   - ""
@@ -40,20 +35,20 @@ rules:
   - patch
   - watch
 - apiGroups:
-  - sources.eventing.knative.dev
+  - sources.knative.dev
   resources:
-  - cronjobsources
-  - cronjobsources/status
-  - cronjobsources/finalizers
-  - containersources
-  - containersources/status
-  - containersources/finalizers
   - sinkbindings
   - sinkbindings/status
   - sinkbindings/finalizers
   - apiserversources
   - apiserversources/status
   - apiserversources/finalizers
+  - pingsources
+  - pingsources/status
+  - pingsources/finalizers
+  - containersources
+  - containersources/status
+  - containersources/finalizers
   verbs:
   - get
   - list

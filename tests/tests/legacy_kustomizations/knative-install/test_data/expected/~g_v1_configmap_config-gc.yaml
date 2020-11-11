@@ -17,28 +17,27 @@ data:
     # to actually change the configuration.
 
     # Delay after revision creation before considering it for GC
-    stale-revision-create-delay: "24h"
+    stale-revision-create-delay: "48h"
 
-    # Duration since a route has been pointed at a revision before it should be GC'd
-    # This minus lastpinned-debounce be longer than the controller resync period (10 hours)
+    # Duration since a route has pointed at the revision before it
+    # should be GC'd.
+    # This minus lastpinned-debounce must be longer than the controller
+    # resync period (10 hours).
     stale-revision-timeout: "15h"
 
-    # Minimum number of generations of revisions to keep before considering for GC
-    stale-revision-minimum-generations: "1"
+    # Minimum number of generations of revisions to keep before considering
+    # them for GC
+    stale-revision-minimum-generations: "20"
 
     # To avoid constant updates, we allow an existing annotation to be stale by this
-    # amount before we update the timestamp
+    # amount before we update the timestamp.
     stale-revision-lastpinned-debounce: "5h"
 kind: ConfigMap
 metadata:
   labels:
     app.kubernetes.io/component: knative-serving-install
-    app.kubernetes.io/instance: knative-serving-install
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-serving-install
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.11.2
     kustomize.component: knative
-    serving.knative.dev/release: v0.11.2
+    serving.knative.dev/release: v0.14.3
   name: config-gc
   namespace: knative-serving
