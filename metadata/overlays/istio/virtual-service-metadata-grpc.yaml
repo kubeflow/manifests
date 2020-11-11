@@ -15,7 +15,7 @@ spec:
       uri: /ml_metadata
     route:
     - destination:
-        host: $(metadata-envoy-service).$(ui-namespace).svc.$(ui-clusterDomain)
+        host: $(metadata-envoy-service).$(metadata-namespace).svc.$(ui-clusterDomain)
         port:
           number: 9090
     timeout: 300s
