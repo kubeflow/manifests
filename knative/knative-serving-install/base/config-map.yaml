@@ -29,13 +29,27 @@ data:
     # fractional values in (0, 1] interval (i.e. 0.7 ⇒ 70%).
     # Thus minimal percentage value must be greater than 1.0, or it will be
     # treated as a fraction.
+    # NOTE: that this value does not affect actual number of concurrent requests
+    #       the user container may receive, but only the average number of requests
+    #       that the revision pods will receive.
     container-concurrency-target-percentage: "70"
 
     # The container concurrency target default is what the Autoscaler will
-    # try to maintain when concurrency is used as the scaling metric for a
+    # try to maintain when concurrency is used as the scaling metric for the
     # Revision and the Revision specifies unlimited concurrency.
-    # Even when specifying unlimited concurrency, the autoscaler will
+    # When revision explicitly specifies container concurrency, that value
+    # will be used as a scaling target for autoscaler.
+    # When specifying unlimited concurrency, the autoscaler will
     # horizontally scale the application based on this target concurrency.
+    # This is what we call "soft limit" in the documentation, i.e. it only
+    # affects number of pods and does not affect the number of requests
+    # individual pod processes.
+    # The value must be a positive number such that the value multiplied
+    # by container-concurrency-target-percentage is greater than 0.01.
+    # NOTE: that this value will be adjusted by application of
+    #       container-concurrency-target-percentage, i.e. by default
+    #       the system will target on average 70 concurrent requests
+    #       per revision pod.
     # NOTE: Only one metric can be used for autoscaling a Revision.
     container-concurrency-target-default: "100"
 
@@ -83,7 +97,7 @@ data:
     # Max scale up rate limits the rate at which the autoscaler will
     # increase pod count. It is the maximum ratio of desired pods versus
     # observed pods.
-    # Cannot less or equal to 1.
+    # Cannot be less or equal to 1.
     # I.e with value of 2.0 the number of pods can at most go N to 2N
     # over single Autoscaler period (see tick-interval), but at least N to
     # N+1, if Autoscaler needs to scale up.
@@ -92,11 +106,10 @@ data:
     # Max scale down rate limits the rate at which the autoscaler will
     # decrease pod count. It is the maximum ratio of observed pods versus
     # desired pods.
-    # Cannot less or equal to 1.
+    # Cannot be less or equal to 1.
     # I.e. with value of 2.0 the number of pods can at most go N to N/2
     # over single Autoscaler evaluation period (see tick-interval), but at
     # least N to N-1, if Autoscaler needs to scale down.
-    # Not yet used // TODO(vagababov) remove once other parts are ready.
     max-scale-down-rate: "2.0"
 
     # Scale to zero feature flag
@@ -105,20 +118,33 @@ data:
     # Tick interval is the time between autoscaling calculations.
     tick-interval: "2s"
 
-    # Dynamic parameters (take effect when config map is updated):
-
     # Scale to zero grace period is the time an inactive revision is left
-    # running before it is scaled to zero (min: 30s).
+    # running before it is scaled to zero (min: 6s).
     scale-to-zero-grace-period: "30s"
+
+    # Enable graceful scaledown feature flag.
+    # Once enabled, it allows the autoscaler to prioritize pods processing
+    # fewer (or zero) requests for removal when scaling down.
+    enable-graceful-scaledown: "false"
+
+    # pod-autoscaler-class specifies the default pod autoscaler class
+    # that should be used if none is specified. If omitted, the Knative
+    # Horizontal Pod Autoscaler (KPA) is used by default.
+    pod-autoscaler-class: "kpa.autoscaling.knative.dev"
+
+    # The capacity of a single activator task.
+    # The `unit` is one concurrent request proxied by the activator.
+    # activator-capacity must be at least 1.
+    # This value is used for computation of the Activator subset size.
+    # See the algorithm here: http://bit.ly/38XiCZ3.
+    # TODO(vagababov): tune after actual benchmarking.
+    activator-capacity: "100.0"
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.11.2"
+    serving.knative.dev/release: v0.14.3
   name: config-autoscaler
   namespace: knative-serving
-
----
-
 ---
 apiVersion: v1
 data:
@@ -182,13 +208,22 @@ data:
     # disables this throttling and lets through as many requests as
     # the pod receives.
     container-concurrency: "0"
+
+    # The container concurrency max limit is an operator setting ensuring that
+    # the individual revisions cannot have arbitrary large concurrency
+    # values, or autoscaling targets. `container-concurrency` default setting
+    # must be at or below this value.
+    # Must be greater than 1.
+    container-concurrency-max-limit: "1000"
+
+    # feature flag indicates whether to enable multi container support or not
+    enable-multi-container: "false"
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.11.2"
+    serving.knative.dev/release: v0.14.3
   name: config-defaults
   namespace: knative-serving
-
 ---
 apiVersion: v1
 data:
@@ -210,14 +245,13 @@ data:
 
     # List of repositories for which tag to digest resolving should be skipped
     registriesSkippingTagResolving: "ko.local,dev.local"
-  queueSidecarImage: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:792f6945c7bc73a49a470a5b955c39c8bd174705743abf5fb71aa0f4c04128eb
+  queueSidecarImage: 'gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:d066ae5b642885827506610ae25728d442ce11447b82df6e9cc4c174bb97ecb3'
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.11.2"
+    serving.knative.dev/release: v0.14.3
   name: config-deployment
   namespace: knative-serving
-
 ---
 apiVersion: v1
 data:
@@ -260,10 +294,9 @@ data:
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.11.2"
+    serving.knative.dev/release: v0.14.3
   name: config-domain
   namespace: knative-serving
-
 ---
 apiVersion: v1
 data:
@@ -284,27 +317,82 @@ data:
     # to actually change the configuration.
 
     # Delay after revision creation before considering it for GC
-    stale-revision-create-delay: "24h"
+    stale-revision-create-delay: "48h"
 
-    # Duration since a route has been pointed at a revision before it should be GC'd
-    # This minus lastpinned-debounce be longer than the controller resync period (10 hours)
+    # Duration since a route has pointed at the revision before it
+    # should be GC'd.
+    # This minus lastpinned-debounce must be longer than the controller
+    # resync period (10 hours).
     stale-revision-timeout: "15h"
 
-    # Minimum number of generations of revisions to keep before considering for GC
-    stale-revision-minimum-generations: "1"
+    # Minimum number of generations of revisions to keep before considering
+    # them for GC
+    stale-revision-minimum-generations: "20"
 
     # To avoid constant updates, we allow an existing annotation to be stale by this
-    # amount before we update the timestamp
+    # amount before we update the timestamp.
     stale-revision-lastpinned-debounce: "5h"
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.11.2"
+    serving.knative.dev/release: v0.14.3
   name: config-gc
   namespace: knative-serving
-
 ---
+apiVersion: v1
+data:
+  _example: |
+    ################################
+    #                              #
+    #    EXAMPLE CONFIGURATION     #
+    #                              #
+    ################################
 
+    # This block is not actually functional configuration,
+    # but serves to illustrate the available configuration
+    # options and document them in a way that is accessible
+    # to users that `kubectl edit` this config map.
+    #
+    # These sample configuration options may be copied out of
+    # this example block and unindented to be in the data block
+    # to actually change the configuration.
+
+    # resourceLock controls which API resource is used as the basis for the
+    # leader election lock. Valid values are:
+    #
+    # - leases -> use the coordination API
+    # - configmaps -> use configmaps
+    # - endpoints -> use endpoints
+    resourceLock: "leases"
+
+    # leaseDuration is how long non-leaders will wait to try to acquire the
+    # lock; 15 seconds is the value used by core kubernetes controllers.
+    leaseDuration: "15s"
+    # renewDeadline is how long a leader will try to renew the lease before
+    # giving up; 10 seconds is the value used by core kubernetes controllers.
+    renewDeadline: "10s"
+    # retryPeriod is how long the leader election client waits between tries of
+    # actions; 2 seconds is the value used by core kubernetes controllers.
+    retryPeriod: "2s"
+    # enabledComponents is a comma-delimited list of component names for which
+    # leader election is enabled. Valid values are:
+    #
+    # - controller
+    # - hpaautoscaler
+    # - certcontroller
+    # - istiocontroller
+    # - nscontroller
+    enabledComponents: "controller,hpaautoscaler,certcontroller,istiocontroller,nscontroller"
+  leaseDuration: 15s
+  renewDeadline: 10s
+  resourceLock: leases
+  retryPeriod: 2s
+kind: ConfigMap
+metadata:
+  labels:
+    serving.knative.dev/release: v0.14.3
+  name: config-leader-election
+  namespace: knative-serving
 ---
 apiVersion: v1
 data:
@@ -356,13 +444,16 @@ data:
     loglevel.queueproxy: "info"
     loglevel.webhook: "info"
     loglevel.activator: "info"
+    loglevel.hpaautoscaler: "info"
+    loglevel.certcontroller: "info"
+    loglevel.istiocontroller: "info"
+    loglevel.nscontroller: "info"
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.11.2"
+    serving.knative.dev/release: v0.14.3
   name: config-logging
   namespace: knative-serving
-
 ---
 apiVersion: v1
 data:
@@ -382,45 +473,12 @@ data:
     # this example block and unindented to be in the data block
     # to actually change the configuration.
 
-    # istio.sidecar.includeOutboundIPRanges specifies the IP ranges that Istio sidecar
-    # will intercept.
+    # DEPRECATED:
+    # istio.sidecar.includeOutboundIPRanges is obsolete.
+    # The current versions have outbound network access enabled by default.
+    # If you need this option for some reason, please use global.proxy.includeIPRanges in Istio.
     #
-    # Replace this with the IP ranges of your cluster (see below for some examples).
-    # Separate multiple entries with a comma.
-    # Example: "10.4.0.0/14,10.7.240.0/20"
-    #
-    # If set to "*" Istio will intercept all traffic within
-    # the cluster as well as traffic that is going outside the cluster.
-    # Traffic going outside the cluster will be blocked unless
-    # necessary egress rules are created.
-    #
-    # If omitted or set to "", value of global.proxy.includeIPRanges
-    # provided at Istio deployment time is used. In default Knative serving
-    # deployment, global.proxy.includeIPRanges value is set to "*".
-    #
-    # If an invalid value is passed, "" is used instead.
-    #
-    # If valid set of IP address ranges are put into this value,
-    # Istio will no longer intercept traffic going to IP addresses
-    # outside the provided ranges and there is no need to specify
-    # egress rules.
-    #
-    # To determine the IP ranges of your cluster:
-    #   IBM Cloud Private: cat cluster/config.yaml | grep service_cluster_ip_range
-    #   IBM Cloud Kubernetes Service: "172.30.0.0/16,172.20.0.0/16,10.10.10.0/24"
-    #   Google Container Engine (GKE): gcloud container clusters describe $CLUSTER_NAME --zone=$CLUSTER_ZONE | grep -e clusterIpv4Cidr -e servicesIpv4Cidr
-    #   Azure Kubernetes Service (AKS): "10.0.0.0/16"
-    #   Azure Container Service (ACS; deprecated): "10.244.0.0/16,10.240.0.0/16"
-    #   Azure Container Service Engine (ACS-Engine; OSS): Configurable, but defaults to "10.0.0.0/16"
-    #   Minikube: "10.0.0.1/24"
-    #
-    # For more information, visit
-    # https://istio.io/docs/tasks/traffic-management/egress/
-    #
-    istio.sidecar.includeOutboundIPRanges: "*"
-
-    # clusteringress.class has been deprecated.   Please use ingress.class instead.
-    clusteringress.class: "istio.ingress.networking.knative.dev"
+    # istio.sidecar.includeOutboundIPRanges: "*"
 
     # ingress.class specifies the default ingress class
     # to use when not dictated by Route annotation.
@@ -442,7 +500,7 @@ data:
     # will result in undefined behavior.  Therefore it is best to only
     # update this value during the setup of Knative, to avoid getting
     # undefined behavior.
-    certificate.class: "cert-manager.certificate.networking.internal.knative.dev"
+    certificate.class: "cert-manager.certificate.networking.knative.dev"
 
     # domainTemplate specifies the golang text template string to use
     # when constructing the Knative service's DNS name. The default
@@ -476,7 +534,7 @@ data:
     autoTLS: "Disabled"
 
     # Controls the behavior of the HTTP endpoint for the Knative ingress.
-    # It requires autoTLS to be enabled or reconcileExternalGateway in config-istio to be true.
+    # It requires autoTLS to be enabled.
     # 1. Enabled: The Knative ingress will be able to serve HTTP connection.
     # 2. Disabled: The Knative ingress will reject HTTP traffic.
     # 3. Redirected: The Knative ingress will send a 302 redirect for all
@@ -485,25 +543,26 @@ data:
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.11.2"
+    serving.knative.dev/release: v0.14.3
   name: config-network
   namespace: knative-serving
-
 ---
 apiVersion: v1
 data:
-  _example: |
+  _example: >
     ################################
     #                              #
     #    EXAMPLE CONFIGURATION     #
     #                              #
     ################################
 
+
     # This block is not actually functional configuration,
     # but serves to illustrate the available configuration
     # options and document them in a way that is accessible
     # to users that `kubectl edit` this config map.
     #
+
     # These sample configuration options may be copied out of
     # this example block and unindented to be in the data block
     # to actually change the configuration.
@@ -548,7 +607,8 @@ data:
     #   PodIP         string  // IP of the pod hosting the revision
     # }
     #
-    logging.request-log-template: '{"httpRequest": {"requestMethod": "{{.Request.Method}}", "requestUrl": "{{js .Request.RequestURI}}", "requestSize": "{{.Request.ContentLength}}", "status": {{.Response.Code}}, "responseSize": "{{.Response.Size}}", "userAgent": "{{js .Request.UserAgent}}", "remoteIp": "{{js .Request.RemoteAddr}}", "serverIp": "{{.Revision.PodIP}}", "referer": "{{js .Request.Referer}}", "latency": "{{.Response.Latency}}s", "protocol": "{{.Request.Proto}}"}, "traceId": "{{index .Request.Header "X-B3-Traceid"}}"}'
+    logging.request-log-template: '{"httpRequest": {"requestMethod": "{{.Request.Method}}", "requestUrl": "{{js .Request.RequestURI}}", "requestSize": "{{.Request.ContentLength}}", "status": {{.Response.Code}}, "responseSize": "{{.Response.Size}}", "userAgent": "{{js .Request.UserAgent}}", "remoteIp": "{{js .Request.RemoteAddr}}", "serverIp": "{{.Revision.PodIP}}", "referer": "{{js .Request.Referer}}", "latency": "{{.Response.Latency}}s", "protocol": "{{.Request.Proto}}"}, "traceId": "{{index
+    .Request.Header "X-B3-Traceid"}}"}'
 
     # If true, this enables queue proxy writing request logs for probe requests to stdout.
     # It uses the same template for user requests, i.e. logging.request-log-template.
@@ -584,10 +644,9 @@ data:
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.11.2"
+    serving.knative.dev/release: v0.14.3
   name: config-observability
   namespace: knative-serving
-
 ---
 apiVersion: v1
 data:
@@ -628,14 +687,13 @@ data:
 kind: ConfigMap
 metadata:
   labels:
-    serving.knative.dev/release: "v0.11.2"
+    serving.knative.dev/release: v0.14.3
   name: config-tracing
   namespace: knative-serving
-
 ---
-
 apiVersion: v1
 data:
+  _example: |
     ################################
     #                              #
     #    EXAMPLE CONFIGURATION     #
@@ -658,14 +716,14 @@ data:
     # {{ingress_namespace}}.svc.cluster.local"`. The {{gateway_namespace}}
     # is optional; when it is omitted, the system will search for
     # the gateway in the serving system namespace `knative-serving`
-    gateway.kubeflow.kubeflow-gateway: "istio-ingressgateway.istio-system.svc.cluster.local"
+    gateway.knative-serving.knative-ingress-gateway: "istio-ingressgateway.istio-system.svc.cluster.local"
 
     # A cluster local gateway to allow pods outside of the mesh to access
     # Services and Routes not exposing through an ingress.  If the users
     # do have a service mesh setup, this isn't required and can be removed.
     #
     # An example use case is when users want to use Istio without any
-    # sidecar injection (like Knative's istio-lean.yaml).  Since every pod
+    # sidecar injection (like Knative's istio-ci-no-mesh.yaml).  Since every pod
     # is outside of the service mesh in that case, a cluster-local  service
     # will need to be exposed to a cluster-local gateway to be accessible.
     # The configuration format should be `local-gateway.{{local_gateway_namespace}}.
@@ -679,16 +737,13 @@ data:
     # To use only Istio service mesh and no cluster-local-gateway, replace
     # all local-gateway.* entries by the following entry.
     local-gateway.mesh: "mesh"
-
-    # Feature flag to enable reconciling external Istio Gateways.
-    # When auto TLS feature is turned on, reconcileExternalGateway will be automatically enforced.
-    # 1. true: enabling reconciling external gateways.
-    # 2. false: disabling reconciling external gateways.
-    reconcileExternalGateway: "false"
+  gateway.kubeflow.kubeflow-gateway: istio-ingressgateway.istio-system.svc.cluster.local
+  local-gateway.knative-serving.cluster-local-gateway: cluster-local-gateway.istio-system.svc.cluster.local
+  local-gateway.mesh: mesh
 kind: ConfigMap
 metadata:
   labels:
     networking.knative.dev/ingress-provider: istio
-    serving.knative.dev/release: "v0.11.2"
+    serving.knative.dev/release: v0.14.3
   name: config-istio
   namespace: knative-serving

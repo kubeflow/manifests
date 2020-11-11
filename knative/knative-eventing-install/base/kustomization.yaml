@@ -15,16 +15,16 @@ commonLabels:
 images:
 - name: gcr.io/knative-releases/knative.dev/eventing/cmd/controller
   newName: gcr.io/knative-releases/knative.dev/eventing/cmd/controller
-  digest: sha256:d071a79973911f45ffd9021ad7e7cc6f4e262b3f1edb77d9bfdcf91b0d657b4e
-- name: gcr.io/knative-releases/knative.dev/eventing/cmd/sources_controller
-  newName: gcr.io/knative-releases/knative.dev/eventing/cmd/sources_controller
-  digest: sha256:0df4cfcf82998eccf687a08a456f60578190e68175a441bcd3c26de7a4869739
+  digest: sha256:c99f08229c464407e5ba11f942d29b969e0f7dd2e242973d50d480cc45eebf28
+- name: gcr.io/knative-releases/knative.dev/eventing/cmd/channel_broker
+  newName: gcr.io/knative-releases/knative.dev/eventing/cmd/channel_broker
+  digest: sha256:5065eaeb3904e8b0893255b11fdcdde54a6bac1d0d4ecc8c9ce4c4c32073d924
 - name: gcr.io/knative-releases/knative.dev/eventing/cmd/webhook
   newName: gcr.io/knative-releases/knative.dev/eventing/cmd/webhook
-  digest: sha256:75b2dfaaf279b98c2e90b02414b2255aebbc58b23beeba838feba57b09da12b6
+  digest: sha256:a3046d0426b4617fe9186fb3d983e350de82d2e3f33dcc13441e591e24410901
 - name: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_controller
   newName: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_controller
-  digest: sha256:67cf35921e6ba4d8d5027637bdb9f0bec328e0ba5706fb0ea4eb32187a77bd0b
+  digest: sha256:9a084ba0ed6a12862adb3ca00de069f0ec1715fe8d4db6c9921fcca335c675bb
 - name: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_dispatcher
   newName: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_dispatcher
-  digest: sha256:f5402f075154adfdfb72bf3e4e1a755df6eb57e0e5c7770450210c3b0270d38f
+  digest: sha256:8df896444091f1b34185f0fa3da5d41f32e84c43c48df07605c728e0fe49a9a8

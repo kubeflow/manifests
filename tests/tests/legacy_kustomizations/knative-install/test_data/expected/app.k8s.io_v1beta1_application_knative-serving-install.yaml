@@ -3,12 +3,7 @@ kind: Application
 metadata:
   labels:
     app.kubernetes.io/component: knative-serving-install
-    app.kubernetes.io/instance: knative-serving-install
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-serving-install
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.11.2
-    serving.knative.dev/release: v0.11.2
   name: knative-serving-install
   namespace: knative-serving
 spec:
@@ -33,8 +28,4 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: knative-serving-install
-      app.kubernetes.io/instance: knative-serving-install
-      app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: knative-serving-install
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v0.11.2

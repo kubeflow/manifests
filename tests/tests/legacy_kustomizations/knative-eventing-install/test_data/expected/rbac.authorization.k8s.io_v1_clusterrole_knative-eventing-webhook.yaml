@@ -3,14 +3,9 @@ kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/component: knative-eventing-install
-    app.kubernetes.io/instance: knative-eventing-install
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-eventing-install
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.11.0
-    eventing.knative.dev/release: v0.11.0
+    eventing.knative.dev/release: v0.14.2
     kustomize.component: knative
-    serving.knative.dev/release: v0.11.0
   name: knative-eventing-webhook
 rules:
 - apiGroups:
@@ -57,11 +52,23 @@ rules:
   - patch
   - watch
 - apiGroups:
-  - sources.eventing.knative.dev
+  - sources.knative.dev
   resources:
   - sinkbindings
   - sinkbindings/status
   - sinkbindings/finalizers
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
   verbs:
   - get
   - list

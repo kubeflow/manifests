@@ -3,15 +3,10 @@ kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/component: knative-eventing-install
-    app.kubernetes.io/instance: knative-eventing-install
-    app.kubernetes.io/managed-by: kfctl
     app.kubernetes.io/name: knative-eventing-install
-    app.kubernetes.io/part-of: kubeflow
-    app.kubernetes.io/version: v0.11.0
     duck.knative.dev/addressable: "true"
-    eventing.knative.dev/release: v0.11.0
+    eventing.knative.dev/release: v0.14.2
     kustomize.component: knative
-    serving.knative.dev/release: v0.11.0
   name: channel-addressable-resolver
 rules:
 - apiGroups:
@@ -23,3 +18,9 @@ rules:
   - get
   - list
   - watch
+- apiGroups:
+  - messaging.knative.dev
+  resources:
+  - channels/finalizers
+  verbs:
+  - update
