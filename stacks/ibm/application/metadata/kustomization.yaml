@@ -8,7 +8,6 @@ commonLabels:
 resources:
 - ../../../../metadata/overlays/db
 - ../../../../metadata/overlays/application/application.yaml
-- ../../../../metadata/overlays/istio/virtual-service.yaml
 - ../../../../metadata/overlays/istio/virtual-service-metadata-grpc.yaml
 configurations:
 - ../../../../metadata/overlays/istio/params.yaml
