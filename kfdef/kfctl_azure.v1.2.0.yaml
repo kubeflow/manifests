@@ -34,7 +34,7 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/azure/application/add-anonymous-user-filter-istio-1.6
+        path: stacks/azure/application/add-anonymous-user-filter-istio-1-6
     name: add-anonymous-user-filter
   - kustomizeConfig:
       repoRef:
