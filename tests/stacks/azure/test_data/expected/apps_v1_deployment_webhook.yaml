@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-serving-install
+    app.kubernetes.io/name: knative-serving-install
+    kustomize.component: knative
+    serving.knative.dev/release: v0.14.3
+  name: webhook
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: webhook
+      app.kubernetes.io/component: knative-serving-install
+      app.kubernetes.io/name: knative-serving-install
+      kustomize.component: knative
+      role: webhook
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+      labels:
+        app: webhook
+        app.kubernetes.io/component: knative-serving-install
+        app.kubernetes.io/name: knative-serving-install
+        kustomize.component: knative
+        role: webhook
+        serving.knative.dev/release: v0.14.3
+    spec:
+      containers:
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: METRICS_DOMAIN
+          value: knative.dev/serving
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:7e6df0fda229a13219bbc90ff72a10434a0c64cd7fe13dc534b914247d1087f4
+        name: webhook
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8008
+          name: profiling
+        - containerPort: 8443
+          name: https-webhook
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 20m
+            memory: 20Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+      serviceAccountName: controller

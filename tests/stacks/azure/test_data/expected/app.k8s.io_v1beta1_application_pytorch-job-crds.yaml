@@ -1,0 +1,46 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  labels:
+    app.kubernetes.io/component: pytorch
+    app.kubernetes.io/name: pytorch-job-crds
+  name: pytorch-job-crds
+  namespace: kubeflow
+spec:
+  addOwnerRef: true
+  componentKinds:
+  - group: core
+    kind: Service
+  - group: apps
+    kind: Deployment
+  - group: core
+    kind: ServiceAccount
+  - group: kubeflow.org
+    kind: PyTorchJob
+  descriptor:
+    description: Pytorch-job-crds contains the "PyTorchJob" custom resource definition.
+    keywords:
+    - pytorchjob
+    - pytorch-operator
+    - pytorch-training
+    links:
+    - description: About
+      url: https://github.com/kubeflow/pytorch-operator
+    - description: Docs
+      url: https://www.kubeflow.org/docs/reference/pytorchjob/v1/pytorch/
+    maintainers:
+    - email: johnugeo@cisco.com
+      name: Johnu George
+    owners:
+    - email: johnugeo@cisco.com
+      name: Johnu George
+    type: pytorch-job-crds
+    version: v1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: pytorch
+      app.kubernetes.io/instance: pytorch-job-crds-v0.7.0
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: pytorch-job-crds
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v0.7.0

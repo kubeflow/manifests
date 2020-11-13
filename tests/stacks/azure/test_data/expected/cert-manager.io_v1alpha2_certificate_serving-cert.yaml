@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  labels:
+    app: kfserving
+    app.kubernetes.io/component: kfserving
+    app.kubernetes.io/name: kfserving
+    kustomize.component: kfserving
+  name: serving-cert
+  namespace: kubeflow
+spec:
+  commonName: kfserving-webhook-server-service.kubeflow.svc
+  dnsNames:
+  - kfserving-webhook-server-service.kubeflow.svc
+  issuerRef:
+    kind: Issuer
+    name: selfsigned-issuer
+  secretName: kfserving-webhook-server-cert

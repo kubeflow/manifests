@@ -1,0 +1,48 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  labels:
+    app.kubernetes.io/component: mpijob
+    app.kubernetes.io/name: mpi-operator
+  name: mpi-operator
+  namespace: kubeflow
+spec:
+  addOwnerRef: true
+  componentKinds:
+  - group: apps
+    kind: Deployment
+  - group: core
+    kind: ServiceAccount
+  - group: kubeflow.org
+    kind: MPIJob
+  descriptor:
+    description: Mpi-operator allows users to create and manage the "MPIJob" custom
+      resource.
+    keywords:
+    - mpijob
+    - mpi-operator
+    links:
+    - description: About
+      url: https://github.com/kubeflow/mpi-operator
+    maintainers:
+    - email: rong.ou@gmail.com
+      name: Rong Ou
+    - email: terrytangyuan@gmail.com
+      name: Yuan Tang
+    - email: stp.abhi@gmail.com
+      name: Abhilash Pallerlamudi
+    owners:
+    - email: rong.ou@gmail.com
+      name: Rong Ou
+    - email: terrytangyuan@gmail.com
+      name: Yuan Tang
+    type: mpi-operator
+    version: v1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: mpijob
+      app.kubernetes.io/instance: mpi-operator
+      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/name: mpi-operator
+      app.kubernetes.io/part-of: kubeflow
+      app.kubernetes.io/version: v1.0

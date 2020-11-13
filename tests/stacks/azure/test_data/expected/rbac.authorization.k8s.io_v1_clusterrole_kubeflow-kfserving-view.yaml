@@ -1,0 +1,19 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: kfserving
+    app.kubernetes.io/component: kfserving
+    app.kubernetes.io/name: kfserving
+    kustomize.component: kfserving
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+  name: kubeflow-kfserving-view
+rules:
+- apiGroups:
+  - serving.kubeflow.org
+  resources:
+  - inferenceservices
+  verbs:
+  - get
+  - list
+  - watch
