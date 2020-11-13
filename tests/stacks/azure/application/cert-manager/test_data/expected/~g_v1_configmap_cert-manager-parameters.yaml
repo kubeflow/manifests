@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  namespace: cert-manager
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: cert-manager
+    app.kubernetes.io/name: cert-manager
+    kustomize.component: cert-manager
+  name: cert-manager-parameters
+  namespace: cert-manager

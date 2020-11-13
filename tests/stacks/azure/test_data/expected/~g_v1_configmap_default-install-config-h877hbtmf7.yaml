@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  profile-name: anonymous
+  user: anonymous
+kind: ConfigMap
+metadata:
+  name: default-install-config-h877hbtmf7
+  namespace: kubeflow

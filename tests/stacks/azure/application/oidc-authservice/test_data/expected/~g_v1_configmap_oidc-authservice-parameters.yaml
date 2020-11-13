@@ -1,0 +1,20 @@
+apiVersion: v1
+data:
+  application_secret: <app_secret>
+  client_id: <client_id>
+  gatewaySelector: ingressgateway
+  namespace: istio-system
+  oidc_auth_url: https://login.microsoftonline.com/<tenant_id>/oauth2/v2.0/authorize
+  oidc_provider: https://login.microsoftonline.com/<tenant_id>/v2.0
+  oidc_redirect_uri: https://<load_balancer_ip or domain_name>/login/oidc
+  skip_auth_uri: ""
+  userid-header: kubeflow-userid
+  userid-prefix: ""
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: oidc-authservice
+    app.kubernetes.io/name: oidc-authservice
+  name: oidc-authservice-parameters
+  namespace: istio-system

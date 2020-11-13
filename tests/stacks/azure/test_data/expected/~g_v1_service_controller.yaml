@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: controller
+    app.kubernetes.io/component: knative-serving-install
+    app.kubernetes.io/name: knative-serving-install
+    kustomize.component: knative
+    serving.knative.dev/release: v0.14.3
+  name: controller
+  namespace: kubeflow
+spec:
+  ports:
+  - name: http-profiling
+    port: 8008
+    targetPort: 8008
+  - name: http-metrics
+    port: 9090
+    targetPort: 9090
+  selector:
+    app: controller
+    app.kubernetes.io/component: knative-serving-install
+    app.kubernetes.io/name: knative-serving-install
+    kustomize.component: knative
