@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    component: db
+    kustomize.component: metadata
+  name: metadata-db
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: db
+      kustomize.component: metadata
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        component: db
+        kustomize.component: metadata
+      name: db
+    spec:
+      containers:
+      - args:
+        - --datadir
+        - /var/lib/mysql/datadir
+        envFrom:
+        - configMapRef:
+            name: metadata-db-parameters
+        - secretRef:
+            name: metadata-db-secrets
+        image: mysql:8.0.3
+        name: db-container
+        ports:
+        - containerPort: 3306
+          name: dbapi
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - mysql -D $$MYSQL_DATABASE -p$$MYSQL_ROOT_PASSWORD -e 'SELECT 1'
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: metadata-mysql
+      volumes:
+      - name: metadata-mysql
+        persistentVolumeClaim:
+          claimName: metadata-mysql

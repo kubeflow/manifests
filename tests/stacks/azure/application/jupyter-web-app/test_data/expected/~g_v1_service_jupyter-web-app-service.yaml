@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    getambassador.io/config: |-
+      ---
+      apiVersion: ambassador/v0
+      kind:  Mapping
+      name: webapp_mapping
+      prefix: /jupyter/
+      service: jupyter-web-app-service.$(namespace)
+      add_request_headers:
+        x-forwarded-prefix: /jupyter
+  labels:
+    app: jupyter-web-app
+    app.kubernetes.io/component: jupyter-web-app
+    app.kubernetes.io/name: jupyter-web-app
+    kustomize.component: jupyter-web-app
+    run: jupyter-web-app
+  name: jupyter-web-app-service
+  namespace: kubeflow
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: jupyter-web-app
+    app.kubernetes.io/component: jupyter-web-app
+    app.kubernetes.io/name: jupyter-web-app
+    kustomize.component: jupyter-web-app
+  type: ClusterIP

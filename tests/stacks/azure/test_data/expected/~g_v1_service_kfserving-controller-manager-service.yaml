@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: kfserving
+    app.kubernetes.io/component: kfserving
+    app.kubernetes.io/name: kfserving
+    control-plane: kfserving-controller-manager
+    controller-tools.k8s.io: "1.0"
+    kustomize.component: kfserving
+  name: kfserving-controller-manager-service
+  namespace: kubeflow
+spec:
+  ports:
+  - port: 443
+  selector:
+    app: kfserving
+    app.kubernetes.io/component: kfserving
+    app.kubernetes.io/name: kfserving
+    control-plane: kfserving-controller-manager
+    controller-tools.k8s.io: "1.0"
+    kustomize.component: kfserving

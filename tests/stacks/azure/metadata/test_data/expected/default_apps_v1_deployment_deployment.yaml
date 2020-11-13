@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    component: server
+    kustomize.component: metadata
+  name: deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: server
+      kustomize.component: metadata
+  template:
+    metadata:
+      labels:
+        component: server
+        kustomize.component: metadata
+    spec:
+      containers:
+      - command:
+        - ./server/server
+        - --http_port=8080
+        - --mysql_service_host=$(MYSQL_HOST)
+        - --mlmd_db_name=$(MYSQL_DATABASE)
+        - --mysql_service_port=$(MYSQL_PORT)
+        - --mysql_service_user=$(MYSQL_USERNAME)
+        - --mysql_service_password=$(MYSQL_PASSWORD)
+        envFrom:
+        - configMapRef:
+            name: metadata-db-parameters-hc59m6d49g
+        - secretRef:
+            name: metadata-db-secrets-c9d6622b8k
+        name: container

@@ -1,0 +1,36 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  labels:
+    app.kubernetes.io/component: oidc-authservice
+    app.kubernetes.io/name: oidc-authservice
+  name: authn-filter
+  namespace: istio-system
+spec:
+  filters:
+  - filterConfig:
+      httpService:
+        authorizationRequest:
+          allowedHeaders:
+            patterns:
+            - exact: cookie
+            - exact: X-Auth-Token
+        authorizationResponse:
+          allowedUpstreamHeaders:
+            patterns:
+            - exact: kubeflow-userid
+        serverUri:
+          cluster: outbound|8080||authservice.istio-system.svc.cluster.local
+          failureModeAllow: false
+          timeout: 10s
+          uri: http://authservice.istio-system.svc.cluster.local
+      statusOnError:
+        code: GatewayTimeout
+    filterName: envoy.ext_authz
+    filterType: HTTP
+    insertPosition:
+      index: FIRST
+    listenerMatch:
+      listenerType: GATEWAY
+  workloadLabels:
+    istio: ingressgateway
