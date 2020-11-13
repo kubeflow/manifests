@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: katib
+    app.kubernetes.io/component: katib
+    app.kubernetes.io/name: katib-controller
+    component: db-manager
+  name: katib-db-manager
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: katib
+      app.kubernetes.io/component: katib
+      app.kubernetes.io/name: katib-controller
+      component: db-manager
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: katib
+        app.kubernetes.io/component: katib
+        app.kubernetes.io/name: katib-controller
+        component: db-manager
+      name: katib-db-manager
+    spec:
+      containers:
+      - command:
+        - ./katib-db-manager
+        env:
+        - name: DB_NAME
+          value: mysql
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MYSQL_ROOT_PASSWORD
+              name: katib-mysql-secrets
+        image: docker.io/kubeflowkatib/katib-db-manager:v1beta1-a96ff59
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:6789
+          failureThreshold: 5
+          initialDelaySeconds: 10
+          periodSeconds: 60
+        name: katib-db-manager
+        ports:
+        - containerPort: 6789
+          name: api
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:6789
+          initialDelaySeconds: 5

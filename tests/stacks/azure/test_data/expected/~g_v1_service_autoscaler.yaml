@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: autoscaler
+    app.kubernetes.io/component: knative-serving-install
+    app.kubernetes.io/name: knative-serving-install
+    kustomize.component: knative
+    serving.knative.dev/release: v0.14.3
+  name: autoscaler
+  namespace: kubeflow
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  - name: http-profiling
+    port: 8008
+    targetPort: 8008
+  - name: http-metrics
+    port: 9090
+    targetPort: 9090
+  - name: https-custom-metrics
+    port: 443
+    targetPort: 8443
+  selector:
+    app: autoscaler
+    app.kubernetes.io/component: knative-serving-install
+    app.kubernetes.io/name: knative-serving-install
+    kustomize.component: knative

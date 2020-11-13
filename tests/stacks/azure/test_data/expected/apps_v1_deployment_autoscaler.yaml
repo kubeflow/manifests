@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-serving-install
+    app.kubernetes.io/name: knative-serving-install
+    kustomize.component: knative
+    serving.knative.dev/release: v0.14.3
+  name: autoscaler
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: autoscaler
+      app.kubernetes.io/component: knative-serving-install
+      app.kubernetes.io/name: knative-serving-install
+      kustomize.component: knative
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+      labels:
+        app: autoscaler
+        app.kubernetes.io/component: knative-serving-install
+        app.kubernetes.io/name: knative-serving-install
+        kustomize.component: knative
+        serving.knative.dev/release: v0.14.3
+    spec:
+      containers:
+      - args:
+        - --secure-port=8443
+        - --cert-dir=/tmp
+        env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: METRICS_DOMAIN
+          value: knative.dev/serving
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:f89fd23889c3e0ca3d8e42c9b189dc2f93aa5b3a91c64e8aab75e952a210eeb3
+        livenessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: autoscaler
+            port: 8080
+        name: autoscaler
+        ports:
+        - containerPort: 8080
+          name: websocket
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8443
+          name: custom-metrics
+        - containerPort: 8008
+          name: profiling
+        readinessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: autoscaler
+            port: 8080
+        resources:
+          limits:
+            cpu: 300m
+            memory: 400Mi
+          requests:
+            cpu: 30m
+            memory: 40Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+      serviceAccountName: controller

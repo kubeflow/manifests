@@ -1,0 +1,18 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app: kfserving
+    app.kubernetes.io/component: kfserving
+    app.kubernetes.io/name: kfserving
+    kustomize.component: kfserving
+  name: leader-election-rolebinding
+  namespace: kubeflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: leader-election-role
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: kubeflow

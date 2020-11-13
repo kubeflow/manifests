@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-serving-install
+    app.kubernetes.io/name: knative-serving-install
+    kustomize.component: knative
+    serving.knative.dev/release: v0.14.3
+  name: controller
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: controller
+      app.kubernetes.io/component: knative-serving-install
+      app.kubernetes.io/name: knative-serving-install
+      kustomize.component: knative
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        app: controller
+        app.kubernetes.io/component: knative-serving-install
+        app.kubernetes.io/name: knative-serving-install
+        kustomize.component: knative
+        serving.knative.dev/release: v0.14.3
+    spec:
+      containers:
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: METRICS_DOMAIN
+          value: knative.dev/internal/serving
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256:b86ac8ecc6b2688a0e0b9cb68298220a752125d0a048b8edf2cf42403224393c
+        name: controller
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8008
+          name: profiling
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1000Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+      serviceAccountName: controller

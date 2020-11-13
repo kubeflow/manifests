@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  ROK_SECRET_NAME: secret-rok-{username}
+  UI: default
+  policy: Always
+  prefix: jupyter
+kind: ConfigMap
+metadata:
+  labels:
+    app: jupyter-web-app
+    app.kubernetes.io/component: jupyter-web-app
+    app.kubernetes.io/name: jupyter-web-app
+    kustomize.component: jupyter-web-app
+  name: jupyter-web-app-parameters
+  namespace: kubeflow

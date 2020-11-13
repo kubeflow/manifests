@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+commonLabels:
+  kustomize.component: metadata
+
+bases:
+- ../../../metadata/base
+
+resources:
+- metadata-deployment.yaml
+
+patchesStrategicMerge:
+- metadata-grpc-deployment.yaml
+
+configMapGenerator:
+- name: metadata-db-parameters
+  envs:
+  - params.env
+secretGenerator:
+- name: metadata-db-secrets
+  envs:
+  - secrets.env

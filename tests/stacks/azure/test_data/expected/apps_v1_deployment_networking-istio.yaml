@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-serving-install
+    app.kubernetes.io/name: knative-serving-install
+    kustomize.component: knative
+    networking.knative.dev/ingress-provider: istio
+    serving.knative.dev/release: v0.14.3
+  name: networking-istio
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: networking-istio
+      app.kubernetes.io/component: knative-serving-install
+      app.kubernetes.io/name: knative-serving-install
+      kustomize.component: knative
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: networking-istio
+        app.kubernetes.io/component: knative-serving-install
+        app.kubernetes.io/name: knative-serving-install
+        kustomize.component: knative
+        serving.knative.dev/release: v0.14.3
+    spec:
+      containers:
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: METRICS_DOMAIN
+          value: knative.dev/net-istio
+        image: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller@sha256:75c7918ca887622e7242ec1965f87036db1dc462464810b72735a8e64111f6f7
+        name: networking-istio
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8008
+          name: profiling
+        resources:
+          limits:
+            cpu: 300m
+            memory: 400Mi
+          requests:
+            cpu: 30m
+            memory: 40Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+      serviceAccountName: controller
