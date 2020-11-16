@@ -5,6 +5,7 @@ metadata:
     app: centraldashboard
     app.kubernetes.io/component: centraldashboard
     app.kubernetes.io/name: centraldashboard
+    kustomize.component: centraldashboard
   name: centraldashboard
   namespace: kubeflow
 rules:

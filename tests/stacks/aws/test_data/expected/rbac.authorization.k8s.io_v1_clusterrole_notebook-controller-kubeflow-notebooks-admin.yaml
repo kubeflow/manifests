@@ -7,8 +7,6 @@ kind: ClusterRole
 metadata:
   labels:
     app: notebook-controller
-    app.kubernetes.io/component: notebook-controller
-    app.kubernetes.io/name: notebook-controller
     kustomize.component: notebook-controller
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
   name: notebook-controller-kubeflow-notebooks-admin

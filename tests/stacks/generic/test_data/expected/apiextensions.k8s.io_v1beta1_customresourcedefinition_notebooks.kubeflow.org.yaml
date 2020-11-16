@@ -3,8 +3,6 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     app: notebook-controller
-    app.kubernetes.io/component: notebook-controller
-    app.kubernetes.io/name: notebook-controller
     kustomize.component: notebook-controller
   name: notebooks.kubeflow.org
 spec:
