@@ -16,11 +16,17 @@ spec:
   - group: core
     kind: ConfigMap
   - group: apps
-    kind: StatefulSet
+    kind: Deployment
+  - group: rbac.authorization.k8s.io
+    kind: Role
+  - group: rbac.authorization.k8s.io
+    kind: RoleBinding
   - group: core
     kind: Service
   - group: core
     kind: ServiceAccount
+  - group: apps
+    kind: StatefulSet
   descriptor:
     description: injects volume, volume mounts, env vars into PodDefault
     keywords:
@@ -35,9 +41,5 @@ spec:
     version: v1beta1
   selector:
     matchLabels:
-      app.kubernetes.io/component: bootstrap
-      app.kubernetes.io/instance: webhook-v1.0.0
-      app.kubernetes.io/managed-by: kfctl
+      app.kubernetes.io/component: webhook
       app.kubernetes.io/name: webhook
-      app.kubernetes.io/part-of: webhook
-      app.kubernetes.io/version: v1.0.0
