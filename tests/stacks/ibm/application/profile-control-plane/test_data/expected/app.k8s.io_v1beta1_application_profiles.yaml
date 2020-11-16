@@ -9,14 +9,14 @@ metadata:
 spec:
   addOwnerRef: true
   componentKinds:
+  - group: core
+    kind: ConfigMap
   - group: apps
     kind: Deployment
   - group: core
-    kind: ServiceAccount
-  - group: core
     kind: Service
-  - group: kubeflow.org
-    kind: Profile
+  - group: core
+    kind: ServiceAccount
   descriptor:
     description: ""
     keywords:
@@ -38,8 +38,4 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: profiles
-      app.kubernetes.io/instance: profiles-v1.0.0
-      app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: profiles
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v1.0.0
