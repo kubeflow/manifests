@@ -14,6 +14,7 @@ metadata:
     app: centraldashboard
     app.kubernetes.io/component: centraldashboard
     app.kubernetes.io/name: centraldashboard
+    kustomize.component: centraldashboard
   name: centraldashboard
   namespace: kubeflow
 spec:
@@ -25,5 +26,6 @@ spec:
     app: centraldashboard
     app.kubernetes.io/component: centraldashboard
     app.kubernetes.io/name: centraldashboard
+    kustomize.component: centraldashboard
   sessionAffinity: None
   type: ClusterIP
