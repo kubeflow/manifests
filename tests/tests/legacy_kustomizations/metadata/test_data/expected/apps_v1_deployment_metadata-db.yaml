@@ -24,6 +24,8 @@ spec:
       app.kubernetes.io/version: 0.2.1
       component: db
       kustomize.component: metadata
+  strategy:
+    type: Recreate
   template:
     metadata:
       annotations:
