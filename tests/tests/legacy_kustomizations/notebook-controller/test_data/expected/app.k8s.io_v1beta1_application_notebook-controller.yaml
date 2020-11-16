@@ -14,9 +14,11 @@ spec:
   addOwnerRef: true
   componentKinds:
   - group: core
-    kind: Service
+    kind: ConfigMap
   - group: apps
     kind: Deployment
+  - group: core
+    kind: Service
   - group: core
     kind: ServiceAccount
   descriptor:
@@ -41,8 +43,4 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: notebook-controller
-      app.kubernetes.io/instance: notebook-controller-v1.0.0
-      app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: notebook-controller
-      app.kubernetes.io/part-of: kubeflow
-      app.kubernetes.io/version: v1.0.0

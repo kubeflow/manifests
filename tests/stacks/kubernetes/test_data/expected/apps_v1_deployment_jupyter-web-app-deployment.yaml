@@ -32,7 +32,7 @@ spec:
             configMapKeyRef:
               key: userid-prefix
               name: kubeflow-config
-        image: gcr.io/kubeflow-images-public/jupyter-web-app:vmaster-gd9be4b9e
+        image: gcr.io/kubeflow-images-public/jupyter-web-app:vmaster-g845af298
         name: jupyter-web-app
         ports:
         - containerPort: 5000
@@ -42,5 +42,5 @@ spec:
       serviceAccountName: jupyter-web-app-service-account
       volumes:
       - configMap:
-          name: jupyter-web-app-jupyter-web-app-config-dhcbh64467
+          name: jupyter-web-app-jupyter-web-app-config-8kcgd8t8th
         name: config-volume
