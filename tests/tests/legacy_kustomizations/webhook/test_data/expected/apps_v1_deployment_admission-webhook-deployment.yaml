@@ -38,7 +38,7 @@ spec:
         kustomize.component: admission-webhook
     spec:
       containers:
-      - image: gcr.io/kubeflow-images-public/admission-webhook:vmaster-gaf96e4e3
+      - image: gcr.io/kubeflow-images-public/admission-webhook:vmaster-ge5452b6f
         name: admission-webhook
         volumeMounts:
         - mountPath: /etc/webhook/certs
