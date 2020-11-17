@@ -39,7 +39,7 @@ spec:
             configMapKeyRef:
               key: ISTIO_GATEWAY
               name: notebook-controller-config
-        image: gcr.io/kubeflow-images-public/notebook-controller:vmaster-gf39279c0
+        image: gcr.io/kubeflow-images-public/notebook-controller:vmaster-g6eb007d0
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
