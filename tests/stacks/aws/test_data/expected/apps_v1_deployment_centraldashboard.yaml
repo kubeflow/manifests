@@ -35,6 +35,8 @@ spec:
             configMapKeyRef:
               key: userid-prefix
               name: kubeflow-config
+        - name: DASHBOARD_LINKS_CONFIGMAP
+          value: centraldashboard-links-config
         image: gcr.io/kubeflow-images-public/centraldashboard:vmaster-g8097cfeb
         imagePullPolicy: IfNotPresent
         livenessProbe:
