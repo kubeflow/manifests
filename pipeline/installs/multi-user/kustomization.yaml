@@ -15,6 +15,7 @@ resources:
 - cache
 - metadata-writer
 - istio-authorization-config.yaml
+- view-edit-roles.yaml
 patchesStrategicMerge:
 - api-service/deployment-patch.yaml
 - pipelines-ui/deployment-patch.yaml

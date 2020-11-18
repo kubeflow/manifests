@@ -34,4 +34,10 @@ rules:
   - pods
   verbs:
   - delete
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
 
