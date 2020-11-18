@@ -12,3 +12,6 @@ resources:
 - ../base/role.yaml
 - ../base/service-account.yaml
 - ../base/service.yaml
+- ../base/links-configmap.yaml
+patchesStrategicMerge:
+- deployment_patch.yaml

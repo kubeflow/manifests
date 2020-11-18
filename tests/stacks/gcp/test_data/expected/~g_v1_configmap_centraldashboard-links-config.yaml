@@ -79,4 +79,8 @@ data:
     }
 kind: ConfigMap
 metadata:
+  labels:
+    app.kubernetes.io/component: centraldashboard
+    app.kubernetes.io/name: centraldashboard
   name: centraldashboard-links-config
+  namespace: kubeflow
