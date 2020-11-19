@@ -9,7 +9,7 @@ spec:
   addOwnerRef: true
   selector:
     matchLabels:
-      app.kubernetes.io/application: kubeflow-pipelines
+      app.kubernetes.io/name: kubeflow-pipelines
   descriptor:
     version: $(kfp-app-version)
     type: Kubeflow Pipelines
