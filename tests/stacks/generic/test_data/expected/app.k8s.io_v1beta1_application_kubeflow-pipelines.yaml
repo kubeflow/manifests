@@ -41,4 +41,4 @@ spec:
     version: 1.0.4
   selector:
     matchLabels:
-      app.kubernetes.io/application: kubeflow-pipelines
+      app.kubernetes.io/name: kubeflow-pipelines
