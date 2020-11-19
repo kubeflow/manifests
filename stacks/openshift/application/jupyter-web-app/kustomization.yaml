@@ -31,6 +31,6 @@ vars:
 
 images:
 - name: gcr.io/kubeflow-images-public/jupyter-web-app
-  newTag: v1.0.0
+  newTag: v2.0.0
   newName: quay.io/kubeflow/jupyter-web-app
 
