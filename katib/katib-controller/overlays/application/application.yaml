@@ -6,11 +6,17 @@ spec:
   addOwnerRef: true
   componentKinds:
     - group: core
-      kind: Service
+      kind: ConfigMap
     - group: apps
       kind: Deployment
     - group: core
       kind: Secret
+    - group: core
+      kind: Service
+    - group: core
+      kind: ServiceAccount
+    - group: networking.istio.io
+      kind: VirtualService
     - group: core
       kind: ServiceAccount
     - group: kubeflow.org
@@ -59,7 +65,4 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: katib
-      app.kubernetes.io/instance: katib-controller
-      app.kubernetes.io/managed-by: kfctl
       app.kubernetes.io/name: katib-controller
-      app.kubernetes.io/part-of: kubeflow
