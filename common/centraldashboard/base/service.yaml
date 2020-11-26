@@ -15,7 +15,8 @@ metadata:
   name: centraldashboard
 spec:
   ports:
-  - port: 80
+  - name: http
+    port: 80
     protocol: TCP
     targetPort: 8082
   selector:
