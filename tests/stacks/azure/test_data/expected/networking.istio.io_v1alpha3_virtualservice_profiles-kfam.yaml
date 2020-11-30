@@ -22,6 +22,6 @@ spec:
       uri: /kfam/
     route:
     - destination:
-        host: profiles-kfam.$(namespace).svc.cluster.local
+        host: profiles-kfam.kubeflow.svc.cluster.local
         port:
           number: 8081

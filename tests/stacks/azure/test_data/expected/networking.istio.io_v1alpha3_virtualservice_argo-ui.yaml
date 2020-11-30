@@ -20,6 +20,6 @@ spec:
       uri: /
     route:
     - destination:
-        host: argo-ui.$(namespace).svc.$(clusterDomain)
+        host: argo-ui.kubeflow.svc.cluster.local
         port:
           number: 80
