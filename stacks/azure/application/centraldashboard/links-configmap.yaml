@@ -59,7 +59,7 @@ data:
           "text": "Azure Kubernetes Service Docs",
           "desc": "Azure Kubernetes Service Documentation",
           "link": "https://aka.ms/kubeflow-aks-docs"
-        },
+        }
       ]
     }
 kind: ConfigMap
