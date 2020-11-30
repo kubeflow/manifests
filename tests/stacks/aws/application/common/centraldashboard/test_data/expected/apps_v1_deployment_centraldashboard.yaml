@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: centraldashboard
+    app.kubernetes.io/component: centraldashboard
+    app.kubernetes.io/name: centraldashboard
+  name: centraldashboard
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: centraldashboard
+      app.kubernetes.io/component: centraldashboard
+      app.kubernetes.io/name: centraldashboard
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: centraldashboard
+        app.kubernetes.io/component: centraldashboard
+        app.kubernetes.io/name: centraldashboard
+    spec:
+      containers:
+      - env:
+        - name: USERID_HEADER
+          valueFrom:
+            configMapKeyRef:
+              key: userid-header
+              name: kubeflow-config
+        - name: USERID_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              key: userid-prefix
+              name: kubeflow-config
+        - name: DASHBOARD_LINKS_CONFIGMAP
+          value: centraldashboard-links-config
+        image: gcr.io/kubeflow-images-public/centraldashboard:vmaster-g8097cfeb
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8082
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        name: centraldashboard
+        ports:
+        - containerPort: 8082
+          protocol: TCP
+      serviceAccountName: centraldashboard
