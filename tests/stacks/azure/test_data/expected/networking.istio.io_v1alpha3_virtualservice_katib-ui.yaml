@@ -19,6 +19,6 @@ spec:
       uri: /katib/
     route:
     - destination:
-        host: katib-ui.kubeflow.svc.$(clusterDomain)
+        host: katib-ui.kubeflow.svc.cluster.local
         port:
           number: 80
