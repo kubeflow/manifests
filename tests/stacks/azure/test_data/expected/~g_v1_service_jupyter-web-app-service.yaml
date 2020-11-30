@@ -8,7 +8,7 @@ metadata:
       kind:  Mapping
       name: webapp_mapping
       prefix: /jupyter/
-      service: jupyter-web-app-service.$(namespace)
+      service: jupyter-web-app-service.kubeflow
       add_request_headers:
         x-forwarded-prefix: /jupyter
   labels:

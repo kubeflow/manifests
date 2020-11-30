@@ -19,6 +19,6 @@ spec:
       uri: /
     route:
     - destination:
-        host: centraldashboard.$(namespace).svc.$(clusterDomain)
+        host: centraldashboard.kubeflow.svc.cluster.local
         port:
           number: 80
