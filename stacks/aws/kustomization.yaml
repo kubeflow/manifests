@@ -3,10 +3,9 @@ kind: Kustomization
 namespace: kubeflow
 resources:
   # List the Kubeflow applications that should be included
-  # TODO(https://github.com/kubeflow/manifests/issues/1073):
   # control plane
   - ../../admission-webhook/webhook/v3
-  - ../../common/centraldashboard/overlays/stacks
+  - ./application/common/centraldashboard
   - ../../kubeflow-roles/base
   - ./application/jupyter-web-app
   - ../../jupyter/notebook-controller/base_v3
@@ -20,8 +19,6 @@ resources:
   - ../../mpi-job/mpi-operator/overlays/application
   - ../../katib/installs/katib-standalone
   # Pipeline
-  # Need to change to - ../../pipeline/installs/multi-user
-  # Meta data has been included.
   - ../../pipeline/minio/installs/generic
   - ../../pipeline/mysql/installs/generic
   - ../../pipeline/installs/multi-user
