@@ -32,7 +32,7 @@ spec:
             configMapKeyRef:
               key: userid-prefix
               name: kubeflow-config-f5fk62kk74
-        image: quay.io/kubeflow/jupyter-web-app:v1.0.0
+        image: quay.io/kubeflow/jupyter-web-app:v2.0.0
         name: jupyter-web-app
         ports:
         - containerPort: 5000
