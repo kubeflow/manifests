@@ -31,7 +31,7 @@ spec:
             configMapKeyRef:
               key: cluster-name
               name: aws-alb-ingress-controller-config
-        image: docker.io/amazon/aws-alb-ingress-controller:v1.1.5
+        image: docker.io/amazon/aws-alb-ingress-controller:v1.1.6
         imagePullPolicy: Always
         name: alb-ingress-controller
       serviceAccountName: alb-ingress-controller
