@@ -35,6 +35,12 @@ users:
 - system:serviceaccount:$(NAMESPACE):minio
 #Katib injects container into pods which does not run as non-root user, trying to find Dockerfile for that image and fix it
 #- system:serviceaccount:kubeflow:default
+- system:serviceaccount:$(NAMESPACE):kubeflow-pipelines-cache-deployer-sa
+- system:serviceaccount:$(NAMESPACE):pipeline-runner
+# for kfserving
+- system:serviceaccount:$(NAMESPACE):kfserving
+# for admission-webhook
+- system:serviceaccount:$(NAMESPACE):admission-webhook-service-account
 volumes:
 - configMap
 - downwardAPI
