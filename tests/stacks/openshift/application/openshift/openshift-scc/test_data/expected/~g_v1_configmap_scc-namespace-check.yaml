@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  namespace: kubeflow
+  tekton-namespace: tekton-pipelines
+kind: ConfigMap
+metadata:
+  name: scc-namespace-check
+  namespace: kubeflow
