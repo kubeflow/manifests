@@ -6,7 +6,7 @@ data:
   artifact_bucket: "mlpipeline"
   artifact_endpoint: "minio-service.kubeflow:9000"
   artifact_endpoint_scheme: "http://"
-  artifact_image: "minio/mc"
+  artifact_image: "minio/mc:RELEASE.2020-11-25T23-04-07Z"
   archive_logs: "false"
   track_artifacts: "true"
   strip_eof: "false"
