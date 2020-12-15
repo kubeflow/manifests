@@ -23,9 +23,6 @@ resources:
   - ../../pipeline/mysql/installs/generic
   - ../../pipeline/installs/generic
   - ../../argo/base_v3
-  # Serving components
-  - ../../knative/installs/generic
-  - ../../kfserving/installs/generic
   # Kubernetes resources - anonymous user
   - ../../default-install/base
   # Metadata
