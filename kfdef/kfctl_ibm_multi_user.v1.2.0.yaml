@@ -152,5 +152,5 @@ spec:
   #   name: spark-operator
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/v1.2.0.tar.gz
+    uri: https://github.com/kubeflow/manifests/archive/bc798a24a3a2c973e42ef5d627ac97b5dfa1a24d.tar.gz
   version: v1.2-branch
