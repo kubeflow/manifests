@@ -29,12 +29,8 @@ spec:
     resource: destinationrules
     updateStrategy:
       method: InPlace
-  - apiVersion: rbac.istio.io/v1alpha1
-    resource: serviceroles
-    updateStrategy:
-      method: InPlace
-  - apiVersion: rbac.istio.io/v1alpha1
-    resource: servicerolebindings
+  - apiVersion: security.istio.io/v1beta1
+    resource: authorizationpolicies
     updateStrategy:
       method: InPlace
   hooks:
