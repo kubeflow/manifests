@@ -1,0 +1,14 @@
+apiVersion: config.istio.io/v1alpha2
+kind: rule
+metadata:
+  labels:
+    app: mixer
+  name: promtcp
+  namespace: istio-system
+spec:
+  actions:
+  - handler: prometheus
+    instances:
+    - tcpbytesent
+    - tcpbytereceived
+  match: context.protocol == "tcp"

@@ -5,7 +5,7 @@ metadata:
     kubernetes.io/description: kubeflow-anyuid provides all features of the restricted SCC
       but allows users to run with any UID and any GID.
   name: kubeflow-anyuid-istio
-allowHostDirVolumePlugin: false
+allowHostDirVolumePlugin: true
 allowHostIPC: false
 allowHostNetwork: false
 allowHostPID: false
@@ -43,6 +43,7 @@ users:
 - system:serviceaccount:istio-system:prometheus
 #Component: istio/cluster-local-gateway
 - system:serviceaccount:istio-system:cluster-local-gateway-service-account
+- system:serviceaccount:istio-system:oidc-authservice-service-account
 volumes:
 - configMap
 - downwardAPI
@@ -50,3 +51,4 @@ volumes:
 - persistentVolumeClaim
 - projected
 - secret
+- hostPath

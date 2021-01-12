@@ -1,4 +1,4 @@
-allowHostDirVolumePlugin: false
+allowHostDirVolumePlugin: true
 allowHostIPC: false
 allowHostNetwork: false
 allowHostPID: false
@@ -42,6 +42,7 @@ users:
 - system:serviceaccount:istio-system:istio-galley-service-account
 - system:serviceaccount:istio-system:prometheus
 - system:serviceaccount:istio-system:cluster-local-gateway-service-account
+- system:serviceaccount:istio-system:oidc-authservice-service-account
 volumes:
 - configMap
 - downwardAPI
@@ -49,3 +50,4 @@ volumes:
 - persistentVolumeClaim
 - projected
 - secret
+- hostPath
