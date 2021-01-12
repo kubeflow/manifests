@@ -33,6 +33,8 @@ spec:
           value: email
         - name: OIDC_PROVIDER
           value: https://login.microsoftonline.com/<tenant_id>/v2.0
+        - name: AUTHSERVICE_URL_PREFIX
+          value: /authservice/
         - name: OIDC_AUTH_URL
           value: https://login.microsoftonline.com/<tenant_id>/oauth2/v2.0/authorize
         - name: OIDC_SCOPES
@@ -49,7 +51,7 @@ spec:
           value: <app_secret>
         - name: STORE_PATH
           value: /var/lib/authservice/data.db
-        image: gcr.io/arrikto/kubeflow/oidc-authservice:28c59ef
+        image: gcr.io/arrikto/oidc-authservice:087a340
         imagePullPolicy: Always
         name: authservice
         ports:

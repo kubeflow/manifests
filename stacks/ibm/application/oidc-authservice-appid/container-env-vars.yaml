@@ -7,7 +7,7 @@
         key: oAuthServerUrl
         name: appid-application-configuration
 - op: replace
-  path: /spec/template/spec/containers/0/env/6
+  path: /spec/template/spec/containers/0/env/7
   value:
     name: REDIRECT_URL
     valueFrom:
@@ -15,7 +15,7 @@
         key: oidcRedirectUrl
         name: appid-application-configuration
 - op: replace
-  path: /spec/template/spec/containers/0/env/9
+  path: /spec/template/spec/containers/0/env/10
   value:
     name: CLIENT_ID
     valueFrom:
@@ -23,7 +23,7 @@
         key: clientId
         name: appid-application-configuration
 - op: replace
-  path: /spec/template/spec/containers/0/env/10
+  path: /spec/template/spec/containers/0/env/11
   value:
     name: CLIENT_SECRET
     valueFrom:

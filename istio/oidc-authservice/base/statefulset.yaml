@@ -31,6 +31,8 @@ spec:
             value: email
           - name: OIDC_PROVIDER
             value: $(oidc_provider)
+          - name: AUTHSERVICE_URL_PREFIX
+            value: $(authservice_url_prefix)
           - name: OIDC_AUTH_URL
             value: $(oidc_auth_url)
           - name: OIDC_SCOPES
