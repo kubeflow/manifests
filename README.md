@@ -261,8 +261,8 @@ kustomize
 ## Test
 
 Currently, kubeflow/manifests exist with 2 types of general-purpose tests, unit test and E2E test.
-1. Unit test: uses deprecated ksonnet to generate unit test Argo workflow, detailed code can be found [here](https://github.com/kubeflow/manifests/blob/master/prow_config.yaml#L9-L15).
-2. E2E test: uses python generated E2E test Argo workflow, detailed code can be found [here](https://github.com/kubeflow/manifests/blob/master/prow_config.yaml#L16-L57).
+1. Unit test: uses Github Actions, detailed code can be found [here](https://github.com/kubeflow/manifests/blob/master/.github/workflows/manifests_unittests.yaml).
+2. E2E test: uses python generated E2E test Argo workflow, detailed code can be found [here](https://github.com/kubeflow/manifests/blob/master/prow_config.yaml).
 
 More specific, 
 
@@ -270,7 +270,7 @@ More specific,
 ```
 make test
 ```
-Detailed code can be found [here](https://github.com/kubeflow/manifests/blob/master/tests/scripts/run-tests.sh)
+Detailed code can be found [here](https://github.com/kubeflow/manifests/blob/master/.github/workflows/manifests_unittests.yaml)
 
 2. E2E test's abstract test model (same as kfctl):
 ```
