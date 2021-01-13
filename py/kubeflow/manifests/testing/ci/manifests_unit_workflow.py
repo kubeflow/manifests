@@ -300,7 +300,7 @@ class Builder(object):
       'image': '527798164940.dkr.ecr.us-west-2.amazonaws.com/aws-kubeflow-ci/test-worker:v1.2-branch',
       'imagePullPolicy': 'Always',
       'name': '',
-      'resources': {'limits': {'cpu': '4', 'memory': '4Gi'},
+      'resources': {'limits': {'cpu': '4', 'memory': '16Gi'},
        'requests': {'cpu': '1', 'memory': '1536Mi'}},
       'volumeMounts': [{'mountPath': '/mnt/test-data-volume',
         'name': 'kubeflow-test-volume'}]},
@@ -396,15 +396,15 @@ class Builder(object):
                                command, dependences)
 
     #***************************************************************************
-    # mnaifests unit tests
+    # mnaifests unit test
     #***************************************************************************
-    step_name = "mnaifests-unittests"
+    step_name = "manifests-unittest"
     command = ["make",
                "test",
                ]
 
     dependences = [checkout["name"]]
-    kfctl_go_unittests = self._build_step(step_name, self.workflow, UNIT_DAG_NAME,
+    manifests_unittest = self._build_step(step_name, self.workflow, UNIT_DAG_NAME,
                                           task_template, command, dependences)
 
     # Set the labels on all templates
