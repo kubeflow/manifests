@@ -7,12 +7,12 @@ python_paths:
   - kubeflow/kfctl/py
   - kubeflow/manifests/py
 workflows:
-  - py_func: kubeflow.manifests.testing.ci.manifests_unit_workflow.create_workflow
-    name: unit
-    job_types:
-      - presubmit
-      - postsubmit
-      - periodic
+#  - py_func: kubeflow.manifests.testing.ci.manifests_unit_workflow.create_workflow
+#    name: unit
+#    job_types:
+#      - presubmit
+#      - postsubmit
+#      - periodic
   - py_func: kubeflow.kfctl.testing.ci.kfctl_e2e_workflow.create_workflow
     name: e2e
     job_types:
