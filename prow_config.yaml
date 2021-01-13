@@ -5,9 +5,9 @@ python_paths:
   # be correctly located.
   - kubeflow/testing/py
   - kubeflow/kfctl/py
+  - kubeflow/manifests/py
 workflows:
-  - app_dir: kubeflow/manifests/tests/workflows
-    component: workflows
+  - py_func: kubeflow.manifests.testing.ci.manifests_unit_workflow.create_workflow
     name: unit
     job_types:
       - presubmit

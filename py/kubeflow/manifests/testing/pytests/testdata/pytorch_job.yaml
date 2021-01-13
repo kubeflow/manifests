@@ -1,0 +1,22 @@
+apiVersion: kubeflow.org/v1
+kind: PyTorchJob
+metadata:
+  name: pytorch-mnist-ddp-cpu
+spec:
+  pytorchReplicaSpecs:
+    Master:
+      replicas: 1
+      restartPolicy: OnFailure
+      template:
+        spec:
+          containers:
+          - image: gcr.io/kubeflow-ci/pytorch-mnist/traincpu:latest
+            name: pytorch
+    Worker:
+      replicas: 1
+      restartPolicy: OnFailure
+      template:
+        spec:
+          containers:
+          - image: gcr.io/kubeflow-ci/pytorch-mnist/traincpu:latest
+            name: pytorch
