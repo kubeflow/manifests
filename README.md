@@ -1,3 +1,23 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Manifests](#manifests)
+  - [Obsolete information](#obsolete-information)
+  - [Organization](#organization)
+  - [Kfctl Processing](#kfctl-processing)
+    - [Multiple overlays](#multiple-overlays)
+      - [What are Multiple Overlays?](#what-are-multiple-overlays)
+      - [Merging multiple overlays](#merging-multiple-overlays)
+      - [Merging multiple overlays to generate app.yaml](#merging-multiple-overlays-to-generate-appyaml)
+    - [Using kustomize](#using-kustomize)
+      - [Install kustomize](#install-kustomize)
+    - [Run kustomize](#run-kustomize)
+      - [Example](#example)
+  - [Test](#test)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Manifests
 
 This repo contains [kustomize](https://kustomize.io/) packages for deploying Kubeflow applications. 
