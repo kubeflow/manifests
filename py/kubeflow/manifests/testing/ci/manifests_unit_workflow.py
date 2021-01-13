@@ -116,6 +116,7 @@ class Builder(object):
     # The directory containing the kubeflow/kfctl repo
     self.src_dir = self.src_root_dir + "/kubeflow/manifests"
     self.kubeflow_dir = self.src_root_dir + "/kubeflow/kubeflow"
+    self.manifests_test_dir = self.src_dir + "/tests"
 
     # Directory in kubeflow/kfctl containing the pytest files.
     self.kfctl_pytest_dir = os.path.join(self.src_dir, "py/kubeflow/kfctl/testing/pytests")
@@ -375,7 +376,7 @@ class Builder(object):
 
     # Change the working directory for all subsequent steps
     task_template["container"]["workingDir"] = os.path.join(
-      self.src_dir)
+      self.manifests_test_dir)
     py3_template["container"]["workingDir"] = os.path.join(self.kfctl_pytest_dir)
 
     #***************************************************************************
