@@ -1,3 +1,23 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Manifests](#manifests)
+  - [Obsolete information](#obsolete-information)
+  - [Organization](#organization)
+  - [Kfctl Processing](#kfctl-processing)
+    - [Multiple overlays](#multiple-overlays)
+      - [What are Multiple Overlays?](#what-are-multiple-overlays)
+      - [Merging multiple overlays](#merging-multiple-overlays)
+      - [Merging multiple overlays to generate app.yaml](#merging-multiple-overlays-to-generate-appyaml)
+    - [Using kustomize](#using-kustomize)
+      - [Install kustomize](#install-kustomize)
+    - [Run kustomize](#run-kustomize)
+      - [Example](#example)
+  - [Test](#test)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Manifests
 
 This repo contains [kustomize](https://kustomize.io/) packages for deploying Kubeflow applications. 
@@ -241,8 +261,8 @@ kustomize
 ## Test
 
 Currently, kubeflow/manifests exist with 2 types of general-purpose tests, unit test and E2E test.
-1. Unit test: uses deprecated ksonnet to generate unit test Argo workflow, detailed code can be found [here](https://github.com/kubeflow/manifests/blob/master/prow_config.yaml#L9-L15).
-2. E2E test: uses python generated E2E test Argo workflow, detailed code can be found [here](https://github.com/kubeflow/manifests/blob/master/prow_config.yaml#L16-L57).
+1. Unit test: uses Github Actions, detailed code can be found [here](https://github.com/kubeflow/manifests/blob/master/.github/workflows/manifests_unittests.yaml).
+2. E2E test: uses python generated E2E test Argo workflow, detailed code can be found [here](https://github.com/kubeflow/manifests/blob/master/prow_config.yaml).
 
 More specific, 
 
@@ -250,7 +270,7 @@ More specific,
 ```
 make test
 ```
-Detailed code can be found [here](https://github.com/kubeflow/manifests/blob/master/tests/scripts/run-tests.sh)
+Detailed code can be found [here](https://github.com/kubeflow/manifests/blob/master/.github/workflows/manifests_unittests.yaml)
 
 2. E2E test's abstract test model (same as kfctl):
 ```
