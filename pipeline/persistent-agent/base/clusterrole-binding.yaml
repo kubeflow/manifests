@@ -5,7 +5,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: cluster-admin
+  name: ml-pipeline-persistenceagent
 subjects:
 - kind: ServiceAccount
   name: persistenceagent
