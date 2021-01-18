@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: kubeflow
 resources:
 - kubeflow-anyuid-scc-istio.yaml
+- kubeflow-privileged-scc-istio.yaml
 - kubeflow-anyuid-scc.yaml
 - tekton-anyuid-scc.yaml
 vars:
