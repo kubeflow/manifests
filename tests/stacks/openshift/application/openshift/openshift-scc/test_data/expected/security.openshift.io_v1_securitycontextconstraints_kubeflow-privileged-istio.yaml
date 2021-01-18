@@ -4,7 +4,7 @@ allowHostNetwork: false
 allowHostPID: false
 allowHostPorts: false
 allowPrivilegeEscalation: true
-allowPrivilegedContainer: false
+allowPrivilegedContainer: true
 allowedCapabilities: null
 apiVersion: security.openshift.io/v1
 defaultAddCapabilities: null
@@ -17,7 +17,7 @@ metadata:
   annotations:
     kubernetes.io/description: kubeflow-anyuid provides all features of the restricted
       SCC but allows users to run with any UID and any GID.
-  name: kubeflow-anyuid-istio
+  name: kubeflow-privileged-istio
   namespace: kubeflow
 priority: 10
 readOnlyRootFilesystem: false
@@ -30,17 +30,9 @@ seLinuxContext:
 supplementalGroups:
   type: RunAsAny
 users:
-- system:serviceaccount:istio-system:istio-egressgateway-service-account
-- system:serviceaccount:istio-system:istio-citadel-service-account
-- system:serviceaccount:istio-system:istio-cleanup-old-ca-service-account
-- system:serviceaccount:istio-system:istio-mixer-post-install-account
+- system:serviceaccount:istio-system:istio-ingressgateway-service-account
+- system:serviceaccount:istio-system:istio-pilot-service-account
 - system:serviceaccount:istio-system:istio-mixer-service-account
-- system:serviceaccount:istio-system:istio-sidecar-injector-service-account
-- system:serviceaccount:istio-system:istio-sidecar-injector-service-account
-- system:serviceaccount:istio-system:istio-galley-service-account
-- system:serviceaccount:istio-system:prometheus
-- system:serviceaccount:istio-system:cluster-local-gateway-service-account
-- system:serviceaccount:istio-system:oidc-authservice-service-account
 volumes:
 - configMap
 - downwardAPI
