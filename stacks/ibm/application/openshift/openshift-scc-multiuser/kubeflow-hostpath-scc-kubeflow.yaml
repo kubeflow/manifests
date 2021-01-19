@@ -1,0 +1,47 @@
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  annotations:
+    kubernetes.io/description: kubeflow-anyuid provides all features of the restricted SCC
+      but allows users to run with any UID and any GID.
+  name: kubeflow-hostpath-scc
+allowHostDirVolumePlugin: true
+allowHostIPC: false
+allowHostNetwork: false
+allowHostPID: false
+allowHostPorts: false
+allowPrivilegeEscalation: true
+allowPrivilegedContainer: false
+allowedCapabilities: null
+defaultAddCapabilities: null
+fsGroup:
+  type: RunAsAny
+groups:
+- system:cluster-admins
+priority: 10
+readOnlyRootFilesystem: false
+requiredDropCapabilities:
+- MKNOD
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: RunAsAny
+supplementalGroups:
+  type: RunAsAny
+users:
+#Component: istio/istio-install
+- system:serviceaccount:kubeflow:default
+- system:serviceaccount:kubeflow:ml-pipeline
+- system:serviceaccount:kubeflow:ml-pipeline-persistenceagent
+- system:serviceaccount:kubeflow:ml-pipeline-scheduledworkflow
+- system:serviceaccount:kubeflow:ml-pipeline-ui
+- system:serviceaccount:kubeflow:ml-pipeline-viewer-crd-service-account
+- system:serviceaccount:kubeflow:ml-pipeline-visualizationserver
+volumes:
+- configMap
+- downwardAPI
+- emptyDir
+- persistentVolumeClaim
+- projected
+- secret
+- hostPath

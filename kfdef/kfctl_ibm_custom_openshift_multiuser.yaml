@@ -11,15 +11,16 @@ spec:
     name: namespaces
   # Install istio in a different namespace: istio-system
   # Remove this application if istio is already installed
+  # for multiuser on openshift the scc permission needs to be loosened a bit more
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/openshift/application/openshift/openshift-scc
+        path: stacks/ibm/application/openshift/openshift-scc-multiuser
     name: openshift-scc
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/application/istio-1-3-1-stack-openshift
+        path: stacks/ibm/application/istio-1-3-1-stack-openshift-multiuser
     name: istio-stack
   - kustomizeConfig:
       repoRef:
@@ -76,11 +77,11 @@ spec:
         name: manifests
         path: tektoncd/tektoncd-dashboard/base
     name: tektoncd-dashboard
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: stacks/ibm/application/admission-webhook
-    name: admission-webhook
+  # - kustomizeConfig:
+  #     repoRef:
+  #       name: manifests
+  #       path: stacks/ibm/application/admission-webhook
+  #   name: admission-webhook
   - kustomizeConfig:
       repoRef:
         name: manifests

@@ -49,11 +49,11 @@ spec:
         image: python:3.7
         name: profile-controller
         ports:
-        - containerPort: 80
+        - containerPort: 8080
         volumeMounts:
         - mountPath: /hooks
           name: hooks
       volumes:
       - configMap:
-          name: kubeflow-pipelines-profile-controller-code-gg2h6k2fch
+          name: kubeflow-pipelines-profile-controller-code-2hf2g67gb6
         name: hooks

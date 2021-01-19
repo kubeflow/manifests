@@ -12,7 +12,7 @@ spec:
   - name: http
     port: 80
     protocol: TCP
-    targetPort: 80
+    targetPort: 8080
   selector:
     app: kubeflow-pipelines-profile-controller
     app.kubernetes.io/component: ml-pipeline

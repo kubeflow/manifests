@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  namespace: istio-system
+kind: ConfigMap
+metadata:
+  name: istio-install-config
+  namespace: istio-system
