@@ -1,12 +1,12 @@
-# # This file configures the workflows to trigger in our Prow jobs.
-# # see https://github.com/kubeflow/testing/blob/master/py/kubeflow/testing/run_e2e_workflow.py
-# python_paths:
-#   # Need to place kubeflow/testing in front of kubeflow/testing so that the package can
-#   # be correctly located.
-#   - kubeflow/testing/py
-#   - kubeflow/kfctl/py
-#   - kubeflow/manifests/py
-# workflows:
+# This file configures the workflows to trigger in our Prow jobs.
+# see https://github.com/kubeflow/testing/blob/master/py/kubeflow/testing/run_e2e_workflow.py
+python_paths:
+  # Need to place kubeflow/testing in front of kubeflow/testing so that the package can
+  # be correctly located.
+  - kubeflow/testing/py
+  - kubeflow/kfctl/py
+  - kubeflow/manifests/py
+workflows: []
 #   - py_func: kubeflow.kfctl.testing.ci.kfctl_e2e_workflow.create_workflow
 #     name: e2e
 #     job_types:
