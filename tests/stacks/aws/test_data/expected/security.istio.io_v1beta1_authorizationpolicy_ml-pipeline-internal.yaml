@@ -1,0 +1,30 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  labels:
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+  name: ml-pipeline-internal
+  namespace: kubeflow
+spec:
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/kubeflow/sa/ml-pipeline
+        - cluster.local/ns/kubeflow/sa/ml-pipeline-ui
+        - cluster.local/ns/kubeflow/sa/ml-pipeline-persistenceagent
+        - cluster.local/ns/kubeflow/sa/ml-pipeline-scheduledworkflow
+        - cluster.local/ns/kubeflow/sa/ml-pipeline-viewer-crd-service-account
+        - cluster.local/ns/kubeflow/sa/kubeflow-pipelines-cache
+    to:
+    - operation: {}
+  selector:
+    matchExpressions:
+    - key: app
+      operator: In
+      values:
+      - ml-pipeline
+      - ml-pipeline-ui
+      - ml-pipeline-visualizationserver
+      - mysql

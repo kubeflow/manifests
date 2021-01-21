@@ -45,8 +45,7 @@ class Controller(BaseHTTPRequestHandler):
                 len(children["Deployment.apps/v1"]) == 2 and \
                 len(children["Service.v1"]) == 2 and \
                 len(children["DestinationRule.networking.istio.io/v1alpha3"]) == 1 and \
-                len(children["ServiceRole.rbac.istio.io/v1alpha1"]) == 1 and \
-                len(children["ServiceRoleBinding.rbac.istio.io/v1alpha1"]) == 1 and \
+                len(children["AuthorizationPolicy.security.istio.io/v1beta1"]) == 1 and \
                 "True" or "False"
         }
 
@@ -129,36 +128,25 @@ class Controller(BaseHTTPRequestHandler):
                 }
             },
             {
-                "apiVersion": "rbac.istio.io/v1alpha1",
-                "kind": "ServiceRole",
+                "apiVersion": "security.istio.io/v1beta1",
+                "kind": "AuthorizationPolicy",
                 "metadata": {
                     "name": "ml-pipeline-visualizationserver",
                     "namespace": namespace,
                 },
                 "spec": {
-                    "rules": [{
-                        "services": ["ml-pipeline-visualizationserver.*"]
-                    }]
-                }
-            },
-            {
-                "apiVersion": "rbac.istio.io/v1alpha1",
-                "kind": "ServiceRoleBinding",
-                "metadata": {
-                    "name": "ml-pipeline-visualizationserver",
-                    "namespace": namespace,
-                },
-                "spec": {
-                    "subjects": [{
-                        "properties": {
-                            "source.principal":
-                            "cluster.local/ns/kubeflow/sa/ml-pipeline"
+                    "selector": {
+                        "matchLabels": {
+                            "app": "ml-pipeline-visualizationserver"
                         }
-                    }],
-                    "roleRef": {
-                        "kind": "ServiceRole",
-                        "name": "ml-pipeline-visualizationserver"
-                    }
+                    },
+                    "rules": [{
+                        "from": [{
+                            "source": {
+                                "principals": ["cluster.local/ns/kubeflow/sa/ml-pipeline"]
+                            }
+                        }]
+                    }]
                 }
             },
             {

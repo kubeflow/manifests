@@ -1,0 +1,15 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  labels:
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+  name: service-cache-server
+  namespace: kubeflow
+spec:
+  rules:
+  - to:
+    - operation: {}
+  selector:
+    matchLabels:
+      app: cache-server
