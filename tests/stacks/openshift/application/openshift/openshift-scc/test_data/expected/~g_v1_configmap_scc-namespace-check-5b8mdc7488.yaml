@@ -1,5 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: scc-namespace-check-5b8mdc7488
-  namespace: kubeflow

@@ -5,14 +5,8 @@
 #   # be correctly located.
 #   - kubeflow/testing/py
 #   - kubeflow/kfctl/py
+#   - kubeflow/manifests/py
 # workflows:
-#   - app_dir: kubeflow/manifests/tests/workflows
-#     component: workflows
-#     name: unit
-#     job_types:
-#       - presubmit
-#       - postsubmit
-#       - periodic
 #   - py_func: kubeflow.kfctl.testing.ci.kfctl_e2e_workflow.create_workflow
 #     name: e2e
 #     job_types:

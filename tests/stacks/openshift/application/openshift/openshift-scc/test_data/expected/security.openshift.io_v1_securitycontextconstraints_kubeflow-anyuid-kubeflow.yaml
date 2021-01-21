@@ -32,6 +32,9 @@ supplementalGroups:
 users:
 - system:serviceaccount:kubeflow:metadatadb
 - system:serviceaccount:kubeflow:minio
+- system:serviceaccount:kubeflow:kubeflow-pipelines-cache-deployer-sa
+- system:serviceaccount:kubeflow:kfserving
+- system:serviceaccount:kubeflow:admission-webhook-service-account
 volumes:
 - configMap
 - downwardAPI

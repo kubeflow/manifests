@@ -1,0 +1,21 @@
+name: Unit Test
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  build:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repo
+      uses: actions/checkout@v2
+
+    - name: Unit Test
+      run: |
+        cd tests
+        make test
+
+

@@ -1,3 +1,23 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Manifests](#manifests)
+  - [Obsolete information](#obsolete-information)
+  - [Organization](#organization)
+  - [Kfctl Processing](#kfctl-processing)
+    - [Multiple overlays](#multiple-overlays)
+      - [What are Multiple Overlays?](#what-are-multiple-overlays)
+      - [Merging multiple overlays](#merging-multiple-overlays)
+      - [Merging multiple overlays to generate app.yaml](#merging-multiple-overlays-to-generate-appyaml)
+    - [Using kustomize](#using-kustomize)
+      - [Install kustomize](#install-kustomize)
+    - [Run kustomize](#run-kustomize)
+      - [Example](#example)
+  - [Test](#test)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Manifests
 
 This repo contains [kustomize](https://kustomize.io/) packages for deploying Kubeflow applications. 
@@ -7,7 +27,7 @@ If you are a contributor authoring or editing the packages please see [Best Prac
 Note, please use [kustomize v3.2.1](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv3.2.1) with manifests in this repo, before #538 is fixed which will allow latest kustomize to be used.
 
 
-# Obsolete information
+## Obsolete information
 
 The information below is obsolete. It pertains to using `kfctl` to generate `kustomization.yaml`. This was how things worked through Kubeflow 1.0.0.
 
@@ -238,3 +258,26 @@ kustomize
 ......
 ```
 
+## Test
+
+Currently, kubeflow/manifests exist with 2 types of general-purpose tests, unit test and E2E test.
+1. Unit test: uses Github Actions, detailed code can be found [here](https://github.com/kubeflow/manifests/blob/master/.github/workflows/manifests_unittests.yaml).
+2. E2E test: uses python generated E2E test Argo workflow, detailed code can be found [here](https://github.com/kubeflow/manifests/blob/master/prow_config.yaml).
+
+More specific, 
+
+1. Unit test's abstract test model: 
+```
+make test
+```
+Detailed code can be found [here](https://github.com/kubeflow/manifests/blob/master/.github/workflows/manifests_unittests.yaml)
+
+2. E2E test's abstract test model (same as kfctl):
+```
+1. Create EKS cluster
+2. Deploy Kubeflow by kfctl
+3. Test individual component's status
+4. Only a few component's functionality tests
+5. Report test status and clean up
+```
+Detailed code can be found [here](https://github.com/kubeflow/kfctl/blob/master/py/kubeflow/kfctl/testing/ci/kfctl_e2e_workflow.py)
