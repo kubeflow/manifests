@@ -103,7 +103,7 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/ibm/application/kfp-tekton
+        path: stacks/openshift/application/kfp-tekton
     name: kfp-tekton
   repos:
   - name: manifests
