@@ -14,13 +14,8 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/openshift/application/istio-1-3-1-stack
+        path: stacks/openshift/application/istio-stack
     name: istio-stack
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: stacks/openshift/application/cluster-local-gateway-1-3-1
-    name: cluster-local-gateway
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -102,16 +97,6 @@ spec:
         name: manifests
         path: stacks/openshift
     name: kubeflow-apps
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: knative/installs/generic
-    name: knative
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: kfserving/installs/generic
-    name: kfserving
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/v1.2-branch.tar.gz

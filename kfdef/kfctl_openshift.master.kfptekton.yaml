@@ -105,6 +105,16 @@ spec:
         name: manifests
         path: stacks/openshift/application/kfp-tekton
     name: kfp-tekton
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: knative/installs/generic
+    name: knative
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: kfserving/installs/generic
+    name: kfserving
   repos:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
