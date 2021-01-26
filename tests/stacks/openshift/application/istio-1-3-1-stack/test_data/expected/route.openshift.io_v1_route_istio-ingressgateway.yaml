@@ -1,0 +1,17 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: istio-ingressgateway
+    istio: ingressgateway
+    release: istio
+  name: istio-ingressgateway
+  namespace: istio-system
+spec:
+  port:
+    targetPort: http2
+  to:
+    kind: Service
+    name: istio-ingressgateway
+    weight: 100
+  wildcardPolicy: None
