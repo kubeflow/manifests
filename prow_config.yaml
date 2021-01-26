@@ -39,6 +39,7 @@ workflows: []
 #       - namespaces/*
 #       - pipeline/*
 #       - profiles/*
+#       - prow_config.yaml
 #       - pytorch-job/*
 #       - seldon/*
 #       - spark/*
