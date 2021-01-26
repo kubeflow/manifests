@@ -6,7 +6,7 @@ python_paths:
   - kubeflow/testing/py
   - kubeflow/kfctl/py
   - kubeflow/manifests/py
-workflows: []
+workflows:
    - py_func: kubeflow.kfctl.testing.ci.kfctl_e2e_workflow.create_workflow
      name: e2e
      job_types:
