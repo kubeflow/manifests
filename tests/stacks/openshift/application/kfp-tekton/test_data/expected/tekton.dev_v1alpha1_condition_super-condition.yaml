@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Condition
+metadata:
+  labels:
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+  name: super-condition
+  namespace: kubeflow
+spec:
+  check:
+    image: python:alpine3.6
+    script: |-
+      python -c 'import sys
+      input1=str.rstrip(sys.argv[1])
+      input2=str.rstrip(sys.argv[2])
+      try:
+        input1=int(input1)
+        input2=int(input2)
+      except:
+        input1=str(input1)
+      sys.exit(0) if (input1 $(params.operator) input2) else sys.exit(1)' '$(params.operand1)' '$(params.operand2)'
+  params:
+  - name: operand1
+  - name: operand2
+  - name: operator
