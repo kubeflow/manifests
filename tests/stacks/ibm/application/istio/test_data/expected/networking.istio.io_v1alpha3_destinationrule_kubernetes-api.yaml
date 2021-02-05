@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: kubernetes-api
+  namespace: kubeflow
+spec:
+  host: kubernetes.default.svc.cluster.local
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        connectTimeout: 10s
+        tcpKeepalive:
+          interval: 75s
+          time: 75s
