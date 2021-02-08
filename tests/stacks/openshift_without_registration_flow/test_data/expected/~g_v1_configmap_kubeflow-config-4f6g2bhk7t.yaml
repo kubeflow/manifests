@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  clusterDomain: cluster.local
+  clusterdomain: ""
+  namespace: ""
+  registration-flow: "false"
+  userid-header: kubeflow-userid
+  userid-prefix: ""
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels: {}
+  name: kubeflow-config-4f6g2bhk7t
+  namespace: kubeflow

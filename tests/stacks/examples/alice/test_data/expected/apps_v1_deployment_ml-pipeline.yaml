@@ -26,12 +26,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: userid-header
-              name: kubeflow-config-bmh8k74f52
+              name: kubeflow-config-fhdt47fd8c
         - name: KUBEFLOW_USERID_PREFIX
           valueFrom:
             configMapKeyRef:
               key: userid-prefix
-              name: kubeflow-config-bmh8k74f52
+              name: kubeflow-config-fhdt47fd8c
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:

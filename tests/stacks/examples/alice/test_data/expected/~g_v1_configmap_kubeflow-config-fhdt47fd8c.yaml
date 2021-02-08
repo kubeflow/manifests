@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  clusterDomain: cluster.local
+  project: alice-gcp
+  registration-flow: ""
+  userid-header: x-goog-authenticated-user-email
+  userid-prefix: 'accounts.google.com:'
+  zone: us-east1-d
+kind: ConfigMap
+metadata:
+  name: kubeflow-config-fhdt47fd8c
+  namespace: kubeflow

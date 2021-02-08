@@ -1,0 +1,40 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  labels:
+    kustomize.component: profiles
+  name: profiles-profiles
+  namespace: kubeflow
+spec:
+  addOwnerRef: true
+  componentKinds:
+  - group: core
+    kind: ConfigMap
+  - group: apps
+    kind: Deployment
+  - group: core
+    kind: Service
+  - group: core
+    kind: ServiceAccount
+  descriptor:
+    description: ""
+    keywords:
+    - profiles
+    - kubeflow
+    links:
+    - description: profiles
+      url: https://github.com/kubeflow/kubeflow/tree/master/components/profile-controller
+    - description: kfam
+      url: https://github.com/kubeflow/kubeflow/tree/master/components/access-management
+    maintainers:
+    - email: kunming@google.com
+      name: Kunming Qu
+    owners:
+    - email: kunming@google.com
+      name: Kunming Qu
+    type: profiles
+    version: v1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: profiles
+      app.kubernetes.io/name: profiles

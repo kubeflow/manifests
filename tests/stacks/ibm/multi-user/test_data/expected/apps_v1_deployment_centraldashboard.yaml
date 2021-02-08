@@ -32,12 +32,17 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: userid-header
-              name: kubeflow-config-bk4bc7m928
+              name: kubeflow-config-gd2fcdh646
         - name: USERID_PREFIX
           valueFrom:
             configMapKeyRef:
               key: userid-prefix
-              name: kubeflow-config-bk4bc7m928
+              name: kubeflow-config-gd2fcdh646
+        - name: REGISTRATION_FLOW
+          valueFrom:
+            configMapKeyRef:
+              key: registration-flow
+              name: kubeflow-config-gd2fcdh646
         - name: DASHBOARD_LINKS_CONFIGMAP
           value: centraldashboard-links-config
         image: gcr.io/kubeflow-images-public/centraldashboard:vmaster-g8097cfeb

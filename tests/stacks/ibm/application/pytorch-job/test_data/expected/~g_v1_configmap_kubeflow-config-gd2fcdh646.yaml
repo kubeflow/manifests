@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  cluster-name: ""
+  clusterDomain: cluster.local
+  istio-namespace: istio-system
+  registration-flow: ""
+  userid-header: kubeflow-userid
+  userid-prefix: ""
+kind: ConfigMap
+metadata:
+  name: kubeflow-config-gd2fcdh646
+  namespace: kubeflow
