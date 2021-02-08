@@ -139,7 +139,7 @@ func TestValidK8sResources(t *testing.T) {
 		// Skip cnrm-install. We don't install this with ACM so we don't need to fix it.
 		// It seems like if this is an issue it should eventually get fixed in upstream cnrm configs.
 		// The CNRM directory has lots of CRDS with non empty status.
-		"gcp/v2/management/cnrm-install": true,
+		"distributions/gcp/v2/management/cnrm-install": true,
 	}
 
 	deprecated := []deprecatedK8s{
@@ -435,7 +435,7 @@ resources:
 configMapGenerator:
 - name: config-map
   env: somenev
-  
+
 `,
 			Expected: true,
 		},
@@ -484,7 +484,7 @@ func TestNoObsoleteKustomizations(t *testing.T) {
 		// Skip cnrm-install. We don't install this with ACM so we don't need to fix it.
 		// It seems like if this is an issue it should eventually get fixed in upstream cnrm configs.
 		// The CNRM directory has lots of CRDS with non empty status.
-		"gcp/v2/management/cnrm-install": true,
+		"distributions/gcp/v2/management/cnrm-install": true,
 	}
 
 	err := filepath.Walk("..", func(path string, info os.FileInfo, err error) error {
