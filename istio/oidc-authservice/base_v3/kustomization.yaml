@@ -5,7 +5,6 @@ resources:
 - ../base/statefulset.yaml
 - ../base/envoy-filter.yaml
 - ../base/pvc.yaml
-- ../overlays/application/application.yaml
 namespace: istio-system
 configMapGenerator:
 - name: oidc-authservice-config
@@ -42,6 +41,13 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.oidc_auth_url
+- name: authservice_url_prefix
+  objref:
+    kind: ConfigMap
+    name: oidc-authservice-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.authservice_url_prefix
 - name: application_secret
   objref:
     kind: ConfigMap
@@ -77,9 +83,16 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.namespace
+- name: gatewaySelector
+  objref:
+    kind: ConfigMap
+    name: oidc-authservice-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.gatewaySelector
 configurations:
 - ../base/params.yaml
 images:
 - name: gcr.io/arrikto/kubeflow/oidc-authservice
-  newName: gcr.io/arrikto/kubeflow/oidc-authservice
-  newTag: 28c59ef
+  newName: gcr.io/arrikto/oidc-authservice
+  newTag: 087a340

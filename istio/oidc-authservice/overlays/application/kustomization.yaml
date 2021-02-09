@@ -1,6 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 bases:
-- ../../base
+- ../../base_v3
 commonLabels:
   app.kubernetes.io/component: oidc-authservice
   app.kubernetes.io/name: oidc-authservice

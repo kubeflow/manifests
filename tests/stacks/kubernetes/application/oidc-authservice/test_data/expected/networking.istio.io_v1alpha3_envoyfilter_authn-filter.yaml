@@ -14,7 +14,7 @@ spec:
           allowedHeaders:
             patterns:
             - exact: cookie
-            - exact: X-Auth-Token
+            - exact: authorization
         authorizationResponse:
           allowedUpstreamHeaders:
             patterns:

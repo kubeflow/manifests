@@ -4,7 +4,7 @@ namespace: istio-system
 resources:
 - ../../../../istio/oidc-authservice/overlays/application
 configMapGenerator:
-- name: oidc-authservice-parameters
+- name: oidc-authservice-config
   behavior: merge
   literals:
   - client_id=<client_id>

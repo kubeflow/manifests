@@ -1,6 +1,9 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
+  labels:
+    app.kubernetes.io/component: oidc-authservice
+    app.kubernetes.io/name: oidc-authservice
   name: authn-filter
   namespace: istio-system
 spec:
@@ -11,7 +14,7 @@ spec:
           allowedHeaders:
             patterns:
             - exact: cookie
-            - exact: X-Auth-Token
+            - exact: authorization
         authorizationResponse:
           allowedUpstreamHeaders:
             patterns:
@@ -30,4 +33,4 @@ spec:
     listenerMatch:
       listenerType: GATEWAY
   workloadLabels:
-    istio: $(gatewaySelector)
+    istio: ingressgateway
