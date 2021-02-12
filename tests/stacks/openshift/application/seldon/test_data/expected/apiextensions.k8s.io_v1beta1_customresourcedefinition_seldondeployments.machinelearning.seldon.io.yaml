@@ -3,14 +3,14 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     cert-manager.io/inject-ca-from: kubeflow/seldon-serving-cert
-    controller-gen.kubebuilder.io/version: v0.2.5
+    controller-gen.kubebuilder.io/version: v0.2.9
   creationTimestamp: null
   labels:
     app: seldon
     app.kubernetes.io/component: seldon
     app.kubernetes.io/instance: seldon-core
     app.kubernetes.io/name: seldon-core-operator
-    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/version: 1.6.0
   name: seldondeployments.machinelearning.seldon.io
 spec:
   group: machinelearning.seldon.io
@@ -6656,6 +6656,12 @@ spec:
                         type: object
                       endpoint:
                         properties:
+                          grpcPort:
+                            format: int32
+                            type: integer
+                          httpPort:
+                            format: int32
+                            type: integer
                           service_host:
                             type: string
                           service_port:
@@ -6689,6 +6695,12 @@ spec:
                                             properties:
                                               endpoint:
                                                 properties:
+                                                  grpcPort:
+                                                    format: int32
+                                                    type: integer
+                                                  httpPort:
+                                                    format: int32
+                                                    type: integer
                                                   service_host:
                                                     type: string
                                                   service_port:
@@ -6743,6 +6755,12 @@ spec:
                                           type: array
                                         endpoint:
                                           properties:
+                                            grpcPort:
+                                              format: int32
+                                              type: integer
+                                            httpPort:
+                                              format: int32
+                                              type: integer
                                             service_host:
                                               type: string
                                             service_port:
@@ -6796,6 +6814,12 @@ spec:
                                     type: array
                                   endpoint:
                                     properties:
+                                      grpcPort:
+                                        format: int32
+                                        type: integer
+                                      httpPort:
+                                        format: int32
+                                        type: integer
                                       service_host:
                                         type: string
                                       service_port:
@@ -6847,6 +6871,12 @@ spec:
                               type: array
                             endpoint:
                               properties:
+                                grpcPort:
+                                  format: int32
+                                  type: integer
+                                httpPort:
+                                  format: int32
+                                  type: integer
                                 service_host:
                                   type: string
                                 service_port:
@@ -6898,6 +6928,12 @@ spec:
                         type: array
                       endpoint:
                         properties:
+                          grpcPort:
+                            format: int32
+                            type: integer
+                          httpPort:
+                            format: int32
+                            type: integer
                           service_host:
                             type: string
                           service_port:

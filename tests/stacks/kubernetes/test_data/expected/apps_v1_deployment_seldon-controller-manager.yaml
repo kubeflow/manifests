@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/component: seldon
     app.kubernetes.io/instance: seldon-core
     app.kubernetes.io/name: seldon-core-operator
-    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/version: 1.6.0
     control-plane: seldon-controller-manager
   name: seldon-controller-manager
   namespace: kubeflow
@@ -50,21 +50,13 @@ spec:
           value: ""
         - name: RELATED_IMAGE_STORAGE_INITIALIZER
           value: ""
-        - name: RELATED_IMAGE_SKLEARNSERVER_REST
+        - name: RELATED_IMAGE_SKLEARNSERVER
           value: ""
-        - name: RELATED_IMAGE_SKLEARNSERVER_GRPC
+        - name: RELATED_IMAGE_XGBOOSTSERVER
           value: ""
-        - name: RELATED_IMAGE_XGBOOSTSERVER_REST
+        - name: RELATED_IMAGE_MLFLOWSERVER
           value: ""
-        - name: RELATED_IMAGE_XGBOOSTSERVER_GRPC
-          value: ""
-        - name: RELATED_IMAGE_MLFLOWSERVER_REST
-          value: ""
-        - name: RELATED_IMAGE_MLFLOWSERVER_GRPC
-          value: ""
-        - name: RELATED_IMAGE_TFPROXY_REST
-          value: ""
-        - name: RELATED_IMAGE_TFPROXY_GRPC
+        - name: RELATED_IMAGE_TFPROXY
           value: ""
         - name: RELATED_IMAGE_TENSORFLOW
           value: ""
@@ -171,6 +163,8 @@ spec:
         - mountPath: /tmp/k8s-webhook-server/serving-certs
           name: cert
           readOnly: true
+      securityContext:
+        runAsUser: 8888
       serviceAccountName: seldon-manager
       terminationGracePeriodSeconds: 10
       volumes:
