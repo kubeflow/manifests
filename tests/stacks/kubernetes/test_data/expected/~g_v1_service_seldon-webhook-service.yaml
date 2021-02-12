@@ -12,7 +12,7 @@ metadata:
 spec:
   ports:
   - port: 443
-    targetPort: 443
+    targetPort: 4443
   selector:
     app: seldon
     app.kubernetes.io/component: seldon

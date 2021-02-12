@@ -1,6 +1,9 @@
 # # Seldon Core Operator
 # Below are the default values when installing Seldon Core
 
+# Defaults to .Release.Namespace
+namespaceOverride: "" 
+
 # ## Ingress Options
 # You are able to choose between Istio and Ambassador
 
@@ -36,17 +39,19 @@ managerCreateResources: false
 # to all pods.
 defaultUserID: "8888"
 
+# runtime user to use for manager
+managerUserID: 8888
+
 # ## Service Orchestrator (Executor)
 # The executor is the default service orchestrator which has superceeded the "Java Engine"
 executor:
-  enabled: true
   port: 8000
   metricsPortName: metrics
   image:
     pullPolicy: IfNotPresent
     registry: docker.io
     repository: seldonio/seldon-core-executor
-    tag: 1.4.0
+    tag: 1.6.0
   resources:
     cpuLimit: 500m
     cpuRequest: 500m
@@ -67,7 +72,7 @@ image:
   pullPolicy: IfNotPresent
   registry: docker.io
   repository: seldonio/seldon-core-operator
-  tag: 1.4.0
+  tag: 1.6.0
 manager:
   cpuLimit: 500m
   cpuRequest: 100m
@@ -90,7 +95,7 @@ storageInitializer:
 usageMetrics:
   enabled: false
 webhook:
-  port: 443
+  port: 4443
 
 # ## Predictive Unit Values
 predictiveUnit:
@@ -102,50 +107,39 @@ predictiveUnit:
   defaultEnvSecretRefName: ""
 predictor_servers:
   MLFLOW_SERVER:
-    grpc:
-      defaultImageVersion: "1.4.0"
-      image: seldonio/mlflowserver_grpc
-    rest:
-      defaultImageVersion: "1.4.0"
-      image: seldonio/mlflowserver_rest
-  SKLEARN_SERVER:
-    grpc:
-      defaultImageVersion: "1.4.0"
-      image: seldonio/sklearnserver_grpc
-    rest:
-      defaultImageVersion: "1.4.0"
-      image: seldonio/sklearnserver_rest
     protocols:
+      seldon:
+        defaultImageVersion: "1.6.0"
+        image: seldonio/mlflowserver
+  SKLEARN_SERVER:
+    protocols:
+      seldon:
+        defaultImageVersion: "1.6.0"
+        image: seldonio/sklearnserver
       kfserving:
-        defaultImageVersion: "0.1.0"
+        defaultImageVersion: "0.1.1"
         image: seldonio/mlserver
   TENSORFLOW_SERVER:
-    grpc:
-      defaultImageVersion: "1.4.0"
-      image: seldonio/tfserving-proxy_grpc
-    rest:
-      defaultImageVersion: "1.4.0"
-      image: seldonio/tfserving-proxy_rest
-    tensorflow: true
-    tfImage: tensorflow/serving:2.1.0
-  XGBOOST_SERVER:
-    grpc:
-      defaultImageVersion: "1.4.0"
-      image: seldonio/xgboostserver_grpc
-    rest:
-      defaultImageVersion: "1.4.0"
-      image: seldonio/xgboostserver_rest
     protocols:
+      seldon:
+        defaultImageVersion: "1.6.0"
+        image: seldonio/tfserving-proxy
+      tensorflow: 
+        defaultImageVersion: 2.1.0
+        image:  tensorflow/serving
+  XGBOOST_SERVER:
+    protocols:
+      seldon:
+        defaultImageVersion: "1.6.0"
+        image: seldonio/xgboostserver
       kfserving:
-        defaultImageVersion: "0.1.0"
+        defaultImageVersion: "0.1.1"
         image: seldonio/mlserver
   TRITON_SERVER:
-    grpc:
-      defaultImageVersion: "20.08-py3"
-      image: nvcr.io/nvidia/tritonserver
-    rest:
-      defaultImageVersion: "20.08-py3"
-      image: nvcr.io/nvidia/tritonserver
+    protocols:
+      kfserving:
+        defaultImageVersion: "20.08-py3"
+        image: nvcr.io/nvidia/tritonserver
 
 # ## Other
 # You can choose the crds to not be installed if you already installed them
@@ -178,7 +172,7 @@ engine:
     pullPolicy: IfNotPresent
     registry: docker.io
     repository: seldonio/engine
-    tag: 1.4.0
+    tag: 1.6.0
   resources:
     cpuLimit: 500m
     cpuRequest: 500m
@@ -195,6 +189,5 @@ engine:
 
 # Explainer image
 explainer:
-  image: seldonio/alibiexplainer:1.4.0
-
+  image: seldonio/alibiexplainer:1.6.0
 

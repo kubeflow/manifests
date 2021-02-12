@@ -13,7 +13,7 @@ spec:
   ports:
   - port: 8443
     targePort: 8443
-    targetPort: 443
+    targetPort: 4443
   selector:
     app: seldon
     app.kubernetes.io/component: seldon

@@ -36,7 +36,7 @@ spec:
       containers:
       - args:
         - --enable-leader-election
-        - --webhook-port=443
+        - --webhook-port=4443
         - --create-resources=$(MANAGER_CREATE_RESOURCES)
         - ""
         command:
@@ -77,7 +77,7 @@ spec:
         - name: AMBASSADOR_SINGLE_NAMESPACE
           value: "false"
         - name: ENGINE_CONTAINER_IMAGE_AND_VERSION
-          value: docker.io/seldonio/engine:1.4.0
+          value: docker.io/seldonio/engine:1.6.0
         - name: ENGINE_CONTAINER_IMAGE_PULL_POLICY
           value: IfNotPresent
         - name: ENGINE_CONTAINER_SERVICE_ACCOUNT_NAME
@@ -109,7 +109,7 @@ spec:
         - name: USE_EXECUTOR
           value: "true"
         - name: EXECUTOR_CONTAINER_IMAGE_AND_VERSION
-          value: docker.io/seldonio/seldon-core-executor:1.4.0
+          value: docker.io/seldonio/seldon-core-executor:1.6.0
         - name: EXECUTOR_CONTAINER_IMAGE_PULL_POLICY
           value: IfNotPresent
         - name: EXECUTOR_PROMETHEUS_PATH
@@ -142,11 +142,11 @@ spec:
           value: 500m
         - name: ENGINE_DEFAULT_MEMORY_LIMIT
           value: 512Mi
-        image: docker.io/seldonio/seldon-core-operator:1.4.0
+        image: docker.io/seldonio/seldon-core-operator:1.6.0
         imagePullPolicy: IfNotPresent
         name: manager
         ports:
-        - containerPort: 443
+        - containerPort: 4443
           name: webhook-server
           protocol: TCP
         - containerPort: 8080
