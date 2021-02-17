@@ -45,7 +45,7 @@ class Controller(BaseHTTPRequestHandler):
                 len(children["Deployment.apps/v1"]) == 2 and \
                 len(children["Service.v1"]) == 2 and \
                 len(children["DestinationRule.networking.istio.io/v1alpha3"]) == 1 and \
-                len(children["AuthorizationPolicy.security.istio.io/v1beta1"]) == 1 and \
+                len(children["AuthorizationPolicy.rbac.istio.io/v1alpha1"]) == 1 and \
                 "True" or "False"
         }
 
@@ -128,7 +128,7 @@ class Controller(BaseHTTPRequestHandler):
                 }
             },
             {
-                "apiVersion": "security.istio.io/v1beta1",
+                "apiVersion": "rbac.istio.io/v1alpha1",
                 "kind": "AuthorizationPolicy",
                 "metadata": {
                     "name": "ml-pipeline-visualizationserver",
