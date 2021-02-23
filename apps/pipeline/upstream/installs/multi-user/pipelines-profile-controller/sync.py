@@ -76,6 +76,7 @@ class Controller(BaseHTTPRequestHandler):
                     },
                     "name": "ml-pipeline-visualizationserver",
                     "namespace": namespace,
+                    "cluster-autoscaler.kubernetes.io/safe-to-evict": "true",
                 },
                 "spec": {
                     "selector": {
