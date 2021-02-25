@@ -6,6 +6,7 @@ resources:
 - deployment.yaml
 - service.yaml
 - persistent-volume-claim.yaml
+- serviceaccount.yaml
 configMapGenerator:
 - name: pipeline-mysql-parameters
   envs:
