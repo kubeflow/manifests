@@ -10,6 +10,7 @@ spec:
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
+      serviceAccountName: mysql
       containers:
       - name: mysql
         env:
