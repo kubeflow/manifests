@@ -89,11 +89,6 @@ spec:
         name: manifests
         path: kfserving/installs/generic
     name: kfserving
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: stacks/aws/application/spartakus
-    name: spartakus
   plugins:
   - kind: KfAwsPlugin
     metadata:

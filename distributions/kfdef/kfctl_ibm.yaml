@@ -134,13 +134,6 @@ spec:
         name: manifests
         path: kfserving/installs/generic
     name: kfserving
-  # Spartakus is a separate applications so that kfctl can remove it
-  # to disable usage reporting
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: stacks/ibm/application/spartakus
-    name: spartakus
   # Optional applications
   # - kustomizeConfig:
   #     repoRef:

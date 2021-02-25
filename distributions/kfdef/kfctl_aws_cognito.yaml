@@ -72,11 +72,6 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/aws/application/spartakus
-    name: spartakus
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
         path: stacks/aws
     name: kubeflow-apps
   - kustomizeConfig:
