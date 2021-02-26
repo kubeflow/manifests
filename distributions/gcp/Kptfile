@@ -850,3 +850,27 @@ openAPI:
           values:
           - marker: ${mgmt-project}
             ref: '#/definitions/io.k8s.cli.setters.mgmt-project'
+    io.k8s.cli.setters.node-locations:
+      type: array
+      x-k8s-cli:
+        setter:
+          name: node-locations
+          listValues: ["ZONE"]
+    io.k8s.cli.setters.enable-private-endpoint:
+      type: string
+      x-k8s-cli:
+        setter:
+          name: enable-private-endpoint
+          value: "false"
+    io.k8s.cli.setters.master-ip-cidr-block:
+      type: string
+      x-k8s-cli:
+        setter:
+          name: master-ip-cidr-block
+          value: 172.16.0.32/28
+    io.k8s.cli.setters.master-global-access-enabled:
+      type: string
+      x-k8s-cli:
+        setter:
+          name: master-global-access-enabled
+          value: "true"

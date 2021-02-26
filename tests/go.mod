@@ -3,6 +3,7 @@ module github.com/kubeflow/manifests/tests
 go 1.13
 
 require (
+	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/emicklei/go-restful v2.15.0+incompatible // indirect
 	github.com/evanphx/json-patch v4.9.0+incompatible // indirect
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
@@ -20,7 +21,7 @@ require (
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.1.1 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
 	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
 	golang.org/x/text v0.3.5 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
