@@ -76,7 +76,7 @@ class Controller(BaseHTTPRequestHandler):
                         "app": "ml-pipeline-visualizationserver"
                     },
                     "name": "ml-pipeline-visualizationserver",
-                    "namespace": namespace
+                    "namespace": namespace,
                 },
                 "spec": {
                     "selector": {

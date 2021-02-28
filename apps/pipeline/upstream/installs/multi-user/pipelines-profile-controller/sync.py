@@ -58,7 +58,7 @@ class Controller(BaseHTTPRequestHandler):
                 "kind": "ConfigMap",
                 "metadata": {
                     "name": "metadata-grpc-configmap",
-                    "namespace": namespace
+                    "namespace": namespace,
                 },
                 "data": {
                     "METADATA_GRPC_SERVICE_HOST":
