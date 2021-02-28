@@ -58,7 +58,7 @@ class Controller(BaseHTTPRequestHandler):
                 "kind": "ConfigMap",
                 "metadata": {
                     "name": "metadata-grpc-configmap",
-                    "namespace": namespace,
+                    "namespace": namespace
                 },
                 "data": {
                     "METADATA_GRPC_SERVICE_HOST":
@@ -76,7 +76,6 @@ class Controller(BaseHTTPRequestHandler):
                     },
                     "name": "ml-pipeline-visualizationserver",
                     "namespace": namespace,
-                    "cluster-autoscaler.kubernetes.io/safe-to-evict": "true",
                 },
                 "spec": {
                     "selector": {
@@ -90,8 +89,9 @@ class Controller(BaseHTTPRequestHandler):
                                 "app": "ml-pipeline-visualizationserver"
                             },
                             "annotations": disable_istio_sidecar and {
-                                "sidecar.istio.io/inject": "false"
-                            } or {},
+                                "sidecar.istio.io/inject": "false",
+                                "cluster-autoscaler.kubernetes.io/safe-to-evict": "true"
+                            } or {"cluster-autoscaler.kubernetes.io/safe-to-evict": "true"},
                         },
                         "spec": {
                             "containers": [{
@@ -178,8 +178,7 @@ class Controller(BaseHTTPRequestHandler):
                         "app": "ml-pipeline-ui-artifact"
                     },
                     "name": "ml-pipeline-ui-artifact",
-                    "namespace": namespace,
-                    "cluster-autoscaler.kubernetes.io/safe-to-evict": "true",
+                    "namespace": namespace
                 },
                 "spec": {
                     "selector": {
@@ -193,8 +192,9 @@ class Controller(BaseHTTPRequestHandler):
                                 "app": "ml-pipeline-ui-artifact"
                             },
                             "annotations": disable_istio_sidecar and {
-                                "sidecar.istio.io/inject": "false"
-                            } or {},
+                                "sidecar.istio.io/inject": "false",
+                                "cluster-autoscaler.kubernetes.io/safe-to-evict": "true"
+                            } or {"cluster-autoscaler.kubernetes.io/safe-to-evict": "true"},
                         },
                         "spec": {
                             "containers": [{
