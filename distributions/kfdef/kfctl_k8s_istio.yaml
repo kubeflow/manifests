@@ -209,18 +209,6 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
-      parameters:
-      - name: usageId
-        value: <randomly-generated-id>
-      - name: reportUsage
-        value: 'true'
-      repoRef:
-        name: manifests
-        path: common/spartakus
-    name: spartakus
-  - kustomizeConfig:
-      overlays:
-      - application
       repoRef:
         name: manifests
         path: tf-training/tf-job-crds
