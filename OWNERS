@@ -1,13 +1,12 @@
 approvers:
-  - animeshsingh
-  - Bobgy
   - elikatsis
-  - jlewi
   - PatrickXYS
   - StefanoFioravanzo
-  - swiftdiaries
-  - terrytangyuan
   - vkoukis
   - yanniszark
 reviewers:
-  - pvaneck
+  - elikatsis
+  - PatrickXYS
+  - StefanoFioravanzo
+  - vkoukis
+  - yanniszark
