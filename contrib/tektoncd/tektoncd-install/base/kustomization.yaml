@@ -14,6 +14,8 @@ resources:
 - role-binding.yaml
 - secret.yaml
 - webhook-configuration.yaml
+- horizontal-pod-autoscaler.yaml
+- policy.yaml
 namespace: tekton-pipelines
 configMapGenerator:
 - name: tektoncd-parameters
@@ -29,20 +31,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.tekton-registry
-- name: nop-registry
-  objref:
-    kind: ConfigMap
-    name: tektoncd-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.nop-registry
-- name: affinity-registry
-  objref:
-    kind: ConfigMap
-    name: tektoncd-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.affinity-registry
 - name: gsutil-registry
   objref:
     kind: ConfigMap
@@ -106,13 +94,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.git-init
-- name: creds-init
-  objref:
-    kind: ConfigMap
-    name: tektoncd-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.creds-init
 - name: pullrequest-init
   objref:
     kind: ConfigMap
@@ -141,13 +122,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.controller
-- name: affinity
-  objref:
-    kind: ConfigMap
-    name: tektoncd-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.affinity
 configurations:
 - params.yaml
 images:
