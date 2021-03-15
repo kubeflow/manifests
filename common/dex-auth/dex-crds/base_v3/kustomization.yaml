@@ -80,6 +80,6 @@ vars:
 configurations:
 - ../base/params.yaml
 images:
-- name: quay.io/dexidp/dex
-  newName: quay.io/dexidp/dex
-  newTag: v2.22.0
+- name: ghcr.io/dexidp/dex
+  newName: ghcr.io/dexidp/dex
+  newTag: v2.28.0

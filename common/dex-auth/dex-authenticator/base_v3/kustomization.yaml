@@ -65,4 +65,4 @@ configurations:
 images:
 - name: mintel/dex-k8s-authenticator
   newName: mintel/dex-k8s-authenticator
-  newTag: 1.2.0
+  newTag: 1.4.0
