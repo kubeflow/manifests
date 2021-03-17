@@ -7,8 +7,9 @@ resources:
 - cluster-role-binding.yaml
 - deployment.yaml
 - service.yaml
+- role-binding.yaml
 namespace: tekton-pipelines
 images:
 - name: gcr.io/tekton-releases/github.com/tektoncd/dashboard/cmd/dashboard
   newName: gcr.io/tekton-releases/github.com/tektoncd/dashboard/cmd/dashboard
-  digest: sha256:4c1d0c9d3bd805c07f57ae6974bc7179b03d67fa83870ea8a71415d19c261a38
+  digest: sha256:e36ec9efe78b4bb56a4b1c24d8241bee3a2b477aeef20ff864d1edef31953cd8

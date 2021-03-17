@@ -2,20 +2,25 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: config-artifact-bucket
-#  data:
-#    # location of the gcs bucket to be used for artifact storage
-#    location: "gs://bucket-name"
-#    # name of the secret that will contain the credentials for the service account
-#    # with access to the bucket
-#    bucket.service.account.secret.name:
-#    # The key in the secret with the required service account json
-#    bucket.service.account.secret.key:
+  namespace: tekton-pipelines
+# data:
+#  # location of the gcs bucket to be used for artifact storage
+#  location: "gs://bucket-name"
+#  # name of the secret that will contain the credentials for the service account
+#  # with access to the bucket
+#  bucket.service.account.secret.name:
+#  # The key in the secret with the required service account json
+#  bucket.service.account.secret.key:
+#  # The field name that should be used for the service account
+#  # Valid values: GOOGLE_APPLICATION_CREDENTIALS, BOTO_CONFIG.
+#  bucket.service.account.field.name: GOOGLE_APPLICATION_CREDENTIALS
 
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: config-artifact-pvc
+  namespace: tekton-pipelines
 # data:
 #   # size of the PVC volume
 #   size: 5Gi
@@ -28,8 +33,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: config-defaults
+  namespace: tekton-pipelines
 data:
-  _example: |-
+  _example: |
     ################################
     #                              #
     #    EXAMPLE CONFIGURATION     #
@@ -71,24 +77,94 @@ data:
     # If no sink is specified, no CloudEvent is generated
     # default-cloud-events-sink:
 
+    # default-task-run-workspace-binding contains the default workspace
+    # configuration provided for any Workspaces that a Task declares
+    # but that a TaskRun does not explicitly provide.
+    # default-task-run-workspace-binding: |
+    #   emptyDir: {}
+
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: feature-flags
+  namespace: tekton-pipelines
 data:
+  # Setting this flag to "true" will prevent Tekton to create an
+  # Affinity Assistant for every TaskRun sharing a PVC workspace
+  #
+  # The default behaviour is for Tekton to create Affinity Assistants
+  #
+  # See more in the workspace documentation about Affinity Assistant
+  # https://github.com/tektoncd/pipeline/blob/master/docs/workspaces.md#affinity-assistant-and-specifying-workspace-order-in-a-pipeline
+  # or https://github.com/tektoncd/pipeline/pull/2630 for more info.
   disable-affinity-assistant: "false"
+  # Setting this flag to "true" will prevent Tekton overriding your
+  # Task container's $HOME environment variable.
+  #
+  # The default behaviour currently is for Tekton to override the
+  # $HOME environment variable but this will change in an upcoming
+  # release.
+  #
+  # See https://github.com/tektoncd/pipeline/issues/2013 for more
+  # info.
   disable-home-env-overwrite: "true"
+  # Setting this flag to "true" will prevent Tekton overriding your
+  # Task container's working directory.
+  #
+  # The default behaviour currently is for Tekton to override the
+  # working directory if not set by the user but this will change
+  # in an upcoming release.
+  #
+  # See https://github.com/tektoncd/pipeline/issues/1836 for more
+  # info.
   disable-working-directory-overwrite: "true"
+  # Setting this flag to "true" will prevent Tekton scanning attached
+  # service accounts and injecting any credentials it finds into your
+  # Steps.
+  #
+  # The default behaviour currently is for Tekton to search service
+  # accounts for secrets matching a specified format and automatically
+  # mount those into your Steps.
+  #
+  # Note: setting this to "true" will prevent PipelineResources from
+  # working.
+  #
+  # See https://github.com/tektoncd/pipeline/issues/1836 for more
+  # info.
+  disable-creds-init: "false"
+  # This option should be set to false when Pipelines is running in a
+  # cluster that does not use injected sidecars such as Istio. Setting
+  # it to false should decrease the time it takes for a TaskRun to start
+  # running. For clusters that use injected sidecars, setting this
+  # option to false can lead to unexpected behavior.
+  #
+  # See https://github.com/tektoncd/pipeline/issues/2080 for more info.
   running-in-environment-with-injected-sidecars: "true"
+  # Setting this flag to "true" will require that any Git SSH Secret
+  # offered to Tekton must have known_hosts included.
+  #
+  # See https://github.com/tektoncd/pipeline/issues/2981 for more
+  # info.
+  require-git-ssh-secret-known-hosts: "false"
+  # Setting this flag to "true" enables the use of Tekton OCI bundle.
+  # This is an experimental feature and thus should still be considered
+  # an alpha feature.
+  enable-tekton-oci-bundles: "false"
+  # Setting this flag to "true" enables the use of custom tasks from
+  # within pipelines.
+  # This is an experimental feature and thus should still be considered
+  # an alpha feature.
+  enable-custom-tasks: "true"
 
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: config-leader-election
+  namespace: tekton-pipelines
 data:
-  resourceLock: "leases"
+  # An inactive but valid configuration follows; see example.
   leaseDuration: "15s"
   renewDeadline: "10s"
   retryPeriod: "2s"
@@ -98,7 +174,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: config-logging
+  namespace: tekton-pipelines
 data:
+  # Common configuration for all knative codebase
   zap-logger-config: |
     {
       "level": "info",
@@ -111,7 +189,7 @@ data:
       "errorOutputPaths": ["stderr"],
       "encoding": "json",
       "encoderConfig": {
-        "timeKey": "",
+        "timeKey": "ts",
         "levelKey": "level",
         "nameKey": "logger",
         "callerKey": "caller",
@@ -119,11 +197,12 @@ data:
         "stacktraceKey": "stacktrace",
         "lineEnding": "",
         "levelEncoder": "",
-        "timeEncoder": "",
+        "timeEncoder": "iso8601",
         "durationEncoder": "",
         "callerEncoder": ""
       }
     }
+  # Log level overrides
   loglevel.controller: "info"
   loglevel.webhook: "info"
 
@@ -132,6 +211,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: config-observability
+  namespace: tekton-pipelines
 data:
   _example: |
     ################################
@@ -166,3 +246,13 @@ data:
     # charge.  If metrics.backend-destination is not Stackdriver, this is
     # ignored.
     metrics.allow-stackdriver-custom-metrics: "false"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-registry-cert
+  namespace: tekton-pipelines
+# data:
+#  # Registry's self-signed certificate
+#  cert: |
