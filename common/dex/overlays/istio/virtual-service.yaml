@@ -17,6 +17,6 @@ spec:
         prefix: /dex/
     route:
     - destination:
-        host: dex.$(namespace).svc.cluster.local
+        host: $(DEX_SERVICE).$(DEX_NAMESPACE).svc.cluster.local
         port:
           number: 5556

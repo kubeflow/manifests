@@ -14,13 +14,6 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 vars:
-- name: dex_domain
-  objref:
-    kind: ConfigMap
-    name: dex-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.dex_domain
 - name: issuer
   objref:
     kind: ConfigMap
