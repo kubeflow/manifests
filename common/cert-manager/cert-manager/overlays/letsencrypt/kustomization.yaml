@@ -7,6 +7,8 @@ resources:
 - cluster-issuer.yaml
 commonLabels:
   kustomize.component: cert-manager
+  app.kubernetes.io/component: cert-manager
+  app.kubernetes.io/name: cert-manager
 configMapGenerator:
 - name: cert-manager-parameters
   behavior: merge
