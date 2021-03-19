@@ -4,7 +4,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: kf-feast-core
-  namespace: feast
+  namespace: kubeflow
   labels:
     app: feast-core
     component: core
@@ -21,7 +21,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: feast-online-serving
-  namespace: feast
+  namespace: kubeflow
   labels:
     app: feast-online-serving
     component: serving
@@ -38,7 +38,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: kf-feast-core
-  namespace: feast
+  namespace: kubeflow
   labels:
     app: feast-core
     component: core
@@ -62,7 +62,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: feast-online-serving
-  namespace: feast
+  namespace: kubeflow
   labels:
     app: feast-online-serving
     component: serving
@@ -201,7 +201,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: kf-feast-core
-  namespace: feast
+  namespace: kubeflow
   labels:
     app: feast-core
     chart: feast-core-0.9.2
@@ -226,7 +226,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: kf-feast-feast-jobservice
-  namespace: feast
+  namespace: kubeflow
   labels:
     app: feast-jobservice
     chart: feast-jobservice-0.9.2
@@ -251,7 +251,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: feast-online-serving
-  namespace: feast
+  namespace: kubeflow
   labels:
     app: feast-online-serving
     chart: feast-online-serving-0.9.2
@@ -381,7 +381,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kf-feast-core
-  namespace: feast
+  namespace: kubeflow
   labels:
     app: feast-core
     component: core
@@ -398,8 +398,8 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/configmap: 5e5555fc08c7358edf6f807342fa479f15e9120cf650e023651201380f357e00
-        checksum/secret: 419562d198fb9e0c5b7ea8d9e1bbd701529b2af250e995027a095bf993e24872
+        checksum/configmap: c9332cd092071dd4e5802857b936f8aa1b357460af422aa8d7a074a31bccfadb
+        checksum/secret: bb43ae920c71676f4c2e2dccd3842e8c1828d68c01c8e03bcc0de3ae264b6855
         prometheus.io/path: /metrics
         prometheus.io/port: "8080"
         prometheus.io/scrape: "true"
@@ -467,7 +467,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kf-feast-feast-jobservice
-  namespace: feast
+  namespace: kubeflow
   labels:
     app: feast-jobservice
     component: jobservice
@@ -530,7 +530,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: feast-online-serving
-  namespace: feast
+  namespace: kubeflow
   labels:
     app: feast-online-serving
     component: serving
@@ -547,8 +547,8 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/configmap: 9760419d6d2ac08357f37f05e46ee2f509baa6a5ecd31578bb9093cf3f645301
-        checksum/secret: fc9d4411bb706b0a6c018433ed2912e99c2875b7d3de5c1e74ec394beb8f467d
+        checksum/configmap: c2c064ad117cb552d152d64601e7c0c7b6c3774cda98923f67c76e2b1781b527
+        checksum/secret: 6987ee1b8408107ab44dd416d0a7b5bccd1731f7c5d675b6784374402dabb021
         prometheus.io/path: /metrics
         prometheus.io/port: "8080"
         prometheus.io/scrape: "true"
@@ -934,7 +934,7 @@ spec:
         - name: REDIS_REPLICATION_MODE
           value: slave
         - name: REDIS_MASTER_HOST
-          value: kf-feast-redis-master-0.kf-feast-redis-headless.feast.svc.cluster.local
+          value: kf-feast-redis-master-0.kf-feast-redis-headless.kubeflow.svc.cluster.local
         - name: REDIS_PORT
           value: "6379"
         - name: REDIS_MASTER_PORT_NUMBER
