@@ -1,0 +1,21 @@
+apiVersion: rbac.istio.io/v1alpha1
+kind: ServiceRole
+metadata:
+  name: cluster-local-gateway
+  namespace: istio-system
+spec:
+  rules:
+  - services:
+    - cluster-local-gateway.istio-system.svc.cluster.local
+---
+apiVersion: rbac.istio.io/v1alpha1
+kind: ServiceRoleBinding
+metadata:
+  name: cluster-local-gateway
+  namespace: istio-system
+spec:
+  roleRef:
+    kind: ServiceRole
+    name: cluster-local-gateway
+  subjects:
+  - user: '*'
