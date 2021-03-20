@@ -13,6 +13,12 @@ configMapGenerator:
 - name: oidc-authservice-parameters
   envs:
   - params.env
+
+secretGenerator:
+- name: oidc-authservice-client
+  type: Opaque
+  env: secret_params.env
+
 generatorOptions:
   disableNameSuffixHash: true
 

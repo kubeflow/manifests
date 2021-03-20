@@ -22,31 +22,11 @@ spec:
         ports:
         - name: http-api
           containerPort: 8080
-        env:
-          - name: USERID_HEADER
-            value: $(userid-header)
-          - name: USERID_PREFIX
-            value: $(userid-prefix)
-          - name: USERID_CLAIM
-            value: email
-          - name: OIDC_PROVIDER
-            value: $(oidc_provider)
-          - name: OIDC_AUTH_URL
-            value: $(oidc_auth_url)
-          - name: OIDC_SCOPES
-            value: "profile email groups"
-          - name: REDIRECT_URL
-            value: $(oidc_redirect_uri)
-          - name: SKIP_AUTH_URI
-            value: $(skip_auth_uri)
-          - name: PORT
-            value: "8080"
-          - name: CLIENT_ID
-            value: $(client_id)
-          - name: CLIENT_SECRET
-            value: $(application_secret)
-          - name: STORE_PATH
-            value: /var/lib/authservice/data.db
+        envFrom:
+          - secretRef:
+              name: oidc-authservice-client
+          - configMapRef:
+              name: oidc-authservice-parameters
         volumeMounts:
           - name: data
             mountPath: /var/lib/authservice
@@ -59,4 +39,4 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-              claimName: authservice-pvc          
+              claimName: authservice-pvc
