@@ -5,8 +5,6 @@ resources:
 - gateway.yaml
 - cluster-role.yaml
 - cluster-role-binding.yaml
-- service-role.yaml
-- service-role-binding.yaml
 - config-map.yaml
 - deployment.yaml
 - secret.yaml
@@ -15,8 +13,11 @@ resources:
 - image.yaml
 - hpa.yaml
 - webhook-configuration.yaml
+- istio-authorization-policy.yaml
 commonLabels:
   kustomize.component: knative
+  app.kubernetes.io/component: knative-serving-install
+  app.kubernetes.io/name: knative-serving-install
 images:
 - name: gcr.io/knative-releases/knative.dev/serving/cmd/activator
   newName: gcr.io/knative-releases/knative.dev/serving/cmd/activator
