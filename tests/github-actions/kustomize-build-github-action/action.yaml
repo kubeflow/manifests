@@ -1,0 +1,27 @@
+name: "Kustomize Github Action"
+author: "yanniszark <yanniszark@arrikto.com>"
+description: "Github action for testing that kustomizations are buildable"
+branding:
+  icon: "anchor"
+  color: "blue"
+inputs:
+  # Support setting kustomize version in the future
+  # kustomize-version:
+  #   description: "Kustomize version"
+  #   required: true
+  #   default: "3.2.0"
+  root-path:
+    description: "Path under which to discover kustomizations."
+    default: "."
+  include-patterns:
+    description: "Comma-separated list of patterns that discovered kustomizations must match."
+    default: "*"
+  exclude-patterns:
+    description: "Comma-separated list of patterns that discovered kustomizations must not match."
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - "--root-path=${{ inputs.root-path }}"
+    - "--include-patterns=${{ inputs.include-patterns }}"
+    - "--exclude-patterns=${{ inputs.exclude-patterns }}"
