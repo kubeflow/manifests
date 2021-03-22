@@ -1,9 +1,5 @@
 varReference:
-- path: spec/template/spec/containers/env/value
-  kind: StatefulSet
-- path: spec/filters/filterConfig/httpService/serverUri/uri
+- path: spec/configPatches/patch/value/typed_config/http_service/server_uri/uri
   kind: EnvoyFilter
-- path: spec/filters/filterConfig/httpService/serverUri/cluster
-  kind: EnvoyFilter
-- path: spec/workloadLabels/istio
+- path: spec/configPatches/patch/value/typed_config/http_service/server_uri/cluster
   kind: EnvoyFilter

@@ -1,9 +1,12 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: kubeflow-gateway
+  name: istio-ingressgateway
+  labels:
+    release: istio
 spec:
   selector:
+    app: istio-ingressgateway
     istio: ingressgateway
   servers:
   - port:
@@ -11,4 +14,4 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "*"
+    - '*'

@@ -3,30 +3,40 @@ kind: EnvoyFilter
 metadata:
   name: authn-filter
 spec:
-  workloadLabels:
-    istio: $(gatewaySelector)
-  filters:
-  - filterConfig:
-      httpService:
-        serverUri:
-          uri: http://authservice.$(namespace).svc.cluster.local
-          cluster: outbound|8080||authservice.$(namespace).svc.cluster.local
-          failureModeAllow: false
-          timeout: 10s
-        authorizationRequest:
-          allowedHeaders:
-            patterns:
-            - exact: "cookie"
-            - exact: "X-Auth-Token"
-        authorizationResponse:
-          allowedUpstreamHeaders:
-            patterns:
-            - exact: "kubeflow-userid"
-      statusOnError:
-        code: GatewayTimeout
-    filterName: envoy.ext_authz
-    filterType: HTTP
-    insertPosition:
-      index: FIRST
-    listenerMatch:
-      listenerType: GATEWAY
+  workloadSelector:
+    labels:
+      istio: ingressgateway
+  configPatches:
+    - applyTo: HTTP_FILTER
+      match:
+        context: GATEWAY
+      listener:
+        filterChain:
+          filter:
+            name: "envoy.http_connection_manager"
+            subFilter:
+              name: ""
+      patch:
+        # For some reason, INSERT_FIRST doesn't work
+        operation: INSERT_BEFORE
+        value:
+          # See: https://www.envoyproxy.io/docs/envoy/v1.17.0/configuration/http/http_filters/ext_authz_filter#config-http-filters-ext-authz
+          name: "envoy.filters.http.ext_authz"
+          typed_config:
+            '@type': type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
+            http_service:
+              server_uri:
+                uri: http://$(AUTHSERVICE_SERVICE).$(AUTHSERVICE_NAMESPACE).svc.cluster.local
+                cluster: outbound|8080||$(AUTHSERVICE_SERVICE).$(AUTHSERVICE_NAMESPACE).svc.cluster.local
+                timeout: 10s
+              authorization_request:
+                allowed_headers:
+                  patterns:
+                    # XXX: MUST be lowercase!
+                    - exact: "authorization"
+                    - exact: "cookie"
+                    - exact: "x-auth-token"
+              authorization_response:
+                allowed_upstream_headers:
+                  patterns:
+                    - exact: "kubeflow-userid"
