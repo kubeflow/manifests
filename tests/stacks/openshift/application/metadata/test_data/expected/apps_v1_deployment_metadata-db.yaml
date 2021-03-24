@@ -42,8 +42,7 @@ spec:
             command:
             - /bin/bash
             - -c
-            - mysql -D $$MYSQL_DATABASE -u$$MYSQL_USER_NAME -p$$MYSQL_ROOT_PASSWORD
-              -e 'SELECT 1'
+            - mysql --database=$MYSQL_DATABASE --password=$MYSQL_ROOT_PASSWORD --user=$MYSQL_USER_NAME -e 'SELECT 1'
           initialDelaySeconds: 5
           periodSeconds: 2
           timeoutSeconds: 1
