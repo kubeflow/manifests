@@ -10,3 +10,8 @@ resources:
 
 patchesStrategicMerge:
 - patches/remove-pdb.yaml
+
+images:
+- name: docker.io/istio/proxyv2
+  newName: docker.io/istio/proxyv2
+  newTag: 1.9.1
