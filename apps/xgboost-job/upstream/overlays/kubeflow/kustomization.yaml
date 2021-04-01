@@ -1,9 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
-bases:
+kind: Kustomization
+resources:
 - ../../base
+namespace: kubeflow
 commonLabels:
   app.kubernetes.io/component: xgboostjob
   app.kubernetes.io/name: xgboost-operator
-kind: Kustomization
-resources:
-- application.yaml
