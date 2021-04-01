@@ -5,6 +5,8 @@ bases:
 resources:
 - virtual-service.yaml
 
+namespace: auth
+
 vars:
 - name: DEX_SERVICE
   objref:
