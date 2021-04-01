@@ -2,14 +2,12 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
 resources:
-- cluster-role-binding.yaml
-- cluster-role.yaml
-- deployment.yaml
-- service-account.yaml
-- service.yaml
+- ../../base
+- namespace.yaml
 commonLabels:
+  app: pytorch-operator
   kustomize.component: pytorch-operator
+  app.kubernetes.io/component: pytorch
+  app.kubernetes.io/name: pytorch-operator
 images:
 - name: gcr.io/kubeflow-images-public/pytorch-operator
-  newName: gcr.io/kubeflow-images-public/pytorch-operator
-  newTag: vmaster-g518f9c76

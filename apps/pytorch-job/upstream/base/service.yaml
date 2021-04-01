@@ -8,6 +8,7 @@ metadata:
   labels:
     app: pytorch-operator
   name: pytorch-operator
+  namespace: kubeflow
 spec:
   ports:
   - name: monitoring-port
@@ -16,4 +17,3 @@ spec:
   selector:
     name: pytorch-operator
   type: ClusterIP
-

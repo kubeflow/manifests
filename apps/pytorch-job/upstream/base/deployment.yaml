@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pytorch-operator
+  namespace: kubeflow
 spec:
   replicas: 1
   selector:
@@ -11,8 +12,6 @@ spec:
     metadata:
       labels:
         name: pytorch-operator
-      annotations:
-        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - command:
@@ -29,6 +28,6 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: gcr.io/kubeflow-images-public/pytorch-operator:v0.6.0-18-g5e36a57
+        image: gcr.io/kubeflow-images-public/pytorch-operator:latest
         name: pytorch-operator
       serviceAccountName: pytorch-operator
