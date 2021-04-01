@@ -1,4 +1,5 @@
-  approvers:
+approvers:
   - Bobgy
   - IronPan
-  - rmgogogo
+reviewers:
+  - Bobgy
