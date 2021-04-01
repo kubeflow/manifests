@@ -2,18 +2,25 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mxnet-operator
+  labels:
+    app: mxnet-operator
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: mxnet-operator
   template:
     metadata:
       labels:
-        name: mxnet-operator
+        app: mxnet-operator
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
+      serviceAccountName: mxnet-operator
       containers:
-      - command:
-        - /opt/kubeflow/mxnet-operator.v1
+      - name: mxnet-operator
+        image: mxjob/mxnet-operator:v1beta1
+        imagePullPolicy: Always
         env:
         - name: MY_POD_NAMESPACE
           valueFrom:
@@ -23,7 +30,3 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: mxjob/mxnet-operator:v1beta1
-        imagePullPolicy: Always
-        name: mxnet-operator
-      serviceAccountName: mxnet-operator

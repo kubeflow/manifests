@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mxnet-operator
+spec:
+  template:
+    spec:
+      containers:
+      - name: mxnet-operator
+        image: kubeflow/mxnet-operator:v1.1.0
+        command:
+        - /opt/kubeflow/mxnet-operator.v1
+
