@@ -25,6 +25,9 @@ spec:
         volumeMounts:
         - name: config
           mountPath: /etc/dex/cfg
+        envFrom:
+          - secretRef:
+              name: dex-oidc-client
       volumes:
       - name: config
         configMap:
