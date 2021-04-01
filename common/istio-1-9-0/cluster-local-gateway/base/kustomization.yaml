@@ -5,7 +5,7 @@ namespace: istio-system
 
 resources:
 - cluster-local-gateway.yaml
-- gateway_authorizationpolicy.yaml
+- gateway-authorizationpolicy.yaml
 - gateway.yaml
 
 patchesStrategicMerge:
