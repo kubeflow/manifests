@@ -9,6 +9,9 @@ resources:
 - service-account.yaml
 commonLabels:
   kustomize.component: mpi-operator
+  app: mpi-operator
+  app.kubernetes.io/name: mpi-operator
+  app.kubernetes.io/component: mpijob
 images:
 - name: mpioperator/mpi-operator
   newName: mpioperator/mpi-operator
