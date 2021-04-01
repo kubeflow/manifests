@@ -5,10 +5,4 @@ metadata:
   labels:
     control-plane: kubeflow
     istio-injection: enabled
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: cert-manager
-  labels:
-    control-plane: kubeflow
+    katib-metricscollector-injection: enabled
