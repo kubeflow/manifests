@@ -10,4 +10,5 @@ resources:
 namespace: istio-system
 
 patchesStrategicMerge:
+- patches/service.yaml
 - patches/remove-pdb.yaml

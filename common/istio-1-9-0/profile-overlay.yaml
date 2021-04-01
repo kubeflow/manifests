@@ -6,7 +6,7 @@ spec:
       # Cluster-local gateway for KFServing
       - enabled: true
         name: cluster-local-gateway
-        # See: https://github.com/istio/istio/issues/19263#issuecomment-615833092
+        # https://github.com/istio/istio/issues/19263#issuecomment-615833092
         label:
           app: cluster-local-gateway
           istio: cluster-local-gateway
