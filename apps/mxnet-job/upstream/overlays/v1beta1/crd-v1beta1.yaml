@@ -4,14 +4,12 @@ metadata:
   name: mxjobs.kubeflow.org
 spec:
   group: kubeflow.org
-  version: v1
+  version: v1beta1
   scope: Namespaced
   names:
     kind: MXJob
     singular: mxjob
     plural: mxjobs
-  subresources:
-    status: {}
   validation:
     openAPIV3Schema:
       properties:
