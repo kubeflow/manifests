@@ -4,14 +4,7 @@ namespace: knative-eventing
 resources:
 - ../../knative-eventing-crds/base
 - ../../knative-eventing-crds/overlays/application
-- ../../knative-eventing-install/base/cluster-role.yaml
-- ../../knative-eventing-install/base/cluster-role-binding.yaml
-- ../../knative-eventing-install/base/secret.yaml
-- ../../knative-eventing-install/base/config-map.yaml
-- ../../knative-eventing-install/base/deployment.yaml
-- ../../knative-eventing-install/base/service-account.yaml
-- ../../knative-eventing-install/base/service.yaml
-- ../../knative-eventing-install/base/webhook-configuration.yaml
+- ../../knative-eventing-install/base
 - ../../knative-eventing-install/overlays/application
 commonLabels:
   kustomize.component: knative
