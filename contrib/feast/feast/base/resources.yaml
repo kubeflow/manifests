@@ -8,7 +8,7 @@ metadata:
   labels:
     app: feast-core
     component: core
-    chart: feast-core-0.9.2
+    chart: feast-core-0.25.0
     release: kf-feast
     heritage: Helm
 type: Opaque
@@ -16,16 +16,16 @@ stringData:
   application-secret.yaml: |
     enabled: true
 ---
-# Source: feast/charts/feast-online-serving/templates/secret.yaml
+# Source: feast/charts/feast-serving/templates/secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: feast-online-serving
+  name: kf-feast-feast-serving
   namespace: kubeflow
   labels:
-    app: feast-online-serving
+    app: feast-serving
     component: serving
-    chart: feast-online-serving-0.9.2
+    chart: feast-serving-0.25.0
     release: kf-feast
     heritage: Helm
 type: Opaque
@@ -42,7 +42,7 @@ metadata:
   labels:
     app: feast-core
     component: core
-    chart: feast-core-0.9.2
+    chart: feast-core-0.25.0
     release: kf-feast
     heritage: Helm
 data:
@@ -57,16 +57,16 @@ data:
   application-override.yaml: |
     enabled: true
 ---
-# Source: feast/charts/feast-online-serving/templates/configmap.yaml
+# Source: feast/charts/feast-serving/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: feast-online-serving
+  name: kf-feast-feast-serving
   namespace: kubeflow
   labels:
-    app: feast-online-serving
+    app: feast-serving
     component: serving
-    chart: feast-online-serving-0.9.2
+    chart: feast-serving-0.25.0
     release: kf-feast
     heritage: Helm
 data:
@@ -94,8 +94,6 @@ data:
 
   application-override.yaml: |
     enabled: true
-    feast:
-      core-host: kf-feast-core
 ---
 # Source: feast/charts/redis/templates/configmap.yaml
 apiVersion: v1
@@ -204,7 +202,7 @@ metadata:
   namespace: kubeflow
   labels:
     app: feast-core
-    chart: feast-core-0.9.2
+    chart: feast-core-0.25.0
     release: kf-feast
     heritage: Helm
 spec:
@@ -246,15 +244,15 @@ spec:
     component: jobservice
     release: kf-feast
 ---
-# Source: feast/charts/feast-online-serving/templates/service.yaml
+# Source: feast/charts/feast-serving/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: feast-online-serving
+  name: kf-feast-feast-serving
   namespace: kubeflow
   labels:
-    app: feast-online-serving
-    chart: feast-online-serving-0.9.2
+    app: feast-serving
+    chart: feast-serving-0.25.0
     release: kf-feast
     heritage: Helm
 spec:
@@ -267,7 +265,7 @@ spec:
     port: 6566
     targetPort: 6566
   selector:
-    app: feast-online-serving
+    app: feast-serving
     component: serving
     release: kf-feast
 ---
@@ -385,7 +383,7 @@ metadata:
   labels:
     app: feast-core
     component: core
-    chart: feast-core-0.9.2
+    chart: feast-core-0.25.0
     release: kf-feast
     heritage: Helm
 spec:
@@ -398,8 +396,8 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/configmap: c9332cd092071dd4e5802857b936f8aa1b357460af422aa8d7a074a31bccfadb
-        checksum/secret: bb43ae920c71676f4c2e2dccd3842e8c1828d68c01c8e03bcc0de3ae264b6855
+        checksum/configmap: 0f7ef92b92aac151b3df6c59307b60128fc3b294d8b5aa66218b52c2f4d12f3b
+        checksum/secret: d38bf978d23b3abbc82db6f15166d9b25a82a153f736a4da83908898f226440d
         prometheus.io/path: /metrics
         prometheus.io/port: "8080"
         prometheus.io/scrape: "true"
@@ -495,7 +493,7 @@ spec:
 
       containers:
       - name: feast-jobservice
-        image: gcr.io/kf-feast/feast-jobservice:0.9.2
+        image: gcr.io/kf-feast/feast-jobservice:develop
         imagePullPolicy: IfNotPresent
 
         env:
@@ -525,56 +523,56 @@ spec:
         resources:
           {}
 ---
-# Source: feast/charts/feast-online-serving/templates/deployment.yaml
+# Source: feast/charts/feast-serving/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: feast-online-serving
+  name: kf-feast-feast-serving
   namespace: kubeflow
   labels:
-    app: feast-online-serving
+    app: feast-serving
     component: serving
-    chart: feast-online-serving-0.9.2
+    chart: feast-serving-0.25.0
     release: kf-feast
     heritage: Helm
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: feast-online-serving
+      app: feast-serving
       component: serving
       release: kf-feast
   template:
     metadata:
       annotations:
-        checksum/configmap: c2c064ad117cb552d152d64601e7c0c7b6c3774cda98923f67c76e2b1781b527
-        checksum/secret: 6987ee1b8408107ab44dd416d0a7b5bccd1731f7c5d675b6784374402dabb021
+        checksum/configmap: fc3f1499c79ca0a6fc96c95653c6b137af174923e4e042b449921455475fd733
+        checksum/secret: ba4e6b3c7f57dcf83c33c4e126ce851d21b49d000b33506fcdc290136f2df623
         prometheus.io/path: /metrics
         prometheus.io/port: "8080"
         prometheus.io/scrape: "true"
       labels:
-        app: feast-online-serving
+        app: feast-serving
         component: serving
         release: kf-feast
     spec:
 
       volumes:
-      - name: feast-online-serving-config
+      - name: kf-feast-feast-serving-config
         configMap:
-          name: feast-online-serving
-      - name: feast-online-serving-secret
+          name: kf-feast-feast-serving
+      - name: kf-feast-feast-serving-secret
         secret:
-          secretName: feast-online-serving
+          secretName: kf-feast-feast-serving
 
       containers:
-      - name: feast-online-serving
+      - name: feast-serving
         image: gcr.io/kf-feast/feast-serving:develop
         imagePullPolicy: IfNotPresent
 
         volumeMounts:
-        - name: feast-online-serving-config
+        - name: kf-feast-feast-serving-config
           mountPath: /etc/feast
-        - name: feast-online-serving-secret
+        - name: kf-feast-feast-serving-secret
           mountPath: /etc/secrets/feast
           readOnly: true
 
