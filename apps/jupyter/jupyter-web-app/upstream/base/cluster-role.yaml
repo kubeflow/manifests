@@ -29,6 +29,8 @@ rules:
   - list
   - create
   - delete
+  - patch
+  - update
 - apiGroups:
   - ""
   resources:
@@ -42,6 +44,7 @@ rules:
   - ""
   resources:
   - events
+  - nodes
   verbs:
   - list
 - apiGroups:
