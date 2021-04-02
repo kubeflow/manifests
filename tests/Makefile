@@ -62,7 +62,8 @@ test: modules
 	# the legacy kustomizations tests. Perhaps a simpler sanity test of building
 	# all kustomizations in the repo would be preferrable.
 	# @GO111MODULE=on $(GO) test -v github.com/kubeflow/manifests/tests/...
-	@GO111MODULE=on $(GO) test -v github.com/kubeflow/manifests/tests/.
+	@GO111MODULE=on $(GO) test -run TestCheckWebhookSelector -v github.com/kubeflow/manifests/tests/.
+	@GO111MODULE=on $(GO) test -run TestKustomizationHasDeprecatedEnv -v github.com/kubeflow/manifests/tests/.
 
 run-unittest-plugin:
 	cd .. && XDG_CONFIG_HOME=$$(pwd)/plugins kustomize build profiles/overlays/test --enable_alpha_plugins

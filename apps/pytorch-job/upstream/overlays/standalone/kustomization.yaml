@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+resources:
+- ../../base
+- namespace.yaml
+commonLabels:
+  app: pytorch-operator
+  kustomize.component: pytorch-operator
+  app.kubernetes.io/component: pytorch
+  app.kubernetes.io/name: pytorch-operator
+images:
+- name: gcr.io/kubeflow-images-public/pytorch-operator

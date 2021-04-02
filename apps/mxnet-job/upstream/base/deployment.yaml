@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mxnet-operator
+  labels:
+    app: mxnet-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mxnet-operator
+  template:
+    metadata:
+      labels:
+        app: mxnet-operator
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: mxnet-operator
+      containers:
+      - name: mxnet-operator
+        image: mxjob/mxnet-operator:v1beta1
+        imagePullPolicy: Always
+        env:
+        - name: MY_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name

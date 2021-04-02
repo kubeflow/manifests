@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+bases:
+  - ../../base
+
+commonLabels:
+  app: mxnet-operator
+  app.kubernetes.io/component: mxnet
+  app.kubernetes.io/name: mxnet-operator
+  kustomize.component: mxnet-operator
+
+resources:
+- crd-v1.yaml
+
+patchesStrategicMerge:
+  - deployment.yaml

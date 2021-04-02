@@ -17,16 +17,29 @@
 spawnerFormDefaults:
   image:
     # The container Image for the user's Jupyter Notebook
-    # If readonly, this value must be a member of the list below
-    value: gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-cpu:1.0.0
+    value: public.ecr.aws/j1r0q0g6/notebooks/notebook-servers/jupyter-scipy:v1.3.0-rc.0
     # The list of available standard container Images
     options:
-      - gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-cpu:1.0.0
-      - gcr.io/kubeflow-images-public/tensorflow-1.15.2-notebook-gpu:1.0.0
-      - gcr.io/kubeflow-images-public/tensorflow-2.1.0-notebook-cpu:1.0.0
-      - gcr.io/kubeflow-images-public/tensorflow-2.1.0-notebook-gpu:1.0.0
-    # By default, custom container Images are allowed
-    # Uncomment the following line to only enable standard container Images
+    - public.ecr.aws/j1r0q0g6/notebooks/notebook-servers/jupyter-scipy:v1.3.0-rc.0
+    - public.ecr.aws/j1r0q0g6/notebooks/notebook-servers/jupyter-pytorch-full:v1.3.0-rc.0
+    - public.ecr.aws/j1r0q0g6/notebooks/notebook-servers/jupyter-pytorch-cuda-full:v1.3.0-rc.0
+    - public.ecr.aws/j1r0q0g6/notebooks/notebook-servers/jupyter-tensorflow-full:v1.3.0-rc.0
+    - public.ecr.aws/j1r0q0g6/notebooks/notebook-servers/jupyter-tensorflow-cuda-full:v1.3.0-rc.0
+  imageVSCode:
+    # The container Image for the user's VS-Code Server
+    value: public.ecr.aws/j1r0q0g6/notebooks/notebook-servers/codeserver-python:v1.3.0-rc.0
+    # The list of available standard container Images
+    options:
+    - public.ecr.aws/j1r0q0g6/notebooks/notebook-servers/codeserver-python:v1.3.0-rc.0
+  imageRStudio:
+    # The container Image for the user's RStudio Server
+    value: public.ecr.aws/j1r0q0g6/notebooks/notebook-servers/rstudio-tidyverse:v1.3.0-rc.0
+    # The list of available standard container Images
+    options:
+    - public.ecr.aws/j1r0q0g6/notebooks/notebook-servers/rstudio-tidyverse:v1.3.0-rc.0
+  allowCustomImage: true
+  imagePullPolicy:
+    value: IfNotPresent
     readOnly: false
   cpu:
     # CPU for user's Notebook
@@ -111,10 +124,10 @@ spawnerFormDefaults:
       num: "none"
       # Determines what the UI will show and send to the backend
       vendors:
-        - limitsKey: "nvidia.com/gpu"
-          uiName: "NVIDIA"
-        - limitsKey: "amd.com/gpu"
-          uiName: "AMD"
+      - limitsKey: "nvidia.com/gpu"
+        uiName: "NVIDIA"
+      - limitsKey: "amd.com/gpu"
+        uiName: "AMD"
       # Values: "" or a `limits-key` from the vendors list
       vendor: ""
     readOnly: false
@@ -133,10 +146,7 @@ spawnerFormDefaults:
     # If readonly, the default value will be the only option
     value: "none"
     # The list of available affinity configs
-    options:
-      - configKey: "none"
-        displayName: "None"
-        affinity: {}
+    options: []
     # # (DESC) Pod gets an exclusive "n1-standard-2" Node
     # # (TIP) set PreferNoSchedule taint on this node-pool
     # # (TIP) enable cluster-autoscaler on this node-pool
@@ -168,10 +178,7 @@ spawnerFormDefaults:
     # If readonly, the default value will be the only option
     value: "none"
     # The list of available tolerationGroup configs
-    options:
-      - groupKey: "none"
-        displayName: "None"
-        tolerations: []
+    options: []
     # - groupKey: "group_1"
     #   displayName: "Group 1: description"
     #   tolerations:
