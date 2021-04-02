@@ -1,0 +1,65 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+# Cert-Manager
+- ../common/cert-manager/cert-manager-kube-system-resources/base
+- ../common/cert-manager/cert-manager-crds/base
+- ../common/cert-manager/cert-manager/overlays/self-signed
+# Istio
+- ../common/istio-1-9-0/istio-crds/base
+- ../common/istio-1-9-0/istio-namespace/base
+- ../common/istio-1-9-0/istio-install/base
+# OIDC Authservice
+- ../common/oidc-authservice/base
+# Dex
+- ../common/dex/overlays/istio
+# KNative
+- ../common/knative/knative-serving-crds/base
+- ../common/knative/knative-serving-install/base
+- ../common/knative/knative-eventing-crds/base
+- ../common/knative/knative-eventing-install/base
+- ../common/istio-1-9-0/cluster-local-gateway/base
+# Kubeflow namespace
+- ../common/kubeflow-namespace/base
+# Kubeflow Roles
+- ../common/kubeflow-roles/base
+# Kubeflow Istio Resources
+- ../common/istio-1-9-0/kubeflow-istio-resources/base
+
+
+# Kubeflow Pipelines
+- ../apps/pipeline/upstream/env/platform-agnostic-multi-user
+# KFServing
+- ../apps/kfserving/upstream/overlays/kubeflow
+# Katib
+- ../apps/katib/upstream/installs/katib-with-kubeflow-cert-manager
+# Central Dashboard
+- ../apps/centraldashboard/upstream/overlays/istio
+# Admission Webhook
+- ../apps/admission-webhook/upstream/overlays/cert-manager
+# Notebook Controller
+- ../apps/jupyter/jupyter-web-app/upstream/overlays/istio
+# Jupyter Web App
+- ../apps/jupyter/notebook-controller/upstream/overlays/kubeflow
+# Profiles + KFAM
+- ../apps/profiles/upstream/overlays/kubeflow
+# Volumes Web App
+- ../apps/volumes-web-app/upstream/overlays/istio
+# Tensorboards Web App
+-  ../apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
+# Tensorboard Controller
+-  ../apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
+# TFJob Operator
+- ../apps/tf-training/upstream/overlays/kubeflow
+# Pytorch Operator
+- ../apps/pytorch-job/upstream/overlays/kubeflow
+# MPI Operator
+- ../apps/mpi-job/upstream/overlays/kubeflow
+# MXNet Operator
+- ../apps/mxnet-job/upstream/overlays/kubeflow
+# XGBoost Operator
+- ../apps/xgboost-job/upstream/overlays/kubeflow
+
+# User namespace
+- ../common/user-namespace/base
