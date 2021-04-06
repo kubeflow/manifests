@@ -37,11 +37,11 @@ spec:
         name: manifests
         path: application/v3
     name: application
-  # - kustomizeConfig:
-  #     repoRef:
-  #       name: manifests
-  #       path: stacks/ibm/application/bootstrap
-  #   name: bootstrap
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/bootstrap
+    name: bootstrap
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -77,11 +77,11 @@ spec:
         name: manifests
         path: tektoncd/tektoncd-dashboard/base
     name: tektoncd-dashboard
-  # - kustomizeConfig:
-  #     repoRef:
-  #       name: manifests
-  #       path: stacks/ibm/application/admission-webhook
-  #   name: admission-webhook
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/ibm/application/admission-webhook
+    name: admission-webhook
   - kustomizeConfig:
       repoRef:
         name: manifests
