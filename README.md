@@ -50,7 +50,7 @@ The `example` directory contains an example kustomization for the single command
 ### Prerequisites
 
 - `Kubernetes` (tested with version `1.17`)
-- `kustomize` (version `3.2.0`)
+- `kustomize` (version `3.2.0`) ([link](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0))
 - `kubectl`
 
 ---
