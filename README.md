@@ -215,13 +215,13 @@ kustomize build --load_restrictor=none apps/admission-webhook/upstream/overlays/
 Install the Notebook Controller official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/jupyter/jupyter-web-app/upstream/overlays/istio | kubectl apply -f -
+kustomize build --load_restrictor=none apps/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 Install the Jupyter Web App official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build --load_restrictor=none apps/jupyter/jupyter-web-app/upstream/overlays/istio | kubectl apply -f -
 ```
 
 #### Profiles + KFAM
