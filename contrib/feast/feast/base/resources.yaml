@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: kf-feast-core
+  name: kf-feast-feast-core
   namespace: kubeflow
   labels:
     app: feast-core
@@ -37,7 +37,7 @@ stringData:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: kf-feast-core
+  name: kf-feast-feast-core
   namespace: kubeflow
   labels:
     app: feast-core
@@ -198,7 +198,7 @@ data:
 apiVersion: v1
 kind: Service
 metadata:
-  name: kf-feast-core
+  name: kf-feast-feast-core
   namespace: kubeflow
   labels:
     app: feast-core
@@ -378,7 +378,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kf-feast-core
+  name: kf-feast-feast-core
   namespace: kubeflow
   labels:
     app: feast-core
@@ -396,8 +396,8 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/configmap: 0f7ef92b92aac151b3df6c59307b60128fc3b294d8b5aa66218b52c2f4d12f3b
-        checksum/secret: d38bf978d23b3abbc82db6f15166d9b25a82a153f736a4da83908898f226440d
+        checksum/configmap: ad1b83d64b77cd00800c6f70cb93b9d8f9c68597ff7d66e5bd2a85bdd022bfc0
+        checksum/secret: 56db71bbdb20bd5f5385591439f21dea0bb46cdf257e8491c87e40286d89a365
         prometheus.io/path: /metrics
         prometheus.io/port: "8080"
         prometheus.io/scrape: "true"
@@ -408,12 +408,12 @@ spec:
     spec:
 
       volumes:
-      - name: kf-feast-core-config
+      - name: kf-feast-feast-core-config
         configMap:
-          name: kf-feast-core
-      - name: kf-feast-core-secret
+          name: kf-feast-feast-core
+      - name: kf-feast-feast-core-secret
         secret:
-          secretName: kf-feast-core
+          secretName: kf-feast-feast-core
 
       containers:
       - name: feast-core
@@ -421,9 +421,9 @@ spec:
         imagePullPolicy: IfNotPresent
 
         volumeMounts:
-        - name: kf-feast-core-config
+        - name: kf-feast-feast-core-config
           mountPath: /etc/feast
-        - name: kf-feast-core-secret
+        - name: kf-feast-feast-core-secret
           mountPath: /etc/secrets/feast
           readOnly: true
 

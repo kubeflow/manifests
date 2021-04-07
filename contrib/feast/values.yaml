@@ -1,7 +1,6 @@
 feast-core:
   # feast-core.enabled -- Flag to install Feast Core
   enabled: true
-  fullnameOverride: kf-feast-core
   postgresql:
     # feast-core.postgresql.existingSecret -- Kubernetes secrets that contains the postgresql password
     existingSecret: feast-postgresql
