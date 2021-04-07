@@ -43,7 +43,7 @@ spec:
         - name: METRICS_DOMAIN
           value: knative.dev/internal/serving
         image: 'gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:ffa3d72ee6c2eeb2357999248191a643405288061b7080381f22875cb703e929'
-        livenessProbe: &ref_0
+        livenessProbe:
           httpGet:
             httpHeaders:
             - name: k-kubelet-probe
@@ -59,7 +59,12 @@ spec:
           name: metrics
         - containerPort: 8008
           name: profiling
-        readinessProbe: *ref_0
+        readinessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: activator
+            port: 8012
         resources:
           limits:
             cpu: 1000m
@@ -108,7 +113,7 @@ spec:
         - name: METRICS_DOMAIN
           value: knative.dev/serving
         image: 'gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:f89fd23889c3e0ca3d8e42c9b189dc2f93aa5b3a91c64e8aab75e952a210eeb3'
-        livenessProbe: &ref_0
+        livenessProbe:
           httpGet:
             httpHeaders:
             - name: k-kubelet-probe
@@ -124,7 +129,12 @@ spec:
           name: custom-metrics
         - containerPort: 8008
           name: profiling
-        readinessProbe: *ref_0
+        readinessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: autoscaler
+            port: 8080
         resources:
           limits:
             cpu: 300m

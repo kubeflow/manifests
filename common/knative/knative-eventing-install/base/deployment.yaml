@@ -116,12 +116,14 @@ metadata:
 spec:
   replicas: 1
   selector:
-    matchLabels: &ref_0
+    matchLabels:
       app: eventing-webhook
       role: eventing-webhook
   template:
     metadata:
-      labels: *ref_0
+      labels:
+        app: eventing-webhook
+        role: eventing-webhook
     spec:
       containers:
       - env:
@@ -168,12 +170,14 @@ metadata:
 spec:
   replicas: 1
   selector:
-    matchLabels: &ref_0
+    matchLabels:
       messaging.knative.dev/channel: in-memory-channel
       messaging.knative.dev/role: controller
   template:
     metadata:
-      labels: *ref_0
+      labels:
+        messaging.knative.dev/channel: in-memory-channel
+        messaging.knative.dev/role: controller
     spec:
       containers:
       - env:
@@ -210,12 +214,14 @@ metadata:
 spec:
   replicas: 1
   selector:
-    matchLabels: &ref_0
+    matchLabels:
       messaging.knative.dev/channel: in-memory-channel
       messaging.knative.dev/role: dispatcher
   template:
     metadata:
-      labels: *ref_0
+      labels:
+        messaging.knative.dev/channel: in-memory-channel
+        messaging.knative.dev/role: dispatcher
     spec:
       containers:
       - env:
