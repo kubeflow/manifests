@@ -2,9 +2,17 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
 resources:
-  - ../../common/centraldashboard/overlays/stacks
+#Kubeflow roles
+  - ../../../common/kubeflow-roles/base
+  - ../../../apps/centraldashboard/upstream/overlays/istio
+#Admission webhooks
+  - ../../../apps/admission-webhook/upstream/overlays/cert-manager
+#Volumes Web App
+  - ../../../apps/volumes-web-app/upstream/overlays/istio
 #profiles is here since namespace was not being replaced for the virtual service and pipeline depends on it
-  - ../../profiles/base_v3
+  - ../../../apps/profiles/upstream/overlays/kubeflow
+#Create defualt user
+  - ../../../common/user-namespace/base
 configMapGenerator:
 - name: kubeflow-config
   envs:
@@ -27,6 +35,7 @@ vars:
     kind: ConfigMap
     name: kubeflow-config
 
+# TODO rebuild profile controller image
 images:
 - name: gcr.io/kubeflow-images-public/profile-controller
   newName: quay.io/kubeflow/profile-controller

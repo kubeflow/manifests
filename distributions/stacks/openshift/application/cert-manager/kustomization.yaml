@@ -6,8 +6,6 @@ commonLabels:
 kind: Kustomization
 namespace: cert-manager
 resources:
-- ../../../../cert-manager/cert-manager/base
-- ../../../../cert-manager/cert-manager/overlays/application/application.yaml
-- ../../../../cert-manager/cert-manager/overlays/self-signed/cluster-issuer.yaml
-configurations:
-- ../../../../cert-manager/cert-manager/overlays/application/params.yaml
+- ../../../../../common/cert-manager/cert-manager-kube-system-resources/base
+- ../../../../../common/cert-manager/cert-manager-crds/base
+- ../../../../../common/cert-manager/cert-manager/overlays/self-signed

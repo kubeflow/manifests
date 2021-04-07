@@ -1,0 +1,107 @@
+apiVersion: kfdef.apps.kubeflow.org/v1
+kind: KfDef
+metadata:
+  name: kubeflow
+  namespace: kubeflow
+spec:
+  applications:
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/openshift/openshift-scc
+    name: openshift-scc
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/istio-1-9-0
+    name: istio-stack
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/cert-manager
+    name: cert-manager
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/knative
+    name: knative
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/pipeline-agnostic
+    name: pipeline
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/kfserving
+    name: kfserving
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/katib
+    name: katib
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/jupyter-web-app
+    name: jupyter-web-app
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/notebook-controller
+    name: notebook-controller
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/tensorboard
+    name: tensorboard
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/tf-job
+    name: tf-job
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/pytorch-job
+    name: pytorch-job
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: stacks/openshift
+    name: kubeflow-apps
+#  - kustomizeConfig:
+#      repoRef:
+#        name: manifests
+#        path: application/v3
+#    name: application
+#  - kustomizeConfig:
+#      repoRef:
+#        name: manifests
+#        path: metacontroller/base
+#    name: metacontroller
+#  - kustomizeConfig:
+#      repoRef:
+#        name: manifests
+#        path: stacks/openshift/application/metadata
+#    name: metadata
+ # - kustomizeConfig:
+ #     repoRef:
+ #       name: manifests
+ #       path: tektoncd/tektoncd-install/base
+ #   name: tektoncd-install
+ # - kustomizeConfig:
+ #     repoRef:
+ #       name: manifests
+ #       path: tektoncd/tektoncd-dashboard/base
+ #   name: tektoncd-dashboard
+ # - kustomizeConfig:
+ #     repoRef:
+ #       name: manifests
+ #       path: stacks/openshift/application/kfp-tekton
+ #   name: kfp-tekton
+  repos:
+  - name: manifests
+    #uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
+    uri: /Users/jnakfour/kubeflow/odh-kubeflow-fork/manifests
+  version: master
