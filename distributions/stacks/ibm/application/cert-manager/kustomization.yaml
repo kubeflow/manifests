@@ -6,6 +6,5 @@ commonLabels:
 kind: Kustomization
 namespace: cert-manager
 resources:
-- ../../../../../common/cert-manager/cert-manager-kube-system-resources/base
 - ../../../../../common/cert-manager/cert-manager/overlays/self-signed
 configurations:
