@@ -267,7 +267,7 @@ kustomize build --load_restrictor=none apps/tf-training/upstream/overlays/kubefl
 Install the PyTorch Operator official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build --load_restrictor=none apps/pytorch-job/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### MPI Operator
