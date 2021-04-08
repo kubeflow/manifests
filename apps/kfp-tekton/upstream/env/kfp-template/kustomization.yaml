@@ -3,7 +3,7 @@ kind: Kustomization
 
 bases:
   - ../plain
-  - ./tekton
+  - ../../third-party/tekton-custom-task
 
 resources:
   - namespace.yaml
