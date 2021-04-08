@@ -58,7 +58,7 @@ spec:
       proxyMetadata: {}
     enablePrometheusMerge: true
   profile: demo
-  tag: 1.9.1
+  tag: 1.9.2
   values:
     base:
       enableCRDTemplates: false

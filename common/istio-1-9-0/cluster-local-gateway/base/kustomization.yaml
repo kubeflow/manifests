@@ -14,4 +14,4 @@ patchesStrategicMerge:
 images:
 - name: docker.io/istio/proxyv2
   newName: docker.io/istio/proxyv2
-  newTag: 1.9.1
+  newTag: 1.9.2

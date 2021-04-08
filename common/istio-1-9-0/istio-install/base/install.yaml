@@ -1139,7 +1139,7 @@ data:
         "sts": {
           "servicePort": 0
         },
-        "tag": "1.9.1",
+        "tag": "1.9.2",
         "tracer": {
           "datadog": {
             "address": "$(HOST_IP):8126"
