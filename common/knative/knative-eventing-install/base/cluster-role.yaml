@@ -315,7 +315,7 @@ rules:
   - endpoints
   - events
   - serviceaccounts
-  verbs: &ref_0
+  verbs:
   - get
   - list
   - create
@@ -327,12 +327,26 @@ rules:
   - apps
   resources:
   - deployments
-  verbs: *ref_0
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
 - apiGroups:
   - rbac.authorization.k8s.io
   resources:
   - rolebindings
-  verbs: *ref_0
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
 - apiGroups:
   - eventing.knative.dev
   resources:
@@ -342,7 +356,14 @@ rules:
   - triggers/status
   - eventtypes
   - eventtypes/status
-  verbs: *ref_0
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
 - apiGroups:
   - eventing.knative.dev
   resources:
@@ -361,7 +382,14 @@ rules:
   - parallels/status
   - subscriptions
   - subscriptions/status
-  verbs: *ref_0
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
 - apiGroups:
   - flows.knative.dev
   resources:
@@ -369,7 +397,14 @@ rules:
   - sequences/status
   - parallels
   - parallels/status
-  verbs: *ref_0
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
 - apiGroups:
   - messaging.knative.dev
   resources:
@@ -518,7 +553,7 @@ rules:
   - secrets
   - configmaps
   - services
-  verbs: &ref_0
+  verbs:
   - get
   - list
   - create
@@ -530,7 +565,14 @@ rules:
   - apps
   resources:
   - deployments
-  verbs: *ref_0
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
 - apiGroups:
   - sources.knative.dev
   resources:
@@ -546,22 +588,50 @@ rules:
   - containersources
   - containersources/status
   - containersources/finalizers
-  verbs: *ref_0
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
 - apiGroups:
   - serving.knative.dev
   resources:
   - services
-  verbs: *ref_0
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
 - apiGroups:
   - eventing.knative.dev
   resources:
   - eventtypes
-  verbs: *ref_0
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
 - apiGroups:
   - ''
   resources:
   - events
-  verbs: *ref_0
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
 - apiGroups:
   - authorization.k8s.io
   resources:
@@ -611,7 +681,7 @@ rules:
   resources:
   - mutatingwebhookconfigurations
   - validatingwebhookconfigurations
-  verbs: &ref_0
+  verbs:
   - get
   - list
   - create
@@ -625,7 +695,14 @@ rules:
   - sinkbindings
   - sinkbindings/status
   - sinkbindings/finalizers
-  verbs: *ref_0
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
 - apiGroups:
   - apiextensions.k8s.io
   resources:
@@ -751,7 +828,7 @@ rules:
   resources:
   - services
   - serviceaccounts
-  verbs: &ref_0
+  verbs:
   - get
   - list
   - watch
@@ -770,12 +847,24 @@ rules:
   - rbac.authorization.k8s.io
   resources:
   - rolebindings
-  verbs: *ref_0
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
 - apiGroups:
   - apps
   resources:
   - deployments
-  verbs: *ref_0
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
 - apiGroups:
   - apps
   resources:
@@ -803,7 +892,13 @@ rules:
   - coordination.k8s.io
   resources:
   - leases
-  verbs: *ref_0
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
