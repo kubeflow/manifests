@@ -16,3 +16,9 @@ configMapGenerator:
   behavior: merge
   envs:
   - params.env
+secretGenerator:
+- name: oidc-authservice-client
+  type: Opaque
+  behavior: merge
+  envs:
+  - secret_params.env

@@ -1,0 +1,6 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+resources:
+# Kubeflow Istio Resources
+- ../../../../../common/istio-1-9-0/kubeflow-istio-resources/base
