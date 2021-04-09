@@ -43,7 +43,7 @@ spec:
         - name: METRICS_DOMAIN
           value: knative.dev/internal/serving
         image: 'gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:ffa3d72ee6c2eeb2357999248191a643405288061b7080381f22875cb703e929'
-        livenessProbe: &ref_0
+        livenessProbe:
           httpGet:
             httpHeaders:
             - name: k-kubelet-probe
@@ -59,7 +59,12 @@ spec:
           name: metrics
         - containerPort: 8008
           name: profiling
-        readinessProbe: *ref_0
+        readinessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: activator
+            port: 8012
         resources:
           limits:
             cpu: 1000m
