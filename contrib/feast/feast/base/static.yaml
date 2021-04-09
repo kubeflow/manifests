@@ -4,10 +4,10 @@ data:
 kind: Secret
 metadata:
   name: feast-postgresql
-  namespace: kubeflow
+  namespace: feast
 type: Opaque
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: kubeflow
+  name: feast
