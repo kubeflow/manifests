@@ -47,28 +47,8 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: common/knative/knative-serving-crds/base
-    name: knative-serving-crds
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: common/knative/knative-serving-install/base
-    name: knative-serving-install
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: common/knative/knative-eventing-crds/base
-    name: knative-eventing-crds
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: common/knative/knative-eventing-install/base
-    name: knative-eventing-install
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: common/istio-1-9-0/cluster-local-gateway/base
-    name: cluster-local-gateway
+        path: distributions/stacks/aws/application/knative
+    name: knative
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -141,5 +121,5 @@ spec:
     name: user-namespace
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
-  version: master
+    uri: https://github.com/kubeflow/manifests/archive/v1.3-branch.tar.gz
+  version: v1.3-branch
