@@ -128,13 +128,17 @@ kustomize build --load_restrictor=none common/oidc-authservice/base | kubectl ap
 
 Knative is used by the KFServing official Kubeflow component.
 
-Install Knative:
+Install Knative Serving:
 ```sh
 kustomize build --load_restrictor=none common/knative/knative-serving-crds/base | kubectl apply -f -
 kustomize build --load_restrictor=none common/knative/knative-serving-install/base | kubectl apply -f -
+kustomize build --load_restrictor=none common/istio-1-9-0/cluster-local-gateway/base | kubectl apply -f -
+```
+
+Optionally, you can install Knative Eventing which can be used for inference request logging:
+```sh
 kustomize build --load_restrictor=none common/knative/knative-eventing-crds/base | kubectl apply -f -
 kustomize build --load_restrictor=none common/knative/knative-eventing-install/base | kubectl apply -f -
-kustomize build --load_restrictor=none common/istio-1-9-0/cluster-local-gateway/base | kubectl apply -f -
 ```
 
 #### Kubeflow Namespace
