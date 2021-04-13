@@ -196,7 +196,7 @@ kustomize build --load_restrictor=none apps/kfserving/upstream/overlays/kubeflow
 Install the Katib official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/katib/upstream/installs/katib-with-kubeflow-cert-manager | kubectl apply -f -
+kustomize build --load_restrictor=none apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
 ```
 
 #### Central Dashboard
