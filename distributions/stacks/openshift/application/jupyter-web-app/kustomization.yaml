@@ -4,35 +4,10 @@ namespace: kubeflow
 resources:
 #- ../../../../jupyter/jupyter-web-app/base_v3
 - ../../../../../apps/jupyter/jupyter-web-app/upstream/overlays/istio
-configMapGenerator:
-- name: jupyter-web-app-config
-  behavior: merge
-  files:
-  - ./configs/spawner_ui_config.yaml
-- name: kubeflow-config
-  envs:
-  - ../../config/params.env
-# We need to define vars at the top level otherwise we will get
-# conflicts.
-vars:
-- fieldref:
-    fieldPath: data.clusterDomain
-  name: clusterDomain
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: kubeflow-config
-- fieldref:
-    fieldPath: metadata.namespace
-  name: namespace
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: kubeflow-config
 
 #TODO Need to update this
 images:
-- name: gcr.io/kubeflow-images-public/jupyter-web-app
+- name: public.ecr.aws/j1r0q0g6/notebooks/jupyter-web-app
   newTag: v2.0.0
   newName: quay.io/kubeflow/jupyter-web-app
 

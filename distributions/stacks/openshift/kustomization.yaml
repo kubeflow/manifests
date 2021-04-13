@@ -4,6 +4,8 @@ namespace: kubeflow
 resources:
 #Kubeflow roles
   - ../../../common/kubeflow-roles/base
+#Virtual gateway
+  - ../../../common/istio-1-9-0/kubeflow-istio-resources/base
   - ../../../apps/centraldashboard/upstream/overlays/istio
 #Admission webhooks
   - ../../../apps/admission-webhook/upstream/overlays/cert-manager
