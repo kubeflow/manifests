@@ -5,3 +5,5 @@ resources:
 - ../../../../../common/istio-1-9-0/istio-crds/base
 - ../../../../../common/istio-1-9-0/istio-namespace/base
 - ../../../../../common/istio-1-9-0/istio-install/base
+patchesStrategicMerge:
+- service.yaml
