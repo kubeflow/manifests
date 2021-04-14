@@ -2,10 +2,13 @@ package tests
 
 import (
 	"fmt"
-	"github.com/ghodss/yaml"
 	"io/ioutil"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"path/filepath"
+	"strings"
+	"testing"
+
+	"github.com/ghodss/yaml"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"sigs.k8s.io/kustomize/v3/k8sdeps/kunstruct"
 	"sigs.k8s.io/kustomize/v3/k8sdeps/transformer"
 	"sigs.k8s.io/kustomize/v3/pkg/fs"
@@ -15,8 +18,6 @@ import (
 	"sigs.k8s.io/kustomize/v3/pkg/resource"
 	"sigs.k8s.io/kustomize/v3/pkg/target"
 	"sigs.k8s.io/kustomize/v3/pkg/validators"
-	"strings"
-	"testing"
 )
 
 type KustomizeTestCase struct {
@@ -57,11 +58,7 @@ func RunTestCase(t *testing.T, testCase *KustomizeTestCase) {
 	}
 
 	fsys := fs.MakeRealFS()
-	// We don't want to enforce the security check.
-	// This is equivalent to running:
-	// kustomize build --load_restrictor none
-	lrc := loader.RestrictionNone
-	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), testCase.Package, fsys)
+	_loader, loaderErr := loader.NewLoader(validators.MakeFakeValidator(), testCase.Package, fsys)
 	if loaderErr != nil {
 		t.Fatalf("could not load kustomize loader: %v", loaderErr)
 	}

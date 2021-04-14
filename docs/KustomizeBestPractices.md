@@ -39,38 +39,6 @@ installs/
 Defining separate packages for each component makes it easier to use composition to define new configurations; e.g. using an external database as opposed
 to a database running in cluster.
 
-## Reuse patches
-
-We encourage reusing patches across kustomize packages when it makes sense. For example suppose we
-have an onprem and standalone version of our application but both of them want to reuse
-a common patch to use an external database. We could lay the packages out like so
-
-```
-components/
-          /patches/
-                  /deployment-external-db.yaml
-installs/
-        /app-standalone
-        /app-onprem
-```
-
-The kustomization files for app-standalone could then look like the following
-
-```
-apiVersion: kustomize.config.k8s.io/v1beta1
-...
-patchesStrategicMerge:
-- ../../components/patches/deployment-external-db.yaml
-```
-
-### Disable security check for file outside of directory root
-
-To support the above layout we need to disable [kustomizes' security check](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/FAQ.md#security-file-foo-is-not-in-or-below-bar) by running with the `load_restrictor` flag: 
-
-```
-kustomize build --load_restrictor none $target
-```
-
 ## Command Line substitution
 
 To make it easy for users to override command line arguments use the following pattern.
