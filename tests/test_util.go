@@ -58,7 +58,8 @@ func RunTestCase(t *testing.T, testCase *KustomizeTestCase) {
 	}
 
 	fsys := fs.MakeRealFS()
-	_loader, loaderErr := loader.NewLoader(validators.MakeFakeValidator(), testCase.Package, fsys)
+	lrc := loader.RestrictionRootOnly
+	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), testCase.Package, fsys)
 	if loaderErr != nil {
 		t.Fatalf("could not load kustomize loader: %v", loaderErr)
 	}
