@@ -5,6 +5,7 @@
 <!-- toc -->
 
 - [Overview](#overview)
+- [Kubeflow components versions](#kubeflow-components-versions)
 - [Installation](#installation)
   * [Prerequisites](#prerequisites)
   * [Install with a single command](#install-with-a-single-command)
@@ -32,6 +33,30 @@ The `distributions` directory contains manifests for specific, opinionated distr
 The `docs`, `hack`, and `tests` directories will also be gradually phased out.
 
 Starting Kubeflow 1.3, all components should be deployable using `kustomize` only. Any automation tooling for deployment on top of the manifests should be maintained externally by distribution owners.
+
+## Kubeflow components versions
+
+This repo periodically syncs all official Kubeflow components from their respective upstream repos. The following matrix shows the git version that we include for each component:
+
+| Application | Manifests Path | Revision |
+| - | - | - |
+| TFJob Operator | apps/tf-training/upstream | [v1.1.0](https://github.com/kubeflow/tf-operator/tree/v1.1.0/manifests) |
+| PyTorch Operator | apps/pytorch-job/upstream | [v0.7.0](https://github.com/kubeflow/pytorch-operator/tree/v0.7.0/manifests) |
+| MPI Operator | apps/mpi-job/upstream | [b367aa55886d2b042f5089df359d8e067e49e8d1](https://github.com/kubeflow/mpi-operator/tree/b367aa55886d2b042f5089df359d8e067e49e8d1/manifests) |
+| MXNet Operator | apps/mxnet-job/upstream | [v1.1.0](https://github.com/kubeflow/mxnet-operator/v1.1.0/manifests) |
+| XGBoost Operator | apps/xgboost-job/upstream | [v0.2.0](https://github.com/kubeflow/xgboost-operator/tree/v0.2.0/manifests) |
+| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.3.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.0-rc.0/components/notebook-controller/config) |
+| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.3.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.0-rc.0/components/tensorboard-controller/config) |
+| Central Dashboard | apps/centraldashboard/upstream | [v1.3.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.0-rc.0/components/centraldashboard/manifests) |
+| Profiles + KFAM | apps/profiles/upstream | [v1.3.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.0-rc.0/components/profile-controller/config) |
+| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.3.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.0-rc.0/components/admission-webhook/manifests) |
+| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.3.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.0-rc.0/components/crud-web-apps/jupyter/manifests) |
+| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.3.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.0-rc.0/components/crud-web-apps/tensorboards/manifests) |
+| Volumes Web App | apps/volumes-web-app/upstream | [v1.3.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.0-rc.0/components/crud-web-apps/volumes/manifests) |
+| Katib | apps/katib/upstream | [origin/release-0.11 (7d7c34c72ab8bce74262c7abbe55ef9312291219)](https://github.com/kubeflow/katib/tree/7d7c34c72ab8bce74262c7abbe55ef9312291219/manifests/v1beta1) |
+| KFServing | apps/kfserving/upstream | [origin/release-0.5 (e189a510121c09f764f749143b80f6ee6baaf48b)](https://github.com/kubeflow/kfserving/tree/e189a510121c09f764f749143b80f6ee6baaf48b/config) |
+| Kubeflow Pipelines | apps/pipeline/upstream | [1.5.0-rc.2](https://github.com/kubeflow/pipelines/tree/1.5.0-rc.2/manifests/kustomize) |
+| Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [v0.8.0-rc0](https://github.com/kubeflow/kfp-tekton/tree/v0.8.0-rc0/manifests/kustomize) |
 
 ## Installation
 
