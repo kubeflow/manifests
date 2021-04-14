@@ -320,6 +320,8 @@ kubectl get pods -n kubeflow
 kubectl get pods -n kubeflow-user
 ```
 
+#### Port-Forward
+
 The default way of accessing Kubeflow is via port-forward. This enables you to get started quickly without imposing any requirements on your environment. Run the following to port-forward Istio's Ingress-Gateway to local port `8080`:
 
 ```sh
@@ -329,6 +331,19 @@ kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
 After running the command, you can access the Kubeflow Central Dashboard by doing the following:
 1. Open your browser and visit `http://localhost:8080`. You should get the Dex login screen.
 2. Login with the default user's credential. The default username is `user` and the default password is `12341234`.
+
+#### NodePort / LoadBalancer / Ingress
+
+In order to connect to Kubeflow using NodePort / LoadBalancer / Ingress, you need to setup HTTPS. The reason is that many of our web apps (e.g., Tensorboard Web App, Jupyter Web App, Katib UI) use [Secure Cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies), so accessing Kubeflow with HTTP over a non-localhost domain does not work.
+
+Exposing your Kubeflow cluster with proper HTTPS is a process heavily dependent on your environment. For this reason, please take a look at the available Kubeflow distributions, which are targeted to specific environments, and select the one that fits your needs.
+
+---
+**NOTE**
+
+If you absolutely need to expose Kubeflow over HTTP, you can disable the `Secure Cookies` feature by setting the `APP_SECURE_COOKIES` environment variable to `false` in every relevant web app. This is not recommended, as it poses security risks.
+
+---
 
 ### Change default user password
 
