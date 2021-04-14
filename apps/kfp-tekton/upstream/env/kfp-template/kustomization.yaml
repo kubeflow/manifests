@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+bases:
+  - ../plain
+  - ../../third-party/tekton-custom-task
+
+resources:
+  - namespace.yaml
+
+patchesStrategicMerge:
+  - application-crd.yaml
+  - scheduled-workflow-crd.yaml
+  - viewer-crd.yaml
+
+images:
+  - name: docker.io/aipipeline/api-server
+    newTag: 0.8.0
+  - name: docker.io/aipipeline/persistenceagent
+    newTag: 0.8.0
+  - name: docker.io/aipipeline/frontend
+    newTag: 0.8.0
+  - name: docker.io/aipipeline/metadata-writer
+    newTag: 0.8.0
+  - name: docker.io/aipipeline/scheduledworkflow
+    newTag: 0.8.0
+  - name: docker.io/aipipeline/cache-server
+    newTag: 0.8.0
+  - name: docker.io/aipipeline/pipelineloop-controller
+    newTag: 0.8.0
+  - name: docker.io/aipipeline/pipelineloop-webhook
+    newTag: 0.8.0
