@@ -82,6 +82,11 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
+        path: apps/katib/upstream/installs/katib-with-kubeflow-cert-manager
+    name: katib
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
         path: apps/centraldashboard/upstream/overlays/istio
     name: central-dashboard
   - kustomizeConfig:
