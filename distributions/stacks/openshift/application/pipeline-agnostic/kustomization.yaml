@@ -3,4 +3,5 @@ kind: Kustomization
 resources:
 - ../../../../../apps/pipeline/upstream/base/pipeline/cluster-scoped
 - ../../../../../apps/pipeline/upstream/env/platform-agnostic
-- virtual-service.yaml
+#- virtual-service.yaml
+- metadata-gprc.yaml

@@ -16,7 +16,8 @@ resources:
   - ../../../apps/volumes-web-app/upstream/overlays/istio
 #profiles is here since namespace was not being replaced for the virtual service and pipeline depends on it
   - ../../../apps/profiles/upstream/overlays/kubeflow
-#   - application/profiles
+#Virtual Service for pipeline, has to be here after the gateway is created
+  - application/pipeline-agnostic/virtual-service.yaml
 #Create defualt user
   - ../../../common/user-namespace/base
 configMapGenerator:
