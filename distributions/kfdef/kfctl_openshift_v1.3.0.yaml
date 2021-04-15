@@ -13,7 +13,7 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: distributions/stacks/openshift/application/istio-1-9-0
+        path: distributions/stacks/openshift/application/istio-1-9-0-Openshift
     name: istio-stack
   - kustomizeConfig:
       repoRef:
@@ -28,7 +28,7 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: distributions/stacks/openshift/application/pipeline-agnostic
+        path: distributions/stacks/openshift/application/pipeline-agnostic-multi-user
     name: pipeline
   - kustomizeConfig:
       repoRef:
@@ -68,7 +68,7 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: stacks/openshift
+        path: distributions/stacks/openshift
     name: kubeflow-apps
 #  - kustomizeConfig:
 #      repoRef:
