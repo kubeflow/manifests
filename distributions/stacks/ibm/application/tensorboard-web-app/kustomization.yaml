@@ -3,5 +3,3 @@ kind: Kustomization
 namespace: kubeflow
 resources:
 - ../../../../../apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
-patchesStrategicMerge:
-- custom-env.yaml

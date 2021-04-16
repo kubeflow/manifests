@@ -3,5 +3,3 @@ kind: Kustomization
 namespace: kubeflow
 resources:
 - ../../../../../apps/jupyter/jupyter-web-app/upstream/overlays/istio
-patchesStrategicMerge:
-- custom-env.yaml

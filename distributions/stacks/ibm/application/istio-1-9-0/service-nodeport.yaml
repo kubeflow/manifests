@@ -6,4 +6,4 @@ metadata:
 spec:
   ports:
   - port: 80
-    nodeport: 30380
+    nodePort: 30380

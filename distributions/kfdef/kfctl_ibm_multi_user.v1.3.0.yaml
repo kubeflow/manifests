@@ -52,33 +52,19 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: distributions/stacks/ibm/application/oidc-authservice
-    name: oidc-authservice
-  # dex
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: distributions/stacks/ibm/application/dex-auth
-    name: dex-auth
-  # user namespace
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: distributions/stacks/ibm/application/user-namespace
-    name: user-namespace
-
+        path: distributions/stacks/ibm/application/oidc-authservice-appid
+    name: oidc-authservice-appid
   # Kubeflow components
   - kustomizeConfig:
       repoRef:
         name: manifests
         path: distributions/stacks/ibm/application/admission-webhook
     name: admission-webhook
-
   # central dashboard multiuser
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: distributions/stacks/ibm/application/centraldashboard/single-user
+        path: distributions/stacks/ibm/application/centraldashboard/multi-user
     name: centraldashboard
   # katib
   - kustomizeConfig:
@@ -130,7 +116,7 @@ spec:
         name: manifests
         path: distributions/stacks/ibm/application/tensorboard-controller
     name: tensorboard-controller
-  # tensorboard web app
+  # tensorboard web app . remove insecure if tls is enabled
   - kustomizeConfig:
       repoRef:
         name: manifests
