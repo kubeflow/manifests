@@ -41,6 +41,10 @@ to a database running in cluster.
 
 ## Reuse patches
 
+**Note:** We are in the process of moving to Kustomize v4, see [this](https://github.com/kubeflow/manifests/issues/1797).
+This method of reusing patches is outdated and will likely be replaced by
+[kustomize components](https://github.com/kubernetes-sigs/kustomize/blob/master/examples/components.md).
+
 We encourage reusing patches across kustomize packages when it makes sense. For example suppose we
 have an onprem and standalone version of our application but both of them want to reuse
 a common patch to use an external database. We could lay the packages out like so
