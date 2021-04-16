@@ -28,18 +28,13 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: distributions/stacks/openshift/application/pipeline-agnostic-multi-user
-    name: pipeline
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
         path: distributions/stacks/openshift/application/kfserving
     name: kfserving
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: distributions/stacks/openshift/application/katib
-    name: katib
+        path: distributions/stacks/openshift/application/pipeline-agnostic
+    name: pipeline
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -53,8 +48,8 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: distributions/stacks/openshift/application/tensorboard
-    name: tensorboard
+        path: distributions/stacks/openshift/application/katib
+    name: katib
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -70,38 +65,7 @@ spec:
         name: manifests
         path: distributions/stacks/openshift
     name: kubeflow-apps
-#  - kustomizeConfig:
-#      repoRef:
-#        name: manifests
-#        path: application/v3
-#    name: application
-#  - kustomizeConfig:
-#      repoRef:
-#        name: manifests
-#        path: metacontroller/base
-#    name: metacontroller
-#  - kustomizeConfig:
-#      repoRef:
-#        name: manifests
-#        path: stacks/openshift/application/metadata
-#    name: metadata
- # - kustomizeConfig:
- #     repoRef:
- #       name: manifests
- #       path: tektoncd/tektoncd-install/base
- #   name: tektoncd-install
- # - kustomizeConfig:
- #     repoRef:
- #       name: manifests
- #       path: tektoncd/tektoncd-dashboard/base
- #   name: tektoncd-dashboard
- # - kustomizeConfig:
- #     repoRef:
- #       name: manifests
- #       path: stacks/openshift/application/kfp-tekton
- #   name: kfp-tekton
   repos:
   - name: manifests
-    #uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
-    uri: /Users/jnakfour/kubeflow/odh-kubeflow-fork/manifests
-  version: master
+    uri: https://github.com/kubeflow/manifests/archive/v1.3-branch.tar.gz
+  version: v1.3-branch
