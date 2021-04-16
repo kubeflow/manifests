@@ -12,6 +12,7 @@
   * [Install individual components](#install-individual-components)
   * [Connect to your Kubeflow Cluster](#connect-to-your-kubeflow-cluster)
   * [Change default user password](#change-default-user-password)
+- [Frequently Asked Questions](#frequently-asked-questions)
 
 <!-- tocstop -->
 
@@ -74,8 +75,9 @@ The `example` directory contains an example kustomization for the single command
 
 ### Prerequisites
 
-- `Kubernetes` (tested with version `1.17`)
-- `kustomize` (version `3.2.0`) ([link](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0))
+- `Kubernetes` (tested with version `1.17`) with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
+- `kustomize` (version `3.2.0`) ([download link](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0))
+    - :warning: Kubeflow 1.3.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
 - `kubectl`
 
 ---
@@ -396,3 +398,11 @@ For security reasons, we don't want to use the default password for the default 
       - email: user
         hash: <enter the generated hash here>
     ```
+
+## Frequently Asked Questions
+
+- **Q:** What versions of Istio, Knative, Cert-Manager, Argo, ... are compatible with Kubeflow 1.3? \
+  **A:** Please refer to each individual component's documentation for a dependency compatibility range. For Istio, Knative, Dex, Cert-Manager and OIDC-AuthService, the versions in `common` are the ones we have validated.
+
+- **Q:** Can I use the latest Kustomize version (`v4.x`)? \
+  **A:** Kubeflow 1.3.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
