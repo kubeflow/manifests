@@ -64,9 +64,8 @@ The `example` directory contains an example kustomization for the single command
 
 You can install all Kubeflow official components (residing under `apps`) and all common services (residing under `common`) using the following command:
 
-
 ```sh
-while ! kustomize build --load_restrictor=none example | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+while ! kustomize build example | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
 
 Once, everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](#connect-to-your-kubeflow-cluster).
@@ -88,10 +87,11 @@ cert-manager is used by many Kubeflow components to provide certificates for
 admission webhooks.
 
 Install cert-manager:
+
 ```sh
-kustomize build --load_restrictor=none common/cert-manager/cert-manager-kube-system-resources/base | kubectl apply -f -
-kustomize build --load_restrictor=none common/cert-manager/cert-manager-crds/base | kubectl apply -f -
-kustomize build --load_restrictor=none common/cert-manager/cert-manager/overlays/self-signed | kubectl apply -f -
+kustomize build common/cert-manager/cert-manager-kube-system-resources/base | kubectl apply -f -
+kustomize build common/cert-manager/cert-manager-crds/base | kubectl apply -f -
+kustomize build common/cert-manager/cert-manager/overlays/self-signed | kubectl apply -f -
 ```
 
 #### Istio
@@ -100,10 +100,11 @@ Istio is used by many Kubeflow components to secure their traffic, enforce
 network authorization and implement routing policies.
 
 Install Istio:
+
 ```sh
-kustomize build --load_restrictor=none common/istio-1-9-0/istio-crds/base | kubectl apply -f -
-kustomize build --load_restrictor=none common/istio-1-9-0/istio-namespace/base | kubectl apply -f -
-kustomize build --load_restrictor=none common/istio-1-9-0/istio-install/base | kubectl apply -f -
+kustomize build common/istio-1-9-0/istio-crds/base | kubectl apply -f -
+kustomize build common/istio-1-9-0/istio-namespace/base | kubectl apply -f -
+kustomize build common/istio-1-9-0/istio-install/base | kubectl apply -f -
 ```
 
 #### Dex
@@ -113,7 +114,7 @@ Dex is an OpenID Connect Identity (OIDC) with multiple authentication backends. 
 Install Dex:
 
 ```sh
-kustomize build --load_restrictor=none common/dex/overlays/istio | kubectl apply -f -
+kustomize build common/dex/overlays/istio | kubectl apply -f -
 ```
 
 #### OIDC AuthService
@@ -121,7 +122,7 @@ kustomize build --load_restrictor=none common/dex/overlays/istio | kubectl apply
 The OIDC AuthService extends your Istio Ingress-Gateway capabilities, to be able to function as an OIDC client:
 
 ```sh
-kustomize build --load_restrictor=none common/oidc-authservice/base | kubectl apply -f -
+kustomize build common/oidc-authservice/base | kubectl apply -f -
 ```
 
 #### Knative
@@ -129,16 +130,18 @@ kustomize build --load_restrictor=none common/oidc-authservice/base | kubectl ap
 Knative is used by the KFServing official Kubeflow component.
 
 Install Knative Serving:
+
 ```sh
-kustomize build --load_restrictor=none common/knative/knative-serving-crds/base | kubectl apply -f -
-kustomize build --load_restrictor=none common/knative/knative-serving-install/base | kubectl apply -f -
-kustomize build --load_restrictor=none common/istio-1-9-0/cluster-local-gateway/base | kubectl apply -f -
+kustomize build common/knative/knative-serving-crds/base | kubectl apply -f -
+kustomize build common/knative/knative-serving-install/base | kubectl apply -f -
+kustomize build common/istio-1-9-0/cluster-local-gateway/base | kubectl apply -f -
 ```
 
 Optionally, you can install Knative Eventing which can be used for inference request logging:
+
 ```sh
-kustomize build --load_restrictor=none common/knative/knative-eventing-crds/base | kubectl apply -f -
-kustomize build --load_restrictor=none common/knative/knative-eventing-install/base | kubectl apply -f -
+kustomize build common/knative/knative-eventing-crds/base | kubectl apply -f -
+kustomize build common/knative/knative-eventing-install/base | kubectl apply -f -
 ```
 
 #### Kubeflow Namespace
@@ -147,8 +150,9 @@ Create the namespace where the Kubeflow components will live in. This namespace
 is named `kubeflow`.
 
 Install kubeflow namespace:
+
 ```sh
-kustomize build --load_restrictor=none common/kubeflow-namespace/base | kubectl apply -f -
+kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 ```
 
 #### Kubeflow Roles
@@ -158,10 +162,10 @@ Create the Kubeflow ClusterRoles, `kubeflow-view`, `kubeflow-edit` and
 ClusterRoles.
 
 Install kubeflow roles:
-```sh
-kustomize build --load_restrictor=none common/kubeflow-roles/base | kubectl apply -f -
-```
 
+```sh
+kustomize build common/kubeflow-roles/base | kubectl apply -f -
+```
 
 #### Kubeflow Istio Resources
 
@@ -171,8 +175,9 @@ If you want to install with your own Istio, then you need this kustomization as
 well.
 
 Install istio resources:
+
 ```sh
-kustomize build --load_restrictor=none common/istio-1-9-0/kubeflow-istio-resources/base | kubectl apply -f -
+kustomize build common/istio-1-9-0/kubeflow-istio-resources/base | kubectl apply -f -
 ```
 
 #### Kubeflow Pipelines
@@ -180,7 +185,7 @@ kustomize build --load_restrictor=none common/istio-1-9-0/kubeflow-istio-resourc
 Install the Kubeflow Pipelines official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/pipeline/upstream/env/platform-agnostic-multi-user | kubectl apply -f -
+kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user | kubectl apply -f -
 ```
 
 #### KFServing
@@ -188,7 +193,7 @@ kustomize build --load_restrictor=none apps/pipeline/upstream/env/platform-agnos
 Install the KFServing official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### Katib
@@ -196,7 +201,7 @@ kustomize build --load_restrictor=none apps/kfserving/upstream/overlays/kubeflow
 Install the Katib official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
+kustomize build apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
 ```
 
 #### Central Dashboard
@@ -204,14 +209,15 @@ kustomize build --load_restrictor=none apps/katib/upstream/installs/katib-with-k
 Install the Central Dashboard official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/centraldashboard/upstream/overlays/istio | kubectl apply -f -
+kustomize build apps/centraldashboard/upstream/overlays/istio | kubectl apply -f -
 ```
 
 #### Admission Webhook
 
 Install the Admission Webhook for PodDefaults:
+
 ```sh
-kustomize build --load_restrictor=none apps/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
+kustomize build apps/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
 ```
 
 #### Notebooks
@@ -219,13 +225,13 @@ kustomize build --load_restrictor=none apps/admission-webhook/upstream/overlays/
 Install the Notebook Controller official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build apps/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 Install the Jupyter Web App official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/jupyter/jupyter-web-app/upstream/overlays/istio | kubectl apply -f -
+kustomize build apps/jupyter/jupyter-web-app/upstream/overlays/istio | kubectl apply -f -
 ```
 
 #### Profiles + KFAM
@@ -234,7 +240,7 @@ Install the Profile Controller and the Kubeflow Access-Management (KFAM) officia
 components:
 
 ```sh
-kustomize build --load_restrictor=none apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### Volumes Web App
@@ -242,7 +248,7 @@ kustomize build --load_restrictor=none apps/profiles/upstream/overlays/kubeflow 
 Install the Volumes Web App official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/volumes-web-app/upstream/overlays/istio | kubectl apply -f -
+kustomize build apps/volumes-web-app/upstream/overlays/istio | kubectl apply -f -
 ```
 
 #### Tensorboard
@@ -250,12 +256,13 @@ kustomize build --load_restrictor=none apps/volumes-web-app/upstream/overlays/is
 Install the Tensorboards Web App official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/tensorboard/tensorboards-web-app/upstream/overlays/istio | kubectl apply -f -
+kustomize build apps/tensorboard/tensorboards-web-app/upstream/overlays/istio | kubectl apply -f -
 ```
 
 Install the Tensorboard Controller official Kubeflow component:
+
 ```sh
-kustomize build --load_restrictor=none apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### TFJob Operator
@@ -263,7 +270,7 @@ kustomize build --load_restrictor=none apps/tensorboard/tensorboard-controller/u
 Install the TFJob Operator official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/tf-training/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build apps/tf-training/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### PyTorch Operator
@@ -271,7 +278,7 @@ kustomize build --load_restrictor=none apps/tf-training/upstream/overlays/kubefl
 Install the PyTorch Operator official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/pytorch-job/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build apps/pytorch-job/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### MPI Operator
@@ -279,7 +286,7 @@ kustomize build --load_restrictor=none apps/pytorch-job/upstream/overlays/kubefl
 Install the MPI Operator official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/mpi-job/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build apps/mpi-job/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### MXNet Operator
@@ -287,7 +294,7 @@ kustomize build --load_restrictor=none apps/mpi-job/upstream/overlays/kubeflow |
 Install the MXNet Operator official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/mxnet-job/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build apps/mxnet-job/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### XGBoost Operator
@@ -295,7 +302,7 @@ kustomize build --load_restrictor=none apps/mxnet-job/upstream/overlays/kubeflow
 Install the XGBoost Operator official Kubeflow component:
 
 ```sh
-kustomize build --load_restrictor=none apps/xgboost-job/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build apps/xgboost-job/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### User Namespace
@@ -303,7 +310,7 @@ kustomize build --load_restrictor=none apps/xgboost-job/upstream/overlays/kubefl
 Finally, create a new namespace for the the default user (named `user`).
 
 ```sh
-kustomize build --load_restrictor=none common/user-namespace/base | kubectl apply -f -
+kustomize build common/user-namespace/base | kubectl apply -f -
 ```
 
 ### Connect to your Kubeflow Cluster
@@ -329,6 +336,7 @@ kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
 ```
 
 After running the command, you can access the Kubeflow Central Dashboard by doing the following:
+
 1. Open your browser and visit `http://localhost:8080`. You should get the Dex login screen.
 2. Login with the default user's credential. The default username is `user` and the default password is `12341234`.
 
@@ -350,11 +358,13 @@ If you absolutely need to expose Kubeflow over HTTP, you can disable the `Secure
 For security reasons, we don't want to use the default password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password before deploying. To define a password for the default user:
 
 1. Pick a password for the default user, with handle `user`, and hash it using `bcrypt`:
+
     ```sh
     python3 -c 'from passlib.hash import bcrypt; import getpass; print(bcrypt.using(rounds=12, ident="2y").hash(getpass.getpass()))'
     ```
 
 2. Edit `dex/base/config-map.yaml` and fill the relevant field with the hash of the password you chose:
+
     ```yaml
     ...
       staticPasswords:
