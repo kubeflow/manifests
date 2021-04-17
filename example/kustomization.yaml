@@ -33,7 +33,7 @@ resources:
 # KFServing
 - ../apps/kfserving/upstream/overlays/kubeflow
 # Katib
-- ../apps/katib/upstream/installs/katib-with-kubeflow-cert-manager
+- ../apps/katib/upstream/installs/katib-with-kubeflow
 # Central Dashboard
 - ../apps/centraldashboard/upstream/overlays/istio
 # Admission Webhook
