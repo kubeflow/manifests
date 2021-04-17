@@ -222,7 +222,17 @@ kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user | kubect
 * OIDC Auth Service (or cloud provider specific auth service)
 * Profiles + KFAM
 
-Alternatively, you can install [Kubeflow Pipelines Standalone](https://www.kubeflow.org/docs/components/pipelines/installation/standalone-deployment/) which does not support multi user separation, but has no dependencies on the other services mentioned here.
+##### Kubeflow Pipelines Standalone
+
+Alternatively, you can install [Kubeflow Pipelines Standalone](https://www.kubeflow.org/docs/components/pipelines/installation/standalone-deployment/) which
+
+* does not support multi user separation
+* has no dependencies on the other services mentioned here
+
+You can learn more about the differences in [Installation Options for Kubeflow Pipelines
+](https://www.kubeflow.org/docs/components/pipelines/installation/overview/).
+
+Besides installation instructions in Kubeflow Pipelines Standalone documentation, you need to apply two virtual services to expose [Kubeflow Pipelines UI](https://github.com/kubeflow/pipelines/blob/1.5.0-rc.3/manifests/kustomize/base/installs/multi-user/virtual-service.yaml) and [Metadata API](https://github.com/kubeflow/pipelines/blob/1.5.0-rc.3/manifests/kustomize/base/metadata/options/istio/virtual-service.yaml) in kubeflow-gateway.
 
 #### KFServing
 
