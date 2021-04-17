@@ -209,11 +209,20 @@ kustomize build common/istio-1-9-0/kubeflow-istio-resources/base | kubectl apply
 
 #### Kubeflow Pipelines
 
-Install the Kubeflow Pipelines official Kubeflow component:
+Install the multi-user Kubeflow Pipelines official Kubeflow component:
 
 ```sh
 kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user | kubectl apply -f -
 ```
+
+[Multi-user Kubeflow Pipelines](https://www.kubeflow.org/docs/components/pipelines/multi-user/) depend on
+
+* Istio + Kubeflow Istio Resources
+* Kubeflow Roles
+* OIDC Auth Service (or cloud provider specific auth service)
+* Profiles + KFAM
+
+Alternatively, you can install [Kubeflow Pipelines Standalone](https://www.kubeflow.org/docs/components/pipelines/installation/standalone-deployment/) which does not support multi user separation, but has no dependencies on the other services mentioned here.
 
 #### KFServing
 
