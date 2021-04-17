@@ -209,13 +209,13 @@ kustomize build common/istio-1-9-0/kubeflow-istio-resources/base | kubectl apply
 
 #### Kubeflow Pipelines
 
-Install the multi-user Kubeflow Pipelines official Kubeflow component:
+Install the Multi-User Kubeflow Pipelines official Kubeflow component:
 
 ```sh
 kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user | kubectl apply -f -
 ```
 
-[Multi-user Kubeflow Pipelines](https://www.kubeflow.org/docs/components/pipelines/multi-user/) depend on
+[Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/components/pipelines/multi-user/) depend on
 
 * Istio + Kubeflow Istio Resources
 * Kubeflow Roles
@@ -229,7 +229,7 @@ Alternatively, you can install [Kubeflow Pipelines Standalone](https://www.kubef
 * does not support multi user separation
 * has no dependencies on the other services mentioned here
 
-You can learn more about the differences in [Installation Options for Kubeflow Pipelines
+You can learn more about their differences in [Installation Options for Kubeflow Pipelines
 ](https://www.kubeflow.org/docs/components/pipelines/installation/overview/).
 
 Besides installation instructions in Kubeflow Pipelines Standalone documentation, you need to apply two virtual services to expose [Kubeflow Pipelines UI](https://github.com/kubeflow/pipelines/blob/1.5.0-rc.3/manifests/kustomize/base/installs/multi-user/virtual-service.yaml) and [Metadata API](https://github.com/kubeflow/pipelines/blob/1.5.0-rc.3/manifests/kustomize/base/metadata/options/istio/virtual-service.yaml) in kubeflow-gateway.
