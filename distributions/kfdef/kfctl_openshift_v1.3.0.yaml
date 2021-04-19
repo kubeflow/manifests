@@ -23,16 +23,6 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: distributions/stacks/openshift/application/knative
-    name: knative
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: distributions/stacks/openshift/application/kfserving
-    name: kfserving
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
         path: distributions/stacks/openshift/application/pipeline-agnostic
     name: pipeline
   - kustomizeConfig:
@@ -60,6 +50,21 @@ spec:
         name: manifests
         path: distributions/stacks/openshift/application/pytorch-job
     name: pytorch-job
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/volumes-web-app
+    name: volumes
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/knative
+    name: knative
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/kfserving
+    name: kfserving
   - kustomizeConfig:
       repoRef:
         name: manifests
