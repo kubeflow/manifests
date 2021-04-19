@@ -42,7 +42,7 @@ vars:
     kind: ConfigMap
     name: kubeflow-config
 
-# Rebuilt profile controller image
+# Rebuilt profile controller image for KF 1.3
 images:
 - name: public.ecr.aws/j1r0q0g6/notebooks/profile-controller
   newName: quay.io/kubeflow/profile-controller 
