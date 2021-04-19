@@ -53,7 +53,7 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: distributions/stacks/openshift/application/volumes-web-app
+        path: distributions/stacks/openshift/application/volumeswebapp
     name: volumes
   - kustomizeConfig:
       repoRef:
