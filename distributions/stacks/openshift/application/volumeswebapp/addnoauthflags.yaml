@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: volumes-web-app-deployment
+  name: deployment
 spec:
   template:
     spec:
