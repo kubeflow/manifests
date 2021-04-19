@@ -12,8 +12,6 @@ resources:
   - ../../../apps/centraldashboard/upstream/overlays/istio
 #Admission webhooks
   - ../../../apps/admission-webhook/upstream/overlays/cert-manager
-#Volumes Web App
-  - ../../../apps/volumes-web-app/upstream/overlays/istio
 #profiles is here since namespace was not being replaced for the virtual service and pipeline depends on it
   - ../../../apps/profiles/upstream/overlays/kubeflow
 #Virtual Service for pipeline, has to be here after the gateway is created
