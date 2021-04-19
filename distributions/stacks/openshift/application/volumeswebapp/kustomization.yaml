@@ -4,3 +4,5 @@ namespace: kubeflow
 resources:
 - ../../../../../apps/volumes-web-app/upstream/overlays/istio
 
+patchesStrategicMerge:
+- addnoauthflags.yaml
