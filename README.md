@@ -209,11 +209,38 @@ kustomize build common/istio-1-9-0/kubeflow-istio-resources/base | kubectl apply
 
 #### Kubeflow Pipelines
 
-Install the Kubeflow Pipelines official Kubeflow component:
+Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/components/pipelines/multi-user/) official Kubeflow component:
 
 ```sh
 kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user | kubectl apply -f -
 ```
+
+If your container runtime is not docker, use pns executor instead:
+
+```sh
+kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user-pns | kubectl apply -f -
+```
+
+Refer to [argo workflow executor documentation](https://argoproj.github.io/argo-workflows/workflow-executors/#process-namespace-sharing-pns) for their pros and cons.
+
+**Multi-User Kubeflow Pipelines dependencies**
+
+* Istio + Kubeflow Istio Resources
+* Kubeflow Roles
+* OIDC Auth Service (or cloud provider specific auth service)
+* Profiles + KFAM
+
+**Alternative: Kubeflow Pipelines Standalone**
+
+You can install [Kubeflow Pipelines Standalone](https://www.kubeflow.org/docs/components/pipelines/installation/standalone-deployment/) which
+
+* does not support multi user separation
+* has no dependencies on the other services mentioned here
+
+You can learn more about their differences in [Installation Options for Kubeflow Pipelines
+](https://www.kubeflow.org/docs/components/pipelines/installation/overview/).
+
+Besides installation instructions in Kubeflow Pipelines Standalone documentation, you need to apply two virtual services to expose [Kubeflow Pipelines UI](https://github.com/kubeflow/pipelines/blob/1.5.0-rc.3/manifests/kustomize/base/installs/multi-user/virtual-service.yaml) and [Metadata API](https://github.com/kubeflow/pipelines/blob/1.5.0-rc.3/manifests/kustomize/base/metadata/options/istio/virtual-service.yaml) in kubeflow-gateway.
 
 #### KFServing
 
