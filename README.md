@@ -221,6 +221,8 @@ If your container runtime is not docker, use pns executor instead:
 kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user-pns | kubectl apply -f -
 ```
 
+Refer to [argo workflow executor documentation](https://argoproj.github.io/argo-workflows/workflow-executors/#process-namespace-sharing-pns) for their pros and cons.
+
 **Multi-User Kubeflow Pipelines dependencies**
 
 * Istio + Kubeflow Istio Resources
