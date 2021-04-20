@@ -39,13 +39,13 @@ spec:
   # kubeflow namespace
   - kustomization:
       repoRef:
-        nema: manifests
+        name: manifests
         path: distributions/stacks/ibm/application/kubeflow-namespace
     name: kubeflow-namespace
   # kubeflow roles
   - kustomization:
       repoRef:
-        nema: manifests
+        name: manifests
         path: distributions/stacks/ibm/application/kubeflow-roles
     name: kubeflow-roles
   
