@@ -7,4 +7,4 @@ commonLabels:
   app.kubernetes.io/component: cert-manager
   app.kubernetes.io/name: cert-manager
 resources:
-- ../overlays/self-signed
+- cluster-issuer.yaml

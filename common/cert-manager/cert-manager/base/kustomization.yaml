@@ -2,15 +2,15 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- https://github.com/jetstack/cert-manager/releases/download/v1.3.0/cert-manager.yaml
+- https://github.com/jetstack/cert-manager/releases/download/v1.3.1/cert-manager.yaml
 
 images:
 - name: quay.io/jetstack/cert-manager-controller
   newName: quay.io/jetstack/cert-manager-controller
-  newTag: v1.3.0
+  newTag: v1.3.1
 - name: quay.io/jetstack/cert-manager-cainjector
   newName: quay.io/jetstack/cert-manager-cainjector
-  newTag: v1.3.0
+  newTag: v1.3.1
 - name: quay.io/jetstack/cert-manager-webhook
   newName: quay.io/jetstack/cert-manager-webhook
-  newTag: v1.3.0
+  newTag: v1.3.1

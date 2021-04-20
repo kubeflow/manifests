@@ -3,10 +3,9 @@
 # cluster-issuer into the kubeflow-issuer package.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-bases:
-- ../../base
 resources:
-- cluster-issuer.yaml
+- ../../base
+- ../../kubeflow-issuer
 commonLabels:
   kustomize.component: cert-manager
   app.kubernetes.io/component: cert-manager
