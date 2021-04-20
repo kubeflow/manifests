@@ -37,13 +37,13 @@ spec:
     name: knative
 
   # kubeflow namespace
-  - kustomization:
+  - kustomizeConfig:
       repoRef:
         name: manifests
         path: distributions/stacks/ibm/application/kubeflow-namespace
     name: kubeflow-namespace
   # kubeflow roles
-  - kustomization:
+  - kustomizeConfig:
       repoRef:
         name: manifests
         path: distributions/stacks/ibm/application/kubeflow-roles
