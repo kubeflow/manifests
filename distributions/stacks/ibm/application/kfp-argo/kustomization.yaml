@@ -3,4 +3,3 @@ kind: Kustomization
 namespace: kubeflow
 resources:
   - ../../../../../apps/pipeline/upstream/env/platform-agnostic-multi-user
-  

@@ -3,4 +3,3 @@ kind: Kustomization
 namespace: kubeflow
 resources:
   - ../../../../../apps/tf-training/upstream/overlays/kubeflow
-    

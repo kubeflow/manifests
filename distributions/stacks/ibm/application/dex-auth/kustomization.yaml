@@ -5,4 +5,3 @@ resources:
 - ../../../../../common/dex/overlays/istio
 patchesStrategicMerge:
 - custom-env.yaml
-
