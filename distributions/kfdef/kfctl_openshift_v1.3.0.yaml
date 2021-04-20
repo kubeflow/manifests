@@ -23,8 +23,14 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: distributions/stacks/openshift/application/pipeline-agnostic
-    name: pipeline
+        path: distributions/stacks/openshift/application/kfp-tekton
+    name: kfp-tekton
+#Uncomment if you need KFP on Argo
+#  - kustomizeConfig:
+#      repoRef:
+#        name: manifests
+#        path: distributions/stacks/openshift/application/pipeline-agnostic
+#    name: pipeline
   - kustomizeConfig:
       repoRef:
         name: manifests
