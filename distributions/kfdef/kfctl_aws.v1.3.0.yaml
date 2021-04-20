@@ -82,7 +82,7 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: apps/katib/upstream/installs/katib-with-kubeflow-cert-manager
+        path: apps/katib/upstream/installs/katib-with-kubeflow
     name: katib
   - kustomizeConfig:
       repoRef:
