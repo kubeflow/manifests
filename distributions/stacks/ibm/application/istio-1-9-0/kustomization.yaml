@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: istio-system
+resources:
+- ../../../../../common/istio-1-9-0/istio-crds/base
+- ../../../../../common/istio-1-9-0/istio-namespace/base
+- ../../../../../common/istio-1-9-0/istio-install/base
+patchesStrategicMerge:
+- service-nodeport.yaml

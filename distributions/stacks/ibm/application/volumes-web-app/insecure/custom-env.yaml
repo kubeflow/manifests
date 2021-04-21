@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+spec:
+  template:
+    spec:
+      containers:
+      - name: volumes-web-app
+        env:
+        - name: APP_SECURE_COOKIES
+          value: "false"
