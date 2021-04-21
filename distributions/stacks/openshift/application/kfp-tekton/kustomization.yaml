@@ -3,3 +3,6 @@ kind: Kustomization
 resources:
 #  - ../../../../pipeline/installs/tekton
    - ../../../../../apps/kfp-tekton/upstream/env/platform-agnostic
+
+patchesStrategicMerge:
+- removesidemenu.yaml
