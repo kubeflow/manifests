@@ -4,5 +4,4 @@ commonLabels:
   app.kubernetes.io/component: notebook-controller
   app.kubernetes.io/name: notebook-controller
 resources:
-- base
-- ../../../../jupyter/notebook-controller/overlays/application/application.yaml
+- ../../../../../apps/jupyter/notebook-controller/upstream/overlays/kubeflow
