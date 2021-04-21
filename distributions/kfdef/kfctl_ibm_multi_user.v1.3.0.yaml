@@ -73,12 +73,7 @@ spec:
         name: manifests
         path: distributions/stacks/ibm/application/centraldashboard/multi-user
     name: centraldashboard
-  # katib
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: distributions/stacks/ibm/application/katib
-    name: katib
+
   # profiles
   - kustomizeConfig:
       repoRef:
