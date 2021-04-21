@@ -33,6 +33,7 @@ users:
 - system:serviceaccount:istio-system:istio-ingressgateway-service-account
 - system:serviceaccount:istio-system:istio-pilot-service-account
 - system:serviceaccount:istio-system:istio-mixer-service-account
+- system:serviceaccount:istio-system:istiod-service-account
 volumes:
 - configMap
 - downwardAPI

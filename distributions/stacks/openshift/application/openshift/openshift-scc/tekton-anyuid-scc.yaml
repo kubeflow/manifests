@@ -31,6 +31,7 @@ supplementalGroups:
 users:
 # tekton pipeline runner
 - system:serviceaccount:$(TEKTON-NAMESPACE):tekton-pipelines-controller
+- system:serviceaccount:$(TEKTON-NAMESPACE):tekton-pipelines-webhook
 volumes:
 - configMap
 - downwardAPI

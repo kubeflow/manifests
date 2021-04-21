@@ -11,7 +11,7 @@ allowHostNetwork: false
 allowHostPID: false
 allowHostPorts: false
 allowPrivilegeEscalation: true
-allowPrivilegedContainer: false
+allowPrivilegedContainer: true
 allowedCapabilities: null
 defaultAddCapabilities: null
 fsGroup:
@@ -40,6 +40,8 @@ users:
 - system:serviceaccount:$(NAMESPACE):kfserving
 # for admission-webhook
 - system:serviceaccount:$(NAMESPACE):admission-webhook-service-account
+# Allowing all serviceaccounts in kubeflow to run any uid per istio 1.9 documentation for openshift https://istio.io/latest/docs/setup/platform-setup/openshift/
+- system:serviceaccounts:$(NAMESPACE)
 volumes:
 - configMap
 - downwardAPI

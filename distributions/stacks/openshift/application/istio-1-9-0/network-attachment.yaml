@@ -1,0 +1,5 @@
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+namespace: kubeflow
+metadata:
+  name: istio-cni

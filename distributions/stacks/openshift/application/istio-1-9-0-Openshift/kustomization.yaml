@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+#namespace: istio-system
+resources:
+- namespace.yaml
+# Generated this file with 
+#istioctl profile dump openshift > openshift-profile.yaml
+# istioctl manifest generate -f openshift-profile.yaml -f profile-overlay.yaml > openshift_dump.yaml
+# from istio-1-9-0 folder
+- openshift_dump.yaml
+- ingressgateway.route.yaml

@@ -2,9 +2,22 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
 resources:
-  - ../../common/centraldashboard/overlays/stacks
+#Kubeflow roles
+  - ../../../common/kubeflow-roles/base
+#Virtual gateway
+  - ../../../common/istio-1-9-0/kubeflow-istio-resources/base
+## Per istion 1.9 installation on openshift https://istio.io/latest/docs/setup/platform-setup/openshift/
+# This is here because it needs to install in namespace kubeflow
+  - application/istio-1-9-0-Openshift/network-attachment.yaml
+  - ../../../apps/centraldashboard/upstream/overlays/istio
+#Admission webhooks
+  - ../../../apps/admission-webhook/upstream/overlays/cert-manager
 #profiles is here since namespace was not being replaced for the virtual service and pipeline depends on it
-  - ../../profiles/base_v3
+  - ../../../apps/profiles/upstream/overlays/kubeflow
+#Virtual Service for pipeline, has to be here after the gateway is created
+  - application/pipeline-agnostic/virtual-service.yaml
+#Create defualt user
+  - ../../../common/user-namespace/base
 configMapGenerator:
 - name: kubeflow-config
   envs:
@@ -27,7 +40,8 @@ vars:
     kind: ConfigMap
     name: kubeflow-config
 
+# Rebuilt profile controller image for KF 1.3
 images:
-- name: gcr.io/kubeflow-images-public/profile-controller
-  newName: quay.io/kubeflow/profile-controller
-  newTag: v1.1.0
+- name: public.ecr.aws/j1r0q0g6/notebooks/profile-controller
+  newName: quay.io/kubeflow/profile-controller 
+  newTag: v0.8.0
