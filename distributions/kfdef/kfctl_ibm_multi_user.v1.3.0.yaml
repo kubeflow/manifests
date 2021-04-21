@@ -36,6 +36,13 @@ spec:
         path: distributions/stacks/ibm/application/knative
     name: knative
 
+  # kfserving
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/ibm/application/kfserving
+    name: kfserving
+    
   # kubeflow namespace
   - kustomizeConfig:
       repoRef:
