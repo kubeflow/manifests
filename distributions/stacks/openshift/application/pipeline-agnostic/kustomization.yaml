@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+#- ../../../../../apps/pipeline/upstream/base/pipeline/cluster-scoped
+- ../../../../../apps/pipeline/upstream/cluster-scoped-resources
+- ../../../../../apps/pipeline/upstream/env/platform-agnostic
+#- virtual-service.yaml
+- metadata-gprc.yaml
+
+patchesStrategicMerge:
+- removesidemenu.yaml
+
+configMapGenerator:
+- name: workflow-controller-configmap
+  behavior: merge
+  literals:
+  - containerRuntimeExecutor=k8sapi

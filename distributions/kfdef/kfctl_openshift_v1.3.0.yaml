@@ -1,0 +1,84 @@
+apiVersion: kfdef.apps.kubeflow.org/v1
+kind: KfDef
+metadata:
+  name: kubeflow
+  namespace: kubeflow
+spec:
+  applications:
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/openshift/openshift-scc
+    name: openshift-scc
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/istio-1-9-0-Openshift
+    name: istio-stack
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/cert-manager
+    name: cert-manager
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/kfp-tekton
+    name: kfp-tekton
+#Uncomment if you need KFP on Argo
+#  - kustomizeConfig:
+#      repoRef:
+#        name: manifests
+#        path: distributions/stacks/openshift/application/pipeline-agnostic
+#    name: pipeline
+  #Only install if you need kfserving, it takes a lot of resources
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/knative
+    name: knative
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/jupyter-web-app
+    name: jupyter-web-app
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/notebook-controller
+    name: notebook-controller
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/katib
+    name: katib
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/tf-job
+    name: tf-job
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/pytorch-job
+    name: pytorch-job
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/volumes-web-app
+    name: volumes-web-app
+  # This takes a long time, please wait for it
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/kfserving
+    name: kfserving
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift
+    name: kubeflow-apps
+  repos:
+  - name: manifests
+    uri: https://github.com/kubeflow/manifests/archive/v1.3-branch.tar.gz
+  version: v1.3-branch

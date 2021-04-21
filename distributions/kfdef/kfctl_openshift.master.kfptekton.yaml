@@ -117,5 +117,5 @@ spec:
     name: kfserving
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
+    uri: https://github.com/kubeflow/manifests/archive/306d02979124bc29e48152272ddd60a59be9306c.tar.gz
   version: master

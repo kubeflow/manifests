@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+spec:
+  template:
+    spec:
+      containers:
+        - name: volumes-web-app
+          env:
+              # This disables authz and gets rid of no user error
+            - name: APP_DISABLE_AUTH
+              value: "True"
+              # This gets rid of erro: Could not find CSRF cookie XSRF-TOKEN in the request
+            - name: APP_SECURE_COOKIES
+              value: "False"
