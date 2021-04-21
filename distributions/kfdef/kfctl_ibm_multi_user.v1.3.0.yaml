@@ -56,6 +56,13 @@ spec:
         path: distributions/stacks/ibm/application/kubeflow-roles
     name: kubeflow-roles
   
+  # profiles
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/ibm/application/profiles
+    name: kubeflow-apps  
+
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -74,12 +81,6 @@ spec:
         path: distributions/stacks/ibm/application/centraldashboard/multi-user
     name: centraldashboard
 
-  # profiles
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: distributions/stacks/ibm/application/profiles
-    name: kubeflow-apps
   # katib
   - kustomizeConfig:
       repoRef:
