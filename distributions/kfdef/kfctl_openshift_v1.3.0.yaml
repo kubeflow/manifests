@@ -31,6 +31,12 @@ spec:
 #        name: manifests
 #        path: distributions/stacks/openshift/application/pipeline-agnostic
 #    name: pipeline
+  #Only install if you need kfserving, it takes a lot of resources
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/openshift/application/knative
+    name: knative
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -61,11 +67,7 @@ spec:
         name: manifests
         path: distributions/stacks/openshift/application/volumes-web-app
     name: volumes-web-app
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: distributions/stacks/openshift/application/knative
-    name: knative
+  # This takes a long time, please wait for it
   - kustomizeConfig:
       repoRef:
         name: manifests
