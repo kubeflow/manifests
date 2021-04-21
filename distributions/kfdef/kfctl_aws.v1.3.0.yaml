@@ -67,13 +67,8 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: common/istio-1-9-0/cluster-local-gateway/base
-    name: cluster-local-gateway
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
         path: common/istio-1-9-0/kubeflow-istio-resources/base
-    name: kubeflow-istio-resources
+    name: kubeflow-apps
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -84,6 +79,11 @@ spec:
         name: manifests
         path: apps/kfserving/upstream/overlays/kubeflow
     name: kfserving
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: apps/katib/upstream/installs/katib-with-kubeflow
+    name: katib
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -141,5 +141,5 @@ spec:
     name: user-namespace
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/master.tar.gz
-  version: master
+    uri: https://github.com/kubeflow/manifests/archive/v1.3-branch.tar.gz
+  version: v1.3-branch
