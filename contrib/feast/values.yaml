@@ -28,7 +28,7 @@ feast-jobservice:
   # feast-jobservice.enabled -- Flag to install Feast Job Service
   image:
     repository: gcr.io/kf-feast/feast-jobservice
-  enabled: false
+  enabled: true
 
 postgresql:
   # postgresql.enabled -- Flag to install Postgresql
