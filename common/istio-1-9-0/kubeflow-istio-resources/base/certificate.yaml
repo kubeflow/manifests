@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: istio-ingressgateway-certs
+  namespace: istio-system
+spec:
+  secretName: istio-ingressgateway-certs
+  issuerRef:
+    name: kubeflow-self-signing-issuer
+    kind: ClusterIssuer
+  commonName: kubeflow.example.com
+  dnsNames:
+    - kubeflow.example.com
