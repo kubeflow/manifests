@@ -55,6 +55,12 @@ spec:
         name: manifests
         path: distributions/stacks/ibm/application/kubeflow-roles
     name: kubeflow-roles
+  # istio resources
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/ibm/application/kubeflow-istio-resources
+    name: istio-resources
   # profiles
   - kustomizeConfig:
       repoRef:
