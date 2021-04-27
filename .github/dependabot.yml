@@ -1,0 +1,50 @@
+updates:
+- assignees:
+  - andreyvelich
+  - Bobgy
+  - gaocegege
+  - jeffwan
+  - johnugeorge
+  - krishnadurai
+  - PatrickXYS
+  - kimwnasptd
+  - thesuperzapper
+  directory: tests/scripts
+  open-pull-requests-limit: 10
+  package-ecosystem: pip
+  schedule:
+    interval: daily
+- assignees:
+  - animeshsingh
+  - Bobgy
+  - elikatsis
+  - jlewi
+  - PatrickXYS
+  - StefanoFioravanzo
+  - swiftdiaries
+  - terrytangyuan
+  - vkoukis
+  - yanniszark
+  directory: .
+  open-pull-requests-limit: 10
+  package-ecosystem: gomod
+  reviewers:
+  - pvaneck
+  schedule:
+    interval: daily
+- assignees:
+  - andreyvelich
+  - Bobgy
+  - gaocegege
+  - jeffwan
+  - johnugeorge
+  - krishnadurai
+  - PatrickXYS
+  - kimwnasptd
+  - thesuperzapper
+  directory: tests
+  open-pull-requests-limit: 10
+  package-ecosystem: gomod
+  schedule:
+    interval: daily
+version: 2
