@@ -18,6 +18,11 @@ spec:
     - kustomizeConfig:
         repoRef:
           name: manifests
+          path: distributions/stacks/openshift-managed/applications/openshift-serverless
+      name: knative-managed
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
           path: distributions/stacks/openshift-managed
       name: kubeflow-apps
   repos:
