@@ -1,0 +1,26 @@
+apiVersion: kfdef.apps.kubeflow.org/v1
+kind: KfDef
+metadata:
+  name: kubeflow
+  namespace: kubeflow
+spec:
+  applications:
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: distributions/stacks/openshift-managed/applications/cert-manager
+      name: cert-manager-managed
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: distributions/stacks/openshift-managed/applications/openshift-service-mesh
+      name: istio-managed
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: distributions/stacks/openshift-managed
+      name: kubeflow-apps
+  repos:
+    - name: manifests
+      uri: https://github.com/tumido/manifests/archive/ocp-managed.tar.gz
+  version: v1.3-branch
