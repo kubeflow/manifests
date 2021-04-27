@@ -4,34 +4,31 @@ kind: Kustomization
 namespace: kubeflow
 
 resources:
-#Kubeflow roles
-- ../../../common/kubeflow-roles/base
-#Virtual gateway
-- ../../../common/istio-1-9-0/kubeflow-istio-resources/base
-
+  - ../../../common/kubeflow-roles/base # Kubeflow roles
+  - ../../../common/istio-1-9-0/kubeflow-istio-resources/base # Virtual gateway
 
 configMapGenerator:
-- name: kubeflow-config
-  envs:
-  - ./config/params.env
+  - name: kubeflow-config
+    envs:
+      - ./config/params.env
 
 vars:
-- fieldref:
-    fieldPath: data.clusterDomain
-  name: clusterDomain
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: kubeflow-config
-- fieldref:
-    fieldPath: metadata.namespace
-  name: namespace
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: kubeflow-config
+  - fieldref:
+      fieldPath: data.clusterDomain
+    name: clusterDomain
+    objref:
+      apiVersion: v1
+      kind: ConfigMap
+      name: kubeflow-config
+  - fieldref:
+      fieldPath: metadata.namespace
+    name: namespace
+    objref:
+      apiVersion: v1
+      kind: ConfigMap
+      name: kubeflow-config
 
 images:
-- name: public.ecr.aws/j1r0q0g6/notebooks/profile-controller
-  newName: quay.io/kubeflow/profile-controller 
-  newTag: v0.8.0
+  - name: public.ecr.aws/j1r0q0g6/notebooks/profile-controller
+    newName: quay.io/kubeflow/profile-controller
+    newTag: v0.8.0

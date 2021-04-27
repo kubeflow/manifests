@@ -28,6 +28,16 @@ spec:
     - kustomizeConfig:
         repoRef:
           name: manifests
+          path: distributions/stacks/openshift-managed/applications/jupyter-web-app
+      name: jupyter-web-app
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: distributions/stacks/openshift-managed/applications/centraldashboard
+      name: centraldashboard
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
           path: distributions/stacks/openshift-managed
       name: kubeflow-apps
   repos:
