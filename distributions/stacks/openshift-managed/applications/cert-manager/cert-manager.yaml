@@ -1,0 +1,7 @@
+---
+apiVersion: operator.cert-manager.io/v1alpha1
+kind: CertManager
+metadata:
+  name: cert-manager
+  namespace: cert-manager
+spec: {}
