@@ -7,8 +7,8 @@ spec:
   selector:
     matchLabels:
       app: activator
-      app.kubernetes.io/component: knative-serving-install
-      app.kubernetes.io/name: knative-serving-install
+      app.kubernetes.io/component: knative-serving
+      app.kubernetes.io/name: knative-serving
       kustomize.component: knative
   rules:
   - {}
@@ -22,8 +22,8 @@ spec:
   selector:
     matchLabels:
       app: autoscaler
-      app.kubernetes.io/component: knative-serving-install
-      app.kubernetes.io/name: knative-serving-install
+      app.kubernetes.io/component: knative-serving
+      app.kubernetes.io/name: knative-serving
       kustomize.component: knative
   rules:
   - {}
@@ -37,8 +37,8 @@ spec:
   selector:
     matchLabels:
       app: controller
-      app.kubernetes.io/component: knative-serving-install
-      app.kubernetes.io/name: knative-serving-install
+      app.kubernetes.io/component: knative-serving
+      app.kubernetes.io/name: knative-serving
       kustomize.component: knative
   rules:
   - {}
@@ -51,8 +51,8 @@ spec:
   action: ALLOW
   selector:
     matchLabels:
-      app.kubernetes.io/component: knative-serving-install
-      app.kubernetes.io/name: knative-serving-install
+      app.kubernetes.io/component: knative-serving
+      app.kubernetes.io/name: knative-serving
       kustomize.component: knative
       role: webhook
   rules:
@@ -69,8 +69,8 @@ spec:
     matchLabels:
       app: istio-webhook
       kustomize.component: knative
-      app.kubernetes.io/component: knative-serving-install
-      app.kubernetes.io/name: knative-serving-install
+      app.kubernetes.io/component: knative-serving
+      app.kubernetes.io/name: knative-serving
   rules:
   - {}
 ---
