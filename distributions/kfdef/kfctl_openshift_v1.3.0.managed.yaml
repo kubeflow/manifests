@@ -8,32 +8,32 @@ spec:
     - kustomizeConfig:
         repoRef:
           name: manifests
-          path: distributions/stacks/openshift-managed/applications/cert-manager
+          path: distributions/stacks/openshift-managed/application/cert-manager
       name: cert-manager-managed
     - kustomizeConfig:
         repoRef:
           name: manifests
-          path: distributions/stacks/openshift-managed/applications/openshift-service-mesh
+          path: distributions/stacks/openshift-managed/application/openshift-service-mesh
       name: istio-managed
     - kustomizeConfig:
         repoRef:
           name: manifests
-          path: distributions/stacks/openshift-managed/applications/openshift-serverless
+          path: distributions/stacks/openshift-managed/application/openshift-serverless
       name: knative-managed
     - kustomizeConfig:
         repoRef:
           name: manifests
-          path: distributions/stacks/openshift-managed/applications/openshift-pipelines
+          path: distributions/stacks/openshift-managed/application/openshift-pipelines
       name: tekton-pipelines-managed
     - kustomizeConfig:
         repoRef:
           name: manifests
-          path: distributions/stacks/openshift-managed/applications/jupyter-web-app
+          path: distributions/stacks/openshift-managed/application/jupyter-web-app
       name: jupyter-web-app
     - kustomizeConfig:
         repoRef:
           name: manifests
-          path: distributions/stacks/openshift-managed/applications/centraldashboard
+          path: distributions/stacks/openshift-managed/application/centraldashboard
       name: centraldashboard
     - kustomizeConfig:
         repoRef:
