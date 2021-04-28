@@ -5,6 +5,7 @@ metadata:
   namespace: kubeflow
 spec:
   applications:
+    # Operatators
     - kustomizeConfig:
         repoRef:
           name: manifests
@@ -25,6 +26,8 @@ spec:
           name: manifests
           path: distributions/stacks/openshift-managed/application/openshift-pipelines
       name: tekton-pipelines-managed
+
+    # Kubeflow Applications
     - kustomizeConfig:
         repoRef:
           name: manifests
@@ -33,8 +36,60 @@ spec:
     - kustomizeConfig:
         repoRef:
           name: manifests
+          path: distributions/stacks/openshift-managed/application/notebook-controller
+      name: notebook-controller
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
           path: distributions/stacks/openshift-managed/application/centraldashboard
       name: centraldashboard
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: distributions/stacks/openshift-managed/application/admission-webhook
+      name: admission-webhook
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: distributions/stacks/openshift-managed/application/profiles
+      name: profiles
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: distributions/stacks/openshift-managed/application/volumes-web-app
+      name: volumes-web-app
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: distributions/stacks/openshift-managed/application/pytorch-job
+      name: pytorch-job
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: distributions/stacks/openshift-managed/application/tf-job
+      name: tf-job
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: distributions/stacks/openshift-managed/application/katib
+      name: katib
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: distributions/stacks/openshift-managed/application/kfp-tekton
+      name: kfp-tekton
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: distributions/stacks/openshift-managed/application/tensorboard
+      name: tensorboard
+    - kustomizeConfig:
+        repoRef:
+          name: manifests
+          path: distributions/stacks/openshift-managed/application/user-namespace
+      name: user-namespace
+
+    # Stack
     - kustomizeConfig:
         repoRef:
           name: manifests

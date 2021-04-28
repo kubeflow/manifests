@@ -6,6 +6,7 @@ namespace: kubeflow
 resources:
   - ../../../common/kubeflow-roles/base # Kubeflow roles
   - ../../../common/istio-1-9-0/kubeflow-istio-resources/base # Virtual gateway
+  - scc.yaml
 
 configMapGenerator:
   - name: kubeflow-config
@@ -27,6 +28,9 @@ vars:
       apiVersion: v1
       kind: ConfigMap
       name: kubeflow-config
+
+configurations:
+  - params.yaml
 
 images:
   - name: public.ecr.aws/j1r0q0g6/notebooks/profile-controller
