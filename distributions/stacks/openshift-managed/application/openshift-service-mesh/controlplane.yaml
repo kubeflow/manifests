@@ -1,0 +1,26 @@
+---
+apiVersion: maistra.io/v2
+kind: ServiceMeshControlPlane
+metadata:
+  namespace: istio-system
+  name: basic
+spec:
+  tracing:
+    sampling: 10000
+    type: Jaeger
+  policy:
+    type: Istiod
+  addons:
+    grafana:
+      enabled: true
+    jaeger:
+      install:
+        storage:
+          type: Memory
+    kiali:
+      enabled: true
+    prometheus:
+      enabled: true
+  version: v2.0
+  telemetry:
+    type: Istiod

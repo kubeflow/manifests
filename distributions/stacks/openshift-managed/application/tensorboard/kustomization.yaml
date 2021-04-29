@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../../../../apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
+  - ../../../../../apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
+
+patchesJson6902:
+  - path: ../../patch_sidecar.yaml
+    target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: deployment
