@@ -204,6 +204,7 @@ metadata:
   labels:
     eventing.knative.dev/release: v0.14.2
     rbac.authorization.k8s.io/aggregate-to-admin: 'true'
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
   name: knative-eventing-namespaced-admin
 rules:
 - apiGroups:
@@ -219,6 +220,7 @@ metadata:
   labels:
     eventing.knative.dev/release: v0.14.2
     rbac.authorization.k8s.io/aggregate-to-admin: 'true'
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
   name: knative-messaging-namespaced-admin
 rules:
 - apiGroups:
@@ -234,6 +236,7 @@ metadata:
   labels:
     eventing.knative.dev/release: v0.14.2
     rbac.authorization.k8s.io/aggregate-to-admin: 'true'
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
   name: knative-flows-namespaced-admin
 rules:
 - apiGroups:
@@ -249,6 +252,7 @@ metadata:
   labels:
     eventing.knative.dev/release: v0.14.2
     rbac.authorization.k8s.io/aggregate-to-admin: 'true'
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
   name: knative-sources-namespaced-admin
 rules:
 - apiGroups:
@@ -264,6 +268,7 @@ metadata:
   labels:
     eventing.knative.dev/release: v0.14.2
     rbac.authorization.k8s.io/aggregate-to-edit: 'true'
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
   name: knative-eventing-namespaced-edit
 rules:
 - apiGroups:
@@ -284,6 +289,7 @@ metadata:
   labels:
     eventing.knative.dev/release: v0.14.2
     rbac.authorization.k8s.io/aggregate-to-view: 'true'
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
   name: knative-eventing-namespaced-view
 rules:
 - apiGroups:
