@@ -8,6 +8,7 @@ resources:
 patchesStrategicMerge:
 - patches/configmap-patch.yaml
 - patches/namespace-injection.yaml
+- patches/clusterrole-patch.yaml
 commonLabels:
   kustomize.component: knative
   app.kubernetes.io/component: knative-serving
