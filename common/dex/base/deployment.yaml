@@ -28,6 +28,11 @@ spec:
         envFrom:
           - secretRef:
               name: dex-oidc-client
+        env:
+          - name: KUBERNETES_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
       volumes:
       - name: config
         configMap:
