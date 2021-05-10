@@ -28,3 +28,12 @@ data:
       secretKeySecret:
         name: mlpipeline-minio-artifact
         key: secretkey
+  executor: |
+    imagePullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 0.1
+        memory: 64Mi
+      limits:
+        cpu: 0.5
+        memory: 512Mi
