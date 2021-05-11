@@ -60,5 +60,5 @@ spec:
       name: name-vm # {"$kpt-set":"name-vm"}
     workloadMetadataConfig:
       nodeMetadata: GKE_METADATA_SERVER
-  nodeVersion: '1.16'
-  minMasterVersion: '1.16'
+  nodeVersion: '1.17'
+  minMasterVersion: '1.17'
