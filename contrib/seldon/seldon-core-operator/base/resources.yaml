@@ -4976,17 +4976,17 @@ spec:
         - name: DEFAULT_USER_ID
           value: '8888'
         - name: EXECUTOR_DEFAULT_CPU_REQUEST
-          value: '500m'
+          value: '100m'
         - name: EXECUTOR_DEFAULT_MEMORY_REQUEST
-          value: '512Mi'
+          value: '256Mi'
         - name: EXECUTOR_DEFAULT_CPU_LIMIT
           value: '500m'
         - name: EXECUTOR_DEFAULT_MEMORY_LIMIT
           value: '512Mi'
         - name: ENGINE_DEFAULT_CPU_REQUEST
-          value: '500m'
+          value: '100m'
         - name: ENGINE_DEFAULT_MEMORY_REQUEST
-          value: '512Mi'
+          value: '256Mi'
         - name: ENGINE_DEFAULT_CPU_LIMIT
           value: '500m'
         - name: ENGINE_DEFAULT_MEMORY_LIMIT
