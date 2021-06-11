@@ -71,7 +71,7 @@ Option 2 targets customization and ability to pick and choose individual compone
 
 The `example` directory contains an example kustomization for the single command to be able to run.
 
-:warning: In both options, we use a default username (`user`) and password (`12341234`). For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
+:warning: In both options, we use a default username (`user@example.com`) and password (`12341234`). For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
 
 ### Prerequisites
 
@@ -136,7 +136,7 @@ kustomize build common/istio-1-9-0/istio-install/base | kubectl apply -f -
 
 #### Dex
 
-Dex is an OpenID Connect Identity (OIDC) with multiple authentication backends. In this default installation, it includes a static user named `user`. By default, the user's password is `12341234`. For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
+Dex is an OpenID Connect Identity (OIDC) with multiple authentication backends. In this default installation, it includes a static user named `user@example.com`. By default, the user's password is `12341234`. For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
 
 Install Dex:
 
@@ -361,7 +361,7 @@ kustomize build apps/xgboost-job/upstream/overlays/kubeflow | kubectl apply -f -
 
 #### User Namespace
 
-Finally, create a new namespace for the the default user (named `user`).
+Finally, create a new namespace for the the default user (named `user@example.com`).
 
 ```sh
 kustomize build common/user-namespace/base | kubectl apply -f -
