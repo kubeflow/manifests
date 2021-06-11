@@ -361,7 +361,7 @@ kustomize build apps/xgboost-job/upstream/overlays/kubeflow | kubectl apply -f -
 
 #### User Namespace
 
-Finally, create a new namespace for the the default user (named `user@example.com`).
+Finally, create a new namespace for the the default user (named `kubeflow-user-example-com`).
 
 ```sh
 kustomize build common/user-namespace/base | kubectl apply -f -
