@@ -12,3 +12,4 @@ namespace: istio-system
 patchesStrategicMerge:
 - patches/service.yaml
 - patches/remove-pdb.yaml
+- patches/istio-configmap-disable-tracing.yaml

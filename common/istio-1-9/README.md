@@ -12,8 +12,8 @@ old version is `X1.Y1.Z1`:
     kustomization for the new Istio version:
 
         $ export MANIFESTS_SRC=<path/to/manifests/repo>
-        $ export ISTIO_OLD=$MANIFESTS_SRC/common/istio-X1-Y1-Z1
-        $ export ISTIO_NEW=$MANIFESTS_SRC/common/istio-X-Y-Z
+        $ export ISTIO_OLD=$MANIFESTS_SRC/common/istio-X1-Y1
+        $ export ISTIO_NEW=$MANIFESTS_SRC/common/istio-X-Y
         $ cp -a $ISTIO_OLD $ISTIO_NEW
 
 2.  Download `istioctl` for version `X.Y.Z`:
@@ -26,6 +26,7 @@ old version is `X1.Y1.Z1`:
 3.  Use `istioctl` to generate an `IstioOperator` resource, the
     CustomResource used to describe the Istio Control Plane:
 
+        $ cd $ISTIO_NEW
         $ istioctl profile dump demo > profile.yaml
 
     ---
@@ -57,8 +58,7 @@ old version is `X1.Y1.Z1`:
     ---
     **NOTE**
 
-    `split-istio-packages` is a python script under `scripts/` that is
-    included in `PATH` in a bootstrapped env.
+    `split-istio-packages` is a python script in the same folder as this file.
 
     ---
 
@@ -87,3 +87,6 @@ The Istio kustomizations make the following changes:
 - Add Istio AuthorizationPolicy in Istio's root namespace, so that sidecars deny traffic by default (explicit deny-by-default authorization model).
 - Add Gateway CRs for the Istio Ingressgateway and the Istio cluster-local gateway, as `istioctl` stopped generating them in later versions.
 - Add the istio-system namespace object to `istio-namespace`, as `istioctl` stopped generating it in later versions.
+- Configure TCP KeepAlives.
+- Disable tracing as it causes DNS breakdown. See:
+  https://github.com/istio/istio/issues/29898
