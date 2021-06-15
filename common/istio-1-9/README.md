@@ -59,6 +59,7 @@ old version is `X1.Y1.Z1`:
     **NOTE**
 
     `split-istio-packages` is a python script in the same folder as this file.
+    The `ruamel.yaml` version used is 0.16.12.
 
     ---
 

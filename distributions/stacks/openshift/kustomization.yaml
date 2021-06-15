@@ -5,10 +5,10 @@ resources:
 #Kubeflow roles
   - ../../../common/kubeflow-roles/base
 #Virtual gateway
-  - ../../../common/istio-1-9-0/kubeflow-istio-resources/base
+  - ../../../common/istio-1-9/kubeflow-istio-resources/base
 ## Per istion 1.9 installation on openshift https://istio.io/latest/docs/setup/platform-setup/openshift/
 # This is here because it needs to install in namespace kubeflow
-  - application/istio-1-9-0-Openshift/network-attachment.yaml
+  - application/istio-1-9-Openshift/network-attachment.yaml
   - ../../../apps/centraldashboard/upstream/overlays/istio
 #Admission webhooks
   - ../../../apps/admission-webhook/upstream/overlays/cert-manager
@@ -43,5 +43,5 @@ vars:
 # Rebuilt profile controller image for KF 1.3
 images:
 - name: public.ecr.aws/j1r0q0g6/notebooks/profile-controller
-  newName: quay.io/kubeflow/profile-controller 
+  newName: quay.io/kubeflow/profile-controller
   newTag: v0.8.0
