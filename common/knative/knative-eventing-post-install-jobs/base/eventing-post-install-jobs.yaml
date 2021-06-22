@@ -22,9 +22,5 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-
-# Note the following ENVVAR settings exist:
-# SYSTEM_NAMESPACE - the namespace of the control plane, defaults to knative-eventing
-# DRY_RUN - a flag to run the script without deleting or updating, defaults to false.
-
 ---
+
