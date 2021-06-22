@@ -206,7 +206,7 @@ The Manifests WG leads will be evaluating the final structure of manifests befor
 
 ### Documentation (3 weeks) (Starts the same time as Feature Freeze)
 
-Now that it’s been 3 weeks of fFeature freeze and continuous bug fixes we
+Now that it’s been 3 weeks of feature freeze and continuous bug fixes we
 should all focus on ensuring that our docs are up to date, before distributions
 start testing. Features that are at risk or being worked up until the deadline
 can be documented last, ideally most of the feature work has landed already and
