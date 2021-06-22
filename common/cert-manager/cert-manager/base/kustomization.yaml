@@ -2,7 +2,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- https://github.com/jetstack/cert-manager/releases/download/v1.4.0/cert-manager.yaml
+# Manifests downloaded from:
+# - https://github.com/jetstack/cert-manager/releases/download/v1.4.0/cert-manager.yaml
+- cert-manager.yaml
 
 images:
 - name: quay.io/jetstack/cert-manager-controller
@@ -14,3 +16,8 @@ images:
 - name: quay.io/jetstack/cert-manager-webhook
   newName: quay.io/jetstack/cert-manager-webhook
   newTag: v1.4.0
+
+patches:
+- path: patches/crd-preserve-unknown-fields.yaml
+  target:
+    kind: CustomResourceDefinition
