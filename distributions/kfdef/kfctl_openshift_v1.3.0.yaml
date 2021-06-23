@@ -13,7 +13,7 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: distributions/stacks/openshift/application/istio-1-9-0-Openshift
+        path: distributions/stacks/openshift/application/istio-1-9-Openshift
     name: istio-stack
   - kustomizeConfig:
       repoRef:

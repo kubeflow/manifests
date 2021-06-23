@@ -1,9 +1,8 @@
----
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    helm.sh/resource-policy: keep
+    "helm.sh/resource-policy": keep
   labels:
     app: istio-pilot
     chart: istio
@@ -234,7 +233,7 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    helm.sh/resource-policy: keep
+    "helm.sh/resource-policy": keep
   labels:
     app: istio-pilot
     chart: istio
@@ -1414,7 +1413,7 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    helm.sh/resource-policy: keep
+    "helm.sh/resource-policy": keep
   labels:
     app: istio-pilot
     chart: istio
@@ -1665,7 +1664,7 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    helm.sh/resource-policy: keep
+    "helm.sh/resource-policy": keep
   labels:
     app: istio-pilot
     chart: istio
@@ -1889,7 +1888,7 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    helm.sh/resource-policy: keep
+    "helm.sh/resource-policy": keep
   labels:
     app: istio-pilot
     chart: istio
@@ -1983,7 +1982,7 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    helm.sh/resource-policy: keep
+    "helm.sh/resource-policy": keep
   labels:
     app: istio-pilot
     chart: istio
@@ -2093,7 +2092,7 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    helm.sh/resource-policy: keep
+    "helm.sh/resource-policy": keep
   labels:
     app: istio-pilot
     chart: istio
@@ -2258,7 +2257,7 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    helm.sh/resource-policy: keep
+    "helm.sh/resource-policy": keep
   labels:
     app: istio-pilot
     chart: istio
@@ -2408,7 +2407,7 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    helm.sh/resource-policy: keep
+    "helm.sh/resource-policy": keep
   labels:
     app: istio-pilot
     chart: istio
@@ -2966,7 +2965,8 @@ spec:
                         format: int32
                         type: integer
                       perTryTimeout:
-                        description: Timeout per retry attempt for a given request.
+                        description: Timeout per attempt for a given request, including
+                          the initial call and any retries.
                         type: string
                       retryOn:
                         description: Specifies the conditions under which retry takes
@@ -3226,7 +3226,7 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    helm.sh/resource-policy: keep
+    "helm.sh/resource-policy": keep
   labels:
     app: istio-pilot
     chart: istio

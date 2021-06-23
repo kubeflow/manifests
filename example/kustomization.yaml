@@ -6,9 +6,9 @@ resources:
 - ../common/cert-manager/cert-manager/base
 - ../common/cert-manager/kubeflow-issuer/base
 # Istio
-- ../common/istio-1-9-0/istio-crds/base
-- ../common/istio-1-9-0/istio-namespace/base
-- ../common/istio-1-9-0/istio-install/base
+- ../common/istio-1-9/istio-crds/base
+- ../common/istio-1-9/istio-namespace/base
+- ../common/istio-1-9/istio-install/base
 # OIDC Authservice
 - ../common/oidc-authservice/base
 # Dex
@@ -18,13 +18,13 @@ resources:
 - ../common/knative/knative-serving-install/base
 - ../common/knative/knative-eventing-crds/base
 - ../common/knative/knative-eventing-install/base
-- ../common/istio-1-9-0/cluster-local-gateway/base
+- ../common/istio-1-9/cluster-local-gateway/base
 # Kubeflow namespace
 - ../common/kubeflow-namespace/base
 # Kubeflow Roles
 - ../common/kubeflow-roles/base
 # Kubeflow Istio Resources
-- ../common/istio-1-9-0/kubeflow-istio-resources/base
+- ../common/istio-1-9/kubeflow-istio-resources/base
 
 
 # Kubeflow Pipelines

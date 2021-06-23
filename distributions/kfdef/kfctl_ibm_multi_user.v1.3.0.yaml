@@ -27,7 +27,7 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: distributions/stacks/ibm/application/istio-1-9-0
+        path: distributions/stacks/ibm/application/istio-1-9
     name: istio-stack
   # knative
   - kustomizeConfig:
@@ -42,7 +42,7 @@ spec:
         name: manifests
         path: distributions/stacks/ibm/application/kfserving
     name: kfserving
-    
+
   # kubeflow namespace
   - kustomizeConfig:
       repoRef:
@@ -55,13 +55,13 @@ spec:
         name: manifests
         path: distributions/stacks/ibm/application/kubeflow-roles
     name: kubeflow-roles
-  
+
   # profiles
   - kustomizeConfig:
       repoRef:
         name: manifests
         path: distributions/stacks/ibm/application/profiles
-    name: kubeflow-apps  
+    name: kubeflow-apps
 
   - kustomizeConfig:
       repoRef:

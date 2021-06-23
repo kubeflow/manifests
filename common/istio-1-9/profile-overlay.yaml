@@ -1,6 +1,11 @@
 apiVersion: install.istio.io/v1alpha1
 kind: IstioOperator
 spec:
+  meshConfig:
+    tcpKeepalive:
+      time: 10s
+      interval: 5s
+      probes: 3
   components:
     ingressGateways:
       # Cluster-local gateway for KFServing

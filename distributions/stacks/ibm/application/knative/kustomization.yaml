@@ -5,4 +5,4 @@ resources:
 - ../../../../../common/knative/knative-serving-install/base
 - ../../../../../common/knative/knative-eventing-crds/base
 - ../../../../../common/knative/knative-eventing-install/base
-- ../../../../../common/istio-1-9-0/cluster-local-gateway/base
+- ../../../../../common/istio-1-9/cluster-local-gateway/base
