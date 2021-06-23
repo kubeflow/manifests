@@ -116,9 +116,8 @@ admission webhooks.
 Install cert-manager:
 
 ```sh
-kustomize build common/cert-manager/cert-manager-kube-system-resources/base | kubectl apply -f -
-kustomize build common/cert-manager/cert-manager-crds/base | kubectl apply -f -
-kustomize build common/cert-manager/cert-manager/overlays/self-signed | kubectl apply -f -
+kustomize build common/cert-manager/cert-manager/base | kubectl apply -f -
+kustomize build common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
 ```
 
 #### Istio
