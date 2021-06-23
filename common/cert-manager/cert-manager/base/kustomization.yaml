@@ -9,14 +9,20 @@ resources:
 images:
 - name: quay.io/jetstack/cert-manager-controller
   newName: quay.io/jetstack/cert-manager-controller
-  newTag: v1.4.0
+  newTag: v1.3.1
 - name: quay.io/jetstack/cert-manager-cainjector
   newName: quay.io/jetstack/cert-manager-cainjector
-  newTag: v1.4.0
+  newTag: v1.3.1
 - name: quay.io/jetstack/cert-manager-webhook
   newName: quay.io/jetstack/cert-manager-webhook
-  newTag: v1.4.0
+  newTag: v1.3.1
 
+# XXX: Do NOT use the namespace transformer, as cert-manager defines resources
+# in two namespaces, 'cert-manager' and 'kube-system'.
+# For more information, see https://github.com/jetstack/cert-manager/issues/4102.
+
+# Patch upstream manifests to explicitly disable 'preserveUnknownFields',
+# otherwise upgrade with 'kubectl apply' fails.
 patches:
 - path: patches/crd-preserve-unknown-fields.yaml
   target:
