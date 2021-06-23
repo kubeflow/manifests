@@ -3,19 +3,8 @@ kind: Kustomization
 
 resources:
 # Manifests downloaded from:
-# - https://github.com/jetstack/cert-manager/releases/download/v1.3.1/cert-manager.yaml
+# https://github.com/jetstack/cert-manager/releases/download/v1.3.1/cert-manager.yaml
 - cert-manager.yaml
-
-images:
-- name: quay.io/jetstack/cert-manager-controller
-  newName: quay.io/jetstack/cert-manager-controller
-  newTag: v1.3.1
-- name: quay.io/jetstack/cert-manager-cainjector
-  newName: quay.io/jetstack/cert-manager-cainjector
-  newTag: v1.3.1
-- name: quay.io/jetstack/cert-manager-webhook
-  newName: quay.io/jetstack/cert-manager-webhook
-  newTag: v1.3.1
 
 # XXX: Do NOT use the namespace transformer, as cert-manager defines resources
 # in two namespaces, 'cert-manager' and 'kube-system'.
