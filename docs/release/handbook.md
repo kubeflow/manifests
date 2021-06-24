@@ -25,7 +25,7 @@ The Release Manager will be responsible for coordinating the release and taking 
 * All the responsibilities of a Release Team Member
 
 ### Release Team Member
-Release Team Members ensure that there's enough bandwidth to perform release relative tasks. They work close with the Release Manager to address release issues.
+Release Team Members ensure that there's enough bandwidth to perform release related tasks. They work closely with the Release Manager to address release issues.
 
 **Prerequisites:** Have contributions in at least 2 Working Groups
 
@@ -37,18 +37,18 @@ Release Team Members ensure that there's enough bandwidth to perform release rel
 * Creating PRs to update manifests repo from WG provided git revisions
 * Attending the Release Team meetings
 * Providing feedback on enhancing the current Release Handbook
+* Keeping notes from the Release Team meetings, in a rotation manner between the members
 
 ### Product Manager
 They will be in charge of driving non-code deliverables, like the post-release blog post and social media announcements. The Product Manager is also responsible for tracking important features and bug fixes that should be highlighted in the release.
 
 **Prerequisites:** Experience in developing blog posts. Contributions to an existing Open Source project is a huge plus.
 
-**Time Commitments:** This role will require synchronous communication, since they need to be attending the Release Team meetings. Most of the effort is expected to start once the Feature Freeze phase completes.
+**Time Commitments:** This role will require some synchronous communication, since they will need to attend some of the later Release Team meetings. Most of the effort is expected to start once the Feature Freeze phase completes, where they will start working on the blog and release announcements.
 
 **Responsibilities:**
 
 * Driving the blog post effort
-* Keeping notes from the Release Team meetings
 * Making sure the processes are being followed
 * Handling communication for social media content publication
 
@@ -68,7 +68,9 @@ The Docs Lead is responsible for working with the Release Team to coordinate doc
 ### Working Group Liaison
 Person responsible for liaising between the release team and the WG. The will
 be the main contact point for the Release Team to figure out the progress of
-the WG as well as required component versions, throughout the release.
+the WG as well as required component versions, throughout the release. If a
+Release Team Member is already part of a WG then they could also serve as the
+liaison.
 
 **Prerequisites:** Contributor in the Working Group and acknowledged from the tech leads of that Working Group
 
@@ -82,7 +84,7 @@ the WG as well as required component versions, throughout the release.
 
 **Prerequisites:** Work at the organization that owns the distribution
 
-**Time Commitments:** This role can be completely asynchronous. Most of their work is expected to be in the Distribution testing phase.
+**Time Commitments:** This role can be completely asynchronous. Most of their work is expected to be in the Distribution testing phase. Ideally they should be involved when the first RC is cut in order to alert early for potential issues.
 
 **Responsibilities:**
 - Exposing issues that the distribution owner is facing with the new release
@@ -168,7 +170,7 @@ From that phase and forward updates to the manifests repo must only be fixing co
 
 - Provide a _git revision_ which the Manifests leads will use to update the files in the manifests repo. WGs are highly encouraged to follow the release process described above
 - Provide an initial list of issues that the WG would like to close until the final release
-- Work on closing the provided opened issues
+- Work on closing the provided open issues
 - Ensure that future_git revisions_they provide only include bug fixes, and not new features, from the previously provided _git revision_
 - Declare expected common dependency version ranges
 - Declare a WG Liaison that will be communicating with the Release Team
@@ -215,8 +217,8 @@ those can start to be documented.
 **Actions for ALL WGs:** Help on keeping the docs up to date.
 
 **Actions for the Release Team:**
-- Request a list of features, from the Working Groups, that require updates to the documentation
-- Ensure the provided components versions match the documentation
+- Request a list of features and deprecations, from the Working Groups, that require updates to the documentation
+- Ensure the provided component versions match the documentation
 - Work alongside the Working Groups to bring the docs up to date
 
 **Success Criteria:** Documentation for this release completed. A new version
@@ -252,7 +254,7 @@ We made it!
 
 **Actions for Manifests WG:**
 
-- Create the final **vX.Y** tag, pointing to the latest commit of the
+- Create the final **vX.Y** tag, pointing to the latest commit of the release branch
 - Create an **vX.Y** tag in <https://github.com/kubeflow/kubeflow>
 - Cut a new GitHub release in <https://github.com/kubeflow/kubeflow>
 
@@ -285,4 +287,6 @@ independently of the major releases.
 
 ### Release Retrospective
 
-The Release Team should create a [blameless](https://sre.google/sre-book/postmortem-culture/) retrospective postmortem and go over it with the community. The aim of this doc is for everyone to chime in and discuss what went well and what could be improved.
+The Release Team should host a [blameless](https://sre.google/sre-book/postmortem-culture/)
+retrospective and capture notes with the community. The aim of this doc
+is for everyone to chime in and discuss what went well and what could be improved.
