@@ -143,7 +143,7 @@ The manifests repo will be following the release process below:
 - [ ] Establish a regular release team meeting as appropriate on the schedule, start off slowly, but meet more often towards the end.
 - [ ] Publish draft schedule to kubeflow-discuss, with actual dates
 - [ ] Get lazy consensus on the release schedule from the WG leads
-- [ ] Ensure schedule also accounts for the point releases AFTER the major release
+- [ ] Ensure schedule also accounts for the patch releases AFTER the minor release
 
 Criteria for timeline that the team needs to consider
 - Holidays around the world that coincide with members of the release team, WG representatives, and distro representatives.
@@ -202,7 +202,7 @@ The Manifests WG leads will be evaluating the final structure of manifests befor
 **Actions for Manifests WG:**
 - Ensure the manifests provide a deployable Kubeflow installation
 - Sync with other WGs on pending issues
-- After finished testing, create a new **vX.Y-rc.3** tag pointing at the commit of the **vX.Y-branch** release branch in case more bug fixes were cherry-picked
+- After finishing testing, create a new **vX.Y-rc.3** tag on the **vX.Y-branch** release branch to ensure the latest bug fixes are included.
 
 **Success Criteria:** Manifests complete and fixes from working groups applied.
 
@@ -214,7 +214,7 @@ start testing. Features that are at risk or being worked up until the deadline
 can be documented last, ideally most of the feature work has landed already and
 those can start to be documented.
 
-**Actions for ALL WGs:** Help on keeping the docs up to date.
+**Actions for ALL WGs:** Have their documentation up to date
 
 **Actions for the Release Team:**
 - Request a list of features and deprecations, from the Working Groups, that require updates to the documentation
@@ -232,7 +232,7 @@ Distribution owners will start testing the latest RC tag and report back issues 
 
 - Evaluate which of the reported issues should be release blocking
 - Work on providing bug fixes for release blocking issues
-- Finalize their provided git revision. It should be stable (not RC) and include fixes for release blocking issues found during this time.
+- Create a final git tag. It should be stable (not RC) and include fixes for release blocking issues found during this time.
 
 **Actions for Manifests WG:**
 
@@ -240,7 +240,7 @@ Distribution owners will start testing the latest RC tag and report back issues 
 
 **Actions for Release Team:**
 
-- Official Blog post begins drafting and collating information from the Working Groups
+- Start creating the draft for the official blog post and collating information from the Working Groups
     - (Optional but encouraged) Working Groups start drafting WG-specific blog
         posts, deep diving into their respective areas
 - Preparation for social media posts can start at the beginning of this phase
@@ -255,8 +255,8 @@ We made it!
 **Actions for Manifests WG:**
 
 - Create the final **vX.Y** tag, pointing to the latest commit of the release branch
-- Create an **vX.Y** tag in <https://github.com/kubeflow/kubeflow>
 - Cut a new GitHub release in <https://github.com/kubeflow/kubeflow>
+- Cut a new GitHub release in <https://github.com/kubeflow/manifests>
 
 **Actions for Release Team:**
 
@@ -268,21 +268,21 @@ We made it!
 ## Post Release
 
 ### Point Release
-Planning for first point release begins. The importance of bugs is left to the
+Planning for first patch release begins. The importance of bugs is left to the
 judgement of the Working Group's tech leads and the Release Manager to decide.
-Fixes included in the point release must satisfy the following criteria:
+Fixes included in the patch release must satisfy the following criteria:
 * important bug fixes
 * critical security fixes
 * updates to documentation
 
 The tech leads of a WG can also coordinate and decide, alongside the
 Manifests WG tech leads and the Release Manager, if a component's versions should be
-bumped in this point release or go to the next major release.
+bumped in this patch release or go to the next minor release.
 
 The Release team continues to meet regularly, as often as needed for the point
-releases. Similar to the major release, the point releases should have a
-tracking issue or board so that distributions can track point releases
-independently of the major releases.
+releases. Similar to the minor release, the patch releases should have a
+tracking issue or board so that distributions can track patch releases
+independently of the minor releases.
 
 
 ### Release Retrospective
