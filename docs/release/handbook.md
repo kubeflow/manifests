@@ -18,9 +18,9 @@ The Release Manager will be responsible for coordinating the release and taking 
 
 **Responsibilities:**
 * Providing updates to the mailing list with the progress of the release
-* Coordinating directly with the WG leads about dates and deliverables
+* Coordinating directly with the WG liaisons and leads about dates and deliverables
 * Coordinating with the Release Team Members for the progress of the release
-* Ensuring the necessary github branches and tags are cut for the different phases of the release
+* Ensuring the WG leads have cut the necessary github branches and tags for the different phases of the release
 * Driving the Release Team meetings
 * All the responsibilities of a Release Team Member
 
@@ -42,7 +42,7 @@ Release Team Members ensure that there's enough bandwidth to perform release rel
 ### Product Manager
 They will be in charge of driving non-code deliverables, like the post-release blog post and social media announcements. The Product Manager is also responsible for tracking important features and bug fixes that should be highlighted in the release.
 
-**Prerequisites:** Experience in developing blog posts. Contributions to an existing Open Source project is a huge plus.
+**Prerequisites:** Experience in writing blog posts. Contributions to an existing Open Source project is a huge plus.
 
 **Time Commitments:** This role will require some synchronous communication, since they will need to attend some of the later Release Team meetings. Most of the effort is expected to start once the Feature Freeze phase completes, where they will start working on the blog and release announcements.
 
@@ -178,7 +178,7 @@ From that phase and forward updates to the manifests repo must only be fixing co
 **Actions for Manifests WG:**
 
 - Get a git revision from all WGs, on the first day of the Feature Freeze period. WGs need to have a git revision ready to give to the manifests WG.
-- Create a tracking issue and keep track of the pending bug fixes for each WG as well as the currently provided _git revision_
+- Create a tracking issue to keep track of the pending bug fixes for each WG as well as the currently provided _git revision_
 - Push a commit that updates the manifests for the different WGs, based on the _git revision_ they had provided.
 - Create a new **vX.Y-branch** branch in the manifests repo
 - Create a new **vX.Y-rc.1** tag that will be pointing to the branch created above
@@ -188,16 +188,16 @@ From that phase and forward updates to the manifests repo must only be fixing co
 **Actions for the Release Team:**
 - Generate a changelog/feature summary for the community, to be presented at the community meeting
     - This will allow WGs to highlight their work, and also act as a checkpoint for everyone to know that they can move to documentation and testing for the rest of the cycle.
-- Identify, early in the first week, features at risk. These should either be aggressively fixed or punted
+- Identify, early in the first week, bugs at risk. These should either be aggressively fixed or punted
 
-**Success Criteria:** All working group git branches created, manifests complete, features either have landed or been pushed to next release.
+**Success Criteria:** All working group git branches and tags are created, manifests are up to date, features either have landed or been pushed to next release.
 
 ### Manifests testing (1 week)
 
 The Manifests WG leads will be evaluating the final structure of manifests before Distribution owners start testing
 
 **Actions for other WGs:**
-- Provide updates and fixes for pending issues
+- Provide updates on the progress of pending issues and their fixes
 
 **Actions for Manifests WG:**
 - Ensure the manifests provide a deployable Kubeflow installation
@@ -208,9 +208,9 @@ The Manifests WG leads will be evaluating the final structure of manifests befor
 
 ### Documentation (3 weeks) (Starts the same time as Feature Freeze)
 
-Now that it’s been 3 weeks of feature freeze and continuous bug fixes we
-should all focus on ensuring that our docs are up to date, before distributions
-start testing. Features that are at risk or being worked up until the deadline
+Alongside the feature freeze and the continuous bug fixes we can now focus on
+ensuring that the docs are up to date, before distributions start testing.
+Features that are at risk or being worked up until the deadline
 can be documented last, ideally most of the feature work has landed already and
 those can start to be documented.
 
