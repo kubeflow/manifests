@@ -11,26 +11,6 @@ resources:
   - mysql-secret.yaml
 
 
-images:
-  - name: gcr.io/ml-pipeline/api-server
-    newName: docker.io/aipipeline/api-server
-    newTag: latest
-  - name: gcr.io/ml-pipeline/persistenceagent
-    newName: docker.io/aipipeline/persistenceagent
-    newTag: latest
-  - name: gcr.io/ml-pipeline/frontend
-    newName: docker.io/aipipeline/frontend
-    newTag: latest
-  - name: gcr.io/ml-pipeline/metadata-writer
-    newName: docker.io/aipipeline/metadata-writer
-    newTag: latest
-  - name: gcr.io/ml-pipeline/scheduledworkflow
-    newName: docker.io/aipipeline/scheduledworkflow
-    newTag: latest
-  - name: gcr.io/ml-pipeline/cache-server
-    newName: docker.io/aipipeline/cache-server
-    newTag: latest
-
 # Used by Kustomize
 vars:
 - name: kfp-namespace
