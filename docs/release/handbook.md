@@ -180,7 +180,7 @@ From that phase and forward updates to the manifests repo must only be fixing co
 
 **Actions for other WGs:**
 
-- Provide a _git revision_ which the Manifests leads will use to update the files in the manifests repo. WGs are highly encouraged to follow the release process described above
+- Provide a _git revision_ which the Manifests leads will use to update the files in the manifests repo
 - Provide an initial list of issues that the WG would like to close until the final release
 - Work on closing the provided open issues
 - Ensure that future_git revisions_they provide only include bug fixes, and not new features, from the previously provided _git revision_
@@ -189,6 +189,7 @@ From that phase and forward updates to the manifests repo must only be fixing co
 
 **Actions for Manifests WG:**
 
+- Create an issue per WG for handling the communication of _git revisions_ that the WGs will be providing
 - Get a git revision from all WGs, on the first day of the Feature Freeze period. WGs need to have a git revision ready to give to the manifests WG.
 - Create a tracking issue to keep track of the pending bug fixes for each WG as well as the currently provided _git revision_
 - Push a commit that updates the manifests for the different WGs, based on the _git revision_ they had provided.
