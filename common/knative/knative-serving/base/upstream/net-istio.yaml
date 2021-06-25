@@ -7,12 +7,10 @@ metadata:
     serving.knative.dev/controller: "true"
     networking.knative.dev/ingress-provider: istio
 rules:
-- apiGroups: ["networking.istio.io"]
-  resources: ["virtualservices", "gateways"]
-  verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
-
+  - apiGroups: ["networking.istio.io"]
+    resources: ["virtualservices", "gateways"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
 ---
-
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -25,15 +23,13 @@ spec:
   selector:
     istio: cluster-local-gateway
   servers:
-  - port:
-      number: 80
-      name: http
-      protocol: HTTP
-    hosts:
-    - "*"
-
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
 ---
-
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: MutatingWebhookConfiguration
 metadata:
@@ -42,21 +38,19 @@ metadata:
     serving.knative.dev/release: "v0.17.1"
     networking.knative.dev/ingress-provider: istio
 webhooks:
-- admissionReviewVersions:
-  - v1beta1
-  clientConfig:
-    service:
-      name: istio-webhook
-      namespace: knative-serving
-  failurePolicy: Fail
-  sideEffects: None
-  objectSelector:
-    matchExpressions:
-    - {key: "serving.knative.dev/configuration", operator: Exists}
-  name: webhook.istio.networking.internal.knative.dev
-
+  - admissionReviewVersions:
+      - v1beta1
+    clientConfig:
+      service:
+        name: istio-webhook
+        namespace: knative-serving
+    failurePolicy: Fail
+    sideEffects: None
+    objectSelector:
+      matchExpressions:
+        - {key: "serving.knative.dev/configuration", operator: Exists}
+    name: webhook.istio.networking.internal.knative.dev
 ---
-
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: ValidatingWebhookConfiguration
 metadata:
@@ -65,22 +59,20 @@ metadata:
     serving.knative.dev/release: "v0.17.1"
     networking.knative.dev/ingress-provider: istio
 webhooks:
-- admissionReviewVersions:
-  - v1beta1
-  clientConfig:
-    service:
-      name: istio-webhook
-      namespace: knative-serving
-  failurePolicy: Fail
-  sideEffects: None
-  name: config.webhook.istio.networking.internal.knative.dev
-  namespaceSelector:
-    matchExpressions:
-    - key: serving.knative.dev/release
-      operator: Exists
-
+  - admissionReviewVersions:
+      - v1beta1
+    clientConfig:
+      service:
+        name: istio-webhook
+        namespace: knative-serving
+    failurePolicy: Fail
+    sideEffects: None
+    name: config.webhook.istio.networking.internal.knative.dev
+    namespaceSelector:
+      matchExpressions:
+        - key: serving.knative.dev/release
+          operator: Exists
 ---
-
 apiVersion: v1
 kind: Secret
 metadata:
@@ -89,9 +81,7 @@ metadata:
   labels:
     serving.knative.dev/release: "v0.17.1"
     networking.knative.dev/ingress-provider: istio
-
 ---
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -145,9 +135,7 @@ data:
     # To use only Istio service mesh and no cluster-local-gateway, replace
     # all local-gateway.* entries by the following entry.
     local-gateway.mesh: "mesh"
-
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -171,36 +159,34 @@ spec:
     spec:
       serviceAccountName: controller
       containers:
-      - name: networking-istio
-        image: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller@sha256:d641b71dfc38afcbd30121b57f11cb3c489413b93166ae77d724da1b2a5f5759
-        resources:
-          requests:
-            cpu: 30m
-            memory: 40Mi
-          limits:
-            cpu: 300m
-            memory: 400Mi
-        env:
-        - name: SYSTEM_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: CONFIG_LOGGING_NAME
-          value: config-logging
-        - name: CONFIG_OBSERVABILITY_NAME
-          value: config-observability
-        - name: METRICS_DOMAIN
-          value: knative.dev/net-istio
-        securityContext:
-          allowPrivilegeEscalation: false
-        ports:
-        - name: metrics
-          containerPort: 9090
-        - name: profiling
-          containerPort: 8008
-
+        - name: networking-istio
+          image: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller@sha256:d641b71dfc38afcbd30121b57f11cb3c489413b93166ae77d724da1b2a5f5759
+          resources:
+            requests:
+              cpu: 30m
+              memory: 40Mi
+            limits:
+              cpu: 300m
+              memory: 400Mi
+          env:
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CONFIG_LOGGING_NAME
+              value: config-logging
+            - name: CONFIG_OBSERVABILITY_NAME
+              value: config-observability
+            - name: METRICS_DOMAIN
+              value: knative.dev/net-istio
+          securityContext:
+            allowPrivilegeEscalation: false
+          ports:
+            - name: metrics
+              containerPort: 9090
+            - name: profiling
+              containerPort: 8008
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -225,40 +211,38 @@ spec:
     spec:
       serviceAccountName: controller
       containers:
-      - name: webhook
-        image: gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook@sha256:23df9385de0f11ae3bfcdf03ed5e9935342a5433990ef2e515df5b418d978468
-        resources:
-          requests:
-            cpu: 20m
-            memory: 20Mi
-          limits:
-            cpu: 200m
-            memory: 200Mi
-        env:
-        - name: SYSTEM_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: CONFIG_LOGGING_NAME
-          value: config-logging
-        - name: CONFIG_OBSERVABILITY_NAME
-          value: config-observability
-        - name: METRICS_DOMAIN
-          value: knative.dev/net-istio
-        - name: WEBHOOK_NAME
-          value: istio-webhook
-        securityContext:
-          allowPrivilegeEscalation: false
-        ports:
-        - name: metrics
-          containerPort: 9090
-        - name: profiling
-          containerPort: 8008
-        - name: https-webhook
-          containerPort: 8443
-
+        - name: webhook
+          image: gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook@sha256:23df9385de0f11ae3bfcdf03ed5e9935342a5433990ef2e515df5b418d978468
+          resources:
+            requests:
+              cpu: 20m
+              memory: 20Mi
+            limits:
+              cpu: 200m
+              memory: 200Mi
+          env:
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CONFIG_LOGGING_NAME
+              value: config-logging
+            - name: CONFIG_OBSERVABILITY_NAME
+              value: config-observability
+            - name: METRICS_DOMAIN
+              value: knative.dev/net-istio
+            - name: WEBHOOK_NAME
+              value: istio-webhook
+          securityContext:
+            allowPrivilegeEscalation: false
+          ports:
+            - name: metrics
+              containerPort: 9090
+            - name: profiling
+              containerPort: 8008
+            - name: https-webhook
+              containerPort: 8443
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -270,16 +254,14 @@ metadata:
     networking.knative.dev/ingress-provider: istio
 spec:
   ports:
-  - name: http-metrics
-    port: 9090
-    targetPort: 9090
-  - name: http-profiling
-    port: 8008
-    targetPort: 8008
-  - name: https-webhook
-    port: 443
-    targetPort: 8443
+    - name: http-metrics
+      port: 9090
+      targetPort: 9090
+    - name: http-profiling
+      port: 8008
+      targetPort: 8008
+    - name: https-webhook
+      port: 443
+      targetPort: 8443
   selector:
     app: istio-webhook
-
----

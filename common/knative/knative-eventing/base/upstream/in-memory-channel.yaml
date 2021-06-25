@@ -1,4 +1,3 @@
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -9,9 +8,7 @@ metadata:
 data:
   MaxIdleConnections: "1000"
   MaxIdleConnectionsPerHost: "100"
-
 ---
-
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -29,9 +26,7 @@ rules:
       - get
       - list
       - watch
-
 ---
-
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -52,9 +47,7 @@ rules:
       - watch
       - update
       - patch
-
 ---
-
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -154,7 +147,6 @@ rules:
       - create
       - update
       - patch
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -204,9 +196,7 @@ rules:
       - create
       - update
       - patch
-
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -225,9 +215,7 @@ spec:
       port: 80
       protocol: TCP
       targetPort: 8080
-
 ---
-
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -235,9 +223,7 @@ metadata:
   namespace: knative-eventing
   labels:
     eventing.knative.dev/release: "v0.17.9"
-
 ---
-
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -245,9 +231,7 @@ metadata:
   namespace: knative-eventing
   labels:
     eventing.knative.dev/release: "v0.17.9"
-
 ---
-
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -262,9 +246,7 @@ roleRef:
   kind: ClusterRole
   name: imc-controller
   apiGroup: rbac.authorization.k8s.io
-
 ---
-
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -279,9 +261,84 @@ roleRef:
   kind: ClusterRole
   name: imc-dispatcher
   apiGroup: rbac.authorization.k8s.io
-
 ---
-
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: inmemorychannels.messaging.knative.dev
+  labels:
+    eventing.knative.dev/release: "v0.17.9"
+    knative.dev/crd-install: "true"
+    messaging.knative.dev/subscribable: "true"
+    duck.knative.dev/addressable: "true"
+spec:
+  group: messaging.knative.dev
+  versions:
+    - name: v1beta1
+      served: true
+      storage: true
+      subresources:
+        status: {}
+      schema:
+        openAPIV3Schema:
+          type: object
+          x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+        - name: URL
+          type: string
+          jsonPath: .status.address.url
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp
+        - name: Ready
+          type: string
+          jsonPath: ".status.conditions[?(@.type==\"Ready\")].status"
+        - name: Reason
+          type: string
+          jsonPath: ".status.conditions[?(@.type==\"Ready\")].reason"
+    - subresources:
+        status: {}
+      schema:
+        openAPIV3Schema:
+          type: object
+          x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+        - name: URL
+          type: string
+          jsonPath: .status.address.url
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp
+        - name: Ready
+          type: string
+          jsonPath: ".status.conditions[?(@.type==\"Ready\")].status"
+        - name: Reason
+          type: string
+          jsonPath: ".status.conditions[?(@.type==\"Ready\")].reason"
+      name: v1
+      served: true
+      storage: false
+  names:
+    kind: InMemoryChannel
+    plural: inmemorychannels
+    singular: inmemorychannel
+    categories:
+      - all
+      - knative
+      - messaging
+      - channel
+    shortNames:
+      - imc
+  scope: Namespaced
+  conversion:
+    strategy: Webhook
+    webhook:
+      conversionReviewVersions: ["v1", "v1beta1"]
+      clientConfig:
+        service:
+          name: eventing-webhook
+          namespace: knative-eventing
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -326,9 +383,7 @@ spec:
               containerPort: 9090
             - name: profiling
               containerPort: 8008
-
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -367,5 +422,5 @@ spec:
           ports:
             - containerPort: 9090
               name: metrics
-
 ---
+
