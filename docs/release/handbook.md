@@ -90,6 +90,20 @@ liaison.
 - Exposing issues that the distribution owner is facing with the new release
 - Syncing with the release team during distro testing phase, we want a nice tight feedback loop there
 
+### Shadow
+
+A person that works closely with a specific release team member as an apprentice. The member they shadow will be acting as a mentor to the shadow and will be educating them about the tasks and day to day operations that specific role needs to perform.
+
+Any Release Team member may select one or more mentees to shadow the release process in order to help fulfill future Release Team staffing requirements and continue to grow the Kubeflow community in general.
+
+**Prerequisites:** none
+
+**Time Commitments:** This role can be completely asynchronous. Most of their work is expected to be in the Feature Freeze and Documentation phases.
+
+**Responsibilities:**
+- Providing a roadmap and dependency updates to the Community early in the release cycle
+- Communicating with Release Team during the Feature Freeze about the progress of bug fixes
+
 ## Proposed WG Processes
 
 ### Releasing
@@ -112,10 +126,6 @@ Working groups should briefly describe what changes to existing [kubeflow.org](h
 Working Groups should be tracking features for the release, as well as the documentation status of each feature as it’s being developed so that the documentation team can keep track of the documentation work that needs to be done.
 
 ## Terminology
-
-### Shadow
-
-A person that works closely with a specific release team member as an apprentice. The member they shadow will be acting as a mentor to the shadow and will be educating them about the tasks and day to day operations that specific role needs to perform.
 
 ### git revision
 
