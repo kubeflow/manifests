@@ -241,6 +241,8 @@ in the website is cut.
 
 Distribution owners will start testing the latest RC tag and report back issues they find. Depending on the severity of the issues, and number of bug fixes that will accommodate them, the Manifests WG leads might need to cut a new RC tag.
 
+After the 3 weeks pass, for this phase, the release process will not further wait for the distributions to be ready.
+
 **Actions for other WGs:**
 
 - Evaluate which of the reported issues should be release blocking
