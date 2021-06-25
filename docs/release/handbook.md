@@ -113,9 +113,9 @@ Working Groups should be tracking features for the release, as well as the docum
 
 ## Terminology
 
-### Shadowing
+### Shadow
 
-A person that has worked closely with the Release Manager in the past. Based on that interaction they should be able to handle tasks that the Release Manager may not be able to cover and share knowledge about the release process.
+A person that works closely with a specific release team member as an apprentice. The member they shadow will be acting as a mentor to the shadow and will be educating them about the tasks and day to day operations that specific role needs to perform.
 
 ### git revision
 
