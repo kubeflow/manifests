@@ -22,6 +22,7 @@ The Release Manager will be responsible for coordinating the release and taking 
 * Coordinating with the Release Team Members for the progress of the release
 * Ensuring the WG leads have cut the necessary github branches and tags for the different phases of the release
 * Driving the Release Team meetings
+* Making sure the processes are being followed
 * All the responsibilities of a Release Team Member
 
 ### Release Team Member
@@ -49,7 +50,6 @@ They will be in charge of driving non-code deliverables, like the post-release b
 **Responsibilities:**
 
 * Driving the blog post effort
-* Making sure the processes are being followed
 * Handling communication for social media content publication
 
 ### Docs Lead
@@ -98,11 +98,11 @@ Any Release Team member may select one or more mentees to shadow the release pro
 
 **Prerequisites:** none
 
-**Time Commitments:** This role can be completely asynchronous. Most of their work is expected to be in the Feature Freeze and Documentation phases.
+**Time Commitments:** The shadows should be prepared to invest a lot of cycles to be up to date with the work done from their mentor
 
 **Responsibilities:**
-- Providing a roadmap and dependency updates to the Community early in the release cycle
-- Communicating with Release Team during the Feature Freeze about the progress of bug fixes
+- Staying in sync with the work done by their mentor
+- Keeping a list of things that could be improved in the next release for the role they shadow
 
 ## Proposed WG Processes
 
