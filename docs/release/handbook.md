@@ -41,7 +41,7 @@ Release Team Members ensure that there's enough bandwidth to perform release rel
 * Keeping notes from the Release Team meetings, in a rotation manner between the members
 
 ### Product Manager
-They will be in charge of driving non-code deliverables, like the post-release blog post and social media announcements. The Product Manager is also responsible for tracking important features and bug fixes that should be highlighted in the release.
+They will be in charge of driving non-code deliverables, like the post-release blog post and social media announcements.
 
 **Prerequisites:** Experience in writing blog posts. Contributions to an existing Open Source project is a huge plus.
 
@@ -51,6 +51,8 @@ They will be in charge of driving non-code deliverables, like the post-release b
 
 * Driving the blog post effort
 * Handling communication for social media content publication
+* Orchestrating and creating user surveys
+* Tracking important features and bug fixes that should be highlighted in the release.
 
 ### Docs Lead
 The Docs Lead is responsible for working with the Release Team to coordinate documentation updates for the next Kubeflow release.
