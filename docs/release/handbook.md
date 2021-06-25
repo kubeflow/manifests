@@ -9,6 +9,8 @@ The purpose of this document is to define the roles and processes for the Kubefl
 ### Release Manager
 The Release Manager will be responsible for coordinating the release and taking ultimate accountability for all release tasks to be completed on time.
 
+If multiple Release Team members meet the prerequisites to become a Release Manager, the one from a different organization than the one that drove the previous release should be preferred.
+
 **Prerequisites:**
 1. Be a contributor for at least 1 year
 2. Have shadowed in a previous release or be a Release Team member in the past
@@ -24,6 +26,14 @@ The Release Manager will be responsible for coordinating the release and taking 
 * Driving the Release Team meetings
 * Making sure the processes are being followed
 * All the responsibilities of a Release Team Member
+
+**Autority:**
+The Release Manager will need to have authority to take some decisions, in
+order to ensure the stability of the release and completion in a timely manner.
+Such decisions include:
+* Moving the release process to the next phase, even if there are controversial issues at hand
+* Delaying the release until some important issues are resolved
+* Denying component version upgrades
 
 ### Release Team Member
 Release Team Members ensure that there's enough bandwidth to perform release related tasks. They work closely with the Release Manager to address release issues.
