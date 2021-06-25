@@ -146,6 +146,26 @@ The manifests repo will be following the release process below:
 
 ## Timeline
 
+| Week | Events |
+| --- | --- |
+| 1 | Development |
+| 2 |   |
+| 3 |   |
+| 4 |   |
+| 5 |   |
+| 6 |   |
+| 7 |   |
+| 8 |   |
+| 9 |   |
+| 10 |   |
+| 11 | Feature Freeze, Documentation |
+| 12 |   |
+| 13 | Manifests testing week |
+| 14 | Distributions testing |
+| 15 |   |
+| 16 |   |
+| 17 | Release |
+
 
 ### Preparation
 
