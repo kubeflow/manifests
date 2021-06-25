@@ -10,7 +10,7 @@ The purpose of this document is to define the roles and processes for the Kubefl
 The Release Manager will be responsible for coordinating the release and taking ultimate accountability for all release tasks to be completed on time.
 
 **Prerequisites:**
-1. Be a contributor for at least 2 years
+1. Be a contributor for at least 1 year
 2. Have shadowed in a previous release or be a Release Team member in the past
 3. Contributions in at least 2 Working Groups
 
@@ -27,7 +27,7 @@ The Release Manager will be responsible for coordinating the release and taking 
 ### Release Team Member
 Release Team Members ensure that there's enough bandwidth to perform release related tasks. They work closely with the Release Manager to address release issues.
 
-**Prerequisites:** Have contributions in at least 2 Working Groups
+**Prerequisites:** none
 
 **Time Commitments:** Their role will need to be synchronous, since they are expected to join the Release meetings. Their time commitment is expected to be spread out throughout the release.
 
