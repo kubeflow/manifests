@@ -282,7 +282,7 @@ We made it!
 
 ## Post Release
 
-### Point Release
+### Patch Release
 Planning for first patch release begins. The importance of bugs is left to the
 judgement of the Working Group's tech leads and the Release Manager to decide.
 Fixes included in the patch release must satisfy the following criteria:
