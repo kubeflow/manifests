@@ -3,4 +3,4 @@ kind: Kustomization
 namespace: kubeflow
 resources:
 # Kubeflow Istio Resources
-- ../../../../../common/istio-1-9-0/kubeflow-istio-resources/base
+- ../../../../../common/istio-1-9/kubeflow-istio-resources/base

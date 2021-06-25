@@ -1,41 +1,18 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: cert-manager
+
 resources:
-- namespace.yaml
-- api-service.yaml
-- cluster-role-binding.yaml
-- cluster-role.yaml
-- deployment.yaml
-- mutating-webhook-configuration.yaml
-- service-account.yaml
-- service.yaml
-- validating-webhook-configuration.yaml
-commonLabels:
-  kustomize.component: cert-manager
-images:
-- name: quay.io/jetstack/cert-manager-controller
-  newName: quay.io/jetstack/cert-manager-controller
-  newTag: v0.11.0
-- name: quay.io/jetstack/cert-manager-webhook
-  newName: quay.io/jetstack/cert-manager-webhook
-  newTag: v0.11.0
-- name: quay.io/jetstack/cert-manager-cainjector
-  newName: quay.io/jetstack/cert-manager-cainjector
-  newTag: v0.11.0
-configMapGenerator:
-- name: cert-manager-parameters
-  envs:
-  - params.env
-generatorOptions:
-  disableNameSuffixHash: true
-vars:
-- name: namespace
-  objref:
-    kind: ConfigMap
-    name: cert-manager-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.namespace
-configurations:
-- params.yaml
+# Manifests downloaded from:
+# https://github.com/jetstack/cert-manager/releases/download/v1.3.1/cert-manager.yaml
+- cert-manager.yaml
+
+# XXX: Do NOT use the namespace transformer, as cert-manager defines resources
+# in two namespaces, 'cert-manager' and 'kube-system'.
+# For more information, see https://github.com/jetstack/cert-manager/issues/4102.
+
+# Patch upstream manifests to explicitly disable 'preserveUnknownFields',
+# otherwise upgrade with 'kubectl apply' fails.
+patches:
+- path: patches/crd-preserve-unknown-fields.yaml
+  target:
+    kind: CustomResourceDefinition

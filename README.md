@@ -44,21 +44,20 @@ This repo periodically syncs all official Kubeflow components from their respect
 | TFJob Operator | apps/tf-training/upstream | [v1.1.0](https://github.com/kubeflow/tf-operator/tree/v1.1.0/manifests) |
 | PyTorch Operator | apps/pytorch-job/upstream | [v0.7.0](https://github.com/kubeflow/pytorch-operator/tree/v0.7.0/manifests) |
 | MPI Operator | apps/mpi-job/upstream | [b367aa55886d2b042f5089df359d8e067e49e8d1](https://github.com/kubeflow/mpi-operator/tree/b367aa55886d2b042f5089df359d8e067e49e8d1/manifests) |
-| MXNet Operator | apps/mxnet-job/upstream | [v1.1.0](https://github.com/kubeflow/mxnet-operator/v1.1.0/manifests) |
+| MXNet Operator | apps/mxnet-job/upstream | [v1.1.0](https://github.com/kubeflow/mxnet-operator/tree/v1.1.0/manifests) |
 | XGBoost Operator | apps/xgboost-job/upstream | [v0.2.0](https://github.com/kubeflow/xgboost-operator/tree/v0.2.0/manifests) |
-| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.3.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.3.0-rc.1/components/notebook-controller/config) |
-| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.3.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.3.0-rc.1/components/tensorboard-controller/config) |
-| Central Dashboard | apps/centraldashboard/upstream | [v1.3.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.3.0-rc.1/components/centraldashboard/manifests) |
-| Profiles + KFAM | apps/profiles/upstream | [v1.3.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.3.0-rc.1/components/profile-controller/config) |
-| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.3.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.3.0-rc.1/components/admission-webhook/manifests) |
-| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.3.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.3.0-rc.1/components/crud-web-apps/jupyter/manifests) |
-| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.3.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.3.0-rc.1/components/crud-web-apps/tensorboards/manifests) |
-| Volumes Web App | apps/volumes-web-app/upstream | [v1.3.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.3.0-rc.1/components/crud-web-apps/volumes/manifests) |
-| Katib | apps/katib/upstream | [origin/release-0.11 (7d7c34c72ab8bce74262c7abbe55ef9312291219)](https://github.com/kubeflow/katib/tree/7d7c34c72ab8bce74262c7abbe55ef9312291219/manifests/v1beta1) |
-| KFServing | apps/kfserving/upstream | [origin/release-0.5 (e189a510121c09f764f749143b80f6ee6baaf48b)](https://github.com/kubeflow/kfserving/tree/e189a510121c09f764f749143b80f6ee6baaf48b/config) |
-| Kubeflow Pipelines | apps/pipeline/upstream | [1.5.0](https://github.com/kubeflow/pipelines/tree/1.5.0/manifests/kustomize) |
-| Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [v0.8.0-rc0](https://github.com/kubeflow/kfp-tekton/tree/v0.8.0-rc0/manifests/kustomize) |
-
+| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.3.1-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.1-rc.0/components/notebook-controller/config) |
+| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.3.1-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.1-rc.0/components/tensorboard-controller/config) |
+| Central Dashboard | apps/centraldashboard/upstream | [v1.3.1-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.1-rc.0/components/centraldashboard/manifests) |
+| Profiles + KFAM | apps/profiles/upstream | [v1.3.1-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.1-rc.0/components/profile-controller/config) |
+| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.3.1-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.1-rc.0/components/admission-webhook/manifests) |
+| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.3.1-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.1-rc.0/components/crud-web-apps/jupyter/manifests) |
+| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.3.1-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.1-rc.0/components/crud-web-apps/tensorboards/manifests) |
+| Volumes Web App | apps/volumes-web-app/upstream | [v1.3.1-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.1-rc.0/components/crud-web-apps/volumes/manifests) |
+| Katib | apps/katib/upstream | [v0.11.1](https://github.com/kubeflow/katib/tree/v0.11.1/manifests/v1beta1) |
+| KFServing | apps/kfserving/upstream | [e189a510121c09f764f749143b80f6ee6baaf48b (release-0.5)](https://github.com/kubeflow/kfserving/tree/e189a510121c09f764f749143b80f6ee6baaf48b/config) |
+| Kubeflow Pipelines | apps/pipeline/upstream | [1.5.1](https://github.com/kubeflow/pipelines/tree/1.5.1/manifests/kustomize) |
+| Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [v0.8.0](https://github.com/kubeflow/kfp-tekton/tree/v0.8.0/manifests/kustomize) |
 ## Installation
 
 Starting Kubeflow 1.3, the Manifests WG provides two options for installing Kubeflow official components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
@@ -71,7 +70,7 @@ Option 2 targets customization and ability to pick and choose individual compone
 
 The `example` directory contains an example kustomization for the single command to be able to run.
 
-:warning: In both options, we use a default username (`user`) and password (`12341234`). For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
+:warning: In both options, we use a default email (`user@example.com`) and password (`12341234`). For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
 
 ### Prerequisites
 
@@ -116,9 +115,8 @@ admission webhooks.
 Install cert-manager:
 
 ```sh
-kustomize build common/cert-manager/cert-manager-kube-system-resources/base | kubectl apply -f -
-kustomize build common/cert-manager/cert-manager-crds/base | kubectl apply -f -
-kustomize build common/cert-manager/cert-manager/overlays/self-signed | kubectl apply -f -
+kustomize build common/cert-manager/cert-manager/base | kubectl apply -f -
+kustomize build common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
 ```
 
 #### Istio
@@ -129,14 +127,14 @@ network authorization and implement routing policies.
 Install Istio:
 
 ```sh
-kustomize build common/istio-1-9-0/istio-crds/base | kubectl apply -f -
-kustomize build common/istio-1-9-0/istio-namespace/base | kubectl apply -f -
-kustomize build common/istio-1-9-0/istio-install/base | kubectl apply -f -
+kustomize build common/istio-1-9/istio-crds/base | kubectl apply -f -
+kustomize build common/istio-1-9/istio-namespace/base | kubectl apply -f -
+kustomize build common/istio-1-9/istio-install/base | kubectl apply -f -
 ```
 
 #### Dex
 
-Dex is an OpenID Connect Identity (OIDC) with multiple authentication backends. In this default installation, it includes a static user named `user`. By default, the user's password is `12341234`. For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
+Dex is an OpenID Connect Identity (OIDC) with multiple authentication backends. In this default installation, it includes a static user with email `user@example.com`. By default, the user's password is `12341234`. For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
 
 Install Dex:
 
@@ -159,16 +157,14 @@ Knative is used by the KFServing official Kubeflow component.
 Install Knative Serving:
 
 ```sh
-kustomize build common/knative/knative-serving-crds/base | kubectl apply -f -
-kustomize build common/knative/knative-serving-install/base | kubectl apply -f -
-kustomize build common/istio-1-9-0/cluster-local-gateway/base | kubectl apply -f -
+kustomize build common/knative/knative-serving/base | kubectl apply -f -
+kustomize build common/istio-1-9/cluster-local-gateway/base | kubectl apply -f -
 ```
 
 Optionally, you can install Knative Eventing which can be used for inference request logging:
 
 ```sh
-kustomize build common/knative/knative-eventing-crds/base | kubectl apply -f -
-kustomize build common/knative/knative-eventing-install/base | kubectl apply -f -
+kustomize build common/knative/knative-eventing/base | kubectl apply -f -
 ```
 
 #### Kubeflow Namespace
@@ -204,7 +200,7 @@ well.
 Install istio resources:
 
 ```sh
-kustomize build common/istio-1-9-0/kubeflow-istio-resources/base | kubectl apply -f -
+kustomize build common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
 ```
 
 #### Kubeflow Pipelines
@@ -361,7 +357,7 @@ kustomize build apps/xgboost-job/upstream/overlays/kubeflow | kubectl apply -f -
 
 #### User Namespace
 
-Finally, create a new namespace for the the default user (named `user`).
+Finally, create a new namespace for the the default user (named `kubeflow-user-example-com`).
 
 ```sh
 kustomize build common/user-namespace/base | kubectl apply -f -

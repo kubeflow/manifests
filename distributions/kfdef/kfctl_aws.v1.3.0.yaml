@@ -67,7 +67,7 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: common/istio-1-9-0/kubeflow-istio-resources/base
+        path: common/istio-1-9/kubeflow-istio-resources/base
     name: kubeflow-apps
   - kustomizeConfig:
       repoRef:
