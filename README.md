@@ -158,16 +158,14 @@ Knative is used by the KFServing official Kubeflow component.
 Install Knative Serving:
 
 ```sh
-kustomize build common/knative/knative-serving-crds/base | kubectl apply -f -
-kustomize build common/knative/knative-serving-install/base | kubectl apply -f -
+kustomize build common/knative/knative-serving/base | kubectl apply -f -
 kustomize build common/istio-1-9/cluster-local-gateway/base | kubectl apply -f -
 ```
 
 Optionally, you can install Knative Eventing which can be used for inference request logging:
 
 ```sh
-kustomize build common/knative/knative-eventing-crds/base | kubectl apply -f -
-kustomize build common/knative/knative-eventing-install/base | kubectl apply -f -
+kustomize build common/knative/knative-eventing/base | kubectl apply -f -
 ```
 
 #### Kubeflow Namespace
