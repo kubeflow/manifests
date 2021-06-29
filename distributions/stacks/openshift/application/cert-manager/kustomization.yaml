@@ -4,8 +4,7 @@ commonLabels:
   app.kubernetes.io/name: cert-manager
   kustomize.component: cert-manager
 kind: Kustomization
-#namespace: cert-manager
+namespace: cert-manager
 resources:
-- ../../../../../common/cert-manager/cert-manager-kube-system-resources/base
-- ../../../../../common/cert-manager/cert-manager-crds/base
-- ../../../../../common/cert-manager/cert-manager/overlays/self-signed
+- ../../../../../common/cert-manager/cert-manager/base/
+- ../../../../../common/cert-manager/kubeflow-issuer/base
