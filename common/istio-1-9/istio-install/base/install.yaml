@@ -1142,7 +1142,7 @@ data:
         "sts": {
           "servicePort": 0
         },
-        "tag": "1.9.5",
+        "tag": "1.9.6",
         "tracer": {
           "datadog": {
             "address": "$(HOST_IP):8126"
@@ -1944,6 +1944,7 @@ webhooks:
       name: istiod
       namespace: istio-system
       path: "/inject"
+      port: 443
     caBundle: ""
   sideEffects: None
   rules:
@@ -2102,7 +2103,7 @@ spec:
           value: standard
         - name: ISTIO_META_CLUSTER_ID
           value: Kubernetes
-        image: docker.io/istio/proxyv2:1.9.5
+        image: docker.io/istio/proxyv2:1.9.6
         name: istio-proxy
         ports:
         - containerPort: 15021
@@ -2297,7 +2298,7 @@ spec:
           value: Kubernetes
         - name: EXTERNAL_ISTIOD
           value: "false"
-        image: docker.io/istio/pilot:1.9.5
+        image: docker.io/istio/pilot:1.9.6
         name: discovery
         ports:
         - containerPort: 8080
