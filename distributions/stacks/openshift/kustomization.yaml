@@ -8,7 +8,7 @@ resources:
   - ../../../common/istio-1-9/kubeflow-istio-resources/base
 ## Per istion 1.9 installation on openshift https://istio.io/latest/docs/setup/platform-setup/openshift/
 # This is here because it needs to install in namespace kubeflow
-  - application/istio-1-9-Openshift/network-attachment.yaml
+  - application/istio-1-9-0-Openshift/network-attachment.yaml
   - ../../../apps/centraldashboard/upstream/overlays/istio
 #Admission webhooks
   - ../../../apps/admission-webhook/upstream/overlays/cert-manager
