@@ -2,5 +2,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - ../../../../../common/knative/knative-serving/base
+- network-attachment.yaml
 - ../../../../../common/istio-1-9/cluster-local-gateway/base
 - ../../../../../common/knative/knative-eventing/base
