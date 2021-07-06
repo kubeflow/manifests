@@ -13,7 +13,7 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: distributions/stacks/openshift/application/istio-1-9-Openshift
+        path: distributions/stacks/openshift/application/istio-1-9-0-Openshift
     name: istio-stack
   - kustomizeConfig:
       repoRef:
@@ -80,5 +80,5 @@ spec:
     name: kubeflow-apps
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/v1.3-branch.tar.gz
-  version: v1.3-branch
+    uri: https://github.com/kubeflow/manifests/archive/v1.3.0.tar.gz
+  version: v1.3-tag
