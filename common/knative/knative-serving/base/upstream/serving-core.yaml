@@ -2105,7 +2105,7 @@ spec:
               containerPort: 8008
             - name: https-webhook
               containerPort: 8443
-          readinessProbe: &probe
+          readinessProbe:
             periodSeconds: 1
             httpGet:
               scheme: HTTPS
@@ -2114,7 +2114,13 @@ spec:
                 - name: k-kubelet-probe
                   value: "webhook"
           livenessProbe:
-            !!merge <<: *probe
+            periodSeconds: 1
+            httpGet:
+              scheme: HTTPS
+              port: 8443
+              httpHeaders:
+                - name: k-kubelet-probe
+                  value: "webhook"
             failureThreshold: 6
             initialDelaySeconds: 20
       terminationGracePeriodSeconds: 300
