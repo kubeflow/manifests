@@ -14,44 +14,6 @@ rules:
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: knative-ingress-gateway
-  namespace: knative-serving
-  labels:
-    serving.knative.dev/release: "v0.23.1"
-    networking.knative.dev/ingress-provider: istio
-spec:
-  selector:
-    istio: ingressgateway
-  servers:
-    - port:
-        number: 80
-        name: http
-        protocol: HTTP
-      hosts:
-        - "*"
----
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: knative-ingress-gateway
-  namespace: knative-serving
-  labels:
-    serving.knative.dev/release: "v0.22.1"
-    networking.knative.dev/ingress-provider: istio
-spec:
-  selector:
-    istio: ingressgateway
-  servers:
-    - port:
-        number: 80
-        name: http
-        protocol: HTTP
-      hosts:
-        - "*"
----
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
   name: knative-local-gateway
   namespace: knative-serving
   labels:
@@ -377,5 +339,3 @@ spec:
       targetPort: 8443
   selector:
     app: istio-webhook
----
-
