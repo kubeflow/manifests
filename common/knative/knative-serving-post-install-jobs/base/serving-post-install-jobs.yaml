@@ -6,6 +6,7 @@ metadata:
   labels:
     app: "storage-version-migration-serving"
     serving.knative.dev/release: "v0.22.1"
+  name: storage-version-migration-serving
 spec:
   ttlSecondsAfterFinished: 600
   backoffLimit: 10
@@ -26,5 +27,3 @@ spec:
             - "configurations.serving.knative.dev"
             - "revisions.serving.knative.dev"
             - "routes.serving.knative.dev"
----
-
