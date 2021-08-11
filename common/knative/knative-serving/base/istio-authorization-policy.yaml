@@ -2,14 +2,12 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: activator-service
+  namespace: knative-serving
 spec:
   action: ALLOW
   selector:
     matchLabels:
       app: activator
-      app.kubernetes.io/component: knative-serving
-      app.kubernetes.io/name: knative-serving
-      kustomize.component: knative
   rules:
   - {}
 ---
@@ -17,14 +15,12 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: autoscaler
+  namespace: knative-serving
 spec:
   action: ALLOW
   selector:
     matchLabels:
       app: autoscaler
-      app.kubernetes.io/component: knative-serving
-      app.kubernetes.io/name: knative-serving
-      kustomize.component: knative
   rules:
   - {}
 ---
@@ -32,14 +28,12 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: controller
+  namespace: knative-serving
 spec:
   action: ALLOW
   selector:
     matchLabels:
       app: controller
-      app.kubernetes.io/component: knative-serving
-      app.kubernetes.io/name: knative-serving
-      kustomize.component: knative
   rules:
   - {}
 ---
@@ -47,13 +41,11 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: webhook
+  namespace: knative-serving
 spec:
   action: ALLOW
   selector:
     matchLabels:
-      app.kubernetes.io/component: knative-serving
-      app.kubernetes.io/name: knative-serving
-      kustomize.component: knative
       role: webhook
   rules:
   - {}
@@ -63,14 +55,12 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: istio-webhook
+  namespace: knative-serving
 spec:
   action: ALLOW
   selector:
     matchLabels:
       app: istio-webhook
-      kustomize.component: knative
-      app.kubernetes.io/component: knative-serving
-      app.kubernetes.io/name: knative-serving
   rules:
   - {}
 ---
@@ -80,6 +70,7 @@ apiVersion: "networking.istio.io/v1alpha3"
 kind: DestinationRule
 metadata:
   name: knative
+  namespace: knative-serving
 spec:
   host: "*.knative-serving.svc.cluster.local"
   trafficPolicy:
