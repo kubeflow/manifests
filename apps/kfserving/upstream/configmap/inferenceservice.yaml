@@ -27,11 +27,11 @@ data:
         "sklearn": {
           "v1": {
             "image": "gcr.io/kfserving/sklearnserver",
-            "defaultImageVersion": "v0.5.1",
+            "defaultImageVersion": "v0.6.0",
             "supportedFrameworks": [
               "sklearn"
             ],
-            "multiModelServer": false
+            "multiModelServer": true
           },
           "v2": {
             "image": "docker.io/seldonio/mlserver",
@@ -45,11 +45,11 @@ data:
         "xgboost": {
           "v1": {
             "image": "gcr.io/kfserving/xgbserver",
-            "defaultImageVersion": "v0.5.1",
+            "defaultImageVersion": "v0.6.0",
             "supportedFrameworks": [
               "xgboost"
             ],
-            "multiModelServer": false
+            "multiModelServer": true
           },
           "v2": {
             "image": "docker.io/seldonio/mlserver",
@@ -63,7 +63,7 @@ data:
         "pytorch": {
           "v1" : {
             "image": "gcr.io/kfserving/pytorchserver",
-            "defaultImageVersion": "v0.5.1",
+            "defaultImageVersion": "v0.6.0",
             "defaultGpuImageVersion": "v0.5.1-gpu",
             "supportedFrameworks": [
               "pytorch"
@@ -71,9 +71,9 @@ data:
             "multiModelServer": false
           },
           "v2" : {
-            "image": "kfserving/torchserve-kfs",
-            "defaultImageVersion": "0.3.0",
-            "defaultGpuImageVersion": "0.3.0-gpu",
+            "image": "pytorch/torchserve-kfs",
+            "defaultImageVersion": "0.4.0",
+            "defaultGpuImageVersion": "0.4.0-gpu",
             "supportedFrameworks": [
               "pytorch"
             ],
@@ -90,11 +90,11 @@ data:
               "pytorch",
               "caffe2"
             ],
-            "multiModelServer": false
+            "multiModelServer": true
         },
         "pmml": {
             "image": "kfserving/pmmlserver",
-            "defaultImageVersion": "v0.5.1",
+            "defaultImageVersion": "v0.6.0",
             "supportedFrameworks": [
               "pmml"
             ],
@@ -102,9 +102,17 @@ data:
         },
         "lightgbm": {
             "image": "kfserving/lgbserver",
-            "defaultImageVersion": "v0.5.1",
+            "defaultImageVersion": "v0.6.0",
             "supportedFrameworks": [
               "lightgbm"
+            ],
+            "multiModelServer": false
+        },
+        "paddle": {
+            "image": "kfserving/paddleserver",
+            "defaultImageVersion": "v0.6.0",
+            "supportedFrameworks": [
+              "paddle"
             ],
             "multiModelServer": false
         }
@@ -116,20 +124,20 @@ data:
     {
         "alibi": {
             "image" : "kfserving/alibi-explainer",
-            "defaultImageVersion": "v0.5.1"
+            "defaultImageVersion": "v0.6.0"
         },
         "aix": {
             "image" : "kfserving/aix-explainer",
-            "defaultImageVersion": "v0.5.1"
+            "defaultImageVersion": "v0.6.0"
         },
         "art": {
             "image" : "kfserving/art-explainer",
-            "defaultImageVersion": "v0.5.1"
+            "defaultImageVersion": "v0.6.0"
         }
     }
   storageInitializer: |-
     {
-        "image" : "gcr.io/kfserving/storage-initializer:v0.5.1",
+        "image" : "gcr.io/kfserving/storage-initializer:v0.6.0",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -147,14 +155,14 @@ data:
     }
   ingress: |-
     {
-        "ingressGateway" : $(ingressGateway)
+        "ingressGateway" : "$(ingressGateway)",
         "ingressService" : "istio-ingressgateway.istio-system.svc.cluster.local",
-        "localGateway" : "cluster-local-gateway.knative-serving",
-        "localGatewayService" : "cluster-local-gateway.istio-system.svc.cluster.local"
+        "localGateway" : "knative-serving/knative-local-gateway",
+        "localGatewayService" : "knative-local-gateway.istio-system.svc.cluster.local"
     }
   logger: |-
     {
-        "image" : "kfserving/agent:v0.5.1",
+        "image" : "kfserving/agent:v0.6.0",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -163,7 +171,7 @@ data:
     }
   batcher: |-
     {
-        "image" : "kfserving/agent:v0.5.1",
+        "image" : "kfserving/agent:v0.6.0",
         "memoryRequest": "1Gi",
         "memoryLimit": "1Gi",
         "cpuRequest": "1",
@@ -171,7 +179,7 @@ data:
     }
   agent: |-
     {
-        "image" : "kfserving/agent:v0.5.1",
+        "image" : "kfserving/agent:v0.6.0",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
