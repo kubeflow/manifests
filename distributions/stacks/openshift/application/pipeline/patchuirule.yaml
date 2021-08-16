@@ -1,3 +1,0 @@
-- op: replace
-  path: /spec/trafficPolicy/tls/mode
-  value: DISABLE
