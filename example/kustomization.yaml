@@ -47,7 +47,9 @@ resources:
 -  ../apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
 # Tensorboard Controller
 -  ../apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
-# TFJob Operator
+# Training Operator
 - ../apps/training-operators/upstream/overlays/kubeflow
+# MPI Operator
+- ../apps/mpi-job/upstream/overlays/kubeflow
 # User namespace
 - ../common/user-namespace/base
