@@ -43,8 +43,6 @@ This repo periodically syncs all official Kubeflow components from their respect
 | - | - | - |
 | Training Operator | apps/training-operator/upstream | [v1.3.0-alpha.2](https://github.com/kubeflow/tf-operator/tree/v1.3.0-alpha.2/manifests) |
 | MPI Operator | apps/mpi-job/upstream | [b367aa55886d2b042f5089df359d8e067e49e8d1](https://github.com/kubeflow/mpi-operator/tree/b367aa55886d2b042f5089df359d8e067e49e8d1/manifests) |
-| MXNet Operator | apps/mxnet-job/upstream | [v1.1.0](https://github.com/kubeflow/mxnet-operator/tree/v1.1.0/manifests) |
-| XGBoost Operator | apps/xgboost-job/upstream | [v0.2.0](https://github.com/kubeflow/xgboost-operator/tree/v0.2.0/manifests) |
 | Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.3.1-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.1-rc.0/components/notebook-controller/config) |
 | Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.3.1-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.1-rc.0/components/tensorboard-controller/config) |
 | Central Dashboard | apps/centraldashboard/upstream | [v1.3.1-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.1-rc.0/components/centraldashboard/manifests) |
