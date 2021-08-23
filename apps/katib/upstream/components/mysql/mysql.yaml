@@ -3,26 +3,25 @@ kind: Deployment
 metadata:
   name: katib-mysql
   namespace: kubeflow
-  # TODO (andreyvelich): Modify labels to follow k8s guidelines.
   labels:
-    app: katib-mysql
+    katib.kubeflow.org/component: mysql
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: katib-mysql
+      katib.kubeflow.org/component: mysql
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: katib-mysql
+        katib.kubeflow.org/component: mysql
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
       containers:
         - name: katib-mysql
-          image: mysql:8
+          image: mysql:8.0.26
           args:
             - --datadir
             - /var/lib/mysql/datadir
@@ -45,18 +44,24 @@ spec:
                 - "/bin/bash"
                 - "-c"
                 - "mysql -D ${MYSQL_DATABASE} -u root -p${MYSQL_ROOT_PASSWORD} -e 'SELECT 1'"
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 1
+            periodSeconds: 2
+            failureThreshold: 10
           livenessProbe:
             exec:
               command:
                 - "/bin/bash"
                 - "-c"
                 - "mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}"
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
+            periodSeconds: 2
+            failureThreshold: 10
+          startupProbe:
+            exec:
+              command:
+                - "/bin/bash"
+                - "-c"
+                - "mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}"
+            periodSeconds: 15
+            failureThreshold: 60
           volumeMounts:
             - name: katib-mysql
               mountPath: /var/lib/mysql

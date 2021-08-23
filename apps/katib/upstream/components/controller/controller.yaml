@@ -3,18 +3,17 @@ kind: Deployment
 metadata:
   name: katib-controller
   namespace: kubeflow
-  # TODO (andreyvelich): Modify labels to follow k8s guidelines.
   labels:
-    app: katib-controller
+    katib.kubeflow.org/component: controller
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: katib-controller
+      katib.kubeflow.org/component: controller
   template:
     metadata:
       labels:
-        app: katib-controller
+        katib.kubeflow.org/component: controller
       annotations:
         prometheus.io/scrape: "true"
         sidecar.istio.io/inject: "false"
@@ -30,7 +29,7 @@ spec:
             - "--trial-resources=TFJob.v1.kubeflow.org"
             - "--trial-resources=PyTorchJob.v1.kubeflow.org"
             - "--trial-resources=MPIJob.v1.kubeflow.org"
-            - "--trial-resources=PipelineRun.v1beta1.tekton.dev"
+            - "--trial-resources=XGBoostJob.v1.kubeflow.org"
           ports:
             - containerPort: 8443
               name: webhook

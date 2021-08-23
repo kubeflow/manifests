@@ -53,13 +53,7 @@ rules:
       - tfjobs
       - pytorchjobs
       - mpijobs
-    verbs:
-      - "*"
-  - apiGroups:
-      - tekton.dev
-    resources:
-      - pipelineruns
-      - taskruns
+      - xgboostjobs
     verbs:
       - "*"
 ---
