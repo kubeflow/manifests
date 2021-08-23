@@ -3,18 +3,17 @@ kind: Deployment
 metadata:
   name: katib-db-manager
   namespace: kubeflow
-  # TODO (andreyvelich): Modify labels to follow k8s guidelines.
   labels:
-    app: katib-db-manager
+    katib.kubeflow.org/component: db-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: katib-db-manager
+      katib.kubeflow.org/component: db-manager
   template:
     metadata:
       labels:
-        app: katib-db-manager
+        katib.kubeflow.org/component: db-manager
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
@@ -34,10 +33,6 @@ spec:
           ports:
             - name: api
               containerPort: 6789
-          readinessProbe:
-            exec:
-              command: ["/bin/grpc_health_probe", "-addr=:6789"]
-            initialDelaySeconds: 5
           livenessProbe:
             exec:
               command: ["/bin/grpc_health_probe", "-addr=:6789"]
