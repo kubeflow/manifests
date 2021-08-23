@@ -41,11 +41,8 @@ This repo periodically syncs all official Kubeflow components from their respect
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
-| TFJob Operator | apps/tf-training/upstream | [v1.1.0](https://github.com/kubeflow/tf-operator/tree/v1.1.0/manifests) |
-| PyTorch Operator | apps/pytorch-job/upstream | [v0.7.0](https://github.com/kubeflow/pytorch-operator/tree/v0.7.0/manifests) |
+| Training Operator | apps/training-operator/upstream | [v1.3.0-alpha.2](https://github.com/kubeflow/tf-operator/tree/v1.3.0-alpha.2/manifests) |
 | MPI Operator | apps/mpi-job/upstream | [b367aa55886d2b042f5089df359d8e067e49e8d1](https://github.com/kubeflow/mpi-operator/tree/b367aa55886d2b042f5089df359d8e067e49e8d1/manifests) |
-| MXNet Operator | apps/mxnet-job/upstream | [v1.1.0](https://github.com/kubeflow/mxnet-operator/tree/v1.1.0/manifests) |
-| XGBoost Operator | apps/xgboost-job/upstream | [v0.2.0](https://github.com/kubeflow/xgboost-operator/tree/v0.2.0/manifests) |
 | Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.3.1-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.1-rc.0/components/notebook-controller/config) |
 | Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.3.1-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.1-rc.0/components/tensorboard-controller/config) |
 | Central Dashboard | apps/centraldashboard/upstream | [v1.3.1-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.3.1-rc.0/components/centraldashboard/manifests) |
@@ -315,20 +312,12 @@ Install the Tensorboard Controller official Kubeflow component:
 kustomize build apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
-#### TFJob Operator
+#### Training Operator
 
-Install the TFJob Operator official Kubeflow component:
-
-```sh
-kustomize build apps/tf-training/upstream/overlays/kubeflow | kubectl apply -f -
-```
-
-#### PyTorch Operator
-
-Install the PyTorch Operator official Kubeflow component:
+Install the Training Operator official Kubeflow component:
 
 ```sh
-kustomize build apps/pytorch-job/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### MPI Operator
@@ -337,22 +326,6 @@ Install the MPI Operator official Kubeflow component:
 
 ```sh
 kustomize build apps/mpi-job/upstream/overlays/kubeflow | kubectl apply -f -
-```
-
-#### MXNet Operator
-
-Install the MXNet Operator official Kubeflow component:
-
-```sh
-kustomize build apps/mxnet-job/upstream/overlays/kubeflow | kubectl apply -f -
-```
-
-#### XGBoost Operator
-
-Install the XGBoost Operator official Kubeflow component:
-
-```sh
-kustomize build apps/xgboost-job/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### User Namespace
