@@ -57,10 +57,13 @@ The manifests for Knative Serving are based off the following:
 
 ### Changes from upstream
 
-- In `knative-serving-install/base/upstream/net-istio.yaml`, the `knative-ingress-gateway` Gateway is removed since we use the Kubeflow gateway.
+- In `knative-serving/base/upstream/net-istio.yaml`, the `knative-ingress-gateway` Gateway is removed since we use the Kubeflow gateway.
 - In `config-istio`, the Knative gateway is set to use `gateway.kubeflow.kubeflow-gateway`.
 - In `config-deployment`, `progressDeadline` is set to `600s` as sometimes large models need longer than
   the default of `120s` to start the containers.
+- In `knative-serving/base/upstream/net-istio.yaml` we explicitly changed the
+  `portLevelMtls.8443` keys to be string. This was necessary to make these
+  manifests work with kustomize 4.2 https://github.com/kubernetes-sigs/kustomize/issues/3446
 
 ## Knative-Eventing
 
