@@ -1,6 +1,5 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: knative-serving
 resources:
 - upstream/serving-core.yaml
 - upstream/net-istio.yaml
@@ -9,10 +8,6 @@ patchesStrategicMerge:
 - patches/configmap-patch.yaml
 - patches/namespace-injection.yaml
 - patches/clusterrole-patch.yaml
-commonLabels:
-  kustomize.component: knative
-  app.kubernetes.io/component: knative-serving
-  app.kubernetes.io/name: knative-serving
 patches:
 - path: patches/sidecar-injection.yaml
   target:
