@@ -186,6 +186,7 @@ The manifests repo will be following the release process below:
 - [ ] Publish draft schedule to kubeflow-discuss, with actual dates
 - [ ] Get lazy consensus on the release schedule from the WG leads
 - [ ] Ensure schedule also accounts for the patch releases AFTER the minor release
+- [ ] Reach out to each WG to determine WG Liaison for the release
 
 Criteria for timeline that the team needs to consider
 - Holidays around the world that coincide with members of the release team, WG representatives, and distro representatives.
