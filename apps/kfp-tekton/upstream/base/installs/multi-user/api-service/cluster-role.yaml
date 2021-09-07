@@ -53,6 +53,19 @@ rules:
   - pipelineruns
   - taskruns
   - conditions
+  - runs
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - custom.tekton.dev
+  resources:
+  - pipelineloops
   verbs:
   - create
   - get

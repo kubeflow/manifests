@@ -8,6 +8,6 @@ namespace: tekton-pipelines
 
 images:
   - name: docker.io/aipipeline/pipelineloop-controller
-    newTag: 0.8.0
+    newTag: 1.0.0
   - name: docker.io/aipipeline/pipelineloop-webhook
-    newTag: 0.8.0
+    newTag: 1.0.0
