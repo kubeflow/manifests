@@ -11,4 +11,4 @@ commonLabels:
 images:
   - name: gcr.io/ml-pipeline/cache-server
     newName: docker.io/aipipeline/cache-server
-    newTag: 0.8.0
+    newTag: 1.0.0
