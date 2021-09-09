@@ -8,3 +8,7 @@ commonLabels:
   app: mpi-operator
   app.kubernetes.io/name: mpi-operator
   app.kubernetes.io/component: mpijob
+images:
+- name: mpioperator/mpi-operator
+  newName: mpioperator/mpi-operator
+  newTag: 0.3.0
