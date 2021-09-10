@@ -16,6 +16,7 @@ resources:
   - ../../../apps/profiles/upstream/overlays/kubeflow
 #Virtual Service for pipeline, has to be here after the gateway is created
   - application/pipeline-agnostic/virtual-service.yaml
+  - application/pipeline-agnostic/metadata-gprc.yaml
 #Create defualt user
   - ../../../common/user-namespace/base
 configMapGenerator:
