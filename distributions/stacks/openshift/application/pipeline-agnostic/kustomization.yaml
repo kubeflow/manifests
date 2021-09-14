@@ -5,7 +5,7 @@ resources:
 - ../../../../../apps/pipeline/upstream/cluster-scoped-resources
 - ../../../../../apps/pipeline/upstream/env/platform-agnostic
 #- virtual-service.yaml
-- metadata-gprc.yaml
+#- metadata-gprc.yaml
 
 patchesStrategicMerge:
 - removesidemenu.yaml
