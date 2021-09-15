@@ -43,9 +43,9 @@ resources:
 - ../apps/profiles/upstream/overlays/kubeflow
 # Volumes Web App
 - ../apps/volumes-web-app/upstream/overlays/istio
-# Tensorboards Web App
+# Tensorboards Controller
 -  ../apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
-# Tensorboard Controller
+# Tensorboard Web App
 -  ../apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
 # Training Operator
 - ../apps/training-operator/upstream/overlays/kubeflow
