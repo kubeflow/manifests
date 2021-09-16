@@ -51,10 +51,11 @@ This repo periodically syncs all official Kubeflow components from their respect
 | Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.4-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.4-rc.0/components/crud-web-apps/jupyter/manifests) |
 | Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.4-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.4-rc.0/components/crud-web-apps/tensorboards/manifests) |
 | Volumes Web App | apps/volumes-web-app/upstream | [v1.4-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.4-rc.0/components/crud-web-apps/volumes/manifests) |
-| Katib | apps/katib/upstream | [v0.12.0-rc.0](https://github.com/kubeflow/katib/tree/v0.12.0-rc.0/manifests/v1beta1) |
+| Katib | apps/katib/upstream | [v0.12.0-rc.1](https://github.com/kubeflow/katib/tree/v0.12.0-rc.1/manifests/v1beta1) |
 | KFServing | apps/kfserving/upstream | [v0.6.0](https://github.com/kubeflow/kfserving/releases/tag/v0.6.0) |
 | Kubeflow Pipelines | apps/pipeline/upstream | [1.7.0](https://github.com/kubeflow/pipelines/tree/1.7.0/manifests/kustomize) |
-| Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [v0.8.0](https://github.com/kubeflow/kfp-tekton/tree/v0.8.0/manifests/kustomize) |
+| Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [v1.0.0](https://github.com/kubeflow/kfp-tekton/tree/v1.0.0/manifests/kustomize) |
+
 ## Installation
 
 Starting Kubeflow 1.3, the Manifests WG provides two options for installing Kubeflow official components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
