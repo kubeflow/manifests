@@ -26,6 +26,12 @@ spec:
             port: 8082
           initialDelaySeconds: 30
           periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8082
+          initialDelaySeconds: 20
+          periodSeconds: 5
         ports:
         - containerPort: 8082
           protocol: TCP
