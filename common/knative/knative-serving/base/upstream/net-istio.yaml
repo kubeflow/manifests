@@ -229,7 +229,7 @@ spec:
       serviceAccountName: controller
       containers:
         - name: networking-istio
-          image: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller@sha256:ff8680da52ef47b8573ebc3393cbfa2f0f14b05c1e02232807f22699adbef57a
+          image: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller:v0.22.1
           resources:
             requests:
               cpu: 30m
@@ -286,7 +286,7 @@ spec:
       serviceAccountName: controller
       containers:
         - name: webhook
-          image: gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook@sha256:1e371db6b1a9f9265fc7a55d15d98c935c0c28925ffde351fb3b93f331c5a08e
+          image: gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook:v0.22.1
           resources:
             requests:
               cpu: 20m
