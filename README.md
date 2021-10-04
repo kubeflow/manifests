@@ -41,7 +41,7 @@ This repo periodically syncs all official Kubeflow components from their respect
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
-| Training Operator | apps/training-operator/upstream | [v1.3.0-rc.2](https://github.com/kubeflow/tf-operator/tree/v1.3.0-rc.2/manifests) |
+| Training Operator | apps/training-operator/upstream | [v1.3.0](https://github.com/kubeflow/tf-operator/tree/v1.3.0/manifests) |
 | MPI Operator | apps/mpi-job/upstream | [v0.3.0](https://github.com/kubeflow/mpi-operator/tree/v0.3.0/manifests) |
 | Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.4-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.4-rc.0/components/notebook-controller/config) |
 | Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.4-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.4-rc.0/components/tensorboard-controller/config) |
