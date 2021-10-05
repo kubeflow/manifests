@@ -1968,6 +1968,8 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             runAsNonRoot: true
+            # User 65532 is the distroless nonroot user ID
+            runAsUser: 65532
             capabilities:
               drop:
                 - all
@@ -2095,6 +2097,8 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             runAsNonRoot: true
+            # User 65532 is the distroless nonroot user ID
+            runAsUser: 65532
             capabilities:
               drop:
                 - all
