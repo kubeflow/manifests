@@ -738,6 +738,8 @@ spec:
                   fieldPath: metadata.name
           securityContext:
             allowPrivilegeEscalation: false
+            # User 65532 is the distroless nonroot user ID
+            runAsUser: 65532
           ports:
             - name: metrics
               containerPort: 9090
@@ -824,5 +826,9 @@ spec:
               protocol: TCP
             - containerPort: 9090
               name: metrics
+          securityContext:
+            allowPrivilegeEscalation: false
+            # User 65532 is the distroless nonroot user ID
+            runAsUser: 65532
 ---
 
