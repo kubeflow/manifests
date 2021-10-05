@@ -472,7 +472,7 @@ spec:
       containers:
         - name: eventing-controller
           terminationMessagePolicy: FallbackToLogsOnError
-          image: gcr.io/knative-releases/knative.dev/eventing/cmd/controller@sha256:6ddffbc286a84048cfd090193d00b4ecda25a3a7bf2de1a8e873f8b3755cc913
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/controller:v0.22.1
           resources:
             requests:
               cpu: 100m
@@ -527,7 +527,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: dispatcher
-          image: gcr.io/knative-releases/knative.dev/eventing/cmd/mtping@sha256:edf462d03591e53e536640591a53538e6bea837fea15ed081eccfb42bc35a5c0
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/mtping:v0.22.1
           env:
             - name: SYSTEM_NAMESPACE
               value: ''
@@ -629,7 +629,7 @@ spec:
       containers:
         - name: eventing-webhook
           terminationMessagePolicy: FallbackToLogsOnError
-          image: gcr.io/knative-releases/knative.dev/eventing/cmd/webhook@sha256:9f70a2a8bb78781472fba0327c5d6ff91f13a29736d4502bf8ad3d60d3f16ccd
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/webhook:v0.22.1
           resources:
             requests:
               cpu: 100m
