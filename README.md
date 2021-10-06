@@ -56,6 +56,14 @@ This repo periodically syncs all official Kubeflow components from their respect
 | Kubeflow Pipelines | apps/pipeline/upstream | [1.7.0](https://github.com/kubeflow/pipelines/tree/1.7.0/manifests/kustomize) |
 | Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [v1.0.0](https://github.com/kubeflow/kfp-tekton/tree/v1.0.0/manifests/kustomize) |
 
+The following is also a matrix with versions from common components that are
+used from the different projects of Kubeflow:
+
+| Component | Local Manifests Path | Upstream Revision |
+| - | - | - |
+| Istio | common/istio-1-9 | [1.9.6](https://github.com/istio/istio/releases/tag/1.9.6) |
+| Knative | common/knative | [0.22.1](https://github.com/knative/serving/releases/tag/v0.22.1) |
+
 ## Installation
 
 Starting from Kubeflow 1.3, the Manifests WG provides two options for installing Kubeflow official components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
