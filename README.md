@@ -33,7 +33,7 @@ The `distributions` directory contains manifests for specific, opinionated distr
 
 The `docs`, `hack`, and `tests` directories will also be gradually phased out.
 
-Starting Kubeflow 1.3, all components should be deployable using `kustomize` only. Any automation tooling for deployment on top of the manifests should be maintained externally by distribution owners.
+Starting from Kubeflow 1.3, all components should be deployable using `kustomize` only. Any automation tooling for deployment on top of the manifests should be maintained externally by distribution owners.
 
 ## Kubeflow components versions
 
@@ -43,22 +43,30 @@ This repo periodically syncs all official Kubeflow components from their respect
 | - | - | - |
 | Training Operator | apps/training-operator/upstream | [v1.3.0](https://github.com/kubeflow/tf-operator/tree/v1.3.0/manifests) |
 | MPI Operator | apps/mpi-job/upstream | [v0.3.0](https://github.com/kubeflow/mpi-operator/tree/v0.3.0/manifests) |
-| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.4-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.4-rc.0/components/notebook-controller/config) |
-| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.4-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.4-rc.0/components/tensorboard-controller/config) |
-| Central Dashboard | apps/centraldashboard/upstream | [v1.4-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.4-rc.0/components/centraldashboard/manifests) |
-| Profiles + KFAM | apps/profiles/upstream | [v1.4-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.4-rc.0/components/profile-controller/config) |
-| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.4-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.4-rc.0/components/admission-webhook/manifests) |
-| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.4-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.4-rc.0/components/crud-web-apps/jupyter/manifests) |
-| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.4-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.4-rc.0/components/crud-web-apps/tensorboards/manifests) |
-| Volumes Web App | apps/volumes-web-app/upstream | [v1.4-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.4-rc.0/components/crud-web-apps/volumes/manifests) |
+| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.4.0](https://github.com/kubeflow/kubeflow/tree/v1.4.0/components/notebook-controller/config) |
+| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.4.0](https://github.com/kubeflow/kubeflow/tree/v1.4.0/components/tensorboard-controller/config) |
+| Central Dashboard | apps/centraldashboard/upstream | [v1.4.0](https://github.com/kubeflow/kubeflow/tree/v1.4.0/components/centraldashboard/manifests) |
+| Profiles + KFAM | apps/profiles/upstream | [v1.4.0](https://github.com/kubeflow/kubeflow/tree/v1.4.0/components/profile-controller/config) |
+| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.4.0](https://github.com/kubeflow/kubeflow/tree/v1.4.0/components/admission-webhook/manifests) |
+| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.4.0](https://github.com/kubeflow/kubeflow/tree/v1.4.0/components/crud-web-apps/jupyter/manifests) |
+| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.4.0](https://github.com/kubeflow/kubeflow/tree/v1.4.0/components/crud-web-apps/tensorboards/manifests) |
+| Volumes Web App | apps/volumes-web-app/upstream | [v1.4.0](https://github.com/kubeflow/kubeflow/tree/v1.4.0/components/crud-web-apps/volumes/manifests) |
 | Katib | apps/katib/upstream | [v0.12.0](https://github.com/kubeflow/katib/tree/v0.12.0/manifests/v1beta1) |
 | KFServing | apps/kfserving/upstream | [v0.6.1](https://github.com/kubeflow/kfserving/releases/tag/v0.6.1) |
 | Kubeflow Pipelines | apps/pipeline/upstream | [1.7.0](https://github.com/kubeflow/pipelines/tree/1.7.0/manifests/kustomize) |
 | Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [v1.0.0](https://github.com/kubeflow/kfp-tekton/tree/v1.0.0/manifests/kustomize) |
 
+The following is also a matrix with versions from common components that are
+used from the different projects of Kubeflow:
+
+| Component | Local Manifests Path | Upstream Revision |
+| - | - | - |
+| Istio | common/istio-1-9 | [1.9.6](https://github.com/istio/istio/releases/tag/1.9.6) |
+| Knative | common/knative | [0.22.1](https://github.com/knative/serving/releases/tag/v0.22.1) |
+
 ## Installation
 
-Starting Kubeflow 1.3, the Manifests WG provides two options for installing Kubeflow official components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
+Starting from Kubeflow 1.3, the Manifests WG provides two options for installing Kubeflow official components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
 
 1. Single-command installation of all components under `apps` and `common`
 2. Multi-command, individual components installation for `apps` and `common`
@@ -72,9 +80,9 @@ The `example` directory contains an example kustomization for the single command
 
 ### Prerequisites
 
-- `Kubernetes` (tested with version `1.17`) with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
+- `Kubernetes` (tested with version `1.19`) with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
 - `kustomize` (version `3.2.0`) ([download link](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0))
-    - :warning: Kubeflow 1.3.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
+    - :warning: Kubeflow 1.4.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
 - `kubectl`
 
 ---
@@ -398,8 +406,8 @@ For security reasons, we don't want to use the default password for the default 
 
 ## Frequently Asked Questions
 
-- **Q:** What versions of Istio, Knative, Cert-Manager, Argo, ... are compatible with Kubeflow 1.3? \
+- **Q:** What versions of Istio, Knative, Cert-Manager, Argo, ... are compatible with Kubeflow 1.4? \
   **A:** Please refer to each individual component's documentation for a dependency compatibility range. For Istio, Knative, Dex, Cert-Manager and OIDC-AuthService, the versions in `common` are the ones we have validated.
 
 - **Q:** Can I use the latest Kustomize version (`v4.x`)? \
-  **A:** Kubeflow 1.3.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
+  **A:** Kubeflow 1.4.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
