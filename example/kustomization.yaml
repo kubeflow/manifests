@@ -35,9 +35,9 @@ resources:
 - ../apps/centraldashboard/upstream/overlays/istio
 # Admission Webhook
 - ../apps/admission-webhook/upstream/overlays/cert-manager
-# Notebook Controller
-- ../apps/jupyter/jupyter-web-app/upstream/overlays/istio
 # Jupyter Web App
+- ../apps/jupyter/jupyter-web-app/upstream/overlays/istio
+# Notebook Controller
 - ../apps/jupyter/notebook-controller/upstream/overlays/kubeflow
 # Profiles + KFAM
 - ../apps/profiles/upstream/overlays/kubeflow
