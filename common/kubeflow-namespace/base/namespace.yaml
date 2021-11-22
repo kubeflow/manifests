@@ -5,4 +5,3 @@ metadata:
   labels:
     control-plane: kubeflow
     istio-injection: enabled
-    katib-metricscollector-injection: enabled
