@@ -53,3 +53,13 @@ resources:
 - ../apps/mpi-job/upstream/overlays/kubeflow
 # User namespace
 - ../common/user-namespace/base
+
+patchesJson6902:
+  - target:
+      group: metacontroller.k8s.io
+      version: v1alpha1
+      kind: CompositeController
+      name: kubeflow-pipelines-profile-controller
+    patch: |-
+      - op: remove
+        path: /metadata/namespace

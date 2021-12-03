@@ -6,6 +6,7 @@ resources:
 - profile-instance.yaml
 configMapGenerator:
 - name: default-install-config
+  namespace: default
   envs:
   - params.env
 vars:
@@ -15,6 +16,7 @@ vars:
   objref:
     kind: ConfigMap
     name: default-install-config
+    namespace: default
     apiVersion: v1
   fieldref:
     fieldpath: data.user
@@ -22,6 +24,7 @@ vars:
   objref:
     kind: ConfigMap
     name: default-install-config
+    namespace: default
     apiVersion: v1
   fieldref:
     fieldpath: data.profile-name
