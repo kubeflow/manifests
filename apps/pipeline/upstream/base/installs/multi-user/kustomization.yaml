@@ -28,6 +28,12 @@ patchesStrategicMerge:
 - persistence-agent/deployment-patch.yaml
 - metadata-writer/deployment-patch.yaml
 - cache/deployment-patch.yaml
-
+patchesJson6902:
+- target:
+    group: metacontroller.k8s.io
+    version: v1alpha1
+    kind: CompositeController
+    name: kubeflow-pipelines-profile-controller
+  path: pipelines-profile-controller/patches/remove-namespace.yaml
 configurations:
 - params.yaml

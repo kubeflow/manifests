@@ -6,6 +6,7 @@ resources:
 - profile-instance.yaml
 configMapGenerator:
 - name: default-install-config
+  namespace: default
   envs:
   - params.env
 vars:

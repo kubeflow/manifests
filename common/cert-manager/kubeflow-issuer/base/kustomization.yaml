@@ -8,3 +8,10 @@ commonLabels:
   app.kubernetes.io/name: cert-manager
 resources:
 - cluster-issuer.yaml
+patchesJson6902:
+- target:
+    group: cert-manager.io
+    version: v1alpha2
+    kind: ClusterIssuer
+    name: kubeflow-self-signing-issuer
+  path: patches/remove-namespace.yaml
