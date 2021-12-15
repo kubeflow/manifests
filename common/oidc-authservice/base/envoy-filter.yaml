@@ -10,12 +10,12 @@ spec:
     - applyTo: HTTP_FILTER
       match:
         context: GATEWAY
-      listener:
-        filterChain:
-          filter:
-            name: "envoy.http_connection_manager"
-            subFilter:
-              name: ""
+        listener:
+          filterChain:
+            filter:
+              name: "envoy.http_connection_manager"
+              subFilter:
+                name: ""
       patch:
         # For some reason, INSERT_FIRST doesn't work
         operation: INSERT_BEFORE
