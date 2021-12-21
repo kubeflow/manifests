@@ -8,6 +8,7 @@ patchesStrategicMerge:
 - patches/configmap-patch.yaml
 - patches/namespace-injection.yaml
 - patches/clusterrole-patch.yaml
+- patches/service-labels.yaml
 patches:
 - path: patches/sidecar-injection.yaml
   target:
