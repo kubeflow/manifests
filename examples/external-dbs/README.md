@@ -26,7 +26,7 @@ configMapGenerator:
     behavior: merge
 secretGenerator:
   - name: katib-mysql-secrets
-    behavior: replace
+    behavior: merge
     envs:
       - secrets-envs/katib-mysql.env
   - name: mysql-secret
