@@ -1,0 +1,106 @@
+---
+# Source: https://github.com/kubeflow/katib/blob/d0d9c8d80e0ac57d96a0db516aa5eaac2f1326f3/manifests/v1beta1/installs/katib-external-db/patches/db-manager.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: katib-db-manager
+  namespace: kubeflow
+spec:
+  template:
+    spec:
+      containers:
+        - name: katib-db-manager
+          env:
+            - name: DB_NAME
+              value: mysql
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: katib-mysql-secrets
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: katib-mysql-secrets
+                  key: DB_PASSWORD
+            - name: KATIB_MYSQL_DB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: katib-mysql-secrets
+                  key: KATIB_MYSQL_DB_DATABASE
+            - name: KATIB_MYSQL_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: katib-mysql-secrets
+                  key: KATIB_MYSQL_DB_HOST
+            - name: KATIB_MYSQL_DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: katib-mysql-secrets
+                  key: KATIB_MYSQL_DB_PORT
+      initContainers:
+        - name: create-if-not-exists
+          image: mysql:8.0.27
+          command:
+            - mysql
+          args:
+            - -h
+            - $(KATIB_MYSQL_DB_HOST)
+            - -u
+            - $(DB_USER)
+            - --password=$(DB_PASSWORD)
+            - -e
+            - "CREATE DATABASE IF NOT EXISTS $(KATIB_MYSQL_DB_DATABASE)"
+          env:
+            - name: DB_NAME
+              value: mysql
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: katib-mysql-secrets
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: katib-mysql-secrets
+                  key: DB_PASSWORD
+            - name: KATIB_MYSQL_DB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: katib-mysql-secrets
+                  key: KATIB_MYSQL_DB_DATABASE
+            - name: KATIB_MYSQL_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: katib-mysql-secrets
+                  key: KATIB_MYSQL_DB_HOST
+            - name: KATIB_MYSQL_DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: katib-mysql-secrets
+                  key: KATIB_MYSQL_DB_PORT
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    katib.kubeflow.org/component: mysql
+  name: katib-mysql
+  namespace: kubeflow
+$patch: delete
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    katib.kubeflow.org/component: mysql
+  name: katib-mysql
+  namespace: kubeflow
+$patch: delete
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: katib-mysql
+  namespace: kubeflow
+$patch: delete

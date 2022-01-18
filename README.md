@@ -74,7 +74,7 @@ Starting from Kubeflow 1.3, the Manifests WG provides two options for installing
 Option 1 targets ease of deployment for end users. \
 Option 2 targets customization and ability to pick and choose individual components.
 
-The `example` directory contains an example kustomization for the single command to be able to run.
+The `examples/all-included` directory contains an example kustomization for the single command to be able to run.
 
 :warning: In both options, we use a default email (`user@example.com`) and password (`12341234`). For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
 
@@ -100,7 +100,7 @@ The `example` directory contains an example kustomization for the single command
 You can install all Kubeflow official components (residing under `apps`) and all common services (residing under `common`) using the following command:
 
 ```sh
-while ! kustomize build example | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+while ! kustomize build examples/all-included | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
 
 Once, everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](#connect-to-your-kubeflow-cluster).
