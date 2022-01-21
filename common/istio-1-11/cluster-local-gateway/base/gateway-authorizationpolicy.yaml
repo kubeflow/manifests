@@ -12,3 +12,4 @@ spec:
       istio: cluster-local-gateway
   rules:
   - {}
+  
