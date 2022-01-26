@@ -7,6 +7,7 @@ resources:
   - 201-role.yaml
   - 201-rolebinding.yaml
   - 202-clusterrolebinding.yaml
+  - 203-object-store-config.yaml
   - 300-pipelineloop.yaml
   - 500-controller.yaml
   - 500-webhook-configuration.yaml
