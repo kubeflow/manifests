@@ -14,6 +14,8 @@ There are environment specific installation instructions not covered in the offi
 
 ### (env/platform-agnostic) install on any Kubernetes cluster
 
+Note: `kubectl` client version `v1.20.0`+ to support the new kustomize plugins.
+
 Install:
 
 ```bash
