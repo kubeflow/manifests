@@ -6,20 +6,27 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.6.0
   creationTimestamp: null
-  name: mxjobs.kubeflow.org
+  name: xgboostjobs.kubeflow.org
 spec:
   group: kubeflow.org
   names:
-    kind: MXJob
-    listKind: MXJobList
-    plural: mxjobs
-    singular: mxjob
+    kind: XGBoostJob
+    listKind: XGBoostJobList
+    plural: xgboostjobs
+    singular: xgboostjob
   scope: Namespaced
   versions:
-  - name: v1
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[-1:].type
+      name: State
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1
     schema:
       openAPIV3Schema:
-        description: MXJob is the Schema for the mxjobs API
+        description: XGBoostJob is the Schema for the xgboostjobs API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -34,13 +41,57 @@ spec:
           metadata:
             type: object
           spec:
-            description: MXJobSpec defines the desired state of MXJob
+            description: XGBoostJobSpec defines the desired state of XGBoostJob
             properties:
-              jobMode:
-                description: JobMode specify the kind of MXjob to do. Different mode
-                  may have different MXReplicaSpecs request
-                type: string
-              mxReplicaSpecs:
+              runPolicy:
+                description: 'INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
+                  Important: Run "make" to regenerate code after modifying this file'
+                properties:
+                  activeDeadlineSeconds:
+                    description: Specifies the duration in seconds relative to the
+                      startTime that the job may be active before the system tries
+                      to terminate it; value must be positive integer.
+                    format: int64
+                    type: integer
+                  backoffLimit:
+                    description: Optional number of retries before marking this job
+                      failed.
+                    format: int32
+                    type: integer
+                  cleanPodPolicy:
+                    description: CleanPodPolicy defines the policy to kill pods after
+                      the job completes. Default to Running.
+                    type: string
+                  schedulingPolicy:
+                    description: SchedulingPolicy defines the policy related to scheduling,
+                      e.g. gang-scheduling
+                    properties:
+                      minAvailable:
+                        format: int32
+                        type: integer
+                      minResources:
+                        additionalProperties:
+                          anyOf:
+                          - type: integer
+                          - type: string
+                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                          x-kubernetes-int-or-string: true
+                        description: ResourceList is a set of (resource name, quantity)
+                          pairs.
+                        type: object
+                      priorityClass:
+                        type: string
+                      queue:
+                        type: string
+                    type: object
+                  ttlSecondsAfterFinished:
+                    description: TTLSecondsAfterFinished is the TTL to clean up jobs.
+                      It may take extra ReconcilePeriod seconds for the cleanup, since
+                      reconcile gets called periodically. Default to infinite.
+                    format: int32
+                    type: integer
+                type: object
+              xgbReplicaSpecs:
                 additionalProperties:
                   description: ReplicaSpec is a description of the replica
                   properties:
@@ -6788,63 +6839,9 @@ spec:
                           type: object
                       type: object
                   type: object
-                description: 'MXReplicaSpecs is map of common.ReplicaType and common.ReplicaSpec
-                  specifies the MX replicas to run. For example,   {     "Scheduler":
-                  common.ReplicaSpec,     "Server": common.ReplicaSpec,     "Worker":
-                  common.ReplicaSpec,   }'
-                type: object
-              runPolicy:
-                description: RunPolicy encapsulates various runtime policies of the
-                  distributed training job, for example how to clean up resources
-                  and how long the job can stay active.
-                properties:
-                  activeDeadlineSeconds:
-                    description: Specifies the duration in seconds relative to the
-                      startTime that the job may be active before the system tries
-                      to terminate it; value must be positive integer.
-                    format: int64
-                    type: integer
-                  backoffLimit:
-                    description: Optional number of retries before marking this job
-                      failed.
-                    format: int32
-                    type: integer
-                  cleanPodPolicy:
-                    description: CleanPodPolicy defines the policy to kill pods after
-                      the job completes. Default to Running.
-                    type: string
-                  schedulingPolicy:
-                    description: SchedulingPolicy defines the policy related to scheduling,
-                      e.g. gang-scheduling
-                    properties:
-                      minAvailable:
-                        format: int32
-                        type: integer
-                      minResources:
-                        additionalProperties:
-                          anyOf:
-                          - type: integer
-                          - type: string
-                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
-                          x-kubernetes-int-or-string: true
-                        description: ResourceList is a set of (resource name, quantity)
-                          pairs.
-                        type: object
-                      priorityClass:
-                        type: string
-                      queue:
-                        type: string
-                    type: object
-                  ttlSecondsAfterFinished:
-                    description: TTLSecondsAfterFinished is the TTL to clean up jobs.
-                      It may take extra ReconcilePeriod seconds for the cleanup, since
-                      reconcile gets called periodically. Default to infinite.
-                    format: int32
-                    type: integer
                 type: object
             required:
-            - jobMode
-            - mxReplicaSpecs
+            - xgbReplicaSpecs
             type: object
           status:
             description: JobStatus represents the current observed state of the training
@@ -6908,6 +6905,53 @@ spec:
                       description: The number of pods which reached phase Failed.
                       format: int32
                       type: integer
+                    labelSelector:
+                      description: A label selector is a label query over a set of
+                        resources. The result of matchLabels and matchExpressions
+                        are ANDed. An empty label selector matches all objects. A
+                        null label selector matches no objects.
+                      properties:
+                        matchExpressions:
+                          description: matchExpressions is a list of label selector
+                            requirements. The requirements are ANDed.
+                          items:
+                            description: A label selector requirement is a selector
+                              that contains values, a key, and an operator that relates
+                              the key and values.
+                            properties:
+                              key:
+                                description: key is the label key that the selector
+                                  applies to.
+                                type: string
+                              operator:
+                                description: operator represents a key's relationship
+                                  to a set of values. Valid operators are In, NotIn,
+                                  Exists and DoesNotExist.
+                                type: string
+                              values:
+                                description: values is an array of string values.
+                                  If the operator is In or NotIn, the values array
+                                  must be non-empty. If the operator is Exists or
+                                  DoesNotExist, the values array must be empty. This
+                                  array is replaced during a strategic merge patch.
+                                items:
+                                  type: string
+                                type: array
+                            required:
+                            - key
+                            - operator
+                            type: object
+                          type: array
+                        matchLabels:
+                          additionalProperties:
+                            type: string
+                          description: matchLabels is a map of {key,value} pairs.
+                            A single {key,value} in the matchLabels map is equivalent
+                            to an element of matchExpressions, whose key field is
+                            "key", the operator is "In", and the values array contains
+                            only "value". The requirements are ANDed.
+                          type: object
+                      type: object
                     succeeded:
                       description: The number of pods which reached phase Succeeded.
                       format: int32
