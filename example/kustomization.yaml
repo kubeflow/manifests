@@ -51,3 +51,7 @@ resources:
 - ../apps/training-operator/upstream/overlays/kubeflow
 # User namespace
 - ../common/user-namespace/base
+
+# KServe
+#- ../contrib/kserve/upstream/kserve_kubeflow.yaml
+- ../contrib/kserve/upstream/kserve.yaml
