@@ -3,12 +3,18 @@ kind: Kustomization
 namespace: kubeflow
 resources:
   - cache-server.yaml
-  - default-deny-not-istio-system.yaml
+  - centraldashboard.yaml
+  - default-allow-same-namespace.yaml
+  - jupyter-web-app.yaml
   - katib-controller.yaml
   - katib-db-manager.yaml
+  - katib-ui.yaml
+  - kfserving-models-web-app.yaml
   - kfserving.yaml
   - metadata-grpc-server.yaml
   - minio.yaml
+  - ml-pipeline-ui.yaml 
   - ml-pipeline.yaml
   - poddefaults.yaml
   - seldon.yaml
+  - volumes-web-app.yaml
