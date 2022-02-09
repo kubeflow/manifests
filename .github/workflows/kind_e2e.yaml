@@ -97,8 +97,6 @@ jobs:
           image: kindest/node:${{ matrix.k8s-version }}@${{ matrix.kind-image-sha }}
         - role: worker
           image: kindest/node:${{ matrix.k8s-version }}@${{ matrix.kind-image-sha }}
-        - role: worker
-          image: kindest/node:${{ matrix.k8s-version }}@${{ matrix.kind-image-sha }}
         EOF
     - name: Create KinD Cluster
       working-directory: ./tests/e2e
@@ -114,4 +112,10 @@ jobs:
     - name: Install Kubeflow Components
       working-directory: ./tests/e2e
       run: |
-        ./hack/setup-kubeflow.sh
+        ./hack/setup-kubeflow-light.sh
+    - name: Run e2e tests
+      working-directory: ./tests/e2e
+      run: |
+        cd tests/e2e
+        pip install -r requirements.txt
+        ./runner.sh

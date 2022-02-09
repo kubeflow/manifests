@@ -11,8 +11,6 @@ nodes:
   image: kindest/node:1.21.2@sha256:19c2315068fd5951aa478ef7b9d1771572c8ea58fbfbf7bc81f7b153679d7a6c
 - role: worker
   image: kindest/node:1.21.2@sha256:19c2315068fd5951aa478ef7b9d1771572c8ea58fbfbf7bc81f7b153679d7a6c
-- role: worker
-  image: kindest/node:1.21.2@sha256:19c2315068fd5951aa478ef7b9d1771572c8ea58fbfbf7bc81f7b153679d7a6c
 kubeadmConfigPatches:
   - |
     apiVersion: kubeadm.k8s.io/v1beta2
