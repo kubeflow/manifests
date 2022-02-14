@@ -53,4 +53,5 @@ resources:
 - ../common/user-namespace/base
 
 # KServe
-- ../contrib/kserve/upstream
+- ../contrib/kserve/kserve
+- ../contrib/kserve/models-web-app/base
