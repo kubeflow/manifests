@@ -329,14 +329,6 @@ Install the Training Operator official Kubeflow component:
 kustomize build apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
-#### MPI Operator
-
-Install the MPI Operator official Kubeflow component:
-
-```sh
-kustomize build apps/mpi-job/upstream/overlays/kubeflow | kubectl apply -f -
-```
-
 #### User Namespace
 
 Finally, create a new namespace for the the default user (named `kubeflow-user-example-com`).
@@ -376,7 +368,7 @@ After running the command, you can access the Kubeflow Central Dashboard by doin
 
 In order to connect to Kubeflow using NodePort / LoadBalancer / Ingress, you need to setup HTTPS. The reason is that many of our web apps (e.g., Tensorboard Web App, Jupyter Web App, Katib UI) use [Secure Cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies), so accessing Kubeflow with HTTP over a non-localhost domain does not work.
 
-Exposing your Kubeflow cluster with proper HTTPS is a process heavily dependent on your environment. For this reason, please take a look at the available Kubeflow distributions, which are targeted to specific environments, and select the one that fits your needs.
+Exposing your Kubeflow cluster with proper HTTPS is a process heavily dependent on your environment. For this reason, please take a look at the available [Kubeflow distributions](https://www.kubeflow.org/docs/started/installing-kubeflow/#install-a-packaged-kubeflow-distribution), which are targeted to specific environments, and select the one that fits your needs.
 
 ---
 **NOTE**
