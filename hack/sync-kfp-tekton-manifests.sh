@@ -52,6 +52,11 @@ DST_DIR=$MANIFESTS_DIR/apps/kfp-tekton/upstream
 rm -r $DST_DIR
 cp $SRC_DIR/manifests/kustomize $DST_DIR -r
 
+echo "Updating README..."
+SRC_TXT="\[.*\](https://github.com/kubeflow/kfp-tekton/tree/.*/manifests/kustomize)"
+DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kfp-tekton/tree/$COMMIT/manifests/kustomize)"
+
+sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
 
 echo "Successfully copied all manifests."
 
@@ -59,4 +64,5 @@ echo "Successfully copied all manifests."
 echo "Committing the changes..."
 cd $MANIFESTS_DIR
 git add apps
+git add README.md
 git commit -m "Update kubeflow/kfp-tekton manifests from ${COMMIT}"
