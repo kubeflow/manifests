@@ -42,19 +42,19 @@ This repo periodically syncs all official Kubeflow components from their respect
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
 | Training Operator | apps/training-operator/upstream | [v1.4.0-rc.0](https://github.com/kubeflow/tf-operator/tree/v1.4.0-rc.0/manifests) |
-| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.5.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.5.0-rc.0/components/notebook-controller/config) |
-| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.5.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.5.0-rc.0/components/tensorboard-controller/config) |
-| Central Dashboard | apps/centraldashboard/upstream | [v1.5.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.5.0-rc.0/components/centraldashboard/manifests) |
-| Profiles + KFAM | apps/profiles/upstream | [v1.5.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.5.0-rc.0/components/profile-controller/config) |
-| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.5.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.5.0-rc.0/components/admission-webhook/manifests) |
-| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.5.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.5.0-rc.0/components/crud-web-apps/jupyter/manifests) |
-| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.5.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.5.0-rc.0/components/crud-web-apps/tensorboards/manifests) |
-| Volumes Web App | apps/volumes-web-app/upstream | [v1.5.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.5.0-rc.0/components/crud-web-apps/volumes/manifests) |
-| Katib | apps/katib/upstream | [v0.13.0-rc.0](https://github.com/kubeflow/katib/tree/v0.12.0-rc.0/manifests/v1beta1) |
+| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.5.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.5.0-rc.1/components/notebook-controller/config) |
+| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.5.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.5.0-rc.1/components/tensorboard-controller/config) |
+| Central Dashboard | apps/centraldashboard/upstream | [v1.5.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.5.0-rc.1/components/centraldashboard/manifests) |
+| Profiles + KFAM | apps/profiles/upstream | [v1.5.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.5.0-rc.1/components/profile-controller/config) |
+| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.5.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.5.0-rc.1/components/admission-webhook/manifests) |
+| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.5.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.5.0-rc.1/components/crud-web-apps/jupyter/manifests) |
+| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.5.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.5.0-rc.1/components/crud-web-apps/tensorboards/manifests) |
+| Volumes Web App | apps/volumes-web-app/upstream | [v1.5.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.5.0-rc.1/components/crud-web-apps/volumes/manifests) |
+| Katib | apps/katib/upstream | [v0.13.0-rc.1](https://github.com/kubeflow/katib/tree/v0.13.0-rc.1/manifests/v1beta1) |
 | KFServing | apps/kfserving/upstream | [v0.6.1](https://github.com/kubeflow/kfserving/releases/tag/v0.6.1) |
 | KServe | contrib/kserve/upstream | [v0.7.0](https://github.com/kserve/kserve/tree/v0.7.0) |
-| Kubeflow Pipelines | apps/pipeline/upstream | [1.8.0-rc.1](https://github.com/kubeflow/pipelines/tree/1.8.0-rc.1/manifests/kustomize) |
-| Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [v1.1.0](https://github.com/kubeflow/kfp-tekton/tree/v1.1.0/manifests/kustomize) |
+| Kubeflow Pipelines | apps/pipeline/upstream | [1.8.0](https://github.com/kubeflow/pipelines/tree/1.8.0/manifests/kustomize) |
+| Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [v1.1.1](https://github.com/kubeflow/kfp-tekton/tree/v1.1.1/manifests/kustomize) |
 
 The following is also a matrix with versions from common components that are
 used from the different projects of Kubeflow:
@@ -329,14 +329,6 @@ Install the Training Operator official Kubeflow component:
 kustomize build apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
-#### MPI Operator
-
-Install the MPI Operator official Kubeflow component:
-
-```sh
-kustomize build apps/mpi-job/upstream/overlays/kubeflow | kubectl apply -f -
-```
-
 #### User Namespace
 
 Finally, create a new namespace for the the default user (named `kubeflow-user-example-com`).
@@ -376,7 +368,7 @@ After running the command, you can access the Kubeflow Central Dashboard by doin
 
 In order to connect to Kubeflow using NodePort / LoadBalancer / Ingress, you need to setup HTTPS. The reason is that many of our web apps (e.g., Tensorboard Web App, Jupyter Web App, Katib UI) use [Secure Cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies), so accessing Kubeflow with HTTP over a non-localhost domain does not work.
 
-Exposing your Kubeflow cluster with proper HTTPS is a process heavily dependent on your environment. For this reason, please take a look at the available Kubeflow distributions, which are targeted to specific environments, and select the one that fits your needs.
+Exposing your Kubeflow cluster with proper HTTPS is a process heavily dependent on your environment. For this reason, please take a look at the available [Kubeflow distributions](https://www.kubeflow.org/docs/started/installing-kubeflow/#install-a-packaged-kubeflow-distribution), which are targeted to specific environments, and select the one that fits your needs.
 
 ---
 **NOTE**

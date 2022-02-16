@@ -52,40 +52,80 @@ DST_DIR=$MANIFESTS_DIR/apps/admission-webhook/upstream
 rm -r $DST_DIR
 cp $SRC_DIR/components/admission-webhook/manifests $DST_DIR -r
 
+echo "Updating README..."
+SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/admission-webhook/manifests)"
+DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/admission-webhook/manifests)"
+sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
+
 echo "Copying centraldashboard manifests..."
 DST_DIR=$MANIFESTS_DIR/apps/centraldashboard/upstream
 rm -r $DST_DIR
 cp $SRC_DIR/components/centraldashboard/manifests $DST_DIR -r
+
+echo "Updating README..."
+SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/centraldashboard/manifests)"
+DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/centraldashboard/manifests)"
+sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
 
 echo "Copying jupyter-web-app manifests..."
 DST_DIR=$MANIFESTS_DIR/apps/jupyter/jupyter-web-app/upstream
 rm -r $DST_DIR
 cp $SRC_DIR/components/crud-web-apps/jupyter/manifests $DST_DIR -r
 
+echo "Updating README..."
+SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/crud-web-apps/jupyter/manifests)"
+DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/crud-web-apps/jupyter/manifests)"
+sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
+
 echo "Copying volumes-web-app manifests..."
 DST_DIR=$MANIFESTS_DIR/apps/volumes-web-app/upstream
 rm -r $DST_DIR
 cp $SRC_DIR/components/crud-web-apps/volumes/manifests $DST_DIR -r
+
+echo "Updating README..."
+SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/crud-web-apps/volumes/manifests)"
+DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/crud-web-apps/volumes/manifests)"
+sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
 
 echo "Copying tensorboards-web-app manifests..."
 DST_DIR=$MANIFESTS_DIR/apps/tensorboard/tensorboards-web-app/upstream
 rm -r $DST_DIR
 cp $SRC_DIR/components/crud-web-apps/tensorboards/manifests $DST_DIR -r
 
+echo "Updating README..."
+SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/crud-web-apps/tensorboards/manifests)"
+DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/crud-web-apps/tensorboards/manifests)"
+sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
+
 echo "Copying profile-controller manifests..."
 DST_DIR=$MANIFESTS_DIR/apps/profiles/upstream
 rm -r $DST_DIR
 cp $SRC_DIR/components/profile-controller/config $DST_DIR -r
+
+echo "Updating README..."
+SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/profile-controller/config)"
+DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/profile-controller/config)"
+sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
 
 echo "Copying notebook-controller manifests..."
 DST_DIR=$MANIFESTS_DIR/apps/jupyter/notebook-controller/upstream
 rm -r $DST_DIR
 cp $SRC_DIR/components/notebook-controller/config $DST_DIR -r
 
+echo "Updating README..."
+SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/notebook-controller/config)"
+DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/notebook-controller/config)"
+sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
+
 echo "Copying tensorboard-controller manifests..."
 DST_DIR=$MANIFESTS_DIR/apps/tensorboard/tensorboard-controller/upstream
 rm -r $DST_DIR
 cp $SRC_DIR/components/tensorboard-controller/config $DST_DIR -r
+
+echo "Updating README..."
+SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/tensorboard-controller/config)"
+DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/tensorboard-controller/config)"
+sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
 
 echo "Successfully copied all manifests."
 
@@ -93,4 +133,5 @@ echo "Successfully copied all manifests."
 echo "Committing the changes..."
 cd $MANIFESTS_DIR
 git add apps
+git add README.md
 git commit -m "Update kubeflow/kubeflow manifests from ${COMMIT}"

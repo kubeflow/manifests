@@ -53,5 +53,5 @@ resources:
 - ../common/user-namespace/base
 
 # KServe
-#- ../contrib/kserve/upstream/kserve_kubeflow.yaml
-- ../contrib/kserve/upstream/kserve.yaml
+- ../contrib/kserve/kserve
+- ../contrib/kserve/models-web-app/base
