@@ -20,7 +20,7 @@ set -euo pipefail
 TIMEOUT=600s  # 10mins
 
 echo "Creating Kubeflow namespace..."
-kubectl create namespace kubeflow
+kubectl create namespace kubeflow --dry-run=client -o yaml | kubectl apply -f -
 
 echo "Deploying all Kubeflow components..."
 function install_kubeflow {
