@@ -21,3 +21,10 @@ commonLabels:
 # !!! If you want to customize the namespace,
 # please also update base/cache-deployer/cluster-scoped/cache-deployer-clusterrolebinding.yaml
 namespace: kubeflow
+patchesJson6902:
+- target:
+    group: metacontroller.k8s.io
+    version: v1alpha1
+    kind: CompositeController
+    name: kubeflow-pipelines-profile-controller
+  path: patches/remove-namespace.yaml
