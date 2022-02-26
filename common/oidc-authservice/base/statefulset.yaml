@@ -15,9 +15,10 @@ spec:
       labels:
         app: authservice
     spec:
+      serviceAccountName: authservice
       containers:
       - name: authservice
-        image: gcr.io/arrikto/kubeflow/oidc-authservice:6ac9400
+        image: gcr.io/arrikto/kubeflow/oidc-authservice:e236439
         imagePullPolicy: Always
         ports:
         - name: http-api
