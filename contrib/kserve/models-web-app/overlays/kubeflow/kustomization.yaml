@@ -33,6 +33,7 @@ generatorOptions:
 # kserve namespace in webhook configurations
 configMapGenerator:
   - name: kserve-models-web-app-config
+    namespace: kserve
     behavior: replace
     literals:
     - USERID_HEADER=kubeflow-userid
