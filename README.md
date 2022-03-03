@@ -395,7 +395,6 @@ For Tensorboard Web App, you need to change `apps/tensorboard/tensorboards-web-a
 TWA_APP_SECURE_COOKIES=false
 ```
 
-
 For Volumes Web App, you need to change `apps/volumes-web-app/upstream/base/params.env` file.
 ```
 VWA_APP_SECURE_COOKIES=false
