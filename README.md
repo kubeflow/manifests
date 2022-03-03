@@ -383,6 +383,23 @@ Exposing your Kubeflow cluster with proper HTTPS is a process heavily dependent 
 
 If you absolutely need to expose Kubeflow over HTTP, you can disable the `Secure Cookies` feature by setting the `APP_SECURE_COOKIES` environment variable to `false` in every relevant web app. This is not recommended, as it poses security risks.
 
+You can expose Kubeflow over HTTP by changing env files.
+
+In order to set `APP_SECURE_COOKIES` environment variable for Jupyter Web App, you need to change `apps/jupyter/jupyter-web-app/upstream/base/params.env` file.
+```
+JWS_APP_SECURE_COOKIES=false
+```
+
+For Tensorboard Web App, you need to change `apps/tensorboard/tensorboards-web-app/upstream/base/params.env` file.
+```
+TWA_APP_SECURE_COOKIES=false
+```
+
+
+For Volumes Web App, you need to change `apps/volumes-web-app/upstream/base/params.env` file.
+```
+VWA_APP_SECURE_COOKIES=false
+```
 ---
 
 ### Change default user password
