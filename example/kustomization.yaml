@@ -32,7 +32,7 @@ resources:
 # Katib
 - ../apps/katib/upstream/installs/katib-with-kubeflow
 # Central Dashboard
-- ../apps/centraldashboard/upstream/overlays/istio
+- ../apps/centraldashboard/upstream/overlays/kserve
 # Admission Webhook
 - ../apps/admission-webhook/upstream/overlays/cert-manager
 # Notebook Controller
@@ -54,4 +54,4 @@ resources:
 
 # KServe
 - ../contrib/kserve/kserve
-- ../contrib/kserve/models-web-app/base
+- ../contrib/kserve/models-web-app/overlays/kubeflow
