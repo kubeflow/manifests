@@ -27,7 +27,7 @@ data:
         },
         {
           "type": "item",
-          "link": "/models/",
+          "link": "/kserve-endpoints/",
           "text": "Models",
           "icon": "kubeflow:models"
         },
