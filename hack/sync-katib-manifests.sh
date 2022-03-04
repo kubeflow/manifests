@@ -55,8 +55,15 @@ cp $SRC_DIR/manifests/v1beta1 $DST_DIR -r
 
 echo "Successfully copied all manifests."
 
+echo "Updating README..."
+SRC_TXT="\[.*\](https://github.com/kubeflow/katib/tree/.*/manifests/v1beta1)"
+DST_TXT="\[$COMMIT\](https://github.com/kubeflow/katib/tree/$COMMIT/manifests/v1beta1)"
+
+sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
+
 # DEV: Comment out these commands when local testing
 echo "Committing the changes..."
 cd $MANIFESTS_DIR
 git add apps
+git add README.md
 git commit -m "Update kubeflow/katib manifests from ${COMMIT}"
