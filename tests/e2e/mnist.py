@@ -1,4 +1,4 @@
-"""E2E Kubeflow test that tesst Pipelines, Katib, TFJobs and KFServing.
+"""E2E Kubeflow test that tesst Pipelines, Katib, TFJobs and KServe.
 
 Requires:
 pip install kfp==1.8.4
@@ -9,7 +9,7 @@ import kfp.dsl as dsl
 from kubernetes import config
 
 import settings
-from utils import isvc, katib, kfserving, tfjob
+from utils import isvc, katib, kserve, tfjob
 
 config.load_kube_config()
 
@@ -38,8 +38,8 @@ def mnist_pipeline(name=settings.PIPELINE_NAME,
     tfjob_op = tfjob.create_tfjob_task(name, namespace, training_steps,
                                        katib_op, model_volume_op)
 
-    # Create the KFServing inference.
-    kfserving.create_kfserving_task(name, namespace, tfjob_op,
+    # Create the KServe Inference
+    kserve.create_serving_task(name, namespace, tfjob_op,
                                     model_volume_op)
 
 

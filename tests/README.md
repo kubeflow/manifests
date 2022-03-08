@@ -15,6 +15,8 @@ included in the tests.
 
 ### Test Suite
 
+**To use KFserving v0.5/0.6 instead of KServe v0.7, comment the 6,7th lines and uncomment the 10,11th lines in e2e/utils/kserve.py**
+
 The e2e tests are completely independent of the underlying K8s cluster, as well
 as the platform of the cluster. These tests should be able to run in real
 world clusters, as well as ephemeral ones like KinD.
