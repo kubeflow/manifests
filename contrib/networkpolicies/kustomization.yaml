@@ -11,6 +11,7 @@ resources:
   - katib-ui.yaml
   - kfserving-models-web-app.yaml
   - kfserving.yaml
+  - kserve-models-web-app.yaml
   - metadata-grpc-server.yaml
   - minio.yaml
   - ml-pipeline-ui.yaml 
