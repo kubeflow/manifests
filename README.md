@@ -244,9 +244,26 @@ You can learn more about their differences in [Installation Options for Kubeflow
 
 Besides installation instructions in Kubeflow Pipelines Standalone documentation, you need to apply two virtual services to expose [Kubeflow Pipelines UI](https://github.com/kubeflow/pipelines/blob/1.7.0/manifests/kustomize/base/installs/multi-user/virtual-service.yaml) and [Metadata API](https://github.com/kubeflow/pipelines/blob/1.7.0/manifests/kustomize/base/metadata/options/istio/virtual-service.yaml) in kubeflow-gateway.
 
-#### KFServing
+#### KServe / KFServing
 
-Install the KFServing official Kubeflow component:
+KFServing was rebranded to KServe.
+
+Install the KServe component:
+
+```sh
+kustomize build contrib/kserve/kserve | kubectl apply -f -
+```
+
+Install the Models web app:
+
+```sh
+kustomize build contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
+```
+
+- ../contrib/kserve/models-web-app/overlays/kubeflow
+
+For those not ready to migrate to KServe, you can still install KFServing v0.6.1 with
+the following command, but we recommend migrating to KServe as soon as possible:
 
 ```sh
 kustomize build apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
