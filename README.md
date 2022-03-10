@@ -163,7 +163,7 @@ Knative is used by the KFServing official Kubeflow component.
 Install Knative Serving:
 
 ```sh
-kustomize build common/knative/knative-serving/base | kubectl apply -f -
+kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -
 kustomize build common/istio-1-11/cluster-local-gateway/base | kubectl apply -f -
 ```
 
@@ -282,7 +282,7 @@ kustomize build apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply
 Install the Central Dashboard official Kubeflow component:
 
 ```sh
-kustomize build apps/centraldashboard/upstream/overlays/istio | kubectl apply -f -
+kustomize build apps/centraldashboard/upstream/overlays/kserve | kubectl apply -f -
 ```
 
 #### Admission Webhook
