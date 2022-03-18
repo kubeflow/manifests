@@ -407,7 +407,7 @@ For security reasons, we don't want to use the default password for the default 
     python3 -c 'from passlib.hash import bcrypt; import getpass; print(bcrypt.using(rounds=12, ident="2y").hash(getpass.getpass()))'
     ```
 
-2. Edit `dex/base/config-map.yaml` and fill the relevant field with the hash of the password you chose:
+2. Edit `common/dex/base/config-map.yaml` and fill the relevant field with the hash of the password you chose:
 
     ```yaml
     ...
