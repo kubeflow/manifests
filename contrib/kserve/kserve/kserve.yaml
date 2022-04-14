@@ -12602,7 +12602,7 @@ spec:
         - --upstream=http://127.0.0.1:8080/
         - --logtostderr=true
         - --v=10
-        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.4.0
+        image: registry.cn-guangzhou.aliyuncs.com/k8s-docker-panyx/kubebuilder_kube-rbac-proxy:587abc14be9b
         name: kube-rbac-proxy
         ports:
         - containerPort: 8443
