@@ -1,0 +1,16 @@
+apiVersion: v1
+data:
+  profile-name: kubeflow-user-example-com
+  user: user@example.com
+kind: ConfigMap
+metadata:
+  name: default-install-config-5cbhhbttg4
+---
+apiVersion: kubeflow.org/v1beta1
+kind: Profile
+metadata:
+  name: kubeflow-user-example-com
+spec:
+  owner:
+    kind: User
+    name: user@example.com

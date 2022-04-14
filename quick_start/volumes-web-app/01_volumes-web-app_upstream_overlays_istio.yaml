@@ -1,0 +1,230 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+  name: volumes-web-app-service-account
+  namespace: kubeflow
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+  name: volumes-web-app-cluster-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - pods
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - watch
+  - update
+  - patch
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - storageclasses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+  name: volumes-web-app-kubeflow-volume-ui-admin
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+  name: volumes-web-app-kubeflow-volume-ui-edit
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - watch
+  - update
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+  name: volumes-web-app-kubeflow-volume-ui-view
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - storageclasses
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+  name: volumes-web-app-cluster-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: volumes-web-app-cluster-role
+subjects:
+- kind: ServiceAccount
+  name: volumes-web-app-service-account
+  namespace: kubeflow
+---
+apiVersion: v1
+data:
+  VWA_CLUSTER_DOMAIN: cluster.local
+  VWA_PREFIX: /volumes
+  VWA_USERID_HEADER: kubeflow-userid
+  VWA_USERID_PREFIX: ""
+kind: ConfigMap
+metadata:
+  labels:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+  name: volumes-web-app-parameters-d9b9bmk7ch
+  namespace: kubeflow
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+    run: volumes-web-app
+  name: volumes-web-app-service
+  namespace: kubeflow
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+  name: volumes-web-app-deployment
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: volumes-web-app
+      kustomize.component: volumes-web-app
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: volumes-web-app
+        kustomize.component: volumes-web-app
+    spec:
+      containers:
+      - env:
+        - name: APP_PREFIX
+          value: /volumes
+        - name: USERID_HEADER
+          value: kubeflow-userid
+        - name: USERID_PREFIX
+          value: ""
+        image: public.ecr.aws/j1r0q0g6/notebooks/volumes-web-app:v1.5.0
+        name: volumes-web-app
+        ports:
+        - containerPort: 5000
+      serviceAccountName: volumes-web-app-service-account
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  labels:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+  name: volumes-web-app-volumes-web-app
+  namespace: kubeflow
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - headers:
+      request:
+        add:
+          x-forwarded-prefix: /volumes
+    match:
+    - uri:
+        prefix: /volumes/
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: volumes-web-app-service.kubeflow.svc.cluster.local
+        port:
+          number: 80

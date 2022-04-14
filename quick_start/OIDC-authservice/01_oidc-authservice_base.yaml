@@ -1,0 +1,145 @@
+apiVersion: v1
+data:
+  OIDC_AUTH_URL: /dex/auth
+  OIDC_PROVIDER: http://dex.auth.svc.cluster.local:5556/dex
+  OIDC_SCOPES: profile email groups
+  PORT: '"8080"'
+  REDIRECT_URL: /login/oidc
+  SKIP_AUTH_URI: /dex
+  STORE_PATH: /var/lib/authservice/data.db
+  USERID_CLAIM: email
+  USERID_HEADER: kubeflow-userid
+  USERID_PREFIX: ""
+kind: ConfigMap
+metadata:
+  name: oidc-authservice-parameters
+  namespace: istio-system
+---
+apiVersion: v1
+data:
+  CLIENT_ID: a3ViZWZsb3ctb2lkYy1hdXRoc2VydmljZQ==
+  CLIENT_SECRET: cFVCbkJPWTgwU25YZ2ppYlRZTTlaV056WTJ4cmVOR1Fvaw==
+kind: Secret
+metadata:
+  name: oidc-authservice-client
+  namespace: istio-system
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authservice
+  namespace: istio-system
+spec:
+  ports:
+  - name: http-authservice
+    port: 8080
+    targetPort: http-api
+  publishNotReadyAddresses: true
+  selector:
+    app: authservice
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: authservice
+  namespace: istio-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authservice
+  serviceName: authservice
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: authservice
+    spec:
+      initContainers:
+      - name: fix-permission
+        image: busybox
+        command: ['sh', '-c']
+        args: ['chmod -R 777 /var/lib/authservice;']
+        volumeMounts:
+        - mountPath: /var/lib/authservice
+          name: data
+      containers:
+      - envFrom:
+        - secretRef:
+            name: oidc-authservice-client
+        - configMapRef:
+            name: oidc-authservice-parameters
+        image: registry.cn-guangzhou.aliyuncs.com/k8s-docker-panyx/oidc-authservice:c9450b805ad5
+        imagePullPolicy: Always
+        name: authservice
+        ports:
+        - containerPort: 8080
+          name: http-api
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8081
+        volumeMounts:
+        - mountPath: /var/lib/authservice
+          name: data
+      securityContext:
+        fsGroup: 111
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: authservice-pvc
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: authn-filter
+  namespace: istio-system
+spec:
+  configPatches:
+  - applyTo: HTTP_FILTER
+    match:
+      context: GATEWAY
+      listener:
+        filterChain:
+          filter:
+            name: envoy.http_connection_manager
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: envoy.filters.http.ext_authz
+        typed_config:
+          '@type': type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
+          http_service:
+            authorization_request:
+              allowed_headers:
+                patterns:
+                - exact: authorization
+                - exact: cookie
+                - exact: x-auth-token
+            authorization_response:
+              allowed_upstream_headers:
+                patterns:
+                - exact: kubeflow-userid
+            server_uri:
+              cluster: outbound|8080||authservice.istio-system.svc.cluster.local
+              timeout: 10s
+              uri: http://authservice.istio-system.svc.cluster.local
+  workloadSelector:
+    labels:
+      istio: ingressgateway
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: authservice-pvc
+  namespace: istio-system
+spec:
+  storageClassName: local-storage
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

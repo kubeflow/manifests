@@ -1,0 +1,335 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+  name: notebooks.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    kind: Notebook
+    plural: notebooks
+    singular: notebook
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          properties:
+            template:
+              description: 'INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
+                Important: Run "make" to regenerate code after modifying this file'
+              properties:
+                spec:
+                  type: object
+              type: object
+          type: object
+        status:
+          properties:
+            conditions:
+              description: Conditions is an array of current conditions
+              items:
+                properties:
+                  type:
+                    description: Type of the confition/
+                    type: string
+                required:
+                - type
+                type: object
+              type: array
+          required:
+          - conditions
+          type: object
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: false
+  - name: v1beta1
+    served: true
+    storage: false
+  - name: v1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+  name: notebook-controller-service-account
+  namespace: kubeflow
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+  name: notebook-controller-leader-election-role
+  namespace: kubeflow
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - configmaps/status
+  verbs:
+  - get
+  - update
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+---
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-notebooks-admin: "true"
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+  name: notebook-controller-kubeflow-notebooks-admin
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-notebooks-admin: "true"
+  name: notebook-controller-kubeflow-notebooks-edit
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - notebooks
+  - notebooks/status
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+  name: notebook-controller-kubeflow-notebooks-view
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - notebooks
+  - notebooks/status
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+  name: notebook-controller-role
+rules:
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - '*'
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - notebooks
+  - notebooks/finalizers
+  - notebooks/status
+  verbs:
+  - '*'
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - virtualservices
+  verbs:
+  - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+  name: notebook-controller-leader-election-rolebinding
+  namespace: kubeflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: notebook-controller-leader-election-role
+subjects:
+- kind: ServiceAccount
+  name: notebook-controller-service-account
+  namespace: kubeflow
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+  name: notebook-controller-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: notebook-controller-role
+subjects:
+- kind: ServiceAccount
+  name: notebook-controller-service-account
+  namespace: kubeflow
+---
+apiVersion: v1
+data:
+  ISTIO_GATEWAY: kubeflow/kubeflow-gateway
+  USE_ISTIO: "true"
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+  name: notebook-controller-config-kkt88f2bhb
+  namespace: kubeflow
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+  name: notebook-controller-service
+  namespace: kubeflow
+spec:
+  ports:
+  - port: 443
+  selector:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+  name: notebook-controller-deployment
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: notebook-controller
+      kustomize.component: notebook-controller
+  template:
+    metadata:
+      labels:
+        app: notebook-controller
+        kustomize.component: notebook-controller
+    spec:
+      containers:
+      - command:
+        - /manager
+        env:
+        - name: USE_ISTIO
+          valueFrom:
+            configMapKeyRef:
+              key: USE_ISTIO
+              name: notebook-controller-config-kkt88f2bhb
+        - name: ISTIO_GATEWAY
+          valueFrom:
+            configMapKeyRef:
+              key: ISTIO_GATEWAY
+              name: notebook-controller-config-kkt88f2bhb
+        image: public.ecr.aws/j1r0q0g6/notebooks/notebook-controller:v1.5.0
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        name: manager
+      serviceAccountName: notebook-controller-service-account

@@ -1,0 +1,864 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: experiments.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    categories:
+    - all
+    - kubeflow
+    - katib
+    kind: Experiment
+    plural: experiments
+    singular: experiment
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[-1:].type
+      name: Type
+      type: string
+    - jsonPath: .status.conditions[-1:].status
+      name: Status
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1beta1
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: suggestions.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    categories:
+    - all
+    - kubeflow
+    - katib
+    kind: Suggestion
+    plural: suggestions
+    singular: suggestion
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[-1:].type
+      name: Type
+      type: string
+    - jsonPath: .status.conditions[-1:].status
+      name: Status
+      type: string
+    - jsonPath: .spec.requests
+      name: Requested
+      type: string
+    - jsonPath: .status.suggestionCount
+      name: Assigned
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1beta1
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: trials.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    categories:
+    - all
+    - kubeflow
+    - katib
+    kind: Trial
+    plural: trials
+    singular: trial
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[-1:].type
+      name: Type
+      type: string
+    - jsonPath: .status.conditions[-1:].status
+      name: Status
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1beta1
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: kubeflow/katib-webhook-cert
+  name: katib.kubeflow.org
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    caBundle: Cg==
+    service:
+      name: katib-controller
+      namespace: kubeflow
+      path: /mutate-experiment
+  failurePolicy: Ignore
+  name: defaulter.experiment.katib.kubeflow.org
+  rules:
+  - apiGroups:
+    - kubeflow.org
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - experiments
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    caBundle: Cg==
+    service:
+      name: katib-controller
+      namespace: kubeflow
+      path: /mutate-pod
+  failurePolicy: Ignore
+  name: mutator.pod.katib.kubeflow.org
+  namespaceSelector:
+    matchLabels:
+      katib.kubeflow.org/metrics-collector-injection: enabled
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    resources:
+    - pods
+  sideEffects: None
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: katib-controller
+  namespace: kubeflow
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: katib-ui
+  namespace: kubeflow
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: katib-controller
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - serviceaccounts
+  - services
+  - events
+  - namespaces
+  - persistentvolumes
+  - persistentvolumeclaims
+  - pods
+  - pods/log
+  - pods/status
+  - secrets
+  verbs:
+  - '*'
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - '*'
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - roles
+  - rolebindings
+  verbs:
+  - '*'
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  - cronjobs
+  verbs:
+  - '*'
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - experiments
+  - experiments/status
+  - experiments/finalizers
+  - trials
+  - trials/status
+  - trials/finalizers
+  - suggestions
+  - suggestions/status
+  - suggestions/finalizers
+  - tfjobs
+  - pytorchjobs
+  - mpijobs
+  - xgboostjobs
+  - mxjobs
+  verbs:
+  - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: katib-ui
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - namespaces
+  verbs:
+  - '*'
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - experiments
+  - trials
+  - suggestions
+  verbs:
+  - '*'
+---
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-katib-admin: "true"
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+  name: kubeflow-katib-admin
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-katib-admin: "true"
+  name: kubeflow-katib-edit
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - experiments
+  - trials
+  - suggestions
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+  name: kubeflow-katib-view
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - experiments
+  - trials
+  - suggestions
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: katib-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: katib-controller
+subjects:
+- kind: ServiceAccount
+  name: katib-controller
+  namespace: kubeflow
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: katib-ui
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: katib-ui
+subjects:
+- kind: ServiceAccount
+  name: katib-ui
+  namespace: kubeflow
+---
+apiVersion: v1
+data:
+  early-stopping: |-
+    {
+      "medianstop": {
+        "image": "docker.io/kubeflowkatib/earlystopping-medianstop:v0.13.0"
+      }
+    }
+  metrics-collector-sidecar: |-
+    {
+      "StdOut": {
+        "image": "docker.io/kubeflowkatib/file-metrics-collector:v0.13.0"
+      },
+      "File": {
+        "image": "docker.io/kubeflowkatib/file-metrics-collector:v0.13.0"
+      },
+      "TensorFlowEvent": {
+        "image": "docker.io/kubeflowkatib/tfevent-metrics-collector:v0.13.0",
+        "resources": {
+          "limits": {
+            "memory": "1Gi"
+          }
+        }
+      }
+    }
+  suggestion: |-
+    {
+      "random": {
+        "image": "docker.io/kubeflowkatib/suggestion-hyperopt:v0.13.0"
+      },
+      "tpe": {
+        "image": "docker.io/kubeflowkatib/suggestion-hyperopt:v0.13.0"
+      },
+      "grid": {
+        "image": "docker.io/kubeflowkatib/suggestion-chocolate:v0.13.0"
+      },
+      "hyperband": {
+        "image": "docker.io/kubeflowkatib/suggestion-hyperband:v0.13.0"
+      },
+      "bayesianoptimization": {
+        "image": "docker.io/kubeflowkatib/suggestion-skopt:v0.13.0"
+      },
+      "cmaes": {
+        "image": "docker.io/kubeflowkatib/suggestion-goptuna:v0.13.0"
+      },
+      "sobol": {
+        "image": "docker.io/kubeflowkatib/suggestion-goptuna:v0.13.0"
+      },
+      "multivariate-tpe": {
+        "image": "docker.io/kubeflowkatib/suggestion-optuna:v0.13.0"
+      },
+      "enas": {
+        "image": "docker.io/kubeflowkatib/suggestion-enas:v0.13.0",
+        "resources": {
+          "limits": {
+            "memory": "200Mi"
+          }
+        }
+      },
+      "darts": {
+        "image": "docker.io/kubeflowkatib/suggestion-darts:v0.13.0"
+      }
+    }
+kind: ConfigMap
+metadata:
+  name: katib-config
+  namespace: kubeflow
+---
+apiVersion: v1
+data:
+  defaultTrialTemplate.yaml: |-
+    apiVersion: batch/v1
+    kind: Job
+    spec:
+      template:
+        spec:
+          containers:
+            - name: training-container
+              image: docker.io/kubeflowkatib/mxnet-mnist:v0.13.0
+              command:
+                - "python3"
+                - "/opt/mxnet-mnist/mnist.py"
+                - "--batch-size=64"
+                - "--lr=${trialParameters.learningRate}"
+                - "--num-layers=${trialParameters.numberLayers}"
+                - "--optimizer=${trialParameters.optimizer}"
+          restartPolicy: Never
+  enasCPUTemplate: |-
+    apiVersion: batch/v1
+    kind: Job
+    spec:
+      template:
+        spec:
+          containers:
+            - name: training-container
+              image: docker.io/kubeflowkatib/enas-cnn-cifar10-cpu:v0.13.0
+              command:
+                - python3
+                - -u
+                - RunTrial.py
+                - --num_epochs=1
+                - "--architecture=\"${trialParameters.neuralNetworkArchitecture}\""
+                - "--nn_config=\"${trialParameters.neuralNetworkConfig}\""
+          restartPolicy: Never
+  pytorchJobTemplate: |-
+    apiVersion: kubeflow.org/v1
+    kind: PyTorchJob
+    spec:
+      pytorchReplicaSpecs:
+        Master:
+          replicas: 1
+          restartPolicy: OnFailure
+          template:
+            spec:
+              containers:
+                - name: pytorch
+                  image: docker.io/kubeflowkatib/pytorch-mnist:v0.13.0
+                  imagePullPolicy: Always
+                  command:
+                    - "python3"
+                    - "/opt/pytorch-mnist/mnist.py"
+                    - "--epochs=1"
+                    - "--lr=${trialParameters.learningRate}"
+                    - "--momentum=${trialParameters.momentum}"
+        Worker:
+          replicas: 2
+          restartPolicy: OnFailure
+          template:
+            spec:
+              containers:
+                - name: pytorch
+                  image: docker.io/kubeflowkatib/pytorch-mnist:v0.13.0
+                  imagePullPolicy: Always
+                  command:
+                    - "python3"
+                    - "/opt/pytorch-mnist/mnist.py"
+                    - "--epochs=1"
+                    - "--lr=${trialParameters.learningRate}"
+                    - "--momentum=${trialParameters.momentum}"
+kind: ConfigMap
+metadata:
+  labels:
+    katib.kubeflow.org/component: trial-templates
+  name: trial-templates
+  namespace: kubeflow
+---
+apiVersion: v1
+data:
+  MYSQL_ROOT_PASSWORD: dGVzdA==
+kind: Secret
+metadata:
+  name: katib-mysql-secrets
+  namespace: kubeflow
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/port: "8080"
+    prometheus.io/scheme: http
+    prometheus.io/scrape: "true"
+  labels:
+    katib.kubeflow.org/component: controller
+  name: katib-controller
+  namespace: kubeflow
+spec:
+  ports:
+  - name: webhook
+    port: 443
+    protocol: TCP
+    targetPort: 8443
+  - name: metrics
+    port: 8080
+    targetPort: 8080
+  selector:
+    katib.kubeflow.org/component: controller
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    katib.kubeflow.org/component: db-manager
+  name: katib-db-manager
+  namespace: kubeflow
+spec:
+  ports:
+  - name: api
+    port: 6789
+    protocol: TCP
+  selector:
+    katib.kubeflow.org/component: db-manager
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    katib.kubeflow.org/component: mysql
+  name: katib-mysql
+  namespace: kubeflow
+spec:
+  ports:
+  - name: dbapi
+    port: 3306
+    protocol: TCP
+  selector:
+    katib.kubeflow.org/component: mysql
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    katib.kubeflow.org/component: ui
+  name: katib-ui
+  namespace: kubeflow
+spec:
+  ports:
+  - name: ui
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    katib.kubeflow.org/component: ui
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    katib.kubeflow.org/component: controller
+  name: katib-controller
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      katib.kubeflow.org/component: controller
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+        sidecar.istio.io/inject: "false"
+      labels:
+        katib.kubeflow.org/component: controller
+    spec:
+      containers:
+      - args:
+        - --webhook-port=8443
+        - --trial-resources=Job.v1.batch
+        - --trial-resources=TFJob.v1.kubeflow.org
+        - --trial-resources=PyTorchJob.v1.kubeflow.org
+        - --trial-resources=MPIJob.v1.kubeflow.org
+        - --trial-resources=XGBoostJob.v1.kubeflow.org
+        - --trial-resources=MXJob.v1.kubeflow.org
+        command:
+        - ./katib-controller
+        env:
+        - name: KATIB_CORE_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: docker.io/kubeflowkatib/katib-controller:v0.13.0
+        name: katib-controller
+        ports:
+        - containerPort: 8443
+          name: webhook
+          protocol: TCP
+        - containerPort: 8080
+          name: metrics
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /tmp/cert
+          name: cert
+          readOnly: true
+      serviceAccountName: katib-controller
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: katib-webhook-cert
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    katib.kubeflow.org/component: db-manager
+  name: katib-db-manager
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      katib.kubeflow.org/component: db-manager
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        katib.kubeflow.org/component: db-manager
+    spec:
+      containers:
+      - command:
+        - ./katib-db-manager
+        env:
+        - name: DB_NAME
+          value: mysql
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MYSQL_ROOT_PASSWORD
+              name: katib-mysql-secrets
+        image: docker.io/kubeflowkatib/katib-db-manager:v0.13.0
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:6789
+          failureThreshold: 5
+          initialDelaySeconds: 10
+          periodSeconds: 60
+        name: katib-db-manager
+        ports:
+        - containerPort: 6789
+          name: api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    katib.kubeflow.org/component: mysql
+  name: katib-mysql
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      katib.kubeflow.org/component: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        katib.kubeflow.org/component: mysql
+    spec:
+      containers:
+      - args:
+        - --datadir
+        - /var/lib/mysql/datadir
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MYSQL_ROOT_PASSWORD
+              name: katib-mysql-secrets
+        - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          value: "true"
+        - name: MYSQL_DATABASE
+          value: katib
+        image: mysql:8.0.26
+        livenessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}
+          failureThreshold: 10
+          periodSeconds: 2
+        name: katib-mysql
+        ports:
+        - containerPort: 3306
+          name: dbapi
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - mysql -D ${MYSQL_DATABASE} -u root -p${MYSQL_ROOT_PASSWORD} -e 'SELECT
+              1'
+          failureThreshold: 10
+          periodSeconds: 2
+        startupProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}
+          failureThreshold: 60
+          periodSeconds: 15
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: katib-mysql
+      volumes:
+      - name: katib-mysql
+        persistentVolumeClaim:
+          claimName: katib-mysql
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    katib.kubeflow.org/component: ui
+  name: katib-ui
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      katib.kubeflow.org/component: ui
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        katib.kubeflow.org/component: ui
+    spec:
+      containers:
+      - args:
+        - --port=8080
+        command:
+        - ./katib-ui
+        env:
+        - name: KATIB_CORE_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: docker.io/kubeflowkatib/katib-ui:v0.13.0
+        name: katib-ui
+        ports:
+        - containerPort: 8080
+          name: ui
+      serviceAccountName: katib-ui
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: katib-webhook-cert
+  namespace: kubeflow
+spec:
+  commonName: katib-controller.kubeflow.svc
+  dnsNames:
+  - katib-controller.kubeflow.svc
+  - katib-controller.kubeflow.svc.cluster.local
+  isCA: true
+  issuerRef:
+    kind: Issuer
+    name: katib-selfsigned-issuer
+  secretName: katib-webhook-cert
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: katib-selfsigned-issuer
+  namespace: kubeflow
+spec:
+  selfSigned: {}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: katib-ui
+  namespace: kubeflow
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /katib/
+    rewrite:
+      uri: /katib/
+    route:
+    - destination:
+        host: katib-ui.kubeflow.svc.cluster.local
+        port:
+          number: 80
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: katib-mysql
+  namespace: kubeflow
+spec:
+  storageClassName: local-storage
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: kubeflow/katib-webhook-cert
+  name: katib.kubeflow.org
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    caBundle: Cg==
+    service:
+      name: katib-controller
+      namespace: kubeflow
+      path: /validate-experiment
+  failurePolicy: Ignore
+  name: validator.experiment.katib.kubeflow.org
+  rules:
+  - apiGroups:
+    - kubeflow.org
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - experiments
+  sideEffects: None

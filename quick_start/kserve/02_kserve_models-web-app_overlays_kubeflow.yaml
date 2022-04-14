@@ -1,0 +1,211 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    app.kubernetes.io/name: kserve
+    kustomize.component: kserve-models-web-app
+  name: kserve-models-web-app
+  namespace: kubeflow
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    app.kubernetes.io/name: kserve
+    kustomize.component: kserve-models-web-app
+  name: kserve-models-web-app-cluster-role
+rules:
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - pods
+  - pods/log
+  - events
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - serving.kserve.io
+  resources:
+  - inferenceservices
+  - inferenceservices/status
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+- apiGroups:
+  - serving.knative.dev
+  resources:
+  - services
+  - services/status
+  - routes
+  - routes/status
+  - configurations
+  - configurations/status
+  - revisions
+  - revisions/status
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    app.kubernetes.io/name: kserve
+    kustomize.component: kserve-models-web-app
+  name: kserve-models-web-app-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kserve-models-web-app-cluster-role
+subjects:
+- kind: ServiceAccount
+  name: kserve-models-web-app
+  namespace: kubeflow
+---
+apiVersion: v1
+data:
+  APP_PREFIX: /kserve-endpoints
+  USERID_HEADER: kubeflow-userid
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    app.kubernetes.io/name: kserve
+    kustomize.component: kserve-models-web-app
+  name: kserve-models-web-app-config-gfh88m49k6
+  namespace: kubeflow
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    app.kubernetes.io/name: kserve
+    kustomize.component: kserve-models-web-app
+  name: kserve-models-web-app
+  namespace: kubeflow
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    app.kubernetes.io/name: kserve
+    kustomize.component: kserve-models-web-app
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    app.kubernetes.io/name: kserve
+    kustomize.component: kserve-models-web-app
+  name: kserve-models-web-app
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kserve
+      app.kubernetes.io/component: kserve-models-web-app
+      app.kubernetes.io/name: kserve
+      kustomize.component: kserve-models-web-app
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+      labels:
+        app: kserve
+        app.kubernetes.io/component: kserve-models-web-app
+        app.kubernetes.io/name: kserve
+        kustomize.component: kserve-models-web-app
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: kserve-models-web-app-config-gfh88m49k6
+        image: kserve/models-web-app:v0.7.0
+        imagePullPolicy: Always
+        name: kserve-models-web-app
+        ports:
+        - containerPort: 5000
+      serviceAccountName: kserve-models-web-app
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  labels:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    app.kubernetes.io/name: kserve
+    kustomize.component: kserve-models-web-app
+  name: kserve-models-web-app
+  namespace: kubeflow
+spec:
+  gateways:
+  - kubeflow/kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /kserve-endpoints/
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: kserve-models-web-app.kubeflow.svc.cluster.local
+        port:
+          number: 80
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  labels:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    app.kubernetes.io/name: kserve
+    kustomize.component: kserve-models-web-app
+  name: kserve-models-web-app
+  namespace: kubeflow
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+  selector:
+    matchLabels:
+      app: kserve
+      app.kubernetes.io/component: kserve-models-web-app
+      app.kubernetes.io/name: kserve
+      kustomize.component: kserve-models-web-app
