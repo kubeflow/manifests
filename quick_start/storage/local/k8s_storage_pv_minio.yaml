@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: kubeflow
+  name: "k8s-storage-pv-minio"
+  labels:
+    name: k8s-storage-pv-minio
+    release: stable
+spec:
+  storageClassName: local-storage-minio
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  hostPath:
+    path: /data/data3/k8s_storage_pv_minio

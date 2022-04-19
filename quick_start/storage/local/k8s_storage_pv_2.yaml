@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: istio-system
+  name: "k8s-storage-pv-2"
+  labels:
+    name: k8s-storage-pv-2
+    release: stable
+spec:
+  storageClassName: local-storage
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  hostPath:
+    path: /data/data3/k8s_storage_pv_2
