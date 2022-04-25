@@ -251,7 +251,7 @@ Besides installation instructions in Kubeflow Pipelines Standalone documentation
 
 KFServing was rebranded to KServe.
 
-Install the KServe component:
+Install the KServe component as stand-alone:
 
 ```sh
 kustomize build contrib/kserve/kserve | kubectl apply -f -
@@ -271,6 +271,27 @@ the following command, but we recommend migrating to KServe as soon as possible:
 ```sh
 kustomize build apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
 ```
+
+If you don't need KFServing and want to use kserve as integrated mode not stand-alone modee, edit kustomization.yaml of kserve.
+Comment out exist resources kserve.yaml and aggregated-roles.yaml. And uncomment kserve_kubeflow.yaml:
+
+```sh
+# contrib/kserve/kserve/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+#- kserve.yaml
+#- aggregated-roles.yaml
+# For KF 1.5 we are including both KFServing and KServe. Thus we install the
+# standalone kserve manifests, to avoid conflicts with 0.6.1 KFServing.
+- kserve_kubeflow.yaml
+```
+
+Run kustomize build and apply it!
+```sh
+kustomize build contrib/kserve/kserve | kubectl apply -f -
+``` 
+
 
 #### Katib
 
