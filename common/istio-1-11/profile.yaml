@@ -47,6 +47,8 @@ spec:
         env:
         - name: PILOT_TRACE_SAMPLING
           value: "100"
+        - name: ENABLE_LEGACY_FSGROUP_INJECTION
+          value: "false"
         resources:
           requests:
             cpu: 10m
