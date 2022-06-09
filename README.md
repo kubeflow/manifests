@@ -272,7 +272,7 @@ the following command, but we recommend migrating to KServe as soon as possible:
 kustomize build apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
-If you don't need KFServing and want to use kserve as integrated mode not stand-alone modee, edit kustomization.yaml of kserve.
+If you don't need KFServing and want to use kserve in an integrated mode and not in standalone mode, then edit the kustomization.yaml of kserve.
 Comment out exist resources kserve.yaml and aggregated-roles.yaml. And uncomment kserve_kubeflow.yaml:
 
 ```sh
