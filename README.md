@@ -54,7 +54,7 @@ This repo periodically syncs all official Kubeflow components from their respect
 | KFServing | apps/kfserving/upstream | [v0.6.1](https://github.com/kubeflow/kfserving/releases/tag/v0.6.1) |
 | KServe | contrib/kserve/upstream | [v0.7.0](https://github.com/kserve/kserve/tree/v0.7.0) |
 | Kubeflow Pipelines | apps/pipeline/upstream | [1.8.2](https://github.com/kubeflow/pipelines/tree/1.8.2/manifests/kustomize) |
-| Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [v1.1.1](https://github.com/kubeflow/kfp-tekton/tree/v1.1.1/manifests/kustomize) |
+| Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [v1.2.1](https://github.com/kubeflow/kfp-tekton/tree/v1.2.1/manifests/kustomize) |
 
 The following is also a matrix with versions from common components that are
 used from the different projects of Kubeflow:

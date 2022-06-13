@@ -10,6 +10,7 @@ bases:
   - ../../third-party/minio/base
   - ../../third-party/minio/options/istio
   - ../../third-party/metacontroller/base
+  - ../../third-party/kfp-csi-s3
 
 # Identifier for application manager to apply ownerReference.
 # The ownerReference ensures the resources get garbage collected

@@ -375,7 +375,7 @@ spec:
           args:
             - --v=5
             - --csi-address=/csi/csi.sock
-            - --kubelet-registration-path=/var/data/kubelet/plugins/kfp-csi-s3/csi.sock
+            - --kubelet-registration-path=$(kubelet-path)/kubelet/plugins/kfp-csi-s3/csi.sock
           securityContext:
             # This is necessary only for systems with SELinux, where
             # non-privileged sidecar containers cannot access unix domain socket
@@ -414,22 +414,22 @@ spec:
           volumeMounts:
             - mountPath: /csi
               name: socket-dir
-            - mountPath: /var/data/kubelet/pods
+            - mountPath: $(kubelet-path)/kubelet/pods
               mountPropagation: Bidirectional
               name: mountpoint-dir
             - mountPath: /dev
               name: dev-dir
       volumes:
         - hostPath:
-            path: /var/data/kubelet/plugins/kfp-csi-s3
+            path: $(kubelet-path)/kubelet/plugins/kfp-csi-s3
             type: DirectoryOrCreate
           name: socket-dir
         - hostPath:
-            path: /var/data/kubelet/pods
+            path: $(kubelet-path)/kubelet/pods
             type: DirectoryOrCreate
           name: mountpoint-dir
         - hostPath:
-            path: /var/data/kubelet/plugins_registry
+            path: $(kubelet-path)/kubelet/plugins_registry
             type: Directory
           name: registration-dir
         - hostPath:
@@ -475,7 +475,7 @@ spec:
             name: socket-dir
       volumes:
         - hostPath:
-            path: /var/data/kubelet/plugins/kfp-csi-s3
+            path: $(kubelet-path)/kubelet/plugins/kfp-csi-s3
             type: DirectoryOrCreate
           name: socket-dir
 ---
@@ -517,7 +517,7 @@ spec:
               name: socket-dir
       volumes:
         - hostPath:
-            path: /var/data/kubelet/plugins/kfp-csi-s3
+            path: $(kubelet-path)/kubelet/plugins/kfp-csi-s3
             type: DirectoryOrCreate
           name: socket-dir
 ---

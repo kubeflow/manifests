@@ -43,20 +43,20 @@ patchesStrategicMerge:
 images:
   - name: gcr.io/ml-pipeline/api-server
     newName: docker.io/aipipeline/api-server
-    newTag: 1.1.1
+    newTag: 1.2.1
   - name: gcr.io/ml-pipeline/persistenceagent
     newName: docker.io/aipipeline/persistenceagent
-    newTag: 1.1.1
+    newTag: 1.2.1
   - name: gcr.io/ml-pipeline/scheduledworkflow
     newName: docker.io/aipipeline/scheduledworkflow
-    newTag: 1.1.1
+    newTag: 1.2.1
   - name: gcr.io/ml-pipeline/frontend
     newName: docker.io/aipipeline/frontend
-    newTag: 1.1.1
+    newTag: 1.2.1
   - name: gcr.io/ml-pipeline/viewer-crd-controller
-    newTag: 1.7.0
+    newTag: 1.8.1
   - name: gcr.io/ml-pipeline/visualization-server
-    newTag: 1.7.0
+    newTag: 1.8.1
   - name: gcr.io/ml-pipeline/metadata-writer
     newName: docker.io/aipipeline/metadata-writer
-    newTag: 1.1.1
+    newTag: 1.2.1
