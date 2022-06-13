@@ -4,7 +4,7 @@
 
 There are 2 goals for the e2e tests:
 1. Verify that core components can be applied and become Ready
-2. Virify that core CRDs can be created and succeed
+2. Verify that core CRDs can be created and succeed
 
 ### Components
 
