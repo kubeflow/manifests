@@ -26,7 +26,7 @@ resources:
 
 
 # Kubeflow Pipelines
-- ../apps/pipeline/upstream/env/platform-agnostic-multi-user
+- ../apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
 # KFServing
 - ../apps/kfserving/upstream/overlays/kubeflow
 # Katib
@@ -35,9 +35,9 @@ resources:
 - ../apps/centraldashboard/upstream/overlays/kserve
 # Admission Webhook
 - ../apps/admission-webhook/upstream/overlays/cert-manager
-# Notebook Controller
-- ../apps/jupyter/jupyter-web-app/upstream/overlays/istio
 # Jupyter Web App
+- ../apps/jupyter/jupyter-web-app/upstream/overlays/istio
+# Notebook Controller
 - ../apps/jupyter/notebook-controller/upstream/overlays/kubeflow
 # Profiles + KFAM
 - ../apps/profiles/upstream/overlays/kubeflow

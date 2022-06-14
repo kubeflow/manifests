@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This shell script is used to setup Katib deployment.
+# This shell script is used to setup Kubeflow deployment.
 set -euo pipefail
 
 TIMEOUT=600s  # 10mins
@@ -58,7 +58,7 @@ kubectl wait --timeout=${TIMEOUT} -n knative-serving --all --for=condition=Ready
 
 echo "Deploying KFP."
 function install_kfp {
-    kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user | kubectl apply -f - --validate=false
+    kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f - --validate=false
 }
 
 while ! install_kfp;
