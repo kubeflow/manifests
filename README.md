@@ -53,7 +53,7 @@ This repo periodically syncs all official Kubeflow components from their respect
 | Katib | apps/katib/upstream | [v0.13.0](https://github.com/kubeflow/katib/tree/v0.13.0/manifests/v1beta1) |
 | KFServing | apps/kfserving/upstream | [v0.6.1](https://github.com/kubeflow/kfserving/releases/tag/v0.6.1) |
 | KServe | contrib/kserve/upstream | [v0.7.0](https://github.com/kserve/kserve/tree/v0.7.0) |
-| Kubeflow Pipelines | apps/pipeline/upstream | [1.8.1](https://github.com/kubeflow/pipelines/tree/1.8.1/manifests/kustomize) |
+| Kubeflow Pipelines | apps/pipeline/upstream | [1.8.2](https://github.com/kubeflow/pipelines/tree/1.8.2/manifests/kustomize) |
 | Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [v1.1.1](https://github.com/kubeflow/kfp-tekton/tree/v1.1.1/manifests/kustomize) |
 
 The following is also a matrix with versions from common components that are
@@ -217,7 +217,7 @@ kustomize build common/istio-1-11/kubeflow-istio-resources/base | kubectl apply 
 Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/components/pipelines/multi-user/) official Kubeflow component:
 
 ```sh
-kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user | kubectl apply -f -
+kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
 ```
 
 If your container runtime is not docker, use pns executor instead:
