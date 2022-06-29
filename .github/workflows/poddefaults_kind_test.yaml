@@ -1,0 +1,43 @@
+name: Build & Apply PodDefaults manifests in KinD
+on:
+  pull_request:
+    paths:
+      - apps/admission-webhook/upstream/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install KinD
+      run: ./components/testing/gh-actions/install_kind.sh
+
+    - name: Install KinD
+      run: ./testing/gh-actions/install_kind.sh
+
+    - name: Create KinD Cluster
+      run: kind create cluster --config testing/gh-actions/kind-1-22.yaml
+
+    - name: Install kustomize
+      run: ./testing/gh-actions/install_kustomize.sh
+
+    - name: Install Istio
+      run: |
+        cd common/istio-1-11
+        kustomize build istio-crds/base | kubectl apply -f -
+        kustomize build istio-namespace/base | kubectl apply -f -
+        kustomize build istio-install/base | kubectl apply -f -
+
+    - name: Install cert-manager
+      run: |
+        cd common/cert-manager
+        kustomize build cert-manager/base | kubectl apply -f -
+        kustomize build kubeflow-issuer/base | kubectl apply -f -
+
+    - name: Build & Apply manifests
+      run: |
+        cd apps/admission-webhook/upstream
+        kubectl create ns kubeflow
+        kustomize build overlays/cert-manager | kubectl apply -f -
