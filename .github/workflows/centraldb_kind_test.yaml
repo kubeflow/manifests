@@ -1,8 +1,8 @@
-name: Build & Apply PodDefaults manifests in KinD
+name: Build & Apply CentralDashboard manifests in KinD
 on:
   pull_request:
     paths:
-      - apps/admission-webhook/upstream/**
+      - apps/centraldashboard/upstream/**
 
 jobs:
   build:
@@ -27,17 +27,8 @@ jobs:
         kustomize build istio-namespace/base | kubectl apply -f -
         kustomize build istio-install/base | kubectl apply -f -
 
-    - name: Install cert-manager
-      run: |
-        cd common/cert-manager
-        kubectl create namespace cert-manager
-        kustomize build cert-manager/base | kubectl apply -f -
-        echo "Waiting for cert-manager to be ready ..."
-        kubectl wait --for=condition=ready pod -l 'app in (cert-manager,webhook)' --timeout=180s -n cert-manager
-        kustomize build kubeflow-issuer/base | kubectl apply -f -
-
     - name: Build & Apply manifests
       run: |
-        cd apps/admission-webhook/upstream
+        cd apps/centraldashboard/upstream
         kubectl create ns kubeflow
-        kustomize build overlays/cert-manager | kubectl apply -f -
+        kustomize build overlays/kserve | kubectl apply -f -
