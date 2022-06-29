@@ -1,17 +1,16 @@
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
-metadata: # kpt-merge: /cronworkflows.argoproj.io
-  name: cronworkflows.argoproj.io
+metadata: # kpt-merge: /workflowtasksets.argoproj.io
+  name: workflowtasksets.argoproj.io
 spec:
   group: argoproj.io
   names:
-    kind: CronWorkflow
-    listKind: CronWorkflowList
-    plural: cronworkflows
+    kind: WorkflowTaskSet
+    listKind: WorkflowTaskSetList
+    plural: workflowtasksets
     shortNames:
-    - cwf
-    - cronwf
-    singular: cronworkflow
+    - wfts
+    singular: workflowtaskset
   scope: Namespaced
   versions:
   - name: v1alpha1
