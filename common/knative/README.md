@@ -4,8 +4,8 @@
 
 The manifests for Knative Serving are based off the following:
 
-  - [Knative serving (v0.22.1)](https://github.com/knative/serving/releases/download/v0.22.1/serving-core.yaml)
-  - [Knative ingress controller for Istio (v0.22.1)](https://github.com/knative-sandbox/net-istio/releases/download/v0.22.1/net-istio.yaml)
+  - [Knative serving (v1.4.0)](https://github.com/knative/serving/releases/download/v0.22.1/serving-core.yaml)
+  - [Knative ingress controller for Istio (v1.4.0)](https://github.com/knative-sandbox/net-istio/releases/download/v0.22.1/net-istio.yaml)
 
 
 1. Download the knative-serving manifests with the following commands:
@@ -13,9 +13,9 @@ The manifests for Knative Serving are based off the following:
     ```sh
     # No need to install serving-crds.
     # See: https://github.com/knative/serving/issues/9945
-    wget -O knative-serving/base/upstream/serving-core.yaml 'https://github.com/knative/serving/releases/download/v0.22.1/serving-core.yaml'
-    wget -O knative-serving/base/upstream/net-istio.yaml 'https://github.com/knative-sandbox/net-istio/releases/download/v0.22.1/net-istio.yaml'
-    wget -O knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml https://github.com/knative/serving/releases/download/v0.22.1/serving-post-install-jobs.yaml
+    wget -O knative-serving/base/upstream/serving-core.yaml 'https://github.com/knative/serving/releases/download/knative-v1.4.0/serving-core.yaml'
+    wget -O knative-serving/base/upstream/net-istio.yaml 'https://github.com/knative-sandbox/net-istio/releases/download/knative-v1.4.0/net-istio.yaml'
+    wget -O knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml https://github.com/knative/serving/releases/download/knative-v1.4.0/serving-post-install-jobs.yaml
     ```
 
 1. Remove all comments, since `yq` does not handle them correctly. See:
@@ -67,20 +67,20 @@ The manifests for Knative Serving are based off the following:
 
 ## Knative-Eventing
 
-The manifests for Knative Eventing are based off the the [v0.22.1 release](https://github.com/knative/eventing/releases/tag/v0.22.1).
+The manifests for Knative Eventing are based off the the [v1.4.0 release](https://github.com/knative/eventing/releases/tag/v0.22.1).
 
-  - [Eventing Core](https://github.com/knative/eventing/releases/download/v0.22.1/eventing-core.yaml)
-  - [In-Memory Channel](https://github.com/knative/eventing/releases/download/v0.22.1/in-memory-channel.yaml)
-  - [MT Channel Broker](https://github.com/knative/eventing/releases/download/v0.22.1/mt-channel-broker.yaml)
+  - [Eventing Core](https://github.com/knative/eventing/releases/download/v1.4.0/eventing-core.yaml)
+  - [In-Memory Channel](https://github.com/knative/eventing/releases/download/v1.4.0/in-memory-channel.yaml)
+  - [MT Channel Broker](https://github.com/knative/eventing/releases/download/v1.4.0/mt-channel-broker.yaml)
 
 
-1. Download the knative-serving manifests with the following commands:
+1. Download the knative-eventing manifests with the following commands:
 
     ```sh
-    wget -O knative-eventing/base/upstream/eventing-core.yaml 'https://github.com/knative/eventing/releases/download/v0.22.1/eventing-core.yaml'
-    wget -O knative-eventing/base/upstream/in-memory-channel.yaml 'https://github.com/knative/eventing/releases/download/v0.22.1/in-memory-channel.yaml'
-    wget -O knative-eventing/base/upstream/mt-channel-broker.yaml 'https://github.com/knative/eventing/releases/download/v0.22.1/mt-channel-broker.yaml'
-    wget -O knative-eventing-post-install-jobs/base/eventing-post-install-jobs.yaml https://github.com/knative/eventing/releases/download/v0.22.1/eventing-post-install-jobs.yaml
+    wget -O knative-eventing/base/upstream/eventing-core.yaml 'https://github.com/knative/eventing/releases/download/knative-v1.4.0/eventing-core.yaml'
+    wget -O knative-eventing/base/upstream/in-memory-channel.yaml 'https://github.com/knative/eventing/releases/download/knative-v1.4.0/in-memory-channel.yaml'
+    wget -O knative-eventing/base/upstream/mt-channel-broker.yaml 'https://github.com/knative/eventing/releases/download/knative-v1.4.0/mt-channel-broker.yaml'
+    wget -O knative-eventing-post-install-jobs/base/eventing-post-install-jobs.yaml https://github.com/knative/eventing/releases/download/knative-v1.4.0/eventing-post-install-jobs.yaml
     ```
 
 1. Remove all comments, since `yq` does not handle them correctly. See:
