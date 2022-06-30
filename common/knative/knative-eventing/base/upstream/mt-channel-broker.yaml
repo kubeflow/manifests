@@ -1,10 +1,26 @@
+# Copyright 2020 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: knative-eventing-mt-channel-broker-controller
   labels:
-    eventing.knative.dev/release: "v0.22.1"
+    eventing.knative.dev/release: "v1.4.0"
+    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/name: knative-eventing
 rules:
+  # Configs resources and status we care about.
   - apiGroups:
       - ""
     resources:
@@ -23,13 +39,29 @@ rules:
       - "delete"
       - "patch"
       - "watch"
+
 ---
+# Copyright 2020 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: knative-eventing-mt-broker-filter
   labels:
-    eventing.knative.dev/release: "v0.22.1"
+    eventing.knative.dev/release: "v1.4.0"
+    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
       - eventing.knative.dev
@@ -48,21 +80,53 @@ rules:
       - get
       - list
       - watch
+
 ---
+# Copyright 2020 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: mt-broker-filter
   namespace: knative-eventing
   labels:
-    eventing.knative.dev/release: "v0.22.1"
+    eventing.knative.dev/release: "v1.4.0"
+    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/name: knative-eventing
+
 ---
+# Copyright 2020 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: knative-eventing-mt-broker-ingress
   labels:
-    eventing.knative.dev/release: "v0.22.1"
+    eventing.knative.dev/release: "v1.4.0"
+    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
       - eventing.knative.dev
@@ -80,21 +144,54 @@ rules:
       - get
       - list
       - watch
+
 ---
+# Copyright 2020 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: mt-broker-ingress
   namespace: knative-eventing
   labels:
-    eventing.knative.dev/release: "v0.22.1"
+    eventing.knative.dev/release: "v1.4.0"
+    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/name: knative-eventing
+
 ---
+# Copyright 2020 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: eventing-mt-channel-broker-controller
   labels:
-    eventing.knative.dev/release: "v0.22.1"
+    eventing.knative.dev/release: "v1.4.0"
+    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
     name: eventing-controller
@@ -103,13 +200,30 @@ roleRef:
   kind: ClusterRole
   name: knative-eventing-mt-channel-broker-controller
   apiGroup: rbac.authorization.k8s.io
+
 ---
+# Copyright 2020 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: knative-eventing-mt-broker-filter
   labels:
-    eventing.knative.dev/release: "v0.22.1"
+    eventing.knative.dev/release: "v1.4.0"
+    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
     name: mt-broker-filter
@@ -118,13 +232,30 @@ roleRef:
   kind: ClusterRole
   name: knative-eventing-mt-broker-filter
   apiGroup: rbac.authorization.k8s.io
+
 ---
+# Copyright 2020 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: knative-eventing-mt-broker-ingress
   labels:
-    eventing.knative.dev/release: "v0.22.1"
+    eventing.knative.dev/release: "v1.4.0"
+    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
     name: mt-broker-ingress
@@ -133,14 +264,32 @@ roleRef:
   kind: ClusterRole
   name: knative-eventing-mt-broker-ingress
   apiGroup: rbac.authorization.k8s.io
+
 ---
+# Copyright 2020 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mt-broker-filter
   namespace: knative-eventing
   labels:
-    eventing.knative.dev/release: "v0.22.1"
+    eventing.knative.dev/release: "v1.4.0"
+    app.kubernetes.io/component: broker-filter
+    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/name: knative-eventing
 spec:
   selector:
     matchLabels:
@@ -149,15 +298,18 @@ spec:
     metadata:
       labels:
         eventing.knative.dev/brokerRole: filter
-        eventing.knative.dev/release: "v0.22.1"
+        eventing.knative.dev/release: "v1.4.0"
+        app.kubernetes.io/component: broker-filter
+        app.kubernetes.io/version: "1.4.0"
+        app.kubernetes.io/name: knative-eventing
     spec:
       serviceAccountName: mt-broker-filter
       enableServiceLinks: false
       containers:
         - name: filter
           terminationMessagePolicy: FallbackToLogsOnError
-          image: gcr.io/knative-releases/knative.dev/eventing/cmd/broker/filter@sha256:0e25aa1613a3a1779b3f7b7f863e651e5f37520a7f6808ccad2164cc2b6a9b12
-          readinessProbe:
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/broker/filter@sha256:426797eae80ce0b759701ed5aa70571bf10a8fd1d459b6d1da3b6ea7bd320280
+          readinessProbe: &probe
             failureThreshold: 3
             httpGet:
               path: /healthz
@@ -167,14 +319,7 @@ spec:
             successThreshold: 1
             timeoutSeconds: 1
           livenessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: /healthz
-              port: 8080
-              scheme: HTTP
-            periodSeconds: 2
-            successThreshold: 1
-            timeoutSeconds: 1
+            !!merge <<: *probe
             initialDelaySeconds: 5
           resources:
             requests:
@@ -215,13 +360,21 @@ spec:
               value: "8080"
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - all
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     eventing.knative.dev/brokerRole: filter
-    eventing.knative.dev/release: "v0.22.1"
+    eventing.knative.dev/release: "v1.4.0"
+    app.kubernetes.io/component: broker-filter
+    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/name: knative-eventing
   name: broker-filter
   namespace: knative-eventing
 spec:
@@ -236,14 +389,32 @@ spec:
       targetPort: 9092
   selector:
     eventing.knative.dev/brokerRole: filter
+
 ---
+# Copyright 2020 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mt-broker-ingress
   namespace: knative-eventing
   labels:
-    eventing.knative.dev/release: "v0.22.1"
+    eventing.knative.dev/release: "v1.4.0"
+    app.kubernetes.io/component: broker-ingress
+    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/name: knative-eventing
 spec:
   selector:
     matchLabels:
@@ -252,15 +423,18 @@ spec:
     metadata:
       labels:
         eventing.knative.dev/brokerRole: ingress
-        eventing.knative.dev/release: "v0.22.1"
+        eventing.knative.dev/release: "v1.4.0"
+        app.kubernetes.io/component: broker-ingress
+        app.kubernetes.io/version: "1.4.0"
+        app.kubernetes.io/name: knative-eventing
     spec:
       serviceAccountName: mt-broker-ingress
       enableServiceLinks: false
       containers:
         - name: ingress
           terminationMessagePolicy: FallbackToLogsOnError
-          image: gcr.io/knative-releases/knative.dev/eventing/cmd/broker/ingress@sha256:cf579f88aa2a37c240e25bb886c1ef5404e326e12c7caf571e49308612243eee
-          readinessProbe:
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/broker/ingress@sha256:e53c0774a9f95506566c2cee91437df5c69effa314afcd699610a34e12bd9595
+          readinessProbe: &probe
             failureThreshold: 3
             httpGet:
               path: /healthz
@@ -270,14 +444,7 @@ spec:
             successThreshold: 1
             timeoutSeconds: 1
           livenessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: /healthz
-              port: 8080
-              scheme: HTTP
-            periodSeconds: 2
-            successThreshold: 1
-            timeoutSeconds: 1
+            !!merge <<: *probe
             initialDelaySeconds: 5
           resources:
             requests:
@@ -318,13 +485,21 @@ spec:
               value: "8080"
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - all
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     eventing.knative.dev/brokerRole: ingress
-    eventing.knative.dev/release: "v0.22.1"
+    eventing.knative.dev/release: "v1.4.0"
+    app.kubernetes.io/component: broker-ingress
+    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/name: knative-eventing
   name: broker-ingress
   namespace: knative-eventing
 spec:
@@ -339,14 +514,32 @@ spec:
       targetPort: 9092
   selector:
     eventing.knative.dev/brokerRole: ingress
+
 ---
+# Copyright 2020 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mt-broker-controller
   namespace: knative-eventing
   labels:
-    eventing.knative.dev/release: "v0.22.1"
+    eventing.knative.dev/release: "v1.4.0"
+    app.kubernetes.io/component: mt-broker-controller
+    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/name: knative-eventing
 spec:
   selector:
     matchLabels:
@@ -355,8 +548,12 @@ spec:
     metadata:
       labels:
         app: mt-broker-controller
-        eventing.knative.dev/release: "v0.22.1"
+        eventing.knative.dev/release: "v1.4.0"
+        app.kubernetes.io/component: broker-controller
+        app.kubernetes.io/version: "1.4.0"
+        app.kubernetes.io/name: knative-eventing
     spec:
+      # To avoid node becoming SPOF, spread our replicas to different nodes.
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -371,7 +568,7 @@ spec:
       containers:
         - name: mt-broker-controller
           terminationMessagePolicy: FallbackToLogsOnError
-          image: gcr.io/knative-releases/knative.dev/eventing/cmd/mtchannel_broker@sha256:a2678934d280ea19b0804cc7757d559a0312e2acea221b17a99bd830cd9eeaac
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/mtchannel_broker@sha256:c0b3b21bdf2694d68e5eeaf20d2052a901173e929055a78815aa03c08f0c386f
           resources:
             requests:
               cpu: 100m
@@ -387,27 +584,48 @@ spec:
               value: config-observability
             - name: METRICS_DOMAIN
               value: knative.dev/eventing
-            - name: BROKER_INJECTION_DEFAULT
-              value: "false"
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - all
           ports:
             - name: metrics
               containerPort: 9090
             - name: profiling
               containerPort: 8008
+
 ---
+# Copyright 2020 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: broker-ingress-hpa
   namespace: knative-eventing
   labels:
-    eventing.knative.dev/release: "v0.22.1"
+    eventing.knative.dev/release: "v1.4.0"
+    app.kubernetes.io/component: broker-ingress
+    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/name: knative-eventing
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -429,7 +647,10 @@ metadata:
   name: broker-filter-hpa
   namespace: knative-eventing
   labels:
-    eventing.knative.dev/release: "v0.22.1"
+    eventing.knative.dev/release: "v1.4.0"
+    app.kubernetes.io/component: broker-filter
+    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/name: knative-eventing
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -444,5 +665,5 @@ spec:
         target:
           type: Utilization
           averageUtilization: 70
----
 
+---
