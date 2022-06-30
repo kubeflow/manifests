@@ -1,0 +1,16 @@
+#
+# Copyright © 2020 Arrikto Inc.  All Rights Reserved.
+#
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: istio-system
+
+resources:
+- cluster-local-gateway.yaml
+- gateway-authorizationpolicy.yaml
+- gateway.yaml
+
+patchesStrategicMerge:
+- patches/remove-pdb.yaml
