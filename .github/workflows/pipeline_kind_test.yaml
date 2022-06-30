@@ -21,23 +21,14 @@ jobs:
       run: ./testing/gh-actions/install_kustomize.sh
 
     - name: Install Istio
-      run: |
-        cd common/istio-1-11
-        kustomize build istio-crds/base | kubectl apply -f -
-        kustomize build istio-namespace/base | kubectl apply -f -
-        kustomize build istio-install/base | kubectl apply -f -
+      run: ./testing/gh-actions/install_istio.sh
 
     - name: Install cert-manager
-      run: |
-        cd common/cert-manager
-        kubectl create namespace cert-manager
-        kustomize build cert-manager/base | kubectl apply -f -
-        echo "Waiting for cert-manager to be ready ..."
-        kubectl wait --for=condition=ready pod -l 'app in (cert-manager,webhook)' --timeout=180s -n cert-manager
-        kustomize build kubeflow-issuer/base | kubectl apply -f -
+      run: ./testing/gh-actions/install_cert_manager.sh
 
     - name: Build & Apply manifests
       run: |
         cd apps/pipeline/upstream
         kubectl create ns kubeflow
         kustomize build env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
+        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
