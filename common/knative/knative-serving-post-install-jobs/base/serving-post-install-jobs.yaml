@@ -1,12 +1,30 @@
+
+---
+# /tmp/tmp.6gY9AuLX8o/serving-storage-version-migration.yaml
+# Copyright 2020 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 apiVersion: batch/v1
 kind: Job
 metadata:
   generateName: storage-version-migration-serving-
   namespace: knative-serving
   labels:
-    app: "storage-version-migration-serving"
-    serving.knative.dev/release: "v0.22.1"
-  name: storage-version-migration-serving
+    app: storage-version-migration-serving
+    app.kubernetes.io/name: knative-serving
+    app.kubernetes.io/component: storage-version-migration-job
+    app.kubernetes.io/version: "1.4.0"
 spec:
   ttlSecondsAfterFinished: 600
   backoffLimit: 10
@@ -15,15 +33,33 @@ spec:
       annotations:
         sidecar.istio.io/inject: "false"
       labels:
-        app: "storage-version-migration-serving"
+        app: storage-version-migration-serving
+        app.kubernetes.io/name: knative-serving
+        app.kubernetes.io/component: storage-version-migration-job
+        app.kubernetes.io/version: "1.4.0"
     spec:
       serviceAccountName: controller
       restartPolicy: OnFailure
       containers:
         - name: migrate
-          image: gcr.io/knative-releases/knative.dev/serving/vendor/knative.dev/pkg/apiextensions/storageversion/cmd/migrate@sha256:dce9002c02d7abda2f7d4b656c28029ec172d085bb116f22936cb1e096c3d1c7
+          # This is the Go import path for the binary that is containerized
+          # and substituted here.
+          image: gcr.io/knative-releases/knative.dev/pkg/apiextensions/storageversion/cmd/migrate@sha256:a53b272ad6937f2fa785e9e42b059aaa9f93dd100d1fabae8e63c7acb7a4f711
           args:
             - "services.serving.knative.dev"
             - "configurations.serving.knative.dev"
             - "revisions.serving.knative.dev"
             - "routes.serving.knative.dev"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 1000m
+              memory: 1000Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+
+---
