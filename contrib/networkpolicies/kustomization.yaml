@@ -9,8 +9,6 @@ resources:
   - katib-controller.yaml
   - katib-db-manager.yaml
   - katib-ui.yaml
-  - kfserving-models-web-app.yaml
-  - kfserving.yaml
   - kserve-models-web-app.yaml
   - kserve.yaml
   - metatada-envoy.yaml
