@@ -50,7 +50,7 @@ This repo periodically syncs all official Kubeflow components from their respect
 | Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.5.0](https://github.com/kubeflow/kubeflow/tree/v1.5.0/components/crud-web-apps/jupyter/manifests) |
 | Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.5.0](https://github.com/kubeflow/kubeflow/tree/v1.5.0/components/crud-web-apps/tensorboards/manifests) |
 | Volumes Web App | apps/volumes-web-app/upstream | [v1.5.0](https://github.com/kubeflow/kubeflow/tree/v1.5.0/components/crud-web-apps/volumes/manifests) |
-| Katib | apps/katib/upstream | [v0.13.0](https://github.com/kubeflow/katib/tree/v0.13.0/manifests/v1beta1) |
+| Katib | apps/katib/upstream | [v0.14.0-rc.0](https://github.com/kubeflow/katib/tree/v0.14.0-rc.0/manifests/v1beta1) |
 | KFServing | apps/kfserving/upstream | [v0.6.1](https://github.com/kubeflow/kfserving/releases/tag/v0.6.1) |
 | KServe | contrib/kserve/upstream | [v0.7.0](https://github.com/kserve/kserve/tree/v0.7.0) |
 | Kubeflow Pipelines | apps/pipeline/upstream | [1.8.2](https://github.com/kubeflow/pipelines/tree/1.8.2/manifests/kustomize) |
