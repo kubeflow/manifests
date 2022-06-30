@@ -46,6 +46,8 @@ The manifests for Knative Serving are based off the following:
     yq eval -i 'select((.kind == "Gateway" and .metadata.name == "knative-ingress-gateway") | not)' knative-serving/base/upstream/net-istio.yaml
     ```
 
+    NOTE: You'll need to remove a redundant `{}` at the end of the `knative-serving/base/upstream/net-istio.yaml` file.
+
 1. Set `metadata.name` in the serving post-install job, to be deploy-able with
    `kustomize` and `kubectl apply`:
 
