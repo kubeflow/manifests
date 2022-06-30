@@ -306,13 +306,14 @@ metadata:
     app.kubernetes.io/name: knative-eventing
 spec:
   selector:
-    matchLabels: &labels
+    matchLabels:
       messaging.knative.dev/channel: in-memory-channel
       messaging.knative.dev/role: controller
   template:
     metadata:
       labels:
-        !!merge <<: *labels
+        messaging.knative.dev/channel: in-memory-channel
+        messaging.knative.dev/role: controller
         app.kubernetes.io/component: imc-controller
         app.kubernetes.io/version: "1.4.0"
         app.kubernetes.io/name: knative-eventing
@@ -322,7 +323,9 @@ spec:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
                 labelSelector:
-                  matchLabels: *labels
+                  matchLabels:
+                    messaging.knative.dev/channel: in-memory-channel
+                    messaging.knative.dev/role: controller
                 topologyKey: kubernetes.io/hostname
               weight: 100
       serviceAccountName: imc-controller
@@ -365,7 +368,7 @@ spec:
               containerPort: 8008
             - name: https-webhook
               containerPort: 8443
-          readinessProbe: &probe
+          readinessProbe:
             periodSeconds: 1
             httpGet:
               scheme: HTTPS
@@ -374,7 +377,13 @@ spec:
                 - name: k-kubelet-probe
                   value: "webhook"
           livenessProbe:
-            !!merge <<: *probe
+            periodSeconds: 1
+            httpGet:
+              scheme: HTTPS
+              port: 8443
+              httpHeaders:
+                - name: k-kubelet-probe
+                  value: "webhook"
             initialDelaySeconds: 20
       terminationGracePeriodSeconds: 300
 ---
@@ -454,13 +463,14 @@ metadata:
     app.kubernetes.io/name: knative-eventing
 spec:
   selector:
-    matchLabels: &labels
+    matchLabels:
       messaging.knative.dev/channel: in-memory-channel
       messaging.knative.dev/role: dispatcher
   template:
     metadata:
       labels:
-        !!merge <<: *labels
+        messaging.knative.dev/channel: in-memory-channel
+        messaging.knative.dev/role: dispatcher
         app.kubernetes.io/component: imc-dispatcher
         app.kubernetes.io/version: "1.4.0"
         app.kubernetes.io/name: knative-eventing
@@ -470,7 +480,9 @@ spec:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
                 labelSelector:
-                  matchLabels: *labels
+                  matchLabels:
+                    messaging.knative.dev/channel: in-memory-channel
+                    messaging.knative.dev/role: dispatcher
                 topologyKey: kubernetes.io/hostname
               weight: 100
       serviceAccountName: imc-dispatcher
@@ -478,7 +490,7 @@ spec:
       containers:
         - name: dispatcher
           image: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_dispatcher@sha256:1bfe4a8b168449a65d87191a45b68ccece87cc73d5f8c3728dc07ab83fe71240
-          readinessProbe: &probe
+          readinessProbe:
             failureThreshold: 3
             httpGet:
               path: /healthz
@@ -488,7 +500,14 @@ spec:
             successThreshold: 1
             timeoutSeconds: 1
           livenessProbe:
-            !!merge <<: *probe
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 2
+            successThreshold: 1
+            timeoutSeconds: 1
             initialDelaySeconds: 5
           env:
             - name: CONFIG_LOGGING_NAME
@@ -877,7 +896,7 @@ rules:
     resources:
       - services
       - serviceaccounts
-    verbs: &everything
+    verbs:
       - get
       - list
       - watch
@@ -896,12 +915,24 @@ rules:
       - "rbac.authorization.k8s.io"
     resources:
       - rolebindings
-    verbs: *everything
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
   - apiGroups:
       - apps
     resources:
       - deployments
-    verbs: *everything
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
   - apiGroups:
       - apps
     resources:
@@ -929,13 +960,19 @@ rules:
       - coordination.k8s.io
     resources:
       - leases
-    verbs: *everything
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
   - apiGroups:
       - "admissionregistration.k8s.io"
     resources:
       - "mutatingwebhookconfigurations"
       - "validatingwebhookconfigurations"
-    verbs: &everything
+    verbs:
       - "get"
       - "list"
       - "create"
