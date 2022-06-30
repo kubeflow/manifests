@@ -55,8 +55,15 @@ cp $SRC_DIR/manifests $DST_DIR -r
 
 echo "Successfully copied all manifests."
 
+echo "Updating README..."
+SRC_TXT="\[.*\](https://github.com/kubeflow/training-operator/tree/.*/manifests)"
+DST_TXT="\[$COMMIT\](https://github.com/kubeflow/training-operator/tree/$COMMIT/manifests)"
+
+sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
+
 # DEV: Comment out these commands when local testing
 echo "Committing the changes..."
 cd $MANIFESTS_DIR
 git add apps
+git add README.md
 git commit -m "Update kubeflow/training-operator manifests from ${COMMIT}"
