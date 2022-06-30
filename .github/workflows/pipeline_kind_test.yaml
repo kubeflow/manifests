@@ -1,0 +1,34 @@
+name: Build & Apply Kubeflow Pipelines manifests in KinD
+on:
+  pull_request:
+    paths:
+      - apps/pipeline/upstream/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install KinD
+      run: ./testing/gh-actions/install_kind.sh
+
+    - name: Create KinD Cluster
+      run: kind create cluster --config testing/gh-actions/kind-1-22.yaml
+
+    - name: Install kustomize
+      run: ./testing/gh-actions/install_kustomize.sh
+
+    - name: Install Istio
+      run: ./testing/gh-actions/install_istio.sh
+
+    - name: Install cert-manager
+      run: ./testing/gh-actions/install_cert_manager.sh
+
+    - name: Build & Apply manifests
+      run: |
+        cd apps/pipeline/upstream
+        kubectl create ns kubeflow
+        kustomize build env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
+        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
