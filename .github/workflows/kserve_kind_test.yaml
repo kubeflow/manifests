@@ -30,6 +30,7 @@ jobs:
       run: |
         cd contrib/kserve
         kubectl create ns kubeflow
-        for i in {1..3}; do kustomize build kserve | kubectl apply -f -; sleep 45; done 
+        for i in {1..3}; do set +e ;kustomize build kserve | kubectl apply -f -; sleep 45; done
+        set -e
         kustomize build models-web-app/overlays/kubeflow | kubectl apply -f -
         kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
