@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # This script aims at helping create a PR to update the manifests of the
-# kubeflow/pipelines repo.
+# kserve/kserve and kserve/models-web-app repo.
 # This script:
 # 1. Checks out a new branch
 # 2. Copies files to the correct places
@@ -9,6 +9,9 @@
 #
 # Afterwards the developers can submit the PR to the kubeflow/manifests
 # repo, based on that local branch
+
+# Run this script form the root of kubeflow/manifests repository
+# ./hack/sync-kserve-manifests.sh
 
 # strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
 set -euo pipefail
@@ -18,7 +21,7 @@ CLONE_DIR=${CLONE_DIR:=/tmp}
 KSERVE_DIR="${CLONE_DIR?}/kserve"
 WEBAPP_DIR="${CLONE_DIR?}/models-web-app"
 BRANCH=${BRANCH:=sync-kserve-manifests-${KSERVE_COMMIT?}}
-# required only if commit does not match the tag
+# *_VERSION vars are required only if COMMIT does not match a tag
 KSERVE_VERSION=${KSERVE_VERSION:=${KSERVE_COMMIT?}}
 WEBAPP_VERSION=${WEBAPP_VERSION:=${WEBAPP_COMMIT?}}
 
@@ -31,7 +34,7 @@ echo "Creating branch: ${BRANCH}"
 if [ -n "$(git status --porcelain)" ]; then
   # Uncommitted changes
   echo "WARNING: You have uncommitted changes, exiting..."
-#   exit 1
+  exit 1
 fi
 
 if [ "$(git branch --list "${BRANCH}")" ]
@@ -102,7 +105,7 @@ DST_DIR=$MANIFESTS_DIR/contrib/kserve/models-web-app
 rm -r "$DST_DIR"
 cp "$SRC_MANIFEST_PATH" "$DST_DIR" -r
 
-echo "Successfully copied kserve manifests."
+echo "Successfully copied kserve models web app manifests."
 
 echo "Updating README..."
 SRC_TXT="\[.*\](https://github.com/kserve/models-web-app/tree/.*)"
