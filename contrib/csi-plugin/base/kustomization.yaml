@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+images:
+- name: registry.cn-hangzhou.aliyuncs.com/acs/csi-node-driver-registrar
+  newName: registry.cn-hangzhou.aliyuncs.com/acs/csi-node-driver-registrar
+  newTag: v1.2.0
+- name: registry.cn-hangzhou.aliyuncs.com/plugins/csi-plugin
+  newName: registry.cn-hangzhou.aliyuncs.com/plugins/csi-plugin
+  newTag: v1.16.9-sfe-47712c74 
+- name: registry.cn-hangzhou.aliyuncs.com/acs/csi-provisioner
+  newName: registry.cn-hangzhou.aliyuncs.com/acs/csi-provisioner
+  newTag: v3.0.0-3f86569-aliyun
+
+namespace: kube-system
+
+resources:
+- rbac.yaml
+- nas-plugin.yaml
+- nas-provisioner.yaml

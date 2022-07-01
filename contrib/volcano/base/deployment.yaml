@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: volcano-queue
+  namespace: sfe
+spec:
+  selector:
+    matchLabels:
+      sfe.com/app: volcano-queue
+  template:
+    metadata:
+      labels:
+        sfe.com/app: volcano-queue
+    spec:
+      containers:
+      - name: volcano-queue
+        image: sfe-volcano-go:latest
+        imagePullPolicy: IfNotPresent
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccountName: volcano-queue
+      terminationGracePeriodSeconds: 30
+
+
+     

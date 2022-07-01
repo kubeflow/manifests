@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namePrefix: prod-
+commonLabels:
+  sfe.com/component: volcano-queue-interface
+  sfe.com/app: volcano-queue-interface
+# commonAnnotations:
+#   note: sfe
+bases:
+- ../../base
+patchesStrategicMerge:
+- deployment.yaml

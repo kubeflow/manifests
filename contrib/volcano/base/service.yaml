@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: volcano-queue-service
+  namespace: sfe
+spec:
+  ports:
+  - port: 8887
+    protocol: TCP
+    targetPort: 8887
+    nodePort: 31752
+  selector:
+    sfe.com/app: volcano-queue
+  sessionAffinity: None
+  type: NodePort

@@ -1,0 +1,148 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: csi-provisioner
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: csi-provisioner
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: csi-provisioner
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: node-role.kubernetes.io/master
+                operator: Exists
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: type
+                operator: NotIn
+                values:
+                - virtual-kubelet
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - csi-provisioner
+            topologyKey: kubernetes.io/hostname
+      tolerations:
+      - effect: NoSchedule
+        operator: Exists
+        key: node-role.kubernetes.io/master
+      - effect: NoSchedule
+        operator: Exists
+        key: node.cloudprovider.kubernetes.io/uninitialized
+      priorityClassName: system-node-critical
+      serviceAccount: csi-admin
+      hostNetwork: true
+      containers:
+        - name: external-nas-provisioner
+          image: registry.cn-hangzhou.aliyuncs.com/acs/csi-provisioner:v3.0.0-3f86569-aliyun
+          args:
+            - "--csi-address=$(ADDRESS)"
+            - "--volume-name-prefix=nas"
+            - "--timeout=150s"
+            - "--leader-election=true"
+            - "--extra-create-metadata=true"
+            - "--retry-interval-start=500ms"
+            - "--v=5"
+          env:
+            - name: ADDRESS
+              value: /var/lib/kubelet/csi-provisioner/nasplugin.csi.alibabacloud.com/csi.sock
+          imagePullPolicy: "IfNotPresent"
+          volumeMounts:
+            - name: nas-provisioner-dir
+              mountPath: /var/lib/kubelet/csi-provisioner/nasplugin.csi.alibabacloud.com
+        - name: csi-provisioner
+          securityContext:
+            privileged: true
+            capabilities:
+              add: ["SYS_ADMIN"]
+            allowPrivilegeEscalation: true
+          # image: registry.cn-hangzhou.aliyuncs.com/acs/csi-plugin:v1.18.8.47-906bd535-aliyun
+          # image: registry.cn-hangzhou.aliyuncs.com/acs/csi-plugin:v1.22.8-e84838c-aliyun
+          image: registry.cn-hangzhou.aliyuncs.com/plugins/csi-plugin:v1.16.9-sfe-47712c74
+          imagePullPolicy: "IfNotPresent"
+          args:
+            - "--endpoint=$(CSI_ENDPOINT)"
+            - "--v=2"
+            - "--driver=nas"
+            - "--nodeid=$(KUBE_NODE_NAME)"
+          env:
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: CSI_ENDPOINT
+              value: unix://var/lib/kubelet/csi-provisioner/driverplugin.csi.alibabacloud.com-replace/csi.sock
+            - name: MAX_VOLUMES_PERNODE
+              value: "15"
+            - name: SERVICE_TYPE
+              value: "provisioner"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: healthz
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 5
+          ports:
+            - name: healthz
+              containerPort: 11270
+              protocol: TCP
+          volumeMounts:
+            - name: host-dev
+              mountPath: /dev
+              mountPropagation: "HostToContainer"
+            - name: host-log
+              mountPath: /var/log/
+            - name: etc
+              mountPath: /host/etc
+            - name: nas-provisioner-dir
+              mountPath: /var/lib/kubelet/csi-provisioner/nasplugin.csi.alibabacloud.com
+            - mountPath: /var/addon
+              name: addon-token
+              readOnly: true
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1000Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+      volumes:
+        - name: nas-provisioner-dir
+          emptyDir: {}
+        - name: host-log
+          hostPath:
+            path: /var/log/
+        - name: host-dev
+          hostPath:
+            path: /dev
+        - name: etc
+          hostPath:
+            path: /etc
+        - name: addon-token
+          secret:
+            defaultMode: 420
+            optional: true
+            items:
+            - key: addon.token.config
+              path: token-config
+            secretName: addon.csi.token

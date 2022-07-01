@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# commonAnnotations:
+#   sfe.com/component: "volcano-queue-interface"
+#   sfe.com/app: "volcano-queue-interface"
+
+commonLabels:
+  sfe.com/component: queue-interface
+  sfe.com/app: queue-interface
+
+images:
+- name: sfe-volcano-go
+  newName: sfe-volcano-go
+  newTag: v1.1
+
+namespace: sfe
+
+resources:
+- cluster-role-binding.yaml
+- cluster-role.yaml 
+- deployment.yaml
+- service-account.yaml
+- service.yaml
