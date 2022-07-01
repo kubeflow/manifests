@@ -14,7 +14,7 @@ spec:
         app.kubernetes.io/component: kserve-models-web-app
     spec:
       containers:
-      - image: kserve/models-web-app:latest
+      - image: kserve/models-web-app:v0.8.0
         imagePullPolicy: Always
         name: kserve-models-web-app
         envFrom:
@@ -22,4 +22,23 @@ spec:
               name: kserve-models-web-app-config
         ports:
         - containerPort: 5000
+          name: http
+        livenessProbe:
+          httpGet:
+            path: /healthz/liveness
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+          failureThreshold: 3
+          successThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /healthz/readiness
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+          failureThreshold: 3
+          successThreshold: 1
       serviceAccountName: kserve-models-web-app
