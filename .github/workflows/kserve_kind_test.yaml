@@ -27,9 +27,4 @@ jobs:
       run: ./tests/gh-actions/install_cert_manager.sh
 
     - name: Build & Apply manifests
-      run: |
-        cd contrib/kserve
-        kubectl create ns kubeflow
-        kustomize build kserve | kubectl apply -f -
-        kustomize build models-web-app/overlays/kubeflow | kubectl apply -f -
-        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
+      run: ./tests/gh-actions/install_kserve.sh
