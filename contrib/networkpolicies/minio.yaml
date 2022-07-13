@@ -18,6 +18,12 @@ spec:
                 operator: In
                 values:
                   - kubeflow-profile
+        - namespaceSelector:
+            matchExpressions:
+              - key: kubernetes.io/metadata.name
+                operator: In
+                values:
+                  - istio-system
         - podSelector: {} # allow all pods from the same namespace
   policyTypes:
     - Ingress

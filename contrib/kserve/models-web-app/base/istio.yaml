@@ -11,7 +11,7 @@ spec:
   http:
   - match:
     - uri:
-        prefix: /kserve-endpoints/
+        prefix: /models/
     rewrite:
       uri: /
     route:

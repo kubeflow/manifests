@@ -1,6 +1,6 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
-metadata:
+metadata: # kpt-merge: /argo-role
   name: argo-role
 rules:
   - apiGroups:
@@ -45,6 +45,8 @@ rules:
     resources:
       - workflows
       - workflows/finalizers
+      - workflowtasksets
+      - workflowtasksets/finalizers
     verbs:
       - get
       - list
