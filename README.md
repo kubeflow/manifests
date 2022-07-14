@@ -62,7 +62,7 @@ used from the different projects of Kubeflow:
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
 | Istio | common/istio-1-14 | [1.14.1](https://github.com/istio/istio/releases/tag/1.14.1) |
-| Knative | common/knative | [0.22.1](https://github.com/knative/serving/releases/tag/v0.22.1) |
+| Knative | common/knative | [1.2.5](https://github.com/knative/serving/releases/tag/knative-v1.2.5) |
 
 ## Installation
 
@@ -80,10 +80,7 @@ The `example` directory contains an example kustomization for the single command
 
 ### Prerequisites
 
-- `Kubernetes` (up to `1.21`) with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
-    - :warning: Kubeflow 1.5.0 is not compatible with version 1.22 and onwards.
-        You can track the remaining work for K8s 1.22 support in
-        [kubeflow/kubeflow#6353](https://github.com/kubeflow/kubeflow/issues/6353)
+- `Kubernetes` (up to `1.22`) with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
 - `kustomize` (version `3.2.0`) ([download link](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0))
     - :warning: Kubeflow 1.5.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
 - `kubectl`
