@@ -3,22 +3,9 @@ kind: Namespace
 metadata:
   name: knative-eventing
   labels:
-    eventing.knative.dev/release: "v1.4.0"
-    app.kubernetes.io/version: "1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
-# Copyright 2021 The Knative Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -26,8 +13,8 @@ metadata:
   name: imc-controller
   namespace: knative-eventing
   labels:
-    eventing.knative.dev/release: "v1.4.0"
-    app.kubernetes.io/version: "1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -35,8 +22,8 @@ kind: ClusterRoleBinding
 metadata:
   name: imc-controller
   labels:
-    eventing.knative.dev/release: "v1.4.0"
-    app.kubernetes.io/version: "1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -53,8 +40,8 @@ metadata:
   namespace: knative-eventing
   name: imc-controller
   labels:
-    eventing.knative.dev/release: "v1.4.0"
-    app.kubernetes.io/version: "1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -70,8 +57,8 @@ kind: ClusterRoleBinding
 metadata:
   name: imc-controller-resolver
   labels:
-    eventing.knative.dev/release: "v1.4.0"
-    app.kubernetes.io/version: "1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -81,19 +68,6 @@ roleRef:
   kind: ClusterRole
   name: addressable-resolver
   apiGroup: rbac.authorization.k8s.io
-# Copyright 2021 The Knative Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -101,8 +75,8 @@ metadata:
   name: imc-dispatcher
   namespace: knative-eventing
   labels:
-    eventing.knative.dev/release: "v1.4.0"
-    app.kubernetes.io/version: "1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -110,8 +84,8 @@ kind: ClusterRoleBinding
 metadata:
   name: imc-dispatcher
   labels:
-    eventing.knative.dev/release: "v1.4.0"
-    app.kubernetes.io/version: "1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -121,19 +95,6 @@ roleRef:
   kind: ClusterRole
   name: imc-dispatcher
   apiGroup: rbac.authorization.k8s.io
-# Copyright 2020 The Knative Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -141,26 +102,13 @@ metadata:
   name: config-imc-event-dispatcher
   namespace: knative-eventing
   labels:
-    eventing.knative.dev/release: "v1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
     app.kubernetes.io/component: imc-controller
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 data:
   MaxIdleConnections: "1000"
   MaxIdleConnectionsPerHost: "100"
-# Copyright 2019 The Knative Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -168,10 +116,10 @@ metadata:
   name: config-observability
   namespace: knative-eventing
   labels:
-    eventing.knative.dev/release: "v1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
     knative.dev/config-propagation: original
     knative.dev/config-category: eventing
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
   annotations:
     knative.dev/example-checksum: "f46cf09d"
@@ -223,19 +171,6 @@ data:
     # sink-event-error-reporting.enable whether the adapter reports a kube event to the CRD indicating
     # a failure to send a cloud event to the sink.
     sink-event-error-reporting.enable: "false"
-# Copyright 2019 The Knative Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -243,13 +178,13 @@ metadata:
   name: config-tracing
   namespace: knative-eventing
   labels:
-    eventing.knative.dev/release: "v1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
     knative.dev/config-propagation: original
     knative.dev/config-category: eventing
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
   annotations:
-    knative.dev/example-checksum: "0492ceb0"
+    knative.dev/example-checksum: "c8f8c47b"
 data:
   _example: |
     ################################
@@ -266,7 +201,7 @@ data:
     # this example block and unindented to be in the data block
     # to actually change the configuration.
     #
-    # This may be "zipkin" or "none". the default is "none"
+    # This may be "zipkin" or "none", the default is "none"
     backend: "none"
 
     # URL to zipkin collector where traces are sent.
@@ -279,19 +214,6 @@ data:
 
     # Percentage (0-1) of requests to trace
     sample-rate: "0.1"
-# Copyright 2019 The Knative Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -299,10 +221,10 @@ metadata:
   name: imc-controller
   namespace: knative-eventing
   labels:
-    eventing.knative.dev/release: "v1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
     knative.dev/high-availability: "true"
     app.kubernetes.io/component: imc-controller
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 spec:
   selector:
@@ -315,7 +237,7 @@ spec:
         messaging.knative.dev/channel: in-memory-channel
         messaging.knative.dev/role: controller
         app.kubernetes.io/component: imc-controller
-        app.kubernetes.io/version: "1.4.0"
+        app.kubernetes.io/version: "1.2.4"
         app.kubernetes.io/name: knative-eventing
     spec:
       affinity:
@@ -332,7 +254,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: controller
-          image: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_controller@sha256:bcf585877a32db79b651d2560f9ae9378de26ee5ac3a6d3e63b3159b3fec32d2
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_controller@sha256:a602de59eab2140a9a7639e221b777aa1bd5b9b4203e09dacdc32850f4414e4f
           env:
             - name: WEBHOOK_NAME
               value: inmemorychannel-webhook
@@ -349,7 +271,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: DISPATCHER_IMAGE
-              value: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_dispatcher@sha256:1bfe4a8b168449a65d87191a45b68ccece87cc73d5f8c3728dc07ab83fe71240
+              value: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_dispatcher@sha256:cd4502677aedc0779be980c5e7186cdc8e7557a036048480f8a3431ec1b3b873
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -392,9 +314,9 @@ kind: Service
 metadata:
   labels:
     app.kubernetes.io/component: imc-controller
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
-    eventing.knative.dev/release: "v1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
   name: inmemorychannel-webhook
   namespace: knative-eventing
 spec:
@@ -418,11 +340,11 @@ metadata:
   name: imc-dispatcher
   namespace: knative-eventing
   labels:
-    eventing.knative.dev/release: "v1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
     messaging.knative.dev/channel: in-memory-channel
     messaging.knative.dev/role: dispatcher
     app.kubernetes.io/component: imc-dispatcher
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 spec:
   selector:
@@ -436,19 +358,6 @@ spec:
     - name: http-metrics
       port: 9090
       targetPort: 9090
-# Copyright 2019 The Knative Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -456,10 +365,10 @@ metadata:
   name: imc-dispatcher
   namespace: knative-eventing
   labels:
-    eventing.knative.dev/release: "v1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
     knative.dev/high-availability: "true"
     app.kubernetes.io/component: imc-dispatcher
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 spec:
   selector:
@@ -472,7 +381,7 @@ spec:
         messaging.knative.dev/channel: in-memory-channel
         messaging.knative.dev/role: dispatcher
         app.kubernetes.io/component: imc-dispatcher
-        app.kubernetes.io/version: "1.4.0"
+        app.kubernetes.io/version: "1.2.4"
         app.kubernetes.io/name: knative-eventing
     spec:
       affinity:
@@ -489,7 +398,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: dispatcher
-          image: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_dispatcher@sha256:1bfe4a8b168449a65d87191a45b68ccece87cc73d5f8c3728dc07ab83fe71240
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_dispatcher@sha256:cd4502677aedc0779be980c5e7186cdc8e7557a036048480f8a3431ec1b3b873
           readinessProbe:
             failureThreshold: 3
             httpGet:
@@ -549,11 +458,11 @@ kind: CustomResourceDefinition
 metadata:
   name: inmemorychannels.messaging.knative.dev
   labels:
-    eventing.knative.dev/release: "v1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
     knative.dev/crd-install: "true"
     messaging.knative.dev/subscribable: "true"
     duck.knative.dev/addressable: "true"
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 spec:
   group: messaging.knative.dev
@@ -774,28 +683,15 @@ spec:
     shortNames:
       - imc
   scope: Namespaced
-# Copyright 2019 The Knative Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: imc-addressable-resolver
   labels:
-    eventing.knative.dev/release: "v1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
     duck.knative.dev/addressable: "true"
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -807,28 +703,15 @@ rules:
       - get
       - list
       - watch
-# Copyright 2019 The Knative Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: imc-channelable-manipulator
   labels:
-    eventing.knative.dev/release: "v1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
     duck.knative.dev/channelable: "true"
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -844,27 +727,14 @@ rules:
       - update
       - patch
       - delete
-# Copyright 2019 The Knative Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: imc-controller
   labels:
-    eventing.knative.dev/release: "v1.4.0"
-    app.kubernetes.io/version: "1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -1003,8 +873,8 @@ kind: ClusterRole
 metadata:
   name: imc-dispatcher
   labels:
-    eventing.knative.dev/release: "v1.4.0"
-    app.kubernetes.io/version: "1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -1050,19 +920,6 @@ rules:
       - create
       - update
       - patch
-# Copyright 2020 The Knative Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -1070,8 +927,8 @@ metadata:
   namespace: knative-eventing
   name: knative-inmemorychannel-webhook
   labels:
-    eventing.knative.dev/release: "v1.4.0"
-    app.kubernetes.io/version: "1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -1085,27 +942,14 @@ rules:
       - "list"
       - "watch"
       - "patch"
-# Copyright 2021 The Knative Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
   name: inmemorychannel.eventing.knative.dev
   labels:
-    eventing.knative.dev/release: "v1.4.0"
-    app.kubernetes.io/version: "1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 webhooks:
   - admissionReviewVersions: ["v1"]
@@ -1117,27 +961,14 @@ webhooks:
     failurePolicy: Fail
     name: inmemorychannel.eventing.knative.dev
     timeoutSeconds: 10
-# Copyright 2021 The Knative Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
   name: validation.inmemorychannel.eventing.knative.dev
   labels:
-    eventing.knative.dev/release: "v1.4.0"
-    app.kubernetes.io/version: "1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 webhooks:
   - admissionReviewVersions: ["v1"]
@@ -1149,19 +980,6 @@ webhooks:
     failurePolicy: Fail
     name: validation.inmemorychannel.eventing.knative.dev
     timeoutSeconds: 10
-# Copyright 2021 The Knative Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 ---
 apiVersion: v1
 kind: Secret
@@ -1169,8 +987,8 @@ metadata:
   name: inmemorychannel-webhook-certs
   namespace: knative-eventing
   labels:
-    eventing.knative.dev/release: "v1.4.0"
-    app.kubernetes.io/version: "1.4.0"
+    eventing.knative.dev/release: "v1.2.4"
+    app.kubernetes.io/version: "1.2.4"
     app.kubernetes.io/name: knative-eventing
 ---
 
