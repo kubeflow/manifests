@@ -11,7 +11,7 @@ resources:
   - katib-ui.yaml
   - kserve-models-web-app.yaml
   - kserve.yaml
-  - metatada-envoy.yaml
+  - metadata-envoy.yaml
   - metadata-grpc-server.yaml
   - minio.yaml
   - ml-pipeline-ui.yaml 
