@@ -1,6 +1,6 @@
 apiVersion: apps/v1
 kind: StatefulSet
-metadata:
+metadata: # kpt-merge: /metacontroller
   labels:
     app: metacontroller
   name: metacontroller

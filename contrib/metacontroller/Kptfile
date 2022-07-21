@@ -1,0 +1,18 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: metacontroller
+upstream:
+  type: git
+  git:
+    repo: https://github.com/kubeflow/pipelines
+    directory: /manifests/kustomize/third-party/metacontroller
+    ref: 2.0.0-alpha.3
+  updateStrategy: resource-merge
+upstreamLock:
+  type: git
+  git:
+    repo: https://github.com/kubeflow/pipelines
+    directory: /manifests/kustomize/third-party/metacontroller
+    ref: 2.0.0-alpha.3
+    commit: fe333d49fc08f66ec867d3dd7dbd756927bf390c
