@@ -29,7 +29,8 @@ jobs:
     - name: Build & Apply manifests
       run: ./tests/gh-actions/install_kserve.sh
 
-     - name: Create kserve experiment
+    - name: Create kserve experiment
       run: |
-        kubectl apply -f tests/gh-actions/kserve_test.yaml
-        kubectl wait --for=condition=Ready inferenceservices.serving.kubeflow.org -n kubeflow-user --all --timeout 300s
+        ./tests/gh-actions/install_knative.sh
+        kubectl apply -f tests/gh-actions/kf-objects/kserve_test.yaml
+        kubectl wait --for=condition=ready inferenceservices.serving.kserve.io --all-namespaces --all --timeout 300s
