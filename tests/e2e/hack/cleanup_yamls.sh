@@ -13,4 +13,4 @@ kubectl delete experiments.kubeflow.org -n kubeflow-user-example-com mnist-e2e
 
 kubectl delete tfjobs.kubeflow.org -n kubeflow-user-example-com mnist-e2e
 
-kubectl delete inferenceservices.serving.kubeflow.org -n kubeflow-user-example-com mnist-e2e
+kubectl delete inferenceservices.serving.kserve.io -n kubeflow-user-example-com mnist-e2e
