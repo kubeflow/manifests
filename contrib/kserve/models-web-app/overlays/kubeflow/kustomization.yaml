@@ -36,6 +36,7 @@ configMapGenerator:
     behavior: replace
     literals:
     - USERID_HEADER=kubeflow-userid
+    - APP_PREFIX=/kserve-endpoints
 
 configurations:
 - params.yaml
