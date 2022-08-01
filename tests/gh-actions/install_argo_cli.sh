@@ -8,4 +8,4 @@ gunzip argo-linux-amd64.gz
 # Make binary executable
 chmod +x argo-linux-amd64
 # Move binary to path
-sudo mv ./argo-darwin-amd64 /usr/local/bin/argo
+sudo mv ./argo-linux-amd64 /usr/local/bin/argo
