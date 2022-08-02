@@ -34,5 +34,7 @@ jobs:
         pip3 install kfp==1.8.4
         python3 ./tests/gh-actions/test_pipeline.py
         ./tests/gh-actions/install_argo_cli.sh
-        kfp run submit -e test_pipeline -f ./tests/gh-actions/test_pipeline.py.yaml
-        argo wait @latest -n kubeflow-user
+        echo "Deploy pipeline..."
+        kfp run submit -e test_pipeline -f ./tests/gh-actions/kf-objects/test_pipeline.py.yaml
+        echo "Wait for pipeline..."
+        argo wait @latest --request-timeout 60
