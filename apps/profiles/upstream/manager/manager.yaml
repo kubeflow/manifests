@@ -31,16 +31,11 @@ spec:
         image: docker.io/kubeflownotebookswg/profile-controller
         imagePullPolicy: Always
         name: manager
-        livenessProbe:
-          httpGet:
-            path: /metrics
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 30
         ports:
         - containerPort: 8080
           name: manager-http
           protocol: TCP
+        - containerPort: 9876
         livenessProbe:
           httpGet:
             path: /healthz
@@ -53,6 +48,4 @@ spec:
             port: 9876
           initialDelaySeconds: 5
           periodSeconds: 10
-        ports:
-        - containerPort: 9876
       serviceAccountName: controller-manager
