@@ -29,3 +29,8 @@ jobs:
         kubectl create ns kubeflow
         kustomize build overlays/kubeflow | kubectl apply -f -
         kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
+
+    - name: Create a TFJob
+      run: |
+        kubectl create -f tests/gh-actions/kf-objects/tfjob.yaml
+        kubectl wait --for=condition=Succeeded tfjobs tfjob-simple -n kubeflow --timeout 180s
