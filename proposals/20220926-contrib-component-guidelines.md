@@ -38,6 +38,8 @@ These are the requirements for all components under `/contrib`:
 2. There must be an OWNERS file with at least 2 users
 3. The component must work with the latest version of Kubeflow, and its
    dependencies
+4. There must be an `UPGRADE.md` file that documents any instructions users need
+   to follow when applying manifests of a newer version
 
 At this point we don't want to provide too much of a strict structure for the
 README. Developers are free to expose any other information in the README that
