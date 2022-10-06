@@ -3,7 +3,7 @@
 **Authors**: Kimonas Sotirchos kimwnasptd@arrikto.com
 
 The motivation behind this proposal is to fully document expectations and
-requirements that componetns under `/contrib` should satisfy. This will make it
+requirements that components under `/contrib` should satisfy. This will make it
 more clear how to use a component, how it integrates with Kubeflow, the problems
 it tries to solve as well as dependency versions.
 
