@@ -34,6 +34,7 @@ These are the requirements for all components under `/contrib`:
           we expect all manifests to be a kustomize packages
     * How to use the component as part of Kubeflow (examples)
     * The problems it tries to solve and the value it brings
+    * Links to the official documentation of the component
 2. There must be an OWNERS file with at least 2 users
 3. The component must work with the latest version of Kubeflow, and its
    dependencies
