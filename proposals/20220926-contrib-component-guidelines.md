@@ -27,15 +27,16 @@ it tries to solve as well as dependency versions.
 Components living under `/contrib` should satisfy some strict requirements to
 ensure they are always usable by end-users and contain complementary documentation.
 
-These are the following items that all components under `/contrib` should have:
-1. A `README.md` file that documents:
-    * The K8s version and KF component versions that the component needs
+These are the requirements for all components under `/contrib`:
+1. There must be a `README.md` file that documents:
     * Instructions on how someone can install the component in a Kubeflow cluster
         * Since Kubeflow manifests have standardized on [Kustomize](https://kustomize.io/)
           we expect all manifests to be a kustomize packages
     * How to use the component as part of Kubeflow (examples)
     * The problems it tries to solve and the value it brings
-2. An OWNERS file with at least 2 users
+2. There must be an OWNERS file with at least 2 users
+3. The component must work with the latest version of Kubeflow, and its
+   dependencies
 
 At this point we don't want to provide too much of a strict structure for the
 README. Developers are free to expose any other information in the README that
