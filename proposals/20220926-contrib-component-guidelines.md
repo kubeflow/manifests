@@ -40,6 +40,12 @@ These are the requirements for all components under `/contrib`:
    dependencies
 4. There must be an `UPGRADE.md` file that documents any instructions users need
    to follow when applying manifests of a newer version
+5. There needs to be sufficient work on testing
+    * There must be a script file [python, bash etc] that vefiries the component
+      is working as expected. This can be something very simple, like submitting a
+      CustomResource and waiting for it to become Ready
+    * The maintainers will need to work with the leads of Manifests WG to ensure
+      there's some basic automation in place that will be running the above script(s)
 
 At this point we don't want to provide too much of a strict structure for the
 README. Developers are free to expose any other information in the README that
