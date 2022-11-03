@@ -29,7 +29,7 @@ spec:
           - configMapRef:
               name: config
         image: docker.io/kubeflownotebookswg/profile-controller
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         name: manager
         livenessProbe:
           httpGet:

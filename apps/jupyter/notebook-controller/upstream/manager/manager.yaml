@@ -32,7 +32,7 @@ spec:
               configMapKeyRef:
                 name: config
                 key: ISTIO_GATEWAY
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
             path: /healthz
