@@ -19,3 +19,4 @@ resources:
   - poddefaults.yaml
   - seldon.yaml
   - volumes-web-app.yaml
+  - tensorboards-web-app.yaml
