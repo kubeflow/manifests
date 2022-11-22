@@ -11,7 +11,7 @@ vars:
   objref:
     kind: Certificate
     group: cert-manager.io
-    version: v1alpha2
+    version: v1
     name: seldon-serving-cert # this name should match the one in certificate.yaml
   fieldref:
     fieldpath: metadata.namespace
@@ -19,17 +19,12 @@ vars:
   objref:
     kind: Certificate
     group: cert-manager.io
-    version: v1alpha2
+    version: v1
     name: seldon-serving-cert # this name should match the one in certificate.yaml
 - name: SERVICE_NAMESPACE # namespace of the service
   objref:
-    kind: Service
-    version: v1
-    name: seldon-webhook-service
+    kind: Deployment
+    version: apps/v1
+    name: seldon-controller-manager
   fieldref:
     fieldpath: metadata.namespace
-- name: SERVICE_NAME
-  objref:
-    kind: Service
-    version: v1
-    name: seldon-webhook-service

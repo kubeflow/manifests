@@ -14,5 +14,5 @@ kustomize build seldon-core-operator/base | kubectl apply -n kubeflow -f -
 This kustomize spec was created from the seldon-core-operator helm chart with:
 
 ```
-make clean seldon-core-operator/base
+make clean-kustomize seldon-core-operator/base
 ```
