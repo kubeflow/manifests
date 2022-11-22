@@ -24,3 +24,21 @@ seldon-core-operator/base: clean-kustomize
 .PHONY:clean-kustomize
 clean-kustomize:
 	rm -rf seldon-core-operator/base
+
+test:
+	# Creating resources
+	kustomize build seldon-core-operator/base | kubectl apply -n kubeflow -f -
+	# Waiting for resources
+	kubectl wait --for condition=Available -n kubeflow deployment/seldon-controller-manager
+	# Create seldon namespace
+	kubectl create namespace seldon
+	# Create example deployment
+	kubectl apply -f example.yaml
+	# Wait for deployment
+	kubectl wait --for condition=Available -n seldon deployment/echo-default-0-classifier
+	# Remove deployment
+	kubectl delete -f example.yaml
+	# Remove namespace
+	kubectl delete namespace seldon
+	# Cleaning resources
+	kustomize build contrib/seldon/seldon-core-operator/base | kubectl delete -n kubeflo -f -
