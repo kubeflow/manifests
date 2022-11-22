@@ -19,6 +19,12 @@ make clean-kustomize seldon-core-operator/base
 
 ## Testing
 
+```
+make test
+```
+
+# Overview
+
 We can create a test model once the "Install Seldon Operator" is configured
 
 ```

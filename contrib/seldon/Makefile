@@ -41,4 +41,4 @@ test:
 	# Remove namespace
 	kubectl delete namespace seldon
 	# Cleaning resources
-	kustomize build contrib/seldon/seldon-core-operator/base | kubectl delete -n kubeflo -f -
+	kustomize build seldon-core-operator/base | kubectl delete -n kubeflow -f -
