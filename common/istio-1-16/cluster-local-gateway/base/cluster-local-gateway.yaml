@@ -9,7 +9,7 @@ metadata:
     release: istio
     istio.io/rev: default
     install.operator.istio.io/owning-resource: unknown
-    operator.istio.io/component: "IngressGateways"
+    operator.istio.io/component: IngressGateways
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -36,9 +36,9 @@ spec:
     metadata:
       annotations:
         prometheus.io/path: /stats/prometheus
-        prometheus.io/port: "15020"
-        prometheus.io/scrape: "true"
-        sidecar.istio.io/inject: "false"
+        prometheus.io/port: '15020'
+        prometheus.io/scrape: 'true'
+        sidecar.istio.io/inject: 'false'
       labels:
         app: cluster-local-gateway
         chart: gateways
@@ -50,49 +50,12 @@ spec:
         release: istio
         service.istio.io/canonical-name: cluster-local-gateway
         service.istio.io/canonical-revision: latest
-        sidecar.istio.io/inject: "false"
+        sidecar.istio.io/inject: 'false'
     spec:
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - preference:
-              matchExpressions:
-              - key: kubernetes.io/arch
-                operator: In
-                values:
-                - amd64
-            weight: 2
-          - preference:
-              matchExpressions:
-              - key: kubernetes.io/arch
-                operator: In
-                values:
-                - arm64
-            weight: 2
-          - preference:
-              matchExpressions:
-              - key: kubernetes.io/arch
-                operator: In
-                values:
-                - ppc64le
-            weight: 2
-          - preference:
-              matchExpressions:
-              - key: kubernetes.io/arch
-                operator: In
-                values:
-                - s390x
-            weight: 2
           requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/arch
-                operator: In
-                values:
-                - amd64
-                - arm64
-                - ppc64le
-                - s390x
       containers:
       - args:
         - proxy
@@ -149,11 +112,10 @@ spec:
         - name: TRUST_DOMAIN
           value: cluster.local
         - name: ISTIO_META_UNPRIVILEGED_POD
-          value: "true"
+          value: 'true'
         - name: ISTIO_META_CLUSTER_ID
           value: Kubernetes
-        image: docker.io/istio/proxyv2:1.14.1
-        imagePullPolicy: IfNotPresent
+        image: docker.io/istio/proxyv2:1.16.0
         name: istio-proxy
         ports:
         - containerPort: 15020
@@ -190,6 +152,8 @@ spec:
         volumeMounts:
         - mountPath: /var/run/secrets/workload-spiffe-uds
           name: workload-socket
+        - mountPath: /var/run/secrets/credential-uds
+          name: credential-socket
         - mountPath: /var/run/secrets/workload-spiffe-credentials
           name: workload-certs
         - mountPath: /etc/istio/proxy
@@ -220,6 +184,8 @@ spec:
       volumes:
       - emptyDir: {}
         name: workload-socket
+      - emptyDir: {}
+        name: credential-socket
       - emptyDir: {}
         name: workload-certs
       - configMap:
@@ -269,7 +235,7 @@ metadata:
     release: istio
     istio.io/rev: default
     install.operator.istio.io/owning-resource: unknown
-    operator.istio.io/component: "IngressGateways"
+    operator.istio.io/component: IngressGateways
 spec:
   minAvailable: 1
   selector:
@@ -286,11 +252,11 @@ metadata:
     release: istio
     istio.io/rev: default
     install.operator.istio.io/owning-resource: unknown
-    operator.istio.io/component: "IngressGateways"
+    operator.istio.io/component: IngressGateways
 rules:
-- apiGroups: [""]
-  resources: ["secrets"]
-  verbs: ["get", "watch", "list"]
+- apiGroups: ['']
+  resources: [secrets]
+  verbs: [get, watch, list]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -301,7 +267,7 @@ metadata:
     release: istio
     istio.io/rev: default
     install.operator.istio.io/owning-resource: unknown
-    operator.istio.io/component: "IngressGateways"
+    operator.istio.io/component: IngressGateways
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
