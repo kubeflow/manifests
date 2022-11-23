@@ -1,6 +1,8 @@
-# Seldon Kustomize 
+# Seldon Core
 
-## Install Seldon Operator
+[Seldon Core](https://github.com/SeldonIO/seldon-core/) is a framework to deploy your machine learning models on Kubernetes at scale.
+
+## Install Seldon Core Operator
 
  * The yaml assumes you will install in kubeflow namespace
  * You need to have installed istio first
