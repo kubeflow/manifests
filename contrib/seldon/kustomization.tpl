@@ -24,7 +24,8 @@ vars:
 - name: SERVICE_NAMESPACE # namespace of the service
   objref:
     kind: Deployment
-    version: apps/v1
+    version: v1
+    group: apps
     name: seldon-controller-manager
   fieldref:
     fieldpath: metadata.namespace
