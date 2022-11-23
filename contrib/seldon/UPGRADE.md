@@ -1,5 +1,19 @@
 # Upgrading Documentation
 
+## Updating manifests
+
+In order to update manifests make sure you are running the commands in linux.
+
+If you are running in another OS, please make sure to update the Makefile commands.
+
+You can refresh the configuration by running:
+
+```
+make seldon-core-operator/base
+```
+
+## Updating to specific version
+
 Upgrading the version can be done by setting the `SELDON_VERSION` environment variable, such as:
 
 ```
