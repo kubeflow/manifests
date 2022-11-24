@@ -5,6 +5,7 @@ on:
       - apps/admission-webhook/upstream/**
       - tests/gh-actions/kind-cluster.yaml
       - tests/gh-actions/install_istio.sh
+      - common/cert-manager/**
 
 jobs:
   build:
