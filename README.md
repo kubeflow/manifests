@@ -63,6 +63,7 @@ used from the different projects of Kubeflow:
 | - | - | - |
 | Istio | common/istio-1-14 | [1.14.1](https://github.com/istio/istio/releases/tag/1.14.1) |
 | Knative | common/knative | [0.22.1](https://github.com/knative/serving/releases/tag/v0.22.1) |
+| Cert Manager | common/cert-manager | [1.10.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.10.1) |
 
 ## Installation
 
