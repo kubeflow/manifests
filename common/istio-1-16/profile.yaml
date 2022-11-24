@@ -57,12 +57,18 @@ spec:
     defaultConfig:
       proxyMetadata: {}
     enablePrometheusMerge: true
+    extensionProviders:
+    - envoyOtelAls:
+        port: 4317
+        service: opentelemetry-collector.istio-system.svc.cluster.local
+      name: otel
   profile: demo
-  tag: 1.9.6
+  tag: 1.16.0
   values:
     base:
       enableCRDTemplates: false
       validationURL: ""
+    defaultRevision: ""
     gateways:
       istio-egressgateway:
         autoscaleEnabled: false
@@ -76,7 +82,6 @@ spec:
           name: egressgateway-ca-certs
           secretName: istio-egressgateway-ca-certs
         type: ClusterIP
-        zvpn: {}
       istio-ingressgateway:
         autoscaleEnabled: false
         env: {}
@@ -89,12 +94,7 @@ spec:
           name: ingressgateway-ca-certs
           secretName: istio-ingressgateway-ca-certs
         type: LoadBalancer
-        zvpn: {}
     global:
-      arch:
-        amd64: 2
-        ppc64le: 2
-        s390x: 2
       configValidation: true
       defaultNodeSelector: {}
       defaultPodDisruptionBudget:
@@ -181,6 +181,7 @@ spec:
       image: pilot
       keepaliveMaxServerConnectionAge: 30m
       nodeSelector: {}
+      podLabels: {}
       replicaCount: 1
       traceSampling: 1
     telemetry:

@@ -4,6 +4,7 @@ on:
     paths:
       - common/dex/base/**
       - tests/gh-actions/kind-cluster.yaml
+      - tests/gh-actions/install_istio.sh
 
 jobs:
   build:

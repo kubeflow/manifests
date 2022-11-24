@@ -49,7 +49,7 @@ old version is `X1.Y1.Z1`:
 
         $ export PATH="$MANIFESTS_SRC/scripts:$PATH"
         $ cd $ISTIO_NEW
-        $ istioctl manifest generate -f profile.yaml -f profile-overlay.yaml > dump.yaml
+        $ istioctl manifest generate --cluster-specific -f profile.yaml -f profile-overlay.yaml > dump.yaml
         $ split-istio-packages -f dump.yaml
         $ mv $ISTIO_NEW/crd.yaml $ISTIO_NEW/istio-crds/base
         $ mv $ISTIO_NEW/install.yaml $ISTIO_NEW/istio-install/base
@@ -61,7 +61,38 @@ old version is `X1.Y1.Z1`:
     `split-istio-packages` is a python script in the same folder as this file.
     The `ruamel.yaml` version used is 0.16.12.
 
+    `--cluster-specific` is a flag that determines if a current K8s cluster context will be used to dynamically 
+    detect default settings. Ensure you have a target cluster ready before running the above commands. 
+    We set this flag because `istioctl manifest generate` generates manifest files with resources that are no 
+    longer supported in Kubernetes 1.25 (`policy/v1beta1`). See: 
+    - https://github.com/istio/istio/issues/41220
+
     ---
+
+5. Remove PodDisruptionBudget from `istio-install` and `cluster-local-gateway` kustomizations. 
+   See https://github.com/istio/istio/issues/12602 and https://github.com/istio/istio/issues/24000
+
+   Until now we have used two patches:
+   - `common/istio-1-16/istio-install/base/patches/remove-pdb.yaml`
+   - `common/istio-1-16/cluster-local-gateway/base/patches/remove-pdb.yaml`
+   
+   The above patches do not work with kustomize v3.2.0 as it doesn't have the appropriate 
+   openapi schemas for the policy/v1 API version resources. This is fixed in kustomize v4+. 
+   See https://github.com/kubernetes-sigs/kustomize/issues/3694#issuecomment-799700607 and
+   https://github.com/kubernetes-sigs/kustomize/issues/4495
+   
+   A temporary workaround is to use the following instructions to manually delete the PodDisruptionBudget resources with `yq`: 
+        
+        $ yq eval -i 'select((.kind == "PodDisruptionBudget" and .metadata.name == "cluster-local-gateway") | not)' common/istio-1-16/cluster-local-gateway/base/cluster-local-gateway.yaml
+        $ yq eval -i 'select((.kind == "PodDisruptionBudget" and .metadata.name == "istio-ingressgateway") | not)' common/istio-1-16/istio-install/base/install.yaml
+        $ yq eval -i 'select((.kind == "PodDisruptionBudget" and .metadata.name == "istiod") | not)' common/istio-1-16/istio-install/base/install.yaml
+        
+   ---
+   **NOTE**
+   
+   NOTE: Make sure to remove a redundant {} at the end of the `common/istio-1-16/istio-install/base/install.yaml` and `common/istio-1-16/cluster-local-gateway/base/cluster-local-gateway.yaml` files.
+   
+   ---
 
 ## Changes to Istio's upstream manifests
 
