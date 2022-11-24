@@ -61,7 +61,7 @@ used from the different projects of Kubeflow:
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
-| Istio | common/istio-1-14 | [1.14.1](https://github.com/istio/istio/releases/tag/1.14.1) |
+| Istio | common/istio-1-16 | [1.16.0](https://github.com/istio/istio/releases/tag/1.16.0) |
 | Knative | common/knative | [0.22.1](https://github.com/knative/serving/releases/tag/v0.22.1) |
 
 ## Installation

@@ -64,8 +64,7 @@ old version is `X1.Y1.Z1`:
     `--cluster-specific` is a flag that determines if a current K8s cluster context will be used to dynamically 
     detect default settings. Ensure you have a target cluster ready before running the above commands. 
     We set this flag because `istioctl manifest generate` generates manifest files with resources that are no 
-    longer supported in Kubernetes 1.25 (`policy/v1beta1`). See: 
-    - https://github.com/istio/istio/issues/41220
+    longer supported in Kubernetes 1.25 (`policy/v1beta1`). See: https://github.com/istio/istio/issues/41220
 
     ---
 
