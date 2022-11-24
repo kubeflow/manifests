@@ -3,7 +3,11 @@ on:
   pull_request:
     paths:
       - apps/jupyter/jupyter-web-app/upstream/**
+<<<<<<< HEAD
       - tests/gh-actions/kind-cluster.yaml
+=======
+      - tests/gh-actions/install_istio.sh
+>>>>>>> tests: Update GH Action workflows
 
 jobs:
   build:
