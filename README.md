@@ -274,7 +274,15 @@ Install the Katib official Kubeflow component:
 kustomize build apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
 ```
 
-#### Central Dashboard
+#### Seldon
+
+Install the Seldon component:
+
+```sh
+kustomize build contrib/seldon/seldon-core-operator/base | kubectl apply -f -
+```
+
+#### Central DashboarD
 
 Install the Central Dashboard official Kubeflow component:
 
