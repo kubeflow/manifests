@@ -13,7 +13,7 @@ kustomize build seldon-core-operator/base | kubectl apply -n kubeflow -f -
 
 ## Updating
 
-See [UPGRADING.md](UPGRADING.md)
+See [UPGRADE.md](UPGRADE.md)
 
 ## Testing
 
