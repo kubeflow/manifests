@@ -25,6 +25,8 @@ test:
 	kustomize build seldon-core-operator/base | kubectl apply -n kubeflow -f -
 	# Waiting for resources
 	kubectl wait --for condition=Available -n kubeflow deployment/seldon-controller-manager
+	# Wait for manager resources to be created
+	sleep 5
 	# Create example deployment
 	kubectl apply -f example.yaml
 	# Wait for deployment
