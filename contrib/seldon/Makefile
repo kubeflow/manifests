@@ -17,14 +17,14 @@ clean-kustomize:
 	rm -rf seldon-core-operator/base
 
 test:
-	# Creating resources
-	kustomize build seldon-core-operator/base | kubectl apply -n kubeflow -f -
-	# Waiting for resources
-	kubectl wait --for condition=Available -n kubeflow deployment/seldon-controller-manager
 	# Create seldon namespace
 	kubectl create namespace seldon || echo "seldon namespace exists"
 	# Create kubeflow namespace if not exists
 	kubectl create namespace kubeflow || echo "kubeflow namespace exists"
+	# Creating resources
+	kustomize build seldon-core-operator/base | kubectl apply -n kubeflow -f -
+	# Waiting for resources
+	kubectl wait --for condition=Available -n kubeflow deployment/seldon-controller-manager
 	# Create example deployment
 	kubectl apply -f example.yaml
 	# Wait for deployment
