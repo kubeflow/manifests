@@ -30,6 +30,11 @@ test:
 	# Create example deployment
 	kubectl apply -n seldon -f example.yaml
 	# Wait for manager resources to be created
+	sleep 5
+	kubectl get deploy -A
+	sleep 5
+	kubectl logs -n kubeflow deployment/seldon-controller-manager
+	sleep 5
 	kubectl get deploy -A
 	# Wait for deployment
 	kubectl wait --for condition=Available -n seldon deployment/echo-default-0-classifier
