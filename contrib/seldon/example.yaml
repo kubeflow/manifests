@@ -5,7 +5,6 @@ metadata:
 spec:
   predictors:
   - name: default
-    replicas: 1
     graph:
       name: classifier
       type: MODEL
