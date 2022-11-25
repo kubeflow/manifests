@@ -38,7 +38,7 @@ resources:
 # Notebook Controller
 - ../apps/jupyter/notebook-controller/upstream/overlays/kubeflow
 # Profiles + KFAM
-- ../apps/profiles/upstream/overlays/kubeflow
+# - ../apps/profiles/upstream/overlays/kubeflow
 # Volumes Web App
 - ../apps/volumes-web-app/upstream/overlays/istio
 # Tensorboards Controller
