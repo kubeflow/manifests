@@ -2,7 +2,6 @@ apiVersion: machinelearning.seldon.io/v1
 kind: SeldonDeployment
 metadata:
   name: echo
-  namespace: seldon
 spec:
   predictors:
   - name: default

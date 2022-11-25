@@ -29,6 +29,8 @@ test:
 	sleep 5
 	# Create example deployment
 	kubectl apply -n seldon -f example.yaml
+	# Wait for manager resources to be created
+	sleep 5
 	# Wait for deployment
 	kubectl wait --for condition=Available -n seldon deployment/echo-default-0-classifier
 	# Remove deployment
