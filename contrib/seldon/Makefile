@@ -22,14 +22,14 @@ test:
 	# Waiting for resources
 	kubectl wait --for condition=Available -n kubeflow deployment/seldon-controller-manager
 	# Create seldon namespace
-	kubectl create namespace seldon
+	kubectl create namespace seldon || echo "seldon namespace exists"
+	# Create kubeflow namespace if not exists
+	kubectl create namespace kubeflow || echo "kubeflow namespace exists"
 	# Create example deployment
 	kubectl apply -f example.yaml
 	# Wait for deployment
 	kubectl wait --for condition=Available -n seldon deployment/echo-default-0-classifier
 	# Remove deployment
 	kubectl delete -f example.yaml
-	# Remove namespace
-	kubectl delete namespace seldon
 	# Cleaning resources
 	kustomize build seldon-core-operator/base | kubectl delete -n kubeflow -f -
