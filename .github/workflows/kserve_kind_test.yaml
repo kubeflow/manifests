@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - contrib/kserve/**
+      - common/knative/**
 
 jobs:
   build:
