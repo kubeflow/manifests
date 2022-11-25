@@ -28,10 +28,10 @@ test:
 	# Wait for manager resources to be created
 	sleep 5
 	# Create example deployment
-	kubectl apply -f example.yaml
+	kubectl apply -n seldon -f example.yaml
 	# Wait for deployment
 	kubectl wait --for condition=Available -n seldon deployment/echo-default-0-classifier
 	# Remove deployment
-	kubectl delete -f example.yaml
+	kubectl delete -n seldon -f example.yaml
 	# Cleaning resources
 	kustomize build seldon-core-operator/base | kubectl delete -n kubeflow -f -
