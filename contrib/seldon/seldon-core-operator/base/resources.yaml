@@ -1,0 +1,708 @@
+---
+# Source: seldon-core-operator/templates/serviceaccount_seldon-manager.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: seldon
+    app.kubernetes.io/instance: 'seldon-core'
+    app.kubernetes.io/name: 'seldon-core-operator'
+    app.kubernetes.io/version: '1.15.0'
+  name: 'seldon-manager'
+  namespace: 'kubeflow'
+---
+# Source: seldon-core-operator/templates/clusterrole_seldon-manager-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  labels:
+    app: seldon
+    app.kubernetes.io/instance: 'seldon-core'
+    app.kubernetes.io/name: 'seldon-core-operator'
+    app.kubernetes.io/version: '1.15.0'
+  name: seldon-manager-role-kubeflow
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ''
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ''
+  resources:
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - getambassador.io
+  resources:
+  - mappings
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - getambassador.io
+  resources:
+  - mappings/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - getambassador.io
+  resources:
+  - tlscontexts
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - getambassador.io
+  resources:
+  - tlscontexts/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - keda.sh
+  resources:
+  - scaledobjects
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - keda.sh
+  resources:
+  - scaledobjects/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - keda.sh
+  resources:
+  - scaledobjects/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - machinelearning.seldon.io
+  resources:
+  - seldondeployments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - machinelearning.seldon.io
+  resources:
+  - seldondeployments/finalizers
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - machinelearning.seldon.io
+  resources:
+  - seldondeployments/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - destinationrules
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - destinationrules/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - virtualservices
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - virtualservices/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - v1
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - v1
+  resources:
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - v1
+  resources:
+  - services/status
+  verbs:
+  - get
+  - patch
+  - update
+---
+# Source: seldon-core-operator/templates/clusterrole_seldon-manager-sas-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  labels:
+    app: seldon
+    app.kubernetes.io/instance: 'seldon-core'
+    app.kubernetes.io/name: 'seldon-core-operator'
+    app.kubernetes.io/version: '1.15.0'
+  name: seldon-manager-sas-role-kubeflow
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ''
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ''
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+  - list
+  - watch
+---
+# Source: seldon-core-operator/templates/clusterrole_seldon-webhook-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  labels:
+    app: seldon
+    app.kubernetes.io/instance: 'seldon-core'
+    app.kubernetes.io/name: 'seldon-core-operator'
+    app.kubernetes.io/version: '1.15.0'
+  name: seldon-webhook-role-kubeflow
+rules:
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - mutatingwebhookconfigurations
+  - validatingwebhookconfigurations
+  verbs:
+  - get
+  - list
+  - create
+  - delete
+  - update
+- apiGroups:
+  - apps
+  resources:
+  - deployments/finalizers
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - create
+  - get
+  - list
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions/finalizers
+  verbs:
+  - get
+  - patch
+  - update
+---
+# Source: seldon-core-operator/templates/clusterrolebinding_seldon-manager-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: seldon
+    app.kubernetes.io/instance: 'seldon-core'
+    app.kubernetes.io/name: 'seldon-core-operator'
+    app.kubernetes.io/version: '1.15.0'
+  name: seldon-manager-rolebinding-kubeflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: seldon-manager-role-kubeflow
+subjects:
+- kind: ServiceAccount
+  name: 'seldon-manager'
+  namespace: 'kubeflow'
+---
+# Source: seldon-core-operator/templates/clusterrolebinding_seldon-manager-sas-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: seldon
+    app.kubernetes.io/instance: 'seldon-core'
+    app.kubernetes.io/name: 'seldon-core-operator'
+    app.kubernetes.io/version: '1.15.0'
+  name: seldon-manager-sas-rolebinding-kubeflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: seldon-manager-sas-role-kubeflow
+subjects:
+- kind: ServiceAccount
+  name: seldon-manager
+  namespace: 'kubeflow'
+---
+# Source: seldon-core-operator/templates/clusterrolebinding_seldon-webhook-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: seldon
+    app.kubernetes.io/instance: 'seldon-core'
+    app.kubernetes.io/name: 'seldon-core-operator'
+    app.kubernetes.io/version: '1.15.0'
+  name: seldon-webhook-rolebinding-kubeflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: seldon-webhook-role-kubeflow
+subjects:
+- kind: ServiceAccount
+  name: seldon-manager
+  namespace: 'kubeflow'
+---
+# Source: seldon-core-operator/templates/role_seldon-leader-election-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app: seldon
+    app.kubernetes.io/instance: 'seldon-core'
+    app.kubernetes.io/name: 'seldon-core-operator'
+    app.kubernetes.io/version: '1.15.0'
+  name: seldon-leader-election-role
+  namespace: 'kubeflow'
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - configmaps/status
+  verbs:
+  - get
+  - update
+  - patch
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ''
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ''
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+---
+# Source: seldon-core-operator/templates/rolebinding_seldon-leader-election-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app: seldon
+    app.kubernetes.io/instance: 'seldon-core'
+    app.kubernetes.io/name: 'seldon-core-operator'
+    app.kubernetes.io/version: '1.15.0'
+  name: seldon-leader-election-rolebinding
+  namespace: 'kubeflow'
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: seldon-leader-election-role
+subjects:
+- kind: ServiceAccount
+  name: 'seldon-manager'
+  namespace: 'kubeflow'
+---
+# Source: seldon-core-operator/templates/deployment_seldon-controller-manager.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: seldon
+    app.kubernetes.io/instance: 'seldon-core'
+    app.kubernetes.io/name: 'seldon-core-operator'
+    app.kubernetes.io/version: '1.15.0'
+    control-plane: seldon-controller-manager
+  name: seldon-controller-manager
+  namespace: 'kubeflow'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seldon
+      app.kubernetes.io/instance: seldon1
+      app.kubernetes.io/name: seldon
+      app.kubernetes.io/version: v0.5
+      control-plane: seldon-controller-manager
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: '8080'
+        prometheus.io/scrape: 'true'
+        sidecar.istio.io/inject: 'false'
+      labels:
+        app: seldon
+        app.kubernetes.io/instance: seldon1
+        app.kubernetes.io/name: seldon
+        app.kubernetes.io/version: v0.5
+        control-plane: seldon-controller-manager
+    spec:
+      containers:
+      - args:
+        - --enable-leader-election
+        - --webhook-port=4443
+        - --create-resources=$(MANAGER_CREATE_RESOURCES)
+        - --log-level=$(MANAGER_LOG_LEVEL)
+        - --leader-election-id=$(MANAGER_LEADER_ELECTION_ID)
+        - --leader-election-resource-lock=$(MANAGER_LEADER_ELECTION_RESOURCE_LOCK)
+        - --leader-election-lease-duration-secs=$(MANAGER_LEADER_ELECTION_LEASE_DURATION_SECS)
+        - --leader-election-renew-deadline-secs=$(MANAGER_LEADER_ELECTION_RENEW_DEADLINE_SECS)
+        - --leader-election-retry-period-secs=$(MANAGER_LEADER_ELECTION_RETRY_PERIOD_SECS)
+        - ''
+        command:
+        - /manager
+        env:
+        - name: MANAGER_LEADER_ELECTION_ID
+          value: 'a33bd623.machinelearning.seldon.io'
+        - name: MANAGER_LEADER_ELECTION_RESOURCE_LOCK
+          value: ''
+        - name: MANAGER_LEADER_ELECTION_LEASE_DURATION_SECS
+          value: '15'
+        - name: MANAGER_LEADER_ELECTION_RENEW_DEADLINE_SECS
+          value: '10'
+        - name: MANAGER_LEADER_ELECTION_RETRY_PERIOD_SECS
+          value: '2'
+        - name: MANAGER_LOG_LEVEL
+          value: 'INFO'
+        - name: WATCH_NAMESPACE
+          value: ''
+        - name: RELATED_IMAGE_EXECUTOR
+          value: ''
+        - name: RELATED_IMAGE_STORAGE_INITIALIZER
+          value: ''
+        - name: RELATED_IMAGE_SKLEARNSERVER
+          value: ''
+        - name: RELATED_IMAGE_SKLEARNSERVER_V2
+          value: ''
+        - name: RELATED_IMAGE_XGBOOSTSERVER
+          value: ''
+        - name: RELATED_IMAGE_XGBOOSTSERVER_V2
+          value: ''
+        - name: RELATED_IMAGE_MLFLOWSERVER
+          value: ''
+        - name: RELATED_IMAGE_MLFLOWSERVER_V2
+          value: ''
+        - name: RELATED_IMAGE_TFPROXY
+          value: ''
+        - name: RELATED_IMAGE_TENSORFLOW
+          value: ''
+        - name: RELATED_IMAGE_EXPLAINER
+          value: ''
+        - name: RELATED_IMAGE_EXPLAINER_V2
+          value: ''
+        - name: RELATED_IMAGE_MOCK_CLASSIFIER
+          value: ''
+        - name: MANAGER_CREATE_RESOURCES
+          value: 'true'
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONTROLLER_ID
+          value: ''
+        - name: AMBASSADOR_ENABLED
+          value: 'false'
+        - name: AMBASSADOR_VERSION
+          value: 'v2'
+        - name: AMBASSADOR_SINGLE_NAMESPACE
+          value: 'false'
+        - name: PREDICTIVE_UNIT_HTTP_SERVICE_PORT
+          value: '9000'
+        - name: PREDICTIVE_UNIT_GRPC_SERVICE_PORT
+          value: '9500'
+        - name: PREDICTIVE_UNIT_DEFAULT_ENV_SECRET_REF_NAME
+          value: ''
+        - name: PREDICTIVE_UNIT_METRICS_PORT_NAME
+          value: 'metrics'
+        - name: ISTIO_ENABLED
+          value: 'true'
+        - name: KEDA_ENABLED
+          value: 'false'
+        - name: ISTIO_GATEWAY
+          value: '$(SERVICE_NAMESPACE)/kubeflow-gateway'
+        - name: ISTIO_TLS_MODE
+          value: ''
+        - name: USE_EXECUTOR
+          value: 'true'
+        - name: EXECUTOR_CONTAINER_IMAGE_AND_VERSION
+          value: 'docker.io/seldonio/seldon-core-executor:1.15.0'
+        - name: EXECUTOR_CONTAINER_IMAGE_PULL_POLICY
+          value: 'IfNotPresent'
+        - name: EXECUTOR_PROMETHEUS_PATH
+          value: '/prometheus'
+        - name: EXECUTOR_SERVER_PORT
+          value: '8000'
+        - name: EXECUTOR_CONTAINER_USER
+          value: '8888'
+        - name: EXECUTOR_CONTAINER_SERVICE_ACCOUNT_NAME
+          value: 'default'
+        - name: EXECUTOR_SERVER_METRICS_PORT_NAME
+          value: 'metrics'
+        - name: EXECUTOR_REQUEST_LOGGER_DEFAULT_ENDPOINT
+          value: 'http://default-broker'
+        - name: EXECUTOR_REQUEST_LOGGER_WORK_QUEUE_SIZE
+          value: '10000'
+        - name: EXECUTOR_REQUEST_LOGGER_WRITE_TIMEOUT_MS
+          value: '2000'
+        - name: DEFAULT_USER_ID
+          value: '8888'
+        - name: EXECUTOR_DEFAULT_CPU_REQUEST
+          value: '500m'
+        - name: EXECUTOR_DEFAULT_MEMORY_REQUEST
+          value: '512Mi'
+        - name: EXECUTOR_DEFAULT_CPU_LIMIT
+          value: '500m'
+        - name: EXECUTOR_DEFAULT_MEMORY_LIMIT
+          value: '512Mi'
+        - name: DEPLOYMENT_NAME_AS_PREFIX
+          value: 'false'
+        - name: EXECUTOR_FULL_HEALTH_CHECKS
+          value: 'false'
+        image: 'docker.io/seldonio/seldon-core-operator:1.15.0'
+        imagePullPolicy: 'IfNotPresent'
+        name: manager
+        ports:
+        - containerPort: 4443
+          name: webhook-server
+          protocol: TCP
+        - containerPort: 8080
+          name: metrics
+          protocol: TCP
+        resources:
+          limits:
+            cpu: '500m'
+            memory: '300Mi'
+          requests:
+            cpu: '100m'
+            memory: '200Mi'
+      hostNetwork: false
+      priorityClassName: ''
+      securityContext:
+        runAsUser: 8888
+      serviceAccountName: 'seldon-manager'
+      terminationGracePeriodSeconds: 10
+---
+# Source: seldon-core-operator/templates/certificate_seldon-serving-cert.yaml
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  labels:
+    app: seldon
+    app.kubernetes.io/instance: 'seldon-core'
+    app.kubernetes.io/name: 'seldon-core-operator'
+    app.kubernetes.io/version: '1.15.0'
+  name: seldon-serving-cert
+  namespace: 'kubeflow'
+spec:
+  commonName: seldon-webhook-service.$(CERTIFICATE_NAMESPACE).svc
+  dnsNames:
+  - seldon-webhook-service.$(SERVICE_NAMESPACE).svc.cluster.local
+  - seldon-webhook-service.$(SERVICE_NAMESPACE).svc
+  issuerRef:
+    kind: Issuer
+    name: seldon-selfsigned-issuer
+  secretName: seldon-webhook-server-cert
+---
+# Source: seldon-core-operator/templates/issuer_seldon-selfsigned-issuer.yaml
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  labels:
+    app: seldon
+    app.kubernetes.io/instance: 'seldon-core'
+    app.kubernetes.io/name: 'seldon-core-operator'
+    app.kubernetes.io/version: '1.15.0'
+  name: seldon-selfsigned-issuer
+  namespace: 'kubeflow'
+spec:
+  selfSigned: {}
