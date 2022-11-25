@@ -107,6 +107,24 @@ The manifests for Knative Eventing are based off the the [v1.2.4 release](https:
     yq eval -i 'explode(.)' knative-eventing-post-install-jobs/base/eventing-post-install-jobs.yaml
     ```
 
+1. Set `metadata.name` in the eventing post-install job, to be deploy-able with
+   `kustomize` and `kubectl apply`:
+
+    ```sh
+    # We are not using the '|=' operator because it generates an empty object
+    # ({}) which crashes kustomize.
+    yq eval -i 'select(.kind == "Job" and .metadata.generateName == "storage-version-migration-eventing-") | .metadata.name = "storage-version-migration-serving"' knative-eventing-post-install-jobs/base/eventing-post-install.yaml
+    ```
+
+1. Remove the `config-observability` and `config-tracing` ConfigMaps resource definitions from the In-Memory Channel, as they are already defined in eventing core. 
+
+   ```sh
+   yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-observability") | not)' knative-eventing/base/upstream/in-memory-channel.yaml 
+   yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-tracing") | not)' knative-eventing/base/upstream/in-memory-channel.yaml 
+   ``` 
+
+   NOTE: Make sure to remove a redundant `{}` at the end of the `knative-eventing/base/upstream/in-memory-channel.yaml` file after running the above commands.
+
 ## Copyright
 
 The files under the folders `knative-serving/base/upstream` and
