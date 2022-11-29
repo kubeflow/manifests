@@ -6,7 +6,7 @@
 
 * Kubernetes 1.18 - 1.24
 
-Support for Kubernetes 1.25 is currently part of (SeldonIO/seldon-core#4172)[https://github.com/SeldonIO/seldon-core/pull/4172]
+Support for Kubernetes 1.25 is currently part of [SeldonIO/seldon-core#4172](https://github.com/SeldonIO/seldon-core/pull/4172)
 
 ## Install Seldon Core Operator
 
