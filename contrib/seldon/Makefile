@@ -37,7 +37,7 @@ test:
 	sleep 5
 	kubectl get deploy -A
 	# Wait for deployment
-	kubectl wait --for condition=Available -n seldon deployment/echo-default-0-classifier
+	kubectl wait --for condition=Available -n seldon deployment/echo-default-0-classifier --timeout=360s
 	# Remove deployment
 	kubectl delete -n seldon -f example.yaml
 	# Cleaning resources
