@@ -1,0 +1,166 @@
+name: AWS E2E Tests
+
+on:
+  #  push:
+  #    branches:
+  #      - master
+  #  pull_request:
+  workflow_dispatch:
+
+jobs:
+  # Runs tests on AWS that are too big for github actions
+  # Tests that are small enough are above in `actions:`
+  aws:
+    name: AWS
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        juju: [2.9/stable]
+        microk8s: [1.24/stable]
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        sudo snap install juju --classic
+        sudo snap install juju-wait --classic
+
+    - name: Bootstrap onto AWS
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: |
+        set -eux
+        juju autoload-credentials --client aws
+        juju bootstrap aws/us-east-1 uk8saws --debug --show-log --config test-mode=true --model-default test-mode=true
+        juju deploy ubuntu --constraints 'instance-type=t3a.xlarge root-disk=80G'
+        juju wait -vw
+        juju status
+        juju status --format yaml
+
+    - name: Copy code to AWS instance
+      run: |
+        set -eux
+        juju scp -- -r $(pwd)/ ubuntu/0:~/
+
+    - name: Install test dependencies
+      run: |
+        juju ssh ubuntu/0 <<EOF
+          set -eux
+          sudo snap install microk8s --classic --channel ${{ matrix.microk8s }}
+          sudo apt update
+          sudo usermod -a -G microk8s ubuntu
+        EOF
+
+    - name: Enable microk8s addons & install kustomize
+      run: |
+        juju ssh ubuntu/0 <<EOF
+          set -eux
+          microk8s enable dns hostpath-storage ingress metallb:10.64.140.43-10.64.140.49 rbac
+          microk8s status -a hostpath-storage --wait-ready
+          wget https://github.com/kubernetes-sigs/kustomize/releases/download/v3.2.0/kustomize_3.2.0_linux_amd64
+          mv kustomize_3.2.0_linux_amd64 manifests/kustomize
+          chmod +x manifests/kustomize
+          sudo snap alias microk8s.kubectl kubectl
+        EOF
+
+
+    - name: Deploy Kubeflow
+      run: |
+        juju ssh ubuntu/0 <<EOF
+          set -eux
+          cd manifests
+          while ! ./kustomize build example | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+
+        EOF
+
+    - name: MicroK8s status
+      run: juju ssh ubuntu/0 sudo microk8s status
+      if: failure()
+
+    - name: MicroK8s get pods
+      run: juju ssh ubuntu/0 sudo microk8s kubectl get pods -A
+      if: failure()
+
+    - name: MicroK8s describe pods
+      run: juju ssh ubuntu/0 sudo microk8s kubectl describe pods -A
+      if: failure()
+
+    - name: Generate inspect tarball
+      run: |
+        set -eux
+        juju ssh ubuntu/0 <<EOF
+          set -eux
+          sudo microk8s inspect | \
+            grep -Po "Report tarball is at \K.+" | \
+            sudo xargs -I {} mv {} inspection-report-${{ strategy.job-index }}.tar.gz
+        EOF
+        juju scp ubuntu/0:~/inspection-report-${{ strategy.job-index }}.tar.gz .
+      if: failure()
+
+    - name: Upload debug logs
+      uses: actions/upload-artifact@v2
+      with:
+        name: juju-debug-aws
+        path: juju-debug-${{ strategy.job-index }}.log
+      if: failure()
+
+    - name: Upload inspect tarball
+      uses: actions/upload-artifact@v2
+      with:
+        name: inspection-reports-aws
+        path: ./inspection-report-${{ strategy.job-index }}.tar.gz
+      if: failure()
+
+    - name: Generate kubectl describe
+      run: |
+        set -eux
+        juju ssh ubuntu/0 <<EOF
+          set -eux
+          mkdir describe-${{ strategy.job-index }}
+          for resource in \$(sudo microk8s kubectl api-resources -o name | sort); do
+            sudo microk8s kubectl describe \$resource -A > describe-${{ strategy.job-index }}/"\$resource".describe || true
+          done
+          tar -cvzf describe.tar.gz describe-${{ strategy.job-index }}/*.describe
+        EOF
+        juju scp ubuntu/0:~/describe.tar.gz describe-${{ strategy.job-index }}.tar.gz
+      if: failure()
+
+    - name: Upload kubectl describe
+      uses: actions/upload-artifact@v2
+      with:
+        name: kubectl-describe-aws
+        path: describe-${{ strategy.job-index }}.tar.gz
+      if: failure()
+
+    - name: Generate kubeflow pod logs
+      run: |
+        set -eux
+        juju ssh ubuntu/0 <<EOF
+          set -eux
+          mkdir stdout-${{ strategy.job-index }}
+          for namespace in admin kubeflow; do
+              for pod in \$(microk8s kubectl get pods -n \$namespace -o custom-columns=:metadata.name --no-headers); do
+                  for container in \$(microk8s kubectl get pods -n \$namespace -o jsonpath="{.spec.containers[*].name}" \$pod); do
+                    microk8s kubectl logs -n \$namespace --timestamps \$pod -c \$container > stdout-${{ strategy.job-index }}/\$namespace-\$pod-\$container.log || true
+                  done
+              done
+          done
+          tar -cvzf stdout.tar.gz stdout-${{ strategy.job-index }}/*.log
+        EOF
+        juju scp ubuntu/0:~/stdout.tar.gz stdout-${{ strategy.job-index }}.tar.gz
+      if: failure()
+
+    - name: Upload kubeflow pod logs
+      uses: actions/upload-artifact@v2
+      with:
+        name: kubectl-stdout-aws
+        path: stdout-${{ strategy.job-index }}.tar.gz
+      if: failure()
+
+    - name: Destroy controller
+      run: juju destroy-controller -y uk8saws --destroy-all-models --destroy-storage
+      if: always()
