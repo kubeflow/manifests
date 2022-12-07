@@ -1,10 +1,10 @@
 apiVersion: metacontroller.k8s.io/v1alpha1
 kind: CompositeController
-metadata:
+metadata: # kpt-merge: /catset-controller
   name: catset-controller
 spec:
   parentResource:
-    apiVersion: ctl.enisoc.com/v1 
+    apiVersion: ctl.enisoc.com/v1
     resource: catsets
     revisionHistory:
       fieldPaths:

@@ -11,6 +11,12 @@ Metacontroller is an add-on for Kubernetes that makes it easy to write and deplo
 - You should have `kubectl` available and configured to talk to the desired cluster.
 - `kustomize`.
 
+## Compile manifests
+
+```bash
+make hydrate
+```
+
 ## Install Metacontroller
 
 ```bash
@@ -21,6 +27,12 @@ make apply
 
 ```bash
 make test
+```
+
+## Uninstall Metacontroller
+
+```bash
+make delete
 ```
 
 ## Upgrade Metacontroller
