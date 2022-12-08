@@ -56,3 +56,8 @@ test-catset-controller:
 	# Cleanup
 	kubectl delete compositecontrollers/catset-controller
 	echo "[Test] contrib/metacontroller catset-controller PASSED"
+
+.PHONY: pull
+pull:
+	# Check ./UPGRADE.md for instructions on how to pull updated manifests
+	kpt pkg update .@${KFP_VERSION}
