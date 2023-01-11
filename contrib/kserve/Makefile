@@ -1,4 +1,5 @@
 KSERVE_VERSION ?= 0.9.0
+MODELS_WEBAPP_VERSION ?= 0.8.1
 
 .PHONY: upgrade-kserve-manifests
 upgrade-kserve-manifests: clean-kserve-manifests
@@ -8,10 +9,48 @@ upgrade-kserve-manifests: clean-kserve-manifests
 
 .PHONY: clean-kserve-manifests
 clean-kserve-manifests:
-	rm -f ./kserve/kserve*.yaml
+	cd kserve && rm -f kserve.yaml kserve-runtimes.yaml kserve_kubeflow.yaml
 
 .PHONY: install-kserve
 install-kserve:
+	# Create kubeflow namespace if not exists
+	kubectl create namespace kubeflow || echo "kubeflow namespace exists"
 	kubectl apply -k kserve
+
+.PHONY: uninstall-kserve
+uninstall-kserve:
+	kubectl delete -k kserve
+
+.PHONY: test-kserve
+test-kserve:
+	cd tests && pytest .
+
+.PHONY: clean-models-webapp-manifests
+clean-models-webapp-manifests:
+	rm -rf models-web-app
+
+.PHONY: upgrade-models-webapp-manifests
+upgrade-models-webapp-manifests: clean-models-webapp-manifests
+	git clone https://github.com/kserve/models-web-app.git kserve-models-web-app-src
+	RELEASE_VERSION=$(echo ${MODELS_WEBAPP_VERSION} | cut -d "." -f1-2) && git checkout release-${VERSION}
+	cp kserve-models-web-app/config models-web-app
+	# cleanup
+	rm -rf kserve-models-web-app-src
+
+.PHONY: install-models-web-app
+install-models-webapp:
+	# Create kubeflow namespace if not exists
+	kubectl create namespace kubeflow || echo "kubeflow namespace exists"
+	kubectl apply -k models-web-app/overlays/kubeflow
+
+.PHONY: uninstall-models-web-app
+uninstall-models-webapp:
+	kubectl delete -k models-web-app/overlays/kubeflow
+
+test-models-webapp: install-models-webapp
+	kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-webapp
+	echo "Test Passed"
+	echo "cleaning up ..."
+	kubectl delete -k models-web-app/overlays/kubeflow
 
 
