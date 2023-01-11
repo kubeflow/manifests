@@ -1,5 +1,6 @@
 KSERVE_VERSION ?= 0.9.0
 MODELS_WEBAPP_VERSION ?= 0.8.1
+MODELS_WEBAPP_RELEASE_VERSION := $(shell echo ${MODELS_WEBAPP_VERSION} | cut -d "." -f1-2)
 
 .PHONY: upgrade-kserve-manifests
 upgrade-kserve-manifests: clean-kserve-manifests
@@ -32,8 +33,8 @@ clean-models-webapp-manifests:
 .PHONY: upgrade-models-webapp-manifests
 upgrade-models-webapp-manifests: clean-models-webapp-manifests
 	git clone https://github.com/kserve/models-web-app.git kserve-models-web-app-src
-	RELEASE_VERSION=$(echo ${MODELS_WEBAPP_VERSION} | cut -d "." -f1-2) && git checkout release-${VERSION}
-	cp kserve-models-web-app/config models-web-app
+	cd kserve-models-web-app-src && git checkout release-${MODELS_WEBAPP_RELEASE_VERSION}
+	cp -r kserve-models-web-app-src/config ./models-web-app
 	# cleanup
 	rm -rf kserve-models-web-app-src
 
@@ -47,10 +48,9 @@ install-models-webapp:
 uninstall-models-webapp:
 	kubectl delete -k models-web-app/overlays/kubeflow
 
+.PHONY: test-models-webapp
 test-models-webapp: install-models-webapp
-	kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-webapp
-	echo "Test Passed"
-	echo "cleaning up ..."
+	kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app
+	@echo "Test Passed"
+	@echo "cleaning up ..."
 	kubectl delete -k models-web-app/overlays/kubeflow
-
-

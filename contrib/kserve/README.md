@@ -35,7 +35,7 @@ _Since 0.7 [KFServing is rebranded to KServe](https://blog.kubeflow.org/release/
 ### Kubeflow Installation
 KServe is an important addon component of Kubeflow, please learn more from the [Kubeflow KServe documentation](https://www.kubeflow.org/docs/external-add-ons/kserve/kserve) and follow [KServe with Kubeflow on AWS](https://awslabs.github.io/kubeflow-manifests/main/docs/component-guides/kserve) to learn how to use KServe on AWS.
 
-## :nut_and_bolt: Models Web App
+## :hammer_and_pick: Models Web App
 The Models web app is responsible for allowing the user to manipulate the Model Servers in their Kubeflow cluster. To achieve this it provides a user friendly way to handle the lifecycle of InferenceService CRs.
 Please follow the [Kserve Models UI documentation](https://www.kubeflow.org/docs/external-add-ons/kserve/webapp/) for more information.
 
@@ -70,7 +70,7 @@ For upgrading see [UPGRADE.md](UPGRADE.md)
    ```sh
    kubectl apply -k ../../common/knative/knative-serving/overlays/gateways
    kubectl apply -k ../../common/istio-1-16/cluster-local-gateway/base
-   kubectl apply -k ../../common/istio-1-16/cluster-local-gateway/base
+   kubectl apply -k ../../common/istio-1-16/kubeflow-istio-resources/base
    ```
 7. Install kserve
    ```sh
@@ -89,6 +89,7 @@ For upgrading see [UPGRADE.md](UPGRADE.md)
    export KSERVE_INGRESS_HOST_PORT='localhost:8080'
    make test-kserve
    ```
+
 ### Testing Models WebApp
 #### Prerequisite
 1. Running kubernetes cluster
