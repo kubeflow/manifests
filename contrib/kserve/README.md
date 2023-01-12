@@ -76,6 +76,8 @@ For upgrading see [UPGRADE.md](UPGRADE.md)
    ```sh
    make install-kserve
    ```
+> **_NOTE:_** If resource/crd installation fails please re-run the commands.
+
 #### Steps
 
 1. Port forward

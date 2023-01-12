@@ -29,6 +29,8 @@
    ```sh
    make install-kserve
    ```
+> **_NOTE:_** If resource/crd installation fails please re-run the commands.
+
 ### Testing
 For testing refer [kserve readme](README.md#testing-kserve).
    
@@ -60,6 +62,7 @@ If you are using another OS, please make sure to update the Makefile commands.
    ```sh
    make install-models-webapp
    ```
-   
+> **_NOTE:_** If resource/crd installation fails please re-run the commands.
+
 ### Testing
 For testing refer [kserve readme](README.md#testing-models-webapp).
