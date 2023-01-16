@@ -220,14 +220,14 @@ Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/compon
 ```sh
 kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
 ```
+This installs argo with the safe-to use runasnonroot emissary executor.  Please note that the installer is still responsible to analyze the security issues that arise when containers are run with root access and to decide if the kubeflow pipeline main containers are run as runasnonroot. It is strongly recommended that the pipelines main containers are installed and run as runasnonroot and without any special capabilities to mitigate security risks.
 
-If your container runtime is not docker, use pns executor instead:
-
+Do not use the deprecated and insecure PNS executor anymore
 ```sh
 kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user-pns | kubectl apply -f -
 ```
 
-Refer to [argo workflow executor documentation](https://argoproj.github.io/argo-workflows/workflow-executors/#process-namespace-sharing-pns) for their pros and cons.
+Refer to [argo workflow executor documentation](https://argoproj.github.io/argo-workflows/workflow-executors) for further reasoning.
 
 **Multi-User Kubeflow Pipelines dependencies**
 
