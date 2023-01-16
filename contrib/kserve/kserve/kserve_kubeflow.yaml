@@ -14452,7 +14452,7 @@ metadata:
   labels:
     app: kserve
     app.kubernetes.io/name: kserve
-  name: leader-election-role
+  name: kserve-leader-election-role
   namespace: kubeflow
 rules:
 - apiGroups:
@@ -14867,12 +14867,12 @@ metadata:
   labels:
     app: kserve
     app.kubernetes.io/name: kserve
-  name: leader-election-rolebinding
+  name: kserve-leader-election-rolebinding
   namespace: kubeflow
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: leader-election-role
+  name: kserve-leader-election-role
 subjects:
 - kind: ServiceAccount
   name: kserve-controller-manager
