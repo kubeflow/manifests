@@ -4,8 +4,8 @@
 
 The manifests for Knative Serving are based off the following:
 
-  - [Knative serving (v1.2.5)](https://github.com/knative/serving/releases/download/knative-v1.2.5/serving-core.yaml)
-  - [Knative ingress controller for Istio (v1.2.0)](https://github.com/knative-sandbox/net-istio/releases/download/knative-v1.2.0/net-istio.yaml)
+  - [Knative serving (v1.8.1)](https://github.com/knative/serving/releases/tag/knative-v1.8.1)
+  - [Knative ingress controller for Istio (v1.8.0)](https://github.com/knative-sandbox/net-istio/releases/tag/knative-v1.8.0)
 
 
 1. Download the knative-serving manifests with the following commands:
@@ -13,9 +13,9 @@ The manifests for Knative Serving are based off the following:
     ```sh
     # No need to install serving-crds.
     # See: https://github.com/knative/serving/issues/9945
-    wget -O knative-serving/base/upstream/serving-core.yaml 'https://github.com/knative/serving/releases/download/knative-v1.2.5/serving-core.yaml'
-    wget -O knative-serving/base/upstream/net-istio.yaml 'https://github.com/knative-sandbox/net-istio/releases/download/knative-v1.2.0/net-istio.yaml'
-    wget -O knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml https://github.com/knative/serving/releases/download/knative-v1.2.5/serving-post-install-jobs.yaml
+    wget -O knative-serving/base/upstream/serving-core.yaml 'https://github.com/knative/serving/releases/download/knative-v1.8.1/serving-core.yaml'
+    wget -O knative-serving/base/upstream/net-istio.yaml 'https://github.com/knative-sandbox/net-istio/releases/download/knative-v1.8.0/net-istio.yaml'
+    wget -O knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml 'https://github.com/knative/serving/releases/download/knative-v1.8.1/serving-post-install-jobs.yaml'
     ```
 
 1. Remove all comments, since `yq` does not handle them correctly. See:
@@ -67,9 +67,6 @@ NOTE: You'll need to remove a redundant `{}` at the end of the `knative-serving/
 - In `config-istio`, the Knative gateway is set to use `gateway.kubeflow.kubeflow-gateway`.
 - In `config-deployment`, `progressDeadline` is set to `600s` as sometimes large models need longer than
   the default of `120s` to start the containers.
-- In `knative-serving/base/upstream/net-istio.yaml` we explicitly changed the
-  `portLevelMtls.8443` keys to be string. This was necessary to make these
-  manifests work with kustomize 4.2 https://github.com/kubernetes-sigs/kustomize/issues/3446
 
 ## Knative-Eventing
 
