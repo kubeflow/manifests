@@ -70,20 +70,20 @@ NOTE: You'll need to remove a redundant `{}` at the end of the `knative-serving/
 
 ## Knative-Eventing
 
-The manifests for Knative Eventing are based off the the [v1.2.4 release](https://github.com/knative/eventing/releases/tag/knative-v1.2.4).
+The manifests for Knative Eventing are based off the the [v1.8.1 release](https://github.com/knative/eventing/releases/tag/knative-v1.8.1).
 
-  - [Eventing Core](https://github.com/knative/eventing/releases/download/knative-v1.2.4/eventing-core.yaml)
-  - [In-Memory Channel](https://github.com/knative/eventing/releases/download/knative-v1.2.4/in-memory-channel.yaml)
-  - [MT Channel Broker](https://github.com/knative/eventing/releases/download/knative-v1.2.4/mt-channel-broker.yaml)
+  - [Eventing Core](https://github.com/knative/eventing/releases/download/knative-v1.8.1/eventing-core.yaml)
+  - [In-Memory Channel](https://github.com/knative/eventing/releases/download/knative-v1.8.1/in-memory-channel.yaml)
+  - [MT Channel Broker](https://github.com/knative/eventing/releases/download/knative-v1.8.1/mt-channel-broker.yaml)
 
 
 1. Download the knative-eventing manifests with the following commands:
 
     ```sh
-    wget -O knative-eventing/base/upstream/eventing-core.yaml 'https://github.com/knative/eventing/releases/download/knative-v1.2.4/eventing-core.yaml'
-    wget -O knative-eventing/base/upstream/in-memory-channel.yaml 'https://github.com/knative/eventing/releases/download/knative-v1.2.4/in-memory-channel.yaml'
-    wget -O knative-eventing/base/upstream/mt-channel-broker.yaml 'https://github.com/knative/eventing/releases/download/knative-v1.2.4/mt-channel-broker.yaml'
-    wget -O knative-eventing-post-install-jobs/base/eventing-post-install-jobs.yaml https://github.com/knative/eventing/releases/download/knative-v1.2.4/eventing-post-install.yaml
+    wget -O knative-eventing/base/upstream/eventing-core.yaml 'https://github.com/knative/eventing/releases/download/knative-v1.8.1/eventing-core.yaml'
+    wget -O knative-eventing/base/upstream/in-memory-channel.yaml 'https://github.com/knative/eventing/releases/download/knative-v1.8.1/in-memory-channel.yaml'
+    wget -O knative-eventing/base/upstream/mt-channel-broker.yaml 'https://github.com/knative/eventing/releases/download/knative-v1.8.1/mt-channel-broker.yaml'
+    wget -O knative-eventing-post-install-jobs/base/eventing-post-install.yaml 'https://github.com/knative/eventing/releases/download/knative-v1.8.1/eventing-post-install.yaml'
     ```
 
 1. Remove all comments, since `yq` does not handle them correctly. See:
@@ -93,7 +93,7 @@ The manifests for Knative Eventing are based off the the [v1.2.4 release](https:
     yq eval -i '... comments=""' knative-eventing/base/upstream/eventing-core.yaml
     yq eval -i '... comments=""' knative-eventing/base/upstream/in-memory-channel.yaml
     yq eval -i '... comments=""' knative-eventing/base/upstream/mt-channel-broker.yaml
-    yq eval -i '... comments=""' knative-eventing-post-install-jobs/base/eventing-post-install-jobs.yaml
+    yq eval -i '... comments=""' knative-eventing-post-install-jobs/base/eventing-post-install.yaml
     ```
 
 1. Remove all YAML anchors and aliases, as kustomize does not support them. See:
@@ -104,8 +104,26 @@ The manifests for Knative Eventing are based off the the [v1.2.4 release](https:
     yq eval -i 'explode(.)' knative-eventing/base/upstream/eventing-core.yaml
     yq eval -i 'explode(.)' knative-eventing/base/upstream/in-memory-channel.yaml
     yq eval -i 'explode(.)' knative-eventing/base/upstream/mt-channel-broker.yaml
-    yq eval -i 'explode(.)' knative-eventing-post-install-jobs/base/eventing-post-install-jobs.yaml
+    yq eval -i 'explode(.)' knative-eventing-post-install-jobs/base/eventing-post-install.yaml
     ```
+
+1. Set `metadata.name` in the eventing post-install job, to be deploy-able with
+   `kustomize` and `kubectl apply`:
+
+    ```sh
+    # We are not using the '|=' operator because it generates an empty object
+    # ({}) which crashes kustomize.
+    yq eval -i 'select(.kind == "Job" and .metadata.generateName == "storage-version-migration-eventing-") | .metadata.name = "storage-version-migration-eventing"' knative-eventing-post-install-jobs/base/eventing-post-install.yaml
+    ```
+
+1. Remove the `config-observability` and `config-tracing` ConfigMaps resource definitions from the In-Memory Channel, as they are already defined in eventing core. 
+
+   ```sh
+   yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-observability") | not)' knative-eventing/base/upstream/in-memory-channel.yaml 
+   yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-tracing") | not)' knative-eventing/base/upstream/in-memory-channel.yaml 
+   ``` 
+
+   NOTE: Make sure to remove a redundant `{}` at the end of the `knative-eventing/base/upstream/in-memory-channel.yaml` file after running the above commands.
 
 ## Copyright
 
