@@ -126,6 +126,7 @@ Install cert-manager:
 
 ```sh
 kustomize build common/cert-manager/cert-manager/base | kubectl apply -f -
+kubectl wait --for=condition=ready pod -l 'app in (cert-manager,webhook)' --timeout=180s -n cert-manager
 kustomize build common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
 ```
 
