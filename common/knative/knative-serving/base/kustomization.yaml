@@ -1,7 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- upstream/serving-crds.yaml
 - upstream/serving-core.yaml
 - upstream/net-istio.yaml
 - istio-authorization-policy.yaml

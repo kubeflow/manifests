@@ -2,7 +2,6 @@
 set -euo pipefail
 echo "Installing Kserve ..."
 cd contrib/kserve
-kubectl create ns kubeflow
 set +e
 kustomize build kserve | kubectl apply -f -
 set -e

@@ -26,7 +26,7 @@ from kserve import constants
 logging.basicConfig(level=logging.INFO)
 
 KSERVE_NAMESPACE = "kserve"
-KSERVE_TEST_NAMESPACE = "default"
+KSERVE_TEST_NAMESPACE = "kserve-test"
 MODEL_CLASS_NAME = "modelClass"
 
 
