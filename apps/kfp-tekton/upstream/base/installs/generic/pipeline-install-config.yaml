@@ -11,12 +11,14 @@ data:
     until the changes take effect. A quick way to restart all deployments in a
     namespace: `kubectl rollout restart deployment -n <your-namespace>`.
   appName: pipeline
-  appVersion: 1.8.1
+  appVersion: 1.8.4
   dbHost: mysql
   dbPort: "3306"
   mlmdDb: metadb
   cacheDb: cachedb
   pipelineDb: mlpipeline
+  objectStoreHost: minio-service
+  objectStorePort: "9000"
   bucketName: mlpipeline
   ## defaultPipelineRoot: Optional. Default pipeline root in v2 compatible mode.
   ## https://www.kubeflow.org/docs/components/pipelines/sdk/v2/v2-compatibility/
