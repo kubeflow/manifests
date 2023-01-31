@@ -13,7 +13,8 @@ commonLabels:
   kustomize.component: volumes-web-app
 images:
 - name: docker.io/kubeflownotebookswg/volumes-web-app
-  newTag: v1.6.0-rc.1
+  newName: docker.io/kubeflownotebookswg/volumes-web-app
+  newTag: v1.7.0-rc.0
 # We need the name to be unique without the suffix because the original name is what
 # gets used with patches
 configMapGenerator:
@@ -52,6 +53,13 @@ vars:
 - fieldref:
     fieldPath: data.VWA_PREFIX
   name: VWA_PREFIX
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: parameters
+- name: VWA_APP_SECURE_COOKIES
+  fieldref:
+    fieldPath: data.VWA_APP_SECURE_COOKIES
   objref:
     apiVersion: v1
     kind: ConfigMap
