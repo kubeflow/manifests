@@ -1,0 +1,20 @@
+yataiSystem:
+  namespace: "kubeflow"
+
+yatai:
+  endpoint: ''
+
+layers:
+  network:
+    ingressClass: nginx
+    ingressAnnotations: {}
+
+    ingressPath: /
+    ingressPathType: ImplementationSpecific
+
+    domainSuffix: ''
+
+    automaticDomainSuffixGeneration: false
+
+bentoDeploymentNamespaces: ["kubeflow"]
+
