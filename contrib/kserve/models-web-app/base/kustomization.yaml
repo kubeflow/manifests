@@ -13,7 +13,7 @@ commonLabels:
 images:
 - name: kserve/models-web-app
   newName: kserve/models-web-app
-  newTag: v0.8.0
+  newTag: v0.10.0
 configMapGenerator:
   - name: kserve-models-web-app-config
     literals:
