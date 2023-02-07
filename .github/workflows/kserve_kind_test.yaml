@@ -59,4 +59,4 @@ jobs:
 
       - name: Run kserve models webapp test
         run: |
-          kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-webapp
+          kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app
