@@ -45,7 +45,7 @@ spec:
               cpu: "1"
               memory: "2G"
             requests:
-              cpu: "500m"
+              cpu: "100m"
               memory: "2G"
           securityContext:
             allowPrivilegeEscalation: false
@@ -90,7 +90,7 @@ spec:
               cpu: "1"
               memory: "1G"
             requests:
-              cpu: "500m"
+              cpu: "300m"
               memory: "1G"
           securityContext:
             allowPrivilegeEscalation: false
