@@ -115,8 +115,4 @@ kubectl get pod -l ray.io/cluster=kubeflow-raycluster
     ```
 
 # Upgrading
-```sh
-# Step 1: Update KUBERAY_RELEASE_VERSION in Makefile
-# Step 2: Create new KubeRay operator manifest
-make kuberay-operator/base
-```
+See [UPGRADE.md](UPGRADE.md) for more details.
