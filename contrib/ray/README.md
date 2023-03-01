@@ -23,7 +23,12 @@
     * 8 CPUs
 
 # Example
-![image](assets/architecture.png)
+<figure>
+  <img
+  src="assets/architecture.svg"
+  alt="ray/kubeflow integration">
+  <figcaption>Note: Kubeflow Central Dashboard will be renamed to workbench in the future.</figcaption>
+</figure>
 
 ## Step 1: Install Kubeflow v1.6-branch
 * This example installs Kubeflow with the [v1.6-branch](https://github.com/kubeflow/manifests/tree/v1.6-branch).
