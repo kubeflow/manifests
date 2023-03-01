@@ -54,22 +54,22 @@ kubectl get pod -l ray.io/cluster=kubeflow-raycluster
 # kubeflow-raycluster-head-p6dpk                 1/1     Running   0          70s
 # kubeflow-raycluster-worker-small-group-l7j6c   1/1     Running   0          70s
 ```
-* `raycluster_example.yaml` uses `rayproject/ray:2.2.0-py38-cpu` as its OCI image. Ray is very sensitive to the Python versions and Ray versions between the server (RayCluster) and client (Jupyter Notebook) sides. This image uses:
+* `raycluster_example.yaml` uses `rayproject/ray:2.2.0-py38-cpu` as its OCI image. Ray is very sensitive to the Python versions and Ray versions between the server (RayCluster) and client (JupyterLab) sides. This image uses:
     * Python 3.8.13
     * Ray 2.2.0
 
 ## Step 4: Forward the port of Istio's Ingress-Gateway
 * Follow the [instructions](https://github.com/kubeflow/manifests/tree/v1.6-branch#port-forward) to forward the port of Istio's Ingress-Gateway and log in to Kubeflow Central Dashboard.
 
-## Step 5: Create a Jupyter notebook via Kubeflow Central Dashboard
+## Step 5: Create a JupyterLab via Kubeflow Central Dashboard
 * Click "Notebooks" icon in the left panel.
 * Click "New Notebook"
 * Select `kubeflownotebookswg/jupyter-scipy:v1.6.1` as OCI image.
 * Click "Launch"
-* Click "CONNECT" to connect into the notebook instance.
+* Click "CONNECT" to connect into the JupyterLab instance.
 
-## Step 6: Use Ray client in the Jupyter notebook to connect to the RayCluster
-* As I mentioned in Step 3, Ray is very sensitive to the Python versions and Ray versions between the server (RayCluster) and client (Jupyter Notebook) sides.
+## Step 6: Use Ray client in the JupyterLab to connect to the RayCluster
+* As I mentioned in Step 3, Ray is very sensitive to the Python versions and Ray versions between the server (RayCluster) and client (JupyterLab) sides.
     ```sh
     # Check Python version. The version's MAJOR and MINOR should match with RayCluster (i.e. Python 3.8)
     python --version 
