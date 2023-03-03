@@ -38,3 +38,4 @@ spec:
                 allowed_upstream_headers:
                   patterns:
                     - exact: "kubeflow-userid"
+                    - exact: "kubeflow-groups"
