@@ -13,12 +13,8 @@ jobs:
     - name: Check out repo
       uses: actions/checkout@v2
 
-    - name: Install Kustomize
-      working-directory: ./tests/e2e
-      run: |
-        curl -Lo ./kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.2.0/kustomize_3.2.0_linux_amd64
-        chmod +x ./kustomize
-        sudo mv kustomize /usr/local/bin
+    - name: Install kustomize
+      run: ./tests/gh-actions/install_kustomize.sh
 
     - name: Unit Test
       run: |
