@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauth2-proxy-authservice
+  labels:
+    app: authservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: oauth2-proxy
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: authservice
+    spec:
+      volumes:
+        - name: configmain
+          configMap:
+            name: oauth2-proxy
+            defaultMode: 420
+        - name: configalpha
+          configMap:
+            name: oauth2-proxy-alpha
+            defaultMode: 420
+        - name: authservice-client
+          secret:
+            secretName: authservice-client
+      containers:
+        - name: oauth2-proxy
+          image: quay.io/oauth2-proxy/oauth2-proxy:v7.4.0
+          args:
+            - '--alpha-config=/etc/oauth2_proxy/oauth2_proxy.yml'
+            - '--config=/etc/oauth2_proxy/oauth2_proxy.cfg'
+            - '--silence-ping-logging'
+          ports:
+            - name: http-api
+              containerPort: 8080
+              protocol: TCP
+            - name: metrics
+              containerPort: 44180
+              protocol: TCP
+          env:
+            - name: OAUTH2_PROXY_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: oauth2-proxy
+                  key: client-id
+            - name: OAUTH2_PROXY_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oauth2-proxy
+                  key: client-secret
+            - name: OAUTH2_PROXY_COOKIE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oauth2-proxy
+                  key: cookie-secret
+          volumeMounts:
+            - name: configmain
+              mountPath: /etc/oauth2_proxy/oauth2_proxy.cfg
+              subPath: oauth2_proxy.cfg
+            - name: configalpha
+              mountPath: /etc/oauth2_proxy/oauth2_proxy.yml
+              subPath: oauth2_proxy.yml
+            - name: authservice-client
+              subPath: CLIENT_SECRET
+              mountPath: "/etc/oauth2_proxy/CLIENT_SECRET"
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: http
+              scheme: HTTP
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: http
+              scheme: HTTP

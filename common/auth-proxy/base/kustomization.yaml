@@ -4,19 +4,12 @@ kind: Kustomization
 resources:
 - rbac.yaml
 - service.yaml
-- statefulset.yaml
 - envoy-filter.yaml
-- pvc.yaml
 
 namespace: istio-system
 
-configMapGenerator:
-- name: oidc-authservice-parameters
-  envs:
-  - params.env
-
 secretGenerator:
-- name: oidc-authservice-client
+- name: authservice-client
   type: Opaque
   envs:
   - secret_params.env
