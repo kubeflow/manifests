@@ -34,10 +34,7 @@ old version is `X1.Y1.Z1`:
 
     `istioctl` comes with a bunch of [predefined
     profiles](https://istio.io/v1.9/docs/setup/additional-setup/config-profiles/)
-    (`default`, `demo`, `minimal`, etc.). The `demo` profile enables
-    high levels of tracing and access logging and included monitoring
-    components in the past, which we wanted to install. In the future,
-    we can consider moving to the `default` profile.
+    (`default`, `demo`, `minimal`, etc.). The `default` profile is installed by default.
 
     ---
 
