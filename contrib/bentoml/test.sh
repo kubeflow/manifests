@@ -7,7 +7,7 @@ kustomize build bentoml-yatai-stack/default | kubectl apply --server-side -f -
 kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/yatai-image-builder
 kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/yatai-deployment
 sleep 5
-kubectl apply -n kubeflow -f example.yaml
+kubectl apply -n kubeflow -f deployment_from_bento.yaml
 sleep 5
 kubectl -n kubeflow logs deploy/yatai-deployment
 sleep 5
@@ -20,7 +20,7 @@ PID=$!
 function trap_handler {
  kill $PID
  kubectl -n kubeflow logs -l yatai.ai/bento-deployment=test-yatai --tail=100
- kubectl -n kubeflow delete -f example.yaml
+ kubectl -n kubeflow delete -f deployment_from_bento.yaml
  kustomize build bentoml-yatai-stack/default | kubectl delete -f -
 }
 

@@ -110,9 +110,9 @@ Users can choose to interact with Kubernetes through either `kubectl` or Kuberne
 
 ### Deploy with BentoRequest CRD
 
-In this workflow, we will export the Bento to a remote S3 storage. After that, we will use the `yatai-image-build` operator to containerize the Bento and push the resulting OCI image to a remote registry. Finally, we will use the `yatai-deployment` operator to deploy the containerized Bento image.
+In this workflow, we will export the Bento to a remote S3 storage. After that, we will use the `yatai-image-builder` operator to containerize the Bento and push the resulting OCI image to a remote registry. Finally, we will use the `yatai-deployment` operator to deploy the containerized Bento image.
 
-Kustomize the installation with AWS and Container registry credentials by updating the [yatai-image-builder-values.yaml](https://github.com/ssheng/manifests/blob/master/contrib/bentoml/sources/yatai-image-builder-values.yaml) file.
+Kustomize the installation with AWS and Container registry credentials by updating the [yatai-image-builder-values.yaml](https://github.com/ssheng/manifests/blob/master/contrib/bentoml/sources/yatai-image-builder-values.yaml) file. This will ensure that the `yatai-image-builder` has access to download the Bento from AWS S3 and push the OCI image built to a registry of your choice.
 
 ```
 dockerRegistry:
