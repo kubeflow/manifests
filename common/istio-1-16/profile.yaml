@@ -62,7 +62,7 @@ spec:
         port: 4317
         service: opentelemetry-collector.istio-system.svc.cluster.local
       name: otel
-  profile: demo
+  profile: default
   tag: 1.16.0
   values:
     base:
