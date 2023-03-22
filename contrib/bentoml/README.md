@@ -149,7 +149,7 @@ bentoml export fraud_detection:o5smnagbncigycvj s3://your_bucket/fraud_detection
 Apply the `BentoRequest` and `BentoDeployment` resources as defined in `deployment_from_bentorequest.yaml` included in this example.
 
 ```bash
-kubectl apply deployment_from_bentorequest.yaml
+kubectl apply -f deployment_from_bentorequest.yaml
 ```
 
 Once the resources are created, the `yatai-image-builder` operator will reconcile the `BentoRequest` resource and spawn a pod to build the container image from the provided Bento defined in the resource. The `yatai-image-builder` operator will push the built image to the container registry specified during the installation and create a `Bento` resource with the same name. At the same time, the `yatai-deployment` operator will reconcile the `BentoDeployment` resource with the provided name and create Kubernetes deployments of API Servers and Runners from the container image specified in the `Bento` resource.
@@ -173,7 +173,7 @@ docker push your-username/fraud_detection:o5smnagbncigycvj
 Apply the `Bento` and `BentoDeployment` resources as defined in `deployment_from_bento.yaml` file included in this example.
 
 ```bash
-kubectl apply deployment_from_bento.yaml
+kubectl apply -f deployment_from_bento.yaml
 ```
 
 Once the resources are created, the `yatai-deployment` operator will reconcile the `BentoDeployment` resource with the provided name and create Kubernetes deployments of API Servers and Runners from the container image specified in the `Bento` resource.
