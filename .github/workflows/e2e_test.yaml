@@ -1,0 +1,122 @@
+name: E2E Tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    name: AWS
+    runs-on: ubuntu-20.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        juju: [2.9/stable]
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Install juju
+      run: |
+        sudo snap install juju --classic --channel ${{ matrix.juju }}
+        sudo snap install juju-wait --classic
+
+    - name: Bootstrap onto AWS
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: |
+        set -eux
+        juju autoload-credentials --client aws
+        juju bootstrap aws/us-east-1 uk8saws --debug --show-log --config test-mode=true --model-default test-mode=true
+        juju deploy ubuntu --constraints 'instance-type=t3a.xlarge root-disk=80G'
+        juju wait -vw
+        juju status --format yaml
+
+    - name: Copy manifests to AWS instance
+      run: |
+        set -eux
+        juju scp -- -r $(pwd)/ ubuntu/0:~/
+
+    - name: Install Docker
+      run: juju ssh ubuntu/0 ./manifests/tests/e2e/setup/install_docker.sh
+
+    - name: Install Python
+      run: juju ssh ubuntu/0 ./manifests/tests/e2e/setup/install_python.sh
+
+    - name: Install Kubectl
+      run: juju ssh ubuntu/0 ./manifests/tests/e2e/setup/install_kubectl.sh
+
+    - name: Install Kustomize
+      run: juju ssh ubuntu/0 ./manifests/tests/gh-actions/install_kustomize.sh
+
+    - name: Install KinD
+      run: juju ssh ubuntu/0 ./manifests/tests/gh-actions/install_kind.sh
+
+    - name: Create a KinD Cluster
+      run: juju ssh ubuntu/0 kind create cluster --config ./manifests/tests/gh-actions/kind-cluster.yaml
+
+    - name: Deploy Kubeflow
+      run: juju ssh ubuntu/0 ./manifests/tests/e2e/setup/install_kubeflow.sh
+      timeout-minutes: 45
+
+    - name: Test Kubeflow with mnist
+      run: |
+        juju ssh ubuntu/0 <<EOF
+          cd manifests/tests/e2e
+          ./runner.sh
+        EOF
+      timeout-minutes: 20
+
+    - name: Generate KinD logs
+      env:
+        JOB_INDEX: ${{ strategy.job-index }}
+      run: |
+        set -eux
+        juju ssh ubuntu/0 ./manifests/tests/e2e/setup/generate_kind_logs.sh
+        juju scp ubuntu/0:~/kind-logs-$JOB_INDEX.tar.gz .
+      if: failure()
+
+    - name: Upload KinD logs tarball
+      uses: actions/upload-artifact@v2
+      with:
+        name: kind-logs
+        path: kind-logs-${{ strategy.job-index }}.tar.gz
+      if: failure()
+
+    - name: Generate kubectl describe logs
+      env:
+        JOB_INDEX: ${{ strategy.job-index }}
+      run: |
+        set -eux
+        juju ssh ubuntu/0 ./manifests/tests/e2e/setup/generate_describe_logs.sh
+        juju scp ubuntu/0:~/describe.tar.gz kubectl-describe-$JOB_INDEX.tar.gz
+      if: failure()
+
+    - name: Upload kubectl describe tarball
+      uses: actions/upload-artifact@v2
+      with:
+        name: kubectl-describe
+        path: kubectl-describe-${{ strategy.job-index }}.tar.gz
+      if: failure()
+
+    - name: Generate pod logs
+      env:
+        JOB_INDEX: ${{ strategy.job-index }}
+      run: |
+        set -eux
+        juju ssh ubuntu/0 ./manifests/tests/e2e/setup/generate_pod_logs.sh
+        juju scp ubuntu/0:~/stdout.tar.gz kubectl-stdout-$JOB_INDEX.tar.gz
+      if: failure()
+
+    - name: Upload pod logs tarball
+      uses: actions/upload-artifact@v2
+      with:
+        name: kubectl-stdout
+        path: kubectl-stdout-${{ strategy.job-index }}.tar.gz
+      if: failure()
+
+    - name: Destroy controller
+      run: juju destroy-controller -y uk8saws --destroy-all-models --destroy-storage
+      if: always()
