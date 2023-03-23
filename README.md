@@ -297,7 +297,7 @@ kustomize build contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply 
 
 #### BentoML
 
-BentoML allows you to package models trained in Kubeflow notebooks and deploy them as microservices in Kubernetes.
+BentoML allows you to package models trained in Kubeflow Notebooks and deploy them as microservices in Kubernetes.
 
 Install the BentoML Yatai components:
 
