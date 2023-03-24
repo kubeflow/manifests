@@ -108,6 +108,8 @@ python:3.7
 pytorch/torchserve-kfs:0.7.0
 quay.io/argoproj/argocli:latest
 quay.io/argoproj/workflow-controller:latest
+quay.io/bentoml/yatai-deployment:1.1.4
+quay.io/bentoml/yatai-image-builder:1.1.3
 quay.io/dexidp/dex:v2.23.0
 quay.io/jetstack/cert-manager-cainjector:v1.10.1
 quay.io/jetstack/cert-manager-controller:v1.10.1

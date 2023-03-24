@@ -6,10 +6,11 @@
 
 #VERSION=1.7.0
 output_file="../docs/kf${VERSION}_images.txt"
-
+declare -a dirs=("../apps" "../common" "../example" "../contrib/metacontroller"
+                 "../contrib/seldon" "../contrib/bentoml" )
 rm -f .tmp
 # Iterate over all files with names: 'kustomization.yaml', 'kustomization.yml', 'Kustomization' found recursively in the provided list of directories
-for F in $(find ../apps ../common ../example ../contrib/metacontroller ../contrib/seldon \( -name kustomization.yaml   -o -name kustomization.yml -o -name Kustomization \)); do
+for F in $(find "${dirs[@]}" \( -name kustomization.yaml   -o -name kustomization.yml -o -name Kustomization \)); do
 
   dir=$(dirname -- "$F")
   # Generate k8s resources specified in 'dir' using the 'kustomize build' command.
