@@ -27,7 +27,7 @@
   <img
   src="assets/architecture.svg"
   alt="ray/kubeflow integration">
-  <figcaption>Note: Kubeflow Central Dashboard will be renamed to workbench in the future.</figcaption>
+  <figcaption>Note: (1) Kubeflow Central Dashboard will be renamed to workbench in the future. (2) Kubeflow Pipeline (KFP) is an important component of Kubeflow, but it is not included in this example.</figcaption>
 </figure>
 
 ## Step 1: Install Kubeflow v1.6-branch
