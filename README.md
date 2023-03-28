@@ -37,7 +37,7 @@ Starting from Kubeflow 1.3, all components should be deployable using `kustomize
 
 ## Kubeflow components versions
 
-### Kubeflow Version: v1.7.0-rc.0
+### Kubeflow Version: v1.7.0
 
 This repo periodically syncs all official Kubeflow components from their respective upstream repos. The following matrix shows the git version that we include for each component:
 
