@@ -14,7 +14,7 @@ Run the following command to install BentoML Yatai. Note that the YAML assumes y
 kustomize build bentoml-yatai-stack/default | kubectl apply -n kubeflow --server-side -f -
 ```
 
-## Customization
+## Customizations
 
 You can customize the container repository configurations and credentials for the `yatai-image-builder` operator to push Bento images to a container registry of your choice.
 
