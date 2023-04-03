@@ -1,14 +1,44 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+sortOptions:
+  order: legacy
+  legacySortOptions:
+    orderFirst:
+    - Namespace
+    - ResourceQuota
+    - StorageClass
+    - CustomResourceDefinition
+    - MutatingWebhookConfiguration
+    - ServiceAccount
+    - PodSecurityPolicy
+    - Role
+    - ClusterRole
+    - RoleBinding
+    - ClusterRoleBinding
+    - ConfigMap
+    - Secret
+    - Endpoints
+    - Service
+    - LimitRange
+    - PriorityClass
+    - PersistentVolume
+    - PersistentVolumeClaim
+    - Deployment
+    - StatefulSet
+    - CronJob
+    - PodDisruptionBudget
+    orderLast:
+    - ValidatingWebhookConfiguration
+
 resources:
 # Cert-Manager
 - ../common/cert-manager/cert-manager/base
 - ../common/cert-manager/kubeflow-issuer/base
 # Istio
-- ../common/istio-1-11/istio-crds/base
-- ../common/istio-1-11/istio-namespace/base
-- ../common/istio-1-11/istio-install/base
+- ../common/istio-1-16/istio-crds/base
+- ../common/istio-1-16/istio-namespace/base
+- ../common/istio-1-16/istio-install/base
 # OIDC Authservice
 - ../common/oidc-authservice/base
 # Dex
@@ -16,28 +46,26 @@ resources:
 # KNative
 - ../common/knative/knative-serving/overlays/gateways
 - ../common/knative/knative-eventing/base
-- ../common/istio-1-11/cluster-local-gateway/base
+- ../common/istio-1-16/cluster-local-gateway/base
 # Kubeflow namespace
 - ../common/kubeflow-namespace/base
 # Kubeflow Roles
 - ../common/kubeflow-roles/base
 # Kubeflow Istio Resources
-- ../common/istio-1-11/kubeflow-istio-resources/base
+- ../common/istio-1-16/kubeflow-istio-resources/base
 
 
 # Kubeflow Pipelines
-- ../apps/pipeline/upstream/env/platform-agnostic-multi-user
-# KFServing
-- ../apps/kfserving/upstream/overlays/kubeflow
+- ../apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
 # Katib
 - ../apps/katib/upstream/installs/katib-with-kubeflow
 # Central Dashboard
-- ../apps/centraldashboard/upstream/overlays/istio
+- ../apps/centraldashboard/upstream/overlays/kserve
 # Admission Webhook
 - ../apps/admission-webhook/upstream/overlays/cert-manager
-# Notebook Controller
-- ../apps/jupyter/jupyter-web-app/upstream/overlays/istio
 # Jupyter Web App
+- ../apps/jupyter/jupyter-web-app/upstream/overlays/istio
+# Notebook Controller
 - ../apps/jupyter/notebook-controller/upstream/overlays/kubeflow
 # Profiles + KFAM
 - ../apps/profiles/upstream/overlays/kubeflow
@@ -49,7 +77,9 @@ resources:
 -  ../apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
 # Training Operator
 - ../apps/training-operator/upstream/overlays/kubeflow
-# MPI Operator
-- ../apps/mpi-job/upstream/overlays/kubeflow
 # User namespace
 - ../common/user-namespace/base
+
+# KServe
+- ../contrib/kserve/kserve
+- ../contrib/kserve/models-web-app/overlays/kubeflow

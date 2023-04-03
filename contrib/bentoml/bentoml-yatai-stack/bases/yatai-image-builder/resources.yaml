@@ -1,0 +1,2157 @@
+---
+# Source: yatai-image-builder-crds/templates/bentorequest.yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.9.2
+  creationTimestamp: null
+  name: bentoes.resources.yatai.ai
+spec:
+  group: resources.yatai.ai
+  names:
+    kind: Bento
+    listKind: BentoList
+    plural: bentoes
+    singular: bento
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - description: Tag
+      jsonPath: .spec.tag
+      name: Tag
+      type: string
+    - description: Image
+      jsonPath: .spec.image
+      name: Image
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Bento is the Schema for the bentoes API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: BentoSpec defines the desired state of Bento
+            properties:
+              context:
+                properties:
+                  bentomlVersion:
+                    type: string
+                type: object
+              image:
+                type: string
+              imagePullSecrets:
+                items:
+                  description: LocalObjectReference contains enough information to let you locate the referenced object inside the same namespace.
+                  properties:
+                    name:
+                      description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
+                      type: string
+                  type: object
+                  x-kubernetes-map-type: atomic
+                type: array
+              runners:
+                items:
+                  properties:
+                    modelTags:
+                      items:
+                        type: string
+                      type: array
+                    name:
+                      type: string
+                    runnableType:
+                      type: string
+                  required:
+                  - name
+                  type: object
+                type: array
+              tag:
+                type: string
+            required:
+            - image
+            - tag
+            type: object
+          status:
+            description: BentoStatus defines the observed state of Bento
+            properties:
+              ready:
+                description: 'INSERT ADDITIONAL STATUS FIELD - define observed state of cluster Important: Run "make" to regenerate code after modifying this file'
+                type: boolean
+            required:
+            - ready
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+# Source: yatai-image-builder-crds/templates/bentorequest.yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.9.2
+  creationTimestamp: null
+  name: bentorequests.resources.yatai.ai
+spec:
+  group: resources.yatai.ai
+  names:
+    kind: BentoRequest
+    listKind: BentoRequestList
+    plural: bentorequests
+    singular: bentorequest
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - description: Bento Tag
+      jsonPath: .spec.bentoTag
+      name: Bento-Tag
+      type: string
+    - description: Download URL
+      jsonPath: .spec.downloadUrl
+      name: Download-Url
+      type: string
+    - description: Image
+      jsonPath: .spec.image
+      name: Image
+      type: string
+    - description: Image Exists
+      jsonPath: .status.conditions[?(@.type=='ImageExists')].status
+      name: Image-Exists
+      type: string
+    - description: Bento Available
+      jsonPath: .status.conditions[?(@.type=='BentoAvailable')].status
+      name: Bento-Available
+      type: string
+    - description: Image Builder Pod Phase
+      jsonPath: .status.imageBuilderPodStatus.phase
+      name: Image-Builder-Pod-Phase
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: BentoRequest is the Schema for the bentorequests API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: BentoRequestSpec defines the desired state of BentoRequest
+            properties:
+              bentoTag:
+                type: string
+              context:
+                properties:
+                  bentomlVersion:
+                    type: string
+                type: object
+              dockerConfigJsonSecretName:
+                type: string
+              downloadUrl:
+                type: string
+              downloaderContainerEnvFrom:
+                items:
+                  description: EnvFromSource represents the source of a set of ConfigMaps
+                  properties:
+                    configMapRef:
+                      description: The ConfigMap to select from
+                      properties:
+                        name:
+                          description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
+                          type: string
+                        optional:
+                          description: Specify whether the ConfigMap must be defined
+                          type: boolean
+                      type: object
+                      x-kubernetes-map-type: atomic
+                    prefix:
+                      description: An optional identifier to prepend to each key in the ConfigMap. Must be a C_IDENTIFIER.
+                      type: string
+                    secretRef:
+                      description: The Secret to select from
+                      properties:
+                        name:
+                          description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
+                          type: string
+                        optional:
+                          description: Specify whether the Secret must be defined
+                          type: boolean
+                      type: object
+                      x-kubernetes-map-type: atomic
+                  type: object
+                type: array
+              image:
+                type: string
+              imageBuildTimeout:
+                description: A Duration represents the elapsed time between two instants as an int64 nanosecond count. The representation limits the largest representable duration to approximately 290 years.
+                format: int64
+                type: integer
+              imageBuilderContainerResources:
+                description: ResourceRequirements describes the compute resource requirements.
+                properties:
+                  limits:
+                    additionalProperties:
+                      anyOf:
+                      - type: integer
+                      - type: string
+                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                      x-kubernetes-int-or-string: true
+                    description: 'Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
+                    type: object
+                  requests:
+                    additionalProperties:
+                      anyOf:
+                      - type: integer
+                      - type: string
+                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                      x-kubernetes-int-or-string: true
+                    description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
+                    type: object
+                type: object
+              imageBuilderExtraContainerEnv:
+                items:
+                  description: EnvVar represents an environment variable present in a Container.
+                  properties:
+                    name:
+                      description: Name of the environment variable. Must be a C_IDENTIFIER.
+                      type: string
+                    value:
+                      description: 'Variable references $(VAR_NAME) are expanded using the previously defined environment variables in the container and any service environment variables. If a variable cannot be resolved, the reference in the input string will be unchanged. Double $$ are reduced to a single $, which allows for escaping the $(VAR_NAME) syntax: i.e. "$$(VAR_NAME)" will produce the string literal "$(VAR_NAME)". Escaped references will never be expanded, regardless of whether the variable exists or not. Defaults to "".'
+                      type: string
+                    valueFrom:
+                      description: Source for the environment variable's value. Cannot be used if value is not empty.
+                      properties:
+                        configMapKeyRef:
+                          description: Selects a key of a ConfigMap.
+                          properties:
+                            key:
+                              description: The key to select.
+                              type: string
+                            name:
+                              description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
+                              type: string
+                            optional:
+                              description: Specify whether the ConfigMap or its key must be defined
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                          x-kubernetes-map-type: atomic
+                        fieldRef:
+                          description: 'Selects a field of the pod: supports metadata.name, metadata.namespace, `metadata.labels[''<KEY>'']`, `metadata.annotations[''<KEY>'']`, spec.nodeName, spec.serviceAccountName, status.hostIP, status.podIP, status.podIPs.'
+                          properties:
+                            apiVersion:
+                              description: Version of the schema the FieldPath is written in terms of, defaults to "v1".
+                              type: string
+                            fieldPath:
+                              description: Path of the field to select in the specified API version.
+                              type: string
+                          required:
+                          - fieldPath
+                          type: object
+                          x-kubernetes-map-type: atomic
+                        resourceFieldRef:
+                          description: 'Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, limits.ephemeral-storage, requests.cpu, requests.memory and requests.ephemeral-storage) are currently supported.'
+                          properties:
+                            containerName:
+                              description: 'Container name: required for volumes, optional for env vars'
+                              type: string
+                            divisor:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              description: Specifies the output format of the exposed resources, defaults to "1"
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                            resource:
+                              description: 'Required: resource to select'
+                              type: string
+                          required:
+                          - resource
+                          type: object
+                          x-kubernetes-map-type: atomic
+                        secretKeyRef:
+                          description: Selects a key of a secret in the pod's namespace
+                          properties:
+                            key:
+                              description: The key of the secret to select from.  Must be a valid secret key.
+                              type: string
+                            name:
+                              description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?'
+                              type: string
+                            optional:
+                              description: Specify whether the Secret or its key must be defined
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                          x-kubernetes-map-type: atomic
+                      type: object
+                  required:
+                  - name
+                  type: object
+                type: array
+              imageBuilderExtraPodMetadata:
+                properties:
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                type: object
+              imageBuilderExtraPodSpec:
+                properties:
+                  affinity:
+                    description: Affinity is a group of affinity scheduling rules.
+                    properties:
+                      nodeAffinity:
+                        description: Describes node affinity scheduling rules for the pod.
+                        properties:
+                          preferredDuringSchedulingIgnoredDuringExecution:
+                            description: The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding "weight" to the sum if the node matches the corresponding matchExpressions; the node(s) with the highest sum are the most preferred.
+                            items:
+                              description: An empty preferred scheduling term matches all objects with implicit weight 0 (i.e. it's a no-op). A null preferred scheduling term matches no objects (i.e. is also a no-op).
+                              properties:
+                                preference:
+                                  description: A node selector term, associated with the corresponding weight.
+                                  properties:
+                                    matchExpressions:
+                                      description: A list of node selector requirements by node's labels.
+                                      items:
+                                        description: A node selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
+                                        properties:
+                                          key:
+                                            description: The label key that the selector applies to.
+                                            type: string
+                                          operator:
+                                            description: Represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.
+                                            type: string
+                                          values:
+                                            description: An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.
+                                            items:
+                                              type: string
+                                            type: array
+                                        required:
+                                        - key
+                                        - operator
+                                        type: object
+                                      type: array
+                                    matchFields:
+                                      description: A list of node selector requirements by node's fields.
+                                      items:
+                                        description: A node selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
+                                        properties:
+                                          key:
+                                            description: The label key that the selector applies to.
+                                            type: string
+                                          operator:
+                                            description: Represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.
+                                            type: string
+                                          values:
+                                            description: An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.
+                                            items:
+                                              type: string
+                                            type: array
+                                        required:
+                                        - key
+                                        - operator
+                                        type: object
+                                      type: array
+                                  type: object
+                                  x-kubernetes-map-type: atomic
+                                weight:
+                                  description: Weight associated with matching the corresponding nodeSelectorTerm, in the range 1-100.
+                                  format: int32
+                                  type: integer
+                              required:
+                              - preference
+                              - weight
+                              type: object
+                            type: array
+                          requiredDuringSchedulingIgnoredDuringExecution:
+                            description: If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to an update), the system may or may not try to eventually evict the pod from its node.
+                            properties:
+                              nodeSelectorTerms:
+                                description: Required. A list of node selector terms. The terms are ORed.
+                                items:
+                                  description: A null or empty node selector term matches no objects. The requirements of them are ANDed. The TopologySelectorTerm type implements a subset of the NodeSelectorTerm.
+                                  properties:
+                                    matchExpressions:
+                                      description: A list of node selector requirements by node's labels.
+                                      items:
+                                        description: A node selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
+                                        properties:
+                                          key:
+                                            description: The label key that the selector applies to.
+                                            type: string
+                                          operator:
+                                            description: Represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.
+                                            type: string
+                                          values:
+                                            description: An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.
+                                            items:
+                                              type: string
+                                            type: array
+                                        required:
+                                        - key
+                                        - operator
+                                        type: object
+                                      type: array
+                                    matchFields:
+                                      description: A list of node selector requirements by node's fields.
+                                      items:
+                                        description: A node selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
+                                        properties:
+                                          key:
+                                            description: The label key that the selector applies to.
+                                            type: string
+                                          operator:
+                                            description: Represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.
+                                            type: string
+                                          values:
+                                            description: An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.
+                                            items:
+                                              type: string
+                                            type: array
+                                        required:
+                                        - key
+                                        - operator
+                                        type: object
+                                      type: array
+                                  type: object
+                                  x-kubernetes-map-type: atomic
+                                type: array
+                            required:
+                            - nodeSelectorTerms
+                            type: object
+                            x-kubernetes-map-type: atomic
+                        type: object
+                      podAffinity:
+                        description: Describes pod affinity scheduling rules (e.g. co-locate this pod in the same node, zone, etc. as some other pod(s)).
+                        properties:
+                          preferredDuringSchedulingIgnoredDuringExecution:
+                            description: The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding "weight" to the sum if the node has pods which matches the corresponding podAffinityTerm; the node(s) with the highest sum are the most preferred.
+                            items:
+                              description: The weights of all of the matched WeightedPodAffinityTerm fields are added per-node to find the most preferred node(s)
+                              properties:
+                                podAffinityTerm:
+                                  description: Required. A pod affinity term, associated with the corresponding weight.
+                                  properties:
+                                    labelSelector:
+                                      description: A label query over a set of resources, in this case pods.
+                                      properties:
+                                        matchExpressions:
+                                          description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
+                                          items:
+                                            description: A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
+                                            properties:
+                                              key:
+                                                description: key is the label key that the selector applies to.
+                                                type: string
+                                              operator:
+                                                description: operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.
+                                                type: string
+                                              values:
+                                                description: values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
+                                                items:
+                                                  type: string
+                                                type: array
+                                            required:
+                                            - key
+                                            - operator
+                                            type: object
+                                          type: array
+                                        matchLabels:
+                                          additionalProperties:
+                                            type: string
+                                          description: matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
+                                          type: object
+                                      type: object
+                                      x-kubernetes-map-type: atomic
+                                    namespaceSelector:
+                                      description: A label query over the set of namespaces that the term applies to. The term is applied to the union of the namespaces selected by this field and the ones listed in the namespaces field. null selector and null or empty namespaces list means "this pod's namespace". An empty selector ({}) matches all namespaces.
+                                      properties:
+                                        matchExpressions:
+                                          description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
+                                          items:
+                                            description: A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
+                                            properties:
+                                              key:
+                                                description: key is the label key that the selector applies to.
+                                                type: string
+                                              operator:
+                                                description: operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.
+                                                type: string
+                                              values:
+                                                description: values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
+                                                items:
+                                                  type: string
+                                                type: array
+                                            required:
+                                            - key
+                                            - operator
+                                            type: object
+                                          type: array
+                                        matchLabels:
+                                          additionalProperties:
+                                            type: string
+                                          description: matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
+                                          type: object
+                                      type: object
+                                      x-kubernetes-map-type: atomic
+                                    namespaces:
+                                      description: namespaces specifies a static list of namespace names that the term applies to. The term is applied to the union of the namespaces listed in this field and the ones selected by namespaceSelector. null or empty namespaces list and null namespaceSelector means "this pod's namespace".
+                                      items:
+                                        type: string
+                                      type: array
+                                    topologyKey:
+                                      description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
+                                      type: string
+                                  required:
+                                  - topologyKey
+                                  type: object
+                                weight:
+                                  description: weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
+                                  format: int32
+                                  type: integer
+                              required:
+                              - podAffinityTerm
+                              - weight
+                              type: object
+                            type: array
+                          requiredDuringSchedulingIgnoredDuringExecution:
+                            description: If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to a pod label update), the system may or may not try to eventually evict the pod from its node. When there are multiple elements, the lists of nodes corresponding to each podAffinityTerm are intersected, i.e. all terms must be satisfied.
+                            items:
+                              description: Defines a set of pods (namely those matching the labelSelector relative to the given namespace(s)) that this pod should be co-located (affinity) or not co-located (anti-affinity) with, where co-located is defined as running on a node whose value of the label with key <topologyKey> matches that of any node on which a pod of the set of pods is running
+                              properties:
+                                labelSelector:
+                                  description: A label query over a set of resources, in this case pods.
+                                  properties:
+                                    matchExpressions:
+                                      description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
+                                      items:
+                                        description: A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
+                                        properties:
+                                          key:
+                                            description: key is the label key that the selector applies to.
+                                            type: string
+                                          operator:
+                                            description: operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.
+                                            type: string
+                                          values:
+                                            description: values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
+                                            items:
+                                              type: string
+                                            type: array
+                                        required:
+                                        - key
+                                        - operator
+                                        type: object
+                                      type: array
+                                    matchLabels:
+                                      additionalProperties:
+                                        type: string
+                                      description: matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
+                                      type: object
+                                  type: object
+                                  x-kubernetes-map-type: atomic
+                                namespaceSelector:
+                                  description: A label query over the set of namespaces that the term applies to. The term is applied to the union of the namespaces selected by this field and the ones listed in the namespaces field. null selector and null or empty namespaces list means "this pod's namespace". An empty selector ({}) matches all namespaces.
+                                  properties:
+                                    matchExpressions:
+                                      description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
+                                      items:
+                                        description: A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
+                                        properties:
+                                          key:
+                                            description: key is the label key that the selector applies to.
+                                            type: string
+                                          operator:
+                                            description: operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.
+                                            type: string
+                                          values:
+                                            description: values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
+                                            items:
+                                              type: string
+                                            type: array
+                                        required:
+                                        - key
+                                        - operator
+                                        type: object
+                                      type: array
+                                    matchLabels:
+                                      additionalProperties:
+                                        type: string
+                                      description: matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
+                                      type: object
+                                  type: object
+                                  x-kubernetes-map-type: atomic
+                                namespaces:
+                                  description: namespaces specifies a static list of namespace names that the term applies to. The term is applied to the union of the namespaces listed in this field and the ones selected by namespaceSelector. null or empty namespaces list and null namespaceSelector means "this pod's namespace".
+                                  items:
+                                    type: string
+                                  type: array
+                                topologyKey:
+                                  description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
+                                  type: string
+                              required:
+                              - topologyKey
+                              type: object
+                            type: array
+                        type: object
+                      podAntiAffinity:
+                        description: Describes pod anti-affinity scheduling rules (e.g. avoid putting this pod in the same node, zone, etc. as some other pod(s)).
+                        properties:
+                          preferredDuringSchedulingIgnoredDuringExecution:
+                            description: The scheduler will prefer to schedule pods to nodes that satisfy the anti-affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling anti-affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding "weight" to the sum if the node has pods which matches the corresponding podAffinityTerm; the node(s) with the highest sum are the most preferred.
+                            items:
+                              description: The weights of all of the matched WeightedPodAffinityTerm fields are added per-node to find the most preferred node(s)
+                              properties:
+                                podAffinityTerm:
+                                  description: Required. A pod affinity term, associated with the corresponding weight.
+                                  properties:
+                                    labelSelector:
+                                      description: A label query over a set of resources, in this case pods.
+                                      properties:
+                                        matchExpressions:
+                                          description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
+                                          items:
+                                            description: A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
+                                            properties:
+                                              key:
+                                                description: key is the label key that the selector applies to.
+                                                type: string
+                                              operator:
+                                                description: operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.
+                                                type: string
+                                              values:
+                                                description: values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
+                                                items:
+                                                  type: string
+                                                type: array
+                                            required:
+                                            - key
+                                            - operator
+                                            type: object
+                                          type: array
+                                        matchLabels:
+                                          additionalProperties:
+                                            type: string
+                                          description: matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
+                                          type: object
+                                      type: object
+                                      x-kubernetes-map-type: atomic
+                                    namespaceSelector:
+                                      description: A label query over the set of namespaces that the term applies to. The term is applied to the union of the namespaces selected by this field and the ones listed in the namespaces field. null selector and null or empty namespaces list means "this pod's namespace". An empty selector ({}) matches all namespaces.
+                                      properties:
+                                        matchExpressions:
+                                          description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
+                                          items:
+                                            description: A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
+                                            properties:
+                                              key:
+                                                description: key is the label key that the selector applies to.
+                                                type: string
+                                              operator:
+                                                description: operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.
+                                                type: string
+                                              values:
+                                                description: values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
+                                                items:
+                                                  type: string
+                                                type: array
+                                            required:
+                                            - key
+                                            - operator
+                                            type: object
+                                          type: array
+                                        matchLabels:
+                                          additionalProperties:
+                                            type: string
+                                          description: matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
+                                          type: object
+                                      type: object
+                                      x-kubernetes-map-type: atomic
+                                    namespaces:
+                                      description: namespaces specifies a static list of namespace names that the term applies to. The term is applied to the union of the namespaces listed in this field and the ones selected by namespaceSelector. null or empty namespaces list and null namespaceSelector means "this pod's namespace".
+                                      items:
+                                        type: string
+                                      type: array
+                                    topologyKey:
+                                      description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
+                                      type: string
+                                  required:
+                                  - topologyKey
+                                  type: object
+                                weight:
+                                  description: weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
+                                  format: int32
+                                  type: integer
+                              required:
+                              - podAffinityTerm
+                              - weight
+                              type: object
+                            type: array
+                          requiredDuringSchedulingIgnoredDuringExecution:
+                            description: If the anti-affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the anti-affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to a pod label update), the system may or may not try to eventually evict the pod from its node. When there are multiple elements, the lists of nodes corresponding to each podAffinityTerm are intersected, i.e. all terms must be satisfied.
+                            items:
+                              description: Defines a set of pods (namely those matching the labelSelector relative to the given namespace(s)) that this pod should be co-located (affinity) or not co-located (anti-affinity) with, where co-located is defined as running on a node whose value of the label with key <topologyKey> matches that of any node on which a pod of the set of pods is running
+                              properties:
+                                labelSelector:
+                                  description: A label query over a set of resources, in this case pods.
+                                  properties:
+                                    matchExpressions:
+                                      description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
+                                      items:
+                                        description: A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
+                                        properties:
+                                          key:
+                                            description: key is the label key that the selector applies to.
+                                            type: string
+                                          operator:
+                                            description: operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.
+                                            type: string
+                                          values:
+                                            description: values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
+                                            items:
+                                              type: string
+                                            type: array
+                                        required:
+                                        - key
+                                        - operator
+                                        type: object
+                                      type: array
+                                    matchLabels:
+                                      additionalProperties:
+                                        type: string
+                                      description: matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
+                                      type: object
+                                  type: object
+                                  x-kubernetes-map-type: atomic
+                                namespaceSelector:
+                                  description: A label query over the set of namespaces that the term applies to. The term is applied to the union of the namespaces selected by this field and the ones listed in the namespaces field. null selector and null or empty namespaces list means "this pod's namespace". An empty selector ({}) matches all namespaces.
+                                  properties:
+                                    matchExpressions:
+                                      description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
+                                      items:
+                                        description: A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
+                                        properties:
+                                          key:
+                                            description: key is the label key that the selector applies to.
+                                            type: string
+                                          operator:
+                                            description: operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.
+                                            type: string
+                                          values:
+                                            description: values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
+                                            items:
+                                              type: string
+                                            type: array
+                                        required:
+                                        - key
+                                        - operator
+                                        type: object
+                                      type: array
+                                    matchLabels:
+                                      additionalProperties:
+                                        type: string
+                                      description: matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
+                                      type: object
+                                  type: object
+                                  x-kubernetes-map-type: atomic
+                                namespaces:
+                                  description: namespaces specifies a static list of namespace names that the term applies to. The term is applied to the union of the namespaces listed in this field and the ones selected by namespaceSelector. null or empty namespaces list and null namespaceSelector means "this pod's namespace".
+                                  items:
+                                    type: string
+                                  type: array
+                                topologyKey:
+                                  description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
+                                  type: string
+                              required:
+                              - topologyKey
+                              type: object
+                            type: array
+                        type: object
+                    type: object
+                  nodeSelector:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  schedulerName:
+                    type: string
+                  serviceAccountName:
+                    type: string
+                  tolerations:
+                    items:
+                      description: The pod this Toleration is attached to tolerates any taint that matches the triple <key,value,effect> using the matching operator <operator>.
+                      properties:
+                        effect:
+                          description: Effect indicates the taint effect to match. Empty means match all taint effects. When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
+                          type: string
+                        key:
+                          description: Key is the taint key that the toleration applies to. Empty means match all taint keys. If the key is empty, operator must be Exists; this combination means to match all values and all keys.
+                          type: string
+                        operator:
+                          description: Operator represents a key's relationship to the value. Valid operators are Exists and Equal. Defaults to Equal. Exists is equivalent to wildcard for value, so that a pod can tolerate all taints of a particular category.
+                          type: string
+                        tolerationSeconds:
+                          description: TolerationSeconds represents the period of time the toleration (which must be of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default, it is not set, which means tolerate the taint forever (do not evict). Zero and negative values will be treated as 0 (evict immediately) by the system.
+                          format: int64
+                          type: integer
+                        value:
+                          description: Value is the taint value the toleration matches to. If the operator is Exists, the value should be empty, otherwise just a regular string.
+                          type: string
+                      type: object
+                    type: array
+                  topologySpreadConstraints:
+                    items:
+                      description: TopologySpreadConstraint specifies how to spread matching pods among the given topology.
+                      properties:
+                        labelSelector:
+                          description: LabelSelector is used to find matching pods. Pods that match this label selector are counted to determine the number of pods in their corresponding topology domain.
+                          properties:
+                            matchExpressions:
+                              description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
+                              items:
+                                description: A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
+                                properties:
+                                  key:
+                                    description: key is the label key that the selector applies to.
+                                    type: string
+                                  operator:
+                                    description: operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.
+                                    type: string
+                                  values:
+                                    description: values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
+                                    items:
+                                      type: string
+                                    type: array
+                                required:
+                                - key
+                                - operator
+                                type: object
+                              type: array
+                            matchLabels:
+                              additionalProperties:
+                                type: string
+                              description: matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
+                              type: object
+                          type: object
+                          x-kubernetes-map-type: atomic
+                        matchLabelKeys:
+                          description: MatchLabelKeys is a set of pod label keys to select the pods over which spreading will be calculated. The keys are used to lookup values from the incoming pod labels, those key-value labels are ANDed with labelSelector to select the group of existing pods over which spreading will be calculated for the incoming pod. Keys that don't exist in the incoming pod labels will be ignored. A null or empty list means only match against labelSelector.
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: atomic
+                        maxSkew:
+                          description: 'MaxSkew describes the degree to which pods may be unevenly distributed. When `whenUnsatisfiable=DoNotSchedule`, it is the maximum permitted difference between the number of matching pods in the target topology and the global minimum. The global minimum is the minimum number of matching pods in an eligible domain or zero if the number of eligible domains is less than MinDomains. For example, in a 3-zone cluster, MaxSkew is set to 1, and pods with the same labelSelector spread as 2/2/1: In this case, the global minimum is 1. | zone1 | zone2 | zone3 | |  P P  |  P P  |   P   | - if MaxSkew is 1, incoming pod can only be scheduled to zone3 to become 2/2/2; scheduling it onto zone1(zone2) would make the ActualSkew(3-1) on zone1(zone2) violate MaxSkew(1). - if MaxSkew is 2, incoming pod can be scheduled onto any zone. When `whenUnsatisfiable=ScheduleAnyway`, it is used to give higher precedence to topologies that satisfy it. It''s a required field. Default value is 1 and 0 is not allowed.'
+                          format: int32
+                          type: integer
+                        minDomains:
+                          description: "MinDomains indicates a minimum number of eligible domains. When the number of eligible domains with matching topology keys is less than minDomains, Pod Topology Spread treats \"global minimum\" as 0, and then the calculation of Skew is performed. And when the number of eligible domains with matching topology keys equals or greater than minDomains, this value has no effect on scheduling. As a result, when the number of eligible domains is less than minDomains, scheduler won't schedule more than maxSkew Pods to those domains. If value is nil, the constraint behaves as if MinDomains is equal to 1. Valid values are integers greater than 0. When value is not nil, WhenUnsatisfiable must be DoNotSchedule. \n For example, in a 3-zone cluster, MaxSkew is set to 2, MinDomains is set to 5 and pods with the same labelSelector spread as 2/2/2: | zone1 | zone2 | zone3 | |  P P  |  P P  |  P P  | The number of domains is less than 5(MinDomains), so \"global minimum\" is treated as 0. In this situation, new pod with the same labelSelector cannot be scheduled, because computed skew will be 3(3 - 0) if new Pod is scheduled to any of the three zones, it will violate MaxSkew. \n This is a beta field and requires the MinDomainsInPodTopologySpread feature gate to be enabled (enabled by default)."
+                          format: int32
+                          type: integer
+                        nodeAffinityPolicy:
+                          description: "NodeAffinityPolicy indicates how we will treat Pod's nodeAffinity/nodeSelector when calculating pod topology spread skew. Options are: - Honor: only nodes matching nodeAffinity/nodeSelector are included in the calculations. - Ignore: nodeAffinity/nodeSelector are ignored. All nodes are included in the calculations. \n If this value is nil, the behavior is equivalent to the Honor policy. This is a alpha-level feature enabled by the NodeInclusionPolicyInPodTopologySpread feature flag."
+                          type: string
+                        nodeTaintsPolicy:
+                          description: "NodeTaintsPolicy indicates how we will treat node taints when calculating pod topology spread skew. Options are: - Honor: nodes without taints, along with tainted nodes for which the incoming pod has a toleration, are included. - Ignore: node taints are ignored. All nodes are included. \n If this value is nil, the behavior is equivalent to the Ignore policy. This is a alpha-level feature enabled by the NodeInclusionPolicyInPodTopologySpread feature flag."
+                          type: string
+                        topologyKey:
+                          description: TopologyKey is the key of node labels. Nodes that have a label with this key and identical values are considered to be in the same topology. We consider each <key, value> as a "bucket", and try to put balanced number of pods into each bucket. We define a domain as a particular instance of a topology. Also, we define an eligible domain as a domain whose nodes meet the requirements of nodeAffinityPolicy and nodeTaintsPolicy. e.g. If TopologyKey is "kubernetes.io/hostname", each Node is a domain of that topology. And, if TopologyKey is "topology.kubernetes.io/zone", each zone is a domain of that topology. It's a required field.
+                          type: string
+                        whenUnsatisfiable:
+                          description: 'WhenUnsatisfiable indicates how to deal with a pod if it doesn''t satisfy the spread constraint. - DoNotSchedule (default) tells the scheduler not to schedule it. - ScheduleAnyway tells the scheduler to schedule the pod in any location, but giving higher precedence to topologies that would help reduce the skew. A constraint is considered "Unsatisfiable" for an incoming pod if and only if every possible node assignment for that pod would violate "MaxSkew" on some topology. For example, in a 3-zone cluster, MaxSkew is set to 1, and pods with the same labelSelector spread as 3/1/1: | zone1 | zone2 | zone3 | | P P P |   P   |   P   | If WhenUnsatisfiable is set to DoNotSchedule, incoming pod can only be scheduled to zone2(zone3) to become 3/2/1(3/1/2) as ActualSkew(2-1) on zone2(zone3) satisfies MaxSkew(1). In other words, the cluster can still be imbalanced, but scheduler won''t make it *more* imbalanced. It''s a required field.'
+                          type: string
+                      required:
+                      - maxSkew
+                      - topologyKey
+                      - whenUnsatisfiable
+                      type: object
+                    type: array
+                type: object
+              models:
+                items:
+                  properties:
+                    downloadUrl:
+                      type: string
+                    tag:
+                      type: string
+                  required:
+                  - tag
+                  type: object
+                type: array
+              ociRegistryInsecure:
+                type: boolean
+              runners:
+                items:
+                  properties:
+                    modelTags:
+                      items:
+                        type: string
+                      type: array
+                    name:
+                      type: string
+                    runnableType:
+                      type: string
+                  required:
+                  - name
+                  type: object
+                type: array
+            required:
+            - bentoTag
+            type: object
+          status:
+            description: BentoRequestStatus defines the observed state of BentoRequest
+            properties:
+              conditions:
+                description: 'INSERT ADDITIONAL STATUS FIELD - define observed state of cluster Important: Run "make" to regenerate code after modifying this file'
+                items:
+                  description: "Condition contains details for one aspect of the current state of this API Resource. --- This struct is intended for direct use as an array at the field path .status.conditions.  For example, \n type FooStatus struct{ // Represents the observations of a foo's current state. // Known .status.conditions.type are: \"Available\", \"Progressing\", and \"Degraded\" // +patchMergeKey=type // +patchStrategy=merge // +listType=map // +listMapKey=type Conditions []metav1.Condition `json:\"conditions,omitempty\" patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"` \n // other fields }"
+                  properties:
+                    lastTransitionTime:
+                      description: lastTransitionTime is the last time the condition transitioned from one status to another. This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: message is a human readable message indicating details about the transition. This may be an empty string.
+                      maxLength: 32768
+                      type: string
+                    observedGeneration:
+                      description: observedGeneration represents the .metadata.generation that the condition was set based upon. For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date with respect to the current state of the instance.
+                      format: int64
+                      minimum: 0
+                      type: integer
+                    reason:
+                      description: reason contains a programmatic identifier indicating the reason for the condition's last transition. Producers of specific condition types may define expected values and meanings for this field, and whether the values are considered a guaranteed API. The value should be a CamelCase string. This field may not be empty.
+                      maxLength: 1024
+                      minLength: 1
+                      pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                      type: string
+                    status:
+                      description: status of the condition, one of True, False, Unknown.
+                      enum:
+                      - "True"
+                      - "False"
+                      - Unknown
+                      type: string
+                    type:
+                      description: type of condition in CamelCase or in foo.example.com/CamelCase. --- Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be useful (see .node.status.conditions), the ability to deconflict is important. The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+                      maxLength: 316
+                      pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              imageBuilderPodStatus:
+                description: PodStatus represents information about the status of a pod. Status may trail the actual state of a system, especially if the node that hosts the pod cannot contact the control plane.
+                properties:
+                  conditions:
+                    description: 'Current service state of pod. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions'
+                    items:
+                      description: PodCondition contains details for the current condition of this pod.
+                      properties:
+                        lastProbeTime:
+                          description: Last time we probed the condition.
+                          format: date-time
+                          type: string
+                        lastTransitionTime:
+                          description: Last time the condition transitioned from one status to another.
+                          format: date-time
+                          type: string
+                        message:
+                          description: Human-readable message indicating details about last transition.
+                          type: string
+                        reason:
+                          description: Unique, one-word, CamelCase reason for the condition's last transition.
+                          type: string
+                        status:
+                          description: 'Status is the status of the condition. Can be True, False, Unknown. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions'
+                          type: string
+                        type:
+                          description: 'Type is the type of the condition. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions'
+                          type: string
+                      required:
+                      - status
+                      - type
+                      type: object
+                    type: array
+                  containerStatuses:
+                    description: 'The list has one entry per container in the manifest. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-and-container-status'
+                    items:
+                      description: ContainerStatus contains details for the current status of this container.
+                      properties:
+                        containerID:
+                          description: Container's ID in the format '<type>://<container_id>'.
+                          type: string
+                        image:
+                          description: 'The image the container is running. More info: https://kubernetes.io/docs/concepts/containers/images.'
+                          type: string
+                        imageID:
+                          description: ImageID of the container's image.
+                          type: string
+                        lastState:
+                          description: Details about the container's last termination condition.
+                          properties:
+                            running:
+                              description: Details about a running container
+                              properties:
+                                startedAt:
+                                  description: Time at which the container was last (re-)started
+                                  format: date-time
+                                  type: string
+                              type: object
+                            terminated:
+                              description: Details about a terminated container
+                              properties:
+                                containerID:
+                                  description: Container's ID in the format '<type>://<container_id>'
+                                  type: string
+                                exitCode:
+                                  description: Exit status from the last termination of the container
+                                  format: int32
+                                  type: integer
+                                finishedAt:
+                                  description: Time at which the container last terminated
+                                  format: date-time
+                                  type: string
+                                message:
+                                  description: Message regarding the last termination of the container
+                                  type: string
+                                reason:
+                                  description: (brief) reason from the last termination of the container
+                                  type: string
+                                signal:
+                                  description: Signal from the last termination of the container
+                                  format: int32
+                                  type: integer
+                                startedAt:
+                                  description: Time at which previous execution of the container started
+                                  format: date-time
+                                  type: string
+                              required:
+                              - exitCode
+                              type: object
+                            waiting:
+                              description: Details about a waiting container
+                              properties:
+                                message:
+                                  description: Message regarding why the container is not yet running.
+                                  type: string
+                                reason:
+                                  description: (brief) reason the container is not yet running.
+                                  type: string
+                              type: object
+                          type: object
+                        name:
+                          description: This must be a DNS_LABEL. Each container in a pod must have a unique name. Cannot be updated.
+                          type: string
+                        ready:
+                          description: Specifies whether the container has passed its readiness probe.
+                          type: boolean
+                        restartCount:
+                          description: The number of times the container has been restarted.
+                          format: int32
+                          type: integer
+                        started:
+                          description: Specifies whether the container has passed its startup probe. Initialized as false, becomes true after startupProbe is considered successful. Resets to false when the container is restarted, or if kubelet loses state temporarily. Is always true when no startupProbe is defined.
+                          type: boolean
+                        state:
+                          description: Details about the container's current condition.
+                          properties:
+                            running:
+                              description: Details about a running container
+                              properties:
+                                startedAt:
+                                  description: Time at which the container was last (re-)started
+                                  format: date-time
+                                  type: string
+                              type: object
+                            terminated:
+                              description: Details about a terminated container
+                              properties:
+                                containerID:
+                                  description: Container's ID in the format '<type>://<container_id>'
+                                  type: string
+                                exitCode:
+                                  description: Exit status from the last termination of the container
+                                  format: int32
+                                  type: integer
+                                finishedAt:
+                                  description: Time at which the container last terminated
+                                  format: date-time
+                                  type: string
+                                message:
+                                  description: Message regarding the last termination of the container
+                                  type: string
+                                reason:
+                                  description: (brief) reason from the last termination of the container
+                                  type: string
+                                signal:
+                                  description: Signal from the last termination of the container
+                                  format: int32
+                                  type: integer
+                                startedAt:
+                                  description: Time at which previous execution of the container started
+                                  format: date-time
+                                  type: string
+                              required:
+                              - exitCode
+                              type: object
+                            waiting:
+                              description: Details about a waiting container
+                              properties:
+                                message:
+                                  description: Message regarding why the container is not yet running.
+                                  type: string
+                                reason:
+                                  description: (brief) reason the container is not yet running.
+                                  type: string
+                              type: object
+                          type: object
+                      required:
+                      - image
+                      - imageID
+                      - name
+                      - ready
+                      - restartCount
+                      type: object
+                    type: array
+                  ephemeralContainerStatuses:
+                    description: Status for any ephemeral containers that have run in this pod.
+                    items:
+                      description: ContainerStatus contains details for the current status of this container.
+                      properties:
+                        containerID:
+                          description: Container's ID in the format '<type>://<container_id>'.
+                          type: string
+                        image:
+                          description: 'The image the container is running. More info: https://kubernetes.io/docs/concepts/containers/images.'
+                          type: string
+                        imageID:
+                          description: ImageID of the container's image.
+                          type: string
+                        lastState:
+                          description: Details about the container's last termination condition.
+                          properties:
+                            running:
+                              description: Details about a running container
+                              properties:
+                                startedAt:
+                                  description: Time at which the container was last (re-)started
+                                  format: date-time
+                                  type: string
+                              type: object
+                            terminated:
+                              description: Details about a terminated container
+                              properties:
+                                containerID:
+                                  description: Container's ID in the format '<type>://<container_id>'
+                                  type: string
+                                exitCode:
+                                  description: Exit status from the last termination of the container
+                                  format: int32
+                                  type: integer
+                                finishedAt:
+                                  description: Time at which the container last terminated
+                                  format: date-time
+                                  type: string
+                                message:
+                                  description: Message regarding the last termination of the container
+                                  type: string
+                                reason:
+                                  description: (brief) reason from the last termination of the container
+                                  type: string
+                                signal:
+                                  description: Signal from the last termination of the container
+                                  format: int32
+                                  type: integer
+                                startedAt:
+                                  description: Time at which previous execution of the container started
+                                  format: date-time
+                                  type: string
+                              required:
+                              - exitCode
+                              type: object
+                            waiting:
+                              description: Details about a waiting container
+                              properties:
+                                message:
+                                  description: Message regarding why the container is not yet running.
+                                  type: string
+                                reason:
+                                  description: (brief) reason the container is not yet running.
+                                  type: string
+                              type: object
+                          type: object
+                        name:
+                          description: This must be a DNS_LABEL. Each container in a pod must have a unique name. Cannot be updated.
+                          type: string
+                        ready:
+                          description: Specifies whether the container has passed its readiness probe.
+                          type: boolean
+                        restartCount:
+                          description: The number of times the container has been restarted.
+                          format: int32
+                          type: integer
+                        started:
+                          description: Specifies whether the container has passed its startup probe. Initialized as false, becomes true after startupProbe is considered successful. Resets to false when the container is restarted, or if kubelet loses state temporarily. Is always true when no startupProbe is defined.
+                          type: boolean
+                        state:
+                          description: Details about the container's current condition.
+                          properties:
+                            running:
+                              description: Details about a running container
+                              properties:
+                                startedAt:
+                                  description: Time at which the container was last (re-)started
+                                  format: date-time
+                                  type: string
+                              type: object
+                            terminated:
+                              description: Details about a terminated container
+                              properties:
+                                containerID:
+                                  description: Container's ID in the format '<type>://<container_id>'
+                                  type: string
+                                exitCode:
+                                  description: Exit status from the last termination of the container
+                                  format: int32
+                                  type: integer
+                                finishedAt:
+                                  description: Time at which the container last terminated
+                                  format: date-time
+                                  type: string
+                                message:
+                                  description: Message regarding the last termination of the container
+                                  type: string
+                                reason:
+                                  description: (brief) reason from the last termination of the container
+                                  type: string
+                                signal:
+                                  description: Signal from the last termination of the container
+                                  format: int32
+                                  type: integer
+                                startedAt:
+                                  description: Time at which previous execution of the container started
+                                  format: date-time
+                                  type: string
+                              required:
+                              - exitCode
+                              type: object
+                            waiting:
+                              description: Details about a waiting container
+                              properties:
+                                message:
+                                  description: Message regarding why the container is not yet running.
+                                  type: string
+                                reason:
+                                  description: (brief) reason the container is not yet running.
+                                  type: string
+                              type: object
+                          type: object
+                      required:
+                      - image
+                      - imageID
+                      - name
+                      - ready
+                      - restartCount
+                      type: object
+                    type: array
+                  hostIP:
+                    description: IP address of the host to which the pod is assigned. Empty if not yet scheduled.
+                    type: string
+                  initContainerStatuses:
+                    description: 'The list has one entry per init container in the manifest. The most recent successful init container will have ready = true, the most recently started container will have startTime set. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-and-container-status'
+                    items:
+                      description: ContainerStatus contains details for the current status of this container.
+                      properties:
+                        containerID:
+                          description: Container's ID in the format '<type>://<container_id>'.
+                          type: string
+                        image:
+                          description: 'The image the container is running. More info: https://kubernetes.io/docs/concepts/containers/images.'
+                          type: string
+                        imageID:
+                          description: ImageID of the container's image.
+                          type: string
+                        lastState:
+                          description: Details about the container's last termination condition.
+                          properties:
+                            running:
+                              description: Details about a running container
+                              properties:
+                                startedAt:
+                                  description: Time at which the container was last (re-)started
+                                  format: date-time
+                                  type: string
+                              type: object
+                            terminated:
+                              description: Details about a terminated container
+                              properties:
+                                containerID:
+                                  description: Container's ID in the format '<type>://<container_id>'
+                                  type: string
+                                exitCode:
+                                  description: Exit status from the last termination of the container
+                                  format: int32
+                                  type: integer
+                                finishedAt:
+                                  description: Time at which the container last terminated
+                                  format: date-time
+                                  type: string
+                                message:
+                                  description: Message regarding the last termination of the container
+                                  type: string
+                                reason:
+                                  description: (brief) reason from the last termination of the container
+                                  type: string
+                                signal:
+                                  description: Signal from the last termination of the container
+                                  format: int32
+                                  type: integer
+                                startedAt:
+                                  description: Time at which previous execution of the container started
+                                  format: date-time
+                                  type: string
+                              required:
+                              - exitCode
+                              type: object
+                            waiting:
+                              description: Details about a waiting container
+                              properties:
+                                message:
+                                  description: Message regarding why the container is not yet running.
+                                  type: string
+                                reason:
+                                  description: (brief) reason the container is not yet running.
+                                  type: string
+                              type: object
+                          type: object
+                        name:
+                          description: This must be a DNS_LABEL. Each container in a pod must have a unique name. Cannot be updated.
+                          type: string
+                        ready:
+                          description: Specifies whether the container has passed its readiness probe.
+                          type: boolean
+                        restartCount:
+                          description: The number of times the container has been restarted.
+                          format: int32
+                          type: integer
+                        started:
+                          description: Specifies whether the container has passed its startup probe. Initialized as false, becomes true after startupProbe is considered successful. Resets to false when the container is restarted, or if kubelet loses state temporarily. Is always true when no startupProbe is defined.
+                          type: boolean
+                        state:
+                          description: Details about the container's current condition.
+                          properties:
+                            running:
+                              description: Details about a running container
+                              properties:
+                                startedAt:
+                                  description: Time at which the container was last (re-)started
+                                  format: date-time
+                                  type: string
+                              type: object
+                            terminated:
+                              description: Details about a terminated container
+                              properties:
+                                containerID:
+                                  description: Container's ID in the format '<type>://<container_id>'
+                                  type: string
+                                exitCode:
+                                  description: Exit status from the last termination of the container
+                                  format: int32
+                                  type: integer
+                                finishedAt:
+                                  description: Time at which the container last terminated
+                                  format: date-time
+                                  type: string
+                                message:
+                                  description: Message regarding the last termination of the container
+                                  type: string
+                                reason:
+                                  description: (brief) reason from the last termination of the container
+                                  type: string
+                                signal:
+                                  description: Signal from the last termination of the container
+                                  format: int32
+                                  type: integer
+                                startedAt:
+                                  description: Time at which previous execution of the container started
+                                  format: date-time
+                                  type: string
+                              required:
+                              - exitCode
+                              type: object
+                            waiting:
+                              description: Details about a waiting container
+                              properties:
+                                message:
+                                  description: Message regarding why the container is not yet running.
+                                  type: string
+                                reason:
+                                  description: (brief) reason the container is not yet running.
+                                  type: string
+                              type: object
+                          type: object
+                      required:
+                      - image
+                      - imageID
+                      - name
+                      - ready
+                      - restartCount
+                      type: object
+                    type: array
+                  message:
+                    description: A human readable message indicating details about why the pod is in this condition.
+                    type: string
+                  nominatedNodeName:
+                    description: nominatedNodeName is set only when this pod preempts other pods on the node, but it cannot be scheduled right away as preemption victims receive their graceful termination periods. This field does not guarantee that the pod will be scheduled on this node. Scheduler may decide to place the pod elsewhere if other nodes become available sooner. Scheduler may also decide to give the resources on this node to a higher priority pod that is created after preemption. As a result, this field may be different than PodSpec.nodeName when the pod is scheduled.
+                    type: string
+                  phase:
+                    description: "The phase of a Pod is a simple, high-level summary of where the Pod is in its lifecycle. The conditions array, the reason and message fields, and the individual container status arrays contain more detail about the pod's status. There are five possible phase values: \n Pending: The pod has been accepted by the Kubernetes system, but one or more of the container images has not been created. This includes time before being scheduled as well as time spent downloading images over the network, which could take a while. Running: The pod has been bound to a node, and all of the containers have been created. At least one container is still running, or is in the process of starting or restarting. Succeeded: All containers in the pod have terminated in success, and will not be restarted. Failed: All containers in the pod have terminated, and at least one container has terminated in failure. The container either exited with non-zero status or was terminated by the system. Unknown: For some reason the state of the pod could not be obtained, typically due to an error in communicating with the host of the pod. \n More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-phase"
+                    type: string
+                  podIP:
+                    description: IP address allocated to the pod. Routable at least within the cluster. Empty if not yet allocated.
+                    type: string
+                  podIPs:
+                    description: podIPs holds the IP addresses allocated to the pod. If this field is specified, the 0th entry must match the podIP field. Pods may be allocated at most 1 value for each of IPv4 and IPv6. This list is empty if no IPs have been allocated yet.
+                    items:
+                      description: "IP address information for entries in the (plural) PodIPs field. Each entry includes: \n IP: An IP address allocated to the pod. Routable at least within the cluster."
+                      properties:
+                        ip:
+                          description: ip is an IP address (IPv4 or IPv6) assigned to the pod
+                          type: string
+                      type: object
+                    type: array
+                  qosClass:
+                    description: 'The Quality of Service (QOS) classification assigned to the pod based on resource requirements See PodQOSClass type for available QOS classes More info: https://git.k8s.io/community/contributors/design-proposals/node/resource-qos.md'
+                    type: string
+                  reason:
+                    description: A brief CamelCase message indicating details about why the pod is in this state. e.g. 'Evicted'
+                    type: string
+                  startTime:
+                    description: RFC 3339 date and time at which the object was acknowledged by the Kubelet. This is before the Kubelet pulled the container image(s) for the pod.
+                    format: date-time
+                    type: string
+                type: object
+            required:
+            - conditions
+            - imageBuilderPodStatus
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+# Source: yatai-image-builder/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: yatai-image-builder
+  namespace: kubeflow
+  labels:
+    helm.sh/chart: yatai-image-builder-1.1.3
+    app.kubernetes.io/name: yatai-image-builder
+    app.kubernetes.io/instance: yatai-image-builder
+    app.kubernetes.io/version: "1.1.3"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: yatai-image-builder/templates/secret-env.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: yatai-image-builder-env
+  namespace: kubeflow
+  labels:
+    helm.sh/chart: yatai-image-builder-1.1.3
+    app.kubernetes.io/name: yatai-image-builder
+    app.kubernetes.io/instance: yatai-image-builder
+    app.kubernetes.io/version: "1.1.3"
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+stringData:
+  YATAI_IMAGE_BUILDER_SHARED_ENV_SECRET_NAME: yatai-image-builder-shared-env
+
+  YATAI_SYSTEM_NAMESPACE: kubeflow
+  YATAI_API_TOKEN: "SqXTUo0q8nqRtWQn"
+
+  DOCKER_REGISTRY_SERVER: "127.0.0.1:5000"
+  DOCKER_REGISTRY_IN_CLUSTER_SERVER: "docker-registry.kubeflow.svc.cluster.local:5000"
+  DOCKER_REGISTRY_USERNAME: ""
+  DOCKER_REGISTRY_PASSWORD: ""
+  DOCKER_REGISTRY_SECURE: "false"
+  DOCKER_REGISTRY_BENTO_REPOSITORY_NAME: "yatai-bentos"
+
+  INTERNAL_IMAGES_BENTO_DOWNLOADER: "quay.io/bentoml/bento-downloader:0.0.1"
+  INTERNAL_IMAGES_KANIKO: "quay.io/bentoml/kaniko:1.9.1"
+  INTERNAL_IMAGES_BUILDKIT: "quay.io/bentoml/buildkit:master"
+  INTERNAL_IMAGES_BUILDKIT_ROOTLESS: "quay.io/bentoml/buildkit:master-rootless"
+
+  BENTO_IMAGE_BUILD_ENGINE: "kaniko"
+---
+# Source: yatai-image-builder/templates/secret-shared-env.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: yatai-image-builder-shared-env
+  namespace: kubeflow
+  labels:
+    helm.sh/chart: yatai-image-builder-1.1.3
+    app.kubernetes.io/name: yatai-image-builder
+    app.kubernetes.io/instance: yatai-image-builder
+    app.kubernetes.io/version: "1.1.3"
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+stringData:
+  YATAI_IMAGE_BUILDER_NAMESPACE: kubeflow
+---
+# Source: yatai-image-builder/templates/secret-yatai-common-env.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: yatai-common-env
+  namespace: kubeflow
+  labels:
+    helm.sh/chart: yatai-image-builder-1.1.3
+    app.kubernetes.io/name: yatai-image-builder
+    app.kubernetes.io/instance: yatai-image-builder
+    app.kubernetes.io/version: "1.1.3"
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+stringData:
+  YATAI_ENDPOINT: ""
+  YATAI_CLUSTER_NAME: "default"
+---
+# Source: yatai-image-builder/templates/clusterrole-yatai-with-bento-request.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: yatai-with-bento-request-kubeflow
+rules:
+- apiGroups:
+  - resources.yatai.ai
+  resources:
+  - bentorequests
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - resources.yatai.ai
+  resources:
+  - bentorequests/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - resources.yatai.ai
+  resources:
+  - bentorequests/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - resources.yatai.ai
+  resources:
+  - bentoes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - resources.yatai.ai
+  resources:
+  - bentoes/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - resources.yatai.ai
+  resources:
+  - bentoes/status
+  verbs:
+  - get
+  - patch
+  - update
+---
+# Source: yatai-image-builder/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: yatai-image-builder-kubeflow
+rules:
+- apiGroups:
+  - resources.yatai.ai
+  resources:
+  - bentorequests
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - resources.yatai.ai
+  resources:
+  - bentorequests/status
+  verbs:
+  - update
+- apiGroups:
+  - resources.yatai.ai
+  resources:
+  - bentoes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - resources.yatai.ai
+  resources:
+  - bentoes/status
+  verbs:
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - create
+  - delete
+  - update
+  - patch
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+  - list
+  - watch
+---
+# Source: yatai-image-builder/templates/clusterrolebinding-yatai-with-bento-request.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: yatai-with-bento-request-kubeflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: yatai-with-bento-request-kubeflow
+subjects:
+- kind: ServiceAccount
+  name: yatai
+  namespace: kubeflow
+---
+# Source: yatai-image-builder/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: yatai-image-builder-kubeflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: yatai-image-builder-kubeflow
+subjects:
+- kind: ServiceAccount
+  name: yatai-image-builder
+  namespace: kubeflow
+---
+# Source: yatai-image-builder/templates/role-in-yatai-system-namespace.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: yatai-image-builder-in-yatai-system
+  namespace: kubeflow
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  resourceNames:
+  - yatai-common-env
+  - yatai-image-builder-shared-env
+  verbs:
+  - get
+  - list
+  - watch
+---
+# Source: yatai-image-builder/templates/role-yatai-in-yatai-system-namespace.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: yatai-role-for-yatai-image-builder
+  namespace: kubeflow
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  resourceNames:
+  - yatai-common-env
+  - yatai-image-builder-shared-env
+  verbs:
+  - get
+  - list
+  - watch
+---
+# Source: yatai-image-builder/templates/role-yatai-with-yatai-image-builder.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: yatai-with-yatai-image-builder
+  namespace: kubeflow
+rules:
+- apiGroups:
+  - apps
+  resources:
+  - replicasets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  resourceNames:
+  - yatai-image-builder-config
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - events.k8s.io
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/exec
+  verbs:
+  - create
+  - update
+  - patch
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/attach
+  verbs:
+  - create
+  - update
+  - patch
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/ephemeralcontainers
+  verbs:
+  - create
+  - update
+  - patch
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/log
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  resourceNames:
+  - yatai-image-builder-env
+  - yatai-image-builder-build-args
+  verbs:
+  - get
+  - list
+  - watch
+---
+# Source: yatai-image-builder/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: yatai-image-builder
+  namespace: kubeflow
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  resourceNames:
+  - yatai-image-builder-build-args
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  resourceNames:
+  - yatai-image-builder-config
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - events.k8s.io
+  resources:
+  - events
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+# Source: yatai-image-builder/templates/rolebinding-in-yatai-system-namespace.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: yatai-image-builder-in-yatai-system
+  namespace: kubeflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: yatai-image-builder-in-yatai-system
+subjects:
+  - kind: ServiceAccount
+    name: yatai-image-builder
+    namespace: kubeflow
+---
+# Source: yatai-image-builder/templates/rolebinding-yatai-in-yatai-system-namespace.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: yatai-role-for-yatai-image-builder
+  namespace: kubeflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: yatai-role-for-yatai-image-builder
+subjects:
+  - kind: ServiceAccount
+    name: yatai
+    namespace: kubeflow
+---
+# Source: yatai-image-builder/templates/rolebinding-yatai-with-yatai-image-builder.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: yatai-with-yatai-image-builder
+  namespace: kubeflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: yatai-with-yatai-image-builder
+subjects:
+  - kind: ServiceAccount
+    name: yatai
+    namespace: kubeflow
+---
+# Source: yatai-image-builder/templates/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: yatai-image-builder
+  namespace: kubeflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: yatai-image-builder
+subjects:
+  - kind: ServiceAccount
+    name: yatai-image-builder
+    namespace: kubeflow
+---
+# Source: yatai-image-builder/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: yatai-image-builder-webhook-service
+  namespace: kubeflow
+  labels:
+    helm.sh/chart: yatai-image-builder-1.1.3
+    app.kubernetes.io/name: yatai-image-builder
+    app.kubernetes.io/instance: yatai-image-builder
+    app.kubernetes.io/version: "1.1.3"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: 9443
+  selector:
+    app.kubernetes.io/name: yatai-image-builder
+    app.kubernetes.io/instance: yatai-image-builder
+---
+# Source: yatai-image-builder/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yatai-image-builder
+  namespace: kubeflow
+  labels:
+    helm.sh/chart: yatai-image-builder-1.1.3
+    app.kubernetes.io/name: yatai-image-builder
+    app.kubernetes.io/instance: yatai-image-builder
+    app.kubernetes.io/version: "1.1.3"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: yatai-image-builder
+      app.kubernetes.io/instance: yatai-image-builder
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: yatai-image-builder
+        app.kubernetes.io/instance: yatai-image-builder
+    spec:
+      serviceAccountName: yatai-image-builder
+      securityContext:
+        {}
+      containers:
+        - name: manager
+          args:
+            - --health-probe-bind-address=:8081
+            - --metrics-bind-address=127.0.0.1:8080
+            - --leader-elect
+          command:
+            - /manager
+          env:
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          envFrom:
+            - secretRef:
+                name: yatai-image-builder-env
+          securityContext:
+            {}
+          image: "quay.io/bentoml/yatai-image-builder:1.1.3"
+          imagePullPolicy: IfNotPresent
+
+          ports:
+          - containerPort: 9443
+            name: webhook-server
+            protocol: TCP
+
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /readyz
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+
+          resources:
+            {}
+
+          volumeMounts:
+          - mountPath: /tmp/k8s-webhook-server/serving-certs
+            name: cert
+            readOnly: true
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: yatai-image-builder-webhook-server-cert
+---
+# Source: yatai-image-builder/templates/certificate.yaml
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: yatai-image-builder-serving-cert
+  namespace: kubeflow
+  labels:
+    helm.sh/chart: yatai-image-builder-1.1.3
+    app.kubernetes.io/name: yatai-image-builder
+    app.kubernetes.io/instance: yatai-image-builder
+    app.kubernetes.io/version: "1.1.3"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  dnsNames:
+  - yatai-image-builder-webhook-service.kubeflow.svc
+  - yatai-image-builder-webhook-service.kubeflow.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: yatai-image-builder-selfsigned-issuer
+  secretName: yatai-image-builder-webhook-server-cert
+---
+# Source: yatai-image-builder/templates/issuer.yaml
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: yatai-image-builder-selfsigned-issuer
+  namespace: kubeflow
+  labels:
+    helm.sh/chart: yatai-image-builder-1.1.3
+    app.kubernetes.io/name: yatai-image-builder
+    app.kubernetes.io/instance: yatai-image-builder
+    app.kubernetes.io/version: "1.1.3"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selfSigned: {}

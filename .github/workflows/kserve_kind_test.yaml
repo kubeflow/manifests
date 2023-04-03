@@ -1,0 +1,62 @@
+name: Build & Apply KServe manifests in KinD
+on:
+  pull_request:
+    paths:
+      - contrib/kserve/**
+      - common/knative/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install KinD
+        run: ./tests/gh-actions/install_kind.sh
+
+      - name: Create KinD Cluster
+        run: kind create cluster --config tests/gh-actions/kind-cluster.yaml
+
+      - name: Install kustomize
+        run: ./tests/gh-actions/install_kustomize.sh
+
+      - name: Create kubeflow namespace
+        run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+      - name: Install Istio
+        run: ./tests/gh-actions/install_istio.sh
+
+      - name: Install cert-manager
+        run: ./tests/gh-actions/install_cert_manager.sh
+
+      - name: Install knative
+        run: ./tests/gh-actions/install_knative.sh
+
+      - name: Build & Apply manifests
+        run: ./tests/gh-actions/install_kserve.sh
+
+      - name: Create test namespace
+        run: kubectl create ns kserve-test
+
+      - name: Setup python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install test dependencies
+        run: pip install -r ./contrib/kserve/tests/requirements.txt
+
+      - name: Port forward
+        run: |
+          INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
+          nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
+
+      - name: Run kserve tests
+        run: |
+          export KSERVE_INGRESS_HOST_PORT=localhost:8080
+          cd ./contrib/kserve/tests && pytest .
+
+      - name: Run kserve models webapp test
+        run: |
+          kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app

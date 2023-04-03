@@ -1,0 +1,25 @@
+# This testing option is available for testing projects that don't yet support k8s 1.25
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+# Configure registry for KinD.
+containerdConfigPatches:
+- |-
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."$REGISTRY_NAME:$REGISTRY_PORT"]
+    endpoint = ["http://$REGISTRY_NAME:$REGISTRY_PORT"]
+# This is needed in order to support projected volumes with service account tokens.
+# See: https://kubernetes.slack.com/archives/CEKK1KTN2/p1600268272383600
+kubeadmConfigPatches:
+  - |
+    apiVersion: kubeadm.k8s.io/v1beta2
+    kind: ClusterConfiguration
+    metadata:
+      name: config
+    apiServer:
+      extraArgs:
+        "service-account-issuer": "kubernetes.default.svc"
+        "service-account-signing-key-file": "/etc/kubernetes/pki/sa.key"
+nodes:
+- role: control-plane
+  image: kindest/node:v1.24.7@sha256:577c630ce8e509131eab1aea12c022190978dd2f745aac5eb1fe65c0807eb315
+- role: worker
+  image: kindest/node:v1.24.7@sha256:577c630ce8e509131eab1aea12c022190978dd2f745aac5eb1fe65c0807eb315

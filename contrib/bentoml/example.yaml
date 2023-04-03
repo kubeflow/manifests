@@ -1,0 +1,57 @@
+apiVersion: resources.yatai.ai/v1alpha1
+kind: Bento
+metadata:
+  name: test-yatai
+  namespace: kubeflow
+spec:
+  image: quay.io/bentoml/iris_classifier:r4zint4b567i4usu
+  runners:
+  - name: iris_clf
+    runnableType: SklearnRunnable
+  tag: iris_classifier:r4zint4b567i4usu
+---
+apiVersion: serving.yatai.ai/v2alpha1
+kind: BentoDeployment
+metadata:
+  name: test-yatai
+  namespace: kubeflow
+spec:
+  autoscaling:
+    maxReplicas: 2
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 80
+          type: Utilization
+      type: Resource
+    minReplicas: 1
+  bento: test-yatai
+  ingress:
+    enabled: false
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+    requests:
+      cpu: 100m
+      memory: 200Mi
+  runners:
+  - autoscaling:
+      maxReplicas: 2
+      metrics:
+      - resource:
+          name: cpu
+          target:
+            averageUtilization: 80
+            type: Utilization
+        type: Resource
+      minReplicas: 1
+    name: iris_clf
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1024Mi
+      requests:
+        cpu: 100m
+        memory: 200Mi

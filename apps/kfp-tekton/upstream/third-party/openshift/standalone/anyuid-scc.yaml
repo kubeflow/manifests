@@ -34,8 +34,8 @@ users:
 #Minio accesses files owned by root
 - system:serviceaccount:kubeflow:minio
 #Katib injects container into pods which does not run as non-root user, trying to find Dockerfile for that image and fix it
-#- system:serviceaccount:kubeflow:default
 - system:serviceaccount:kubeflow:default
+- system:serviceaccount:kubeflow:pipeline-runner
 - system:serviceaccount:kubeflow:kubeflow-pipelines-cache
 - system:serviceaccount:kubeflow:kubeflow-pipelines-cache-deployer-sa
 - system:serviceaccount:kubeflow:metadata-grpc-server

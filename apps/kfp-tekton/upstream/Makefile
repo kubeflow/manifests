@@ -18,12 +18,12 @@ platform-agnostic: FORCE
 	kubectl kustomize env/platform-agnostic
 
 platform-agnostic-multi-user: FORCE
-	kustomize build --load_restrictor none env/platform-agnostic-multi-user
+	kustomize build --load-restrictor LoadRestrictionsNone env/platform-agnostic-multi-user
 
 plain: FORCE
 	kubectl kustomize env/plain
 
 plain-multi-user: FORCE
-	kustomize build --load_restrictor none env/plain-multi-user
+	kustomize build --load-restrictor LoadRestrictionsNone env/plain-multi-user
 
 FORCE: ;

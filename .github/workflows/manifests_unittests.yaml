@@ -13,9 +13,10 @@ jobs:
     - name: Check out repo
       uses: actions/checkout@v2
 
+    - name: Install kustomize
+      run: ./tests/gh-actions/install_kustomize.sh
+
     - name: Unit Test
       run: |
-        cd tests
-        make test
-
+        kustomize build example
 

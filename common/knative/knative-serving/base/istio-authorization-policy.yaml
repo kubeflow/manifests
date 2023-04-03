@@ -60,7 +60,7 @@ spec:
   action: ALLOW
   selector:
     matchLabels:
-      app: istio-webhook
+      app: net-istio-webhook
   rules:
   - {}
 ---

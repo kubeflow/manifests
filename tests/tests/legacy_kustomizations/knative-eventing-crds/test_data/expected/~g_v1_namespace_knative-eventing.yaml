@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  labels:
-    app.kubernetes.io/instance: knative-eventing-crds
-    app.kubernetes.io/name: knative-eventing-crds
-    eventing.knative.dev/release: v0.14.2
-  name: knative-eventing

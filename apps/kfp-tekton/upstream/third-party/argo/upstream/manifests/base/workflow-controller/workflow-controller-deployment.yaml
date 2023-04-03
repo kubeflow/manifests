@@ -1,6 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
-metadata:
+metadata: # kpt-merge: /workflow-controller
   name: workflow-controller
 spec:
   selector:
@@ -11,10 +11,11 @@ spec:
       labels:
         app: workflow-controller
     spec:
+      priorityClassName: workflow-controller
       serviceAccountName: argo
       containers:
         - name: workflow-controller
-          image: docker.io/argoproj/workflow-controller:latest
+          image: quay.io/argoproj/workflow-controller:latest
           securityContext:
             readOnlyRootFilesystem: true
             runAsNonRoot: true
@@ -28,7 +29,7 @@ spec:
             - --configmap
             - workflow-controller-configmap
             - --executor-image
-            - argoproj/argoexec:latest
+            - quay.io/argoproj/argoexec:latest
           env:
             - name: LEADER_ELECTION_IDENTITY
               valueFrom:

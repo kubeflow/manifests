@@ -12,6 +12,7 @@
   * [Install individual components](#install-individual-components)
   * [Connect to your Kubeflow Cluster](#connect-to-your-kubeflow-cluster)
   * [Change default user password](#change-default-user-password)
+- [Release process](#release-process)
 - [Frequently Asked Questions](#frequently-asked-questions)
 
 <!-- tocstop -->
@@ -37,36 +38,39 @@ Starting from Kubeflow 1.3, all components should be deployable using `kustomize
 
 ## Kubeflow components versions
 
+### Kubeflow Version: latest
+
 This repo periodically syncs all official Kubeflow components from their respective upstream repos. The following matrix shows the git version that we include for each component:
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
-| Training Operator | apps/training-operator/upstream | [v1.3.0](https://github.com/kubeflow/tf-operator/tree/v1.3.0/manifests) |
-| MPI Operator | apps/mpi-job/upstream | [v0.3.0](https://github.com/kubeflow/mpi-operator/tree/v0.3.0/manifests) |
-| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.4.0](https://github.com/kubeflow/kubeflow/tree/v1.4.0/components/notebook-controller/config) |
-| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.4.0](https://github.com/kubeflow/kubeflow/tree/v1.4.0/components/tensorboard-controller/config) |
-| Central Dashboard | apps/centraldashboard/upstream | [v1.4.0](https://github.com/kubeflow/kubeflow/tree/v1.4.0/components/centraldashboard/manifests) |
-| Profiles + KFAM | apps/profiles/upstream | [v1.4.0](https://github.com/kubeflow/kubeflow/tree/v1.4.0/components/profile-controller/config) |
-| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.4.0](https://github.com/kubeflow/kubeflow/tree/v1.4.0/components/admission-webhook/manifests) |
-| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.4.0](https://github.com/kubeflow/kubeflow/tree/v1.4.0/components/crud-web-apps/jupyter/manifests) |
-| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.4.0](https://github.com/kubeflow/kubeflow/tree/v1.4.0/components/crud-web-apps/tensorboards/manifests) |
-| Volumes Web App | apps/volumes-web-app/upstream | [v1.4.0](https://github.com/kubeflow/kubeflow/tree/v1.4.0/components/crud-web-apps/volumes/manifests) |
-| Katib | apps/katib/upstream | [v0.12.0](https://github.com/kubeflow/katib/tree/v0.12.0/manifests/v1beta1) |
-| KFServing | apps/kfserving/upstream | [v0.6.1](https://github.com/kubeflow/kfserving/releases/tag/v0.6.1) |
-| Kubeflow Pipelines | apps/pipeline/upstream | [1.7.0](https://github.com/kubeflow/pipelines/tree/1.7.0/manifests/kustomize) |
-| Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [v1.0.0](https://github.com/kubeflow/kfp-tekton/tree/v1.0.0/manifests/kustomize) |
+| Training Operator | apps/training-operator/upstream | [v1.6.0-rc.0](https://github.com/kubeflow/training-operator/tree/v1.6.0-rc.0/manifests) |
+| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.7.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.7.0-rc.0/components/notebook-controller/config) |
+| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.7.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.7.0-rc.0/components/tensorboard-controller/config) |
+| Central Dashboard | apps/centraldashboard/upstream | [v1.7.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.7.0-rc.0/components/centraldashboard/manifests) |
+| Profiles + KFAM | apps/profiles/upstream | [v1.7.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.7.0-rc.0/components/profile-controller/config) |
+| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.7.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.7.0-rc.0/components/admission-webhook/manifests) |
+| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.7.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.7.0-rc.0/components/crud-web-apps/jupyter/manifests) |
+| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.7.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.7.0-rc.0/components/crud-web-apps/tensorboards/manifests) |
+| Volumes Web App | apps/volumes-web-app/upstream | [v1.7.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.7.0-rc.0/components/crud-web-apps/volumes/manifests) |
+| Katib | apps/katib/upstream | [v0.15.0-rc.0](https://github.com/kubeflow/katib/tree/v0.15.0-rc.0/manifests/v1beta1) |
+| KServe | contrib/kserve/kserve | [v0.10.0](https://github.com/kserve/kserve/tree/v0.10.0/install/v0.10.0) |
+| KServe Models Web App | contrib/kserve/models-web-app | [v0.10.0](https://github.com/kserve/models-web-app/tree/v0.10.0/config) |
+| Kubeflow Pipelines | apps/pipeline/upstream | [2.0.0-alpha.7](https://github.com/kubeflow/pipelines/tree/2.0.0-alpha.7/manifests/kustomize) |
+| Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [v1.5.1](https://github.com/kubeflow/kfp-tekton/tree/v1.5.1/manifests/kustomize) |
 
 The following is also a matrix with versions from common components that are
 used from the different projects of Kubeflow:
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
-| Istio | common/istio-1-9 | [1.9.6](https://github.com/istio/istio/releases/tag/1.9.6) |
-| Knative | common/knative | [0.22.1](https://github.com/knative/serving/releases/tag/v0.22.1) |
+| Istio | common/istio-1-16 | [1.16.0](https://github.com/istio/istio/releases/tag/1.16.0) |
+| Knative | common/knative/knative-serving <br /> common/knative/knative-eventing | [1.8.1](https://github.com/knative/serving/releases/tag/knative-v1.8.1) <br /> [1.8.1](https://github.com/knative/eventing/releases/tag/knative-v1.8.1) |
+| Cert Manager | common/cert-manager | [1.10.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.10.1) |
 
 ## Installation
 
-Starting from Kubeflow 1.3, the Manifests WG provides two options for installing Kubeflow official components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
+The Manifests WG provides two options for installing Kubeflow official components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
 
 1. Single-command installation of all components under `apps` and `common`
 2. Multi-command, individual components installation for `apps` and `common`
@@ -80,15 +84,17 @@ The `example` directory contains an example kustomization for the single command
 
 ### Prerequisites
 
-- `Kubernetes` (tested with version `1.19`) with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
-- `kustomize` (version `3.2.0`) ([download link](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0))
-    - :warning: Kubeflow 1.4.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
+- `Kubernetes` (up to `1.25`) with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
+- `kustomize` [5.0.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.0.0)
+    - :warning: Kubeflow is not compatible with earlier versions of Kustomize. This is because we need the [`sortOptions`](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/sortoptions/) field, which is only available in Kustomize 5 and onwards https://github.com/kubeflow/manifests/issues/2388.
 - `kubectl`
 
 ---
 **NOTE**
 
 `kubectl apply` commands may fail on the first try. This is inherent in how Kubernetes and `kubectl` work (e.g., CR must be created after CRD becomes ready). The solution is to simply re-run the command until it succeeds. For the single-line command, we have included a bash one-liner to retry the command.
+
+The reason we do `awk '!/well-defined/'` is because there's a regression in Kustomize 5 and a line is printed in stdout and not stderr https://github.com/kubernetes-sigs/kustomize/issues/5039. We'll remove this command once a future patch version of Kustomize is available.
 
 ---
 
@@ -97,7 +103,7 @@ The `example` directory contains an example kustomization for the single command
 You can install all Kubeflow official components (residing under `apps`) and all common services (residing under `common`) using the following command:
 
 ```sh
-while ! kustomize build example | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+while ! kustomize build example | awk '!/well-defined/' | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
 
 Once, everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](#connect-to-your-kubeflow-cluster).
@@ -113,6 +119,22 @@ If all the following commands are executed, the result is the same as in the abo
 - Provide a description of each component and insight on how it gets installed.
 - Enable the user or distribution owner to pick and choose only the components they need.
 
+---
+**Troubleshooting note**
+
+We've seen errors like the following when applying the kustomizations of different components:
+```
+error: resource mapping not found for name: "<RESOURCE_NAME>" namespace: "<SOME_NAMESPACE>" from "STDIN": no matches for kind "<CRD_NAME>" in version "<CRD_FULL_NAME>"
+ensure CRDs are installed first
+```
+
+This is because a kustomization applies both a CRD and a CR very quickly, and the CRD
+hasn't become [`Established`](https://github.com/kubernetes/apiextensions-apiserver/blob/a7ee7f91a2d0805f729998b85680a20cfba208d2/pkg/apis/apiextensions/types.go#L276-L279) yet. You can learn more about this in https://github.com/kubernetes/kubectl/issues/1117 and https://github.com/helm/helm/issues/4925.
+
+If you bump into this error we advise to re-apply the kustomization of the component.
+
+---
+
 #### cert-manager
 
 cert-manager is used by many Kubeflow components to provide certificates for
@@ -122,8 +144,17 @@ Install cert-manager:
 
 ```sh
 kustomize build common/cert-manager/cert-manager/base | kubectl apply -f -
+kubectl wait --for=condition=ready pod -l 'app in (cert-manager,webhook)' --timeout=180s -n cert-manager
 kustomize build common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
 ```
+
+In case you get this error:
+```
+Error from server (InternalError): error when creating "STDIN": Internal error occurred: failed calling webhook "webhook.cert-manager.io": failed to call webhook: Post "https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s": dial tcp 10.96.202.64:443: connect: connection refused
+```
+This is because the webhook is not yet ready to receive request. Wait a couple seconds and retry applying the manfiests.
+
+For more troubleshooting info also check out https://cert-manager.io/docs/troubleshooting/webhook/
 
 #### Istio
 
@@ -133,9 +164,9 @@ network authorization and implement routing policies.
 Install Istio:
 
 ```sh
-kustomize build common/istio-1-9/istio-crds/base | kubectl apply -f -
-kustomize build common/istio-1-9/istio-namespace/base | kubectl apply -f -
-kustomize build common/istio-1-9/istio-install/base | kubectl apply -f -
+kustomize build common/istio-1-16/istio-crds/base | kubectl apply -f -
+kustomize build common/istio-1-16/istio-namespace/base | kubectl apply -f -
+kustomize build common/istio-1-16/istio-install/base | kubectl apply -f -
 ```
 
 #### Dex
@@ -158,13 +189,13 @@ kustomize build common/oidc-authservice/base | kubectl apply -f -
 
 #### Knative
 
-Knative is used by the KFServing official Kubeflow component.
+Knative is used by the KServe official Kubeflow component.
 
 Install Knative Serving:
 
 ```sh
-kustomize build common/knative/knative-serving/base | kubectl apply -f -
-kustomize build common/istio-1-9/cluster-local-gateway/base | kubectl apply -f -
+kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -
+kustomize build common/istio-1-16/cluster-local-gateway/base | kubectl apply -f -
 ```
 
 Optionally, you can install Knative Eventing which can be used for inference request logging:
@@ -206,7 +237,7 @@ well.
 Install istio resources:
 
 ```sh
-kustomize build common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
+kustomize build common/istio-1-16/kubeflow-istio-resources/base | kubectl apply -f -
 ```
 
 #### Kubeflow Pipelines
@@ -214,16 +245,16 @@ kustomize build common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -
 Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/components/pipelines/multi-user/) official Kubeflow component:
 
 ```sh
-kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user | kubectl apply -f -
+kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | awk '!/well-defined/' | kubectl apply -f -
 ```
+This installs argo with the safe-to use runasnonroot emissary executor.  Please note that the installer is still responsible to analyze the security issues that arise when containers are run with root access and to decide if the kubeflow pipeline main containers are run as runasnonroot. It is strongly recommended that the pipelines main containers are installed and run as runasnonroot and without any special capabilities to mitigate security risks.
 
-If your container runtime is not docker, use pns executor instead:
-
+Do not use the deprecated and insecure PNS executor anymore
 ```sh
 kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user-pns | kubectl apply -f -
 ```
 
-Refer to [argo workflow executor documentation](https://argoproj.github.io/argo-workflows/workflow-executors/#process-namespace-sharing-pns) for their pros and cons.
+Refer to [argo workflow executor documentation](https://argoproj.github.io/argo-workflows/workflow-executors) for further reasoning.
 
 **Multi-User Kubeflow Pipelines dependencies**
 
@@ -244,13 +275,23 @@ You can learn more about their differences in [Installation Options for Kubeflow
 
 Besides installation instructions in Kubeflow Pipelines Standalone documentation, you need to apply two virtual services to expose [Kubeflow Pipelines UI](https://github.com/kubeflow/pipelines/blob/1.7.0/manifests/kustomize/base/installs/multi-user/virtual-service.yaml) and [Metadata API](https://github.com/kubeflow/pipelines/blob/1.7.0/manifests/kustomize/base/metadata/options/istio/virtual-service.yaml) in kubeflow-gateway.
 
-#### KFServing
+#### KServe
 
-Install the KFServing official Kubeflow component:
+KFServing was rebranded to KServe.
+
+Install the KServe component:
 
 ```sh
-kustomize build apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build contrib/kserve/kserve | kubectl apply -f -
 ```
+
+Install the Models web app:
+
+```sh
+kustomize build contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
+```
+
+- ../contrib/kserve/models-web-app/overlays/kubeflow
 
 #### Katib
 
@@ -265,7 +306,7 @@ kustomize build apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply
 Install the Central Dashboard official Kubeflow component:
 
 ```sh
-kustomize build apps/centraldashboard/upstream/overlays/istio | kubectl apply -f -
+kustomize build apps/centraldashboard/upstream/overlays/kserve | kubectl apply -f -
 ```
 
 #### Admission Webhook
@@ -329,14 +370,6 @@ Install the Training Operator official Kubeflow component:
 kustomize build apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
-#### MPI Operator
-
-Install the MPI Operator official Kubeflow component:
-
-```sh
-kustomize build apps/mpi-job/upstream/overlays/kubeflow | kubectl apply -f -
-```
-
 #### User Namespace
 
 Finally, create a new namespace for the the default user (named `kubeflow-user-example-com`).
@@ -376,7 +409,7 @@ After running the command, you can access the Kubeflow Central Dashboard by doin
 
 In order to connect to Kubeflow using NodePort / LoadBalancer / Ingress, you need to setup HTTPS. The reason is that many of our web apps (e.g., Tensorboard Web App, Jupyter Web App, Katib UI) use [Secure Cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies), so accessing Kubeflow with HTTP over a non-localhost domain does not work.
 
-Exposing your Kubeflow cluster with proper HTTPS is a process heavily dependent on your environment. For this reason, please take a look at the available Kubeflow distributions, which are targeted to specific environments, and select the one that fits your needs.
+Exposing your Kubeflow cluster with proper HTTPS is a process heavily dependent on your environment. For this reason, please take a look at the available [Kubeflow distributions](https://www.kubeflow.org/docs/started/installing-kubeflow/#install-a-packaged-kubeflow-distribution), which are targeted to specific environments, and select the one that fits your needs.
 
 ---
 **NOTE**
@@ -395,7 +428,7 @@ For security reasons, we don't want to use the default password for the default 
     python3 -c 'from passlib.hash import bcrypt; import getpass; print(bcrypt.using(rounds=12, ident="2y").hash(getpass.getpass()))'
     ```
 
-2. Edit `dex/base/config-map.yaml` and fill the relevant field with the hash of the password you chose:
+2. Edit `common/dex/base/config-map.yaml` and fill the relevant field with the hash of the password you chose:
 
     ```yaml
     ...
@@ -404,10 +437,16 @@ For security reasons, we don't want to use the default password for the default 
         hash: <enter the generated hash here>
     ```
 
+## Release process
+
+The Manifest Working Group releases Kubeflow based on the [release timeline](https://github.com/kubeflow/community/blob/master/releases/handbook.md#timeline).
+ The community and the release team work closely with the Manifest Working Group to define the specific dates at the start of the [release cycle](https://github.com/kubeflow/community/blob/master/releases/handbook.md#releasing)
+ and follow the [release versioning policy](https://github.com/kubeflow/community/blob/master/releases/handbook.md#versioning-policy),
+ as defined in the [Kubeflow release handbook](https://github.com/kubeflow/community/blob/master/releases/handbook.md).
+
 ## Frequently Asked Questions
 
-- **Q:** What versions of Istio, Knative, Cert-Manager, Argo, ... are compatible with Kubeflow 1.4? \
+- **Q:** What versions of Istio, Knative, Cert-Manager, Argo, ... are compatible with Kubeflow? \
   **A:** Please refer to each individual component's documentation for a dependency compatibility range. For Istio, Knative, Dex, Cert-Manager and OIDC-AuthService, the versions in `common` are the ones we have validated.
-
-- **Q:** Can I use the latest Kustomize version (`v4.x`)? \
-  **A:** Kubeflow 1.4.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
+- **Q:** Can I use earlier version of Kustomize with Kubeflow manifests?
+  **A:** The manual installation instructions work with Kustomize 3.2. To use the one-liner installation you'll need to comment out the `sortOptions` section in the `example/kustomization.yaml`.
