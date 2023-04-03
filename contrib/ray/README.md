@@ -1,7 +1,10 @@
 TODO
 - Use proper multi-tenancy namespaces, never ever "default"
+- Te ray dashboard, worker, head must only be availbale from inside your kubeflow user namespace
 - Disable the istio sidecar for the deployment kuberay-operator in the namespace kubeflow
 - Disable the istio sidecar for the ray head in the namespace kubeflow
+- This allows to run the example job, but the workers crash every few minutes, maybe wee need to disable their sidecars as well
+- Somehow the Ray cluster dashboard is exposed
 - Long term fix the ray head with Istio Authorizationpolicies
 - Networkpolicies for kuberay-operator in the kubeflow namespace
 
