@@ -1,3 +1,10 @@
+TODO
+- Use proper multi-tenancy namespaces, never ever "default"
+- Disable the istio sidecar for the deployment kuberay-operator in the namespace kubeflow
+- Disable the istio sidecar for the ray head in the namespace kubeflow
+- Long term fix the ray head with Istio Authorizationpolicies
+- Networkpolicies for kuberay-operator in the kubeflow namespace
+
 > Credit: This manifest refers a lot to the engineering blog ["Building a Machine Learning Platform with Kubeflow and Ray on Google Kubernetes Engine"](https://cloud.google.com/blog/products/ai-machine-learning/build-a-ml-platform-with-kubeflow-and-ray-on-gke) from Google Cloud.
 
 # Ray
@@ -37,6 +44,9 @@
     * If you do not want to install all components, you can comment out **KNative**, **Katib**, **Tensorboards Controller**, **Tensorboard Web App**, **Training Operator**, and **KServe** from [example/kustomization.yaml](https://github.com/kubeflow/manifests/blob/v1.6-branch/example/kustomization.yaml).
 
 ## Step 2: Install KubeRay operator
+
+We never ever break Kubernetes standards and do not use the "default" namespace, but a proper one, in our case "kubeflow".
+
 ```sh
 # Install a KubeRay operator and custom resource definitions.
 kustomize build kuberay-operator/base | kubectl apply --server-side -f -
@@ -51,10 +61,12 @@ kubectl get pod -l app.kubernetes.io/component=kuberay-operator
 ```sh
 # Create a RayCluster CR, and the KubeRay operator will reconcile a Ray cluster
 # with 1 head Pod and 1 worker Pod.
-kubectl apply -f raycluster_example.yaml
+# $MY_KUBEFLOW_USER_NAMESPACE is a proper Kubeflow user namespace with istio sidecar injection and never ever the wrong "default" 
+export MY_KUBEFLOW_USER_NAMESPACE=development
+kubectl apply -f $raycluster_example.yaml -n $MY_KUBEFLOW_USER_NAMESPACE
 
 # Check RayCluster
-kubectl get pod -l ray.io/cluster=kubeflow-raycluster
+kubectl get pod -l ray.io/cluster=kubeflow-raycluster -n $MY_KUBEFLOW_USER_NAMESPACE
 # NAME                                           READY   STATUS    RESTARTS   AGE
 # kubeflow-raycluster-head-p6dpk                 1/1     Running   0          70s
 # kubeflow-raycluster-worker-small-group-l7j6c   1/1     Running   0          70s
@@ -88,8 +100,10 @@ kubectl get pod -l ray.io/cluster=kubeflow-raycluster
     # Open a new .ipynb page.
 
     import ray
-    # ray://${RAYCLUSTER_HEAD_SVC}.${NAMESPACE}.svc.cluster.local:${RAY_CLIENT_PORT}
-    ray.init(address="ray://kubeflow-raycluster-head-svc.default.svc.cluster.local:10001")
+    # For other namespaces use ray://${RAYCLUSTER_HEAD_SVC}.${NAMESPACE}.svc.cluster.local:${RAY_CLIENT_PORT}
+    # But we use of course our per namespace ray cluster to have multi-tenancy and
+    # We never ever use "default" as namespace since this would violate Kubernetes standards
+    ray.init(address="ray://kubeflow-raycluster-head-svc:10001")
     print(ray.cluster_resources())
     # {'node:10.244.0.41': 1.0, 'memory': 3000000000.0, 'node:10.244.0.40': 1.0, 'object_store_memory': 805386239.0, 'CPU': 2.0}
 
