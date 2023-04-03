@@ -2,7 +2,7 @@
 
 set -e
 
-NAMESPACE=default
+NAMESPACE=kubeflow
 TIMEOUT=120  # timeout in seconds
 SLEEP_INTERVAL=30  # interval between checks in seconds
 RAY_VERSION=2.2.0
@@ -10,12 +10,12 @@ RAY_VERSION=2.2.0
 function trap_handler {
   kill $PID
   # Delete RayCluster
-  kubectl delete -f raycluster_example.yaml
+  kubectl -n $NAMESPACE delete -f raycluster_example.yaml
 
   # Wait for all Ray Pods to be deleted.
   start_time=$(date +%s)
   while true; do
-    pods=$(kubectl get pods -n $NAMESPACE -o json | jq '.items | length')
+    pods=$(kubectl -n $NAMESPACE get pods -o json | jq '.items | length')
     if [ "$pods" -eq 1 ]; then
       break
     fi
@@ -29,29 +29,29 @@ function trap_handler {
   done
 
   # Delete KubeRay operator
-  kustomize build kuberay-operator/base | kubectl delete -f -
+  kustomize build kuberay-operator/base | kubectl -n $NAMESPACE delete -f -
 }
 
 trap trap_handler EXIT
 
 # Install KubeRay operator
-kustomize build kuberay-operator/base | kubectl apply --server-side -f -
+kustomize build kuberay-operator/base | kubectl -n $NAMESPACE apply --server-side -f -
 
 # Wait for the operator to be ready.
-kubectl wait --for=condition=available --timeout=600s deploy/kuberay-operator
-kubectl get pod -l app.kubernetes.io/component=kuberay-operator
+kubectl -n $NAMESPACE wait --for=condition=available --timeout=600s deploy/kuberay-operator
+kubectl -n $NAMESPACE get pod -l app.kubernetes.io/component=kuberay-operator
 
 # Create a RayCluster custom resource.
-kubectl apply -f raycluster_example.yaml
+kubectl -n $NAMESPACE apply -f raycluster_example.yaml
 
 # Wait for the RayCluster to be ready.
 sleep 5
-kubectl wait --for=condition=ready pod -l ray.io/cluster=kubeflow-raycluster --timeout=900s
-kubectl logs -l ray.io/cluster=kubeflow-raycluster,ray.io/node-type=head
+kubectl -n $NAMESPACE wait --for=condition=ready pod -l ray.io/cluster=kubeflow-raycluster --timeout=900s
+kubectl -n $NAMESPACE logs -l ray.io/cluster=kubeflow-raycluster,ray.io/node-type=head
 
 # Forward the port of Dashboard
 sleep 5
-kubectl port-forward --address 0.0.0.0 svc/kubeflow-raycluster-head-svc 8265:8265 &
+kubectl -n $NAMESPACE port-forward --address 0.0.0.0 svc/kubeflow-raycluster-head-svc 8265:8265 &
 PID=$!
 echo "Forward the port 8265 of Ray head in the background process: $PID"
 
