@@ -16,4 +16,5 @@ patches:
           type: RuntimeDefault
 namespace: kubeflow
 resources:
+- namespace.yaml
 - resources.yaml
