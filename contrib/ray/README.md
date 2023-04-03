@@ -1,12 +1,8 @@
 TODO
-- Use proper multi-tenancy namespaces, never ever "default"
-- Te ray dashboard, worker, head must only be availbale from inside your kubeflow user namespace
-- Disable the istio sidecar for the deployment kuberay-operator in the namespace kubeflow
-- Disable the istio sidecar for the ray head in the namespace kubeflow
-- This allows to run the example job, but the workers crash every few minutes, maybe wee need to disable their sidecars as well
-- Somehow the Ray cluster dashboard is exposed
-- Long term fix the ray head with Istio Authorizationpolicies
-- Networkpolicies for kuberay-operator in the kubeflow namespace
+- The ray dashboard, worker and head must only be available from inside your kubeflow user namespace
+- Reenable the istio sidecar for the ray head and worker in the user namespace and provide the corresponding Istio Authorizationpolicies
+- We can keep the istio sidecar for the deployment kuberay-operator in the namespace kubeflow, since it does NOT use a webhook, but something else to reconcile rayclusters. This means we also do not need a networkpolicy for the ray operator.
+
 
 > Credit: This manifest refers a lot to the engineering blog ["Building a Machine Learning Platform with Kubeflow and Ray on Google Kubernetes Engine"](https://cloud.google.com/blog/products/ai-machine-learning/build-a-ml-platform-with-kubeflow-and-ray-on-gke) from Google Cloud.
 
