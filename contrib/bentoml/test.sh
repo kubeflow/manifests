@@ -31,7 +31,7 @@ trap trap_handler EXIT
 sleep 5
 
 output=$(curl --fail -X 'POST' \
-  'http://0.0.0.0:3000/is_fraud' \
+  'http://localhost:3333/is_fraud' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '[
