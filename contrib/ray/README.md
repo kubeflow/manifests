@@ -1,7 +1,6 @@
 TODO
 - The ray dashboard, worker and head must only be available from inside your kubeflow user namespace
-- Reenable the istio sidecar for the ray head and worker in the user namespace and provide the corresponding Istio Authorizationpolicies
-- We can keep the istio sidecar for the deployment kuberay-operator in the namespace kubeflow, since it does NOT use a webhook, but something else to reconcile rayclusters. This means we also do not need a networkpolicy for the ray operator.
+- Reenable the istio sidecar for the ray head and worker in the user namespace and provide the corresponding Istio Authorizationpolicies. We can keep the istio sidecar for the deployment kuberay-operator in the namespace kubeflow, since it does NOT use a webhook, but something else to reconcile rayclusters. This means we also do not need a networkpolicy for the ray operator.
 
 
 > Credit: This manifest refers a lot to the engineering blog ["Building a Machine Learning Platform with Kubeflow and Ray on Google Kubernetes Engine"](https://cloud.google.com/blog/products/ai-machine-learning/build-a-ml-platform-with-kubeflow-and-ray-on-gke) from Google Cloud.
@@ -36,15 +35,15 @@ TODO
   <figcaption>Note: (1) Kubeflow Central Dashboard will be renamed to workbench in the future. (2) Kubeflow Pipeline (KFP) is an important component of Kubeflow, but it is not included in this example.</figcaption>
 </figure>
 
-## Step 1: Install Kubeflow v1.6-branch
-* This example installs Kubeflow with the [v1.6-branch](https://github.com/kubeflow/manifests/tree/v1.6-branch).
+## Step 1: Install Kubeflow v1.7-branch
+* This example installs Kubeflow with the [v1.7-branch](https://github.com/kubeflow/manifests/tree/v1.7-branch).
 
-* Install all Kubeflow official components and all common services using [one command](https://github.com/kubeflow/manifests/tree/v1.6-branch#install-with-a-single-command).
-    * If you do not want to install all components, you can comment out **KNative**, **Katib**, **Tensorboards Controller**, **Tensorboard Web App**, **Training Operator**, and **KServe** from [example/kustomization.yaml](https://github.com/kubeflow/manifests/blob/v1.6-branch/example/kustomization.yaml).
+* Install all Kubeflow official components and all common services using [one command](https://github.com/kubeflow/manifests/tree/v1.7-branch#install-with-a-single-command).
+    * If you do not want to install all components, you can comment out **KNative**, **Katib**, **Tensorboards Controller**, **Tensorboard Web App**, **Training Operator**, and **KServe** from [example/kustomization.yaml](https://github.com/kubeflow/manifests/blob/v1.7-branch/example/kustomization.yaml).
 
 ## Step 2: Install KubeRay operator
 
-We never ever break Kubernetes standards and do not use the "default" namespace, but a proper one, in our case "kubeflow".
+We never ever break Kubernetes standards and do not use the "default" namespace, but a proper one, in our case "kubeflow" for the ray operator.
 
 ```sh
 # Install a KubeRay operator and custom resource definitions.
@@ -75,12 +74,12 @@ kubectl get pod -l ray.io/cluster=kubeflow-raycluster -n $MY_KUBEFLOW_USER_NAMES
     * Ray 2.2.0
 
 ## Step 4: Forward the port of Istio's Ingress-Gateway
-* Follow the [instructions](https://github.com/kubeflow/manifests/tree/v1.6-branch#port-forward) to forward the port of Istio's Ingress-Gateway and log in to Kubeflow Central Dashboard.
+* Follow the [instructions](https://github.com/kubeflow/manifests/tree/v1.7-branch#port-forward) to forward the port of Istio's Ingress-Gateway and log in to Kubeflow Central Dashboard.
 
 ## Step 5: Create a JupyterLab via Kubeflow Central Dashboard
 * Click "Notebooks" icon in the left panel.
 * Click "New Notebook"
-* Select `kubeflownotebookswg/jupyter-scipy:v1.6.1` as OCI image.
+* Select `kubeflownotebookswg/jupyter-scipy:v1.7.0` as OCI image.
 * Click "Launch"
 * Click "CONNECT" to connect into the JupyterLab instance.
 
