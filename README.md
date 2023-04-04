@@ -302,7 +302,7 @@ BentoML allows you to package models trained in Kubeflow Notebooks and deploy th
 Install the BentoML Yatai components:
 
 ```sh
-kustomize build bentoml-yatai-stack/default | kubectl apply -n kubeflow --server-side -f -
+kustomize build contrib/bentoml/bentoml-yatai-stack/default | kubectl apply -n kubeflow --server-side -f -
 ```
 
 #### Katib
