@@ -22,7 +22,7 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: csi-attacher
+  name: kfp-csi-attacher
   # replace with non-default namespace name
   namespace: kubeflow
   labels:
@@ -42,7 +42,7 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: csi-provisioner
+  name: kfp-csi-provisioner
   # replace with non-default namespace name
   namespace: kubeflow
   labels:
@@ -104,7 +104,7 @@ rules:
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: external-attacher-runner
+  name: kfp-external-attacher-runner
   labels:
     app.kubernetes.io/name: "kubeflow"
 rules:
@@ -132,7 +132,7 @@ rules:
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: external-provisioner-runner
+  name: kfp-external-provisioner-runner
   labels:
     app.kubernetes.io/name: "kubeflow"
   namespace: kubeflow
@@ -195,35 +195,35 @@ roleRef:
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: csi-attacher-role
+  name: kfp-csi-attacher-role
   labels:
     app.kubernetes.io/name: "kubeflow"
 subjects:
   - kind: ServiceAccount
-    name: csi-attacher
+    name: kfp-csi-attacher
     # replace with non-default namespace name
     namespace: kubeflow
 roleRef:
   kind: ClusterRole
-  name: external-attacher-runner
+  name: kfp-external-attacher-runner
   apiGroup: rbac.authorization.k8s.io
 ---
 # Source: dlf-chart/charts/csi-sidecars-rbac/templates/provisioner-rbac.yaml
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: csi-provisioner-role
+  name: kfp-csi-provisioner-role
   labels:
     app.kubernetes.io/name: "kubeflow"
   namespace: kubeflow
 subjects:
   - kind: ServiceAccount
-    name: csi-provisioner
+    name: kfp-csi-provisioner
     # replace with non-default namespace name
     namespace: kubeflow
 roleRef:
   kind: ClusterRole
-  name: external-provisioner-runner
+  name: kfp-external-provisioner-runner
   apiGroup: rbac.authorization.k8s.io
 ---
 # Source: dlf-chart/charts/csi-sidecars-rbac/templates/attacher-rbac.yaml
@@ -234,7 +234,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   # replace with non-default namespace name
   namespace: kubeflow
-  name: external-attacher-cfg
+  name: kfp-external-attacher-cfg
   labels:
     app.kubernetes.io/name: "kubeflow"
 rules:
@@ -250,7 +250,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   # replace with non-default namespace name
   namespace: kubeflow
-  name: external-provisioner-cfg
+  name: kfp-external-provisioner-cfg
   labels:
     app.kubernetes.io/name: "kubeflow"
 rules:
@@ -282,38 +282,38 @@ rules:
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: csi-attacher-role-cfg
+  name: kfp-csi-attacher-role-cfg
   # replace with non-default namespace name
   namespace: kubeflow
   labels:
     app.kubernetes.io/name: "kubeflow"
 subjects:
   - kind: ServiceAccount
-    name: csi-attacher
+    name: kfp-csi-attacher
     # replace with non-default namespace name
     namespace: kubeflow
 roleRef:
   kind: Role
-  name: external-attacher-cfg
+  name: kfp-external-attacher-cfg
   apiGroup: rbac.authorization.k8s.io
 ---
 # Source: dlf-chart/charts/csi-sidecars-rbac/templates/provisioner-rbac.yaml
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: csi-provisioner-role-cfg
+  name: kfp-csi-provisioner-role-cfg
   # replace with non-default namespace name
   namespace: kubeflow
   labels:
     app.kubernetes.io/name: "kubeflow"
 subjects:
   - kind: ServiceAccount
-    name: csi-provisioner
+    name: kfp-csi-provisioner
     # replace with non-default namespace name
     namespace: kubeflow
 roleRef:
   kind: Role
-  name: external-provisioner-cfg
+  name: kfp-external-provisioner-cfg
   apiGroup: rbac.authorization.k8s.io
 ---
 # Source: dlf-chart/charts/csi-s3-chart/templates/attacher.yaml
@@ -321,14 +321,14 @@ roleRef:
 kind: Service
 apiVersion: v1
 metadata:
-  name: csi-attacher-s3
+  name: kfp-csi-attacher-s3
   namespace: kubeflow
   labels:
-    app: csi-attacher-s3
+    app: kfp-csi-attacher-s3
     app.kubernetes.io/name: "kubeflow"
 spec:
   selector:
-    app: csi-attacher-s3
+    app: kfp-csi-attacher-s3
   ports:
     - name: dummy
       port: 12345
@@ -337,14 +337,14 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: csi-provisioner-s3
+  name: kfp-csi-provisioner-s3
   namespace: kubeflow
   labels:
-    app: csi-provisioner-s3
+    app: kfp-csi-provisioner-s3
     app.kubernetes.io/name: "kubeflow"
 spec:
   selector:
-    app: csi-provisioner-s3
+    app: kfp-csi-provisioner-s3
   ports:
     - name: dummy
       port: 12345
@@ -370,7 +370,7 @@ spec:
       serviceAccountName: kfp-csi-s3
       containers:
         - name: driver-registrar
-          image: "quay.io/k8scsi/csi-node-driver-registrar:v1.2.0"
+          image: "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.3.0"
           imagePullPolicy: Always
           args:
             - --v=5
@@ -380,7 +380,7 @@ spec:
             # This is necessary only for systems with SELinux, where
             # non-privileged sidecar containers cannot access unix domain socket
             # created by privileged CSI driver container.
-            privileged: true
+            privileged: false
           env:
             - name: KUBE_NODE_NAME
               valueFrom:
@@ -393,7 +393,7 @@ spec:
             - mountPath: /registration
               name: registration-dir
         - name: kfp-csi-s3
-          image: "quay.io/datashim/csi-s3:latest-amd64"
+          image: "quay.io/datashim-io/csi-s3:latest"
           imagePullPolicy: Always
           args:
             - "--v=5"
@@ -441,26 +441,26 @@ spec:
 kind: StatefulSet
 apiVersion: apps/v1
 metadata:
-  name: csi-attacher-s3
+  name: kfp-csi-attacher-s3
   namespace: kubeflow
   labels:
     app.kubernetes.io/name: "kubeflow"
 spec:
-  serviceName: "csi-attacher-s3"
+  serviceName: "kfp-csi-attacher-s3"
   replicas: 1
   selector:
     matchLabels:
-      app: csi-attacher-s3
+      app: kfp-csi-attacher-s3
   template:
     metadata:
       labels:
         app.kubernetes.io/name: "kubeflow"
-        app: csi-attacher-s3
+        app: kfp-csi-attacher-s3
     spec:
-      serviceAccountName: csi-attacher
+      serviceAccountName: kfp-csi-attacher
       containers:
-        - name: csi-attacher
-          image: "quay.io/k8scsi/csi-attacher:v2.2.0"
+        - name: kfp-csi-attacher
+          image: "k8s.gcr.io/sig-storage/csi-attacher:v3.3.0"
           imagePullPolicy: Always
           args:
             - --v=5
@@ -483,25 +483,25 @@ spec:
 kind: StatefulSet
 apiVersion: apps/v1
 metadata:
-  name: csi-provisioner-s3
+  name: kfp-csi-provisioner-s3
   labels:
     app.kubernetes.io/name: "kubeflow"
   namespace: kubeflow
 spec:
-  serviceName: "csi-provisioner-s3"
+  serviceName: "kfp-csi-provisioner-s3"
   replicas: 1
   selector:
     matchLabels:
-      app: csi-provisioner-s3
+      app: kfp-csi-provisioner-s3
   template:
     metadata:
       labels:
-        app: csi-provisioner-s3
+        app: kfp-csi-provisioner-s3
     spec:
-      serviceAccountName: csi-provisioner
+      serviceAccountName: kfp-csi-provisioner
       containers:
-        - name: csi-provisioner
-          image: "quay.io/k8scsi/csi-provisioner:v2.0.2"
+        - name: kfp-csi-provisioner
+          image: "k8s.gcr.io/sig-storage/csi-provisioner:v2.2.2"
           imagePullPolicy: Always
           args:
             - -v=5

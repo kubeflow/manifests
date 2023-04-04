@@ -8,7 +8,9 @@ resources:
   - 201-rolebinding.yaml
   - 202-clusterrolebinding.yaml
   - 203-object-store-config.yaml
+  - 204-cache-config.yaml
   - 300-pipelineloop.yaml
+  - 301-breaktask.yaml
   - 500-controller.yaml
   - 500-webhook-configuration.yaml
   - 500-webhook.yaml

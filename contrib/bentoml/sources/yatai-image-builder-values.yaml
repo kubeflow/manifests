@@ -1,0 +1,13 @@
+yataiSystem:
+  namespace: "kubeflow"
+
+yatai:
+  endpoint: ''
+
+dockerRegistry:
+  bentoRepositoryName: yatai-bentos
+  inClusterServer: docker-registry.kubeflow.svc.cluster.local:5000
+  password: ""
+  secure: false
+  server: 127.0.0.1:5000
+  username: ""

@@ -1,0 +1,6 @@
+# Adds namespace to all resources.
+namespace: kubeflow
+
+bases:
+- ../bases/yatai-image-builder
+- ../bases/yatai-deployment

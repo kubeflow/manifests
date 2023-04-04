@@ -97,7 +97,6 @@ rules:
       - tekton.dev
     resources:
       - clustertasks
-      - clustertasks/status
     verbs:
       - get
       - list
@@ -132,7 +131,6 @@ rules:
       - tekton.dev
     resources:
       - clustertasks
-      - clustertasks/status
     verbs:
       - create
       - update
@@ -185,13 +183,7 @@ rules:
       - pipelines
       - pipelineruns
       - pipelineresources
-      - conditions
-      - tasks/status
-      - taskruns/status
-      - pipelines/status
-      - pipelineruns/status
-      - taskruns/finalizers
-      - pipelineruns/finalizers
+      - runs
     verbs:
       - get
       - list
@@ -215,13 +207,7 @@ rules:
       - pipelines
       - pipelineruns
       - pipelineresources
-      - conditions
-      - taskruns/finalizers
-      - pipelineruns/finalizers
-      - tasks/status
-      - taskruns/status
-      - pipelines/status
-      - pipelineruns/status
+      - runs
     verbs:
       - create
       - update
@@ -264,6 +250,7 @@ metadata:
     app.kubernetes.io/component: dashboard
     app.kubernetes.io/instance: default
     app.kubernetes.io/part-of: tekton-dashboard
+    rbac.dashboard.tekton.dev/subject: tekton-dashboard
   name: tekton-dashboard-backend
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -276,7 +263,7 @@ subjects:
 ---
 apiVersion: v1
 data:
-  version: v0.24.1
+  version: v0.30.0
 kind: ConfigMap
 metadata:
   labels:
@@ -294,9 +281,9 @@ metadata:
     app.kubernetes.io/instance: default
     app.kubernetes.io/name: dashboard
     app.kubernetes.io/part-of: tekton-dashboard
-    app.kubernetes.io/version: v0.24.1
-    dashboard.tekton.dev/release: v0.24.1
-    version: v0.24.1
+    app.kubernetes.io/version: v0.30.0
+    dashboard.tekton.dev/release: v0.30.0
+    version: v0.30.0
   name: tekton-dashboard
   namespace: tekton-pipelines
 spec:
@@ -320,9 +307,9 @@ metadata:
     app.kubernetes.io/instance: default
     app.kubernetes.io/name: dashboard
     app.kubernetes.io/part-of: tekton-dashboard
-    app.kubernetes.io/version: v0.24.1
-    dashboard.tekton.dev/release: v0.24.1
-    version: v0.24.1
+    app.kubernetes.io/version: v0.30.0
+    dashboard.tekton.dev/release: v0.30.0
+    version: v0.30.0
   name: tekton-dashboard
   namespace: tekton-pipelines
 spec:
@@ -341,7 +328,7 @@ spec:
         app.kubernetes.io/instance: default
         app.kubernetes.io/name: dashboard
         app.kubernetes.io/part-of: tekton-dashboard
-        app.kubernetes.io/version: v0.24.1
+        app.kubernetes.io/version: v0.30.0
       name: tekton-dashboard
     spec:
       containers:
@@ -361,7 +348,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-          image: gcr.io/tekton-releases/github.com/tektoncd/dashboard/cmd/dashboard:v0.24.1@sha256:fe4febbb74ca3e7027c29719e32e38074b3af6be588ee08cca5826f21fa003a1
+          image: gcr.io/tekton-releases/github.com/tektoncd/dashboard/cmd/dashboard:v0.30.0@sha256:85f7d38086fadb07556052ce873d44861c29ef690f47735f32d7e6a153ca8a92
           livenessProbe:
             httpGet:
               path: /health
@@ -373,11 +360,18 @@ spec:
             httpGet:
               path: /readiness
               port: 9097
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsGroup: 65532
+            runAsNonRoot: true
+            runAsUser: 65532
+            seccompProfile:
+              type: RuntimeDefault
       nodeSelector:
         kubernetes.io/os: linux
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 65532
       serviceAccountName: tekton-dashboard
       volumes: []
 
@@ -390,6 +384,7 @@ metadata:
     app.kubernetes.io/component: dashboard
     app.kubernetes.io/instance: default
     app.kubernetes.io/part-of: tekton-dashboard
+    rbac.dashboard.tekton.dev/subject: tekton-dashboard
   name: tekton-dashboard-tenant
 roleRef:
   apiGroup: rbac.authorization.k8s.io

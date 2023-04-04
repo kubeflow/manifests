@@ -1,0 +1,4 @@
+pytest>=7.0.0
+kserve>=0.10.0
+kubernetes>=18.20.0
+requests>=2.18.4

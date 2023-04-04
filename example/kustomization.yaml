@@ -1,6 +1,36 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+sortOptions:
+  order: legacy
+  legacySortOptions:
+    orderFirst:
+    - Namespace
+    - ResourceQuota
+    - StorageClass
+    - CustomResourceDefinition
+    - MutatingWebhookConfiguration
+    - ServiceAccount
+    - PodSecurityPolicy
+    - Role
+    - ClusterRole
+    - RoleBinding
+    - ClusterRoleBinding
+    - ConfigMap
+    - Secret
+    - Endpoints
+    - Service
+    - LimitRange
+    - PriorityClass
+    - PersistentVolume
+    - PersistentVolumeClaim
+    - Deployment
+    - StatefulSet
+    - CronJob
+    - PodDisruptionBudget
+    orderLast:
+    - ValidatingWebhookConfiguration
+
 resources:
 # Cert-Manager
 - ../common/cert-manager/cert-manager/base
@@ -38,7 +68,7 @@ resources:
 # Notebook Controller
 - ../apps/jupyter/notebook-controller/upstream/overlays/kubeflow
 # Profiles + KFAM
-# - ../apps/profiles/upstream/overlays/kubeflow
+- ../apps/profiles/upstream/overlays/kubeflow
 # Volumes Web App
 - ../apps/volumes-web-app/upstream/overlays/istio
 # Tensorboards Controller

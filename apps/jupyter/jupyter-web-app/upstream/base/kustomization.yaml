@@ -22,7 +22,8 @@ commonLabels:
   kustomize.component: jupyter-web-app
 images:
 - name: docker.io/kubeflownotebookswg/jupyter-web-app
-  newTag: v1.6.0-rc.1
+  newName: docker.io/kubeflownotebookswg/jupyter-web-app
+  newTag: v1.7.0-rc.0
 # We need the name to be unique without the suffix because the original name is what
 # gets used with patches
 configMapGenerator:
@@ -71,6 +72,13 @@ vars:
 - fieldref:
     fieldPath: data.JWA_PREFIX
   name: JWA_PREFIX
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: parameters
+- name: JWA_APP_SECURE_COOKIES
+  fieldref:
+    fieldPath: data.JWA_APP_SECURE_COOKIES
   objref:
     apiVersion: v1
     kind: ConfigMap

@@ -1,16 +1,40 @@
 # Metacontroller
 
 - [Official documentation](https://metacontroller.github.io/metacontroller/)
-- [Official repoitory](https://github.com/metacontroller/metacontroller)
+- [Official repository](https://github.com/metacontroller/metacontroller)
 
-## Upgrade
+Metacontroller is an add-on for Kubernetes that makes it easy to write and deploy custom controllers.
 
-Metacontroller is pulled from [Kubeflow Pipelines third-party folder](https://github.com/kubeflow/pipelines/tree/master/manifests/kustomize/third-party/metacontroller). To update this component specify the desired KFP version and run the following command in console from the root directory **/**:
+## Prerequisites
+
+- Kubernetes v1.16+ (because of maintainability, e2e test suite might not cover all releases).
+- You should have `kubectl` available and configured to talk to the desired cluster.
+- `kustomize`.
+
+## Compile manifests
 
 ```bash
-export KFP_VERSION=2.0.0-alpha.3   # specify KFP version
-kpt pkg update ./contrib/metacontroller@${KFP_VERSION}
+make hydrate
 ```
 
-Alternatively, you can copy the content from [Kubeflow Pipelines third-party folder](https://github.com/kubeflow/pipelines/tree/master/manifests/kustomize/third-party/metacontroller) by choosing the appropriate `TAG` in that repository.
+## Install Metacontroller
 
+```bash
+make apply
+```
+
+## Verify deployment
+
+```bash
+make test
+```
+
+## Uninstall Metacontroller
+
+```bash
+make delete
+```
+
+## Upgrade Metacontroller
+
+To upgrade to the lates version used in Kubeflow, follow the steps in [UPGRADE.md](./UPDGRADE.md).
