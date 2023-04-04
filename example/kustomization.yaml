@@ -83,5 +83,4 @@ resources:
 # KServe
 - ../contrib/kserve/kserve
 - ../contrib/kserve/models-web-app/overlays/kubeflow
-# BentoML
-- ../contrib/bentoml/bentoml-yatai-stack/default
+

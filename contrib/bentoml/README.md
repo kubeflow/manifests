@@ -4,7 +4,7 @@ Starting with the release of Kubeflow 1.7, BentoML provides a native integration
 
 ## Requirements
 
-* Kubernetes 1.20 - 1.24
+* Kubernetes 1.20 - 1.25
 
 ## Installation
 
