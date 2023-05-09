@@ -7,41 +7,8 @@
 #tar xzf istio.tar.gz
 #istio-${ISTIO_TAG}/bin/istioctl manifest generate --set values.pilot.autoscaleMin=1 --set values.gateways.istio-ingressgateway.autoscaleMin=1 --set components.cni.enabled=true --set components.cni.namespace=kube-system --set components.cni.tag=${ISTIO_TAG} --set values.global.proxy.resources.requests.cpu=10m --set tag=${ISTIO_TAG} > istio.yaml
 #rm -rf istio-${ISTIO_TAG} istio.tar.gz
-
-# sadly there is a bug such that the busybox image is not configurable in a proper way
-
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 resources:
 - namespace.yaml
 - istio.yaml
-
-patchesStrategicMerge:
-# Pentest enahncement: check port 15010 & 8080 in istiod: According to https://istio.io/latest/docs/ops/best-practices/security/#control-plane port 15010 is not that problematic (only resource discovery). Other parts of the documentation also say | 15010 | GRPC | XDS and CA services (Plaintext, only for secure networks) | We have a secure network layer and only XDS is served. Port 8080 is not listed in the service and even if it would be somehow reachable by IP it only "offers read access". Nevertheless we set ENABLE_DEBUG_ON_HTTP=false do disable it entirely.
-- |-
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: istiod
-    namespace: istio-system
-  spec:
-    template:
-      spec:
-        containers:
-        - name: discovery
-          env:
-          - name: ENABLE_DEBUG_ON_HTTP
-            value: 'false'
-# https://github.com/kubeflow/manifests/issues/2285
-- |-
-  apiVersion: v1
-  kind: Service
-  metadata:
-    name: istio-ingressgateway
-    namespace: istio-system
-  spec:
-    type: ClusterIP
-
-
-

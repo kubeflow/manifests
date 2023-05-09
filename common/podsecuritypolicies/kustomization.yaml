@@ -6,4 +6,3 @@ resources:
 - restricted/kubeflow-restricted-psp.yaml
 - restricted/kubeflow-restricted-clusterrole.yaml
 - restricted/kubeflow-restricted-clusterrole-rolebinding.yaml
-
