@@ -65,39 +65,15 @@ old version is `X1.Y1.Z1`:
 
     ---
 
-5. Remove PodDisruptionBudget from `istio-install` and `cluster-local-gateway` kustomizations. 
-   See https://github.com/istio/istio/issues/12602 and https://github.com/istio/istio/issues/24000
-
-   Until now we have used two patches:
-   - `common/istio-1-16/istio-install/base/patches/remove-pdb.yaml`
-   - `common/istio-1-16/cluster-local-gateway/base/patches/remove-pdb.yaml`
-   
-   The above patches do not work with kustomize v3.2.0 as it doesn't have the appropriate 
-   openapi schemas for the policy/v1 API version resources. This is fixed in kustomize v4+. 
-   See https://github.com/kubernetes-sigs/kustomize/issues/3694#issuecomment-799700607 and
-   https://github.com/kubernetes-sigs/kustomize/issues/4495
-   
-   A temporary workaround is to use the following instructions to manually delete the PodDisruptionBudget resources with `yq`: 
-        
-        $ yq eval -i 'select((.kind == "PodDisruptionBudget" and .metadata.name == "cluster-local-gateway") | not)' common/istio-1-16/cluster-local-gateway/base/cluster-local-gateway.yaml
-        $ yq eval -i 'select((.kind == "PodDisruptionBudget" and .metadata.name == "istio-ingressgateway") | not)' common/istio-1-16/istio-install/base/install.yaml
-        $ yq eval -i 'select((.kind == "PodDisruptionBudget" and .metadata.name == "istiod") | not)' common/istio-1-16/istio-install/base/install.yaml
-        
-   ---
-   **NOTE**
-   
-   NOTE: Make sure to remove a redundant {} at the end of the `common/istio-1-16/istio-install/base/install.yaml` and `common/istio-1-16/cluster-local-gateway/base/cluster-local-gateway.yaml` files.
-   
-   ---
-
 ## Changes to Istio's upstream manifests
 
 ### Changes to the upstream IstioOperator profile
 
 Changes to Istio's upstream profile `default` are the following:
 
--   Add a `cluster-local-gateway` component for KFServing.
--   Disable the EgressGateway component. We don't use it and it adds
+-   Add a `cluster-local-gateway` component for KServe. 
+    # TODO i think we can drop this gateway now
+-   Disable the EgressGateway component. We do not use it and it adds
     unnecessary complexity.
 
 Those changes are captured in the [profile-overlay.yaml](profile-overlay.yaml)
