@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-restricted-clusterrole
+rules:
+- apiGroups:
+  - policy
+  resourceNames:
+  - kubeflow-restricted-psp
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use
+
