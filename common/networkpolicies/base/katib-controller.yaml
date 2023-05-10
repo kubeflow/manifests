@@ -1,5 +1,5 @@
-kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
 metadata:
   name: katib-controller
   namespace: kubeflow
@@ -16,8 +16,8 @@ spec:
     - ports: # webhook
         - protocol: TCP
           port: 8443
-#    - ports: # metrics
-#        - protocol: TCP
-#          port: 8080
+  #    - ports: # metrics
+  #        - protocol: TCP
+  #          port: 8080
   policyTypes:
     - Ingress
