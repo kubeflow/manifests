@@ -53,9 +53,25 @@ to drive all the above areas. Root reviewers on the other hand are expected to
 have knowledge in all the above and have as a goal to grow into the approvers
 role by helping with reviews throughout the project.
 
-As with the rest of the Kubeflow projects, and the governance model, in order
-for someone to become an approver they have to first to be a reviewer.
+#### Root Reviewer requirements
 
-#### Reviewer requirements
+* Primary reviewer for at least 2 PRs in `/common`
+* Primary reviewer for at least 1 PR in `/tests`
+* Primary reviewer for at least 1 PR in `/contrib`
 
-#### Approver requirements
+#### Root Approver requirements
+
+The goal of the requirements is to quantify the main pillars that we documented
+above. The high level reasoning is that approvers should have lead efforts and
+have expertise in the different processes and artefacts maintained in this repo
+as well as be invested in the community of the WG.
+
+* Need to be a root reviewer
+* Have been a WG liaison for a KF release
+* Has at least 3 substantial PRs merged for `/common`
+    * I.e. updating the versions of Istio, Dex or Knative
+    * I.e. update manifests to work with newer versions of kustomize
+* Has at least 2 substantial PRs merged for `/testing`
+* Has at least 1 substantial PR merged for `/proposals`
+* Has been an active participant in issues and PRs for at least 3 months
+* Has attended at least 75% of Manifests WG meetings
