@@ -1,8 +1,7 @@
 # End-to-end Testing
 
-**Authors**: Dominik Fleischmann ([@domFleischmann](https://github.com/domFleischmann)),
-Kimonas Sotirchos ([@kimwnasptd](https://github.com/kimwnasptd)),
-and Anna Jung ([@annajung](https://github.com/annajung))
+**Authors**: Dominik Fleischmann ([@domFleischmann](https://github.com/domFleischmann)), Kimonas
+Sotirchos ([@kimwnasptd](https://github.com/kimwnasptd)), and Anna Jung ([@annajung](https://github.com/annajung))
 
 ## Background
 
@@ -29,30 +28,35 @@ correctly together.
 After some initial conversations, it has been agreed to create integration tests based on GitHub Actions, which will
 spawn an EC2 instance with enough resources to deploy the complete Kubeflow solution and run some end-to-end testing.
 
-### Alternative solutions considered
-
-#### Prow
-
-While there are some existing tests with Prow, those tests were discarded due to them not having been updated in 2 years
-and there being a high amount of complexity in these tests. After some investigation, the Manifests Working Group
-decided that it would be more work adapting those tests to the current state of manifests than starting from scratch
-with lower complexity.
-
-#### Self-hosted runners
-
-Self-hosted runners are not recommended with public repositories due to security concerns with how it behaves on a pull
-request made by a forked repository.
-
 ## Implementation
 
 Below lists steps the GitHub actions will perform to complete end-to-end testing
 
+- [Create Credentials required by the AWS](#create-credentials-required-by-the-aws)
 - [Create an EC2 instance](#create-an-ec2-instance)
 - [Install a Kubernetes on the instance](#install-a-kubernetes-on-the-instance)
 - [Deploy Kubeflow](#deploy-kubeflow)
 - [Run tests](#run-tests)
 - [Log and report errors](#log-and-report-errors)
 - [Clean up](#clean-up)
+
+### Create credentials required by the AWS
+
+To leverage AWS, two credentials are required:
+
+- `AWS_ACCESS_KEY_ID`: Specifies an AWS access key associated with an IAM user or role.
+- `AWS_SECRET_ACCESS_KEY`: Specifies the secret key associated with the access key. This is essentially the "password"
+  for the access key.
+
+Both credentials needs to
+be [stored as secrets on GitHub](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
+and will be accessed in a workflow as environment variables.
+
+```shell
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+```
 
 ### Create an EC2 instance
 
@@ -84,29 +88,6 @@ To install Kubernetes, we explored two options and propose to use **KinD**
 
 - [Microk8s](#microk8s)
 - [KinD](#kind)
-
-#### MicroK8s
-
-Using [microk8s](https://microk8s.io/), install Kubernetes and enable [dns](https://microk8s.io/docs/addon-dns),
-[storage](https://microk8s.io/docs/addon-hostpath-storage), [ingress](https://microk8s.io/docs/addon-ingress),
-[loadbalancer](https://microk8s.io/docs/addon-metallb), and [rbac](https://microk8s.io/docs/multi-user).
-
-```shell
-# Install microk8s
-sudo snap install microk8s --classic --channel ${{ matrix.microk8s }}
-sudo apt update
-sudo usermod -a -G microk8s ubuntu
-
-# Install dependencies - kubectl
-sudo snap alias microk8s.kubectl kubectl
-
-# Deploy kubernetes using microk8s
-sudo snap install microk8s --classic --channel 1.24/stable
-microk8s enable dns hostpath-storage ingress metallb:10.64.140.43-10.64.140.49 rbac
-```
-
-**Note**: microk8s requires IP address pool when enabling dns, address pool of 10.64.140.43-10.64.140.49 is an arbitrary
-decision.
 
 #### KinD
 
@@ -186,8 +167,10 @@ tests should be added to cover various Kubeflow components and features.
 
 Step to run e2e python script from the workflow:
 
-1. Convert e2e mnist notebook to a python script (reuse [mnist.py](https://github.com/kubeflow/manifests/blob/master/tests/e2e/mnist.py))
-2. Run mnist python script outside of the cluster (reuse [runner.sh](https://github.com/kubeflow/manifests/blob/master/tests/e2e/runner.sh))
+1. Convert e2e mnist notebook to a python script (
+   reuse [mnist.py](https://github.com/kubeflow/manifests/blob/master/tests/e2e/mnist.py))
+2. Run mnist python script outside of the cluster (
+   reuse [runner.sh](https://github.com/kubeflow/manifests/blob/master/tests/e2e/runner.sh))
 
 #### Jupyter notebook
 
@@ -370,3 +353,43 @@ The proposed end-to-end workflow has been tested with the following Kubernetes a
 - 1.25 Kuberentes and main branch of the manifest
   repo ([last commit](https://github.com/DomFleischmann/manifests/commit/8e5714171f1fd5b00f59f436e9ab8cb45a0f30e3)) (
   kind)
+
+### Alternative solutions considered
+
+#### Prow
+
+While there are some existing tests with Prow, those tests were discarded due to them not having been updated in 2 years
+and there being a high amount of complexity in these tests. After some investigation, the Manifests Working Group
+decided that it would be more work adapting those tests to the current state of manifests than starting from scratch
+with lower complexity.
+
+#### Self-hosted runners
+
+Self-hosted runners are not recommended with public repositories due to security concerns with how it behaves on a pull
+request made by a forked repository.
+
+#### MicroK8s
+
+Instead of KinD, [microk8s](https://microk8s.io/) was considered as an alternative to install Kubernetes.
+
+Below shows the steps required in the workflow to install microk8s and to install Kubernetes using microk8s. During
+the Kubernetes installation, you must enable [dns](https://microk8s.io/docs/addon-dns),
+[storage](https://microk8s.io/docs/addon-hostpath-storage), [ingress](https://microk8s.io/docs/addon-ingress),
+[loadbalancer](https://microk8s.io/docs/addon-metallb), and [rbac](https://microk8s.io/docs/multi-user).
+
+```shell
+# Install microk8s
+sudo snap install microk8s --classic --channel ${{ matrix.microk8s }}
+sudo apt update
+sudo usermod -a -G microk8s ubuntu
+
+# Install dependencies - kubectl
+sudo snap alias microk8s.kubectl kubectl
+
+# Deploy kubernetes using microk8s
+sudo snap install microk8s --classic --channel 1.24/stable
+microk8s enable dns hostpath-storage ingress metallb:10.64.140.43-10.64.140.49 rbac
+```
+
+**Note**: microk8s requires IP address pool when enabling dns, address pool of 10.64.140.43-10.64.140.49 is an arbitrary
+decision.
