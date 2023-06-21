@@ -1,35 +1,28 @@
 #!/usr/bin/env bash
 
-#| Working Group         	| Directories                                                                                                                                                                                                                                                                                                                      	|
-#|-----------------------	|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|
-#| AutoML(Katib)         	| ../apps/katib                                                                                                                                                                                                                                                                                                                       	|
-#| Pipelines             	| ../apps/pipeline/upstream                                                                                                                                                                                                                                                                                                           	|
-#| Training              	| ../apps/training-operator/upstream                                                                                                                                                                                                                                                                                                 	|
-#| Manifests             	| ../common                                                                                                                                                                                                                                                                                                                          	|
-#| Notebooks/Workbenches 	| ../apps/admission-webhook/upstream<br>../apps/centraldashboard/upstream<br>../apps/jupyter/jupyter-web-app/upstream<br>../apps/volumes-web-app/upstream<br>../apps/tensorboard/tensorboards-web-app/upstream<br>../apps/profiles/upstream<br>../apps/jupyter/notebook-controller/upstream<br>../apps/tensorboard/tensorboard-controller/upstream 	|
-
 # The script reports:
 # 1. Images used by the Kubeflow Working Groups
 # 2. All images used by Kubeflow
 # The reported image lists are saved in respective files under ../doc directory
+#The script must be executed from the `hack` folder as it use relative paths
 
-# Future release process enhancements may include an automatic image inventory scan.
-# The reported image list can also be used for image vulnerability scanning and managing licenses
+# Future release process enhancements may include an automatic image inventory scan, generating SBOM files
+# vulnerability scanning and managing licenses.
 
 version=latest
 images=()
 
 declare -A wg_dirs=(
   [automl]="../apps/katib"
-  [pipelines]="../apps/pipeline/upstream"
+  [pipelines]="../apps/pipeline/upstream ../apps/kfp-tekton/upstream"
   [training]="../apps/training-operator/upstream"
-  [manifests]="../common"
-  [notebooks]="../apps/admission-webhook/upstream ../apps/centraldashboard/upstream ../apps/jupyter/jupyter-web-app/upstream ../apps/volumes-web-app/upstream ../apps/tensorboard/tensorboards-web-app/upstream ../apps/profiles/upstream ../apps/jupyter/notebook-controller/upstream ../apps/tensorboard/tensorboard-controller/upstream"
+  [manifests]="../common ../example"
+  [workbenches]="../apps/admission-webhook/upstream ../apps/centraldashboard/upstream ../apps/jupyter/jupyter-web-app/upstream ../apps/volumes-web-app/upstream ../apps/tensorboard/tensorboards-web-app/upstream ../apps/profiles/upstream ../apps/jupyter/notebook-controller/upstream ../apps/tensorboard/tensorboard-controller/upstream"
+  [serving]="../contrib/kserve"
 )
 
 declare -A wg_exclude_dirs=(
-#  [automl]="*/manager/* */default/* */crd/* */rbac/* */components/*"
-  [notebooks]="*/manager/* */default/* */crd/* */rbac/* */components/*"
+  [workbenches]="*/manager/* */default/* */crd/* */rbac/* */components/*"
 )
 
 get_wg_ignored_dirs() {
@@ -58,7 +51,7 @@ save_images() {
   wg=${1:-""}
   shift
   local images=("$@")
-  output_file="../docs/kf${version}_${wg}_images.txt"
+  output_file="../docs/kf_${version}_${wg}_images.txt"
   printf "%s\n" "${images[@]}" > "$output_file"
   echo "File ${output_file} successfully created"
 }
