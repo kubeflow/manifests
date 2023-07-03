@@ -61,7 +61,7 @@ kubectl get pod -l app.kubernetes.io/component=kuberay-operator
 # with 1 head Pod and 1 worker Pod.
 # $MY_KUBEFLOW_USER_NAMESPACE is a proper Kubeflow user namespace with istio sidecar injection and never ever the wrong "default" 
 export MY_KUBEFLOW_USER_NAMESPACE=development
-kubectl apply -f $raycluster_example.yaml -n $MY_KUBEFLOW_USER_NAMESPACE
+kubectl apply -f raycluster_example.yaml -n $MY_KUBEFLOW_USER_NAMESPACE
 
 # Check RayCluster
 kubectl get pod -l ray.io/cluster=kubeflow-raycluster -n $MY_KUBEFLOW_USER_NAMESPACE
