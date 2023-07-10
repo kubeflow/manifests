@@ -3,13 +3,12 @@
 # The script reports:
 # 1. Images used by the Kubeflow Working Groups
 # 2. All images used by Kubeflow
-# The reported image lists are saved in respective files under ../doc directory
-#The script must be executed from the `hack` folder as it use relative paths
+# The reported image lists are saved in respective files under ../docs/image_lists directory
+# The script must be executed from the `hack` folder as it use relative paths
 
 # Future release process enhancements may include an automatic image inventory scan, generating SBOM files
 # vulnerability scanning and managing licenses.
 
-version=latest
 images=()
 
 declare -A wg_dirs=(
@@ -51,10 +50,29 @@ save_images() {
   wg=${1:-""}
   shift
   local images=("$@")
-  output_file="../docs/kf_${version}_${wg}_images.txt"
+  output_file="../docs/image_lists/kf_${version}_${wg}_images.txt"
   printf "%s\n" "${images[@]}" > "$output_file"
   echo "File ${output_file} successfully created"
 }
+
+validate_semantic_version() {
+  local version="${1:-"latest"}"
+
+  local regex="^[0-9]+\.[0-9]+\.[0-9]+$"  # Regular expression for semantic version pattern
+  if [[ $version  =~ $regex || $version = "latest" ]]; then
+      echo "$version"
+  else
+      echo "Invalid semantic version: '$version'"
+      return 1
+  fi
+}
+
+if ! version=$(validate_semantic_version "$1") ; then
+    echo "$version. Exiting script."
+    exit 1
+fi
+
+echo "Running the script using Kubeflow version: $version"
 
 for wg in "${!wg_dirs[@]}"; do
   ignored_dirs=$(get_wg_ignored_dirs "$wg")
