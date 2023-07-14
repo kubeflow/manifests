@@ -1,0 +1,18 @@
+#
+# Copyright © 2020 Arrikto Inc.  All Rights Reserved.
+#
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: istio-system
+
+resources:
+- cluster-local-gateway.yaml
+- gateway-authorizationpolicy.yaml
+- gateway.yaml
+
+# Disable this patch until we upgrade to kustomize to v4+ 
+# see https://github.com/kubeflow/manifests/issues/2325#issuecomment-1323909056
+# patchesStrategicMerge:
+# - patches/remove-pdb.yaml
