@@ -12,11 +12,11 @@
 images=()
 
 declare -A wg_dirs=(
-  [automl]="../apps/katib"
-  [pipelines]="../apps/pipeline/upstream ../apps/kfp-tekton/upstream"
-  [training]="../apps/training-operator/upstream"
+  [automl]="../apps/katib/upstream/installs"
+  [pipelines]="../apps/pipeline/upstream/env ../apps/kfp-tekton/upstream/env"
+  [training]="../apps/training-operator/upstream/overlays"
   [manifests]="../common ../example"
-  [workbenches]="../apps/admission-webhook/upstream ../apps/centraldashboard/upstream ../apps/jupyter/jupyter-web-app/upstream ../apps/volumes-web-app/upstream ../apps/tensorboard/tensorboards-web-app/upstream ../apps/profiles/upstream ../apps/jupyter/notebook-controller/upstream ../apps/tensorboard/tensorboard-controller/upstream"
+  [workbenches]="../apps/admission-webhook/upstream/overlays ../apps/centraldashboard/upstream/overlays ../apps/jupyter/jupyter-web-app/upstream/overlays ../apps/volumes-web-app/upstream/overlays ../apps/tensorboard/tensorboards-web-app/upstream/overlays ../apps/profiles/upstream/overlays ../apps/jupyter/notebook-controller/upstream/overlays ../apps/tensorboard/tensorboard-controller/upstream/overlays"
   [serving]="../contrib/kserve"
 )
 
