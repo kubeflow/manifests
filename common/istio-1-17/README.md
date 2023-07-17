@@ -19,8 +19,8 @@ old version is `X1.Y1.Z1`:
 2. Download `istioctl` for version `X.Y.Z`:
 
         $ ISTIO_VERSION="X.Y.Z"
-        $ wget "https://github.com/istio/istio/releases/download/${ISTIO_VERSION}/istio-${ISTIO_VERSION}-linux.tar.gz"
-        $ tar xvfz istio-${ISTIO_VERSION}-linux.tar.gz
+        $ wget "https://github.com/istio/istio/releases/download/${ISTIO_VERSION}/istio-${ISTIO_VERSION}-linux-amd64.tar.gz"
+        $ tar xvfz istio-${ISTIO_VERSION}-linux-amd64.tar.gz
         # sudo mv istio-${ISTIO_VERSION}/bin/istioctl /usr/local/bin/istioctl
 
 3. Use `istioctl` to generate an `IstioOperator` resource, the
@@ -71,6 +71,22 @@ old version is `X1.Y1.Z1`:
    Until now we have used two patches:
    - `common/istio-1-17/istio-install/base/patches/remove-pdb.yaml`
    - `common/istio-1-17/cluster-local-gateway/base/patches/remove-pdb.yaml`
+   
+   The above patches do not work with kustomize v3.2.0 as it doesn't have the appropriate 
+   openapi schemas for the policy/v1 API version resources. This is fixed in kustomize v4+. 
+   See https://github.com/kubernetes-sigs/kustomize/issues/3694#issuecomment-799700607 and
+   https://github.com/kubernetes-sigs/kustomize/issues/4495
+   
+   A temporary workaround is to use the following instructions to manually delete the PodDisruptionBudget resources with `yq`: 
+        
+        $ yq eval -i 'select((.kind == "PodDisruptionBudget" and .metadata.name == "cluster-local-gateway") | not)' common/istio-1-17/cluster-local-gateway/base/cluster-local-gateway.yaml
+        $ yq eval -i 'select((.kind == "PodDisruptionBudget" and .metadata.name == "istio-ingressgateway") | not)' common/istio-1-17/istio-install/base/install.yaml
+        $ yq eval -i 'select((.kind == "PodDisruptionBudget" and .metadata.name == "istiod") | not)' common/istio-1-17/istio-install/base/install.yaml
+        
+   ---
+   **NOTE**
+   
+   NOTE: Make sure to remove a redundant {} at the end of the `common/istio-1-17/istio-install/base/install.yaml` and `common/istio-1-17/cluster-local-gateway/base/cluster-local-gateway.yaml` files.
    
    ---
 
