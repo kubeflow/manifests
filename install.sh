@@ -1,6 +1,6 @@
-# kustomize build example | awk '!/well-defined/' > kubeflow.yaml
+kustomize build example | awk '!/well-defined/' > kubeflow.yaml
 
-# while ! kubectl apply -f kubeflow.yaml; do echo "Retrying to apply resources"; sleep 120; done
+while ! kubectl apply -f kubeflow.yaml; do echo "Retrying to apply resources"; sleep 120; done
 
 
 # while ! kustomize build example | awk '!/well-defined/' | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
@@ -83,30 +83,32 @@ spec:
 EOF 
 
 
-# cat <<EOF | kubectl apply -f -
-# apiVersion: kubeflow.org/v1alpha1
-# kind: PodDefault
-# metadata:
-#   name: access-ml-pipeline
-#   namespace: "kubeflow-thanhnm777-gmail-com"
-# spec:
-#   desc: Allow access to Kubeflow Pipelines
-#   selector:
-#     matchLabels:
-#       access-ml-pipeline: "true"
-#   volumes:
-#     - name: volume-kf-pipeline-token
-#       projected:
-#         sources:
-#           - serviceAccountToken:
-#               path: token
-#               expirationSeconds: 99999
-#               audience: pipelines.kubeflow.org      
-#   volumeMounts:
-#     - mountPath: /var/run/secrets/kubeflow/pipelines
-#       name: volume-kf-pipeline-token
-#       readOnly: true
-#   env:
-#     - name: KF_PIPELINES_SA_TOKEN_PATH
-#       value: /var/run/secrets/kubeflow/pipelines/token
-# EOF
+cat <<EOF | kubectl apply -f -
+apiVersion: kubeflow.org/v1alpha1
+kind: PodDefault
+metadata:
+  name: access-ml-pipeline
+  namespace: "kubeflow-thanhnm777-gmail-com"
+spec:
+  desc: Allow access to Kubeflow Pipelines
+  selector:
+    matchLabels:
+      access-ml-pipeline: "true"
+  volumes:
+    - name: volume-kf-pipeline-token
+      projected:
+        sources:
+          - serviceAccountToken:
+              path: token
+              expirationSeconds: 99999
+              audience: pipelines.kubeflow.org      
+  volumeMounts:
+    - mountPath: /var/run/secrets/kubeflow/pipelines
+      name: volume-kf-pipeline-token
+      readOnly: true
+  env:
+    - name: KF_PIPELINES_SA_TOKEN_PATH
+      value: /var/run/secrets/kubeflow/pipelines/token
+EOF
+
+kubectl apply -f dex-configmap.yaml
