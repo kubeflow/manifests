@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: registry
+  name: registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: registry
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: registry
+    spec:
+      containers:
+        - env:
+            - name: REGISTRY_AUTH
+              value: htpasswd
+            - name: REGISTRY_AUTH_HTPASSWD_PATH
+              value: /auth/htpasswd
+            - name: REGISTRY_AUTH_HTPASSWD_REALM
+              value: Registry Realm
+            - name: REGISTRY_HTTP_TLS_CERTIFICATE
+              value: /certs/domain.crt
+            - name: REGISTRY_HTTP_TLS_KEY
+              value: /certs/domain.key
+          image: registry:2
+          name: registry
+          ports:
+            - containerPort: 5000
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/registry
+              name: registry-claim0
+            - mountPath: /certs
+              name: registry-claim1
+            - mountPath: /auth
+              name: registry-claim2
+      restartPolicy: Always
+      volumes:
+        - name: registry-claim0
+          persistentVolumeClaim:
+            claimName: registry-claim0
+        - name: registry-claim1
+          persistentVolumeClaim:
+            claimName: registry-claim1
+        - name: registry-claim2
+          persistentVolumeClaim:
+            claimName: registry-claim2
+status: {}
