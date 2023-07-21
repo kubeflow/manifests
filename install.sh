@@ -4,6 +4,9 @@ while ! kubectl apply -f kubeflow.yaml; do echo "Retrying to apply resources"; s
 # while ! kustomize build example | awk '!/well-defined/' | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 
 
+#not working but still keeptrack!
+go install github.com/arttor/helmify/cmd/helmify@latest
+kustomize build example | awk '!/well-defined/' | ~/go/bin/helmify kbf
 
 TIMEOUT=600s  # 10mins
 
