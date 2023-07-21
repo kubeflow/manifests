@@ -152,5 +152,3 @@ kubectl apply -f /tmp/istio-${istioVersion}/samples/addons
 kubectl rollout status deployment/kiali -n istio-system
 # /tmp/istio-1.18.1/bin/istioctl dashboard kiali
 cd ..
-
-kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
