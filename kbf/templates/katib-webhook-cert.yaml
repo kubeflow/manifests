@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "kbf.fullname" . }}-katib-webhook-cert
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  commonName: katib-controller.kubeflow.svc
+  dnsNames:
+  - '{{ include "kbf.fullname" . }}-katib-controller.kubeflow.svc'
+  - '{{ include "kbf.fullname" . }}-katib-controller.kubeflow.svc.{{ .Values.kubernetesClusterDomain
+    }}'
+  isCA: true
+  issuerRef:
+    kind: Issuer
+    name: '{{ include "kbf.fullname" . }}-katib-selfsigned-issuer'
+  secretName: katib-webhook-cert

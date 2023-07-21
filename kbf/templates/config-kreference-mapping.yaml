@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-config-kreference-mapping
+  labels:
+    app.kubernetes.io/component: knative-eventing
+    eventing.knative.dev/release: v1.8.1
+    knative.dev/config-category: eventing
+    knative.dev/config-propagation: original
+    kustomize.component: knative
+  {{- include "kbf.labels" . | nindent 4 }}
+  annotations:
+    knative.dev/example-checksum: 7375dbe1
+data:
+  _example: {{ .Values.configKreferenceMapping.Example | toYaml | indent 1 }}

@@ -1,0 +1,49 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "kbf.fullname" . }}-istiod
+  labels:
+    app: istiod
+    release: istio
+  {{- include "kbf.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - gateways
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+  - get
+  - watch
+  - list
+  - update
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "kbf.fullname" . }}-istiod
+  labels:
+    app: istiod
+    release: istio
+  {{- include "kbf.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: '{{ include "kbf.fullname" . }}-istiod'
+subjects:
+- kind: ServiceAccount
+  name: '{{ include "kbf.fullname" . }}-istiod'
+  namespace: '{{ .Release.Namespace }}'

@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-pipeline-install-config
+  labels:
+    app.kubernetes.io/component: ml-pipeline
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  ConMaxLifeTime: {{ .Values.pipelineInstallConfig.conMaxLifeTime | quote }}
+  DEFAULT_CACHE_STALENESS: {{ .Values.pipelineInstallConfig.defaultCacheStaleness
+    | quote }}
+  MAXIMUM_CACHE_STALENESS: {{ .Values.pipelineInstallConfig.maximumCacheStaleness
+    | quote }}
+  appName: {{ .Values.pipelineInstallConfig.appName | quote }}
+  appVersion: {{ .Values.pipelineInstallConfig.appVersion | quote }}
+  autoUpdatePipelineDefaultVersion: {{ .Values.pipelineInstallConfig.autoUpdatePipelineDefaultVersion
+    | quote }}
+  bucketName: {{ .Values.pipelineInstallConfig.bucketName | quote }}
+  cacheDb: {{ .Values.pipelineInstallConfig.cacheDb | quote }}
+  cacheImage: {{ .Values.pipelineInstallConfig.cacheImage | quote }}
+  cacheNodeRestrictions: {{ .Values.pipelineInstallConfig.cacheNodeRestrictions |
+    quote }}
+  cronScheduleTimezone: {{ .Values.pipelineInstallConfig.cronScheduleTimezone | quote
+    }}
+  dbHost: {{ .Values.pipelineInstallConfig.dbHost | quote }}
+  dbPort: {{ .Values.pipelineInstallConfig.dbPort | quote }}
+  defaultPipelineRoot: {{ .Values.pipelineInstallConfig.defaultPipelineRoot | quote
+    }}
+  mlmdDb: {{ .Values.pipelineInstallConfig.mlmdDb | quote }}
+  pipelineDb: {{ .Values.pipelineInstallConfig.pipelineDb | quote }}
+  warning: {{ .Values.pipelineInstallConfig.warning | toYaml | indent 1 }}

@@ -1,0 +1,114 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kbf.fullname" . }}-training-operator
+  labels:
+    app: training-operator
+  {{- include "kbf.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - mpijobs
+  - tfjobs
+  - mxjobs
+  - pytorchjobs
+  - xgboostjobs
+  - paddlejobs
+  - mpijobs/status
+  - tfjobs/status
+  - pytorchjobs/status
+  - mxjobs/status
+  - xgboostjobs/status
+  - paddlejobs/status
+  - mpijobs/finalizers
+  - tfjobs/finalizers
+  - pytorchjobs/finalizers
+  - mxjobs/finalizers
+  - xgboostjobs/finalizers
+  - paddlejobs/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  - endpoints
+  - events
+  verbs:
+  - '*'
+- apiGroups:
+  - apps
+  - extensions
+  resources:
+  - deployments
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - pods/exec
+  verbs:
+  - create
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - roles
+  - rolebindings
+  verbs:
+  - create
+  - list
+  - watch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - secrets
+  - serviceaccounts
+  verbs:
+  - create
+  - list
+  - watch
+  - update
+- apiGroups:
+  - scheduling.volcano.sh
+  resources:
+  - podgroups
+  verbs:
+  - '*'
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - '*'
+- apiGroups:
+  - scheduling.sigs.k8s.io
+  resources:
+  - podgroups
+  verbs:
+  - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "kbf.fullname" . }}-training-operator
+  labels:
+    app: training-operator
+  {{- include "kbf.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: '{{ include "kbf.fullname" . }}-training-operator'
+subjects:
+- kind: ServiceAccount
+  name: '{{ include "kbf.fullname" . }}-training-operator'
+  namespace: '{{ .Release.Namespace }}'

@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kbf.fullname" . }}-tensorboard-controller-controller-manager-metrics-service
+  labels:
+    app: tensorboard-controller
+    control-plane: controller-manager
+    kustomize.component: tensorboard-controller
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.tensorboardControllerControllerManagerMetricsService.type }}
+  selector:
+    app: tensorboard-controller
+    control-plane: controller-manager
+    kustomize.component: tensorboard-controller
+  {{- include "kbf.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.tensorboardControllerControllerManagerMetricsService.ports | toYaml | nindent 2 -}}

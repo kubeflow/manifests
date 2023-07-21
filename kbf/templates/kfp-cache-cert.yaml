@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "kbf.fullname" . }}-kfp-cache-cert
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  commonName: kfp-cache-cert
+  dnsNames:
+  - '{{ include "kbf.fullname" . }}-cache-server'
+  - '{{ include "kbf.fullname" . }}-cache-server.kubeflow'
+  - '{{ include "kbf.fullname" . }}-cache-server.kubeflow.svc'
+  isCA: true
+  issuerRef:
+    kind: Issuer
+    name: '{{ include "kbf.fullname" . }}-kfp-cache-selfsigned-issuer'
+  secretName: webhook-server-tls

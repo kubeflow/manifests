@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kbf.fullname" . }}-training-operator
+  labels:
+    app: training-operator
+  {{- include "kbf.labels" . | nindent 4 }}
+  annotations:
+    prometheus.io/path: /metrics
+    prometheus.io/port: "8080"
+    prometheus.io/scrape: "true"
+spec:
+  type: {{ .Values.trainingOperator.type }}
+  selector:
+    control-plane: kubeflow-training-operator
+  {{- include "kbf.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.trainingOperator.ports | toYaml | nindent 2 -}}

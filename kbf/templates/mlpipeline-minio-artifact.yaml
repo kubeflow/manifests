@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "kbf.fullname" . }}-mlpipeline-minio-artifact
+  labels:
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+stringData:
+  accesskey: {{ required "mlpipelineMinioArtifact.accesskey is required" .Values.mlpipelineMinioArtifact.accesskey
+    | quote }}
+  secretkey: {{ required "mlpipelineMinioArtifact.secretkey is required" .Values.mlpipelineMinioArtifact.secretkey
+    | quote }}

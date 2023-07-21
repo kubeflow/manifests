@@ -1,0 +1,15 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "kbf.fullname" . }}-knative-serving-controller-admin
+  labels:
+    app.kubernetes.io/component: controller
+  {{- include "kbf.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: '{{ include "kbf.fullname" . }}-knative-serving-admin'
+subjects:
+- kind: ServiceAccount
+  name: '{{ include "kbf.fullname" . }}-controller'
+  namespace: '{{ .Release.Namespace }}'

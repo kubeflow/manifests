@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-profiles-config-46c7tgh6fd
+  labels:
+    kustomize.component: profiles
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  ADMIN: {{ .Values.profilesConfig46C7Tgh6Fd.admin | quote }}
+  USERID_HEADER: {{ .Values.profilesConfig46C7Tgh6Fd.useridHeader | quote }}
+  USERID_PREFIX: {{ .Values.profilesConfig46C7Tgh6Fd.useridPrefix | quote }}
+  WORKLOAD_IDENTITY: {{ .Values.profilesConfig46C7Tgh6Fd.workloadIdentity | quote
+    }}

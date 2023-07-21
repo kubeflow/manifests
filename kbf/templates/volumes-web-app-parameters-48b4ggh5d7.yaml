@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-volumes-web-app-parameters-48b4ggh5d7
+  labels:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  VWA_APP_SECURE_COOKIES: {{ .Values.volumesWebAppParameters48B4Ggh5D7.vwaAppSecureCookies
+    | quote }}
+  VWA_CLUSTER_DOMAIN: {{ .Values.volumesWebAppParameters48B4Ggh5D7.vwaClusterDomain
+    | quote }}
+  VWA_PREFIX: {{ .Values.volumesWebAppParameters48B4Ggh5D7.vwaPrefix | quote }}
+  VWA_USERID_HEADER: {{ .Values.volumesWebAppParameters48B4Ggh5D7.vwaUseridHeader
+    | quote }}
+  VWA_USERID_PREFIX: {{ .Values.volumesWebAppParameters48B4Ggh5D7.vwaUseridPrefix
+    | quote }}

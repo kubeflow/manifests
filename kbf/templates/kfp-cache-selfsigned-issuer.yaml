@@ -1,0 +1,8 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ include "kbf.fullname" . }}-kfp-cache-selfsigned-issuer
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selfSigned: {}

@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-config-features
+  labels:
+    app.kubernetes.io/component: knative-eventing
+    eventing.knative.dev/release: v1.8.1
+    knative.dev/config-category: eventing
+    knative.dev/config-propagation: original
+    kustomize.component: knative
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  delivery-retryafter: {{ .Values.configFeatures.deliveryRetryafter | quote }}
+  delivery-timeout: {{ .Values.configFeatures.deliveryTimeout | quote }}
+  kreference-group: {{ .Values.configFeatures.kreferenceGroup | quote }}
+  kreference-mapping: {{ .Values.configFeatures.kreferenceMapping | quote }}
+  new-trigger-filters: {{ .Values.configFeatures.newTriggerFilters | quote }}
+  strict-subscriber: {{ .Values.configFeatures.strictSubscriber | quote }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-config-features
+  labels:
+    app.kubernetes.io/component: controller
+  {{- include "kbf.labels" . | nindent 4 }}
+  annotations:
+    knative.dev/example-checksum: 691a192e
+data:
+  _example: {{ .Values.configFeatures.Example | toYaml | indent 1 }}

@@ -1,0 +1,3602 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-dex
+  labels:
+    app: dex
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.dex.replicas }}
+  selector:
+    matchLabels:
+      app: dex
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: dex
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - command:
+        - dex
+        - serve
+        - /etc/dex/cfg/config.yaml
+        env:
+        - name: KUBERNETES_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        envFrom:
+        - secretRef:
+            name: {{ include "kbf.fullname" . }}-dex-oidc-client
+        image: {{ .Values.dex.dex.image.repository }}:{{ .Values.dex.dex.image.tag | default
+          .Chart.AppVersion }}
+        name: dex
+        ports:
+        - containerPort: 5556
+          name: http
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/dex/cfg
+          name: config
+      serviceAccountName: {{ include "kbf.fullname" . }}-dex
+      volumes:
+      - configMap:
+          items:
+          - key: config.yaml
+            path: config.yaml
+          name: {{ include "kbf.fullname" . }}-dex
+        name: config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-cert-manager
+  labels:
+    app: cert-manager
+    app.kubernetes.io/component: controller
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.certManager.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: controller
+      app.kubernetes.io/instance: cert-manager
+      app.kubernetes.io/name: cert-manager
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: cert-manager
+        app.kubernetes.io/component: controller
+        app.kubernetes.io/instance: cert-manager
+        app.kubernetes.io/name: cert-manager
+        app.kubernetes.io/version: v1.10.1
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9402"
+        prometheus.io/scrape: "true"
+    spec:
+      containers:
+      - args: {{- toYaml .Values.certManager.certManagerController.args | nindent 8 }}
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.certManager.certManagerController.image.repository }}:{{ .Values.certManager.certManagerController.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.certManager.certManagerController.imagePullPolicy }}
+        name: cert-manager-controller
+        ports:
+        - containerPort: 9402
+          name: http-metrics
+          protocol: TCP
+        resources: {}
+        securityContext: {{- toYaml .Values.certManager.certManagerController.containerSecurityContext
+          | nindent 10 }}
+      nodeSelector: {{- toYaml .Values.certManager.nodeSelector | nindent 8 }}
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: {{ include "kbf.fullname" . }}-cert-manager
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-cert-manager-cainjector
+  labels:
+    app: cainjector
+    app.kubernetes.io/component: cainjector
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.certManagerCainjector.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: cainjector
+      app.kubernetes.io/instance: cert-manager
+      app.kubernetes.io/name: cainjector
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: cainjector
+        app.kubernetes.io/component: cainjector
+        app.kubernetes.io/instance: cert-manager
+        app.kubernetes.io/name: cainjector
+        app.kubernetes.io/version: v1.10.1
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - args: {{- toYaml .Values.certManagerCainjector.certManagerCainjector.args | nindent
+          8 }}
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.certManagerCainjector.certManagerCainjector.image.repository
+          }}:{{ .Values.certManagerCainjector.certManagerCainjector.image.tag | default
+          .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.certManagerCainjector.certManagerCainjector.imagePullPolicy
+          }}
+        name: cert-manager-cainjector
+        resources: {}
+        securityContext: {{- toYaml .Values.certManagerCainjector.certManagerCainjector.containerSecurityContext
+          | nindent 10 }}
+      nodeSelector: {{- toYaml .Values.certManagerCainjector.nodeSelector | nindent 8 }}
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: {{ include "kbf.fullname" . }}-cert-manager-cainjector
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-cert-manager-webhook
+  labels:
+    app: webhook
+    app.kubernetes.io/component: webhook
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.certManagerWebhook.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: webhook
+      app.kubernetes.io/instance: cert-manager
+      app.kubernetes.io/name: webhook
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: webhook
+        app.kubernetes.io/component: webhook
+        app.kubernetes.io/instance: cert-manager
+        app.kubernetes.io/name: webhook
+        app.kubernetes.io/version: v1.10.1
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - args: {{- toYaml .Values.certManagerWebhook.certManagerWebhook.args | nindent 8
+          }}
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.certManagerWebhook.certManagerWebhook.image.repository }}:{{
+          .Values.certManagerWebhook.certManagerWebhook.image.tag | default .Chart.AppVersion
+          }}
+        imagePullPolicy: {{ .Values.certManagerWebhook.certManagerWebhook.imagePullPolicy
+          }}
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /livez
+            port: 6080
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: cert-manager-webhook
+        ports:
+        - containerPort: 10250
+          name: https
+          protocol: TCP
+        - containerPort: 6080
+          name: healthcheck
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: 6080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        securityContext: {{- toYaml .Values.certManagerWebhook.certManagerWebhook.containerSecurityContext
+          | nindent 10 }}
+      nodeSelector: {{- toYaml .Values.certManagerWebhook.nodeSelector | nindent 8 }}
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: {{ include "kbf.fullname" . }}-cert-manager-webhook
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-cluster-local-gateway
+  labels:
+    app: cluster-local-gateway
+    install.operator.istio.io/owning-resource: unknown
+    istio: cluster-local-gateway
+    istio.io/rev: default
+    operator.istio.io/component: IngressGateways
+    release: istio
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: cluster-local-gateway
+      istio: cluster-local-gateway
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: cluster-local-gateway
+        chart: gateways
+        heritage: Tiller
+        install.operator.istio.io/owning-resource: unknown
+        istio: cluster-local-gateway
+        istio.io/rev: default
+        operator.istio.io/component: IngressGateways
+        release: istio
+        service.istio.io/canonical-name: cluster-local-gateway
+        service.istio.io/canonical-revision: latest
+        sidecar.istio.io/inject: "false"
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        prometheus.io/path: /stats/prometheus
+        prometheus.io/port: "15020"
+        prometheus.io/scrape: "true"
+        sidecar.istio.io/inject: "false"
+    spec:
+      affinity:
+        nodeAffinity: {}
+      containers:
+      - args: {{- toYaml .Values.clusterLocalGateway.istioProxy.args | nindent 8 }}
+        env:
+        - name: ISTIO_META_ROUTER_MODE
+          value: {{ quote .Values.clusterLocalGateway.istioProxy.env.istioMetaRouterMode
+            }}
+        - name: JWT_POLICY
+          value: {{ quote .Values.clusterLocalGateway.istioProxy.env.jwtPolicy }}
+        - name: PILOT_CERT_PROVIDER
+          value: {{ quote .Values.clusterLocalGateway.istioProxy.env.pilotCertProvider
+            }}
+        - name: CA_ADDR
+          value: {{ quote .Values.clusterLocalGateway.istioProxy.env.caAddr }}
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: INSTANCE_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP
+        - name: SERVICE_ACCOUNT
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.serviceAccountName
+        - name: ISTIO_META_WORKLOAD_NAME
+          value: {{ quote .Values.clusterLocalGateway.istioProxy.env.istioMetaWorkloadName
+            }}
+        - name: ISTIO_META_OWNER
+          value: {{ quote .Values.clusterLocalGateway.istioProxy.env.istioMetaOwner }}
+        - name: ISTIO_META_MESH_ID
+          value: {{ quote .Values.clusterLocalGateway.istioProxy.env.istioMetaMeshId }}
+        - name: TRUST_DOMAIN
+          value: {{ quote .Values.clusterLocalGateway.istioProxy.env.trustDomain }}
+        - name: ISTIO_META_UNPRIVILEGED_POD
+          value: {{ quote .Values.clusterLocalGateway.istioProxy.env.istioMetaUnprivilegedPod
+            }}
+        - name: ISTIO_META_CLUSTER_ID
+          value: {{ quote .Values.clusterLocalGateway.istioProxy.env.istioMetaClusterId
+            }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.clusterLocalGateway.istioProxy.image.repository }}:{{ .Values.clusterLocalGateway.istioProxy.image.tag
+          | default .Chart.AppVersion }}
+        name: istio-proxy
+        ports:
+        - containerPort: 15020
+          protocol: TCP
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 15090
+          name: http-envoy-prom
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /healthz/ready
+            port: 15021
+            scheme: HTTP
+          initialDelaySeconds: 1
+          periodSeconds: 2
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {{- toYaml .Values.clusterLocalGateway.istioProxy.resources | nindent
+          10 }}
+        securityContext: {{- toYaml .Values.clusterLocalGateway.istioProxy.containerSecurityContext
+          | nindent 10 }}
+        volumeMounts:
+        - mountPath: /var/run/secrets/workload-spiffe-uds
+          name: workload-socket
+        - mountPath: /var/run/secrets/credential-uds
+          name: credential-socket
+        - mountPath: /var/run/secrets/workload-spiffe-credentials
+          name: workload-certs
+        - mountPath: /etc/istio/proxy
+          name: istio-envoy
+        - mountPath: /etc/istio/config
+          name: config-volume
+        - mountPath: /var/run/secrets/istio
+          name: istiod-ca-cert
+        - mountPath: /var/run/secrets/tokens
+          name: istio-token
+          readOnly: true
+        - mountPath: /var/lib/istio/data
+          name: istio-data
+        - mountPath: /etc/istio/pod
+          name: podinfo
+        - mountPath: /etc/istio/ingressgateway-certs
+          name: ingressgateway-certs
+          readOnly: true
+        - mountPath: /etc/istio/ingressgateway-ca-certs
+          name: ingressgateway-ca-certs
+          readOnly: true
+      securityContext:
+        fsGroup: 1337
+        runAsGroup: 1337
+        runAsNonRoot: true
+        runAsUser: 1337
+      serviceAccountName: {{ include "kbf.fullname" . }}-cluster-local-gateway-service-account
+      volumes:
+      - emptyDir: {}
+        name: workload-socket
+      - emptyDir: {}
+        name: credential-socket
+      - emptyDir: {}
+        name: workload-certs
+      - configMap:
+          name: istio-ca-root-cert
+        name: istiod-ca-cert
+      - downwardAPI:
+          items:
+          - fieldRef:
+              fieldPath: metadata.labels
+            path: labels
+          - fieldRef:
+              fieldPath: metadata.annotations
+            path: annotations
+        name: podinfo
+      - emptyDir: {}
+        name: istio-envoy
+      - emptyDir: {}
+        name: istio-data
+      - name: istio-token
+        projected:
+          sources:
+          - serviceAccountToken:
+              audience: istio-ca
+              expirationSeconds: 43200
+              path: istio-token
+      - configMap:
+          name: {{ include "kbf.fullname" . }}-istio
+          optional: true
+        name: config-volume
+      - name: ingressgateway-certs
+        secret:
+          optional: true
+          secretName: istio-ingressgateway-certs
+      - name: ingressgateway-ca-certs
+        secret:
+          optional: true
+          secretName: istio-ingressgateway-ca-certs
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-istio-ingressgateway
+  labels:
+    app: istio-ingressgateway
+    install.operator.istio.io/owning-resource: unknown
+    istio: ingressgateway
+    istio.io/rev: default
+    operator.istio.io/component: IngressGateways
+    release: istio
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: istio-ingressgateway
+      istio: ingressgateway
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: istio-ingressgateway
+        chart: gateways
+        heritage: Tiller
+        install.operator.istio.io/owning-resource: unknown
+        istio: ingressgateway
+        istio.io/rev: default
+        operator.istio.io/component: IngressGateways
+        release: istio
+        service.istio.io/canonical-name: istio-ingressgateway
+        service.istio.io/canonical-revision: latest
+        sidecar.istio.io/inject: "false"
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        prometheus.io/path: /stats/prometheus
+        prometheus.io/port: "15020"
+        prometheus.io/scrape: "true"
+        sidecar.istio.io/inject: "false"
+    spec:
+      affinity:
+        nodeAffinity: {}
+      containers:
+      - args: {{- toYaml .Values.istioIngressgateway.istioProxy.args | nindent 8 }}
+        env:
+        - name: JWT_POLICY
+          value: {{ quote .Values.istioIngressgateway.istioProxy.env.jwtPolicy }}
+        - name: PILOT_CERT_PROVIDER
+          value: {{ quote .Values.istioIngressgateway.istioProxy.env.pilotCertProvider
+            }}
+        - name: CA_ADDR
+          value: {{ quote .Values.istioIngressgateway.istioProxy.env.caAddr }}
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: INSTANCE_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP
+        - name: SERVICE_ACCOUNT
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.serviceAccountName
+        - name: ISTIO_META_WORKLOAD_NAME
+          value: {{ quote .Values.istioIngressgateway.istioProxy.env.istioMetaWorkloadName
+            }}
+        - name: ISTIO_META_OWNER
+          value: {{ quote .Values.istioIngressgateway.istioProxy.env.istioMetaOwner }}
+        - name: ISTIO_META_MESH_ID
+          value: {{ quote .Values.istioIngressgateway.istioProxy.env.istioMetaMeshId }}
+        - name: TRUST_DOMAIN
+          value: {{ quote .Values.istioIngressgateway.istioProxy.env.trustDomain }}
+        - name: ISTIO_META_UNPRIVILEGED_POD
+          value: {{ quote .Values.istioIngressgateway.istioProxy.env.istioMetaUnprivilegedPod
+            }}
+        - name: ISTIO_META_CLUSTER_ID
+          value: {{ quote .Values.istioIngressgateway.istioProxy.env.istioMetaClusterId
+            }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.istioIngressgateway.istioProxy.image.repository }}:{{ .Values.istioIngressgateway.istioProxy.image.tag
+          | default .Chart.AppVersion }}
+        name: istio-proxy
+        ports:
+        - containerPort: 15021
+          protocol: TCP
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 8443
+          protocol: TCP
+        - containerPort: 31400
+          protocol: TCP
+        - containerPort: 15443
+          protocol: TCP
+        - containerPort: 15090
+          name: http-envoy-prom
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /healthz/ready
+            port: 15021
+            scheme: HTTP
+          initialDelaySeconds: 1
+          periodSeconds: 2
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {{- toYaml .Values.istioIngressgateway.istioProxy.resources | nindent
+          10 }}
+        securityContext: {{- toYaml .Values.istioIngressgateway.istioProxy.containerSecurityContext
+          | nindent 10 }}
+        volumeMounts:
+        - mountPath: /var/run/secrets/workload-spiffe-uds
+          name: workload-socket
+        - mountPath: /var/run/secrets/credential-uds
+          name: credential-socket
+        - mountPath: /var/run/secrets/workload-spiffe-credentials
+          name: workload-certs
+        - mountPath: /etc/istio/proxy
+          name: istio-envoy
+        - mountPath: /etc/istio/config
+          name: config-volume
+        - mountPath: /var/run/secrets/istio
+          name: istiod-ca-cert
+        - mountPath: /var/run/secrets/tokens
+          name: istio-token
+          readOnly: true
+        - mountPath: /var/lib/istio/data
+          name: istio-data
+        - mountPath: /etc/istio/pod
+          name: podinfo
+        - mountPath: /etc/istio/ingressgateway-certs
+          name: ingressgateway-certs
+          readOnly: true
+        - mountPath: /etc/istio/ingressgateway-ca-certs
+          name: ingressgateway-ca-certs
+          readOnly: true
+      securityContext:
+        fsGroup: 1337
+        runAsGroup: 1337
+        runAsNonRoot: true
+        runAsUser: 1337
+      serviceAccountName: {{ include "kbf.fullname" . }}-istio-ingressgateway-service-account
+      volumes:
+      - emptyDir: {}
+        name: workload-socket
+      - emptyDir: {}
+        name: credential-socket
+      - emptyDir: {}
+        name: workload-certs
+      - configMap:
+          name: istio-ca-root-cert
+        name: istiod-ca-cert
+      - downwardAPI:
+          items:
+          - fieldRef:
+              fieldPath: metadata.labels
+            path: labels
+          - fieldRef:
+              fieldPath: metadata.annotations
+            path: annotations
+        name: podinfo
+      - emptyDir: {}
+        name: istio-envoy
+      - emptyDir: {}
+        name: istio-data
+      - name: istio-token
+        projected:
+          sources:
+          - serviceAccountToken:
+              audience: istio-ca
+              expirationSeconds: 43200
+              path: istio-token
+      - configMap:
+          name: {{ include "kbf.fullname" . }}-istio
+          optional: true
+        name: config-volume
+      - name: ingressgateway-certs
+        secret:
+          optional: true
+          secretName: istio-ingressgateway-certs
+      - name: ingressgateway-ca-certs
+        secret:
+          optional: true
+          secretName: istio-ingressgateway-ca-certs
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-istiod
+  labels:
+    app: istiod
+    install.operator.istio.io/owning-resource: unknown
+    istio: pilot
+    istio.io/rev: default
+    operator.istio.io/component: Pilot
+    release: istio
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.istiod.replicas }}
+  selector:
+    matchLabels:
+      istio: pilot
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: istiod
+        install.operator.istio.io/owning-resource: unknown
+        istio: pilot
+        istio.io/rev: default
+        operator.istio.io/component: Pilot
+        sidecar.istio.io/inject: "false"
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        prometheus.io/port: "15014"
+        prometheus.io/scrape: "true"
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - args: {{- toYaml .Values.istiod.discovery.args | nindent 8 }}
+        env:
+        - name: ENABLE_DEBUG_ON_HTTP
+          value: {{ quote .Values.istiod.discovery.env.enableDebugOnHttp }}
+        - name: REVISION
+          value: {{ quote .Values.istiod.discovery.env.revision }}
+        - name: JWT_POLICY
+          value: {{ quote .Values.istiod.discovery.env.jwtPolicy }}
+        - name: PILOT_CERT_PROVIDER
+          value: {{ quote .Values.istiod.discovery.env.pilotCertProvider }}
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: SERVICE_ACCOUNT
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.serviceAccountName
+        - name: KUBECONFIG
+          value: {{ quote .Values.istiod.discovery.env.kubeconfig }}
+        - name: PILOT_TRACE_SAMPLING
+          value: {{ quote .Values.istiod.discovery.env.pilotTraceSampling }}
+        - name: PILOT_ENABLE_PROTOCOL_SNIFFING_FOR_OUTBOUND
+          value: {{ quote .Values.istiod.discovery.env.pilotEnableProtocolSniffingForOutbound
+            }}
+        - name: PILOT_ENABLE_PROTOCOL_SNIFFING_FOR_INBOUND
+          value: {{ quote .Values.istiod.discovery.env.pilotEnableProtocolSniffingForInbound
+            }}
+        - name: ISTIOD_ADDR
+          value: {{ quote .Values.istiod.discovery.env.istiodAddr }}
+        - name: PILOT_ENABLE_ANALYSIS
+          value: {{ quote .Values.istiod.discovery.env.pilotEnableAnalysis }}
+        - name: CLUSTER_ID
+          value: {{ quote .Values.istiod.discovery.env.clusterId }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.istiod.discovery.image.repository }}:{{ .Values.istiod.discovery.image.tag
+          | default .Chart.AppVersion }}
+        name: discovery
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 15010
+          protocol: TCP
+        - containerPort: 15017
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 1
+          periodSeconds: 3
+          timeoutSeconds: 5
+        resources: {{- toYaml .Values.istiod.discovery.resources | nindent 10 }}
+        securityContext: {{- toYaml .Values.istiod.discovery.containerSecurityContext |
+          nindent 10 }}
+        volumeMounts:
+        - mountPath: /var/run/secrets/tokens
+          name: istio-token
+          readOnly: true
+        - mountPath: /var/run/secrets/istio-dns
+          name: local-certs
+        - mountPath: /etc/cacerts
+          name: cacerts
+          readOnly: true
+        - mountPath: /var/run/secrets/remote
+          name: istio-kubeconfig
+          readOnly: true
+        - mountPath: /var/run/secrets/istiod/tls
+          name: istio-csr-dns-cert
+          readOnly: true
+        - mountPath: /var/run/secrets/istiod/ca
+          name: istio-csr-ca-configmap
+          readOnly: true
+      securityContext:
+        fsGroup: 1337
+      serviceAccountName: {{ include "kbf.fullname" . }}-istiod
+      volumes:
+      - emptyDir:
+          medium: Memory
+        name: local-certs
+      - name: istio-token
+        projected:
+          sources:
+          - serviceAccountToken:
+              audience: istio-ca
+              expirationSeconds: 43200
+              path: istio-token
+      - name: cacerts
+        secret:
+          optional: true
+          secretName: cacerts
+      - name: istio-kubeconfig
+        secret:
+          optional: true
+          secretName: istio-kubeconfig
+      - name: istio-csr-dns-cert
+        secret:
+          optional: true
+          secretName: istiod-tls
+      - configMap:
+          defaultMode: 420
+          name: istio-ca-root-cert
+          optional: true
+        name: istio-csr-ca-configmap
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-eventing-controller
+  labels:
+    app.kubernetes.io/component: knative-eventing
+    eventing.knative.dev/release: v1.8.1
+    knative.dev/high-availability: "true"
+    kustomize.component: knative
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: eventing-controller
+      app.kubernetes.io/component: knative-eventing
+      app.kubernetes.io/name: knative-eventing
+      kustomize.component: knative
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: eventing-controller
+        app.kubernetes.io/component: knative-eventing
+        app.kubernetes.io/name: knative-eventing
+        app.kubernetes.io/version: 1.8.1
+        eventing.knative.dev/release: v1.8.1
+        kustomize.component: knative
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: eventing-controller
+                  app.kubernetes.io/component: knative-eventing
+                  app.kubernetes.io/name: knative-eventing
+                  kustomize.component: knative
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: {{ quote .Values.eventingController.eventingController.env.configLoggingName
+            }}
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: {{ quote .Values.eventingController.eventingController.env.configObservabilityName
+            }}
+        - name: METRICS_DOMAIN
+          value: {{ quote .Values.eventingController.eventingController.env.metricsDomain
+            }}
+        - name: APISERVER_RA_IMAGE
+          value: {{ quote .Values.eventingController.eventingController.env.apiserverRaImage
+            }}
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.eventingController.eventingController.image.repository }}:{{
+          .Values.eventingController.eventingController.image.tag | default .Chart.AppVersion
+          }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: probes
+            scheme: HTTP
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 5
+        name: eventing-controller
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8008
+          name: profiling
+        - containerPort: 8080
+          name: probes
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: probes
+            scheme: HTTP
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 5
+        resources: {{- toYaml .Values.eventingController.eventingController.resources |
+          nindent 10 }}
+        securityContext: {{- toYaml .Values.eventingController.eventingController.containerSecurityContext
+          | nindent 10 }}
+        terminationMessagePolicy: FallbackToLogsOnError
+      enableServiceLinks: false
+      serviceAccountName: {{ include "kbf.fullname" . }}-eventing-controller
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-eventing-webhook
+  labels:
+    app.kubernetes.io/component: knative-eventing
+    eventing.knative.dev/release: v1.8.1
+    kustomize.component: knative
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: eventing-webhook
+      app.kubernetes.io/component: knative-eventing
+      app.kubernetes.io/name: knative-eventing
+      kustomize.component: knative
+      role: eventing-webhook
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: eventing-webhook
+        app.kubernetes.io/component: knative-eventing
+        app.kubernetes.io/name: knative-eventing
+        app.kubernetes.io/version: 1.8.1
+        eventing.knative.dev/release: v1.8.1
+        kustomize.component: knative
+        role: eventing-webhook
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: eventing-webhook
+                  app.kubernetes.io/component: knative-eventing
+                  app.kubernetes.io/name: knative-eventing
+                  kustomize.component: knative
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: {{ quote .Values.eventingWebhook.eventingWebhook.env.configLoggingName
+            }}
+        - name: METRICS_DOMAIN
+          value: {{ quote .Values.eventingWebhook.eventingWebhook.env.metricsDomain }}
+        - name: WEBHOOK_NAME
+          value: {{ quote .Values.eventingWebhook.eventingWebhook.env.webhookName }}
+        - name: WEBHOOK_PORT
+          value: {{ quote .Values.eventingWebhook.eventingWebhook.env.webhookPort }}
+        - name: SINK_BINDING_SELECTION_MODE
+          value: {{ quote .Values.eventingWebhook.eventingWebhook.env.sinkBindingSelectionMode
+            }}
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.eventingWebhook.eventingWebhook.image.repository }}:{{ .Values.eventingWebhook.eventingWebhook.image.tag
+          | default .Chart.AppVersion }}
+        livenessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: webhook
+            port: 8443
+            scheme: HTTPS
+          initialDelaySeconds: 120
+          periodSeconds: 1
+        name: eventing-webhook
+        ports:
+        - containerPort: 8443
+          name: https-webhook
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8008
+          name: profiling
+        readinessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: webhook
+            port: 8443
+            scheme: HTTPS
+          periodSeconds: 1
+        resources: {{- toYaml .Values.eventingWebhook.eventingWebhook.resources | nindent
+          10 }}
+        securityContext: {{- toYaml .Values.eventingWebhook.eventingWebhook.containerSecurityContext
+          | nindent 10 }}
+        terminationMessagePolicy: FallbackToLogsOnError
+      enableServiceLinks: false
+      serviceAccountName: {{ include "kbf.fullname" . }}-eventing-webhook
+      terminationGracePeriodSeconds: 300
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-pingsource-mt-adapter
+  labels:
+    app.kubernetes.io/component: knative-eventing
+    eventing.knative.dev/release: v1.8.1
+    kustomize.component: knative
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.pingsourceMtAdapter.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: knative-eventing
+      app.kubernetes.io/name: knative-eventing
+      eventing.knative.dev/source: ping-source-controller
+      kustomize.component: knative
+      sources.knative.dev/role: adapter
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: knative-eventing
+        app.kubernetes.io/name: knative-eventing
+        app.kubernetes.io/version: 1.8.1
+        eventing.knative.dev/release: v1.8.1
+        eventing.knative.dev/source: ping-source-controller
+        kustomize.component: knative
+        sources.knative.dev/role: adapter
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: knative-eventing
+                  app.kubernetes.io/name: knative-eventing
+                  eventing.knative.dev/source: ping-source-controller
+                  kustomize.component: knative
+                  sources.knative.dev/role: adapter
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: K_METRICS_CONFIG
+          value: {{ quote .Values.pingsourceMtAdapter.dispatcher.env.kMetricsConfig }}
+        - name: K_LOGGING_CONFIG
+          value: {{ quote .Values.pingsourceMtAdapter.dispatcher.env.kLoggingConfig }}
+        - name: K_LEADER_ELECTION_CONFIG
+          value: {{ quote .Values.pingsourceMtAdapter.dispatcher.env.kLeaderElectionConfig
+            }}
+        - name: K_NO_SHUTDOWN_AFTER
+          value: {{ quote .Values.pingsourceMtAdapter.dispatcher.env.kNoShutdownAfter }}
+        - name: K_SINK_TIMEOUT
+          value: {{ quote .Values.pingsourceMtAdapter.dispatcher.env.kSinkTimeout }}
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.pingsourceMtAdapter.dispatcher.image.repository }}:{{ .Values.pingsourceMtAdapter.dispatcher.image.tag
+          | default .Chart.AppVersion }}
+        name: dispatcher
+        ports:
+        - containerPort: 9090
+          name: metrics
+          protocol: TCP
+        resources: {{- toYaml .Values.pingsourceMtAdapter.dispatcher.resources | nindent
+          10 }}
+        securityContext: {{- toYaml .Values.pingsourceMtAdapter.dispatcher.containerSecurityContext
+          | nindent 10 }}
+      enableServiceLinks: false
+      serviceAccountName: {{ include "kbf.fullname" . }}-pingsource-mt-adapter
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-activator
+  labels:
+    app.kubernetes.io/component: activator
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: activator
+      role: activator
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: activator
+        app.kubernetes.io/component: activator
+        app.kubernetes.io/name: knative-serving
+        app.kubernetes.io/version: 1.8.0
+        role: activator
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+      - env:
+        - name: GOGC
+          value: {{ quote .Values.activator.activator.env.gogc }}
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: {{ quote .Values.activator.activator.env.configLoggingName }}
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: {{ quote .Values.activator.activator.env.configObservabilityName }}
+        - name: METRICS_DOMAIN
+          value: {{ quote .Values.activator.activator.env.metricsDomain }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.activator.activator.image.repository }}:{{ .Values.activator.activator.image.tag
+          | default .Chart.AppVersion }}
+        livenessProbe:
+          failureThreshold: 12
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: activator
+            port: 8012
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        name: activator
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8008
+          name: profiling
+        - containerPort: 8012
+          name: http1
+        - containerPort: 8013
+          name: h2c
+        readinessProbe:
+          failureThreshold: 5
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: activator
+            port: 8012
+          periodSeconds: 5
+        resources: {{- toYaml .Values.activator.activator.resources | nindent 10 }}
+        securityContext: {{- toYaml .Values.activator.activator.containerSecurityContext
+          | nindent 10 }}
+      serviceAccountName: {{ include "kbf.fullname" . }}-controller
+      terminationGracePeriodSeconds: 600
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-autoscaler
+  labels:
+    app.kubernetes.io/component: autoscaler
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.autoscaler.replicas }}
+  selector:
+    matchLabels:
+      app: autoscaler
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: autoscaler
+        app.kubernetes.io/component: autoscaler
+        app.kubernetes.io/name: knative-serving
+        app.kubernetes.io/version: 1.8.0
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+        sidecar.istio.io/inject: "true"
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: autoscaler
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: {{ quote .Values.autoscaler.autoscaler.env.configLoggingName }}
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: {{ quote .Values.autoscaler.autoscaler.env.configObservabilityName }}
+        - name: METRICS_DOMAIN
+          value: {{ quote .Values.autoscaler.autoscaler.env.metricsDomain }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.autoscaler.autoscaler.image.repository }}:{{ .Values.autoscaler.autoscaler.image.tag
+          | default .Chart.AppVersion }}
+        livenessProbe:
+          failureThreshold: 6
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: autoscaler
+            port: 8080
+        name: autoscaler
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8008
+          name: profiling
+        - containerPort: 8080
+          name: websocket
+        readinessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: autoscaler
+            port: 8080
+        resources: {{- toYaml .Values.autoscaler.autoscaler.resources | nindent 10 }}
+        securityContext: {{- toYaml .Values.autoscaler.autoscaler.containerSecurityContext
+          | nindent 10 }}
+      serviceAccountName: {{ include "kbf.fullname" . }}-controller
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-controller
+  labels:
+    app.kubernetes.io/component: controller
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: controller
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: controller
+        app.kubernetes.io/component: controller
+        app.kubernetes.io/name: knative-serving
+        app.kubernetes.io/version: 1.8.0
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+        sidecar.istio.io/inject: "true"
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: controller
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: {{ quote .Values.controller.controller.env.configLoggingName }}
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: {{ quote .Values.controller.controller.env.configObservabilityName }}
+        - name: METRICS_DOMAIN
+          value: {{ quote .Values.controller.controller.env.metricsDomain }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.controller.controller.image.repository }}:{{ .Values.controller.controller.image.tag
+          | default .Chart.AppVersion }}
+        name: controller
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8008
+          name: profiling
+        resources: {{- toYaml .Values.controller.controller.resources | nindent 10 }}
+        securityContext: {{- toYaml .Values.controller.controller.containerSecurityContext
+          | nindent 10 }}
+      serviceAccountName: {{ include "kbf.fullname" . }}-controller
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-domain-mapping
+  labels:
+    app.kubernetes.io/component: domain-mapping
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: domain-mapping
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: domain-mapping
+        app.kubernetes.io/component: domain-mapping
+        app.kubernetes.io/name: knative-serving
+        app.kubernetes.io/version: 1.8.0
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+        sidecar.istio.io/inject: "true"
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: domain-mapping
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: {{ quote .Values.domainMapping.domainMapping.env.configLoggingName }}
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: {{ quote .Values.domainMapping.domainMapping.env.configObservabilityName
+            }}
+        - name: METRICS_DOMAIN
+          value: {{ quote .Values.domainMapping.domainMapping.env.metricsDomain }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.domainMapping.domainMapping.image.repository }}:{{ .Values.domainMapping.domainMapping.image.tag
+          | default .Chart.AppVersion }}
+        name: domain-mapping
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8008
+          name: profiling
+        resources: {{- toYaml .Values.domainMapping.domainMapping.resources | nindent 10
+          }}
+        securityContext: {{- toYaml .Values.domainMapping.domainMapping.containerSecurityContext
+          | nindent 10 }}
+      serviceAccountName: {{ include "kbf.fullname" . }}-controller
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-domainmapping-webhook
+  labels:
+    app.kubernetes.io/component: domain-mapping
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: domainmapping-webhook
+      role: domainmapping-webhook
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: domainmapping-webhook
+        app.kubernetes.io/component: domain-mapping
+        app.kubernetes.io/name: knative-serving
+        app.kubernetes.io/version: 1.8.0
+        role: domainmapping-webhook
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+        sidecar.istio.io/inject: "true"
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: domainmapping-webhook
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: {{ quote .Values.domainmappingWebhook.domainmappingWebhook.env.configLoggingName
+            }}
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: {{ quote .Values.domainmappingWebhook.domainmappingWebhook.env.configObservabilityName
+            }}
+        - name: WEBHOOK_PORT
+          value: {{ quote .Values.domainmappingWebhook.domainmappingWebhook.env.webhookPort
+            }}
+        - name: METRICS_DOMAIN
+          value: {{ quote .Values.domainmappingWebhook.domainmappingWebhook.env.metricsDomain
+            }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.domainmappingWebhook.domainmappingWebhook.image.repository }}:{{
+          .Values.domainmappingWebhook.domainmappingWebhook.image.tag | default .Chart.AppVersion
+          }}
+        livenessProbe:
+          failureThreshold: 6
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: webhook
+            port: 8443
+            scheme: HTTPS
+          initialDelaySeconds: 20
+          periodSeconds: 1
+        name: domainmapping-webhook
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8008
+          name: profiling
+        - containerPort: 8443
+          name: https-webhook
+        readinessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: webhook
+            port: 8443
+            scheme: HTTPS
+          periodSeconds: 1
+        resources: {{- toYaml .Values.domainmappingWebhook.domainmappingWebhook.resources
+          | nindent 10 }}
+        securityContext: {{- toYaml .Values.domainmappingWebhook.domainmappingWebhook.containerSecurityContext
+          | nindent 10 }}
+      serviceAccountName: {{ include "kbf.fullname" . }}-controller
+      terminationGracePeriodSeconds: 300
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-net-istio-controller
+  labels:
+    app.kubernetes.io/component: net-istio
+    networking.knative.dev/ingress-provider: istio
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: net-istio-controller
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: net-istio-controller
+        app.kubernetes.io/component: net-istio
+        app.kubernetes.io/name: knative-serving
+        app.kubernetes.io/version: 1.8.0
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: {{ quote .Values.netIstioController.controller.env.configLoggingName }}
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: {{ quote .Values.netIstioController.controller.env.configObservabilityName
+            }}
+        - name: ENABLE_SECRET_INFORMER_FILTERING_BY_CERT_UID
+          value: {{ quote .Values.netIstioController.controller.env.enableSecretInformerFilteringByCertUid
+            }}
+        - name: METRICS_DOMAIN
+          value: {{ quote .Values.netIstioController.controller.env.metricsDomain }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.netIstioController.controller.image.repository }}:{{ .Values.netIstioController.controller.image.tag
+          | default .Chart.AppVersion }}
+        name: controller
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8008
+          name: profiling
+        resources: {{- toYaml .Values.netIstioController.controller.resources | nindent
+          10 }}
+        securityContext: {{- toYaml .Values.netIstioController.controller.containerSecurityContext
+          | nindent 10 }}
+      serviceAccountName: {{ include "kbf.fullname" . }}-controller
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-net-istio-webhook
+  labels:
+    app.kubernetes.io/component: net-istio
+    networking.knative.dev/ingress-provider: istio
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: net-istio-webhook
+      role: net-istio-webhook
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: net-istio-webhook
+        app.kubernetes.io/component: net-istio
+        app.kubernetes.io/name: knative-serving
+        app.kubernetes.io/version: 1.8.0
+        role: net-istio-webhook
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: {{ quote .Values.netIstioWebhook.webhook.env.configLoggingName }}
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: {{ quote .Values.netIstioWebhook.webhook.env.configObservabilityName }}
+        - name: METRICS_DOMAIN
+          value: {{ quote .Values.netIstioWebhook.webhook.env.metricsDomain }}
+        - name: WEBHOOK_NAME
+          value: {{ quote .Values.netIstioWebhook.webhook.env.webhookName }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.netIstioWebhook.webhook.image.repository }}:{{ .Values.netIstioWebhook.webhook.image.tag
+          | default .Chart.AppVersion }}
+        name: webhook
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8008
+          name: profiling
+        - containerPort: 8443
+          name: https-webhook
+        resources: {{- toYaml .Values.netIstioWebhook.webhook.resources | nindent 10 }}
+        securityContext: {{- toYaml .Values.netIstioWebhook.webhook.containerSecurityContext
+          | nindent 10 }}
+      serviceAccountName: {{ include "kbf.fullname" . }}-controller
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-webhook
+  labels:
+    app.kubernetes.io/component: webhook
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: webhook
+      role: webhook
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: webhook
+        app.kubernetes.io/name: knative-serving
+        app.kubernetes.io/version: 1.8.0
+        role: webhook
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+        sidecar.istio.io/inject: "true"
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: webhook
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: {{ quote .Values.webhook.webhook.env.configLoggingName }}
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: {{ quote .Values.webhook.webhook.env.configObservabilityName }}
+        - name: WEBHOOK_NAME
+          value: {{ quote .Values.webhook.webhook.env.webhookName }}
+        - name: WEBHOOK_PORT
+          value: {{ quote .Values.webhook.webhook.env.webhookPort }}
+        - name: METRICS_DOMAIN
+          value: {{ quote .Values.webhook.webhook.env.metricsDomain }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.webhook.webhook.image.repository }}:{{ .Values.webhook.webhook.image.tag
+          | default .Chart.AppVersion }}
+        livenessProbe:
+          failureThreshold: 6
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: webhook
+            port: 8443
+            scheme: HTTPS
+          initialDelaySeconds: 20
+          periodSeconds: 1
+        name: webhook
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8008
+          name: profiling
+        - containerPort: 8443
+          name: https-webhook
+        readinessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: webhook
+            port: 8443
+            scheme: HTTPS
+          periodSeconds: 1
+        resources: {{- toYaml .Values.webhook.webhook.resources | nindent 10 }}
+        securityContext: {{- toYaml .Values.webhook.webhook.containerSecurityContext |
+          nindent 10 }}
+      serviceAccountName: {{ include "kbf.fullname" . }}-controller
+      terminationGracePeriodSeconds: 300
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-admission-webhook-deployment
+  labels:
+    app: poddefaults
+    app.kubernetes.io/component: poddefaults
+    kustomize.component: poddefaults
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: poddefaults
+      app.kubernetes.io/component: poddefaults
+      app.kubernetes.io/name: poddefaults
+      kustomize.component: poddefaults
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: poddefaults
+        app.kubernetes.io/component: poddefaults
+        app.kubernetes.io/name: poddefaults
+        kustomize.component: poddefaults
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - args: {{- toYaml .Values.admissionWebhookDeployment.admissionWebhook.args | nindent
+          8 }}
+        env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.admissionWebhookDeployment.admissionWebhook.image.repository
+          }}:{{ .Values.admissionWebhookDeployment.admissionWebhook.image.tag | default
+          .Chart.AppVersion }}
+        name: admission-webhook
+        ports:
+        - containerPort: 4443
+          name: https-webhook
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/webhook/certs
+          name: webhook-cert
+          readOnly: true
+      serviceAccountName: {{ include "kbf.fullname" . }}-admission-webhook-service-account
+      volumes:
+      - name: webhook-cert
+        secret:
+          secretName: {{ include "kbf.fullname" . }}-webhook-certs
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-cache-server
+  labels:
+    app: cache-server
+    app.kubernetes.io/component: ml-pipeline
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.cacheServer.replicas }}
+  selector:
+    matchLabels:
+      app: cache-server
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
+      application-crd-id: kubeflow-pipelines
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: cache-server
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
+        application-crd-id: kubeflow-pipelines
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - args: {{- toYaml .Values.cacheServer.server.args | nindent 8 }}
+        env:
+        - name: NAMESPACE_TO_WATCH
+          value: {{ quote .Values.cacheServer.server.env.namespaceToWatch }}
+        - name: DEFAULT_CACHE_STALENESS
+          valueFrom:
+            configMapKeyRef:
+              key: DEFAULT_CACHE_STALENESS
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: MAXIMUM_CACHE_STALENESS
+          valueFrom:
+            configMapKeyRef:
+              key: MAXIMUM_CACHE_STALENESS
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: CACHE_IMAGE
+          valueFrom:
+            configMapKeyRef:
+              key: cacheImage
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: CACHE_NODE_RESTRICTIONS
+          valueFrom:
+            configMapKeyRef:
+              key: cacheNodeRestrictions
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: DBCONFIG_DRIVER
+          value: {{ quote .Values.cacheServer.server.env.dbconfigDriver }}
+        - name: DBCONFIG_DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: cacheDb
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: DBCONFIG_HOST_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: dbHost
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: DBCONFIG_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: dbPort
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: DBCONFIG_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: {{ include "kbf.fullname" . }}-mysql-secret
+        - name: DBCONFIG_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: {{ include "kbf.fullname" . }}-mysql-secret
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.cacheServer.server.image.repository }}:{{ .Values.cacheServer.server.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.cacheServer.server.imagePullPolicy }}
+        name: server
+        ports:
+        - containerPort: 8443
+          name: webhook-api
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/webhook/certs
+          name: webhook-tls-certs
+          readOnly: true
+      serviceAccountName: {{ include "kbf.fullname" . }}-kubeflow-pipelines-cache
+      volumes:
+      - name: webhook-tls-certs
+        secret:
+          secretName: webhook-server-tls
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-centraldashboard
+  labels:
+    app: centraldashboard
+    app.kubernetes.io/component: centraldashboard
+    kustomize.component: centraldashboard
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.centraldashboard.replicas }}
+  selector:
+    matchLabels:
+      app: centraldashboard
+      app.kubernetes.io/component: centraldashboard
+      app.kubernetes.io/name: centraldashboard
+      kustomize.component: centraldashboard
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: centraldashboard
+        app.kubernetes.io/component: centraldashboard
+        app.kubernetes.io/name: centraldashboard
+        kustomize.component: centraldashboard
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+      - env:
+        - name: USERID_HEADER
+          value: {{ quote .Values.centraldashboard.centraldashboard.env.useridHeader }}
+        - name: USERID_PREFIX
+          value: {{ quote .Values.centraldashboard.centraldashboard.env.useridPrefix }}
+        - name: PROFILES_KFAM_SERVICE_HOST
+          value: {{ quote .Values.centraldashboard.centraldashboard.env.profilesKfamServiceHost
+            }}
+        - name: REGISTRATION_FLOW
+          value: {{ quote .Values.centraldashboard.centraldashboard.env.registrationFlow
+            }}
+        - name: DASHBOARD_LINKS_CONFIGMAP
+          value: {{ quote .Values.centraldashboard.centraldashboard.env.dashboardLinksConfigmap
+            }}
+        - name: LOGOUT_URL
+          value: {{ quote .Values.centraldashboard.centraldashboard.env.logoutUrl }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.centraldashboard.centraldashboard.image.repository }}:{{ .Values.centraldashboard.centraldashboard.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.centraldashboard.centraldashboard.imagePullPolicy }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8082
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        name: centraldashboard
+        ports:
+        - containerPort: 8082
+          protocol: TCP
+        resources: {}
+      serviceAccountName: {{ include "kbf.fullname" . }}-centraldashboard
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-jupyter-web-app-deployment
+  labels:
+    app: jupyter-web-app
+    kustomize.component: jupyter-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.jupyterWebAppDeployment.replicas }}
+  selector:
+    matchLabels:
+      app: jupyter-web-app
+      kustomize.component: jupyter-web-app
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: jupyter-web-app
+        kustomize.component: jupyter-web-app
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: APP_PREFIX
+          value: {{ quote .Values.jupyterWebAppDeployment.jupyterWebApp.env.appPrefix }}
+        - name: UI
+          value: {{ quote .Values.jupyterWebAppDeployment.jupyterWebApp.env.ui }}
+        - name: USERID_HEADER
+          value: {{ quote .Values.jupyterWebAppDeployment.jupyterWebApp.env.useridHeader
+            }}
+        - name: USERID_PREFIX
+          value: {{ quote .Values.jupyterWebAppDeployment.jupyterWebApp.env.useridPrefix
+            }}
+        - name: APP_SECURE_COOKIES
+          value: {{ quote .Values.jupyterWebAppDeployment.jupyterWebApp.env.appSecureCookies
+            }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.jupyterWebAppDeployment.jupyterWebApp.image.repository }}:{{
+          .Values.jupyterWebAppDeployment.jupyterWebApp.image.tag | default .Chart.AppVersion
+          }}
+        name: jupyter-web-app
+        ports:
+        - containerPort: 5000
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/config
+          name: config-volume
+        - mountPath: /src/apps/default/static/assets/logos
+          name: logos-volume
+      serviceAccountName: {{ include "kbf.fullname" . }}-jupyter-web-app-service-account
+      volumes:
+      - configMap:
+          name: {{ include "kbf.fullname" . }}-jupyter-web-app-config-84khm987mh
+        name: config-volume
+      - configMap:
+          name: {{ include "kbf.fullname" . }}-jupyter-web-app-logos
+        name: logos-volume
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-katib-controller
+  labels:
+    katib.kubeflow.org/component: controller
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.katibController.replicas }}
+  selector:
+    matchLabels:
+      katib.kubeflow.org/component: controller
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        katib.kubeflow.org/component: controller
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - args: {{- toYaml .Values.katibController.katibController.args | nindent 8 }}
+        command:
+        - ./katib-controller
+        env:
+        - name: KATIB_CORE_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.katibController.katibController.image.repository }}:{{ .Values.katibController.katibController.image.tag
+          | default .Chart.AppVersion }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: healthz
+        name: katib-controller
+        ports:
+        - containerPort: 8443
+          name: webhook
+          protocol: TCP
+        - containerPort: 8080
+          name: metrics
+          protocol: TCP
+        - containerPort: 18080
+          name: healthz
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: healthz
+        resources: {}
+        volumeMounts:
+        - mountPath: /tmp/cert
+          name: cert
+          readOnly: true
+      serviceAccountName: {{ include "kbf.fullname" . }}-katib-controller
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: {{ include "kbf.fullname" . }}-katib-webhook-cert
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-katib-db-manager
+  labels:
+    katib.kubeflow.org/component: db-manager
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.katibDbManager.replicas }}
+  selector:
+    matchLabels:
+      katib.kubeflow.org/component: db-manager
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        katib.kubeflow.org/component: db-manager
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - command:
+        - ./katib-db-manager
+        env:
+        - name: DB_NAME
+          value: {{ quote .Values.katibDbManager.katibDbManager.env.dbName }}
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MYSQL_ROOT_PASSWORD
+              name: {{ include "kbf.fullname" . }}-katib-mysql-secrets
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.katibDbManager.katibDbManager.image.repository }}:{{ .Values.katibDbManager.katibDbManager.image.tag
+          | default .Chart.AppVersion }}
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:6789
+          failureThreshold: 5
+          initialDelaySeconds: 10
+          periodSeconds: 60
+        name: katib-db-manager
+        ports:
+        - containerPort: 6789
+          name: api
+        resources: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-katib-mysql
+  labels:
+    katib.kubeflow.org/component: mysql
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.katibMysql.replicas }}
+  selector:
+    matchLabels:
+      katib.kubeflow.org/component: mysql
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        katib.kubeflow.org/component: mysql
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - args: {{- toYaml .Values.katibMysql.katibMysql.args | nindent 8 }}
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MYSQL_ROOT_PASSWORD
+              name: {{ include "kbf.fullname" . }}-katib-mysql-secrets
+        - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          value: {{ quote .Values.katibMysql.katibMysql.env.mysqlAllowEmptyPassword }}
+        - name: MYSQL_DATABASE
+          value: {{ quote .Values.katibMysql.katibMysql.env.mysqlDatabase }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.katibMysql.katibMysql.image.repository }}:{{ .Values.katibMysql.katibMysql.image.tag
+          | default .Chart.AppVersion }}
+        livenessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}
+          failureThreshold: 10
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        name: katib-mysql
+        ports:
+        - containerPort: 3306
+          name: dbapi
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - mysql -D ${MYSQL_DATABASE} -u root -p${MYSQL_ROOT_PASSWORD} -e SELECT 1
+          failureThreshold: 10
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources: {}
+        startupProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}
+          failureThreshold: 60
+          periodSeconds: 15
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: katib-mysql
+      volumes:
+      - name: katib-mysql
+        persistentVolumeClaim:
+          claimName: {{ include "kbf.fullname" . }}-katib-mysql
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-katib-ui
+  labels:
+    katib.kubeflow.org/component: ui
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.katibUi.replicas }}
+  selector:
+    matchLabels:
+      katib.kubeflow.org/component: ui
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        katib.kubeflow.org/component: ui
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+      - args: {{- toYaml .Values.katibUi.katibUi.args | nindent 8 }}
+        command:
+        - ./katib-ui
+        env:
+        - name: KATIB_CORE_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: APP_DISABLE_AUTH
+          value: {{ quote .Values.katibUi.katibUi.env.appDisableAuth }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.katibUi.katibUi.image.repository }}:{{ .Values.katibUi.katibUi.image.tag
+          | default .Chart.AppVersion }}
+        name: katib-ui
+        ports:
+        - containerPort: 8080
+          name: ui
+        resources: {}
+      serviceAccountName: {{ include "kbf.fullname" . }}-katib-ui
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-kserve-controller-manager
+  labels:
+    app: kserve
+    control-plane: kserve-controller-manager
+    controller-tools.k8s.io: "1.0"
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: kserve
+      app.kubernetes.io/name: kserve
+      control-plane: kserve-controller-manager
+      controller-tools.k8s.io: "1.0"
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: kserve
+        app.kubernetes.io/name: kserve
+        control-plane: kserve-controller-manager
+        controller-tools.k8s.io: "1.0"
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        kubectl.kubernetes.io/default-container: manager
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - args: {{- toYaml .Values.kserveControllerManager.manager.args | nindent 8 }}
+        command:
+        - /manager
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: SECRET_NAME
+          value: {{ quote .Values.kserveControllerManager.manager.env.secretName }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.kserveControllerManager.manager.image.repository }}:{{ .Values.kserveControllerManager.manager.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.kserveControllerManager.manager.imagePullPolicy }}
+        name: manager
+        ports:
+        - containerPort: 9443
+          name: webhook-server
+          protocol: TCP
+        resources: {{- toYaml .Values.kserveControllerManager.manager.resources | nindent
+          10 }}
+        securityContext: {{- toYaml .Values.kserveControllerManager.manager.containerSecurityContext
+          | nindent 10 }}
+        volumeMounts:
+        - mountPath: /tmp/k8s-webhook-server/serving-certs
+          name: cert
+          readOnly: true
+      - args: {{- toYaml .Values.kserveControllerManager.kubeRbacProxy.args | nindent 8
+          }}
+        env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.kserveControllerManager.kubeRbacProxy.image.repository }}:{{
+          .Values.kserveControllerManager.kubeRbacProxy.image.tag | default .Chart.AppVersion
+          }}
+        name: kube-rbac-proxy
+        ports:
+        - containerPort: 8443
+          name: https
+          protocol: TCP
+        resources: {}
+      securityContext:
+        runAsNonRoot: true
+      serviceAccountName: {{ include "kbf.fullname" . }}-kserve-controller-manager
+      terminationGracePeriodSeconds: 10
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: kserve-webhook-server-cert
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-kserve-models-web-app
+  labels:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    kustomize.component: kserve-models-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.kserveModelsWebApp.replicas }}
+  selector:
+    matchLabels:
+      app: kserve
+      app.kubernetes.io/component: kserve-models-web-app
+      app.kubernetes.io/name: kserve
+      kustomize.component: kserve-models-web-app
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: kserve
+        app.kubernetes.io/component: kserve-models-web-app
+        app.kubernetes.io/name: kserve
+        kustomize.component: kserve-models-web-app
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "kbf.fullname" . }}-kserve-models-web-app-config
+        image: {{ .Values.kserveModelsWebApp.kserveModelsWebApp.image.repository }}:{{
+          .Values.kserveModelsWebApp.kserveModelsWebApp.image.tag | default .Chart.AppVersion
+          }}
+        imagePullPolicy: {{ .Values.kserveModelsWebApp.kserveModelsWebApp.imagePullPolicy
+          }}
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz/liveness
+            port: http
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: kserve-models-web-app
+        ports:
+        - containerPort: 5000
+          name: http
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz/readiness
+            port: http
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+      serviceAccountName: {{ include "kbf.fullname" . }}-kserve-models-web-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-kubeflow-pipelines-profile-controller
+  labels:
+    app: kubeflow-pipelines-profile-controller
+    app.kubernetes.io/component: ml-pipeline
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.kubeflowPipelinesProfileController.replicas }}
+  selector:
+    matchLabels:
+      app: kubeflow-pipelines-profile-controller
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
+      application-crd-id: kubeflow-pipelines
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: kubeflow-pipelines-profile-controller
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
+        application-crd-id: kubeflow-pipelines
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - command:
+        - python
+        - /hooks/sync.py
+        env:
+        - name: KFP_VERSION
+          valueFrom:
+            configMapKeyRef:
+              key: appVersion
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: KFP_DEFAULT_PIPELINE_ROOT
+          valueFrom:
+            configMapKeyRef:
+              key: defaultPipelineRoot
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+              optional: true
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: accesskey
+              name: {{ include "kbf.fullname" . }}-mlpipeline-minio-artifact
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: secretkey
+              name: {{ include "kbf.fullname" . }}-mlpipeline-minio-artifact
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "kbf.fullname" . }}-kubeflow-pipelines-profile-controller-env-5252m69c4c
+        image: {{ .Values.kubeflowPipelinesProfileController.profileController.image.repository
+          }}:{{ .Values.kubeflowPipelinesProfileController.profileController.image.tag |
+          default .Chart.AppVersion }}
+        name: profile-controller
+        ports:
+        - containerPort: 8080
+        resources: {}
+        volumeMounts:
+        - mountPath: /hooks
+          name: hooks
+      volumes:
+      - configMap:
+          name: {{ include "kbf.fullname" . }}-kubeflow-pipelines-profile-controller-code-hdk828hd6c
+        name: hooks
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-metadata-envoy-deployment
+  labels:
+    application-crd-id: kubeflow-pipelines
+    component: metadata-envoy
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.metadataEnvoyDeployment.replicas }}
+  selector:
+    matchLabels:
+      application-crd-id: kubeflow-pipelines
+      component: metadata-envoy
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        application-crd-id: kubeflow-pipelines
+        component: metadata-envoy
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.metadataEnvoyDeployment.container.image.repository }}:{{ .Values.metadataEnvoyDeployment.container.image.tag
+          | default .Chart.AppVersion }}
+        name: container
+        ports:
+        - containerPort: 9090
+          name: md-envoy
+        - containerPort: 9901
+          name: envoy-admin
+        resources: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-metadata-grpc-deployment
+  labels:
+    application-crd-id: kubeflow-pipelines
+    component: metadata-grpc-server
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.metadataGrpcDeployment.replicas }}
+  selector:
+    matchLabels:
+      application-crd-id: kubeflow-pipelines
+      component: metadata-grpc-server
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        application-crd-id: kubeflow-pipelines
+        component: metadata-grpc-server
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - args: {{- toYaml .Values.metadataGrpcDeployment.container.args | nindent 8 }}
+        command:
+        - /bin/metadata_store_server
+        env:
+        - name: DBCONFIG_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: {{ include "kbf.fullname" . }}-mysql-secret
+        - name: DBCONFIG_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: {{ include "kbf.fullname" . }}-mysql-secret
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              key: mlmdDb
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: MYSQL_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: dbHost
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: MYSQL_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: dbPort
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.metadataGrpcDeployment.container.image.repository }}:{{ .Values.metadataGrpcDeployment.container.image.tag
+          | default .Chart.AppVersion }}
+        livenessProbe:
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          tcpSocket:
+            port: grpc-api
+          timeoutSeconds: 2
+        name: container
+        ports:
+        - containerPort: 8080
+          name: grpc-api
+        readinessProbe:
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          tcpSocket:
+            port: grpc-api
+          timeoutSeconds: 2
+        resources: {}
+      serviceAccountName: {{ include "kbf.fullname" . }}-metadata-grpc-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-metadata-writer
+  labels:
+    app: metadata-writer
+    app.kubernetes.io/component: ml-pipeline
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.metadataWriter.replicas }}
+  selector:
+    matchLabels:
+      app: metadata-writer
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
+      application-crd-id: kubeflow-pipelines
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: metadata-writer
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
+        application-crd-id: kubeflow-pipelines
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: NAMESPACE_TO_WATCH
+          value: {{ quote .Values.metadataWriter.main.env.namespaceToWatch }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.metadataWriter.main.image.repository }}:{{ .Values.metadataWriter.main.image.tag
+          | default .Chart.AppVersion }}
+        name: main
+        resources: {}
+      serviceAccountName: {{ include "kbf.fullname" . }}-kubeflow-pipelines-metadata-writer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-minio
+  labels:
+    app: minio
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: minio
+      application-crd-id: kubeflow-pipelines
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: minio
+        application-crd-id: kubeflow-pipelines
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - args: {{- toYaml .Values.minio.minio.args | nindent 8 }}
+        env:
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: accesskey
+              name: {{ include "kbf.fullname" . }}-mlpipeline-minio-artifact
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: secretkey
+              name: {{ include "kbf.fullname" . }}-mlpipeline-minio-artifact
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.minio.minio.image.repository }}:{{ .Values.minio.minio.image.tag
+          | default .Chart.AppVersion }}
+        name: minio
+        ports:
+        - containerPort: 9000
+        resources: {{- toYaml .Values.minio.minio.resources | nindent 10 }}
+        volumeMounts:
+        - mountPath: /data
+          name: data
+          subPath: minio
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: {{ include "kbf.fullname" . }}-minio-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-ml-pipeline
+  labels:
+    app: ml-pipeline
+    app.kubernetes.io/component: ml-pipeline
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
+      application-crd-id: kubeflow-pipelines
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: ml-pipeline
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
+        application-crd-id: kubeflow-pipelines
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+    spec:
+      containers:
+      - env:
+        - name: KUBEFLOW_USERID_HEADER
+          value: {{ quote .Values.mlPipeline.mlPipelineApiServer.env.kubeflowUseridHeader
+            }}
+        - name: KUBEFLOW_USERID_PREFIX
+          value: {{ quote .Values.mlPipeline.mlPipelineApiServer.env.kubeflowUseridPrefix
+            }}
+        - name: AUTO_UPDATE_PIPELINE_DEFAULT_VERSION
+          valueFrom:
+            configMapKeyRef:
+              key: autoUpdatePipelineDefaultVersion
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: OBJECTSTORECONFIG_SECURE
+          value: {{ quote .Values.mlPipeline.mlPipelineApiServer.env.objectstoreconfigSecure
+            }}
+        - name: OBJECTSTORECONFIG_BUCKETNAME
+          valueFrom:
+            configMapKeyRef:
+              key: bucketName
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: DBCONFIG_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: {{ include "kbf.fullname" . }}-mysql-secret
+        - name: DBCONFIG_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: {{ include "kbf.fullname" . }}-mysql-secret
+        - name: DBCONFIG_DBNAME
+          valueFrom:
+            configMapKeyRef:
+              key: pipelineDb
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: DBCONFIG_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: dbHost
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: DBCONFIG_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: dbPort
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: DBCONFIG_CONMAXLIFETIME
+          valueFrom:
+            configMapKeyRef:
+              key: ConMaxLifeTime
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: OBJECTSTORECONFIG_ACCESSKEY
+          valueFrom:
+            secretKeyRef:
+              key: accesskey
+              name: {{ include "kbf.fullname" . }}-mlpipeline-minio-artifact
+        - name: OBJECTSTORECONFIG_SECRETACCESSKEY
+          valueFrom:
+            secretKeyRef:
+              key: secretkey
+              name: {{ include "kbf.fullname" . }}-mlpipeline-minio-artifact
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "kbf.fullname" . }}-pipeline-api-server-config-dc9hkg52h6
+        image: {{ .Values.mlPipeline.mlPipelineApiServer.image.repository }}:{{ .Values.mlPipeline.mlPipelineApiServer.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.mlPipeline.mlPipelineApiServer.imagePullPolicy }}
+        livenessProbe:
+          exec:
+            command:
+            - wget
+            - -q
+            - -S
+            - -O
+            - -
+            - http://localhost:8888/apis/v1beta1/healthz
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 2
+        name: ml-pipeline-api-server
+        ports:
+        - containerPort: 8888
+          name: http
+        - containerPort: 8887
+          name: grpc
+        readinessProbe:
+          exec:
+            command:
+            - wget
+            - -q
+            - -S
+            - -O
+            - -
+            - http://localhost:8888/apis/v1beta1/healthz
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 2
+        resources: {{- toYaml .Values.mlPipeline.mlPipelineApiServer.resources | nindent
+          10 }}
+        startupProbe:
+          exec:
+            command:
+            - wget
+            - -q
+            - -S
+            - -O
+            - -
+            - http://localhost:8888/apis/v1beta1/healthz
+          failureThreshold: 12
+          periodSeconds: 5
+          timeoutSeconds: 2
+      serviceAccountName: {{ include "kbf.fullname" . }}-ml-pipeline
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-ml-pipeline-persistenceagent
+  labels:
+    app: ml-pipeline-persistenceagent
+    app.kubernetes.io/component: ml-pipeline
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-persistenceagent
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
+      application-crd-id: kubeflow-pipelines
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: ml-pipeline-persistenceagent
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
+        application-crd-id: kubeflow-pipelines
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+    spec:
+      containers:
+      - env:
+        - name: NAMESPACE
+          value: {{ quote .Values.mlPipelinePersistenceagent.mlPipelinePersistenceagent.env.namespace
+            }}
+        - name: KUBEFLOW_USERID_HEADER
+          value: {{ quote .Values.mlPipelinePersistenceagent.mlPipelinePersistenceagent.env.kubeflowUseridHeader
+            }}
+        - name: KUBEFLOW_USERID_PREFIX
+          value: {{ quote .Values.mlPipelinePersistenceagent.mlPipelinePersistenceagent.env.kubeflowUseridPrefix
+            }}
+        - name: TTL_SECONDS_AFTER_WORKFLOW_FINISH
+          value: {{ quote .Values.mlPipelinePersistenceagent.mlPipelinePersistenceagent.env.ttlSecondsAfterWorkflowFinish
+            }}
+        - name: NUM_WORKERS
+          value: {{ quote .Values.mlPipelinePersistenceagent.mlPipelinePersistenceagent.env.numWorkers
+            }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "kbf.fullname" . }}-persistenceagent-config-hkgkmd64bh
+        image: {{ .Values.mlPipelinePersistenceagent.mlPipelinePersistenceagent.image.repository
+          }}:{{ .Values.mlPipelinePersistenceagent.mlPipelinePersistenceagent.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.mlPipelinePersistenceagent.mlPipelinePersistenceagent.imagePullPolicy
+          }}
+        name: ml-pipeline-persistenceagent
+        resources: {{- toYaml .Values.mlPipelinePersistenceagent.mlPipelinePersistenceagent.resources
+          | nindent 10 }}
+      serviceAccountName: {{ include "kbf.fullname" . }}-ml-pipeline-persistenceagent
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-ml-pipeline-scheduledworkflow
+  labels:
+    app: ml-pipeline-scheduledworkflow
+    app.kubernetes.io/component: ml-pipeline
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-scheduledworkflow
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
+      application-crd-id: kubeflow-pipelines
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: ml-pipeline-scheduledworkflow
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
+        application-crd-id: kubeflow-pipelines
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+    spec:
+      containers:
+      - env:
+        - name: NAMESPACE
+          value: {{ quote .Values.mlPipelineScheduledworkflow.mlPipelineScheduledworkflow.env.namespace
+            }}
+        - name: CRON_SCHEDULE_TIMEZONE
+          valueFrom:
+            configMapKeyRef:
+              key: cronScheduleTimezone
+              name: {{ include "kbf.fullname" . }}-pipeline-install-config
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.mlPipelineScheduledworkflow.mlPipelineScheduledworkflow.image.repository
+          }}:{{ .Values.mlPipelineScheduledworkflow.mlPipelineScheduledworkflow.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.mlPipelineScheduledworkflow.mlPipelineScheduledworkflow.imagePullPolicy
+          }}
+        name: ml-pipeline-scheduledworkflow
+        resources: {}
+      serviceAccountName: {{ include "kbf.fullname" . }}-ml-pipeline-scheduledworkflow
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-ml-pipeline-ui
+  labels:
+    app: ml-pipeline-ui
+    app.kubernetes.io/component: ml-pipeline
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-ui
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
+      application-crd-id: kubeflow-pipelines
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: ml-pipeline-ui
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
+        application-crd-id: kubeflow-pipelines
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+    spec:
+      containers:
+      - env:
+        - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
+          value: {{ quote .Values.mlPipelineUi.mlPipelineUi.env.viewerTensorboardPodTemplateSpecPath
+            }}
+        - name: DEPLOYMENT
+          value: {{ quote .Values.mlPipelineUi.mlPipelineUi.env.deployment }}
+        - name: ARTIFACTS_SERVICE_PROXY_NAME
+          value: {{ quote .Values.mlPipelineUi.mlPipelineUi.env.artifactsServiceProxyName
+            }}
+        - name: ARTIFACTS_SERVICE_PROXY_PORT
+          value: {{ quote .Values.mlPipelineUi.mlPipelineUi.env.artifactsServiceProxyPort
+            }}
+        - name: ARTIFACTS_SERVICE_PROXY_ENABLED
+          value: {{ quote .Values.mlPipelineUi.mlPipelineUi.env.artifactsServiceProxyEnabled
+            }}
+        - name: ENABLE_AUTHZ
+          value: {{ quote .Values.mlPipelineUi.mlPipelineUi.env.enableAuthz }}
+        - name: KUBEFLOW_USERID_HEADER
+          value: {{ quote .Values.mlPipelineUi.mlPipelineUi.env.kubeflowUseridHeader }}
+        - name: KUBEFLOW_USERID_PREFIX
+          value: {{ quote .Values.mlPipelineUi.mlPipelineUi.env.kubeflowUseridPrefix }}
+        - name: MINIO_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: accesskey
+              name: {{ include "kbf.fullname" . }}-mlpipeline-minio-artifact
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: secretkey
+              name: {{ include "kbf.fullname" . }}-mlpipeline-minio-artifact
+        - name: ALLOW_CUSTOM_VISUALIZATIONS
+          value: {{ quote .Values.mlPipelineUi.mlPipelineUi.env.allowCustomVisualizations
+            }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.mlPipelineUi.mlPipelineUi.image.repository }}:{{ .Values.mlPipelineUi.mlPipelineUi.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.mlPipelineUi.mlPipelineUi.imagePullPolicy }}
+        livenessProbe:
+          exec:
+            command:
+            - wget
+            - -q
+            - -S
+            - -O
+            - -
+            - http://localhost:3000/apis/v1beta1/healthz
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 2
+        name: ml-pipeline-ui
+        ports:
+        - containerPort: 3000
+        readinessProbe:
+          exec:
+            command:
+            - wget
+            - -q
+            - -S
+            - -O
+            - -
+            - http://localhost:3000/apis/v1beta1/healthz
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 2
+        resources: {{- toYaml .Values.mlPipelineUi.mlPipelineUi.resources | nindent 10
+          }}
+        volumeMounts:
+        - mountPath: /etc/config
+          name: config-volume
+          readOnly: true
+      serviceAccountName: {{ include "kbf.fullname" . }}-ml-pipeline-ui
+      volumes:
+      - configMap:
+          name: {{ include "kbf.fullname" . }}-ml-pipeline-ui-configmap
+        name: config-volume
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-ml-pipeline-viewer-crd
+  labels:
+    app: ml-pipeline-viewer-crd
+    app.kubernetes.io/component: ml-pipeline
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-viewer-crd
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
+      application-crd-id: kubeflow-pipelines
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: ml-pipeline-viewer-crd
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
+        application-crd-id: kubeflow-pipelines
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+    spec:
+      containers:
+      - env:
+        - name: NAMESPACE
+          value: {{ quote .Values.mlPipelineViewerCrd.mlPipelineViewerCrd.env.namespace
+            }}
+        - name: MAX_NUM_VIEWERS
+          value: {{ quote .Values.mlPipelineViewerCrd.mlPipelineViewerCrd.env.maxNumViewers
+            }}
+        - name: MINIO_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.mlPipelineViewerCrd.mlPipelineViewerCrd.image.repository }}:{{
+          .Values.mlPipelineViewerCrd.mlPipelineViewerCrd.image.tag | default .Chart.AppVersion
+          }}
+        imagePullPolicy: {{ .Values.mlPipelineViewerCrd.mlPipelineViewerCrd.imagePullPolicy
+          }}
+        name: ml-pipeline-viewer-crd
+        resources: {}
+      serviceAccountName: {{ include "kbf.fullname" . }}-ml-pipeline-viewer-crd-service-account
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-ml-pipeline-visualizationserver
+  labels:
+    app: ml-pipeline-visualizationserver
+    app.kubernetes.io/component: ml-pipeline
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-visualizationserver
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
+      application-crd-id: kubeflow-pipelines
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: ml-pipeline-visualizationserver
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
+        application-crd-id: kubeflow-pipelines
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.mlPipelineVisualizationserver.mlPipelineVisualizationserver.image.repository
+          }}:{{ .Values.mlPipelineVisualizationserver.mlPipelineVisualizationserver.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.mlPipelineVisualizationserver.mlPipelineVisualizationserver.imagePullPolicy
+          }}
+        livenessProbe:
+          exec:
+            command:
+            - wget
+            - -q
+            - -S
+            - -O
+            - -
+            - http://localhost:8888/
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 2
+        name: ml-pipeline-visualizationserver
+        ports:
+        - containerPort: 8888
+          name: http
+        readinessProbe:
+          exec:
+            command:
+            - wget
+            - -q
+            - -S
+            - -O
+            - -
+            - http://localhost:8888/
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 2
+        resources: {{- toYaml .Values.mlPipelineVisualizationserver.mlPipelineVisualizationserver.resources
+          | nindent 10 }}
+      serviceAccountName: {{ include "kbf.fullname" . }}-ml-pipeline-visualizationserver
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-mysql
+  labels:
+    app: mysql
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+      application-crd-id: kubeflow-pipelines
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: mysql
+        application-crd-id: kubeflow-pipelines
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - args: {{- toYaml .Values.mysql.mysql.args | nindent 8 }}
+        env:
+        - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          value: {{ quote .Values.mysql.mysql.env.mysqlAllowEmptyPassword }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.mysql.mysql.image.repository }}:{{ .Values.mysql.mysql.image.tag
+          | default .Chart.AppVersion }}
+        name: mysql
+        ports:
+        - containerPort: 3306
+          name: mysql
+        resources: {{- toYaml .Values.mysql.mysql.resources | nindent 10 }}
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-persistent-storage
+      serviceAccountName: {{ include "kbf.fullname" . }}-mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: {{ include "kbf.fullname" . }}-mysql-pv-claim
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-notebook-controller-deployment
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: notebook-controller
+      kustomize.component: notebook-controller
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: notebook-controller
+        kustomize.component: notebook-controller
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - command:
+        - /manager
+        env:
+        - name: USE_ISTIO
+          valueFrom:
+            configMapKeyRef:
+              key: USE_ISTIO
+              name: {{ include "kbf.fullname" . }}-notebook-controller-config-dm5b6dd458
+        - name: ISTIO_GATEWAY
+          valueFrom:
+            configMapKeyRef:
+              key: ISTIO_GATEWAY
+              name: {{ include "kbf.fullname" . }}-notebook-controller-config-dm5b6dd458
+        - name: CLUSTER_DOMAIN
+          valueFrom:
+            configMapKeyRef:
+              key: CLUSTER_DOMAIN
+              name: {{ include "kbf.fullname" . }}-notebook-controller-config-dm5b6dd458
+        - name: ENABLE_CULLING
+          valueFrom:
+            configMapKeyRef:
+              key: ENABLE_CULLING
+              name: {{ include "kbf.fullname" . }}-notebook-controller-config-dm5b6dd458
+        - name: CULL_IDLE_TIME
+          valueFrom:
+            configMapKeyRef:
+              key: CULL_IDLE_TIME
+              name: {{ include "kbf.fullname" . }}-notebook-controller-config-dm5b6dd458
+        - name: IDLENESS_CHECK_PERIOD
+          valueFrom:
+            configMapKeyRef:
+              key: IDLENESS_CHECK_PERIOD
+              name: {{ include "kbf.fullname" . }}-notebook-controller-config-dm5b6dd458
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.notebookControllerDeployment.manager.image.repository }}:{{ .Values.notebookControllerDeployment.manager.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.notebookControllerDeployment.manager.imagePullPolicy
+          }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        name: manager
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources: {}
+      serviceAccountName: {{ include "kbf.fullname" . }}-notebook-controller-service-account
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-profiles-deployment
+  labels:
+    kustomize.component: profiles
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.profilesDeployment.replicas }}
+  selector:
+    matchLabels:
+      kustomize.component: profiles
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        kustomize.component: profiles
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+      - command:
+        - /access-management
+        - -cluster-admin
+        - $(ADMIN)
+        - -userid-header
+        - $(USERID_HEADER)
+        - -userid-prefix
+        - $(USERID_PREFIX)
+        env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "kbf.fullname" . }}-profiles-config-46c7tgh6fd
+        image: {{ .Values.profilesDeployment.kfam.image.repository }}:{{ .Values.profilesDeployment.kfam.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.profilesDeployment.kfam.imagePullPolicy }}
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8081
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        name: kfam
+        ports:
+        - containerPort: 8081
+          name: kfam-http
+          protocol: TCP
+        resources: {}
+      - command:
+        - /manager
+        - -userid-header
+        - $(USERID_HEADER)
+        - -userid-prefix
+        - $(USERID_PREFIX)
+        - -workload-identity
+        - $(WORKLOAD_IDENTITY)
+        env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "kbf.fullname" . }}-profiles-config-46c7tgh6fd
+        image: {{ .Values.profilesDeployment.manager.image.repository }}:{{ .Values.profilesDeployment.manager.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.profilesDeployment.manager.imagePullPolicy }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 9876
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        name: manager
+        ports:
+        - containerPort: 9876
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 9876
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/profile-controller
+          name: namespace-labels
+          readOnly: true
+      serviceAccountName: {{ include "kbf.fullname" . }}-profiles-controller-service-account
+      volumes:
+      - configMap:
+          name: {{ include "kbf.fullname" . }}-namespace-labels-data-4df5t8mdgf
+        name: namespace-labels
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-tensorboard-controller-deployment
+  labels:
+    app: tensorboard-controller
+    control-plane: controller-manager
+    kustomize.component: tensorboard-controller
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.tensorboardControllerDeployment.replicas }}
+  selector:
+    matchLabels:
+      app: tensorboard-controller
+      control-plane: controller-manager
+      kustomize.component: tensorboard-controller
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: tensorboard-controller
+        control-plane: controller-manager
+        kustomize.component: tensorboard-controller
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        kubectl.kubernetes.io/default-container: manager
+    spec:
+      containers:
+      - args: {{- toYaml .Values.tensorboardControllerDeployment.manager.args | nindent
+          8 }}
+        command:
+        - /manager
+        env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "kbf.fullname" . }}-tensorboard-controller-config-b98cb9gk9k
+        image: {{ .Values.tensorboardControllerDeployment.manager.image.repository }}:{{
+          .Values.tensorboardControllerDeployment.manager.image.tag | default .Chart.AppVersion
+          }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        name: manager
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources: {{- toYaml .Values.tensorboardControllerDeployment.manager.resources
+          | nindent 10 }}
+        securityContext: {{- toYaml .Values.tensorboardControllerDeployment.manager.containerSecurityContext
+          | nindent 10 }}
+      - args: {{- toYaml .Values.tensorboardControllerDeployment.kubeRbacProxy.args | nindent
+          8 }}
+        env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.tensorboardControllerDeployment.kubeRbacProxy.image.repository
+          }}:{{ .Values.tensorboardControllerDeployment.kubeRbacProxy.image.tag | default
+          .Chart.AppVersion }}
+        name: kube-rbac-proxy
+        ports:
+        - containerPort: 8443
+          name: https
+          protocol: TCP
+        resources: {{- toYaml .Values.tensorboardControllerDeployment.kubeRbacProxy.resources
+          | nindent 10 }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+      serviceAccountName: {{ include "kbf.fullname" . }}-tensorboard-controller-controller-manager
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-tensorboards-web-app-deployment
+  labels:
+    app: tensorboards-web-app
+    kustomize.component: tensorboards-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.tensorboardsWebAppDeployment.replicas }}
+  selector:
+    matchLabels:
+      app: tensorboards-web-app
+      kustomize.component: tensorboards-web-app
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: tensorboards-web-app
+        kustomize.component: tensorboards-web-app
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: APP_PREFIX
+          value: {{ quote .Values.tensorboardsWebAppDeployment.tensorboardsWebApp.env.appPrefix
+            }}
+        - name: USERID_HEADER
+          value: {{ quote .Values.tensorboardsWebAppDeployment.tensorboardsWebApp.env.useridHeader
+            }}
+        - name: USERID_PREFIX
+          value: {{ quote .Values.tensorboardsWebAppDeployment.tensorboardsWebApp.env.useridPrefix
+            }}
+        - name: APP_SECURE_COOKIES
+          value: {{ quote .Values.tensorboardsWebAppDeployment.tensorboardsWebApp.env.appSecureCookies
+            }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.tensorboardsWebAppDeployment.tensorboardsWebApp.image.repository
+          }}:{{ .Values.tensorboardsWebAppDeployment.tensorboardsWebApp.image.tag | default
+          .Chart.AppVersion }}
+        name: tensorboards-web-app
+        ports:
+        - containerPort: 5000
+        resources: {}
+      serviceAccountName: {{ include "kbf.fullname" . }}-tensorboards-web-app-service-account
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-training-operator
+  labels:
+    control-plane: kubeflow-training-operator
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.trainingOperator.replicas }}
+  selector:
+    matchLabels:
+      control-plane: kubeflow-training-operator
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        control-plane: kubeflow-training-operator
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - command:
+        - /manager
+        env:
+        - name: MY_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.trainingOperator.trainingOperator.image.repository }}:{{ .Values.trainingOperator.trainingOperator.image.tag
+          | default .Chart.AppVersion }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          timeoutSeconds: 3
+        name: training-operator
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 10
+          periodSeconds: 15
+          timeoutSeconds: 3
+        resources: {}
+        securityContext: {{- toYaml .Values.trainingOperator.trainingOperator.containerSecurityContext
+          | nindent 10 }}
+      serviceAccountName: {{ include "kbf.fullname" . }}-training-operator
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-volumes-web-app-deployment
+  labels:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.volumesWebAppDeployment.replicas }}
+  selector:
+    matchLabels:
+      app: volumes-web-app
+      kustomize.component: volumes-web-app
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: volumes-web-app
+        kustomize.component: volumes-web-app
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: APP_PREFIX
+          value: {{ quote .Values.volumesWebAppDeployment.volumesWebApp.env.appPrefix }}
+        - name: USERID_HEADER
+          value: {{ quote .Values.volumesWebAppDeployment.volumesWebApp.env.useridHeader
+            }}
+        - name: USERID_PREFIX
+          value: {{ quote .Values.volumesWebAppDeployment.volumesWebApp.env.useridPrefix
+            }}
+        - name: APP_SECURE_COOKIES
+          value: {{ quote .Values.volumesWebAppDeployment.volumesWebApp.env.appSecureCookies
+            }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.volumesWebAppDeployment.volumesWebApp.image.repository }}:{{
+          .Values.volumesWebAppDeployment.volumesWebApp.image.tag | default .Chart.AppVersion
+          }}
+        name: volumes-web-app
+        ports:
+        - containerPort: 5000
+        resources: {}
+      serviceAccountName: {{ include "kbf.fullname" . }}-volumes-web-app-service-account
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kbf.fullname" . }}-workflow-controller
+  labels:
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: workflow-controller
+      application-crd-id: kubeflow-pipelines
+    {{- include "kbf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: workflow-controller
+        application-crd-id: kubeflow-pipelines
+      {{- include "kbf.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - args: {{- toYaml .Values.workflowController.workflowController.args | nindent 8
+          }}
+        command:
+        - workflow-controller
+        env:
+        - name: LEADER_ELECTION_IDENTITY
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.workflowController.workflowController.image.repository }}:{{
+          .Values.workflowController.workflowController.image.tag | default .Chart.AppVersion
+          }}
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: 6060
+          initialDelaySeconds: 90
+          periodSeconds: 60
+          timeoutSeconds: 30
+        name: workflow-controller
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 6060
+        resources: {{- toYaml .Values.workflowController.workflowController.resources |
+          nindent 10 }}
+        securityContext: {{- toYaml .Values.workflowController.workflowController.containerSecurityContext
+          | nindent 10 }}
+      nodeSelector: {{- toYaml .Values.workflowController.nodeSelector | nindent 8 }}
+      priorityClassName: workflow-controller
+      securityContext:
+        runAsNonRoot: true
+      serviceAccountName: {{ include "kbf.fullname" . }}-argo

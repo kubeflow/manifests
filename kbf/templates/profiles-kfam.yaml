@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kbf.fullname" . }}-profiles-kfam
+  labels:
+    kustomize.component: profiles
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.profilesKfam.type }}
+  selector:
+    kustomize.component: profiles
+  {{- include "kbf.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.profilesKfam.ports | toYaml | nindent 2 -}}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "kbf.fullname" . }}-profiles-kfam
+  labels:
+    kustomize.component: profiles
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - headers:
+      request:
+        add:
+          x-forwarded-prefix: /kfam
+    match:
+    - uri:
+        prefix: /kfam/
+    rewrite:
+      uri: /kfam/
+    route:
+    - destination:
+        host: profiles-kfam.kubeflow.svc.cluster.local
+        port:
+          number: 8081
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "kbf.fullname" . }}-profiles-kfam
+  labels:
+    kustomize.component: profiles
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/kubeflow/sa/centraldashboard
+  selector:
+    matchLabels:
+      kustomize.component: profiles

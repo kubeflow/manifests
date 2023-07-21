@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-config-br-default-channel
+  labels:
+    app.kubernetes.io/component: knative-eventing
+    eventing.knative.dev/release: v1.8.1
+    kustomize.component: knative
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  channel-template-spec: {{ .Values.configBrDefaultChannel.channelTemplateSpec |
+    toYaml | indent 1 }}

@@ -1,0 +1,16 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "kbf.fullname" . }}-pipeline-runner-binding
+  labels:
+    app.kubernetes.io/component: ml-pipeline
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: '{{ include "kbf.fullname" . }}-pipeline-runner'
+subjects:
+- kind: ServiceAccount
+  name: '{{ include "kbf.fullname" . }}-pipeline-runner'
+  namespace: '{{ .Release.Namespace }}'

@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kbf.fullname" . }}-kubeflow-kserve-admin
+  labels:
+    app: kserve
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+  {{- include "kbf.labels" . | nindent 4 }}
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-kserve-admin: "true"
+rules: []

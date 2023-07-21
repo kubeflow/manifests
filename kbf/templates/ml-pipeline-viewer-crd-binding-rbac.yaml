@@ -1,0 +1,33 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "kbf.fullname" . }}-ml-pipeline-viewer-crd-binding
+  labels:
+    app.kubernetes.io/component: ml-pipeline
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: '{{ include "kbf.fullname" . }}-ml-pipeline-viewer-controller-role'
+subjects:
+- kind: ServiceAccount
+  name: '{{ include "kbf.fullname" . }}-ml-pipeline-viewer-crd-service-account'
+  namespace: '{{ .Release.Namespace }}'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "kbf.fullname" . }}-ml-pipeline-viewer-crd-binding
+  labels:
+    app.kubernetes.io/component: ml-pipeline
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: '{{ include "kbf.fullname" . }}-ml-pipeline-viewer-controller-role'
+subjects:
+- kind: ServiceAccount
+  name: '{{ include "kbf.fullname" . }}-ml-pipeline-viewer-crd-service-account'
+  namespace: '{{ .Release.Namespace }}'

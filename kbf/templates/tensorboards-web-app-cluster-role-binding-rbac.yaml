@@ -1,0 +1,16 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "kbf.fullname" . }}-tensorboards-web-app-cluster-role-binding
+  labels:
+    app: tensorboards-web-app
+    kustomize.component: tensorboards-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: '{{ include "kbf.fullname" . }}-tensorboards-web-app-cluster-role'
+subjects:
+- kind: ServiceAccount
+  name: '{{ include "kbf.fullname" . }}-tensorboards-web-app-service-account'
+  namespace: '{{ .Release.Namespace }}'

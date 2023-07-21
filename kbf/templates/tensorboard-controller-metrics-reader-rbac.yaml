@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kbf.fullname" . }}-tensorboard-controller-metrics-reader
+  labels:
+    app: tensorboard-controller
+    kustomize.component: tensorboard-controller
+  {{- include "kbf.labels" . | nindent 4 }}
+rules:
+- nonResourceURLs:
+  - /metrics
+  verbs:
+  - get

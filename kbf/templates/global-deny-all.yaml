@@ -1,0 +1,7 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "kbf.fullname" . }}-global-deny-all
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+spec: {}

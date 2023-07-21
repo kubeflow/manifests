@@ -1,0 +1,15 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kbf.fullname" . }}-admission-webhook-kubeflow-poddefaults-admin
+  labels:
+    app: poddefaults
+    app.kubernetes.io/component: poddefaults
+    kustomize.component: poddefaults
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+  {{- include "kbf.labels" . | nindent 4 }}
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-poddefaults-admin: "true"
+rules: []

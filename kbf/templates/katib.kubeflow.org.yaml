@@ -1,0 +1,84 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: {{ include "kbf.fullname" . }}-katib.kubeflow.org
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "kbf.fullname" . }}-kubeflow/katib-webhook-cert
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    caBundle: Cg==
+    service:
+      name: '{{ include "kbf.fullname" . }}-katib-controller'
+      namespace: kubeflow
+      path: /mutate-experiment
+  failurePolicy: Ignore
+  name: defaulter.experiment.katib.kubeflow.org
+  rules:
+  - apiGroups:
+    - kubeflow.org
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - experiments
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    caBundle: Cg==
+    service:
+      name: '{{ include "kbf.fullname" . }}-katib-controller'
+      namespace: kubeflow
+      path: /mutate-pod
+  failurePolicy: Ignore
+  name: mutator.pod.katib.kubeflow.org
+  namespaceSelector:
+    matchLabels:
+      katib.kubeflow.org/metrics-collector-injection: enabled
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    resources:
+    - pods
+  sideEffects: None
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: {{ include "kbf.fullname" . }}-katib.kubeflow.org
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "kbf.fullname" . }}-kubeflow/katib-webhook-cert
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    caBundle: Cg==
+    service:
+      name: '{{ include "kbf.fullname" . }}-katib-controller'
+      namespace: kubeflow
+      path: /validate-experiment
+  failurePolicy: Ignore
+  name: validator.experiment.katib.kubeflow.org
+  rules:
+  - apiGroups:
+    - kubeflow.org
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - experiments
+  sideEffects: None

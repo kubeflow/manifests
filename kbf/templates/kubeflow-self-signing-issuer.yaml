@@ -1,0 +1,10 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ include "kbf.fullname" . }}-kubeflow-self-signing-issuer
+  labels:
+    app.kubernetes.io/component: cert-manager
+    kustomize.component: cert-manager
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selfSigned: {}

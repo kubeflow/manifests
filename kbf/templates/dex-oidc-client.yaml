@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "kbf.fullname" . }}-dex-oidc-client
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  OIDC_CLIENT_ID: {{ required "dexOidcClient.oidcClientId is required" .Values.dexOidcClient.oidcClientId
+    | b64enc | quote }}
+  OIDC_CLIENT_SECRET: {{ required "dexOidcClient.oidcClientSecret is required" .Values.dexOidcClient.oidcClientSecret
+    | b64enc | quote }}
+type: Opaque

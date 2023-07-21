@@ -1,0 +1,16 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "kbf.fullname" . }}-jupyter-web-app-jupyter-notebook-role-binding
+  labels:
+    app: jupyter-web-app
+    kustomize.component: jupyter-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: '{{ include "kbf.fullname" . }}-jupyter-web-app-jupyter-notebook-role'
+subjects:
+- kind: ServiceAccount
+  name: jupyter-notebook
+  namespace: '{{ .Release.Namespace }}'

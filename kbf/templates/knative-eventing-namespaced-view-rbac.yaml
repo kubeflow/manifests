@@ -1,0 +1,24 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kbf.fullname" . }}-knative-eventing-namespaced-view
+  labels:
+    app.kubernetes.io/component: knative-eventing
+    eventing.knative.dev/release: v1.8.1
+    kustomize.component: knative
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+  {{- include "kbf.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - eventing.knative.dev
+  - messaging.knative.dev
+  - sources.knative.dev
+  - flows.knative.dev
+  - bindings.knative.dev
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+  - watch

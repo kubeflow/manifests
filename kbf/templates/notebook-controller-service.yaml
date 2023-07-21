@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kbf.fullname" . }}-notebook-controller-service
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.notebookControllerService.type }}
+  selector:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+  {{- include "kbf.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.notebookControllerService.ports | toYaml | nindent 2 -}}

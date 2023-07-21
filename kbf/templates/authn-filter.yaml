@@ -1,0 +1,39 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: {{ include "kbf.fullname" . }}-authn-filter
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  configPatches:
+  - applyTo: HTTP_FILTER
+    match:
+      context: GATEWAY
+      listener:
+        filterChain:
+          filter:
+            name: envoy.http_connection_manager
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: envoy.filters.http.ext_authz
+        typed_config:
+          '@type': type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
+          http_service:
+            authorization_request:
+              allowed_headers:
+                patterns:
+                - exact: authorization
+                - exact: cookie
+                - exact: x-auth-token
+            authorization_response:
+              allowed_upstream_headers:
+                patterns:
+                - exact: kubeflow-userid
+            server_uri:
+              cluster: outbound|8080||authservice.istio-system.svc.cluster.local
+              timeout: 10s
+              uri: http://authservice.istio-system.svc.cluster.local
+  workloadSelector:
+    labels:
+      istio: ingressgateway
