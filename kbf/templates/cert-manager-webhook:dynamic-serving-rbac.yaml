@@ -1,0 +1,43 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "kbf.fullname" . }}-cert-manager-webhook:dynamic-serving
+  labels:
+    app: webhook
+    app.kubernetes.io/component: webhook
+  {{- include "kbf.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - ""
+  resourceNames:
+  - cert-manager-webhook-ca
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "kbf.fullname" . }}-cert-manager-webhook:dynamic-serving
+  labels:
+    app: webhook
+    app.kubernetes.io/component: webhook
+  {{- include "kbf.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: '{{ include "kbf.fullname" . }}-cert-manager-webhook:dynamic-serving'
+subjects:
+- kind: ServiceAccount
+  name: '{{ include "kbf.fullname" . }}-cert-manager-webhook'
+  namespace: '{{ .Release.Namespace }}'

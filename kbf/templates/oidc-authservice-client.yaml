@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "kbf.fullname" . }}-oidc-authservice-client
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  CLIENT_ID: {{ required "oidcAuthserviceClient.clientId is required" .Values.oidcAuthserviceClient.clientId
+    | b64enc | quote }}
+  CLIENT_SECRET: {{ required "oidcAuthserviceClient.clientSecret is required" .Values.oidcAuthserviceClient.clientSecret
+    | b64enc | quote }}
+type: Opaque

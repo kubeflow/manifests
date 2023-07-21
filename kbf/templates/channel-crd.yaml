@@ -1,0 +1,328 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: channels.messaging.knative.dev
+  labels:
+    app.kubernetes.io/component: knative-eventing
+    duck.knative.dev/addressable: "true"
+    eventing.knative.dev/release: v1.8.1
+    knative.dev/crd-install: "true"
+    kustomize.component: knative
+    messaging.knative.dev/subscribable: "true"
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  group: messaging.knative.dev
+  names:
+    categories:
+    - all
+    - knative
+    - messaging
+    - channel
+    kind: Channel
+    plural: channels
+    shortNames:
+    - ch
+    singular: channel
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.address.url
+      name: URL
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    - jsonPath: .status.conditions[?(@.type=="Ready")].status
+      name: Ready
+      type: string
+    - jsonPath: .status.conditions[?(@.type=="Ready")].reason
+      name: Reason
+      type: string
+    name: v1
+    schema:
+      openAPIV3Schema:
+        description: Channel represents a generic Channel. It is normally used when
+          we want a Channel, but do not need a specific Channel implementation.
+        properties:
+          spec:
+            description: Spec defines the desired state of the Channel.
+            properties:
+              channelTemplate:
+                description: ChannelTemplate specifies which Channel CRD to use to create
+                  the CRD Channel backing this Channel. This is immutable after creation.
+                  Normally this is set by the Channel defaulter, not directly by the
+                  user.
+                properties:
+                  apiVersion:
+                    description: 'APIVersion defines the versioned schema of this representation
+                      of an object. Servers should convert recognized schemas to the
+                      latest internal value, and may reject unrecognized values. More
+                      info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+                    type: string
+                  kind:
+                    description: 'Kind is a string value representing the REST resource
+                      this object represents. Servers may infer this from the endpoint
+                      the client submits requests to. Cannot be updated. In CamelCase.
+                      More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                    type: string
+                  spec:
+                    description: Spec defines the Spec to use for each channel created.
+                      Passed in verbatim to the Channel CRD as Spec section.
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                type: object
+              delivery:
+                description: DeliverySpec contains the default delivery spec for each
+                  subscription to this Channelable. Each subscription delivery spec,
+                  if any, overrides this global delivery spec.
+                properties:
+                  backoffDelay:
+                    description: 'BackoffDelay is the delay before retrying. More information
+                      on Duration format: - https://www.iso.org/iso-8601-date-and-time-format.html
+                      - https://en.wikipedia.org/wiki/ISO_8601  For linear policy, backoff
+                      delay is backoffDelay*<numberOfRetries>. For exponential policy,
+                      backoff delay is backoffDelay*2^<numberOfRetries>.'
+                    type: string
+                  backoffPolicy:
+                    description: BackoffPolicy is the retry backoff policy (linear,
+                      exponential).
+                    type: string
+                  deadLetterSink:
+                    description: DeadLetterSink is the sink receiving event that could
+                      not be sent to a destination.
+                    properties:
+                      ref:
+                        description: Ref points to an Addressable.
+                        properties:
+                          apiVersion:
+                            description: API version of the referent.
+                            type: string
+                          kind:
+                            description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                            type: string
+                          name:
+                            description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                            type: string
+                          namespace:
+                            description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+                              This is optional field, it gets defaulted to the object
+                              holding it if left out.'
+                            type: string
+                        type: object
+                      uri:
+                        description: URI can be an absolute URL(non-empty scheme and
+                          non-empty host) pointing to the target or a relative URI.
+                          Relative URIs will be resolved using the base URI retrieved
+                          from Ref.
+                        type: string
+                    type: object
+                  retry:
+                    description: Retry is the minimum number of retries the sender should
+                      attempt when sending an event before moving it to the dead letter
+                      sink.
+                    format: int32
+                    type: integer
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+              subscribers:
+                description: This is the list of subscriptions for this subscribable.
+                items:
+                  properties:
+                    delivery:
+                      description: DeliverySpec contains options controlling the event
+                        delivery
+                      properties:
+                        backoffDelay:
+                          description: 'BackoffDelay is the delay before retrying. More
+                            information on Duration format: - https://www.iso.org/iso-8601-date-and-time-format.html
+                            - https://en.wikipedia.org/wiki/ISO_8601  For linear policy,
+                            backoff delay is backoffDelay*<numberOfRetries>. For exponential
+                            policy, backoff delay is backoffDelay*2^<numberOfRetries>.'
+                          type: string
+                        backoffPolicy:
+                          description: BackoffPolicy is the retry backoff policy (linear,
+                            exponential).
+                          type: string
+                        deadLetterSink:
+                          description: DeadLetterSink is the sink receiving event that
+                            could not be sent to a destination.
+                          properties:
+                            ref:
+                              description: Ref points to an Addressable.
+                              properties:
+                                apiVersion:
+                                  description: API version of the referent.
+                                  type: string
+                                kind:
+                                  description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                                  type: string
+                                name:
+                                  description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                                  type: string
+                                namespace:
+                                  description: 'Namespace of the referent. More info:
+                                    https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+                                    This is optional field, it gets defaulted to the
+                                    object holding it if left out.'
+                                  type: string
+                              type: object
+                            uri:
+                              description: URI can be an absolute URL(non-empty scheme
+                                and non-empty host) pointing to the target or a relative
+                                URI. Relative URIs will be resolved using the base URI
+                                retrieved from Ref.
+                              type: string
+                          type: object
+                        retry:
+                          description: Retry is the minimum number of retries the sender
+                            should attempt when sending an event before moving it to
+                            the dead letter sink.
+                          format: int32
+                          type: integer
+                      type: object
+                      x-kubernetes-preserve-unknown-fields: true
+                    generation:
+                      description: Generation of the origin of the subscriber with uid:UID.
+                      format: int64
+                      type: integer
+                    replyUri:
+                      description: ReplyURI is the endpoint for the reply
+                      type: string
+                    subscriberUri:
+                      description: SubscriberURI is the endpoint for the subscriber
+                      type: string
+                    uid:
+                      description: UID is used to understand the origin of the subscriber.
+                      type: string
+                  type: object
+                type: array
+            type: object
+          status:
+            description: Status represents the current state of the Channel. This data
+              may be out of date.
+            properties:
+              address:
+                properties:
+                  url:
+                    type: string
+                type: object
+              annotations:
+                description: Annotations is additional Status fields for the Resource
+                  to save some additional State as well as convey more information to
+                  the user. This is roughly akin to Annotations on any k8s resource,
+                  just the reconciler conveying richer information outwards.
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+              channel:
+                description: Channel is an KReference to the Channel CRD backing this
+                  Channel.
+                properties:
+                  apiVersion:
+                    description: API version of the referent.
+                    type: string
+                  kind:
+                    description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                    type: string
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                    type: string
+                  namespace:
+                    description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+                      This is optional field, it gets defaulted to the object holding
+                      it if left out.'
+                    type: string
+                type: object
+              conditions:
+                description: Conditions the latest available observations of a resource's
+                  current state.
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: LastTransitionTime is the last time the condition
+                        transitioned from one status to another. We use VolatileTime
+                        in place of metav1.Time to exclude this from creating equality.Semantic
+                        differences (all other things held constant).
+                      type: string
+                    message:
+                      description: A human readable message indicating details about
+                        the transition.
+                      type: string
+                    reason:
+                      description: The reason for the condition's last transition.
+                      type: string
+                    severity:
+                      description: Severity with which to treat failures of this type
+                        of condition. When this is not specified, it defaults to Error.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition.
+                      type: string
+                  required:
+                  - type
+                  - status
+                  type: object
+                type: array
+              deadLetterChannel:
+                description: DeadLetterChannel is a KReference and is set by the channel
+                  when it supports native error handling via a channel Failed messages
+                  are delivered here.
+                properties:
+                  apiVersion:
+                    description: API version of the referent.
+                    type: string
+                  kind:
+                    description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                    type: string
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                    type: string
+                  namespace:
+                    description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+                      This is optional field, it gets defaulted to the object holding
+                      it if left out.'
+                    type: string
+                type: object
+              deadLetterSinkUri:
+                description: DeadLetterSinkURI is the resolved URI of the dead letter
+                  sink that will be used as a fallback when not specified by Triggers.
+                type: string
+              observedGeneration:
+                description: ObservedGeneration is the 'Generation' of the Service that
+                  was last processed by the controller.
+                format: int64
+                type: integer
+              subscribers:
+                description: This is the list of subscription's statuses for this channel.
+                items:
+                  properties:
+                    message:
+                      description: A human readable message indicating details of Ready
+                        status.
+                      type: string
+                    observedGeneration:
+                      description: Generation of the origin of the subscriber with uid:UID.
+                      format: int64
+                      type: integer
+                    ready:
+                      description: Status of the subscriber.
+                      type: string
+                    uid:
+                      description: UID is used to understand the origin of the subscriber.
+                      type: string
+                  type: object
+                type: array
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kbf.fullname" . }}-activator-service
+  labels:
+    app: activator
+    app.kubernetes.io/component: activator
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.activatorService.type }}
+  selector:
+    app: activator
+  {{- include "kbf.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.activatorService.ports | toYaml | nindent 2 -}}
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "kbf.fullname" . }}-activator-service
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  action: ALLOW
+  rules:
+  - {}
+  selector:
+    matchLabels:
+      app: activator

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-notebook-controller-config-dm5b6dd458
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  CLUSTER_DOMAIN: {{ .Values.notebookControllerConfigDm5B6Dd458.clusterDomain | quote
+    }}
+  CULL_IDLE_TIME: {{ .Values.notebookControllerConfigDm5B6Dd458.cullIdleTime | quote
+    }}
+  ENABLE_CULLING: {{ .Values.notebookControllerConfigDm5B6Dd458.enableCulling | quote
+    }}
+  IDLENESS_CHECK_PERIOD: {{ .Values.notebookControllerConfigDm5B6Dd458.idlenessCheckPeriod
+    | quote }}
+  ISTIO_GATEWAY: {{ .Values.notebookControllerConfigDm5B6Dd458.istioGateway | quote
+    }}
+  USE_ISTIO: {{ .Values.notebookControllerConfigDm5B6Dd458.useIstio | quote }}

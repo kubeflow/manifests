@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kbf.fullname" . }}-workflow-controller-metrics
+  labels:
+    app: workflow-controller
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+  annotations:
+    workflows.argoproj.io/description: |
+      This service is deprecated. It will be removed in v3.4.
+  
+      https://github.com/argoproj/argo-workflows/issues/8441
+spec:
+  type: {{ .Values.workflowControllerMetrics.type }}
+  selector:
+    app: workflow-controller
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.workflowControllerMetrics.ports | toYaml | nindent 2 -}}

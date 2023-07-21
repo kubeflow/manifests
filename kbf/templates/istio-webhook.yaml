@@ -1,0 +1,13 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "kbf.fullname" . }}-istio-webhook
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  action: ALLOW
+  rules:
+  - {}
+  selector:
+    matchLabels:
+      app: net-istio-webhook

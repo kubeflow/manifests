@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "kbf.fullname" . }}-authservice
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.authservice.replicas }}
+  selector:
+    matchLabels:
+      app: authservice
+  serviceName: {{ include "kbf.fullname" . }}-authservice
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: authservice
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        envFrom:
+        - secretRef:
+            name: {{ include "kbf.fullname" . }}-oidc-authservice-client
+        - configMapRef:
+            name: {{ include "kbf.fullname" . }}-oidc-authservice-parameters
+        image: {{ .Values.authservice.authservice.image.repository }}:{{ .Values.authservice.authservice.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.authservice.authservice.imagePullPolicy }}
+        name: authservice
+        ports:
+        - containerPort: 8080
+          name: http-api
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8081
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/authservice
+          name: data
+      securityContext:
+        fsGroup: 111
+      serviceAccountName: {{ include "kbf.fullname" . }}-authservice
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: {{ include "kbf.fullname" . }}-authservice-pvc
+  updateStrategy: {}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "kbf.fullname" . }}-metacontroller
+  labels:
+    app: metacontroller
+    application-crd-id: kubeflow-pipelines
+    kustomize.component: metacontroller
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.metacontroller.replicas }}
+  selector:
+    matchLabels:
+      app: metacontroller
+      application-crd-id: kubeflow-pipelines
+      kustomize.component: metacontroller
+  serviceName: ""
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: metacontroller
+        application-crd-id: kubeflow-pipelines
+        kustomize.component: metacontroller
+    spec:
+      containers:
+      - command:
+        - /usr/bin/metacontroller
+        - --zap-log-level=4
+        - --discovery-interval=3600s
+        env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.metacontroller.metacontroller.image.repository }}:{{ .Values.metacontroller.metacontroller.image.tag
+          | default .Chart.AppVersion }}
+        name: metacontroller
+        resources: {{- toYaml .Values.metacontroller.metacontroller.resources | nindent
+          10 }}
+        securityContext: {{- toYaml .Values.metacontroller.metacontroller.containerSecurityContext
+          | nindent 10 }}
+      serviceAccountName: {{ include "kbf.fullname" . }}-meta-controller-service
+  updateStrategy: {}

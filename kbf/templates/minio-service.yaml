@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kbf.fullname" . }}-minio-service
+  labels:
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.minioService.type }}
+  selector:
+    app: minio
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.minioService.ports | toYaml | nindent 2 -}}
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "kbf.fullname" . }}-minio-service
+  labels:
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/kubeflow/sa/ml-pipeline
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/kubeflow/sa/ml-pipeline-ui
+  - {}
+  selector:
+    matchLabels:
+      app: minio

@@ -1,0 +1,32 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ include "kbf.fullname" . }}-tensorboards-web-app
+  labels:
+    app: tensorboards-web-app
+    kustomize.component: tensorboards-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  host: tensorboards-web-app-service.kubeflow.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "kbf.fullname" . }}-tensorboards-web-app
+  labels:
+    app: tensorboards-web-app
+    kustomize.component: tensorboards-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+  selector:
+    matchLabels:
+      app: tensorboards-web-app

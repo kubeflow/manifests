@@ -1,0 +1,10 @@
+apiVersion: kubeflow.org/v1beta1
+kind: Profile
+metadata:
+  name: {{ include "kbf.fullname" . }}-thanhnm777-gmail-com
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  owner:
+    kind: User
+    name: thanhnm777@gmail.com

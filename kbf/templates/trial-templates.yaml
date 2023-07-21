@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-trial-templates
+  labels:
+    katib.kubeflow.org/component: trial-templates
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  defaultTrialTemplate.yaml: {{ .Values.trialTemplates.defaultTrialTemplateYaml |
+    toYaml | indent 1 }}
+  enasCPUTemplate: {{ .Values.trialTemplates.enasCPUTemplate | toYaml | indent 1
+    }}
+  pytorchJobTemplate: {{ .Values.trialTemplates.pytorchJobTemplate | toYaml | indent
+    1 }}

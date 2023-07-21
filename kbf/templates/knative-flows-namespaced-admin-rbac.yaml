@@ -1,0 +1,18 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kbf.fullname" . }}-knative-flows-namespaced-admin
+  labels:
+    app.kubernetes.io/component: knative-eventing
+    eventing.knative.dev/release: v1.8.1
+    kustomize.component: knative
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+  {{- include "kbf.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - flows.knative.dev
+  resources:
+  - '*'
+  verbs:
+  - '*'

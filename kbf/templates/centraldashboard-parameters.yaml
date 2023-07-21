@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-centraldashboard-parameters
+  labels:
+    app: centraldashboard
+    app.kubernetes.io/component: centraldashboard
+    kustomize.component: centraldashboard
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  CD_CLUSTER_DOMAIN: {{ .Values.centraldashboardParameters.cdClusterDomain | quote
+    }}
+  CD_REGISTRATION_FLOW: {{ .Values.centraldashboardParameters.cdRegistrationFlow
+    | quote }}
+  CD_USERID_HEADER: {{ .Values.centraldashboardParameters.cdUseridHeader | quote
+    }}
+  CD_USERID_PREFIX: {{ .Values.centraldashboardParameters.cdUseridPrefix | quote
+    }}

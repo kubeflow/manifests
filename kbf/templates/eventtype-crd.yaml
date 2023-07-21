@@ -1,0 +1,137 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: eventtypes.eventing.knative.dev
+  labels:
+    app.kubernetes.io/component: knative-eventing
+    eventing.knative.dev/release: v1.8.1
+    knative.dev/crd-install: "true"
+    kustomize.component: knative
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  group: eventing.knative.dev
+  names:
+    categories:
+    - all
+    - knative
+    - eventing
+    kind: EventType
+    plural: eventtypes
+    singular: eventtype
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.type
+      name: Type
+      type: string
+    - jsonPath: .spec.source
+      name: Source
+      type: string
+    - jsonPath: .spec.schema
+      name: Schema
+      type: string
+    - jsonPath: .spec.broker
+      name: Broker
+      type: string
+    - jsonPath: .spec.description
+      name: Description
+      type: string
+    - jsonPath: .status.conditions[?(@.type=="Ready")].status
+      name: Ready
+      type: string
+    - jsonPath: .status.conditions[?(@.type=="Ready")].reason
+      name: Reason
+      type: string
+    name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: EventType represents a type of event that can be consumed from
+          a Broker.
+        properties:
+          spec:
+            description: Spec defines the desired state of the EventType.
+            properties:
+              broker:
+                type: string
+              description:
+                description: Description is an optional field used to describe the EventType,
+                  in any meaningful way.
+                type: string
+              schema:
+                description: Schema is a URI, it represents the CloudEvents schemaurl
+                  extension attribute. It may be a JSON schema, a protobuf schema, etc.
+                  It is optional.
+                type: string
+              schemaData:
+                description: SchemaData allows the CloudEvents schema to be stored directly
+                  in the EventType. Content is dependent on the encoding. Optional attribute.
+                  The contents are not validated or manipulated by the system.
+                type: string
+              source:
+                description: Source is a URI, it represents the CloudEvents source.
+                type: string
+              type:
+                description: Type represents the CloudEvents type. It is authoritative.
+                type: string
+            type: object
+          status:
+            description: Status represents the current state of the EventType. This
+              data may be out of date.
+            properties:
+              annotations:
+                description: Annotations is additional Status fields for the Resource
+                  to save some additional State as well as convey more information to
+                  the user. This is roughly akin to Annotations on any k8s resource,
+                  just the reconciler conveying richer information outwards.
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+              conditions:
+                description: Conditions the latest available observations of a resource's
+                  current state.
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: LastTransitionTime is the last time the condition
+                        transitioned from one status to another. We use VolatileTime
+                        in place of metav1.Time to exclude this from creating equality.Semantic
+                        differences (all other things held constant).
+                      type: string
+                    message:
+                      description: A human readable message indicating details about
+                        the transition.
+                      type: string
+                    reason:
+                      description: The reason for the condition's last transition.
+                      type: string
+                    severity:
+                      description: Severity with which to treat failures of this type
+                        of condition. When this is not specified, it defaults to Error.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition.
+                      type: string
+                  required:
+                  - type
+                  - status
+                  type: object
+                type: array
+              observedGeneration:
+                description: ObservedGeneration is the 'Generation' of the Service that
+                  was last processed by the controller.
+                format: int64
+                type: integer
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

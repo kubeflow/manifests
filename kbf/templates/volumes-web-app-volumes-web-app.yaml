@@ -1,0 +1,28 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "kbf.fullname" . }}-volumes-web-app-volumes-web-app
+  labels:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - headers:
+      request:
+        add:
+          x-forwarded-prefix: /volumes
+    match:
+    - uri:
+        prefix: /volumes/
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: volumes-web-app-service.kubeflow.svc.cluster.local
+        port:
+          number: 80

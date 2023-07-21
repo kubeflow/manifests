@@ -1,0 +1,114 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: {{ include "kbf.fullname" . }}-stats-filter-1.14
+  labels:
+    istio.io/rev: default
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  configPatches:
+  - applyTo: HTTP_FILTER
+    match:
+      context: SIDECAR_OUTBOUND
+      listener:
+        filterChain:
+          filter:
+            name: envoy.filters.network.http_connection_manager
+            subFilter:
+              name: envoy.filters.http.router
+      proxy:
+        proxyVersion: ^1\.14.*
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: istio.stats
+        typed_config:
+          '@type': type.googleapis.com/udpa.type.v1.TypedStruct
+          type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
+          value:
+            config:
+              configuration:
+                '@type': type.googleapis.com/google.protobuf.StringValue
+                value: |
+                  {
+                    "debug": "false",
+                    "stat_prefix": "istio"
+                  }
+              root_id: stats_outbound
+              vm_config:
+                code:
+                  local:
+                    inline_string: envoy.wasm.stats
+                runtime: envoy.wasm.runtime.null
+                vm_id: stats_outbound
+  - applyTo: HTTP_FILTER
+    match:
+      context: SIDECAR_INBOUND
+      listener:
+        filterChain:
+          filter:
+            name: envoy.filters.network.http_connection_manager
+            subFilter:
+              name: envoy.filters.http.router
+      proxy:
+        proxyVersion: ^1\.14.*
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: istio.stats
+        typed_config:
+          '@type': type.googleapis.com/udpa.type.v1.TypedStruct
+          type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
+          value:
+            config:
+              configuration:
+                '@type': type.googleapis.com/google.protobuf.StringValue
+                value: |
+                  {
+                    "debug": "false",
+                    "stat_prefix": "istio",
+                    "disable_host_header_fallback": true
+                  }
+              root_id: stats_inbound
+              vm_config:
+                code:
+                  local:
+                    inline_string: envoy.wasm.stats
+                runtime: envoy.wasm.runtime.null
+                vm_id: stats_inbound
+  - applyTo: HTTP_FILTER
+    match:
+      context: GATEWAY
+      listener:
+        filterChain:
+          filter:
+            name: envoy.filters.network.http_connection_manager
+            subFilter:
+              name: envoy.filters.http.router
+      proxy:
+        proxyVersion: ^1\.14.*
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: istio.stats
+        typed_config:
+          '@type': type.googleapis.com/udpa.type.v1.TypedStruct
+          type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
+          value:
+            config:
+              configuration:
+                '@type': type.googleapis.com/google.protobuf.StringValue
+                value: |
+                  {
+                    "debug": "false",
+                    "stat_prefix": "istio",
+                    "disable_host_header_fallback": true
+                  }
+              root_id: stats_outbound
+              vm_config:
+                code:
+                  local:
+                    inline_string: envoy.wasm.stats
+                runtime: envoy.wasm.runtime.null
+                vm_id: stats_outbound
+  priority: -1

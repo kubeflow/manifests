@@ -1,0 +1,48 @@
+apiVersion: serving.kserve.io/v1alpha1
+kind: ClusterServingRuntime
+metadata:
+  name: {{ include "kbf.fullname" . }}-kserve-tritonserver
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  annotations:
+    prometheus.kserve.io/path: /metrics
+    prometheus.kserve.io/port: "8002"
+  containers:
+  - args:
+    - tritonserver
+    - --model-store=/mnt/models
+    - --grpc-port=9000
+    - --http-port=8080
+    - --allow-grpc=true
+    - --allow-http=true
+    image: nvcr.io/nvidia/tritonserver:21.09-py3
+    name: kserve-container
+    resources:
+      limits:
+        cpu: "1"
+        memory: 2Gi
+      requests:
+        cpu: "1"
+        memory: 2Gi
+  protocolVersions:
+  - v2
+  - grpc-v2
+  supportedModelFormats:
+  - autoSelect: true
+    name: tensorrt
+    version: "8"
+  - autoSelect: true
+    name: tensorflow
+    version: "1"
+  - autoSelect: true
+    name: tensorflow
+    version: "2"
+  - autoSelect: true
+    name: onnx
+    version: "1"
+  - name: pytorch
+    version: "1"
+  - autoSelect: true
+    name: triton
+    version: "2"

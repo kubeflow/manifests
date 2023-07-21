@@ -1,0 +1,19 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kbf.fullname" . }}-notebook-controller-kubeflow-notebooks-view
+  labels:
+    app: notebook-controller
+    kustomize.component: notebook-controller
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+  {{- include "kbf.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - notebooks
+  - notebooks/status
+  verbs:
+  - get
+  - list
+  - watch

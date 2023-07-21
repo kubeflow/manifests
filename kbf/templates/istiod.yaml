@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kbf.fullname" . }}-istiod
+  labels:
+    app: istiod
+    install.operator.istio.io/owning-resource: unknown
+    istio: pilot
+    istio.io/rev: default
+    operator.istio.io/component: Pilot
+    release: istio
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.istiod.type }}
+  selector:
+    app: istiod
+    istio: pilot
+  {{- include "kbf.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.istiod.ports | toYaml | nindent 2 -}}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "kbf.fullname" . }}-istiod
+  labels:
+    app: istiod
+    install.operator.istio.io/owning-resource: unknown
+    istio: pilot
+    istio.io/rev: default
+    operator.istio.io/component: Pilot
+    release: istio
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: istiod
+      istio: pilot

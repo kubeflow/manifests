@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kbf.fullname" . }}-volumes-web-app-service
+  labels:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+    run: volumes-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.volumesWebAppService.type }}
+  selector:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+  {{- include "kbf.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.volumesWebAppService.ports | toYaml | nindent 2 -}}

@@ -1,0 +1,32 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ include "kbf.fullname" . }}-volumes-web-app
+  labels:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  host: volumes-web-app-service.kubeflow.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "kbf.fullname" . }}-volumes-web-app
+  labels:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+  selector:
+    matchLabels:
+      app: volumes-web-app

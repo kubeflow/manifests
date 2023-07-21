@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "kbf.fullname" . }}-knative-serving-certs
+  labels:
+    networking.internal.knative.dev/certificate-uid: serving-certs
+    serving-certs-ctrl: data-plane
+  {{- include "kbf.labels" . | nindent 4 }}

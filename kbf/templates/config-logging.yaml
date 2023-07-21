@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-config-logging
+  labels:
+    app.kubernetes.io/component: knative-eventing
+    eventing.knative.dev/release: v1.8.1
+    knative.dev/config-category: eventing
+    knative.dev/config-propagation: original
+    kustomize.component: knative
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  loglevel.controller: {{ .Values.configLogging.loglevelController | quote }}
+  loglevel.webhook: {{ .Values.configLogging.loglevelWebhook | quote }}
+  zap-logger-config: {{ .Values.configLogging.zapLoggerConfig | toYaml | indent 1
+    }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-config-logging
+  labels:
+    app.kubernetes.io/component: logging
+  {{- include "kbf.labels" . | nindent 4 }}
+  annotations:
+    knative.dev/example-checksum: b0f3c6f2
+data:
+  _example: {{ .Values.configLogging.Example | toYaml | indent 1 }}

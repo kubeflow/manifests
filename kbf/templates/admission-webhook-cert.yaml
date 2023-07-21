@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "kbf.fullname" . }}-admission-webhook-cert
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  commonName: admission-webhook-service.kubeflow.svc
+  dnsNames:
+  - '{{ include "kbf.fullname" . }}-admission-webhook-service.kubeflow.svc'
+  - '{{ include "kbf.fullname" . }}-admission-webhook-service.kubeflow.svc.{{ .Values.kubernetesClusterDomain
+    }}'
+  isCA: true
+  issuerRef:
+    kind: Issuer
+    name: '{{ include "kbf.fullname" . }}-admission-webhook-selfsigned-issuer'
+  secretName: webhook-certs

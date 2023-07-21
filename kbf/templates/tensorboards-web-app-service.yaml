@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kbf.fullname" . }}-tensorboards-web-app-service
+  labels:
+    app: tensorboards-web-app
+    kustomize.component: tensorboards-web-app
+    run: tensorboards-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.tensorboardsWebAppService.type }}
+  selector:
+    app: tensorboards-web-app
+    kustomize.component: tensorboards-web-app
+  {{- include "kbf.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.tensorboardsWebAppService.ports | toYaml | nindent 2 -}}

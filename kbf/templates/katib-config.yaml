@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-katib-config
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  early-stopping: {{ .Values.katibConfig.earlyStopping | toYaml | indent 1 }}
+  metrics-collector-sidecar: {{ .Values.katibConfig.metricsCollectorSidecar | toYaml
+    | indent 1 }}
+  suggestion: {{ .Values.katibConfig.suggestion | toYaml | indent 1 }}

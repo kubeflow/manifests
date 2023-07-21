@@ -1,0 +1,42 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "kbf.fullname" . }}-cert-manager:leaderelection
+  labels:
+    app: cert-manager
+    app.kubernetes.io/component: controller
+  {{- include "kbf.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - coordination.k8s.io
+  resourceNames:
+  - cert-manager-controller
+  resources:
+  - leases
+  verbs:
+  - get
+  - update
+  - patch
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "kbf.fullname" . }}-cert-manager:leaderelection
+  labels:
+    app: cert-manager
+    app.kubernetes.io/component: controller
+  {{- include "kbf.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: '{{ include "kbf.fullname" . }}-cert-manager:leaderelection'
+subjects:
+- kind: ServiceAccount
+  name: '{{ include "kbf.fullname" . }}-cert-manager'
+  namespace: '{{ .Release.Namespace }}'

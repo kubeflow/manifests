@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-config-deployment
+  labels:
+    app.kubernetes.io/component: controller
+  {{- include "kbf.labels" . | nindent 4 }}
+  annotations:
+    knative.dev/example-checksum: dd7ee769
+data:
+  _example: {{ .Values.configDeployment.Example | toYaml | indent 1 }}
+  progressDeadline: {{ .Values.configDeployment.progressDeadline | quote }}
+  queue-sidecar-image: {{ .Values.configDeployment.queueSidecarImage | quote }}

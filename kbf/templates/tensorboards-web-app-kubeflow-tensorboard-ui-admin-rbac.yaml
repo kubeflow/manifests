@@ -1,0 +1,10 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kbf.fullname" . }}-tensorboards-web-app-kubeflow-tensorboard-ui-admin
+  labels:
+    app: tensorboards-web-app
+    kustomize.component: tensorboards-web-app
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+  {{- include "kbf.labels" . | nindent 4 }}
+rules: []

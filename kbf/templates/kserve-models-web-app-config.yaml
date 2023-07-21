@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-kserve-models-web-app-config
+  labels:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    kustomize.component: kserve-models-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  APP_PREFIX: {{ .Values.kserveModelsWebAppConfig.appPrefix | quote }}
+  USERID_HEADER: {{ .Values.kserveModelsWebAppConfig.useridHeader | quote }}

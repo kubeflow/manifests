@@ -1,0 +1,57 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kbf.fullname" . }}-cert-manager-controller-certificatesigningrequests
+  labels:
+    app: cert-manager
+    app.kubernetes.io/component: cert-manager
+  {{- include "kbf.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - certificates.k8s.io
+  resources:
+  - certificatesigningrequests
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+- apiGroups:
+  - certificates.k8s.io
+  resources:
+  - certificatesigningrequests/status
+  verbs:
+  - update
+  - patch
+- apiGroups:
+  - certificates.k8s.io
+  resourceNames:
+  - issuers.cert-manager.io/*
+  - clusterissuers.cert-manager.io/*
+  resources:
+  - signers
+  verbs:
+  - sign
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "kbf.fullname" . }}-cert-manager-controller-certificatesigningrequests
+  labels:
+    app: cert-manager
+    app.kubernetes.io/component: cert-manager
+  {{- include "kbf.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: '{{ include "kbf.fullname" . }}-cert-manager-controller-certificatesigningrequests'
+subjects:
+- kind: ServiceAccount
+  name: '{{ include "kbf.fullname" . }}-cert-manager'
+  namespace: '{{ .Release.Namespace }}'

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-pipeline-api-server-config-dc9hkg52h6
+  labels:
+    app.kubernetes.io/component: ml-pipeline
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  DEFAULTPIPELINERUNNERSERVICEACCOUNT: {{ .Values.pipelineApiServerConfigDc9Hkg52H6.defaultpipelinerunnerserviceaccount
+    | quote }}
+  MULTIUSER: {{ .Values.pipelineApiServerConfigDc9Hkg52H6.multiuser | quote }}
+  VISUALIZATIONSERVICE_NAME: {{ .Values.pipelineApiServerConfigDc9Hkg52H6.visualizationserviceName
+    | quote }}
+  VISUALIZATIONSERVICE_PORT: {{ .Values.pipelineApiServerConfigDc9Hkg52H6.visualizationservicePort
+    | quote }}

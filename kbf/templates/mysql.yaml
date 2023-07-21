@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kbf.fullname" . }}-mysql
+  labels:
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.mysql.type }}
+  selector:
+    app: mysql
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.mysql.ports | toYaml | nindent 2 -}}
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "kbf.fullname" . }}-mysql
+  labels:
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/kubeflow/sa/ml-pipeline
+        - cluster.local/ns/kubeflow/sa/ml-pipeline-ui
+        - cluster.local/ns/kubeflow/sa/ml-pipeline-persistenceagent
+        - cluster.local/ns/kubeflow/sa/ml-pipeline-scheduledworkflow
+        - cluster.local/ns/kubeflow/sa/ml-pipeline-viewer-crd-service-account
+        - cluster.local/ns/kubeflow/sa/kubeflow-pipelines-cache
+        - cluster.local/ns/kubeflow/sa/metadata-grpc-server
+  selector:
+    matchLabels:
+      app: mysql

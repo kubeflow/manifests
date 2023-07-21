@@ -1,0 +1,54 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kbf.fullname" . }}-kserve-models-web-app-cluster-role
+  labels:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    kustomize.component: kserve-models-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - pods
+  - pods/log
+  - events
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - serving.kserve.io
+  resources:
+  - inferenceservices
+  - inferenceservices/status
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+- apiGroups:
+  - serving.knative.dev
+  resources:
+  - services
+  - services/status
+  - routes
+  - routes/status
+  - configurations
+  - configurations/status
+  - revisions
+  - revisions/status
+  verbs:
+  - get
+  - list

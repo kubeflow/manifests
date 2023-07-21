@@ -1,0 +1,31 @@
+apiVersion: serving.kserve.io/v1alpha1
+kind: ClusterServingRuntime
+metadata:
+  name: {{ include "kbf.fullname" . }}-kserve-xgbserver
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  annotations:
+    prometheus.kserve.io/path: /metrics
+    prometheus.kserve.io/port: "8080"
+  containers:
+  - args:
+    - --model_name={{.Name}}
+    - --model_dir=/mnt/models
+    - --http_port=8080
+    - --nthread=1
+    image: kserve/xgbserver:v0.10.0
+    name: kserve-container
+    resources:
+      limits:
+        cpu: "1"
+        memory: 2Gi
+      requests:
+        cpu: "1"
+        memory: 2Gi
+  protocolVersions:
+  - v1
+  supportedModelFormats:
+  - autoSelect: true
+    name: xgboost
+    version: "1"

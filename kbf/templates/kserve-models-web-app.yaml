@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kbf.fullname" . }}-kserve-models-web-app
+  labels:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    kustomize.component: kserve-models-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.kserveModelsWebApp.type }}
+  selector:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    app.kubernetes.io/name: kserve
+    kustomize.component: kserve-models-web-app
+  {{- include "kbf.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.kserveModelsWebApp.ports | toYaml | nindent 2 -}}
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "kbf.fullname" . }}-kserve-models-web-app
+  labels:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    kustomize.component: kserve-models-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  gateways:
+  - kubeflow/kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /kserve-endpoints/
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: kserve-models-web-app.kubeflow.svc.cluster.local
+        port:
+          number: 80
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "kbf.fullname" . }}-kserve-models-web-app
+  labels:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    kustomize.component: kserve-models-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+  selector:
+    matchLabels:
+      app: kserve
+      app.kubernetes.io/component: kserve-models-web-app
+      app.kubernetes.io/name: kserve
+      kustomize.component: kserve-models-web-app

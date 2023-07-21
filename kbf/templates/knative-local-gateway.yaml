@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kbf.fullname" . }}-knative-local-gateway
+  labels:
+    app.kubernetes.io/component: net-istio
+    experimental.istio.io/disable-gateway-port-translation: "true"
+    networking.knative.dev/ingress-provider: istio
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.knativeLocalGateway.type }}
+  selector:
+    app: cluster-local-gateway
+    istio: cluster-local-gateway
+  {{- include "kbf.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.knativeLocalGateway.ports | toYaml | nindent 2 -}}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ include "kbf.fullname" . }}-knative-local-gateway
+  labels:
+    app.kubernetes.io/component: net-istio
+    networking.knative.dev/ingress-provider: istio
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: cluster-local-gateway
+    istio: cluster-local-gateway
+  servers:
+  - hosts:
+    - '*'
+    port:
+      name: http
+      number: 8081
+      protocol: HTTP

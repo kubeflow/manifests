@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-kubeflow-pipelines-profile-controller-code-hdk828hd6c
+  labels:
+    app: kubeflow-pipelines-profile-controller
+    app.kubernetes.io/component: ml-pipeline
+    application-crd-id: kubeflow-pipelines
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  sync.py: {{ .Values.kubeflowPipelinesProfileControllerCodeHdk828Hd6C.syncPy | toYaml
+    | indent 1 }}

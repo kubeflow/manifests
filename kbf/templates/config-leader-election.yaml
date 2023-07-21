@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-config-leader-election
+  labels:
+    app.kubernetes.io/component: knative-eventing
+    eventing.knative.dev/release: v1.8.1
+    kustomize.component: knative
+  {{- include "kbf.labels" . | nindent 4 }}
+  annotations:
+    knative.dev/example-checksum: f7948630
+data:
+  _example: {{ .Values.configLeaderElection.Example | toYaml | indent 1 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-config-leader-election
+  labels:
+    app.kubernetes.io/component: controller
+  {{- include "kbf.labels" . | nindent 4 }}
+  annotations:
+    knative.dev/example-checksum: f4b71f57
+data:
+  _example: {{ .Values.configLeaderElection.Example | toYaml | indent 1 }}

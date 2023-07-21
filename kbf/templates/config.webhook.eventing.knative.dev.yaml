@@ -1,0 +1,24 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: {{ include "kbf.fullname" . }}-config.webhook.eventing.knative.dev
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "kbf.fullname" . }}-
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+webhooks:
+- admissionReviewVersions:
+  - v1
+  - v1beta1
+  clientConfig:
+    service:
+      name: '{{ include "kbf.fullname" . }}-eventing-webhook'
+      namespace: knative-eventing
+  failurePolicy: Ignore
+  name: config.webhook.eventing.knative.dev
+  namespaceSelector:
+    matchExpressions:
+    - key: eventing.knative.dev/release
+      operator: Exists
+  sideEffects: None
+  timeoutSeconds: 10

@@ -1,0 +1,17 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kbf.fullname" . }}-kubeflow-istio-view
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+  {{- include "kbf.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - istio.io
+  - networking.istio.io
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+  - watch

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-config-sugar
+  labels:
+    app.kubernetes.io/component: knative-eventing
+    eventing.knative.dev/release: v1.8.1
+    kustomize.component: knative
+  {{- include "kbf.labels" . | nindent 4 }}
+  annotations:
+    knative.dev/example-checksum: 62dfac6f
+data:
+  _example: {{ .Values.configSugar.Example | toYaml | indent 1 }}

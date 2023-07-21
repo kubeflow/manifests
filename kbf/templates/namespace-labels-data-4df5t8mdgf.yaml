@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-namespace-labels-data-4df5t8mdgf
+  labels:
+    kustomize.component: profiles
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  namespace-labels.yaml: {{ .Values.namespaceLabelsData4Df5T8Mdgf.namespaceLabelsYaml
+    | toYaml | indent 1 }}

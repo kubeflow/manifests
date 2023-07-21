@@ -1,0 +1,23 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: {{ include "kbf.fullname" . }}-webhook.istio.networking.internal.knative.dev
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "kbf.fullname" . }}-
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+webhooks:
+- admissionReviewVersions:
+  - v1
+  - v1beta1
+  clientConfig:
+    service:
+      name: '{{ include "kbf.fullname" . }}-net-istio-webhook'
+      namespace: '{{ .Release.Namespace }}'
+  failurePolicy: Fail
+  name: webhook.istio.networking.internal.knative.dev
+  objectSelector:
+    matchExpressions:
+    - key: serving.knative.dev/configuration
+      operator: Exists
+  sideEffects: None

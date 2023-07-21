@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kbf.fullname" . }}-autoscaler
+  labels:
+    app: autoscaler
+    app.kubernetes.io/component: autoscaler
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.autoscaler.type }}
+  selector:
+    app: autoscaler
+  {{- include "kbf.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.autoscaler.ports | toYaml | nindent 2 -}}
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "kbf.fullname" . }}-autoscaler
+  labels:
+  {{- include "kbf.labels" . | nindent 4 }}
+spec:
+  action: ALLOW
+  rules:
+  - {}
+  selector:
+    matchLabels:
+      app: autoscaler
