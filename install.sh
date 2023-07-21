@@ -115,7 +115,7 @@ apiVersion: kubeflow.org/v1alpha1
 kind: PodDefault
 metadata:
   name: access-ml-pipeline
-  namespace: "kubeflow-thanhnm777-gmail-com"
+  namespace: "thanhnm777-gmail-com"
 spec:
   desc: Allow access to Kubeflow Pipelines
   selector:
