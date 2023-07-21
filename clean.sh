@@ -1,39 +1,5 @@
-kustomize build example | awk '!/well-defined/' > kubeflow.yaml
 
-while ! kubectl apply -f kubeflow.yaml; do echo "Retrying to apply resources"; sleep 120; done
-# while ! kustomize build example | awk '!/well-defined/' | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
-
-
-
-TIMEOUT=600s  # 10mins
-
-
-echo "---"
-echo "Waiting for all Kubeflow components to become ready."
-
-echo "Waiting for Cert Manager pods to become ready..."
-kubectl wait --timeout=${TIMEOUT} -n cert-manager --all --for=condition=Ready pod
-
-echo "Waiting for istio-system Pods to become ready..."
-kubectl wait --timeout=${TIMEOUT} -n istio-system --all --for=condition=Ready pod
-
-echo "Waiting for knative-serving Pods to become ready..."
-kubectl wait --timeout=${TIMEOUT} -n knative-serving --all --for=condition=Ready pod
-
-echo "Waiting for kubeflow/ml-pipelines to become ready..."
-kubectl wait --timeout=${TIMEOUT} -n kubeflow -l app=ml-pipeline --for=condition=Ready pod
-
-echo "Waiting for kubeflow/kfserving to become ready..."
-kubectl wait --timeout=${TIMEOUT} -n kubeflow -l app=kfserving --for=condition=Ready pod
-
-echo "Waiting for kubeflow/katib to become ready..."
-kubectl wait --timeout=${TIMEOUT} -n kubeflow -l katib.kubeflow.org/component=controller --for=condition=Ready pod
-
-echo "Waiting for kubeflow/training-operator to become ready..."
-kubectl wait --timeout=${TIMEOUT} -n kubeflow -l control-plane=kubeflow-training-operator --for=condition=Ready pod
-
-
-cat <<EOF | kubectl apply -f -
+cat <<EOF | kubectl delete -f -
 ---
   apiVersion: networking.gke.io/v1
   kind: ManagedCertificate
@@ -110,7 +76,7 @@ spec:
 EOF 
 
 
-cat <<EOF | kubectl apply -f -
+cat <<EOF | kubectl delete -f -
 apiVersion: kubeflow.org/v1alpha1
 kind: PodDefault
 metadata:
@@ -138,14 +104,9 @@ spec:
       value: /var/run/secrets/kubeflow/pipelines/token
 EOF
 
-kubectl apply -f dex-configmap.yaml
-kubectl delete pod `kubectl get pods -n auth | awk '{print $1}' | grep -iv name` -n auth 
+kubectl delete -f dex-configmap.yaml
 
-
+kubectl delete ns thanhnm777-gmail-com
 istioVersion="1.18.1"
-curl -L https://istio.io/downloadIstio | sh -
-mv istio-${istioVersion} /tmp/
-kubectl apply -f /tmp/istio-${istioVersion}/samples/addons
-kubectl rollout status deployment/kiali -n istio-system
-# /tmp/istio-1.18.1/bin/istioctl dashboard kiali
-cd ..
+kubectl delete -f /tmp/istio-${istioVersion}/samples/addons
+kubectl delete -f kubeflow.yaml
