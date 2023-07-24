@@ -37,8 +37,8 @@ jobs:
         pip3 install kfp==1.8.22
         kustomize build apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
         kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
-        kustomize build common/user-namespace/base | awk '!/well-defined/' | kubectl apply -f -
-        kustomize build common/kubeflow-roles/base | awk '!/well-defined/' | kubectl apply -f -
+        kustomize build common/user-namespace/base | kubectl apply -f -
+        kustomize build common/kubeflow-roles/base | kubectl apply -f -
         ./tests/e2e/hack/proxy_pipelines.sh
         kubectl apply -f tests/e2e/yamls
         python3 ./tests/gh-actions/kf-objects/test_pipeline.py
