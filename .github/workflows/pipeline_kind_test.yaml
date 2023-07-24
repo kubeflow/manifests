@@ -34,7 +34,7 @@ jobs:
 
     - name: Deploy test pipeline
       run: |
-        pip3 install kfp==1.8.4
+        pip3 install kfp==1.8.22
         kustomize build apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
         kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
         kustomize build common/user-namespace/base | kubectl apply -f -
