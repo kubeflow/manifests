@@ -85,7 +85,7 @@ The `example` directory contains an example kustomization for the single command
 ### Prerequisites
 
 - `Kubernetes` (up to `1.25`) with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
-- `kustomize` [5.0.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.0.0)
+- `kustomize` [5.0.3](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.0.3)
     - :warning: Kubeflow is not compatible with earlier versions of Kustomize. This is because we need the [`sortOptions`](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/sortoptions/) field, which is only available in Kustomize 5 and onwards https://github.com/kubeflow/manifests/issues/2388.
 - `kubectl`
 
@@ -94,8 +94,6 @@ The `example` directory contains an example kustomization for the single command
 
 `kubectl apply` commands may fail on the first try. This is inherent in how Kubernetes and `kubectl` work (e.g., CR must be created after CRD becomes ready). The solution is to simply re-run the command until it succeeds. For the single-line command, we have included a bash one-liner to retry the command.
 
-The reason we do `awk '!/well-defined/'` is because there's a regression in Kustomize 5 and a line is printed in stdout and not stderr https://github.com/kubernetes-sigs/kustomize/issues/5039. We'll remove this command once a future patch version of Kustomize is available.
-
 ---
 
 ### Install with a single command
@@ -103,7 +101,7 @@ The reason we do `awk '!/well-defined/'` is because there's a regression in Kust
 You can install all Kubeflow official components (residing under `apps`) and all common services (residing under `common`) using the following command:
 
 ```sh
-while ! kustomize build example | awk '!/well-defined/' | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+while ! kustomize build example | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
 
 Once, everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](#connect-to-your-kubeflow-cluster).
@@ -245,7 +243,7 @@ kustomize build common/istio-1-16/kubeflow-istio-resources/base | kubectl apply 
 Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/components/pipelines/multi-user/) official Kubeflow component:
 
 ```sh
-kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | awk '!/well-defined/' | kubectl apply -f -
+kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
 ```
 This installs argo with the safe-to use runasnonroot emissary executor.  Please note that the installer is still responsible to analyze the security issues that arise when containers are run with root access and to decide if the kubeflow pipeline main containers are run as runasnonroot. It is strongly recommended that the pipelines main containers are installed and run as runasnonroot and without any special capabilities to mitigate security risks.
 
