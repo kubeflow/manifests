@@ -1,7 +1,10 @@
 name: E2E Tests
 
 on:
-  workflow_dispatch:
+  pull_request:
+    paths:
+      - apps/**
+      - common/**
 
 jobs:
   e2e:
