@@ -6,7 +6,7 @@ The manifests for Cert Manager are based off the following:
 
   - [Cert Manager (v1.12.2)](https://github.com/cert-manager/cert-manager/releases/tag/v1.12.2)
 
-1. Download the knative-serving manifests with the following commands:
+1. Download the cert manager yaml with the following commands:
 
     ```sh
     # No need to install cert-manager-crds.
