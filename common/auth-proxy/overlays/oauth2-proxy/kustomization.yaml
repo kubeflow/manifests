@@ -9,6 +9,12 @@ resources:
 - oauth2-proxy-alpha-config.yaml
 - oauth2-proxy-config.yaml
 
+secretGenerator:
+- name: oauth2-proxy
+  type: Opaque
+  envs:
+  - secret_params.env
+
 namespace: istio-system
 
 generatorOptions:

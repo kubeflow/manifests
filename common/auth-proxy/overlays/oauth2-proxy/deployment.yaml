@@ -14,7 +14,7 @@ spec:
       annotations:
         sidecar.istio.io/inject: "false"
       labels:
-        app: authservice
+        app.kubernetes.io/name: oauth2-proxy
     spec:
       volumes:
         - name: configmain
@@ -35,6 +35,7 @@ spec:
             - '--alpha-config=/etc/oauth2_proxy/oauth2_proxy.yml'
             - '--config=/etc/oauth2_proxy/oauth2_proxy.cfg'
             - '--silence-ping-logging'
+            - '--redirect-url=http://localhost:8080/oauth2/callback'
           ports:
             - name: http-api
               containerPort: 8080
@@ -46,18 +47,18 @@ spec:
             - name: OAUTH2_PROXY_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: oauth2-proxy
-                  key: client-id
+                  name: authservice-client
+                  key: CLIENT_ID
             - name: OAUTH2_PROXY_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: oauth2-proxy
-                  key: client-secret
+                  name: authservice-client
+                  key: CLIENT_SECRET
             - name: OAUTH2_PROXY_COOKIE_SECRET
               valueFrom:
                 secretKeyRef:
                   name: oauth2-proxy
-                  key: cookie-secret
+                  key: COOKIE_SECRET
           volumeMounts:
             - name: configmain
               mountPath: /etc/oauth2_proxy/oauth2_proxy.cfg
@@ -71,10 +72,10 @@ spec:
           livenessProbe:
             httpGet:
               path: /ping
-              port: http
+              port: http-api
               scheme: HTTP
           readinessProbe:
             httpGet:
               path: /ping
-              port: http
+              port: http-api
               scheme: HTTP

@@ -5,14 +5,14 @@ metadata:
   labels:
     app: oauth2-proxy
 data:
-  oauth2_proxy.yml: >
+  oauth2_proxy.yml: |-
     injectResponseHeaders:
-    - name: kubeflow-groups
-      values:
-      - claim: groups
-    - name: kubeflow-userid
-      values:
-      - claim: email
+      - name: kubeflow-groups
+        values:
+        - claim: groups
+      - name: kubeflow-userid
+        values:
+        - claim: email
     metricsServer:
       BindAddress: 0.0.0.0:44180
       SecureBindAddress: ""
