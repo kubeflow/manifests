@@ -179,25 +179,11 @@ kustomize build common/dex/overlays/istio | kubectl apply -f -
 
 #### Authservice
 
-The oauth service is responsible for ensuring the requests of users are
-
-#### Authservice
-
-The Authservice is responsible for ensuring requests are authorized. Otherwise redirecting them to the provider (Here Dex is used as OIDC Provider). It is also responsible for adding the `kubeflow-userid` to the upstream request. You can find the sequence diagram for an Authentication Flow [here](https://github.com/arrikto/oidc-authservice/blob/master/docs/media/oidc_authservice_sequence_diagram.svg).
-
-They are two available options the *OIDC AuthService* or the *OAuth2-proxy*. **You should not apply both.**
-
-##### oidc-authservice
-
-This is the default solution provided for kubeflow. The [OIDC AuthService](https://github.com/arrikto/oidc-authservice) extends your Istio Ingress-Gateway capabilities, to be able to function as an OIDC client:
-
-```sh
-kustomize build common/auth-proxy/overlays/oidc-authservice | kubectl apply -f -
-```
-
-##### OAuth2-proxy
+The Authservice is responsible for ensuring requests are authorized. Otherwise redirecting them to the provider (Here Dex is used as OIDC Provider). It is also responsible for adding the `kubeflow-userid` to the upstream request.
 
 The [OAuth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy) will extends the istio Ingress-Gateway in the same way the *OIDC AuthService* is doing but offer more flexibility for handling requests. See the [documentation](https://oauth2-proxy.github.io/oauth2-proxy/docs/configuration/overview).
+
+Install oauth2-proxy
 
 ```sh
 kustomize build common/auth-proxy/overlays/oauth-proxy | kubectl apply -f -

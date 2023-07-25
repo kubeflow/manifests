@@ -39,8 +39,8 @@ resources:
 - ../common/istio-1-16/istio-crds/base
 - ../common/istio-1-16/istio-namespace/base
 - ../common/istio-1-16/istio-install/base
-# OIDC Authservice
-- ../common/auth-proxy/overlays/oidc-authservice
+# oauth
+- ../common/auth-proxy/overlays/oauth2-proxy
 # Dex
 - ../common/dex/overlays/istio
 # KNative
