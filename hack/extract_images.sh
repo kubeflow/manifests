@@ -12,39 +12,13 @@
 images=()
 
 declare -A wg_dirs=(
-  [automl]="../apps/katib"
-  [pipelines]="../apps/pipeline/upstream ../apps/kfp-tekton/upstream"
-  [training]="../apps/training-operator/upstream"
+  [automl]="../apps/katib/upstream/installs"
+  [pipelines]="../apps/pipeline/upstream/env ../apps/kfp-tekton/upstream/env"
+  [training]="../apps/training-operator/upstream/overlays"
   [manifests]="../common ../example"
-  [workbenches]="../apps/admission-webhook/upstream ../apps/centraldashboard/upstream ../apps/jupyter/jupyter-web-app/upstream ../apps/volumes-web-app/upstream ../apps/tensorboard/tensorboards-web-app/upstream ../apps/profiles/upstream ../apps/jupyter/notebook-controller/upstream ../apps/tensorboard/tensorboard-controller/upstream"
+  [workbenches]="../apps/admission-webhook/upstream/overlays ../apps/centraldashboard/upstream/overlays ../apps/jupyter/jupyter-web-app/upstream/overlays ../apps/volumes-web-app/upstream/overlays ../apps/tensorboard/tensorboards-web-app/upstream/overlays ../apps/profiles/upstream/overlays ../apps/jupyter/notebook-controller/upstream/overlays ../apps/tensorboard/tensorboard-controller/upstream/overlays"
   [serving]="../contrib/kserve"
 )
-
-declare -A wg_exclude_dirs=(
-  [workbenches]="*/manager/* */default/* */crd/* */rbac/* */components/*"
-)
-
-get_wg_ignored_dirs() {
-  local wg=$1
-  # Check if the key exists in the map
-  if [[ ${wg_exclude_dirs[$wg]+_} ]]; then
-    # Split the string into an array using space as the delimiter
-    IFS=" " read -ra values <<< "${wg_exclude_dirs[$wg]}"
-    echo "${values[@]}"
-  else
-    echo ""
-  fi
-}
-
-# Build the 'find' command dynamically
-# example: find ../apps/katib ( -name kustomization.yaml   -o -name kustomization.yml -o -name Kustomization \) ! -path '*./xxx/*' ! -path '*/components/*'
-construct_find_command(){
-  find_command="find $1 \( -name kustomization.yaml   -o -name kustomization.yml -o -name Kustomization \) "
-  for ignore_dir in $2; do
-    find_command+="! -path \"$ignore_dir\" "
-  done
-  echo "$find_command"
-}
 
 save_images() {
   wg=${1:-""}
@@ -75,13 +49,10 @@ fi
 echo "Running the script using Kubeflow version: $version"
 
 for wg in "${!wg_dirs[@]}"; do
-  ignored_dirs=$(get_wg_ignored_dirs "$wg")
   declare -a dirs=(${wg_dirs[$wg]})
   wg_images=()
   for (( i=0; i<"${#dirs[@]}"; i++ )); do
-    find_command=$(construct_find_command "${dirs[$i]}" "$ignored_dirs")
-    kustomization_files=($(eval "$find_command"))
-    for F in "${kustomization_files[@]}"; do
+    for F in $(find "${dirs[$i]}" \( -name kustomization.yaml   -o -name kustomization.yml -o -name Kustomization \)); do
         dir=$(dirname -- "$F")
         # Generate k8s resources specified in 'dir' using the 'kustomize build' command.
         kbuild=$(kustomize build "$dir")
