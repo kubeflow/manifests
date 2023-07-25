@@ -8,7 +8,7 @@ In this section, we explain how to upgrade our istio kustomize packages
 by leveraging `istioctl`. Assuming the new version is `X.Y.Z` and the
 old version is `X1.Y1.Z1`:
 
-1.  Make a copy of the old istio manifests tree, which will become the
+1. Make a copy of the old istio manifests tree, which will become the
     kustomization for the new Istio version:
 
         $ export MANIFESTS_SRC=<path/to/manifests/repo>
@@ -16,14 +16,14 @@ old version is `X1.Y1.Z1`:
         $ export ISTIO_NEW=$MANIFESTS_SRC/common/istio-X-Y
         $ cp -a $ISTIO_OLD $ISTIO_NEW
 
-2.  Download `istioctl` for version `X.Y.Z`:
+2. Download `istioctl` for version `X.Y.Z`:
 
         $ ISTIO_VERSION="X.Y.Z"
-        $ wget "https://github.com/istio/istio/releases/download/${ISTIO_VERSION}/istio-${ISTIO_VERSION}-linux.tar.gz"
-        $ tar xvfz istio-${ISTIO_VERSION}-linux.tar.gz
+        $ wget "https://github.com/istio/istio/releases/download/${ISTIO_VERSION}/istio-${ISTIO_VERSION}-linux-amd64.tar.gz"
+        $ tar xvfz istio-${ISTIO_VERSION}-linux-amd64.tar.gz
         # sudo mv istio-${ISTIO_VERSION}/bin/istioctl /usr/local/bin/istioctl
 
-3.  Use `istioctl` to generate an `IstioOperator` resource, the
+3. Use `istioctl` to generate an `IstioOperator` resource, the
     CustomResource used to describe the Istio Control Plane:
 
         $ cd $ISTIO_NEW
@@ -38,7 +38,7 @@ old version is `X1.Y1.Z1`:
 
     ---
 
-4.  Generate manifests and add them to their respective packages. We
+4. Generate manifests and add them to their respective packages. We
     will generate manifests using `istioctl`, the
     `profile.yaml` file from upstream and the
     `profile-overlay.yaml` file that contains our desired
@@ -69,8 +69,8 @@ old version is `X1.Y1.Z1`:
    See https://github.com/istio/istio/issues/12602 and https://github.com/istio/istio/issues/24000
 
    Until now we have used two patches:
-   - `common/istio-1-16/istio-install/base/patches/remove-pdb.yaml`
-   - `common/istio-1-16/cluster-local-gateway/base/patches/remove-pdb.yaml`
+   - `common/istio-1-17/istio-install/base/patches/remove-pdb.yaml`
+   - `common/istio-1-17/cluster-local-gateway/base/patches/remove-pdb.yaml`
    
    The above patches do not work with kustomize v3.2.0 as it doesn't have the appropriate 
    openapi schemas for the policy/v1 API version resources. This is fixed in kustomize v4+. 
@@ -79,16 +79,18 @@ old version is `X1.Y1.Z1`:
    
    A temporary workaround is to use the following instructions to manually delete the PodDisruptionBudget resources with `yq`: 
         
-        $ yq eval -i 'select((.kind == "PodDisruptionBudget" and .metadata.name == "cluster-local-gateway") | not)' common/istio-1-16/cluster-local-gateway/base/cluster-local-gateway.yaml
-        $ yq eval -i 'select((.kind == "PodDisruptionBudget" and .metadata.name == "istio-ingressgateway") | not)' common/istio-1-16/istio-install/base/install.yaml
-        $ yq eval -i 'select((.kind == "PodDisruptionBudget" and .metadata.name == "istiod") | not)' common/istio-1-16/istio-install/base/install.yaml
+        $ yq eval -i 'select((.kind == "PodDisruptionBudget" and .metadata.name == "cluster-local-gateway") | not)' common/istio-1-17/cluster-local-gateway/base/cluster-local-gateway.yaml
+        $ yq eval -i 'select((.kind == "PodDisruptionBudget" and .metadata.name == "istio-ingressgateway") | not)' common/istio-1-17/istio-install/base/install.yaml
+        $ yq eval -i 'select((.kind == "PodDisruptionBudget" and .metadata.name == "istiod") | not)' common/istio-1-17/istio-install/base/install.yaml
         
    ---
    **NOTE**
    
-   NOTE: Make sure to remove a redundant {} at the end of the `common/istio-1-16/istio-install/base/install.yaml` and `common/istio-1-16/cluster-local-gateway/base/cluster-local-gateway.yaml` files.
+   NOTE: Make sure to remove a redundant {} at the end of the `common/istio-1-17/istio-install/base/install.yaml` and `common/istio-1-17/cluster-local-gateway/base/cluster-local-gateway.yaml` files.
    
    ---
+
+6. Remove `dump.yaml`
 
 ## Changes to Istio's upstream manifests
 
