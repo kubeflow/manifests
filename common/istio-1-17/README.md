@@ -78,7 +78,7 @@ old version is `X1.Y1.Z1`:
 
 Changes to Istio's upstream profile `default` are the following:
 
--   Add a `cluster-local-gateway` component for Kserve. TODO this might be removed for newer Kserve
+-   Add a `cluster-local-gateway` component for Kserve. Knative-local-gateway is now obsolete https://github.com/kubeflow/manifests/pull/2355/commits/adc00b804404ea08685a044ae595be0bed9adb59.
 -   Disable the EgressGateway component. We do not use it and it adds unnecessary complexity.
 
 Those changes are captured in the [profile-overlay.yaml](profile-overlay.yaml)
