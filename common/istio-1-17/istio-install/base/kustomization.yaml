@@ -14,6 +14,6 @@ patchesStrategicMerge:
 - patches/service.yaml
 - patches/istio-configmap-disable-tracing.yaml
 - patches/disable-debugging.yaml
-- patches/istio-ingressgateway-remove-pdb
-- patches/istiod-remove-pdb
+- patches/istio-ingressgateway-remove-pdb.yaml
+- patches/istiod-remove-pdb.yaml
 
