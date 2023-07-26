@@ -8,7 +8,7 @@ spec:
       probes: 3
   components:
     ingressGateways:
-      # Cluster-local gateway for KFServing
+      # Cluster-local gateway for KServe
       - enabled: true
         name: cluster-local-gateway
         # https://github.com/istio/istio/issues/19263#issuecomment-615833092
