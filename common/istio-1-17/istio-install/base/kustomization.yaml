@@ -10,7 +10,7 @@ resources:
 - gateway.yaml
 - x-forwarded-host.yaml
 
-patchesStrategicMerge:
+patches:
 - patches/service.yaml
 - patches/istio-configmap-disable-tracing.yaml
 - patches/disable-debugging.yaml

@@ -7,4 +7,6 @@ resources:
 - cluster-local-gateway.yaml
 - gateway-authorizationpolicy.yaml
 - gateway.yaml
+
+patches:
 - patches/remove-pdb.yaml
