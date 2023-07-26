@@ -1,4 +1,3 @@
----
 $patch: delete
 apiVersion: policy/v1
 kind: PodDisruptionBudget
