@@ -65,13 +65,6 @@ old version is `X1.Y1.Z1`:
     
     ---
 
-   ---
-   **NOTE**
-   
-   NOTE: Make sure to remove a redundant {} at the end of the `common/istio-1-18/istio-install/base/install.yaml` and `common/istio-1-18/cluster-local-gateway/base/cluster-local-gateway.yaml` files.
-   
-   ---
-
 ## Changes to Istio's upstream manifests
 
 ### Changes to the upstream IstioOperator profile
