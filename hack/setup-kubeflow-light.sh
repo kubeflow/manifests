@@ -30,9 +30,9 @@ sleep 5
 kubectl wait --timeout=${TIMEOUT} -n cert-manager --all --for=condition=Ready pod
 
 echo "Deploying Istio."
-kustomize build common/istio-1-16/istio-crds/base | kubectl apply -f -
-kustomize build common/istio-1-16/istio-namespace/base | kubectl apply -f -
-kustomize build common/istio-1-16/istio-install/base | kubectl apply -f -
+kustomize build common/istio-1-17/istio-crds/base | kubectl apply -f -
+kustomize build common/istio-1-17/istio-namespace/base | kubectl apply -f -
+kustomize build common/istio-1-17/istio-install/base | kubectl apply -f -
 
 echo "Waiting for istio-system Pods to become ready..."
 sleep 5
@@ -50,7 +50,7 @@ do
 done
 
 kustomize build common/knative/knative-eventing/base | kubectl apply -f -
-kustomize build common/istio-1-16/cluster-local-gateway/base | kubectl apply -f -
+kustomize build common/istio-1-17/cluster-local-gateway/base | kubectl apply -f -
 
 echo "Waiting for knative-serving Pods to become ready..."
 sleep 5

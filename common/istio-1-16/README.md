@@ -27,7 +27,7 @@ old version is `X1.Y1.Z1`:
     CustomResource used to describe the Istio Control Plane:
 
         $ cd $ISTIO_NEW
-        $ istioctl profile dump demo > profile.yaml
+        $ istioctl profile dump default > profile.yaml
 
     ---
     **NOTE**
@@ -94,10 +94,10 @@ old version is `X1.Y1.Z1`:
 
 ### Changes to the upstream IstioOperator profile
 
-Changes to Istio's upstream profile `demo` are the following:
+Changes to Istio's upstream profile `default` are the following:
 
 -   Add a `cluster-local-gateway` component for KFServing.
--   Disable the EgressGateway component. We don\'t use it and it adds
+-   Disable the EgressGateway component. We don't use it and it adds
     unnecessary complexity.
 
 Those changes are captured in the [profile-overlay.yaml](profile-overlay.yaml)
