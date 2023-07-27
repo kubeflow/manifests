@@ -15,4 +15,4 @@ spec:
       - name: discovery
         env:
         - name: ENABLE_DEBUG_ON_HTTP
-          value: false
+          value: 'false'
