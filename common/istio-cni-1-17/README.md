@@ -1,4 +1,7 @@
-# Istio
+# Istio-CNI
+
+This uses istio-cni as described here https://istio.io/latest/docs/setup/additional-setup/cni/.
+Please be aware of Kserve and initcontainers https://istio.io/latest/docs/setup/additional-setup/cni/#compatibility-with-application-init-containers. Either use runasuser : 1337 xor add the annotation traffic.sidecar.istio.io/excludeOutboundIPRanges: 0.0.0.0/0 for kserve inferenceservices.
 
 ## Upgrade Istio Manifests
 
