@@ -1,0 +1,143 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: "{{ .Values.ns }}"
+  name: mlflowserver
+  labels:
+    app: mlflowserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflowserver
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: mlflowserver
+    spec:
+      containers:
+        - name: server
+          image: "{{ .Values.image.server }}:{{ .Values.image.version }}"
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+          ports:
+            - containerPort: 5000
+              name: serving
+              protocol: TCP
+          env:
+            - name: "MLFLOW_S3_ENDPOINT_URL"
+              value: "http://minio-service.kubeflow.svc.cluster.local:9000"
+            - name: "AWS_ACCESS_KEY_ID"
+              valueFrom: { secretKeyRef: { name: "mlpipeline-minio-artifact", key: "accesskey" } }
+            - name: "AWS_SECRET_ACCESS_KEY"
+              valueFrom: { secretKeyRef: { name: "mlpipeline-minio-artifact", key: "secretkey" } }
+            - name: "AWS_BUCKET"
+              value: "mlflow"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: "{{ .Values.ns }}"
+  name: mlflowserver
+spec:
+  selector:
+    app: mlflowserver
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: mlflow-server
+  namespace: "{{ .Values.ns }}"
+spec:
+  gateways:
+    - kubeflow-gateway
+  hosts:
+    - '*'
+  queryParams:
+    - ns: {{ .Values.ns }}
+  http:
+    - match:
+        - uri:
+            prefix: /mlflow/
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: mlflowserver.{{ .Values.ns }}.svc.cluster.local
+            port:
+              number: 5000
+
+
+---
+apiVersion: kubeflow.org/v1alpha1
+kind: PodDefault
+metadata:
+  name: access-mlflow0
+  namespace: "{{ .Values.ns }}"
+spec:
+  desc: mlflow
+  selector:
+    matchLabels:
+      access-mlflow: "true"
+#      pipelines.kubeflow.org/pipeline-sdk-type: "kfp"
+  env:
+    - name: "MLFLOW_S3_ENDPOINT_URL"
+      value: "http://minio-service.kubeflow.svc.cluster.local:9000"
+    - name: "AWS_ACCESS_KEY_ID"
+      valueFrom: { secretKeyRef: { name: "mlpipeline-minio-artifact", key: "accesskey" } }
+    - name: "AWS_SECRET_ACCESS_KEY"
+      valueFrom: { secretKeyRef: { name: "mlpipeline-minio-artifact", key: "secretkey" } }
+    - name: "AWS_BUCKET"
+      value: "mlflow"
+    - name: "remote_server_uri"
+      value: "http://mlflowserver.{{ .Values.ns }}.svc.cluster.local:5000"
+---
+
+apiVersion: kubeflow.org/v1alpha1
+kind: PodDefault
+metadata:
+  name: access-mlflow1
+  namespace: "{{ .Values.ns }}"
+spec:
+  desc: mlflow
+  selector:
+    matchLabels:
+      pipelines.kubeflow.org/pipeline-sdk-type: "kfp"
+  env:
+    - name: "MLFLOW_S3_ENDPOINT_URL"
+      value: "http://minio-service.kubeflow.svc.cluster.local:9000"
+    - name: "AWS_ACCESS_KEY_ID"
+      valueFrom: { secretKeyRef: { name: "mlpipeline-minio-artifact", key: "accesskey" } }
+    - name: "AWS_SECRET_ACCESS_KEY"
+      valueFrom: { secretKeyRef: { name: "mlpipeline-minio-artifact", key: "secretkey" } }
+    - name: "AWS_BUCKET"
+      value: "mlflow"
+    - name: "remote_server_uri"
+      value: "http://mlflowserver.{{ .Values.ns }}.svc.cluster.local:5000"
+---
+apiVersion: kubeflow.org/v1alpha1
+kind: PodDefault
+metadata:
+  name: access-mlflow2
+  namespace: "{{ .Values.ns }}"
+spec:
+  desc: mlflow
+  selector:
+    matchLabels:
+      pipelines.kubeflow.org/v2_component: "true"
+  env:
+    - name: "MLFLOW_S3_ENDPOINT_URL"
+      value: "http://minio-service.kubeflow.svc.cluster.local:9000"
+    - name: "AWS_ACCESS_KEY_ID"
+      valueFrom: { secretKeyRef: { name: "mlpipeline-minio-artifact", key: "accesskey" } }
+    - name: "AWS_SECRET_ACCESS_KEY"
+      valueFrom: { secretKeyRef: { name: "mlpipeline-minio-artifact", key: "secretkey" } }
+    - name: "AWS_BUCKET"
+      value: "mlflow"
+    - name: "remote_server_uri"
+      value: "http://mlflowserver.{{ .Values.ns }}.svc.cluster.local:5000"

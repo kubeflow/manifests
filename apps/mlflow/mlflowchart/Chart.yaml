@@ -1,0 +1,7 @@
+apiVersion: v1
+appVersion: 0.1
+description: MLFlow
+maintainers:
+- name: Thanh
+name: MLFLOW tracking server
+version: 0.1

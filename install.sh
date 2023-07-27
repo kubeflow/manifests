@@ -120,7 +120,7 @@ metadata:
   name: access-ml-pipeline
   namespace: "thanhnm777-gmail-com"
 spec:
-  desc: Allow access to Kubeflow Pipelines
+  desc: Kubeflow Pipelines
   selector:
     matchLabels:
       access-ml-pipeline: "true"
@@ -141,14 +141,31 @@ spec:
       value: /var/run/secrets/kubeflow/pipelines/token
 EOF
 
+
+
+kubectl exec -it `kubectl get pods -A | grep -i kubeflow | grep -i mysql | grep -v katib | awk '{print $2}'` -n kubeflow -- mysql -e 'create database mlflowdb;'
+kubectl exec -it `kubectl get pods -A | grep -i kubeflow | grep -i mysql | grep -v katib | awk '{print $2}'` -n kubeflow -- mysql -e "CREATE USER 'mlflow'@'%' IDENTIFIED by 'mlflow';"
+kubectl exec -it `kubectl get pods -A | grep -i kubeflow | grep -i mysql | grep -v katib | awk '{print $2}'` -n kubeflow -- mysql -e "GRANT ALL PRIVILEGES ON mlflowdb.* TO 'mlflow'@'%';"
+
+
+
+
+helm upgrade --install mlflow apps/mlflow/mlflowchart --namespace thanhnm777-gmail-com --set ns=thanhnm777-gmail-com
+
+
+
 kubectl apply -f dex-configmap.yaml
 kubectl delete pod `kubectl get pods -n auth | awk '{print $1}' | grep -iv name` -n auth 
 
 
-istioVersion="1.18.1"
+istioVersion="1.18.2"
 curl -L https://istio.io/downloadIstio | sh -
 mv istio-${istioVersion} /tmp/
 kubectl apply -f /tmp/istio-${istioVersion}/samples/addons
 kubectl rollout status deployment/kiali -n istio-system
 # /tmp/istio-1.18.1/bin/istioctl dashboard kiali
 cd ..
+
+
+#kubectl port-forward -n kubeflow svc/minio-service 9000:9000
+#kubectl port-forward -n kubeflow svc/mlflowserver 5000:5000
