@@ -169,10 +169,6 @@ kustomize build common/istio-1-16/istio-install/base | kubectl apply -f -
 
 #### Authservice
 
-The oauth service is responsible for ensuring the requests of users are
-
-#### Authservice
-
 The Authservice is responsible for ensuring requests are authorized. Otherwise, redirecting them to the provider (Here Dex is used as OIDC Provider). It is also responsible for adding the `kubeflow-userid` to the upstream request. You can find the sequence diagram for an Authentication Flow [here](https://github.com/arrikto/oidc-authservice/blob/master/docs/media/oidc_authservice_sequence_diagram.svg).
 
 They are two available options the *OIDC AuthService* or the *OAuth2-proxy*. **You should not apply both.**
