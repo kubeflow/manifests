@@ -1,3 +1,7 @@
+# Install notes
+
+Install both directories.
+
 # Cert Manager
 
 ## Upgrade Cert Manager Manifests
