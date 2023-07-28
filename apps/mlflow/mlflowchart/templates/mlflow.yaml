@@ -94,7 +94,7 @@ spec:
       valueFrom: { secretKeyRef: { name: "mlpipeline-minio-artifact", key: "secretkey" } }
     - name: "AWS_BUCKET"
       value: "mlflow"
-    - name: "remote_server_uri"
+    - name: "mlflow_server_uri"
       value: "http://mlflowserver.{{ .Values.ns }}.svc.cluster.local:5000"
 ---
 
@@ -117,7 +117,7 @@ spec:
       valueFrom: { secretKeyRef: { name: "mlpipeline-minio-artifact", key: "secretkey" } }
     - name: "AWS_BUCKET"
       value: "mlflow"
-    - name: "remote_server_uri"
+    - name: "mlflow_server_uri"
       value: "http://mlflowserver.{{ .Values.ns }}.svc.cluster.local:5000"
 ---
 apiVersion: kubeflow.org/v1alpha1
@@ -139,5 +139,5 @@ spec:
       valueFrom: { secretKeyRef: { name: "mlpipeline-minio-artifact", key: "secretkey" } }
     - name: "AWS_BUCKET"
       value: "mlflow"
-    - name: "remote_server_uri"
+    - name: "mlflow_server_uri"
       value: "http://mlflowserver.{{ .Values.ns }}.svc.cluster.local:5000"
