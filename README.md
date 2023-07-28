@@ -167,6 +167,32 @@ kustomize build common/istio-1-16/istio-namespace/base | kubectl apply -f -
 kustomize build common/istio-1-16/istio-install/base | kubectl apply -f -
 ```
 
+#### Authservice
+
+The oauth service is responsible for ensuring the requests of users are
+
+#### Authservice
+
+The Authservice is responsible for ensuring requests are authorized. Otherwise, redirecting them to the provider (Here Dex is used as OIDC Provider). It is also responsible for adding the `kubeflow-userid` to the upstream request. You can find the sequence diagram for an Authentication Flow [here](https://github.com/arrikto/oidc-authservice/blob/master/docs/media/oidc_authservice_sequence_diagram.svg).
+
+They are two available options the *OIDC AuthService* or the *OAuth2-proxy*. **You should not apply both.**
+
+##### oidc-authservice
+
+This is the default solution provided for kubeflow. The [OIDC AuthService](https://github.com/arrikto/oidc-authservice) extends your Istio Ingress-Gateway capabilities, to be able to function as an OIDC client:
+
+```sh
+kustomize build common/auth-envoy-filter/overlays/oidc-authservice | kubectl apply -f -
+```
+
+##### OAuth2-proxy
+
+The [OAuth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy) will extends the istio Ingress-Gateway in the same way the *OIDC AuthService* is doing but offer more flexibility for handling requests. See the [documentation](https://oauth2-proxy.github.io/oauth2-proxy/docs/configuration/overview).
+
+```sh
+kustomize build common/auth-envoy-filter/overlays/oauth2-proxy | kubectl apply -f -
+```
+
 #### Dex
 
 Dex is an OpenID Connect Identity (OIDC) with multiple authentication backends. In this default installation, it includes a static user with email `user@example.com`. By default, the user's password is `12341234`. For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
@@ -177,32 +203,8 @@ Install Dex:
 kustomize build common/dex/overlays/istio | kubectl apply -f -
 ```
 
-#### Authservice
-
-The oauth service is responsible for ensuring the requests of users are
-
-#### Authservice
-
-The Authservice is responsible for ensuring requests are authorized. Otherwise redirecting them to the provider (Here Dex is used as OIDC Provider). It is also responsible for adding the `kubeflow-userid` to the upstream request. You can find the sequence diagram for an Authentication Flow [here](https://github.com/arrikto/oidc-authservice/blob/master/docs/media/oidc_authservice_sequence_diagram.svg).
-
-They are two available options the *OIDC AuthService* or the *OAuth2-proxy*. **You should not apply both.**
-
-##### oidc-authservice
-
-This is the default solution provided for kubeflow. The [OIDC AuthService](https://github.com/arrikto/oidc-authservice) extends your Istio Ingress-Gateway capabilities, to be able to function as an OIDC client:
-
-```sh
-kustomize build common/auth-proxy/overlays/oidc-authservice | kubectl apply -f -
-```
-
-##### OAuth2-proxy
-
-The [OAuth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy) will extends the istio Ingress-Gateway in the same way the *OIDC AuthService* is doing but offer more flexibility for handling requests. See the [documentation](https://oauth2-proxy.github.io/oauth2-proxy/docs/configuration/overview).
-
-```sh
-kustomize build common/auth-proxy/overlays/oauth-proxy | kubectl apply -f -
-```
-
+> If you are using `oauth2-proxy` as auth envoy filter, you should be using `common/dex/overlays/oauth2-proxy` instead.
+ 
 #### Knative
 
 Knative is used by the KServe official Kubeflow component.
