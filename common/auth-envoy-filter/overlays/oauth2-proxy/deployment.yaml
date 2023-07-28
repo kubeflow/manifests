@@ -35,7 +35,7 @@ spec:
             - '--alpha-config=/etc/oauth2_proxy/oauth2_proxy.yml'
             - '--config=/etc/oauth2_proxy/oauth2_proxy.cfg'
             - '--silence-ping-logging'
-            - '--redirect-url=http://localhost:8080/oauth2/callback'
+            - '--redirect-url=/oauth2/callback'
           ports:
             - name: http-api
               containerPort: 8080
