@@ -55,15 +55,15 @@ metadata:
   namespace: "{{ .Values.ns }}"
 spec:
   gateways:
-    - kubeflow-gateway
+    - kubeflow/kubeflow-gateway
   hosts:
     - '*'
-  queryParams:
-    - ns: {{ .Values.ns }}
+  # queryParams:
+  #   - ns: {{ .Values.ns }}
   http:
     - match:
         - uri:
-            prefix: /mlflow/
+            prefix: /mlflow
       rewrite:
         uri: /
       route:

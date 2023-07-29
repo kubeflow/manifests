@@ -150,7 +150,7 @@ kubectl exec -it `kubectl get pods -A | grep -i kubeflow | grep -i mysql | grep 
 
 
 
-helm upgrade --install mlflow apps/mlflow/mlflowchart --namespace thanhnm777-gmail-com --set ns=thanhnm777-gmail-com
+helm upgrade --install mlflow apps/mlflow/mlflowchart --set ns=thanhnm777-gmail-com
 
 
 
