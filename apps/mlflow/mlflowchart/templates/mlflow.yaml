@@ -63,7 +63,7 @@ spec:
   http:
     - match:
         - uri:
-            prefix: /mlflow
+            prefix: /{{ .Values.ns }}/mlflow
       rewrite:
         uri: /
       route:
@@ -71,8 +71,19 @@ spec:
             host: mlflowserver.{{ .Values.ns }}.svc.cluster.local
             port:
               number: 5000
-
-
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: mlflowserver
+  namespace: "{{ .Values.ns }}"
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app: mlflowserver
+  rules:
+  - {}
 ---
 apiVersion: kubeflow.org/v1alpha1
 kind: PodDefault
