@@ -1,6 +1,7 @@
-kustomize build example | awk '!/well-defined/' > kubeflow.yaml
+kustomize build example | awk '!/well-defined/' > kubeflow-akz.yaml
 
-while ! kubectl apply -f kubeflow.yaml; do echo "Retrying to apply resources"; sleep 120; done
+sed -i "s/SECURE_COOKIES: \"true\"/SECURE_COOKIE: \"false\"/g" kubeflow-akz.yaml
+while ! kubectl apply -f kubeflow-akz.yaml; do echo "Retrying to apply resources"; sleep 120; done
 # while ! kustomize build example | awk '!/well-defined/' | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 
 
@@ -81,3 +82,22 @@ cd ..
 
 #kubectl port-forward -n kubeflow svc/minio-service 9000:9000
 #kubectl port-forward -n kubeflow svc/mlflowserver 5000:5000
+
+
+cat <<EOF | kubectl delete -f -
+apiVersion: v1
+kind: Service
+metadata:
+  name: istio-ingressgateway-lsj4h
+  namespace: istio-system
+spec:
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: 8080
+    name: http
+  selector:
+    app: istio-ingressgateway
+    istio: ingressgateway
+  type: LoadBalancer
+EOF

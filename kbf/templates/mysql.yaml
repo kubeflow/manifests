@@ -22,17 +22,9 @@ metadata:
     application-crd-id: kubeflow-pipelines
   {{- include "kbf.labels" . | nindent 4 }}
 spec:
+  action: ALLOW
   rules:
-  - from:
-    - source:
-        principals:
-        - cluster.local/ns/kubeflow/sa/ml-pipeline
-        - cluster.local/ns/kubeflow/sa/ml-pipeline-ui
-        - cluster.local/ns/kubeflow/sa/ml-pipeline-persistenceagent
-        - cluster.local/ns/kubeflow/sa/ml-pipeline-scheduledworkflow
-        - cluster.local/ns/kubeflow/sa/ml-pipeline-viewer-crd-service-account
-        - cluster.local/ns/kubeflow/sa/kubeflow-pipelines-cache
-        - cluster.local/ns/kubeflow/sa/metadata-grpc-server
+  - {}
   selector:
     matchLabels:
       app: mysql

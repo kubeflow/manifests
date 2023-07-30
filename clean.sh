@@ -107,6 +107,9 @@ EOF
 kubectl delete -f dex-configmap.yaml
 
 kubectl delete ns thanhnm777-gmail-com
-istioVersion="1.18.1"
+istioVersion="1.18.2"
 kubectl delete -f /tmp/istio-${istioVersion}/samples/addons
 kubectl delete -f kubeflow.yaml
+
+
+helm delete mlflow 

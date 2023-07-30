@@ -1,0 +1,25 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.azure.com/tls-cert-keyvault-uri: https://kbfkeyvaultdev.vault.azure.net/certificates/kbfz/b4cca15af6454ca6a511b56d83df9d57
+  name: kbf-ingress
+  namespace: istio-system
+spec:
+  ingressClassName: webapprouting.kubernetes.azure.com
+  rules:
+  - host: kbfz.rdenginno.info
+    http:
+      paths:
+      - backend:
+          service:
+            name: istio-system
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - kbfz.rdenginno.info
+    secretName: keyvault-kbf-ingress
