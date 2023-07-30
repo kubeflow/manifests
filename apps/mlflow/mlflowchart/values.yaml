@@ -4,4 +4,4 @@ ns: thanhnm777-gmail-com
 image:
   server: thanhnm777/mlflow-remote-server
   pullPolicy: Always
-  version: 0.0.5
+  version: 0.0.7

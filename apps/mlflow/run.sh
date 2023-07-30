@@ -19,19 +19,19 @@ fi
 
 mkdir -p "${FILE_DIR}"
 
-mlflow server \
-    --backend-store-uri "file://$FILE_DIR" \
-    --default-artifact-root "s3://$AWS_BUCKET/mlflow/artifacts" \
-    --host 0.0.0.0 \
-    --port "$PORT"
+# mlflow server \
+#     --backend-store-uri "file://$FILE_DIR" \
+#     --default-artifact-root "s3://$AWS_BUCKET/mlflow/artifacts" \
+#     --host 0.0.0.0 \
+#     --port "$PORT"
 
 
 
 #cannot run with mysql? strange? so workaround working with postgresql then
-# mlflow server \
-#     --backend-store-uri "mysql://mlflow:mlflow@mysql.kubeflow.svc:3306/mlflowdb" \
-#     --default-artifact-root "s3://$AWS_BUCKET/mlflow/artifacts" \
-#     --host 0.0.0.0 \
-#     --port "$PORT"
+mlflow server \
+    --backend-store-uri "mysql://mlflow:mlflow@mysql.kubeflow.svc:3306/mlflowdb" \
+    --default-artifact-root "s3://$AWS_BUCKET/mlflow/artifacts" \
+    --host 0.0.0.0 \
+    --port "$PORT"
 
 

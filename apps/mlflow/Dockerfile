@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.7
 RUN pip3 install --upgrade pip && \
  pip3 install mlflow --upgrade && \
  pip3 install awscli --upgrade && \

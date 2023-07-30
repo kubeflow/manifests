@@ -1,1 +1,1 @@
-docker build -t thanhnm777/mlflow-remote-server:0.0.5 . --push
+docker build -t thanhnm777/mlflow-remote-server:0.0.7 . --push

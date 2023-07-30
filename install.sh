@@ -113,39 +113,38 @@ spec:
 EOF 
 
 
-cat <<EOF | kubectl apply -f -
-apiVersion: kubeflow.org/v1alpha1
-kind: PodDefault
-metadata:
-  name: access-ml-pipeline
-  namespace: "thanhnm777-gmail-com"
-spec:
-  desc: Kubeflow Pipelines
-  selector:
-    matchLabels:
-      access-ml-pipeline: "true"
-  volumes:
-    - name: volume-kf-pipeline-token
-      projected:
-        sources:
-          - serviceAccountToken:
-              path: token
-              expirationSeconds: 99999
-              audience: pipelines.kubeflow.org      
-  volumeMounts:
-    - mountPath: /var/run/secrets/kubeflow/pipelines
-      name: volume-kf-pipeline-token
-      readOnly: true
-  env:
-    - name: KF_PIPELINES_SA_TOKEN_PATH
-      value: /var/run/secrets/kubeflow/pipelines/token
-EOF
+# cat <<EOF | kubectl apply -f -
+# apiVersion: kubeflow.org/v1alpha1
+# kind: PodDefault
+# metadata:
+#   name: access-ml-pipeline
+#   namespace: "thanhnm777-gmail-com"
+# spec:
+#   desc: Kubeflow Pipelines
+#   selector:
+#     matchLabels:
+#       access-ml-pipeline: "true"
+#   volumes:
+#     - name: volume-kf-pipeline-token
+#       projected:
+#         sources:
+#           - serviceAccountToken:
+#               path: token
+#               expirationSeconds: 99999
+#               audience: pipelines.kubeflow.org      
+#   volumeMounts:
+#     - mountPath: /var/run/secrets/kubeflow/pipelines
+#       name: volume-kf-pipeline-token
+#       readOnly: true
+#   env:
+#     - name: KF_PIPELINES_SA_TOKEN_PATH
+#       value: /var/run/secrets/kubeflow/pipelines/token
+# EOF
 
 
 
 kubectl exec -it `kubectl get pods -A | grep -i kubeflow | grep -i mysql | grep -v katib | awk '{print $2}'` -n kubeflow -- mysql -e 'create database mlflowdb;'
-kubectl exec -it `kubectl get pods -A | grep -i kubeflow | grep -i mysql | grep -v katib | awk '{print $2}'` -n kubeflow -- mysql -e "CREATE USER 'mlflow'@'%' IDENTIFIED by 'mlflow';"
-kubectl exec -it `kubectl get pods -A | grep -i kubeflow | grep -i mysql | grep -v katib | awk '{print $2}'` -n kubeflow -- mysql -e "GRANT ALL PRIVILEGES ON mlflowdb.* TO 'mlflow'@'%';"
+kubectl exec -it `kubectl get pods -A | grep -i kubeflow | grep -i mysql | grep -v katib | awk '{print $2}'` -n kubeflow -- mysql -e "use mlflowdb; CREATE USER 'mlflow3'@'%' IDENTIFIED WITH mysql_native_password BY 'MlflowM123'; GRANT ALL ON mlflowdb.* TO 'mlflow3'@'%';flush privileges"
 
 
 
