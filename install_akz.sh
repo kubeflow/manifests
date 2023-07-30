@@ -82,22 +82,3 @@ cd ..
 
 #kubectl port-forward -n kubeflow svc/minio-service 9000:9000
 #kubectl port-forward -n kubeflow svc/mlflowserver 5000:5000
-
-
-cat <<EOF | kubectl delete -f -
-apiVersion: v1
-kind: Service
-metadata:
-  name: istio-ingressgateway-lsj4h
-  namespace: istio-system
-spec:
-  ports:
-  - port: 443
-    protocol: TCP
-    targetPort: 8080
-    name: http
-  selector:
-    app: istio-ingressgateway
-    istio: ingressgateway
-  type: LoadBalancer
-EOF
