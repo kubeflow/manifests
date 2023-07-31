@@ -25,10 +25,16 @@ jobs:
         sudo snap install juju --classic --channel ${{ matrix.juju }}
         sudo snap install juju-wait --classic
 
-    - name: Bootstrap onto AWS
+    - name: Configure credentials
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.GH_E2E_AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.GH_E2E_SECRET_ACCESS_KEY }}
+      run: |
+        aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+        aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+        aws configure set default.region eu-east-1
+
+    - name: Bootstrap onto AWS
       run: |
         set -eux
         juju autoload-credentials --client aws
