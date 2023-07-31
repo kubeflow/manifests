@@ -1,6 +1,5 @@
 kustomize build example | awk '!/well-defined/' > kubeflow-akz.yaml
 
-sed -i "s/SECURE_COOKIES: \"true\"/SECURE_COOKIE: \"false\"/g" kubeflow-akz.yaml
 while ! kubectl apply -f kubeflow-akz.yaml; do echo "Retrying to apply resources"; sleep 120; done
 # while ! kustomize build example | awk '!/well-defined/' | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 
@@ -76,7 +75,7 @@ curl -L https://istio.io/downloadIstio | sh -
 mv istio-${istioVersion} /tmp/
 kubectl apply -f /tmp/istio-${istioVersion}/samples/addons
 kubectl rollout status deployment/kiali -n istio-system
-# /tmp/istio-1.18.1/bin/istioctl dashboard kiali
+# /tmp/istio-1.18.2/bin/istioctl dashboard kiali
 cd ..
 
 
