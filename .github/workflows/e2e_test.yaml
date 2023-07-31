@@ -27,8 +27,8 @@ jobs:
 
     - name: Configure credentials
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.GH_E2E_AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.GH_E2E_SECRET_ACCESS_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.gh_e2e_aws_access_key_id }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.gh_e2e_secret_access_key }}
       run: |
         aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
         aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
