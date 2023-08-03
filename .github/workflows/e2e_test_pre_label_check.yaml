@@ -9,9 +9,8 @@ on:
       - labeled
 
 jobs:
-  label_check:
+  ok_to_test_label_check:
     if: ${{ github.event.label.name == 'ok-to-test' }}
-    name: label-check
     runs-on: ubuntu-latest
     steps:
     - run: echo "Pull request contains label ok-to-test"

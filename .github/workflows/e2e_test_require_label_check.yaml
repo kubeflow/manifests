@@ -1,0 +1,22 @@
+name: E2E Test Require Label Check
+
+on:
+  pull_request:
+    paths:
+      - apps/**
+      - common/**
+    types:
+      - opened
+      - labeled
+      - unlabeled
+      - synchronize
+
+jobs:
+  require_label_check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: mheap/github-action-required-labels@v5
+      with:
+        mode: exactly
+        count: 1
+        labels: "ok-to-test"
