@@ -1,13 +1,17 @@
 name: E2E Tests
 
 on:
-  pull_request:
-    paths:
-      - apps/**
-      - common/**
+  workflow_run:
+    workflows: ["E2E Test Pre Label Check"]
+      types:
+        - completed
 
 jobs:
   e2e:
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+
     name: AWS
     runs-on: ubuntu-20.04
 
@@ -18,7 +22,7 @@ jobs:
 
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Install juju
       run: |

@@ -1,0 +1,17 @@
+name: E2E Test Pre Label Check
+
+on:
+  pull_request:
+    paths:
+      - apps/**
+      - common/**
+    types:
+      - labeled
+
+jobs:
+  label_check:
+    if: ${{ github.event.label.name == 'ok-to-test' }}
+    name: label-check
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo "Pull request contains label ok-to-test"
