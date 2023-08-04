@@ -2,13 +2,13 @@ name: E2E Tests
 
 on:
   workflow_run:
-    workflows: ["E2E Test Pre Label Check"]
-      types:
-        - completed
+    workflows: [E2E Test Pre Label Check]
+    types: [completed]
 
 jobs:
   e2e:
     if: >
+      github.event.label.name == 'ok-to-test' &&
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success'
 

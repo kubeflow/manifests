@@ -1,16 +1,22 @@
 name: E2E Test Pre Label Check
 
 on:
-  pull_request:
-    paths:
-      - apps/**
-      - common/**
-    types:
-      - labeled
+  workflow_run:
+    workflows: [E2E Test Require Label Check]
+    types: [completed]
 
 jobs:
   ok_to_test_label_check:
     if: ${{ github.event.label.name == 'ok-to-test' }}
+
     runs-on: ubuntu-latest
+
     steps:
-    - run: echo "Pull request contains label ok-to-test"
+    - name: Check out repo
+      uses: actions/checkout@v2
+
+    - name: Install kustomize
+      run: ./tests/gh-actions/install_kustomize.sh
+
+    - name: Unit Test
+      run: kustomize build example

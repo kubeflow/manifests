@@ -10,6 +10,7 @@ on:
       - labeled
       - unlabeled
       - synchronize
+      - reopened
 
 jobs:
   require_label_check:
