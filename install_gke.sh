@@ -110,36 +110,7 @@ spec:
       port:
         number: 8080
 ---
-EOF 
-
-
-# cat <<EOF | kubectl apply -f -
-# apiVersion: kubeflow.org/v1alpha1
-# kind: PodDefault
-# metadata:
-#   name: access-ml-pipeline
-#   namespace: "thanhnm777-gmail-com"
-# spec:
-#   desc: Kubeflow Pipelines
-#   selector:
-#     matchLabels:
-#       access-ml-pipeline: "true"
-#   volumes:
-#     - name: volume-kf-pipeline-token
-#       projected:
-#         sources:
-#           - serviceAccountToken:
-#               path: token
-#               expirationSeconds: 99999
-#               audience: pipelines.kubeflow.org      
-#   volumeMounts:
-#     - mountPath: /var/run/secrets/kubeflow/pipelines
-#       name: volume-kf-pipeline-token
-#       readOnly: true
-#   env:
-#     - name: KF_PIPELINES_SA_TOKEN_PATH
-#       value: /var/run/secrets/kubeflow/pipelines/token
-# EOF
+EOF
 
 bash install_mlflow.sh
 kubectl apply -f dex-configmap.yaml
