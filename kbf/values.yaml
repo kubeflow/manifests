@@ -4690,14 +4690,14 @@ tensorboardsWebAppDeployment:
   tensorboardsWebApp:
     env:
       appPrefix: /tensorboards
-      appSecureCookies: "true"
+      appSecureCookies: "false"
       useridHeader: kubeflow-userid
       useridPrefix: ""
     image:
       repository: docker.io/kubeflownotebookswg/tensorboards-web-app
       tag: v1.7.0
-tensorboardsWebAppParametersDg5Mtm7Md8:
-  twaAppSecureCookies: "true"
+tensorboardsWebAppParameters9Cdtm8M796:
+  twaAppSecureCookies: "false"
   twaClusterDomain: cluster.local
   twaPrefix: /tensorboards
   twaUseridHeader: kubeflow-userid

@@ -79,7 +79,8 @@ resources:
 - ../apps/training-operator/upstream/overlays/kubeflow
 # User namespace
 #- ../common/user-namespace/base
-- ../common/thanhnm777-gmail-com/base
+- ../common/thanhnm39315-sacombank-com/base
+#- ../common/thanhnm777-gmail-com/base
 
 # KServe
 - ../contrib/kserve/kserve

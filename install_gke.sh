@@ -112,7 +112,7 @@ spec:
 ---
 EOF
 
-bash install_mlflow.sh
+bash install_mlflow.sh thanhnm39315-sacombank-com
 kubectl apply -f dex-configmap.yaml
 kubectl delete pod `kubectl get pods -n auth | awk '{print $1}' | grep -iv name` -n auth 
 

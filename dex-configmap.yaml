@@ -22,8 +22,11 @@ data:
       username: user
       userID: "15841185641784"
     - email: thanhnm777@gmail.com
-      hash: $2y$12$p6U8Ie4FS.Lj4OKGeo8TEOw9md6TcdkOC9sI/ivAGkoT8KxBsOlO6
+      hash: $2y$12$p6U8Ie4FS.Lj4OKGeo8TEOw9md6TcdkOC9sI/ivAGkoT8KxBsOlO3
       username: thanhnm777
+    - email: thanhnm39315@sacombank.com
+      hash: $2y$12$p6U8Ie4FS.Lj4OKGeo8TEOw9md6TcdkOC9sI/ivAGkoT8KxBsOlO6
+      username: thanhnm39315
     staticClients:
     # https://github.com/dexidp/dex/pull/1664
     - idEnv: OIDC_CLIENT_ID

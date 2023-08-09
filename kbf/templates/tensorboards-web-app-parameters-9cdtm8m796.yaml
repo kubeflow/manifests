@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kbf.fullname" . }}-tensorboards-web-app-parameters-9cdtm8m796
+  labels:
+    app: tensorboards-web-app
+    kustomize.component: tensorboards-web-app
+  {{- include "kbf.labels" . | nindent 4 }}
+data:
+  TWA_APP_SECURE_COOKIES: {{ .Values.tensorboardsWebAppParameters9Cdtm8M796.twaAppSecureCookies
+    | quote }}
+  TWA_CLUSTER_DOMAIN: {{ .Values.tensorboardsWebAppParameters9Cdtm8M796.twaClusterDomain
+    | quote }}
+  TWA_PREFIX: {{ .Values.tensorboardsWebAppParameters9Cdtm8M796.twaPrefix | quote
+    }}
+  TWA_USERID_HEADER: {{ .Values.tensorboardsWebAppParameters9Cdtm8M796.twaUseridHeader
+    | quote }}
+  TWA_USERID_PREFIX: {{ .Values.tensorboardsWebAppParameters9Cdtm8M796.twaUseridPrefix
+    | quote }}
