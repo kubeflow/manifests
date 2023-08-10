@@ -29,4 +29,6 @@ spec:
               configMapKeyRef:
                 name: pipeline-install-config
                 key: cronScheduleTimezone
+          - name: EXECUTIONTYPE
+            value: Workflow
       serviceAccountName: ml-pipeline-scheduledworkflow

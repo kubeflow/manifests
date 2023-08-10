@@ -202,7 +202,7 @@ def test_sync_server_with_pipeline_enabled(sync_server, data, expected_status,
     url = f"http://{server.server_address[0]}:{str(server.server_address[1])}"
     print("url: ", url)
     print("data")
-    print(json.dumps(data, indent=2))
+    print(json.dumps(data))
     x = requests.post(url, data=json.dumps(data))
     results = json.loads(x.text)
 
@@ -245,7 +245,7 @@ def test_sync_server_with_direct_passing_of_settings(
     url = f"http://{server.server_address[0]}:{str(server.server_address[1])}"
     print("url: ", url)
     print("data")
-    print(json.dumps(data, indent=2))
+    print(json.dumps(data))
     x = requests.post(url, data=json.dumps(data))
     results = json.loads(x.text)
 

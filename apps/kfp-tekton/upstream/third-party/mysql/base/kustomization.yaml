@@ -6,3 +6,5 @@ resources:
 - mysql-pv-claim.yaml
 - mysql-service.yaml
 - mysql-serviceaccount.yaml
+
+namespace: kubeflow

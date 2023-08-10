@@ -1,0 +1,4 @@
+- op: remove
+  path: /spec/template/spec/containers/0/securityContext/runAsGroup
+- op: remove
+  path: /spec/template/spec/containers/0/securityContext/runAsUser
