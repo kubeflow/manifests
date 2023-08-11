@@ -7,6 +7,5 @@ metadata:
 data:
   oauth2_proxy.cfg: >-
     email_domains = [ "*" ]
-    skip_auth_regex=["/dex/.*"] 
-    redirect_url="/oauth2/callback"
+    skip_auth_regex=["/dex/.*"]
 binaryData: {}

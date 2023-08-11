@@ -167,27 +167,24 @@ kustomize build common/istio-1-16/istio-namespace/base | kubectl apply -f -
 kustomize build common/istio-1-16/istio-install/base | kubectl apply -f -
 ```
 
-#### Authservice
+#### AuthService
 
-The Authservice is responsible for ensuring requests are authorized. Otherwise, redirecting them to the provider (Here Dex is used as OIDC Provider). It is also responsible for adding the `kubeflow-userid` to the upstream request. You can find the sequence diagram for an Authentication Flow [here](https://github.com/arrikto/oidc-authservice/blob/master/docs/media/oidc_authservice_sequence_diagram.svg).
-
-They are two available options the *OIDC AuthService* or the *OAuth2-proxy*. **You should not apply both.**
-
-##### oidc-authservice
-
-This is the default solution provided for kubeflow. The [OIDC AuthService](https://github.com/arrikto/oidc-authservice) extends your Istio Ingress-Gateway capabilities, to be able to function as an OIDC client:
+The OIDC AuthService extends your Istio Ingress-Gateway capabilities, to be able to function as an OIDC client:
 
 ```sh
-kustomize build common/auth-envoy-filter/overlays/oidc-authservice | kubectl apply -f -
+kustomize build common/oidc-client/oidc-authservice/base | kubectl apply -f -
 ```
 
-##### OAuth2-proxy
+<details>
+  <summary>oauth2-proxy alternative</summary>
 
-The [OAuth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy) will extends the istio Ingress-Gateway in the same way the *OIDC AuthService* is doing but offer more flexibility for handling requests. See the [documentation](https://oauth2-proxy.github.io/oauth2-proxy/docs/configuration/overview).
+You can use [OAuth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy) instead of [OIDC AuthService](https://github.com/arrikto/oidc-authservice). To do so, run the following command instead
 
 ```sh
-kustomize build common/auth-envoy-filter/overlays/oauth2-proxy | kubectl apply -f -
+kustomize build  common/oidc-client/oauth2-proxy/base | kubectl apply -f -
 ```
+
+</details>
 
 #### Dex
 

@@ -40,7 +40,7 @@ resources:
 - ../common/istio-1-16/istio-namespace/base
 - ../common/istio-1-16/istio-install/base
 # OIDC Authservice
-- ../common/auth-envoy-filter/overlays/oidc-authservice
+- ../common/oidc-client/oidc-authservice/base
 # Dex
 - ../common/dex/overlays/istio
 # KNative

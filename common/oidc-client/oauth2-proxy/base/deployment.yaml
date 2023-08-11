@@ -25,9 +25,9 @@ spec:
           configMap:
             name: oauth2-proxy-alpha
             defaultMode: 420
-        - name: authservice-client
+        - name: oauth2-proxy
           secret:
-            secretName: authservice-client
+            secretName: oauth2-proxy
       containers:
         - name: oauth2-proxy
           image: quay.io/oauth2-proxy/oauth2-proxy:v7.4.0
@@ -35,7 +35,8 @@ spec:
             - '--alpha-config=/etc/oauth2_proxy/oauth2_proxy.yml'
             - '--config=/etc/oauth2_proxy/oauth2_proxy.cfg'
             - '--silence-ping-logging'
-            - '--redirect-url=/oauth2/callback'
+            - '--proxy-prefix=/oauth2'
+            - '--cookie-secure=false'
           ports:
             - name: http-api
               containerPort: 8080
@@ -44,16 +45,6 @@ spec:
               containerPort: 44180
               protocol: TCP
           env:
-            - name: OAUTH2_PROXY_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: authservice-client
-                  key: CLIENT_ID
-            - name: OAUTH2_PROXY_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: authservice-client
-                  key: CLIENT_SECRET
             - name: OAUTH2_PROXY_COOKIE_SECRET
               valueFrom:
                 secretKeyRef:
@@ -66,7 +57,7 @@ spec:
             - name: configalpha
               mountPath: /etc/oauth2_proxy/oauth2_proxy.yml
               subPath: oauth2_proxy.yml
-            - name: authservice-client
+            - name: oauth2-proxy
               subPath: CLIENT_SECRET
               mountPath: "/etc/oauth2_proxy/CLIENT_SECRET"
           livenessProbe:
