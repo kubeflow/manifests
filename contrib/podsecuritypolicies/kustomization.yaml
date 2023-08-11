@@ -1,8 +1,0 @@
-# REMOVED IN KUBERNTES 1.25 https://kubernetes.io/docs/concepts/security/pod-security-policy/
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-- restricted/kubeflow-restricted-usernamespace-clusterrole.yaml
-- restricted/kubeflow-restricted-psp.yaml
-- restricted/kubeflow-restricted-clusterrole.yaml
-- restricted/kubeflow-restricted-clusterrole-rolebinding.yaml

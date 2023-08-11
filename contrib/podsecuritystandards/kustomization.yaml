@@ -1,5 +1,0 @@
-TODO add the label `pod-security.kubernetes.io/enforce=restricted`
-to the namespace yamls of kubeflow,auth,cert-manager,istio-system,knative-serving,knative-eventing
-https://kubernetes.io/docs/tutorials/security/ns-level-pss/
-We also have to add this label to the profile controller.
-The profile contoller should take the laber from an environment variable to make it configurable
