@@ -1,5 +1,9 @@
 name: Build & Apply KServe manifests in KinD, using istio CNI
 on:
+  pull_request:
+    paths:
+      - contrib/kserve/**
+      - common/knative/**
   workflow_dispatch:
 
 jobs:
