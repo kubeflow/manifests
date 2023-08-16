@@ -1,0 +1,76 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: kfp-driver
+  namespace: kubeflow
+  labels:
+    app.kubernetes.io/component: kfp-driver
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: kubeflow-pipeline
+rules:
+  - apiGroups:
+    - ""
+    resources:
+    - secrets
+    verbs:
+    - get
+  - apiGroups:
+    - ""
+    resources:
+    - persistentvolumes
+    - persistentvolumeclaims
+    verbs:
+    - '*'
+  - apiGroups:
+    - snapshot.storage.k8s.io
+    resources:
+    - volumesnapshots
+    verbs:
+    - create
+    - delete
+    - get
+  - apiGroups:
+    - ""
+    resources:
+    - pods
+    - pods/exec
+    - pods/log
+    - services
+    verbs:
+    - '*'
+  - apiGroups:
+    - ""
+    - apps
+    - extensions
+    resources:
+    - deployments
+    - replicasets
+    verbs:
+    - '*'
+  - apiGroups:
+    - kubeflow.org
+    resources:
+    - '*'
+    verbs:
+    - '*'
+  - apiGroups:
+    - batch
+    resources:
+    - jobs
+    verbs:
+    - '*'
+  - apiGroups:
+    - machinelearning.seldon.io
+    resources:
+    - seldondeployments
+    verbs:
+    - '*'
+  - apiGroups:
+    - policy
+    resources:
+    - podsecuritypolicies
+    resourceNames:
+    - tekton-pipelines
+    - openshift-pipelines
+    verbs:
+    - use

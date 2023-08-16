@@ -1,0 +1,123 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- csi-s3-deployment.yaml
+- csi-s3-secret.yaml
+
+namespace: kubeflow
+
+configMapGenerator:
+- name: csi-s3-parameters
+  literals:
+  # Update the credentials for the below fields before apply.
+  - endpoint-base64=aHR0cDovL21pbmlvLXNlcnZpY2Uua3ViZWZsb3c6OTAwMA==
+  - bucket-base64=bWxwaXBlbGluZQ==
+  - accessKeyID-base64=bWluaW8=
+  - secretAccessKey-bas64=bWluaW8xMjM=
+  - kubelet-path=/var/data
+generatorOptions:
+  disableNameSuffixHash: true
+replacements:
+- source:
+    name: csi-s3-parameters
+    kind: ConfigMap
+    version: v1
+    fieldpath: data.endpoint-base64
+  targets:
+  - select:
+      kind: Secret
+      name: kfp-csi-secret
+    fieldPaths:
+    - data.endpoint
+- source:
+    name: csi-s3-parameters
+    kind: ConfigMap
+    version: v1
+    fieldpath: data.bucket-base64
+  targets:
+  - select:
+      kind: Secret
+      name: kfp-csi-secret
+    fieldPaths:
+    - data.bucket
+- source:
+    name: csi-s3-parameters
+    kind: ConfigMap
+    version: v1
+    fieldpath: data.accessKeyID-base64
+  targets:
+  - select:
+      kind: Secret
+      name: kfp-csi-secret
+    fieldPaths:
+    - data.accessKeyID
+- source:
+    name: csi-s3-parameters
+    kind: ConfigMap
+    version: v1
+    fieldpath: data.secretAccessKey-bas64
+  targets:
+  - select:
+      kind: Secret
+      name: kfp-csi-secret
+    fieldPaths:
+    - data.secretAccessKey
+- source:
+    name: csi-s3-parameters
+    kind: ConfigMap
+    version: v1
+    fieldpath: data.kubelet-path
+  targets:
+  - select:
+      kind: DaemonSet
+      name: kfp-csi-s3
+    fieldPaths:
+    - spec.template.spec.containers.[name=driver-registrar].args.3
+    options:
+      delimiter: /
+      index: 0
+  - select:
+      kind: DaemonSet
+      name: kfp-csi-s3
+    fieldPaths:
+    - spec.template.spec.containers.[name=kfp-csi-s3].volumeMounts.[name=mountpoint-dir].mountPath
+    - spec.template.spec.volumes.[name=mountpoint-dir].hostPath.path
+    options:
+      delimiter: /
+      index: 0
+  - select:
+      kind: DaemonSet
+      name: kfp-csi-s3
+    fieldPaths:
+    - spec.template.spec.volumes.[name=registration-dir].hostPath.path
+    options:
+      delimiter: /
+      index: 0
+  - select:
+      kind: DaemonSet
+      name: kfp-csi-s3
+    fieldPaths:
+    - spec.template.spec.volumes.[name=socket-dir].hostPath.path
+    options:
+      delimiter: /
+      index: 0
+  - select:
+      kind: StatefulSet
+      name: kfp-csi-attacher-s3
+    fieldPaths:
+    - spec.template.spec.volumes.[name=socket-dir].hostPath.path
+    options:
+      delimiter: /
+      index: 0
+  - select:
+      kind: StatefulSet
+      name: kfp-csi-provisioner-s3
+    fieldPaths:
+    - spec.template.spec.volumes.[name=socket-dir].hostPath.path
+    options:
+      delimiter: /
+      index: 0
+
+configurations:
+- params.yaml

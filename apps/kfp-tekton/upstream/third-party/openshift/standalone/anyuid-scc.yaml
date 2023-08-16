@@ -47,6 +47,14 @@ users:
 - system:serviceaccount:kubeflow:ml-pipeline-viewer-crd-service-account
 - system:serviceaccount:kubeflow:ml-pipeline-visualizationserver
 - system:serviceaccount:kubeflow:mysql
+- system:serviceaccount:kubeflow:kfp-csi-s3
+- system:serviceaccount:kubeflow:kfp-csi-attacher
+- system:serviceaccount:kubeflow:kfp-csi-provisioner
+- system:serviceaccount:openshift-pipelines:kfp-driver
+- system:serviceaccount:openshift-pipelines:kfp-exithandler-controller
+- system:serviceaccount:openshift-pipelines:kfp-exithandler-webhook
+- system:serviceaccount:openshift-pipelines:tekton-pipelineloop-controller
+- system:serviceaccount:openshift-pipelines:tekton-pipelineloop-webhook
 volumes:
 - configMap
 - downwardAPI

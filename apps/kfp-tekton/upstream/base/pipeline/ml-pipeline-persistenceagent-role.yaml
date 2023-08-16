@@ -20,9 +20,16 @@ rules:
   - list
   - watch
 - apiGroups:
+  - ''
+  resources:
+  - namespaces
+  verbs:
+  - get
+- apiGroups:
   - tekton.dev
   resources:
   - pipelineruns
+  - customruns
   - taskruns
   - conditions
   - runs

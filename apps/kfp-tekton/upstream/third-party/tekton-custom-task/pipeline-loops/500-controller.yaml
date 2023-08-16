@@ -40,7 +40,7 @@ spec:
       serviceAccountName: tekton-pipelineloop-controller
       containers:
       - name: tekton-pipelineloop-controller
-        image: docker.io/aipipeline/pipelineloop-controller:nightly
+        image: quay.io/aipipeline/pipelineloop-controller:nightly
         env:
         - name: SYSTEM_NAMESPACE
           valueFrom:
@@ -59,8 +59,8 @@ spec:
           capabilities:
             drop:
             - ALL
-          runAsGroup: 65532
           runAsNonRoot: true
+          runAsGroup: 65532
           runAsUser: 65532
           seccompProfile:
             type: RuntimeDefault

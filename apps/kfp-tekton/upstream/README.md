@@ -1,6 +1,6 @@
-# Install Kubeflow Pipelines Tekton Standalone using Kustomize Manifests
+# Install Kubeflow Pipelines Standalone using Kustomize Manifests
 
-This folder contains [Kubeflow Pipelines Standalone](https://www.kubeflow.org/docs/components/pipelines/installation/standalone-deployment/)
+This folder contains [Kubeflow Pipelines Standalone](https://www.kubeflow.org/docs/components/pipelines/installation/standalone-deployment/) 
 Kustomize manifests.
 
 Kubeflow Pipelines Standalone is one option to install Kubeflow Pipelines. You can review all other options in
@@ -13,8 +13,6 @@ To install Kubeflow Pipelines Standalone, follow [Kubeflow Pipelines Standalone 
 There are environment specific installation instructions not covered in the official deployment documentation, they are listed below.
 
 ### (env/platform-agnostic) install on any Kubernetes cluster
-
-Note: `kubectl` client version `v1.20.0`+ to support the new kustomize plugins.
 
 Install:
 
@@ -29,18 +27,18 @@ kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80
 
 Now you can access Kubeflow Pipelines UI in your browser by <http://localhost:8080>.
 
+Customize:
+
+There are two variations for platform-agnostic that uses different [argo workflow executors](https://argoproj.github.io/argo-workflows/workflow-executors/):
+
+* env/platform-agnostic-emissary
+* env/platform-agnostic-pns
+
 You can install them by changing `KFP_ENV` in above instructions to the variation you want.
 
 Data:
 
 Application data are persisted in in-cluster PersistentVolumeClaim storage.
-
-### (env/ibm) install on IBM Cloud with in-cluster PersistentVolumeClaim storage
-
-IBM Cloud uses the NFS storage with UID support to make sure all pods can run as non-root users.
-
-Please follow the [IKS group ID storage setup](https://www.kubeflow.org/docs/ibm/deploy/install-kubeflow-on-iks/#ibm-cloud-group-id-storage-setup)
-before running the above standalone install commands.
 
 ### (env/gcp) install on Google Cloud with Cloud Storage and Cloud SQL
 
@@ -64,7 +62,7 @@ reinstall a newer version can reuse the data.
 ```bash
 ### 1. namespace scoped
 # Depends on how you installed it:
-kubectl kustomize env/platform-agnostic/ | kubectl delete -f -
+kubectl kustomize env/platform-agnostic | kubectl delete -f -
 # or
 kubectl kustomize env/dev | kubectl delete -f -
 # or

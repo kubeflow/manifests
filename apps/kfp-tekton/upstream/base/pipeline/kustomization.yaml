@@ -1,8 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-bases:
-  - metadata-writer
-  - cluster-scoped
+# bases:
+#   - metadata-writer
 resources:
   - ml-pipeline-apiserver-deployment.yaml
   - ml-pipeline-apiserver-role.yaml
@@ -35,28 +34,17 @@ resources:
   - pipeline-runner-sa.yaml
   - container-builder-sa.yaml
   - viewer-sa.yaml
-  - kfp-pipeline-config.yaml
   - kfp-launcher-configmap.yaml
-patchesStrategicMerge:
-  - apiserver-deployment.yaml
-  - metadata-writer-deployment.yaml
 images:
   - name: gcr.io/ml-pipeline/api-server
-    newName: docker.io/aipipeline/api-server
-    newTag: 1.5.1
+    newTag: 2.0.0
   - name: gcr.io/ml-pipeline/persistenceagent
-    newName: docker.io/aipipeline/persistenceagent
-    newTag: 1.5.1
+    newTag: 2.0.0
   - name: gcr.io/ml-pipeline/scheduledworkflow
-    newName: docker.io/aipipeline/scheduledworkflow
-    newTag: 1.5.1
+    newTag: 2.0.0
   - name: gcr.io/ml-pipeline/frontend
-    newName: docker.io/aipipeline/frontend
-    newTag: 1.5.1
+    newTag: 2.0.0
   - name: gcr.io/ml-pipeline/viewer-crd-controller
-    newTag: 1.8.4
+    newTag: 2.0.0
   - name: gcr.io/ml-pipeline/visualization-server
-    newTag: 1.8.4
-  - name: gcr.io/ml-pipeline/metadata-writer
-    newName: docker.io/aipipeline/metadata-writer
-    newTag: 1.5.1
+    newTag: 2.0.0
