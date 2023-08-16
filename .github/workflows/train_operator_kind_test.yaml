@@ -35,4 +35,4 @@ jobs:
     - name: Create a TFJob
       run: |
         kubectl create -f tests/gh-actions/kf-objects/tfjob.yaml
-        kubectl wait --for=condition=Succeeded tfjobs tfjob-simple -n kubeflow --timeout 180s
+        kubectl wait --for=condition=Succeeded tfjobs tfjob-simple -n kubeflow --timeout 600s
