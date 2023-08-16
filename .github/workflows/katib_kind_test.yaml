@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - apps/katib/upstream/**
+      - tests/gh-actions/kind-cluster.yaml
+      - tests/gh-actions/install_istio.sh
 
 jobs:
   build:
