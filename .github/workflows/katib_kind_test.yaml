@@ -57,20 +57,20 @@ jobs:
         echo "Waiting for the Experiment to become Succeeded..."
         kubectl wait --for=condition=Succeeded experiments.kubeflow.org -n kubeflow-user --all --timeout 300s
 
-      - name: Save relevant debug artifacts
-        if: failure()
-        run: |
-          mkdir ~/katib-debug-logs
-          bash -c "df -h | tee ~/katib-debug-logs/df.log"
-          bash -c "free -h | tee ~/katib-debug-logs/free.log"
-          kubectl describe deployments -A | tee ~/katib-debug-logs/deployments.log
-          kubectl describe nodes | tee ~/katib-debug-logs/nodes.log
-          kubectl describe pods -A | tee ~/katib-debug-logs/describe-pods.log
-          kubectl get pods -A | tee ~/katib-debug-logs/get-pods.log
+    - name: Save relevant debug artifacts
+      if: failure()
+      run: |
+        mkdir ~/katib-debug-logs
+        bash -c "df -h | tee ~/katib-debug-logs/df.log"
+        bash -c "free -h | tee ~/katib-debug-logs/free.log"
+        kubectl describe deployments -A | tee ~/katib-debug-logs/deployments.log
+        kubectl describe nodes | tee ~/katib-debug-logs/nodes.log
+        kubectl describe pods -A | tee ~/katib-debug-logs/describe-pods.log
+        kubectl get pods -A | tee ~/katib-debug-logs/get-pods.log
 
-      - name: Upload debug artifacts
-        if: failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: katib-debug-logs
-          path: ~/katib-debug-logs
+    - name: Upload debug artifacts
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: katib-debug-logs
+        path: ~/katib-debug-logs
