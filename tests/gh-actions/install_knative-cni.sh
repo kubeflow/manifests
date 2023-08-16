@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euo pipefail
-echo "Installing KNative with isstio-cni ..."
+echo "Installing KNative with istio-cni ..."
 set +e
 kustomize build common/knative/knative-serving/base | kubectl apply -f -
 set -e
