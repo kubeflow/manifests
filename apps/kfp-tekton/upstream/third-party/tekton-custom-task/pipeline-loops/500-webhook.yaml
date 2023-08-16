@@ -36,7 +36,7 @@ spec:
       serviceAccountName: tekton-pipelineloop-webhook
       containers:
       - name: webhook
-        image: docker.io/aipipeline/pipelineloop-webhook:nightly
+        image: quay.io/aipipeline/pipelineloop-webhook:nightly
         env:
         - name: SYSTEM_NAMESPACE
           valueFrom:
@@ -69,8 +69,8 @@ spec:
           capabilities:
             drop:
             - ALL
-          runAsGroup: 65532
           runAsNonRoot: true
+          runAsGroup: 65532
           runAsUser: 65532
           seccompProfile:
             type: RuntimeDefault

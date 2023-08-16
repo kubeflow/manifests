@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: kfp-driver
+    app.kubernetes.io/component: kfp-driver
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/version: devel
+    app.kubernetes.io/part-of: kubeflow-pipeline
+    # tekton.dev/release value replaced with inputs.params.versionTag in pipeline/tekton/publish.yaml
+    pipeline.tekton.dev/release: "devel"
+    # labels below are related to istio and should not be used for resource lookup
+    app: kfp-driver
+    version: "devel"
+  name: kfp-driver
+  namespace: kubeflow
+spec:
+  ports:
+    - name: http-metrics
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+  selector:
+    app.kubernetes.io/name: kfp-driver
+    app.kubernetes.io/component: kfp-driver
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: kubeflow-pipeline

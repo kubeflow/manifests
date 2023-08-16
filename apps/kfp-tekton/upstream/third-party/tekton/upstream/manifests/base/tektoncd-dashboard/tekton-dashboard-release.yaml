@@ -110,42 +110,6 @@ rules:
       - get
       - list
       - watch
-  - apiGroups:
-      - ""
-    resources:
-      - serviceaccounts
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - dashboard.tekton.dev
-    resources:
-      - extensions
-    verbs:
-      - create
-      - update
-      - delete
-      - patch
-  - apiGroups:
-      - tekton.dev
-    resources:
-      - clustertasks
-    verbs:
-      - create
-      - update
-      - delete
-      - patch
-  - apiGroups:
-      - triggers.tekton.dev
-    resources:
-      - clusterinterceptors
-      - clustertriggerbindings
-    verbs:
-      - create
-      - update
-      - delete
-      - patch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -182,7 +146,6 @@ rules:
       - taskruns
       - pipelines
       - pipelineruns
-      - pipelineresources
       - runs
     verbs:
       - get
@@ -192,6 +155,7 @@ rules:
       - triggers.tekton.dev
     resources:
       - eventlisteners
+      - interceptors
       - triggerbindings
       - triggers
       - triggertemplates
@@ -199,32 +163,6 @@ rules:
       - get
       - list
       - watch
-  - apiGroups:
-      - tekton.dev
-    resources:
-      - tasks
-      - taskruns
-      - pipelines
-      - pipelineruns
-      - pipelineresources
-      - runs
-    verbs:
-      - create
-      - update
-      - delete
-      - patch
-  - apiGroups:
-      - triggers.tekton.dev
-    resources:
-      - eventlisteners
-      - triggerbindings
-      - triggers
-      - triggertemplates
-    verbs:
-      - create
-      - update
-      - delete
-      - patch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -263,7 +201,7 @@ subjects:
 ---
 apiVersion: v1
 data:
-  version: v0.30.0
+  version: v0.32.0
 kind: ConfigMap
 metadata:
   labels:
@@ -281,9 +219,9 @@ metadata:
     app.kubernetes.io/instance: default
     app.kubernetes.io/name: dashboard
     app.kubernetes.io/part-of: tekton-dashboard
-    app.kubernetes.io/version: v0.30.0
-    dashboard.tekton.dev/release: v0.30.0
-    version: v0.30.0
+    app.kubernetes.io/version: v0.32.0
+    dashboard.tekton.dev/release: v0.32.0
+    version: v0.32.0
   name: tekton-dashboard
   namespace: tekton-pipelines
 spec:
@@ -307,9 +245,9 @@ metadata:
     app.kubernetes.io/instance: default
     app.kubernetes.io/name: dashboard
     app.kubernetes.io/part-of: tekton-dashboard
-    app.kubernetes.io/version: v0.30.0
-    dashboard.tekton.dev/release: v0.30.0
-    version: v0.30.0
+    app.kubernetes.io/version: v0.32.0
+    dashboard.tekton.dev/release: v0.32.0
+    version: v0.32.0
   name: tekton-dashboard
   namespace: tekton-pipelines
 spec:
@@ -328,7 +266,7 @@ spec:
         app.kubernetes.io/instance: default
         app.kubernetes.io/name: dashboard
         app.kubernetes.io/part-of: tekton-dashboard
-        app.kubernetes.io/version: v0.30.0
+        app.kubernetes.io/version: v0.32.0
       name: tekton-dashboard
     spec:
       containers:
@@ -337,7 +275,7 @@ spec:
             - --logout-url=
             - --pipelines-namespace=tekton-pipelines
             - --triggers-namespace=tekton-pipelines
-            - --read-only=false
+            - --read-only=true
             - --log-level=info
             - --log-format=json
             - --namespace=
@@ -348,7 +286,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-          image: gcr.io/tekton-releases/github.com/tektoncd/dashboard/cmd/dashboard:v0.30.0@sha256:85f7d38086fadb07556052ce873d44861c29ef690f47735f32d7e6a153ca8a92
+          image: gcr.io/tekton-releases/github.com/tektoncd/dashboard/cmd/dashboard:v0.32.0@sha256:f11d6bdd2a1f2bb1e6366e416741ce1754a7695837305c054a0167f3f7b055ca
           livenessProbe:
             httpGet:
               path: /health
