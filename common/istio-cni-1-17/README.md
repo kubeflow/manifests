@@ -15,8 +15,8 @@ old version is `X1.Y1.Z1`:
     kustomization for the new Istio version:
 
         $ export MANIFESTS_SRC=<path/to/manifests/repo>
-        $ export ISTIO_OLD=$MANIFESTS_SRC/common/istio-X1-Y1
-        $ export ISTIO_NEW=$MANIFESTS_SRC/common/istio-X-Y
+        $ export ISTIO_OLD=$MANIFESTS_SRC/common/istio-cni-X1-Y1
+        $ export ISTIO_NEW=$MANIFESTS_SRC/common/istio-cni-X-Y
         $ cp -a $ISTIO_OLD $ISTIO_NEW
 
 2.  Download `istioctl` for version `X.Y.Z`:
