@@ -53,7 +53,7 @@ This repo periodically syncs all official Kubeflow components from their respect
 | Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.7.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.7.0-rc.0/components/crud-web-apps/jupyter/manifests) |
 | Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.7.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.7.0-rc.0/components/crud-web-apps/tensorboards/manifests) |
 | Volumes Web App | apps/volumes-web-app/upstream | [v1.7.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.7.0-rc.0/components/crud-web-apps/volumes/manifests) |
-| Katib | apps/katib/upstream | [v0.15.0-rc.0](https://github.com/kubeflow/katib/tree/v0.15.0-rc.0/manifests/v1beta1) |
+| Katib | apps/katib/upstream | [v0.16.0-rc.1](https://github.com/kubeflow/katib/tree/v0.16.0-rc.1/manifests/v1beta1) |
 | KServe | contrib/kserve/kserve | [v0.10.0](https://github.com/kserve/kserve/tree/v0.10.0/install/v0.10.0) |
 | KServe Models Web App | contrib/kserve/models-web-app | [v0.10.0](https://github.com/kserve/models-web-app/tree/v0.10.0/config) |
 | Kubeflow Pipelines | apps/pipeline/upstream | [2.0.0-alpha.7](https://github.com/kubeflow/pipelines/tree/2.0.0-alpha.7/manifests/kustomize) |
