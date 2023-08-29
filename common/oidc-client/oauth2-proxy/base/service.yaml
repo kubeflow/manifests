@@ -5,9 +5,9 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: authservice
+    app.kubernetes.io/name: oauth2-proxy
   ports:
-  - port: 8080
-    name: http-authservice
-    targetPort: http-api
+    - port: 8080
+      name: http-authservice
+      targetPort: http-api
   publishNotReadyAddresses: true

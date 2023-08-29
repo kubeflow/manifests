@@ -167,6 +167,25 @@ kustomize build common/istio-1-17/istio-namespace/base | kubectl apply -f -
 kustomize build common/istio-1-17/istio-install/base | kubectl apply -f -
 ```
 
+#### AuthService
+
+The OIDC AuthService extends your Istio Ingress-Gateway capabilities, to be able to function as an OIDC client:
+
+```sh
+kustomize build common/oidc-client/oidc-authservice/base | kubectl apply -f -
+```
+
+<details>
+  <summary>oauth2-proxy alternative</summary>
+
+You can use [OAuth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy) instead of [OIDC AuthService](https://github.com/arrikto/oidc-authservice). To do so, run the following command instead
+
+```sh
+kustomize build  common/oidc-client/oauth2-proxy/base | kubectl apply -f -
+```
+
+</details>
+
 #### Dex
 
 Dex is an OpenID Connect Identity (OIDC) with multiple authentication backends. In this default installation, it includes a static user with email `user@example.com`. By default, the user's password is `12341234`. For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
@@ -177,14 +196,8 @@ Install Dex:
 kustomize build common/dex/overlays/istio | kubectl apply -f -
 ```
 
-#### OIDC AuthService
-
-The OIDC AuthService extends your Istio Ingress-Gateway capabilities, to be able to function as an OIDC client:
-
-```sh
-kustomize build common/oidc-authservice/base | kubectl apply -f -
-```
-
+> If you are using `oauth2-proxy` as auth envoy filter, you should be using `common/dex/overlays/oauth2-proxy` instead.
+ 
 #### Knative
 
 Knative is used by the KServe official Kubeflow component.

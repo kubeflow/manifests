@@ -1,0 +1,44 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- deployment.yaml
+- oauth2-proxy-alpha-config.yaml
+- oauth2-proxy-config.yaml
+- rbac.yaml
+- service.yaml
+- envoy-filter.yaml
+
+secretGenerator:
+- name: oauth2-proxy
+  type: Opaque
+  envs:
+  - secret_params.env
+
+namespace: istio-system
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+vars:
+  - name: AUTHSERVICE_NAMESPACE
+    objref:
+      kind: Service
+      name: authservice
+      apiVersion: v1
+    fieldref:
+      fieldpath: metadata.namespace
+  - name: AUTHSERVICE_SERVICE
+    objref:
+      kind: Service
+      name: authservice
+      apiVersion: v1
+    fieldref:
+      fieldpath: metadata.name
+configurations:
+  - params.yaml
+
+images:
+- name: quay.io/oauth2-proxy/oauth2-proxy
+  newName: quay.io/oauth2-proxy/oauth2-proxy
+  newTag: v7.4.0
