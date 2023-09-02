@@ -1,10 +1,28 @@
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: authservice-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /data/data-science-persistent-volumes/kubeflow/kubeflow-authservice-mysql-pv
+    server: 10.10.10.10
+  storageClassName: nfs-client
+
+---
+
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: authservice-pvc
 spec:
-  accessModes:
-    - ReadWriteOnce
+  storageClassName: nfs-client
+  volumeName: authservice-pv
+  accessModes: [ReadWriteOnce]
   resources:
     requests:
       storage: 10Gi

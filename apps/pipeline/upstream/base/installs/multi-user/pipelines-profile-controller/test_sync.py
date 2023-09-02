@@ -60,8 +60,8 @@ FRONTEND_TAG = "somehash"
 
 KFP_VERSION = "x.y.z"
 
-MINIO_ACCESS_KEY = "abcdef"
-MINIO_SECRET_KEY = "uvwxyz"
+MINIO_ACCESS_KEY = "abcdefabcdefabcdefabcdef"
+MINIO_SECRET_KEY = "uvwxyzuvwxyzuvwxyzuvwxyz"
 
 # "Environments" used in tests
 ENV_VARIABLES_BASE = {

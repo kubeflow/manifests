@@ -1,10 +1,29 @@
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: minio-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /data/data-science-persistent-volumes/kubeflow/kubeflow-minio-pv
+    server: 10.10.10.10
+  storageClassName: nfs-client
+
+---
+
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: minio-pvc
 spec:
+  storageClassName: nfs-client
+  volumeName: minio-pv
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
-      storage: 20Gi
+      storage: 10Gi

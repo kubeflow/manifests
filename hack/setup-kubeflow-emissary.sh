@@ -24,7 +24,7 @@ microk8s kubectl create namespace kubeflow --dry-run=client -o yaml | microk8s k
 
 echo "Deploying all Kubeflow components..."
 function install_kubeflow {
-    kustomize build example | microk8s kubectl apply -f - --validate=false
+    kustomize build set | microk8s kubectl apply -f - --validate=false
 }
 
 while ! install_kubeflow;
