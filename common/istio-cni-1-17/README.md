@@ -1,4 +1,7 @@
-# Istio
+# Istio-CNI
+
+This uses istio-cni as described here https://istio.io/latest/docs/setup/additional-setup/cni/.
+Please be aware of Kserve and initcontainers https://istio.io/latest/docs/setup/additional-setup/cni/#compatibility-with-application-init-containers. Either use runasuser : 1337 xor add the annotation traffic.sidecar.istio.io/excludeOutboundIPRanges: 0.0.0.0/0 for kserve inferenceservices.
 
 ## Upgrade Istio Manifests
 
@@ -12,8 +15,8 @@ old version is `X1.Y1.Z1`:
     kustomization for the new Istio version:
 
         $ export MANIFESTS_SRC=<path/to/manifests/repo>
-        $ export ISTIO_OLD=$MANIFESTS_SRC/common/istio-X1-Y1
-        $ export ISTIO_NEW=$MANIFESTS_SRC/common/istio-X-Y
+        $ export ISTIO_OLD=$MANIFESTS_SRC/common/istio-cni-X1-Y1
+        $ export ISTIO_NEW=$MANIFESTS_SRC/common/istio-cni-X-Y
         $ cp -a $ISTIO_OLD $ISTIO_NEW
 
 2.  Download `istioctl` for version `X.Y.Z`:
@@ -45,7 +48,7 @@ old version is `X1.Y1.Z1`:
 
         $ export PATH="$MANIFESTS_SRC/scripts:$PATH"
         $ cd $ISTIO_NEW
-        $ istioctl manifest generate --cluster-specific -f profile.yaml -f profile-overlay.yaml > dump.yaml
+        $ istioctl manifest generate --cluster-specific -f profile.yaml -f profile-overlay.yaml --set components.cni.enabled=true --set components.cni.namespace=kube-system > dump.yaml
         $ split-istio-packages -f dump.yaml
         $ mv $ISTIO_NEW/crd.yaml $ISTIO_NEW/istio-crds/base
         $ mv $ISTIO_NEW/install.yaml $ISTIO_NEW/istio-install/base

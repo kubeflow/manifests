@@ -1,8 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: istio-system
-
 resources:
 - install.yaml
 - gateway_authorizationpolicy.yaml
@@ -14,6 +12,6 @@ patchesStrategicMerge:
 - patches/service.yaml
 - patches/istio-configmap-disable-tracing.yaml
 - patches/disable-debugging.yaml
-# Disable this patch until we upgrade to kustomize to v4+ 
-# see https://github.com/kubeflow/manifests/issues/2325#issuecomment-1323909056
-# - patches/remove-pdb.yaml
+- patches/istio-ingressgateway-remove-pdb.yaml
+- patches/istiod-remove-pdb.yaml
+
