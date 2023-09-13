@@ -32,3 +32,4 @@ So far not. Only PSS restricted may block Docker in Docker. In PSS baseline you 
 
 ### Does this fix/solve any outstanding issues?
 We are not following best practices and this is forbidden in most enterprise environments.
+The progress is tracked in https://github.com/kubeflow/manifests/issues/2528
