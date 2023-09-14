@@ -7,7 +7,7 @@ Most enterprise environments will require this as well.
 
 ### Implementation details
 The main steps are adding an additional profile for istio-cni and later ambient mesh, updating the documentation and manifest generation process.
-Only istio-cni or istio ambient mesh can run rootless as explined here https://istio.io/latest/docs/setup/additional-setup/cni/.
+Only istio-cni or istio ambient mesh can run rootless as explained here https://istio.io/latest/docs/setup/additional-setup/cni/.
 Then adding the baseline and restricted PSS as kustomize component to /contrib and extending the profile controller to annotate user namespaces with configurable PSS labels.
 
 We want to use a staged approach.
