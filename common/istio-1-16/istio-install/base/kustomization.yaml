@@ -10,10 +10,7 @@ resources:
 - gateway.yaml
 - x-forwarded-host.yaml
 
-patchesStrategicMerge:
-- patches/service.yaml
-- patches/istio-configmap-disable-tracing.yaml
-- patches/disable-debugging.yaml
-# Disable this patch until we upgrade to kustomize to v4+ 
-# see https://github.com/kubeflow/manifests/issues/2325#issuecomment-1323909056
-# - patches/remove-pdb.yaml
+patches:
+- path: patches/service.yaml
+- path: patches/istio-configmap-disable-tracing.yaml
+- path: patches/disable-debugging.yaml
