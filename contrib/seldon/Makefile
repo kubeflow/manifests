@@ -1,5 +1,5 @@
 
-SELDON_VERSION ?= 1.15.0
+SELDON_VERSION ?= 1.17.1
 
 seldon-core-operator/base: clean-kustomize
 	mkdir -p seldon-core-operator/base

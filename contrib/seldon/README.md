@@ -54,7 +54,7 @@ spec:
     componentSpecs:
     - spec:
         containers:
-        - image: seldonio/echo-model:1.15.0-dev
+        - image: seldonio/echo-model:1.17.1
           name: classifier
 END
 ```
@@ -87,6 +87,6 @@ curl -H "Content-Type: application/json" -H "Cookie: authservice_session=${SESSI
    -d '{"data": {"ndarray":[[1.0, 2.0, 5.0]]}}' \
    http://{CLUSTER_IP}/seldon/seldon/echo/api/v1.0/predictions
 
-{"data":{"names":["t:0","t:1","t:2"],"ndarray":[[1.0,2.0,5.0]]},"meta":{"metrics":[{"key":"mycounter","type":"COUNTER","value":1},{"key":"mygauge","type":"GAUGE","value":100},{"key":"mytimer","type":"TIMER","value":20.2}],"requestPath":{"classifier":"seldonio/echo-model:1.15.0-dev"}}}
+{"data":{"names":["t:0","t:1","t:2"],"ndarray":[[1.0,2.0,5.0]]},"meta":{"metrics":[{"key":"mycounter","type":"COUNTER","value":1},{"key":"mygauge","type":"GAUGE","value":100},{"key":"mytimer","type":"TIMER","value":20.2}],"requestPath":{"classifier":"seldonio/echo-model:1.17.1"}}}
 ```
 
