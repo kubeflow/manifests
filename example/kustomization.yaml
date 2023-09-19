@@ -69,6 +69,8 @@ resources:
 - ../apps/jupyter/notebook-controller/upstream/overlays/kubeflow
 # Profiles + KFAM
 - ../apps/profiles/upstream/overlays/kubeflow
+# PVC Viewer
+- ../apps/pvcviewer-controller/upstream/base/
 # Volumes Web App
 - ../apps/volumes-web-app/upstream/overlays/istio
 # Tensorboards Controller
