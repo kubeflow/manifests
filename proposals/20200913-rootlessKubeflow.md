@@ -21,10 +21,10 @@ We want to use a staged approach.
 
 #### Second stage:
 4. Add pod security standards (https://kubernetes.io/docs/concepts/security/pod-security-standards/) base/restricted to manifests/contrib
-5. Enforce PSS baseline (Adavanced users can still build OCI containers via Podman and buildah, but not Docker in Docker). It works with any istio
-6. Enable Warnings for violations of restricted PSS
-7. Add tests to make sure that the PSS are used and tested in the CICD
-8. Optionally Enforce PSS restricted (this is where minor corner cases are affected)
+5. Enforce PSS baseline (Adavanced users can still build OCI containers via Podman and buildah, but not Docker in Docker). The baseline PSS should works with any istio. If not we will move this item to the third stage after istio-cni or the ambient mesh is the default.
+7. Enable Warnings for violations of restricted PSS
+8. Add tests to make sure that the PSS are used and tested in the CICD
+9. Optionally Enforce PSS restricted (this is where minor corner cases are affected)
 
 #### Third stage:
 9. Upgrade Istio to 1.19 to make the ambient mesh available
@@ -37,7 +37,7 @@ We want to use a staged approach.
 This does not cover Application level CVEs, only cluster level security.
 
 ### Does this break any existing functionality?
-So far not. Only PSS restricted may block the incredibly dangerous and unprofessional Docker in Docker.
+So far not. Only PSS restricted may block the security-wise dangerous Docker in Docker.
 This is a rarely used feature from the KFP SDK.
 With PSS baseline you can still build OCI images with Podman for example. 
 We should replace Docker with the cli compatible podman in the KFP SDK https://kubeflow-pipelines.readthedocs.io/en/1.8.22/source/kfp.containers.html?highlight=kfp.containers.build_image_from_working_dir#kfp.containers.build_image_from_working_dir.
