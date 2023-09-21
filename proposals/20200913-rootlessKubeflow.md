@@ -17,10 +17,10 @@ We want to use a staged approach.
 #### First Stage:
 1. Implement Istio 1.17.5 and use it by default, because 1.17. is what we have planned to use for Kubeflow 1.8.
 2. Implement istio-cni (`--set components.cni.enabled=true --set components.cni.namespace=kube-system`) as second option.
-3. Add simple tests similar to tests/gh-actions/install_istio.sh and tests/gh-actions/install_knative.sh for istio-cni and support both rootfull and rootless istio at the same time and give users one release to test
+3. Add simple tests similar to `tests/gh-actions/install_istio.sh` and `tests/gh-actions/install_knative.sh` for istio-cni and support both rootfull and rootless istio at the same time and give users one release to test
 
 #### Second stage:
-4. Add pod security standards (https://kubernetes.io/docs/concepts/security/pod-security-standards/) base/restricted to manifests/contrib
+4. Add pod security standards (https://kubernetes.io/docs/concepts/security/pod-security-standards/) `base/restricted` to `manifests/contrib`
 5. Enforce PSS baseline (Adavanced users can still build OCI containers via Podman and buildah, but not Docker in Docker). The baseline PSS should works with any istio. If not we will move this item to the third stage after istio-cni or the ambient mesh is the default.
 7. Enable Warnings for violations of restricted PSS
 8. Add tests to make sure that the PSS are used and tested in the CICD
