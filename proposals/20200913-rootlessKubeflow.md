@@ -44,5 +44,5 @@ We should replace Docker with the cli compatible podman in the KFP SDK https://k
 
 
 ### Does this fix/solve any outstanding issues?
-We are not following best practices and this is forbidden in most enterprise environments.
+This proposal enables Kubeflow to implement parts of Kubernetes best practices and improve the usage in enterprise and regulated environments.
 The progress is tracked in https://github.com/kubeflow/manifests/issues/2528
