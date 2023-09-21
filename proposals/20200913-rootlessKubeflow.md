@@ -1,5 +1,7 @@
 # Rootless Kubeflow
 
+Authors: Julius von Kohout (@juliusvonkohout)
+
 ### Goals
 
 We want to run Kubeflow as rootless as possible according to CNCF/Kubernetes best practices.
