@@ -21,7 +21,7 @@ First Stage:
 
 Second stage:
 4. Add pod security standards (https://kubernetes.io/docs/concepts/security/pod-security-standards/) base/restricted to manifests/contrib
-5. Enforce PSS baseline (here you can still build OCI containers via Podman and buildah). It works with any istio
+5. Enforce PSS baseline (Adavanced users can still build OCI containers via Podman and buildah, but not Docker in Docker). It works with any istio
 6. Enable Warnings for violations of restricted PSS
 7. Add tests to make sure that the PSS are used and tested in the CICD
 8. Optionally Enforce PSS restricted (this is where minor corner cases are affected)
