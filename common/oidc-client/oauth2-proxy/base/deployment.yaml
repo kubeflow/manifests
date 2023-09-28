@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: oauth2-proxy-authservice
+  name: oauth2-proxy
   labels:
-    app: authservice
+    app: oauth2-proxy
 spec:
   replicas: 1
   selector:
@@ -11,8 +11,6 @@ spec:
       app.kubernetes.io/name: oauth2-proxy
   template:
     metadata:
-      annotations:
-        sidecar.istio.io/inject: "false"
       labels:
         app.kubernetes.io/name: oauth2-proxy
     spec:
@@ -21,10 +19,6 @@ spec:
           configMap:
             name: oauth2-proxy
             defaultMode: 420
-        - name: configalpha
-          configMap:
-            name: oauth2-proxy-alpha
-            defaultMode: 420
         - name: oauth2-proxy
           secret:
             secretName: oauth2-proxy
@@ -32,13 +26,9 @@ spec:
         - name: oauth2-proxy
           image: quay.io/oauth2-proxy/oauth2-proxy:v7.4.0
           args:
-            - '--alpha-config=/etc/oauth2_proxy/oauth2_proxy.yml'
             - '--config=/etc/oauth2_proxy/oauth2_proxy.cfg'
-            - '--silence-ping-logging'
-            - '--proxy-prefix=/oauth2'
-            - '--cookie-secure=false'
           ports:
-            - name: http-api
+            - name: http
               containerPort: 8080
               protocol: TCP
             - name: metrics
@@ -54,19 +44,17 @@ spec:
             - name: configmain
               mountPath: /etc/oauth2_proxy/oauth2_proxy.cfg
               subPath: oauth2_proxy.cfg
-            - name: configalpha
-              mountPath: /etc/oauth2_proxy/oauth2_proxy.yml
-              subPath: oauth2_proxy.yml
             - name: oauth2-proxy
               subPath: CLIENT_SECRET
               mountPath: "/etc/oauth2_proxy/CLIENT_SECRET"
           livenessProbe:
             httpGet:
               path: /ping
-              port: http-api
+              port: http
               scheme: HTTP
           readinessProbe:
             httpGet:
               path: /ping
-              port: http-api
+              port: http
               scheme: HTTP
+          resources: {}

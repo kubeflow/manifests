@@ -3,11 +3,16 @@ kind: Kustomization
 
 resources:
 - deployment.yaml
-- oauth2-proxy-alpha-config.yaml
+- namespace.yaml
 - oauth2-proxy-config.yaml
-- rbac.yaml
+- serviceaccount.yaml
 - service.yaml
-- envoy-filter.yaml
+
+# To use oauth2-proxy in OpenShift, use openshift distribution of oauth2-proxy
+# available here: https://github.com/openshift/oauth-proxy
+# and add RBAC to enable creation of tokenreviews
+# Token Reviews for OpenShift
+# - rbac.tokenreviews.yaml
 
 secretGenerator:
 - name: oauth2-proxy
@@ -15,7 +20,7 @@ secretGenerator:
   envs:
   - secret_params.env
 
-namespace: istio-system
+namespace: oauth2-proxy
 
 generatorOptions:
   disableNameSuffixHash: true
@@ -24,14 +29,14 @@ vars:
   - name: AUTHSERVICE_NAMESPACE
     objref:
       kind: Service
-      name: authservice
+      name: oauth2-proxy
       apiVersion: v1
     fieldref:
       fieldpath: metadata.namespace
   - name: AUTHSERVICE_SERVICE
     objref:
       kind: Service
-      name: authservice
+      name: oauth2-proxy
       apiVersion: v1
     fieldref:
       fieldpath: metadata.name
