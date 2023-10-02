@@ -4,11 +4,11 @@ kind: Kustomization
 namespace: oauth2-proxy
 
 resources:
-- deployment.yaml
-- namespace.yaml
-- oauth2-proxy-config.yaml
-- serviceaccount.yaml
-- service.yaml
+  - deployment.yaml
+  - namespace.yaml
+  - oauth2-proxy-config.yaml
+  - serviceaccount.yaml
+  - service.yaml
 
 # To use oauth2-proxy in OpenShift, use openshift distribution of oauth2-proxy
 # available here: https://github.com/openshift/oauth-proxy
@@ -16,33 +16,36 @@ resources:
 # Token Reviews for OpenShift
 # - rbac.tokenreviews.yaml
 
-secretGenerator:
-- name: oauth2-proxy
-  type: Opaque
-  literals:
-    - "client-id=kubeflow-oidc-authservice"
-    - "client-secret=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok"
-    - "cookie-secret=7d16fee92f8d11b8940b081b3f8b8acb"
+generatorOptions:
+  disableNameSuffixHash: true
 
-# vars:
-#   - name: AUTHSERVICE_NAMESPACE
-#     objref:
-#       kind: Service
-#       name: oauth2-proxy
-#       apiVersion: v1
-#     fieldref:
-#       fieldpath: metadata.namespace
-#   - name: AUTHSERVICE_SERVICE
-#     objref:
-#       kind: Service
-#       name: oauth2-proxy
-#       apiVersion: v1
-#     fieldref:
-#       fieldpath: metadata.name
-# configurations:
-#   - params.yaml
+secretGenerator:
+  - name: oauth2-proxy
+    type: Opaque
+    literals:
+      - "client-id=kubeflow-oidc-authservice"
+      - "client-secret=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok"
+      - "cookie-secret=7d16fee92f8d11b8940b081b3f8b8acb"
+
+configMapGenerator:
+  # This will configure oauth2-proxy option --cookie-secure which will force
+  # auth redirect with redirect_uri parameter using https.
+  # This is because oauth2-proxy is configured to serve on http so it guesses
+  # that the auth redirect should also be using http.
+  # To see the difference, you can call curl to your Kubeflow address with grep:
+  # $ curl -s  https://kubeflow.example.com | grep -oE "redirect_uri=([a-z])+"
+  # if FORCE_HTTPS=false, the output will be:
+  #   redirect_uri=http
+  # if FORCE_HTTPS=true, the output will be:
+  #   redirect_uri=https
+  # Other way to configure oauth2-proxy to use the redirect_uri with https
+  # is to configure it to serve behind https endpoint using configuration option
+  # --https-address=0.0.0.0:443 and provide TLS Cert and Key
+  - name: oauth2-proxy-force-https
+    literals:
+      - FORCE_HTTPS=false
 
 images:
-- name: quay.io/oauth2-proxy/oauth2-proxy
-  newName: quay.io/oauth2-proxy/oauth2-proxy
-  newTag: v7.4.0
+  - name: quay.io/oauth2-proxy/oauth2-proxy
+    newName: quay.io/oauth2-proxy/oauth2-proxy
+    newTag: v7.4.0

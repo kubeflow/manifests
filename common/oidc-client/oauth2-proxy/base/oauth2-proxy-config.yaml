@@ -25,9 +25,6 @@ data:
     redeem_url = "http://dex.auth.svc.cluster.local:5556/dex/token"
     oidc_jwks_url = "http://dex.auth.svc.cluster.local:5556/dex/keys"
     # ---
-    # Set "cookie_secure = true" to use https.
-    cookie_secure = true
-    # ---
     # Go to dex login page directly instead of showing the oauth2-proxy login
     # page.
     skip_provider_button = true
@@ -36,6 +33,7 @@ data:
     # forward the Authorization Bearer token to Istio and enable authorization
     # based on JWT.
     set_authorization_header = true
+    # ---
     # set X-Auth-Request-User, X-Auth-Request-Groups, X-Auth-Request-Email and
     # X-Auth-Request-Preferred-Username. This is optional for Kubeflow but you
     # may have other services that use standard auth headers.
@@ -44,7 +42,8 @@ data:
     cookie_name = "oauth2_proxy_kubeflow"
     # ---
     # Dex default cookie expiration is 24h. If set to 168h (default oauth2-proxy),
-    # Istio will not be able to use after 24h.
+    # Istio will not be able to use the JWT after 24h but oauth2-proxy will still
+    # consider the cookie valid.
     # It's possible to configure the JWT Refresh Token to enable longer login
     # session.
     cookie_expire = "24h"
