@@ -1,5 +1,10 @@
 # Kubeflow with oauth2-proxy and envoyExtAuthzHttp
 
+For a quick install, see [Example installation](#example-installation).
+
+
+## Description
+
 Kubeflow authorization currently works based on custom auth headers:
 * `kubeflow-userid` with user email
 * `kubeflow-groups` with a comma-separated list of groups
@@ -138,3 +143,65 @@ The details of this custom integration can be found here:
 * https://github.com/kubeflow/kubeflow/blob/c6c4492/components/centraldashboard/public/components/logout-button.js#L50
 
 To login again, user have to refresh the page.
+
+## Example installation
+To use `oauth2-proxy` with `istio` `envoyExtAuthzHttp`, following changes has to
+be done to the `example/kustomization.yaml` file:
+* change `OIDC Authservice` to `oauth2-proxy for OIDC`
+  ```
+  # from
+  - ../common/oidc-client/oidc-authservice/base
+  # to
+  - ../common/oidc-client/oauth2-proxy/base
+  ```
+* change Dex overlay
+  ```
+  # from
+  - ../common/dex/overlays/istio
+  # to
+  - ../common/dex/overlays/oauth2-proxy
+* add Kustomize Components to modify Istio and Central Dashboard to integrate
+  with `oauth2-proxy` using `envoyExtAuthzHttp`
+  ```
+  components:
+  # Istio meshConfig for oauth2-proxy
+  - ../common/oidc-client/oauth2-proxy/components/istio
+
+  # Central Dashboard logout url using oauth2-proxy /oauth2/sign_out
+  - ../common/oidc-client/oauth2-proxy/components/central-dashboard
+  ```
+
+All those changes combined can be done with this single command:
+```diff
+$ git apply <<EOF
+diff --git a/example/kustomization.yaml b/example/kustomization.yaml
+index c1a85789..028a6486 100644
+--- a/example/kustomization.yaml
++++ b/example/kustomization.yaml
+@@ -39,10 +39,10 @@ resources:
+ - ../common/istio-1-17/istio-crds/base
+ - ../common/istio-1-17/istio-namespace/base
+ - ../common/istio-1-17/istio-install/base
+-# OIDC Authservice
+-- ../common/oidc-client/oidc-authservice/base
++# oauth2-proxy for OIDC
++- ../common/oidc-client/oauth2-proxy/base
+ # Dex
+-- ../common/dex/overlays/istio
++- ../common/dex/overlays/oauth2-proxy
+ # KNative
+ - ../common/knative/knative-serving/overlays/gateways
+ - ../common/knative/knative-eventing/base
+@@ -85,3 +85,10 @@ resources:
+ # KServe
+ - ../contrib/kserve/kserve
+ - ../contrib/kserve/models-web-app/overlays/kubeflow
++
++components:
++# Istio meshConfig for oauth2-proxy
++- ../common/oidc-client/oauth2-proxy/components/istio
++
++# Central Dashboard logout url using oauth2-proxy /oauth2/sign_out
++- ../common/oidc-client/oauth2-proxy/components/central-dashboard
+EOF
+```
