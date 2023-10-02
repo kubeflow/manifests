@@ -19,9 +19,6 @@ spec:
           configMap:
             name: oauth2-proxy
             defaultMode: 420
-        - name: oauth2-proxy
-          secret:
-            secretName: oauth2-proxy
       containers:
         - name: oauth2-proxy
           image: quay.io/oauth2-proxy/oauth2-proxy:v7.4.0
@@ -36,18 +33,25 @@ spec:
               containerPort: 44180
               protocol: TCP
           env:
+            - name: OAUTH2_PROXY_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: oauth2-proxy
+                  key: client-id
+            - name: OAUTH2_PROXY_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oauth2-proxy
+                  key: client-secret
             - name: OAUTH2_PROXY_COOKIE_SECRET
               valueFrom:
                 secretKeyRef:
                   name: oauth2-proxy
-                  key: COOKIE_SECRET
+                  key: cookie-secret
           volumeMounts:
             - name: configmain
               mountPath: /etc/oauth2_proxy/oauth2_proxy.cfg
               subPath: oauth2_proxy.cfg
-            - name: oauth2-proxy
-              subPath: CLIENT_SECRET
-              mountPath: "/etc/oauth2_proxy/CLIENT_SECRET"
           livenessProbe:
             httpGet:
               path: /ping

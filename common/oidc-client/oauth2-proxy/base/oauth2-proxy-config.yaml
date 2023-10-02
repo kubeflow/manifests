@@ -12,8 +12,6 @@ data:
     upstreams = "static://200"
     email_domains = [ "*" ]
     skip_auth_regex=["/dex/.*"]
-    client_id = "kubeflow-oidc-authservice"
-    client_secret_file = "/etc/oauth2_proxy/CLIENT_SECRET"
     # ---
     # OIDC Discovery has to be skipped and login url has to be provided directly
     # in order to enable relative auth redirect.
