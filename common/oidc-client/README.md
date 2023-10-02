@@ -24,8 +24,6 @@ authentication requirements.
 For more information on how this integration is used, please reference
 [oauth2-proxy/README.md](oauth2-proxy/README.md).
 
-## References
-
-- [^1]: [Envoy Filter](https://istio.io/latest/docs/reference/config/networking/envoy-filter/)
-- [^2]: [External Authorization](https://istio.io/latest/docs/tasks/security/authorization/authz-custom/)
-- [^3]: [oauth2-proxy ](https://github.com/oauth2-proxy/oauth2-proxy)
+[^1]: [Envoy Filter](https://istio.io/latest/docs/reference/config/networking/envoy-filter/)
+[^2]: [External Authorization](https://istio.io/latest/docs/tasks/security/authorization/authz-custom/)
+[^3]: [oauth2-proxy ](https://github.com/oauth2-proxy/oauth2-proxy)
