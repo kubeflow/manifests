@@ -1,7 +1,7 @@
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: oauth2-proxy-istio-ingressgateway
+  name: istio-ingressgateway-oauth2-proxy
   namespace: istio-system
 spec:
   action: CUSTOM
