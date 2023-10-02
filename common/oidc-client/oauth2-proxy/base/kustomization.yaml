@@ -28,19 +28,8 @@ secretGenerator:
       - "cookie-secret=7d16fee92f8d11b8940b081b3f8b8acb"
 
 configMapGenerator:
-  # This will configure oauth2-proxy option --cookie-secure which will force
+  # This will configure oauth2-proxy option --cookie-secure which can force
   # auth redirect with redirect_uri parameter using https.
-  # This is because oauth2-proxy is configured to serve on http so it guesses
-  # that the auth redirect should also be using http.
-  # To see the difference, you can call curl to your Kubeflow address with grep:
-  # $ curl -s  https://kubeflow.example.com | grep -oE "redirect_uri=([a-z])+"
-  # if FORCE_HTTPS=false, the output will be:
-  #   redirect_uri=http
-  # if FORCE_HTTPS=true, the output will be:
-  #   redirect_uri=https
-  # Other way to configure oauth2-proxy to use the redirect_uri with https
-  # is to configure it to serve behind https endpoint using configuration option
-  # --https-address=0.0.0.0:443 and provide TLS Cert and Key
   - name: oauth2-proxy-force-https
     literals:
       - FORCE_HTTPS=false
