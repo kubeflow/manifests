@@ -35,7 +35,7 @@ configMapGenerator:
       # most probably the Kubernetes OIDC Issuer will be server in-cluster
       # behind self-signed certs. This option will configure
       # --ssl-insecure-skip-verify which will accept self-signed-certificates.
-      - ALLOW_SELF_SIGNED_ISSUER=true
+      - ALLOW_SELF_SIGNED_ISSUER=false
 
       # This will configure oauth2-proxy option --skip-jwt-bearer-tokens which
       # will pass the requests with 'Authorization' header with Bearer Token
