@@ -1,0 +1,14 @@
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: kubernetes-oidc-issuer
+  namespace: istio-system
+spec:
+  jwtRules:
+    - forwardOriginalToken: true
+      issuer: $(ISSUER)
+      outputClaimToHeaders:
+        - claim: sub
+          header: x-auth-request-user
+        - claim: sub
+          header: kubeflow-userid
