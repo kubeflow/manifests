@@ -160,14 +160,15 @@ be done to the `example/kustomization.yaml` file:
   - ../common/dex/overlays/istio
   # to
   - ../common/dex/overlays/oauth2-proxy
-* add Kustomize Components to modify Istio and Central Dashboard to integrate
-  with `oauth2-proxy` using `envoyExtAuthzHttp`
+* add Kustomize Components to configure Istio, oauth2-proxy, Kubernetes and
+  Central Dashboard with `oauth2-proxy` using `envoyExtAuthzHttp`
   ```
   components:
-  # Istio meshConfig for oauth2-proxy
-  - ../common/oidc-client/oauth2-proxy/components/istio
-
-  # Central Dashboard logout url using oauth2-proxy /oauth2/sign_out
+  # oauth2-proxy components to configure Istio, oauth2-proxy, Kubernetes and Central Dashboard
+  - ../common/oidc-client/oauth2-proxy/components/istio-external-auth
+  - ../common/oidc-client/oauth2-proxy/components/istio-use-kubernetes-oidc-issuer
+  - ../common/oidc-client/oauth2-proxy/components/allow-unauthenticated-issuer-discovery
+  - ../common/oidc-client/oauth2-proxy/components/configure-self-signed-kubernetes-oidc-issuer
   - ../common/oidc-client/oauth2-proxy/components/central-dashboard
   ```
 
@@ -175,7 +176,7 @@ All those changes combined can be done with this single command:
 ```diff
 $ git apply <<EOF
 diff --git a/example/kustomization.yaml b/example/kustomization.yaml
-index c1a85789..028a6486 100644
+index c1a85789..cad8bb8b 100644
 --- a/example/kustomization.yaml
 +++ b/example/kustomization.yaml
 @@ -39,10 +39,10 @@ resources:
@@ -192,16 +193,17 @@ index c1a85789..028a6486 100644
  # KNative
  - ../common/knative/knative-serving/overlays/gateways
  - ../common/knative/knative-eventing/base
-@@ -85,3 +85,10 @@ resources:
+@@ -85,3 +85,11 @@ resources:
  # KServe
  - ../contrib/kserve/kserve
  - ../contrib/kserve/models-web-app/overlays/kubeflow
 +
 +components:
-+# Istio meshConfig for oauth2-proxy
-+- ../common/oidc-client/oauth2-proxy/components/istio
-+
-+# Central Dashboard logout url using oauth2-proxy /oauth2/sign_out
++# oauth2-proxy components to configure Istio, oauth2-proxy, Kubernetes and Central Dashboard
++- ../common/oidc-client/oauth2-proxy/components/istio-external-auth
++- ../common/oidc-client/oauth2-proxy/components/istio-use-kubernetes-oidc-issuer
++- ../common/oidc-client/oauth2-proxy/components/allow-unauthenticated-issuer-discovery
++- ../common/oidc-client/oauth2-proxy/components/configure-self-signed-kubernetes-oidc-issuer
 +- ../common/oidc-client/oauth2-proxy/components/central-dashboard
 EOF
 ```
