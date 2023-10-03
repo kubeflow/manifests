@@ -51,8 +51,23 @@ spec:
             - name: OAUTH2_PROXY_COOKIE_SECURE
               valueFrom:
                 configMapKeyRef:
-                  name: oauth2-proxy-force-https
+                  name: oauth2-proxy-parameters
                   key: FORCE_HTTPS
+            - name: OAUTH2_PROXY_SSL_INSECURE_SKIP_VERIFY
+              valueFrom:
+                configMapKeyRef:
+                  name: oauth2-proxy-parameters
+                  key: ALLOW_SELF_SIGNED_ISSUER
+            - name: OAUTH2_PROXY_SKIP_JWT_BEARER_TOKENS
+              valueFrom:
+                configMapKeyRef:
+                  name: oauth2-proxy-parameters
+                  key: ENABLE_M2M_TOKENS
+            - name: OAUTH2_PROXY_EXTRA_JWT_ISSUERS
+              valueFrom:
+                configMapKeyRef:
+                  name: oauth2-proxy-parameters
+                  key: EXTRA_JWT_ISSUERS
           volumeMounts:
             - name: configmain
               mountPath: /etc/oauth2_proxy/oauth2_proxy.cfg

@@ -16,9 +16,6 @@ resources:
 # Token Reviews for OpenShift
 # - rbac.tokenreviews.yaml
 
-generatorOptions:
-  disableNameSuffixHash: true
-
 secretGenerator:
   - name: oauth2-proxy
     type: Opaque
@@ -28,11 +25,27 @@ secretGenerator:
       - "cookie-secret=7d16fee92f8d11b8940b081b3f8b8acb"
 
 configMapGenerator:
-  # This will configure oauth2-proxy option --cookie-secure which can force
-  # auth redirect with redirect_uri parameter using https.
-  - name: oauth2-proxy-force-https
+  - name: oauth2-proxy-parameters
     literals:
+      # This will configure oauth2-proxy option --cookie-secure which can force
+      # auth redirect with redirect_uri parameter using https.
       - FORCE_HTTPS=false
+
+      # If Kubernetes is managed by kind, vCluster, minikube or similar tool,
+      # most probably the Kubernetes OIDC Issuer will be server in-cluster
+      # behind self-signed certs. This option will configure
+      # --ssl-insecure-skip-verify which will accept self-signed-certificates.
+      - ALLOW_SELF_SIGNED_ISSUER=true
+
+      # This will configure oauth2-proxy option --skip-jwt-bearer-tokens which
+      # will pass the requests with 'Authorization' header with Bearer Token
+      # matching --extra-jwt-issuers.
+      - ENABLE_M2M_TOKENS=true
+
+      # Bearer tokens issued by these OIDC Issuers will be verified against the
+      # Issuer and accepted on success.
+      # The format is exactly like in --extra-jwt-issuers.
+      - EXTRA_JWT_ISSUERS=https://kubernetes.default.svc.cluster.local=https://kubernetes.default.svc.cluster.local
 
 images:
   - name: quay.io/oauth2-proxy/oauth2-proxy
