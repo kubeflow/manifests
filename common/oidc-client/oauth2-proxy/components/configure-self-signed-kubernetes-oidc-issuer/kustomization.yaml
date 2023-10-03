@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+resources:
+  - job.set-kubernetes-oidc-issuer-jwks-in-requestauthentication.yaml
+  - rbac.yaml
+
+configMapGenerator:
+  - name: configure-self-signed-kubernetes-oidc-issuer-script
+    namespace: istio-system
+    files:
+      - "script.sh=script.sh"
+
+# vars:
+#   - name: ISSUER
+#     objref:
+#       kind: ConfigMap
+#       name: istio-use-k8s-jwt-params
+#       apiVersion: v1
+#     fieldref:
+#       fieldpath: data.ISSUER
+
+# configurations:
+#   - params.yaml
