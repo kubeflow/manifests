@@ -4,6 +4,7 @@ metadata:
   name: configure-kubernetes-oidc-issuer-jwks-in-requestauthentication
   namespace: istio-system
 spec:
+  ttlSecondsAfterFinished: 0
   template:
     metadata:
       labels: {}
