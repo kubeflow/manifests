@@ -16,10 +16,10 @@ echo "Wait until resource RequestAuthentication ${REQUEST_AUTHENTICATION_NAME} i
 while true; do
   response="$(
     curl -s -o /dev/null \
-    --url "${RESOURCE_URL}" \
-    -w "%{http_code}"  \
-    --header "Authorization: Bearer $(cat /run/secrets/kubernetes.io/serviceaccount/token)" \
-    --insecure
+      --url "${RESOURCE_URL}" \
+      -w "%{http_code}" \
+      --header "Authorization: Bearer $(cat /run/secrets/kubernetes.io/serviceaccount/token)" \
+      --insecure
   )"
   if [ "${response}" = "200" ]; then
     break

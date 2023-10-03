@@ -5,23 +5,21 @@ metadata:
   namespace: istio-system
 
 ---
-
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: self-signed-kubernetes-oidc-issuer-configurator
   namespace: istio-system
 rules:
-- apiGroups:
-  - security.istio.io
-  resources:
-  - requestauthentications
-  verbs:
-  - get
-  - patch
+  - apiGroups:
+      - security.istio.io
+    resources:
+      - requestauthentications
+    verbs:
+      - get
+      - patch
 
 ---
-
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -32,24 +30,6 @@ roleRef:
   kind: Role
   name: self-signed-kubernetes-oidc-issuer-configurator
 subjects:
-- kind: ServiceAccount
-  name: self-signed-kubernetes-oidc-issuer-configurator
-  namespace: istio-system
-
-# - apiGroups:
-#   - ""
-#   resources:
-#   - secrets
-#   verbs:
-#   - create
-#   - get
-#   - watch
-#   - list
-#   - update
-#   - delete
-# - apiGroups:
-#   - ""
-#   resources:
-#   - configmaps
-#   verbs:
-#   - delete
+  - kind: ServiceAccount
+    name: self-signed-kubernetes-oidc-issuer-configurator
+    namespace: istio-system
