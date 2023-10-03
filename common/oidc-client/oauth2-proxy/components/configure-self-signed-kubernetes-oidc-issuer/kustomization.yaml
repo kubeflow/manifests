@@ -11,14 +11,7 @@ configMapGenerator:
     files:
       - "script.sh=script.sh"
 
-# vars:
-#   - name: ISSUER
-#     objref:
-#       kind: ConfigMap
-#       name: istio-use-k8s-jwt-params
-#       apiVersion: v1
-#     fieldref:
-#       fieldpath: data.ISSUER
-
-# configurations:
-#   - params.yaml
+  - name: oauth2-proxy-parameters
+    behavior: merge
+    literals:
+      - ALLOW_SELF_SIGNED_ISSUER=true
