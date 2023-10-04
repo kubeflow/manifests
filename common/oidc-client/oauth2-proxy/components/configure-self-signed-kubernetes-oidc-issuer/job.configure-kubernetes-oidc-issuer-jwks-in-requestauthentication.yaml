@@ -16,6 +16,9 @@ spec:
           name: configure-kubernetes-oidc-issuer-jwks-in-requestauthentication
           command:
             - /script.sh
+          envFrom:
+            - configMapRef:
+                name: configure-self-signed-kubernetes-oidc-issuer-envs
           volumeMounts:
             - mountPath: /script.sh
               name: script
