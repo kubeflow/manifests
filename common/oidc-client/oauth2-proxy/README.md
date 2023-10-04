@@ -145,14 +145,23 @@ The details of this custom integration can be found here:
 To login again, user have to refresh the page.
 
 ## Example installation
-To use `oauth2-proxy` with `istio` `envoyExtAuthzHttp`, following changes has to
-be done to the `example/kustomization.yaml` file:
-* change `OIDC Authservice` to `oauth2-proxy for OIDC`
+To install Kubeflow configured to use `oauth2-proxy` with `istio`
+`envoyExtAuthzHttp` extension, following changes has to be done to the
+`example/kustomization.yaml` file:
+* use `oauth2-proxy` overlay for istio-install
+  ```
+  # from
+  - ../common/istio-1-17/istio-install/base
+  # to
+  - ../common/istio-1-17/istio-install/overlays/oauth2-proxy
+  ```
+* change `OIDC Authservice` to `oauth2-proxy for OIDC` and use overlay for m2m
+  bearer tokens with self-signed in-cluster issuer
   ```
   # from
   - ../common/oidc-client/oidc-authservice/base
   # to
-  - ../common/oidc-client/oauth2-proxy/base
+  - ../common/oidc-client/oauth2-proxy/overlays/m2m-self-signed
   ```
 * change Dex overlay
   ```
@@ -160,50 +169,45 @@ be done to the `example/kustomization.yaml` file:
   - ../common/dex/overlays/istio
   # to
   - ../common/dex/overlays/oauth2-proxy
-* add Kustomize Components to configure Istio, oauth2-proxy, Kubernetes and
-  Central Dashboard with `oauth2-proxy` using `envoyExtAuthzHttp`
+* change Central Dashboard overlay to use oauth2-proxy for logout
   ```
-  components:
-  # oauth2-proxy components to configure Istio, oauth2-proxy, Kubernetes and Central Dashboard
-  - ../common/oidc-client/oauth2-proxy/components/istio-external-auth
-  - ../common/oidc-client/oauth2-proxy/components/istio-use-kubernetes-oidc-issuer
-  - ../common/oidc-client/oauth2-proxy/components/allow-unauthenticated-issuer-discovery
-  - ../common/oidc-client/oauth2-proxy/components/configure-self-signed-kubernetes-oidc-issuer
-  - ../common/oidc-client/oauth2-proxy/components/central-dashboard
+  # from
+  - ../apps/centraldashboard/upstream/overlays/kserve
+  # to
+  - ../apps/centraldashboard/upstream/overlays/oauth2-proxy
   ```
 
 All those changes combined can be done with this single command:
 ```diff
 $ git apply <<EOF
 diff --git a/example/kustomization.yaml b/example/kustomization.yaml
-index c1a85789..cad8bb8b 100644
+index c1a85789..4a50440c 100644
 --- a/example/kustomization.yaml
 +++ b/example/kustomization.yaml
-@@ -39,10 +39,10 @@ resources:
+@@ -38,11 +38,11 @@ resources:
+ # Istio
  - ../common/istio-1-17/istio-crds/base
  - ../common/istio-1-17/istio-namespace/base
- - ../common/istio-1-17/istio-install/base
+-- ../common/istio-1-17/istio-install/base
 -# OIDC Authservice
 -- ../common/oidc-client/oidc-authservice/base
++- ../common/istio-1-17/istio-install/overlays/oauth2-proxy
 +# oauth2-proxy for OIDC
-+- ../common/oidc-client/oauth2-proxy/base
++- ../common/oidc-client/oauth2-proxy/overlays/m2m-self-signed
  # Dex
 -- ../common/dex/overlays/istio
 +- ../common/dex/overlays/oauth2-proxy
  # KNative
  - ../common/knative/knative-serving/overlays/gateways
  - ../common/knative/knative-eventing/base
-@@ -85,3 +85,11 @@ resources:
- # KServe
- - ../contrib/kserve/kserve
- - ../contrib/kserve/models-web-app/overlays/kubeflow
-+
-+components:
-+# oauth2-proxy components to configure Istio, oauth2-proxy, Kubernetes and Central Dashboard
-+- ../common/oidc-client/oauth2-proxy/components/istio-external-auth
-+- ../common/oidc-client/oauth2-proxy/components/istio-use-kubernetes-oidc-issuer
-+- ../common/oidc-client/oauth2-proxy/components/allow-unauthenticated-issuer-discovery
-+- ../common/oidc-client/oauth2-proxy/components/configure-self-signed-kubernetes-oidc-issuer
-+- ../common/oidc-client/oauth2-proxy/components/central-dashboard
+@@ -60,7 +60,7 @@ resources:
+ # Katib
+ - ../apps/katib/upstream/installs/katib-with-kubeflow
+ # Central Dashboard
+-- ../apps/centraldashboard/upstream/overlays/kserve
++- ../apps/centraldashboard/upstream/overlays/oauth2-proxy
+ # Admission Webhook
+ - ../apps/admission-webhook/upstream/overlays/cert-manager
+ # Jupyter Web App
 EOF
 ```
