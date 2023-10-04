@@ -5,18 +5,18 @@ resources:
   - requestauthentication.yaml
 
 configMapGenerator:
-  - name: istio-use-k8s-jwt-params
-    envs:
-      - params.env
+  - name: istio-m2m-params
+    literals:
+      - M2M_TOKEN_ISSUER=https://kubernetes.default.svc.cluster.local
 
 vars:
-  - name: ISSUER
+  - name: M2M_TOKEN_ISSUER
     objref:
       kind: ConfigMap
-      name: istio-use-k8s-jwt-params
+      name: istio-m2m-params
       apiVersion: v1
     fieldref:
-      fieldpath: data.ISSUER
+      fieldpath: data.M2M_TOKEN_ISSUER
 
 configurations:
   - params.yaml
