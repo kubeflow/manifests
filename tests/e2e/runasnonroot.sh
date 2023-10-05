@@ -41,7 +41,7 @@ has_securityContext_and_runAsNonRoot() {
   local securityContextContainer=$(kubectl get pod -n "$namespace" "$pod_name" -o json | jq -r '.spec.containers[] | select(.name == "'"$container_name"'").securityContext')
 
   if [ "$securityContextContainer" = "null" ]; then
-    if [ "$runAsNonRootPod" = "Missing" ]; then
+    if [ "$securityContextPod" = "null" ]; then
       echo "Error: 'securityContext' is missing at the pod and container level in container $container_name of pod $pod_name"
       return 1
     else
