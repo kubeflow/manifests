@@ -6,7 +6,7 @@ metadata:
 spec:
   jwtRules:
     - forwardOriginalToken: true
-      issuer: $(M2M_TOKEN_ISSUER)
+      issuer: M2M_TOKEN_ISSUER_PLACEHOLDER
       outputClaimToHeaders:
         - claim: sub
           header: x-auth-request-user
