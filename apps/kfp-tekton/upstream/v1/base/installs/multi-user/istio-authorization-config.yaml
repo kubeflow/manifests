@@ -94,6 +94,16 @@ spec:
 apiVersion: "networking.istio.io/v1alpha3"
 kind: DestinationRule
 metadata:
+  name: ml-pipeline-persistenceagent
+spec:
+  host: ml-pipeline-persistenceagent.kubeflow.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+---
+apiVersion: "networking.istio.io/v1alpha3"
+kind: DestinationRule
+metadata:
   name: ml-pipeline-visualizationserver
 spec:
   host: ml-pipeline-visualizationserver.kubeflow.svc.cluster.local
