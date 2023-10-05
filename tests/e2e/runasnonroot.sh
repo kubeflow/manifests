@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -euxo
+
 namespace="kubeflow"
 error_flag=0
 
@@ -16,28 +16,49 @@ has_id_command() {
   fi
 }
 
-# Function to check if 'runAsNonRoot' is present in the container's security context
-has_runAsNonRoot() {
+# Function to check 'securityContext' and 'runAsNonRoot' at the pod or container level
+has_securityContext_and_runAsNonRoot() {
   local pod_name="$1"
   local container_name="$2"
 
-  # Use jq to check if 'securityContext' is missing in the container's security context
-  local securityContext=$(kubectl get pod -n "$namespace" "$pod_name" -o json | jq -r '.spec.containers[] | select(.name == "'"$container_name"'").securityContext')
-  
-  if [ "$securityContext" = "null" ]; then
-    echo "Error: 'securityContext' is missing in container $container_name of pod $pod_name"
-    return 1  # 'securityContext' is missing (fail)
-  fi
-  
-  # Use jq to check if 'runAsNonRoot' is missing in the container's security context
-  local runAsNonRoot=$(kubectl get pod -n "$namespace" "$pod_name" -o json | jq -r '.spec.containers[] | select(.name == "'"$container_name"'").securityContext.runAsNonRoot // "Missing"')
+  # Use jq to check if 'securityContext' is defined at the pod level
+  local securityContextPod=$(kubectl get pod -n "$namespace" "$pod_name" -o json | jq -r '.spec.securityContext')
 
-  if [ "$runAsNonRoot" = "Missing" ]; then
-    echo "Error: 'runAsNonRoot' is missing in container $container_name of pod $pod_name"
-    return 1  # 'runAsNonRoot' is missing (fail)
+  if [ "$securityContextPod" = "null" ]; then
+    : # 'securityContext' is missing at the pod level, continue checking at the container level
   else
-    return 0  # 'runAsNonRoot' is present
+    # Check 'runAsNonRoot' at the pod level
+    local runAsNonRootPod=$(kubectl get pod -n "$namespace" "$pod_name" -o json | jq -r '.spec.securityContext.runAsNonRoot // "Missing"')
+
+    if [ "$runAsNonRootPod" = "Missing" ]; then
+      : # 'runAsNonRoot' is missing at the pod level, continue checking at the container level
+    else
+      return 0  # 'runAsNonRoot' is present at the pod level (success)
+    fi
   fi
+  
+  # Use jq to check 'securityContext' at the container level
+  local securityContextContainer=$(kubectl get pod -n "$namespace" "$pod_name" -o json | jq -r '.spec.containers[] | select(.name == "'"$container_name"'").securityContext')
+
+  if [ "$securityContextContainer" = "null" ]; then
+    if [ "$runAsNonRootPod" = "Missing" ]; then
+      echo "Error: 'securityContext' is missing at the pod and container level in container $container_name of pod $pod_name"
+      return 1
+    else
+      echo "Error: There is no runasnonroot on pod level and 'securityContext' is missing at container level in container $container_name of pod $pod_name"
+      return 1
+    fi
+  fi
+
+  # Check 'runAsNonRoot' at the container level
+  local runAsNonRootContainer=$(kubectl get pod -n "$namespace" "$pod_name" -o json | jq -r '.spec.containers[] | select(.name == "'"$container_name"'").securityContext.runAsNonRoot // "Missing"')
+
+  if [ "$runAsNonRootContainer" = "Missing" ]; then
+    echo "Error: There is no runasnonroot on pod level and'runAsNonRoot' is missing in container $container_name of pod $pod_name"
+    return 1  # 'runAsNonRoot' is missing at the container level (fail)
+  fi
+
+  return 0  # 'securityContext' and 'runAsNonRoot' are defined at the container level
 }
 
 # Get a list of pod names in the specified namespace that are not in the "Completed" state
@@ -50,7 +71,7 @@ for pod_name in $pod_names; do
   container_names=$(kubectl get pod -n "$namespace" "$pod_name" -o json | jq -r '.spec.containers[].name')
 
   for container_name in $container_names; do
-    if ! has_runAsNonRoot "$pod_name" "$container_name"; then
+    if has_securityContext_and_runAsNonRoot "$pod_name" "$container_name"; then
       error_flag=1
     fi
 
