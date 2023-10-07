@@ -14,9 +14,9 @@ resources:
   - metadata-envoy.yaml
   - metadata-grpc-server.yaml
   - minio.yaml
-  - ml-pipeline-ui.yaml 
+  - ml-pipeline-ui.yaml
   - ml-pipeline.yaml
   - poddefaults.yaml
-  - seldon.yaml
   - volumes-web-app.yaml
   - tensorboards-web-app.yaml
+  # - seldon.yaml
