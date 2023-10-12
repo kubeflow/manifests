@@ -1,17 +1,16 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-bases:
-  - ../../dev
-  - ../base
 namespace: kubeflow
 
 # Delete the cache deployer as we use the cert-manager instead 
-patchesStrategicMerge:
-  - ./delete-cache-deployer.yaml
+patches:
+  - path: ./delete-cache-deployer.yaml
 
 resources:
-- namespace.yaml
+  - ../../dev
+  - ../base
+  - namespace.yaml
 
 vars:
 # NOTE: var name must be unique globally to allow composition of multiple kustomize
