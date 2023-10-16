@@ -2,10 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- ../../base/installs/generic
-- ../../base/metadata/base
-- ../../third-party/minio/base
-- ../../third-party/mysql/base
+- ../plain
 - ../../third-party/openshift-pipelines-custom-task
 - ../../third-party/openshift/standalone
 
@@ -67,13 +64,13 @@ patches:
 images:
 - name: gcr.io/ml-pipeline/api-server
   newName: quay.io/aipipeline/apiserver
-  newTag: 2.0.0
+  newTag: 2.0.1
 - name: gcr.io/ml-pipeline/persistenceagent
   newName: quay.io/aipipeline/persistenceagent
-  newTag: 2.0.0
+  newTag: 2.0.1
 - name: gcr.io/ml-pipeline/scheduledworkflow
   newName: quay.io/aipipeline/scheduledworkflow
-  newTag: 2.0.0
+  newTag: 2.0.1
 
 labels:
 - includeSelectors: true
