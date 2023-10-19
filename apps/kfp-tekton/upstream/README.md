@@ -12,6 +12,23 @@ To install Kubeflow Pipelines Standalone, follow [Kubeflow Pipelines Standalone 
 
 There are environment specific installation instructions not covered in the official deployment documentation, they are listed below.
 
+## Kubeflow Pipelines on Tekton (KFP-Tekton)
+Project bringing Kubeflow Pipelines and Tekton together. The current code allows you run Kubeflow Pipelines with Tekton backend end to end.
+You can use the [Kubeflow Pipelines SDK v2](https://www.kubeflow.org/docs/components/pipelines/v2/introduction/) to compose a ML pipeline,
+generate the Intermediate Representation(IR), and run it on KFP-Tekton.
+
+To install the KFP-Tekton v2 on any Kubernetes cluster, please follow the instructions below:
+```bash
+cd manifests/kustomize
+KFP_ENV=platform-agnostic-tekton
+kubectl apply -k cluster-scoped-resources-tekton/
+kubectl wait crd/applications.app.k8s.io --for condition=established --timeout=60s
+kubectl apply -k "env/${KFP_ENV}/"
+kubectl wait pods -l application-crd-id=kubeflow-pipelines -n kubeflow --for condition=Ready --timeout=1800s
+kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80
+```
+Now you can access Kubeflow Pipelines UI in your browser by <http://localhost:8080>.
+
 ### (env/platform-agnostic) install on any Kubernetes cluster
 
 Install:
