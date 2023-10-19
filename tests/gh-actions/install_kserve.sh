@@ -3,7 +3,7 @@ set -euo pipefail
 echo "Installing Kserve ..."
 cd contrib/kserve
 set +e
-kustomize build kserve | kubectl apply -f -
+for i in 1 2 3 ; do  kustomize build kserve | kubectl apply -f - && break || sleep 15; done
 set -e
 echo "Waiting for crd/clusterservingruntimes.serving.kserve.io to be available ..."
 kubectl wait --for condition=established --timeout=30s crd/clusterservingruntimes.serving.kserve.io
