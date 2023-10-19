@@ -55,7 +55,7 @@ This repo periodically syncs all official Kubeflow components from their respect
 | Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.8.0-rc.2](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.2/components/crud-web-apps/tensorboards/manifests) |
 | Volumes Web App | apps/volumes-web-app/upstream | [v1.8.0-rc.2](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.2/components/crud-web-apps/volumes/manifests) |
 | Katib | apps/katib/upstream | [v0.16.0-rc.1](https://github.com/kubeflow/katib/tree/v0.16.0-rc.1/manifests/v1beta1) |
-| KServe | contrib/kserve/kserve | [v0.11.0](https://github.com/kserve/kserve/tree/v0.11.0/install/v0.11.0) |
+| KServe | contrib/kserve/kserve | [v0.11.1](https://github.com/kserve/kserve/tree/v0.11.1/install/v0.11.1) |
 | KServe Models Web App | contrib/kserve/models-web-app | [v0.10.0](https://github.com/kserve/models-web-app/tree/v0.10.0/config) |
 | Kubeflow Pipelines | apps/pipeline/upstream | [2.0.2](https://github.com/kubeflow/pipelines/tree/2.0.2/manifests/kustomize) |
 | Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [2.0.1](https://github.com/kubeflow/kfp-tekton/tree/2.0.x/manifests/kustomize) |
