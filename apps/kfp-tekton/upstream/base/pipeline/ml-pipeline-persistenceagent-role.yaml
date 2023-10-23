@@ -27,12 +27,6 @@ rules:
   verbs:
   - report
 - apiGroups:
-  - ''
-  resources:
-  - namespaces
-  verbs:
-  - get
-- apiGroups:
   - tekton.dev
   resources:
   - pipelineruns
@@ -40,6 +34,7 @@ rules:
   - taskruns
   - conditions
   - runs
+  - tasks
   verbs:
   - create
   - get
@@ -48,3 +43,10 @@ rules:
   - update
   - patch
   - delete
+- apiGroups:
+    - pipelines.kubeflow.org
+  resources:
+    - runs
+  verbs:
+    - reportMetrics
+    - readArtifact

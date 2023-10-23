@@ -1,12 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-resources:
-  - ../../cluster-scoped-resources-tekton
-  - ../../base/installs/generic
-  - ../../base/metadata/base
-  - ../../third-party/minio/base
-  - ../../third-party/mysql/base
+bases:
+  # Application controller is used to provide Google Cloud Console integration.
+  - ../../../third-party/application
+  - ../../../base/application
+  - ../../platform-agnostic-postgresql
+  - ../../gcp/inverse-proxy
 
 # Identifier for application manager to apply ownerReference.
 # The ownerReference ensures the resources get garbage collected
@@ -15,5 +15,5 @@ commonLabels:
   application-crd-id: kubeflow-pipelines
 
 # !!! If you want to customize the namespace,
-# please also update base/cache-deployer/cluster-scoped/cache-deployer-clusterrolebinding.yaml
+# please refer sample/cluster-scoped-resources to update the namespace for cluster-scoped-resources
 namespace: kubeflow
