@@ -14,7 +14,7 @@ data:
   appVersion: 2.0.0
   dbHost: postgres  # relic to be removed after release
   dbPort: "5432"    # relic to be removed after release
-  dbType: postgres
+  dbType: postgres  
   postgresHost: postgres
   postgresPort: "5432"
   mlmdDb: metadb
