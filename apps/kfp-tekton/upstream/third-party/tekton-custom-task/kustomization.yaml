@@ -11,21 +11,21 @@ namespace: tekton-pipelines
 
 images:
   - name: quay.io/aipipeline/pipelineloop-controller
-    newTag: 1.8.0
+    newTag: 1.7.1
   - name: quay.io/aipipeline/pipelineloop-webhook
-    newTag: 1.8.0
+    newTag: 1.7.1
   - name: kfp-v2-dev-driver-controller
     newName: quay.io/aipipeline/tekton-driver
-    newTag: 2.0.2
+    newTag: 2.0.3
   - name: tekton-exithandler-controller
     newName: quay.io/aipipeline/tekton-exithandler-controller
-    newTag: 2.0.2
+    newTag: 2.0.3
   - name: tekton-exithandler-webhook
     newName: quay.io/aipipeline/tekton-exithandler-webhook
-    newTag: 2.0.2
+    newTag: 2.0.3
   - name: tekton-kfptask-controller
     newName: quay.io/aipipeline/tekton-kfptask-controller
-    newTag: 2.0.2
+    newTag: 2.0.3
   - name: tekton-kfptask-webhook
     newName: quay.io/aipipeline/tekton-kfptask-webhook
-    newTag: 2.0.2
+    newTag: 2.0.3

@@ -7,4 +7,5 @@ metadata:
     app.kubernetes.io/instance: default
     app.kubernetes.io/part-of: tekton-pipelines
 data:
-  running-in-environment-with-injected-sidecars: "false"
+  embedded-status: "full"
+  custom-task-version: "v1beta1"
