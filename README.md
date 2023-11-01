@@ -45,15 +45,15 @@ This repo periodically syncs all official Kubeflow components from their respect
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
 | Training Operator | apps/training-operator/upstream | [v1.7.0](https://github.com/kubeflow/training-operator/tree/v1.7.0/manifests) |
-| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.8.0-rc.5](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.5/components/notebook-controller/config) |
-| PVC Viewer Controller | apps/pvcviewer-roller/upstream | [v1.8.0-rc.5](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.5/components/pvcviewer-controller/config) |
-| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.8.0-rc.5](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.5/components/tensorboard-controller/config) |
-| Central Dashboard | apps/centraldashboard/upstream | [v1.8.0-rc.5](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.5/components/centraldashboard/manifests) |
-| Profiles + KFAM | apps/profiles/upstream | [v1.8.0-rc.5](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.5/components/profile-controller/config) |
-| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.8.0-rc.5](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.5/components/admission-webhook/manifests) |
-| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.8.0-rc.5](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.5/components/crud-web-apps/jupyter/manifests) |
-| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.8.0-rc.5](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.5/components/crud-web-apps/tensorboards/manifests) |
-| Volumes Web App | apps/volumes-web-app/upstream | [v1.8.0-rc.5](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.5/components/crud-web-apps/volumes/manifests) |
+| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/notebook-controller/config) |
+| PVC Viewer Controller | apps/pvcviewer-roller/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/pvcviewer-controller/config) |
+| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/tensorboard-controller/config) |
+| Central Dashboard | apps/centraldashboard/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/centraldashboard/manifests) |
+| Profiles + KFAM | apps/profiles/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/profile-controller/config) |
+| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/admission-webhook/manifests) |
+| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/crud-web-apps/jupyter/manifests) |
+| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/crud-web-apps/tensorboards/manifests) |
+| Volumes Web App | apps/volumes-web-app/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/crud-web-apps/volumes/manifests) |
 | Katib | apps/katib/upstream | [v0.16.0](https://github.com/kubeflow/katib/tree/v0.16.0/manifests/v1beta1) |
 | KServe | contrib/kserve/kserve | [v0.11.1](https://github.com/kserve/kserve/tree/v0.11.1/install/v0.11.1) |
 | KServe Models Web App | contrib/kserve/models-web-app | [v0.10.0](https://github.com/kserve/models-web-app/tree/v0.10.0/config) |
