@@ -5,149 +5,139 @@ For a quick install, see [Example installation](#example-installation).
 
 ## Description
 
-Kubeflow authorization currently works based on custom auth headers:
-* `kubeflow-userid` with user email
-* `kubeflow-groups` with a comma-separated list of groups
-    * this is not yet fully functional
+Kubeflow authorization operates using custom authentication headers:
+* `kubeflow-userid`: Contains the user's email address.
+* `kubeflow-groups`: Holds a comma-separated list of user groups.
+    * Note: The functionality for `kubeflow-groups` is not fully operational at this time.
 
-This was implemented with custom, minimalistic authorization tool from arrikto
-called `oidc-authservice`, which was integrated with Istio using `EnvoyFilter`.
+This feature was implemented using a custom, minimalistic authorization tool from Arrikto
+named `oidc-authservice`. This tool was integrated into Istio using `EnvoyFilter`.
 
-Using `envoyExtAuthzHttp` for authentication is better, because:
-* The `envoyExtAuthzHttp` extension simplifies the process of adding external
-  authorization to the Envoy proxy within an Istio service mesh. It provides a
-  declarative way to configure and apply authorization policies, avoiding the
-  complexity of directly modifying EnvoyFilter configurations.
-* Istio promotes using the `envoyExtAuthzHttp` extension for adding external
-  authorization because it follows a standardized approach. This allows for
-  consistency across different Istio deployments and makes it easier to
-  understand and maintain the authorization logic within the service mesh.
-* By using `envoyExtAuthzHttp`, authorization policies are defined in separate
-  configuration resources instead of modifying the EnvoyFilter directly. This
-  separation simplifies policy management and makes it easier to update or
-  replace authorization logic as needed without modifying EnvoyFilter
-  configurations.
-* The `envoyExtAuthzHttp` extension integrates well with other Istio features
-  such as AuthorizationPolicy and VirtualService. It allows for easier
-  integration with Istio's broader ecosystem and leverages the benefits of
-  Istio's architecture and capabilities.
-* It's highly possible that the internal auth decisions in Kubeflow will
-  be based on the JWT directly in future instead of the custom auth headers.
+The adoption of `envoyExtAuthzHttp` for authentication offers several advantages:
+* **Simplified Authorization Process**: `envoyExtAuthzHttp` extension streamlines adding
+  external authorization to the Envoy proxy within an Istio service mesh. It allows for
+  declarative policy configuration, reducing the complexity associated with direct
+  `EnvoyFilter` modifications.
+* **Standardization**: Istio recommends `envoyExtAuthzHttp` for its standardized approach.
+  This promotes consistency across Istio deployments and simplifies understanding and
+  maintenance of the authorization logic.
+* **Separate Policy Management**: Authorization policies are defined in distinct
+  configuration resources, not directly in `EnvoyFilter`. This separation eases policy
+  management and facilitates updates or replacements of authorization logic without
+  altering `EnvoyFilter` configurations.
+* **Seamless Integration with Istio**: `envoyExtAuthzHttp` harmonizes with Istio features
+  like `AuthorizationPolicy` and `VirtualService`, enabling smoother integration within
+  Istio's ecosystem and taking advantage of its architecture and capabilities.
+* **Future-Proofing**: There is a high likelihood that Kubeflow's internal authentication
+  decisions will transition to relying directly on JWTs instead of custom auth headers.
 
-Additional information on why it's worth moving out of `EnvoyFilter` can be found
-under these resources:
-* https://github.com/istio/istio/issues/27790
-* https://istio.io/latest/docs/tasks/security/authorization/authz-custom/
+Additional information on the benefits of moving away from `EnvoyFilter` can be found in these
+resources:
+* [Istio GitHub Issue #27790](https://github.com/istio/istio/issues/27790)
+* [Istio Documentation on Authorization with Custom Authentication](https://istio.io/latest/docs/tasks/security/authorization/authz-custom/)
 
-`envoyExtAuthzHttp` could probably be integrated with `oidc-authservice`
-but `oauth2-proxy` is a more advanced authentication proxy that has a greater
-community support and used across the industry, including official istio documentation on [External Authorization](https://istio.io/latest/docs/tasks/security/authorization/authz-custom).
+While `envoyExtAuthzHttp` could potentially integrate with `oidc-authservice`, `oauth2-proxy`
+emerges as a more advanced authentication proxy. It boasts broader community support and is
+widely used in the industry, including in the official Istio documentation on [External
+Authorization](https://istio.io/latest/docs/tasks/security/authorization/authz-custom).
 
-For more details on the `oauth2-proxy`, see the [official documentation](https://oauth2-proxy.github.io/oauth2-proxy/docs/behaviour).
+For more details on the `oauth2-proxy`, refer to the [official documentation](https://oauth2-proxy.github.io/oauth2-proxy/docs/behaviour).
 
 ## OpenShift
 
-This deployment of oauth2-proxy doesn't support OpenShift. To enable integration
-with OpenShift:
-* use OpenShift distribution of oauth2-proxy available here:
-    * https://github.com/openshift/oauth-proxy
-* enable RBAC for token reviews by adding the `rbac.tokenreviews.yaml` file
-  to the kustomize (see comment in `kustomization.yaml`)
+This deployment of `oauth2-proxy` does not support OpenShift out of the box. To facilitate
+integration with OpenShift:
+* Utilize the OpenShift-specific distribution of `oauth2-proxy`, accessible at:
+    * [OpenShift OAuth Proxy on GitHub](https://github.com/openshift/oauth-proxy)
+* Enable RBAC for token reviews by incorporating the `rbac.tokenreviews.yaml` file into
+  your kustomize. For more details, refer to the relevant comment in `kustomization.yaml`.
 
 ## CloudFlare
 
-CloudFlare will require that some of the static, standard web browser assets are
-available without user authentication. This is important because CloudFlare will
-want to cache these assets for performance and if these assets are not available
-without user authentication, CloudFlare robots will be redirected to the
-authentication page. This can result in general issues while accessing the
+CloudFlare requires that certain static, standard web browser assets are accessible without
+user authentication. This is crucial because CloudFlare aims to cache these assets for
+enhanced performance. If these assets necessitate user authentication, CloudFlare robots
+will be redirected to the authentication page, potentially causing access issues with the
 Kubeflow instance behind CloudFlare.
 
-This can be easily solved by specifying in Istio `AuthorizationPolicy` a set of
-assets that don't require authentication. Such `AuthorizationPolicy` definition
-is already available under file
-`authorizationpolicy.istio-ingressgateway-oauth2-proxy-cloudflare.yaml`.
+This issue can be resolved by defining a set of assets in the Istio `AuthorizationPolicy`
+that do not require authentication. An example `AuthorizationPolicy` for this purpose is
+provided in the file `authorizationpolicy.istio-ingressgateway-oauth2-proxy-cloudflare.yaml`.
 
-## Explaining the auth routine
+## Explaining the Auth Routine
 
-1. Istio is configured with `envoyExtAuthzHttp` extension provider pointing to
-   `oauth2-proxy` service. This enables usage of this extension in
-   `AuthorizationPolicy` to add external authorization to the service mesh.
-2. Istio service mesh is configured with `AuthorizationPolicy`
-   `istio-ingressgateway-oauth2-proxy` in `istio-system` (istio root) namespace
-   with `action: CUSTOM` with `oauth2-proxy` provider. This means that every
-   request to the `istio-ingressgateway` must go through the external
-   authorization service, which is `oauth2-proxy`.
-3. `oauth2-proxy` will make decisions based on the cookie named
-   `oauth2_proxy_kubeflow`. If the cookie is not present, expired or invalid,
-   `oauth2-proxy` will redirect to the configured oidc provider, which in
-   default setup is `dex`.
-    * some of the information passed in the auth redirect are:
-        * redirect_uri pointing to the URI that the user should be redirected to
-          after successful authentication,
-        * code challenge to protect against interception and replay attacks,
-        * state parameter to ensure that the authorization response is valid,
-          originating from the same request that was initially sent, and that it
-          hasn't been tampered with or intercepted by an attacker.
+1. Istio is configured with the `envoyExtAuthzHttp` extension provider pointing to the
+   `oauth2-proxy` service. This configuration enables the use of this extension in
+   `AuthorizationPolicy` for adding external authorization to the service mesh.
+2. The Istio service mesh has an `AuthorizationPolicy` named `istio-ingressgateway-oauth2-proxy`
+   in the `istio-system` (Istio root) namespace. This policy is set with `action: CUSTOM` and
+   specifies the `oauth2-proxy` provider. Consequently, every request to the
+   `istio-ingressgateway` must pass through the external authorization service, `oauth2-proxy`.
+3. `oauth2-proxy` decides based on the cookie named `oauth2_proxy_kubeflow`. If this cookie
+   is absent, expired, or invalid, `oauth2-proxy` redirects to the configured OIDC provider,
+   typically `dex`. The authentication redirect includes:
+    * A `redirect_uri` for redirecting the user post-authentication,
+    * A code challenge to guard against interception and replay attacks,
+    * A state parameter to validate the authorization response's authenticity and
+      ensure it originates from the initial request.
 
-   After this step and successful authentication, cookie is available in user
-   browser which is then used by istio and oauth2-proxy to authorize user
-   requests.
+   Post-authentication, a cookie is set in the user's browser, used by Istio and `oauth2-proxy`
+   for authorizing requests.
 
-   Alternatively, `oauth2-proxy` will also look for an `Authorization` header
-   with a JWT bearer token. `oauth2-proxy` will automatically trust the JWT
-   issued by the configured oidc provider, which in the default setup is dex.
-   Additional trusted JWTs can be configured in a way that `oauth2-proxy` will
-   skip the authentication and forward the request back to istio including
-   provided authorization header.
+   `oauth2-proxy` also checks for an `Authorization` header with a JWT bearer token. It trusts
+   JWTs issued by the configured OIDC provider (default `dex`) and can be configured to trust
+   additional JWTs. If a valid JWT is present, `oauth2-proxy` forwards the request to Istio
+   along with the authorization header.
 
-   The ultimate goal of this step is to provide the `Authorization` header
-   with JWT Bearer Token which is later used in `RequestAuthentication` to
-   configure Istio to trust this JWT, parse JWT Claims to include user email
-   and groups in custom Kubeflow authorization headers, allow routing and
-   authorization decision based on JWT Claims.
-4. In this step Istio will always have the JWT in the request making it possible
-   to make authorization decision based on JWT Claims.
+   The key objective here is to supply an `Authorization` header with a JWT Bearer Token,
+   later used in `RequestAuthentication`. This step configures Istio to trust the JWT, parse
+   its claims to include user email and groups in custom Kubeflow authorization headers, and
+   make routing and authorization decisions based on these JWT claims.
+4. With this setup, Istio always receives the JWT in requests, enabling authorization
+   decisions based on JWT claims.
 
 ## Using HTTPS
-`oauth2-proxy` is configured with `http` endpoint secured by Istio Service Mesh.
-Because of that, `oauth2-proxy` will guess that the auth redirect uri is supposed
-to be handler with `http` as well. To force using `https`, change variable
-`FORCE_HTTPS` to `true` in `kustomization.yaml`. This will use `oauth2-proxy`
-configuration option `--cookie-secure` which will redirect with `https`.
 
-## Istio JWT Pub Key Refresh Interval
-On initial Kubeflow setup, it's highly possible that `istiod` will become
-available before `dex`. Using Istio `RequestAuthentication` configures Istio to call
-the Issuer URL to gather the JWT Pub Key. If Issuer is not yet available, placeholder
-keys will be configured and the setup will become unusable until Istio has access
-to the correct JWT Pub Key. For that reason, `istiod` is configured with env variable
-`PILOT_JWT_PUB_KEY_REFRESH_INTERVAL="1m"` so the JWT Pub Key is refreshed every
-minute instead of the default 20 minutes.
+`oauth2-proxy` is initially set up with an `http` endpoint, secured by the Istio Service Mesh.
+As a result, `oauth2-proxy` may default to assuming that the authentication redirect URI should
+also use `http`. To enforce the use of `https`, modify the variable `FORCE_HTTPS` in
+`kustomization.yaml` to `true`. This adjustment leverages the `oauth2-proxy` configuration
+option `--cookie-secure`, ensuring redirection occurs with `https`.
 
-If this is not configured, user will be presented with following Istio error:
+## Istio JWT Public Key Refresh Interval
+
+In the initial setup of Kubeflow, it's common for `istiod` to become available before `dex`.
+Istio's `RequestAuthentication` is configured to retrieve the JWT Public Key from the Issuer
+URL. If the Issuer is not yet operational, placeholder keys are set, which can render the
+setup nonfunctional until Istio can access the correct JWT Public Key. To address this,
+`istiod` is configured with the environment variable `PILOT_JWT_PUB_KEY_REFRESH_INTERVAL="1m"`.
+This setting ensures the JWT Public Key is refreshed every minute, rather than the default
+20 minutes.
+
+Without this configuration, users may encounter the following Istio error:
 ```
 Jwks doesn't have key to match kid or alg from Jwt
 ```
 
-## Issues with this setup
-While not directly an Istio or oauth2-proxy issue, currently Kubeflow is configured
-to always redirect to the URL provided in logout response body object under key
-`afterLogoutURL`. This is custom integration with `oidc-authservice` component.
-oauth2-proxy has redirect capabilities and can redirect to the base Kubeflow
-page but because of this custom integration, currently logging out will remove
-the authentication cookie but not redirect to the Kubeflow Home Page.
+## Issues with This Setup
 
-The details of this custom integration can be found here:
-* https://github.com/arrikto/oidc-authservice/blob/0c4ea9a/server.go#L509
-* https://github.com/kubeflow/kubeflow/blob/c6c4492/components/centraldashboard/public/components/logout-button.js#L50
+While not an inherent issue with Istio or `oauth2-proxy`, the current Kubeflow configuration
+automatically redirects to a URL specified in the logout response body's `afterLogoutURL` key.
+This behavior stems from custom integration with the `oidc-authservice` component. While
+`oauth2-proxy` is capable of redirecting to the base Kubeflow page, this custom setup results
+in users being logged out (with the authentication cookie removed) but not redirected back to
+the Kubeflow Home Page.
 
-To login again, user have to refresh the page.
+Details of this custom integration are available at:
+* [oidc-authservice server.go](https://github.com/arrikto/oidc-authservice/blob/0c4ea9a/server.go#L509)
+* [Kubeflow logout-button.js](https://github.com/kubeflow/kubeflow/blob/c6c4492/components/centraldashboard/public/components/logout-button.js#L50)
 
-## Example installation
-To install Kubeflow configured to use `oauth2-proxy` with `istio`
-`envoyExtAuthzHttp` extension, following changes has to be done to the
-`example/kustomization.yaml` file:
+To log in again, users must manually refresh the page.
+
+## Example Installation
+
+To install Kubeflow configured to use `oauth2-proxy` with Istio's `envoyExtAuthzHttp` extension,
+make the following changes to the `example/kustomization.yaml` file:
 * use `oauth2-proxy` overlay for istio-install
   ```
   # from
