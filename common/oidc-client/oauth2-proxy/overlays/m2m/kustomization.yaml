@@ -6,7 +6,6 @@ resources:
 
 components:
 - ../../components/istio-m2m
-- ../../components/allow-unauthenticated-issuer-discovery
 - component-overwrite-m2m-token-issuer
 
 configMapGenerator:
