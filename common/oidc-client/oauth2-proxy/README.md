@@ -43,6 +43,34 @@ Authorization](https://istio.io/latest/docs/tasks/security/authorization/authz-c
 
 For more details on the `oauth2-proxy`, refer to the [official documentation](https://oauth2-proxy.github.io/oauth2-proxy/docs/behaviour).
 
+## Available Components
+
+Below is a list of the available Kustomize Components with brief descriptions. Click on each for more details.
+
+* **[allow-unauthenticated-issuer-discovery](./allow-unauthenticated-issuer-discovery.md)** -
+  Creates a ClusterRoleBinding for anonymous access to Kubernetes OIDC
+  discovery.
+
+* **[central-dashboard](./central-dashboard.md)** - Configures the central
+  dashboard to use oauth2-proxy logout URL.
+
+* **[configure-self-signed-kubernetes-oidc-issuer](./configure-self-signed-kubernetes-oidc-issuer.md)** -
+  Creates a Kubernetes Job with RBAC to discover and configure the in-cluster,
+  self-signed default Kubernetes OIDC issuer, essential for using Kubernetes
+  OIDC for M2M Tokens.
+
+* **[istio-external-auth](./istio-external-auth.md)** - Modifies Istio
+  configuration to define oauth2-proxy as external authentication middleware via
+  envoyExtAuthzHttp extension provider. Adds RequestAuthentication to trust Dex
+  as IdP and AuthorizationPolicies to delegate authentication to oauth2-proxy.
+
+* **[istio-m2m](./istio-m2m.md)** - Creates RequestAuthentication for Istio to
+  trust the OIDC Issuer specified in parameters. This allows the generation of
+  JWTs for authenticating requests, typically as Bearer Tokens in the
+  Authorization header. By default, the OIDC Issuer is the in-cluster Kubernetes
+  OIDC.
+
+
 ## OpenShift
 
 This deployment of `oauth2-proxy` does not support OpenShift out of the box. To facilitate
