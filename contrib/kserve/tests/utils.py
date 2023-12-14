@@ -30,6 +30,10 @@ KSERVE_TEST_NAMESPACE = "kserve-test"
 MODEL_CLASS_NAME = "modelClass"
 
 
+class M2mTokenNotAvailable(Exception):
+    pass
+
+
 def get_cluster_ip(name="istio-ingressgateway", namespace="istio-system"):
     api_instance = client.CoreV1Api(client.ApiClient())
     service = api_instance.read_namespaced_service(name, namespace)
@@ -43,22 +47,42 @@ def get_cluster_ip(name="istio-ingressgateway", namespace="istio-system"):
     return os.environ.get("KSERVE_INGRESS_HOST_PORT", cluster_ip)
 
 
-def predict(service_name, input_json, protocol_version="v1",
-            version=constants.KSERVE_V1BETA1_VERSION, model_name=None):
+def get_m2m_auth_token(env_name="KSERVE_M2M_TOKEN"):
+    try:
+        return os.environ[env_name]
+    except KeyError:
+        raise M2mTokenNotAvailable(env_name)
+
+
+def predict(
+    service_name,
+    input_json,
+    protocol_version="v1",
+    version=constants.KSERVE_V1BETA1_VERSION,
+    model_name=None,
+):
     with open(input_json) as json_file:
         data = json.load(json_file)
 
-        return predict_str(service_name=service_name,
-                           input_json=json.dumps(data),
-                           protocol_version=protocol_version,
-                           version=version,
-                           model_name=model_name)
+        return predict_str(
+            service_name=service_name,
+            input_json=json.dumps(data),
+            protocol_version=protocol_version,
+            version=version,
+            model_name=model_name,
+        )
 
 
-def predict_str(service_name, input_json, protocol_version="v1",
-                version=constants.KSERVE_V1BETA1_VERSION, model_name=None):
+def predict_str(
+    service_name,
+    input_json,
+    protocol_version="v1",
+    version=constants.KSERVE_V1BETA1_VERSION,
+    model_name=None,
+):
     kfs_client = KServeClient(
-        config_file=os.environ.get("KUBECONFIG", "~/.kube/config"))
+        config_file=os.environ.get("KUBECONFIG", "~/.kube/config")
+    )
     isvc = kfs_client.get(
         service_name,
         namespace=KSERVE_TEST_NAMESPACE,
@@ -68,7 +92,17 @@ def predict_str(service_name, input_json, protocol_version="v1",
     time.sleep(10)
     cluster_ip = get_cluster_ip()
     host = urlparse(isvc["status"]["url"]).netloc
-    headers = {"Host": host, "Content-Type": "application/json"}
+    headers = {
+        "Host": host,
+        "Content-Type": "application/json",
+    }
+
+    try:
+        token = get_m2m_auth_token()
+        headers.update({"Authorization": f"Bearer {token}"})
+        logging.info("M2M Token Found.")
+    except M2mTokenNotAvailable:
+        logging.warn("M2M Token Not found, client authentication disabled.")
 
     if model_name is None:
         model_name = service_name
@@ -81,7 +115,9 @@ def predict_str(service_name, input_json, protocol_version="v1",
     logging.info("Sending url = %s", url)
     logging.info("Sending request data: %s", input_json)
     response = requests.post(url, input_json, headers=headers)
-    logging.info("Got response code %s, content %s", response.status_code, response.content)
+    logging.info(
+        "Got response code %s, content %s", response.status_code, response.content
+    )
     if response.status_code == 200:
         preds = json.loads(response.content.decode("utf-8"))
         return preds
