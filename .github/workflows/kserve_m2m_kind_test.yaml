@@ -1,4 +1,4 @@
-name: Build & Apply KServe manifests in KinD
+name: Build & Apply KServe manifests with m2m auth in KinD
 on:
   pull_request:
     paths:
