@@ -31,6 +31,12 @@ rules:
   - patch
   - delete
 - apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+- apiGroups:
   - ''
   resources:
   - events

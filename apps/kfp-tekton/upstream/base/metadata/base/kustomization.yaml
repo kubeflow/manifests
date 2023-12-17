@@ -7,6 +7,7 @@ resources:
   - metadata-envoy-deployment.yaml
   - metadata-envoy-service.yaml
   - metadata-grpc-sa.yaml
+namespace: kubeflow
 images:
   - name: gcr.io/ml-pipeline/metadata-envoy
-    newTag: 1.8.1
+    newTag: 2.0.0

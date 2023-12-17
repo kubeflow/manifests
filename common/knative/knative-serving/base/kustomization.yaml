@@ -4,12 +4,14 @@ resources:
 - upstream/serving-core.yaml
 - upstream/net-istio.yaml
 - istio-authorization-policy.yaml
-patchesStrategicMerge:
-- patches/configmap-patch.yaml
-- patches/namespace-injection.yaml
-- patches/clusterrole-patch.yaml
-- patches/service-labels.yaml
 patches:
 - path: patches/sidecar-injection.yaml
   target:
     kind: Deployment
+- path: patches/config-deployment.yaml
+- path: patches/config-istio.yaml
+- path: patches/namespace-injection.yaml
+- path: patches/knative-serving-namespaced-admin.yaml
+- path: patches/knative-serving-namespaced-edit.yaml
+- path: patches/knative-serving-namespaced-view.yaml
+- path: patches/service-labels.yaml

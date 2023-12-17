@@ -5,16 +5,15 @@ data:
       requests:
         cpu: 10m
         memory: 64Mi
-  containerRuntimeExecutor: docker
   containerRuntimeExecutors: |
-    - name: k8sapi
-      selector:
-        matchLabels:
-          workflows.argoproj.io/container-runtime-executor: k8sapi
     - name: emissary
       selector:
         matchLabels:
           workflows.argoproj.io/container-runtime-executor: emissary
+    - name: pns
+      selector:
+        matchLabels:
+          workflows.argoproj.io/container-runtime-executor: pns
   images: |
     argoproj/argosay:v1:
       command: [cowsay]
@@ -59,3 +58,5 @@ data:
 kind: ConfigMap
 metadata: # kpt-merge: /workflow-controller-configmap
   name: workflow-controller-configmap
+  annotations:
+    internal.kpt.dev/upstream-identifier: '|ConfigMap|default|workflow-controller-configmap'

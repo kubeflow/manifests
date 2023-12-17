@@ -5,9 +5,6 @@ metadata:
 spec:
   replicas: 1
   template:
-    metadata:
-      annotations:
-        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: volumes-web-app
@@ -23,4 +20,14 @@ spec:
           value: $(VWA_USERID_PREFIX)
         - name: APP_SECURE_COOKIES
           value: $(VWA_APP_SECURE_COOKIES)
+        - name: VOLUME_VIEWER_IMAGE
+          value: filebrowser/filebrowser:latest
+        volumeMounts: 
+        - name: viewer-spec
+          mountPath: /etc/config/viewer-spec.yaml
+          subPath: viewer-spec.yaml 
       serviceAccountName: service-account
+      volumes: 
+      - name: viewer-spec
+        configMap: 
+          name: viewer-spec

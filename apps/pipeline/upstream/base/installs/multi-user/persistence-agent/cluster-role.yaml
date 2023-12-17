@@ -19,3 +19,16 @@ rules:
   - get
   - list
   - watch
+- apiGroups:
+  - pipelines.kubeflow.org
+  resources:
+  - scheduledworkflows
+  - workflows
+  verbs:
+  - report
+- apiGroups:
+  - ''
+  resources:
+  - namespaces
+  verbs:
+  - get

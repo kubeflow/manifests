@@ -7,5 +7,5 @@ metadata:
     app.kubernetes.io/instance: default
     app.kubernetes.io/part-of: tekton-pipelines
 data:
-  enable-custom-tasks: "true"
-  enable-api-fields: "alpha"
+  embedded-status: "full"
+  custom-task-version: "v1beta1"

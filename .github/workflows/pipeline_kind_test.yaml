@@ -3,6 +3,9 @@ on:
   pull_request:
     paths:
       - apps/pipeline/upstream/**
+      - tests/gh-actions/kind-cluster.yaml
+      - tests/gh-actions/install_istio.sh
+      - common/cert-manager/**
 
 jobs:
   build:
@@ -15,7 +18,7 @@ jobs:
       run: ./tests/gh-actions/install_kind.sh
 
     - name: Create KinD Cluster
-      run: kind create cluster --config tests/gh-actions/kind-cluster-1-25.yaml
+      run: kind create cluster --config tests/gh-actions/kind-cluster.yaml
 
     - name: Install kustomize
       run: ./tests/gh-actions/install_kustomize.sh
@@ -31,7 +34,7 @@ jobs:
 
     - name: Deploy test pipeline
       run: |
-        pip3 install kfp==1.8.4
+        pip3 install kfp==1.8.22
         kustomize build apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
         kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
         kustomize build common/user-namespace/base | kubectl apply -f -

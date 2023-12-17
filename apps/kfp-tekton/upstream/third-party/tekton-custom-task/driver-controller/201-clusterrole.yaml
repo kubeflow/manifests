@@ -1,0 +1,32 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: kfp-driver-cluster-access
+  labels:
+    app.kubernetes.io/component: kfp-driver
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: kubeflow-pipeline
+rules:
+  # Controller needs cluster access to all Run CRs.
+  - apiGroups: ["tekton.dev"]
+    resources: ["runs", "customruns", "runs/finalizers", "customruns/finalizers",
+      "runs/status", "customruns/status", "pipelineruns", "task", "taskruns", "conditions"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumes", "persistentvolumeclaims"]
+    verbs: ["*"]
+
+  # Controller needs cluster access to leases for leader election.
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+
+  # Controller needs permission to emit events associated with Run CRs.
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+
+  # driver needs to access configmaps to get configuration
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "watch", "list"]

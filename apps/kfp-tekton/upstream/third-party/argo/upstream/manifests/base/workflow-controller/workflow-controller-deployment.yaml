@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata: # kpt-merge: /workflow-controller
   name: workflow-controller
+  annotations:
+    internal.kpt.dev/upstream-identifier: 'apps|Deployment|default|workflow-controller'
 spec:
   selector:
     matchLabels:
@@ -11,6 +13,7 @@ spec:
       labels:
         app: workflow-controller
     spec:
+      priorityClassName: workflow-controller
       serviceAccountName: argo
       containers:
         - name: workflow-controller

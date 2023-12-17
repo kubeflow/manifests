@@ -36,7 +36,7 @@ spec:
       serviceAccountName: tekton-pipelineloop-webhook
       containers:
       - name: webhook
-        image: docker.io/aipipeline/pipelineloop-webhook:nightly
+        image: quay.io/aipipeline/pipelineloop-webhook:nightly
         env:
         - name: SYSTEM_NAMESPACE
           valueFrom:
@@ -64,6 +64,16 @@ spec:
           containerPort: 8008
         - name: https-webhook
           containerPort: 8443
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsGroup: 65532
+          runAsUser: 65532
+          seccompProfile:
+            type: RuntimeDefault
 ---
 apiVersion: v1
 kind: Service

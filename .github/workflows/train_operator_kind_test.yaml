@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - apps/training-operator/upstream/**
+      - tests/gh-actions/kind-cluster.yaml
+      - tests/gh-actions/install_istio.sh
 
 jobs:
   build:
@@ -15,7 +17,7 @@ jobs:
       run: ./tests/gh-actions/install_kind.sh
 
     - name: Create KinD Cluster
-      run: kind create cluster --config tests/gh-actions/kind-cluster-1-25.yaml
+      run: kind create cluster --config tests/gh-actions/kind-cluster.yaml
 
     - name: Install kustomize
       run: ./tests/gh-actions/install_kustomize.sh
@@ -33,4 +35,4 @@ jobs:
     - name: Create a TFJob
       run: |
         kubectl create -f tests/gh-actions/kf-objects/tfjob.yaml
-        kubectl wait --for=condition=Succeeded tfjobs tfjob-simple -n kubeflow --timeout 180s
+        kubectl wait --for=condition=Succeeded tfjobs tfjob-simple -n kubeflow --timeout 600s

@@ -29,18 +29,8 @@ spec:
           - configMapRef:
               name: config
         image: docker.io/kubeflownotebookswg/profile-controller
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         name: manager
-        livenessProbe:
-          httpGet:
-            path: /metrics
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 30
-        ports:
-        - containerPort: 8080
-          name: manager-http
-          protocol: TCP
         livenessProbe:
           httpGet:
             path: /healthz
