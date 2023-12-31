@@ -1,4 +1,4 @@
-name: Build & Apply KServe manifests with m2m auth in KinD
+name: Deploy and test KServe with m2m auth in KinD
 on:
   pull_request:
     paths:
@@ -52,12 +52,19 @@ jobs:
           INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
           nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
 
-      - name: Run kserve tests
+      - name: Run kserve tests with m2m token from SA default/default
         run: |
           export KSERVE_INGRESS_HOST_PORT=localhost:8080
           export KSERVE_M2M_TOKEN="$(kubectl -n default create token default)"
-          cd ./contrib/kserve/tests && pytest .
+          cd ./contrib/kserve/tests && pytest . -vs --log-level info
 
-      - name: Run kserve models webapp test
+      - name: Run and fail kserve tests without kserve m2m token
         run: |
-          kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app
+          export KSERVE_INGRESS_HOST_PORT=localhost:8080
+          cd ./contrib/kserve/tests
+          if pytest . -vs --log-level info; then
+            echo "This test should fail with an HTTP redirect to oauth2-proxy/dex auth."; exit 1
+          else
+            echo "Task failed successfully!"
+            echo "This is a provisional way of testing that m2m is enabled for kserve."
+          fi
