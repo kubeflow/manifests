@@ -7,6 +7,7 @@ resources:
 - crds.yaml
 - deployment.yaml
 - service.yaml
+- dex-passwords.yaml
 generatorOptions:
   disableNameSuffixHash: true
 
