@@ -1,8 +1,10 @@
 approvers:
   - elikatsis
+  - juliusvonkohout
   - kimwnasptd
   - PatrickXYS
   - StefanoFioravanzo
   - yanniszark
 reviewers:
-  - annajung
+  - juliusvonkohout
+  - kimwnasptd

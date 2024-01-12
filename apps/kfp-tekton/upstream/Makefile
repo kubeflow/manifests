@@ -1,6 +1,6 @@
 # This makefile is a quick test to verify all manifests can be hydrated.
 
-test: aws azure dev gcp platform-agnostic platform-agnostic-multi-user plain plain-multi-user
+test: aws azure dev gcp platform-agnostic platform-agnostic-multi-user
 
 aws: FORCE
 	kubectl kustomize env/aws
@@ -19,11 +19,5 @@ platform-agnostic: FORCE
 
 platform-agnostic-multi-user: FORCE
 	kustomize build --load-restrictor LoadRestrictionsNone env/platform-agnostic-multi-user
-
-plain: FORCE
-	kubectl kustomize env/plain
-
-plain-multi-user: FORCE
-	kustomize build --load-restrictor LoadRestrictionsNone env/plain-multi-user
 
 FORCE: ;

@@ -1,0 +1,9 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: knative-local-gateway
+  namespace: knative-serving
+spec:
+  selector:
+    app: cluster-local-gateway
+    istio: cluster-local-gateway

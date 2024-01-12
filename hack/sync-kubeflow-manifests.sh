@@ -127,6 +127,16 @@ SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/tensorbo
 DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/tensorboard-controller/config)"
 sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
 
+echo "Copying pvcviewer-controller manifests..."
+DST_DIR=$MANIFESTS_DIR/apps/pvcviewer-controller/upstream
+rm -r $DST_DIR
+cp $SRC_DIR/components/pvcviewer-controller/config $DST_DIR -r
+
+echo "Updating README..."
+SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/pvcviewer-controller/config)"
+DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/pvcviewer-controller/config)"
+sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
+
 echo "Successfully copied all manifests."
 
 # DEV: Comment out these commands when local testing

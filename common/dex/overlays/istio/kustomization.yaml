@@ -1,26 +1,43 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: auth
 
 resources:
 - ../../base
 - virtual-service.yaml
 
-namespace: auth
-
-vars:
-- name: DEX_SERVICE
-  objref:
-    kind: Service
-    name: dex
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.name
-- name: DEX_NAMESPACE
-  objref:
-    kind: Service
-    name: dex
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.namespace
 configurations:
 - params.yaml
+
+replacements:
+- source:
+    version: v1
+    kind: Service
+    name: dex
+    fieldPath: metadata.name
+  targets:
+  - fieldPaths:
+    - spec.http.0.route.0.destination.host
+    options:
+      delimiter: .
+    select:
+      version: v1alpha3
+      group: networking.istio.io
+      kind: VirtualService
+      name: dex
+- source:
+    fieldPath: metadata.namespace
+    kind: Service
+    name: dex
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.http.0.route.0.destination.host
+    options:
+      delimiter: .
+      index: 1
+    select:
+      version: v1alpha3
+      group: networking.istio.io
+      kind: VirtualService
+      name: dex

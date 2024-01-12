@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - apps/katib/upstream/**
+      - tests/gh-actions/kind-cluster.yaml
+      - tests/gh-actions/install_istio.sh
 
 jobs:
   build:
@@ -26,17 +28,31 @@ jobs:
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh
 
+    # https://kind.sigs.k8s.io/docs/user/known-issues/#apparmor
+    - name: AppArmor
+      run: |
+        set -x
+        sudo apt-get install apparmor-profiles
+        sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+
     - name: Build & Apply manifests
       run: |
         cd apps/katib/upstream
         kubectl create ns kubeflow
         kustomize build installs/katib-with-kubeflow | kubectl apply -f -
-        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 300s
+        kubectl wait --for=condition=Ready pods --all -n kubeflow --timeout 300s
 
     - name: Create katib experiment
       run: |
         kubectl create namespace kubeflow-user
         kubectl label namespace kubeflow-user katib.kubeflow.org/metrics-collector-injection=enabled
         kubectl apply -f tests/gh-actions/kf-objects/katib_test.yaml
+
+        echo "Waiting for Experiment to become Running..."
+        kubectl wait --for=condition=Running experiments.kubeflow.org -n kubeflow-user --all --timeout 300s
+
+        echo "Waiting for all Trials to become Succeeded..."
         kubectl wait --for=condition=Succeeded trials.kubeflow.org -n kubeflow-user --all --timeout 300s
+
+        echo "Waiting for the Experiment to become Succeeded..."
         kubectl wait --for=condition=Succeeded experiments.kubeflow.org -n kubeflow-user --all --timeout 300s

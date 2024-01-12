@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oauth2-proxy
+  labels:
+    app: oauth2-proxy
+data:
+  oauth2_proxy.cfg: >-
+    email_domains = [ "*" ]
+    skip_auth_regex=["/dex/.*"]
+binaryData: {}

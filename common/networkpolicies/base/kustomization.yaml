@@ -17,6 +17,8 @@ resources:
   - ml-pipeline-ui.yaml
   - ml-pipeline.yaml
   - poddefaults.yaml
+  - pvcviewer-webhook.yaml
+  - seldon.yaml
   - volumes-web-app.yaml
   - tensorboards-web-app.yaml
   - seldon.yaml
