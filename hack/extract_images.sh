@@ -62,7 +62,7 @@ for wg in "${!wg_dirs[@]}"; do
           continue
         fi
         # Grep the output of 'kustomize build' command for 'image:' and '- image' lines and return just the image itself
-        mapfile kimages -t  <<< "$(grep '\-\?\s\image:'<<<"$kbuild" | sed -re 's/\s-?\simage: *//;s/^[ \t]*//g' | sed '/^$/d;/{/d' )"
+        mapfile kimages -t  <<< "$(grep '\-\?\s\image:'<<<"$kbuild" | sed -re 's/\s-?\simage: *//;s/^[ \t]*//g' | sed '/^\$/d;/{/d' )"
         wg_images+=("${kimages[@]}")
     done
   done
