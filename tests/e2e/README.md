@@ -13,7 +13,7 @@ This test is using the following Kubeflow CRDs:
 The heart of this test is the `mnist.py` python script, which applies and waits
 for the CRDs to complete. The python scripts are all expecting that
 1. `kubectl` is configured with access to a Kubeflow cluster
-2. `kustomize` 3.2.0 is available
+2. `kustomize` 5.0.3+ is available
 3. The KFP backend is proxied to localhost
 
 While the `mnist.py` is used for running the test, it is advised to use the

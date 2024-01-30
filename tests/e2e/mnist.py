@@ -1,8 +1,8 @@
 """E2E Kubeflow test that tesst Pipelines, Katib, TFJobs and KServe.
 
 Requires:
-pip install kfp==1.8.4
-pip install kubeflow-katib==0.12.0
+pip install kfp==1.8.22
+pip install kubeflow-katib==0.15.0
 """
 import kfp
 import kfp.dsl as dsl
