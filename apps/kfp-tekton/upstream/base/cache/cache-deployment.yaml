@@ -82,7 +82,7 @@ spec:
                "--namespace_to_watch=$(NAMESPACE_TO_WATCH)",
                "--listen_port=$(WEBHOOK_PORT)",
               ]
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8443
           name: webhook-api
