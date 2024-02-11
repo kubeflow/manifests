@@ -33,7 +33,7 @@ spec:
       containers:
         - name: kfp-driver
           image: kfp-v2-dev-driver-controller:dummy
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           env:
             - name: SYSTEM_NAMESPACE
               valueFrom:
