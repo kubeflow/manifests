@@ -76,7 +76,7 @@ spec:
         - name: PIPELINE_RUNTIME
           value: tekton
         image: gcr.io/ml-pipeline/api-server:dummy
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         name: ml-pipeline-api-server
         ports:
         - name: http
