@@ -371,7 +371,7 @@ spec:
       containers:
         - name: driver-registrar
           image: "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.3.0"
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           args:
             - --v=5
             - --csi-address=/csi/csi.sock
@@ -395,7 +395,7 @@ spec:
               name: registration-dir
         - name: kfp-csi-s3
           image: "quay.io/datashim-io/csi-s3:latest"
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           args:
             - "--v=5"
             - "--endpoint=$(CSI_ENDPOINT)"
@@ -462,7 +462,7 @@ spec:
       containers:
         - name: kfp-csi-attacher
           image: "k8s.gcr.io/sig-storage/csi-attacher:v3.3.0"
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           args:
             - --v=5
             - --csi-address=/csi/csi.sock
@@ -503,7 +503,7 @@ spec:
       containers:
         - name: kfp-csi-provisioner
           image: "k8s.gcr.io/sig-storage/csi-provisioner:v2.2.2"
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           args:
             - -v=5
             - --csi-address=/csi/csi.sock
