@@ -6,6 +6,6 @@ Resolves #
 
 **Checklist:**
 - [ ] Unit tests pass:
-  **Make sure you have installed kustomize == 3.2.1**
+  **Make sure you have installed kustomize == 5.0.1**
     1. `make generate-changed-only`
     2. `make test`
