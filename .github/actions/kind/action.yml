@@ -1,0 +1,19 @@
+name: "Set up KinD"
+description: "Step to start and configure KinD cluster"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup KinD cluster
+      uses: helm/kind-action@v1.8.0
+      with:
+        cluster_name: cluster
+        version: v0.17.0
+        config: ${{ env.KIND_CONFIG_FILE }}
+
+    - name: Print cluster info
+      shell: bash
+      run: |
+        echo "KinD cluster:"
+        kubectl cluster-info
+        kubectl describe nodes
