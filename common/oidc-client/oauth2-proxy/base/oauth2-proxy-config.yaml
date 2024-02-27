@@ -50,5 +50,8 @@ data:
     cookie_refresh = 0
     # ---
     code_challenge_method = "S256"
+    # ---
+    redirect_url = "/oauth2/callback"
+    relative_redirect_url = true
 
 binaryData: {}

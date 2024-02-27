@@ -57,4 +57,4 @@ configMapGenerator:
 images:
 - name: quay.io/oauth2-proxy/oauth2-proxy
   newName: quay.io/oauth2-proxy/oauth2-proxy
-  newTag: v7.4.0
+  newTag: v7.6.0
