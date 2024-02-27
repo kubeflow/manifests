@@ -117,13 +117,13 @@ kubectl apply -f dex-configmap.yaml
 kubectl delete pod `kubectl get pods -n auth | awk '{print $1}' | grep -iv name` -n auth 
 
 
-istioVersion="1.18.2"
-curl -L https://istio.io/downloadIstio | sh -
-mv istio-${istioVersion} /tmp/
-kubectl apply -f /tmp/istio-${istioVersion}/samples/addons
-kubectl rollout status deployment/kiali -n istio-system
-# /tmp/istio-1.18.1/bin/istioctl dashboard kiali
-cd ..
+# istioVersion="1.18.2"
+# curl -L https://istio.io/downloadIstio | sh -
+# mv istio-${istioVersion} /tmp/
+# kubectl apply -f /tmp/istio-${istioVersion}/samples/addons
+# kubectl rollout status deployment/kiali -n istio-system
+# # /tmp/istio-1.18.1/bin/istioctl dashboard kiali
+# cd ..
 
 
 #kubectl port-forward -n kubeflow svc/minio-service 9000:9000
