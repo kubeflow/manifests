@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../base
+
+components:
+- ../../components/istio-m2m
+- component-overwrite-m2m-token-issuer
+
+configMapGenerator:
+- name: oauth2-proxy-parameters
+  behavior: merge
+  literals:
+  - FORCE_HTTPS=true
+  - ENABLE_M2M_TOKENS=true
+  - EXTRA_JWT_ISSUERS=https://oidc.eks.region.amazonaws.com/id/1234abcd=https://kubernetes.default.svc

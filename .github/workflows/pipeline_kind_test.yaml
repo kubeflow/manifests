@@ -29,8 +29,14 @@ jobs:
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh
 
-    - name: Build & Apply manifests
+    - name: Create kubeflow namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+    - name: Build & Apply KF Pipelines manifests
       run: ./tests/gh-actions/install_pipelines.sh
+
+    - name: Install KF Multi Tenancy
+      run: ./tests/gh-actions/install_multi_tenancy.sh
 
     - name: Deploy test pipeline
       run: |

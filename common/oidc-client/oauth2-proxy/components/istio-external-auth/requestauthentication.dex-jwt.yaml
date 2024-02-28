@@ -1,0 +1,19 @@
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: dex-jwt
+  namespace: istio-system
+spec:
+  jwtRules:
+    # forwardOriginalToken must be set to true so the authorization header will
+    # be passed between Kubeflow Components and Istio can configure the
+    # Kubeflow Auth Headers based on this request authorization header.
+    - forwardOriginalToken: true
+      issuer: http://dex.auth.svc.cluster.local:5556/dex
+      # These 5 lines provides integration of istio/oauth2-proxy with
+      # Kubeflow custom auth headers.
+      outputClaimToHeaders:
+        - header: kubeflow-userid
+          claim: email
+        - header: kubeflow-groups
+          claim: groups

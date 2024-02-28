@@ -1,0 +1,114 @@
+name: Deploy and test Kubeflow Pipelines manifests with m2m auth in KinD
+on:
+  pull_request:
+    paths:
+      - apps/pipeline/upstream/**
+      - tests/gh-actions/kind-cluster.yaml
+      - tests/gh-actions/install_istio.sh
+      - common/cert-manager/**
+      - common/oidc-client/oauth2-proxy/**
+      - common/istio*/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install KinD
+        run: ./tests/gh-actions/install_kind.sh
+
+      - name: Create KinD Cluster
+        run: kind create cluster --config tests/gh-actions/kind-cluster.yaml
+
+      - name: Install kustomize
+        run: ./tests/gh-actions/install_kustomize.sh
+
+      - name: Install kubectl
+        run: ./tests/gh-actions/install_kubectl.sh
+
+      - name: Install Istio with ext auth
+        run: ./tests/gh-actions/install_istio_with_ext_auth.sh
+
+      - name: Install cert-manager
+        run: ./tests/gh-actions/install_cert_manager.sh
+
+      - name: Create kubeflow namespace
+        run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+      - name: Install KF Pipelines
+        run: ./tests/gh-actions/install_pipelines.sh
+
+      - name: Install KF Multi Tenancy
+        run: ./tests/gh-actions/install_multi_tenancy.sh
+
+      - name: Install kubeflow-istio-resources
+        run: kustomize build common/istio-1-17/kubeflow-istio-resources/base | kubectl apply -f -
+
+      - name: Create KF Profile
+        run: kustomize build common/user-namespace/base | kubectl apply -f -
+
+      - name: port forward
+        run: |
+          ingress_gateway_service=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
+          nohup kubectl port-forward --namespace istio-system svc/${ingress_gateway_service} 8080:80 &
+          while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
+
+      - name: List and deploy test pipeline with authorized ServiceAccount Token
+        run: |
+          pip3 install kfp==2.4.0
+          KF_PROFILE=kubeflow-user-example-com
+          TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
+
+          python -c '
+          from time import sleep
+          import kfp
+          import sys
+
+          token = sys.argv[1]
+          namespace = sys.argv[2]
+          client = kfp.Client(host="http://localhost:8080/pipeline", existing_token=token)
+
+          pipeline = client.list_pipelines().pipelines[0]
+          pipeline_name = pipeline.display_name
+          pipeline_id = pipeline.pipeline_id
+          pipeline_version_id = client.list_pipeline_versions(pipeline_id).pipeline_versions[0].pipeline_version_id
+          experiment_id = client.create_experiment("m2m-test", namespace=namespace).experiment_id
+
+          print(f"Starting pipeline {pipeline_name}.")
+          run_id = client.run_pipeline(experiment_id=experiment_id, job_name="m2m-test", pipeline_id=pipeline_id, version_id=pipeline_version_id).run_id
+
+          while True:
+            status = client.get_run(run_id=run_id).state
+            if status not in ["SUCCEEDED", "FAILED", "ERROR"]:
+              print(f"Waiting for run_id: {run_id}, status: {status}.")
+              sleep(10)
+            else:
+              print(f"Run with id {run_id} finished with status: {status}.")
+              break
+          ' "${TOKEN}" "${KF_PROFILE}"
+
+      - name: Fail to list pipelines with unauthorized ServiceAccount Token
+        run: |
+          pip3 install kfp==2.4.0
+          KF_PROFILE=kubeflow-user-example-com
+          TOKEN="$(kubectl -n default create token default)"
+
+          python -c '
+          import kfp
+          import sys
+          from kfp_server_api.exceptions import ApiException
+
+          token = sys.argv[1]
+          namespace = sys.argv[2]
+          client = kfp.Client(host="http://localhost:8080/pipeline", existing_token=token)
+
+          try:
+            pipeline = client.list_runs(namespace=namespace)
+          except ApiException as e:
+            assert e.status == 403, "This API Call should return unauthorized/forbidden error."
+          ' "${TOKEN}" "${KF_PROFILE}"
+
+          echo "Test succeeded. Token from unauthorized ServiceAccount cannot list \
+          piplines in $KF_PROFILE namespace."

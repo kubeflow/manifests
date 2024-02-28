@@ -1,0 +1,23 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: istio-ingressgateway-oauth2-proxy
+  namespace: istio-system
+spec:
+  action: CUSTOM
+  provider:
+    name: oauth2-proxy
+  selector:
+    matchLabels:
+      app: istio-ingressgateway
+  rules:
+  - to:
+    - operation:
+        notPaths:
+        - /favicon*
+        - /webcomponentsjs*
+        - /vendor.bundle.js
+        - /app.bundle.js
+        - /dashboard_lib.bundle.js
+        - /assets*
+        - /app.css
