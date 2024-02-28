@@ -76,6 +76,10 @@ when client calls API to list the KF Pipeline Runs:
      {}  # empty response which is fine because no pipeline runs exist
      ```
 
+### Auth analysis diagram for Kubeflow Pipelines
+
+![Kubeflow Auth Diagram](./kubeflow_auth_diagram.svg)
+
 ## Kubeflow Notebooks User and M2M Authentication and Authorization
 
 The underlying mechanism is the same as in Kubeflow Pipelines.
@@ -105,20 +109,21 @@ This is based on the following:
 
 1. KServe Controller Manager patch integrating kube-rbac-proxy[^6].
 
-    This suggests the kserve **might** use the same mechanism based on
-    `SubjectAccessReviews`. Having a look at the kubeflow/manifests I see it's
-    not enabled.
-
+   This suggests the kserve **might** use the same mechanism based on
+   `SubjectAccessReviews`. Having a look at the kubeflow/manifests I see it's
+   not enabled.
 2. Search through the docs and code:
-    * https://github.com/kserve/kserve/tree/v0.12.0/docs/samples/istio-dex
-    * https://github.com/kserve/kserve/tree/v0.12.0/docs/samples/gcp-iap
 
-    The docs above mention that while it's possible to enable authentication,
-    authorization is more complicated and probably we need to add
-    `AuthorizationPolicy`...
-    > create an [Istio AuthorizationPolicy](https://istio.io/latest/docs/reference/config/security/authorization-policy/) to grant access to the pods or disable it
+   * https://github.com/kserve/kserve/tree/v0.12.0/docs/samples/istio-dex
+   * https://github.com/kserve/kserve/tree/v0.12.0/docs/samples/gcp-iap
 
-    Most probably some work is needed to enable authorized access to kserve models.
+   The docs above mention that while it's possible to enable authentication,
+   authorization is more complicated and probably we need to add
+   `AuthorizationPolicy`...
+
+   > create an [Istio AuthorizationPolicy](https://istio.io/latest/docs/reference/config/security/authorization-policy/) to grant access to the pods or disable it
+
+   Most probably some work is needed to enable authorized access to kserve models.
 
 ## Links
 
