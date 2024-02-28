@@ -18,6 +18,9 @@ jobs:
       - name: Create KinD Cluster
         run: kind create cluster --config tests/gh-actions/kind-cluster.yaml
 
+      - name: Install kubectl
+        run: ./tests/gh-actions/install_kubectl.sh
+
       - name: Install kustomize
         run: ./tests/gh-actions/install_kustomize.sh
 
@@ -51,6 +54,7 @@ jobs:
         run: |
           INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
           nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
+          while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
 
       - name: Run kserve tests with m2m token from SA default/default
         run: |
