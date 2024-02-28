@@ -1,4 +1,4 @@
-name: Build & Apply Kubeflow Pipelines manifests in KinD
+name: Deploy and test Kubeflow Pipelines manifests with m2m auth in KinD
 on:
   pull_request:
     paths:
@@ -50,23 +50,26 @@ jobs:
           nohup kubectl port-forward --namespace istio-system svc/${ingress_gateway_service} 8080:80 &
           while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
 
-      - name: Deploy test pipeline
+      - name: List and deploy test pipeline with authorized ServiceAccount Token
         run: |
           pip3 install kfp==2.4.0
-          TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
+          KF_PROFILE=kubeflow-user-example-com
+          TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
+
           python -c '
           from time import sleep
           import kfp
           import sys
 
           token = sys.argv[1]
+          namespace = sys.argv[2]
           client = kfp.Client(host="http://localhost:8080/pipeline", existing_token=token)
 
           pipeline = client.list_pipelines().pipelines[0]
           pipeline_name = pipeline.display_name
           pipeline_id = pipeline.pipeline_id
           pipeline_version_id = client.list_pipeline_versions(pipeline_id).pipeline_versions[0].pipeline_version_id
-          experiment_id = client.create_experiment("m2m-test", namespace="kubeflow-user-example-com").experiment_id
+          experiment_id = client.create_experiment("m2m-test", namespace=namespace).experiment_id
 
           print(f"Starting pipeline {pipeline_name}.")
           run_id = client.run_pipeline(experiment_id=experiment_id, job_name="m2m-test", pipeline_id=pipeline_id, version_id=pipeline_version_id).run_id
@@ -79,4 +82,28 @@ jobs:
             else:
               print(f"Run with id {run_id} finished with status: {status}.")
               break
-          ' "${TOKEN}"
+          ' "${TOKEN}" "${KF_PROFILE}"
+
+      - name: Fail to list pipelines with unauthorized ServiceAccount Token
+        run: |
+          pip3 install kfp==2.4.0
+          KF_PROFILE=kubeflow-user-example-com
+          TOKEN="$(kubectl -n default create token default)"
+
+          python -c '
+          import kfp
+          import sys
+          from kfp_server_api.exceptions import ApiException
+
+          token = sys.argv[1]
+          namespace = sys.argv[2]
+          client = kfp.Client(host="http://localhost:8080/pipeline", existing_token=token)
+
+          try:
+            pipeline = client.list_runs(namespace=namespace)
+          except ApiException as e:
+            assert e.status == 403, "This API Call should return unauthorized/forbidden error."
+          ' "${TOKEN}" "${KF_PROFILE}"
+
+          echo "Test succeeded. Token from unauthorized ServiceAccount cannot list \
+          piplines in $KF_PROFILE namespace."
