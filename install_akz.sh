@@ -40,7 +40,7 @@ kubectl wait --timeout=${TIMEOUT} -n kubeflow -l control-plane=kubeflow-training
 # kind: PodDefault
 # metadata:
 #   name: access-ml-pipeline
-#   namespace: "thanhnm777-gmail-com"
+#   namespace: "thanhnm39315-sacombank-com"
 # spec:
 #   desc: Kubeflow Pipelines
 #   selector:

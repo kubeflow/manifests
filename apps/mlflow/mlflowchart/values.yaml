@@ -1,6 +1,6 @@
 # application name is a namespace
 # docker images
-ns: thanhnm777-gmail-com
+ns: thanhnm39315-sacombank-com
 image:
   server: thanhnm777/mlflow-remote-server
   pullPolicy: Always
