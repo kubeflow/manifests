@@ -32,8 +32,11 @@ jobs:
     - name: Create kubeflow namespace
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
-    - name: Build & Apply manifests
+    - name: Build & Apply KF Pipelines manifests
       run: ./tests/gh-actions/install_pipelines.sh
+
+    - name: Install KF Multi Tenancy
+      run: ./tests/gh-actions/install_multi_tenancy.sh
 
     - name: Deploy test pipeline
       run: |

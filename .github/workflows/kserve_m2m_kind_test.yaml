@@ -4,6 +4,8 @@ on:
     paths:
       - contrib/kserve/**
       - common/knative/**
+      - common/oidc-client/oauth2-proxy/**
+      - common/istio*/**
 
 jobs:
   build:
