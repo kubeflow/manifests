@@ -34,6 +34,19 @@ rules:
   - apiGroups: ["apps"]
     resources: ["deployments", "deployments/finalizers"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumes", "persistentvolumeclaims"]
+    verbs: ["*"]
+
+  # Controller needs permission to emit events associated with Run CRs.
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+
+  # driver needs to access configmaps to get configuration
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "watch", "list"]
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1

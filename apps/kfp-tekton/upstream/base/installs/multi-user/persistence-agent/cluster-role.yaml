@@ -27,12 +27,6 @@ rules:
   verbs:
   - report
 - apiGroups:
-  - ''
-  resources:
-  - namespaces
-  verbs:
-  - get
-- apiGroups:
   - tekton.dev
   resources:
   - pipelineruns
