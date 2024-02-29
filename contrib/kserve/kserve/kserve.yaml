@@ -1140,6 +1140,10 @@ spec:
                       type: boolean
                     name:
                       type: string
+                    priority:
+                      format: int32
+                      minimum: 1
+                      type: integer
                     version:
                       type: string
                   required:
@@ -1888,6 +1892,655 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
+  name: clusterstoragecontainers.serving.kserve.io
+spec:
+  group: serving.kserve.io
+  names:
+    kind: ClusterStorageContainer
+    listKind: ClusterStorageContainerList
+    plural: clusterstoragecontainers
+    singular: clusterstoragecontainer
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          disabled:
+            type: boolean
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              container:
+                properties:
+                  args:
+                    items:
+                      type: string
+                    type: array
+                  command:
+                    items:
+                      type: string
+                    type: array
+                  env:
+                    items:
+                      properties:
+                        name:
+                          type: string
+                        value:
+                          type: string
+                        valueFrom:
+                          properties:
+                            configMapKeyRef:
+                              properties:
+                                key:
+                                  type: string
+                                name:
+                                  type: string
+                                optional:
+                                  type: boolean
+                              required:
+                              - key
+                              type: object
+                              x-kubernetes-map-type: atomic
+                            fieldRef:
+                              properties:
+                                apiVersion:
+                                  type: string
+                                fieldPath:
+                                  type: string
+                              required:
+                              - fieldPath
+                              type: object
+                              x-kubernetes-map-type: atomic
+                            resourceFieldRef:
+                              properties:
+                                containerName:
+                                  type: string
+                                divisor:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                resource:
+                                  type: string
+                              required:
+                              - resource
+                              type: object
+                              x-kubernetes-map-type: atomic
+                            secretKeyRef:
+                              properties:
+                                key:
+                                  type: string
+                                name:
+                                  type: string
+                                optional:
+                                  type: boolean
+                              required:
+                              - key
+                              type: object
+                              x-kubernetes-map-type: atomic
+                          type: object
+                      required:
+                      - name
+                      type: object
+                    type: array
+                  envFrom:
+                    items:
+                      properties:
+                        configMapRef:
+                          properties:
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          type: object
+                          x-kubernetes-map-type: atomic
+                        prefix:
+                          type: string
+                        secretRef:
+                          properties:
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          type: object
+                          x-kubernetes-map-type: atomic
+                      type: object
+                    type: array
+                  image:
+                    type: string
+                  imagePullPolicy:
+                    type: string
+                  lifecycle:
+                    properties:
+                      postStart:
+                        properties:
+                          exec:
+                            properties:
+                              command:
+                                items:
+                                  type: string
+                                type: array
+                            type: object
+                          httpGet:
+                            properties:
+                              host:
+                                type: string
+                              httpHeaders:
+                                items:
+                                  properties:
+                                    name:
+                                      type: string
+                                    value:
+                                      type: string
+                                  required:
+                                  - name
+                                  - value
+                                  type: object
+                                type: array
+                              path:
+                                type: string
+                              port:
+                                anyOf:
+                                - type: integer
+                                - type: string
+                                x-kubernetes-int-or-string: true
+                              scheme:
+                                type: string
+                            required:
+                            - port
+                            type: object
+                          tcpSocket:
+                            properties:
+                              host:
+                                type: string
+                              port:
+                                anyOf:
+                                - type: integer
+                                - type: string
+                                x-kubernetes-int-or-string: true
+                            required:
+                            - port
+                            type: object
+                        type: object
+                      preStop:
+                        properties:
+                          exec:
+                            properties:
+                              command:
+                                items:
+                                  type: string
+                                type: array
+                            type: object
+                          httpGet:
+                            properties:
+                              host:
+                                type: string
+                              httpHeaders:
+                                items:
+                                  properties:
+                                    name:
+                                      type: string
+                                    value:
+                                      type: string
+                                  required:
+                                  - name
+                                  - value
+                                  type: object
+                                type: array
+                              path:
+                                type: string
+                              port:
+                                anyOf:
+                                - type: integer
+                                - type: string
+                                x-kubernetes-int-or-string: true
+                              scheme:
+                                type: string
+                            required:
+                            - port
+                            type: object
+                          tcpSocket:
+                            properties:
+                              host:
+                                type: string
+                              port:
+                                anyOf:
+                                - type: integer
+                                - type: string
+                                x-kubernetes-int-or-string: true
+                            required:
+                            - port
+                            type: object
+                        type: object
+                    type: object
+                  livenessProbe:
+                    properties:
+                      exec:
+                        properties:
+                          command:
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      failureThreshold:
+                        format: int32
+                        type: integer
+                      grpc:
+                        properties:
+                          port:
+                            format: int32
+                            type: integer
+                          service:
+                            type: string
+                        required:
+                        - port
+                        type: object
+                      httpGet:
+                        properties:
+                          host:
+                            type: string
+                          httpHeaders:
+                            items:
+                              properties:
+                                name:
+                                  type: string
+                                value:
+                                  type: string
+                              required:
+                              - name
+                              - value
+                              type: object
+                            type: array
+                          path:
+                            type: string
+                          port:
+                            anyOf:
+                            - type: integer
+                            - type: string
+                            x-kubernetes-int-or-string: true
+                          scheme:
+                            type: string
+                        required:
+                        - port
+                        type: object
+                      initialDelaySeconds:
+                        format: int32
+                        type: integer
+                      periodSeconds:
+                        format: int32
+                        type: integer
+                      successThreshold:
+                        format: int32
+                        type: integer
+                      tcpSocket:
+                        properties:
+                          host:
+                            type: string
+                          port:
+                            anyOf:
+                            - type: integer
+                            - type: string
+                            x-kubernetes-int-or-string: true
+                        required:
+                        - port
+                        type: object
+                      terminationGracePeriodSeconds:
+                        format: int64
+                        type: integer
+                      timeoutSeconds:
+                        format: int32
+                        type: integer
+                    type: object
+                  name:
+                    type: string
+                  ports:
+                    items:
+                      properties:
+                        containerPort:
+                          format: int32
+                          type: integer
+                        hostIP:
+                          type: string
+                        hostPort:
+                          format: int32
+                          type: integer
+                        name:
+                          type: string
+                        protocol:
+                          default: TCP
+                          type: string
+                      required:
+                      - containerPort
+                      type: object
+                    type: array
+                    x-kubernetes-list-map-keys:
+                    - containerPort
+                    - protocol
+                    x-kubernetes-list-type: map
+                  readinessProbe:
+                    properties:
+                      exec:
+                        properties:
+                          command:
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      failureThreshold:
+                        format: int32
+                        type: integer
+                      grpc:
+                        properties:
+                          port:
+                            format: int32
+                            type: integer
+                          service:
+                            type: string
+                        required:
+                        - port
+                        type: object
+                      httpGet:
+                        properties:
+                          host:
+                            type: string
+                          httpHeaders:
+                            items:
+                              properties:
+                                name:
+                                  type: string
+                                value:
+                                  type: string
+                              required:
+                              - name
+                              - value
+                              type: object
+                            type: array
+                          path:
+                            type: string
+                          port:
+                            anyOf:
+                            - type: integer
+                            - type: string
+                            x-kubernetes-int-or-string: true
+                          scheme:
+                            type: string
+                        required:
+                        - port
+                        type: object
+                      initialDelaySeconds:
+                        format: int32
+                        type: integer
+                      periodSeconds:
+                        format: int32
+                        type: integer
+                      successThreshold:
+                        format: int32
+                        type: integer
+                      tcpSocket:
+                        properties:
+                          host:
+                            type: string
+                          port:
+                            anyOf:
+                            - type: integer
+                            - type: string
+                            x-kubernetes-int-or-string: true
+                        required:
+                        - port
+                        type: object
+                      terminationGracePeriodSeconds:
+                        format: int64
+                        type: integer
+                      timeoutSeconds:
+                        format: int32
+                        type: integer
+                    type: object
+                  resources:
+                    properties:
+                      claims:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                          required:
+                          - name
+                          type: object
+                        type: array
+                        x-kubernetes-list-map-keys:
+                        - name
+                        x-kubernetes-list-type: map
+                      limits:
+                        additionalProperties:
+                          anyOf:
+                          - type: integer
+                          - type: string
+                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                          x-kubernetes-int-or-string: true
+                        type: object
+                      requests:
+                        additionalProperties:
+                          anyOf:
+                          - type: integer
+                          - type: string
+                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                          x-kubernetes-int-or-string: true
+                        type: object
+                    type: object
+                  securityContext:
+                    properties:
+                      allowPrivilegeEscalation:
+                        type: boolean
+                      capabilities:
+                        properties:
+                          add:
+                            items:
+                              type: string
+                            type: array
+                          drop:
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      privileged:
+                        type: boolean
+                      procMount:
+                        type: string
+                      readOnlyRootFilesystem:
+                        type: boolean
+                      runAsGroup:
+                        format: int64
+                        type: integer
+                      runAsNonRoot:
+                        type: boolean
+                      runAsUser:
+                        format: int64
+                        type: integer
+                      seLinuxOptions:
+                        properties:
+                          level:
+                            type: string
+                          role:
+                            type: string
+                          type:
+                            type: string
+                          user:
+                            type: string
+                        type: object
+                      seccompProfile:
+                        properties:
+                          localhostProfile:
+                            type: string
+                          type:
+                            type: string
+                        required:
+                        - type
+                        type: object
+                      windowsOptions:
+                        properties:
+                          gmsaCredentialSpec:
+                            type: string
+                          gmsaCredentialSpecName:
+                            type: string
+                          hostProcess:
+                            type: boolean
+                          runAsUserName:
+                            type: string
+                        type: object
+                    type: object
+                  startupProbe:
+                    properties:
+                      exec:
+                        properties:
+                          command:
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      failureThreshold:
+                        format: int32
+                        type: integer
+                      grpc:
+                        properties:
+                          port:
+                            format: int32
+                            type: integer
+                          service:
+                            type: string
+                        required:
+                        - port
+                        type: object
+                      httpGet:
+                        properties:
+                          host:
+                            type: string
+                          httpHeaders:
+                            items:
+                              properties:
+                                name:
+                                  type: string
+                                value:
+                                  type: string
+                              required:
+                              - name
+                              - value
+                              type: object
+                            type: array
+                          path:
+                            type: string
+                          port:
+                            anyOf:
+                            - type: integer
+                            - type: string
+                            x-kubernetes-int-or-string: true
+                          scheme:
+                            type: string
+                        required:
+                        - port
+                        type: object
+                      initialDelaySeconds:
+                        format: int32
+                        type: integer
+                      periodSeconds:
+                        format: int32
+                        type: integer
+                      successThreshold:
+                        format: int32
+                        type: integer
+                      tcpSocket:
+                        properties:
+                          host:
+                            type: string
+                          port:
+                            anyOf:
+                            - type: integer
+                            - type: string
+                            x-kubernetes-int-or-string: true
+                        required:
+                        - port
+                        type: object
+                      terminationGracePeriodSeconds:
+                        format: int64
+                        type: integer
+                      timeoutSeconds:
+                        format: int32
+                        type: integer
+                    type: object
+                  stdin:
+                    type: boolean
+                  stdinOnce:
+                    type: boolean
+                  terminationMessagePath:
+                    type: string
+                  terminationMessagePolicy:
+                    type: string
+                  tty:
+                    type: boolean
+                  volumeDevices:
+                    items:
+                      properties:
+                        devicePath:
+                          type: string
+                        name:
+                          type: string
+                      required:
+                      - devicePath
+                      - name
+                      type: object
+                    type: array
+                  volumeMounts:
+                    items:
+                      properties:
+                        mountPath:
+                          type: string
+                        mountPropagation:
+                          type: string
+                        name:
+                          type: string
+                        readOnly:
+                          type: boolean
+                        subPath:
+                          type: string
+                        subPathExpr:
+                          type: string
+                      required:
+                      - mountPath
+                      - name
+                      type: object
+                    type: array
+                  workingDir:
+                    type: string
+                required:
+                - name
+                type: object
+              supportedUriFormats:
+                items:
+                  properties:
+                    prefix:
+                      type: string
+                    regex:
+                      type: string
+                  type: object
+                type: array
+            required:
+            - container
+            - supportedUriFormats
+            type: object
+        type: object
+    served: true
+    storage: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.12.0
   name: inferencegraphs.serving.kserve.io
 spec:
   group: serving.kserve.io
@@ -2303,6 +2956,11 @@ spec:
                           condition:
                             type: string
                           data:
+                            type: string
+                          dependency:
+                            enum:
+                            - Soft
+                            - Hard
                             type: string
                           name:
                             type: string
@@ -18968,6 +19626,10 @@ spec:
                       type: boolean
                     name:
                       type: string
+                    priority:
+                      format: int32
+                      minimum: 1
+                      type: integer
                     version:
                       type: string
                   required:
@@ -20084,6 +20746,18 @@ rules:
 - apiGroups:
   - serving.kserve.io
   resources:
+  - clusterstoragecontainers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - serving.kserve.io
+  resources:
   - inferencegraphs
   - inferencegraphs/finalizers
   verbs:
@@ -20247,11 +20921,11 @@ data:
     contains the Art explainer serving runtime default image version.\n           \"defaultImageVersion\":
     \"latest\"\n       }\n   }\n \n # ====================================== STORAGE
     INITIALIZER CONFIGURATION ======================================\n # Example\n
-    storageInitializer: |-\n   {\n       \"image\" : \"kserve/storage-initializer:v0.11.0\",\n
+    storageInitializer: |-\n   {\n       \"image\" : \"kserve/storage-initializer:v0.11.2\",\n
     \      \"memoryRequest\": \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\":
     \"100m\",\n       \"cpuLimit\": \"1\",\n       \"enableDirectPvcVolumeMount\":
     false\n   }\n storageInitializer: |-\n   {\n       # image contains the default
-    storage initializer image uri.\n       \"image\" : \"kserve/storage-initializer:v0.11.0\",\n
+    storage initializer image uri.\n       \"image\" : \"kserve/storage-initializer:v0.11.2\",\n
     \      \n       # memoryRequest is the requests.memory to set for the storage
     initializer init container.\n       \"memoryRequest\": \"100Mi\",\n   \n        #
     memoryLimit is the limits.memory to set for the storage initializer init container.\n
@@ -20366,11 +21040,11 @@ data:
     \      # NOTE: This configuration only applicable to serverless deployment.\n
     \      \"pathTemplate\": \"/serving/{{ .Namespace }}/{{ .Name }}\"\n   }\n \n
     # ====================================== LOGGER CONFIGURATION ======================================\n
-    # Example\n logger: |-\n   {\n       \"image\" : \"kserve/agent:v0.11.0\",\n       \"memoryRequest\":
+    # Example\n logger: |-\n   {\n       \"image\" : \"kserve/agent:v0.11.2\",\n       \"memoryRequest\":
     \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n
     \      \"cpuLimit\": \"1\",\n       \"defaultUrl\": \"http://default-broker\"\n
     \  }\n logger: |-\n   {\n       # image contains the default logger image uri.\n
-    \      \"image\" : \"kserve/agent:v0.11.0\",\n   \n       # memoryRequest is the
+    \      \"image\" : \"kserve/agent:v0.11.2\",\n   \n       # memoryRequest is the
     requests.memory to set for the logger container.\n       \"memoryRequest\": \"100Mi\",\n
     \      \n       # memoryLimit is the limits.memory to set for the logger container.\n
     \      \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is the requests.cpu
@@ -20379,10 +21053,10 @@ data:
     \"1\",\n       \n       # defaultUrl specifies the default logger url. If logger
     is not specified in the resource this url is used.\n       \"defaultUrl\": \"http://default-broker\"\n
     \  }\n \n # ====================================== BATCHER CONFIGURATION ======================================\n
-    # Example\n batcher: |-\n   {\n       \"image\" : \"kserve/agent:v0.11.0\",\n       \"memoryRequest\":
+    # Example\n batcher: |-\n   {\n       \"image\" : \"kserve/agent:v0.11.2\",\n       \"memoryRequest\":
     \"1Gi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"1\",\n       \"cpuLimit\":
     \"1\"\n   }\n batcher: |-\n   {\n       # image contains the default batcher image
-    uri.\n       \"image\" : \"kserve/agent:v0.11.0\",\n       \n       # memoryRequest
+    uri.\n       \"image\" : \"kserve/agent:v0.11.2\",\n       \n       # memoryRequest
     is the requests.memory to set for the batcher container.\n       \"memoryRequest\":
     \"1Gi\",\n   \n       # memoryLimit is the limits.memory to set for the batcher
     container.\n       \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is
@@ -20390,10 +21064,10 @@ data:
     \      \n       # cpuLimit is the limits.cpu to set for the batcher container.\n
     \      \"cpuLimit\": \"1\"\n   }\n \n # ======================================
     AGENT CONFIGURATION ======================================\n # Example\n agent:
-    |-\n   {\n       \"image\" : \"kserve/agent:v0.11.0\",\n       \"memoryRequest\":
+    |-\n   {\n       \"image\" : \"kserve/agent:v0.11.2\",\n       \"memoryRequest\":
     \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n
     \      \"cpuLimit\": \"1\"\n   }\n agent: |-\n   {\n       # image contains the
-    default agent image uri.\n       \"image\" : \"kserve/agent:v0.11.0\",\n   \n       #
+    default agent image uri.\n       \"image\" : \"kserve/agent:v0.11.2\",\n   \n       #
     memoryRequest is the requests.memory to set for the agent container.\n       \"memoryRequest\":
     \"100Mi\",\n   \n       # memoryLimit is the limits.memory to set for the agent
     container.\n       \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is
@@ -20401,11 +21075,11 @@ data:
     \      \n       # cpuLimit is the limits.cpu to set for the agent container.\n
     \      \"cpuLimit\": \"1\"\n   }\n \n # ======================================
     ROUTER CONFIGURATION ======================================\n # Example\n router:
-    |-\n   {\n       \"image\" : \"kserve/router:v0.11.0\",\n       \"memoryRequest\":
+    |-\n   {\n       \"image\" : \"kserve/router:v0.11.2\",\n       \"memoryRequest\":
     \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n
     \      \"cpuLimit\": \"1\"\n   }\n # router is the implementation of inference
     graph.\n router: |-\n   {\n       # image contains the default router image uri.\n
-    \      \"image\" : \"kserve/router:v0.11.0\",\n       \n       # memoryRequest
+    \      \"image\" : \"kserve/router:v0.11.2\",\n       \n       # memoryRequest
     is the requests.memory to set for the router container.\n       \"memoryRequest\":
     \"100Mi\",\n       \n       # memoryLimit is the limits.memory to set for the
     router container.\n       \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest
@@ -20439,7 +21113,7 @@ data:
     \    \"enablePrometheusScraping\" : \"false\"\n   }"
   agent: |-
     {
-        "image" : "kserve/agent:v0.11.0",
+        "image" : "kserve/agent:v0.11.2",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -20447,7 +21121,7 @@ data:
     }
   batcher: |-
     {
-        "image" : "kserve/agent:v0.11.0",
+        "image" : "kserve/agent:v0.11.2",
         "memoryRequest": "1Gi",
         "memoryLimit": "1Gi",
         "cpuRequest": "1",
@@ -20501,7 +21175,7 @@ data:
     }
   logger: |-
     {
-        "image" : "kserve/agent:v0.11.0",
+        "image" : "kserve/agent:v0.11.2",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -20515,7 +21189,7 @@ data:
     }
   router: |-
     {
-        "image" : "kserve/router:v0.11.0",
+        "image" : "kserve/router:v0.11.2",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -20523,7 +21197,7 @@ data:
     }
   storageInitializer: |-
     {
-        "image" : "kserve/storage-initializer:v0.11.0",
+        "image" : "kserve/storage-initializer:v0.11.2",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -20625,7 +21299,7 @@ spec:
               fieldPath: metadata.namespace
         - name: SECRET_NAME
           value: kserve-webhook-server-cert
-        image: kserve/kserve-controller:v0.11.0
+        image: kserve/kserve-controller:v0.11.2
         imagePullPolicy: Always
         name: manager
         ports:
@@ -20753,6 +21427,36 @@ metadata:
   annotations:
     cert-manager.io/inject-ca-from: kserve/serving-cert
   creationTimestamp: null
+  name: clusterservingruntime.serving.kserve.io
+webhooks:
+- admissionReviewVersions:
+  - v1beta1
+  clientConfig:
+    caBundle: Cg==
+    service:
+      name: kserve-webhook-server-service
+      namespace: kserve
+      path: /validate-serving-kserve-io-v1alpha1-clusterservingruntime
+  failurePolicy: Fail
+  name: clusterservingruntime.kserve-webhook-server.validator
+  rules:
+  - apiGroups:
+    - serving.kserve.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clusterservingruntimes
+  sideEffects: None
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: kserve/serving-cert
+  creationTimestamp: null
   name: inferencegraph.serving.kserve.io
 webhooks:
 - admissionReviewVersions:
@@ -20805,6 +21509,36 @@ webhooks:
     - UPDATE
     resources:
     - inferenceservices
+  sideEffects: None
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: kserve/serving-cert
+  creationTimestamp: null
+  name: servingruntime.serving.kserve.io
+webhooks:
+- admissionReviewVersions:
+  - v1beta1
+  clientConfig:
+    caBundle: Cg==
+    service:
+      name: kserve-webhook-server-service
+      namespace: kserve
+      path: /validate-serving-kserve-io-v1alpha1-servingruntime
+  failurePolicy: Fail
+  name: servingruntime.kserve-webhook-server.validator
+  rules:
+  - apiGroups:
+    - serving.kserve.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - servingruntimes
   sideEffects: None
 ---
 apiVersion: admissionregistration.k8s.io/v1
