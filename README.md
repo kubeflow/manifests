@@ -44,21 +44,22 @@ This repo periodically syncs all official Kubeflow components from their respect
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
-| Training Operator | apps/training-operator/upstream | [v1.7.0-rc.0](https://github.com/kubeflow/training-operator/tree/v1.7.0-rc.0/manifests) |
-| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.8.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.0/components/notebook-controller/config) |
-| PVC Viewer Controller | apps/pvcviewer-roller/upstream | [v1.8.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.0/components/pvcviewer-controller/config) |
-| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.8.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.0/components/tensorboard-controller/config) |
-| Central Dashboard | apps/centraldashboard/upstream | [v1.8.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.0/components/centraldashboard/manifests) |
-| Profiles + KFAM | apps/profiles/upstream | [v1.8.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.0/components/profile-controller/config) |
-| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.8.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.0/components/admission-webhook/manifests) |
-| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.8.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.0/components/crud-web-apps/jupyter/manifests) |
-| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.8.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.0/components/crud-web-apps/tensorboards/manifests) |
-| Volumes Web App | apps/volumes-web-app/upstream | [v1.8.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0-rc.0/components/crud-web-apps/volumes/manifests) |
-| Katib | apps/katib/upstream | [v0.16.0-rc.1](https://github.com/kubeflow/katib/tree/v0.16.0-rc.1/manifests/v1beta1) |
-| KServe | contrib/kserve/kserve | [v0.11.0](https://github.com/kserve/kserve/tree/v0.11.0/install/v0.11.0) |
+| Training Operator | apps/training-operator/upstream | [v1.7.0](https://github.com/kubeflow/training-operator/tree/v1.7.0/manifests) |
+| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/notebook-controller/config) |
+| PVC Viewer Controller | apps/pvcviewer-roller/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/pvcviewer-controller/config) |
+| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/tensorboard-controller/config) |
+| Central Dashboard | apps/centraldashboard/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/centraldashboard/manifests) |
+| Profiles + KFAM | apps/profiles/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/profile-controller/config) |
+| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/admission-webhook/manifests) |
+| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/crud-web-apps/jupyter/manifests) |
+| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/crud-web-apps/tensorboards/manifests) |
+| Volumes Web App | apps/volumes-web-app/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/crud-web-apps/volumes/manifests) |
+| Katib | apps/katib/upstream | [v0.16.0](https://github.com/kubeflow/katib/tree/v0.16.0/manifests/v1beta1) |
+| KServe | contrib/kserve/kserve | [v0.11.2](https://github.com/kserve/kserve/tree/v0.11.2/install/v0.11.2) |
 | KServe Models Web App | contrib/kserve/models-web-app | [v0.10.0](https://github.com/kserve/models-web-app/tree/v0.10.0/config) |
-| Kubeflow Pipelines | apps/pipeline/upstream | [2.0.1](https://github.com/kubeflow/pipelines/tree/2.0.1/manifests/kustomize) |
-| Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [v2.0.0](https://github.com/kubeflow/kfp-tekton/tree/v2.0.0/manifests/kustomize) |
+| Kubeflow Pipelines | apps/pipeline/upstream | [2.0.3](https://github.com/kubeflow/pipelines/tree/2.0.3/manifests/kustomize) |
+| Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [2.0.5](https://github.com/kubeflow/kfp-tekton/tree/2.0.5/manifests/kustomize) |
+=======
 
 The following is also a matrix with versions from common components that are
 used from the different projects of Kubeflow:
@@ -99,45 +100,6 @@ The `example` directory contains an example kustomization for the single command
 
 ### Install with a single command
 
-#### Prerequisites
-- `kind`
-- `docker`
-- Linux kernel subsystem changes
-    - `sudo sysctl fs.inotify.max_user_instances=2280`
-    - `sudo sysctl fs.inotify.max_user_watches=1255360`
-
-#### Create kind cluster
-```sh
-cat <<EOF | kind create cluster --name=kubeflow  --kubeconfig mycluster.yaml --config=-
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-nodes:
-- role: control-plane
-  kubeadmConfigPatches:
-  - |
-    kind: ClusterConfiguration
-    apiServer:
-      extraArgs:
-        "service-account-issuer": "kubernetes.default.svc"
-        "service-account-signing-key-file": "/etc/kubernetes/pki/sa.key"
-EOF
-```
-
-#### Save kubeconfig
-```sh
-kind get kubeconfig --name kubeflow > ~/.kube/config
-```
-
-#### Create a Secret based on existing credentials in order to pull the images
-```sh
-docker login
-
-kubectl create secret generic regcred \
-    --from-file=.dockerconfigjson=/path/to/.docker/config.json \
-    --type=kubernetes.io/dockerconfigjson
-```
-
-#### Install with a single command
 You can install all Kubeflow official components (residing under `apps`) and all common services (residing under `common`) using the following command:
 
 ```sh
