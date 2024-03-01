@@ -20,11 +20,12 @@ rules:
   - list
   - watch
 - apiGroups:
-  - ''
+  - pipelines.kubeflow.org
   resources:
-  - namespaces
+  - scheduledworkflows
+  - workflows
   verbs:
-  - get
+  - report
 - apiGroups:
   - tekton.dev
   resources:
@@ -42,3 +43,10 @@ rules:
   - update
   - patch
   - delete
+- apiGroups:
+    - pipelines.kubeflow.org
+  resources:
+    - runs
+  verbs:
+    - reportMetrics
+    - readArtifact

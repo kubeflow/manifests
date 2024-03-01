@@ -1,18 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-bases:
-  - ../../base/installs/multi-user
-  - ../../base/metadata/base
-  - ../../base/metadata/options/istio
+resources:
   - ../../third-party/tekton/installs/cluster
   - ../../third-party/tekton-custom-task
-  - ../../third-party/mysql/base
-  - ../../third-party/mysql/options/istio
-  - ../../third-party/minio/base
-  - ../../third-party/minio/options/istio
-  - ../../third-party/metacontroller/base
-  # - ../../third-party/kfp-csi-s3
+  - ../plain-multi-user
 
 # Identifier for application manager to apply ownerReference.
 # The ownerReference ensures the resources get garbage collected
@@ -23,13 +15,16 @@ commonLabels:
 images:
 - name: gcr.io/ml-pipeline/api-server
   newName: quay.io/aipipeline/apiserver
-  newTag: 2.0.0
+  newTag: 2.0.5
 - name: gcr.io/ml-pipeline/persistenceagent
   newName: quay.io/aipipeline/persistenceagent
-  newTag: 2.0.0
+  newTag: 2.0.5
 - name: gcr.io/ml-pipeline/scheduledworkflow
   newName: quay.io/aipipeline/scheduledworkflow
-  newTag: 2.0.0
+  newTag: 2.0.5
+
+patchesStrategicMerge:
+- tekton-config.yaml
 
 patches:
 - patch: |-
