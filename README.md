@@ -38,7 +38,7 @@ Starting from Kubeflow 1.3, all components should be deployable using `kustomize
 
 ## Kubeflow components versions
 
-### Kubeflow Version: latest
+### Kubeflow Version: master
 
 This repo periodically syncs all official Kubeflow components from their respective upstream repos. The following matrix shows the git version that we include for each component:
 
@@ -99,6 +99,44 @@ The `example` directory contains an example kustomization for the single command
 ---
 
 ### Install with a single command
+
+#### Prerequisites
+- `kind`
+- `docker`
+- Linux kernel subsystem changes
+    - `sudo sysctl fs.inotify.max_user_instances=2280`
+    - `sudo sysctl fs.inotify.max_user_watches=1255360`
+
+#### Create kind cluster
+```sh
+cat <<EOF | kind create cluster --name=kubeflow  --kubeconfig mycluster.yaml --config=-
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  kubeadmConfigPatches:
+  - |
+    kind: ClusterConfiguration
+    apiServer:
+      extraArgs:
+        "service-account-issuer": "kubernetes.default.svc"
+        "service-account-signing-key-file": "/etc/kubernetes/pki/sa.key"
+EOF
+```
+
+#### Save kubeconfig
+```sh
+kind get kubeconfig --name kubeflow > ~/.kube/config
+```
+
+#### Create a Secret based on existing credentials in order to pull the images
+```sh
+docker login
+
+kubectl create secret generic regcred \
+    --from-file=.dockerconfigjson=/path/to/.docker/config.json \
+    --type=kubernetes.io/dockerconfigjson
+```
 
 You can install all Kubeflow official components (residing under `apps`) and all common services (residing under `common`) using the following command:
 
