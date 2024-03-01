@@ -4,15 +4,3 @@ resources:
   # Install Kserve in kubeflow namespace
   - kserve_kubeflow.yaml
   - kserve-runtimes.yaml
-
-# If you want to install both KFServing and KServe, install the
-# standalone kserve manifests, to avoid conflicts with 0.6.1 KFServing.
-# - kserve.yaml
-# - aggregated-roles.yaml
-# - kserve-runtimes.yaml
-# configMapGenerator:
-#   - name: kserve-config
-#     namespace: kserve
-#     behavior: merge
-#     envs:
-#     - params.env
