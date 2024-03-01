@@ -15,7 +15,7 @@ rules:
     resources: ["runs/status", "customruns/status", "taskruns/status", "pipelineruns/status", "runs/finalizers", "customruns/finalizers",]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
   - apiGroups: ["custom.tekton.dev"]
-    resources: ["pipelineloops"]
+    resources: ["pipelineloops", "kfptasks"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
   - apiGroups: ["apps"]
     resources: ["deployments", "deployments/finalizers"]

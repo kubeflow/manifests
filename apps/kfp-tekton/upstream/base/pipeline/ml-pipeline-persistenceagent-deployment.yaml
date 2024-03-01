@@ -31,6 +31,8 @@ spec:
             value: ""
           - name: EXECUTIONTYPE
             value: Workflow
+          - name: LOG_LEVEL
+            value: "info"
         image: gcr.io/ml-pipeline/persistenceagent:dummy
         imagePullPolicy: IfNotPresent
         name: ml-pipeline-persistenceagent
