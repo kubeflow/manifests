@@ -4,6 +4,8 @@ echo "Installing Kserve ..."
 cd contrib/kserve
 set +e
 kustomize build kserve | kubectl apply -f -
+sleep 30
+kustomize build kserve | kubectl apply -f -
 set -e
 echo "Waiting for crd/clusterservingruntimes.serving.kserve.io to be available ..."
 kubectl wait --for condition=established --timeout=30s crd/clusterservingruntimes.serving.kserve.io
