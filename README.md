@@ -125,6 +125,7 @@ EOF
 
 #### Save kubeconfig
 ```sh
+mv ~/.kube/config ~/.kube/config_backup
 kind get kubeconfig --name kubeflow > ~/.kube/config
 ```
 
