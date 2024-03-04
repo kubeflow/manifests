@@ -3,7 +3,7 @@
 apiVersion: kubeflow.org/v1beta1
 kind: Experiment
 metadata:
-  namespace: kubeflow
+  namespace: kubeflow-user
   name: grid
 spec:
   objective:
