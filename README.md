@@ -431,7 +431,7 @@ kustomize build apps/training-operator/upstream/overlays/kubeflow | kubectl appl
 
 #### User Namespace
 
-Finally, create a new namespace for the the default user (named `kubeflow-user-example-com`).
+Finally, create a new namespace for the default user (named `kubeflow-user-example-com`).
 
 ```sh
 kustomize build common/user-namespace/base | kubectl apply -f -
