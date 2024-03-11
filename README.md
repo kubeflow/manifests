@@ -507,5 +507,5 @@ The Manifest Working Group releases Kubeflow based on the [release timeline](htt
 
 - **Q:** What versions of Istio, Knative, Cert-Manager, Argo, ... are compatible with Kubeflow? \
   **A:** Please refer to each individual component's documentation for a dependency compatibility range. For Istio, Knative, Dex, Cert-Manager and OIDC-AuthService, the versions in `common` are the ones we have validated.
-- **Q:** Can I use earlier version of Kustomize with Kubeflow manifests?
+- **Q:** Can I use earlier version of Kustomize with Kubeflow manifests? \
   **A:** The manual installation instructions work with Kustomize 3.2. To use the one-liner installation you'll need to comment out the `sortOptions` section in the `example/kustomization.yaml`.
