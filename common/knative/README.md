@@ -69,7 +69,7 @@ NOTE: You'll need to remove a redundant `{}` at the end of the `knative-serving/
 
 ## Knative-Eventing
 
-The manifests for Knative Eventing are based off the the [v1.10.1 release](https://github.com/knative/eventing/releases/tag/knative-v1.10.1).
+The manifests for Knative Eventing are based off the [v1.10.1 release](https://github.com/knative/eventing/releases/tag/knative-v1.10.1).
 
   - [Eventing Core](https://github.com/knative/eventing/releases/download/knative-v1.10.1/eventing-core.yaml)
   - [In-Memory Channel](https://github.com/knative/eventing/releases/download/knative-v1.10.1/in-memory-channel.yaml)
