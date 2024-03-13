@@ -1,2 +1,3 @@
-kfp==1.8.22
-kubeflow-katib==0.15.0
+kfp==2.5.0
+kubeflow-katib==0.16.0
+pytest==8.1.1

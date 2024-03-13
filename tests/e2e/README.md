@@ -8,13 +8,17 @@ This test is using the following Kubeflow CRDs:
 3. TFJobs
 4. KServe InferenceServices
 
+## Prerequisites
+- Python 3.10
+- Install `requirements.txt`
+- [Prerequisites](https://github.com/kubeflow/manifests#prerequisites)
+- [kind cluster](https://github.com/kubeflow/manifests#kind-cluster-setup)
+
 ## How to run
 
 The heart of this test is the `mnist.py` python script, which applies and waits
-for the CRDs to complete. The python scripts are all expecting that
-1. `kubectl` is configured with access to a Kubeflow cluster
-2. `kustomize` 5.0.3+ is available
-3. The KFP backend is proxied to localhost
+for the CRDs to complete. The python scripts are all expecting that you have a 
+cluster where KFP backend is proxied to localhost
 
 While the `mnist.py` is used for running the test, it is advised to use the
 `runner.sh` script instead. The `runner.sh` script will be running the python

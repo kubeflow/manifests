@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+echo "Setup"
+kubectl create namespace kubeflow-user-example-com
+kubectl create namespace istio-system
+
 echo "Installing necessary RBAC."""
 kubectl apply -f yamls
 
