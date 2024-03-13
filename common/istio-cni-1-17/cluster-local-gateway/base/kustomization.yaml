@@ -8,5 +8,5 @@ resources:
 - gateway-authorizationpolicy.yaml
 - gateway.yaml
 
-patchesStrategicMerge:
-- patches/remove-pdb.yaml
+patches:
+- path: patches/remove-pdb.yaml
