@@ -106,7 +106,7 @@ The `example` directory contains an example kustomization for the single command
     - `sudo sysctl fs.inotify.max_user_instances=2280`
     - `sudo sysctl fs.inotify.max_user_watches=1255360`
 
-#### Create kind cluster
+#### kind cluster setup
 ```sh
 cat <<EOF | kind create cluster --name=kubeflow  --kubeconfig mycluster.yaml --config=-
 kind: Cluster
@@ -134,9 +134,11 @@ kind get kubeconfig --name kubeflow > ~/.kube/config
 docker login
 
 kubectl create secret generic regcred \
-    --from-file=.dockerconfigjson=/path/to/.docker/config.json \
+    --from-file=.dockerconfigjson=/home/change_me/.docker/config.json \
     --type=kubernetes.io/dockerconfigjson
 ```
+
+### Install with a single command
 
 You can install all Kubeflow official components (residing under `apps`) and all common services (residing under `common`) using the following command:
 
