@@ -36,17 +36,6 @@ The manifests for Knative Serving are based off the following:
     yq eval -i 'explode(.)' knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml
     ```
 
-1. Remove the `knative-ingress-gateway` Gateway, since we use the Kubeflow
-   gateway. We will make this into a patch once we update kustomize to v4,
-   which supports removing CRs with patches. See:
-   https://github.com/kubernetes-sigs/kustomize/issues/3694
-
-    ```sh
-    yq eval -i 'select((.kind == "Gateway" and .metadata.name == "knative-ingress-gateway") | not)' knative-serving/base/upstream/net-istio.yaml
-    ```
-
-    NOTE: You'll need to remove a redundant `{}` at the end of the `knative-serving/base/upstream/net-istio.yaml` file.
-
 1. Set `metadata.name` in the serving post-install job, to be deploy-able with
    `kustomize` and `kubectl apply`:
 
@@ -56,13 +45,9 @@ The manifests for Knative Serving are based off the following:
     yq eval -i 'select(.kind == "Job" and .metadata.generateName == "storage-version-migration-serving-") | .metadata.name = "storage-version-migration-serving"' knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml
     ```
 
-
-NOTE: You'll need to remove a redundant `{}` at the end of the `knative-serving/base/upstream/net-istio.yaml` and 
-`knative-serving/base/upstream/serving-core.yaml` files.
-
 ### Changes from upstream
 
-- In `knative-serving/base/upstream/net-istio.yaml`, the `knative-ingress-gateway` Gateway is removed since we use the Kubeflow gateway.
+- The `knative-ingress-gateway` Gateway is removed since we use the Kubeflow gateway.
 - In `config-istio`, the Knative gateway is set to use `gateway.kubeflow.kubeflow-gateway`.
 - In `config-deployment`, `progressDeadline` is set to `600s` as sometimes large models need longer than
   the default of `120s` to start the containers.
