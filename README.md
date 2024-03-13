@@ -85,9 +85,9 @@ The `example` directory contains an example kustomization for the single command
 
 ### Prerequisites
 
-- `Kubernetes` (up to `1.27`) with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
+- `Kubernetes` (around `1.28`) with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
 - `kustomize` [5.2.1+](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.2.1)
-    - :warning: Kubeflow is not compatible with earlier versions of Kustomize. This is because we need the [`sortOptions`](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/sortoptions/) field, which is only available in Kustomize 5 and onwards https://github.com/kubeflow/manifests/issues/2388.
+    - :warning: Kubeflow is not compatible with earlier versions of Kustomize. One of the reasons is that we need the [`sortOptions`](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/sortoptions/) field, which is only available in Kustomize 5 and onwards https://github.com/kubeflow/manifests/issues/2388.
 - `kubectl`
 
 ---
