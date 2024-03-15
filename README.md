@@ -85,9 +85,9 @@ The `example` directory contains an example kustomization for the single command
 
 ### Prerequisites
 
-- `Kubernetes` (up to `1.27`) with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
-- `kustomize` [5.0.3](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.0.3)
-    - :warning: Kubeflow is not compatible with earlier versions of Kustomize. This is because we need the [`sortOptions`](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/sortoptions/) field, which is only available in Kustomize 5 and onwards https://github.com/kubeflow/manifests/issues/2388.
+- `Kubernetes` (around `1.28`) with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
+- `kustomize` [5.2.1+](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.2.1)
+    - :warning: Kubeflow is not compatible with earlier versions of Kustomize. One of the reasons is that we need the [`sortOptions`](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/sortoptions/) field, which is only available in Kustomize 5 and onwards https://github.com/kubeflow/manifests/issues/2388.
 - `kubectl`
 
 ---
@@ -508,4 +508,4 @@ The Manifest Working Group releases Kubeflow based on the [release timeline](htt
 - **Q:** What versions of Istio, Knative, Cert-Manager, Argo, ... are compatible with Kubeflow? \
   **A:** Please refer to each individual component's documentation for a dependency compatibility range. For Istio, Knative, Dex, Cert-Manager and OIDC-AuthService, the versions in `common` are the ones we have validated.
 - **Q:** Can I use earlier version of Kustomize with Kubeflow manifests?
-  **A:** The manual installation instructions work with Kustomize 3.2. To use the one-liner installation you'll need to comment out the `sortOptions` section in the `example/kustomization.yaml`.
+  **A:** No, it is not supported anymore, although it might be possible with manual effort.
