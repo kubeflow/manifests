@@ -15,3 +15,4 @@ patches:
 - path: patches/knative-serving-namespaced-edit.yaml
 - path: patches/knative-serving-namespaced-view.yaml
 - path: patches/service-labels.yaml
+- path: patches/remove-gateway.yaml
