@@ -12,6 +12,7 @@ sortOptions:
     - MutatingWebhookConfiguration
     - ServiceAccount
     - PodSecurityPolicy
+    - NetworkPolicy
     - Role
     - ClusterRole
     - RoleBinding
@@ -49,6 +50,8 @@ resources:
 - ../common/istio-1-17/cluster-local-gateway/base
 # Kubeflow namespace
 - ../common/kubeflow-namespace/base
+# NetworkPolicies
+- ../common/networkpolicies/base
 # Kubeflow Roles
 - ../common/kubeflow-roles/base
 # Kubeflow Istio Resources

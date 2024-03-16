@@ -1,15 +1,15 @@
-kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
 metadata:
-  name: seldon
+  name: poddefaults
   namespace: kubeflow
 spec:
   podSelector:
     matchExpressions:
-      - key: control-plane
+      - key: app
         operator: In
         values:
-          - seldon-controller-manager # validating webhook
+          - poddefaults # mutating webhook
   # https://www.elastic.co/guide/en/cloud-on-k8s/1.1/k8s-webhook-network-policies.html
   # The kubernetes api server must reach the webhook
   ingress:
@@ -18,4 +18,3 @@ spec:
           port: 4443
   policyTypes:
     - Ingress
-

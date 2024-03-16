@@ -1,7 +1,7 @@
-kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
 metadata:
-  name: ml-pipeline
+  name: minio
   namespace: kubeflow
 spec:
   podSelector:
@@ -9,7 +9,7 @@ spec:
       - key: app
         operator: In
         values:
-          - ml-pipeline # just the apiserver
+          - minio # artifact storage
   ingress:
     - from:
         - namespaceSelector:
@@ -24,5 +24,6 @@ spec:
                 operator: In
                 values:
                   - istio-system
+        - podSelector: {} # allow all pods from the same namespace
   policyTypes:
     - Ingress

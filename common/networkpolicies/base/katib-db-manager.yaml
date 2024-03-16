@@ -1,15 +1,15 @@
-kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
 metadata:
-  name: metadata-grpc-server
+  name: katib-db-manager
   namespace: kubeflow
 spec:
   podSelector:
     matchExpressions:
-      - key: component
+      - key: katib.kubeflow.org/component
         operator: In
         values:
-          - metadata-grpc-server # metadata server
+          - db-manager # the metrics loggers write directly to this database
   ingress:
     - from:
         - namespaceSelector:
@@ -21,4 +21,3 @@ spec:
         - podSelector: {} # allow all pods from the same namespace
   policyTypes:
     - Ingress
-

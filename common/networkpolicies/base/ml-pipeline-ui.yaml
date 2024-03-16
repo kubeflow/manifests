@@ -1,15 +1,15 @@
-kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
 metadata:
-  name: katib-ui
+  name: ml-pipeline-ui
   namespace: kubeflow
 spec:
   podSelector:
     matchExpressions:
-      - key: katib.kubeflow.org/component
+      - key: app
         operator: In
         values:
-          - ui
+          - ml-pipeline-ui
   ingress:
     - from:
         - namespaceSelector:
