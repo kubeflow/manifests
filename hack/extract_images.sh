@@ -15,7 +15,7 @@ declare -A wg_dirs=(
   [automl]="../apps/katib/upstream/installs"
   [pipelines]="../apps/pipeline/upstream/env ../apps/kfp-tekton/upstream/env"
   [training]="../apps/training-operator/upstream/overlays"
-  [manifests]="../common ../example"
+  [manifests]="../common"
   [workbenches]="../apps/admission-webhook/upstream/overlays ../apps/centraldashboard/upstream/overlays ../apps/jupyter/jupyter-web-app/upstream/overlays ../apps/volumes-web-app/upstream/overlays ../apps/tensorboard/tensorboards-web-app/upstream/overlays ../apps/profiles/upstream/overlays ../apps/jupyter/notebook-controller/upstream/overlays ../apps/tensorboard/tensorboard-controller/upstream/overlays"
   [serving]="../contrib/kserve"
 )
