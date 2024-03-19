@@ -5,9 +5,19 @@ resources:
   - ../istio
 
 patches:
-  - path: config-map.yaml
+  - path: patches/config-map.yaml
     target:
       version: v1
       kind: ConfigMap
       name: dex
+      namespace: auth
+  - path: patches/dex-passwords.yaml
+    target:
+      kind: Secret
+      name: dex-passwords
+      namespace: auth
+  - path: patches/dex-oidc-client.yaml
+    target:
+      kind: Secret
+      name: dex-oidc-client
       namespace: auth

@@ -18,10 +18,12 @@ data:
       skipApprovalScreen: true
     enablePasswordDB: true
     staticPasswords:
-    - email: user@example.com
-      hashFromEnv: DEX_USER_PASSWORD
-      username: user
-      userID: "15841185641784"
+    {%- for user in auth.dex.staticPasswords %}
+    - email: "{{ user.email }}"
+      hashFromEnv: DEX_PASSWORD_{{ user.username | slugify | upper }}
+      username: "{{ user.username }}"
+      userID: "{{ user.userID }}"
+    {%- endfor %}
     staticClients:
     # https://github.com/dexidp/dex/pull/1664
     - idEnv: OIDC_CLIENT_ID

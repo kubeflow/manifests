@@ -3,3 +3,22 @@ auth:
     enabled: false
   oauth2_proxy:
     enabled: true
+  dex:
+    staticPasswords:
+      - email: "user@example.com"
+        # password: "12341234"
+        hash: "$2y$12$4K/VkmDd1q1Orb3xAt82zu8gk7Ad6ReFR4LCP9UeYE90NLiN9Df72"
+        username: "user"
+        userID: "15841185641784"
+      - email: "user2@example.com"
+        # password: "12341234"
+        hash: "$2y$12$4K/VkmDd1q1Orb3xAt82zu8gk7Ad6ReFR4LCP9UeYE90NLiN9Df72"
+        username: "user2"
+        userID: "15841185641785"
+    oidc:
+      clientID: kubeflow-oidc-authservice
+      clientSecret: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
+
+profiles:
+  - ownerEmail: user@example.com
+    profileName: kubeflow-user-example-com

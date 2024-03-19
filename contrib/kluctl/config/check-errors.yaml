@@ -9,3 +9,11 @@
     {% endif %}
   {% endif %}
 {% endif %}
+
+{% if not auth.dex.staticPasswords %}
+  {{ raise("you must provide a list of static passwords via auth.dex.staticPassword") }}
+{% endif %}
+
+{% if not auth.dex.oidc.clientID or not auth.dex.oidc.clientSecret %}
+  {{ raise("you must provide an oidc clientID and clientSecret") }}
+{% endif %}

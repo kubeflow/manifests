@@ -1,0 +1,6 @@
+- op: replace
+  path: /data/OIDC_CLIENT_ID
+  value: "{{ auth.dex.oidc.clientID | b64encode }}"
+- op: replace
+  path: /data/OIDC_CLIENT_SECRET
+  value: "{{ auth.dex.oidc.clientSecret | b64encode }}"
