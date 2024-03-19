@@ -4,8 +4,8 @@ kind: Kustomization
 namespace: oauth2-proxy
 
 resources:
-- deployment.yaml
 - namespace.yaml
+- deployment.yaml
 - oauth2-proxy-config.yaml
 - serviceaccount.yaml
 - service.yaml
