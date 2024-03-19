@@ -1,0 +1,11 @@
+
+deployments:
+  - path: ../../common
+    onlyRender: true
+  - path: ../../apps
+    onlyRender: true
+  - path: ../../contrib/kserve
+    onlyRender: true
+  - include: common
+  - barrier: true
+  - include: apps

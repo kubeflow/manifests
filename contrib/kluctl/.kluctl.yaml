@@ -1,0 +1,2 @@
+# The discriminator is used to locate all previously deployed resources so that we can do cleanup/pruning of removed resources
+discriminator: kubeflow
