@@ -1,0 +1,5 @@
+auth:
+  auth_service:
+    enabled: false
+  oauth2_proxy:
+    enabled: true

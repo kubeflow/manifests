@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../upstream/overlays/kserve
+
+{% if auth.oauth2_proxy.enabled %}
+components:
+  - ../../../common/oidc-client/oauth2-proxy/components/central-dashboard
+{% endif %}

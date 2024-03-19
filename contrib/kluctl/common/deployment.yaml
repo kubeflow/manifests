@@ -12,11 +12,16 @@ deployments:
   - path: ../../../common/istio-1-17/istio-namespace/base
   # istio CRDs and NS can be deployed in parallel
   - barrier: true
-  - path: ../../../common/istio-1-17/istio-install/overlays/oauth2-proxy
+  - path: ../../../common/istio-1-17/istio-install/overlays/kluctl
   - barrier: true
   # oauth2-proxy
-  - path: ../../../common/oidc-client/oauth2-proxy/overlays/m2m-self-signed
-  - path: ../../../common/dex/overlays/oauth2-proxy
+  - path: ../../../common/oidc-client/oauth2-proxy/overlays/kluctl
+    when: auth.oauth2_proxy.enabled
+  # auth-service
+  - path: ../../../common/oidc-client/oidc-authservice/base
+    when: auth.auth_service.enabled
+  # Dex
+  - path: ../../../common/dex/overlays/kluctl
   # KNative
   - path: ../../../common/knative/knative-serving/overlays/gateways
   - path: ../../../common/knative/knative-eventing/base

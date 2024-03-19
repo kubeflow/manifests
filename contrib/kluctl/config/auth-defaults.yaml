@@ -1,0 +1,12 @@
+auth:
+  auth_service:
+    enabled: false
+  oauth2_proxy:
+    enabled: true
+    cloudFlare: false
+    m2m:
+      enabled: true
+      selfSigned: true
+      # replace/add a real one in case selfSigned=false
+      extraJwtIssuers:
+        # - https://oidc.eks.region.amazonaws.com/id/1234abcd=https://kubernetes.default.svc

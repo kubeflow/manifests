@@ -1,0 +1,33 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../base
+
+{% if auth.oauth2_proxy.m2m.enabled %}
+components:
+- ../../components/istio-m2m
+{% if auth.oauth2_proxy.m2m.selfSigned %}
+- ../../components/allow-unauthenticated-issuer-discovery
+- ../../components/configure-self-signed-kubernetes-oidc-issuer
+{% else %}
+- ../m2m/component-overwrite-m2m-token-issuer
+{% endif %}
+
+{% set extraJwtIssuers=[] %}
+{% if auth.oauth2_proxy.m2m.selfSigned %}
+  #{{ extraJwtIssuers.append("https://kubernetes.default.svc.cluster.local=https://kubernetes.default.svc.cluster.local") }}
+{% endif %}
+{% if auth.oauth2_proxy.m2m.extraJwtIssuers %}
+  #{{ extraJwtIssuers.extend(auth.oauth2_proxy.m2m.extraJwtIssuers) }}
+{% endif %}
+
+configMapGenerator:
+- name: oauth2-proxy-parameters
+  behavior: merge
+  literals:
+  - ALLOW_SELF_SIGNED_ISSUER={{ auth.oauth2_proxy.m2m.selfSigned | lower }}
+  - FORCE_HTTPS={{ (not auth.oauth2_proxy.m2m.selfSigned) | lower }}
+  - ENABLE_M2M_TOKENS=true
+  - EXTRA_JWT_ISSUERS={{ ",".join(extraJwtIssuers) }}
+{% endif %}

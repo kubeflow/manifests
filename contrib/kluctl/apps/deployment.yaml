@@ -5,7 +5,7 @@ deployments:
   # Katib
   - path: ../../../apps/katib/upstream/installs/katib-with-kubeflow
   # Central Dashboard
-  - path: ../../../apps/centraldashboard/upstream/overlays/oauth2-proxy
+  - path: ../../../apps/centraldashboard/kluctl
   # Admission Webhook
   - path: ../../../apps/admission-webhook/upstream/overlays/cert-manager
   # Jupyter Web App

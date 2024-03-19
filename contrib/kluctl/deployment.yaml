@@ -1,3 +1,8 @@
+vars:
+  - file: config/auth-defaults.yaml
+  - file: "{{ args.config }}"
+    when: args.config
+  - file: config/check-errors.yaml
 
 deployments:
   - path: ../../common
