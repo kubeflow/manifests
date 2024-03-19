@@ -1,0 +1,7 @@
+deployments:
+{% for user in profiles %}
+  - path: user
+    vars:
+      - values:
+          user: {{ user | to_json }}
+{% endfor %}

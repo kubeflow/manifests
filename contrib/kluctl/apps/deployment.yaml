@@ -24,8 +24,6 @@ deployments:
   - path: ../../../apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
   # Training Operator
   - path: ../../../apps/training-operator/upstream/overlays/kubeflow
-  # User namespace
-  - path: ../../../common/user-namespace/base
 
   # KServe
   - path: ../../../contrib/kserve/kserve

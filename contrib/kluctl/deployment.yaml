@@ -1,5 +1,6 @@
 vars:
   - file: config/auth-defaults.yaml
+  - file: config/users-defaults.yaml
   - file: "{{ args.config }}"
     when: args.config
   - file: config/check-errors.yaml
@@ -14,3 +15,5 @@ deployments:
   - include: common
   - barrier: true
   - include: apps
+  - barrier: true
+  - include: users
