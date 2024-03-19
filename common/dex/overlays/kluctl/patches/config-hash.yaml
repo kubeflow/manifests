@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dex
+spec:
+  template:
+    metadata:
+      annotations:
+        checksum/dex-configmap: {{ load_sha256('./config-map.yaml') }}
+        checksum/dex-passwords: {{ load_sha256('./dex-passwords.yaml') }}
+        checksum/dex-oidc-client: {{ load_sha256('./dex-oidc-client.yaml') }}

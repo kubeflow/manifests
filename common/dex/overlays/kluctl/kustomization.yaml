@@ -5,6 +5,7 @@ resources:
   - ../istio
 
 patches:
+  - path: patches/config-hash.yaml
   - path: patches/config-map.yaml
     target:
       version: v1
