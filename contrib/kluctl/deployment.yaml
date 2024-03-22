@@ -17,3 +17,17 @@ deployments:
   - include: apps
   - barrier: true
   - include: users
+
+conflictResolution:
+  - kind: ValidatingWebhookConfiguration
+    fieldPath:
+    - webhooks.*.rules
+    - webhooks.*.failurePolicy
+    action: ignore
+  - kind: MutatingWebhookConfiguration
+    fieldPath: webhooks.*.rules
+    action: ignore
+  - manager: clusterrole-aggregation-controller
+    action: ignore
+  - manager: cert-manager-cainjector
+    action: ignore

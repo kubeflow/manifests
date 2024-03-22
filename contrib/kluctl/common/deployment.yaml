@@ -32,3 +32,10 @@ deployments:
   - path: ../../../common/kubeflow-roles/base
   # Kubeflow Istio Resources
   - path: ../../../common/istio-1-17/kubeflow-istio-resources/base
+
+conflictResolution:
+  # We should ignore the conflict that is created by the configure-self-signed-kubernetes-oidc-issuer Job
+  - kind: RequestAuthentication
+    name: m2m-token-issuer
+    fieldPath: spec.jwtRules
+    action: ignore
