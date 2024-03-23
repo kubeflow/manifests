@@ -1,0 +1,23 @@
+auth:
+  auth_service:
+    enabled: true
+  oauth2_proxy:
+    enabled: false
+  dex:
+    staticPasswords:
+      - email: "user@example.com"
+        # password: "12341234"
+        hash: "$2y$12$4K/VkmDd1q1Orb3xAt82zu8gk7Ad6ReFR4LCP9UeYE90NLiN9Df72"
+        username: "user"
+        userID: "15841185641784"
+    oidc:
+      clientID: kubeflow-oidc-authservice
+      clientSecret: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
+apps:
+  centraldashboard:
+    # we usually don't need it in tests
+    enabled: false
+
+profiles:
+  - ownerEmail: user@example.com
+    profileName: kubeflow-user-example-com
