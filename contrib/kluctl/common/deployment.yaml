@@ -28,10 +28,16 @@ deployments:
   - path: ../../../common/istio-1-17/cluster-local-gateway/base
   # Kubeflow namespace
   - path: ../../../common/kubeflow-namespace/base
+    tags:
+      - kubeflow-namespace
   # Kubeflow Roles
   - path: ../../../common/kubeflow-roles/base
+    tags:
+      - kubeflow-roles
   # Kubeflow Istio Resources
   - path: ../../../common/istio-1-17/kubeflow-istio-resources/base
+    tags:
+      - kubeflow-istio-resources
 
 conflictResolution:
   # We should ignore the conflict that is created by the configure-self-signed-kubernetes-oidc-issuer Job

@@ -1,29 +1,51 @@
 deployments:
   # Kubeflow Pipelines
   - path: ../../../apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
+    tags:
+      - pipelines
   - barrier: true
   # Katib
   - path: ../../../apps/katib/upstream/installs/katib-with-kubeflow
+    tags:
+      - katib
   # Central Dashboard
   - path: ../../../apps/centraldashboard/kluctl
+    tags:
+      - centraldashboard
   # Admission Webhook
   - path: ../../../apps/admission-webhook/upstream/overlays/cert-manager
   # Jupyter Web App
   - path: ../../../apps/jupyter/jupyter-web-app/upstream/overlays/istio
+    tags:
+      - jupyter
   # Notebook Controller
   - path: ../../../apps/jupyter/notebook-controller/upstream/overlays/kubeflow
+    tags:
+      - notebook-controller
   # Profiles + KFAM
   - path: ../../../apps/profiles/upstream/overlays/kubeflow
+    tags:
+      - profiles
   # PVC Viewer
   - path: ../../../apps/pvcviewer-controller/upstream/base/
+    tags:
+      - pvc-viewer
   # Volumes Web App
   - path: ../../../apps/volumes-web-app/upstream/overlays/istio
+    tags:
+      - volumes-web-app
   # Tensorboards Controller
   - path: ../../../apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
+    tags:
+      - tensorboard
   # Tensorboard Web App
   - path: ../../../apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
+    tags:
+      - tensorboard
   # Training Operator
   - path: ../../../apps/training-operator/upstream/overlays/kubeflow
+    tags:
+      - training-operator
 
   # KServe
   - include: kserve
