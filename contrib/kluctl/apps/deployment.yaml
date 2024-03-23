@@ -26,6 +26,4 @@ deployments:
   - path: ../../../apps/training-operator/upstream/overlays/kubeflow
 
   # KServe
-  - path: ../../../contrib/kserve/kserve
-  - barrier: true
-  - path: ../../../contrib/kserve/models-web-app/overlays/kubeflow
+  - include: kserve

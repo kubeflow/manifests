@@ -1,0 +1,6 @@
+
+deployments:
+- path: kserve
+- barrier: true
+- path: kserve-runtimes
+- path: ../../../kserve/models-web-app/overlays/kubeflow
