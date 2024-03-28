@@ -1,0 +1,7 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: authn-filter
+spec:
+  workloadSelector:
+    labels: {{ istio.gateway.selectorLabels | to_json }}

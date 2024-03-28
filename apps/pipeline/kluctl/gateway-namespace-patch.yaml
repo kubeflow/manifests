@@ -1,0 +1,11 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: ml-pipeline-ui
+  namespace: kubeflow
+spec:
+  rules:
+    - from:
+        - source:
+            namespaces:
+              - {{ istio.gateway.namespace }}

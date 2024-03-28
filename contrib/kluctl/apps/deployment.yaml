@@ -1,11 +1,11 @@
 deployments:
   # Kubeflow Pipelines
-  - path: ../../../apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
+  - path: ../../../apps/pipeline/kluctl
     tags:
       - pipelines
   - barrier: true
   # Katib
-  - path: ../../../apps/katib/upstream/installs/katib-with-kubeflow
+  - path: ../../../apps/katib/kluctl
     tags:
       - katib
   # Central Dashboard
@@ -15,7 +15,7 @@ deployments:
   # Admission Webhook
   - path: ../../../apps/admission-webhook/upstream/overlays/cert-manager
   # Jupyter Web App
-  - path: ../../../apps/jupyter/jupyter-web-app/upstream/overlays/istio
+  - path: ../../../apps/jupyter/jupyter-web-app/kluctl
     tags:
       - jupyter
   # Notebook Controller
@@ -31,7 +31,7 @@ deployments:
     tags:
       - pvc-viewer
   # Volumes Web App
-  - path: ../../../apps/volumes-web-app/upstream/overlays/istio
+  - path: ../../../apps/volumes-web-app/kluctl
     tags:
       - volumes-web-app
   # Tensorboards Controller
@@ -39,7 +39,7 @@ deployments:
     tags:
       - tensorboard
   # Tensorboard Web App
-  - path: ../../../apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
+  - path: ../../../apps/tensorboard/tensorboards-web-app/kluctl
     tags:
       - tensorboard
   # Training Operator

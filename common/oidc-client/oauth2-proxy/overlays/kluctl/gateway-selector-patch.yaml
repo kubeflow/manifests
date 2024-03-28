@@ -1,0 +1,8 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: istio-ingressgateway-oauth2-proxy
+  namespace: istio-system
+spec:
+  selector:
+    matchLabels: {{ istio.gateway.selectorLabels | to_json }}

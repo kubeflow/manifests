@@ -14,7 +14,9 @@ components:
 {% else %}
 - ../m2m/component-overwrite-m2m-token-issuer
 {% endif %}
+{% endif %}
 
+{% if auth.oauth2_proxy.m2m.enabled %}
 {% set extraJwtIssuers=[] %}
 {% if auth.oauth2_proxy.m2m.selfSigned %}
   #{{ extraJwtIssuers.append("https://kubernetes.default.svc.cluster.local=https://kubernetes.default.svc.cluster.local") }}
@@ -22,7 +24,6 @@ components:
 {% if auth.oauth2_proxy.m2m.extraJwtIssuers %}
   #{{ extraJwtIssuers.extend(auth.oauth2_proxy.m2m.extraJwtIssuers) }}
 {% endif %}
-
 configMapGenerator:
 - name: oauth2-proxy-parameters
   behavior: merge
@@ -32,3 +33,6 @@ configMapGenerator:
   - ENABLE_M2M_TOKENS=true
   - EXTRA_JWT_ISSUERS={{ ",".join(extraJwtIssuers) }}
 {% endif %}
+
+patches:
+  - path: gateway-selector-patch.yaml

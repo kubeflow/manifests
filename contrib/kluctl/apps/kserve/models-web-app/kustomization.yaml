@@ -1,0 +1,5 @@
+resources:
+  - ../../../../kserve/models-web-app/overlays/kubeflow
+
+patches:
+  - path: gateway-principal-patch.yaml

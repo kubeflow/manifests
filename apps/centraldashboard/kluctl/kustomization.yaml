@@ -8,3 +8,6 @@ resources:
 components:
   - ../../../common/oidc-client/oauth2-proxy/components/central-dashboard
 {% endif %}
+
+patches:
+  - path: gateway-principal-patch.yaml

@@ -1,0 +1,11 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: katib-ui
+  namespace: kubeflow
+spec:
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/{{ istio.gateway.namespace }}/sa/{{ istio.gateway.serviceAccount }}

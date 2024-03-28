@@ -11,13 +11,17 @@ deployments:
   # oauth2-proxy
   - path: ../../../common/oidc-client/oauth2-proxy/overlays/kluctl
     when: auth.oauth2_proxy.enabled
+    tags:
+      - oauth2-proxy
   # auth-service
-  - path: ../../../common/oidc-client/oidc-authservice/base
+  - path: ../../../common/oidc-client/oidc-authservice/overlays/kluctl
     when: auth.auth_service.enabled
+    tags:
+      - auth-service
   # Dex
   - path: ../../../common/dex/overlays/kluctl
   # KNative
-  - path: ../../../common/knative/knative-serving/overlays/gateways
+  - path: ../../../common/knative/knative-serving/overlays/kluctl
   - path: ../../../common/knative/knative-eventing/base
   - path: ../../../common/istio-1-17/cluster-local-gateway/base
   # Kubeflow namespace

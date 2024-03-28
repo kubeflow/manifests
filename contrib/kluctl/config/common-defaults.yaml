@@ -7,5 +7,10 @@ istio:
   enabled: true
 
   gateway:
+    # in case you bring your own gateway deployment, replace these values with whatever matches the deployment.
+    # also, make sure that there exists a AuthorizationPolicy that grants unconditional access to the gateway deployment
+    namespace: istio-system
+    serviceAccount: istio-ingressgateway-service-account
+    serviceName: istio-ingressgateway
     selectorLabels:
       istio: ingressgateway
