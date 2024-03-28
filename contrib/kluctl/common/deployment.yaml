@@ -1,18 +1,12 @@
 deployments:
   # Cert-Manager
-  - path: ../../../common/cert-manager/cert-manager/base
-  - waitReadinessObjects:
-      - kind: Deployment
-        name: cert-manager-webhook
-        namespace: cert-manager
+  - include: cert-manager
+    when: cert_manager.enabled
   - barrier: true
   - path: ../../../common/cert-manager/kubeflow-issuer/base
   # Istio
-  - path: ../../../common/istio-1-17/istio-crds/base
-  - path: ../../../common/istio-1-17/istio-namespace/base
-  # istio CRDs and NS can be deployed in parallel
-  - barrier: true
-  - path: ../../../common/istio-1-17/istio-install/overlays/kluctl
+  - include: istio
+    when: istio.enabled
   - barrier: true
   # oauth2-proxy
   - path: ../../../common/oidc-client/oauth2-proxy/overlays/kluctl

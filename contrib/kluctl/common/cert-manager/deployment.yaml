@@ -1,0 +1,6 @@
+deployments:
+  - path: ../../../../common/cert-manager/cert-manager/base
+  - waitReadinessObjects:
+      - kind: Deployment
+        name: cert-manager-webhook
+        namespace: cert-manager
