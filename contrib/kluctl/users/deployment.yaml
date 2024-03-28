@@ -4,4 +4,12 @@ deployments:
     vars:
       - values:
           user: {{ user | to_json }}
+  - waitReadinessObjects:
+      - kind: Namespace
+        name: {{ user.profileName }}
+    barrier: true
+  - path: extra
+    vars:
+      - values:
+          user: {{ user | to_json }}
 {% endfor %}
