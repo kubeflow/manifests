@@ -4,8 +4,9 @@ kind: Kustomization
 resources:
 - ../../base
 
-{% if auth.oauth2_proxy.m2m.enabled %}
 components:
+- ../../components/istio-external-auth
+{% if auth.oauth2_proxy.m2m.enabled %}
 - ../../components/istio-m2m
 {% if auth.oauth2_proxy.m2m.selfSigned %}
 - ../../components/allow-unauthenticated-issuer-discovery

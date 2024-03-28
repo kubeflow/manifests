@@ -6,5 +6,5 @@ resources:
 
 {% if auth.oauth2_proxy.enabled %}
 components:
-- ../../../../oidc-client/oauth2-proxy/components/istio-external-auth
+- ../../../../oidc-client/oauth2-proxy/components/istio-external-auth-patches
 {% endif %}
