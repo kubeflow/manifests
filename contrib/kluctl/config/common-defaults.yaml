@@ -5,3 +5,7 @@ istio:
   # Warning, if you bring your own istio, make sure that it is configured to support external authorization via
   # oauth2-proxy if you plan to use oauth2-proxy instead of authservice
   enabled: true
+
+  gateway:
+    selectorLabels:
+      istio: ingressgateway

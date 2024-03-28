@@ -29,7 +29,7 @@ deployments:
     tags:
       - kubeflow-roles
   # Kubeflow Istio Resources
-  - path: ../../../common/istio-1-17/kubeflow-istio-resources/base
+  - path: ../../../common/istio-1-17/kubeflow-istio-resources/overlays/kluctl
     tags:
       - kubeflow-istio-resources
 
