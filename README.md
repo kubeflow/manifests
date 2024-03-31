@@ -83,6 +83,65 @@ The `example` directory contains an example kustomization for the single command
 
 :warning: In both options, we use a default email (`user@example.com`) and password (`12341234`). For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
 
+## Useful kubectl Commands
+
+### View Pods Status
+
+To check the status of Pods in Kubeflow namespaces:
+
+```sh
+kubectl get pods -n cert-manager
+kubectl get pods -n istio-system
+kubectl get pods -n auth
+kubectl get pods -n knative-eventing
+kubectl get pods -n knative-serving
+kubectl get pods -n kubeflow
+kubectl get pods -n kubeflow-user-example-com
+Port-Forward
+To access Kubeflow via port-forwarding:
+
+sh
+Copy code
+kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
+This command forwards traffic from port 8080 on your local machine to port 80 on the Istio Ingress-Gateway service in the istio-system namespace.
+
+Describe Pod
+To get detailed information about a specific Pod:
+
+sh
+Copy code
+kubectl describe pod <pod_name> -n <namespace>
+Replace <pod_name> with the name of the Pod and <namespace> with the namespace it belongs to.
+
+Logs
+To view logs from a specific Pod:
+
+sh
+Copy code
+kubectl logs <pod_name> -n <namespace>
+Replace <pod_name> with the name of the Pod and <namespace> with the namespace it belongs to.
+
+Exec
+To execute a command in a specific Pod:
+
+sh
+Copy code
+kubectl exec -it <pod_name> -n <namespace> -- <command>
+Replace <pod_name> with the name of the Pod, <namespace> with the namespace it belongs to, and <command> with the command you want to execute.
+
+Delete Resources
+To delete resources in a specific namespace:
+
+sh
+Copy code
+kubectl delete <resource_type> <resource_name> -n <namespace>
+Replace <resource_type> with the type of resource (e.g., pod, service, deployment), <resource_name> with the name of the resource, and <namespace> with the namespace it belongs to.
+
+css
+Copy code
+
+Feel free to adjust the formatting or content to better suit the style and needs of you
+}
 ### Prerequisites
 
 - `Kubernetes` (around `1.28`) with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
