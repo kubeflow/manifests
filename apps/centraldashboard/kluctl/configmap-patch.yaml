@@ -1,0 +1,18 @@
+# {% set links = load_template('./links.yaml') | from_yaml %}
+
+apiVersion: v1
+data:
+  settings: |-
+    {
+      "DASHBOARD_FORCE_IFRAME": true
+    }
+  links: |-
+    {
+      "menuLinks": {{ links.menuLinks | selectattr("when", "true") | list | to_json }},
+      "externalLinks": {{ links.externalLinks | selectattr("when", "true") | list | to_json }},
+      "quickLinks": {{ links.quickLinks | selectattr("when", "true") | list | to_json }},
+      "documentationItems": {{ links.quickLinks | selectattr("when", "true") | list | to_json }}
+    }
+kind: ConfigMap
+metadata:
+  name: centraldashboard-config

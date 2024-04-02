@@ -11,3 +11,4 @@ components:
 
 patches:
   - path: gateway-principal-patch.yaml
+  - path: configmap-patch.yaml

@@ -1,6 +1,7 @@
 vars:
   - file: config/common-defaults.yaml
   - file: config/auth-defaults.yaml
+  - file: config/apps-defaults.yaml
   - file: config/users-defaults.yaml
   - file: "{{ args.config }}"
     when: args.config

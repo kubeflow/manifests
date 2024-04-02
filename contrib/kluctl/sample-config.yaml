@@ -19,6 +19,12 @@ auth:
       clientID: kubeflow-oidc-authservice
       clientSecret: pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok
 
+apps:
+  jupyter:
+    enabled: true
+  pipelines:
+    enabled: true
+
 profiles:
   - ownerEmail: user@example.com
     profileName: kubeflow-user-example-com
