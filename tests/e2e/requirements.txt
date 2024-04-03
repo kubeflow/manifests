@@ -1,2 +1,0 @@
-kfp==1.8.22
-kubeflow-katib==0.15.0
