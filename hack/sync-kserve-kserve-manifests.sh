@@ -84,4 +84,4 @@ echo "Committing the changes..."
 cd "$MANIFESTS_DIR"
 git add contrib/kserve
 git add README.md
-git commit -m "Update kserve manifests from ${KSERVE_VERSION}" -m "Update kserve/kserve manifests from ${KSERVE_COMMIT}"
+git commit -s -m "Update kserve manifests from ${KSERVE_VERSION}" -m "Update kserve/kserve manifests from ${KSERVE_COMMIT}"

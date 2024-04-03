@@ -66,4 +66,4 @@ echo "Committing the changes..."
 cd $MANIFESTS_DIR
 git add apps
 git add README.md
-git commit -m "Update kubeflow/training-operator manifests from ${COMMIT}"
+git commit -s -m "Update kubeflow/training-operator manifests from ${COMMIT}"

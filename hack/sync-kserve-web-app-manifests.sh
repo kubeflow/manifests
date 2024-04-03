@@ -65,4 +65,4 @@ echo "Committing the changes..."
 cd "$MANIFESTS_DIR"
 git add contrib/kserve/models-web-app
 git add README.md
-git commit -m "Update kserve web app manifests from ${COMMIT}"
+git commit -s -m "Update kserve web app manifests from ${COMMIT}"

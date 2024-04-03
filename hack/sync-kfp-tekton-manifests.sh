@@ -65,4 +65,4 @@ echo "Committing the changes..."
 cd $MANIFESTS_DIR
 git add apps
 git add README.md
-git commit -m "Update kubeflow/kfp-tekton manifests from ${COMMIT}"
+git commit -s -m "Update kubeflow/kfp-tekton manifests from ${COMMIT}"
