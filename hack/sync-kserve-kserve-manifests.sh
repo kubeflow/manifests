@@ -28,7 +28,7 @@ MANIFESTS_DIR=$(dirname "${SCRIPT_DIR}")
 
 echo "Creating branch: ${BRANCH}"
 
-# DEV: Comment out this if when local testing
+# DEV: Comment out this if you are testing locally
 if [ -n "$(git status --porcelain)" ]; then
   # Uncommitted changes
   echo "WARNING: You have uncommitted changes, exiting..."
@@ -41,7 +41,7 @@ then
    exit 1
 fi
 
-# DEV: Comment out this checkout command when local testing
+# DEV: Comment out this checkout command if you are testing locally
 git checkout -b "${BRANCH}"
 
 echo "Checking out in $KSERVE_DIR to $KSERVE_COMMIT..."
@@ -79,9 +79,9 @@ DST_TXT="\[$KSERVE_COMMIT\](https://github.com/kserve/kserve/tree/$KSERVE_COMMIT
 
 sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
 
-# DEV: Comment out these commands when local testing
+# DEV: Comment out these commands if you are testing locally
 echo "Committing the changes..."
 cd "$MANIFESTS_DIR"
 git add contrib/kserve
 git add README.md
-git commit -m "Update kserve manifests from ${KSERVE_VERSION}" -m "Update kserve/kserve manifests from ${KSERVE_COMMIT}"
+git commit -s -m "Update kserve manifests from ${KSERVE_VERSION}" -m "Update kserve/kserve manifests from ${KSERVE_COMMIT}"
