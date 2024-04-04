@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: kubeflow-m2m-oidc-configurator
+  namespace: istio-system
+spec:
+  schedule: '* * * * *'
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 60
+      template:
+        metadata:
+          labels: {}
+        spec:
+          restartPolicy: OnFailure
+          serviceAccountName: kubeflow-m2m-oidc-configurator
+          containers:
+            - image: curlimages/curl
+              name: kubeflow-m2m-oidc-configurator
+              command:
+                - /script.sh
+              envFrom:
+                - configMapRef:
+                    name: kubeflow-m2m-oidc-configurator-envs
+              volumeMounts:
+                - mountPath: /script.sh
+                  name: script
+                  subPath: script.sh
+              resources: {}
+          volumes:
+            - name: script
+              configMap:
+                name: kubeflow-m2m-oidc-configurator-script
+                defaultMode: 0777
+                items:
+                  - key: script.sh
+                    path: script.sh
