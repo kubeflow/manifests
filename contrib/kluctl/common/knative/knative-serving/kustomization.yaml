@@ -1,0 +1,6 @@
+resources:
+  - ../../../../../common/knative/knative-serving/overlays/gateways
+
+
+patches:
+  - path: config-istio-patch.yaml

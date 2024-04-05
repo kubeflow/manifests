@@ -1,0 +1,4 @@
+deployments:
+  - path: knative-serving
+  - path: ../../../../common/knative/knative-eventing/base
+  - path: ../../../../common/istio-1-17/cluster-local-gateway/base

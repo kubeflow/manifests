@@ -3,4 +3,4 @@ deployments:
   - path: ../../../../common/istio-1-17/istio-namespace/base
   # istio CRDs and NS can be deployed in parallel
   - barrier: true
-  - path: ../../../../common/istio-1-17/istio-install/overlays/kluctl
+  - path: istio-install

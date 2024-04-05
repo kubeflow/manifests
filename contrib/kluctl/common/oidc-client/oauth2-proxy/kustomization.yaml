@@ -2,17 +2,17 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- ../../base
+- ../../../../../common/oidc-client/oauth2-proxy/base
 
 components:
-- ../../components/istio-external-auth
+- ../../../../../common/oidc-client/oauth2-proxy/components/istio-external-auth
 {% if auth.oauth2_proxy.m2m.enabled %}
-- ../../components/istio-m2m
+- ../../../../../common/oidc-client/oauth2-proxy/components/istio-m2m
 {% if auth.oauth2_proxy.m2m.selfSigned %}
-- ../../components/allow-unauthenticated-issuer-discovery
-- ../../components/configure-self-signed-kubernetes-oidc-issuer
+- ../../../../../common/oidc-client/oauth2-proxy/components/allow-unauthenticated-issuer-discovery
+- ../../../../../common/oidc-client/oauth2-proxy/components/configure-self-signed-kubernetes-oidc-issuer
 {% else %}
-- ../m2m/component-overwrite-m2m-token-issuer
+- ../../../../../common/oidc-client/oauth2-proxy/overlays/m2m/component-overwrite-m2m-token-issuer
 {% endif %}
 {% endif %}
 

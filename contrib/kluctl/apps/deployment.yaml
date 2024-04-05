@@ -1,33 +1,23 @@
 deployments:
   # Kubeflow Pipelines
-  - path: ../../../apps/pipeline/kluctl
+  - path: pipeline
     when: apps.pipelines.enabled
     tags:
+      - pipeline
       - pipelines
   - barrier: true
   # Katib
-  - path: ../../../apps/katib/kluctl
+  - path: katib
     when: apps.katib.enabled
-    tags:
-      - katib
   # Central Dashboard
-  - path: ../../../apps/centraldashboard/kluctl
+  - path: centraldashboard
     when: apps.centraldashboard.enabled
-    tags:
-      - centraldashboard
   # Admission Webhook
   - path: ../../../apps/admission-webhook/upstream/overlays/cert-manager
     when: apps.admission_webhook.enabled
   # Jupyter Web App
-  - path: ../../../apps/jupyter/jupyter-web-app/kluctl
+  - include: jupyter
     when: apps.jupyter.enabled
-    tags:
-      - jupyter
-  # Notebook Controller
-  - path: ../../../apps/jupyter/notebook-controller/upstream/overlays/kubeflow
-    when: apps.jupyter.enabled
-    tags:
-      - notebook-controller
   # Profiles + KFAM
   - path: ../../../apps/profiles/upstream/overlays/kubeflow
     tags:
@@ -38,20 +28,13 @@ deployments:
     tags:
       - pvc-viewer
   # Volumes Web App
-  - path: ../../../apps/volumes-web-app/kluctl
+  - path: volumes-web-app
     when: apps.volumes.enabled
     tags:
       - volumes-web-app
-  # Tensorboards Controller
-  - path: ../../../apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
+  # Tensorboard
+  - include: tensorboard
     when: apps.tensorboards.enabled
-    tags:
-      - tensorboard
-  # Tensorboard Web App
-  - path: ../../../apps/tensorboard/tensorboards-web-app/kluctl
-    when: apps.tensorboards.enabled
-    tags:
-      - tensorboard
   # Training Operator
   - path: ../../../apps/training-operator/upstream/overlays/kubeflow
     when: apps.training_operator.enabled

@@ -6,7 +6,7 @@ sortOptions:
   order: legacy
 
 resources:
-  - ../upstream/env/cert-manager/platform-agnostic-multi-user
+  - ../../../../apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
 
 patches:
   - path: gateway-namespace-patch.yaml

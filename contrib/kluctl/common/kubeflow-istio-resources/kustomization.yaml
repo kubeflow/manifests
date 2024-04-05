@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: kubeflow
 
 resources:
-- ../../base
+- ../../../../common/istio-1-17/kubeflow-istio-resources/base
 
 patches:
   - path: gateway-selector-patch.yaml
