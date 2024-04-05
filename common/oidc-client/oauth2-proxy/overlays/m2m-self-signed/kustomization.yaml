@@ -6,6 +6,7 @@ resources:
 
 components:
 - ../../components/istio-m2m
+- ../../components/istio-external-auth
 - ../../components/allow-unauthenticated-issuer-discovery
 - ../../components/configure-self-signed-kubernetes-oidc-issuer
 

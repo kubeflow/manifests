@@ -9,7 +9,3 @@ resources:
 # authorizationpolicy.istio-ingressgateway-oauth2-proxy-cloudflare.yaml
 # instead of 
 # authorizationpolicy.istio-ingressgateway-oauth2-proxy.yaml
-
-patches:
-- path: patches/cm.enable-oauth2-proxy.yaml
-- path: patches/deployment.jwt-refresh-interval.yaml

@@ -1,0 +1,6 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+patches:
+- path: patches/cm.enable-oauth2-proxy.yaml
+- path: patches/deployment.jwt-refresh-interval.yaml

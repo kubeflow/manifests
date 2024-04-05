@@ -6,6 +6,7 @@ resources:
 
 components:
 - ../../components/istio-m2m
+- ../../components/istio-external-auth
 - component-overwrite-m2m-token-issuer
 
 configMapGenerator:
