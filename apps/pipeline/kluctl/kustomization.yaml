@@ -1,6 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+# TODO remove this when https://github.com/kubeflow/pipelines/pull/10669 is synced into manifests
+sortOptions:
+  order: legacy
+
 resources:
   - ../upstream/env/cert-manager/platform-agnostic-multi-user
 
