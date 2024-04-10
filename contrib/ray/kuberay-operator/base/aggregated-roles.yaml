@@ -1,7 +1,4 @@
-aggregationRule:
-  clusterRoleSelectors:
-  - matchLabels:
-      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-kuberay-admin: "true"
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -10,6 +7,10 @@ metadata:
     app: kuberay-operator
     app.kubernetes.io/name: kuberay-operator
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        rbac.authorization.kubeflow.org/aggregate-to-kubeflow-kuberay-admin: "true"
 rules: []
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -22,10 +23,18 @@ metadata:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-kuberay-admin: "true"
 rules:
-- apiGroups:
-  - ray.io
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-  resources: ["*"]
+  - apiGroups:
+      - ray.io
+    resources:
+      - "*"
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -36,8 +45,12 @@ metadata:
     app.kubernetes.io/name: kuberay-operator
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
 rules:
-- apiGroups:
-  - ray.io
-  verbs: ["get", "list", "watch"]
-  resources: ["*"]
+  - apiGroups:
+      - ray.io
+    resources:
+      - "*"
+    verbs:
+      - get
+      - list
+      - watch
 ---
