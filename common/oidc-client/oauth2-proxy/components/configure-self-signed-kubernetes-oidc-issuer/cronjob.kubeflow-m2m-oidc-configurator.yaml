@@ -5,6 +5,7 @@ metadata:
   namespace: istio-system
 spec:
   schedule: '* * * * *'
+  concurrencyPolicy: Forbid
   jobTemplate:
     spec:
       ttlSecondsAfterFinished: 60
