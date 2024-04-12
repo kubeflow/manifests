@@ -66,8 +66,8 @@ kubectl wait --timeout=${TIMEOUT} -n kubeflow -l control-plane=kubeflow-training
 
 
 # bash install_mlflow.sh
-# kubectl apply -f dex-configmap.yaml
-# kubectl delete pod `kubectl get pods -n auth | awk '{print $1}' | grep -iv name` -n auth 
+kubectl apply -f dex-configmap.yaml
+kubectl delete pod `kubectl get pods -n auth | awk '{print $1}' | grep -iv name` -n auth 
 
 
 # istioVersion="1.18.2"
@@ -78,6 +78,7 @@ kubectl wait --timeout=${TIMEOUT} -n kubeflow -l control-plane=kubeflow-training
 # # /tmp/istio-1.18.2/bin/istioctl dashboard kiali
 # cd ..
 
+#kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
 
 #kubectl port-forward -n kubeflow svc/minio-service 9000:9000
 #kubectl port-forward -n kubeflow svc/mlflowserver 5000:5000
