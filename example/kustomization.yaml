@@ -74,9 +74,9 @@ resources:
 # Volumes Web App
 - ../apps/volumes-web-app/upstream/overlays/istio
 # Tensorboards Controller
--  ../apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
+- ../apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
 # Tensorboard Web App
--  ../apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
+- ../apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
 # Training Operator
 - ../apps/training-operator/upstream/overlays/kubeflow
 # User namespace
