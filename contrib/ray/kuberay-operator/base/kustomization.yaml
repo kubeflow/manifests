@@ -18,3 +18,4 @@ namespace: kubeflow
 resources:
 - namespace.yaml
 - resources.yaml
+- aggregated-roles.yaml
