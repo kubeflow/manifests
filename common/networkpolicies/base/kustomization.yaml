@@ -14,7 +14,7 @@ resources:
   - metadata-envoy.yaml
   - metadata-grpc-server.yaml
   - minio.yaml
-  - ml-pipeline-ui.yaml 
+  - ml-pipeline-ui.yaml
   - ml-pipeline.yaml
   - poddefaults.yaml
   - pvcviewer-webhook.yaml
