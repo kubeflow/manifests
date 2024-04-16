@@ -113,6 +113,7 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
+  image: kindest/node:v1.28.0
   kubeadmConfigPatches:
   - |
     kind: ClusterConfiguration
@@ -134,7 +135,7 @@ kind get kubeconfig --name kubeflow > ~/.kube/config
 docker login
 
 kubectl create secret generic regcred \
-    --from-file=.dockerconfigjson=/path/to/.docker/config.json \
+    --from-file=.dockerconfigjson=/home/to/.docker/config.json \
     --type=kubernetes.io/dockerconfigjson
 ```
 
