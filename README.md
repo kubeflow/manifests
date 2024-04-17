@@ -100,6 +100,8 @@ The `example` directory contains an example kustomization for the single command
 ### Install with a single command
 
 #### Prerequisites
+- 32 GB of RAM recommended
+- 16 CPU cores recommended
 - `kind`
 - `docker`
 - Linux kernel subsystem changes
