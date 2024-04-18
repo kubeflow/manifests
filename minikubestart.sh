@@ -1,0 +1,1 @@
+minikube start --driver docker --container-runtime docker --gpus all --cpus 6 --memory 32G
