@@ -83,5 +83,5 @@ kubectl delete pod `kubectl get pods -n auth | awk '{print $1}' | grep -iv name`
 #kubectl port-forward -n kubeflow svc/minio-service 9000:9000
 #kubectl port-forward -n kubeflow svc/mlflowserver 5000:5000
 
-kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
+#kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
 # thanhnm39315@sacombank.com QweAsdZxc!23
