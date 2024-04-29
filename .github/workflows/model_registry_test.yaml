@@ -1,0 +1,42 @@
+# If anyone changes or improve the following tests for Model Registry, please 
+# consider reflecting the same changes on https://github.com/kubeflow/model-registry
+name: Deploy and test Kubeflow Model Registry
+on:
+  pull_request:
+    paths:
+      - apps/model-registry/upstream/**
+      - tests/gh-actions/kind-cluster.yaml
+      - tests/gh-actions/install_istio.sh
+
+jobs:
+  build-kfmr:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install KinD
+      run: ./tests/gh-actions/install_kind.sh
+
+    - name: Create KinD Cluster
+      run: kind create cluster --config tests/gh-actions/kind-cluster.yaml
+
+    - name: Install kustomize
+      run: ./tests/gh-actions/install_kustomize.sh
+
+    - name: Install Istio
+      run: ./tests/gh-actions/install_istio.sh
+
+    - name: Create kubeflow namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+    - name: Build & Apply KF Model Registry manifests
+      run: |
+        kustomize build apps/model-registry/upstream/overlays/db | kubectl apply -f -
+        kustomize build apps/model-registry/upstream/options/istio | kubectl apply -f -
+
+    - name: Test KF Model Registry deployment
+      run: |
+        echo "Waiting for all Model Registry Pods to become ready..."
+        kubectl wait --for=condition=available -n kubeflow deployment/model-registry-db --timeout=600s
+        kubectl wait --for=condition=available -n kubeflow deployment/model-registry-deployment --timeout=600s
