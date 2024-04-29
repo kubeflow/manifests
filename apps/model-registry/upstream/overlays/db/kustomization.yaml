@@ -1,0 +1,38 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+
+resources:
+- model-registry-db-pvc.yaml
+- model-registry-db-deployment.yaml
+- model-registry-db-service.yaml
+- ../../base
+
+patchesStrategicMerge:
+- patches/model-registry-deployment.yaml
+
+configMapGenerator:
+- envs:
+  - params.env
+  name: model-registry-db-parameters
+secretGenerator:
+- envs:
+  - secrets.env
+  name: model-registry-db-secrets
+generatorOptions:
+  disableNameSuffixHash: true
+
+
+images:
+- name: mysql
+  newName: mysql
+  newTag: 8.0.3
+
+vars:
+- fieldref:
+    fieldPath: metadata.name
+  name: MLMD_DB_HOST
+  objref:
+    apiVersion: v1
+    kind: Service
+    name: model-registry-db

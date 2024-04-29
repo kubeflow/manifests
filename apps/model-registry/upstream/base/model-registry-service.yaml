@@ -1,0 +1,17 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: metadata
+  name: model-registry-service
+spec:
+  selector:
+    component: model-registry-server
+  type: ClusterIP
+  ports:
+  - port: 8080
+    protocol: TCP
+    name: http-api
+  - port: 9090
+    protocol: TCP
+    name: grpc-api

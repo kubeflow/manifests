@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: model-registry-configmap
+  labels:
+    component: model-registry-server
+data:
+  MODEL_REGISTRY_REST_SERVICE_HOST: "model-registry-service"
+  MODEL_REGISTRY_REST_SERVICE_PORT: "8080"
+  MODEL_REGISTRY_GRPC_SERVICE_HOST: "model-registry-service"
+  MODEL_REGISTRY_GRPC_SERVICE_PORT: "9090"
