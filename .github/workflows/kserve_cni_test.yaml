@@ -1,16 +1,23 @@
-name: Build & Apply KServe manifests in KinD
+name: Build & Apply KServe manifests in KinD, using istio CNI
 on:
   pull_request:
     paths:
-      - contrib/kserve/**
-      - common/knative/**
+      - .github/workflows/kserve_cni_test.yaml
+      - tests/gh-actions/kind-cluster.yaml
+      - tests/gh-actions/install_kind.sh
+      - tests/gh-actions/install_kustomize.sh
+      - common/istio-cni-1-17/**
+      - tests/gh-actions/install_cert_manager.sh
+      - common/cert-manager/**
+      - tests/gh-actions/install_knative-cni.sh
+      - tests/gh-actions/install_kserve.sh
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install KinD
         run: ./tests/gh-actions/install_kind.sh
@@ -24,14 +31,14 @@ jobs:
       - name: Create kubeflow namespace
         run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
-      - name: Install Istio
-        run: ./tests/gh-actions/install_istio.sh
+      - name: Install Istio CNI
+        run: ./tests/gh-actions/install_istio-cni.sh
 
       - name: Install cert-manager
         run: ./tests/gh-actions/install_cert_manager.sh
 
-      - name: Install knative
-        run: ./tests/gh-actions/install_knative.sh
+      - name: Install knative CNI
+        run: ./tests/gh-actions/install_knative-cni.sh
 
       - name: Build & Apply manifests
         run: ./tests/gh-actions/install_kserve.sh
