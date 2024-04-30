@@ -9,79 +9,72 @@
 #
 # Afterwards the developers can submit the PR to the kubeflow/manifests
 # repo, based on that local branch
-
-# Run this script form the root of kubeflow/manifests repository
-# ./hack/sync-kserve-manifests.sh
+# It must be executed directly from its directory
 
 # strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
-set -euo pipefail
+set -euxo pipefail
 IFS=$'\n\t'
 
-CLONE_DIR=${CLONE_DIR:=/tmp}
-KSERVE_DIR="${CLONE_DIR?}/kserve"
-BRANCH=${BRANCH:=sync-kserve-manifests-${KSERVE_COMMIT?}}
-# *_VERSION vars are required only if COMMIT does not match a tag
-KSERVE_VERSION=${KSERVE_VERSION:=${KSERVE_COMMIT?}}
+KSERVE_VERSION="v0.12.1"
+COMMIT="0.12.1" # You can use tags as well
+SRC_DIR=${SRC_DIR:=/tmp/kserve}
+BRANCH=${BRANCH:=sync-kserve-manifests-${COMMIT?}}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-MANIFESTS_DIR=$(dirname "${SCRIPT_DIR}")
+MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
 
 echo "Creating branch: ${BRANCH}"
 
-# DEV: Comment out this if you are testing locally
 if [ -n "$(git status --porcelain)" ]; then
-  # Uncommitted changes
-  echo "WARNING: You have uncommitted changes, exiting..."
-  exit 1
+  echo "WARNING: You have uncommitted changes"
 fi
-
-if [ "$(git branch --list "${BRANCH}")" ]
+if [ `git branch --list $BRANCH` ]
 then
-   echo "WARNING: Branch ${BRANCH} already exists. Exiting..."
-   exit 1
+   echo "WARNING: Branch $BRANCH already exists."
 fi
 
-# DEV: Comment out this checkout command if you are testing locally
-git checkout -b "${BRANCH}"
+# Create the branch in the manifests repository
+if ! git show-ref --verify --quiet refs/heads/$BRANCH; then
+    git checkout -b $BRANCH
+else
+    echo "Branch $BRANCH already exists."
+fi
+echo "Checking out in $SRC_DIR to $COMMIT..."
 
-echo "Checking out in $KSERVE_DIR to $KSERVE_COMMIT..."
-pushd $CLONE_DIR
-    if [ ! -d "$KSERVE_DIR" ]
-    then
-        git clone https://github.com/kserve/kserve.git && cd kserve
-        git checkout "${KSERVE_COMMIT}"
-    else
-        echo "WARNING: ${KSERVE_DIR} directory already exists. Exiting..."
-        exit 1
-    fi
-popd
+# Checkout the kserve repository
+mkdir -p $SRC_DIR
+cd $SRC_DIR/kserve
+if [ ! -d "kserve/.git" ]; then
+    git clone https://github.com/kserve/kserve.git
+fi
+if ! git rev-parse --verify --quiet $COMMIT; then
+    git checkout -b $COMMIT
+else
+    git checkout $COMMIT
+fi
+
+if [ -n "$(git status --porcelain)" ]; then
+  echo "WARNING: You have uncommitted changes"
+fi
 
 echo "Copying kserve manifests..."
-SRC_MANIFEST_PATH="$KSERVE_DIR"/install/"$KSERVE_VERSION"
-if [ ! -d "$SRC_MANIFEST_PATH" ]
-then
-    echo "Directory $SRC_MANIFEST_PATH DOES NOT exists."
-    exit 1
-fi
-
 DST_DIR=$MANIFESTS_DIR/contrib/kserve/kserve
-pushd "$DST_DIR"
-    rm -rf kserve*
-popd
-cp "$SRC_MANIFEST_PATH"/* "$DST_DIR" -r
+if [ -d "$DST_DIR" ]; then
+    rm -rf "$DST_DIR"/kserve*
+fi
+cp $SRC_DIR/kserve/install/"$KSERVE_VERSION"/* $DST_DIR -r
 
 
-echo "Successfully copied kserve manifests."
+echo "Successfully copied all manifests."
 
 echo "Updating README..."
 SRC_TXT="\[.*\](https://github.com/kserve/kserve/tree/.*)"
-DST_TXT="\[$KSERVE_COMMIT\](https://github.com/kserve/kserve/tree/$KSERVE_COMMIT/install/$KSERVE_VERSION)"
+DST_TXT="\[$COMMIT\](https://github.com/kserve/kserve/tree/$COMMIT/install/$KSERVE_VERSION)"
 
 sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
 
-# DEV: Comment out these commands if you are testing locally
 echo "Committing the changes..."
 cd "$MANIFESTS_DIR"
 git add contrib/kserve
 git add README.md
-git commit -s -m "Update kserve manifests from ${KSERVE_VERSION}" -m "Update kserve/kserve manifests from ${KSERVE_COMMIT}"
+git commit -s -m "Update kserve manifests from ${KSERVE_VERSION}" -m "Update kserve/kserve manifests from ${COMMIT}"

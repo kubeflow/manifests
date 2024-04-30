@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
   # Install Kserve in kubeflow namespace
   - kserve_kubeflow.yaml
-  - kserve-runtimes.yaml
+  - kserve-cluster-resources.yaml
