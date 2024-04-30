@@ -43,15 +43,17 @@ echo "Checking out in $SRC_DIR to $COMMIT..."
 
 # Checkout the kserve repository
 mkdir -p $SRC_DIR
-cd $SRC_DIR/kserve
+cd $SRC_DIR
 if [ ! -d "kserve/.git" ]; then
     git clone https://github.com/kserve/kserve.git
 fi
+cd $SRC_DIR/kserve
 if ! git rev-parse --verify --quiet $COMMIT; then
     git checkout -b $COMMIT
 else
     git checkout $COMMIT
 fi
+
 
 if [ -n "$(git status --porcelain)" ]; then
   echo "WARNING: You have uncommitted changes"

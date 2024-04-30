@@ -9,11 +9,13 @@
 #
 # Afterwards the developers can submit the PR to the kubeflow/manifests
 # repo, based on that local branch
+# It must be executed directly from its directory
 
 # strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
-set -euo pipefail
+set -euxo pipefail
 IFS=$'\n\t'
 
+COMMIT="v0.17.0-rc.0" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kubeflow-katib}
 BRANCH=${BRANCH:=sync-kubeflow-katib-manifests-${COMMIT?}}
 
@@ -22,46 +24,56 @@ MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
 
 echo "Creating branch: ${BRANCH}"
 
-# DEV: Comment out this if you are testing locally
 if [ -n "$(git status --porcelain)" ]; then
-  # Uncommitted changes
-  echo "WARNING: You have uncommitted changes, exiting..."
-  exit 1
+  echo "WARNING: You have uncommitted changes"
 fi
-
 if [ `git branch --list $BRANCH` ]
 then
-   echo "WARNING: Branch $BRANCH already exists. Exiting..."
-   exit 1
+   echo "WARNING: Branch $BRANCH already exists."
 fi
 
-# DEV: Comment out this checkout command if you are testing locally
-git checkout -b $BRANCH
-
+# Create the branch in the manifests repository
+if ! git show-ref --verify --quiet refs/heads/$BRANCH; then
+    git checkout -b $BRANCH
+else
+    echo "Branch $BRANCH already exists."
+fi
 echo "Checking out in $SRC_DIR to $COMMIT..."
+
+# Checkout the KFP repository
+mkdir -p $SRC_DIR
 cd $SRC_DIR
-if [ -n "$(git status --porcelain)" ]; then
-  # Uncommitted changes
-  echo "WARNING: You have uncommitted changes, exiting..."
-  exit 1
+if [ ! -d "katib/.git" ]; then
+    git clone https://github.com/kubeflow/katib.git
 fi
-git checkout $COMMIT
+cd $SRC_DIR/katib
+if ! git rev-parse --verify --quiet $COMMIT; then
+    git checkout -b $COMMIT
+else
+    git checkout $COMMIT
+fi
+
+
+if [ -n "$(git status --porcelain)" ]; then
+  echo "WARNING: You have uncommitted changes"
+fi
 
 echo "Copying katib manifests..."
 DST_DIR=$MANIFESTS_DIR/apps/katib/upstream
-rm -r $DST_DIR
-cp $SRC_DIR/manifests/v1beta1 $DST_DIR -r
+if [ -d "$DST_DIR" ]; then
+    rm -r "$DST_DIR"
+fi
+cp $SRC_DIR/katib/manifests/v1beta1 $DST_DIR -r
 
 
 echo "Successfully copied all manifests."
 
 echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kubeflow/katib/tree/.*/manifests/v1beta1)"
-DST_TXT="\[$COMMIT\](https://github.com/kubeflow/katib/tree/$COMMIT/manifests/v1beta1)"
+SRC_TXT="\[.*\](https://github.com/kubeflow/katib/tree/.*/manifests/kustomize)"
+DST_TXT="\[$COMMIT\](https://github.com/kubeflow/katib/tree/$COMMIT/manifests/kustomize)"
 
 sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
 
-# DEV: Comment out these commands if you are testing locally
 echo "Committing the changes..."
 cd $MANIFESTS_DIR
 git add apps
