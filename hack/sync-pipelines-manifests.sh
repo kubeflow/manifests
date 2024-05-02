@@ -15,7 +15,7 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="2.1.0" # You can use tags as well
+COMMIT="2.2.0" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kubeflow-pipelines}
 BRANCH=${BRANCH:=sync-kubeflow-pipelines-manifests-${COMMIT?}}
 
