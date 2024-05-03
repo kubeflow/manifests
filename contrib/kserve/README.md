@@ -10,7 +10,7 @@ It encapsulates the complexity of autoscaling, networking, health checking, and 
 
 For more details, visit the [KServe website](https://kserve.github.io/website/).
 
-![KServe](assets/kserve.png)
+![KServe](assets/kserve_new.png)
 
 _Since 0.7 [KFServing is rebranded to KServe](https://blog.kubeflow.org/release/official/2021/09/27/kfserving-transition.html), we still support the RTS release
 [0.6.x](https://github.com/kserve/kserve/tree/release-0.6), please refer to corresponding release branch for docs_.
