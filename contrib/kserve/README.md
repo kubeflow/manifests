@@ -4,7 +4,7 @@
 [![Releases](https://img.shields.io/github/release-pre/kserve/kserve.svg?sort=semver)](https://github.com/kserve/kserve/releases)
 [![LICENSE](https://img.shields.io/github/license/kserve/kserve.svg)](https://github.com/kserve/kserve/blob/master/LICENSE)
 
-KServe provides a Kubernetes [Custom Resource Definition](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) for serving machine learning (ML) models on arbitrary frameworks. It aims to solve production model serving use cases by providing performant, high abstraction interfaces for common ML frameworks like Tensorflow, XGBoost, ScikitLearn, PyTorch, and ONNX.
+KServe provides a Kubernetes [Custom Resource Definition](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) for serving predictive and generative machine learning (ML) models. It aims to solve production model serving use cases by providing high abstraction interfaces for Tensorflow, XGBoost, ScikitLearn, PyTorch, Huggingface Transformer/LLM models using standardized data plane protocols.
 
 It encapsulates the complexity of autoscaling, networking, health checking, and server configuration to bring cutting edge serving features like GPU Autoscaling, Scale to Zero, and Canary Rollouts to your ML deployments. It enables a simple, pluggable, and complete story for Production ML Serving including prediction, pre-processing, post-processing and explainability. KServe is being [used across various organizations.](https://kserve.github.io/website/master/community/adopters/)
 
@@ -12,12 +12,11 @@ For more details, visit the [KServe website](https://kserve.github.io/website/).
 
 ![KServe](assets/kserve_new.png)
 
-_Since 0.7 [KFServing is rebranded to KServe](https://blog.kubeflow.org/release/official/2021/09/27/kfserving-transition.html), we still support the RTS release
-[0.6.x](https://github.com/kserve/kserve/tree/release-0.6), please refer to corresponding release branch for docs_.
+*[KFServing has been rebranded to KServe since v0.7](https://blog.kubeflow.org/release/official/2021/09/27/kfserving-transition.html).*
 
 ## Why KServe?
-- KServe is a standard, cloud agnostic **Model Inference Platform** on Kubernetes, built for highly scalable use cases.
-- Provides performant, **standardized inference protocol** across ML frameworks.
+- KServe is a standard, cloud agnostic **Model Inference Platform** for serving predictive and generative AI models on Kubernetes, built for highly scalable use cases.
+- Provides performant, **standardized inference protocol** across ML frameworks including OpenAI specification for generative models.
 - Support modern **serverless inference workload** with **request based autoscaling including scale-to-zero** on **CPU and GPU**.
 - Provides **high scalability, density packing and intelligent routing** using **ModelMesh**.
 - **Simple and pluggable production serving** for **inference**, **pre/post processing**, **monitoring** and **explainability**.
@@ -46,7 +45,7 @@ For upgrading see [UPGRADE.md](UPGRADE.md)
 ### Testing Kserve
 #### Prerequisite
 
-1. Install Python >= 3.7
+1. Install Python >= 3.8
 2. Install requirements
    ```sh
    pip install -r tests/requirements.txt
@@ -62,15 +61,15 @@ For upgrading see [UPGRADE.md](UPGRADE.md)
    ```
 5. Install Istio
    ```sh
-   kubectl apply -k ../../common/istio-1-16/istio-crds/base
-   kubectl apply -k ../../common/istio-1-16/istio-namespace/base
-   kubectl apply -k ../../common/istio-1-16/istio-install/base
+   kubectl apply -k ../../common/istio-1-17/istio-crds/base
+   kubectl apply -k ../../common/istio-1-17/istio-namespace/base
+   kubectl apply -k ../../common/istio-1-17/istio-install/base
    ```
 6. Install knative
    ```sh
    kubectl apply -k ../../common/knative/knative-serving/overlays/gateways
-   kubectl apply -k ../../common/istio-1-16/cluster-local-gateway/base
-   kubectl apply -k ../../common/istio-1-16/kubeflow-istio-resources/base
+   kubectl apply -k ../../common/istio-1-17/cluster-local-gateway/base
+   kubectl apply -k ../../common/istio-1-17/kubeflow-istio-resources/base
    ```
 7. Install kserve
    ```sh
