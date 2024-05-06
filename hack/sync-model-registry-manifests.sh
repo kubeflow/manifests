@@ -9,11 +9,13 @@
 #
 # Afterwards the developers can submit the PR to the kubeflow/manifests
 # repo, based on that local branch
+# It must be executed directly from its directory
 
 # strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
-set -euo pipefail
+set -euxo pipefail
 IFS=$'\n\t'
 
+COMMIT="v0.2.0-alpha" # You can use tags as well
 DEV_MODE=${DEV_MODE:=false}
 SRC_DIR=${SRC_DIR:=/tmp/kubeflow-model-registry}
 BRANCH=${BRANCH:=sync-kubeflow-model-registry-manifests-${COMMIT?}}
@@ -21,43 +23,47 @@ BRANCH=${BRANCH:=sync-kubeflow-model-registry-manifests-${COMMIT?}}
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
 
-if [ "$DEV_MODE" != "false" ]; then
-    echo "WARNING: Dev mode enabled..."
-fi
-
 echo "Creating branch: ${BRANCH}"
 
-# DEV: Comment out this if you are testing locally
 if [ -n "$(git status --porcelain)" ]; then
-  # Uncommitted changes
-  echo "WARNING: You have uncommitted changes, exiting..."
-  exit 1
+  echo "WARNING: You have uncommitted changes"
 fi
 
 if [ `git branch --list $BRANCH` ]
 then
-   echo "WARNING: Branch $BRANCH already exists. Exiting..."
-   exit 1
+   echo "WARNING: Branch $BRANCH already exists."
 fi
 
-# DEV: If you are testing locally set DEV_MODE=true to skip this step
-if [ "$DEV_MODE" = "false" ]; then
+# Create the branch in the manifests repository
+if ! git show-ref --verify --quiet refs/heads/$BRANCH; then
     git checkout -b $BRANCH
+else
+    echo "Branch $BRANCH already exists."
+fi
+echo "Checking out in $SRC_DIR to $COMMIT..."
+
+# Checkout the Model Registry repository
+mkdir -p $SRC_DIR
+cd $SRC_DIR
+if [ ! -d "model-registry/.git" ]; then
+    git clone https://github.com/kubeflow/model-registry.git
+fi
+cd $SRC_DIR/model-registry
+if ! git rev-parse --verify --quiet $COMMIT; then
+    git checkout -b $COMMIT
+else
+    git checkout $COMMIT
 fi
 
-echo "Checking out in $SRC_DIR to $COMMIT..."
-cd $SRC_DIR
 if [ -n "$(git status --porcelain)" ]; then
-  # Uncommitted changes
-  echo "WARNING: You have uncommitted changes, exiting..."
-  exit 1
+  echo "WARNING: You have uncommitted changes"
 fi
-git checkout $COMMIT
 
 echo "Copying model-registry manifests..."
 DST_DIR=$MANIFESTS_DIR/apps/model-registry/upstream
-rm -rf $DST_DIR
-mkdir -p $DST_DIR
+if [ -d "$DST_DIR" ]; then
+    rm -r "$DST_DIR"
+fi
 cp $SRC_DIR/manifests/kustomize/* $DST_DIR -r
 
 echo "Successfully copied all manifests."
@@ -68,11 +74,8 @@ DST_TXT="\[$COMMIT\](https://github.com/kubeflow/model-registry/tree/$COMMIT/man
 
 sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
 
-# DEV: If you are testing locally set DEV_MODE=true to skip this step
-if [ "$DEV_MODE" = "false" ]; then
-    echo "Committing the changes..."
-    cd $MANIFESTS_DIR
-    git add apps
-    git add README.md
-    git commit -s -m "Update kubeflow/model-registry manifests from ${COMMIT}"
-fi
+echo "Committing the changes..."
+cd $MANIFESTS_DIR
+git add apps
+git add README.md
+git commit -s -m "Update kubeflow/model-registry manifests from ${COMMIT}"
