@@ -1,17 +1,23 @@
-name: Build & Apply Dex manifests in KinD
+name: Build & Apply Seldon manifests in KinD
 on:
   pull_request:
     paths:
-      - common/dex/base/**
+      - .github/workflows/seldon_test.yaml
       - tests/gh-actions/kind-cluster.yaml
+      - contrib/seldon/**
+      - tests/gh-actions/install_kind.sh
+      - tests/gh-actions/install_kustomize.sh
       - tests/gh-actions/install_istio.sh
+      - common/istio*/**
+      - tests/gh-actions/install_cert_manager.sh
+      - common/cert-manager/**
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Install KinD
       run: ./tests/gh-actions/install_kind.sh
@@ -25,8 +31,10 @@ jobs:
     - name: Install Istio
       run: ./tests/gh-actions/install_istio.sh
 
+    - name: Install cert-manager
+      run: ./tests/gh-actions/install_cert_manager.sh
+
     - name: Build & Apply manifests
       run: |
-        cd common/dex
-        kustomize build overlays/istio | kubectl apply -f -
-        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
+        cd contrib/seldon/
+        make test

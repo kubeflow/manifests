@@ -6,7 +6,9 @@ on:
     paths:
       - apps/model-registry/upstream/**
       - tests/gh-actions/kind-cluster.yaml
+      - tests/gh-actions/install_kustomize.sh
       - tests/gh-actions/install_istio.sh
+      - common/istio*/**
 
 jobs:
   build-kfmr:
