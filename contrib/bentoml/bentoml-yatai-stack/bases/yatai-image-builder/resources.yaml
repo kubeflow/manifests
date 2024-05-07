@@ -61,6 +61,23 @@ spec:
                   type: object
                   x-kubernetes-map-type: atomic
                 type: array
+              models:
+                items:
+                  properties:
+                    downloadUrl:
+                      type: string
+                    size:
+                      anyOf:
+                      - type: integer
+                      - type: string
+                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                      x-kubernetes-int-or-string: true
+                    tag:
+                      type: string
+                  required:
+                  - tag
+                  type: object
+                type: array
               runners:
                 items:
                   properties:
@@ -76,6 +93,8 @@ spec:
                   - name
                   type: object
                 type: array
+              serviceName:
+                type: string
               tag:
                 type: string
             required:
@@ -160,6 +179,10 @@ spec:
             properties:
               bentoTag:
                 type: string
+              buildArgs:
+                items:
+                  type: string
+                type: array
               context:
                 properties:
                   bentomlVersion:
@@ -800,6 +823,8 @@ spec:
                     additionalProperties:
                       type: string
                     type: object
+                  priorityClassName:
+                    type: string
                   schedulerName:
                     type: string
                   serviceAccountName:
@@ -899,6 +924,12 @@ spec:
                   properties:
                     downloadUrl:
                       type: string
+                    size:
+                      anyOf:
+                      - type: integer
+                      - type: string
+                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                      x-kubernetes-int-or-string: true
                     tag:
                       type: string
                   required:
@@ -922,6 +953,8 @@ spec:
                   - name
                   type: object
                 type: array
+              serviceName:
+                type: string
             required:
             - bentoTag
             type: object
@@ -1481,10 +1514,10 @@ metadata:
   name: yatai-image-builder
   namespace: kubeflow
   labels:
-    helm.sh/chart: yatai-image-builder-1.1.3
+    helm.sh/chart: yatai-image-builder-1.2.28
     app.kubernetes.io/name: yatai-image-builder
     app.kubernetes.io/instance: yatai-image-builder
-    app.kubernetes.io/version: "1.1.3"
+    app.kubernetes.io/version: "1.2.28"
     app.kubernetes.io/managed-by: Helm
 ---
 # Source: yatai-image-builder/templates/secret-env.yaml
@@ -1494,17 +1527,17 @@ metadata:
   name: yatai-image-builder-env
   namespace: kubeflow
   labels:
-    helm.sh/chart: yatai-image-builder-1.1.3
+    helm.sh/chart: yatai-image-builder-1.2.28
     app.kubernetes.io/name: yatai-image-builder
     app.kubernetes.io/instance: yatai-image-builder
-    app.kubernetes.io/version: "1.1.3"
+    app.kubernetes.io/version: "1.2.28"
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 stringData:
   YATAI_IMAGE_BUILDER_SHARED_ENV_SECRET_NAME: yatai-image-builder-shared-env
 
   YATAI_SYSTEM_NAMESPACE: kubeflow
-  YATAI_API_TOKEN: "SqXTUo0q8nqRtWQn"
+  YATAI_API_TOKEN: "L0d0yHgKkzFNHv7l"
 
   DOCKER_REGISTRY_SERVER: "127.0.0.1:5000"
   DOCKER_REGISTRY_IN_CLUSTER_SERVER: "docker-registry.kubeflow.svc.cluster.local:5000"
@@ -1514,11 +1547,23 @@ stringData:
   DOCKER_REGISTRY_BENTO_REPOSITORY_NAME: "yatai-bentos"
 
   INTERNAL_IMAGES_BENTO_DOWNLOADER: "quay.io/bentoml/bento-downloader:0.0.1"
-  INTERNAL_IMAGES_KANIKO: "quay.io/bentoml/kaniko:1.9.1"
+  INTERNAL_IMAGES_KANIKO: "quay.io/bentoml/kaniko:debug"
   INTERNAL_IMAGES_BUILDKIT: "quay.io/bentoml/buildkit:master"
   INTERNAL_IMAGES_BUILDKIT_ROOTLESS: "quay.io/bentoml/buildkit:master-rootless"
 
   BENTO_IMAGE_BUILD_ENGINE: "kaniko"
+
+  DISABLE_YATAI_COMPONENT_REGISTRATION: "false"
+
+  ADD_NAMESPACE_PREFIX_TO_IMAGE_NAME: "false"
+
+  BUILDKIT_S3_CACHE_ENABLED: "false"
+  BUILDKIT_S3_CACHE_REGION: "us-west-1"
+  BUILDKIT_S3_CACHE_BUCKET: "yatai-image-builder-cache"
+
+  ESTARGZ_ENABLED: "false"
+
+  KANIKO_CACHE_REPO: ""
 ---
 # Source: yatai-image-builder/templates/secret-shared-env.yaml
 apiVersion: v1
@@ -1527,10 +1572,10 @@ metadata:
   name: yatai-image-builder-shared-env
   namespace: kubeflow
   labels:
-    helm.sh/chart: yatai-image-builder-1.1.3
+    helm.sh/chart: yatai-image-builder-1.2.28
     app.kubernetes.io/name: yatai-image-builder
     app.kubernetes.io/instance: yatai-image-builder
-    app.kubernetes.io/version: "1.1.3"
+    app.kubernetes.io/version: "1.2.28"
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 stringData:
@@ -1543,10 +1588,10 @@ metadata:
   name: yatai-common-env
   namespace: kubeflow
   labels:
-    helm.sh/chart: yatai-image-builder-1.1.3
+    helm.sh/chart: yatai-image-builder-1.2.28
     app.kubernetes.io/name: yatai-image-builder
     app.kubernetes.io/instance: yatai-image-builder
-    app.kubernetes.io/version: "1.1.3"
+    app.kubernetes.io/version: "1.2.28"
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 stringData:
@@ -1559,6 +1604,25 @@ kind: ClusterRole
 metadata:
   name: yatai-with-bento-request-kubeflow
 rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  resourceNames:
+  - yatai-image-builder-aws-access-key
+  verbs:
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
   - resources.yatai.ai
   resources:
@@ -1654,6 +1718,30 @@ rules:
   - bentoes/status
   verbs:
   - update
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - "batch"
+  resources:
+  - jobs
+  verbs:
+  - create
+  - delete
+  - update
+  - patch
+  - get
+  - list
+  - watch
 - apiGroups:
   - ""
   resources:
@@ -2018,10 +2106,10 @@ metadata:
   name: yatai-image-builder-webhook-service
   namespace: kubeflow
   labels:
-    helm.sh/chart: yatai-image-builder-1.1.3
+    helm.sh/chart: yatai-image-builder-1.2.28
     app.kubernetes.io/name: yatai-image-builder
     app.kubernetes.io/instance: yatai-image-builder
-    app.kubernetes.io/version: "1.1.3"
+    app.kubernetes.io/version: "1.2.28"
     app.kubernetes.io/managed-by: Helm
 spec:
   ports:
@@ -2038,11 +2126,13 @@ kind: Deployment
 metadata:
   name: yatai-image-builder
   namespace: kubeflow
+  annotations:
+    rollme: "8YbnM"
   labels:
-    helm.sh/chart: yatai-image-builder-1.1.3
+    helm.sh/chart: yatai-image-builder-1.2.28
     app.kubernetes.io/name: yatai-image-builder
     app.kubernetes.io/instance: yatai-image-builder
-    app.kubernetes.io/version: "1.1.3"
+    app.kubernetes.io/version: "1.2.28"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -2072,12 +2162,14 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: JUICEFS_STORAGE_CLASS_NAME
+              value: "juicefs-sc"
           envFrom:
             - secretRef:
                 name: yatai-image-builder-env
           securityContext:
             {}
-          image: "quay.io/bentoml/yatai-image-builder:1.1.3"
+          image: "quay.io/bentoml/yatai-image-builder:1.2.28"
           imagePullPolicy: IfNotPresent
 
           ports:
@@ -2127,10 +2219,10 @@ metadata:
   name: yatai-image-builder-serving-cert
   namespace: kubeflow
   labels:
-    helm.sh/chart: yatai-image-builder-1.1.3
+    helm.sh/chart: yatai-image-builder-1.2.28
     app.kubernetes.io/name: yatai-image-builder
     app.kubernetes.io/instance: yatai-image-builder
-    app.kubernetes.io/version: "1.1.3"
+    app.kubernetes.io/version: "1.2.28"
     app.kubernetes.io/managed-by: Helm
 spec:
   dnsNames:
@@ -2148,10 +2240,10 @@ metadata:
   name: yatai-image-builder-selfsigned-issuer
   namespace: kubeflow
   labels:
-    helm.sh/chart: yatai-image-builder-1.1.3
+    helm.sh/chart: yatai-image-builder-1.2.28
     app.kubernetes.io/name: yatai-image-builder
     app.kubernetes.io/instance: yatai-image-builder
-    app.kubernetes.io/version: "1.1.3"
+    app.kubernetes.io/version: "1.2.28"
     app.kubernetes.io/managed-by: Helm
 spec:
   selfSigned: {}
