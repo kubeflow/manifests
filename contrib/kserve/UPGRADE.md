@@ -16,7 +16,7 @@
 1. Set the desired version to upgrade.
 
    ```sh
-   export KSERVE_VERSION=0.10.0-rc0
+   export KSERVE_VERSION=0.12.1
    ```
 
 2. Rebuild the manifests.
