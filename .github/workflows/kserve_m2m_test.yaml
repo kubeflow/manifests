@@ -2,17 +2,26 @@ name: Deploy and test KServe with m2m auth in KinD
 on:
   pull_request:
     paths:
+      - .github/workflows/kserve_m2m_test.yaml
+      - tests/gh-actions/kind-cluster.yaml
+      - tests/gh-actions/install_kind.sh
+      - tests/gh-actions/install_kustomize.sh
       - contrib/kserve/**
-      - common/knative/**
       - common/oidc-client/oauth2-proxy/**
       - common/istio*/**
+      - tests/gh-actions/install_istio_with_ext_auth.sh*
+      - tests/gh-actions/install_cert_manager.sh
+      - common/cert-manager/**
+      - tests/gh-actions/install_knative.sh
+      - common/knative/**
+      - tests/gh-actions/install_kserve.sh
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install KinD
         run: ./tests/gh-actions/install_kind.sh
