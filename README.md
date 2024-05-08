@@ -21,20 +21,17 @@
 
 This repo is owned by the [Manifests Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md).
 If you are a contributor authoring or editing the packages please see [Best Practices](./docs/KustomizeBestPractices.md).
+Our Slack channel is wg-manifests which you can join here https://www.kubeflow.org/docs/about/community/. You can also find our biweekly meetings there as well.
 
-The Kubeflow Manifests repository is organized under three (3) main directories, which include manifests for installing:
+The Kubeflow Manifests repository is organized under three main directories, which include manifests for installing:
 
 | Directory | Purpose |
 | - | - |
 | `apps` | Kubeflow's official components, as maintained by the respective Kubeflow WGs |
 | `common` | Common services, as maintained by the Manifests WG |
-| `contrib` | 3rd party contributed applications, which are maintained externally and are not part of a Kubeflow WG |
+| `contrib` | 3rd party contributed applications (e.g. Ray, Kserve), which are maintained externally and are not part of a Kubeflow WG |
 
-The `distributions` directory contains manifests for specific, opinionated distributions of Kubeflow, and will be phased out during the 1.4 release, [since going forward distributions will maintain their manifests on their respective external repositories](https://github.com/kubeflow/community/blob/master/proposals/kubeflow-distributions.md).
-
-The `docs`, `hack`, and `tests` directories will also be gradually phased out.
-
-Starting from Kubeflow 1.3, all components should be deployable using `kustomize` only. Any automation tooling for deployment on top of the manifests should be maintained externally by distribution owners.
+All components are deployable with `kustomize`. Any automation tooling for deployment on top of the manifests should be maintained externally by distribution owners.
 
 ## Kubeflow components versions
 
@@ -54,7 +51,7 @@ This repo periodically syncs all official Kubeflow components from their respect
 | Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/crud-web-apps/jupyter/manifests) |
 | Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/crud-web-apps/tensorboards/manifests) |
 | Volumes Web App | apps/volumes-web-app/upstream | [v1.8.0](https://github.com/kubeflow/kubeflow/tree/v1.8.0/components/crud-web-apps/volumes/manifests) |
-| Katib | apps/katib/upstream | [v0.16.0](https://github.com/kubeflow/katib/tree/v0.16.0/manifests/v1beta1) |
+| Katib | apps/katib/upstream | [v0.17.0-rc.0](https://github.com/kubeflow/katib/tree/v0.17.0-rc.0/manifests/v1beta1) |
 | KServe | contrib/kserve/kserve | [0.12.1](https://github.com/kserve/kserve/tree/0.12.1/install/v0.12.1) |
 | KServe Models Web App | contrib/kserve/models-web-app | [v0.10.0](https://github.com/kserve/models-web-app/tree/v0.10.0/config) |
 | Kubeflow Pipelines | apps/pipeline/upstream | [2.2.0](https://github.com/kubeflow/pipelines/tree/2.2.0/manifests/kustomize) |
@@ -68,7 +65,7 @@ used from the different projects of Kubeflow:
 | - | - | - |
 | Istio | common/istio-1-17 | [1.17.3](https://github.com/istio/istio/releases/tag/1.17.3) |
 | Knative | common/knative/knative-serving <br /> common/knative/knative-eventing | [1.10.2](https://github.com/knative/serving/releases/tag/knative-v1.10.2) <br /> [1.10.1](https://github.com/knative/eventing/releases/tag/knative-v1.10.1) |
-| Cert Manager | common/cert-manager | [1.12.2](https://github.com/cert-manager/cert-manager/releases/tag/v1.12.2) |
+| Cert Manager | common/cert-manager | [1.14.5](https://github.com/cert-manager/cert-manager/releases/tag/v1.12.2) |
 
 ## Installation
 
@@ -105,7 +102,7 @@ The `example` directory contains an example kustomization for the single command
 - 16 CPU cores recommended
 - `kind`
 - `docker`
-- Linux kernel subsystem changes
+- Linux kernel subsystem changes to support many pods
     - `sudo sysctl fs.inotify.max_user_instances=2280`
     - `sudo sysctl fs.inotify.max_user_watches=1255360`
 
