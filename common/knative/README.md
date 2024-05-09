@@ -5,7 +5,7 @@
 The manifests for Knative Serving are based off the following:
 
   - [Knative serving (v1.10.2)](https://github.com/knative/serving/releases/tag/knative-v1.10.2)
-  - [Knative ingress controller for Istio (v1.10.1)](https://github.com/knative-sandbox/net-istio/releases/tag/knative-v1.10.1)
+  - [Knative ingress controller for Istio (v1.10.1)](https://github.com/knative-extensions/net-istio/releases/tag/knative-v1.10.1)
 
 1. Download the knative-serving manifests with the following commands:
 
@@ -13,7 +13,7 @@ The manifests for Knative Serving are based off the following:
     # No need to install serving-crds.
     # See: https://github.com/knative/serving/issues/9945
     wget -O knative-serving/base/upstream/serving-core.yaml 'https://github.com/knative/serving/releases/download/knative-v1.10.2/serving-core.yaml'
-    wget -O knative-serving/base/upstream/net-istio.yaml 'https://github.com/knative-sandbox/net-istio/releases/download/knative-v1.10.1/net-istio.yaml'
+    wget -O knative-serving/base/upstream/net-istio.yaml 'https://github.com/knative-extensions/net-istio/releases/download/knative-v1.10.1/net-istio.yaml'
     wget -O knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml 'https://github.com/knative/serving/releases/download/knative-v1.10.2/serving-post-install-jobs.yaml'
     ```
 
