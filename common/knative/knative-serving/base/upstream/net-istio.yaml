@@ -5,7 +5,7 @@ metadata:
   labels:
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.3"
     serving.knative.dev/controller: "true"
     networking.knative.dev/ingress-provider: istio
 rules:
@@ -21,7 +21,7 @@ metadata:
   labels:
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.3"
     networking.knative.dev/ingress-provider: istio
 spec:
   selector:
@@ -42,7 +42,7 @@ metadata:
   labels:
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.3"
     networking.knative.dev/ingress-provider: istio
 spec:
   selector:
@@ -63,7 +63,7 @@ metadata:
   labels:
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.3"
     networking.knative.dev/ingress-provider: istio
     experimental.istio.io/disable-gateway-port-translation: "true"
 spec:
@@ -83,7 +83,7 @@ metadata:
   labels:
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.3"
     networking.knative.dev/ingress-provider: istio
 data:
   _example: |
@@ -124,11 +124,6 @@ data:
     # will search for the local gateway in the serving system namespace
     # `knative-serving`
     local-gateway.knative-serving.knative-local-gateway: "knative-local-gateway.istio-system.svc.cluster.local"
-
-    # If true, knative will use the Istio VirtualService's status to determine
-    # endpoint readiness. Otherwise, probe as usual.
-    # NOTE: This feature is currently experimental and should not be used in production.
-    enable-virtualservice-status: "false"
 ---
 apiVersion: "security.istio.io/v1beta1"
 kind: "PeerAuthentication"
@@ -138,7 +133,7 @@ metadata:
   labels:
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.3"
     networking.knative.dev/ingress-provider: istio
 spec:
   selector:
@@ -151,30 +146,12 @@ spec:
 apiVersion: "security.istio.io/v1beta1"
 kind: "PeerAuthentication"
 metadata:
-  name: "domainmapping-webhook"
-  namespace: "knative-serving"
-  labels:
-    app.kubernetes.io/component: net-istio
-    app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.1"
-    networking.knative.dev/ingress-provider: istio
-spec:
-  selector:
-    matchLabels:
-      app: domainmapping-webhook
-  portLevelMtls:
-    "8443":
-      mode: PERMISSIVE
----
-apiVersion: "security.istio.io/v1beta1"
-kind: "PeerAuthentication"
-metadata:
   name: "net-istio-webhook"
   namespace: "knative-serving"
   labels:
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.3"
     networking.knative.dev/ingress-provider: istio
 spec:
   selector:
@@ -192,7 +169,7 @@ metadata:
   labels:
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.3"
     networking.knative.dev/ingress-provider: istio
 spec:
   selector:
@@ -206,12 +183,12 @@ spec:
         app: net-istio-controller
         app.kubernetes.io/component: net-istio
         app.kubernetes.io/name: knative-serving
-        app.kubernetes.io/version: "1.10.1"
+        app.kubernetes.io/version: "1.12.3"
     spec:
       serviceAccountName: controller
       containers:
         - name: controller
-          image: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller@sha256:421aa67057240fa0c56ebf2c6e5b482a12842005805c46e067129402d1751220
+          image: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller@sha256:5782b4a6b1a106d7cafe77d044b30905a9fecbbd2e0029946cb8a4b3507b40a4
           resources:
             requests:
               cpu: 30m
@@ -271,7 +248,7 @@ metadata:
   labels:
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.3"
     networking.knative.dev/ingress-provider: istio
 spec:
   selector:
@@ -285,12 +262,12 @@ spec:
         role: net-istio-webhook
         app.kubernetes.io/component: net-istio
         app.kubernetes.io/name: knative-serving
-        app.kubernetes.io/version: "1.10.1"
+        app.kubernetes.io/version: "1.12.3"
     spec:
       serviceAccountName: controller
       containers:
         - name: webhook
-          image: gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook@sha256:bfa1dfea77aff6dfa7959f4822d8e61c4f7933053874cd3f27352323e6ecd985
+          image: gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook@sha256:eeff0ad31550f3ff519d988bb36bfe214e5b60c1ec4349c1f9bb2b2d8cad9479
           resources:
             requests:
               cpu: 20m
@@ -356,7 +333,7 @@ metadata:
   labels:
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.3"
     networking.knative.dev/ingress-provider: istio
 ---
 apiVersion: v1
@@ -368,7 +345,7 @@ metadata:
     role: net-istio-webhook
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.3"
     networking.knative.dev/ingress-provider: istio
 spec:
   ports:
@@ -391,7 +368,7 @@ metadata:
   labels:
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.3"
     networking.knative.dev/ingress-provider: istio
 webhooks:
   - admissionReviewVersions:
@@ -415,7 +392,7 @@ metadata:
   labels:
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.3"
     networking.knative.dev/ingress-provider: istio
 webhooks:
   - admissionReviewVersions:
@@ -432,5 +409,14 @@ webhooks:
       matchLabels:
         app.kubernetes.io/name: knative-serving
         app.kubernetes.io/component: net-istio
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: routing-serving-certs
+  namespace: istio-system
+  labels:
+    serving-certs-ctrl: "data-plane-routing"
+    networking.internal.knative.dev/certificate-uid: "serving-certs"
 ---
 
