@@ -1,8 +1,12 @@
 # Federated-Learning-on-kubeflow-with-nodered
 A simple example of federated learning on kubeflow with node-red which can control number of clients
 
-## Implementation
+## Installation
+.docker
+.Wsl(for windows), make sure it has connected to docker.
 
+## Implementation
+Open terminal(wsl) and type.
 ```
 git clone https://github.com/sefgsefg/Federated-Learning-on-kubeflow-with-nodered.git
 ```
