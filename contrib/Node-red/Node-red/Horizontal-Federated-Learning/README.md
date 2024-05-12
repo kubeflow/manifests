@@ -10,6 +10,10 @@ Open terminal(wsl) and type.
 ```
 git clone https://github.com/sefgsefg/Federated-Learning-on-kubeflow-with-nodered.git
 ```
+open the file FL_kubeflow_with_node-red/example/main/node_modules/snippets.js and change some data
+
+![](https://github.com/sefgsefg/manifests/blob/master/contrib/Node-red/Node-red/Horizontal-Federated-Learning/FL_kubeflow_with_node-red/data_select.png)
+
 
 ```
 cd Federated-Learning-on-kubeflow-with-nodered/FL_kubeflow_with_node-red/example
