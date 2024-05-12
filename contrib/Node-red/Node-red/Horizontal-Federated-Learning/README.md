@@ -12,10 +12,13 @@ git clone https://github.com/sefgsefg/Federated-Learning-on-kubeflow-with-nodere
 ```
 open the file FL_kubeflow_with_node-red/example/main/node_modules/snippets.js and change some data
 1. Training data change, you can use example data we provide.
+
 ![](https://github.com/sefgsefg/manifests/blob/master/contrib/Node-red/Node-red/Horizontal-Federated-Learning/FL_kubeflow_with_node-red/data_select.png)
 
 2. Type your Kubeflow's url and account.
+
 ![](https://github.com/sefgsefg/manifests/blob/master/contrib/Node-red/Node-red/Horizontal-Federated-Learning/FL_kubeflow_with_node-red/account.png)
+
 ```
 cd Federated-Learning-on-kubeflow-with-nodered/FL_kubeflow_with_node-red/example
 ```
