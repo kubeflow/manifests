@@ -17,6 +17,7 @@ open the file FL_kubeflow_with_node-red/example/main/node_modules/snippets.js an
 
 ![](https://github.com/sefgsefg/manifests/blob/master/contrib/Node-red/Node-red/Horizontal-Federated-Learning/FL_kubeflow_with_node-red/data_select.png)
 
+
 2. Type your Kubeflow's url and account.
 
 ![](https://github.com/sefgsefg/manifests/blob/master/contrib/Node-red/Node-red/Horizontal-Federated-Learning/FL_kubeflow_with_node-red/account.png)
