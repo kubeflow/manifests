@@ -1,6 +1,6 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Join The Community
+  - name: Join Our Slack Channel wg-manifests.
     url: https://www.kubeflow.org/docs/about/community/
     about: Join our slack channel and access our meeting schedule.
   

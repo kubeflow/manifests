@@ -1,5 +1,5 @@
 name: Issue Report
-description: Report a Issue
+description: Report an Issue
 body:
   - type: markdown
     attributes:
@@ -12,34 +12,34 @@ body:
       options:
         - label: Is this a Kubeflow issue?
           required: true
-        - label: Is this for Kubeflow development ?
-          required: true
         - label: Are you posting in the right repository ?
           required: true
+        - label: Did you follow the installation guide https://github.com/kubeflow/manifests?tab=readme-ov-file ?
+          required: true
+        - label: Is the issue report properly structured and detailed with version numbers?
+          required: true
+        - label: Is this for Kubeflow development ?
+          required: false
+        - label: Would you like to work on this issue?
+          required: false
+        - label: Join our slack channel using [wg-manifests](https://www.kubeflow.org/docs/about/community/).
+          required: false
   - type: dropdown
     id: version
     attributes:
       label: Version
       description: What version of our software are you running?
       options:
+        - master
+        - 1.9
         - 1.8
-        - 1.7
-        - 1.6
-        - 1.5
-        - 1.4
-        - 1.3
-        - 1.2
-        - 1.1
-        - 1.0
-        - 0.7
-        - 0.6
     validations:
       required: true
   - type: textarea
     id: description
     attributes:
       label: Describe your issue
-      placeholder: When I Procced this issue is occured. 
+      placeholder: When I Proceed this issue is occured. 
     validations:
       required: true
   - type: textarea
@@ -55,12 +55,6 @@ body:
     id: screenshots
     attributes:
       label: Put here any screenshots or videos (optional)
-  - type: dropdown
-    id: assign
-    attributes:
-      label: "Would you like to work on this issue?"
-      options:
-        - "Yes"
   - type: markdown
     attributes:
       value: |
