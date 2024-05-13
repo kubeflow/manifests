@@ -1760,7 +1760,7 @@ data:
         "sts": {
           "servicePort": 0
         },
-        "tag": "1.17.5",
+        "tag": "1.22.0",
         "tracer": {
           "datadog": {
             "address": "$(HOST_IP):8126"
@@ -3127,7 +3127,7 @@ spec:
         # This container installs the Istio CNI binaries
         # and CNI network config file on each node.
       - name: install-cni
-        image: docker.io/istio/install-cni:1.17.5
+        image: docker.io/istio/install-cni:1.22.0-beta.1
         readinessProbe:
           httpGet:
             path: /readyz
@@ -3246,7 +3246,7 @@ spec:
       serviceAccountName: istio-ingressgateway-service-account
       containers:
       - name: istio-proxy
-        image: docker.io/istio/proxyv2:1.17.5
+        image: docker.io/istio/proxyv2:1.22.0-beta.1
         ports:
         - containerPort: 15021
           protocol: TCP
@@ -3454,7 +3454,7 @@ spec:
         fsGroup: 1337
       containers:
       - name: discovery
-        image: docker.io/istio/pilot:1.17.5
+        image: docker.io/istio/pilot:1.22.0-beta.1
         args:
         - discovery
         - --monitoringAddr=:15014

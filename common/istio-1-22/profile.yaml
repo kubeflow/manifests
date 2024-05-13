@@ -22,7 +22,7 @@ spec:
       proxyMetadata: {}
     enablePrometheusMerge: true
   profile: default
-  tag: 1.17.5
+  tag: 1.22.0-beta.1
   values:
     base:
       enableCRDTemplates: false
