@@ -3,7 +3,7 @@ kind: ClusterRole
 metadata:
   name: knative-eventing-mt-channel-broker-controller
   labels:
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.6"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -30,7 +30,7 @@ kind: ClusterRole
 metadata:
   name: knative-eventing-mt-broker-filter
   labels:
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.6"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -51,13 +51,28 @@ rules:
       - list
       - watch
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: mt-broker-filter
+  namespace: knative-eventing
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - "secrets"
+    verbs:
+      - get
+      - list
+      - watch
+---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: mt-broker-filter
   namespace: knative-eventing
   labels:
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.6"
     app.kubernetes.io/name: knative-eventing
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -65,9 +80,18 @@ kind: ClusterRole
 metadata:
   name: knative-eventing-mt-broker-ingress
   labels:
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.6"
     app.kubernetes.io/name: knative-eventing
 rules:
+  - apiGroups:
+      - eventing.knative.dev
+    resources:
+      - eventtypes
+    verbs:
+      - create
+      - get
+      - list
+      - watch
   - apiGroups:
       - eventing.knative.dev
     resources:
@@ -85,13 +109,28 @@ rules:
       - list
       - watch
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: mt-broker-ingress
+  namespace: knative-eventing
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - "secrets"
+    verbs:
+      - get
+      - list
+      - watch
+---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: mt-broker-ingress
   namespace: knative-eventing
   labels:
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.6"
     app.kubernetes.io/name: knative-eventing
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -99,7 +138,7 @@ kind: ClusterRoleBinding
 metadata:
   name: eventing-mt-channel-broker-controller
   labels:
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.6"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -115,7 +154,7 @@ kind: ClusterRoleBinding
 metadata:
   name: knative-eventing-mt-broker-filter
   labels:
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.6"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -127,11 +166,25 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: mt-broker-filter
+  namespace: knative-eventing
+subjects:
+  - kind: ServiceAccount
+    name: mt-broker-filter
+    namespace: knative-eventing
+roleRef:
+  kind: Role
+  name: mt-broker-filter
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: knative-eventing-mt-broker-ingress
   labels:
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.6"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -142,6 +195,20 @@ roleRef:
   name: knative-eventing-mt-broker-ingress
   apiGroup: rbac.authorization.k8s.io
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: mt-broker-ingress
+  namespace: knative-eventing
+subjects:
+  - kind: ServiceAccount
+    name: mt-broker-ingress
+    namespace: knative-eventing
+roleRef:
+  kind: Role
+  name: mt-broker-ingress
+  apiGroup: rbac.authorization.k8s.io
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -149,7 +216,7 @@ metadata:
   namespace: knative-eventing
   labels:
     app.kubernetes.io/component: broker-filter
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.6"
     app.kubernetes.io/name: knative-eventing
 spec:
   selector:
@@ -160,7 +227,7 @@ spec:
       labels:
         eventing.knative.dev/brokerRole: filter
         app.kubernetes.io/component: broker-filter
-        app.kubernetes.io/version: "1.10.1"
+        app.kubernetes.io/version: "1.12.6"
         app.kubernetes.io/name: knative-eventing
     spec:
       serviceAccountName: mt-broker-filter
@@ -168,7 +235,7 @@ spec:
       containers:
         - name: filter
           terminationMessagePolicy: FallbackToLogsOnError
-          image: gcr.io/knative-releases/knative.dev/eventing/cmd/broker/filter@sha256:29bd9f43359153c0ea39cf382d5f25ca43f55abbbce3d802ca37cc4d5c4a6942
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/broker/filter@sha256:4e3cf0703024129c60b66529f41a1d29310f61f6aced24d25fd241e43b1a2e8e
           readinessProbe:
             failureThreshold: 3
             httpGet:
@@ -195,6 +262,9 @@ spec:
           ports:
             - containerPort: 8080
               name: http
+              protocol: TCP
+            - containerPort: 8443
+              name: https
               protocol: TCP
             - containerPort: 9092
               name: metrics
@@ -225,6 +295,8 @@ spec:
               value: knative.dev/internal/eventing
             - name: FILTER_PORT
               value: "8080"
+            - name: FILTER_PORT_HTTPS
+              value: "8443"
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -241,7 +313,7 @@ metadata:
   labels:
     eventing.knative.dev/brokerRole: filter
     app.kubernetes.io/component: broker-filter
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.6"
     app.kubernetes.io/name: knative-eventing
   name: broker-filter
   namespace: knative-eventing
@@ -251,6 +323,10 @@ spec:
       port: 80
       protocol: TCP
       targetPort: 8080
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 8443
     - name: http-metrics
       port: 9092
       protocol: TCP
@@ -265,7 +341,7 @@ metadata:
   namespace: knative-eventing
   labels:
     app.kubernetes.io/component: broker-ingress
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.6"
     app.kubernetes.io/name: knative-eventing
 spec:
   selector:
@@ -276,7 +352,7 @@ spec:
       labels:
         eventing.knative.dev/brokerRole: ingress
         app.kubernetes.io/component: broker-ingress
-        app.kubernetes.io/version: "1.10.1"
+        app.kubernetes.io/version: "1.12.6"
         app.kubernetes.io/name: knative-eventing
     spec:
       serviceAccountName: mt-broker-ingress
@@ -284,7 +360,7 @@ spec:
       containers:
         - name: ingress
           terminationMessagePolicy: FallbackToLogsOnError
-          image: gcr.io/knative-releases/knative.dev/eventing/cmd/broker/ingress@sha256:7f3b05f6e0abae19e9438fac44dd9938ddd2293014ef0fb8d388450c9ff63000
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/broker/ingress@sha256:65412cf797d0bb7c7e22454431f57f8d9dcedf93620769f4c1206947acf05abb
           readinessProbe:
             failureThreshold: 3
             httpGet:
@@ -311,6 +387,9 @@ spec:
           ports:
             - containerPort: 8080
               name: http
+              protocol: TCP
+            - containerPort: 8443
+              name: https
               protocol: TCP
             - containerPort: 9092
               name: metrics
@@ -341,6 +420,8 @@ spec:
               value: knative.dev/internal/eventing
             - name: INGRESS_PORT
               value: "8080"
+            - name: INGRESS_PORT_HTTPS
+              value: "8443"
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -357,7 +438,7 @@ metadata:
   labels:
     eventing.knative.dev/brokerRole: ingress
     app.kubernetes.io/component: broker-ingress
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.6"
     app.kubernetes.io/name: knative-eventing
   name: broker-ingress
   namespace: knative-eventing
@@ -367,6 +448,10 @@ spec:
       port: 80
       protocol: TCP
       targetPort: 8080
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 8443
     - name: http-metrics
       port: 9092
       protocol: TCP
@@ -381,7 +466,7 @@ metadata:
   namespace: knative-eventing
   labels:
     app.kubernetes.io/component: mt-broker-controller
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.6"
     app.kubernetes.io/name: knative-eventing
 spec:
   selector:
@@ -392,7 +477,7 @@ spec:
       labels:
         app: mt-broker-controller
         app.kubernetes.io/component: broker-controller
-        app.kubernetes.io/version: "1.10.1"
+        app.kubernetes.io/version: "1.12.6"
         app.kubernetes.io/name: knative-eventing
     spec:
       affinity:
@@ -409,7 +494,7 @@ spec:
       containers:
         - name: mt-broker-controller
           terminationMessagePolicy: FallbackToLogsOnError
-          image: gcr.io/knative-releases/knative.dev/eventing/cmd/mtchannel_broker@sha256:4040ffc2d34e950b7969b4ba90cec29e65e506126ddb195faf3a56cb2fa653e8
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/mtchannel_broker@sha256:9dc9e0b00325f1ec994ef6f48761ba7d9217333fa0c2cbfccfa9b204e3f616a9
           resources:
             requests:
               cpu: 100m
@@ -451,7 +536,7 @@ metadata:
   namespace: knative-eventing
   labels:
     app.kubernetes.io/component: broker-ingress
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.6"
     app.kubernetes.io/name: knative-eventing
 spec:
   scaleTargetRef:
@@ -475,7 +560,7 @@ metadata:
   namespace: knative-eventing
   labels:
     app.kubernetes.io/component: broker-filter
-    app.kubernetes.io/version: "1.10.1"
+    app.kubernetes.io/version: "1.12.6"
     app.kubernetes.io/name: knative-eventing
 spec:
   scaleTargetRef:

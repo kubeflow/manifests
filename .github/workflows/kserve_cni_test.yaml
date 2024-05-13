@@ -1,18 +1,24 @@
-name: Deploy and test KServe with m2m auth in KinD
+name: Build & Apply KServe manifests in KinD, using istio CNI
 on:
   pull_request:
     paths:
-      - contrib/kserve/**
+      - .github/workflows/kserve_cni_test.yaml
+      - tests/gh-actions/kind-cluster.yaml
+      - tests/gh-actions/install_kind.sh
+      - tests/gh-actions/install_kustomize.sh
+      - common/istio-cni-1-17/**
+      - tests/gh-actions/install_cert_manager.sh
+      - common/cert-manager/**
+      - tests/gh-actions/install_knative-cni.sh
       - common/knative/**
-      - common/oidc-client/oauth2-proxy/**
-      - common/istio*/**
+      - tests/gh-actions/install_kserve.sh
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install KinD
         run: ./tests/gh-actions/install_kind.sh
@@ -20,23 +26,20 @@ jobs:
       - name: Create KinD Cluster
         run: kind create cluster --config tests/gh-actions/kind-cluster.yaml
 
-      - name: Install kubectl
-        run: ./tests/gh-actions/install_kubectl.sh
-
       - name: Install kustomize
         run: ./tests/gh-actions/install_kustomize.sh
 
       - name: Create kubeflow namespace
         run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
-      - name: Install Istio with ext auth
-        run: ./tests/gh-actions/install_istio_with_ext_auth.sh*
+      - name: Install Istio CNI
+        run: ./tests/gh-actions/install_istio-cni.sh
 
       - name: Install cert-manager
         run: ./tests/gh-actions/install_cert_manager.sh
 
-      - name: Install knative
-        run: ./tests/gh-actions/install_knative.sh
+      - name: Install knative CNI
+        run: ./tests/gh-actions/install_knative-cni.sh
 
       - name: Build & Apply manifests
         run: ./tests/gh-actions/install_kserve.sh
@@ -56,21 +59,12 @@ jobs:
         run: |
           INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
           nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
-          while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
 
-      - name: Run kserve tests with m2m token from SA default/default
+      - name: Run kserve tests
         run: |
           export KSERVE_INGRESS_HOST_PORT=localhost:8080
-          export KSERVE_M2M_TOKEN="$(kubectl -n default create token default)"
-          cd ./contrib/kserve/tests && pytest . -vs --log-level info
+          cd ./contrib/kserve/tests && pytest .
 
-      - name: Run and fail kserve tests without kserve m2m token
+      - name: Run kserve models webapp test
         run: |
-          export KSERVE_INGRESS_HOST_PORT=localhost:8080
-          cd ./contrib/kserve/tests
-          if pytest . -vs --log-level info; then
-            echo "This test should fail with an HTTP redirect to oauth2-proxy/dex auth."; exit 1
-          else
-            echo "Task failed successfully!"
-            echo "This is a provisional way of testing that m2m is enabled for kserve."
-          fi
+          kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app

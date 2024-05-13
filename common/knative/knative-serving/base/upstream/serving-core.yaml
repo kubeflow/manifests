@@ -4,14 +4,48 @@ metadata:
   name: knative-serving
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: knative-serving-activator
+  namespace: knative-serving
+  labels:
+    serving.knative.dev/controller: "true"
+    app.kubernetes.io/version: "1.12.4"
+    app.kubernetes.io/name: knative-serving
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps", "secrets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
+    resourceNames: ["routing-serving-certs", "knative-serving-certs"]
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: knative-serving-activator-cluster
+  labels:
+    serving.knative.dev/controller: "true"
+    app.kubernetes.io/version: "1.12.4"
+    app.kubernetes.io/name: knative-serving
+rules:
+  - apiGroups: [""]
+    resources: ["services", "endpoints"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["serving.knative.dev"]
+    resources: ["revisions"]
+    verbs: ["get", "list", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: knative-serving-aggregated-addressable-resolver
   labels:
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     app.kubernetes.io/name: knative-serving
 aggregationRule:
   clusterRoleSelectors:
@@ -23,7 +57,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: knative-serving-addressable-resolver
   labels:
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     app.kubernetes.io/name: knative-serving
     duck.knative.dev/addressable: "true"
 rules:
@@ -45,7 +79,7 @@ metadata:
   name: knative-serving-namespaced-admin
   labels:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     app.kubernetes.io/name: knative-serving
 rules:
   - apiGroups: ["serving.knative.dev"]
@@ -61,7 +95,7 @@ metadata:
   name: knative-serving-namespaced-edit
   labels:
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     app.kubernetes.io/name: knative-serving
 rules:
   - apiGroups: ["serving.knative.dev"]
@@ -77,7 +111,7 @@ metadata:
   name: knative-serving-namespaced-view
   labels:
     rbac.authorization.k8s.io/aggregate-to-view: "true"
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     app.kubernetes.io/name: knative-serving
 rules:
   - apiGroups: ["serving.knative.dev", "networking.internal.knative.dev", "autoscaling.internal.knative.dev", "caching.internal.knative.dev"]
@@ -90,7 +124,7 @@ metadata:
   name: knative-serving-core
   labels:
     serving.knative.dev/controller: "true"
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     app.kubernetes.io/name: knative-serving
 rules:
   - apiGroups: [""]
@@ -129,7 +163,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: knative-serving-podspecable-binding
   labels:
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     app.kubernetes.io/name: knative-serving
     duck.knative.dev/podspecable: "true"
 rules:
@@ -151,7 +185,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -159,7 +193,7 @@ metadata:
   name: knative-serving-admin
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
 aggregationRule:
   clusterRoleSelectors:
     - matchLabels:
@@ -172,7 +206,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
 subjects:
   - kind: ServiceAccount
     name: controller
@@ -189,7 +223,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
 subjects:
   - kind: ServiceAccount
     name: controller
@@ -199,13 +233,58 @@ roleRef:
   name: knative-serving-aggregated-addressable-resolver
   apiGroup: rbac.authorization.k8s.io
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: activator
+  namespace: knative-serving
+  labels:
+    app.kubernetes.io/component: activator
+    app.kubernetes.io/name: knative-serving
+    app.kubernetes.io/version: "1.12.4"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: knative-serving-activator
+  namespace: knative-serving
+  labels:
+    app.kubernetes.io/component: activator
+    app.kubernetes.io/name: knative-serving
+    app.kubernetes.io/version: "1.12.4"
+subjects:
+  - kind: ServiceAccount
+    name: activator
+    namespace: knative-serving
+roleRef:
+  kind: Role
+  name: knative-serving-activator
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: knative-serving-activator-cluster
+  labels:
+    app.kubernetes.io/component: activator
+    app.kubernetes.io/name: knative-serving
+    app.kubernetes.io/version: "1.12.4"
+subjects:
+  - kind: ServiceAccount
+    name: activator
+    namespace: knative-serving
+roleRef:
+  kind: ClusterRole
+  name: knative-serving-activator-cluster
+  apiGroup: rbac.authorization.k8s.io
+---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: images.caching.internal.knative.dev
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     knative.dev/crd-install: "true"
 spec:
   group: caching.internal.knative.dev
@@ -312,7 +391,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: networking
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     knative.dev/crd-install: "true"
 spec:
   group: networking.internal.knative.dev
@@ -444,7 +523,7 @@ metadata:
   name: configurations.serving.knative.dev
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     knative.dev/crd-install: "true"
     duck.knative.dev/podspecable: "true"
 spec:
@@ -671,6 +750,19 @@ spec:
                                     description: Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.
                                     type: integer
                                     format: int32
+                                  grpc:
+                                    description: GRPC specifies an action involving a GRPC port.
+                                    type: object
+                                    required:
+                                      - port
+                                    properties:
+                                      port:
+                                        description: Port number of the gRPC service. Number must be in the range 1 to 65535.
+                                        type: integer
+                                        format: int32
+                                      service:
+                                        description: "Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). \n If this is not specified, the default behavior is defined by gRPC."
+                                        type: string
                                   httpGet:
                                     description: HTTPGet specifies the http request to perform.
                                     type: object
@@ -689,7 +781,7 @@ spec:
                                             - value
                                           properties:
                                             name:
-                                              description: The header field name
+                                              description: The header field name. This will be canonicalized upon output, so case-variant names will be understood as the same header.
                                               type: string
                                             value:
                                               description: The header field value
@@ -779,6 +871,19 @@ spec:
                                     description: Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.
                                     type: integer
                                     format: int32
+                                  grpc:
+                                    description: GRPC specifies an action involving a GRPC port.
+                                    type: object
+                                    required:
+                                      - port
+                                    properties:
+                                      port:
+                                        description: Port number of the gRPC service. Number must be in the range 1 to 65535.
+                                        type: integer
+                                        format: int32
+                                      service:
+                                        description: "Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). \n If this is not specified, the default behavior is defined by gRPC."
+                                        type: string
                                   httpGet:
                                     description: HTTPGet specifies the http request to perform.
                                     type: object
@@ -797,7 +902,7 @@ spec:
                                             - value
                                           properties:
                                             name:
-                                              description: The header field name
+                                              description: The header field name. This will be canonicalized upon output, so case-variant names will be understood as the same header.
                                               type: string
                                             value:
                                               description: The header field value
@@ -847,6 +952,21 @@ spec:
                                 description: 'Compute Resources required by this container. Cannot be updated. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
                                 type: object
                                 properties:
+                                  claims:
+                                    description: "Claims lists the names of resources, defined in spec.resourceClaims, that are used by this container. \n This is an alpha field and requires enabling the DynamicResourceAllocation feature gate. \n This field is immutable. It can only be set for containers."
+                                    type: array
+                                    items:
+                                      description: ResourceClaim references one entry in PodSpec.ResourceClaims.
+                                      type: object
+                                      required:
+                                        - name
+                                      properties:
+                                        name:
+                                          description: Name must match the name of one entry in pod.spec.resourceClaims of the Pod where this field is used. It makes that resource available inside a container.
+                                          type: string
+                                    x-kubernetes-list-map-keys:
+                                      - name
+                                    x-kubernetes-list-type: map
                                   limits:
                                     description: 'Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
                                     type: object
@@ -857,7 +977,7 @@ spec:
                                         - type: string
                                       x-kubernetes-int-or-string: true
                                   requests:
-                                    description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
+                                    description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. Requests cannot exceed Limits. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
                                     type: object
                                     additionalProperties:
                                       pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
@@ -1012,6 +1132,10 @@ spec:
                         serviceAccountName:
                           description: 'ServiceAccountName is the name of the ServiceAccount to use to run this pod. More info: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/'
                           type: string
+                        shareProcessNamespace:
+                          description: This is accessible behind a feature flag - kubernetes.podspec-shareproccessnamespace
+                          type: boolean
+                          x-kubernetes-preserve-unknown-fields: true
                         timeoutSeconds:
                           description: TimeoutSeconds is the maximum duration in seconds that the request instance is allowed to respond to a request. If unspecified, a system default will be provided.
                           type: integer
@@ -1320,7 +1444,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: networking
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     knative.dev/crd-install: "true"
 spec:
   group: networking.internal.knative.dev
@@ -1369,14 +1493,14 @@ metadata:
   name: domainmappings.serving.knative.dev
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     knative.dev/crd-install: "true"
 spec:
   group: serving.knative.dev
   versions:
     - name: v1beta1
       served: true
-      storage: false
+      storage: true
       subresources:
         status: {}
       additionalPrinterColumns:
@@ -1453,119 +1577,8 @@ spec:
                     CACerts:
                       description: CACerts is the Certification Authority (CA) certificates in PEM format according to https://www.rfc-editor.org/rfc/rfc7468.
                       type: string
-                    name:
-                      description: Name is the name of the address.
-                      type: string
-                    url:
-                      type: string
-                annotations:
-                  description: Annotations is additional Status fields for the Resource to save some additional State as well as convey more information to the user. This is roughly akin to Annotations on any k8s resource, just the reconciler conveying richer information outwards.
-                  type: object
-                  additionalProperties:
-                    type: string
-                conditions:
-                  description: Conditions the latest available observations of a resource's current state.
-                  type: array
-                  items:
-                    description: 'Condition defines a readiness condition for a Knative resource. See: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties'
-                    type: object
-                    required:
-                      - status
-                      - type
-                    properties:
-                      lastTransitionTime:
-                        description: LastTransitionTime is the last time the condition transitioned from one status to another. We use VolatileTime in place of metav1.Time to exclude this from creating equality.Semantic differences (all other things held constant).
-                        type: string
-                      message:
-                        description: A human readable message indicating details about the transition.
-                        type: string
-                      reason:
-                        description: The reason for the condition's last transition.
-                        type: string
-                      severity:
-                        description: Severity with which to treat failures of this type of condition. When this is not specified, it defaults to Error.
-                        type: string
-                      status:
-                        description: Status of the condition, one of True, False, Unknown.
-                        type: string
-                      type:
-                        description: Type of condition.
-                        type: string
-                observedGeneration:
-                  description: ObservedGeneration is the 'Generation' of the Service that was last processed by the controller.
-                  type: integer
-                  format: int64
-                url:
-                  description: URL is the URL of this DomainMapping.
-                  type: string
-    - name: v1alpha1
-      served: true
-      storage: true
-      subresources:
-        status: {}
-      schema:
-        openAPIV3Schema:
-          description: DomainMapping is a mapping from a custom hostname to an Addressable.
-          type: object
-          properties:
-            apiVersion:
-              description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
-              type: string
-            kind:
-              description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
-              type: string
-            metadata:
-              type: object
-            spec:
-              description: 'Spec is the desired state of the DomainMapping. More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status'
-              type: object
-              required:
-                - ref
-              properties:
-                ref:
-                  description: "Ref specifies the target of the Domain Mapping. \n The object identified by the Ref must be an Addressable with a URL of the form `{name}.{namespace}.{domain}` where `{domain}` is the cluster domain, and `{name}` and `{namespace}` are the name and namespace of a Kubernetes Service. \n This contract is satisfied by Knative types such as Knative Services and Knative Routes, and by Kubernetes Services."
-                  type: object
-                  required:
-                    - kind
-                    - name
-                  properties:
-                    address:
-                      description: Address points to a specific Address Name.
-                      type: string
-                    apiVersion:
-                      description: API version of the referent.
-                      type: string
-                    group:
-                      description: 'Group of the API, without the version of the group. This can be used as an alternative to the APIVersion, and then resolved using ResolveGroup. Note: This API is EXPERIMENTAL and might break anytime. For more details: https://github.com/knative/eventing/issues/5086'
-                      type: string
-                    kind:
-                      description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
-                      type: string
-                    name:
-                      description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
-                      type: string
-                    namespace:
-                      description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ This is optional field, it gets defaulted to the object holding it if left out.'
-                      type: string
-                tls:
-                  description: TLS allows the DomainMapping to terminate TLS traffic with an existing secret.
-                  type: object
-                  required:
-                    - secretName
-                  properties:
-                    secretName:
-                      description: SecretName is the name of the existing secret used to terminate TLS traffic.
-                      type: string
-            status:
-              description: 'Status is the current state of the DomainMapping. More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status'
-              type: object
-              properties:
-                address:
-                  description: Address holds the information needed for a DomainMapping to be the target of an event.
-                  type: object
-                  properties:
-                    CACerts:
-                      description: CACerts is the Certification Authority (CA) certificates in PEM format according to https://www.rfc-editor.org/rfc/rfc7468.
+                    audience:
+                      description: Audience is the OIDC audience for this address.
                       type: string
                     name:
                       description: Name is the name of the address.
@@ -1612,16 +1625,6 @@ spec:
                 url:
                   description: URL is the URL of this DomainMapping.
                   type: string
-      additionalPrinterColumns:
-        - name: URL
-          type: string
-          jsonPath: .status.url
-        - name: Ready
-          type: string
-          jsonPath: ".status.conditions[?(@.type=='Ready')].status"
-        - name: Reason
-          type: string
-          jsonPath: ".status.conditions[?(@.type=='Ready')].reason"
   names:
     kind: DomainMapping
     plural: domainmappings
@@ -1641,7 +1644,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: networking
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     knative.dev/crd-install: "true"
 spec:
   group: networking.internal.knative.dev
@@ -1884,7 +1887,7 @@ metadata:
   name: metrics.autoscaling.internal.knative.dev
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     knative.dev/crd-install: "true"
 spec:
   group: autoscaling.internal.knative.dev
@@ -1989,7 +1992,7 @@ metadata:
   name: podautoscalers.autoscaling.internal.knative.dev
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     knative.dev/crd-install: "true"
 spec:
   group: autoscaling.internal.knative.dev
@@ -2132,7 +2135,7 @@ metadata:
   name: revisions.serving.knative.dev
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     knative.dev/crd-install: "true"
 spec:
   group: serving.knative.dev
@@ -2338,6 +2341,19 @@ spec:
                             description: Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.
                             type: integer
                             format: int32
+                          grpc:
+                            description: GRPC specifies an action involving a GRPC port.
+                            type: object
+                            required:
+                              - port
+                            properties:
+                              port:
+                                description: Port number of the gRPC service. Number must be in the range 1 to 65535.
+                                type: integer
+                                format: int32
+                              service:
+                                description: "Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). \n If this is not specified, the default behavior is defined by gRPC."
+                                type: string
                           httpGet:
                             description: HTTPGet specifies the http request to perform.
                             type: object
@@ -2356,7 +2372,7 @@ spec:
                                     - value
                                   properties:
                                     name:
-                                      description: The header field name
+                                      description: The header field name. This will be canonicalized upon output, so case-variant names will be understood as the same header.
                                       type: string
                                     value:
                                       description: The header field value
@@ -2446,6 +2462,19 @@ spec:
                             description: Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.
                             type: integer
                             format: int32
+                          grpc:
+                            description: GRPC specifies an action involving a GRPC port.
+                            type: object
+                            required:
+                              - port
+                            properties:
+                              port:
+                                description: Port number of the gRPC service. Number must be in the range 1 to 65535.
+                                type: integer
+                                format: int32
+                              service:
+                                description: "Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). \n If this is not specified, the default behavior is defined by gRPC."
+                                type: string
                           httpGet:
                             description: HTTPGet specifies the http request to perform.
                             type: object
@@ -2464,7 +2493,7 @@ spec:
                                     - value
                                   properties:
                                     name:
-                                      description: The header field name
+                                      description: The header field name. This will be canonicalized upon output, so case-variant names will be understood as the same header.
                                       type: string
                                     value:
                                       description: The header field value
@@ -2514,6 +2543,21 @@ spec:
                         description: 'Compute Resources required by this container. Cannot be updated. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
                         type: object
                         properties:
+                          claims:
+                            description: "Claims lists the names of resources, defined in spec.resourceClaims, that are used by this container. \n This is an alpha field and requires enabling the DynamicResourceAllocation feature gate. \n This field is immutable. It can only be set for containers."
+                            type: array
+                            items:
+                              description: ResourceClaim references one entry in PodSpec.ResourceClaims.
+                              type: object
+                              required:
+                                - name
+                              properties:
+                                name:
+                                  description: Name must match the name of one entry in pod.spec.resourceClaims of the Pod where this field is used. It makes that resource available inside a container.
+                                  type: string
+                            x-kubernetes-list-map-keys:
+                              - name
+                            x-kubernetes-list-type: map
                           limits:
                             description: 'Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
                             type: object
@@ -2524,7 +2568,7 @@ spec:
                                 - type: string
                               x-kubernetes-int-or-string: true
                           requests:
-                            description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
+                            description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. Requests cannot exceed Limits. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
                             type: object
                             additionalProperties:
                               pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
@@ -2679,6 +2723,10 @@ spec:
                 serviceAccountName:
                   description: 'ServiceAccountName is the name of the ServiceAccount to use to run this pod. More info: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/'
                   type: string
+                shareProcessNamespace:
+                  description: This is accessible behind a feature flag - kubernetes.podspec-shareproccessnamespace
+                  type: boolean
+                  x-kubernetes-preserve-unknown-fields: true
                 timeoutSeconds:
                   description: TimeoutSeconds is the maximum duration in seconds that the request instance is allowed to respond to a request. If unspecified, a system default will be provided.
                   type: integer
@@ -3013,7 +3061,7 @@ metadata:
   name: routes.serving.knative.dev
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     knative.dev/crd-install: "true"
     duck.knative.dev/addressable: "true"
 spec:
@@ -3099,6 +3147,9 @@ spec:
                     CACerts:
                       description: CACerts is the Certification Authority (CA) certificates in PEM format according to https://www.rfc-editor.org/rfc/rfc7468.
                       type: string
+                    audience:
+                      description: Audience is the OIDC audience for this address.
+                      type: string
                     name:
                       description: Name is the name of the address.
                       type: string
@@ -3178,7 +3229,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: networking
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     knative.dev/crd-install: "true"
 spec:
   group: networking.internal.knative.dev
@@ -3327,7 +3378,7 @@ metadata:
   name: services.serving.knative.dev
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     knative.dev/crd-install: "true"
     duck.knative.dev/addressable: "true"
     duck.knative.dev/podspecable: "true"
@@ -3558,6 +3609,19 @@ spec:
                                     description: Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.
                                     type: integer
                                     format: int32
+                                  grpc:
+                                    description: GRPC specifies an action involving a GRPC port.
+                                    type: object
+                                    required:
+                                      - port
+                                    properties:
+                                      port:
+                                        description: Port number of the gRPC service. Number must be in the range 1 to 65535.
+                                        type: integer
+                                        format: int32
+                                      service:
+                                        description: "Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). \n If this is not specified, the default behavior is defined by gRPC."
+                                        type: string
                                   httpGet:
                                     description: HTTPGet specifies the http request to perform.
                                     type: object
@@ -3576,7 +3640,7 @@ spec:
                                             - value
                                           properties:
                                             name:
-                                              description: The header field name
+                                              description: The header field name. This will be canonicalized upon output, so case-variant names will be understood as the same header.
                                               type: string
                                             value:
                                               description: The header field value
@@ -3666,6 +3730,19 @@ spec:
                                     description: Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.
                                     type: integer
                                     format: int32
+                                  grpc:
+                                    description: GRPC specifies an action involving a GRPC port.
+                                    type: object
+                                    required:
+                                      - port
+                                    properties:
+                                      port:
+                                        description: Port number of the gRPC service. Number must be in the range 1 to 65535.
+                                        type: integer
+                                        format: int32
+                                      service:
+                                        description: "Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). \n If this is not specified, the default behavior is defined by gRPC."
+                                        type: string
                                   httpGet:
                                     description: HTTPGet specifies the http request to perform.
                                     type: object
@@ -3684,7 +3761,7 @@ spec:
                                             - value
                                           properties:
                                             name:
-                                              description: The header field name
+                                              description: The header field name. This will be canonicalized upon output, so case-variant names will be understood as the same header.
                                               type: string
                                             value:
                                               description: The header field value
@@ -3734,6 +3811,21 @@ spec:
                                 description: 'Compute Resources required by this container. Cannot be updated. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
                                 type: object
                                 properties:
+                                  claims:
+                                    description: "Claims lists the names of resources, defined in spec.resourceClaims, that are used by this container. \n This is an alpha field and requires enabling the DynamicResourceAllocation feature gate. \n This field is immutable. It can only be set for containers."
+                                    type: array
+                                    items:
+                                      description: ResourceClaim references one entry in PodSpec.ResourceClaims.
+                                      type: object
+                                      required:
+                                        - name
+                                      properties:
+                                        name:
+                                          description: Name must match the name of one entry in pod.spec.resourceClaims of the Pod where this field is used. It makes that resource available inside a container.
+                                          type: string
+                                    x-kubernetes-list-map-keys:
+                                      - name
+                                    x-kubernetes-list-type: map
                                   limits:
                                     description: 'Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
                                     type: object
@@ -3744,7 +3836,7 @@ spec:
                                         - type: string
                                       x-kubernetes-int-or-string: true
                                   requests:
-                                    description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
+                                    description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. Requests cannot exceed Limits. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
                                     type: object
                                     additionalProperties:
                                       pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
@@ -3899,6 +3991,10 @@ spec:
                         serviceAccountName:
                           description: 'ServiceAccountName is the name of the ServiceAccount to use to run this pod. More info: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/'
                           type: string
+                        shareProcessNamespace:
+                          description: This is accessible behind a feature flag - kubernetes.podspec-shareproccessnamespace
+                          type: boolean
+                          x-kubernetes-preserve-unknown-fields: true
                         timeoutSeconds:
                           description: TimeoutSeconds is the maximum duration in seconds that the request instance is allowed to respond to a request. If unspecified, a system default will be provided.
                           type: integer
@@ -4189,6 +4285,9 @@ spec:
                     CACerts:
                       description: CACerts is the Certification Authority (CA) certificates in PEM format according to https://www.rfc-editor.org/rfc/rfc7468.
                       type: string
+                    audience:
+                      description: Audience is the OIDC audience for this address.
+                      type: string
                     name:
                       description: Name is the name of the address.
                       type: string
@@ -4288,20 +4387,10 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: control-serving-certs
-  namespace: knative-serving
-  labels:
-    serving-certs-ctrl: "control-plane"
-    networking.internal.knative.dev/certificate-uid: "serving-certs"
----
-apiVersion: v1
-kind: Secret
-metadata:
   name: routing-serving-certs
   namespace: knative-serving
   labels:
     serving-certs-ctrl: "data-plane-routing"
-    routing-id: "0"
     networking.internal.knative.dev/certificate-uid: "serving-certs"
 ---
 apiVersion: caching.internal.knative.dev/v1alpha1
@@ -4312,9 +4401,9 @@ metadata:
   labels:
     app.kubernetes.io/component: queue-proxy
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
 spec:
-  image: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:dabaecec38860ca4c972e6821d5dc825549faf50c6feb8feb4c04802f2338b8a
+  image: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:89e6f90141f1b63405883fbb4de0d3b6d80f8b77e530904c4d29bdcd1dc5a167
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -4324,7 +4413,7 @@ metadata:
   labels:
     app.kubernetes.io/component: autoscaler
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
   annotations:
     knative.dev/example-checksum: "47c2487f"
 data:
@@ -4520,7 +4609,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: controller
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
   annotations:
     knative.dev/example-checksum: "e7973912"
 data:
@@ -4660,11 +4749,11 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: controller
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
   annotations:
-    knative.dev/example-checksum: "410041a0"
+    knative.dev/example-checksum: "ed77183a"
 data:
-  queue-sidecar-image: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:dabaecec38860ca4c972e6821d5dc825549faf50c6feb8feb4c04802f2338b8a
+  queue-sidecar-image: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:89e6f90141f1b63405883fbb4de0d3b6d80f8b77e530904c4d29bdcd1dc5a167
   _example: |-
     ################################
     #                              #
@@ -4695,15 +4784,18 @@ data:
     queue-sidecar-cpu-request: "25m"
 
     # Sets the queue proxy's CPU limit.
-    # If omitted, no value is specified and the system default is used.
+    # If omitted, a default value (currently "1000m"), is used when
+    # `queueproxy.resource-defaults` is set to `Enabled`.
     queue-sidecar-cpu-limit: "1000m"
 
     # Sets the queue proxy's memory request.
-    # If omitted, no value is specified and the system default is used.
+    # If omitted, a default value (currently "400Mi"), is used when
+    # `queueproxy.resource-defaults` is set to `Enabled`.
     queue-sidecar-memory-request: "400Mi"
 
     # Sets the queue proxy's memory limit.
-    # If omitted, no value is specified and the system default is used.
+    # If omitted, a default value (currently "800Mi"), is used when
+    # `queueproxy.resource-defaults` is set to `Enabled`.
     queue-sidecar-memory-limit: "800Mi"
 
     # Sets the queue proxy's ephemeral storage request.
@@ -4735,7 +4827,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: controller
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
   annotations:
     knative.dev/example-checksum: "26c09de5"
 data:
@@ -4785,9 +4877,9 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: controller
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
   annotations:
-    knative.dev/example-checksum: "d3565159"
+    knative.dev/example-checksum: "f2fc138e"
 data:
   _example: |-
     ################################
@@ -4891,6 +4983,12 @@ data:
     # See: https://knative.dev/docs/serving/feature-flags/#kubernetes-security-context
     kubernetes.podspec-securitycontext: "disabled"
 
+    # Indicated whether sharing the process namespace via ShareProcessNamespace pod spec is allowed.
+    # This can be especially useful for sharing data from images directly between sidecars
+    #
+    # See: https://knative.dev/docs/serving/configuration/feature-flags/#kubernetes-share-process-namespace
+    kubernetes.podspec-shareprocessnamespace: "disabled"
+
     # Indicates whether Kubernetes PriorityClassName support is enabled
     #
     # WARNING: Cannot safely be disabled once enabled.
@@ -4966,6 +5064,9 @@ data:
     #
     # NOTE THAT THIS IS AN EXPERIMENTAL / ALPHA FEATURE
     queueproxy.mount-podinfo: "disabled"
+
+    # Default queue proxy resource requests and limits to good values for most cases if set.
+    queueproxy.resource-defaults: "disabled"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -4975,7 +5076,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: controller
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
   annotations:
     knative.dev/example-checksum: "aa3813a8"
 data:
@@ -5060,7 +5161,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: controller
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
   annotations:
     knative.dev/example-checksum: "f4b71f57"
 data:
@@ -5105,11 +5206,11 @@ metadata:
   name: config-logging
   namespace: knative-serving
   labels:
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     app.kubernetes.io/component: logging
     app.kubernetes.io/name: knative-serving
   annotations:
-    knative.dev/example-checksum: "b0f3c6f2"
+    knative.dev/example-checksum: "53fda05f"
 data:
   _example: |
     ################################
@@ -5163,6 +5264,8 @@ data:
     loglevel.net-certmanager-controller: "info"
     loglevel.net-istio-controller: "info"
     loglevel.net-contour-controller: "info"
+    loglevel.net-kourier-controller: "info"
+    loglevel.net-gateway-api-controller: "info"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -5172,9 +5275,9 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: networking
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
   annotations:
-    knative.dev/example-checksum: "73d96d1b"
+    knative.dev/example-checksum: "0573e07d"
 data:
   _example: |
     ################################
@@ -5225,7 +5328,7 @@ data:
     #   namespace-wildcard-cert-selector: {}
     #
     # Useful labels include the "kubernetes.io/metadata.name" label to
-    # avoid provisioning a certifcate for the "kube-system" namespaces.
+    # avoid provisioning a certificate for the "kube-system" namespaces.
     # Use the following selector to match pre-1.0 behavior of using
     # "networking.knative.dev/disableWildcardCert" to exclude namespaces:
     #
@@ -5240,7 +5343,7 @@ data:
     # value is "{{.Name}}.{{.Namespace}}.{{.Domain}}".
     #
     # Valid variables defined in the template include Name, Namespace, Domain,
-    # Labels, and Annotations. Name will be the result of the tagTemplate
+    # Labels, and Annotations. Name will be the result of the tag-template
     # below, if a tag is specified for the route.
     #
     # Changing this value might be necessary when the extra levels in
@@ -5260,22 +5363,51 @@ data:
     # would be {Name}-{Namespace}.foo.{Domain}
     domain-template: "{{.Name}}.{{.Namespace}}.{{.Domain}}"
 
-    # tagTemplate specifies the golang text template string to use
+    # tag-template specifies the golang text template string to use
     # when constructing the DNS name for "tags" within the traffic blocks
     # of Routes and Configuration.  This is used in conjunction with the
-    # domainTemplate above to determine the full URL for the tag.
+    # domain-template above to determine the full URL for the tag.
     tag-template: "{{.Tag}}-{{.Name}}"
 
-    # Controls whether TLS certificates are automatically provisioned and
-    # installed in the Knative ingress to terminate external TLS connection.
-    # 1. Enabled: enabling auto-TLS feature.
-    # 2. Disabled: disabling auto-TLS feature.
+    # auto-tls is deprecated and replaced by external-domain-tls
     auto-tls: "Disabled"
 
+    # Controls whether TLS certificates are automatically provisioned and
+    # installed in the Knative ingress to terminate TLS connections
+    # for cluster external domains (like: app.example.com)
+    # - Enabled: enables the TLS certificate provisioning feature for cluster external domains.
+    # - Disabled: disables the TLS certificate provisioning feature for cluster external domains.
+    external-domain-tls: "Disabled"
+
+    # Controls weather TLS certificates are automatically provisioned and
+    # installed in the Knative ingress to terminate TLS connections
+    # for cluster local domains (like: app.namespace.svc.<your-cluster-domain>)
+    # - Enabled: enables the TLS certificate provisioning feature for cluster cluster-local domains.
+    # - Disabled: disables the TLS certificate provisioning feature for cluster cluster local domains.
+    # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
+    #       for now. Use with caution.
+    cluster-local-domain-tls: "Disabled"
+
+    # internal-encryption is deprecated and replaced by system-internal-tls
+    internal-encryption: "false"
+
+    # system-internal-tls controls weather TLS encryption is used for connections between
+    # the internal components of Knative:
+    # - ingress to activator
+    # - ingress to queue-proxy
+    # - activator to queue-proxy
+    #
+    # Possible values for this flag are:
+    # - Enabled: enables the TLS certificate provisioning feature for cluster cluster-local domains.
+    # - Disabled: disables the TLS certificate provisioning feature for cluster cluster local domains.
+    # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
+    #       for now. Use with caution.
+    system-internal-tls: "Disabled"
+
     # Controls the behavior of the HTTP endpoint for the Knative ingress.
-    # It requires autoTLS to be enabled.
-    # 1. Enabled: The Knative ingress will be able to serve HTTP connection.
-    # 2. Redirected: The Knative ingress will send a 301 redirect for all
+    # It requires auto-tls to be enabled.
+    # - Enabled: The Knative ingress will be able to serve HTTP connection.
+    # - Redirected: The Knative ingress will send a 301 redirect for all
     # http connections, asking the clients to use HTTPS.
     #
     # "Disabled" option is deprecated.
@@ -5319,21 +5451,11 @@ data:
     #  - "disabled": always use Pod IPs and do not fall back to Cluster IP on failure.
     mesh-compatibility-mode: "auto"
 
-    # Defines the scheme used for external URLs if autoTLS is not enabled.
+    # Defines the scheme used for external URLs if auto-tls is not enabled.
     # This can be used for making Knative report all URLs as "HTTPS" for example, if you're
     # fronting Knative with an external loadbalancer that deals with TLS termination and
     # Knative doesn't know about that otherwise.
     default-external-scheme: "http"
-
-    # internal-encryption indicates whether internal traffic is encrypted or not.
-    # If this is "true", the following traffic are encrypted:
-    #  - ingress to activator
-    #  - ingress to queue-proxy
-    #  - activator to queue-proxy
-    #
-    # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
-    #       for now. Use with caution.
-    internal-encryption: "false"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -5343,9 +5465,9 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: observability
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
   annotations:
-    knative.dev/example-checksum: "fed4756e"
+    knative.dev/example-checksum: "54abd711"
 data:
   _example: |
     ################################
@@ -5418,10 +5540,21 @@ data:
     # It supports either prometheus (the default) or opencensus.
     metrics.backend-destination: prometheus
 
+    # metrics.reporting-period-seconds specifies the global metrics reporting period for control and data plane components.
+    # If a zero or negative value is passed the default reporting period is used (10 secs).
+    # If the attribute is not specified a default value is used per metrics backend.
+    # For the prometheus backend the default reporting period is 5s while for opencensus it is 60s.
+    metrics.reporting-period-seconds: "5"
+
     # metrics.request-metrics-backend-destination specifies the request metrics
     # destination. It enables queue proxy to send request metrics.
     # Currently supported values: prometheus (the default), opencensus.
     metrics.request-metrics-backend-destination: prometheus
+
+    # metrics.request-metrics-reporting-period-seconds specifies the request metrics reporting period in sec at queue proxy.
+    # If a zero or negative value is passed the default reporting period is used (10 secs).
+    # If the attribute is not specified, it is overridden by the value of metrics.reporting-period-seconds.
+    metrics.request-metrics-reporting-period-seconds: "5"
 
     # profiling.enable indicates whether it is allowed to retrieve runtime profiling data from
     # the pods via an HTTP server in the format expected by the pprof visualization tool. When
@@ -5437,7 +5570,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: tracing
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
   annotations:
     knative.dev/example-checksum: "26614636"
 data:
@@ -5479,7 +5612,7 @@ metadata:
   labels:
     app.kubernetes.io/component: activator
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
 spec:
   minReplicas: 1
   maxReplicas: 20
@@ -5503,7 +5636,7 @@ metadata:
   labels:
     app.kubernetes.io/component: activator
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
 spec:
   minAvailable: 80%
   selector:
@@ -5517,7 +5650,7 @@ metadata:
   namespace: knative-serving
   labels:
     app.kubernetes.io/component: activator
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     app.kubernetes.io/name: knative-serving
 spec:
   selector:
@@ -5531,12 +5664,12 @@ spec:
         role: activator
         app.kubernetes.io/component: activator
         app.kubernetes.io/name: knative-serving
-        app.kubernetes.io/version: "1.10.2"
+        app.kubernetes.io/version: "1.12.4"
     spec:
-      serviceAccountName: controller
+      serviceAccountName: activator
       containers:
         - name: activator
-          image: gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:c2994c2b6c2c7f38ad1b85c71789bf1753cc8979926423c83231e62258837cb9
+          image: gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:ad42ddc9bc4e25fdc88c240d7cbfad4b2708eb7d26e07ae904d258011141116e
           resources:
             requests:
               cpu: 300m
@@ -5610,7 +5743,7 @@ metadata:
   labels:
     app: activator
     app.kubernetes.io/component: activator
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     app.kubernetes.io/name: knative-serving
 spec:
   selector:
@@ -5641,7 +5774,7 @@ metadata:
   labels:
     app.kubernetes.io/component: autoscaler
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
 spec:
   replicas: 1
   selector:
@@ -5657,7 +5790,7 @@ spec:
         app: autoscaler
         app.kubernetes.io/component: autoscaler
         app.kubernetes.io/name: knative-serving
-        app.kubernetes.io/version: "1.10.2"
+        app.kubernetes.io/version: "1.12.4"
     spec:
       affinity:
         podAntiAffinity:
@@ -5671,7 +5804,7 @@ spec:
       serviceAccountName: controller
       containers:
         - name: autoscaler
-          image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:8319aa662b4912e8175018bd7cc90c63838562a27515197b803bdcd5634c7007
+          image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:66aa0dbceee62691d5327e423bbd7cbd411903747adeab61fdc81b14590793d4
           resources:
             requests:
               cpu: 100m
@@ -5735,7 +5868,7 @@ metadata:
     app: autoscaler
     app.kubernetes.io/component: autoscaler
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
   name: autoscaler
   namespace: knative-serving
 spec:
@@ -5760,7 +5893,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
 spec:
   selector:
     matchLabels:
@@ -5771,7 +5904,7 @@ spec:
         app: controller
         app.kubernetes.io/component: controller
         app.kubernetes.io/name: knative-serving
-        app.kubernetes.io/version: "1.10.2"
+        app.kubernetes.io/version: "1.12.4"
     spec:
       affinity:
         podAntiAffinity:
@@ -5785,7 +5918,7 @@ spec:
       serviceAccountName: controller
       containers:
         - name: controller
-          image: gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256:98a2cc7fd62ee95e137116504e7166c32c65efef42c3d1454630780410abf943
+          image: gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256:e5b7b6edd265b66d32f424bd245c06455154462ade6ce05698472212248d5657
           resources:
             requests:
               cpu: 100m
@@ -5846,7 +5979,7 @@ metadata:
     app: controller
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
   name: controller
   namespace: knative-serving
 spec:
@@ -5860,210 +5993,6 @@ spec:
   selector:
     app: controller
 ---
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: domain-mapping
-  namespace: knative-serving
-  labels:
-    app.kubernetes.io/component: domain-mapping
-    app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
-spec:
-  selector:
-    matchLabels:
-      app: domain-mapping
-  template:
-    metadata:
-      labels:
-        app: domain-mapping
-        app.kubernetes.io/component: domain-mapping
-        app.kubernetes.io/name: knative-serving
-        app.kubernetes.io/version: "1.10.2"
-    spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app: domain-mapping
-                topologyKey: kubernetes.io/hostname
-              weight: 100
-      serviceAccountName: controller
-      containers:
-        - name: domain-mapping
-          image: gcr.io/knative-releases/knative.dev/serving/cmd/domain-mapping@sha256:f66c41ad7a73f5d4f4bdfec4294d5459c477f09f3ce52934d1a215e32316b59b
-          resources:
-            requests:
-              cpu: 30m
-              memory: 40Mi
-            limits:
-              cpu: 300m
-              memory: 400Mi
-          env:
-            - name: SYSTEM_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: CONFIG_LOGGING_NAME
-              value: config-logging
-            - name: CONFIG_OBSERVABILITY_NAME
-              value: config-observability
-            - name: METRICS_DOMAIN
-              value: knative.dev/serving
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            capabilities:
-              drop:
-                - ALL
-            seccompProfile:
-              type: RuntimeDefault
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: probes
-              scheme: HTTP
-            periodSeconds: 5
-            failureThreshold: 6
-          readinessProbe:
-            httpGet:
-              path: /readiness
-              port: probes
-              scheme: HTTP
-            periodSeconds: 5
-            failureThreshold: 3
-          ports:
-            - name: metrics
-              containerPort: 9090
-            - name: profiling
-              containerPort: 8008
-            - name: probes
-              containerPort: 8080
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: domainmapping-webhook
-  namespace: knative-serving
-  labels:
-    app.kubernetes.io/component: domain-mapping
-    app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
-spec:
-  selector:
-    matchLabels:
-      app: domainmapping-webhook
-      role: domainmapping-webhook
-  template:
-    metadata:
-      labels:
-        app: domainmapping-webhook
-        role: domainmapping-webhook
-        app.kubernetes.io/component: domain-mapping
-        app.kubernetes.io/name: knative-serving
-        app.kubernetes.io/version: "1.10.2"
-    spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app: domainmapping-webhook
-                topologyKey: kubernetes.io/hostname
-              weight: 100
-      serviceAccountName: controller
-      containers:
-        - name: domainmapping-webhook
-          image: gcr.io/knative-releases/knative.dev/serving/cmd/domain-mapping-webhook@sha256:7368aaddf2be8d8784dc7195f5bc272ecfe49d429697f48de0ddc44f278167aa
-          resources:
-            requests:
-              cpu: 100m
-              memory: 100Mi
-            limits:
-              cpu: 500m
-              memory: 500Mi
-          env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: SYSTEM_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: CONFIG_LOGGING_NAME
-              value: config-logging
-            - name: CONFIG_OBSERVABILITY_NAME
-              value: config-observability
-            - name: WEBHOOK_PORT
-              value: "8443"
-            - name: METRICS_DOMAIN
-              value: knative.dev/serving
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            capabilities:
-              drop:
-                - ALL
-            seccompProfile:
-              type: RuntimeDefault
-          ports:
-            - name: metrics
-              containerPort: 9090
-            - name: profiling
-              containerPort: 8008
-            - name: https-webhook
-              containerPort: 8443
-          readinessProbe:
-            periodSeconds: 1
-            httpGet:
-              scheme: HTTPS
-              port: 8443
-              httpHeaders:
-                - name: k-kubelet-probe
-                  value: "webhook"
-          livenessProbe:
-            periodSeconds: 1
-            httpGet:
-              scheme: HTTPS
-              port: 8443
-              httpHeaders:
-                - name: k-kubelet-probe
-                  value: "webhook"
-            failureThreshold: 6
-            initialDelaySeconds: 20
-      terminationGracePeriodSeconds: 300
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    role: domainmapping-webhook
-    app.kubernetes.io/component: domain-mapping
-    app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
-  name: domainmapping-webhook
-  namespace: knative-serving
-spec:
-  ports:
-    - name: http-metrics
-      port: 9090
-      targetPort: 9090
-    - name: http-profiling
-      port: 8008
-      targetPort: 8008
-    - name: https-webhook
-      port: 443
-      targetPort: 8443
-  selector:
-    app: domainmapping-webhook
-    role: domainmapping-webhook
----
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -6072,7 +6001,7 @@ metadata:
   labels:
     app.kubernetes.io/component: webhook
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
 spec:
   minReplicas: 1
   maxReplicas: 5
@@ -6096,7 +6025,7 @@ metadata:
   labels:
     app.kubernetes.io/component: webhook
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
 spec:
   minAvailable: 80%
   selector:
@@ -6110,7 +6039,7 @@ metadata:
   namespace: knative-serving
   labels:
     app.kubernetes.io/component: webhook
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     app.kubernetes.io/name: knative-serving
 spec:
   selector:
@@ -6123,7 +6052,7 @@ spec:
         app: webhook
         role: webhook
         app.kubernetes.io/component: webhook
-        app.kubernetes.io/version: "1.10.2"
+        app.kubernetes.io/version: "1.12.4"
         app.kubernetes.io/name: knative-serving
     spec:
       affinity:
@@ -6138,7 +6067,7 @@ spec:
       serviceAccountName: controller
       containers:
         - name: webhook
-          image: gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:4305209ce498caf783f39c8f3e85dfa635ece6947033bf50b0b627983fd65953
+          image: gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:48aee2733721ecc77956abc5a2ca072853a669ebc97519beb48f7b3da8455e67
           resources:
             requests:
               cpu: 100m
@@ -6205,9 +6134,10 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
+    app: webhook
     role: webhook
     app.kubernetes.io/component: webhook
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
     app.kubernetes.io/name: knative-serving
   name: webhook
   namespace: knative-serving
@@ -6233,7 +6163,7 @@ metadata:
   labels:
     app.kubernetes.io/component: webhook
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
 webhooks:
   - admissionReviewVersions: ["v1", "v1beta1"]
     clientConfig:
@@ -6260,7 +6190,7 @@ metadata:
   labels:
     app.kubernetes.io/component: webhook
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
 webhooks:
   - admissionReviewVersions: ["v1", "v1beta1"]
     clientConfig:
@@ -6292,77 +6222,6 @@ webhooks:
           - revisions
           - routes
           - services
----
-apiVersion: admissionregistration.k8s.io/v1
-kind: MutatingWebhookConfiguration
-metadata:
-  name: webhook.domainmapping.serving.knative.dev
-  labels:
-    app.kubernetes.io/component: domain-mapping
-    app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
-webhooks:
-  - admissionReviewVersions: ["v1", "v1beta1"]
-    clientConfig:
-      service:
-        name: domainmapping-webhook
-        namespace: knative-serving
-    failurePolicy: Fail
-    sideEffects: None
-    name: webhook.domainmapping.serving.knative.dev
-    timeoutSeconds: 10
-    rules:
-      - apiGroups:
-          - serving.knative.dev
-        apiVersions:
-          - "*"
-        operations:
-          - CREATE
-          - UPDATE
-        scope: "*"
-        resources:
-          - domainmappings
-          - domainmappings/status
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: domainmapping-webhook-certs
-  namespace: knative-serving
-  labels:
-    app.kubernetes.io/component: domain-mapping
-    app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
----
-apiVersion: admissionregistration.k8s.io/v1
-kind: ValidatingWebhookConfiguration
-metadata:
-  name: validation.webhook.domainmapping.serving.knative.dev
-  labels:
-    app.kubernetes.io/component: domain-mapping
-    app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
-webhooks:
-  - admissionReviewVersions: ["v1", "v1beta1"]
-    clientConfig:
-      service:
-        name: domainmapping-webhook
-        namespace: knative-serving
-    failurePolicy: Fail
-    sideEffects: None
-    name: validation.webhook.domainmapping.serving.knative.dev
-    timeoutSeconds: 10
-    rules:
-      - apiGroups:
-          - serving.knative.dev
-        apiVersions:
-          - "*"
-        operations:
-          - CREATE
-          - UPDATE
-          - DELETE
-        scope: "*"
-        resources:
           - domainmappings
           - domainmappings/status
 ---
@@ -6373,7 +6232,7 @@ metadata:
   labels:
     app.kubernetes.io/component: webhook
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
 webhooks:
   - admissionReviewVersions: ["v1", "v1beta1"]
     clientConfig:
@@ -6406,6 +6265,8 @@ webhooks:
           - revisions
           - routes
           - services
+          - domainmappings
+          - domainmappings/status
 ---
 apiVersion: v1
 kind: Secret
@@ -6415,6 +6276,6 @@ metadata:
   labels:
     app.kubernetes.io/component: webhook
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.10.2"
+    app.kubernetes.io/version: "1.12.4"
 ---
 

@@ -1,16 +1,16 @@
-KSERVE_VERSION ?= 0.10.0
+KSERVE_VERSION ?= 0.12.1
 MODELS_WEBAPP_VERSION ?= 0.8.1
 MODELS_WEBAPP_RELEASE_VERSION := $(shell echo ${MODELS_WEBAPP_VERSION} | cut -d "." -f1-2)
 
 .PHONY: upgrade-kserve-manifests
 upgrade-kserve-manifests: clean-kserve-manifests
 	curl -sSL 'https://github.com/kserve/kserve/releases/download/v$(KSERVE_VERSION)/kserve_kubeflow.yaml' -o 'kserve/kserve_kubeflow.yaml'
-	curl -sSL 'https://github.com/kserve/kserve/releases/download/v$(KSERVE_VERSION)/kserve-runtimes.yaml' -o 'kserve/kserve-runtimes.yaml'
+	curl -sSL 'https://github.com/kserve/kserve/releases/download/v$(KSERVE_VERSION)/kserve-cluster-resources.yaml' -o 'kserve/kserve-cluster-resources.yaml'
 	curl -sSL 'https://github.com/kserve/kserve/releases/download/v$(KSERVE_VERSION)/kserve.yaml' -o 'kserve/kserve.yaml'
 
 .PHONY: clean-kserve-manifests
 clean-kserve-manifests:
-	cd kserve && rm -f kserve.yaml kserve-runtimes.yaml kserve_kubeflow.yaml
+	cd kserve && rm -f kserve.yaml kserve-cluster-resources.yaml kserve_kubeflow.yaml
 
 .PHONY: install-kserve
 install-kserve:
