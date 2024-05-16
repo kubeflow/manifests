@@ -3,7 +3,7 @@ A simple example of federated learning on kubeflow with node-red which can contr
 
 ## Table of Contents
 <!-- toc -->
-- [Federated Learning Overview](#Federated Learning Overview)
+- [Federated Learning Overview](#Federated)
 - [Self-defined Node](#Self-defined-Node)
   * [Prerequisites](#Prerequisites)
   * [snippet.js](#snippet.js)
