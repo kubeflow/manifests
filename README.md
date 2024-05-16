@@ -12,6 +12,7 @@
   * [Install individual components](#install-individual-components)
   * [Connect to your Kubeflow Cluster](#connect-to-your-kubeflow-cluster)
   * [Change default user password](#change-default-user-password)
+- [Upgrading and extending](#upgrade)
 - [Release process](#release-process)
 - [Frequently Asked Questions](#frequently-asked-questions)
 
@@ -68,6 +69,8 @@ used from the different projects of Kubeflow:
 | Cert Manager | common/cert-manager | [1.14.5](https://github.com/cert-manager/cert-manager/releases/tag/v1.12.2) |
 
 ## Installation
+
+This is for the installation from scratch. For the in-place upgrade guide please jump to the upgrading and extending section.
 
 The Manifests WG provides two options for installing Kubeflow official components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
 
@@ -479,6 +482,18 @@ TODO this changed slightly in https://github.com/kubeflow/manifests/pull/2669 an
       - email: user@example.com
         hash: <enter the generated hash here>
     ```
+
+## Upgrading and extending
+
+For modifications and in place upgrades of the Kubeflow platform we provide a rough description for advanced users:
+
+- Never ever edit the manifests directly, use Kustomize overlays and [components](https://github.com/kubernetes-sigs/kustomize/blob/master/examples/components.md) on top of the [example.yaml](https://github.com/kubeflow/manifests/blob/master/example/kustomization.yaml).
+- This allows you to upgrade by just referencing the new manifests.
+- You might have to adjust your over the top overlays and components if needed.
+- You might have to prune old resources. For that you would add [labels](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/labels/) to all your resources from the start.
+- With labels you can use `kubectl apply` with `--prune` and `--dry-run` to list prunable resources.
+- Sometimes there are major changes, e.g. in the 1.9 release we switch to oauth2-proxy, which need additional attention.
+- Nevertheless with a bit of Kubernetes knowledge one should be able to upgrade.
 
 ## Release process
 
