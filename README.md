@@ -488,7 +488,7 @@ TODO this changed slightly in https://github.com/kubeflow/manifests/pull/2669 an
 For modifications and in place upgrades of the Kubeflow platform we provide a rough description for advanced users:
 
 - Never ever edit the manifests directly, use Kustomize overlays and [components](https://github.com/kubernetes-sigs/kustomize/blob/master/examples/components.md) on top of the [example.yaml](https://github.com/kubeflow/manifests/blob/master/example/kustomization.yaml).
-- This allows you to upgrade by just referencing the new manifests.
+- This allows you to upgrade by just referencing the new manifests, building with kustomize and running `kubectl apply` again.
 - You might have to adjust your over the top overlays and components if needed.
 - You might have to prune old resources. For that you would add [labels](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/labels/) to all your resources from the start.
 - With labels you can use `kubectl apply` with `--prune` and `--dry-run` to list prunable resources.
