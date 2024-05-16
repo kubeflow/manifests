@@ -13,7 +13,7 @@ A simple example of federated learning on kubeflow with node-red which can contr
 
 <!-- tocstop -->
 
-## Federated Learning Overview
+# Federated Learning Overview
 Federated Learning is a decentralized machine learning technique where model training happens locally on devices holding data, preserving privacy. Instead of sending data to a central server, model updates are sent, allowing collaborative learning without exposing sensitive information. This approach is efficient for edge devices, reduces data transfer, and is ideal for privacy-sensitive applications like healthcare and finance, revolutionizing how machine learning is done in connected environments.
 
 ## Installation
