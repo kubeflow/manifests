@@ -7,7 +7,7 @@ A simple example of federated learning on kubeflow with node-red which can contr
 - [Installation](#Installation)
 - [Implementation](#Implementation)
 - [Reference](#Reference)
-- 
+
 <!-- tocstop -->
 
 # Federated-Learning-Overview
