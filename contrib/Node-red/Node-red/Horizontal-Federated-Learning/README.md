@@ -1,6 +1,18 @@
 # Federated-Learning-on-kubeflow-with-nodered
 A simple example of federated learning on kubeflow with node-red which can control number of clients
 
+## Table of Contents
+<!-- toc -->
+- [Federated Learning Overview](#Federated Learning Overview)
+- [Self-defined Node](#Self-defined-Node)
+  * [Prerequisites](#Prerequisites)
+  * [snippet.js](#snippet.js)
+  * [example.js](#example.js)
+  * [example.html](#example.html)
+- [Reference](#Reference)
+
+<!-- tocstop -->
+
 ## Federated Learning Overview
 Federated Learning is a decentralized machine learning technique where model training happens locally on devices holding data, preserving privacy. Instead of sending data to a central server, model updates are sent, allowing collaborative learning without exposing sensitive information. This approach is efficient for edge devices, reduces data transfer, and is ideal for privacy-sensitive applications like healthcare and finance, revolutionizing how machine learning is done in connected environments.
 
