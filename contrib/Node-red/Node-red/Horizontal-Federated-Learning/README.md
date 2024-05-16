@@ -4,8 +4,8 @@ A simple example of federated learning on kubeflow with node-red which can contr
 ## Table of Contents
 <!-- toc -->
 - [Federated Learning Overview](#Federated-Learning-Overview)
-- [Self-defined Node](#Self-defined-Node)
-  * [Prerequisites](#Prerequisites)
+- [Installation](#Installation)
+- [Implementation](#Implementation)
   * [snippet.js](#snippet.js)
   * [example.js](#example.js)
   * [example.html](#example.html)
