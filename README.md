@@ -12,7 +12,7 @@
   * [Install individual components](#install-individual-components)
   * [Connect to your Kubeflow Cluster](#connect-to-your-kubeflow-cluster)
   * [Change default user password](#change-default-user-password)
-- [Upgrading and extending](#upgrade)
+- [Upgrading and extending](#upgrading-and-extending)
 - [Release process](#release-process)
 - [Frequently Asked Questions](#frequently-asked-questions)
 
