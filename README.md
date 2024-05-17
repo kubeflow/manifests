@@ -63,7 +63,7 @@ used from the different projects of Kubeflow:
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
-| Istio | common/istio-1-17 | [1.17.3](https://github.com/istio/istio/releases/tag/1.17.3) |
+| Istio | common/istio-1-22 | [1.22.0](https://github.com/istio/istio/releases/tag/1.22.0) |
 | Knative | common/knative/knative-serving <br /> common/knative/knative-eventing | [v1.12.4](https://github.com/knative/serving/releases/tag/knative-v1.12.4) <br /> [v1.12.6](https://github.com/knative/eventing/releases/tag/knative-v1.12.6) |
 | Cert Manager | common/cert-manager | [1.14.5](https://github.com/cert-manager/cert-manager/releases/tag/v1.12.2) |
 
@@ -203,9 +203,9 @@ network authorization and implement routing policies.
 Install Istio:
 
 ```sh
-kustomize build common/istio-1-17/istio-crds/base | kubectl apply -f -
-kustomize build common/istio-1-17/istio-namespace/base | kubectl apply -f -
-kustomize build common/istio-1-17/istio-install/base | kubectl apply -f -
+kustomize build common/istio-1-22/istio-crds/base | kubectl apply -f -
+kustomize build common/istio-1-22/istio-namespace/base | kubectl apply -f -
+kustomize build common/istio-1-22/istio-install/base | kubectl apply -f -
 ```
 
 #### AuthService
@@ -247,7 +247,7 @@ Install Knative Serving:
 
 ```sh
 kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -
-kustomize build common/istio-1-17/cluster-local-gateway/base | kubectl apply -f -
+kustomize build common/istio-1-22/cluster-local-gateway/base | kubectl apply -f -
 ```
 
 Optionally, you can install Knative Eventing which can be used for inference request logging:
@@ -289,7 +289,7 @@ well.
 Install istio resources:
 
 ```sh
-kustomize build common/istio-1-17/kubeflow-istio-resources/base | kubectl apply -f -
+kustomize build common/istio-1-22/kubeflow-istio-resources/base | kubectl apply -f -
 ```
 
 #### Kubeflow Pipelines
