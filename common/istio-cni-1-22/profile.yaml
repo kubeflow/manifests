@@ -23,7 +23,6 @@ spec:
     enablePrometheusMerge: true
   profile: default
   tag: 1.22.0
-  
   values:
     base:
       enableCRDTemplates: false
