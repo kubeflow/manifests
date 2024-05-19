@@ -1,28 +1,33 @@
 # Pull Request Template related to Kubeflow manifests Issues
 
-Please include a summary of chnages and the related issue. List any dependencies that are required for this change.
+🔄 Please include a summary of changes and the related issue. List any dependencies that are required for this change. Please delete the options that are not relevant.
 
 
-# A brief description of the changes
 
+## ✏️ A brief description of the changes
+> I changed ...
 
-Please delete options that are not relevant.
+## 📦 List any dependencies that are required for this change
+> depend on #
 
-
-# List any dependencies that are required for this change
-
-# If this PR is related to an issue, please link to the issue here.
+## 🐛 If this PR is related to an issue, please put the link of the issue here.
+> link to issue #
 
 
   
-# Unit Test Checklist
+## ✅ Unit Test Checklist
   
-  - [] Make sure you have installed kustomize == 5.2.1+     
-  - [] Have you written new tests for your core changes, as applicable?      
-  - [] Have you successfully run existing tests with your changes ?    
-  - [] Have you successfully run existing and new tests with your changes ?
-        
+  - [] 🛠️ Make sure you have installed kustomize == 5.2.1+     
+  - [] ✍️ Have you written new tests for your core changes, as applicable?      
+  - [] 🔄 Have you successfully run existing tests with your changes ?    
+  - [] 🚀 Have you successfully run existing and new tests with your changes ?
+
+## ✅ Contributor checklist
+  - [] All the commits have been _signed-off_  (To pass the `DCO` check)
+  - [] Submit the [Contributor License Agreements](https://cla.developers.google.com/clas) (To pass the `cla/google` check)
+
+
+---     
  
-> **Note:** Please note that you have to fill required fields to post a Pull Request.
-If not please close or redo the Pull Request and join our slack channel [wg-manifests](https://www.kubeflow.org/docs/about/community/) here. This link also contains our meeting schedule.
+>You can join our slack channel [wg-manifests](https://www.kubeflow.org/docs/about/community/) here. This link also contains our meeting schedule.
   
