@@ -1,6 +1,9 @@
-# Pull Request Template related to Kubeflow manifests Issues
+# Pull Request Template for Kubeflow manifests Issues
 
-🔄 Please include a summary of changes and the related issue. List any dependencies that are required for this change. Please delete the options that are not relevant.
+- Please include a summary of changes and the related issue. 
+- List any dependencies that are required for this change. 
+- Please delete the options that are not relevant.
+- The following checklist will help you to satisfy the requirements.
 
 
 
@@ -8,10 +11,10 @@
 > I changed ...
 
 ## 📦 List any dependencies that are required for this change
-> depend on #
+> My PR depends on #
 
 ## 🐛 If this PR is related to an issue, please put the link of the issue here.
-> link to issue #
+> The following issues are related, because ...
 
 
   
@@ -29,5 +32,5 @@
 
 ---     
  
->You can join our slack channel [wg-manifests](https://www.kubeflow.org/docs/about/community/) here. This link also contains our meeting schedule.
+>You can join our slack channel **wg-manifests** [here](https://www.kubeflow.org/docs/about/community/). This link also contains our meeting schedule.
   
