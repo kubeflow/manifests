@@ -92,6 +92,7 @@ defaults: {
         <input type="text" id="node-input-userinput" />
 </div>
 ```
+
 ## Reference
 https://github.com/NightLightTw/kube-nodered
 
