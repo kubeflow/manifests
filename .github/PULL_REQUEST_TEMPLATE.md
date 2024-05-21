@@ -20,14 +20,14 @@
   
 ## ✅ Unit Test Checklist
   
-  - [] 🛠️ Make sure you have installed kustomize == 5.2.1+     
-  - [] ✍️ Have you written new tests for your core changes, as applicable?      
-  - [] 🔄 Have you successfully run existing tests with your changes ?    
-  - [] 🚀 Have you successfully run existing and new tests with your changes ?
+  - [ ] 🛠️ Make sure you have installed kustomize == 5.2.1+     
+  - [ ] ✍️ Have you written new tests for your core changes, as applicable?      
+  - [ ] 🔄 Have you successfully run existing tests with your changes ?    
+  - [ ] 🚀 Have you successfully run existing and new tests with your changes ?
 
 ## ✅ Contributor checklist
-  - [] All the commits have been _signed-off_  (To pass the `DCO` check)
-  - [] Submit the [Contributor License Agreements](https://cla.developers.google.com/clas) (To pass the `cla/google` check)
+  - [ ] All the commits have been _signed-off_  (To pass the `DCO` check)
+  - [ ] Submit the [Contributor License Agreements](https://cla.developers.google.com/clas) (To pass the `cla/google` check)
 
 
 ---     
