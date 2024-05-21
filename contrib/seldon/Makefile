@@ -1,9 +1,11 @@
 
-SELDON_VERSION ?= 1.17.1
+SELDON_VERSION ?= 1.18.1
+# This could be replaced by a local path if required
+SELDON_OPERATOR_CHART ?= seldon-core-operator --repo https://storage.googleapis.com/seldon-charts
 
 seldon-core-operator/base: clean-kustomize
 	mkdir -p seldon-core-operator/base
-	cd seldon-core-operator/base && helm template -f ../../values.yaml seldon-core seldon-core-operator --repo https://storage.googleapis.com/seldon-charts --namespace kubeflow --version ${SELDON_VERSION}  > resources.yaml
+	cd seldon-core-operator/base && helm template -f ../../values.yaml seldon-core ${SELDON_OPERATOR_CHART} --namespace kubeflow --version ${SELDON_VERSION}  > resources.yaml
 	sed -i 's#cert-manager.io/inject-ca-from:.*#cert-manager.io/inject-ca-from: kubeflow/seldon-serving-cert#g' seldon-core-operator/base/resources.yaml
 	sed -i "s#'seldon-webhook-service.kubeflow.svc.cluster.local'#"'seldon-webhook-service.$$(SERVICE_NAMESPACE).svc.cluster.local#' seldon-core-operator/base/resources.yaml
 	sed -i "s#commonName: 'seldon-webhook-service.kubeflow.svc'#"'commonName: seldon-webhook-service.$$(CERTIFICATE_NAMESPACE).svc#' seldon-core-operator/base/resources.yaml
