@@ -1,18 +1,20 @@
-name: Build & Apply PodDefaults manifests in KinD
+name: Build & Apply JWA manifests in KinD
 on:
   pull_request:
     paths:
-      - apps/admission-webhook/upstream/**
+      - .github/workflows/jupyter_web_application_test.yaml
+      - apps/jupyter/jupyter-web-app/upstream/**
       - tests/gh-actions/kind-cluster.yaml
+      - tests/gh-actions/install_kind.sh
+      - tests/gh-actions/install_kustomize.sh
       - tests/gh-actions/install_istio.sh
-      - common/cert-manager/**
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Install KinD
       run: ./tests/gh-actions/install_kind.sh
@@ -26,12 +28,9 @@ jobs:
     - name: Install Istio
       run: ./tests/gh-actions/install_istio.sh
 
-    - name: Install cert-manager
-      run: ./tests/gh-actions/install_cert_manager.sh
-
     - name: Build & Apply manifests
       run: |
-        cd apps/admission-webhook/upstream
+        cd apps/jupyter/jupyter-web-app/upstream
         kubectl create ns kubeflow
-        kustomize build overlays/cert-manager | kubectl apply -f -
+        kustomize build overlays/istio | kubectl apply -f -
         kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s

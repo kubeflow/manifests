@@ -7,7 +7,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.17.1'
+    app.kubernetes.io/version: '1.18.1'
   name: 'seldon-manager'
   namespace: 'kubeflow'
 ---
@@ -20,7 +20,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.17.1'
+    app.kubernetes.io/version: '1.18.1'
   name: seldon-manager-role-kubeflow
 rules:
 - apiGroups:
@@ -288,7 +288,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.17.1'
+    app.kubernetes.io/version: '1.18.1'
   name: seldon-manager-sas-role-kubeflow
 rules:
 - apiGroups:
@@ -325,7 +325,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.17.1'
+    app.kubernetes.io/version: '1.18.1'
   name: seldon-webhook-role-kubeflow
 rules:
 - apiGroups:
@@ -372,7 +372,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.17.1'
+    app.kubernetes.io/version: '1.18.1'
   name: seldon-manager-rolebinding-kubeflow
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -391,7 +391,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.17.1'
+    app.kubernetes.io/version: '1.18.1'
   name: seldon-manager-sas-rolebinding-kubeflow
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -410,7 +410,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.17.1'
+    app.kubernetes.io/version: '1.18.1'
   name: seldon-webhook-rolebinding-kubeflow
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -429,7 +429,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.17.1'
+    app.kubernetes.io/version: '1.18.1'
   name: seldon-leader-election-role
   namespace: 'kubeflow'
 rules:
@@ -481,7 +481,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.17.1'
+    app.kubernetes.io/version: '1.18.1'
   name: seldon-leader-election-rolebinding
   namespace: 'kubeflow'
 roleRef:
@@ -501,7 +501,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.17.1'
+    app.kubernetes.io/version: '1.18.1'
     control-plane: seldon-controller-manager
   name: seldon-controller-manager
   namespace: 'kubeflow'
@@ -531,6 +531,7 @@ spec:
       - args:
         - --enable-leader-election
         - --webhook-port=4443
+        - --metrics-addr=:8080
         - --create-resources=$(MANAGER_CREATE_RESOURCES)
         - --log-level=$(MANAGER_LOG_LEVEL)
         - --leader-election-id=$(MANAGER_LEADER_ELECTION_ID)
@@ -615,7 +616,7 @@ spec:
         - name: USE_EXECUTOR
           value: 'true'
         - name: EXECUTOR_CONTAINER_IMAGE_AND_VERSION
-          value: 'docker.io/seldonio/seldon-core-executor:1.17.1'
+          value: 'docker.io/seldonio/seldon-core-executor:1.18.1'
         - name: EXECUTOR_CONTAINER_IMAGE_PULL_POLICY
           value: 'IfNotPresent'
         - name: EXECUTOR_PROMETHEUS_PATH
@@ -648,7 +649,7 @@ spec:
           value: 'false'
         - name: EXECUTOR_FULL_HEALTH_CHECKS
           value: 'false'
-        image: 'docker.io/seldonio/seldon-core-operator:1.17.1'
+        image: 'docker.io/seldonio/seldon-core-operator:1.18.1'
         imagePullPolicy: 'IfNotPresent'
         name: manager
         ports:
@@ -680,7 +681,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.17.1'
+    app.kubernetes.io/version: '1.18.1'
   name: seldon-serving-cert
   namespace: 'kubeflow'
 spec:
@@ -701,7 +702,7 @@ metadata:
     app: seldon
     app.kubernetes.io/instance: 'seldon-core'
     app.kubernetes.io/name: 'seldon-core-operator'
-    app.kubernetes.io/version: '1.17.1'
+    app.kubernetes.io/version: '1.18.1'
   name: seldon-selfsigned-issuer
   namespace: 'kubeflow'
 spec:

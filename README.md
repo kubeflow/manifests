@@ -5,6 +5,7 @@
 Kube-node-red is aiming to integrate Kubeflow/Kubebeters with node-red, leveraging node-red's low-code modules, and using Kubeflow resources (e.g. Kubeflow pipeline, Kserve) to enhance its AI/ML ability.
 ## Table of Contents
 <!-- toc -->
+
 - [Architecture](#Architecture)
 - [Self-defined Node](#Self-defined-Node)
   * [Prerequisites](#Prerequisites)
@@ -17,6 +18,7 @@ Kube-node-red is aiming to integrate Kubeflow/Kubebeters with node-red, leveragi
 
 # Architecture
 ![image](https://hackmd.io/_uploads/HJeFeO6Up.png)
+
 
 
 # Self-defined Node
@@ -32,6 +34,7 @@ Node front-end logic and user configuration logic and user configuration
 
 1.Machine learning tasks written in python are executed in kubeflow, and js strings are stored in constants for node calls and modifications.
 
+
 ```javascript=
 const EXAMPLE =
 `
@@ -39,6 +42,7 @@ const EXAMPLE =
     data.fillna(value=0, inplace=True)
     data = data.values  
 `;
+
 ```
 2. The user-modified part will need to be replaced with the template literal value "%s"
 ```javascript=
@@ -55,16 +59,19 @@ module.exports = {
 ```        
 ##  example.js
 
+
 1. Import the "util" module and import the prepared snippet.js according to the file structure
 ```javascript=
 const util = require('util');
 const snippets = require('../snippets');
+
 ```
 
 2. Replace the user's front-end configuration with the target code
 ```javascript=
 example = util.format(snippets.EXAMPLE,config.userinput)
 ```
+
 
 3. Store the modified code as a variable in the msg object attribute
 ```javascript=
@@ -74,6 +81,7 @@ node.on('input', function(msg) {
             node.send(msg);
     
 });
+
 ```
 
 ##  example.html
@@ -83,6 +91,7 @@ defaults: {
             userinput: { value: {} }                    
         },
 ```
+
 
 
 2.Write corresponding html template

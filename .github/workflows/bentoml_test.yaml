@@ -1,15 +1,21 @@
-name: Build & Apply Seldon manifests in KinD
+name: Build & Apply BentoML Yatai Stack manifests in KinD
 on:
   pull_request:
     paths:
-      - contrib/seldon/**
+      - .github/workflows/bentoml_test.yaml
+      - tests/gh-actions/kind-cluster.yaml
+      - tests/gh-actions/install_kind.sh
+      - tests/gh-actions/install_kustomize.sh
+      - tests/gh-actions/install_cert_manager.sh
+      - common/cert-manager/**
+      - contrib/bentoml/**
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Install KinD
       run: ./tests/gh-actions/install_kind.sh
@@ -20,13 +26,10 @@ jobs:
     - name: Install kustomize
       run: ./tests/gh-actions/install_kustomize.sh
 
-    - name: Install Istio
-      run: ./tests/gh-actions/install_istio.sh
-
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh
 
     - name: Build & Apply manifests
       run: |
-        cd contrib/seldon/
+        cd contrib/bentoml/
         make test
