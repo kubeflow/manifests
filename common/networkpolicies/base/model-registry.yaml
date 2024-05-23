@@ -25,5 +25,10 @@ spec:
                 values:
                   - istio-system
         - podSelector: {} # allow all pods from the same namespace
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 9090
   policyTypes:
     - Ingress
