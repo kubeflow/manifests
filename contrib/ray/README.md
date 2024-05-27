@@ -20,8 +20,8 @@ TODO
 
 # Requirements
 * Dependencies
-    * `kustomize`: v3.2.0 (Kubeflow manifest is sensitive to `kustomize` version.)
-    * `Kubernetes`: v1.23
+    * `kustomize`: v5.2.1+ (Kubeflow manifest is sensitive to `kustomize` version.)
+    * `Kubernetes`: v1.29+
 
 * Computing resources:
     * 16GB RAM
@@ -36,7 +36,7 @@ TODO
 </figure>
 
 ## Step 1: Install Kubeflow v1.7-branch
-* This example installs Kubeflow with the [v1.7-branch](https://github.com/kubeflow/manifests/tree/v1.7-branch).
+* This example installs Kubeflow with the [v1.9-branch](https://github.com/kubeflow/manifests/tree/v1.9-branch).
 
 * Install all Kubeflow official components and all common services using [one command](https://github.com/kubeflow/manifests/tree/v1.7-branch#install-with-a-single-command).
     * If you do not want to install all components, you can comment out **KNative**, **Katib**, **Tensorboards Controller**, **Tensorboard Web App**, **Training Operator**, and **KServe** from [example/kustomization.yaml](https://github.com/kubeflow/manifests/blob/v1.7-branch/example/kustomization.yaml).
@@ -47,10 +47,10 @@ We never ever break Kubernetes standards and do not use the "default" namespace,
 
 ```sh
 # Install a KubeRay operator and custom resource definitions.
-kustomize build kuberay-operator/base | kubectl apply --server-side -f -
+kustomize build kuberay-operator/overlays/kubeflow | kubectl apply --server-side -f -
 
 # Check KubeRay operator
-kubectl get pod -l app.kubernetes.io/component=kuberay-operator
+kubectl get pod -l app.kubernetes.io/component=kuberay-operator -n kubeflow
 # NAME                                READY   STATUS    RESTARTS   AGE
 # kuberay-operator-5b8cd69758-rkpvh   1/1     Running   0          6m23s
 ```
@@ -69,9 +69,9 @@ kubectl get pod -l ray.io/cluster=kubeflow-raycluster -n $MY_KUBEFLOW_USER_NAMES
 # kubeflow-raycluster-head-p6dpk                 1/1     Running   0          70s
 # kubeflow-raycluster-worker-small-group-l7j6c   1/1     Running   0          70s
 ```
-* `raycluster_example.yaml` uses `rayproject/ray:2.2.0-py38-cpu` as its OCI image. Ray is very sensitive to the Python versions and Ray versions between the server (RayCluster) and client (JupyterLab) sides. This image uses:
-    * Python 3.8.13
-    * Ray 2.2.0
+* `raycluster_example.yaml` uses `rayproject/ray:2.23.0-py311-cpu` as its OCI image. Ray is very sensitive to the Python versions and Ray versions between the server (RayCluster) and client (JupyterLab) sides. This image uses:
+    * Python 3.11
+    * Ray 2.23.0
 
 ## Step 4: Forward the port of Istio's Ingress-Gateway
 * Follow the [instructions](https://github.com/kubeflow/manifests/tree/v1.7-branch#port-forward) to forward the port of Istio's Ingress-Gateway and log in to Kubeflow Central Dashboard.
@@ -79,19 +79,17 @@ kubectl get pod -l ray.io/cluster=kubeflow-raycluster -n $MY_KUBEFLOW_USER_NAMES
 ## Step 5: Create a JupyterLab via Kubeflow Central Dashboard
 * Click "Notebooks" icon in the left panel.
 * Click "New Notebook"
-* Select `kubeflownotebookswg/jupyter-scipy:v1.7.0` as OCI image.
+* Select `kubeflownotebookswg/jupyter-scipy:v1.9.0` as OCI image (or any other with the same python version)
 * Click "Launch"
 * Click "CONNECT" to connect into the JupyterLab instance.
 
 ## Step 6: Use Ray client in the JupyterLab to connect to the RayCluster
 * As I mentioned in Step 3, Ray is very sensitive to the Python versions and Ray versions between the server (RayCluster) and client (JupyterLab) sides.
     ```sh
-    # Check Python version. The version's MAJOR and MINOR should match with RayCluster (i.e. Python 3.8)
+    # Check Python version. The version's MAJOR and MINOR should match with RayCluster (i.e. Python 3.11.9)
     python --version 
-    # Python 3.8.10
-    
-    # Install Ray 2.2.0
-    pip install -U ray[default]==2.2.0
+    # Python 3.11.9
+    pip install -U ray[default]==2.23.0
     ```
 * Connect to RayCluster via Ray client.
     ```python
@@ -106,29 +104,29 @@ kubectl get pod -l ray.io/cluster=kubeflow-raycluster -n $MY_KUBEFLOW_USER_NAMES
     # {'node:10.244.0.41': 1.0, 'memory': 3000000000.0, 'node:10.244.0.40': 1.0, 'object_store_memory': 805386239.0, 'CPU': 2.0}
 
     # Try Ray task
-    @ray.remote
-    def f(x):
-        return x * x
+@ray.remote
+def f(x):
+    return x * x
 
-    futures = [f.remote(i) for i in range(4)]
-    print(ray.get(futures)) # [0, 1, 4, 9]
+futures = [f.remote(i) for i in range(4)]
+print(ray.get(futures)) # [0, 1, 4, 9]
 
-    # Try Ray actor
-    @ray.remote
-    class Counter(object):
-        def __init__(self):
-            self.n = 0
+# Try Ray actor
+@ray.remote
+class Counter(object):
+    def __init__(self):
+        self.n = 0
 
-        def increment(self):
-            self.n += 1
+    def increment(self):
+        self.n += 1
 
-        def read(self):
-            return self.n
+    def read(self):
+        return self.n
 
-    counters = [Counter.remote() for i in range(4)]
-    [c.increment.remote() for c in counters]
-    futures = [c.read.remote() for c in counters]
-    print(ray.get(futures)) # [1, 1, 1, 1]
+counters = [Counter.remote() for i in range(4)]
+[c.increment.remote() for c in counters]
+futures = [c.read.remote() for c in counters]
+print(ray.get(futures)) # [1, 1, 1, 1]
     ```
 
 # Upgrading
