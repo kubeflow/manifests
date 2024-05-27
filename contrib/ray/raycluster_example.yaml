@@ -3,7 +3,7 @@ kind: RayCluster
 metadata:
   name: kubeflow-raycluster
 spec:
-  rayVersion: '2.2.0'
+  rayVersion: '2.23.0'
   # Ray head pod configuration
   headGroupSpec:
     # Kubernetes Service Type.
@@ -24,7 +24,7 @@ spec:
       spec:
         containers:
         - name: ray-head
-          image: rayproject/ray:2.2.0-py38-cpu
+          image: rayproject/ray:2.23.0-py311-cpu
           ports:
           - containerPort: 6379
             name: gcs
@@ -79,7 +79,7 @@ spec:
       spec:
         containers:
         - name: ray-worker
-          image: rayproject/ray:2.2.0-py38-cpu
+          image: rayproject/ray:2.23.0-py311-cpu
           lifecycle:
             preStop:
               exec:
@@ -110,7 +110,7 @@ spec:
         initContainers:
         # the env var $RAY_IP is set by the operator if missing, with the value of the head service name
         - name: init
-          image: busybox:1.28
+          image: busybox:1.36
           # Change the cluster postfix if you don't have a default setting
           command: ['sh', '-c', "until nslookup $RAY_IP.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for K8s Service $RAY_IP; sleep 2; done"]
           securityContext:

@@ -7,21 +7,17 @@ metadata:
     app: kuberay-operator
     app.kubernetes.io/name: kuberay-operator
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
-aggregationRule:
-  clusterRoleSelectors:
-    - matchLabels:
-        rbac.authorization.kubeflow.org/aggregate-to-kubeflow-kuberay-admin: "true"
 rules: []
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kubeflow-kuberay-editor
+  name: kubeflow-kuberay-edit
   labels:
     app: kuberay-operator
     app.kubernetes.io/name: kuberay-operator
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
-    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-kuberay-admin: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
 rules:
   - apiGroups:
       - ray.io
