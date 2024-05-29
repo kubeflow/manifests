@@ -33,14 +33,16 @@ jobs:
       - name: Install kubectl
         run: ./tests/gh-actions/install_kubectl.sh
 
+      - name: Create kubeflow namespace
+        run: |
+          kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+          kustomize build apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
+
       - name: Install Istio with ext auth
         run: ./tests/gh-actions/install_istio_with_ext_auth.sh
 
       - name: Install cert-manager
         run: ./tests/gh-actions/install_cert_manager.sh
-
-      - name: Create kubeflow namespace
-        run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
       - name: Install KF Pipelines
         run: ./tests/gh-actions/install_pipelines.sh
@@ -49,7 +51,7 @@ jobs:
         run: ./tests/gh-actions/install_multi_tenancy.sh
 
       - name: Install kubeflow-istio-resources
-        run: kustomize build common/istio-1-17/kubeflow-istio-resources/base | kubectl apply -f -
+        run: kustomize build common/istio-1-22/kubeflow-istio-resources/base | kubectl apply -f -
 
       - name: Create KF Profile
         run: kustomize build common/user-namespace/base | kubectl apply -f -

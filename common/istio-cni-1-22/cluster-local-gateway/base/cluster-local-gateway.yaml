@@ -120,7 +120,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        image: docker.io/istio/proxyv2:1.17.5
+        image: docker.io/istio/proxyv2:1.22.0
         name: istio-proxy
         ports:
         - containerPort: 15020
