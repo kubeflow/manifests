@@ -36,3 +36,10 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name
+- name: POSTGRES_PORT
+  objref:
+    kind: ConfigMap
+    name: model-registry-db-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.POSTGRES_PORT

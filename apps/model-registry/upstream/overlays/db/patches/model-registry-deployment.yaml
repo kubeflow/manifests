@@ -4,6 +4,10 @@ metadata:
   name: model-registry-deployment
 spec:
   template:
+    metadata:
+      annotations:
+        # db doesn't use istio
+        traffic.sidecar.istio.io/excludeOutboundPorts: $(MYSQL_PORT)
     spec:
       containers:
         - name: rest-container

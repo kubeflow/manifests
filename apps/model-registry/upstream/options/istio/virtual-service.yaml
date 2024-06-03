@@ -7,18 +7,23 @@ spec:
   - kubeflow-gateway
   hosts:
   - '*'
-  tcp:
+  http:
   - match:
-    - port: 8080
+    - uri:
+        prefix: /api/model_registry/
     route:
     - destination:
         host: model-registry-service.kubeflow.svc.cluster.local
         port:
           number: 8080
   - match:
-      - port: 9090
+    - port: 9090
+    - authority:
+        regex: model-registry-service(\..+)?(:9090)?
+    - uri:
+        prefix: /ml_metadata.MetadataStoreService/
     route:
-      - destination:
-          host: model-registry-service.kubeflow.svc.cluster.local
-          port:
-            number: 9090
+    - destination:
+        host: model-registry-service.kubeflow.svc.cluster.local
+        port:
+          number: 9090
