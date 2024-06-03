@@ -15,7 +15,7 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="v0.2.0-alpha" # You can use tags as well
+COMMIT="v0.2.1-alpha" # You can use tags as well
 DEV_MODE=${DEV_MODE:=false}
 SRC_DIR=${SRC_DIR:=/tmp/kubeflow-model-registry}
 BRANCH=${BRANCH:=sync-kubeflow-model-registry-manifests-${COMMIT?}}
@@ -64,7 +64,8 @@ DST_DIR=$MANIFESTS_DIR/apps/model-registry/upstream
 if [ -d "$DST_DIR" ]; then
     rm -r "$DST_DIR"
 fi
-cp $SRC_DIR/manifests/kustomize/* $DST_DIR -r
+mkdir -p $DST_DIR
+cp $SRC_DIR/model-registry/manifests/kustomize/* $DST_DIR -r
 
 echo "Successfully copied all manifests."
 
