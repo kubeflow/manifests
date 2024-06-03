@@ -24,7 +24,6 @@ spec:
                 operator: In
                 values:
                   - istio-system
-        - podSelector: {} # allow all pods from the same namespace
       ports:
         - protocol: TCP
           port: 8080
