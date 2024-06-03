@@ -37,9 +37,9 @@ resources:
 - ../common/cert-manager/cert-manager/base
 - ../common/cert-manager/kubeflow-issuer/base
 # Istio
-- ../common/istio-1-17/istio-crds/base
-- ../common/istio-1-17/istio-namespace/base
-- ../common/istio-1-17/istio-install/overlays/oauth2-proxy
+- ../common/istio-1-18/istio-crds/base
+- ../common/istio-1-18/istio-namespace/base
+- ../common/istio-1-18/istio-install/overlays/oauth2-proxy
 # oauth2-proxy
 - ../common/oidc-client/oauth2-proxy/overlays/m2m-self-signed
 # Dex
@@ -47,7 +47,7 @@ resources:
 # KNative
 - ../common/knative/knative-serving/overlays/gateways
 - ../common/knative/knative-eventing/base
-- ../common/istio-1-17/cluster-local-gateway/base
+- ../common/istio-1-18/cluster-local-gateway/base
 # Kubeflow namespace
 - ../common/kubeflow-namespace/base
 # NetworkPolicies
@@ -55,7 +55,7 @@ resources:
 # Kubeflow Roles
 - ../common/kubeflow-roles/base
 # Kubeflow Istio Resources
-- ../common/istio-1-17/kubeflow-istio-resources/base
+- ../common/istio-1-18/kubeflow-istio-resources/base
 
 
 # Kubeflow Pipelines
