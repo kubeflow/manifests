@@ -16,6 +16,7 @@ resources:
   - minio.yaml
   - ml-pipeline-ui.yaml
   - ml-pipeline.yaml
+  - model-registry.yaml
   - poddefaults.yaml
   - pvcviewer-webhook.yaml
   - seldon.yaml
