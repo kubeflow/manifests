@@ -22,7 +22,7 @@ spec:
       proxyMetadata: {}
     enablePrometheusMerge: true
   profile: default
-  tag: 1.18.7
+  tag: 1.19.10
   values:
     base:
       enableCRDTemplates: false
@@ -127,8 +127,6 @@ spec:
       configMap: true
       cpu:
         targetAverageUtilization: 80
-      enableProtocolSniffingForInbound: true
-      enableProtocolSniffingForOutbound: true
       env: {}
       image: pilot
       keepaliveMaxServerConnectionAge: 30m
