@@ -22,7 +22,7 @@ spec:
       proxyMetadata: {}
     enablePrometheusMerge: true
   profile: default
-  tag: 1.19.10
+  tag: 1.20.6
   values:
     base:
       enableCRDTemplates: false
@@ -93,9 +93,9 @@ spec:
         includeIPRanges: '*'
         logLevel: warning
         privileged: false
-        readinessFailureThreshold: 30
-        readinessInitialDelaySeconds: 1
-        readinessPeriodSeconds: 2
+        readinessFailureThreshold: 4
+        readinessInitialDelaySeconds: 0
+        readinessPeriodSeconds: 15
         resources:
           limits:
             cpu: 2000m
@@ -103,6 +103,9 @@ spec:
           requests:
             cpu: 100m
             memory: 128Mi
+        startupProbe:
+          enabled: true
+          failureThreshold: 600
         statusPort: 15020
         tracer: zipkin
       proxy_init:
