@@ -46,7 +46,7 @@ old version is `X1.Y1.Z1`:
         $ export PATH="$MANIFESTS_SRC/scripts:$PATH"
         $ cd $ISTIO_NEW
         $ istioctl manifest generate --cluster-specific -f profile.yaml -f profile-overlay.yaml > dump.yaml
-        $ split-istio-packages -f dump.yaml
+        $ ./split-istio-packages -f dump.yaml
         $ mv $ISTIO_NEW/crd.yaml $ISTIO_NEW/istio-crds/base
         $ mv $ISTIO_NEW/install.yaml $ISTIO_NEW/istio-install/base
         $ mv $ISTIO_NEW/cluster-local-gateway.yaml $ISTIO_NEW/cluster-local-gateway/base
