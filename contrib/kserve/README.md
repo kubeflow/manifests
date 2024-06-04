@@ -61,15 +61,15 @@ For upgrading see [UPGRADE.md](UPGRADE.md)
    ```
 5. Install Istio
    ```sh
-   kubectl apply -k ../../common/istio-1-17/istio-crds/base
-   kubectl apply -k ../../common/istio-1-17/istio-namespace/base
-   kubectl apply -k ../../common/istio-1-17/istio-install/base
+   kubectl apply -k ../../common/istio-1-18/istio-crds/base
+   kubectl apply -k ../../common/istio-1-18/istio-namespace/base
+   kubectl apply -k ../../common/istio-1-18/istio-install/base
    ```
 6. Install knative
    ```sh
    kubectl apply -k ../../common/knative/knative-serving/overlays/gateways
-   kubectl apply -k ../../common/istio-1-17/cluster-local-gateway/base
-   kubectl apply -k ../../common/istio-1-17/kubeflow-istio-resources/base
+   kubectl apply -k ../../common/istio-1-18/cluster-local-gateway/base
+   kubectl apply -k ../../common/istio-1-18/kubeflow-istio-resources/base
    ```
 7. Install kserve
    ```sh

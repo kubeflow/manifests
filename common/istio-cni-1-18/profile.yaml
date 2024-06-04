@@ -22,7 +22,7 @@ spec:
       proxyMetadata: {}
     enablePrometheusMerge: true
   profile: default
-  tag: 1.17.5
+  tag: 1.18.7
   values:
     base:
       enableCRDTemplates: false
@@ -107,13 +107,6 @@ spec:
         tracer: zipkin
       proxy_init:
         image: proxyv2
-        resources:
-          limits:
-            cpu: 2000m
-            memory: 1024Mi
-          requests:
-            cpu: 10m
-            memory: 10Mi
       sds:
         token:
           aud: istio-ca
