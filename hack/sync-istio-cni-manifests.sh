@@ -15,9 +15,9 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="1.20.6"  # Must be a release
-CURRENT_VERSION="1-19" 
-NEW_VERSION="1-20" 
+COMMIT="1.21.3"  # Must be a release
+CURRENT_VERSION="1-20" 
+NEW_VERSION="1-21" 
 
 SRC_DIR=${SRC_DIR:=/tmp/istio-cni}
 BRANCH=${BRANCH:=istio-${COMMIT?}}
@@ -66,7 +66,7 @@ cd $ISTIO_NEW
 istioctl profile dump default > profile.yaml
 
 # cd $ISTIO_NEW
-export PATH="$MANIFESTS_DIR/scripts:$PATH"
+# export PATH="$MANIFESTS_DIR/scripts:$PATH"
 istioctl manifest generate --cluster-specific -f profile.yaml -f profile-overlay.yaml > dump.yaml
 ./split-istio-packages -f dump.yaml
 mv $ISTIO_NEW/crd.yaml $ISTIO_NEW/istio-crds/base
@@ -78,10 +78,10 @@ if [ -n "$(git status --porcelain)" ]; then
   echo "WARNING: You have uncommitted changes"
 fi
 
-find "$MANIFESTS_DIR" -type f -exec sed -i "s/istio-cni-${CURRENT_VERSION}/istio-cni-${NEW_VERSION}/g" {} +
+# find "$MANIFESTS_DIR" -type f -exec sed -i "s/istio-cni-${CURRENT_VERSION}/istio-cni-${NEW_VERSION}/g" {} +
 
-echo "Committing the changes..."
-cd "$MANIFESTS_DIR"
-git rm -r $ISTIO_OLD
-git add .
-git commit -s -m "Updated istio-cni to v.${COMMIT}"
+# echo "Committing the changes..."
+# cd "$MANIFESTS_DIR"
+# git rm -r $ISTIO_OLD
+# git add .
+# git commit -s -m "Updated istio-cni to v.${COMMIT}"

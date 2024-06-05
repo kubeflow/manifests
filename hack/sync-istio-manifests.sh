@@ -15,9 +15,9 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="1.20.6"
-CURRENT_VERSION="1-19" 
-NEW_VERSION="1-20" # Must be a release
+COMMIT="1.21.3"
+CURRENT_VERSION="1-20" 
+NEW_VERSION="1-21" # Must be a release
 
 SRC_DIR=${SRC_DIR:=/tmp/istio} # Must be a release
 BRANCH=${BRANCH:=istio-${COMMIT?}}
@@ -78,9 +78,9 @@ if [ -n "$(git status --porcelain)" ]; then
   echo "WARNING: You have uncommitted changes"
 fi
 
-#Updating README.md to sync with upgradedIistio
+Updating README.md to sync with Istio upgraded version
 echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/istio/istio/releases/tag/*)"
+SRC_TXT="\[.*\](https://github.com/istio/istio/releases/tag/.*)"
 DST_TXT="\[$COMMIT\](https://github.com/istio/istio/releases/tag/$COMMIT)"
 
 sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
@@ -90,6 +90,6 @@ find "$MANIFESTS_DIR" -type f -exec sed -i "s/istio-${CURRENT_VERSION}/istio-${N
 
 echo "Committing the changes..."
 cd "$MANIFESTS_DIR"
-git rm -r $ISTIO_OLD
+rm -rf $ISTIO_OLD
 git add .
 git commit -s -m "Updated istio to v.${COMMIT}"

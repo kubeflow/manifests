@@ -528,6 +528,11 @@ spec:
                                   description: The idle timeout for upstream connection
                                     pool connections.
                                   type: string
+                                maxConcurrentStreams:
+                                  description: The maximum number of concurrent streams
+                                    allowed for a peer on one HTTP/2 connection.
+                                  format: int32
+                                  type: integer
                                 maxRequestsPerConnection:
                                   description: Maximum number of requests per connection
                                     to a backend.
@@ -550,6 +555,9 @@ spec:
                               properties:
                                 connectTimeout:
                                   description: TCP connection timeout.
+                                  type: string
+                                idleTimeout:
+                                  description: The idle timeout for TCP connections.
                                   type: string
                                 maxConnectionDuration:
                                   description: The maximum duration of a connection.
@@ -809,6 +817,12 @@ spec:
                                         description: The idle timeout for upstream
                                           connection pool connections.
                                         type: string
+                                      maxConcurrentStreams:
+                                        description: The maximum number of concurrent
+                                          streams allowed for a peer on one HTTP/2
+                                          connection.
+                                        format: int32
+                                        type: integer
                                       maxRequestsPerConnection:
                                         description: Maximum number of requests per
                                           connection to a backend.
@@ -832,6 +846,9 @@ spec:
                                     properties:
                                       connectTimeout:
                                         description: TCP connection timeout.
+                                        type: string
+                                      idleTimeout:
+                                        description: The idle timeout for TCP connections.
                                         type: string
                                       maxConnectionDuration:
                                         description: The maximum duration of a connection.
@@ -1122,6 +1139,16 @@ spec:
                                 type: object
                             type: object
                           type: array
+                        proxyProtocol:
+                          description: The upstream PROXY protocol settings.
+                          properties:
+                            version:
+                              description: The PROXY protocol version to use.
+                              enum:
+                              - V1
+                              - V2
+                              type: string
+                          type: object
                         tls:
                           description: TLS related settings for connections to the
                             upstream service.
@@ -1223,6 +1250,11 @@ spec:
                             description: The idle timeout for upstream connection
                               pool connections.
                             type: string
+                          maxConcurrentStreams:
+                            description: The maximum number of concurrent streams
+                              allowed for a peer on one HTTP/2 connection.
+                            format: int32
+                            type: integer
                           maxRequestsPerConnection:
                             description: Maximum number of requests per connection
                               to a backend.
@@ -1244,6 +1276,9 @@ spec:
                         properties:
                           connectTimeout:
                             description: TCP connection timeout.
+                            type: string
+                          idleTimeout:
+                            description: The idle timeout for TCP connections.
                             type: string
                           maxConnectionDuration:
                             description: The maximum duration of a connection.
@@ -1499,6 +1534,11 @@ spec:
                                   description: The idle timeout for upstream connection
                                     pool connections.
                                   type: string
+                                maxConcurrentStreams:
+                                  description: The maximum number of concurrent streams
+                                    allowed for a peer on one HTTP/2 connection.
+                                  format: int32
+                                  type: integer
                                 maxRequestsPerConnection:
                                   description: Maximum number of requests per connection
                                     to a backend.
@@ -1521,6 +1561,9 @@ spec:
                               properties:
                                 connectTimeout:
                                   description: TCP connection timeout.
+                                  type: string
+                                idleTimeout:
+                                  description: The idle timeout for TCP connections.
                                   type: string
                                 maxConnectionDuration:
                                   description: The maximum duration of a connection.
@@ -1802,6 +1845,16 @@ spec:
                           type: object
                       type: object
                     type: array
+                  proxyProtocol:
+                    description: The upstream PROXY protocol settings.
+                    properties:
+                      version:
+                        description: The PROXY protocol version to use.
+                        enum:
+                        - V1
+                        - V2
+                        type: string
+                    type: object
                   tls:
                     description: TLS related settings for connections to the upstream
                       service.
@@ -1965,6 +2018,11 @@ spec:
                                   description: The idle timeout for upstream connection
                                     pool connections.
                                   type: string
+                                maxConcurrentStreams:
+                                  description: The maximum number of concurrent streams
+                                    allowed for a peer on one HTTP/2 connection.
+                                  format: int32
+                                  type: integer
                                 maxRequestsPerConnection:
                                   description: Maximum number of requests per connection
                                     to a backend.
@@ -1987,6 +2045,9 @@ spec:
                               properties:
                                 connectTimeout:
                                   description: TCP connection timeout.
+                                  type: string
+                                idleTimeout:
+                                  description: The idle timeout for TCP connections.
                                   type: string
                                 maxConnectionDuration:
                                   description: The maximum duration of a connection.
@@ -2246,6 +2307,12 @@ spec:
                                         description: The idle timeout for upstream
                                           connection pool connections.
                                         type: string
+                                      maxConcurrentStreams:
+                                        description: The maximum number of concurrent
+                                          streams allowed for a peer on one HTTP/2
+                                          connection.
+                                        format: int32
+                                        type: integer
                                       maxRequestsPerConnection:
                                         description: Maximum number of requests per
                                           connection to a backend.
@@ -2269,6 +2336,9 @@ spec:
                                     properties:
                                       connectTimeout:
                                         description: TCP connection timeout.
+                                        type: string
+                                      idleTimeout:
+                                        description: The idle timeout for TCP connections.
                                         type: string
                                       maxConnectionDuration:
                                         description: The maximum duration of a connection.
@@ -2559,6 +2629,16 @@ spec:
                                 type: object
                             type: object
                           type: array
+                        proxyProtocol:
+                          description: The upstream PROXY protocol settings.
+                          properties:
+                            version:
+                              description: The PROXY protocol version to use.
+                              enum:
+                              - V1
+                              - V2
+                              type: string
+                          type: object
                         tls:
                           description: TLS related settings for connections to the
                             upstream service.
@@ -2660,6 +2740,11 @@ spec:
                             description: The idle timeout for upstream connection
                               pool connections.
                             type: string
+                          maxConcurrentStreams:
+                            description: The maximum number of concurrent streams
+                              allowed for a peer on one HTTP/2 connection.
+                            format: int32
+                            type: integer
                           maxRequestsPerConnection:
                             description: Maximum number of requests per connection
                               to a backend.
@@ -2681,6 +2766,9 @@ spec:
                         properties:
                           connectTimeout:
                             description: TCP connection timeout.
+                            type: string
+                          idleTimeout:
+                            description: The idle timeout for TCP connections.
                             type: string
                           maxConnectionDuration:
                             description: The maximum duration of a connection.
@@ -2936,6 +3024,11 @@ spec:
                                   description: The idle timeout for upstream connection
                                     pool connections.
                                   type: string
+                                maxConcurrentStreams:
+                                  description: The maximum number of concurrent streams
+                                    allowed for a peer on one HTTP/2 connection.
+                                  format: int32
+                                  type: integer
                                 maxRequestsPerConnection:
                                   description: Maximum number of requests per connection
                                     to a backend.
@@ -2958,6 +3051,9 @@ spec:
                               properties:
                                 connectTimeout:
                                   description: TCP connection timeout.
+                                  type: string
+                                idleTimeout:
+                                  description: The idle timeout for TCP connections.
                                   type: string
                                 maxConnectionDuration:
                                   description: The maximum duration of a connection.
@@ -3239,6 +3335,16 @@ spec:
                           type: object
                       type: object
                     type: array
+                  proxyProtocol:
+                    description: The upstream PROXY protocol settings.
+                    properties:
+                      version:
+                        description: The PROXY protocol version to use.
+                        enum:
+                        - V1
+                        - V2
+                        type: string
+                    type: object
                   tls:
                     description: TLS related settings for connections to the upstream
                       service.
@@ -3919,54 +4025,6 @@ spec:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  labels:
-    release: istio
-  name: istiooperators.install.istio.io
-spec:
-  conversion:
-    strategy: None
-  group: install.istio.io
-  names:
-    kind: IstioOperator
-    listKind: IstioOperatorList
-    plural: istiooperators
-    shortNames:
-    - iop
-    - io
-    singular: istiooperator
-  scope: Namespaced
-  versions:
-  - additionalPrinterColumns:
-    - description: Istio control plane revision
-      jsonPath: .spec.revision
-      name: Revision
-      type: string
-    - description: IOP current state
-      jsonPath: .status.status
-      name: Status
-      type: string
-    - description: 'CreationTimestamp is a timestamp representing the server time
-        when this object was created. It is not guaranteed to be set in happens-before
-        order across separate operations. Clients may not set this value. It is represented
-        in RFC3339 form and is in UTC. Populated by the system. Read-only. Null for
-        lists. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata'
-      jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        type: object
-        x-kubernetes-preserve-unknown-fields: true
-    served: true
-    storage: true
-    subresources:
-      status: {}
-
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
   annotations:
     helm.sh/resource-policy: keep
   labels:
@@ -4038,7 +4096,7 @@ spec:
                 description: Port specific mutual TLS settings.
                 type: object
               selector:
-                description: The selector determines the workloads to apply the ChannelAuthentication
+                description: The selector determines the workloads to apply the PeerAuthentication
                   on.
                 properties:
                   matchLabels:
@@ -4176,6 +4234,11 @@ spec:
                       description: If set to true, the original token will be kept
                         for the upstream request.
                       type: boolean
+                    fromCookies:
+                      description: List of cookie names from which JWT is expected.
+                      items:
+                        type: string
+                      type: array
                     fromHeaders:
                       description: List of header locations from which JWT is expected.
                       items:
@@ -4290,6 +4353,11 @@ spec:
                       description: If set to true, the original token will be kept
                         for the upstream request.
                       type: boolean
+                    fromCookies:
+                      description: List of cookie names from which JWT is expected.
+                      items:
+                        type: string
+                      type: array
                     fromHeaders:
                       description: List of header locations from which JWT is expected.
                       items:
@@ -4799,6 +4867,11 @@ spec:
                         description: The idle timeout for upstream connection pool
                           connections.
                         type: string
+                      maxConcurrentStreams:
+                        description: The maximum number of concurrent streams allowed
+                          for a peer on one HTTP/2 connection.
+                        format: int32
+                        type: integer
                       maxRequestsPerConnection:
                         description: Maximum number of requests per connection to
                           a backend.
@@ -4819,6 +4892,9 @@ spec:
                     properties:
                       connectTimeout:
                         description: TCP connection timeout.
+                        type: string
+                      idleTimeout:
+                        description: The idle timeout for TCP connections.
                         type: string
                       maxConnectionDuration:
                         description: The maximum duration of a connection.
@@ -4892,6 +4968,11 @@ spec:
                               description: The idle timeout for upstream connection
                                 pool connections.
                               type: string
+                            maxConcurrentStreams:
+                              description: The maximum number of concurrent streams
+                                allowed for a peer on one HTTP/2 connection.
+                              format: int32
+                              type: integer
                             maxRequestsPerConnection:
                               description: Maximum number of requests per connection
                                 to a backend.
@@ -4913,6 +4994,9 @@ spec:
                           properties:
                             connectTimeout:
                               description: TCP connection timeout.
+                              type: string
+                            idleTimeout:
+                              description: The idle timeout for TCP connections.
                               type: string
                             maxConnectionDuration:
                               description: The maximum duration of a connection.
@@ -5171,6 +5255,11 @@ spec:
                         description: The idle timeout for upstream connection pool
                           connections.
                         type: string
+                      maxConcurrentStreams:
+                        description: The maximum number of concurrent streams allowed
+                          for a peer on one HTTP/2 connection.
+                        format: int32
+                        type: integer
                       maxRequestsPerConnection:
                         description: Maximum number of requests per connection to
                           a backend.
@@ -5191,6 +5280,9 @@ spec:
                     properties:
                       connectTimeout:
                         description: TCP connection timeout.
+                        type: string
+                      idleTimeout:
+                        description: The idle timeout for TCP connections.
                         type: string
                       maxConnectionDuration:
                         description: The maximum duration of a connection.
@@ -5264,6 +5356,11 @@ spec:
                               description: The idle timeout for upstream connection
                                 pool connections.
                               type: string
+                            maxConcurrentStreams:
+                              description: The maximum number of concurrent streams
+                                allowed for a peer on one HTTP/2 connection.
+                              format: int32
+                              type: integer
                             maxRequestsPerConnection:
                               description: Maximum number of requests per connection
                                 to a backend.
@@ -5285,6 +5382,9 @@ spec:
                           properties:
                             connectTimeout:
                               description: TCP connection timeout.
+                              type: string
+                            idleTimeout:
+                              description: The idle timeout for TCP connections.
                               type: string
                             maxConnectionDuration:
                               description: The maximum duration of a connection.
@@ -5544,6 +5644,7 @@ spec:
                         properties:
                           name:
                             description: Required.
+                            minLength: 1
                             type: string
                         required:
                         - name
@@ -5564,7 +5665,7 @@ spec:
                             nullable: true
                             type: boolean
                           match:
-                            description: Match allows provides the scope of the override.
+                            description: Match allows providing the scope of the override.
                             oneOf:
                             - not:
                                 anyOf:
@@ -5579,10 +5680,11 @@ spec:
                             properties:
                               customMetric:
                                 description: Allows free-form specification of a metric.
+                                minLength: 1
                                 type: string
                               metric:
-                                description: One of the well-known Istio Standard
-                                  Metrics.
+                                description: One of the well-known [Istio Standard
+                                  Metrics](https://istio.io/latest/docs/reference/config/metrics/).
                                 enum:
                                 - ALL_METRICS
                                 - REQUEST_COUNT
@@ -5598,7 +5700,7 @@ spec:
                                 type: string
                               mode:
                                 description: 'Controls which mode of metrics generation
-                                  is selected: CLIENT and/or SERVER.'
+                                  is selected: `CLIENT`, `SERVER`, or `CLIENT_AND_SERVER`.'
                                 enum:
                                 - CLIENT_AND_SERVER
                                 - CLIENT
@@ -5620,6 +5722,13 @@ spec:
                                     is `UPSERT`.
                                   type: string
                               type: object
+                              x-kubernetes-validations:
+                              - message: value must be set when operation is UPSERT
+                                rule: "((has(self.operation) ? self.operation : '')
+                                  == 'UPSERT') ? self.value != '' : true"
+                              - message: value must not be set when operation is REMOVE
+                                rule: "((has(self.operation) ? self.operation : '')
+                                  == 'REMOVE') ? !has(self.value) : true"
                             description: Optional.
                             type: object
                         type: object
@@ -5630,6 +5739,7 @@ spec:
                         properties:
                           name:
                             description: Required.
+                            minLength: 1
                             type: string
                         required:
                         - name
@@ -5698,7 +5808,10 @@ spec:
                               name:
                                 description: Name of the environment variable from
                                   which to extract the tag value.
+                                minLength: 1
                                 type: string
+                            required:
+                            - name
                             type: object
                           header:
                             description: RequestHeader adds the value of an header
@@ -5710,7 +5823,10 @@ spec:
                               name:
                                 description: Name of the header from which to extract
                                   the tag value.
+                                minLength: 1
                                 type: string
+                            required:
+                            - name
                             type: object
                           literal:
                             description: Literal adds the same, hard-coded value to
@@ -5718,7 +5834,10 @@ spec:
                             properties:
                               value:
                                 description: The tag value to use.
+                                minLength: 1
                                 type: string
+                            required:
+                            - value
                             type: object
                         type: object
                       description: Optional.
@@ -5746,6 +5865,7 @@ spec:
                         properties:
                           name:
                             description: Required.
+                            minLength: 1
                             type: string
                         required:
                         - name
@@ -5754,6 +5874,8 @@ spec:
                     randomSamplingPercentage:
                       description: Controls the rate at which traffic will be selected
                         for tracing if no prior sampling decision has been made.
+                      maximum: 100
+                      minimum: 0
                       nullable: true
                       type: number
                     useRequestIdForTraceSampling:
@@ -7680,7 +7802,7 @@ spec:
                 type: string
               imagePullPolicy:
                 description: The pull behaviour to be applied when fetching Wasm module
-                  by either OCI image or http/https.
+                  by either OCI image or `http/https`.
                 enum:
                 - UNSPECIFIED_POLICY
                 - IfNotPresent
