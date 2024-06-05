@@ -55,19 +55,18 @@ if [ ! -d "$SRC_DIR" ]; then
 mkdir -p $SRC_DIR
 fi
 cd $SRC_DIR
-if [ ! -d "istio-${COMMIT}-linux-amd64.tar.gz" ]; then
+if [ ! -d "istio-${COMMIT}" ]; then
     wget "https://github.com/istio/istio/releases/download/${COMMIT}/istio-${COMMIT}-linux-amd64.tar.gz"
     tar xvfz istio-${COMMIT}-linux-amd64.tar.gz
 fi
 
-sudo mv istio-${COMMIT}/bin/istioctl /usr/local/bin/istioctl
-
+ISTIOCTL=$SRC_DIR/istio-${COMMIT}/bin/istioctl
 cd $ISTIO_NEW
-istioctl profile dump default > profile.yaml
+$ISTIOCTL profile dump default > profile.yaml
 
 # cd $ISTIO_NEW
 # export PATH="$MANIFESTS_DIR/scripts:$PATH"
-istioctl manifest generate --cluster-specific -f profile.yaml -f profile-overlay.yaml > dump.yaml
+$ISTIOCTL manifest generate -f profile.yaml -f profile-overlay.yaml > dump.yaml
 ./split-istio-packages -f dump.yaml
 mv $ISTIO_NEW/crd.yaml $ISTIO_NEW/istio-crds/base
 mv $ISTIO_NEW/install.yaml $ISTIO_NEW/istio-install/base
@@ -84,4 +83,4 @@ echo "Committing the changes..."
 cd "$MANIFESTS_DIR"
 rm -rf $ISTIO_OLD
 git add .
-git commit -s -m "Updated istio-cni to v.${COMMIT}"
+git commit -s -m "Upgrade istio-cni to v.${COMMIT}"
