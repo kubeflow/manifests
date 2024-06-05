@@ -78,7 +78,7 @@ if [ -n "$(git status --porcelain)" ]; then
   echo "WARNING: You have uncommitted changes"
 fi
 
-Updating README.md to sync with Istio upgraded version
+# Updating README.md to sync with Istio upgraded version
 echo "Updating README..."
 SRC_TXT="\[.*\](https://github.com/istio/istio/releases/tag/.*)"
 DST_TXT="\[$COMMIT\](https://github.com/istio/istio/releases/tag/$COMMIT)"
