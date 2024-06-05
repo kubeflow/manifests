@@ -583,7 +583,7 @@ data:
             - "-z"
             - {{ .MeshConfig.ProxyInboundListenPort | default "15006" | quote }}
             - "-u"
-            - "1337"
+            - {{ .ProxyUID | default "1337" | quote }}
             - "-m"
             - "{{ annotation .ObjectMeta `sidecar.istio.io/interceptionMode` .ProxyConfig.InterceptionMode }}"
             - "-i"
@@ -650,8 +650,8 @@ data:
               runAsUser: 0
             {{- else }}
               readOnlyRootFilesystem: true
-              runAsGroup: 1337
-              runAsUser: 1337
+              runAsGroup: {{ .ProxyGID | default "1337" }}
+              runAsUser: {{ .ProxyUID | default "1337" }}
               runAsNonRoot: true
             {{- end }}
           {{ end -}}
@@ -838,11 +838,17 @@ data:
             {{- end }}
             {{with .Values.global.imagePullPolicy }}imagePullPolicy: "{{.}}"{{end}}
             {{ if ne (annotation .ObjectMeta `status.sidecar.istio.io/port` .Values.global.proxy.statusPort) `0` }}
-          {{ if $nativeSidecar }}
+          {{ if .Values.global.proxy.startupProbe.enabled }}
             startupProbe:
-          {{ else }}
-            readinessProbe:
+              httpGet:
+                path: /healthz/ready
+                port: 15021
+              initialDelaySeconds: 0
+              periodSeconds: 1
+              timeoutSeconds: 3
+              failureThreshold: {{ .Values.global.proxy.startupProbe.failureThreshold }}
           {{ end }}
+            readinessProbe:
               httpGet:
                 path: /healthz/ready
                 port: 15021
@@ -861,7 +867,7 @@ data:
                 - ALL
               privileged: true
               readOnlyRootFilesystem: {{ ne (annotation .ObjectMeta `sidecar.istio.io/enableCoreDump` .Values.global.proxy.enableCoreDump) "true" }}
-              runAsGroup: 1337
+              runAsGroup: {{ .ProxyGID | default "1337" }}
               runAsNonRoot: false
               runAsUser: 0
               {{- else }}
@@ -880,13 +886,13 @@ data:
                 - ALL
               privileged: {{ .Values.global.proxy.privileged }}
               readOnlyRootFilesystem: {{ ne (annotation .ObjectMeta `sidecar.istio.io/enableCoreDump` .Values.global.proxy.enableCoreDump) "true" }}
-              runAsGroup: 1337
+              runAsGroup: {{ .ProxyGID | default "1337" }}
               {{ if or (eq (annotation .ObjectMeta `sidecar.istio.io/interceptionMode` .ProxyConfig.InterceptionMode) `TPROXY`) (eq (annotation .ObjectMeta `sidecar.istio.io/capNetBindService` .Values.global.proxy.capNetBindService) `true`) -}}
               runAsNonRoot: false
               runAsUser: 0
               {{- else -}}
               runAsNonRoot: true
-              runAsUser: 1337
+              runAsUser: {{ .ProxyUID | default "1337" }}
               {{- end }}
               {{- end }}
             resources:
@@ -1040,6 +1046,10 @@ data:
             {{ end }}
           }
         spec:
+          securityContext:
+            sysctls:
+            - name: net.ipv4.ip_unprivileged_port_start
+              value: "0"
           containers:
           - name: istio-proxy
           {{- if contains "/" .Values.global.proxy.image }}
@@ -1069,6 +1079,9 @@ data:
             lifecycle:
               {{ toYaml .Values.global.proxy.lifecycle | indent 6 }}
           {{- end }}
+            securityContext:
+              runAsUser: {{ .ProxyUID | default "1337" }}
+              runAsGroup: {{ .ProxyGID | default "1337" }}
             env:
             - name: JWT_POLICY
               value: {{ .Values.global.jwtPolicy }}
@@ -1715,7 +1728,11 @@ data:
                 - containerPort: 15090
                   protocol: TCP
                   name: http-envoy-prom
-                image: {{.ProxyImage}}
+                {{- if contains "/" (annotation .ObjectMeta `sidecar.istio.io/proxyImage` .Values.global.proxy.image) }}
+                image: "{{ annotation .ObjectMeta `sidecar.istio.io/proxyImage` .Values.global.proxy.image }}"
+                {{- else }}
+                image: "{{ .ProxyImage }}"
+                {{- end }}
                 {{with .Values.global.imagePullPolicy }}imagePullPolicy: "{{.}}"{{end}}
                 args:
                 - proxy
@@ -1789,6 +1806,11 @@ data:
                       resource: limits.cpu
                 - name: ISTIO_META_CLUSTER_ID
                   value: "{{ valueOrDefault .Values.global.multiCluster.clusterName `Kubernetes` }}"
+                {{- $network := valueOrDefault (index .Labels `topology.istio.io/network`) .Values.global.network }}
+                {{- if $network }}
+                - name: ISTIO_META_NETWORK
+                  value: "{{ $network }}"
+                {{- end }}
                 - name: ISTIO_META_INTERCEPTION_MODE
                   value: REDIRECT
                 - name: ISTIO_META_WORKLOAD_NAME
@@ -1970,7 +1992,11 @@ data:
               serviceAccountName: {{.ServiceAccount | quote}}
               containers:
               - name: istio-proxy
+              {{- if contains "/" (annotation .ObjectMeta `sidecar.istio.io/proxyImage` .Values.global.proxy.image) }}
+                image: "{{ annotation .ObjectMeta `sidecar.istio.io/proxyImage` .Values.global.proxy.image }}"
+              {{- else }}
                 image: "{{ .ProxyImage }}"
+              {{- end }}
                 {{- if .Values.global.proxy.resources }}
                 resources:
                   {{- toYaml .Values.global.proxy.resources | nindent 10 }}
@@ -1985,8 +2011,8 @@ data:
                   allowPrivilegeEscalation: false
                   privileged: false
                   readOnlyRootFilesystem: true
-                  runAsUser: 1337
-                  runAsGroup: 1337
+                  runAsUser: {{ .ProxyUID | default "1337" }}
+                  runAsGroup: {{ .ProxyGID | default "1337" }}
                   runAsNonRoot: true
                 {{- else }}
                   capabilities:
@@ -2299,9 +2325,9 @@ data:
           "includeOutboundPorts": "",
           "logLevel": "warning",
           "privileged": false,
-          "readinessFailureThreshold": 30,
-          "readinessInitialDelaySeconds": 1,
-          "readinessPeriodSeconds": 2,
+          "readinessFailureThreshold": 4,
+          "readinessInitialDelaySeconds": 0,
+          "readinessPeriodSeconds": 15,
           "resources": {
             "limits": {
               "cpu": "2000m",
@@ -2311,6 +2337,10 @@ data:
               "cpu": "100m",
               "memory": "128Mi"
             }
+          },
+          "startupProbe": {
+            "enabled": true,
+            "failureThreshold": 600
           },
           "statusPort": 15020,
           "tracer": "zipkin"
@@ -2327,7 +2357,7 @@ data:
         "sts": {
           "servicePort": 0
         },
-        "tag": "1.19.10",
+        "tag": "1.20.6",
         "tracer": {
           "datadog": {},
           "lightstep": {},
@@ -2631,7 +2661,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        image: docker.io/istio/proxyv2:1.19.10
+        image: docker.io/istio/proxyv2:1.20.6
         name: istio-proxy
         ports:
         - containerPort: 15021
@@ -2694,7 +2724,6 @@ spec:
           name: ingressgateway-ca-certs
           readOnly: true
       securityContext:
-        fsGroup: 1337
         runAsGroup: 1337
         runAsNonRoot: true
         runAsUser: 1337
@@ -2812,8 +2841,6 @@ spec:
           value: /var/run/secrets/remote/config
         - name: PILOT_TRACE_SAMPLING
           value: '1'
-        - name: ISTIOD_ADDR
-          value: istiod.istio-system.svc:15012
         - name: PILOT_ENABLE_ANALYSIS
           value: 'false'
         - name: CLUSTER_ID
@@ -2828,7 +2855,7 @@ spec:
               resource: limits.cpu
         - name: PLATFORM
           value: ''
-        image: docker.io/istio/pilot:1.19.10
+        image: docker.io/istio/pilot:1.20.6
         name: discovery
         ports:
         - containerPort: 8080
@@ -2854,9 +2881,7 @@ spec:
             drop:
             - ALL
           readOnlyRootFilesystem: true
-          runAsGroup: 1337
           runAsNonRoot: true
-          runAsUser: 1337
         volumeMounts:
         - mountPath: /var/run/secrets/tokens
           name: istio-token
@@ -2875,8 +2900,6 @@ spec:
         - mountPath: /var/run/secrets/istiod/ca
           name: istio-csr-ca-configmap
           readOnly: true
-      securityContext:
-        fsGroup: 1337
       serviceAccountName: istiod
       volumes:
       - emptyDir:

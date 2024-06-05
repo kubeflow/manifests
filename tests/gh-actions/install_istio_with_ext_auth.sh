@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 echo "Installing Istio configured with external authorization..."
-cd common/istio-1-19
+cd common/istio-1-20
 kustomize build istio-crds/base | kubectl apply -f -
 kustomize build istio-namespace/base | kubectl apply -f -
 kustomize build istio-install/overlays/oauth2-proxy | kubectl apply -f -

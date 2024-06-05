@@ -6,7 +6,7 @@ on:
       - tests/gh-actions/kind-cluster.yaml
       - tests/gh-actions/install_kind.sh
       - tests/gh-actions/install_kustomize.sh
-      - common/istio-cni-1-19/**
+      - common/istio-cni-1-20/**
       - tests/gh-actions/install_cert_manager.sh
       - common/cert-manager/**
       - tests/gh-actions/install_knative-cni.sh

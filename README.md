@@ -64,7 +64,7 @@ used from the different projects of Kubeflow:
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
-| Istio | common/istio-1-19 | [1.19.10](https://github.com/istio/istio/releases/tag/1.19.10) |
+| Istio | common/istio-1-20 | [1.20.6](https://github.com/istio/istio/releases/tag/1.20.6) |
 | Knative | common/knative/knative-serving <br /> common/knative/knative-eventing | [v1.12.4](https://github.com/knative/serving/releases/tag/knative-v1.12.4) <br /> [v1.12.6](https://github.com/knative/eventing/releases/tag/knative-v1.12.6) |
 | Cert Manager | common/cert-manager | [1.14.5](https://github.com/cert-manager/cert-manager/releases/tag/v1.12.2) |
 
@@ -208,10 +208,10 @@ Install Istio:
 
 ```sh
 echo "Installing Istio configured with external authorization..."
-cd common/istio-1-19
-kustomize build common/istio-1-19/istio-crds/base | kubectl apply -f -
-kustomize build common/istio-1-19/istio-namespace/base | kubectl apply -f -
-kustomize build common/istio-1-19/istio-install/overlays/oauth2-proxy | kubectl apply -f -
+cd common/istio-1-20
+kustomize build common/istio-1-20/istio-crds/base | kubectl apply -f -
+kustomize build common/istio-1-20/istio-namespace/base | kubectl apply -f -
+kustomize build common/istio-1-20/istio-install/overlays/oauth2-proxy | kubectl apply -f -
 
 echo "Waiting for all Istio Pods to become ready..."
 kubectl wait --for=condition=Ready pods --all -n istio-system --timeout 300s
@@ -247,7 +247,7 @@ Install Knative Serving:
 
 ```sh
 kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -
-kustomize build common/istio-1-19/cluster-local-gateway/base | kubectl apply -f -
+kustomize build common/istio-1-20/cluster-local-gateway/base | kubectl apply -f -
 ```
 
 Optionally, you can install Knative Eventing which can be used for inference request logging:
