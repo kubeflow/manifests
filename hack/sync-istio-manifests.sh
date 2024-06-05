@@ -15,9 +15,9 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="1.21.3"
-CURRENT_VERSION="1-20" 
-NEW_VERSION="1-21" # Must be a release
+COMMIT="1.22.0"
+CURRENT_VERSION="1-21" 
+NEW_VERSION="1-22" # Must be a release
 
 SRC_DIR=${SRC_DIR:=/tmp/istio} # Must be a release
 BRANCH=${BRANCH:=istio-${COMMIT?}}
@@ -66,7 +66,7 @@ cd $ISTIO_NEW
 istioctl profile dump default > profile.yaml
 
 # cd $ISTIO_NEW
-export PATH="$MANIFESTS_DIR/scripts:$PATH"
+# export PATH="$MANIFESTS_DIR/scripts:$PATH"
 istioctl manifest generate --cluster-specific -f profile.yaml -f profile-overlay.yaml > dump.yaml
 ./split-istio-packages -f dump.yaml
 mv $ISTIO_NEW/crd.yaml $ISTIO_NEW/istio-crds/base
