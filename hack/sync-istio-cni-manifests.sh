@@ -15,9 +15,9 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="1.20.6"  # Must be a release
-CURRENT_VERSION="1-19" 
-NEW_VERSION="1-20" 
+COMMIT="1.22.0"  # Must be a release
+CURRENT_VERSION="1-21" 
+NEW_VERSION="1-22" 
 
 SRC_DIR=${SRC_DIR:=/tmp/istio-cni}
 BRANCH=${BRANCH:=istio-${COMMIT?}}
@@ -27,6 +27,10 @@ MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
 
 ISTIO_OLD=$MANIFESTS_DIR/common/istio-cni-${CURRENT_VERSION}
 ISTIO_NEW=$MANIFESTS_DIR/common/istio-cni-${NEW_VERSION}
+
+if [ ! -d "$ISTIO_NEW" ]; then
+cp -a $ISTIO_OLD $ISTIO_NEW
+fi 
 
 echo "Creating branch: ${BRANCH}"
 
@@ -44,30 +48,25 @@ if ! git show-ref --verify --quiet refs/heads/$BRANCH; then
 else
     echo "Branch $BRANCH already exists."
 fi
-
-if [ ! -d "$ISTIO_NEW" ]; then
-cp -a $ISTIO_OLD $ISTIO_NEW
-fi 
-
 echo "Checking out in $SRC_DIR to $COMMIT..."
+
 # Checkout the istio repository
 if [ ! -d "$SRC_DIR" ]; then
 mkdir -p $SRC_DIR
 fi
 cd $SRC_DIR
-if [ ! -d "istio-${COMMIT}-linux-amd64.tar.gz" ]; then
+if [ ! -d "istio-${COMMIT}" ]; then
     wget "https://github.com/istio/istio/releases/download/${COMMIT}/istio-${COMMIT}-linux-amd64.tar.gz"
     tar xvfz istio-${COMMIT}-linux-amd64.tar.gz
 fi
 
-sudo mv istio-${COMMIT}/bin/istioctl /usr/local/bin/istioctl
-
+ISTIOCTL=$SRC_DIR/istio-${COMMIT}/bin/istioctl
 cd $ISTIO_NEW
-istioctl profile dump default > profile.yaml
+$ISTIOCTL profile dump default > profile.yaml
 
 # cd $ISTIO_NEW
-export PATH="$MANIFESTS_DIR/scripts:$PATH"
-istioctl manifest generate --cluster-specific -f profile.yaml -f profile-overlay.yaml > dump.yaml
+# export PATH="$MANIFESTS_DIR/scripts:$PATH"
+$ISTIOCTL manifest generate -f profile.yaml -f profile-overlay.yaml > dump.yaml
 ./split-istio-packages -f dump.yaml
 mv $ISTIO_NEW/crd.yaml $ISTIO_NEW/istio-crds/base
 mv $ISTIO_NEW/install.yaml $ISTIO_NEW/istio-install/base
@@ -82,6 +81,6 @@ find "$MANIFESTS_DIR" -type f -exec sed -i "s/istio-cni-${CURRENT_VERSION}/istio
 
 echo "Committing the changes..."
 cd "$MANIFESTS_DIR"
-git rm -r $ISTIO_OLD
+rm -rf $ISTIO_OLD
 git add .
-git commit -s -m "Updated istio-cni to v.${COMMIT}"
+git commit -s -m "Upgrade istio-cni to v.${COMMIT}"

@@ -15,9 +15,9 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="1.20.6"
-CURRENT_VERSION="1-19" 
-NEW_VERSION="1-20" # Must be a release
+COMMIT="1.22.0"
+CURRENT_VERSION="1-21" 
+NEW_VERSION="1-22" # Must be a release
 
 SRC_DIR=${SRC_DIR:=/tmp/istio} # Must be a release
 BRANCH=${BRANCH:=istio-${COMMIT?}}
@@ -55,19 +55,18 @@ if [ ! -d "$SRC_DIR" ]; then
 mkdir -p $SRC_DIR
 fi
 cd $SRC_DIR
-if [ ! -d "istio-${COMMIT}-linux-amd64.tar.gz" ]; then
+if [ ! -d "istio-${COMMIT}" ]; then
     wget "https://github.com/istio/istio/releases/download/${COMMIT}/istio-${COMMIT}-linux-amd64.tar.gz"
     tar xvfz istio-${COMMIT}-linux-amd64.tar.gz
 fi
 
-sudo mv istio-${COMMIT}/bin/istioctl /usr/local/bin/istioctl
-
+ISTIOCTL=$SRC_DIR/istio-${COMMIT}/bin/istioctl
 cd $ISTIO_NEW
-istioctl profile dump default > profile.yaml
+$ISTIOCTL profile dump default > profile.yaml
 
 # cd $ISTIO_NEW
-export PATH="$MANIFESTS_DIR/scripts:$PATH"
-istioctl manifest generate --cluster-specific -f profile.yaml -f profile-overlay.yaml > dump.yaml
+# export PATH="$MANIFESTS_DIR/scripts:$PATH"
+$ISTIOCTL manifest generate -f profile.yaml -f profile-overlay.yaml > dump.yaml
 ./split-istio-packages -f dump.yaml
 mv $ISTIO_NEW/crd.yaml $ISTIO_NEW/istio-crds/base
 mv $ISTIO_NEW/install.yaml $ISTIO_NEW/istio-install/base
@@ -78,9 +77,9 @@ if [ -n "$(git status --porcelain)" ]; then
   echo "WARNING: You have uncommitted changes"
 fi
 
-#Updating README.md to sync with upgradedIistio
+# Updating README.md to sync with Istio upgraded version
 echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/istio/istio/releases/tag/*)"
+SRC_TXT="\[.*\](https://github.com/istio/istio/releases/tag/.*)"
 DST_TXT="\[$COMMIT\](https://github.com/istio/istio/releases/tag/$COMMIT)"
 
 sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
@@ -90,6 +89,6 @@ find "$MANIFESTS_DIR" -type f -exec sed -i "s/istio-${CURRENT_VERSION}/istio-${N
 
 echo "Committing the changes..."
 cd "$MANIFESTS_DIR"
-git rm -r $ISTIO_OLD
+rm -rf $ISTIO_OLD
 git add .
-git commit -s -m "Updated istio to v.${COMMIT}"
+git commit -s -m "Upgrade istio to v.${COMMIT}"
