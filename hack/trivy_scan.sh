@@ -99,7 +99,6 @@ mkdir -p "$SUMMARY_OF_SEVERITY_COUNTS"
 echo "Started scanning images"
 
 files=($(find "$DIRECTORY" -type f -name "*.txt" ! -name "kf_latest_all_images.txt"))
-echo "Files to scan: $files"
 
 # Loop through each text file in the specified directory
 for file in "${files[@]}"; do
@@ -108,7 +107,6 @@ for file in "${files[@]}"; do
 
     # Extract the base name of the file (without the directory and extension)
     file_base_name=$(basename "$file" .txt)
-    echo "Scanning images in $file"
 
     # Directory to save reports for this specific file
     file_reports_dir="${SCAN_REPORTS_DIR}/${file_base_name}"
@@ -131,33 +129,29 @@ for file in "${files[@]}"; do
                 image_name_scan="${image_name_scan}_${image_tag}"
         fi
 
-        # Run Trivy scan and capture output
-        trivy_output=$(trivy image --format json --output /dev/null "$line" 2>&1)
+        echo "Scanning $image_name_scan"
 
-        # Check if the scan was successful
-        if [[ $? -eq 0 ]]; then
-                trivy_output=$(trivy image --format json --output "${file_reports_dir}/${image_name_scan}_scan.json" "$line")
-                # Check if results exist in the scan file (before processing)
-                is_json_empty=$(jq -r '.Results // false' "${file_reports_dir}/${image_name_scan}_scan.json")
-
-                if [[ "$is_json_empty" == "false" ]]; then
-                        echo "No vulnerabilities found in $image_name:$image_tag"
-                else
-                    # Filter results to include only elements with vulnerabilities
-                    results=$(jq -r '.Results? | .[] | select(.Vulnerabilities) | .Vulnerabilities | length > 0' "${file_reports_dir}/${image_name_scan}_scan.json") 
-                    if [[ "$results" == "" || "$results" == "false" ]]; then
-                            echo "The vulnerability detection may be insufficient because security updates are not provided for $image_name:$image_tag"
-                    else
-                            # Count the number of vulnerabilities by severity
-                            severity_counts=$(jq 'reduce (.Results[].Vulnerabilities? // [])[] as $v ({"LOW": 0, "MEDIUM": 0, "HIGH": 0, "CRITICAL": 0}; .[$v.Severity]+=1)' "${file_reports_dir}/${image_name_scan}_scan.json")
-                            report=$(jq -n --arg image "$line" --argjson counts "$severity_counts" '{image: $image, severity_counts: $counts}')
-                            echo "$report" > "${severity_count}/${image_name_scan}_severity_report.json"
-                    fi
-              fi
-
+        trivy image --format json --output "${file_reports_dir}/${image_name_scan}_scan.json" "$line"
+        if [ $? -ne 0 ]; then 
+            echo "Error scanning $image_name:$image_tag"
         else
-                # Trivy scan failed, handle the error (optional)
-                echo "Error scanning $image_name:$image_tag: $trivy_output"
+        # Check if results exist in the scan file (before processing)
+          is_json_empty=$(jq -r '.Results // false' "${file_reports_dir}/${image_name_scan}_scan.json")
+
+          if [[ "$is_json_empty" == "false" ]]; then
+                  echo "No vulnerabilities found in $image_name:$image_tag"
+          else
+              # Filter results to include only elements with vulnerabilities
+              results=$(jq -r '.Results? | .[] | select(.Vulnerabilities) | .Vulnerabilities | length > 0' "${file_reports_dir}/${image_name_scan}_scan.json") 
+              if [[ "$results" == "" || "$results" == "false" ]]; then
+                      echo "The vulnerability detection may be insufficient because security updates are not provided for $image_name:$image_tag"
+              else
+                      # Count the number of vulnerabilities by severity
+                      severity_counts=$(jq 'reduce (.Results[].Vulnerabilities? // [])[] as $v ({"LOW": 0, "MEDIUM": 0, "HIGH": 0, "CRITICAL": 0}; .[$v.Severity]+=1)' "${file_reports_dir}/${image_name_scan}_scan.json")
+                      report=$(jq -n --arg image "$line" --argjson counts "$severity_counts" '{image: $image, severity_counts: $counts}')
+                      echo "$report" > "${severity_count}/${image_name_scan}_severity_report.json"
+              fi
+          fi
         fi
 
     done < "$file"
@@ -207,7 +201,7 @@ for file in "$severity_dir"/*.json; do
    # Process the JSON file
   data=$(jq -r '.data[] | {LOW: .severity_counts.LOW, MEDIUM: .severity_counts.MEDIUM, HIGH: .severity_counts.HIGH, CRITICAL: .severity_counts.CRITICAL}' "$file")
 
-  # Check if data is empty (no severity counts)
+  # Check if data is empty
   if [[ -z "$data" ]]; then
     data="{\"LOW\": 0, \"MEDIUM\": 0, \"HIGH\": 0, \"CRITICAL\": 0}"
   fi
@@ -240,7 +234,6 @@ for file in "$severity_dir"/*.json; do
   # Append to all_data JSON string
   all_data="{\"$filename\": $file_data,\"total\": { \"images\": $total_images, \"LOW\": $total_low, \"MEDIUM\": $total_medium, \"HIGH\": $total_high, \"CRITICAL\": $total_critical }}"
   merged_data=$(jq -s '.[0] * .[1]' <(echo "$merged_data") <(echo "$all_data"))
-
 
 done
 

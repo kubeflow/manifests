@@ -8,11 +8,9 @@ on:
       - master
 
 jobs:
-  # This job will run the image scan scripts
-  image-scan:
+  image-extraction-and-security-scan:
     runs-on: ubuntu-latest
     steps:
-      # Checkout the code from repository
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -50,14 +48,14 @@ jobs:
       - name: Run image extracting and security scanning script
         run: |
           cd hack
-          chmod +x extract_images.sh
-          ./extract_images.sh
+          chmod +x trivy_scan.sh
+          ./trivy_scan.sh
 
       # Upload the artifact
       - name: Upload trivy scanned_results
         uses: actions/upload-artifact@v4
         with:
-          name: my-artifact
+          name: trivy_scanned_results
           path: docs/image_lists/
 
       
