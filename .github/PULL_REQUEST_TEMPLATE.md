@@ -32,5 +32,5 @@
 
 ---     
  
->You can join our slack channel **wg-manifests** [here](https://www.kubeflow.org/docs/about/community/). This link also contains our meeting schedule.
+>You can join our CNCF Slack Channel **kubeflow-platform** [here](https://www.kubeflow.org/docs/about/community/). This link also contains our meeting schedule.
   

@@ -1,6 +1,7 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Join Our Slack Channel wg-manifests.
+  - name: Join Our CNCF Slack Channel kubeflow-platform..
     url: https://www.kubeflow.org/docs/about/community/
-    about: Join our slack channel and access our meeting schedule.
+    about: Join our CNCF Slack Channel and access our meeting schedule.
+  
   
