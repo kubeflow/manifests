@@ -22,7 +22,7 @@ body:
           required: false
         - label: Would you like to work on this issue?
           required: false
-        - label: Join our slack channel using [wg-manifests](https://www.kubeflow.org/docs/about/community/).
+        - label: You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website. Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2).
           required: false
   - type: dropdown
     id: version
@@ -39,7 +39,7 @@ body:
     id: description
     attributes:
       label: Describe your issue
-      placeholder: When I Proceed this issue is occured. 
+      placeholder: When installing Kubeflow I got the following error message from ... 
     validations:
       required: true
   - type: textarea
@@ -59,6 +59,6 @@ body:
     attributes:
       value: |
         > **Note:** Please note that you have to fill required fields to post an Issue.
-          If not please close or redo the issue and join our slack channel [wg-manifests](https://www.kubeflow.org/docs/about/community/) here. This link also contains our meeting schedule. 
+          If not please close or redo the issue and you can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website.  Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2). 
 
         **Thanks for reporting this issue! We will get back to you as soon as possible.** 
