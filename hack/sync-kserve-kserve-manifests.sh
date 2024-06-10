@@ -15,8 +15,8 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-KSERVE_VERSION="v0.12.1"
-COMMIT="0.12.1" # You can use tags as well
+KSERVE_VERSION="v0.13.0"
+COMMIT="0.13.0" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kserve}
 BRANCH=${BRANCH:=sync-kserve-manifests-${COMMIT?}}
 
