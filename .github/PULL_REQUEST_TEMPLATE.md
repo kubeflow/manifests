@@ -32,5 +32,5 @@
 
 ---     
  
->You can join our CNCF Slack Channel **kubeflow-platform** [here](https://www.kubeflow.org/docs/about/community/). This link also contains our meeting schedule.
+> You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website. Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2).
   
