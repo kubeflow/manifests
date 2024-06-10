@@ -77,12 +77,12 @@ if [ -n "$(git status --porcelain)" ]; then
   echo "WARNING: You have uncommitted changes"
 fi
 
-find "$MANIFESTS_DIR" -type f -exec sed -i "s/istio-cni-${CURRENT_VERSION}/istio-cni-${NEW_VERSION}/g" {} +
+find "$MANIFESTS_DIR" -type f -not -path '*/.git/*' -exec sed -i "s/istio-cni-${CURRENT_VERSION}/istio-cni-${NEW_VERSION}/g" {} +
 
 
 
 echo "Committing the changes..."
 cd "$MANIFESTS_DIR"
-git rm -rf $ISTIO_OLD
+rm -rf $ISTIO_OLD
 git add .
 git commit -s -m "Upgrade istio-cni to v.${COMMIT}"
