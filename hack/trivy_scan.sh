@@ -9,6 +9,18 @@
 # - Summary of security counts with images a JSON file inside ../image_lists/summary_of_severity_counts_for_WG folder
 # 4. Generate a summary of the security scan reports
 # - The summary will be saved in JSON format inside ../image_lists/summary_of_severity_counts_for_WG folder
+# 5. Before run this file you have to 
+#    1. Install kustomize 
+#       - sudo apt install snapd
+#       - sudo snap install kustomize
+#    2. Install trivy
+#       - sudo apt install snapd
+#       - sudo snap install trivy
+#    3. Install jq
+#       - sudo apt install jq
+#    4. Install Python
+#    5. Install prettytable
+#       - pip install prettytable
 
 # The script must be executed from the hack folder as it use relative paths
 

@@ -1,7 +1,5 @@
 name: Image Extracting and Security Scanning
 
-
-
 on:
   push:
     branches:
@@ -37,7 +35,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10' 
+          python-version: '3.12' 
   
       # Install prettytable package
       - name: Install prettytable
@@ -51,12 +49,6 @@ jobs:
           chmod +x trivy_scan.sh
           ./trivy_scan.sh
 
-      # Upload the artifact
-      - name: Upload trivy scanned_results
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy_scanned_results
-          path: docs/image_lists/
 
       
 
