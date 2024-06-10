@@ -15,7 +15,7 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="1.22.0"
+COMMIT="1.22.1"
 CURRENT_VERSION="1-21" 
 NEW_VERSION="1-22" # Must be a release
 
@@ -85,7 +85,7 @@ DST_TXT="\[$COMMIT\](https://github.com/istio/istio/releases/tag/$COMMIT)"
 sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
 
 #Syncing updated directory's name with other files
-find "$MANIFESTS_DIR" -type f -exec sed -i "s/istio-${CURRENT_VERSION}/istio-${NEW_VERSION}/g" {} +
+find "$MANIFESTS_DIR" -type f -not -path '*/.git/*' -exec sed -i "s/istio-${CURRENT_VERSION}/istio-${NEW_VERSION}/g" {} +
 
 echo "Committing the changes..."
 cd "$MANIFESTS_DIR"

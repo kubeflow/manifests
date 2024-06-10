@@ -15,7 +15,7 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="1.22.0"  # Must be a release
+COMMIT="1.22.1"  # Must be a release
 CURRENT_VERSION="1-21" 
 NEW_VERSION="1-22" 
 
@@ -79,8 +79,10 @@ fi
 
 find "$MANIFESTS_DIR" -type f -exec sed -i "s/istio-cni-${CURRENT_VERSION}/istio-cni-${NEW_VERSION}/g" {} +
 
+
+
 echo "Committing the changes..."
 cd "$MANIFESTS_DIR"
-rm -rf $ISTIO_OLD
+git rm -rf $ISTIO_OLD
 git add .
 git commit -s -m "Upgrade istio-cni to v.${COMMIT}"
