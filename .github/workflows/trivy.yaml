@@ -1,0 +1,55 @@
+name: Image Extracting and Security Scanning
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  image-extraction-and-security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Install kustomize
+      - name: Install kustomize
+        run: |
+          sudo apt update
+          sudo apt install snapd
+          sudo snap install kustomize
+
+      # Install trivy
+      - name: Install trivy
+        run: |
+          sudo apt update
+          sudo snap install trivy
+
+      # Install jq
+      - name: Install jq
+        run: |
+          sudo apt update
+          sudo apt install jq
+
+      # Install Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12' 
+  
+      # Install prettytable package
+      - name: Install prettytable
+        run: |
+          pip install prettytable
+
+      # Run the shell script (extract_images.sh)
+      - name: Run image extracting and security scanning script
+        run: |
+          cd hack
+          chmod +x trivy_scan.sh
+          ./trivy_scan.sh
+
+
+      
+
+      
