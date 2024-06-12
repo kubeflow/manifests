@@ -67,6 +67,10 @@ jobs:
           nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
           while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
 
+      - name: Wait for the kubeflow-m2m-oidc-configurator Job
+        run: |
+          ./tests/gh-actions/wait_for_kubeflow_m2m_oidc_configurator.sh
+
       - name: Run kserve tests with m2m token from SA default/default
         run: |
           export KSERVE_INGRESS_HOST_PORT=localhost:8080
