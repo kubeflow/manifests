@@ -39,7 +39,7 @@ jobs:
         run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
       - name: Install Istio with ext auth
-        run: ./tests/gh-actions/install_istio_with_ext_auth.sh*
+        run: ./tests/gh-actions/install_istio_with_ext_auth.sh
 
       - name: Install cert-manager
         run: ./tests/gh-actions/install_cert_manager.sh

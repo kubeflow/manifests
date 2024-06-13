@@ -4,11 +4,11 @@ metadata:
   name: kubeflow-m2m-oidc-configurator
   namespace: istio-system
 spec:
-  schedule: '* * * * *'
+  schedule: '*/5 * * * *'
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
-      ttlSecondsAfterFinished: 60
+      ttlSecondsAfterFinished: 600
       template:
         metadata:
           labels: {}

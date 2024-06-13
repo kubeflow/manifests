@@ -8,7 +8,8 @@ kustomize build istio-install/overlays/oauth2-proxy | kubectl apply -f -
 cd -
 
 echo "Waiting for all Istio Pods to become ready..."
-kubectl wait --for=condition=Ready pods --all -n istio-system --timeout 300s
+kubectl wait --for=condition=Ready pods --all -n istio-system --timeout=300s \
+  --field-selector=status.phase!=Succeeded
 
 echo "Installing oauth2-proxy..."
 cd common/oidc-client
