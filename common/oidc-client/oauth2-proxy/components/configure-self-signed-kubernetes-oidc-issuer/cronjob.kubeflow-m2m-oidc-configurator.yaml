@@ -8,6 +8,7 @@ spec:
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
+      backoffLimit: 3
       ttlSecondsAfterFinished: 600
       template:
         metadata:
