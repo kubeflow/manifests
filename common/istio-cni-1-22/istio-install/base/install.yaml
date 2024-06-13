@@ -43,6 +43,8 @@ rules:
   - networking.istio.io
   - authentication.istio.io
   - rbac.istio.io
+  - telemetry.istio.io
+  - extensions.istio.io
   resources:
   - '*'
   verbs:
@@ -457,9 +459,6 @@ data:
   mesh: |-
     defaultConfig:
       discoveryAddress: istiod.istio-system.svc:15012
-      tracing:
-        zipkin:
-          address: zipkin.istio-system:9411
     defaultProviders:
       metrics:
       - prometheus
@@ -542,8 +541,8 @@ data:
             kubectl.kubernetes.io/default-container: "{{ index $containers 0 }}",
             {{- end }}
             {{- end }}
-        {{- if .Values.istio_cni.enabled }}
-            {{- if not .Values.istio_cni.chained }}
+        {{- if or .Values.pilot.cni.enabled .Values.istio_cni.enabled }}
+            {{- if or (eq .Values.pilot.cni.provider "multus") (eq .Values.istio_cni.provider "multus") (not .Values.istio_cni.chained)}}
             k8s.v1.cni.cncf.io/networks: '{{ appendMultusNetwork (index .ObjectMeta.Annotations `k8s.v1.cni.cncf.io/networks`) `default/istio-cni` }}',
             {{- end }}
             sidecar.istio.io/interceptionMode: "{{ annotation .ObjectMeta `sidecar.istio.io/interceptionMode` .ProxyConfig.InterceptionMode }}",
@@ -567,7 +566,7 @@ data:
               (not $nativeSidecar) }}
           initContainers:
           {{ if ne (annotation .ObjectMeta `sidecar.istio.io/interceptionMode` .ProxyConfig.InterceptionMode) `NONE` }}
-          {{ if .Values.istio_cni.enabled -}}
+          {{ if or .Values.pilot.cni.enabled .Values.istio_cni.enabled -}}
           - name: istio-validation
           {{ else -}}
           - name: istio-init
@@ -619,7 +618,7 @@ data:
             {{ if .Values.global.logAsJson -}}
             - "--log_as_json"
             {{ end -}}
-            {{ if .Values.istio_cni.enabled -}}
+            {{ if or .Values.pilot.cni.enabled .Values.istio_cni.enabled -}}
             - "--run-validation"
             - "--skip-rule-apply"
             {{ end -}}
@@ -637,14 +636,14 @@ data:
               allowPrivilegeEscalation: {{ .Values.global.proxy.privileged }}
               privileged: {{ .Values.global.proxy.privileged }}
               capabilities:
-            {{- if not .Values.istio_cni.enabled }}
+            {{- if not (or .Values.pilot.cni.enabled .Values.istio_cni.enabled) }}
                 add:
                 - NET_ADMIN
                 - NET_RAW
             {{- end }}
                 drop:
                 - ALL
-            {{- if not .Values.istio_cni.enabled }}
+            {{- if not (or .Values.pilot.cni.enabled .Values.istio_cni.enabled) }}
               readOnlyRootFilesystem: false
               runAsGroup: 0
               runAsNonRoot: false
@@ -735,12 +734,10 @@ data:
                   - drain
           {{- end }}
             env:
-            {{- if eq (env "PILOT_ENABLE_INBOUND_PASSTHROUGH" "true") "false" }}
+            {{- if eq .InboundTrafficPolicyMode "localhost" }}
             - name: REWRITE_PROBE_LEGACY_LOCALHOST_DESTINATION
               value: "true"
             {{- end }}
-            - name: JWT_POLICY
-              value: {{ .Values.global.jwtPolicy }}
             - name: PILOT_CERT_PROVIDER
               value: {{ .Values.global.pilotCertProvider }}
             - name: CA_ADDR
@@ -939,10 +936,8 @@ data:
             # SDS channel between istioagent and Envoy
             - mountPath: /etc/istio/proxy
               name: istio-envoy
-            {{- if eq .Values.global.jwtPolicy "third-party-jwt" }}
             - mountPath: /var/run/secrets/tokens
               name: istio-token
-            {{- end }}
             {{- if .Values.global.mountMtlsCerts }}
             # Use the key and cert mounted to /etc/certs/ for the in-cluster mTLS communications.
             - mountPath: /etc/certs/
@@ -995,7 +990,6 @@ data:
                 - path: "annotations"
                   fieldRef:
                     fieldPath: metadata.annotations
-          {{- if eq .Values.global.jwtPolicy "third-party-jwt" }}
           - name: istio-token
             projected:
               sources:
@@ -1003,7 +997,6 @@ data:
                   path: istio-token
                   expirationSeconds: 43200
                   audience: {{ .Values.global.sds.token.aud }}
-          {{- end }}
           {{- if eq .Values.global.pilotCertProvider "istiod" }}
           - name: istiod-ca-cert
             configMap:
@@ -1095,8 +1088,6 @@ data:
               runAsUser: {{ .ProxyUID | default "1337" }}
               runAsGroup: {{ .ProxyGID | default "1337" }}
             env:
-            - name: JWT_POLICY
-              value: {{ .Values.global.jwtPolicy }}
             - name: PILOT_CERT_PROVIDER
               value: {{ .Values.global.pilotCertProvider }}
             - name: CA_ADDR
@@ -1225,10 +1216,8 @@ data:
             # SDS channel between istioagent and Envoy
             - mountPath: /etc/istio/proxy
               name: istio-envoy
-            {{- if eq .Values.global.jwtPolicy "third-party-jwt" }}
             - mountPath: /var/run/secrets/tokens
               name: istio-token
-            {{- end }}
             {{- if .Values.global.mountMtlsCerts }}
             # Use the key and cert mounted to /etc/certs/ for the in-cluster mTLS communications.
             - mountPath: /etc/certs/
@@ -1265,7 +1254,6 @@ data:
                 - path: "annotations"
                   fieldRef:
                     fieldPath: metadata.annotations
-          {{- if eq .Values.global.jwtPolicy "third-party-jwt" }}
           - name: istio-token
             projected:
               sources:
@@ -1273,7 +1261,6 @@ data:
                   path: istio-token
                   expirationSeconds: 43200
                   audience: {{ .Values.global.sds.token.aud }}
-          {{- end }}
           {{- if eq .Values.global.pilotCertProvider "istiod" }}
           - name: istiod-ca-cert
             configMap:
@@ -1446,12 +1433,10 @@ data:
               value: grpc
             - name: OUTPUT_CERTS
               value: /var/lib/istio/data
-            {{- if eq (env "PILOT_ENABLE_INBOUND_PASSTHROUGH" "true") "false" }}
+            {{- if eq .InboundTrafficPolicyMode "localhost" }}
             - name: REWRITE_PROBE_LEGACY_LOCALHOST_DESTINATION
               value: "true"
             {{- end }}
-            - name: JWT_POLICY
-              value: {{ .Values.global.jwtPolicy }}
             - name: PILOT_CERT_PROVIDER
               value: {{ .Values.global.pilotCertProvider }}
             - name: CA_ADDR
@@ -1568,10 +1553,8 @@ data:
             # UDS channel between istioagent and gRPC client for XDS/SDS
             - mountPath: /etc/istio/proxy
               name: istio-xds
-            {{- if eq .Values.global.jwtPolicy "third-party-jwt" }}
             - mountPath: /var/run/secrets/tokens
               name: istio-token
-            {{- end }}
             {{- if .Values.global.mountMtlsCerts }}
             # Use the key and cert mounted to /etc/certs/ for the in-cluster mTLS communications.
             - mountPath: /etc/certs/
@@ -1642,7 +1625,6 @@ data:
                 - path: "annotations"
                   fieldRef:
                     fieldPath: metadata.annotations
-          {{- if eq .Values.global.jwtPolicy "third-party-jwt" }}
           - name: istio-token
             projected:
               sources:
@@ -1650,7 +1632,6 @@ data:
                   path: istio-token
                   expirationSeconds: 43200
                   audience: {{ .Values.global.sds.token.aud }}
-          {{- end }}
           {{- if eq .Values.global.pilotCertProvider "istiod" }}
           - name: istiod-ca-cert
             configMap:
@@ -1694,6 +1675,14 @@ data:
                 "gateway.networking.k8s.io/gateway-name" .Name
                 "istio.io/gateway-name" .Name
               ) | nindent 4 }}
+          {{- if ge .KubeVersion 128 }}
+          # Safe since 1.28: https://github.com/kubernetes/kubernetes/pull/117412
+          ownerReferences:
+          - apiVersion: gateway.networking.k8s.io/v1beta1
+            kind: Gateway
+            name: "{{.Name}}"
+            uid: "{{.UID}}"
+          {{- end }}
         ---
         apiVersion: apps/v1
         kind: Deployment
@@ -1726,7 +1715,6 @@ data:
                   (omit .InfrastructureAnnotations "kubectl.kubernetes.io/last-applied-configuration" "gateway.istio.io/name-override" "gateway.istio.io/service-account" "gateway.istio.io/controller-version")
                   (strdict "istio.io/rev" (.Revision | default "default"))
                   (strdict
-                    "ambient.istio.io/redirection" "disabled"
                     "prometheus.io/path" "/stats/prometheus"
                     "prometheus.io/port" "15020"
                     "prometheus.io/scrape" "true"
@@ -1735,6 +1723,7 @@ data:
                 {{- toJsonMap
                   (strdict
                     "sidecar.istio.io/inject" "false"
+                    "istio.io/dataplane-mode" "none"
                     "service.istio.io/canonical-name" .DeploymentName
                     "service.istio.io/canonical-revision" "latest"
                    )
@@ -1787,8 +1776,6 @@ data:
                   valueFrom:
                     fieldRef:
                       fieldPath: spec.nodeName
-                - name: JWT_POLICY
-                  value: {{ .Values.global.jwtPolicy }}
                 - name: PILOT_CERT_PROVIDER
                   value: {{ .Values.global.pilotCertProvider }}
                 - name: CA_ADDR
@@ -1993,6 +1980,14 @@ data:
                 "gateway.networking.k8s.io/gateway-name" .Name
                 "istio.io/gateway-name" .Name
               ) | nindent 4 }}
+          {{- if ge .KubeVersion 128 }}
+          # Safe since 1.28: https://github.com/kubernetes/kubernetes/pull/117412
+          ownerReferences:
+          - apiVersion: gateway.networking.k8s.io/v1beta1
+            kind: Gateway
+            name: "{{.Name}}"
+            uid: "{{.UID}}"
+          {{- end }}
         ---
         apiVersion: apps/v1
         kind: Deployment
@@ -2041,7 +2036,7 @@ data:
                     "istio.io/gateway-name" .Name
                   ) | nindent 8 }}
             spec:
-              {{- if .KubeVersion122 }}
+              {{- if ge .KubeVersion 122 }}
               {{/* safe since 1.22: https://github.com/kubernetes/kubernetes/pull/103326. */}}
               securityContext:
                 sysctls:
@@ -2062,7 +2057,7 @@ data:
                 {{- end }}
                 {{with .Values.global.imagePullPolicy }}imagePullPolicy: "{{.}}"{{end}}
                 securityContext:
-                {{- if .KubeVersion122 }}
+                {{- if ge .KubeVersion 122 }}
                   # Safe since 1.22: https://github.com/kubernetes/kubernetes/pull/103326
                   capabilities:
                     drop:
@@ -2111,11 +2106,9 @@ data:
               {{- end }}
               {{- if .Values.global.proxy.lifecycle }}
                 lifecycle:
-                  {{ toYaml .Values.global.proxy.lifecycle | indent 6 }}
+                  {{- toYaml .Values.global.proxy.lifecycle | nindent 10 }}
               {{- end }}
                 env:
-                - name: JWT_POLICY
-                  value: {{ .Values.global.jwtPolicy }}
                 - name: PILOT_CERT_PROVIDER
                   value: {{ .Values.global.pilotCertProvider }}
                 - name: CA_ADDR
@@ -2240,10 +2233,8 @@ data:
                 # SDS channel between istioagent and Envoy
                 - mountPath: /etc/istio/proxy
                   name: istio-envoy
-                {{- if eq .Values.global.jwtPolicy "third-party-jwt" }}
                 - mountPath: /var/run/secrets/tokens
                   name: istio-token
-                {{- end }}
                 - name: istio-podinfo
                   mountPath: /etc/istio/pod
               volumes:
@@ -2274,7 +2265,6 @@ data:
                     - path: "annotations"
                       fieldRef:
                         fieldPath: metadata.annotations
-              {{- if eq .Values.global.jwtPolicy "third-party-jwt" }}
               - name: istio-token
                 projected:
                   sources:
@@ -2282,7 +2272,6 @@ data:
                       path: istio-token
                       expirationSeconds: 43200
                       audience: {{ .Values.global.sds.token.aud }}
-              {{- end }}
               {{- if eq .Values.global.pilotCertProvider "istiod" }}
               - name: istiod-ca-cert
                 configMap:
@@ -2355,7 +2344,6 @@ data:
         "istiod": {
           "enableAnalysis": false
         },
-        "jwtPolicy": "third-party-jwt",
         "logAsJson": false,
         "logging": {
           "level": "default:info"
@@ -2370,7 +2358,6 @@ data:
         "namespace": "istio-system",
         "network": "",
         "omitSidecarInjectorConfigMap": false,
-        "oneNamespace": false,
         "operatorManageWebhooks": false,
         "pilotCertProvider": "istiod",
         "priorityClassName": "",
@@ -2406,7 +2393,7 @@ data:
             "failureThreshold": 600
           },
           "statusPort": 15020,
-          "tracer": "zipkin"
+          "tracer": "none"
         },
         "proxy_init": {
           "image": "proxyv2"
@@ -2420,12 +2407,19 @@ data:
         "sts": {
           "servicePort": 0
         },
-        "tag": "1.21.3",
+        "tag": "1.22.1",
         "variant": ""
       },
       "istio_cni": {
         "chained": true,
-        "enabled": false
+        "enabled": false,
+        "provider": "default"
+      },
+      "pilot": {
+        "cni": {
+          "enabled": false,
+          "provider": "default"
+        }
       },
       "revision": "",
       "sidecarInjectorWebhook": {
@@ -2661,8 +2655,6 @@ spec:
         - --proxyComponentLogLevel=misc:error
         - --log_output_level=default:info
         env:
-        - name: JWT_POLICY
-          value: third-party-jwt
         - name: PILOT_CERT_PROVIDER
           value: istiod
         - name: CA_ADDR
@@ -2717,7 +2709,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        image: docker.io/istio/proxyv2:1.21.3
+        image: docker.io/istio/proxyv2:1.22.1
         name: istio-proxy
         ports:
         - containerPort: 15021
@@ -2850,7 +2842,6 @@ spec:
   template:
     metadata:
       annotations:
-        ambient.istio.io/redirection: disabled
         prometheus.io/port: '15014'
         prometheus.io/scrape: 'true'
         sidecar.istio.io/inject: 'false'
@@ -2858,6 +2849,7 @@ spec:
         app: istiod
         install.operator.istio.io/owning-resource: unknown
         istio: pilot
+        istio.io/dataplane-mode: none
         istio.io/rev: default
         operator.istio.io/component: Pilot
         sidecar.istio.io/inject: 'false'
@@ -2874,8 +2866,6 @@ spec:
         env:
         - name: REVISION
           value: default
-        - name: JWT_POLICY
-          value: third-party-jwt
         - name: PILOT_CERT_PROVIDER
           value: istiod
         - name: POD_NAME
@@ -2911,7 +2901,7 @@ spec:
               resource: limits.cpu
         - name: PLATFORM
           value: ''
-        image: docker.io/istio/pilot:1.21.3
+        image: docker.io/istio/pilot:1.22.1
         name: discovery
         ports:
         - containerPort: 8080
@@ -2957,6 +2947,9 @@ spec:
           name: istio-csr-ca-configmap
           readOnly: true
       serviceAccountName: istiod
+      tolerations:
+      - key: cni.istio.io/not-ready
+        operator: Exists
       volumes:
       - emptyDir:
           medium: Memory

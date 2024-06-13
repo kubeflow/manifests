@@ -15,7 +15,7 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="1.22.0"  # Must be a release
+COMMIT="1.22.1"  # Must be a release
 CURRENT_VERSION="1-21" 
 NEW_VERSION="1-22" 
 
@@ -77,7 +77,9 @@ if [ -n "$(git status --porcelain)" ]; then
   echo "WARNING: You have uncommitted changes"
 fi
 
-find "$MANIFESTS_DIR" -type f -exec sed -i "s/istio-cni-${CURRENT_VERSION}/istio-cni-${NEW_VERSION}/g" {} +
+find "$MANIFESTS_DIR" -type f -not -path '*/.git/*' -exec sed -i "s/istio-cni-${CURRENT_VERSION}/istio-cni-${NEW_VERSION}/g" {} +
+
+
 
 echo "Committing the changes..."
 cd "$MANIFESTS_DIR"
