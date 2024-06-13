@@ -29,15 +29,20 @@ while true; do
 done
 echo "Resource RequestAuthentication ${REQUEST_AUTHENTICATION_NAME} in namespace ${ISTIO_ROOT_NAMESPACE} is ready."
 
-# Get Issuer URL configured in RequestAuthentication.
-ISSUER_URL="$(
+echo "Getting RequestAuthentication object."
+REQUEST_AUTHENTICATION_OBJ="$(
   curl -s --request GET \
     --url "${RESOURCE_URL}" \
     --header "Authorization: Bearer $(cat /run/secrets/kubernetes.io/serviceaccount/token)" \
-    --insecure |
-    awk -F'"' '/"issuer":/ { print $4 }'
+    --insecure
 )"
-echo "ISSUER_URL: ${ISSUER_URL}."
+
+# Get Issuer URL configured in RequestAuthentication.
+ISSUER_URL="$(echo "${REQUEST_AUTHENTICATION_OBJ}" | awk -F'"' '/"issuer":/ { print $4 }')"
+echo "Issuer Url in RequestAuthentication: ${ISSUER_URL}"
+
+CURRENT_JWKS_ESCAPED="$(echo "${REQUEST_AUTHENTICATION_OBJ}" | awk -F'"' '/"jwks":/' | sed -n 's/^.*"jwks": "\(.*\)".*$/\1/p')"
+printf "Current Jwks (escaped):\n%s\n" "${CURRENT_JWKS_ESCAPED}"
 
 # GET URI to the JWKS.
 JWKS_URI="$(
@@ -48,7 +53,7 @@ JWKS_URI="$(
     grep -o '"jwks_uri":"https:\/\/[^"]\+"' |
     sed 's/"jwks_uri":"\(.*\)"/\1/'
 )"
-echo "JWKS_URI: ${JWKS_URI}."
+echo "Jwks Uri from Well Known OpenID Configuration: ${JWKS_URI}"
 
 # Get content of the JWKS.
 JWKS="$(
@@ -57,10 +62,17 @@ JWKS="$(
     --header "Authorization: Bearer $(cat /run/secrets/kubernetes.io/serviceaccount/token)" \
     --insecure
 )"
-echo "JWKS: ${JWKS}."
 
 # Format JWKS in a way that can be accepted in resource patch.
 JWKS_ESCAPED="$(echo "${JWKS}" | sed 's/"/\\"/g')"
+printf "JWKS from Well Known OpenID Configuration (escaped): \n%s\n" "${JWKS_ESCAPED}"
+
+# If the JWKS from RequestAuthentication and OpenID Configuration is the same, don't to any changes.
+if [ "$(echo "${JWKS_ESCAPED}" | base64 -w0)" = "$(echo "${CURRENT_JWKS_ESCAPED}" | base64 -w0)" ]; then
+  echo "JWKS in RequestAuthentication ${REQUEST_AUTHENTICATION_NAME} is configured correctly, exitting..."
+  exit 0
+fi
+echo "JWKS in RequestAuthentication ${REQUEST_AUTHENTICATION_NAME} needs to be configured."
 
 # Patch the RequestAuthentication with JWKS.
 curl -s --request PATCH \
