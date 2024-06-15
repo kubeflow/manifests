@@ -7,31 +7,35 @@
 ## Scope
 This proposal aims to standardise how the Kubeflow backends should be handling the user information (name of user, groups they belong to), living in JWTs and http headers.
 
-This proposal takes as a requirement that users should be able to use K8s Tokens as `Authorization: Bearer <token>` headers in their request from inside the cluster.
+This proposal takes as a requirement that users should be able to use K8s Tokens as `Authorization: Bearer <token>` headers in their request from inside the cluster. Note that the issuer of the tokens should not be relevant to the Kubeflow applications. It'll be up to the service-mesh to verify them, and be able to work with multiple issuers (i.e. Dex, K8s etc). The applications will only care about the user/groups information from the tokens.
 ### In
 - Which component should be validating JWTs (id-tokens from OIDC or K8s ServiceAccount tokens)
 - Define where the backends should expect to find user related information
-- Define how different token "types" (dex, k8s) should be handled
+- Define how different token issuers (i.e. Dex, K8s etc) should be handled
 ### Out
 - Proposing code changes to existing components
 ## Current State
 As of Kubeflow 1.8 the user information has been injected into requests as the `kubeflow-userid` header, from the AuthService (replaced by `oauth2-proxy`). For this approach to be secure there are the following patterns that Kubeflow follows:
-1. Backends in the `kubeflow` namespace that need to know the user identity will rely on `kubeflow-userid` headers in http requests
-2. The AuthService will be adding the `kubeflow-userid` header to all authenticated requests
-3. Only requests from the Istio IngressGateway should be trusted to have the `kubeflow-userid` header
-    1. Backends that shouldn't be exposed to user namespaces (i.e. jupyter-web-app) are only reachable via the Istio IngressGateway
+1. Backends in the `kubeflow` namespace that need to know the user identity rely on `kubeflow-userid` headers in http requests.
+2. The AuthService adds the `kubeflow-userid` header to all authenticated requests.
+3. Only requests from the Istio IngressGateway are trusted to have the `kubeflow-userid` header
+    1. Backends that are not exposed to user namespaces (i.e. jupyter-web-app) are only reachable via the Istio IngressGateway.
     2. The KFP backend [explicitly drops requests](https://github.com/kubeflow/manifests/blob/96ce068e16b2a707464471bddc0d2a58e403d1fc/apps/pipeline/upstream/base/installs/multi-user/istio-authorization-config.yaml#L37) from user namespaces if they have this header
-    3. For in-cluster Pods that want to talk to `kubeflow` workloads, which understands identity, the Pods will need to [use a K8s ServiceAccount Token](https://www.kubeflow.org/docs/components/pipelines/v1/sdk/connect-api/#full-kubeflow-subfrom-inside-clustersub)
+    3. In-cluster Pods that want to talk to `kubeflow` workloads, which understands identity, are [using a K8s ServiceAccount Token](https://www.kubeflow.org/docs/components/pipelines/v1/sdk/connect-api/#full-kubeflow-subfrom-inside-clustersub)
 ### Limitations
 - Not able to express `AuthorizationPolicies` for group header in Istio
+- Limited possibility to use custom JWT claims as a source of information about authenticated user
 
-The above limitation has pushed us to inject `id_tokens` to requests, via `oauth2-proxy`, to all authenticated requests. This will enable us to define policies in the future for better handling of groups.
+To accommodate the above limitations and improve the authnz flow in terms of security, maintenance and flexibility
+we propose to add the JWT to the `Authorization` header, so it can be digested by Istio and have the user details securely
+injected to auth headers when authorized. This will also enable us to define policies in the future for better handling of groups.
 https://istio.io/latest/docs/tasks/security/authorization/authz-jwt/
 
-But the above creates the following issues:
-2. Ambiguity on how to handle different `id_tokens` (i.e. from Dex and from K8s)
-3. Information of user is both in `kubeflow-userid` and in `id_token` of http request
-4. It's not clear if backends should be validating the JWT tokens (i.e. KFP right now validates ServiceAccount tokens [`1`](https://github.com/kubeflow/pipelines/blob/2.2.0/backend/src/apiserver/auth/authenticator_token_review.go#L47-L58) [`2`](https://github.com/kubeflow/pipelines/blob/2.2.0/backend/src/apiserver/resource/resource_manager.go#L1698-L1699) )
+But the above creates the following topics that require agreement on how to handle:
+1. There will be `id_tokens` from different issuers (i.e. from Dex, K8s) that the platform will need to handle
+2. Information of user is both in `kubeflow-userid` and in `id_token` of http request, for Kubeflow components to deduce the identity from
+3. It's not clear if backends should be validating the JWT (i.e. KFP right now validates ServiceAccount tokens [`1`](https://github.com/kubeflow/pipelines/blob/2.2.0/backend/src/apiserver/auth/authenticator_token_review.go#L47-L58) [`2`](https://github.com/kubeflow/pipelines/blob/2.2.0/backend/src/apiserver/resource/resource_manager.go#L1698-L1699) )
+
 ## Spec
 This proposal aims to provide a uniform way for all backends to handle identity tokens, and agreeing on which levels of the stack should responsible for different parts.
 
@@ -43,11 +47,14 @@ This spec proposes to standardise on the following high level agreement, for new
 3. The backends are not responsible for validating the JWTs or their existence
 4. The service-mesh must expose user and groups to `kubeflow-userid` and `kubeflow-groups` headers, after validating JWTs
     1. if the mesh will not override these headers, then users could forge requests and impersonate other users by setting the header and any valid token
-    1. by default the `email` claim from `id_token`, should be configurable in one place per issuer via `RequestAuthentication`
-    2. in case of K8s ServiceAccount tokens the `email` claim will be `system:serviceaccount:<sa-namespace>:<sa-name>`
+    1. for User to Machine traffic, the `email` claim from `id_token` should be used by default but it should also allow parameterization to allow using different claims. This is doable via `RequestAuthentication` with object per issuer
+    2. in case of K8s ServiceAccount tokens the `sub` claim will be used. `sub` claim format is `system:serviceaccount:<sa-namespace>:<sa-name>`
     3. in case of Dex tokens it would be `kimonas@email.com`
 5. The backends will use the information from the headers and not deal with JWTs
     1. `SubjectAccessReviews` should be made for the `user` and `groups` that were exposed from the headers, independently of the issuer of the token
+    2. [`SubjectAccessReview API`](https://kubernetes.io/docs/reference/kubernetes-api/authorization-resources/subject-access-review-v1/) uses the `user`,
+       `groups`, `resource` and `verb` details to verify the access against K8s RBAC, which allows defining authorization to specific actions based on
+       K8s standard RBAC implementation
 
 With the above implementation we move all the logic of handling the JWTs to the service-mesh and leave only the business logic to the apps. This also means that the apps don't care about token "types" (i.e. dex, k8s tokens etc) and only have to look at the corresponding headers.
 
@@ -67,7 +74,10 @@ This can be achieved by multiple ways
 - By using `requestPrincipals`
 - By using `request.auth.claims[iss]` in the `when` condition of an `AuthorizationPolicy` rule
 
-The recommended way is to use `requestPrincipals: ["*"]`, as the [Istio docs suggest](https://istio.io/latest/docs/tasks/security/authorization/authz-jwt/), to accept only requests that have a JWT. But if a Kubeflow app would like to only accept tokens from a specific issuer (i.e. k8s) then the `request.auth.claims[iss]` key should be used.
+The recommended way is to use `requestPrincipals: ["*"]`, as the [Istio docs suggest](https://istio.io/latest/docs/tasks/security/authorization/authz-jwt/), to accept only requests that have a JWT.
+
+If an admin would like to further limit access to Kubeflow apps based on specific issuers, they can do so by updating the `AuthorizationPolicies`
+to instead use `request.auth.claims[iss]`.
 
 From the above, the `AuthorizationPolicy` for the jupyter-web-app should look like:
 ```yaml
@@ -117,7 +127,7 @@ spec:
         - cluster.local/ns/kubeflow/sa/kubeflow-pipelines-cache
   - from:
     - source:
-        requestPrincipals: # new! Allow request from any namespace, as long as it has JWT
+        requestPrincipals: # new! Allow request from any source, as long as it has JWT
         - '*'
   selector:
     matchLabels:
