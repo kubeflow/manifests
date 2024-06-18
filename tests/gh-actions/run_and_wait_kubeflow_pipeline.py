@@ -3,6 +3,7 @@
 from kfp import dsl
 import kfp
 from time import sleep
+import subprocess
 
 
 client = kfp.Client()
@@ -50,6 +51,10 @@ run = client.create_run_from_pipeline_func(
 
 while True:
     live_run = client.get_run(run_id=run.run_id)
+    print(f"{live_run.state=}")
+
+    subprocess.run(["kubectl", "get", "pods"])
+
     if live_run.finished_at > live_run.created_at:
         print("Finished pipeline!")
         print(f"{live_run.finished_at > live_run.created_at=}")
