@@ -61,8 +61,10 @@ jobs:
       run: |
         kubectl apply -f tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml
         kubectl wait --for=jsonpath='{.status.readyReplicas}'=1 \
-          -f tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml
-        kubectl -n kubeflow-user-example-com wait --for=condition=Ready pod/test-0
+          -f tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml \
+          --timeout 300s
+        kubectl -n kubeflow-user-example-com wait --for=condition=Ready pod/test-0 \
+          --timeout 300s
 
     # - name: Port forward
     #   run: |
