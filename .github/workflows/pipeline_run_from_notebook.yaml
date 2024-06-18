@@ -38,6 +38,9 @@ jobs:
     - name: Install kubeflow-istio-resources
       run: kustomize build common/istio-1-22/kubeflow-istio-resources/base | kubectl apply -f -
 
+    - name: Install KF Multi Tenancy
+      run: ./tests/gh-actions/install_multi_tenancy.sh
+
     - name: Build & Apply manifests
       run: |
         kustomize build apps/jupyter/jupyter-web-app/upstream/overlays/istio/ | kubectl apply -f -
