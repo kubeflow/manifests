@@ -66,8 +66,11 @@ jobs:
         kubectl -n kubeflow-user-example-com wait --for=condition=Ready pod/test-0 \
           --timeout 300s
 
-    # - name: Port forward
-    #   run: |
-    #     INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
-    #     nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
-    #     while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
+    - name: Copy and execute the pipeline run script in KF Notebook
+      run: |
+        kubectl -n kubeflow-user-example-com cp \
+          ./tests/gh-actions/run_and_wait_kubeflow_pipeline.py \
+          test-0:/home/jovyan/run_and_wait_kubeflow_pipeline.py
+
+        kubectl -n kubeflow-user-example-com exec -ti \
+          test-0 -- python /home/jovyan/run_and_wait_kubeflow_pipeline.py
