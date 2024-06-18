@@ -1,0 +1,62 @@
+# name: Build & Apply Notebook Controller manifests in KinD
+name: Create Pipeline Run from Kubeflow Notebook
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pipeline_run_from_notebook.yaml
+      - apps/jupyter/notebook-controller/upstream/**
+      - tests/gh-actions/kind-cluster.yaml
+      - tests/gh-actions/install_kind.sh
+      - tests/gh-actions/install_kustomize.sh
+      - tests/gh-actions/install_istio.sh
+      - common/istio*/**
+      - common/oidc-client/**
+      - apps/jupyter/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install KinD
+      run: ./tests/gh-actions/install_kind.sh
+
+    - name: Create KinD Cluster
+      run: kind create cluster --config tests/gh-actions/kind-cluster.yaml
+
+    - name: Install kustomize
+      run: ./tests/gh-actions/install_kustomize.sh
+
+    - name: Create kubeflow namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+    - name: Install Istio with ext auth
+      run: ./tests/gh-actions/install_istio_with_ext_auth.sh
+
+    - name: Install kubeflow-istio-resources
+      run: kustomize build common/istio-1-22/kubeflow-istio-resources/base | kubectl apply -f -
+
+    - name: Build & Apply manifests
+      run: |
+        kustomize build apps/jupyter/jupyter-web-app/upstream/overlays/istio/ | kubectl apply -f -
+        kustomize build apps/jupyter/notebook-controller/upstream/overlays/kubeflow/ | kubectl apply -f -
+        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 300s
+
+    - name: Create KF Profile
+      run: kustomize build common/user-namespace/base | kubectl apply -f -
+
+    - name: Apply PodDefaults to access ml-pipeline with projected token
+      run: kubectl apply -f tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.yaml
+
+    - name: Create Kubeflow Notebook with PodDefaults
+      run: |
+        kubectl apply -f tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml
+        kubectl -n kubeflow-user-example-com wait --for=condition=Ready pod/test-0
+
+    # - name: Port forward
+    #   run: |
+    #     INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
+    #     nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
+    #     while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
