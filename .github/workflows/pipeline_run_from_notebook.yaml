@@ -38,6 +38,9 @@ jobs:
     - name: Install kubeflow-istio-resources
       run: kustomize build common/istio-1-22/kubeflow-istio-resources/base | kubectl apply -f -
 
+    - name: Install cert-manager
+      run: ./tests/gh-actions/install_cert_manager.sh
+
     - name: Install KF Multi Tenancy
       run: ./tests/gh-actions/install_multi_tenancy.sh
 
@@ -45,6 +48,7 @@ jobs:
       run: |
         kustomize build apps/jupyter/jupyter-web-app/upstream/overlays/istio/ | kubectl apply -f -
         kustomize build apps/jupyter/notebook-controller/upstream/overlays/kubeflow/ | kubectl apply -f -
+        kustomize build apps/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
         kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 300s
 
     - name: Create KF Profile
