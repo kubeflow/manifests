@@ -4,6 +4,16 @@ from kfp import dsl
 import kfp
 from time import sleep
 import subprocess
+import logging
+import sys
+from datetime import datetime, timezone
+
+logger = logging.getLogger("run_and_wait_for_pipeline")
+logging.basicConfig(
+    stream=sys.stdout,
+    level=logging.DEBUG,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
 
 
 client = kfp.Client()
@@ -26,43 +36,61 @@ def add_pipeline(
     b: float = 7.0,
 ):
     first_add_task = add(a=a, b=4.0)
-    second_add_task = add(a=first_add_task.output, b=b)
+    add(a=first_add_task.output, b=b)
 
 
 try:
-    print("getting experiment...")
+    logger.info(
+        f"Trying to get experiment from {experiment_name=} {experiment_namespace=}."
+    )
     experiment = client.get_experiment(
         experiment_name=experiment_name, namespace=experiment_namespace
     )
-    print("got experiment!")
+    logger.info("Experiment found!")
 except Exception:
-    print("creating experiment...")
+    logger.info("Experiment not found, trying to create experiment.")
     experiment = client.create_experiment(
         name=experiment_name, namespace=experiment_namespace
     )
-    print("created experiment!")
+    logger.info("Experiment created!")
 
-run = client.create_run_from_pipeline_func(
-    add_pipeline,
-    arguments={"a": 7.0, "b": 8.0},
-    experiment_id=experiment.experiment_id,
-    enable_caching=False,
-)
+try:
+    logger.info("Trying to create Pipeline Run.")
+    run = client.create_run_from_pipeline_func(
+        add_pipeline,
+        arguments={"a": 7.0, "b": 8.0},
+        experiment_id=experiment.experiment_id,
+        enable_caching=False,
+    )
+except Exception as e:
+    logger.error(
+        f"Failed to create Pipeline Run. Exception: {e.__class__.__name__}: {str(e)}"
+    )
+    raise SystemExit(1)
 
 while True:
     live_run = client.get_run(run_id=run.run_id)
-    print(f"{live_run.state=}")
+    logger.info(f"Pipeline Run State: {live_run.state}.")
 
-    subprocess.run(["kubectl", "get", "pods"])
+    minutes_from_pipeline_run_start = (
+        datetime.now(timezone.utc) - live_run.created_at
+    ).seconds / 60
+
+    if minutes_from_pipeline_run_start > 5:
+        logger.debug(
+            "Pipeline is running for more than 5 minutes, "
+            f"showing pod states in {experiment_namespace=}."
+        )
+        subprocess.run(["kubectl", "get", "pods"])
 
     if live_run.finished_at > live_run.created_at:
-        print("Finished pipeline!")
-        print(f"{live_run.finished_at > live_run.created_at=}")
-        print(f"{live_run.state=}")
-        print(f"{live_run.created_at=}")
-        print(f"{live_run.finished_at=}")
-        print(f"{live_run.error=}")
+        logger.info("Finished Pipeline Run!")
+        logger.info(
+            f"Pipeline was running for {minutes_from_pipeline_run_start:0.2} minutes."
+        )
+        logger.info(f"Pipeline Run finished in state: {live_run.state}.")
+        logger.info(f"Pipeline Run finished with error: {live_run.error}.")
         break
     else:
-        print("Waiting for pipeline to finish...")
+        logger.info("Waiting for pipeline to finish...")
     sleep(5)

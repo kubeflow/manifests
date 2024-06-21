@@ -1,4 +1,3 @@
-# name: Build & Apply Notebook Controller manifests in KinD
 name: Create Pipeline Run from Kubeflow Notebook
 on:
   pull_request:
@@ -58,15 +57,13 @@ jobs:
       run: kustomize build common/user-namespace/base | kubectl apply -f -
 
     - name: Apply PodDefaults to access ml-pipeline with projected token
-      run: kubectl apply -f tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.yaml
+      run: kubectl apply -f tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml
 
     - name: Create Kubeflow Notebook with PodDefaults
       run: |
         kubectl apply -f tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml
         kubectl wait --for=jsonpath='{.status.readyReplicas}'=1 \
           -f tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml \
-          --timeout 300s
-        kubectl -n kubeflow-user-example-com wait --for=condition=Ready pod/test-0 \
           --timeout 300s
 
     - name: Copy and execute the pipeline run script in KF Notebook
