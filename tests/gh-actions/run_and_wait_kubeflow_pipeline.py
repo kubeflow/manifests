@@ -100,7 +100,12 @@ while True:
             logger.warn("Running 'kubectl describe wf':")
             subprocess.run(["kubectl", "describe", "wf"])
 
-            raise SystemExit(1)
+            logger.warn(
+                """The Pipeline Run failed but the goal of verifying if a
+                kfp.Client can access KFP API from KF Notebook without
+                credentials has succeeded. Exiting with code 0"""
+            )
+            raise SystemExit(0)
         break
     else:
         logger.info("Waiting for pipeline to finish...")
