@@ -60,6 +60,10 @@ jobs:
           nohup kubectl port-forward --namespace istio-system svc/${ingress_gateway_service} 8080:80 &
           while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
 
+      - name: Wait for the kubeflow-m2m-oidc-configurator Job
+        run: |
+          ./tests/gh-actions/wait_for_kubeflow_m2m_oidc_configurator.sh
+
       - name: List and deploy test pipeline with authorized ServiceAccount Token
         run: |
           pip3 install kfp==2.4.0

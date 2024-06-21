@@ -2,16 +2,16 @@ apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 
 resources:
-- job.configure-kubernetes-oidc-issuer-jwks-in-requestauthentication.yaml
+- cronjob.kubeflow-m2m-oidc-configurator.yaml
 - rbac.yaml
 
 configMapGenerator:
-- name: configure-self-signed-kubernetes-oidc-issuer-script
+- name: kubeflow-m2m-oidc-configurator-script
   namespace: istio-system
   files:
   - script.sh=script.sh
 
-- name: configure-self-signed-kubernetes-oidc-issuer-envs
+- name: kubeflow-m2m-oidc-configurator-envs
   namespace: istio-system
   literals:
   - ISTIO_ROOT_NAMESPACE=istio-system
