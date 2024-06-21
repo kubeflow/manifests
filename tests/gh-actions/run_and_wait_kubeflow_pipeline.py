@@ -90,6 +90,17 @@ while True:
         )
         logger.info(f"Pipeline Run finished in state: {live_run.state}.")
         logger.info(f"Pipeline Run finished with error: {live_run.error}.")
+
+        if live_run.state != "SUCCEEDED":
+            logger.warn("The Pipeline Run finished but has failed...")
+
+            logger.warn("Running 'kubectl get pods':")
+            subprocess.run(["kubectl", "get", "pods"])
+
+            logger.warn("Running 'kubectl describe wf':")
+            subprocess.run(["kubectl", "describe", "wf"])
+
+            raise SystemExit(1)
         break
     else:
         logger.info("Waiting for pipeline to finish...")
