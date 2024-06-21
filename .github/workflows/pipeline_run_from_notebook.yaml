@@ -66,6 +66,10 @@ jobs:
           -f tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml \
           --timeout 300s
 
+    - name: Wait for the kubeflow-m2m-oidc-configurator Job
+      run: |
+        ./tests/gh-actions/wait_for_kubeflow_m2m_oidc_configurator.sh
+
     - name: Copy and execute the pipeline run script in KF Notebook
       run: |
         kubectl -n kubeflow-user-example-com cp \
