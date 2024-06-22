@@ -25,12 +25,6 @@ jobs:
           sudo apt update
           sudo snap install trivy
 
-      # Install jq
-      - name: Install jq
-        run: |
-          sudo apt update
-          sudo apt install jq
-
       # Install Python
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -46,8 +40,7 @@ jobs:
       - name: Run image extracting and security scanning script
         run: |
           cd hack
-          chmod +x trivy_scan.sh
-          ./trivy_scan.sh
+          python3 trivy_scan.py
 
 
       
