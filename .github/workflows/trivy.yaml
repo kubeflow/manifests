@@ -36,13 +36,8 @@ jobs:
         run: |
           pip install prettytable
 
-      # Run the shell script (extract_images.sh)
+      # Run the shell script (trivy_scan.py)
       - name: Run image extracting and security scanning script
         run: |
           cd hack
           python3 trivy_scan.py
-
-
-      
-
-      
