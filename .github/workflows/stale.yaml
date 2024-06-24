@@ -35,7 +35,7 @@ jobs:
             activity. Please comment "/reopen" to reopen it.
           stale-issue-label: lifecycle/stale
           # Exclude them from being marked as stale
-          exempt-issue-labels: lifecycle/frozen,enhancement,good first issue,help wanted
+          exempt-issue-labels: lifecycle/frozen,enhancement,good first issue
           # The message that will be added as a comment to the pull requests 
           # when the stale workflow marks it automatically as stale with a label.
           stale-pr-message: >
@@ -49,7 +49,7 @@ jobs:
             activity.You can reopen the PR if you want. 
           stale-pr-label: lifecycle/stale
           # Exclude them from being marked as stale
-          exempt-pr-labels: lifecycle/frozen,enhancement,good first issue,help wanted
+          exempt-pr-labels: lifecycle/frozen,enhancement,good first issue
           # The issues or the pull requests with a milestone will not be marked as stale automatically
           exempt-all-milestones: true
           # Learn more about operations: https://github.com/actions/stale#operations-per-run.
