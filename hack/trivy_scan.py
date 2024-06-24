@@ -309,7 +309,7 @@ print(table)
 
 
 # Write the table output to a file in the specified folder
-output_file = SUMMARY_OF_SEVERITY_COUNTS + 'summary_of_severity_counts_for_WGs_in_table.txt'
+output_file = SUMMARY_OF_SEVERITY_COUNTS + '/summary_of_severity_counts_for_WGs_in_table.txt'
 with open(output_file, 'w') as f:
     f.write(str(table))
 
