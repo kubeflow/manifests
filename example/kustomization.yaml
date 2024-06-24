@@ -88,3 +88,9 @@ resources:
 # KServe
 - ../contrib/kserve/kserve
 - ../contrib/kserve/models-web-app/overlays/kubeflow
+
+#Pod Security Standarards enabled
+#uncomment below to enable baseline level standards
+# - ../contrib/security/PSS/static/baseline
+#uncomment below to enable restricted level standards
+# - ../contrib/security/PSS/static/restricted
