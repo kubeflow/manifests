@@ -45,9 +45,8 @@ jobs:
           # The message that will be added as a comment to the pull requests 
           # when the stale workflow closes it automatically after being stale for too long.
           close-pr-message: >
-            This pull request has been automatically marked as stale because it has not had
-            recent activity. It will be closed if no further activity occurs. Thank you
-            for your contributions.
+            This pull request has been automatically closed because it has not had recent 
+            activity.You can reopen the PR if you want. 
           stale-pr-label: lifecycle/stale
           # Exclude them from being marked as stale
           exempt-pr-labels: lifecycle/frozen,enhancement,good first issue,help wanted
