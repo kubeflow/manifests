@@ -1,6 +1,6 @@
 # The script:
 # 1. Extract all the images used by the Kubeflow Working Groups
-# - The reported image lists are saved in respective files under ../docs/image_lists directory
+# - The reported image lists are saved in respective files under ../image_lists directory
 # 2. Scan the reported images using Trivy for security vulnerabilities
 # - Scanned reports will be saved in JSON format inside ../image_lists/security_scan_reports/ folder for each Working Group
 # 3. The script will also generate a summary of the security scan reports with severity counts for each Working Group with images
@@ -40,7 +40,7 @@ wg_dirs = {
     "model-registry": "../apps/model-registry/upstream"
 }
 
-DIRECTORY = "../docs/image_lists"
+DIRECTORY = "../image_lists"
 SCAN_REPORTS_DIR = os.path.join(DIRECTORY, "security_scan_reports")
 ALL_SEVERITY_COUNTS = os.path.join(DIRECTORY, "severity_counts_with_images_for_WG")
 SUMMARY_OF_SEVERITY_COUNTS = os.path.join(DIRECTORY, "summary_of_severity_counts_for_WG")
@@ -51,7 +51,7 @@ os.makedirs(SUMMARY_OF_SEVERITY_COUNTS, exist_ok=True)
 
 def save_images(wg, images, version):
     # Saves a list of container images to a text file named after the workgroup and version.
-    output_file = f"../docs/image_lists/kf_{version}_{wg}_images.txt"
+    output_file = f"../image_lists/kf_{version}_{wg}_images.txt"
     with open(output_file, 'w') as f:
         f.write('\n'.join(images))
     print(f"File {output_file} successfully created")
