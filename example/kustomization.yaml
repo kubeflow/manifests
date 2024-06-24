@@ -88,3 +88,10 @@ resources:
 # KServe
 - ../contrib/kserve/kserve
 - ../contrib/kserve/models-web-app/overlays/kubeflow
+
+# Pod Security Standards
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/
+# Uncomment to enable baseline level standards
+# - ../contrib/security/PSS/static/baseline
+# Uncomment to enable restricted level standards
+# - ../contrib/security/PSS/static/restricted
