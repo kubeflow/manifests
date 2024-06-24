@@ -21,7 +21,7 @@
 ## Overview of the Kubeflow Platform
 
 This repository is owned by the [Manifests Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md).
-If you are a contributor authoring or editing the packages please see [Best Practices](./docs/KustomizeBestPractices.md).
+If you are a contributor authoring or editing the packages please see [Best Practices](./documents/KustomizeBestPractices.md).
 Our Slack channel is wg-manifests which you can join here https://www.kubeflow.org/docs/about/community/. You can also find there our [biweekly meetings](https://bit.ly/kf-wg-manifests-meet), including the commentable [Agenda](https://bit.ly/kf-wg-manifests-notes)
 
 The Kubeflow Manifests repository is organized under three main directories, which include manifests for installing:
