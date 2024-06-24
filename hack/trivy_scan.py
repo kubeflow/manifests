@@ -290,7 +290,7 @@ groupnames = {
     "Serving": "Kserve",
     "Manifests":"Manifests",
     "Training": "Training",
-    "Model-Registry":"Model Registry",
+    "Model-registry":"Model Registry", 
     "total": "All Images",
 }
 
