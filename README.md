@@ -22,7 +22,7 @@
 
 This repository is owned by the [Manifests Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md).
 If you are a contributor authoring or editing the packages please see [Best Practices](./documents/KustomizeBestPractices.md).
-Our Slack channel is wg-manifests which you can join here https://www.kubeflow.org/docs/about/community/. You can also find there our [biweekly meetings](https://bit.ly/kf-wg-manifests-meet), including the commentable [Agenda](https://bit.ly/kf-wg-manifests-notes)
+You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website. Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2). You can also find there our [biweekly meetings](https://bit.ly/kf-wg-manifests-meet), including the commentable [Agenda](https://bit.ly/kf-wg-manifests-notes).
 
 The Kubeflow Manifests repository is organized under three main directories, which include manifests for installing:
 
