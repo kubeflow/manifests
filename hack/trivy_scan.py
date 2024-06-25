@@ -54,7 +54,7 @@ def save_images(wg, images, version):
     output_file = f"../image_lists/kf_{version}_{wg}_images.txt"
     with open(output_file, 'w') as f:
         f.write('\n'.join(images))
-    print(f"File {output_file} successfully created")
+    print(f"File {output_file} successfully created", flush=True)
 
 def validate_semantic_version(version):
     # Validates a semantic version string (e.g., "0.1.2" or "latest").
@@ -66,7 +66,7 @@ def validate_semantic_version(version):
 
 def extract_images(version):
     version = validate_semantic_version(version)
-    print(f"Running the script using Kubeflow version: {version}")
+    print(f"Running the script using Kubeflow version: {version}", flush=True)
 
     all_images = set() # Collect all unique images across workgroups
 
@@ -82,7 +82,7 @@ def extract_images(version):
                             result = subprocess.run(['kustomize', 'build', root], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                             kbuild = result.stdout
                         except subprocess.CalledProcessError as e:
-                            print(f"ERROR:\t Failed \"kustomize build\" command for directory: {root}. See error above")
+                            print(f"ERROR:\t Failed \"kustomize build\" command for directory: {root}. See error above", flush=True)
                             continue
                         
                         # Use regex to find lines with 'image: <image-name>:<version>' or 'image: <image-name>'
@@ -107,14 +107,14 @@ extract_images(args.version)
 
 
 
-print("Started scanning images")
+print("Started scanning images", flush=True)
 
 # Get list of text files excluding "kf_latest_all_images.txt"
 files = [f for f in glob.glob(os.path.join(DIRECTORY, "*.txt")) if not f.endswith("kf_latest_all_images.txt")]
 
 # Loop through each text file in the specified directory
 for file in files:
-    print(f"Scanning images in {file}")
+    print(f"Scanning images in {file}", flush=True)
 
     file_base_name = os.path.basename(file).replace('.txt', '')
 
@@ -139,18 +139,19 @@ for file in files:
         if image_tag:
             image_name_scan = f"{image_name_scan}:{image_tag}"
 
-        print(f"Scanning {image_name_scan}")
+        print(f"Scanning {image_name_scan}", flush=True)
 
         scan_output_file = os.path.join(file_reports_dir, f"{image_name_scan}_scan.json")
 
         try:
-            subprocess.run(["trivy", "image", "--format", "json", "--output", scan_output_file, line], check=True)
+            result = subprocess.run(["trivy", "image", "--format", "json", "--output", scan_output_file, line], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            print(result.stdout, flush=True)
 
             with open(scan_output_file, 'r') as json_file:
                 scan_data = json.load(json_file)
 
             if not scan_data.get('Results'):
-                print(f"No vulnerabilities found in {image_name}:{image_tag}")
+                print(f"No vulnerabilities found in {image_name}:{image_tag}", flush=True)
             else:
                 vulnerabilities = [
                     result['Vulnerabilities']
@@ -159,7 +160,7 @@ for file in files:
                 ]
 
                 if not vulnerabilities:
-                    print(f"The vulnerability detection may be insufficient because security updates are not provided for {image_name}:{image_tag}")
+                    print(f"The vulnerability detection may be insufficient because security updates are not provided for {image_name}:{image_tag}", flush=True)
                 else:
                     severity_counts = {"LOW": 0, "MEDIUM": 0, "HIGH": 0, "CRITICAL": 0}
                     for vulns in vulnerabilities:
@@ -180,8 +181,9 @@ for file in files:
                     with open(severity_report_file, 'w') as report_file:
                         json.dump(report, report_file, indent=4)
 
-        except subprocess.CalledProcessError:
-            print(f"Error scanning {image_name}:{image_tag}")
+        except subprocess.CalledProcessError as error:
+            print(f"Error scanning {image_name}:{image_tag}", flush=True)
+            print(error.stderr, flush=True)
 
     # Combine all the JSON files into a single file with severity counts for all images
     json_files = glob.glob(os.path.join(severity_count, "*.json"))
@@ -189,7 +191,7 @@ for file in files:
     output_file = os.path.join(ALL_SEVERITY_COUNTS, f"{file_base_name}.json")
 
     if not json_files:
-        print(f"No JSON files found in '{severity_count}'. Skipping combination.")
+        print(f"No JSON files found in '{severity_count}'. Skipping combination.", flush=True)
     else:
         combined_data = []
         for json_file in json_files:
@@ -199,7 +201,7 @@ for file in files:
         with open(output_file, 'w') as of:
             json.dump({"data": combined_data}, of, indent=4)
 
-        print(f"JSON files successfully combined into '{output_file}'")
+        print(f"JSON files successfully combined into '{output_file}'", flush=True)
 
 # File to save summary of the severity counts for WGs as JSON format.
 summary_file = os.path.join(SUMMARY_OF_SEVERITY_COUNTS, "severity_summary_in_json_format.json")
@@ -226,7 +228,7 @@ for file_path in glob.glob(os.path.join(ALL_SEVERITY_COUNTS, "*.json")):
       filename = filename.capitalize()
 
     else:
-      print(f"Skipping invalid filename format: {file_path}")
+      print(f"Skipping invalid filename format: {file_path}", flush=True)
       continue
 
     with open(file_path, 'r') as f:
@@ -268,15 +270,15 @@ for file_path in glob.glob(os.path.join(ALL_SEVERITY_COUNTS, "*.json")):
     }
 
 
-print("Summary in Json Format:")
-print(json.dumps(merged_data, indent=4)) 
+print("Summary in Json Format:", flush=True)
+print(json.dumps(merged_data, indent=4), flush=True) 
 
 
 # Write the final output to a file
 with open(summary_file, 'w') as summary_f:
     json.dump(merged_data, summary_f, indent=4)
 
-print(f"Summary written to: {summary_file} as JSON format")
+print(f"Summary written to: {summary_file} as JSON format", flush=True)
 
 # Load JSON content from the file
 with open(summary_file, 'r') as file:
@@ -305,7 +307,7 @@ for group_name in groupnames:
         table.add_row([groupnames[group_name], value["images"], value["CRITICAL"], value["HIGH"], value["MEDIUM"], value["LOW"]])
 
 # Print the table
-print(table)
+print(table, flush=True)
 
 
 # Write the table output to a file in the specified folder
@@ -313,6 +315,6 @@ output_file = SUMMARY_OF_SEVERITY_COUNTS + '/summary_of_severity_counts_for_WGs_
 with open(output_file, 'w') as f:
     f.write(str(table))
 
-print("Output saved to:", output_file)
-print("Severirty counts with images respect to WGs are saved in the" ,ALL_SEVERITY_COUNTS)
-print("Scanned Json reports on images are saved in" ,SCAN_REPORTS_DIR)
+print("Output saved to:", output_file, flush=True)
+print("Severirty counts with images respect to WGs are saved in the" ,ALL_SEVERITY_COUNTS, flush=True)
+print("Scanned Json reports on images are saved in" ,SCAN_REPORTS_DIR, flush=True)
