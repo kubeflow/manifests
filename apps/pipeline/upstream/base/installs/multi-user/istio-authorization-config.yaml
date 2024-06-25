@@ -32,10 +32,9 @@ spec:
         - cluster.local/ns/kubeflow/sa/ml-pipeline-scheduledworkflow
         - cluster.local/ns/kubeflow/sa/ml-pipeline-viewer-crd-service-account
         - cluster.local/ns/kubeflow/sa/kubeflow-pipelines-cache
-  # For user workloads, which cannot user http headers for authentication
-  - when:
-    - key: request.headers[kubeflow-userid]
-      notValues: ['*']
+  - from:
+    - source:
+        requestPrincipals: ["*"]  # allow access by any trusted principal
 ---
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
