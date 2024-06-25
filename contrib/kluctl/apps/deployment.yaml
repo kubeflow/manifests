@@ -1,0 +1,46 @@
+deployments:
+  # Kubeflow Pipelines
+  - path: pipeline
+    when: apps.pipelines.enabled
+    tags:
+      - pipeline
+      - pipelines
+  - barrier: true
+  # Katib
+  - path: katib
+    when: apps.katib.enabled
+  # Central Dashboard
+  - path: centraldashboard
+    when: apps.centraldashboard.enabled
+  # Admission Webhook
+  - path: ../../../apps/admission-webhook/upstream/overlays/cert-manager
+    when: apps.admission_webhook.enabled
+  # Jupyter Web App
+  - include: jupyter
+    when: apps.jupyter.enabled
+  # Profiles + KFAM
+  - path: ../../../apps/profiles/upstream/overlays/kubeflow
+    tags:
+      - profiles
+  # PVC Viewer
+  - path: ../../../apps/pvcviewer-controller/upstream/base/
+    when: apps.volumes.enabled
+    tags:
+      - pvc-viewer
+  # Volumes Web App
+  - path: volumes-web-app
+    when: apps.volumes.enabled
+    tags:
+      - volumes-web-app
+  # Tensorboard
+  - include: tensorboard
+    when: apps.tensorboards.enabled
+  # Training Operator
+  - path: ../../../apps/training-operator/upstream/overlays/kubeflow
+    when: apps.training_operator.enabled
+    tags:
+      - training-operator
+
+  # KServe
+  - include: kserve
+    when: apps.kserve.enabled

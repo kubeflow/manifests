@@ -1,0 +1,33 @@
+deployments:
+  # Cert-Manager
+  - include: cert-manager
+    when: cert_manager.enabled
+  - barrier: true
+  - path: ../../../common/cert-manager/kubeflow-issuer/base
+  # Istio
+  - include: istio
+    when: istio.enabled
+  - barrier: true
+  # oidc-client
+  - include: oidc-client
+  # Dex
+  - path: dex
+  # KNative
+  - include: knative
+  # Kubeflow namespace
+  - path: ../../../common/kubeflow-namespace/base
+    tags:
+      - kubeflow-namespace
+  # Kubeflow Roles
+  - path: ../../../common/kubeflow-roles/base
+    tags:
+      - kubeflow-roles
+  # Kubeflow Istio Resources
+  - path: kubeflow-istio-resources
+
+conflictResolution:
+  # We should ignore the conflict that is created by the configure-self-signed-kubernetes-oidc-issuer Job
+  - kind: RequestAuthentication
+    name: m2m-token-issuer
+    fieldPath: spec.jwtRules
+    action: ignore

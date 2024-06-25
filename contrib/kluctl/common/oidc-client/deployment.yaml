@@ -1,0 +1,7 @@
+deployments:
+  # oauth2-proxy
+  - path: oauth2-proxy
+    when: auth.oauth2_proxy.enabled
+  # auth-service
+  - path: oidc-authservice
+    when: auth.auth_service.enabled

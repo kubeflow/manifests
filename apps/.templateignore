@@ -1,0 +1,2 @@
+# We ignore all upstream manifests. Kluctl templating only happens in overlays
+**/upstream

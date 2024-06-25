@@ -1,0 +1,8 @@
+apiVersion: kubeflow.org/v1beta1
+kind: Profile
+metadata:
+  name: "{{ user.profileName }}"
+spec:
+  owner:
+    kind: User
+    name: {{ user.ownerEmail }}

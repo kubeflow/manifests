@@ -1,0 +1,15 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: ns-owner-access-istio-ingress
+  namespace: "{{ user.profileName }}"
+spec:
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/{{ istio.gateway.namespace }}/sa/{{ istio.gateway.serviceAccount }}
+      when:
+        - key: request.headers[kubeflow-userid]
+          values:
+            - "{{ user.ownerEmail }}"

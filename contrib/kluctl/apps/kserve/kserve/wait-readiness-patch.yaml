@@ -1,0 +1,13 @@
+- op: add
+  path: /metadata/annotations/kluctl.io~1wait-readiness
+  value: "true"
+- op: add
+  path: /spec/template/spec/containers/0/readinessProbe
+  value:
+    failureThreshold: 3
+    tcpSocket:
+      port: 9443
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1

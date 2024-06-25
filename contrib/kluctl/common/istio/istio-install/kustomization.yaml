@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../../../../common/istio-1-17/istio-install/base
+
+{% if auth.oauth2_proxy.enabled %}
+components:
+- ../../../../../common/oidc-client/oauth2-proxy/components/istio-external-auth-patches
+{% endif %}
