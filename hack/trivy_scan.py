@@ -41,6 +41,7 @@ wg_dirs = {
 }
 
 DIRECTORY = "../image_lists"
+os.makedirs(DIRECTORY, exist_ok=True)
 SCAN_REPORTS_DIR = os.path.join(DIRECTORY, "security_scan_reports")
 ALL_SEVERITY_COUNTS = os.path.join(DIRECTORY, "severity_counts_with_images_for_WG")
 SUMMARY_OF_SEVERITY_COUNTS = os.path.join(DIRECTORY, "summary_of_severity_counts_for_WG")
@@ -135,12 +136,9 @@ for file in files:
 
         image_name_scan = image_name.split('/')[-1]
 
-        if image_tag:
-            image_name_scan = f"{image_name_scan}:{image_tag}"
-
-        print(f"Scanning {image_name_scan}", flush=True)
-
         scan_output_file = os.path.join(file_reports_dir, f"{image_name_scan}_scan.json")
+
+        print(f"Scanning ",line, flush=True)
 
         try:
             result = subprocess.run(["trivy", "image", "--format", "json", "--output", scan_output_file, line], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
