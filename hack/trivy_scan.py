@@ -138,6 +138,9 @@ for file in files:
 
         scan_output_file = os.path.join(file_reports_dir, f"{image_name_scan}_scan.json")
 
+        if image_tag:
+            image_name_scan = f"{image_name_scan}:{image_tag}"
+
         print(f"Scanning ",line, flush=True)
 
         try:
@@ -148,19 +151,19 @@ for file in files:
                 scan_data = json.load(json_file)
 
             if not scan_data.get('Results'):
-                print(f"No vulnerabilities found in {image_name}:{image_tag}", flush=True)
+                print(f"No vulnerabilitiy found in {image_name}:{image_tag}", flush=True)
             else:
-                vulnerabilities = [
+                vulnerabilitiy = [
                     result['Vulnerabilities']
                     for result in scan_data['Results']
                     if 'Vulnerabilities' in result and result['Vulnerabilities']
                 ]
 
-                if not vulnerabilities:
+                if not vulnerabilitiy:
                     print(f"The vulnerability detection may be insufficient because security updates are not provided for {image_name}:{image_tag}", flush=True)
                 else:
                     severity_counts = {"LOW": 0, "MEDIUM": 0, "HIGH": 0, "CRITICAL": 0}
-                    for vulns in vulnerabilities:
+                    for vulns in vulnerabilitiy:
                         for vuln in vulns:
                             severity = vuln.get('Severity', 'UNKNOWN')
                             if severity == 'UNKNOWN':
@@ -173,6 +176,16 @@ for file in files:
                         "image": line,
                         "severity_counts": severity_counts
                     }
+
+                    image_table = PrettyTable()
+                    image_table.field_names = ["Critical", "High", "Medium", "Low"]
+                    image_table.add_row([
+                            severity_counts["CRITICAL"],
+                            severity_counts["HIGH"],
+                            severity_counts["MEDIUM"],
+                            severity_counts["LOW"]
+                        ])
+                    print(image_table , flush=True)
 
                     severity_report_file = os.path.join(severity_count, f"{image_name_scan}_severity_report.json")
                     with open(severity_report_file, 'w') as report_file:
