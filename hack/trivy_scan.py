@@ -80,14 +80,13 @@ def extract_images(version):
                         try:
                             # Execute `kustomize build` to render the kustomization file
                             result = subprocess.run(['kustomize', 'build', root], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                            kbuild = result.stdout
                         except subprocess.CalledProcessError as e:
                             print(f"ERROR:\t Failed \"kustomize build\" command for directory: {root}. See error above", flush=True)
                             continue
                         
                         # Use regex to find lines with 'image: <image-name>:<version>' or 'image: <image-name>'
                         # and '- image: <image-name>:<version>' but avoid environment variables
-                        kimages = re.findall(r'^\s*-?\s*image:\s*([^$\s:]+(?:\:[^\s]+)?)$', kbuild, re.MULTILINE)
+                        kimages = re.findall(r'^\s*-?\s*image:\s*([^$\s:]+(?:\:[^\s]+)?)$', result.stdout, re.MULTILINE)
                         wg_images.update(kimages)
 
         # Ensure uniqueness within workgroup images
@@ -181,9 +180,9 @@ for file in files:
                     with open(severity_report_file, 'w') as report_file:
                         json.dump(report, report_file, indent=4)
 
-        except subprocess.CalledProcessError as error:
+        except subprocess.CalledProcessError as e:
             print(f"Error scanning {image_name}:{image_tag}", flush=True)
-            print(error.stderr, flush=True)
+            print(e.stderr, flush=True)
 
     # Combine all the JSON files into a single file with severity counts for all images
     json_files = glob.glob(os.path.join(severity_count, "*.json"))
