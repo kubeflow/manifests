@@ -1,32 +1,31 @@
-#!/usr/bin/env bash
+# #!/usr/bin/env bash
 
-# This script aims at helping create a PR to update the manifests of the
-# knative.
-# This script:
-# 1. Checks out a new branch
-# 2. Download files into the correct places
-# 3. Commits the changes
-#
-# Afterwards the developers can submit the PR to the kubeflow/manifests
-# repo, based on that local branch
-# It must be executed directly from its directory
+# # This script aims at helping create a PR to update the manifests of Istio
+# # This script:
+# # 1. Checks out a new branch
+# # 2. Download files into the correct places
+# # 3. Commits the changes
+# #
+# # Afterwards the developers can submit the PR to the kubeflow/manifests
+# # repository, based on that local branch
+# # It must be executed directly from its directory
 
-# strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
+# # strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="1.22.1"  # Must be a release
+COMMIT="1.22.1"
 CURRENT_VERSION="1-21" 
-NEW_VERSION="1-22" 
+NEW_VERSION="1-22" # Must be a release
 
-SRC_DIR=${SRC_DIR:=/tmp/istio-cni}
+SRC_DIR=${SRC_DIR:=/tmp/istio} # Must be a release
 BRANCH=${BRANCH:=istio-${COMMIT?}}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
 
-ISTIO_OLD=$MANIFESTS_DIR/common/istio-cni-${CURRENT_VERSION}
-ISTIO_NEW=$MANIFESTS_DIR/common/istio-cni-${NEW_VERSION}
+ISTIO_OLD=$MANIFESTS_DIR/common/istio-${CURRENT_VERSION}
+ISTIO_NEW=$MANIFESTS_DIR/common/istio-${NEW_VERSION}
 
 if [ ! -d "$ISTIO_NEW" ]; then
 cp -a $ISTIO_OLD $ISTIO_NEW
@@ -77,12 +76,18 @@ if [ -n "$(git status --porcelain)" ]; then
   echo "WARNING: You have uncommitted changes"
 fi
 
-find "$MANIFESTS_DIR" -type f -not -path '*/.git/*' -exec sed -i "s/istio-cni-${CURRENT_VERSION}/istio-cni-${NEW_VERSION}/g" {} +
+# Updating README.md to sync with Istio upgraded version
+echo "Updating README..."
+SRC_TXT="\[.*\](https://github.com/istio/istio/releases/tag/.*)"
+DST_TXT="\[$COMMIT\](https://github.com/istio/istio/releases/tag/$COMMIT)"
 
+sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
 
+#Syncing updated directory's name with other files
+find "$MANIFESTS_DIR" -type f -not -path '*/.git/*' -exec sed -i "s/istio-${CURRENT_VERSION}/istio-${NEW_VERSION}/g" {} +
 
 echo "Committing the changes..."
 cd "$MANIFESTS_DIR"
 rm -rf $ISTIO_OLD
 git add .
-git commit -s -m "Upgrade istio-cni to v.${COMMIT}"
+git commit -s -m "Upgrade istio to v.${COMMIT}"

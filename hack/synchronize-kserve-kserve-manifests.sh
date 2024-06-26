@@ -1,23 +1,24 @@
 #!/usr/bin/env bash
 
 # This script aims at helping create a PR to update the manifests of the
-# kubeflow/pipelines repo.
+# kserve/kserve repository.
 # This script:
 # 1. Checks out a new branch
 # 2. Copies files to the correct places
 # 3. Commits the changes
 #
 # Afterwards the developers can submit the PR to the kubeflow/manifests
-# repo, based on that local branch
+# repository, based on that local branch
 # It must be executed directly from its directory
 
 # strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="2.2.0" # You can use tags as well
-SRC_DIR=${SRC_DIR:=/tmp/kubeflow-pipelines}
-BRANCH=${BRANCH:=sync-kubeflow-pipelines-manifests-${COMMIT?}}
+KSERVE_VERSION="v0.13.0"
+COMMIT="0.13.0" # You can use tags as well
+SRC_DIR=${SRC_DIR:=/tmp/kserve}
+BRANCH=${BRANCH:=sync-kserve-manifests-${COMMIT?}}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
@@ -40,13 +41,13 @@ else
 fi
 echo "Checking out in $SRC_DIR to $COMMIT..."
 
-# Checkout the KFP repository
+# Checkout the kserve repository
 mkdir -p $SRC_DIR
 cd $SRC_DIR
-if [ ! -d "pipelines/.git" ]; then
-    git clone https://github.com/kubeflow/pipelines.git
+if [ ! -d "kserve/.git" ]; then
+    git clone https://github.com/kserve/kserve.git
 fi
-cd $SRC_DIR/pipelines
+cd $SRC_DIR/kserve
 if ! git rev-parse --verify --quiet $COMMIT; then
     git checkout -b $COMMIT
 else
@@ -58,24 +59,24 @@ if [ -n "$(git status --porcelain)" ]; then
   echo "WARNING: You have uncommitted changes"
 fi
 
-echo "Copying pipelines manifests..."
-DST_DIR=$MANIFESTS_DIR/apps/pipeline/upstream
+echo "Copying kserve manifests..."
+DST_DIR=$MANIFESTS_DIR/contrib/kserve/kserve
 if [ -d "$DST_DIR" ]; then
-    rm -r "$DST_DIR"
+    rm -rf "$DST_DIR"/kserve*
 fi
-cp $SRC_DIR/pipelines/manifests/kustomize $DST_DIR -r
+cp $SRC_DIR/kserve/install/"$KSERVE_VERSION"/* $DST_DIR -r
 
 
 echo "Successfully copied all manifests."
 
 echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kubeflow/pipelines/tree/.*/manifests/kustomize)"
-DST_TXT="\[$COMMIT\](https://github.com/kubeflow/pipelines/tree/$COMMIT/manifests/kustomize)"
+SRC_TXT="\[.*\](https://github.com/kserve/kserve/tree/.*)"
+DST_TXT="\[$COMMIT\](https://github.com/kserve/kserve/tree/$COMMIT/install/$KSERVE_VERSION)"
 
-sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
+sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
 
 echo "Committing the changes..."
-cd $MANIFESTS_DIR
-git add apps
+cd "$MANIFESTS_DIR"
+git add contrib/kserve
 git add README.md
-git commit -s -m "Update kubeflow/pipelines manifests from ${COMMIT}"
+git commit -s -m "Update kserve manifests from ${KSERVE_VERSION}" -m "Update kserve/kserve manifests from ${COMMIT}"
