@@ -42,13 +42,13 @@ else
 fi
 echo "Checking out in $SRC_DIR to $COMMIT..."
 
-# Checkout the repository
+# Checkout the Model Registry repository
 mkdir -p $SRC_DIR
 cd $SRC_DIR
-if [ ! -d "models-web-app/.git" ]; then
-    git clone https://github.com/kserve/models-web-app.git
+if [ ! -d "model-registry/.git" ]; then
+    git clone https://github.com/kubeflow/model-registry.git
 fi
-cd $SRC_DIR/models-web-app
+cd $SRC_DIR/model-registry
 if ! git rev-parse --verify --quiet $COMMIT; then
     git checkout -b $COMMIT
 else
