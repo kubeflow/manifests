@@ -15,7 +15,7 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="v1.8.0-rc.0" # You can use tags as well
+COMMIT="v1.8.0-rc.1" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kubeflow-training-operator}
 BRANCH=${BRANCH:=sync-kubeflow-training-operator-manifests-${COMMIT?}}
 
@@ -64,7 +64,7 @@ DST_DIR=$MANIFESTS_DIR/apps/training-operator/upstream
 if [ -d "$DST_DIR" ]; then
     rm -r "$DST_DIR"
 fi
-cp $SRC_DIR/manifests $DST_DIR -r
+cp $SRC_DIR/training-operator/manifests $DST_DIR -r
 
 
 echo "Successfully copied all manifests."
