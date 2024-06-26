@@ -141,10 +141,10 @@ for file in files:
 
         image_name_scan = image_name.split('/')[-1]
 
-        scan_output_file = os.path.join(file_reports_dir, f"{image_name_scan}_scan.json")
-
         if image_tag:
-            image_name_scan = f"{image_name_scan}:{image_tag}"
+            image_name_scan = f"{image_name_scan}_{image_tag}"
+        
+        scan_output_file = os.path.join(file_reports_dir, f"{image_name_scan}_scan.json")
 
         log(f"Scanning ",line, flush=True)
 
@@ -190,7 +190,7 @@ for file in files:
                             severity_counts["MEDIUM"],
                             severity_counts["LOW"]
                         ])
-                    log(image_table , flush=True)
+                    log(f"{image_table}\n")
 
                     severity_report_file = os.path.join(severity_count, f"{image_name_scan}_severity_report.json")
                     with open(severity_report_file, 'w') as report_file:
@@ -331,5 +331,5 @@ with open(output_file, 'w') as f:
     f.write(str(table))
 
 log("Output saved to:", output_file, flush=True)
-log("Severirty counts with images respect to WGs are saved in the" ,ALL_SEVERITY_COUNTS, flush=True)
+log("Severity counts with images respect to WGs are saved in the",ALL_SEVERITY_COUNTS, flush=True)
 log("Scanned Json reports on images are saved in" ,SCAN_REPORTS_DIR, flush=True)
