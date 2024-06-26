@@ -17,7 +17,7 @@ IFS=$'\n\t'
 KN_SERVING_RELEASE="v1.12.4" # Must be a release
 KN_EXTENSION_RELEASE="v1.12.3" # Must be a release
 KN_EVENTING_RELEASE="v1.12.6" # Must be a release
-BRANCH=${BRANCH:=sync-knative-manifests-${KN_SERVING_RELEASE?}}
+BRANCH=${BRANCH:=synchronize-knative-manifests-${KN_SERVING_RELEASE?}}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)

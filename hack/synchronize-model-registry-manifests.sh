@@ -18,7 +18,7 @@ IFS=$'\n\t'
 COMMIT="v0.2.1-alpha" # You can use tags as well
 DEV_MODE=${DEV_MODE:=false}
 SRC_DIR=${SRC_DIR:=/tmp/kubeflow-model-registry}
-BRANCH=${BRANCH:=sync-kubeflow-model-registry-manifests-${COMMIT?}}
+BRANCH=${BRANCH:=synchronize-kubeflow-model-registry-manifests-${COMMIT?}}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)

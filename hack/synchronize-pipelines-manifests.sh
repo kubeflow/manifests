@@ -17,7 +17,7 @@ IFS=$'\n\t'
 
 COMMIT="2.2.0" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kubeflow-pipelines}
-BRANCH=${BRANCH:=sync-kubeflow-pipelines-manifests-${COMMIT?}}
+BRANCH=${BRANCH:=synchronize-kubeflow-pipelines-manifests-${COMMIT?}}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)

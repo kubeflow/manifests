@@ -17,7 +17,7 @@ IFS=$'\n\t'
 
 COMMIT="v1.8.0-rc.1" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kubeflow-training-operator}
-BRANCH=${BRANCH:=sync-kubeflow-training-operator-manifests-${COMMIT?}}
+BRANCH=${BRANCH:=synchronize-kubeflow-training-operator-manifests-${COMMIT?}}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)

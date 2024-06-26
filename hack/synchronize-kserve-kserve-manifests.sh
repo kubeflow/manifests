@@ -18,7 +18,7 @@ IFS=$'\n\t'
 KSERVE_VERSION="v0.13.0"
 COMMIT="0.13.0" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kserve}
-BRANCH=${BRANCH:=sync-kserve-manifests-${COMMIT?}}
+BRANCH=${BRANCH:=synchronize-kserve-manifests-${COMMIT?}}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)

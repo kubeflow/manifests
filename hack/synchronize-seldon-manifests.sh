@@ -17,7 +17,7 @@ IFS=$'\n\t'
 
 COMMIT="v1.18.1" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/seldon}
-BRANCH=${BRANCH:=sync-seldon-core-manifests-${COMMIT?}}
+BRANCH=${BRANCH:=synchronize-seldon-core-manifests-${COMMIT?}}
 UPDATE_ECHO_MODEL=false
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )

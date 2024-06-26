@@ -15,7 +15,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 SRC_DIR=${SRC_DIR:=/tmp/kubeflow-kubeflow}
-BRANCH=${BRANCH:=sync-kubeflow-kubeflow-manifests-${COMMIT?}}
+BRANCH=${BRANCH:=synchronize-kubeflow-kubeflow-manifests-${COMMIT?}}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
