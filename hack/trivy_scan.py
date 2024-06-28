@@ -402,5 +402,5 @@ with open(output_file, "w") as f:
     f.write(str(table))
 
 log("Output saved to:", output_file)
-log("Severity counts with images respect to WGs are saved in the", ALL_SEVERITY_COUNTS)
-log("Scanned Json reports on images are saved in", SCAN_REPORTS_DIR)
+log("Severity counts with images respect to WGs are saved in the",ALL_SEVERITY_COUNTS)
+log("Scanned Json reports on images are saved in",SCAN_REPORTS_DIR)
