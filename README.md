@@ -468,20 +468,20 @@ For security reasons, we don't want to use the default password for the default 
 
 1. Pick a password for the default user, with email `user@example.com`, and hash it using `bcrypt`:
 
-TODO this changed slightly in https://github.com/kubeflow/manifests/pull/2669 and https://github.com/kubeflow/manifests/pull/2229
-
     ```sh
     python3 -c 'from passlib.hash import bcrypt; import getpass; print(bcrypt.using(rounds=12, ident="2y").hash(getpass.getpass()))'
     ```
 
-2. Edit `common/dex/base/config-map.yaml` and fill the relevant field with the hash of the password you chose:
+2. Delete existing secret dex-passwords in auth namespace
 
-    ```yaml
-    ...
-      staticPasswords:
-      - email: user@example.com
-        hash: <enter the generated hash here>
-    ```
+3. Create secret dex-passwords in auth namespace like this
+
+```sh
+kubectl  create secret generic dex-passwords --from-literal=DEX_USER_PASSWORD='NEW-BCRYPT-PASSROD-FROM-STEP-1' -n auth
+```
+4. Restart dex pod in auth namespace
+5. Try to login using the new password
+
 
 ## Upgrading and extending
 
