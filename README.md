@@ -468,8 +468,6 @@ For security reasons, we don't want to use the default password for the default 
 
 1. Pick a password for the default user, with email `user@example.com`, and hash it using `bcrypt`:
 
-TODO this changed slightly in https://github.com/kubeflow/manifests/pull/2669 and https://github.com/kubeflow/manifests/pull/2229
-
     ```sh
     python3 -c 'from passlib.hash import bcrypt; import getpass; print(bcrypt.using(rounds=12, ident="2y").hash(getpass.getpass()))'
     ```
