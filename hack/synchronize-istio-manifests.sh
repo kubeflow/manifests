@@ -1,14 +1,13 @@
 # #!/usr/bin/env bash
 
-# # This script aims at helping create a PR to update the manifests of the
-# # knative.
+# # This script aims at helping create a PR to update the manifests of Istio
 # # This script:
 # # 1. Checks out a new branch
 # # 2. Download files into the correct places
 # # 3. Commits the changes
 # #
 # # Afterwards the developers can submit the PR to the kubeflow/manifests
-# # repo, based on that local branch
+# # repository, based on that local branch
 # # It must be executed directly from its directory
 
 # # strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
@@ -77,14 +76,14 @@ if [ -n "$(git status --porcelain)" ]; then
   echo "WARNING: You have uncommitted changes"
 fi
 
-# Updating README.md to sync with Istio upgraded version
+# Update README.md to synchronize with the upgraded Istio version
 echo "Updating README..."
 SRC_TXT="\[.*\](https://github.com/istio/istio/releases/tag/.*)"
 DST_TXT="\[$COMMIT\](https://github.com/istio/istio/releases/tag/$COMMIT)"
 
 sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
 
-#Syncing updated directory's name with other files
+#Synchronize the updated directory names with other files
 find "$MANIFESTS_DIR" -type f -not -path '*/.git/*' -exec sed -i "s/istio-${CURRENT_VERSION}/istio-${NEW_VERSION}/g" {} +
 
 echo "Committing the changes..."

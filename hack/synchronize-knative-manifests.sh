@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 
-# This script aims at helping create a PR to update the manifests of the
-# knative.
+# This script aims at helping create a PR to update the manifests of knative.
 # This script:
 # 1. Checks out a new branch
 # 2. Download files into the correct places
 # 3. Commits the changes
 #
 # Afterwards the developers can submit the PR to the kubeflow/manifests
-# repo, based on that local branch
+# repository, based on that local branch
 # It must be executed directly from its directory
 
 # strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
@@ -18,7 +17,7 @@ IFS=$'\n\t'
 KN_SERVING_RELEASE="v1.12.4" # Must be a release
 KN_EXTENSION_RELEASE="v1.12.3" # Must be a release
 KN_EVENTING_RELEASE="v1.12.6" # Must be a release
-BRANCH=${BRANCH:=sync-knative-manifests-${KN_SERVING_RELEASE?}}
+BRANCH=${BRANCH:=synchronize-knative-manifests-${KN_SERVING_RELEASE?}}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)

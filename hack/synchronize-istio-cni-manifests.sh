@@ -1,3 +1,4 @@
+@ -1,88 +0,0 @@
 #!/usr/bin/env bash
 
 # This script aims at helping create a PR to update the manifests of the
@@ -77,9 +78,15 @@ if [ -n "$(git status --porcelain)" ]; then
   echo "WARNING: You have uncommitted changes"
 fi
 
+# Update README.md to synchronize with the upgraded Istio version
+echo "Updating README..."
+SRC_TXT="\[.*\](https://github.com/istio/istio/releases/tag/.*)"
+DST_TXT="\[$COMMIT\](https://github.com/istio/istio/releases/tag/$COMMIT)"
+
+sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
+
+#Synchronize the updated directory names with other files
 find "$MANIFESTS_DIR" -type f -not -path '*/.git/*' -exec sed -i "s/istio-cni-${CURRENT_VERSION}/istio-cni-${NEW_VERSION}/g" {} +
-
-
 
 echo "Committing the changes..."
 cd "$MANIFESTS_DIR"

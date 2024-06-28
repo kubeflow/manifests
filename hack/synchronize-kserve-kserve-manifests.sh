@@ -1,24 +1,24 @@
 #!/usr/bin/env bash
 
 # This script aims at helping create a PR to update the manifests of the
-# kubeflow/model-registry repo.
+# kserve/kserve repository.
 # This script:
 # 1. Checks out a new branch
 # 2. Copies files to the correct places
 # 3. Commits the changes
 #
 # Afterwards the developers can submit the PR to the kubeflow/manifests
-# repo, based on that local branch
+# repository, based on that local branch
 # It must be executed directly from its directory
 
 # strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="v0.2.1-alpha" # You can use tags as well
-DEV_MODE=${DEV_MODE:=false}
-SRC_DIR=${SRC_DIR:=/tmp/kubeflow-model-registry}
-BRANCH=${BRANCH:=sync-kubeflow-model-registry-manifests-${COMMIT?}}
+KSERVE_VERSION="v0.13.0"
+COMMIT="0.13.0" # You can use tags as well
+SRC_DIR=${SRC_DIR:=/tmp/kserve}
+BRANCH=${BRANCH:=synchronize-kserve-manifests-${COMMIT?}}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
@@ -28,7 +28,6 @@ echo "Creating branch: ${BRANCH}"
 if [ -n "$(git status --porcelain)" ]; then
   echo "WARNING: You have uncommitted changes"
 fi
-
 if [ `git branch --list $BRANCH` ]
 then
    echo "WARNING: Branch $BRANCH already exists."
@@ -42,41 +41,42 @@ else
 fi
 echo "Checking out in $SRC_DIR to $COMMIT..."
 
-# Checkout the Model Registry repository
+# Checkout the kserve repository
 mkdir -p $SRC_DIR
 cd $SRC_DIR
-if [ ! -d "model-registry/.git" ]; then
-    git clone https://github.com/kubeflow/model-registry.git
+if [ ! -d "kserve/.git" ]; then
+    git clone https://github.com/kserve/kserve.git
 fi
-cd $SRC_DIR/model-registry
+cd $SRC_DIR/kserve
 if ! git rev-parse --verify --quiet $COMMIT; then
     git checkout -b $COMMIT
 else
     git checkout $COMMIT
 fi
 
+
 if [ -n "$(git status --porcelain)" ]; then
   echo "WARNING: You have uncommitted changes"
 fi
 
-echo "Copying model-registry manifests..."
-DST_DIR=$MANIFESTS_DIR/apps/model-registry/upstream
+echo "Copying kserve manifests..."
+DST_DIR=$MANIFESTS_DIR/contrib/kserve/kserve
 if [ -d "$DST_DIR" ]; then
-    rm -r "$DST_DIR"
+    rm -rf "$DST_DIR"/kserve*
 fi
-mkdir -p $DST_DIR
-cp $SRC_DIR/model-registry/manifests/kustomize/* $DST_DIR -r
+cp $SRC_DIR/kserve/install/"$KSERVE_VERSION"/* $DST_DIR -r
+
 
 echo "Successfully copied all manifests."
 
 echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kubeflow/model-registry/tree/.*/manifests/kustomize)"
-DST_TXT="\[$COMMIT\](https://github.com/kubeflow/model-registry/tree/$COMMIT/manifests/kustomize)"
+SRC_TXT="\[.*\](https://github.com/kserve/kserve/tree/.*)"
+DST_TXT="\[$COMMIT\](https://github.com/kserve/kserve/tree/$COMMIT/install/$KSERVE_VERSION)"
 
-sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
+sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
 
 echo "Committing the changes..."
-cd $MANIFESTS_DIR
-git add apps
+cd "$MANIFESTS_DIR"
+git add contrib/kserve
 git add README.md
-git commit -s -m "Update kubeflow/model-registry manifests from ${COMMIT}"
+git commit -s -m "Update kserve manifests from ${KSERVE_VERSION}" -m "Update kserve/kserve manifests from ${COMMIT}"

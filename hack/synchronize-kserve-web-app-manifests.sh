@@ -1,58 +1,68 @@
 #!/usr/bin/env bash
 
 # This script aims at helping create a PR to update the manifests of the
-# kserve/models-web-app repo.
+# kserve/models-web-app repository.
 # This script:
 # 1. Checks out a new branch
 # 2. Copies files to the correct places
 # 3. Commits the changes
 #
 # Afterwards the developers can submit the PR to the kubeflow/manifests
-# repo, based on that local branch
+# repository, based on that local branch
 
-# strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
-set -euo pipefail
-IFS=$'\n\t'
 
+COMMIT="0.13.0-rc.0" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kserve-models-web-app}
-BRANCH=${BRANCH:=sync-kserve-web-app-manifests-${COMMIT?}}
+BRANCH=${BRANCH:=synchronize-kserve-web-app-manifests-${COMMIT?}}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
 
 echo "Creating branch: ${BRANCH}"
 
-# DEV: Comment out this if you are testing locally
 if [ -n "$(git status --porcelain)" ]; then
-  # Uncommitted changes
-  echo "WARNING: You have uncommitted changes, exiting..."
-  exit 1
+  echo "WARNING: You have uncommitted changes"
 fi
 
 if [ `git branch --list $BRANCH` ]
 then
-   echo "WARNING: Branch $BRANCH already exists. Exiting..."
-   exit 1
+   echo "WARNING: Branch $BRANCH already exists."
 fi
 
-# DEV: Comment out this checkout command if you are testing locally
-git checkout -b $BRANCH
-
+# Create the branch in the manifests repository
+if ! git show-ref --verify --quiet refs/heads/$BRANCH; then
+    git checkout -b $BRANCH
+else
+    echo "Branch $BRANCH already exists."
+fi
 echo "Checking out in $SRC_DIR to $COMMIT..."
+
+# Checkout the Model Registry repository
+mkdir -p $SRC_DIR
 cd $SRC_DIR
-if [ -n "$(git status --porcelain)" ]; then
-  # Uncommitted changes
-  echo "WARNING: You have uncommitted changes, exiting..."
-  exit 1
+if [ ! -d "models-web-app/.git" ]; then
+    git clone https://github.com/kserve/models-web-app.git
 fi
-git checkout $COMMIT
+cd $SRC_DIR/models-web-app
+if ! git rev-parse --verify --quiet $COMMIT; then
+    git checkout -b $COMMIT
+else
+    git checkout $COMMIT
+fi
+
+if [ -n "$(git status --porcelain)" ]; then
+  echo "WARNING: You have uncommitted changes"
+fi
 
 echo "Copying admission-webhook manifests..."
 DST_DIR=$MANIFESTS_DIR/contrib/kserve/models-web-app
-rm -r $DST_DIR
-cp $SRC_DIR/config $DST_DIR -r
+if [ -d "$DST_DIR" ]; then
+    rm -r "$DST_DIR"
+fi
+mkdir -p $DST_DIR
+cp $SRC_DIR/models-web-app/config/* $DST_DIR -r
 
-echo "Successfully copied kserve models web app manifests."
+echo "Successfully copied all manifests."
 
 echo "Updating README..."
 SRC_TXT="\[.*\](https://github.com/kserve/models-web-app/tree/.*)"
@@ -60,9 +70,8 @@ DST_TXT="\[$COMMIT\](https://github.com/kserve/models-web-app/tree/$COMMIT/confi
 
 sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
 
-# DEV: Comment out these commands if you are testing locally
 echo "Committing the changes..."
-cd "$MANIFESTS_DIR"
+cd $MANIFESTS_DIR
 git add contrib/kserve/models-web-app
 git add README.md
-git commit -s -m "Update kserve web app manifests from ${COMMIT}"
+git commit -s -m "Update kserve models web application manifests from ${COMMIT}"
