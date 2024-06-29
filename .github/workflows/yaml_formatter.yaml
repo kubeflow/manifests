@@ -10,13 +10,8 @@ jobs:
 
     - name: Install yamllint
       run: pip install yamllint
-
-    - name: Lint YAML files
-      run: yamllint .
-      continue-on-error: true
-
+    
     - name: YAML Formatting Guidelines
-      if: always()
       run: |
         echo "### YAML Formatting Guidelines ###
         If there is a formatting error in your YAML file, you will see errors like the one below:
@@ -41,3 +36,8 @@ jobs:
           line-length:
             max: 400
         "
+    
+    - name: Lint YAML files
+      run: yamllint .
+      
+
