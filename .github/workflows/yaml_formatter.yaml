@@ -1,0 +1,15 @@
+name: Proper Formatting on Yaml files
+
+on: [push, pull_request]
+
+jobs:
+  format_python_files:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install yamllint
+      run: pip install yamllint
+
+    - name: Lint YAML files
+      run: yamllint .
