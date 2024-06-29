@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 name: Proper Formatting on YAML files
-=======
-name: Proper Formatting on Yaml files
->>>>>>> 6eb43b53 (Add github action to format yaml files)
 
 on: [push, pull_request]
 
