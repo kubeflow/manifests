@@ -13,3 +13,29 @@ jobs:
 
     - name: Lint YAML files
       run: yamllint .
+
+    - name: YAML Formatting Guidelines
+      run: |
+        echo "### YAML Formatting Guidelines ###
+        If there is a formatting error in your YAML file, you will see errors like the one below:
+        'Error: 6:4 [indentation] wrong indentation: expected 2 but found 3'
+        
+        To fix these errors, refer to the YAML formatting rules at:
+        https://yamllint.readthedocs.io/en/stable/rules.html#
+        
+        Search for the keyword inside the brackets [] in the error message. In this example, it's 'indentation'.
+        
+        Note: Some rules have been customized in the '.yamllint.yaml' file. Below is the content of that file:
+
+        extends: default
+
+        rules:
+          document-start:
+            present: false
+          document-end:
+            present: false
+          indentation:
+            indent-sequences: false
+          line-length:
+            max: 400
+        "
