@@ -10,7 +10,7 @@ jobs:
 
     - name: Install yamllint
       run: pip install yamllint
-    
+
     - name: YAML Formatting Guidelines
       run: |
         echo "### YAML Formatting Guidelines ###
