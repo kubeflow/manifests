@@ -27,15 +27,32 @@ jobs:
     - name: Install kustomize
       run: ./tests/gh-actions/install_kustomize.sh
 
-    - name: Install Istio
-      run: ./tests/gh-actions/install_istio.sh
+    - name: Install kubectl
+      run: ./tests/gh-actions/install_kubectl.sh
+
+    - name: Install Istio with external authentication
+      run: ./tests/gh-actions/install_istio_with_ext_auth.sh
+
+    - name: Install cert-manager
+      run: ./tests/gh-actions/install_cert_manager.sh
+
+    - name: Create kubeflow namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+    - name: Install KF Pipelines
+      run: ./tests/gh-actions/install_pipelines.sh
+
+    - name: Install KF Multi Tenancy
+      run: ./tests/gh-actions/install_multi_tenancy.sh
+
+    - name: Install kubeflow-istio-resources
+      run: kustomize build common/istio-1-22/kubeflow-istio-resources/base | kubectl apply -f -
+
+    - name: Create KF Profile
+      run: kustomize build common/user-namespace/base | kubectl apply -f -
 
     - name: Build & Apply manifests
-      run: |
-        cd apps/training-operator/upstream
-        kubectl create ns kubeflow
-        kustomize build overlays/kubeflow | kubectl apply -f -
-        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
+      run: ./tests/gh-actions/install_training_operator.sh
 
     - name: Create a TFJob
       run: |
