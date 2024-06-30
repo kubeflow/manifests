@@ -2,7 +2,7 @@ name: Build & Apply Training Operator manifests in KinD
 on:
   pull_request:
     paths:
-      - .github/workflows/train_operator_test.yaml
+      - .github/workflows/training_operator_test.yaml
       - apps/training-operator/upstream/**
       - tests/gh-actions/kind-cluster.yaml
       - tests/gh-actions/install_kind.sh
@@ -39,9 +39,6 @@ jobs:
     - name: Create kubeflow namespace
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
-    - name: Install KF Pipelines
-      run: ./tests/gh-actions/install_pipelines.sh
-
     - name: Install KF Multi Tenancy
       run: ./tests/gh-actions/install_multi_tenancy.sh
 
@@ -51,7 +48,7 @@ jobs:
     - name: Create KF Profile
       run: kustomize build common/user-namespace/base | kubectl apply -f -
 
-    - name: Build & Apply manifests
+    - name: Install training operator
       run: ./tests/gh-actions/install_training_operator.sh
 
     - name: Create a TFJob
