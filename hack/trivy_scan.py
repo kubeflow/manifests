@@ -92,8 +92,8 @@ def extract_images(version):
                         
                         # Use regex to find lines with 'image: <image-name>:<version>' or 'image: <image-name>'
                         # and '- image: <image-name>:<version>' but avoid environment variables
-                        kimages = re.findall(r'^\s*-?\s*image:\s*([^$\s:]+(?:\:[^\s]+)?)$', result.stdout, re.MULTILINE)
-                        wg_images.update(kimages)
+                        kustomize_images = re.findall(r'^\s*-?\s*image:\s*([^$\s:]+(?:\:[^\s]+)?)$', result.stdout, re.MULTILINE)
+                        wg_images.update(kustomize_images)
 
         # Ensure uniqueness within workgroup images
         uniq_wg_images = sorted(wg_images)
