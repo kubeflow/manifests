@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    types: [opened, synchronize, reopened]
 
 jobs:
   image-extraction-and-security-scan:
@@ -38,8 +36,15 @@ jobs:
         run: |
           pip install prettytable
 
-      # Run the shell script (trivy_scan.py)
       - name: Run image extracting and security scanning script
         run: |
           cd hack
           python3 trivy_scan.py
+
+      # - name: Upload trivy scanned_results
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: trivy_scanned_results
+      #     path: image_lists/
+
+      
