@@ -95,3 +95,7 @@ resources:
 # - ../contrib/security/PSS/static/baseline
 # Uncomment to enable restricted level standards
 # - ../contrib/security/PSS/static/restricted
+# Uncomment to enable baseline level standards for dynamic namespaces
+# - ../contrib/security/PSS/dynamic/baseline
+# Uncomment to enable restricted level standards for dynamic namespaces
+# - ../contrib/security/PSS/dynamic/restricted

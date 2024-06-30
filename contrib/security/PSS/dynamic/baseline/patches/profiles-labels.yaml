@@ -1,6 +1,10 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: profiles-system
+  name: kubeflow
   labels:
     pod-security.kubernetes.io/enforce: baseline
+    katib.kubeflow.org/metrics-collector-injection: "enabled"
+    serving.kubeflow.org/inferenceservice: "enabled"
+    pipelines.kubeflow.org/enabled: "true"
+    app.kubernetes.io/part-of: "kubeflow-profile"
