@@ -20,5 +20,6 @@ resources:
   - poddefaults.yaml
   - pvcviewer-webhook.yaml
   - seldon.yaml
+  - training-operator-webhook
   - volumes-web-app.yaml
   - tensorboards-web-app.yaml
