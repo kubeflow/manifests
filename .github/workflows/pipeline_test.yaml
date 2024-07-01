@@ -33,7 +33,7 @@ jobs:
       - name: Install kubectl
         run: ./tests/gh-actions/install_kubectl.sh
 
-      - name: Install Istio with ext auth
+      - name: Install Istio with external authentication
         run: ./tests/gh-actions/install_istio_with_ext_auth.sh
 
       - name: Install cert-manager

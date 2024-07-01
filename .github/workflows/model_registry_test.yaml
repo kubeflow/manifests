@@ -32,7 +32,7 @@ jobs:
     - name: Create kubeflow namespace
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
-    - name: Install Istio with ext auth
+    - name: Install Istio with external authentication
       run: ./tests/gh-actions/install_istio_with_ext_auth.sh*
 
     - name: Install cert-manager
@@ -61,7 +61,7 @@ jobs:
           'http://localhost:8081/api/model_registry/v1alpha3/registered_models?pageSize=100&orderBy=ID&sortOrder=DESC' \
           -H 'accept: application/json'
 
-    # for these steps below ensure same steps as kserve (ie: Istio with ext auth, cert0manager, knative) so to achieve same setup 
+    # for these steps below ensure same steps as kserve (ie: Istio with external authentication, cert-manager, knative) so to achieve same setup 
     - name: Port forward Istio gateway
       run: |
         INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')

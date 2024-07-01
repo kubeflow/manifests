@@ -2,7 +2,7 @@ apiVersion: "kubeflow.org/v1"
 kind: TFJob
 metadata:
   name: tfjob-simple
-  namespace: kubeflow
+  namespace: kubeflow-user-example-com
 spec:
    tfReplicaSpecs:
      Worker:
