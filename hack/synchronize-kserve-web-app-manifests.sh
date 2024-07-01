@@ -24,7 +24,7 @@ if [ -n "$(git status --porcelain)" ]; then
   echo "WARNING: You have uncommitted changes"
 fi
 
-if [ `git branch --list $BRANCH` ]
+if [ "$(git branch --list $BRANCH)" ]
 then
    echo "WARNING: Branch $BRANCH already exists."
 fi
