@@ -1,4 +1,4 @@
-# !/usr/bin/env bash
+#!/usr/bin/env bash
 
 # # This script aims at helping create a PR to update the manifests of Istio
 # # This script:
