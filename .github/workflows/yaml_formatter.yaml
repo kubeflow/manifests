@@ -41,7 +41,7 @@ jobs:
     #   run: yamllint .
 
     - name: Fetch main branch
-      run: git fetch origin main
+      run: git fetch origin master
     
     - name: Set up changed files
       run: |
