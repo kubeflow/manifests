@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #!/usr/bin/env bash
+=======
+# !/usr/bin/env bash
+>>>>>>> 7c29d8a6 (Disable SC1017,SC2086,SC2070 rules when shellcheck and did changes in sh files to address the formattings according to shellcheck)
 
 # # This script aims at helping create a PR to update the manifests of Istio
 # # This script:
