@@ -16,7 +16,7 @@ jobs:
     
     - name: Set up changed files
       run: |
-        git diff --name-only origin/main...HEAD | grep -E '^.*\.sh$' | grep -v '^apps/' > changed_files_in_PR.txt || true
+        git diff --name-only origin/master...HEAD | grep -E '^.*\.sh$' | grep -v '^apps/' > changed_files_in_PR.txt || true
     
     - name: Display changed files
       run: cat changed_files_in_PR.txt
