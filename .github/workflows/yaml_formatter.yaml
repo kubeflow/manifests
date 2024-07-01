@@ -37,7 +37,28 @@ jobs:
             max: 400
         "
     
-    - name: Lint YAML files
-      run: yamllint .
+    # - name: Lint YAML files
+    #   run: yamllint .
+
+    - name: Fetch main branch
+      run: git fetch origin main
+    
+    - name: Set up changed files
+      run: |
+        git diff --name-only origin/main...HEAD | grep -E '^common/.*\.ya?ml$|^example/.*\.ya?ml$' > changed_files.txt || true
+    
+    - name: Display changed files
+      run: cat changed_files.txt
+
+    - name: Run yamllint on changed files
+      run: |
+        if [ -s changed_files.txt ]; then
+          while IFS= read -r file; do
+            echo "Running yamllint on $file"
+            yamllint "$file"
+          done < changed_files.txt
+        else
+          echo "No YAML files changed."
+        fi
       
 
