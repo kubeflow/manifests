@@ -126,8 +126,8 @@ function create_gsa_if_not_present {
     gcloud iam service-accounts create $name
   fi
 }
-create_gsa_if_not_present $SYSTEM_GSA
-create_gsa_if_not_present $USER_GSA
+create_gsa_if_not_present "$SYSTEM_GSA"
+create_gsa_if_not_present "$USER_GSA"
 
 function create_ksa_if_not_present {
   local name=${1}
