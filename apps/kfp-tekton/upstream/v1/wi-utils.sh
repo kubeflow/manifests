@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2034
 #
 # Copyright 2019 The Kubeflow Authors
 #
