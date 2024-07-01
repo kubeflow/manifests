@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 @ -1,88 +0,0 @@
 
 # This script aims at helping create a PR to update the manifests of the
