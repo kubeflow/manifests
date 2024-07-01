@@ -4,3 +4,6 @@ kind: Component
 patches:
 - path: patches/kubeflow-labels.yaml
 - path: patches/istio-labels.yaml
+- path: patches/cert-manager-labels.yaml
+- path: patches/dex-labels.yaml
+- path: patches/oauth2-proxy-labels.yaml
