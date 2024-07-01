@@ -1,0 +1,2 @@
+# ~/.shellcheckrc
+disable=SC1017,SC2086,SC2070,SC2046,SC2155,SC2006
