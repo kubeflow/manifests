@@ -12,7 +12,7 @@ jobs:
       run: sudo apt install -y shellcheck
 
     - name: Fetch master branch
-      run: git fetch master
+      run: git fetch origin master
     
     - name: Set up changed files
       run: |
