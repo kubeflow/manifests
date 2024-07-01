@@ -68,40 +68,41 @@ except Exception as e:
     )
     raise SystemExit(1)
 
-while True:
-    live_run = client.get_run(run_id=run.run_id)
-    logger.info(f"Pipeline Run State: {live_run.state}.")
+# For now being able to start a pipeline is enough.
+# while True:
+#     live_run = client.get_run(run_id=run.run_id)
+#     logger.info(f"Pipeline Run State: {live_run.state}.")
 
-    minutes_from_pipeline_run_start = (
-        datetime.now(timezone.utc) - live_run.created_at
-    ).seconds / 60
+#     minutes_from_pipeline_run_start = (
+#         datetime.now(timezone.utc) - live_run.created_at
+#     ).seconds / 60
 
-    if minutes_from_pipeline_run_start > 5:
-        logger.debug(
-            "Pipeline is running for more than 5 minutes, "
-            f"showing pod states in {experiment_namespace=}."
-        )
-        subprocess.run(["kubectl", "get", "pods"])
+#     if minutes_from_pipeline_run_start > 5:
+#         logger.debug(
+#             "Pipeline is running for more than 5 minutes, "
+#             f"showing pod states in {experiment_namespace=}."
+#         )
+#         subprocess.run(["kubectl", "get", "pods"])
 
-    if live_run.finished_at > live_run.created_at:
-        logger.info("Finished Pipeline Run!")
-        logger.info(
-            f"Pipeline was running for {minutes_from_pipeline_run_start:0.2} minutes."
-        )
-        logger.info(f"Pipeline Run finished in state: {live_run.state}.")
-        logger.info(f"Pipeline Run finished with error: {live_run.error}.")
+#     if live_run.finished_at > live_run.created_at:
+#         logger.info("Finished Pipeline Run!")
+#         logger.info(
+#             f"Pipeline was running for {minutes_from_pipeline_run_start:0.2} minutes."
+#         )
+#         logger.info(f"Pipeline Run finished in state: {live_run.state}.")
+#         logger.info(f"Pipeline Run finished with error: {live_run.error}.")
 
-        if live_run.state != "SUCCEEDED":
-            logger.warn("The Pipeline Run finished but has failed...")
+#         if live_run.state != "SUCCEEDED":
+#             logger.warn("The Pipeline Run finished but has failed...")
 
-            logger.warn("Running 'kubectl get pods':")
-            subprocess.run(["kubectl", "get", "pods"])
+#             logger.warn("Running 'kubectl get pods':")
+#             subprocess.run(["kubectl", "get", "pods"])
 
-            logger.warn("Running 'kubectl describe wf':")
-            subprocess.run(["kubectl", "describe", "wf"])
+#             logger.warn("Running 'kubectl describe wf':")
+#             subprocess.run(["kubectl", "describe", "wf"])
 
-            raise SystemExit(1)
-        break
-    else:
-        logger.info("Waiting for pipeline to finish...")
-    sleep(5)
+#             raise SystemExit(1)
+#         break
+#     else:
+#         logger.info("Waiting for pipeline to finish...")
+#     sleep(5)
