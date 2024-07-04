@@ -2,6 +2,18 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
+    app: istio-cni
+    install.operator.istio.io/owning-resource: unknown
+    istio.io/rev: default
+    operator.istio.io/component: Cni
+    release: istio
+  name: istio-cni
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
     app: istio-ingressgateway
     install.operator.istio.io/owning-resource: unknown
     istio: ingressgateway
@@ -28,6 +40,55 @@ metadata:
     release: istio
   name: istiod
   namespace: istio-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: istio-cni
+    install.operator.istio.io/owning-resource: unknown
+    istio.io/rev: default
+    operator.istio.io/component: Cni
+    release: istio
+  name: istio-cni
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - pods
+  - nodes
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: istio-cni
+    install.operator.istio.io/owning-resource: unknown
+    istio.io/rev: default
+    operator.istio.io/component: Cni
+    release: istio
+  name: istio-cni-repair-role
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ''
+  resources:
+  - pods
+  verbs:
+  - watch
+  - get
+  - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -369,6 +430,43 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
+    app: istio-cni
+    install.operator.istio.io/owning-resource: unknown
+    istio.io/rev: default
+    operator.istio.io/component: Cni
+    release: istio
+  name: istio-cni
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: istio-cni
+subjects:
+- kind: ServiceAccount
+  name: istio-cni
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    install.operator.istio.io/owning-resource: unknown
+    istio.io/rev: default
+    k8s-app: istio-cni-repair
+    operator.istio.io/component: Cni
+  name: istio-cni-repair-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: istio-cni-repair-role
+subjects:
+- kind: ServiceAccount
+  name: istio-cni
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
     app: istio-reader
     release: istio
   name: istio-reader-clusterrole-istio-system
@@ -479,6 +577,25 @@ metadata:
     release: istio
   name: istio
   namespace: istio-system
+---
+apiVersion: v1
+data:
+  cni_network_config: "{\n  \"cniVersion\": \"0.3.1\",\n  \"name\": \"istio-cni\"\
+    ,\n  \"type\": \"istio-cni\",\n  \"log_level\": \"debug\",\n  \"log_uds_address\"\
+    : \"__LOG_UDS_ADDRESS__\",\n  \n  \"cni_event_address\": \"__CNI_EVENT_ADDRESS__\"\
+    ,\n  \"kubernetes\": {\n      \"kubeconfig\": \"__KUBECONFIG_FILEPATH__\",\n \
+    \     \"cni_bin_dir\": \"/opt/cni/bin\",\n      \"exclude_namespaces\": [ \"kube-system\"\
+    \ ]\n  }\n}"
+kind: ConfigMap
+metadata:
+  labels:
+    app: istio-cni
+    install.operator.istio.io/owning-resource: unknown
+    istio.io/rev: default
+    operator.istio.io/component: Cni
+    release: istio
+  name: istio-cni-config
+  namespace: kube-system
 ---
 apiVersion: v1
 data:
@@ -2412,7 +2529,7 @@ data:
       },
       "istio_cni": {
         "chained": true,
-        "enabled": false,
+        "enabled": true,
         "provider": "default"
       },
       "pilot": {
@@ -2598,6 +2715,152 @@ webhooks:
     resources:
     - pods
   sideEffects: None
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    install.operator.istio.io/owning-resource: unknown
+    istio.io/rev: default
+    k8s-app: istio-cni-node
+    operator.istio.io/component: Cni
+    release: istio
+  name: istio-cni-node
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      k8s-app: istio-cni-node
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: '15014'
+        prometheus.io/scrape: 'true'
+        sidecar.istio.io/inject: 'false'
+      labels:
+        istio.io/dataplane-mode: none
+        k8s-app: istio-cni-node
+        sidecar.istio.io/inject: 'false'
+    spec:
+      containers:
+      - args:
+        - --log_output_level=default:info,cni:info
+        command:
+        - install-cni
+        env:
+        - name: CNI_NETWORK_CONFIG
+          valueFrom:
+            configMapKeyRef:
+              key: cni_network_config
+              name: istio-cni-config
+        - name: CNI_NET_DIR
+          value: /etc/cni/net.d
+        - name: CHAINED_CNI_PLUGIN
+          value: 'true'
+        - name: REPAIR_ENABLED
+          value: 'true'
+        - name: REPAIR_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: REPAIR_LABEL_PODS
+          value: 'false'
+        - name: REPAIR_DELETE_PODS
+          value: 'false'
+        - name: REPAIR_REPAIR_PODS
+          value: 'true'
+        - name: REPAIR_RUN_AS_DAEMON
+          value: 'true'
+        - name: REPAIR_SIDECAR_ANNOTATION
+          value: sidecar.istio.io/status
+        - name: REPAIR_INIT_CONTAINER_NAME
+          value: istio-validation
+        - name: REPAIR_BROKEN_POD_LABEL_KEY
+          value: cni.istio.io/uninitialized
+        - name: REPAIR_BROKEN_POD_LABEL_VALUE
+          value: 'true'
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: LOG_LEVEL
+          value: debug
+        - name: GOMEMLIMIT
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.memory
+        - name: GOMAXPROCS
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.cpu
+        image: docker.io/istio/install-cni:1.22.1
+        name: install-cni
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8000
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+            - NET_RAW
+            - SYS_ADMIN
+            drop:
+            - ALL
+          privileged: true
+          runAsGroup: 0
+          runAsNonRoot: false
+          runAsUser: 0
+        volumeMounts:
+        - mountPath: /host/opt/cni/bin
+          name: cni-bin-dir
+        - mountPath: /host/proc
+          name: cni-host-procfs
+          readOnly: true
+        - mountPath: /host/etc/cni/net.d
+          name: cni-net-dir
+        - mountPath: /var/run/istio-cni
+          name: cni-socket-dir
+      nodeSelector:
+        kubernetes.io/os: linux
+      priorityClassName: system-node-critical
+      serviceAccountName: istio-cni
+      terminationGracePeriodSeconds: 5
+      tolerations:
+      - effect: NoSchedule
+        operator: Exists
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoExecute
+        operator: Exists
+      volumes:
+      - hostPath:
+          path: /opt/cni/bin
+        name: cni-bin-dir
+      - hostPath:
+          path: /proc
+          type: Directory
+        name: cni-host-procfs
+      - hostPath:
+          path: /etc/cni/net.d
+        name: cni-net-dir
+      - hostPath:
+          path: /var/run/istio-cni
+        name: cni-socket-dir
+      - hostPath:
+          path: /var/run/netns
+          type: DirectoryOrCreate
+        name: cni-netns-dir
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
 ---
 apiVersion: apps/v1
 kind: Deployment
