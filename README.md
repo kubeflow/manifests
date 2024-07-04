@@ -14,6 +14,7 @@
   * [Change default user password](#change-default-user-password)
 - [Upgrading and extending](#upgrading-and-extending)
 - [Release process](#release-process)
+- [CVE Scanning](#cve-scanning)
 - [Frequently Asked Questions](#frequently-asked-questions)
 
 <!-- tocstop -->
@@ -501,6 +502,10 @@ The Manifest Working Group releases Kubeflow based on the [release timeline](htt
  The community and the release team work closely with the Manifest Working Group to define the specific dates at the start of the [release cycle](https://github.com/kubeflow/community/blob/master/releases/handbook.md#releasing)
  and follow the [release versioning policy](https://github.com/kubeflow/community/blob/master/releases/handbook.md#versioning-policy),
  as defined in the [Kubeflow release handbook](https://github.com/kubeflow/community/blob/master/releases/handbook.md).
+
+## CVE Scanning
+
+The manifests repository runs a CVE scanning process when new pull requests are merged. For more information read the [CVE Scanning](./documents/CVE_Scanning.md) doc.
 
 ## Frequently Asked Questions
 
