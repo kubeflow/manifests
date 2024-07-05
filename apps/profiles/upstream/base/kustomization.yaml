@@ -16,7 +16,5 @@ images:
 
 configMapGenerator:
 - name: namespace-labels-data
-  options:
-    disableNameSuffixHash: true
   files:
   - namespace-labels.yaml
