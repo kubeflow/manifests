@@ -3,6 +3,8 @@ kind: Component
 
 patches:
 - path: patches/kubeflow-labels.yaml
+- path: patches/seccomp-istio-ingressgateway.yaml
+- path: patches/seccomp-istiod.yaml
 - path: patches/istio-labels.yaml
 - path: patches/cert-manager-labels.yaml
 - path: patches/dex-labels.yaml
