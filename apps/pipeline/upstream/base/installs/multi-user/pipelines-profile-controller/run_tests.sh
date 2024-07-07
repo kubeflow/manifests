@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # Build venv with required packages
 VENV=".venv"
 PYTHON_VENV="${VENV}/bin/python"

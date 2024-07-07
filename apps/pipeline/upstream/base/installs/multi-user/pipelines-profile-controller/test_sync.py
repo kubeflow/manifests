@@ -11,8 +11,10 @@ import requests
 DATA_INCORRECT_CHILDREN = {
     "parent": {
         "metadata": {
-            "labels": {"pipelines.kubeflow.org/enabled": "true"},
-            "name": "myName",
+            "labels": {
+                "pipelines.kubeflow.org/enabled": "true"
+            },
+            "name": "myName"
         }
     },
     "children": {
@@ -22,14 +24,16 @@ DATA_INCORRECT_CHILDREN = {
         "Service.v1": [],
         "DestinationRule.networking.istio.io/v1alpha3": [],
         "AuthorizationPolicy.security.istio.io/v1beta1": [],
-    },
+    }
 }
 
 DATA_CORRECT_CHILDREN = {
     "parent": {
         "metadata": {
-            "labels": {"pipelines.kubeflow.org/enabled": "true"},
-            "name": "myName",
+            "labels": {
+                "pipelines.kubeflow.org/enabled": "true"
+            },
+            "name": "myName"
         }
     },
     "children": {
@@ -39,7 +43,7 @@ DATA_CORRECT_CHILDREN = {
         "Service.v1": [1, 1],
         "DestinationRule.networking.istio.io/v1alpha3": [1],
         "AuthorizationPolicy.security.istio.io/v1beta1": [1],
-    },
+    }
 }
 
 DATA_MISSING_PIPELINE_ENABLED = {"parent": {}, "children": {}}
@@ -66,38 +70,34 @@ ENV_VARIABLES_BASE = {
     "CONTROLLER_PORT": "0",  # HTTPServer randomly assigns the port to a free port
 }
 
-ENV_KFP_VERSION_ONLY = dict(
-    ENV_VARIABLES_BASE,
-    **{
-        "KFP_VERSION": KFP_VERSION,
-    },
-)
+ENV_KFP_VERSION_ONLY = dict(ENV_VARIABLES_BASE,
+                            **{
+                                "KFP_VERSION": KFP_VERSION,
+                            }
+                            )
 
-ENV_IMAGES_NO_TAGS = dict(
-    ENV_VARIABLES_BASE,
-    **{
-        "KFP_VERSION": KFP_VERSION,
-        "VISUALIZATION_SERVER_IMAGE": VISUALIZATION_SERVER_IMAGE,
-        "FRONTEND_IMAGE": FRONTEND_IMAGE,
-    },
-)
+ENV_IMAGES_NO_TAGS = dict(ENV_VARIABLES_BASE,
+                          **{
+                              "KFP_VERSION": KFP_VERSION,
+                              "VISUALIZATION_SERVER_IMAGE": VISUALIZATION_SERVER_IMAGE,
+                              "FRONTEND_IMAGE": FRONTEND_IMAGE,
+                          }
+                          )
 
-ENV_IMAGES_WITH_TAGS = dict(
-    ENV_VARIABLES_BASE,
-    **{
-        "VISUALIZATION_SERVER_IMAGE": VISUALIZATION_SERVER_IMAGE,
-        "FRONTEND_IMAGE": FRONTEND_IMAGE,
-        "VISUALIZATION_SERVER_TAG": VISUALIZATION_SERVER_TAG,
-        "FRONTEND_TAG": FRONTEND_TAG,
-    },
-)
+ENV_IMAGES_WITH_TAGS = dict(ENV_VARIABLES_BASE,
+                            **{
+                                "VISUALIZATION_SERVER_IMAGE": VISUALIZATION_SERVER_IMAGE,
+                                "FRONTEND_IMAGE": FRONTEND_IMAGE,
+                                "VISUALIZATION_SERVER_TAG": VISUALIZATION_SERVER_TAG,
+                                "FRONTEND_TAG": FRONTEND_TAG,
+                            }
+                            )
 
-ENV_IMAGES_WITH_TAGS_AND_ISTIO = dict(
-    ENV_IMAGES_WITH_TAGS,
-    **{
-        "DISABLE_ISTIO_SIDECAR": "false",
-    },
-)
+ENV_IMAGES_WITH_TAGS_AND_ISTIO = dict(ENV_IMAGES_WITH_TAGS,
+                                      **{
+                                          "DISABLE_ISTIO_SIDECAR": "false",
+                                      }
+                                      )
 
 
 def generate_image_name(imagename, tag):
@@ -154,57 +154,40 @@ def sync_server_from_arguments(request):
     "sync_server, data, expected_status, expected_visualization_server_image, expected_frontend_server_image",
     [
         (
-            ENV_KFP_VERSION_ONLY,
-            DATA_INCORRECT_CHILDREN,
-            {"kubeflow-pipelines-ready": "False"},
-            generate_image_name(DEFAULT_VISUALIZATION_IMAGE, KFP_VERSION),
-            generate_image_name(DEFAULT_FRONTEND_IMAGE, KFP_VERSION),
+                ENV_KFP_VERSION_ONLY,
+                DATA_INCORRECT_CHILDREN,
+                {"kubeflow-pipelines-ready": "False"},
+                generate_image_name(DEFAULT_VISUALIZATION_IMAGE, KFP_VERSION),
+                generate_image_name(DEFAULT_FRONTEND_IMAGE, KFP_VERSION),
         ),
         (
-            ENV_IMAGES_NO_TAGS,
-            DATA_INCORRECT_CHILDREN,
-            {"kubeflow-pipelines-ready": "False"},
-            generate_image_name(
-                ENV_IMAGES_NO_TAGS["VISUALIZATION_SERVER_IMAGE"], KFP_VERSION
-            ),
-            generate_image_name(ENV_IMAGES_NO_TAGS["FRONTEND_IMAGE"], KFP_VERSION),
+                ENV_IMAGES_NO_TAGS,
+                DATA_INCORRECT_CHILDREN,
+                {"kubeflow-pipelines-ready": "False"},
+                generate_image_name(ENV_IMAGES_NO_TAGS["VISUALIZATION_SERVER_IMAGE"], KFP_VERSION),
+                generate_image_name(ENV_IMAGES_NO_TAGS["FRONTEND_IMAGE"], KFP_VERSION),
         ),
         (
-            ENV_IMAGES_WITH_TAGS,
-            DATA_INCORRECT_CHILDREN,
-            {"kubeflow-pipelines-ready": "False"},
-            generate_image_name(
-                ENV_IMAGES_WITH_TAGS["VISUALIZATION_SERVER_IMAGE"],
-                ENV_IMAGES_WITH_TAGS["VISUALIZATION_SERVER_TAG"],
-            ),
-            generate_image_name(
-                ENV_IMAGES_WITH_TAGS["FRONTEND_IMAGE"],
-                ENV_IMAGES_WITH_TAGS["FRONTEND_TAG"],
-            ),
+                ENV_IMAGES_WITH_TAGS,
+                DATA_INCORRECT_CHILDREN,
+                {"kubeflow-pipelines-ready": "False"},
+                generate_image_name(ENV_IMAGES_WITH_TAGS["VISUALIZATION_SERVER_IMAGE"],
+                                    ENV_IMAGES_WITH_TAGS["VISUALIZATION_SERVER_TAG"]),
+                generate_image_name(ENV_IMAGES_WITH_TAGS["FRONTEND_IMAGE"], ENV_IMAGES_WITH_TAGS["FRONTEND_TAG"]),
         ),
         (
-            ENV_IMAGES_WITH_TAGS,
-            DATA_CORRECT_CHILDREN,
-            {"kubeflow-pipelines-ready": "True"},
-            generate_image_name(
-                ENV_IMAGES_WITH_TAGS["VISUALIZATION_SERVER_IMAGE"],
-                ENV_IMAGES_WITH_TAGS["VISUALIZATION_SERVER_TAG"],
-            ),
-            generate_image_name(
-                ENV_IMAGES_WITH_TAGS["FRONTEND_IMAGE"],
-                ENV_IMAGES_WITH_TAGS["FRONTEND_TAG"],
-            ),
+                ENV_IMAGES_WITH_TAGS,
+                DATA_CORRECT_CHILDREN,
+                {"kubeflow-pipelines-ready": "True"},
+                generate_image_name(ENV_IMAGES_WITH_TAGS["VISUALIZATION_SERVER_IMAGE"],
+                                    ENV_IMAGES_WITH_TAGS["VISUALIZATION_SERVER_TAG"]),
+                generate_image_name(ENV_IMAGES_WITH_TAGS["FRONTEND_IMAGE"], ENV_IMAGES_WITH_TAGS["FRONTEND_TAG"]),
         ),
     ],
-    indirect=["sync_server"],
+    indirect=["sync_server"]
 )
-def test_sync_server_with_pipeline_enabled(
-    sync_server,
-    data,
-    expected_status,
-    expected_visualization_server_image,
-    expected_frontend_server_image,
-):
+def test_sync_server_with_pipeline_enabled(sync_server, data, expected_status,
+                                           expected_visualization_server_image, expected_frontend_server_image):
     """
     Nearly end-to-end test of how Controller serves .sync as a POST
 
@@ -224,17 +207,13 @@ def test_sync_server_with_pipeline_enabled(
     results = json.loads(x.text)
 
     # Test overall status of whether children are ok
-    assert results["status"] == expected_status
+    assert results['status'] == expected_status
 
     # Poke a few children to test things that can vary by environment variable
-    assert (
-        results["children"][1]["spec"]["template"]["spec"]["containers"][0]["image"]
-        == expected_visualization_server_image
-    )
-    assert (
-        results["children"][5]["spec"]["template"]["spec"]["containers"][0]["image"]
-        == expected_frontend_server_image
-    )
+    assert results['children'][1]["spec"]["template"]["spec"]["containers"][0][
+               "image"] == expected_visualization_server_image
+    assert results['children'][5]["spec"]["template"]["spec"]["containers"][0][
+               "image"] == expected_frontend_server_image
 
 
 @pytest.mark.parametrize(
@@ -242,28 +221,19 @@ def test_sync_server_with_pipeline_enabled(
     "expected_frontend_server_image",
     [
         (
-            ENV_IMAGES_WITH_TAGS_AND_ISTIO,
-            DATA_CORRECT_CHILDREN,
-            {"kubeflow-pipelines-ready": "True"},
-            generate_image_name(
-                ENV_IMAGES_WITH_TAGS["VISUALIZATION_SERVER_IMAGE"],
-                ENV_IMAGES_WITH_TAGS["VISUALIZATION_SERVER_TAG"],
-            ),
-            generate_image_name(
-                ENV_IMAGES_WITH_TAGS["FRONTEND_IMAGE"],
-                ENV_IMAGES_WITH_TAGS["FRONTEND_TAG"],
-            ),
+                ENV_IMAGES_WITH_TAGS_AND_ISTIO,
+                DATA_CORRECT_CHILDREN,
+                {"kubeflow-pipelines-ready": "True"},
+                generate_image_name(ENV_IMAGES_WITH_TAGS["VISUALIZATION_SERVER_IMAGE"],
+                                    ENV_IMAGES_WITH_TAGS["VISUALIZATION_SERVER_TAG"]),
+                generate_image_name(ENV_IMAGES_WITH_TAGS["FRONTEND_IMAGE"], ENV_IMAGES_WITH_TAGS["FRONTEND_TAG"]),
         ),
     ],
-    indirect=["sync_server_from_arguments"],
+    indirect=["sync_server_from_arguments"]
 )
 def test_sync_server_with_direct_passing_of_settings(
-    sync_server_from_arguments,
-    data,
-    expected_status,
-    expected_visualization_server_image,
-    expected_frontend_server_image,
-):
+        sync_server_from_arguments, data, expected_status, expected_visualization_server_image,
+        expected_frontend_server_image):
     """
     Nearly end-to-end test of how Controller serves .sync as a POST, taking variables as arguments
 
@@ -280,17 +250,13 @@ def test_sync_server_with_direct_passing_of_settings(
     results = json.loads(x.text)
 
     # Test overall status of whether children are ok
-    assert results["status"] == expected_status
+    assert results['status'] == expected_status
 
     # Poke a few children to test things that can vary by environment variable
-    assert (
-        results["children"][1]["spec"]["template"]["spec"]["containers"][0]["image"]
-        == expected_visualization_server_image
-    )
-    assert (
-        results["children"][5]["spec"]["template"]["spec"]["containers"][0]["image"]
-        == expected_frontend_server_image
-    )
+    assert results['children'][1]["spec"]["template"]["spec"]["containers"][0][
+               "image"] == expected_visualization_server_image
+    assert results['children'][5]["spec"]["template"]["spec"]["containers"][0][
+               "image"] == expected_frontend_server_image
 
 
 @pytest.mark.parametrize(
@@ -298,11 +264,10 @@ def test_sync_server_with_direct_passing_of_settings(
     [
         (ENV_IMAGES_WITH_TAGS, DATA_MISSING_PIPELINE_ENABLED, {}, []),
     ],
-    indirect=["sync_server"],
+    indirect=["sync_server"]
 )
-def test_sync_server_without_pipeline_enabled(
-    sync_server, data, expected_status, expected_children
-):
+def test_sync_server_without_pipeline_enabled(sync_server, data, expected_status,
+                                              expected_children):
     """
     Nearly end-to-end test of how Controller serves .sync as a POST
 
@@ -317,5 +282,5 @@ def test_sync_server_without_pipeline_enabled(
     results = json.loads(x.text)
 
     # Test overall status of whether children are ok
-    assert results["status"] == expected_status
-    assert results["children"] == expected_children
+    assert results['status'] == expected_status
+    assert results['children'] == expected_children

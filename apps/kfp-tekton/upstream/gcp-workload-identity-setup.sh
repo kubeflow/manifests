@@ -160,12 +160,12 @@ function bind_gsa_and_ksa {
 }
 
 echo "Binding each kfp system KSA to $SYSTEM_GSA"
-for ksa in "${SYSTEM_KSA[@]}"; do
+for ksa in ${SYSTEM_KSA[@]}; do
   bind_gsa_and_ksa $SYSTEM_GSA $ksa
 done
 
 echo "Binding each kfp user KSA to $USER_GSA"
-for ksa in "${USER_KSA[@]}"; do
+for ksa in ${USER_KSA[@]}; do
   bind_gsa_and_ksa $USER_GSA $ksa
 done
 
