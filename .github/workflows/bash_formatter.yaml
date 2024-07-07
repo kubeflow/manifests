@@ -13,6 +13,15 @@ jobs:
     - name: Install ShellCheck
       run: sudo apt install -y shellcheck
 
+    - name: Bash Formatting Guidelines
+      run: |
+        echo "### Bash Files Formatting Guidelines ###
+        If there are errors and warnings regarding your bash files,
+        You can check that error code definitions in https://www.shellcheck.net/wiki/ site.
+        You can correct them using the https://www.shellcheck.net/ site. 
+        You have to ignore disable errors in .shellcheckrc file.
+        "
+
     - name: Fetch master branch
       run: git fetch origin master
     
