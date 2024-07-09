@@ -1,0 +1,32 @@
+name: Proper Formatting on Python files
+
+on: [push, pull_request]
+
+jobs:
+  format_python_files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Python Files Formatting Guidelines
+        run: |
+          echo "### Python Files Formatting Guidelines ###
+          If there is a formatting errors in your python files, 
+          1. First install black 
+             It requires Python 3.8+ to run.
+             Install with  "pip install black" and if you use pipx, install Black with "pipx install black"
+             If you want to format Jupyter Notebooks, install with pip install "black[jupyter]"
+
+          2. Run the command 
+              "python -m black {source_file_or_directory}" or
+              "black {source_file_or_directory}" 
+             to format python files. 
+          "
+      
+      - uses: psf/black@stable
+        with:
+          src: |
+            ./common
+            ./example
+
+    
