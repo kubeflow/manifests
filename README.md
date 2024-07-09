@@ -111,7 +111,7 @@ The `example` directory contains an example kustomization for the single command
 
 #### Create kind cluster
 ```sh
-cat <<EOF | kind create cluster --name=kubeflow  --kubeconfig mycluster.yaml --config=-
+cat <<EOF | kind create cluster --name=kubeflow --config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
@@ -129,8 +129,8 @@ EOF
 
 #### Save kubeconfig
 ```sh
-mv ~/.kube/config ~/.kube/config_backup
-kind get kubeconfig --name kubeflow > ~/.kube/config
+kind get kubeconfig --name kubeflow > /tmp/kubeflow-config
+export KUBECONFIG=/tmp/kubeflow-config
 ```
 
 #### Create a Secret based on existing credentials in order to pull the images
