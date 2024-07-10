@@ -513,9 +513,9 @@ The Kubeflow security working group follows a responsible disclosure policy for 
 - **Internal Review**: All CVE findings are initially reviewed internally by the security working group.
 - **Severity Assessment**: Each CVE is assessed for severity and potential impact on the Kubeflow project.
 - **Disclosure**: For high and critical severity CVEs, the security working group will:
-  - Notify the maintainers and contributors.
-  - Try to provide a fix or mitigation strategy.
-  - Publicly disclose the CVE details once a fix is available, ensuring users can take necessary actions to secure their deployments.
+  - Notify the maintainers and contributors
+  - Try to provide a fix or mitigation strategy
+  - Publicly disclose the CVE details
 
 ## Frequently Asked Questions
 
