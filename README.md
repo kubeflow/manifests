@@ -506,7 +506,7 @@ The Manifest Working Group releases Kubeflow based on the [release timeline](htt
 ## CVE Scanning
 
 To view all past security scans, head to the [Image Extracting and Security Scanning GitHub Action workflow](https://github.com/kubeflow/manifests/actions/workflows/trivy.yaml). In the logs of the workflow you can expand the `Run image extracting and security scanning script` step to view the CVE logs. You will find a per-image CVE scan and a JSON dump of per-WorkingGroup aggregated metrics.
-You can run the Python script from the workflow file locally on your machine to obtain the detailed JSON files.
+You can run the Python script from the workflow file locally on your machine to obtain the detailed JSON files for any git commit.
 
 The Kubeflow security working group follows a responsible disclosure policy for CVE results:
 
