@@ -505,7 +505,17 @@ The Manifest Working Group releases Kubeflow based on the [release timeline](htt
 
 ## CVE Scanning
 
-The manifests repository runs a CVE scanning process when new pull requests are merged. For more information read the [CVE Scanning](./documents/CVE_Scanning.md) doc.
+To view all past security scans, head to the [Image Extracting and Security Scanning GitHub Action]. It shows the executions of the [Image Extracting and Security Scanning](https://github.com/kubeflow/manifests/actions/workflows/trivy.yaml) workflow. In the logs of the workflow you can expand the `Run image extracting and security scanning script` step to view the CVE logs. You will find a per-image CVE scan and a JSON dump of per-WorkingGroup aggregated metrics.
+You can run the Python script from the workflow file locally on your machine to obtain the detailed JSON files.
+
+The Kubeflow security working group follows a responsible disclosure policy for CVE results:
+
+- **Internal Review**: All CVE findings are initially reviewed internally by the security working group.
+- **Severity Assessment**: Each CVE is assessed for severity and potential impact on the Kubeflow project.
+- **Disclosure**: For high and critical severity CVEs, the security working group will:
+  - Notify the maintainers and contributors.
+  - Try to provide a fix or mitigation strategy.
+  - Publicly disclose the CVE details once a fix is available, ensuring users can take necessary actions to secure their deployments.
 
 ## Frequently Asked Questions
 
