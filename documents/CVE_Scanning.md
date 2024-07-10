@@ -38,6 +38,10 @@ The CVE scanning process runs on each merge to the master branch of the Kubeflow
 ### Results Storage
 The results of each scan are stored as part of the GitHub Actions job. The results can be viewed at the bottom of the job run output, such as in this example: [GitHub Actions Run](https://github.com/kubeflow/manifests/actions/runs/9744982451/job/26891834585).
 
+To view all past security scans, head to the [Actions](https://github.com/kubeflow/manifests/actions), then expand the workflows in the left sidebar and click on the [Image Extracting and Security Scanning](https://github.com/kubeflow/manifests/actions/workflows/trivy.yaml) workflow. Select one of the actions in the main list, then click on the main pipeline action to access the logs of the action, and expand the `Run image extracting and security scanning script` step to view the CVE logs. You will find a per-image CVE scan and a JSON dump of per-WorkingGroup aggregate metrics.
+
+The script also saves all these results locally for convenience. The folder locations and filenames are exposed at the end of the logs. You can run the script locally in your machine to these files.
+
 ## Retention Policy
 
 ### Results Retention
