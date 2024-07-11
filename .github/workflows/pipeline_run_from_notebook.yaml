@@ -4,10 +4,14 @@ on:
     paths:
       - .github/workflows/pipeline_run_from_notebook.yaml
       - apps/jupyter/notebook-controller/upstream/**
+      - apps/pipeline/upstream/**
       - tests/gh-actions/kind-cluster.yaml
       - tests/gh-actions/install_kind.sh
       - tests/gh-actions/install_kustomize.sh
       - tests/gh-actions/install_istio.sh
+      - tests/gh-actions/install_cert_manager.sh
+      - common/cert-manager/**
+      - common/oidc-client/oauth2-proxy/**
       - common/istio*/**
       - common/oidc-client/**
       - apps/jupyter/**
