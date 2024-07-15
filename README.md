@@ -473,6 +473,13 @@ Pick a password for the default user, with email `user@example.com`, and hash it
     python3 -c 'from passlib.hash import bcrypt; import getpass; print(bcrypt.using(rounds=12, ident="2y").hash(getpass.getpass()))'
     ```
 
+For example, running the above command locally with required packages like _passlib_ would look as follows:
+  ```sh
+  python3 -c 'from passlib.hash import bcrypt; import getpass; print(bcrypt.using(rounds=12, ident="2y").hash(getpass.getpass()))'
+  Password:       <--- Enter the password here
+  $2y$12$vIm8CANhuWui0J1p3jYeGeuM28Qcn76IFMaFWvZCG5ZkKZ4MjTF4u <--- GENERATED_HASH_FOR_ENTERED_PASSWORD
+  ```
+
 #### Before creating the cluster:
 
 1. Edit `common/dex/base/dex-passwords.yaml` and fill the relevant field with the hash of the password you chose:
@@ -480,7 +487,7 @@ Pick a password for the default user, with email `user@example.com`, and hash it
     ```yaml
     ...
       stringData:
-        DEX_USER_PASSWORD: <replace the generated hash here>
+        DEX_USER_PASSWORD: <REPLACE_WITH_HASH>
     ```
 
 #### After creating the cluster:
@@ -491,19 +498,19 @@ Pick a password for the default user, with email `user@example.com`, and hash it
     kubectl delete secret dex-passwords -n auth
     ```
 
-3. Create secret dex-passwords with new hash using the following command:
+2. Create secret dex-passwords with new hash using the following command:
 
     ```sh
-    kubectl create secret generic dex-passwords --from-literal=DEX_USER_PASSWORD='<place the generated hash here' -n auth
+    kubectl create secret generic dex-passwords --from-literal=DEX_USER_PASSWORD='REPLACE_WITH_HASH' -n auth
     ```
 
-4. Restart the _dex_ pod in auth namespace using the following command:
+3. Recreate the _dex_ pod in auth namespace using the following command:
 
     ```sh
     kubectl delete pods --all -n auth
     ```
 
-5. Try to login using the new dex password.
+4. Try to login using the new dex password.
 
 ## Upgrading and extending
 
