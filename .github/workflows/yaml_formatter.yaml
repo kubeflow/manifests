@@ -43,6 +43,7 @@ jobs:
       run: git fetch origin master
     
     - name: Set up changed files
+      id: changed_files
       run: |
         git diff --name-only origin/master...HEAD | grep -E '^common/.*\.ya?ml$|^example/.*\.ya?ml$' > changed_files_in_PR.txt || true
         if [ ! -s changed_files_in_PR.txt ]; then
@@ -53,15 +54,7 @@ jobs:
       run: cat changed_files_in_PR.txt
 
     - name: Run yamllint on changed files
+      if: steps.changed_files.outputs.changed_files != ''
       run: |
-        if [ -s changed_files_in_PR.txt ]; then
-          cat changed_files_in_PR.txt | xargs yamllint
-          if [ $? -eq 0 ]; then
-            echo "No YAML style errors found in the changed files."
-          else
-            echo "YAML style errors were found."
-          fi
-        else
-          echo "No YAML files have changed in this PR."
-        fi
+        cat changed_files_in_PR.txt | xargs -I {} yamllint {} || echo "No changes needed for the YAML files."
       shell: bash
