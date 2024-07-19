@@ -43,7 +43,6 @@ jobs:
       run: git fetch origin master
     
     - name: Set up changed files
-      id: changed_files
       run: |
         git diff --name-only origin/master...HEAD | grep -E '^common/.*\.ya?ml$|^example/.*\.ya?ml$' > changed_files_in_PR.txt || true
         if [ ! -s changed_files_in_PR.txt ]; then
