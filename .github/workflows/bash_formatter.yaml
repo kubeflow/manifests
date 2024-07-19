@@ -35,7 +35,7 @@ jobs:
 
     - name: Display changed files
       if: always()  # Always run this step
-      run: cat changed_files_in_PR.txt || echo "No files to display."
+      run: cat changed_files_in_PR.txt || echo "No bash files have changed in this PR."
 
     - name: Run ShellCheck on changed files
       if: steps.changed_files.outputs.changed_files != ''
