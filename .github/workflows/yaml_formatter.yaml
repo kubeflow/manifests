@@ -54,15 +54,16 @@ jobs:
       run: cat changed_files_in_PR.txt
 
     - name: Run yamllint on changed files
+      id: lint
       run: |
-        if [ -s changed_files_in_PR.txt ]; then
-          cat changed_files_in_PR.txt | xargs -I {} yamllint {} || exit 1
-        else
+        if grep -q 'No YAML files have changed in this PR.' changed_files_in_PR.txt; then
           echo "No YAML files have changed in this PR."
+        else
+          cat changed_files_in_PR.txt | xargs -I {} yamllint {} || exit 1
         fi
       shell: bash
 
     - name: Check YAML lint results
-      if: success()
+      if: success() && steps.lint.outcome == 'success'
       run: echo "No styling issues with YAML files."
       shell: bash
