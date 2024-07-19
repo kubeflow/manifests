@@ -26,15 +26,19 @@ jobs:
       run: git fetch origin master
     
     - name: Set up changed files
+      id: changed_files
       run: |
         git diff --name-only origin/master...HEAD | grep -E '^.*\.sh$' | grep -v '^apps/' > changed_files_in_PR.txt || true
-    
+        if [ ! -s changed_files_in_PR.txt ]; then
+          echo "No bash files have changed in this PR."
+        fi
+
     - name: Display changed files
-      run: cat changed_files_in_PR.txt
+      if: always()  # Always run this step
+      run: cat changed_files_in_PR.txt || echo "No files to display."
 
     - name: Run ShellCheck on changed files
+      if: steps.changed_files.outputs.changed_files != ''
       run: |
-        cat changed_files_in_PR.txt | xargs -I {} shellcheck {}
+        cat changed_files_in_PR.txt | xargs -I {} shellcheck {} || echo "No changes needed for the bash files."
       shell: bash
-      
-
