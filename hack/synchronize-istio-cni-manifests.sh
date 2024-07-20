@@ -44,7 +44,7 @@ then
 fi
 
 # Create the branch in the manifests repository
-  if ! git show-ref --verify --quiet refs/heads/$BRANCH; then
+       if ! git show-ref --verify --quiet refs/heads/$BRANCH; then
     git checkout -b $BRANCH
 else
     echo "Branch $BRANCH already exists."

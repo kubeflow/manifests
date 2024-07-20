@@ -38,7 +38,17 @@ jobs:
       run: cat changed_files_in_PR.txt || echo "No bash files have changed in this PR."
 
     - name: Run ShellCheck on changed files
-      if: steps.changed_files.outputs.changed_files != ''
+      id: lint
       run: |
-        cat changed_files_in_PR.txt | xargs -I {} shellcheck {} || echo "No changes needed for the bash files."
+        if grep -q 'No bash files have changed in this PR.' changed_files_in_PR.txt; then
+          echo "No bash files have changed in this PR."
+        else
+          cat changed_files_in_PR.txt | xargs -I {} shellcheck {} || exit 1
+        fi
       shell: bash
+
+    - name: Check Bash lint results
+      if: success() && steps.lint.outcome == 'success'
+      run: echo "No styling issues with Bash files."
+      shell: bash
+      
