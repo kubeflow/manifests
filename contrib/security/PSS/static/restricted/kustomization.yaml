@@ -7,3 +7,4 @@ patches:
 - path: patches/cert-manager-labels.yaml
 - path: patches/dex-labels.yaml
 - path: patches/oauth2-proxy-labels.yaml
+- path: patches/istio-labels.yaml
