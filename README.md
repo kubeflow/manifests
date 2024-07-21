@@ -465,24 +465,52 @@ If you absolutely need to expose Kubeflow over HTTP, you can disable the `Secure
 
 ### Change default user password
 
-For security reasons, we don't want to use the default password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password before deploying. To define a password for the default user:
+For security reasons, we don't want to use the default password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password and apply it either **before creating the cluster** or **after creating the cluster**. 
 
-1. Pick a password for the default user, with email `user@example.com`, and hash it using `bcrypt`:
-
-TODO this changed slightly in https://github.com/kubeflow/manifests/pull/2669 and https://github.com/kubeflow/manifests/pull/2229
+Pick a password for the default user, with email `user@example.com`, and hash it using `bcrypt`:
 
     ```sh
     python3 -c 'from passlib.hash import bcrypt; import getpass; print(bcrypt.using(rounds=12, ident="2y").hash(getpass.getpass()))'
     ```
 
-2. Edit `common/dex/base/config-map.yaml` and fill the relevant field with the hash of the password you chose:
+For example, running the above command locally with required packages like _passlib_ would look as follows:
+  ```sh
+  python3 -c 'from passlib.hash import bcrypt; import getpass; print(bcrypt.using(rounds=12, ident="2y").hash(getpass.getpass()))'
+  Password:       <--- Enter the password here
+  $2y$12$vIm8CANhuWui0J1p3jYeGeuM28Qcn76IFMaFWvZCG5ZkKZ4MjTF4u <--- GENERATED_HASH_FOR_ENTERED_PASSWORD
+  ```
+
+#### Before creating the cluster:
+
+1. Edit `common/dex/base/dex-passwords.yaml` and fill the relevant field with the hash of the password you chose:
 
     ```yaml
     ...
-      staticPasswords:
-      - email: user@example.com
-        hash: <enter the generated hash here>
+      stringData:
+        DEX_USER_PASSWORD: <REPLACE_WITH_HASH>
     ```
+
+#### After creating the cluster:
+
+1. Delete the existing secret _dex-passwords_ in auth namespace using the following command:
+
+    ```sh
+    kubectl delete secret dex-passwords -n auth
+    ```
+
+2. Create secret dex-passwords with new hash using the following command:
+
+    ```sh
+    kubectl create secret generic dex-passwords --from-literal=DEX_USER_PASSWORD='REPLACE_WITH_HASH' -n auth
+    ```
+
+3. Recreate the _dex_ pod in auth namespace using the following command:
+
+    ```sh
+    kubectl delete pods --all -n auth
+    ```
+
+4. Try to login using the new dex password.
 
 ## Upgrading and extending
 
