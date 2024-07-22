@@ -15,7 +15,7 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="v0.17.0-rc.0" # You can use tags as well
+COMMIT="v0.17.0" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kubeflow-katib}
 BRANCH=${BRANCH:=synchronize-kubeflow-katib-manifests-${COMMIT?}}
 
@@ -69,8 +69,8 @@ cp $SRC_DIR/katib/manifests/v1beta1 $DST_DIR -r
 echo "Successfully copied all manifests."
 
 echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kubeflow/katib/tree/.*/manifests/kustomize)"
-DST_TXT="\[$COMMIT\](https://github.com/kubeflow/katib/tree/$COMMIT/manifests/kustomize)"
+SRC_TXT="\[.*\](https://github.com/kubeflow/katib/tree/.*/manifests/v1beta1)"
+DST_TXT="\[$COMMIT\](https://github.com/kubeflow/katib/tree/$COMMIT/manifests/v1beta1)"
 
 sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
 
