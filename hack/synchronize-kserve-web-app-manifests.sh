@@ -11,7 +11,7 @@
 # repository, based on that local branch
 
 
-COMMIT="0.13.0-rc.0" # You can use tags as well
+COMMIT="0.13.0" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kserve-models-web-app}
 BRANCH=${BRANCH:=synchronize-kserve-web-app-manifests-${COMMIT?}}
 
