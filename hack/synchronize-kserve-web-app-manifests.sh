@@ -11,7 +11,7 @@
 # repository, based on that local branch
 
 
-COMMIT="0.13.0-rc.0" # You can use tags as well
+COMMIT="0.13.0" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kserve-models-web-app}
 BRANCH=${BRANCH:=synchronize-kserve-web-app-manifests-${COMMIT?}}
 
@@ -24,7 +24,7 @@ if [ -n "$(git status --porcelain)" ]; then
   echo "WARNING: You have uncommitted changes"
 fi
 
-if [ `git branch --list $BRANCH` ]
+if [ "$(git branch --list $BRANCH)" ]
 then
    echo "WARNING: Branch $BRANCH already exists."
 fi
@@ -39,11 +39,11 @@ echo "Checking out in $SRC_DIR to $COMMIT..."
 
 # Checkout the Model Registry repository
 mkdir -p $SRC_DIR
-cd $SRC_DIR
+cd $SRC_DIR || exit
 if [ ! -d "models-web-app/.git" ]; then
     git clone https://github.com/kserve/models-web-app.git
 fi
-cd $SRC_DIR/models-web-app
+cd $SRC_DIR/models-web-app || exit
 if ! git rev-parse --verify --quiet $COMMIT; then
     git checkout -b $COMMIT
 else
@@ -71,7 +71,7 @@ DST_TXT="\[$COMMIT\](https://github.com/kserve/models-web-app/tree/$COMMIT/confi
 sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
 
 echo "Committing the changes..."
-cd $MANIFESTS_DIR
+cd $MANIFESTS_DIR || exit
 git add contrib/kserve/models-web-app
 git add README.md
 git commit -s -m "Update kserve models web application manifests from ${COMMIT}"
