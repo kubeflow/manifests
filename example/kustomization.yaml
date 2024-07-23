@@ -90,9 +90,14 @@ resources:
 - ../contrib/kserve/kserve
 - ../contrib/kserve/models-web-app/overlays/kubeflow
 
+components:
 # Pod Security Standards
 # https://kubernetes.io/docs/concepts/security/pod-security-standards/
 # Uncomment to enable baseline level standards
 # - ../contrib/security/PSS/static/baseline
 # Uncomment to enable restricted level standards
 # - ../contrib/security/PSS/static/restricted
+# Uncomment to enable baseline level standards for dynamic namespaces
+# - ../contrib/security/PSS/dynamic/baseline
+# Uncomment to enable restricted level standards for dynamic namespaces
+# - ../contrib/security/PSS/dynamic/restricted
