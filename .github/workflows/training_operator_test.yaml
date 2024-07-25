@@ -51,7 +51,7 @@ jobs:
     - name: Install training operator
       run: ./tests/gh-actions/install_training_operator.sh
 
-    - name: Create a TFJob
+    - name: Create a PyTorchJob
       run: |
-        kubectl create -f tests/gh-actions/kf-objects/tfjob.yaml
-        kubectl wait --for=condition=Succeeded tfjobs tfjob-simple -n kubeflow-user-example-com --timeout 600s
+        kubectl create -f tests/gh-actions/kf-objects/training_operator_job.yaml -n kubeflow-user-example-com
+        kubectl wait --for=condition=Succeeded PyTorchJob pytorch-simple -n kubeflow-user-example-com --timeout 600s
