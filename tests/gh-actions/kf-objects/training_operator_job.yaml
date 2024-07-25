@@ -1,5 +1,5 @@
 # from https://github.com/kubeflow/training-operator/blob/master/examples/pytorch/simple.yaml
-# and disabled istio as stated in the documentation
+# and disabled istio as stated in the documentation https://www.kubeflow.org/docs/components/training/user-guides/pytorch/
 apiVersion: "kubeflow.org/v1"
 kind: PyTorchJob
 metadata:
