@@ -1,0 +1,57 @@
+name: Build & Apply Training Operator manifests in KinD
+on:
+  pull_request:
+    paths:
+      - .github/workflows/training_operator_test.yaml
+      - apps/training-operator/upstream/**
+      - tests/gh-actions/kind-cluster.yaml
+      - tests/gh-actions/install_kind.sh
+      - tests/gh-actions/install_kustomize.sh
+      - tests/gh-actions/install_istio.sh
+      - common/istio*/**
+      - tests/gh-actions/kf-objects/tfjob.yaml
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install KinD
+      run: ./tests/gh-actions/install_kind.sh
+
+    - name: Create KinD Cluster
+      run: kind create cluster --config tests/gh-actions/kind-cluster.yaml
+
+    - name: Install kustomize
+      run: ./tests/gh-actions/install_kustomize.sh
+
+    - name: Install kubectl
+      run: ./tests/gh-actions/install_kubectl.sh
+
+    - name: Install Istio with external authentication
+      run: ./tests/gh-actions/install_istio_with_ext_auth.sh
+
+    - name: Install cert-manager
+      run: ./tests/gh-actions/install_cert_manager.sh
+
+    - name: Create kubeflow namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+    - name: Install KF Multi Tenancy
+      run: ./tests/gh-actions/install_multi_tenancy.sh
+
+    - name: Install kubeflow-istio-resources
+      run: kustomize build common/istio-1-22/kubeflow-istio-resources/base | kubectl apply -f -
+
+    - name: Create KF Profile
+      run: kustomize build common/user-namespace/base | kubectl apply -f -
+
+    - name: Install training operator
+      run: ./tests/gh-actions/install_training_operator.sh
+
+    - name: Create a PyTorchJob
+      run: |
+        kubectl create -f tests/gh-actions/kf-objects/training_operator_job.yaml -n kubeflow-user-example-com
+        kubectl wait --for=condition=Succeeded PyTorchJob pytorch-simple -n kubeflow-user-example-com --timeout 600s

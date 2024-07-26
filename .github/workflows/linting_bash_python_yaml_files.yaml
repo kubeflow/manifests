@@ -1,6 +1,6 @@
 name: Proper linting on Bash, Python, and YAML files
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   format_python_files:
