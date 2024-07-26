@@ -10,3 +10,6 @@ kustomize build common/kubeflow-roles/base | kubectl apply -f -
 
 echo "Installing Multitenancy Network policies"
 kustomize build common/networkpolicies/base | kubectl apply -f -
+
+echo "Enabling restricted levels Pod Security Standards to kubeflow namespace"
+kubectl patch namespace kubeflow --patch-file contrib/security/PSS/static/restricted/patches/kubeflow-labels.yaml
