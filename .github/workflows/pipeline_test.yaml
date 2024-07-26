@@ -10,7 +10,7 @@ on:
       - tests/gh-actions/install_istio.sh
       - tests/gh-actions/install_cert_manager.sh
       - common/cert-manager/**
-      - common/oidc-client/oauth2-proxy/**
+      - common/oauth2-proxy/**
       - common/istio*/**
       - tests/gh-actions/install_istio_with_ext_auth.sh
 

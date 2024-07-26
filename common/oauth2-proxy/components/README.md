@@ -41,7 +41,7 @@ emerges as a more advanced authentication proxy. It boasts broader community sup
 widely used in the industry, including in the official Istio documentation on [External
 Authorization](https://istio.io/latest/docs/tasks/security/authorization/authz-custom).
 
-For more details on the `oauth2-proxy`, refer to the [official documentation](https:/oauth2-proxy.github.io/oauth2-proxy/docs/behaviour).
+For more details on the `oauth2-proxy`, refer to the [official documentation](https://oauth2-proxy.github.io/oauth2-proxy/docs/behaviour).
 
 ## Available Components
 

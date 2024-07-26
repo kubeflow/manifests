@@ -7,7 +7,7 @@ on:
       - tests/gh-actions/install_kind.sh
       - tests/gh-actions/install_kustomize.sh
       - contrib/kserve/**
-      - common/oidc-client/oauth2-proxy/**
+      - common/oauth2-proxy/**
       - common/istio*/**
       - tests/gh-actions/install_istio_with_ext_auth.sh*
       - tests/gh-actions/install_cert_manager.sh

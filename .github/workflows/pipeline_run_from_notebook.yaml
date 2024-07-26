@@ -11,9 +11,9 @@ on:
       - tests/gh-actions/install_istio.sh
       - tests/gh-actions/install_cert_manager.sh
       - common/cert-manager/**
-      - common/oidc-client/oauth2-proxy/**
+      - common/oauth2-proxy/**
       - common/istio*/**
-      - common/oidc-client/**
+      - common//**
       - apps/jupyter/**
 
 jobs:
