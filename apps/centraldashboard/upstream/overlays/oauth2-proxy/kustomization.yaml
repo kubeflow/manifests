@@ -6,4 +6,4 @@ resources:
 - ../kserve
 
 components:
-- ../../../../../common/oidc-client/oauth2-proxy/components/central-dashboard
+- ../../../../../common/oauth2-proxy/components/central-dashboard

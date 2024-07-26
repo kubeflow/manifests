@@ -41,7 +41,7 @@ emerges as a more advanced authentication proxy. It boasts broader community sup
 widely used in the industry, including in the official Istio documentation on [External
 Authorization](https://istio.io/latest/docs/tasks/security/authorization/authz-custom).
 
-For more details on the `oauth2-proxy`, refer to the [official documentation](https://oauth2-proxy.github.io/oauth2-proxy/docs/behaviour).
+For more details on the `oauth2-proxy`, refer to the [official documentation](https:/oauth2-proxy.github.io/oauth2-proxy/docs/behaviour).
 
 ## Available Components
 
@@ -177,9 +177,9 @@ make the following changes to the `example/kustomization.yaml` file:
   bearer tokens with self-signed in-cluster issuer
   ```
   # from
-  - ../common/oidc-client/oidc-authservice/base
+  - ../common//oidc-authservice/base
   # to
-  - ../common/oidc-client/oauth2-proxy/overlays/m2m-self-signed
+  - ../common/oauth2-proxy/overlays/m2m-self-signed
   ```
 * change Dex overlay
   ```
@@ -208,10 +208,10 @@ index c1a85789..4a50440c 100644
  - ../common/istio-1-22/istio-namespace/base
 -- ../common/istio-1-22/istio-install/base
 -# OIDC Authservice
--- ../common/oidc-client/oidc-authservice/base
+-- ../common//oidc-authservice/base
 +- ../common/istio-1-22/istio-install/overlays/oauth2-proxy
 +# oauth2-proxy for OIDC
-+- ../common/oidc-client/oauth2-proxy/overlays/m2m-self-signed
++- ../common/oauth2-proxy/overlays/m2m-self-signed
  # Dex
 -- ../common/dex/overlays/istio
 +- ../common/dex/overlays/oauth2-proxy

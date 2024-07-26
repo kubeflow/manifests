@@ -13,7 +13,7 @@ the platform-managed Kubernetes OIDC issuer in the `RequestAuthentication` for s
 and authentication compliance with the platform's security standards.
 
 For scenarios where the OIDC issuer is served behind self-signed certificates, the kustomize
-overlay using this component should include the `common/oidc-client/oauth2-proxy/components/configure-self-signed-kubernetes-oidc-issuer`
+overlay using this component should include the `common/oauth2-proxy/components/configure-self-signed-kubernetes-oidc-issuer`
 component. This additional configuration is necessary to handle the self-signed nature of the
-certificates. This setup is the default in the Kustomize overlay defined in `common/oidc-client/oauth2-proxy/overlays/m2m-self-signed`,
+certificates. This setup is the default in the Kustomize overlay defined in `common/oauth2-proxy/overlays/m2m-self-signed`,
 which is tailored for environments with self-signed OIDC issuers.

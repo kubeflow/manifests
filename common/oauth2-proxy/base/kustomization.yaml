@@ -48,7 +48,7 @@ configMapGenerator:
   # If extra jwt issuers are meant to be used with m2m bearer tokens,
   # each issuer has to be added with RequestAuthentication so Istio can
   # verify, trust and use the JWT. See
-  # 'common/oidc-client/oauth2-proxy/components/istio-m2m' for details.
+  # 'common/oauth2-proxy/components/istio-m2m' for details.
   # Examples:
   # - EXTRA_JWT_ISSUERS=https://kubernetes.default.svc.cluster.local=https://kubernetes.default.svc.cluster.local
   # - EXTRA_JWT_ISSUERS=https://oidc.eks.region.amazonaws.com/id/1234abcd=https://kubernetes.default.svc
