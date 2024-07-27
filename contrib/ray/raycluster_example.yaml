@@ -1,9 +1,10 @@
-apiVersion: ray.io/v1alpha1
+apiVersion: apiVersion: ray.io/v1
 kind: RayCluster
 metadata:
   name: kubeflow-raycluster
 spec:
   rayVersion: '2.23.0'
+  enableInTreeAutoscaling: true
   # Ray head pod configuration
   headGroupSpec:
     # Kubernetes Service Type.
