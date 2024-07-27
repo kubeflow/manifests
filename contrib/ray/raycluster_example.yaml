@@ -1,4 +1,4 @@
-apiVersion: apiVersion: ray.io/v1
+apiVersion: ray.io/v1
 kind: RayCluster
 metadata:
   name: kubeflow-raycluster
