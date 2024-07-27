@@ -17,6 +17,8 @@ kubeadmConfigPatches:
       extraArgs:
         "service-account-issuer": "kubernetes.default.svc"
         "service-account-signing-key-file": "/etc/kubernetes/pki/sa.key"
+networking:
+  disableDefaultCNI: true
 nodes:
 - role: control-plane
   image: kindest/node:v1.29.4@sha256:3abb816a5b1061fb15c6e9e60856ec40d56b7b52bcea5f5f1350bc6e2320b6f8
