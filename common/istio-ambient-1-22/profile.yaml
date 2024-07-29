@@ -28,4 +28,3 @@ spec:
       configValidation: true
       istioNamespace: istio-system
     profile: ambient
-
