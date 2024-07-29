@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
 # Using kserve overlay because it's also used in example installation.
-- ../kserve
+-  ../../upstream/overlays/kserve
 
 components:
-- ../../../../../common/oauth2-proxy/components/central-dashboard
+- ../../../../common/oauth2-proxy/components/central-dashboard

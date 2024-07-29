@@ -192,7 +192,7 @@ make the following changes to the `example/kustomization.yaml` file:
   # from
   - ../apps/centraldashboard/upstream/overlays/kserve
   # to
-  - ../apps/centraldashboard/upstream/overlays/oauth2-proxy
+  - ../apps/centraldashboard/manuel-patches/overlays/oauth2-proxy
   ```
 
 All those changes combined can be done with this single command:
@@ -223,7 +223,7 @@ index c1a85789..4a50440c 100644
  - ../apps/katib/upstream/installs/katib-with-kubeflow
  # Central Dashboard
 -- ../apps/centraldashboard/upstream/overlays/kserve
-+- ../apps/centraldashboard/upstream/overlays/oauth2-proxy
++- ../apps/centraldashboard/manuel-patches/oauth2-proxy
  # Admission Webhook
  - ../apps/admission-webhook/upstream/overlays/cert-manager
  # Jupyter Web App
