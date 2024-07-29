@@ -463,6 +463,19 @@ If you absolutely need to expose Kubeflow over HTTP, you can disable the `Secure
 
 ---
 
+### Change default user name
+
+For security reasons, we don't want to use the default username and email for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own username and email before deploying. To define it for the default user:
+
+1. Edit `common/dex/overlays/oauth2-proxy/config-map.yaml` and fill the relevant field with your email and preferred username:
+
+    ```yaml
+    ...
+      staticPasswords:
+      - email: <REPLACE_WITH_YOUR_EMAIL>
+        username: <REPLACE_WITH_PREFERRED_USERNAME>
+    ```
+
 ### Change default user password
 
 For security reasons, we don't want to use the default password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password and apply it either **before creating the cluster** or **after creating the cluster**. 
