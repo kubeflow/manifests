@@ -223,7 +223,7 @@ index c1a85789..4a50440c 100644
  - ../apps/katib/upstream/installs/katib-with-kubeflow
  # Central Dashboard
 -- ../apps/centraldashboard/upstream/overlays/kserve
-+- ../apps/centraldashboard/manuel-patches/oauth2-proxy
++- ../apps/centraldashboard/overlays
  # Admission Webhook
  - ../apps/admission-webhook/upstream/overlays/cert-manager
  # Jupyter Web App
