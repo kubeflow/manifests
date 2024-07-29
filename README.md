@@ -561,6 +561,6 @@ The Kubeflow security working group follows a responsible disclosure policy for 
 ## Frequently Asked Questions
 
 - **Q:** What versions of Istio, Knative, Cert-Manager, Argo, ... are compatible with Kubeflow? \
-  **A:** Please refer to each individual component's documentation for a dependency compatibility range. For Istio, Knative, Dex, Cert-Manager and OAUTH2, the versions in `common` are the ones we have validated.
+  **A:** Please refer to each individual component's documentation for a dependency compatibility range. For Istio, Knative, Dex, Cert-Manager and OAuth2 Proxy, the versions in `common` are the ones we have validated.
 - **Q:** Can I use earlier version of Kustomize with Kubeflow manifests?
   **A:** No, it is not supported anymore, although it might be possible with manual effort.
