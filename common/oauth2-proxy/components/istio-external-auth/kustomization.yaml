@@ -5,7 +5,7 @@ resources:
 - authorizationpolicy.istio-ingressgateway-oauth2-proxy.yaml
 - requestauthentication.dex-jwt.yaml
 
-# If you're running Kubeflow behind CloudFlare, use 
+# If you're running Kubeflow behind CloudFlare, use
 # authorizationpolicy.istio-ingressgateway-oauth2-proxy-cloudflare.yaml
-# instead of 
+# instead of
 # authorizationpolicy.istio-ingressgateway-oauth2-proxy.yaml

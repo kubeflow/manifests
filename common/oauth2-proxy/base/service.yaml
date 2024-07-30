@@ -7,7 +7,7 @@ spec:
   selector:
     app.kubernetes.io/name: oauth2-proxy
   ports:
-    - port: 80
-      name: http
-      targetPort: http
+  - port: 80
+    name: http
+    targetPort: http
   publishNotReadyAddresses: true

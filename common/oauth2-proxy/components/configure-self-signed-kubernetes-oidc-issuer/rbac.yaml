@@ -11,13 +11,13 @@ metadata:
   name: kubeflow-m2m-oidc-configurator
   namespace: istio-system
 rules:
-  - apiGroups:
-      - security.istio.io
-    resources:
-      - requestauthentications
-    verbs:
-      - get
-      - patch
+- apiGroups:
+  - security.istio.io
+  resources:
+  - requestauthentications
+  verbs:
+  - get
+  - patch
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -30,6 +30,6 @@ roleRef:
   kind: Role
   name: kubeflow-m2m-oidc-configurator
 subjects:
-  - kind: ServiceAccount
-    name: kubeflow-m2m-oidc-configurator
-    namespace: istio-system
+- kind: ServiceAccount
+  name: kubeflow-m2m-oidc-configurator
+  namespace: istio-system
