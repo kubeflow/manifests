@@ -11,19 +11,17 @@ jobs:
     - name: Python Files Formatting Guidelines
       run: |
         echo "### Python Files Formatting Guidelines ###
-        If there is a formatting error in your python files, 
-        1. First install black 
+        If there is a formatting error in your python files,
+        1. First install black
             It requires Python 3.8+ to run.
             Install with  'pip install black' and if you use pipx, install Black with 'pipx install black'.
             If you want to format Jupyter Notebooks, install with 'pip install black[jupyter]'.
 
-        2. Run the command 
+        2. Run the command
             'python -m black {source_file_or_directory}' or
-            'black {source_file_or_directory}' 
-            to format python files. 
+            'black {source_file_or_directory}'
+            to format python files.
         "
-
-
     - uses: psf/black@stable
       with:
         src: |
@@ -46,11 +44,12 @@ jobs:
         If there is a formatting error in your YAML file, you will see errors like the one below:
         'Error: 6:4 [indentation] wrong indentation: expected 2 but found 3'
 
+        6:4 means line 6, column 4.
+
         To fix these errors, refer to the YAML formatting rules at:
         https://yamllint.readthedocs.io/en/stable/rules.html#
 
         Search for the keyword inside the brackets [] in the error message. In this example, it's 'indentation'.
-
         Note: Some rules have been customized in the '.yamllint.yaml' file. Below is the content of that file:
 
         extends: default
@@ -72,7 +71,7 @@ jobs:
     - name: Set up changed files
       id: changed_files
       run: |
-        git diff --name-only origin/master...HEAD | grep -E '^common/.*\.ya?ml$|^example/.*\.ya?ml$' > changed_files_in_PR.txt || true
+        git diff --name-status origin/master...HEAD | grep -E '^[AM].*\.(yaml|yml)$' | awk '{print $2}' > changed_files_in_PR.txt || true
         if [ ! -s changed_files_in_PR.txt ]; then
           echo "No YAML files have changed in this PR." > changed_files_in_PR.txt
         fi
@@ -120,7 +119,7 @@ jobs:
     - name: Set up changed files
       id: changed_files
       run: |
-        git diff --name-only origin/master...HEAD | grep -E '^.*\.sh$' | grep -v '^apps/' > changed_files_in_PR.txt || true
+        git diff --name-only origin/master...HEAD | grep -E '^[AM].*\.sh$' | grep -v '^apps/' | awk '{print $2}' > changed_files_in_PR.txt || true
         if [ ! -s changed_files_in_PR.txt ]; then
           echo "No bash files have changed in this PR."
         fi
