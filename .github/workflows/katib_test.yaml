@@ -2,11 +2,11 @@ name: Build & Apply Katib manifests in KinD
 on:
   pull_request:
     paths:
-      - .github/workflows/katib_test.yaml
-      - apps/katib/upstream/**
-      - tests/gh-actions/install_istio.sh
-      - tests/gh-actions/install_cert_manager.sh
-      - common/cert-manager/**
+    - .github/workflows/katib_test.yaml
+    - apps/katib/upstream/**
+    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_cert_manager.sh
+    - common/cert-manager/**
 
 jobs:
   build:

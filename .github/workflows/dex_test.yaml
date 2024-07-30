@@ -2,9 +2,9 @@ name: Build & Apply Dex manifests in KinD
 on:
   pull_request:
     paths:
-      - .github/workflows/dex_test.yaml
-      - common/dex/base/**
-      - tests/gh-actions/install_istio.sh
+    - .github/workflows/dex_test.yaml
+    - common/dex/base/**
+    - tests/gh-actions/install_istio.sh
 
 jobs:
   build:
