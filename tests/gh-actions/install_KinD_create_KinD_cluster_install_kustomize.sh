@@ -8,7 +8,7 @@ error_exit() {
 
 trap 'error_exit $LINENO' ERR
 
-echo "Fetching KinD executable ..."
+echo "Install KinD..."
 sudo swapoff -a
 
 # This conditional helps running GH Workflows through
@@ -25,15 +25,9 @@ fi
     sudo mv kind /usr/local/bin
 } || { echo "Failed to install KinD"; exit 1; }
 
-echo "Fetching Kustomize ..."
-{
-    curl --silent --location --remote-name "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.2.1/kustomize_v5.2.1_linux_amd64.tar.gz"
-    tar -xzvf kustomize_v5.2.1_linux_amd64.tar.gz
-    chmod a+x kustomize
-    sudo mv kustomize /usr/local/bin/kustomize
-} || { echo "Failed to install Kustomize"; exit 1; }
 
-cat <<EOF > kind-config.yaml
+echo "Creating KinD cluster ..."
+echo "
 apiVersion: kind.x-k8s.io/v1alpha4
 kind: Cluster
 # Configure registry for KinD.
@@ -60,6 +54,13 @@ nodes:
   image: kindest/node:v1.29.4@sha256:3abb816a5b1061fb15c6e9e60856ec40d56b7b52bcea5f5f1350bc6e2320b6f8
 - role: worker
   image: kindest/node:v1.29.4@sha256:3abb816a5b1061fb15c6e9e60856ec40d56b7b52bcea5f5f1350bc6e2320b6f8
-EOF
+" | kind create cluster --config -
 
-echo "KinD and Kustomize have been installed and the KinD configuration has been created in 'kind-config.yaml'."
+
+echo "Install Kustomize ..."
+{
+    curl --silent --location --remote-name "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.2.1/kustomize_v5.2.1_linux_amd64.tar.gz"
+    tar -xzvf kustomize_v5.2.1_linux_amd64.tar.gz
+    chmod a+x kustomize
+    sudo mv kustomize /usr/local/bin/kustomize
+} || { echo "Failed to install Kustomize"; exit 1; }
