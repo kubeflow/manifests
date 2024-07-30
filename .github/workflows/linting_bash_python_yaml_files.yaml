@@ -11,7 +11,7 @@ jobs:
     - name: Python Files Formatting Guidelines
       run: |
         echo "### Python Files Formatting Guidelines ###
-        If there is a formatting error in your python files, 
+        If there is a formatting error in your python files,
         1. First install black
             It requires Python 3.8+ to run.
             Install with  'pip install black' and if you use pipx, install Black with 'pipx install black'.
@@ -22,7 +22,7 @@ jobs:
             'black {source_file_or_directory}'
             to format python files.
         "
-      
+    
     - uses: psf/black@stable
       with:
         src: |
@@ -38,18 +38,20 @@ jobs:
 
     - name: Install yamllint
       run: pip install yamllint
-    
+  
     - name: YAML Formatting Guidelines
       run: |
         echo "### YAML Formatting Guidelines ###
         If there is a formatting error in your YAML file, you will see errors like the one below:
         'Error: 6:4 [indentation] wrong indentation: expected 2 but found 3'
-        
+
+        6:4 means line 6, column 4.
+
         To fix these errors, refer to the YAML formatting rules at:
         https://yamllint.readthedocs.io/en/stable/rules.html#
-        
+     
         Search for the keyword inside the brackets [] in the error message. In this example, it's 'indentation'.
-        
+       
         Note: Some rules have been customized in the '.yamllint.yaml' file. Below is the content of that file:
 
         extends: default
@@ -67,7 +69,7 @@ jobs:
 
     - name: Fetch master branch
       run: git fetch origin master
-    
+ 
     - name: Set up changed files
       id: changed_files
       run: |
@@ -115,7 +117,7 @@ jobs:
 
     - name: Fetch master branch
       run: git fetch origin master
-    
+ 
     - name: Set up changed files
       id: changed_files
       run: |
