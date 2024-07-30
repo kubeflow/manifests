@@ -22,7 +22,7 @@ jobs:
             'black {source_file_or_directory}'
             to format python files.
         "
-    
+   
     - uses: psf/black@stable
       with:
         src: |
@@ -38,7 +38,7 @@ jobs:
 
     - name: Install yamllint
       run: pip install yamllint
-  
+
     - name: YAML Formatting Guidelines
       run: |
         echo "### YAML Formatting Guidelines ###
@@ -49,9 +49,9 @@ jobs:
 
         To fix these errors, refer to the YAML formatting rules at:
         https://yamllint.readthedocs.io/en/stable/rules.html#
-     
+
         Search for the keyword inside the brackets [] in the error message. In this example, it's 'indentation'.
-       
+   
         Note: Some rules have been customized in the '.yamllint.yaml' file. Below is the content of that file:
 
         extends: default
@@ -69,7 +69,7 @@ jobs:
 
     - name: Fetch master branch
       run: git fetch origin master
- 
+
     - name: Set up changed files
       id: changed_files
       run: |
@@ -117,7 +117,7 @@ jobs:
 
     - name: Fetch master branch
       run: git fetch origin master
- 
+
     - name: Set up changed files
       id: changed_files
       run: |
