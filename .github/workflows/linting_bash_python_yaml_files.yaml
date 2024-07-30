@@ -22,7 +22,7 @@ jobs:
             'black {source_file_or_directory}'
             to format python files.
         "
-   
+ 
     - uses: psf/black@stable
       with:
         src: |
@@ -51,7 +51,7 @@ jobs:
         https://yamllint.readthedocs.io/en/stable/rules.html#
 
         Search for the keyword inside the brackets [] in the error message. In this example, it's 'indentation'.
-   
+  
         Note: Some rules have been customized in the '.yamllint.yaml' file. Below is the content of that file:
 
         extends: default
