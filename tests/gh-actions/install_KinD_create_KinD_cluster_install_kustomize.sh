@@ -1,29 +1,65 @@
 #!/bin/bash
-
 set -e
 
-# Function to handle errors
-handle_error() {
-    echo "Error: $1"
+error_exit() {
+    echo "Error occurred in script at line: ${1}."
     exit 1
 }
 
-# Install KinD
-echo "Installing KinD..."
-if ! ./tests/gh-actions/install_kind.sh; then
-    handle_error "Failed to install KinD"
+trap 'error_exit $LINENO' ERR
+
+echo "Fetching KinD executable ..."
+sudo swapoff -a
+
+# This conditional helps running GH Workflows through
+# [act](https://github.com/nektos/act)
+if [ -e /swapfile ]; then
+    sudo rm -f /swapfile
+    sudo mkdir -p /tmp/etcd
+    sudo mount -t tmpfs tmpfs /tmp/etcd
 fi
 
-# Create KinD Cluster
-echo "Creating KinD Cluster..."
-if ! kind create cluster --config tests/gh-actions/kind-cluster.yaml; then
-    handle_error "Failed to create KinD cluster"
-fi
+{
+    curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+    chmod +x ./kind
+    sudo mv kind /usr/local/bin
+} || { echo "Failed to install KinD"; exit 1; }
 
-# Install kustomize
-echo "Installing kustomize..."
-if ! ./tests/gh-actions/install_kustomize.sh; then
-    handle_error "Failed to install kustomize"
-fi
+echo "Fetching Kustomize ..."
+{
+    curl --silent --location --remote-name "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.2.1/kustomize_v5.2.1_linux_amd64.tar.gz"
+    tar -xzvf kustomize_v5.2.1_linux_amd64.tar.gz
+    chmod a+x kustomize
+    sudo mv kustomize /usr/local/bin/kustomize
+} || { echo "Failed to install Kustomize"; exit 1; }
 
-echo "All steps completed successfully."
+cat <<EOF > kind-config.yaml
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+# Configure registry for KinD.
+containerdConfigPatches:
+- |-
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."$REGISTRY_NAME:$REGISTRY_PORT"]
+    endpoint = ["http://$REGISTRY_NAME:$REGISTRY_PORT"]
+# This is needed in order to support projected volumes with service account tokens.
+# See: https://kubernetes.slack.com/archives/CEKK1KTN2/p1600268272383600
+kubeadmConfigPatches:
+  - |
+    apiVersion: kubeadm.k8s.io/v1beta2
+    kind: ClusterConfiguration
+    metadata:
+      name: config
+    apiServer:
+      extraArgs:
+        "service-account-issuer": "kubernetes.default.svc"
+        "service-account-signing-key-file": "/etc/kubernetes/pki/sa.key"
+nodes:
+- role: control-plane
+  image: kindest/node:v1.29.4@sha256:3abb816a5b1061fb15c6e9e60856ec40d56b7b52bcea5f5f1350bc6e2320b6f8
+- role: worker
+  image: kindest/node:v1.29.4@sha256:3abb816a5b1061fb15c6e9e60856ec40d56b7b52bcea5f5f1350bc6e2320b6f8
+- role: worker
+  image: kindest/node:v1.29.4@sha256:3abb816a5b1061fb15c6e9e60856ec40d56b7b52bcea5f5f1350bc6e2320b6f8
+EOF
+
+echo "KinD and Kustomize have been installed and the KinD configuration has been created in 'kind-config.yaml'."
