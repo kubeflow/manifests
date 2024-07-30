@@ -2,19 +2,19 @@ name: Create Pipeline Run from Kubeflow Notebook
 on:
   pull_request:
     paths:
-      - .github/workflows/pipeline_run_from_notebook.yaml
-      - apps/jupyter/notebook-controller/upstream/**
-      - apps/pipeline/upstream/**
-      - tests/gh-actions/kind-cluster.yaml
-      - tests/gh-actions/install_kind.sh
-      - tests/gh-actions/install_kustomize.sh
-      - tests/gh-actions/install_istio.sh
-      - tests/gh-actions/install_cert_manager.sh
-      - common/cert-manager/**
-      - common/oauth2-proxy/**
-      - common/istio*/**
-      - common//**
-      - apps/jupyter/**
+    - .github/workflows/pipeline_run_from_notebook.yaml
+    - apps/jupyter/notebook-controller/upstream/**
+    - apps/pipeline/upstream/**
+    - tests/gh-actions/kind-cluster.yaml
+    - tests/gh-actions/install_kind.sh
+    - tests/gh-actions/install_kustomize.sh
+    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_cert_manager.sh
+    - common/cert-manager/**
+    - common/oauth2-proxy/**
+    - common/istio*/**
+    - common//**
+    - apps/jupyter/**
 
 jobs:
   build:

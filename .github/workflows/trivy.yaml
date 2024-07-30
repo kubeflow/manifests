@@ -3,48 +3,48 @@ name: Image Extracting and Security Scanning
 on:
   push:
     branches:
-      - master
+    - master
 
 jobs:
   image-extraction-and-security-scan:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      # Install kustomize
-      - name: Install kustomize
-        run: |
-          sudo apt update
-          sudo apt install snapd
-          sudo snap install kustomize
+    # Install kustomize
+    - name: Install kustomize
+      run: |
+        sudo apt update
+        sudo apt install snapd
+        sudo snap install kustomize
 
-      # Install trivy
-      - name: Install trivy
-        run: |
-          sudo apt update
-          sudo snap install trivy
+    # Install trivy
+    - name: Install trivy
+      run: |
+        sudo apt update
+        sudo snap install trivy
 
-      # Install Python
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12' 
-  
-      # Install prettytable package
-      - name: Install prettytable
-        run: |
-          pip install prettytable
+    # Install Python
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
 
-      - name: Run image extracting and security scanning script
-        run: |
-          cd hack
-          python3 trivy_scan.py
+    # Install prettytable package
+    - name: Install prettytable
+      run: |
+        pip install prettytable
 
-      # - name: Upload trivy scanned_results
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: trivy_scanned_results
-      #     path: image_lists/
+    - name: Run image extracting and security scanning script
+      run: |
+        cd hack
+        python3 trivy_scan.py
 
-      
+    # - name: Upload trivy scanned_results
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: trivy_scanned_results
+    #     path: image_lists/
+
+

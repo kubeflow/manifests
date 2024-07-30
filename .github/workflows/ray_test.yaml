@@ -2,10 +2,10 @@ name: Build & Apply Ray manifest in KinD
 on:
   pull_request:
     paths:
-      - .github/workflows/ray_test.yaml
-      - contrib/ray/**
-      - tests/gh-actions/install_kind.sh
-      - tests/gh-actions/install_kustomize.sh
+    - .github/workflows/ray_test.yaml
+    - contrib/ray/**
+    - tests/gh-actions/install_kind.sh
+    - tests/gh-actions/install_kustomize.sh
 
 jobs:
   build:

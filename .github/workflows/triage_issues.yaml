@@ -10,10 +10,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Update Kanban
-        uses: kubeflow/code-intelligence/Issue_Triage/action@master
-        with:
-          # Letting input NEEDS_TRIAGE_PROJECT_CARD_ID use the default value
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.triage_projects_github_token }}
+    - name: Update Kanban
+      uses: kubeflow/code-intelligence/Issue_Triage/action@master
+      with:
+        # Letting input NEEDS_TRIAGE_PROJECT_CARD_ID use the default value
+        ISSUE_NUMBER: ${{ github.event.issue.number }}
+        GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.triage_projects_github_token }}
 

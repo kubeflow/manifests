@@ -4,11 +4,11 @@ name: Deploy and test Kubeflow Model Registry
 on:
   pull_request:
     paths:
-      - apps/model-registry/upstream/**
-      - tests/gh-actions/kind-cluster.yaml
-      - tests/gh-actions/install_kustomize.sh
-      - tests/gh-actions/install_istio.sh
-      - common/istio*/**
+    - apps/model-registry/upstream/**
+    - tests/gh-actions/kind-cluster.yaml
+    - tests/gh-actions/install_kustomize.sh
+    - tests/gh-actions/install_istio.sh
+    - common/istio*/**
 
 jobs:
   build-kfmr:

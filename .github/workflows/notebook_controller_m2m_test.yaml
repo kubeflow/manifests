@@ -2,15 +2,15 @@ name: Test Notebook Controller with m2m auth manifests in KinD
 on:
   pull_request:
     paths:
-      - .github/workflows/notebook_controller_m2m_test.yaml
-      - tests/gh-actions/kind-cluster.yaml
-      - tests/gh-actions/install_kind.sh
-      - tests/gh-actions/install_kustomize.sh
-      - apps/jupyter/**
-      - common/oauth2-proxy/**
-      - common/istio*/**
-      - tests/gh-actions/install_istio_with_ext_auth.sh*
-      - tests/gh-actions/install_multi_tenancy.sh
+    - .github/workflows/notebook_controller_m2m_test.yaml
+    - tests/gh-actions/kind-cluster.yaml
+    - tests/gh-actions/install_kind.sh
+    - tests/gh-actions/install_kustomize.sh
+    - apps/jupyter/**
+    - common/oauth2-proxy/**
+    - common/istio*/**
+    - tests/gh-actions/install_istio_with_ext_auth.sh*
+    - tests/gh-actions/install_multi_tenancy.sh
 
 jobs:
   build:

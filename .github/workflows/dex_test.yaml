@@ -2,12 +2,12 @@ name: Build & Apply Dex manifests in KinD
 on:
   pull_request:
     paths:
-      - .github/workflows/dex_test.yaml
-      - common/dex/base/**
-      - tests/gh-actions/kind-cluster.yaml
-      - tests/gh-actions/install_kind.sh
-      - tests/gh-actions/install_kustomize.sh
-      - tests/gh-actions/install_istio.sh
+    - .github/workflows/dex_test.yaml
+    - common/dex/base/**
+    - tests/gh-actions/kind-cluster.yaml
+    - tests/gh-actions/install_kind.sh
+    - tests/gh-actions/install_kustomize.sh
+    - tests/gh-actions/install_istio.sh
 
 jobs:
   build:
@@ -35,12 +35,12 @@ jobs:
         kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
 
     - name: port forward
-        run: |
-          ingress_gateway_service=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
-          nohup kubectl port-forward --namespace istio-system svc/${ingress_gateway_service} 8080:80 &
-          while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
+      run: |
+        ingress_gateway_service=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
+        nohup kubectl port-forward --namespace istio-system svc/${ingress_gateway_service} 8080:80 &
+        while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
 
     - name: test dex login
-        run: |
-        pip3 install requests
-        ./tests/gh-actions/test_dex_login.py
+      run: |
+      pip3 install requests
+      ./tests/gh-actions/test_dex_login.py
