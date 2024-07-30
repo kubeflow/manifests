@@ -2,13 +2,10 @@ name: Build & Apply BentoML Yatai Stack manifests in KinD
 on:
   pull_request:
     paths:
-    - .github/workflows/bentoml_test.yaml
-    - tests/gh-actions/kind-cluster.yaml
-    - tests/gh-actions/install_kind.sh
-    - tests/gh-actions/install_kustomize.sh
-    - tests/gh-actions/install_cert_manager.sh
-    - common/cert-manager/**
-    - contrib/bentoml/**
+      - .github/workflows/bentoml_test.yaml
+      - tests/gh-actions/install_cert_manager.sh
+      - common/cert-manager/**
+      - contrib/bentoml/**
 
 jobs:
   build:
