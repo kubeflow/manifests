@@ -2,16 +2,16 @@ name: Create Pipeline Run from Kubeflow Notebook
 on:
   pull_request:
     paths:
-      - .github/workflows/pipeline_run_from_notebook.yaml
-      - apps/jupyter/notebook-controller/upstream/**
-      - apps/pipeline/upstream/**
-      - tests/gh-actions/install_istio.sh
-      - tests/gh-actions/install_cert_manager.sh
-      - common/cert-manager/**
-      - common/oidc-client/oauth2-proxy/**
-      - common/istio*/**
-      - common/oidc-client/**
-      - apps/jupyter/**
+    - .github/workflows/pipeline_run_from_notebook.yaml
+    - apps/jupyter/notebook-controller/upstream/**
+    - apps/pipeline/upstream/**
+    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_cert_manager.sh
+    - common/cert-manager/**
+    - common/oidc-client/oauth2-proxy/**
+    - common/istio*/**
+    - common/oidc-client/**
+    - apps/jupyter/**
 
 jobs:
   build:

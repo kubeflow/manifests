@@ -2,12 +2,12 @@ name: Build & Apply Seldon manifests in KinD
 on:
   pull_request:
     paths:
-      - .github/workflows/seldon_test.yaml
-      - contrib/seldon/**
-      - tests/gh-actions/install_istio.sh
-      - common/istio*/**
-      - tests/gh-actions/install_cert_manager.sh
-      - common/cert-manager/**
+    - .github/workflows/seldon_test.yaml
+    - contrib/seldon/**
+    - tests/gh-actions/install_istio.sh
+    - common/istio*/**
+    - tests/gh-actions/install_cert_manager.sh
+    - common/cert-manager/**
 
 jobs:
   build:

@@ -2,9 +2,9 @@ name: Build & Apply CentralDashboard manifests in KinD
 on:
   pull_request:
     paths:
-      - .github/workflows/centraldashboard_test.yaml
-      - apps/centraldashboard/upstream/**
-      - tests/gh-actions/install_istio.sh
+    - .github/workflows/centraldashboard_test.yaml
+    - apps/centraldashboard/upstream/**
+    - tests/gh-actions/install_istio.sh
 
 jobs:
   build:

@@ -2,9 +2,9 @@ name: Build & Apply JWA manifests in KinD
 on:
   pull_request:
     paths:
-      - .github/workflows/jupyter_web_application_test.yaml
-      - apps/jupyter/jupyter-web-app/upstream/**
-      - tests/gh-actions/install_istio.sh
+    - .github/workflows/jupyter_web_application_test.yaml
+    - apps/jupyter/jupyter-web-app/upstream/**
+    - tests/gh-actions/install_istio.sh
 
 jobs:
   build:
