@@ -8,137 +8,137 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-      - name: Python Files Formatting Guidelines
-        run: |
-          echo "### Python Files Formatting Guidelines ###
-          If there is a formatting error in your python files, 
-          1. First install black
-             It requires Python 3.8+ to run.
-             Install with  'pip install black' and if you use pipx, install Black with 'pipx install black'.
-             If you want to format Jupyter Notebooks, install with 'pip install black[jupyter]'.
+    - name: Python Files Formatting Guidelines
+      run: |
+        echo "### Python Files Formatting Guidelines ###
+        If there is a formatting error in your python files, 
+        1. First install black
+            It requires Python 3.8+ to run.
+            Install with  'pip install black' and if you use pipx, install Black with 'pipx install black'.
+            If you want to format Jupyter Notebooks, install with 'pip install black[jupyter]'.
 
-          2. Run the command
-              'python -m black {source_file_or_directory}' or
-              'black {source_file_or_directory}'
-             to format python files.
-          "
+        2. Run the command
+            'python -m black {source_file_or_directory}' or
+            'black {source_file_or_directory}'
+            to format python files.
+        "
       
-      - uses: psf/black@stable
-        with:
-          src: |
-            ./common
-            ./example
+    - uses: psf/black@stable
+      with:
+        src: |
+          ./common
+          ./example
 
   format_YAML_files:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
-      - name: Install yamllint
-        run: pip install yamllint
-      
-      - name: YAML Formatting Guidelines
-        run: |
-          echo "### YAML Formatting Guidelines ###
-          If there is a formatting error in your YAML file, you will see errors like the one below:
-          'Error: 6:4 [indentation] wrong indentation: expected 2 but found 3'
-          
-          To fix these errors, refer to the YAML formatting rules at:
-          https://yamllint.readthedocs.io/en/stable/rules.html#
-          
-          Search for the keyword inside the brackets [] in the error message. In this example, it's 'indentation'.
-          
-          Note: Some rules have been customized in the '.yamllint.yaml' file. Below is the content of that file:
+    - name: Install yamllint
+      run: pip install yamllint
+    
+    - name: YAML Formatting Guidelines
+      run: |
+        echo "### YAML Formatting Guidelines ###
+        If there is a formatting error in your YAML file, you will see errors like the one below:
+        'Error: 6:4 [indentation] wrong indentation: expected 2 but found 3'
+        
+        To fix these errors, refer to the YAML formatting rules at:
+        https://yamllint.readthedocs.io/en/stable/rules.html#
+        
+        Search for the keyword inside the brackets [] in the error message. In this example, it's 'indentation'.
+        
+        Note: Some rules have been customized in the '.yamllint.yaml' file. Below is the content of that file:
 
-          extends: default
+        extends: default
 
-          rules:
-            document-start:
-              present: false
-            document-end:
-              present: false
-            indentation:
-              indent-sequences: false
-            line-length:
-              max: 400
-          "
+        rules:
+          document-start:
+            present: false
+          document-end:
+            present: false
+          indentation:
+            indent-sequences: false
+          line-length:
+            max: 400
+        "
 
-      - name: Fetch master branch
-        run: git fetch origin master
-      
-      - name: Set up changed files
-        id: changed_files
-        run: |
-          git diff --name-status origin/master...HEAD | grep -E '^[AM].*\.(yaml|yml)$' | awk '{print $2}' > changed_files_in_PR.txt || true
-          if [ ! -s changed_files_in_PR.txt ]; then
-            echo "No YAML files have changed in this PR." > changed_files_in_PR.txt
-          fi
+    - name: Fetch master branch
+      run: git fetch origin master
+    
+    - name: Set up changed files
+      id: changed_files
+      run: |
+        git diff --name-status origin/master...HEAD | grep -E '^[AM].*\.(yaml|yml)$' | awk '{print $2}' > changed_files_in_PR.txt || true
+        if [ ! -s changed_files_in_PR.txt ]; then
+          echo "No YAML files have changed in this PR." > changed_files_in_PR.txt
+        fi
 
-      - name: Display changed files
-        run: cat changed_files_in_PR.txt
+    - name: Display changed files
+      run: cat changed_files_in_PR.txt
 
-      - name: Run yamllint on changed files
-        id: lint
-        run: |
-          if grep -q 'No YAML files have changed in this PR.' changed_files_in_PR.txt; then
-            echo "No YAML files have changed in this PR."
-          else
-            cat changed_files_in_PR.txt | xargs -I {} yamllint {} || exit 1
-          fi
-        shell: bash
+    - name: Run yamllint on changed files
+      id: lint
+      run: |
+        if grep -q 'No YAML files have changed in this PR.' changed_files_in_PR.txt; then
+          echo "No YAML files have changed in this PR."
+        else
+          cat changed_files_in_PR.txt | xargs -I {} yamllint {} || exit 1
+        fi
+      shell: bash
 
-      - name: Check YAML lint results
-        if: success() && steps.lint.outcome == 'success'
-        run: echo "No styling issues with YAML files."
-        shell: bash
+    - name: Check YAML lint results
+      if: success() && steps.lint.outcome == 'success'
+      run: echo "No styling issues with YAML files."
+      shell: bash
 
   format_bash_files:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
-      - name: Install ShellCheck
-        run: sudo apt install -y shellcheck
+    - name: Install ShellCheck
+      run: sudo apt install -y shellcheck
 
-      - name: Bash Formatting Guidelines
-        run: |
-          echo "### Bash Files Formatting Guidelines ###
-          If there are errors and warnings regarding your bash files,
-          You can check the error code definitions at https://www.shellcheck.net/wiki/.
-          You can correct them using the https://www.shellcheck.net/ site.
-          You have to ignore disable errors in the .shellcheckrc file.
-          "
+    - name: Bash Formatting Guidelines
+      run: |
+        echo "### Bash Files Formatting Guidelines ###
+        If there are errors and warnings regarding your bash files,
+        You can check the error code definitions at https://www.shellcheck.net/wiki/.
+        You can correct them using the https://www.shellcheck.net/ site.
+        You have to ignore disable errors in the .shellcheckrc file.
+        "
 
-      - name: Fetch master branch
-        run: git fetch origin master
-      
-      - name: Set up changed files
-        id: changed_files
-        run: |
-          git diff --name-only origin/master...HEAD | grep -E '^[AM].*\.sh$' | grep -v '^apps/' | awk '{print $2}' > changed_files_in_PR.txt || true
-          if [ ! -s changed_files_in_PR.txt ]; then
-            echo "No bash files have changed in this PR."
-          fi
+    - name: Fetch master branch
+      run: git fetch origin master
+    
+    - name: Set up changed files
+      id: changed_files
+      run: |
+        git diff --name-only origin/master...HEAD | grep -E '^[AM].*\.sh$' | grep -v '^apps/' | awk '{print $2}' > changed_files_in_PR.txt || true
+        if [ ! -s changed_files_in_PR.txt ]; then
+          echo "No bash files have changed in this PR."
+        fi
 
-      - name: Display changed files
-        if: always()  # Always run this step
-        run: cat changed_files_in_PR.txt || echo "No bash files have changed in this PR."
+    - name: Display changed files
+      if: always()  # Always run this step
+      run: cat changed_files_in_PR.txt || echo "No bash files have changed in this PR."
 
-      - name: Run ShellCheck on changed files
-        id: lint
-        run: |
-          if grep -q 'No bash files have changed in this PR.' changed_files_in_PR.txt; then
-            echo "No bash files have changed in this PR."
-          else
-            cat changed_files_in_PR.txt | xargs -I {} shellcheck {} || exit 1
-          fi
-        shell: bash
+    - name: Run ShellCheck on changed files
+      id: lint
+      run: |
+        if grep -q 'No bash files have changed in this PR.' changed_files_in_PR.txt; then
+          echo "No bash files have changed in this PR."
+        else
+          cat changed_files_in_PR.txt | xargs -I {} shellcheck {} || exit 1
+        fi
+      shell: bash
 
-      - name: Check Bash lint results
-        if: success() && steps.lint.outcome == 'success'
-        run: echo "No styling issues with Bash files."
-        shell: bash
+    - name: Check Bash lint results
+      if: success() && steps.lint.outcome == 'success'
+      run: echo "No styling issues with Bash files."
+      shell: bash
