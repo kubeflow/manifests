@@ -4,13 +4,24 @@ metadata:
   name: kubeflow-raycluster
 spec:
   rayVersion: '2.23.0'
+  # If `enableInTreeAutoscaling` is true, the Autoscaler sidecar will be added to the Ray head pod.
   enableInTreeAutoscaling: true
+  # `autoscalerOptions` is an OPTIONAL field specifying configuration overrides for the Ray Autoscaler.
+  # The example configuration shown below below represents the DEFAULT values.
+  # (You may delete autoscalerOptions if the defaults are suitable.)
+  autoscalerOptions:
+    # Default: Upscaling is not rate-limited. This mode adds new worker pods to handle increased workload as quiclky as possible.
+    upscalingMode: Default 
+    # `idleTimeoutSeconds` is the number of seconds to wait before scaling down a worker pod which is not using Ray resources.
+    idleTimeoutSeconds: 60
   # Ray head pod configuration
   headGroupSpec:
     # Kubernetes Service Type.
     serviceType: ClusterIP
     # The following params are used to complete the ray start: ray start --head --block --dashboard-host: '0.0.0.0' ...
     rayStartParams:
+      # Setting "num-cpus: 0" to avoid any Ray actors or tasks being scheduled on the Ray head Pod.
+      num-cpus: "0"
       dashboard-host: '0.0.0.0'
       block: 'true'
     # pod template
