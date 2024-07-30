@@ -33,3 +33,14 @@ jobs:
         cd common/dex
         kustomize build overlays/istio | kubectl apply -f -
         kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
+
+    - name: port forward
+        run: |
+          ingress_gateway_service=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
+          nohup kubectl port-forward --namespace istio-system svc/${ingress_gateway_service} 8080:80 &
+          while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
+
+    - name: test dex login
+        run: |
+        pip3 install requests
+        ./tests/gh-actions/test_dex_login.py
