@@ -46,5 +46,3 @@ jobs:
     #   with:
     #     name: trivy_scanned_results
     #     path: image_lists/
-
-
