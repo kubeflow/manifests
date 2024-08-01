@@ -41,7 +41,7 @@ resources:
 - ../common/istio-1-22/istio-namespace/base
 - ../common/istio-1-22/istio-install/overlays/oauth2-proxy
 # oauth2-proxy
-- ../common/oidc-client/oauth2-proxy/overlays/m2m-self-signed
+- ../common/oauth2-proxy/overlays/m2m-self-signed
 # Dex
 - ../common/dex/overlays/oauth2-proxy
 # KNative
@@ -64,7 +64,7 @@ resources:
 # Katib
 - ../apps/katib/upstream/installs/katib-with-kubeflow
 # Central Dashboard
-- ../apps/centraldashboard/upstream/overlays/oauth2-proxy
+- ../apps/centraldashboard/overlays/oauth2-proxy
 # Admission Webhook
 - ../apps/admission-webhook/upstream/overlays/cert-manager
 # Jupyter Web App

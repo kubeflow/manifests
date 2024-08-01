@@ -2,13 +2,13 @@ name: Build & Apply VWA manifests in KinD
 on:
   pull_request:
     paths:
-      - .github/workflows/volumes_web_application_test.yaml
-      - apps/volumes-web-app/upstream/**
-      - tests/gh-actions/kind-cluster.yaml
-      - tests/gh-actions/install_kind.sh
-      - tests/gh-actions/install_kustomize.sh
-      - tests/gh-actions/install_istio.sh
-      - common/istio*/**
+    - .github/workflows/volumes_web_application_test.yaml
+    - apps/volumes-web-app/upstream/**
+    - tests/gh-actions/kind-cluster.yaml
+    - tests/gh-actions/install_kind.sh
+    - tests/gh-actions/install_kustomize.sh
+    - tests/gh-actions/install_istio.sh
+    - common/istio*/**
 
 jobs:
   build:

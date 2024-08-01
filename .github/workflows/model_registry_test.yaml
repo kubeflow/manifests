@@ -1,14 +1,14 @@
-# If anyone changes or improve the following tests for Model Registry, please 
+# If anyone changes or improve the following tests for Model Registry, please
 # consider reflecting the same changes on https://github.com/kubeflow/model-registry
 name: Deploy and test Kubeflow Model Registry
 on:
   pull_request:
     paths:
-      - apps/model-registry/upstream/**
-      - tests/gh-actions/kind-cluster.yaml
-      - tests/gh-actions/install_kustomize.sh
-      - tests/gh-actions/install_istio.sh
-      - common/istio*/**
+    - apps/model-registry/upstream/**
+    - tests/gh-actions/kind-cluster.yaml
+    - tests/gh-actions/install_kustomize.sh
+    - tests/gh-actions/install_istio.sh
+    - common/istio*/**
 
 jobs:
   build-kfmr:
@@ -61,7 +61,7 @@ jobs:
           'http://localhost:8081/api/model_registry/v1alpha3/registered_models?pageSize=100&orderBy=ID&sortOrder=DESC' \
           -H 'accept: application/json'
 
-    # for these steps below ensure same steps as kserve (ie: Istio with external authentication, cert-manager, knative) so to achieve same setup 
+    # for these steps below ensure same steps as kserve (ie: Istio with external authentication, cert-manager, knative) so to achieve same setup
     - name: Port forward Istio gateway
       run: |
         INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')

@@ -1,8 +1,8 @@
 name: Unit Test
 
 on:
-  - push
-  - pull_request
+- push
+- pull_request
 
 jobs:
   build:
@@ -19,4 +19,3 @@ jobs:
     - name: Unit Test
       run: |
         kustomize build example
-

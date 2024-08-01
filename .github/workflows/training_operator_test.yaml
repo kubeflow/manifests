@@ -2,14 +2,14 @@ name: Build & Apply Training Operator manifests in KinD
 on:
   pull_request:
     paths:
-      - .github/workflows/training_operator_test.yaml
-      - apps/training-operator/upstream/**
-      - tests/gh-actions/kind-cluster.yaml
-      - tests/gh-actions/install_kind.sh
-      - tests/gh-actions/install_kustomize.sh
-      - tests/gh-actions/install_istio.sh
-      - common/istio*/**
-      - tests/gh-actions/kf-objects/tfjob.yaml
+    - .github/workflows/training_operator_test.yaml
+    - apps/training-operator/upstream/**
+    - tests/gh-actions/kind-cluster.yaml
+    - tests/gh-actions/install_kind.sh
+    - tests/gh-actions/install_kustomize.sh
+    - tests/gh-actions/install_istio.sh
+    - common/istio*/**
+    - tests/gh-actions/kf-objects/tfjob.yaml
 
 jobs:
   build:

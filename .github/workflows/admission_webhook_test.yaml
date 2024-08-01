@@ -2,14 +2,14 @@ name: Build & Apply PodDefaults manifests in KinD
 on:
   pull_request:
     paths:
-      - .github/workflows/admission_webhook_test.yaml
-      - apps/admission-webhook/upstream/**
-      - tests/gh-actions/kind-cluster.yaml
-      - tests/gh-actions/install_kind.sh
-      - tests/gh-actions/install_kustomize.sh
-      - tests/gh-actions/install_istio.sh
-      - tests/gh-actions/install_cert_manager.sh
-      - common/cert-manager/**
+    - .github/workflows/admission_webhook_test.yaml
+    - apps/admission-webhook/upstream/**
+    - tests/gh-actions/kind-cluster.yaml
+    - tests/gh-actions/install_kind.sh
+    - tests/gh-actions/install_kustomize.sh
+    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_cert_manager.sh
+    - common/cert-manager/**
 
 jobs:
   build:

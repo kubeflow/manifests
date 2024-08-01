@@ -125,7 +125,7 @@ jobs:
         fi
 
     - name: Display changed files
-      if: always()  # Always run this step
+      if: always() # Always run this step
       run: cat changed_files_in_PR.txt || echo "No bash files have changed in this PR."
 
     - name: Run ShellCheck on changed files
