@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: auth
+
+resources:
+- namespace.yaml
+- config-map.yaml
+- crds.yaml
+- deployment.yaml
+- service.yaml
+- dex-passwords.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+secretGenerator:
+- name: dex-oidc-client
+  type: Opaque
+  envs:
+  - secret_params.env
