@@ -18,13 +18,13 @@ data:
       skipApprovalScreen: true
     enablePasswordDB: true
     staticPasswords:
-    - email: user@example.com
-      hashFromEnv: DEX_USER_PASSWORD
-      username: user
-      userID: "15841185641784"
-    staticClients:
-    # https://github.com/dexidp/dex/pull/1664
-    - idEnv: OIDC_CLIENT_ID
-      redirectURIs: ["/oauth2/callback"]
-      name: 'Dex Login Application'
-      secretEnv: OIDC_CLIENT_SECRET
+          - email: user@example.com
+            hashFromEnv: DEX_USER_PASSWORD
+            username: user
+            userID: "15841185641784"
+          staticClients:
+          # https://github.com/dexidp/dex/pull/1664
+          - idEnv: OIDC_CLIENT_ID
+            redirectURIs: ["/oauth2/callback"]
+            name: 'Dex Login Application'
+            secretEnv: OIDC_CLIENT_SECRET
