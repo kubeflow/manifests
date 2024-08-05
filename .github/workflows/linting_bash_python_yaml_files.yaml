@@ -71,7 +71,7 @@ jobs:
     - name: Set up changed files
       id: changed_files
       run: |
-        git diff --name-status origin/master...HEAD | grep -E '^[AM].*\.(yaml|yml)$' | awk '{print $2}' > changed_files_in_PR.txt || true
+        git diff --name-only --diff-filter=AM origin/master...HEAD | grep -E '^common/.*\.ya?ml$|^example/.*\.ya?ml$|^hack/.*\.ya?ml$|^tests/.*\.ya?ml$|^.github/.*\.ya?ml$' > changed_files_in_PR.txt || true
         if [ ! -s changed_files_in_PR.txt ]; then
           echo "No YAML files have changed in this PR." > changed_files_in_PR.txt
         fi
