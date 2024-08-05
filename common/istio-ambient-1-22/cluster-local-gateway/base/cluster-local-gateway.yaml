@@ -117,13 +117,15 @@ spec:
           value: cluster.local
         - name: ISTIO_META_UNPRIVILEGED_POD
           value: 'true'
+        - name: ISTIO_META_ENABLE_HBONE
+          value: 'true'
         - name: ISTIO_META_CLUSTER_ID
           value: Kubernetes
         - name: ISTIO_META_NODE_NAME
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        image: docker.io/istio/proxyv2:1.22.1
+        image: docker.io/istio/proxyv2:1.22.1-distroless
         name: istio-proxy
         ports:
         - containerPort: 15020

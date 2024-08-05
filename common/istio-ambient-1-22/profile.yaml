@@ -4,16 +4,20 @@ spec:
   components:
     base:
       enabled: true
+    cni:
+      enabled: true
     egressGateways:
     - enabled: false
       name: istio-egressgateway
     ingressGateways:
-    - enabled: true
+    - enabled: false
       name: istio-ingressgateway
     pilot:
       enabled: true
+    ztunnel:
+      enabled: true
   hub: docker.io/istio
-  profile: default
+  profile: ambient
   tag: 1.22.1
   values:
     defaultRevision: ""
@@ -23,3 +27,4 @@ spec:
     global:
       configValidation: true
       istioNamespace: istio-system
+    profile: ambient

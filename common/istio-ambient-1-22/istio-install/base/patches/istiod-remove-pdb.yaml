@@ -2,5 +2,5 @@ $patch: delete
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: cluster-local-gateway
+  name: istiod
   namespace: istio-system
