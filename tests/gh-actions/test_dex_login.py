@@ -103,7 +103,7 @@ resp = get_istio_auth_session(
     username=KUBEFLOW_USERNAME,
     password=KUBEFLOW_PASSWORD
 )
-
+print(f"{resp}")
 if resp == 200:
     sys.exit(0)
 else:
