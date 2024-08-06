@@ -30,8 +30,18 @@ jobs:
 
     - name: Build & Apply manifests
       run: |
-        cd common/dex
-        kustomize build overlays/istio | kubectl apply -f -
+        kustomize build common/dex/overlays/istio | kubectl apply -f -
+        kustomize build common/istio-1-22/istio-crds/base | kubectl apply -f -
+        kustomize build common/istio-1-22/istio-namespace/base | kubectl apply -f -
+        kustomize build common/istio-1-22/istio-install/overlays/oauth2-proxy | kubectl apply -f -
+        kustomize build common/oauth2-proxy/overlays/m2m-self-signed | kubectl apply -f -
+        kustomize build common/dex/overlays/oauth2-proxy | kubectl apply -f -
+        kustomize build common/istio-1-22/cluster-local-gateway/base | kubectl apply -f -
+        kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+        kustomize build common/networkpolicies/base | kubectl apply -f -
+        kustomize build common/kubeflow-roles/base | kubectl apply -f -
+        kustomize build common/istio-1-22/kubeflow-istio-resources/base | kubectl apply -f -
+        kustomize build apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
         kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
 
     - name: port forward
