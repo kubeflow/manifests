@@ -1,0 +1,27 @@
+apps:
+  centraldashboard:
+    enabled: true
+
+  katib:
+    enabled: false
+
+  jupyter:
+    enabled: false
+
+  pipelines:
+    enabled: false
+
+  admission_webhook:
+    enabled: false
+
+  tensorboards:
+    enabled: false
+
+  training_operator:
+    enabled: false
+
+  volumes:
+    enabled: false
+
+  kserve:
+    enabled: false

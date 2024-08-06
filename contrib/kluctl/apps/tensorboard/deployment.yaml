@@ -1,0 +1,7 @@
+deployments:
+  # Tensorboards Controller
+  - path: ../../../../apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
+    tags:
+      - tensorboard-controller
+  # Tensorboard Web App
+  - path: tensorboards-web-app

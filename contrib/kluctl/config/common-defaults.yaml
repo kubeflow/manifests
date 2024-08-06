@@ -1,0 +1,16 @@
+cert_manager:
+  enabled: true
+
+istio:
+  # Warning, if you bring your own istio, make sure that it is configured to support external authorization via
+  # oauth2-proxy if you plan to use oauth2-proxy instead of authservice
+  enabled: true
+
+  gateway:
+    # in case you bring your own gateway deployment, replace these values with whatever matches the deployment.
+    # also, make sure that there exists a AuthorizationPolicy that grants unconditional access to the gateway deployment
+    namespace: istio-system
+    serviceAccount: istio-ingressgateway-service-account
+    serviceName: istio-ingressgateway
+    selectorLabels:
+      istio: ingressgateway

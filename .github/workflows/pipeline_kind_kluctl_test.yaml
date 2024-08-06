@@ -1,0 +1,42 @@
+name: Build & Apply Kubeflow Pipelines manifests in KinD via Kluctl
+on:
+  push:
+  pull_request:
+    paths:
+      - apps/pipeline/upstream/**
+      - tests/gh-actions/kind-cluster.yaml
+      - tests/gh-actions/install_istio.sh
+      - common/cert-manager/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install KinD
+      run: ./tests/gh-actions/install_kind.sh
+
+    - name: Create KinD Cluster
+      run: kind create cluster --config tests/gh-actions/kind-cluster.yaml
+
+    - name: Install kluctl
+      run: ./tests/gh-actions/install_kluctl.sh
+
+    - name: Enable apps
+      run: |
+        yq -i '.apps.pipelines.enabled=true' ./tests/gh-actions/kluctl-config.yaml
+
+    - name: Deploy Kubeflow
+      run: kluctl deploy --project-dir contrib/kluctl --yes -aconfig=$(pwd)/tests/gh-actions/kluctl-config.yaml
+
+    - name: Deploy test pipeline
+      run: |
+        pip3 install kfp==1.8.22
+        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
+        ./tests/e2e/hack/proxy_pipelines.sh
+        kubectl apply -f tests/e2e/yamls
+        python3 ./tests/gh-actions/kf-objects/test_pipeline.py
+        ./tests/gh-actions/install_argo_cli.sh
+        argo wait @latest -n kubeflow-user-example-com --request-timeout 120

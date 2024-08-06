@@ -1,0 +1,7 @@
+deployments:
+  # Jupyter Web App
+  - path: jupyter-web-app
+  # Notebook Controller
+  - path: ../../../../apps/jupyter/notebook-controller/upstream/overlays/kubeflow
+    tags:
+      - notebook-controller

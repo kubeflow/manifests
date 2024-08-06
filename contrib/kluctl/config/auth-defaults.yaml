@@ -1,0 +1,24 @@
+auth:
+  auth_service:
+    enabled: false
+  oauth2_proxy:
+    enabled: true
+    cloudFlare: false
+    m2m:
+      enabled: true
+      selfSigned: true
+      # replace/add a real one in case selfSigned=false
+      extraJwtIssuers:
+        # - https://oidc.eks.region.amazonaws.com/id/1234abcd=https://kubernetes.default.svc
+
+  dex:
+    staticPasswords: []
+    # Must be provided via config overrides
+    #  - email: "user@example.com"
+    #    hash: "$2y$12$4K/VkmDd1q1Orb3xAt82zu8gk7Ad6ReFR4LCP9UeYE90NLiN9Df72"
+    #    username: "user"
+    #    userID: "15841185641784"
+    oidc:
+      # Must be provided via config overrides
+      clientID: ""
+      clientSecret: ""

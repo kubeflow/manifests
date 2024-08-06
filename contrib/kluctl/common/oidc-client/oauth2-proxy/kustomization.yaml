@@ -1,0 +1,38 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../../../../common/oidc-client/oauth2-proxy/base
+
+components:
+- ../../../../../common/oidc-client/oauth2-proxy/components/istio-external-auth
+{% if auth.oauth2_proxy.m2m.enabled %}
+- ../../../../../common/oidc-client/oauth2-proxy/components/istio-m2m
+{% if auth.oauth2_proxy.m2m.selfSigned %}
+- ../../../../../common/oidc-client/oauth2-proxy/components/allow-unauthenticated-issuer-discovery
+- ../../../../../common/oidc-client/oauth2-proxy/components/configure-self-signed-kubernetes-oidc-issuer
+{% else %}
+- ../../../../../common/oidc-client/oauth2-proxy/overlays/m2m/component-overwrite-m2m-token-issuer
+{% endif %}
+{% endif %}
+
+{% if auth.oauth2_proxy.m2m.enabled %}
+{% set extraJwtIssuers=[] %}
+{% if auth.oauth2_proxy.m2m.selfSigned %}
+  #{{ extraJwtIssuers.append("https://kubernetes.default.svc.cluster.local=https://kubernetes.default.svc.cluster.local") }}
+{% endif %}
+{% if auth.oauth2_proxy.m2m.extraJwtIssuers %}
+  #{{ extraJwtIssuers.extend(auth.oauth2_proxy.m2m.extraJwtIssuers) }}
+{% endif %}
+configMapGenerator:
+- name: oauth2-proxy-parameters
+  behavior: merge
+  literals:
+  - ALLOW_SELF_SIGNED_ISSUER={{ auth.oauth2_proxy.m2m.selfSigned | lower }}
+  - FORCE_HTTPS={{ (not auth.oauth2_proxy.m2m.selfSigned) | lower }}
+  - ENABLE_M2M_TOKENS=true
+  - EXTRA_JWT_ISSUERS={{ ",".join(extraJwtIssuers) }}
+{% endif %}
+
+patches:
+  - path: gateway-selector-patch.yaml

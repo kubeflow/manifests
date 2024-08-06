@@ -1,0 +1,19 @@
+{% if auth.oauth2_proxy.enabled and auth.auth_service.enabled %}
+  {{ raise("You can not enable oauth2_proxy and auth_service at the same time") }}
+{% endif %}
+
+{% if auth.oauth2_proxy.enabled %}
+  {% if auth.oauth2_proxy.m2m.enabled %}
+    {% if not auth.oauth2_proxy.m2m.selfSigned and not auth.oauth2_proxy.m2m.extraJwtIssuers %}
+      {{ raise("You must provide extraJwtIssuers when m2m.selfSigned=false") }}
+    {% endif %}
+  {% endif %}
+{% endif %}
+
+{% if not auth.dex.staticPasswords %}
+  {{ raise("you must provide a list of static passwords via auth.dex.staticPassword") }}
+{% endif %}
+
+{% if not auth.dex.oidc.clientID or not auth.dex.oidc.clientSecret %}
+  {{ raise("you must provide an oidc clientID and clientSecret") }}
+{% endif %}

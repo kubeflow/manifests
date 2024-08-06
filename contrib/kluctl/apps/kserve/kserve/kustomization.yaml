@@ -1,0 +1,8 @@
+resources:
+  - ../../../../kserve/kserve/kserve_kubeflow.yaml
+
+patches:
+  - target:
+      kind: Deployment
+      name: kserve-controller-manager
+    path: wait-readiness-patch.yaml
