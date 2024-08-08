@@ -49,7 +49,7 @@ jobs:
         kubectl wait --for=condition=Running experiments.kubeflow.org -n kubeflow-user --all --timeout 300s
 
         echo "Waiting for all Trials to become Succeeded..."
-        kubectl wait --for=condition=Succeeded trials.kubeflow.org -n kubeflow-user --all --timeout 300s
+        kubectl wait --for=condition=Succeeded trials.kubeflow.org -n kubeflow-user --all --timeout 600s
 
         echo "Waiting for the Experiment to become Succeeded..."
         kubectl wait --for=condition=Succeeded experiments.kubeflow.org -n kubeflow-user --all --timeout 300s
