@@ -2,34 +2,34 @@ name: Appy PSS labels to namespaces
 on:
   pull_request:
     paths:
-      - .github/workflows/*
-      - tests/gh-actions/kind-cluster.yaml
-      - apps/profiles/upstream/**
-      - common/dex/**
-      - common/cert-manager/**
-      - common/oidc-client/oauth2-proxy/**
-      - common/istio*/**
-      - tests/gh-actions/install_istio_with_ext_auth.sh
-      - tests/gh-actions/install_multitenancy.sh
+    - .github/workflows/*
+    - tests/gh-actions/kind-cluster.yaml
+    - apps/profiles/upstream/**
+    - common/dex/**
+    - common/cert-manager/**
+    - common/oidc-client/oauth2-proxy/**
+    - common/istio*/**
+    - tests/gh-actions/install_istio_with_ext_auth.sh
+    - tests/gh-actions/install_multitenancy.sh
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Install KinD
-        run: ./tests/gh-actions/install_kind.sh
+    - name: Install KinD
+      run: ./tests/gh-actions/install_kind.sh
 
-      - name: Create KinD Cluster
-        run: kind create cluster --config tests/gh-actions/kind-cluster.yaml
+    - name: Create KinD Cluster
+      run: kind create cluster --config tests/gh-actions/kind-cluster.yaml
 
-      - name: Install kustomize
-        run: ./tests/gh-actions/install_kustomize.sh
+    - name: Install kustomize
+      run: ./tests/gh-actions/install_kustomize.sh
 
-      - name: Install kubectl
-        run: ./tests/gh-actions/install_kubectl.sh
+    - name: Install kubectl
+      run: ./tests/gh-actions/install_kubectl.sh
 
-      - name: Applying Pod Security Standards baseline levels for static namespaces
-        run: ./tests/gh-actions/enable_baseline_PSS.sh
+    - name: Applying Pod Security Standards baseline levels for static namespaces
+      run: ./tests/gh-actions/enable_baseline_PSS.sh
