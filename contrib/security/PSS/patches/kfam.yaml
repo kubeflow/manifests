@@ -11,3 +11,7 @@ spec:
           allowPrivilegeEscalation: false
           seccompProfile:
             type: RuntimeDefault
+          runAsNonRoot: true
+          capabilities:
+            drop:
+            - ALL
