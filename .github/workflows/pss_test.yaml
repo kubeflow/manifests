@@ -38,8 +38,8 @@ jobs:
         ./tests/gh-actions/install_istio_with_ext_auth.sh
         kustomize build common/istio-1-22/kubeflow-istio-resources/base | kubectl apply -f -
         ./tests/gh-actions/install_multi_tenancy.sh
-        kustomize build ../common/oauth2-proxy/overlays/m2m-self-signed | kubectl apply -f -
-        kustomize build ../common/dex/overlays/oauth2-proxy | kubectl apply -f -
+        kustomize build ./common/oauth2-proxy/overlays/m2m-self-signed | kubectl apply -f -
+        kustomize build ./common/dex/overlays/oauth2-proxy | kubectl apply -f -
 
     - name: Applying Pod Security Standards baseline levels for static namespaces
       run: ./tests/gh-actions/enable_baseline_PSS.sh
