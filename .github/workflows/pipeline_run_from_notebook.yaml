@@ -56,15 +56,6 @@ jobs:
     - name: Apply PodDefaults to access ml-pipeline with projected token
       run: kubectl apply -f tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml
 
-    - name: Measure time to pull Docker image
-      run: |
-        start_time=$(date +%s)
-        kubectl apply -f tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml
-        end_time=$(date +%s)
-        image_pull_time=$((end_time - start_time))
-        echo "Image pull and deployment took $image_pull_time seconds."
-      shell: bash
-
     - name: Create Kubeflow Notebook with PodDefaults
       run: |
         kubectl apply -f tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml
