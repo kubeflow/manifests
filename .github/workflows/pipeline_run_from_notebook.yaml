@@ -70,7 +70,7 @@ jobs:
         kubectl apply -f tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml
         kubectl wait --for=jsonpath='{.status.readyReplicas}'=1 \
           -f tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml \
-          --timeout 2400s
+          --timeout 3600s
 
     - name: Wait for the kubeflow-m2m-oidc-configurator Job
       run: |
