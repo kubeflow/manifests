@@ -29,6 +29,14 @@ spec:
               name: script
               subPath: script.sh
             resources: {}
+            securityContext:
+              allowPrivilegeEscalation: false
+              seccompProfile:
+                type: RuntimeDefault
+              runAsNonRoot: true
+              capabilities:
+                drop:
+                - ALL
           volumes:
           - name: script
             configMap:
