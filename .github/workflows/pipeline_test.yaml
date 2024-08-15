@@ -27,10 +27,8 @@ jobs:
     - name: Create KinD Cluster
       run: kind create cluster --config tests/gh-actions/kind-cluster.yaml
 
-      - name: Install Calico
-        run: |
-          chmod +x ./tests/gh-actions/install_calico.sh
-          ./tests/gh-actions/install_calico.sh
+    - name: Install Calico
+      run: ./tests/gh-actions/install_calico.sh
 
     - name: Install kustomize
       run: ./tests/gh-actions/install_kustomize.sh
