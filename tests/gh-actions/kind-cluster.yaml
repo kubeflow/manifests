@@ -8,15 +8,15 @@ containerdConfigPatches:
 # This is needed in order to support projected volumes with service account tokens.
 # See: https://kubernetes.slack.com/archives/CEKK1KTN2/p1600268272383600
 kubeadmConfigPatches:
-  - |
-    apiVersion: kubeadm.k8s.io/v1beta2
-    kind: ClusterConfiguration
-    metadata:
-      name: config
-    apiServer:
-      extraArgs:
-        "service-account-issuer": "kubernetes.default.svc"
-        "service-account-signing-key-file": "/etc/kubernetes/pki/sa.key"
+- |
+  apiVersion: kubeadm.k8s.io/v1beta2
+  kind: ClusterConfiguration
+  metadata:
+    name: config
+  apiServer:
+    extraArgs:
+      "service-account-issuer": "kubernetes.default.svc"
+      "service-account-signing-key-file": "/etc/kubernetes/pki/sa.key"
 networking:
   disableDefaultCNI: true
   podSubnet: 192.168.0.0/16
@@ -27,3 +27,4 @@ nodes:
   image: kindest/node:v1.29.4@sha256:3abb816a5b1061fb15c6e9e60856ec40d56b7b52bcea5f5f1350bc6e2320b6f8
 - role: worker
   image: kindest/node:v1.29.4@sha256:3abb816a5b1061fb15c6e9e60856ec40d56b7b52bcea5f5f1350bc6e2320b6f8
+  
