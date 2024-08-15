@@ -25,7 +25,7 @@ jobs:
 
     - name: Install Calico
       run: ./tests/gh-actions/install_calico.sh
-      
+   
     - name: Install kustomize
       run: ./tests/gh-actions/install_kustomize.sh
 
