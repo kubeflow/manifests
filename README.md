@@ -115,6 +115,9 @@ The `example` directory contains an example kustomization for the single command
 cat <<EOF | kind create cluster --name=kubeflow --config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  disableDefaultCNI: true
+  podSubnet: 192.168.0.0/16
 nodes:
 - role: control-plane
   image: kindest/node:v1.29.4
