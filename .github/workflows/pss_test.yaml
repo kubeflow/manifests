@@ -39,10 +39,10 @@ jobs:
         kustomize build common/istio-1-22/kubeflow-istio-resources/base | kubectl apply -f -
         ./tests/gh-actions/install_multi_tenancy.sh
         kustomize build ./common/oauth2-proxy/overlays/m2m-self-signed | kubectl apply -f -
-        echo "Waiting for all oauth2-proxy to become ready..."
+        echo "Waiting for all oauth2-proxy pods to become ready..."
         kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
         kustomize build ./common/dex/overlays/oauth2-proxy | kubectl apply -f -
-        echo "Waiting for all auth to become ready..."
+        echo "Waiting for pods in auth namespace to become ready..."
         kubectl wait --for=condition=Ready pods --all --timeout=180s -n auth
 
     - name: Applying Pod Security Standards baseline levels for static namespaces
