@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cluster-local-gateway
+spec:
+  template:
+    spec:
+      containers:
+      - name: istio-proxy
+        securityContext:
+          seccompProfile:
+            type: RuntimeDefault
