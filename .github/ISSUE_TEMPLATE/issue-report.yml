@@ -5,6 +5,10 @@ body:
     attributes:
       value: |
         Hello, Please fill out the sections below to help everyone identify and fix the bug
+  - type: markdown
+    attributes:
+      value: |
+        Hello, Please follow [Guidelines for install Kubeflow](https://github.com/kubeflow/manifests/blob/master/README.md). 
   - type: checkboxes
     id: Vaildation
     attributes:
