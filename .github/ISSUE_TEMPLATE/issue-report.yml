@@ -14,29 +14,29 @@ body:
   attributes:
     label: Validation Checklist
     options:
-      - label: Is this a Kubeflow issue?
-        required: true
-      - label: Are you posting in the right repository ?
-        required: true
-      - label: Did you follow the installation guide https://github.com/kubeflow/manifests?tab=readme-ov-file ?
-        required: true
-      - label: Is the issue report properly structured and detailed with version numbers?
-        required: true
-      - label: Is this for Kubeflow development ?
-        required: false
-      - label: Would you like to work on this issue?
-        required: false
-      - label: You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website. Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2).
-        required: false
+    - label: Is this a Kubeflow issue?
+      required: true
+    - label: Are you posting in the right repository ?
+      required: true
+    - label: Did you follow the installation guide https://github.com/kubeflow/manifests?tab=readme-ov-file ?
+      required: true
+    - label: Is the issue report properly structured and detailed with version numbers?
+      required: true
+    - label: Is this for Kubeflow development ?
+      required: false
+    - label: Would you like to work on this issue?
+      required: false
+    - label: You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website. Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2).
+      required: false
 - type: dropdown
   id: version
   attributes:
     label: Version
     description: What version of our software are you running?
     options:
-      - master
-      - 1.9
-      - 1.8
+    - master
+    - 1.9
+    - 1.8
   validations:
     required: true
 - type: textarea
