@@ -5,9 +5,10 @@ on:
     - .github/workflows/*
     - tests/gh-actions/kind-cluster.yaml
     - apps/profiles/upstream/**
+    - apps/pipeline/upstream/**
     - common/dex/**
     - common/cert-manager/**
-    - common/oidc-client/oauth2-proxy/**
+    - common/oauth2-proxy/**
     - common/istio*/**
     - tests/gh-actions/install_istio_with_ext_auth.sh
     - tests/gh-actions/install_multitenancy.sh
@@ -44,6 +45,9 @@ jobs:
         kustomize build ./common/dex/overlays/oauth2-proxy | kubectl apply -f -
         echo "Waiting for pods in auth namespace to become ready..."
         kubectl wait --for=condition=Ready pods --all --timeout=180s -n auth
+
+    - name: Install KF Pipelines
+      run: ./tests/gh-actions/install_pipelines.sh
 
     - name: Applying Pod Security Standards baseline levels for static namespaces
       run: ./tests/gh-actions/enable_baseline_PSS.sh
