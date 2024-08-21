@@ -17,7 +17,7 @@ spec:
           restartPolicy: OnFailure
           serviceAccountName: kubeflow-m2m-oidc-configurator
           containers:
-          - image: docker.io/curlimages/curl
+          - image: docker.io/curlimages/curl:8.9.1
             name: kubeflow-m2m-oidc-configurator
             command:
             - /script.sh
