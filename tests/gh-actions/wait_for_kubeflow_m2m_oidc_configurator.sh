@@ -14,7 +14,7 @@ get_latest_job() {
 
 # Wait until a Job is created
 echo "Waiting for a Job to be created by the ${CRONJOB_NAME} CronJob..."
-while [$SECONDS -lt 60]; do
+while true; do
   JOB_NAME=$(get_latest_job)
   if [[ -n "${JOB_NAME}" ]]; then
     echo "Job ${JOB_NAME} created."
@@ -26,7 +26,7 @@ done
 
 # Wait for the Job to complete successfully
 echo "Waiting for the Job ${JOB_NAME} to complete..."
-while [$SECONDS -lt 60]; do
+while true; do
   STATUS=$(kubectl get job "${JOB_NAME}" -n "${NAMESPACE}" -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}')
   if [[ "${STATUS}" == "True" ]]; then
     echo "Job ${JOB_NAME} completed successfully."
