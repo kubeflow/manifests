@@ -26,7 +26,7 @@ done
 
 # Wait for the Job to complete successfully
 echo "Waiting for the Job ${JOB_NAME} to complete..."
-while [$SECONDS < 60]; do
+while [ $SECONDS -lt 60 ]; do
   STATUS=$(kubectl get job "${JOB_NAME}" -n "${NAMESPACE}" -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}')
   if [[ "${STATUS}" == "True" ]]; then
     echo "Job ${JOB_NAME} completed successfully."
@@ -41,3 +41,7 @@ while [$SECONDS < 60]; do
   sleep 5
   SECONDS=$((SECONDS+5))
 done
+if [ $SECONDS -ge 60 ]; then
+  echo "Job ${JOB_NAME} did not complete within 60 seconds."
+  exit 1
+fi
