@@ -35,5 +35,4 @@ jobs:
     - name: test dex login
       run: |
         pip3 install requests
-        # currently broken
-        # ./tests/gh-actions/test_dex_login.py
+        ./tests/gh-actions/test_dex_login.py
