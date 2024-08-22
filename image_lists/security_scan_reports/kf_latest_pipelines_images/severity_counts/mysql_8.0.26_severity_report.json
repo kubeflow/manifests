@@ -1,0 +1,9 @@
+{
+    "image": "gcr.io/ml-pipeline/mysql:8.0.26",
+    "severity_counts": {
+        "LOW": 135,
+        "MEDIUM": 145,
+        "HIGH": 147,
+        "CRITICAL": 26
+    }
+}

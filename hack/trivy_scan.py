@@ -31,12 +31,7 @@ from prettytable import PrettyTable
 
 # Dictionary mapping Kubeflow workgroups to directories containing kustomization files
 wg_dirs = {
-    "automl": "../apps/katib/upstream/installs",
     "pipelines": "../apps/pipeline/upstream/env ../apps/kfp-tekton/upstream/env",
-    "training": "../apps/training-operator/upstream/overlays",
-    "manifests": "../common/cert-manager/cert-manager/base ../common/cert-manager/kubeflow-issuer/base ../common/istio-1-22/istio-crds/base ../common/istio-1-22/istio-namespace/base ../common/istio-1-22/istio-install/overlays/oauth2-proxy ../common/oauth2-proxy/overlays/m2m-self-signed ../common/dex/overlays/oauth2-proxy ../common/knative/knative-serving/overlays/gateways ../common/knative/knative-eventing/base ../common/istio-1-22/cluster-local-gateway/base ../common/kubeflow-namespace/base ../common/kubeflow-roles/base ../common/istio-1-22/kubeflow-istio-resources/base",
-    "workbenches": "../apps/pvcviewer-controller/upstream/base ../apps/admission-webhook/upstream/overlays ../apps/centraldashboard/overlays ../apps/jupyter/jupyter-web-app/upstream/overlays ../apps/volumes-web-app/upstream/overlays ../apps/tensorboard/tensorboards-web-app/upstream/overlays ../apps/profiles/upstream/overlays ../apps/jupyter/notebook-controller/upstream/overlays ../apps/tensorboard/tensorboard-controller/upstream/overlays",
-    "serving": "../contrib/kserve - ../contrib/kserve/models-web-app/overlays/kubeflow",
     "model-registry": "../apps/model-registry/upstream",
 }
 
@@ -275,6 +270,7 @@ summary_file = os.path.join(
 )
 
 # Initialize counters
+unique_images = set() # unique set of images across all WGs
 total_images = 0
 total_low = 0
 total_medium = 0
@@ -309,12 +305,8 @@ for file_path in glob.glob(os.path.join(ALL_SEVERITY_COUNTS, "*.json")):
     high = sum(entry["severity_counts"]["HIGH"] for entry in data)
     critical = sum(entry["severity_counts"]["CRITICAL"] for entry in data)
 
-    # Update the total counts
-    total_images += image_count
-    total_low += low
-    total_medium += medium
-    total_high += high
-    total_critical += critical
+    # Update unique_images for the total counts
+    unique_images.update(data)
 
     # Create the output for this file
     file_data = {
@@ -328,15 +320,22 @@ for file_path in glob.glob(os.path.join(ALL_SEVERITY_COUNTS, "*.json")):
     # Update merged_data with filename as key
     merged_data[filename] = file_data
 
-    # Add total counts to merged_data
-    merged_data["total"] = {
-        "images": total_images,
-        "LOW": total_low,
-        "MEDIUM": total_medium,
-        "HIGH": total_high,
-        "CRITICAL": total_critical,
-    }
 
+# Update the total counts
+total_images += len(unique_images)
+total_low += sum(entry["severity_counts"]["LOW"] for entry in unique_images)
+total_medium += sum(entry["severity_counts"]["MEDIUM"] for entry in unique_images)
+total_high += sum(entry["severity_counts"]["HIGH"] for entry in unique_images)
+total_critical += sum(entry["severity_counts"]["CRITICAL"] for entry in unique_images)
+
+# Add total counts to merged_data
+merged_data["total"] = {
+    "images": total_images,
+    "LOW": total_low,
+    "MEDIUM": total_medium,
+    "HIGH": total_high,
+    "CRITICAL": total_critical,
+}
 
 log("Summary in Json Format:")
 log(json.dumps(merged_data, indent=4))

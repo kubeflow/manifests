@@ -1,0 +1,23 @@
+{
+    "Model-registry": {
+        "images": 3,
+        "LOW": 151,
+        "MEDIUM": 103,
+        "HIGH": 71,
+        "CRITICAL": 17
+    },
+    "total": {
+        "images": 48,
+        "LOW": 3490,
+        "MEDIUM": 10215,
+        "HIGH": 2209,
+        "CRITICAL": 243
+    },
+    "Pipelines": {
+        "images": 45,
+        "LOW": 3339,
+        "MEDIUM": 10112,
+        "HIGH": 2138,
+        "CRITICAL": 226
+    }
+}

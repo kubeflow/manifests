@@ -1,0 +1,9 @@
+{
+    "image": "gcr.io/ml-pipeline/viewer-crd-controller:2.0.5",
+    "severity_counts": {
+        "LOW": 2,
+        "MEDIUM": 41,
+        "HIGH": 5,
+        "CRITICAL": 1
+    }
+}

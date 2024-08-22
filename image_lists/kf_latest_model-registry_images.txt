@@ -1,0 +1,3 @@
+gcr.io/tfx-oss-public/ml_metadata_store_server:1.14.0
+kubeflow/model-registry:latest
+mysql:8.0.3

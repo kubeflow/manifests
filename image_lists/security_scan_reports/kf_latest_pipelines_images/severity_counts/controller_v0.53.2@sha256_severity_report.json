@@ -1,0 +1,9 @@
+{
+    "image": "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller:v0.53.2@sha256:2cab05747826e7c32e2c588f0fefd354e03f643bd33dbe20533eada00562e6b1",
+    "severity_counts": {
+        "LOW": 0,
+        "MEDIUM": 26,
+        "HIGH": 10,
+        "CRITICAL": 4
+    }
+}

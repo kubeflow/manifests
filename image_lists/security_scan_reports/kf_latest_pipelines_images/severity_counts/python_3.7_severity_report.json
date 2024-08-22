@@ -1,0 +1,9 @@
+{
+    "image": "python:3.7",
+    "severity_counts": {
+        "LOW": 567,
+        "MEDIUM": 1764,
+        "HIGH": 329,
+        "CRITICAL": 17
+    }
+}

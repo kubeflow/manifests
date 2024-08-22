@@ -1,0 +1,9 @@
+{
+    "image": "mysql:8.0.3",
+    "severity_counts": {
+        "LOW": 42,
+        "MEDIUM": 55,
+        "HIGH": 71,
+        "CRITICAL": 17
+    }
+}

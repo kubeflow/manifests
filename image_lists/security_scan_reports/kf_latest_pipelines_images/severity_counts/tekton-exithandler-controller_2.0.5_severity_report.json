@@ -1,0 +1,9 @@
+{
+    "image": "quay.io/aipipeline/tekton-exithandler-controller:2.0.5",
+    "severity_counts": {
+        "LOW": 2,
+        "MEDIUM": 39,
+        "HIGH": 4,
+        "CRITICAL": 1
+    }
+}

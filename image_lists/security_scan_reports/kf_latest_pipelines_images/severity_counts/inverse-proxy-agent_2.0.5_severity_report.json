@@ -1,0 +1,9 @@
+{
+    "image": "gcr.io/ml-pipeline/inverse-proxy-agent:2.0.5",
+    "severity_counts": {
+        "LOW": 529,
+        "MEDIUM": 1443,
+        "HIGH": 335,
+        "CRITICAL": 26
+    }
+}

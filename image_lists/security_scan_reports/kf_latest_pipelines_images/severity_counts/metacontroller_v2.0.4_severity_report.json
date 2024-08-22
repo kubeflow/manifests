@@ -1,0 +1,9 @@
+{
+    "image": "docker.io/metacontrollerio/metacontroller:v2.0.4",
+    "severity_counts": {
+        "LOW": 1,
+        "MEDIUM": 36,
+        "HIGH": 80,
+        "CRITICAL": 7
+    }
+}

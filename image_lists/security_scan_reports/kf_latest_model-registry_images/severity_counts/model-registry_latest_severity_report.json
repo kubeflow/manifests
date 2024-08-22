@@ -1,0 +1,9 @@
+{
+    "image": "kubeflow/model-registry:latest",
+    "severity_counts": {
+        "LOW": 68,
+        "MEDIUM": 13,
+        "HIGH": 0,
+        "CRITICAL": 0
+    }
+}

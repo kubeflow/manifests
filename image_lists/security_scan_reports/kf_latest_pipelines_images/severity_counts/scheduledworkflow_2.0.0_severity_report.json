@@ -1,0 +1,9 @@
+{
+    "image": "quay.io/aipipeline/scheduledworkflow:2.0.0",
+    "severity_counts": {
+        "LOW": 7,
+        "MEDIUM": 67,
+        "HIGH": 14,
+        "CRITICAL": 1
+    }
+}

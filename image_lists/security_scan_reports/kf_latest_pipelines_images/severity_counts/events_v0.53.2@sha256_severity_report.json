@@ -1,0 +1,9 @@
+{
+    "image": "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/events:v0.53.2@sha256:0cf6f0be5319efdd8909ed8f987837d89146fd0632a744bf6d54bf83e5b13ca0",
+    "severity_counts": {
+        "LOW": 0,
+        "MEDIUM": 17,
+        "HIGH": 10,
+        "CRITICAL": 3
+    }
+}

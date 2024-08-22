@@ -1,0 +1,9 @@
+{
+    "image": "gcr.io/ml-pipeline/api-server:2.0.5",
+    "severity_counts": {
+        "LOW": 65,
+        "MEDIUM": 76,
+        "HIGH": 36,
+        "CRITICAL": 3
+    }
+}
