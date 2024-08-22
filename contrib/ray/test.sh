@@ -34,9 +34,6 @@ function trap_handler {
 
 trap trap_handler EXIT
 
-# Install Istio
-./tests/gh-actions/install_istio.sh
-
 # Install KubeRay operator
 kustomize build kuberay-operator/overlays/standalone | kubectl -n $NAMESPACE apply --server-side -f -
 
