@@ -40,6 +40,8 @@ curl -L https://istio.io/downloadIstio | sh -
 cd istio-1.21.1
 export PATH=$PWD/bin:$PATH
 
+kubectl create namespace $NAMESPACE
+
 # Install Istio with:
 #   1. 100% trace sampling for demo purposes.
 #   2. "sanitize_te" disabled for proper gRPC interception. This is required by Istio 1.21.0 (https://github.com/istio/istio/issues/49685).
