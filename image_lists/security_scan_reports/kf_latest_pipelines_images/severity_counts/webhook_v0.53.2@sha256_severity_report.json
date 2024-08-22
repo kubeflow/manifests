@@ -1,9 +1,0 @@
-{
-    "image": "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook:v0.53.2@sha256:1e8f8be3b51be378747b4589dde970582f50e1e69f59527f0a9aa7a75c5833e3",
-    "severity_counts": {
-        "LOW": 0,
-        "MEDIUM": 16,
-        "HIGH": 10,
-        "CRITICAL": 3
-    }
-}

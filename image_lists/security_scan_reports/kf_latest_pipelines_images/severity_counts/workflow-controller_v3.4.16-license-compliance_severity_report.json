@@ -1,9 +1,0 @@
-{
-    "image": "gcr.io/ml-pipeline/workflow-controller:v3.4.16-license-compliance",
-    "severity_counts": {
-        "LOW": 0,
-        "MEDIUM": 14,
-        "HIGH": 1,
-        "CRITICAL": 2
-    }
-}

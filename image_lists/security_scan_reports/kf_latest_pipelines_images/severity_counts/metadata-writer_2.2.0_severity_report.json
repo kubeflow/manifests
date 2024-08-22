@@ -1,9 +1,0 @@
-{
-    "image": "gcr.io/ml-pipeline/metadata-writer:2.2.0",
-    "severity_counts": {
-        "LOW": 548,
-        "MEDIUM": 976,
-        "HIGH": 173,
-        "CRITICAL": 13
-    }
-}

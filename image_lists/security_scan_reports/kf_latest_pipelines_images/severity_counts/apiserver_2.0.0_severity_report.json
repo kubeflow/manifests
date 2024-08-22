@@ -1,9 +1,0 @@
-{
-    "image": "quay.io/aipipeline/apiserver:2.0.0",
-    "severity_counts": {
-        "LOW": 67,
-        "MEDIUM": 93,
-        "HIGH": 43,
-        "CRITICAL": 3
-    }
-}

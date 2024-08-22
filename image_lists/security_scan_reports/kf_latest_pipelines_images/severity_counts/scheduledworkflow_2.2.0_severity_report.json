@@ -1,9 +1,0 @@
-{
-    "image": "gcr.io/ml-pipeline/scheduledworkflow:2.2.0",
-    "severity_counts": {
-        "LOW": 6,
-        "MEDIUM": 44,
-        "HIGH": 7,
-        "CRITICAL": 1
-    }
-}

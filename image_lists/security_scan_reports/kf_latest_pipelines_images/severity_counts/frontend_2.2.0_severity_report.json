@@ -1,9 +1,0 @@
-{
-    "image": "gcr.io/ml-pipeline/frontend:2.2.0",
-    "severity_counts": {
-        "LOW": 10,
-        "MEDIUM": 57,
-        "HIGH": 35,
-        "CRITICAL": 4
-    }
-}

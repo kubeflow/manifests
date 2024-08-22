@@ -1,9 +1,0 @@
-{
-    "image": "gcr.io/cloudsql-docker/gce-proxy:1.25.0",
-    "severity_counts": {
-        "LOW": 1,
-        "MEDIUM": 27,
-        "HIGH": 44,
-        "CRITICAL": 4
-    }
-}

@@ -1,9 +1,0 @@
-{
-    "image": "gcr.io/ml-pipeline/application-crd-controller:20231101",
-    "severity_counts": {
-        "LOW": 0,
-        "MEDIUM": 19,
-        "HIGH": 13,
-        "CRITICAL": 1
-    }
-}

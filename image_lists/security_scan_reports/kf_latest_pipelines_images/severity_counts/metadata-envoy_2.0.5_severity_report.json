@@ -1,9 +1,0 @@
-{
-    "image": "gcr.io/ml-pipeline/metadata-envoy:2.0.5",
-    "severity_counts": {
-        "LOW": 43,
-        "MEDIUM": 29,
-        "HIGH": 1,
-        "CRITICAL": 0
-    }
-}

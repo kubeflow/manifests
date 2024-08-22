@@ -1,9 +1,0 @@
-{
-    "image": "gcr.io/ml-pipeline/cache-deployer:2.2.0",
-    "severity_counts": {
-        "LOW": 2,
-        "MEDIUM": 75,
-        "HIGH": 21,
-        "CRITICAL": 13
-    }
-}

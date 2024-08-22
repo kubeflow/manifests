@@ -1,9 +1,0 @@
-{
-    "image": "gcr.io/tfx-oss-public/ml_metadata_store_server:1.5.0",
-    "severity_counts": {
-        "LOW": 55,
-        "MEDIUM": 25,
-        "HIGH": 0,
-        "CRITICAL": 0
-    }
-}

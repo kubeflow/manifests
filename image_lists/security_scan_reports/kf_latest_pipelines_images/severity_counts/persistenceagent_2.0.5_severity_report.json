@@ -1,9 +1,0 @@
-{
-    "image": "quay.io/aipipeline/persistenceagent:2.0.5",
-    "severity_counts": {
-        "LOW": 6,
-        "MEDIUM": 56,
-        "HIGH": 10,
-        "CRITICAL": 1
-    }
-}

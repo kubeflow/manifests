@@ -1,9 +1,0 @@
-{
-    "image": "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/resolvers:v0.53.2@sha256:6578d145acd9cd288e501023429439334de15de8bd77af132c57a1d5f982e940",
-    "severity_counts": {
-        "LOW": 0,
-        "MEDIUM": 19,
-        "HIGH": 12,
-        "CRITICAL": 5
-    }
-}
