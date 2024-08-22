@@ -35,32 +35,32 @@ function trap_handler {
 trap trap_handler EXIT
 
 # Download Istioctl and its manifests.
-# export ISTIO_VERSION=1.21.1
-# curl -L https://istio.io/downloadIstio | sh -
-# cd istio-1.21.1
-# export PATH=$PWD/bin:$PATH
+export ISTIO_VERSION=1.21.1
+curl -L https://istio.io/downloadIstio | sh -
+cd istio-1.21.1
+export PATH=$PWD/bin:$PATH
 
-# # Install Istio with:
-# #   1. 100% trace sampling for demo purposes.
-# #   2. "sanitize_te" disabled for proper gRPC interception. This is required by Istio 1.21.0 (https://github.com/istio/istio/issues/49685).
-# #   3. TLS 1.3 enabled.
-# istioctl install -y -f - <<EOF
-# apiVersion: install.istio.io/v1alpha1
-# kind: IstioOperator
-# metadata:
-#   namespace: kubeflow
-# spec:
-#   meshConfig:
-#     defaultConfig:
-#       tracing:
-#         sampling: 100
-#       runtimeValues:
-#         envoy.reloadable_features.sanitize_te: "false"
-#     meshMTLS:
-#       minProtocolVersion: TLSV1_3
-# EOF
+# Install Istio with:
+#   1. 100% trace sampling for demo purposes.
+#   2. "sanitize_te" disabled for proper gRPC interception. This is required by Istio 1.21.0 (https://github.com/istio/istio/issues/49685).
+#   3. TLS 1.3 enabled.
+istioctl install -y -f - <<EOF
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  namespace: kubeflow
+spec:
+  meshConfig:
+    defaultConfig:
+      tracing:
+        sampling: 100
+      runtimeValues:
+        envoy.reloadable_features.sanitize_te: "false"
+    meshMTLS:
+      minProtocolVersion: TLSV1_3
+EOF
 
-# cd 
+cd ..
 
 # Install KubeRay operator
 kustomize build kuberay-operator/overlays/standalone | kubectl -n $NAMESPACE apply --server-side -f -
