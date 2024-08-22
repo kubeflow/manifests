@@ -134,7 +134,7 @@ parser.add_argument(
     help="Kubeflow version to use (defaults to latest).",
 )
 args = parser.parse_args()
-extract_images(args.version)
+# extract_images(args.version)
 
 
 log("Started scanning images")
@@ -146,123 +146,123 @@ files = [
     if not f.endswith("kf_latest_all_images.txt")
 ]
 
-# Loop through each text file in the specified directory
-for file in files:
-    log(f"Scanning images in {file}")
+# # Loop through each text file in the specified directory
+# for file in files:
+#     log(f"Scanning images in {file}")
 
-    file_base_name = os.path.basename(file).replace(".txt", "")
+#     file_base_name = os.path.basename(file).replace(".txt", "")
 
-    # Directory to save reports for this specific file
-    file_reports_dir = os.path.join(SCAN_REPORTS_DIR, file_base_name)
-    os.makedirs(file_reports_dir, exist_ok=True)
+#     # Directory to save reports for this specific file
+#     file_reports_dir = os.path.join(SCAN_REPORTS_DIR, file_base_name)
+#     os.makedirs(file_reports_dir, exist_ok=True)
 
-    # Directory to save security count
-    severity_count = os.path.join(file_reports_dir, "severity_counts")
-    os.makedirs(severity_count, exist_ok=True)
+#     # Directory to save security count
+#     severity_count = os.path.join(file_reports_dir, "severity_counts")
+#     os.makedirs(severity_count, exist_ok=True)
 
-    with open(file, "r") as f:
-        lines = f.readlines()
+#     with open(file, "r") as f:
+#         lines = f.readlines()
 
-    for line in lines:
-        line = line.strip()
-        image_name = line.split(":")[0]
-        image_tag = line.split(":")[1] if ":" in line else ""
+#     for line in lines:
+#         line = line.strip()
+#         image_name = line.split(":")[0]
+#         image_tag = line.split(":")[1] if ":" in line else ""
 
-        image_name_scan = image_name.split("/")[-1]
+#         image_name_scan = image_name.split("/")[-1]
 
-        if image_tag:
-            image_name_scan = f"{image_name_scan}_{image_tag}"
+#         if image_tag:
+#             image_name_scan = f"{image_name_scan}_{image_tag}"
 
-        scan_output_file = os.path.join(
-            file_reports_dir, f"{image_name_scan}_scan.json"
-        )
+#         scan_output_file = os.path.join(
+#             file_reports_dir, f"{image_name_scan}_scan.json"
+#         )
 
-        log(f"Scanning ", line)
+#         log(f"Scanning ", line)
 
-        try:
-            result = subprocess.run(
-                [
-                    "trivy",
-                    "image",
-                    "--format",
-                    "json",
-                    "--output",
-                    scan_output_file,
-                    line,
-                ],
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-            )
+#         try:
+#             result = subprocess.run(
+#                 [
+#                     "trivy",
+#                     "image",
+#                     "--format",
+#                     "json",
+#                     "--output",
+#                     scan_output_file,
+#                     line,
+#                 ],
+#                 check=True,
+#                 stdout=subprocess.PIPE,
+#                 stderr=subprocess.PIPE,
+#                 text=True,
+#             )
 
-            with open(scan_output_file, "r") as json_file:
-                scan_data = json.load(json_file)
+#             with open(scan_output_file, "r") as json_file:
+#                 scan_data = json.load(json_file)
 
-            if not scan_data.get("Results"):
-                log(f"No vulnerabilities found in {image_name}:{image_tag}")
-            else:
-                vulnerabilities_list = [
-                    result["Vulnerabilities"]
-                    for result in scan_data["Results"]
-                    if "Vulnerabilities" in result and result["Vulnerabilities"]
-                ]
+#             if not scan_data.get("Results"):
+#                 log(f"No vulnerabilities found in {image_name}:{image_tag}")
+#             else:
+#                 vulnerabilities_list = [
+#                     result["Vulnerabilities"]
+#                     for result in scan_data["Results"]
+#                     if "Vulnerabilities" in result and result["Vulnerabilities"]
+#                 ]
 
-                if not vulnerabilities_list:
-                    log(
-                        f"The vulnerabilities detection may be insufficient because security updates are not provided for {image_name}:{image_tag}\n"
-                    )
-                else:
-                    severity_counts = {"LOW": 0, "MEDIUM": 0, "HIGH": 0, "CRITICAL": 0}
-                    for vulnerabilities in vulnerabilities_list:
-                        for vulnerability in vulnerabilities:
-                            severity = vulnerability.get("Severity", "UNKNOWN")
-                            if severity == "UNKNOWN":
-                                continue
-                            elif severity in severity_counts:
-                                severity_counts[severity] += 1
+#                 if not vulnerabilities_list:
+#                     log(
+#                         f"The vulnerabilities detection may be insufficient because security updates are not provided for {image_name}:{image_tag}\n"
+#                     )
+#                 else:
+#                     severity_counts = {"LOW": 0, "MEDIUM": 0, "HIGH": 0, "CRITICAL": 0}
+#                     for vulnerabilities in vulnerabilities_list:
+#                         for vulnerability in vulnerabilities:
+#                             severity = vulnerability.get("Severity", "UNKNOWN")
+#                             if severity == "UNKNOWN":
+#                                 continue
+#                             elif severity in severity_counts:
+#                                 severity_counts[severity] += 1
 
-                    report = {"image": line, "severity_counts": severity_counts}
+#                     report = {"image": line, "severity_counts": severity_counts}
 
-                    image_table = PrettyTable()
-                    image_table.field_names = ["Critical", "High", "Medium", "Low"]
-                    image_table.add_row(
-                        [
-                            severity_counts["CRITICAL"],
-                            severity_counts["HIGH"],
-                            severity_counts["MEDIUM"],
-                            severity_counts["LOW"],
-                        ]
-                    )
-                    log(f"{image_table}\n")
+#                     image_table = PrettyTable()
+#                     image_table.field_names = ["Critical", "High", "Medium", "Low"]
+#                     image_table.add_row(
+#                         [
+#                             severity_counts["CRITICAL"],
+#                             severity_counts["HIGH"],
+#                             severity_counts["MEDIUM"],
+#                             severity_counts["LOW"],
+#                         ]
+#                     )
+#                     log(f"{image_table}\n")
 
-                    severity_report_file = os.path.join(
-                        severity_count, f"{image_name_scan}_severity_report.json"
-                    )
-                    with open(severity_report_file, "w") as report_file:
-                        json.dump(report, report_file, indent=4)
+#                     severity_report_file = os.path.join(
+#                         severity_count, f"{image_name_scan}_severity_report.json"
+#                     )
+#                     with open(severity_report_file, "w") as report_file:
+#                         json.dump(report, report_file, indent=4)
 
-        except subprocess.CalledProcessError as e:
-            log(f"Error scanning {image_name}:{image_tag}")
-            log(e.stderr)
+#         except subprocess.CalledProcessError as e:
+#             log(f"Error scanning {image_name}:{image_tag}")
+#             log(e.stderr)
 
-    # Combine all the JSON files into a single file with severity counts for all images
-    json_files = glob.glob(os.path.join(severity_count, "*.json"))
+#     # Combine all the JSON files into a single file with severity counts for all images
+#     json_files = glob.glob(os.path.join(severity_count, "*.json"))
 
-    output_file = os.path.join(ALL_SEVERITY_COUNTS, f"{file_base_name}.json")
+#     output_file = os.path.join(ALL_SEVERITY_COUNTS, f"{file_base_name}.json")
 
-    if not json_files:
-        log(f"No JSON files found in '{severity_count}'. Skipping combination.")
-    else:
-        combined_data = []
-        for json_file in json_files:
-            with open(json_file, "r") as jf:
-                combined_data.append(json.load(jf))
+#     if not json_files:
+#         log(f"No JSON files found in '{severity_count}'. Skipping combination.")
+#     else:
+#         combined_data = []
+#         for json_file in json_files:
+#             with open(json_file, "r") as jf:
+#                 combined_data.append(json.load(jf))
 
-        with open(output_file, "w") as of:
-            json.dump({"data": combined_data}, of, indent=4)
+#         with open(output_file, "w") as of:
+#             json.dump({"data": combined_data}, of, indent=4)
 
-        log(f"JSON files successfully combined into '{output_file}'")
+#         log(f"JSON files successfully combined into '{output_file}'")
 
 # File to save summary of the severity counts for WGs as JSON format.
 summary_file = os.path.join(
@@ -270,7 +270,7 @@ summary_file = os.path.join(
 )
 
 # Initialize counters
-unique_images = set() # unique set of images across all WGs
+unique_images = {} # unique set of images across all WGs
 total_images = 0
 total_low = 0
 total_medium = 0
@@ -305,8 +305,9 @@ for file_path in glob.glob(os.path.join(ALL_SEVERITY_COUNTS, "*.json")):
     high = sum(entry["severity_counts"]["HIGH"] for entry in data)
     critical = sum(entry["severity_counts"]["CRITICAL"] for entry in data)
 
-    # Update unique_images for the total counts
-    unique_images.update(data)
+    # Update unique_images for the total counts later
+    for d in data:
+        unique_images[d["image"]] = d
 
     # Create the output for this file
     file_data = {
@@ -322,6 +323,7 @@ for file_path in glob.glob(os.path.join(ALL_SEVERITY_COUNTS, "*.json")):
 
 
 # Update the total counts
+unique_images = unique_images.values() # keep the set of values
 total_images += len(unique_images)
 total_low += sum(entry["severity_counts"]["LOW"] for entry in unique_images)
 total_medium += sum(entry["severity_counts"]["MEDIUM"] for entry in unique_images)
