@@ -82,6 +82,8 @@ kubectl -n $NAMESPACE apply -f raycluster_istio_headless_svc.yaml
 # Create a RayCluster custom resource.
 kubectl -n $NAMESPACE apply -f raycluster_example.yaml
 
+kubectl get pods -n $NAMESPACE --watch
+
 # Wait for the RayCluster to be ready.
 sleep 5
 kubectl -n $NAMESPACE wait --for=condition=ready pod -l ray.io/cluster=kubeflow-raycluster --timeout=900s
