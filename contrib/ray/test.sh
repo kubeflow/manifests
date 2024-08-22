@@ -34,12 +34,18 @@ function trap_handler {
 
 trap trap_handler EXIT
 
+# Install Istio
+./tests/gh-actions/install_istio.sh
+
 # Install KubeRay operator
 kustomize build kuberay-operator/overlays/standalone | kubectl -n $NAMESPACE apply --server-side -f -
 
 # Wait for the operator to be ready.
 kubectl -n $NAMESPACE wait --for=condition=available --timeout=600s deploy/kuberay-operator
 kubectl -n $NAMESPACE get pod -l app.kubernetes.io/component=kuberay-operator
+
+# Create a RayCluster Headless serivice
+kubectl -n $NAMESPACE apply -f raycluster_istio_headless_svc.yaml
 
 # Create a RayCluster custom resource.
 kubectl -n $NAMESPACE apply -f raycluster_example.yaml

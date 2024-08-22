@@ -8,7 +8,7 @@ metadata:
 spec:
   clusterIP: None
   selector:
-    ray.io/cluster: raycluster-istio
+    ray.io/cluster: kubeflow-raycluster
   publishNotReadyAddresses: true
   ports:
   - name: node-manager-port
