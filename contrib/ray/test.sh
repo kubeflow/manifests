@@ -60,6 +60,8 @@ spec:
       minProtocolVersion: TLSV1_3
 EOF
 
+cd 
+
 # Install KubeRay operator
 kustomize build kuberay-operator/overlays/standalone | kubectl -n $NAMESPACE apply --server-side -f -
 
