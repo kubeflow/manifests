@@ -62,10 +62,13 @@ EOF
 
 cd ..
 
+kubectl label namespace kubeflow istio-injection=enabled
+
+kubectl get namespaces --selector=istio-injection=enabled
+
+
 # Install KubeRay operator
 kustomize build kuberay-operator/overlays/standalone | kubectl -n $NAMESPACE apply --server-side -f -
-
-kubectl label namespace kubeflow istio-injection=enabled
 
 # Wait for the operator to be ready.
 kubectl -n $NAMESPACE wait --for=condition=available --timeout=600s deploy/kuberay-operator
