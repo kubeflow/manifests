@@ -4,7 +4,7 @@ metadata:
   labels:
     ray.io/headless-worker-svc: raycluster-istio
   name: raycluster-istio-headless-svc
-  namespace: default
+  namespace: kubeflow
 spec:
   clusterIP: None
   selector:
