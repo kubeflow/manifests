@@ -4,11 +4,11 @@ body:
 - type: markdown
   attributes:
     value: |
-      Hello, Please fill out the sections below to help everyone identify and fix the bug
+      Fill out the sections below to help everyone identify and fix the bug
 - type: markdown
   attributes:
     value: |
-      Hello, Please follow [Guidelines for install Kubeflow](https://github.com/kubeflow/manifests/blob/master/README.md).
+      Follow the [Kubeflow Guidelines](https://github.com/kubeflow/manifests/blob/master/README.md) for installation.
 - type: checkboxes
   id: Vaildation
   attributes:
@@ -32,10 +32,9 @@ body:
   id: version
   attributes:
     label: Version
-    description: What version of our software are you running?
+    description: Which version of the Kubeflow platform are you using?
     options:
     - master
-    - 1.9
     - 1.8
   validations:
     required: true
@@ -62,7 +61,7 @@ body:
 - type: markdown
   attributes:
     value: |
-      > **Note:** Please note that you have to fill required fields to post an Issue.
-        If not please close or redo the issue and you can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website.  Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2).
+      > **Note:** Please note that you have to fill required fields to post an issue.
+        If not please close or redo the issue and you can join the CNCF slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website.  Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2).
 
       **Thanks for reporting this issue! We will get back to you as soon as possible.**
