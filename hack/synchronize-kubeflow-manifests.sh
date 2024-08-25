@@ -40,13 +40,13 @@ else
 fi
 echo "Checking out in $SRC_DIR to $COMMIT..."
 
-# Checkout the Model Registry repository
+# Checkout the upstream repository
 mkdir -p $SRC_DIR
 cd $SRC_DIR
 if [ ! -d "kubeflow/.git" ]; then
     git clone https://github.com/kubeflow/kubeflow.git
 fi
-cd $SRC_DIR/models-web-app
+cd $SRC_DIR/kubeflow
 if ! git rev-parse --verify --quiet $COMMIT; then
     git checkout -b $COMMIT
 else
