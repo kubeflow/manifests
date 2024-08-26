@@ -69,6 +69,7 @@ jobs:
             kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce-
           fi
         done
+        sleep 10
 
     - name: Apply patches to clear warnings
       run: |
@@ -86,6 +87,7 @@ jobs:
             kubectl patch "$KIND" "$NAME" -n "$NAMESPACE" --patch-file "$file"
           fi
         done
+        kubectl describe deployment oauth2-proxy -n oauth2-proxy
 
     - name: Applying Pod Security Standards restricted levels for static namespaces
       run: ./tests/gh-actions/enable_restricted_PSS.sh
