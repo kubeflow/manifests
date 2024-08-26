@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: metadata-grpc-deployment
-  name: kubeflow
+  namespace: kubeflow
 spec:
   template:
     spec:
