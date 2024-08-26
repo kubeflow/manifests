@@ -1,64 +1,67 @@
 name: Issue Report
 description: Report an Issue
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Hello, Please fill out the sections below to help everyone identify and fix the bug
-  - type: checkboxes
-    id: Vaildation
-    attributes:
-      label: Validation Checklist
-      options:
-        - label: Is this a Kubeflow issue?
-          required: true
-        - label: Are you posting in the right repository ?
-          required: true
-        - label: Did you follow the installation guide https://github.com/kubeflow/manifests?tab=readme-ov-file ?
-          required: true
-        - label: Is the issue report properly structured and detailed with version numbers?
-          required: true
-        - label: Is this for Kubeflow development ?
-          required: false
-        - label: Would you like to work on this issue?
-          required: false
-        - label: You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website. Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2).
-          required: false
-  - type: dropdown
-    id: version
-    attributes:
-      label: Version
-      description: What version of our software are you running?
-      options:
-        - master
-        - 1.9
-        - 1.8
-    validations:
+- type: markdown
+  attributes:
+    value: |
+      Fill out the sections below to help everyone identify and fix the bug
+- type: markdown
+  attributes:
+    value: |
+      Follow the [Kubeflow installation guidelines](https://github.com/kubeflow/manifests/blob/master/README.md).
+- type: checkboxes
+  id: Vaildation
+  attributes:
+    label: Validation Checklist
+    options:
+    - label: Is this a Kubeflow issue?
       required: true
-  - type: textarea
-    id: description
-    attributes:
-      label: Describe your issue
-      placeholder: When installing Kubeflow I got the following error message from ... 
-    validations:
+    - label: Are you posting in the right repository ?
       required: true
-  - type: textarea
-    id: steps
-    attributes:
-      label: Steps to reproduce the issue
-      placeholder: |
-        1. Try this ...
-        2. Then do this ...
-    validations:
+    - label: Did you follow the [Kubeflow installation guideline](https://github.com/kubeflow/manifests/blob/master/README.md) ?
       required: true
-  - type: textarea
-    id: screenshots
-    attributes:
-      label: Put here any screenshots or videos (optional)
-  - type: markdown
-    attributes:
-      value: |
-        > **Note:** Please note that you have to fill required fields to post an Issue.
-          If not please close or redo the issue and you can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website.  Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2). 
+    - label: Is the issue report properly structured and detailed with version numbers?
+      required: true
+    - label: Is this for Kubeflow development ?
+      required: false
+    - label: Would you like to work on this issue?
+      required: false
+    - label: You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website. Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2).
+      required: false
+- type: dropdown
+  id: version
+  attributes:
+    label: Version
+    description: Which version of the Kubeflow platform are you using?
+    options:
+    - master
+    - 1.9
+  validations:
+    required: true
+- type: textarea
+  id: description
+  attributes:
+    label: Describe your issue
+    placeholder: When installing Kubeflow I got the following error message from ...
+  validations:
+    required: true
+- type: textarea
+  id: steps
+  attributes:
+    label: Steps to reproduce the issue
+    placeholder: |
+      1. Try this ...
+      2. Then do this ...
+  validations:
+    required: true
+- type: textarea
+  id: screenshots
+  attributes:
+    label: Put here any screenshots or videos (optional)
+- type: markdown
+  attributes:
+    value: |
+      > **Note:** Please note that you have to fill required fields to post an issue.
+        If not please close or redo the issue and you can join the CNCF slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website.  Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2).
 
-        **Thanks for reporting this issue! We will get back to you as soon as possible.** 
+      **Thanks for reporting this issue! We will get back to you as soon as possible.**
