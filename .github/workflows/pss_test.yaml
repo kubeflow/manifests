@@ -44,10 +44,10 @@ jobs:
     - name: Install KF Pipelines
       run: ./tests/gh-actions/install_pipelines.sh
 
-    - name: Applying Pod Security Standards baseline levels for static namespaces
+    - name: Apply Pod Security Standards baseline levels for static namespaces
       run: ./tests/gh-actions/enable_baseline_PSS.sh
 
-    - name: Applying Pod Security Standards baseline levels for dynamic namespaces
+    - name: Apply Pod Security Standards baseline levels for dynamic namespaces
       run: |
         cat << EOF > ./kustomization.yaml
         apiVersion: kustomize.config.k8s.io/v1beta1
@@ -61,12 +61,29 @@ jobs:
         rm ./kustomization.yaml
         kubectl -n kubeflow wait --for=condition=Ready pods -l kustomize.component=profiles --timeout 180s
 
-    - name: Unapplying applied baseline values
+    - name: Unapply applied baseline values
       run: |
         NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow")
         for NAMESPACE in "${NAMESPACES[@]}"; do
           if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
             kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce-
+          fi
+        done
+
+    - name: Apply patches to clear warnings
+      run: |
+        DIRECTORY="contrib/security/PSS/patches"
+        for file in "$DIRECTORY"/*.yaml; do
+          echo "Patching file: $file"
+
+          KIND=$(kubectl get -f "$file" -o jsonpath='{.kind}')
+          NAME=$(kubectl get -f "$file" -o jsonpath='{.metadata.name}')
+          NAMESPACE=$(kubectl get -f "$file" -o jsonpath='{.metadata.namespace}')
+
+          # Apply the patch
+          kubectl get "$KIND" "$NAME" -n "$NAMESPACE" &> /dev/null
+          if [ $? -eq 0 ]; then
+            kubectl patch "$KIND" "$NAME" -n "$NAMESPACE" --patch-file "$file"
           fi
         done
 
