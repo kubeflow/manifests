@@ -41,8 +41,8 @@ jobs:
         cd hack
         python3 trivy_scan.py
 
-    # - name: Upload trivy scanned_results
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: trivy_scanned_results
-    #     path: image_lists/
+    - name: Upload trivy scanned_results
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy_scanned_results
+        path: image_lists/
