@@ -11,8 +11,7 @@
 
 ## ✅ Contributor checklist
   - Make sure you have tested with kustomize. See [Installation Prerequisites](https://github.com/kubeflow/manifests#prerequisites)
-  - All the commits have been _signed-off_  (To pass the `DCO` check)
-  - Submit the [Contributor License Agreements](https://cla.developers.google.com/clas) (To pass the `cla/google` check)
+  - All the commits have been [_signed-off_](https://wiki.linuxfoundation.org/dco)  (To pass the `DCO` check)
 
 ---     
  
