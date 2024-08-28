@@ -78,7 +78,7 @@ when client calls API to list the KF Pipeline Runs:
 
 ### Auth analysis diagram for Kubeflow Pipelines
 
-![Kubeflow Auth Diagram](./kubeflow_auth_diagram.svg)
+![Kubeflow Auth Diagram](./components/kubeflow_auth_diagram.svg)
 
 ## Kubeflow Notebooks User and M2M Authentication and Authorization
 
