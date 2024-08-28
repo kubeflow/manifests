@@ -275,6 +275,7 @@ summary_file = os.path.join(
 )
 
 # Initialize counters
+unique_images = {} # unique set of images across all WGs
 total_images = 0
 total_low = 0
 total_medium = 0
@@ -309,12 +310,9 @@ for file_path in glob.glob(os.path.join(ALL_SEVERITY_COUNTS, "*.json")):
     high = sum(entry["severity_counts"]["HIGH"] for entry in data)
     critical = sum(entry["severity_counts"]["CRITICAL"] for entry in data)
 
-    # Update the total counts
-    total_images += image_count
-    total_low += low
-    total_medium += medium
-    total_high += high
-    total_critical += critical
+    # Update unique_images for the total counts later
+    for d in data:
+        unique_images[d["image"]] = d
 
     # Create the output for this file
     file_data = {
@@ -328,15 +326,23 @@ for file_path in glob.glob(os.path.join(ALL_SEVERITY_COUNTS, "*.json")):
     # Update merged_data with filename as key
     merged_data[filename] = file_data
 
-    # Add total counts to merged_data
-    merged_data["total"] = {
-        "images": total_images,
-        "LOW": total_low,
-        "MEDIUM": total_medium,
-        "HIGH": total_high,
-        "CRITICAL": total_critical,
-    }
 
+# Update the total counts
+unique_images = unique_images.values() # keep the set of values
+total_images += len(unique_images)
+total_low += sum(entry["severity_counts"]["LOW"] for entry in unique_images)
+total_medium += sum(entry["severity_counts"]["MEDIUM"] for entry in unique_images)
+total_high += sum(entry["severity_counts"]["HIGH"] for entry in unique_images)
+total_critical += sum(entry["severity_counts"]["CRITICAL"] for entry in unique_images)
+
+# Add total counts to merged_data
+merged_data["total"] = {
+    "images": total_images,
+    "LOW": total_low,
+    "MEDIUM": total_medium,
+    "HIGH": total_high,
+    "CRITICAL": total_critical,
+}
 
 log("Summary in Json Format:")
 log(json.dumps(merged_data, indent=4))
