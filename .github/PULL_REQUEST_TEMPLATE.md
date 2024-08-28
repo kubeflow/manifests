@@ -11,7 +11,7 @@
 
 ## ✅ Contributor checklist
   - Make sure you have tested with kustomize. See [Installation Prerequisites](https://github.com/kubeflow/manifests#prerequisites)
-  - All the commits have been [_signed-off_](https://wiki.linuxfoundation.org/dco)  (To pass the `DCO` check)
+  - All the commits have been [_signed-off_](https://github.com/kubeflow/community/tree/master/dco-signoff-hook#signing-off-commits)  (To pass the `DCO` check)
 
 ---     
  
