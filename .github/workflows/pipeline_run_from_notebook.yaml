@@ -11,7 +11,7 @@ on:
     - common/cert-manager/**
     - common/oauth2-proxy/**
     - common/istio*/**
-    - common/oidc-client/**
+    - common/**
     - apps/jupyter/**
 
 jobs:
