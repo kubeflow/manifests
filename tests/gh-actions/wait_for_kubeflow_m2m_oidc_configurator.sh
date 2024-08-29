@@ -3,7 +3,7 @@
 CRONJOB_NAME=kubeflow-m2m-oidc-configurator
 NAMESPACE=istio-system
 RETRY_INTERVAL=5    # Each loop iterates after 'RETRY_INTERVAL' seconds
-MAX_RETRIES=12    # Each loop iterates for a total number of 'MAX_RETRIES'
+MAX_RETRIES=20    # Each loop iterates for a total number of 'MAX_RETRIES'
 
 # Function to get the latest Job created by the CronJob
 get_latest_job() {
