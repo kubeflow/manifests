@@ -34,7 +34,7 @@ spec:
               seccompProfile:
                 type: RuntimeDefault
               runAsNonRoot: true
-              runAsUser: 999
+              runAsUser: 1000
               capabilities:
                 drop:
                 - ALL
