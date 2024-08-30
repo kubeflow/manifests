@@ -224,11 +224,25 @@ The oauth2-proxy extends your Istio Ingress-Gateway capabilities, to be able to 
 
 ```sh
 echo "Installing oauth2-proxy..."
-kustomize build common/oauth2-proxy/overlays/m2m-self-signed/ | kubectl apply -f -
+
+# Only uncomment ONE of the following overlays, they are mutually exclusive,
+# see `common/oauth2-proxy/overlays/` for more options.
+
+# OPTION 1: works on most clusters, does NOT allow K8s service account 
+#           tokens to be used from outside the cluster via the Istio ingress-gateway.
+#
+kustomize build common/oauth2-proxy/overlays/m2m-dex-only/ | kubectl apply -f -
 kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
+
+# Option 2: works on Kind/K3D clusters, and allows K8s service account tokens to be used
+#           from outside the cluster via the Istio ingress-gateway.
+# 
+#kustomize build common/oauth2-proxy/overlays/m2m-dex-and-kind/ | kubectl apply -f -
+#kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
+#kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=cluster-jwks-proxy' --timeout=180s -n istio-system
 ```
 
-It supports user sessions as well as proper token-based machine to machine atuhhentication.
+It supports user sessions as well as proper token-based machine to machine authentication.
 
 #### Dex
 
@@ -237,7 +251,9 @@ Dex is an OpenID Connect Identity (OIDC) with multiple authentication backends. 
 Install Dex:
 
 ```sh
+echo "Installing Dex..."
 kustomize build common/dex/overlays/oauth2-proxy | kubectl apply -f -
+kubectl wait --for=condition=ready pods --all --timeout=180s -n auth
 ```
  
 #### Knative

@@ -1,0 +1,33 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: istio-ingressgateway-require-jwt
+  namespace: istio-system
+spec:
+  action: DENY
+  selector:
+    matchLabels:
+      app: istio-ingressgateway
+  rules:
+  # Deny requests that don't have a verified JWT (from a RequestAuthentication)
+  # Note, even user requests that have been authenticated by oauth2-proxy will have a JWT,
+  # because oauth2-proxy injects a Dex JWT into the request.
+  - from:
+    - source:
+        notRequestPrincipals: ["*"]
+    to:
+    - operation:
+        notPaths:
+        # Exclude dex paths, otherwise users won't be able to log in.
+        - /dex/*
+        - /dex/**
+        - /oauth2/*
+
+        # Exclude paths which are safe to cache by Cloudflare.
+        - /favicon*
+        - /webcomponentsjs*
+        - /vendor.bundle.js
+        - /app.bundle.js
+        - /dashboard_lib.bundle.js
+        - /assets*
+        - /app.css

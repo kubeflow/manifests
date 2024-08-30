@@ -38,7 +38,7 @@ resources:
 - ../../../common/istio-1-22/istio-namespace/base
 - ../../../common/istio-1-22/istio-install/overlays/oauth2-proxy
 # oauth2-proxy
-- ../../../common/oauth2-proxy/overlays/m2m-self-signed
+- ../../../common/oauth2-proxy/overlays/m2m-dex-and-kind
 # Dex
 - ../../../common/dex/overlays/oauth2-proxy
 - ../../../common/istio-1-22/cluster-local-gateway/base

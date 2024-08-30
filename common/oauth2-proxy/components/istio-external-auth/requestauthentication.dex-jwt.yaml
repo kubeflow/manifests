@@ -4,16 +4,41 @@ metadata:
   name: dex-jwt
   namespace: istio-system
 spec:
+  # we only apply to the ingress-gateway because:
+  #  - there is no need to verify the same tokens at each sidecar
+  #  - having no selector will apply to the RequestAuthentication to ALL
+  #    Pods in the mesh, even ones which are not part of Kubeflow
+  #  - some Kubeflow services accept direct connections with Kubernetes JWTs,
+  #    and we don't want to require that users configure Istio to verify Kubernetes JWTs
+  #    as there is no method to do this which works on all distributions.
+  selector:
+    matchLabels:
+      app: istio-ingressgateway
+
   jwtRules:
-  # forwardOriginalToken must be set to true so the authorization header will
-  # be passed between Kubeflow Components and Istio can configure the
-  # Kubeflow Auth Headers based on this request authorization header.
-  - forwardOriginalToken: true
-    issuer: http://dex.auth.svc.cluster.local:5556/dex
-    # These 5 lines provides integration of istio/oauth2-proxy with
-    # Kubeflow custom auth headers.
+  - issuer: http://dex.auth.svc.cluster.local:5556/dex
+
+    # `forwardOriginalToken` is not strictly required to be true.
+    # there are pros and cons to each value:
+    #  - true: the original token is forwarded to the destination service
+    #          which raises the risk of the token leaking
+    #  - false: the original token is stripped from the request
+    #           which will prevent the destination service from
+    #           verifying the token (possibly with its own RequestAuthentication)
+    forwardOriginalToken: true
+
+    # This will unpack the JWTs issued by dex into the expected headers.
+    # It is applied to BOTH the m2m tokens from outside the cluster (which skip
+    # oauth2-proxy because they already have a dex JWT), AND user requests which were
+    # authenticated by oauth2-proxy (which injected a dex JWT).
     outputClaimToHeaders:
     - header: kubeflow-userid
       claim: email
     - header: kubeflow-groups
       claim: groups
+
+    # We explicitly set `fromHeaders` to ensure that the JWT is only extracted from the `Authorization` header.
+    # This is because we exclude requests that have an `Authorization` header from oauth2-proxy.
+    fromHeaders:
+    - name: Authorization
+      prefix: "Bearer "

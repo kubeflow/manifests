@@ -1,110 +1,159 @@
 #!/usr/bin/env python3
 
 import re
+from urllib.parse import urlsplit, urlencode
+
 import requests
-import sys
-from urllib.parse import urlsplit
+import urllib3
 
-def get_istio_auth_session(url: str, username: str, password: str) -> dict:
+
+class DexSessionManager:
     """
-    Determine if the specified URL is secured by Dex and try to obtain a session cookie.
-    WARNING: only Dex `staticPasswords` and `LDAP` authentication are currently supported
-             (we default default to using `staticPasswords` if both are enabled)
-
-    :param url: Kubeflow server URL, including protocol
-    :param username: Dex `staticPasswords` or `LDAP` username
-    :param password: Dex `staticPasswords` or `LDAP` password
-    :return: auth session information
+    This is a version of the KFPClientManager() which only generates the Dex session cookies.
+    See https://www.kubeflow.org/docs/components/pipelines/user-guides/core-functions/connect-api/#kubeflow-platform---outside-the-cluster
     """
-    # define the default return object
-    auth_session = {
-        "endpoint_url": url,    # KF endpoint URL
-        "redirect_url": None,   # KF redirect URL, if applicable
-        "dex_login_url": None,  # Dex login URL (for POST of credentials)
-        "is_secured": None,     # True if KF endpoint is secured
-        "session_cookie": None  # Resulting session cookies in the form "key1=value1; key2=value2"
-    }
 
-    # use a persistent session (for cookies)
-    with requests.Session() as s:
+    def __init__(
+        self,
+        endpoint_url: str,
+        dex_username: str,
+        dex_password: str,
+        dex_auth_type: str = "local",
+        skip_tls_verify: bool = False,
+    ):
+        """
+        Initialize the DexSessionManager
 
-        ################
-        # Determine if Endpoint is Secured
-        ################
-        resp = s.get(url, allow_redirects=True)
-        if resp.status_code != 200:
+        :param endpoint_url: the Kubeflow Endpoint URL
+        :param skip_tls_verify: if True, skip TLS verification
+        :param dex_username: the Dex username
+        :param dex_password: the Dex password
+        :param dex_auth_type: the auth type to use if Dex has multiple enabled, one of: ['ldap', 'local']
+        """
+        self._endpoint_url = endpoint_url
+        self._skip_tls_verify = skip_tls_verify
+        self._dex_username = dex_username
+        self._dex_password = dex_password
+        self._dex_auth_type = dex_auth_type
+        self._client = None
+
+        # disable SSL verification, if requested
+        if self._skip_tls_verify:
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+        # ensure `dex_default_auth_type` is valid
+        if self._dex_auth_type not in ["ldap", "local"]:
+            raise ValueError(
+                f"Invalid `dex_auth_type` '{self._dex_auth_type}', must be one of: ['ldap', 'local']"
+            )
+
+    def get_session_cookies(self) -> str:
+        """
+        Get the session cookies by authenticating against Dex
+        :return: a string of session cookies in the form "key1=value1; key2=value2"
+        """
+
+        # use a persistent session (for cookies)
+        s = requests.Session()
+
+        # GET the endpoint_url, which should redirect to Dex
+        resp = s.get(
+            self._endpoint_url, allow_redirects=True, verify=not self._skip_tls_verify
+        )
+        if resp.status_code == 200:
+            pass
+        elif resp.status_code == 403:
+            # if we get 403, we might be at the oauth2-proxy sign-in page
+            # the default path to start the sign-in flow is `/oauth2/start?rd=<url>`
+            url_obj = urlsplit(resp.url)
+            url_obj = url_obj._replace(
+                path="/oauth2/start", query=urlencode({"rd": url_obj.path})
+            )
+            resp = s.get(
+                url_obj.geturl(), allow_redirects=True, verify=not self._skip_tls_verify
+            )
+        else:
             raise RuntimeError(
-                f"HTTP status code '{resp.status_code}' for GET against: {url}"
+                f"HTTP status code '{resp.status_code}' for GET against: {self._endpoint_url}"
             )
 
-        auth_session["redirect_url"] = resp.url
-
-        # if we were NOT redirected, then the endpoint is UNSECURED
+        # if we were NOT redirected, then the endpoint is unsecured
         if len(resp.history) == 0:
-            auth_session["is_secured"] = False
-            return auth_session
-        else:
-            auth_session["is_secured"] = True
+            # no cookies are needed
+            return ""
 
-        ################
-        # Get Dex Login URL
-        ################
-        redirect_url_obj = urlsplit(auth_session["redirect_url"])
-
-        # if we are at `/auth?=xxxx` path, we need to select an auth type
-        if re.search(r"/auth$", redirect_url_obj.path):
-
-            #######
-            # TIP: choose the default auth type by including ONE of the following
-            #######
-
-            # OPTION 1: set "staticPasswords" as default auth type
-            redirect_url_obj = redirect_url_obj._replace(
-                path=re.sub(r"/auth$", "/auth/local", redirect_url_obj.path)
+        # if we are at `../auth` path, we need to select an auth type
+        url_obj = urlsplit(resp.url)
+        if re.search(r"/auth$", url_obj.path):
+            url_obj = url_obj._replace(
+                path=re.sub(r"/auth$", f"/auth/{self._dex_auth_type}", url_obj.path)
             )
-            # OPTION 2: set "ldap" as default auth type
-            # redirect_url_obj = redirect_url_obj._replace(
-            #     path=re.sub(r"/auth$", "/auth/ldap", redirect_url_obj.path)
-            # )
 
-        # if we are at `/auth/xxxx/login` path, then no further action is needed (we can use it for login POST)
-        if re.search(r"/auth/.*/login$", redirect_url_obj.path):
-            auth_session["dex_login_url"] = redirect_url_obj.geturl()
-
-        # else, we need to be redirected to the actual login page
+        # if we are at `../auth/xxxx/login` path, then we are at the login page
+        if re.search(r"/auth/.*/login$", url_obj.path):
+            dex_login_url = url_obj.geturl()
         else:
-            # this GET should redirect us to the `/auth/xxxx/login` path
-            resp = s.get(redirect_url_obj.geturl(), allow_redirects=True)
+            # otherwise, we need to follow a redirect to the login page
+            resp = s.get(
+                url_obj.geturl(), allow_redirects=True, verify=not self._skip_tls_verify
+            )
             if resp.status_code != 200:
                 raise RuntimeError(
-                    f"HTTP status code '{resp.status_code}' for GET against: {redirect_url_obj.geturl()}"
+                    f"HTTP status code '{resp.status_code}' for GET against: {url_obj.geturl()}"
+                )
+            dex_login_url = resp.url
+
+        # attempt Dex login
+        resp = s.post(
+            dex_login_url,
+            data={"login": self._dex_username, "password": self._dex_password},
+            allow_redirects=True,
+            verify=not self._skip_tls_verify,
+        )
+        if resp.status_code != 200:
+            raise RuntimeError(
+                f"HTTP status code '{resp.status_code}' for POST against: {dex_login_url}"
+            )
+
+        # if we were NOT redirected, then the login credentials were probably invalid
+        if len(resp.history) == 0:
+            raise RuntimeError(
+                f"Login credentials are probably invalid - "
+                f"No redirect after POST to: {dex_login_url}"
+            )
+
+        # if we are at `../approval` path, we need to approve the login
+        url_obj = urlsplit(resp.url)
+        if re.search(r"/approval$", url_obj.path):
+            dex_approval_url = url_obj.geturl()
+
+            # approve the login
+            resp = s.post(
+                dex_approval_url,
+                data={"approval": "approve"},
+                allow_redirects=True,
+                verify=not self._skip_tls_verify,
+            )
+            if resp.status_code != 200:
+                raise RuntimeError(
+                    f"HTTP status code '{resp.status_code}' for POST against: {url_obj.geturl()}"
                 )
 
-            # set the login url
-            auth_session["dex_login_url"] = resp.url
-
-        ################
-        # Attempt Dex Login
-        ################
-        resp = s.post(
-            auth_session["dex_login_url"],
-            data={"login": username, "password": password},
-            allow_redirects=True
-        )
-
-    return resp.status_code
+        return "; ".join([f"{c.name}={c.value}" for c in s.cookies])
 
 KUBEFLOW_ENDPOINT = "http://localhost:8080"
 KUBEFLOW_USERNAME = "user@example.com"
 KUBEFLOW_PASSWORD = "12341234"
 
-resp = get_istio_auth_session(
-    url=KUBEFLOW_ENDPOINT,
-    username=KUBEFLOW_USERNAME,
-    password=KUBEFLOW_PASSWORD
+# initialize a DexSessionManager
+dex_session_manager = DexSessionManager(
+    endpoint_url=KUBEFLOW_ENDPOINT,
+    skip_tls_verify=True,
+    dex_username=KUBEFLOW_USERNAME,
+    dex_password=KUBEFLOW_PASSWORD,
+    dex_auth_type="local",
 )
-print(f"{resp}")
-if resp == 200:
-    sys.exit(0)
-else:
-    sys.exit(1)
+
+# try to get the session cookies
+# NOTE: this will raise an exception if something goes wrong
+session_cookies = dex_session_manager.get_session_cookies()
