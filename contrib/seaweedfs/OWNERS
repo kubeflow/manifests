@@ -1,3 +1,6 @@
 approvers:
-  - pschoen-itsc
+#  - pschoen-itsc
+  - juliusvonkohout
+reviewers:
+#  - pschoen-itsc
   - juliusvonkohout

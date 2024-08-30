@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: seaweedfs
+  namespace: kubeflow
   labels:
     app: seaweedfs
 spec:
@@ -38,6 +39,7 @@ spec:
           timeoutSeconds: 10
         securityContext:  # Using restricted profile
           allowPrivilegeEscalation: false
+          privileged: false
           runAsNonRoot: true
           # image defaults to root user
           runAsUser: 1001
@@ -46,9 +48,9 @@ spec:
             type: RuntimeDefault
           capabilities:
             drop:
-              - ALL
+            - ALL
             add:
-              - NET_BIND_SERVICE
+            - NET_BIND_SERVICE
         volumeMounts:
         - mountPath: /data
           name: data
