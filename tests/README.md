@@ -18,8 +18,3 @@ included in the tests.
 The e2e tests are completely independent of the underlying K8s cluster, as well
 as the platform of the cluster. These tests should be able to run in real
 world clusters, as well as ephemeral ones like KinD.
-
-The tests are also explicitly bypassing any authentication system of the
-installation. The goal of these tests are to ensure that a common use case that
-deploys all of Kubeflow's components can succeed. Thus we only want to test
-that the core CRDs can be successfully applied and complete.
