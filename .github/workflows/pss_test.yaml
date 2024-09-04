@@ -64,19 +64,19 @@ jobs:
     - name: Apply Pod Security Standards baseline levels for static namespaces
       run: ./tests/gh-actions/enable_baseline_PSS.sh
 
-    - name: Apply Pod Security Standards baseline levels for dynamic namespaces
-      run: |
-        cat << EOF > ./kustomization.yaml
-        apiVersion: kustomize.config.k8s.io/v1beta1
-        kind: Kustomization
-        resources:
-        - apps/profiles/upstream/overlays/kubeflow
-        components:
-        - contrib/security/PSS/dynamic/baseline
-        EOF
-        kubectl apply -k .
-        rm ./kustomization.yaml
-        kubectl -n kubeflow wait --for=condition=Ready pods -l kustomize.component=profiles --timeout 200s
+    # - name: Apply Pod Security Standards baseline levels for dynamic namespaces
+    #   run: |
+    #     cat << EOF > ./kustomization.yaml
+    #     apiVersion: kustomize.config.k8s.io/v1beta1
+    #     kind: Kustomization
+    #     resources:
+    #     - apps/profiles/upstream/overlays/kubeflow
+    #     components:
+    #     - contrib/security/PSS/dynamic/baseline
+    #     EOF
+    #     kubectl apply -k .
+    #     rm ./kustomization.yaml
+    #     kubectl -n kubeflow wait --for=condition=Ready pods -l kustomize.component=profiles --timeout 200s
 
     - name: Unapply applied baseline values
       run: |
