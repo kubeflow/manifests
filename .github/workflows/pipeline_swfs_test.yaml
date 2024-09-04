@@ -53,7 +53,7 @@ jobs:
       run: |
         kustomize build contrib/seaweedfs/istio | kubectl apply -f -
         kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/seaweedfs
-        kubectl exec deployments/seaweedfs -c seaweedfs -- sh -c "echo \"s3.configure -user minio -access_key minio -secret_key minio123 -actions Read,Write -apply\" | /usr/bin/weed shell"
+        kubectl -n kubeflow exec deploy/seaweedfs -c seaweedfs -- sh -c "echo \"s3.configure -user minio -access_key minio -secret_key minio123 -actions Read,Write -apply\" | /usr/bin/weed shell"
 
     - name: port forward
       run: |

@@ -6,7 +6,7 @@ kubectl create ns kubeflow || echo "namespace kubeflow already exists"
 kubectl get -n kubeflow svc minio-service -o=jsonpath='{.metadata.annotations.kubectl\.kubernetes\.io/last-applied-configuration}' > svc-minio-service-backup.json
 kustomize build istio/ | kubectl apply --server-side -f -
 kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/seaweedfs
-kubectl exec deployments/seaweedfs -c seaweedfs -- sh -c "echo \"s3.configure -user minio -access_key minio -secret_key minio123 -actions Read,Write -apply\" | /usr/bin/weed shell"
+kubectl -n kubeflow exec deployments/seaweedfs -c seaweedfs -- sh -c "echo \"s3.configure -user minio -access_key minio -secret_key minio123 -actions Read,Write -apply\" | /usr/bin/weed shell"
 
 kubectl -n kubeflow port-forward svc/minio-service 8333:9000
 echo "S3 endpoint available on localhost:8333" &
