@@ -64,7 +64,7 @@ jobs:
     - name: Wait for all oauth2-proxy and kubeflow pods to restart
       run: |
         kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=300s -n oauth2-proxy
-        kubectl wait --for=condition-ready pods --all --timeout=300s -n kubeflow 
+        kubectl wait --for=condition=ready pods --all --timeout=300s -n kubeflow
 
     - name: Apply Pod Security Standards baseline levels for static namespaces
       run: ./tests/gh-actions/enable_baseline_PSS.sh
