@@ -61,6 +61,11 @@ jobs:
           fi
         done
 
+    - name: Restart oauth2-proxy deployment
+      run: |
+        kubectl rollout restart deployment oauth2-proxy -n oauth2-proxy
+        kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
+
     - name: Apply Pod Security Standards baseline levels for static namespaces
       run: ./tests/gh-actions/enable_baseline_PSS.sh
 
