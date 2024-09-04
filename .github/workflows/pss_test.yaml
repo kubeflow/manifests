@@ -76,7 +76,7 @@ jobs:
         EOF
         kubectl apply -k .
         rm ./kustomization.yaml
-        kubectl -n kubeflow wait --for=condition=Ready pods -l kustomize.component=profiles --timeout 180s
+        kubectl -n kubeflow wait --for=condition=Ready pods -l kustomize.component=profiles --timeout 200s
 
     - name: Unapply applied baseline values
       run: |
