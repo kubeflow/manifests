@@ -227,8 +227,14 @@ echo "Installing oauth2-proxy..."
 kustomize build common/oauth2-proxy/overlays/m2m-self-signed/ | kubectl apply -f -
 kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 ```
-
 It supports user sessions as well as proper token-based machine to machine atuhhentication.
+
+:warning: Using default [example.yaml](https://github.com/kubeflow/manifests/blob/master/example/kustomization.yaml) in clusters that don't have support `/.well-known/openid-configuration` endpoints will cause issues for users trying to communicate to Kubeflow pipelines via Notebooks.
+
+You can overwrite the M2M token issuer [here](https://github.com/kubeflow/manifests/blob/afc358d6d473a24029149f2a0ca21671af4aca6d/common/oauth2-proxy/overlays/m2m/component-overwrite-m2m-token-issuer/kustomization.yaml#L8).
+
+For EKS clusters, please check [here](https://github.com/kubeflow/manifests/blob/master/common/oauth2-proxy/overlays/m2m/README.md).
+
 
 #### Dex
 
