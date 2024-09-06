@@ -65,8 +65,8 @@ jobs:
             elif [ "$NAME" = "metadata-grpc-deployment" ]; then
               kubectl wait -n kubeflow --for=condition=ready pod -l 'component=metadata-grpc-server' --timeout=180s
             elif [ "$NAME" = "profiles-deployment" ]; then
-              kubectl describe pod -l 'kustomize.component=profiles' -n kubeflow
-              kubectl wait -n kubeflow --for=condition=ready pod -l 'kustomize.component=profiles' --timeout=300s
+              # kubectl describe pod -l 'kustomize.component=profiles' -n kubeflow
+              # kubectl wait -n kubeflow --for=condition=ready pod -l 'kustomize.component=profiles' --timeout=300s
             else
               echo "Fetching logs for pod: $NAME"
               kubectl describe pod -l app="$NAME" -n "$NAMESPACE"
