@@ -71,7 +71,7 @@ jobs:
                 while [ $? -eq 0 ]; do
                   echo "Describing pod: $NAME"
                   kubectl describe pod -l app="$NAME" -n "$NAMESPACE"
-                  sleep 5
+                  sleep 30
                 done
               }
               log_pod &
