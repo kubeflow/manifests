@@ -68,7 +68,7 @@ jobs:
               kubectl wait -n kubeflow --for=condition=ready pod -l 'kustomize.component=profiles' --timeout=180s
             else
               log_pod() {
-                while [ $! -eq 0 ]; do
+                while [ $? -eq 0 ]; do
                   echo "Fetching logs for pod: $POD_NAME"
                   kubectl logs -n "$NAMESPACE" "$POD_NAME"
                   sleep 5
