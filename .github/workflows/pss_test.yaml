@@ -69,8 +69,8 @@ jobs:
             else
               log_pod() {
                 while [ $? -eq 0 ]; do
-                  echo "Fetching logs for pod: $POD_NAME"
-                  kubectl logs -n "$NAMESPACE" "$POD_NAME"
+                  echo "Fetching logs for pod: $NAME"
+                  kubectl logs -n "$NAMESPACE" "$NAME"
                   sleep 5
                 done
               }
