@@ -65,7 +65,7 @@ jobs:
             elif [ "$NAME" = "metadata-grpc-deployment" ]; then
               kubectl wait -n kubeflow --for=condition=ready pod -l 'component=metadata-grpc-server' --timeout=180s
             elif [ "$NAME" = "profiles-deployment" ]; then
-              echo " "
+              echo "skipping this patch"
               # kubectl describe pod -l 'kustomize.component=profiles' -n kubeflow
               # kubectl wait -n kubeflow --for=condition=ready pod -l 'kustomize.component=profiles' --timeout=300s
             else
