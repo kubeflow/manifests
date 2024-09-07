@@ -71,7 +71,7 @@ jobs:
             else
               echo "Fetching logs for pod: $NAME"
               # kubectl describe pod -l app="$NAME" -n "$NAMESPACE"
-              kubectl rollout restart "$KIND" -n "$NAMESPACE"
+              kubectl delete pod -l app="$NAME" -n "$NAMESPACE"
               kubectl wait -n "$NAMESPACE" --for=condition=ready pod -l app="$NAME" --timeout=600s
             fi
           fi
