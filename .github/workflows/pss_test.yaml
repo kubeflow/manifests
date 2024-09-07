@@ -60,6 +60,9 @@ jobs:
             kubectl patch "$KIND" "$NAME" -n "$NAMESPACE" --patch-file "$file"
             if [ "$NAME" = "oauth2-proxy" ]; then
               kubectl wait -n oauth2-proxy --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s
+            elif [ "$NAME" = "cache-server" ]; then
+              kubectl rollout restart deployment cache-server -n kubeflow
+              kubectl wait -n kubeflow --for=condition=ready pod -l 'app=cache-server' --timeout=180s
             elif [ "$NAME" = "metadata-envoy-deployment" ]; then
               kubectl wait -n kubeflow --for=condition=ready pod -l 'component=metadata-envoy' --timeout=180s
             elif [ "$NAME" = "metadata-grpc-deployment" ]; then
@@ -70,7 +73,7 @@ jobs:
               # kubectl wait -n kubeflow --for=condition=ready pod -l 'kustomize.component=profiles' --timeout=300s
             else
               echo "Fetching logs for pod: $NAME"
-              kubectl describe pod -l app="$NAME" -n "$NAMESPACE"
+              # kubectl describe pod -l app="$NAME" -n "$NAMESPACE"
               kubectl wait -n "$NAMESPACE" --for=condition=ready pod -l app="$NAME" --timeout=600s
             fi
           fi
