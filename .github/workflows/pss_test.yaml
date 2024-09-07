@@ -63,7 +63,7 @@ jobs:
             elif [ "$NAME" = "cache-server" ]; then
               kubectl rollout restart deployment cache-server -n kubeflow
               kubectl describe pod -l 'app=cache-server' -n kubeflow
-              kubectl wait -n kubeflow --for=condition=ready pod -l 'app=cache-server' --timeout=180s
+              kubectl wait -n kubeflow --for=condition=ready pod -l 'app=cache-server' --timeout=300s
             elif [ "$NAME" = "metadata-envoy-deployment" ]; then
               kubectl wait -n kubeflow --for=condition=ready pod -l 'component=metadata-envoy' --timeout=180s
             elif [ "$NAME" = "metadata-grpc-deployment" ]; then
