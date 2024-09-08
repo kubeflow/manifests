@@ -2,6 +2,7 @@ apiVersion: ray.io/v1
 kind: RayCluster
 metadata:
   name: kubeflow-raycluster
+  namespace: kubeflow
 spec:
   rayVersion: '2.23.0'
   enableInTreeAutoscaling: true
@@ -18,7 +19,7 @@ spec:
       dashboard-agent-listen-port: '52365'
       metrics-export-port: '8080'
       max-worker-port: '10012'
-      node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.default.svc.cluster.local
+      node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.kubeflow.svc.cluster.local
     template:
       spec:
         containers:
@@ -66,7 +67,7 @@ spec:
         dashboard-agent-listen-port: '52365'
         metrics-export-port: '8080'
         max-worker-port: '10012'
-        node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.default.svc.cluster.local
+        node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.kubeflow.svc.cluster.local
       template:
         spec:
           containers:
