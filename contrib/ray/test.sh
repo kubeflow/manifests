@@ -7,35 +7,33 @@ TIMEOUT=120  # timeout in seconds
 SLEEP_INTERVAL=30  # interval between checks in seconds
 RAY_VERSION=2.23.0
 
-# function trap_handler {
-#   kill $PID
-#   # Delete RayCluster
-#   kubectl -n $NAMESPACE delete -f raycluster_example.yaml
+function trap_handler {
+  kill $PID
+  # Delete RayCluster
+  kubectl -n $NAMESPACE delete -f raycluster_example.yaml
 
-#   # Wait for all Ray Pods to be deleted.
-#   start_time=$(date +%s)
-#   while true; do
-#     pods=$(kubectl -n $NAMESPACE get pods -o json | jq '.items | length')
-#     if [ "$pods" -eq 1 ]; then
-#       break
-#     fi
-#     current_time=$(date +%s)
-#     elapsed_time=$((current_time - start_time))
-#     if [ "$elapsed_time" -ge "$TIMEOUT" ]; then
-#       echo "Timeout exceeded. Exiting loop."
-#       exit 1
-#     fi
-#     sleep $SLEEP_INTERVAL
-#   done
+  # Wait for all Ray Pods to be deleted.
+  start_time=$(date +%s)
+  while true; do
+    pods=$(kubectl -n $NAMESPACE get pods -o json | jq '.items | length')
+    if [ "$pods" -eq 1 ]; then
+      break
+    fi
+    current_time=$(date +%s)
+    elapsed_time=$((current_time - start_time))
+    if [ "$elapsed_time" -ge "$TIMEOUT" ]; then
+      echo "Timeout exceeded. Exiting loop."
+      exit 1
+    fi
+    sleep $SLEEP_INTERVAL
+  done
 
-#   # Delete KubeRay operator
-#   kustomize build kuberay-operator/base | kubectl -n $NAMESPACE delete -f -
+  # Delete KubeRay operator
+  kustomize build kuberay-operator/base | kubectl -n $NAMESPACE delete -f -
 
-# }
+}
 
-# trap trap_handler EXIT
-
-# kubectl create namespace $NAMESPACE
+trap trap_handler EXIT
 
 # Check if namespace exists, if not, create it
 if ! kubectl get namespace $NAMESPACE > /dev/null 2>&1; then
