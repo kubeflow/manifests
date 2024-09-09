@@ -1,3 +1,79 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ray-workers-head
+spec:
+  action: ALLOW
+  rules:
+  - to:
+    - operation:
+        ports:
+        - "6379"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    ray.io/headless-worker-svc: raycluster-istio
+  name: raycluster-istio-headless-svc
+spec:
+  clusterIP: None
+  selector:
+    ray.io/cluster: kubeflow-raycluster
+  publishNotReadyAddresses: true
+  ports:
+  - name: node-manager-port
+    port: 6380
+    appProtocol: grpc
+  - name: object-manager-port
+    port: 6381
+    appProtocol: grpc
+  - name: runtime-env-agent-port
+    port: 6382
+    appProtocol: grpc
+  - name: dashboard-agent-grpc-port
+    port: 6383
+    appProtocol: grpc
+  - name: dashboard-agent-listen-port
+    port: 52365
+    appProtocol: http
+  - name: metrics-export-port
+    port: 8080
+    appProtocol: http
+  - name: p10002
+    port: 10002
+    appProtocol: grpc
+  - name: p10003
+    port: 10003
+    appProtocol: grpc
+  - name: p10004
+    port: 10004
+    appProtocol: grpc
+  - name: p10005
+    port: 10005
+    appProtocol: grpc
+  - name: p10006
+    port: 10006
+    appProtocol: grpc
+  - name: p10007
+    port: 10007
+    appProtocol: grpc
+  - name: p10008
+    port: 10008
+    appProtocol: grpc
+  - name: p10009
+    port: 10009
+    appProtocol: grpc
+  - name: p10010
+    port: 10010
+    appProtocol: grpc
+  - name: p10011
+    port: 10011
+    appProtocol: grpc
+  - name: p10012
+    port: 10012
+    appProtocol: grpc
+---
 apiVersion: ray.io/v1
 kind: RayCluster
 metadata:
@@ -18,7 +94,7 @@ spec:
       dashboard-agent-listen-port: '52365'
       metrics-export-port: '8080'
       max-worker-port: '10012'
-      node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.kubeflow.svc.cluster.local
+      node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.kubeflow-user-example-com.svc.cluster.local
     template:
       spec:
         containers:
@@ -31,13 +107,9 @@ spec:
           volumeMounts:
             - mountPath: /tmp/ray
               name: ray-logs
-          # The resource requests and limits in this config are too small for production!
-          # It is better to use a few large Ray pod than many small ones.
-          # For production, it is ideal to size each Ray pod to take up the
-          # entire Kubernetes node on which it is scheduled.
           resources:
             limits:
-              cpu: "2"
+              cpu: "1"
               memory: "2G"
             requests:
               cpu: "100m"
@@ -66,7 +138,7 @@ spec:
         dashboard-agent-listen-port: '52365'
         metrics-export-port: '8080'
         max-worker-port: '10012'
-        node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.kubeflow.svc.cluster.local
+        node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.kubeflow-user-example-com.svc.cluster.local
       template:
         spec:
           containers:
@@ -81,13 +153,9 @@ spec:
             volumeMounts:
              - mountPath: /tmp/ray
                name: ray-logs
-            # The resource requests and limits in this config are too small for production!
-            # It is better to use a few large Ray pod than many small ones.
-            # For production, it is ideal to size each Ray pod to take up the
-            # entire Kubernetes node on which it is scheduled.
             resources:
              limits:
-               cpu: "2"
+               cpu: "1"
                memory: "1G"
              requests:
                cpu: "300m"

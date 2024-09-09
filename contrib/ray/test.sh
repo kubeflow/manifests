@@ -2,13 +2,12 @@
 
 set -euxo
 
-NAMESPACE=kubeflow
+NAMESPACE=$1
 TIMEOUT=120  # timeout in seconds
 SLEEP_INTERVAL=30  # interval between checks in seconds
 RAY_VERSION=2.23.0
 
 function trap_handler {
-  kill $PID
   # Delete RayCluster
   kubectl -n $NAMESPACE delete -f raycluster_example.yaml
 
@@ -16,7 +15,8 @@ function trap_handler {
   start_time=$(date +%s)
   while true; do
     pods=$(kubectl -n $NAMESPACE get pods -o json | jq '.items | length')
-    if [ "$pods" -eq 1 ]; then
+    if [ "$pods" -eq 0 ]; then
+      kill $PID
       break
     fi
     current_time=$(date +%s)
@@ -29,29 +29,25 @@ function trap_handler {
   done
 
   # Delete KubeRay operator
-  kustomize build kuberay-operator/base | kubectl -n $NAMESPACE delete -f -
+  kustomize build kuberay-operator/base | kubectl -n kubeflow delete -f -
 
 }
 
 trap trap_handler EXIT
 
+kubectl label namespace $NAMESPACE istio-injection=enabled
+
 kubectl get namespaces --selector=istio-injection=enabled
 
 
 # Install KubeRay operator
-kustomize build kuberay-operator/overlays/standalone | kubectl -n $NAMESPACE apply --server-side -f -
+kustomize build kuberay-operator/overlays/standalone | kubectl -n kubeflow apply --server-side -f -
 
 # Wait for the operator to be ready.
-kubectl -n $NAMESPACE wait --for=condition=available --timeout=600s deploy/kuberay-operator
-kubectl -n $NAMESPACE get pod -l app.kubernetes.io/component=kuberay-operator
+kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/kuberay-operator
+kubectl -n kubeflow get pod -l app.kubernetes.io/component=kuberay-operator
 
-# Create a RayCluster Headless serivice
-kubectl -n $NAMESPACE apply -f raycluster_istio_headless_svc.yaml
-
-# Create a RayCluster AuthorizationPolicy
-kubectl apply -f raycluster_istio_auth_policy.yaml
-
-# Create a RayCluster custom resource.
+# Install RayCluster components
 kubectl -n $NAMESPACE apply -f raycluster_example.yaml
 
 # Wait for the RayCluster to be ready.
