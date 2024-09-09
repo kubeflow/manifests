@@ -81,6 +81,7 @@ jobs:
           KIND=$(kubectl get -f "$file" -o jsonpath='{.kind}')
           NAME=$(kubectl get -f "$file" -o jsonpath='{.metadata.name}')
           NAMESPACE=$(kubectl get -f "$file" -o jsonpath='{.metadata.namespace}')
+          kubectl get "$KIND" "$NAME" -n "$NAMESPACE" &> /dev/null
           if [ $? -eq 0 ]; then
             kubectl get pod -l app="$NAME" -n "$NAMESPACE" -o yaml | grep -A 10 securityContext
           fi
