@@ -58,7 +58,6 @@ jobs:
           kubectl get "$KIND" "$NAME" -n "$NAMESPACE" &> /dev/null
           if [ $? -eq 0 ]; then
             kubectl patch "$KIND" "$NAME" -n "$NAMESPACE" --patch-file "$file"
-            sleep 30
             # if [ "$NAME" = "oauth2-proxy" ]; then
             #   kubectl wait -n oauth2-proxy --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s
             # elif [ "$NAME" = "metadata-envoy-deployment" ]; then
@@ -83,7 +82,22 @@ jobs:
           NAMESPACE=$(kubectl get -f "$file" -o jsonpath='{.metadata.namespace}')
           kubectl get "$KIND" "$NAME" -n "$NAMESPACE" &> /dev/null
           if [ $? -eq 0 ]; then
-            kubectl get pod -l app="$NAME" -n "$NAMESPACE" -o yaml | grep -A 10 securityContext
+            if [ "$NAME" = "oauth2-proxy" ]; then
+              echo "Fetching logs for pod: $NAME"
+              kubectl describe pod -l app.kubernetes.io/name: oauth2-proxy -n oauth2-proxy
+            elif [ "$NAME" = "metadata-envoy-deployment" ]; then
+              echo "Fetching logs for pod: $NAME"
+              kubectl describe pod -l 'component=metadata-envoy' -n kubeflow
+            elif [ "$NAME" = "metadata-grpc-deployment" ]; then
+              echo "Fetching logs for pod: $NAME"
+              kubectl describe pod -l 'component=metadata-grpc-server' -n kubeflow
+            elif [ "$NAME" = "profiles-deployment" -o "$NAME" = "ml-pipeline" ]; then
+              echo "Fetching logs for pod: $NAME"
+              kubectl describe pod -l 'kustomize.component=profiles' -n kubeflow
+            else
+              echo "Fetching logs for pod: $NAME"
+              kubectl describe pod -l app="$NAME" -n "$NAMESPACE"
+            fi
           fi
         done
         # sleep 300
