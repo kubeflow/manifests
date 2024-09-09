@@ -7,38 +7,16 @@ TIMEOUT=120  # timeout in seconds
 SLEEP_INTERVAL=30  # interval between checks in seconds
 RAY_VERSION=2.23.0
 
-function trap_handler {
-  # Delete RayCluster
-  kubectl -n $NAMESPACE delete -f raycluster_example.yaml
+while [[ $(kubectl get namespace $NAMESPACE --no-headers 2>/dev/null | wc -l) -eq 0 ]]; do
+    echo "Waiting for namespace $NAMESPACE to be created..."
+    sleep 2
+done
 
-  # Wait for all Ray Pods to be deleted.
-  start_time=$(date +%s)
-  while true; do
-    pods=$(kubectl -n $NAMESPACE get pods -o json | jq '.items | length')
-    if [ "$pods" -eq 0 ]; then
-      kill $PID
-      break
-    fi
-    current_time=$(date +%s)
-    elapsed_time=$((current_time - start_time))
-    if [ "$elapsed_time" -ge "$TIMEOUT" ]; then
-      echo "Timeout exceeded. Exiting loop."
-      exit 1
-    fi
-    sleep $SLEEP_INTERVAL
-  done
-
-  # Delete KubeRay operator
-  kustomize build kuberay-operator/base | kubectl -n kubeflow delete -f -
-
-}
-
-trap trap_handler EXIT
+echo "Namespace $NAMESPACE is created!"
 
 kubectl label namespace $NAMESPACE istio-injection=enabled
 
 kubectl get namespaces --selector=istio-injection=enabled
-
 
 # Install KubeRay operator
 kustomize build kuberay-operator/overlays/standalone | kubectl -n kubeflow apply --server-side -f -
@@ -73,3 +51,26 @@ else
   echo "Test failed!"
   exit 1
 fi
+
+# Delete RayCluster
+kubectl -n $NAMESPACE delete -f raycluster_example.yaml
+
+# Wait for all Ray Pods to be deleted.
+start_time=$(date +%s)
+while true; do
+  pods=$(kubectl -n $NAMESPACE get pods -o json | jq '.items | length')
+  if [ "$pods" -eq 0 ]; then
+    kill $PID
+    break
+  fi
+  current_time=$(date +%s)
+  elapsed_time=$((current_time - start_time))
+  if [ "$elapsed_time" -ge "$TIMEOUT" ]; then
+    echo "Timeout exceeded. Exiting loop."
+    exit 1
+  fi
+  sleep $SLEEP_INTERVAL
+done
+
+# Delete KubeRay operator
+kustomize build kuberay-operator/base | kubectl -n kubeflow delete -f -
