@@ -14,7 +14,7 @@ spec:
             type: RuntimeDefault
           runAsNonRoot: true
           runAsUser: 1000
-          runAsGroup: 0
+          runAsGroup: 1000
           capabilities:
             drop:
             - ALL
