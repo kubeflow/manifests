@@ -2,7 +2,6 @@ apiVersion: ray.io/v1
 kind: RayCluster
 metadata:
   name: kubeflow-raycluster
-  namespace: kubeflow
 spec:
   rayVersion: '2.23.0'
   enableInTreeAutoscaling: true

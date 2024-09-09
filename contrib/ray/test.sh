@@ -35,13 +35,6 @@ function trap_handler {
 
 trap trap_handler EXIT
 
-# Check if namespace exists, if not, create it
-if ! kubectl get namespace $NAMESPACE > /dev/null 2>&1; then
-  kubectl create namespace $NAMESPACE
-fi
-
-kubectl label namespace kubeflow istio-injection=enabled
-
 kubectl get namespaces --selector=istio-injection=enabled
 
 
@@ -53,13 +46,13 @@ kubectl -n $NAMESPACE wait --for=condition=available --timeout=600s deploy/kuber
 kubectl -n $NAMESPACE get pod -l app.kubernetes.io/component=kuberay-operator
 
 # Create a RayCluster Headless serivice
-kubectl apply -f raycluster_istio_headless_svc.yaml
+kubectl -n $NAMESPACE apply -f raycluster_istio_headless_svc.yaml
 
 # Create a RayCluster AuthorizationPolicy
 kubectl apply -f raycluster_istio_auth_policy.yaml
 
 # Create a RayCluster custom resource.
-kubectl  apply -f raycluster_example.yaml
+kubectl -n $NAMESPACE apply -f raycluster_example.yaml
 
 # Wait for the RayCluster to be ready.
 sleep 5
