@@ -187,6 +187,7 @@ Install cert-manager:
 
 ```sh
 kustomize build common/cert-manager/cert-manager/base | kubectl apply -f -
+kustomize build common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
 echo "Waiting for cert-manager to be ready ..."
 kubectl wait --for=condition=ready pod -l 'app in (cert-manager,webhook)' --timeout=180s -n cert-manager
 kubectl wait --for=jsonpath='{.subsets[0].addresses[0].targetRef.kind}'=Pod endpoints -l 'app in (cert-manager,webhook)' --timeout=180s -n cert-manager
@@ -209,7 +210,6 @@ Install Istio:
 
 ```sh
 echo "Installing Istio configured with external authorization..."
-cd common/istio-1-22
 kustomize build common/istio-1-22/istio-crds/base | kubectl apply -f -
 kustomize build common/istio-1-22/istio-namespace/base | kubectl apply -f -
 kustomize build common/istio-1-22/istio-install/overlays/oauth2-proxy | kubectl apply -f -
@@ -268,6 +268,13 @@ Install kubeflow namespace:
 kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 ```
 
+#### Network Policies
+
+Install network policies:
+```sh
+kustomize build common/networkpolicies/base | kubectl apply -f -
+```
+
 #### Kubeflow Roles
 
 Create the Kubeflow ClusterRoles, `kubeflow-view`, `kubeflow-edit` and
@@ -278,6 +285,17 @@ Install kubeflow roles:
 
 ```sh
 kustomize build common/kubeflow-roles/base | kubectl apply -f -
+```
+
+#### Kubeflow Istio Resources
+
+Create the Kubeflow Gateway, `kubeflow-gateway` and ClusterRole, 
+`kubeflow-istio-admin`.
+
+Install kubeflow istio resources:
+
+```sh
+kustomize build common/istio-1-22/kubeflow-istio-resources/base | kubectl apply -f -
 ```
 
 #### Kubeflow Pipelines
@@ -338,7 +356,7 @@ kustomize build apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply
 Install the Central Dashboard official Kubeflow component:
 
 ```sh
-kustomize build apps/centraldashboard/upstream/overlays/kserve | kubectl apply -f -
+kustomize build apps/centraldashboard/upstream/overlays/oauth2-proxy | kubectl apply -f -
 ```
 
 #### Admission Webhook
