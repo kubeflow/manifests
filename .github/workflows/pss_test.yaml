@@ -107,7 +107,7 @@ jobs:
     - name: Restarting cache-server
       run: |
         kubectl rollout restart deployment cache-server -n kubeflow
-        kubectl wait --for=condition=ready pod -l app=cache-server -n kubeflow --timeot=180s
+        kubectl wait --for=condition=ready pod -l app=cache-server -n kubeflow --timeout=180s
 
     - name: Apply Pod Security Standards baseline levels for static namespaces
       run: ./tests/gh-actions/enable_baseline_PSS.sh
