@@ -2,69 +2,61 @@ name: Build & Apply KServe manifests in KinD
 on:
   pull_request:
     paths:
-      - .github/workflows/kserve_test.yaml
-      - tests/gh-actions/kind-cluster.yaml
-      - tests/gh-actions/install_kind.sh
-      - tests/gh-actions/install_kustomize.sh
-      - contrib/kserve/**
-      - tests/gh-actions/install_cert_manager.sh
-      - common/cert-manager/**
-      - tests/gh-actions/install_knative.sh
-      - common/knative/**
-      - tests/gh-actions/install_kserve.sh
+    - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
+    - .github/workflows/kserve_test.yaml
+    - contrib/kserve/**
+    - tests/gh-actions/install_cert_manager.sh
+    - common/cert-manager/**
+    - tests/gh-actions/install_knative.sh
+    - common/knative/**
+    - tests/gh-actions/install_kserve.sh
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Install KinD
-        run: ./tests/gh-actions/install_kind.sh
+    - name: Install KinD, Create KinD cluster and Install kustomize
+      run: ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
 
-      - name: Create KinD Cluster
-        run: kind create cluster --config tests/gh-actions/kind-cluster.yaml
+    - name: Create kubeflow namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
-      - name: Install kustomize
-        run: ./tests/gh-actions/install_kustomize.sh
+    - name: Install Istio
+      run: ./tests/gh-actions/install_istio.sh
 
-      - name: Create kubeflow namespace
-        run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+    - name: Install cert-manager
+      run: ./tests/gh-actions/install_cert_manager.sh
 
-      - name: Install Istio
-        run: ./tests/gh-actions/install_istio.sh
+    - name: Install knative
+      run: ./tests/gh-actions/install_knative.sh
 
-      - name: Install cert-manager
-        run: ./tests/gh-actions/install_cert_manager.sh
+    - name: Build & Apply manifests
+      run: ./tests/gh-actions/install_kserve.sh
 
-      - name: Install knative
-        run: ./tests/gh-actions/install_knative.sh
+    - name: Create test namespace
+      run: kubectl create ns kserve-test
 
-      - name: Build & Apply manifests
-        run: ./tests/gh-actions/install_kserve.sh
+    - name: Setup python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
 
-      - name: Create test namespace
-        run: kubectl create ns kserve-test
+    - name: Install test dependencies
+      run: pip install -r ./contrib/kserve/tests/requirements.txt
 
-      - name: Setup python 3.9
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
+    - name: Port forward
+      run: |
+        INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
+        nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
 
-      - name: Install test dependencies
-        run: pip install -r ./contrib/kserve/tests/requirements.txt
+    - name: Run kserve tests
+      run: |
+        export KSERVE_INGRESS_HOST_PORT=localhost:8080
+        cd ./contrib/kserve/tests && pytest .
 
-      - name: Port forward
-        run: |
-          INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
-          nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
-
-      - name: Run kserve tests
-        run: |
-          export KSERVE_INGRESS_HOST_PORT=localhost:8080
-          cd ./contrib/kserve/tests && pytest .
-
-      - name: Run kserve models webapp test
-        run: |
-          kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app
+    - name: Run kserve models webapp test
+      run: |
+        kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app

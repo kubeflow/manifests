@@ -41,12 +41,13 @@ resources:
 - ../common/istio-1-22/istio-namespace/base
 - ../common/istio-1-22/istio-install/overlays/oauth2-proxy
 # oauth2-proxy
-- ../common/oidc-client/oauth2-proxy/overlays/m2m-self-signed
+- ../common/oauth2-proxy/overlays/m2m-self-signed
 # Dex
 - ../common/dex/overlays/oauth2-proxy
 # KNative
 - ../common/knative/knative-serving/overlays/gateways
-- ../common/knative/knative-eventing/base
+# Uncomment the following line if `knative-eventing` is required
+# - ../common/knative/knative-eventing/base
 - ../common/istio-1-22/cluster-local-gateway/base
 # Kubeflow namespace
 - ../common/kubeflow-namespace/base
@@ -63,7 +64,7 @@ resources:
 # Katib
 - ../apps/katib/upstream/installs/katib-with-kubeflow
 # Central Dashboard
-- ../apps/centraldashboard/upstream/overlays/oauth2-proxy
+- ../apps/centraldashboard/overlays/oauth2-proxy
 # Admission Webhook
 - ../apps/admission-webhook/upstream/overlays/cert-manager
 # Jupyter Web App
@@ -89,9 +90,25 @@ resources:
 - ../contrib/kserve/kserve
 - ../contrib/kserve/models-web-app/overlays/kubeflow
 
+# Ray and Seldon resources (commented out by default)
+# Ray does not support Istio yet and integration is in alpha state.
+# Here is the documentation for Ray: https://docs.ray.io/en/latest/
+# Here is the internal documentation for Ray: - ../contrib/ray/README.md
+# - ../contrib/ray/kuberay-operator/overlays/kubeflow
+#
+# Seldon integration notes: Seldon may have specific requirements and limitations.
+# Documentation for Seldon: https://docs.seldon.io/projects/seldon-core/en/latest/
+# Here is the internal documentation for Seldon: - ../contrib/seldon/README.md
+# - ../contrib/seldon/seldon-core-operator/overlays/application
+
+components:
 # Pod Security Standards
 # https://kubernetes.io/docs/concepts/security/pod-security-standards/
 # Uncomment to enable baseline level standards
 # - ../contrib/security/PSS/static/baseline
 # Uncomment to enable restricted level standards
 # - ../contrib/security/PSS/static/restricted
+# Uncomment to enable baseline level standards for dynamic namespaces
+# - ../contrib/security/PSS/dynamic/baseline
+# Uncomment to enable restricted level standards for dynamic namespaces
+# - ../contrib/security/PSS/dynamic/restricted

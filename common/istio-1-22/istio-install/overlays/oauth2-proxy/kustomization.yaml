@@ -5,4 +5,4 @@ resources:
 - ../../base
 
 components:
-- ../../../../oidc-client/oauth2-proxy/components/istio-external-auth-patches
+- ../../../../oauth2-proxy/components/istio-external-auth-patches

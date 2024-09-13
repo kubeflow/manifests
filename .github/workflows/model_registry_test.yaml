@@ -1,14 +1,13 @@
-# If anyone changes or improve the following tests for Model Registry, please 
+# If anyone changes or improve the following tests for Model Registry, please
 # consider reflecting the same changes on https://github.com/kubeflow/model-registry
 name: Deploy and test Kubeflow Model Registry
 on:
   pull_request:
     paths:
-      - apps/model-registry/upstream/**
-      - tests/gh-actions/kind-cluster.yaml
-      - tests/gh-actions/install_kustomize.sh
-      - tests/gh-actions/install_istio.sh
-      - common/istio*/**
+    - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
+    - apps/model-registry/upstream/**
+    - tests/gh-actions/install_istio.sh
+    - common/istio*/**
 
 jobs:
   build-kfmr:
@@ -17,22 +16,16 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Install KinD
-      run: ./tests/gh-actions/install_kind.sh
-
-    - name: Create KinD Cluster
-      run: kind create cluster --config tests/gh-actions/kind-cluster.yaml
+    - name: Install KinD, Create KinD cluster and Install kustomize
+      run: ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
 
     - name: Install kubectl
       run: ./tests/gh-actions/install_kubectl.sh
 
-    - name: Install kustomize
-      run: ./tests/gh-actions/install_kustomize.sh
-
     - name: Create kubeflow namespace
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
-    - name: Install Istio with ext auth
+    - name: Install Istio with external authentication
       run: ./tests/gh-actions/install_istio_with_ext_auth.sh*
 
     - name: Install cert-manager
@@ -61,7 +54,7 @@ jobs:
           'http://localhost:8081/api/model_registry/v1alpha3/registered_models?pageSize=100&orderBy=ID&sortOrder=DESC' \
           -H 'accept: application/json'
 
-    # for these steps below ensure same steps as kserve (ie: Istio with ext auth, cert0manager, knative) so to achieve same setup 
+    # for these steps below ensure same steps as kserve (ie: Istio with external authentication, cert-manager, knative) so to achieve same setup
     - name: Port forward Istio gateway
       run: |
         INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')

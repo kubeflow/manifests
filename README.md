@@ -43,19 +43,19 @@ This repo periodically syncs all official Kubeflow components from their respect
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
-| Training Operator | apps/training-operator/upstream | [v1.8.0-rc.1](https://github.com/kubeflow/training-operator/tree/v1.8.0-rc.1/manifests) |
-| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.9.0-rc.2](https://github.com/kubeflow/kubeflow/tree/v1.9.0-rc.2/components/notebook-controller/config) |
-| PVC Viewer Controller | apps/pvcviewer-roller/upstream | [v1.9.0-rc.2](https://github.com/kubeflow/kubeflow/tree/v1.9.0-rc.2/components/pvcviewer-controller/config) |
-| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.9.0-rc.2](https://github.com/kubeflow/kubeflow/tree/v1.9.0-rc.2/components/tensorboard-controller/config) |
-| Central Dashboard | apps/centraldashboard/upstream | [v1.9.0-rc.2](https://github.com/kubeflow/kubeflow/tree/v1.9.0-rc.2/components/centraldashboard/manifests) |
-| Profiles + KFAM | apps/profiles/upstream | [v1.9.0-rc.2](https://github.com/kubeflow/kubeflow/tree/v1.9.0-rc.2/components/profile-controller/config) |
-| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.9.0-rc.2](https://github.com/kubeflow/kubeflow/tree/v1.9.0-rc.2/components/admission-webhook/manifests) |
-| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.9.0-rc.2](https://github.com/kubeflow/kubeflow/tree/v1.9.0-rc.2/components/crud-web-apps/jupyter/manifests) |
-| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.9.0-rc.2](https://github.com/kubeflow/kubeflow/tree/v1.9.0-rc.2/components/crud-web-apps/tensorboards/manifests) |
-| Volumes Web App | apps/volumes-web-app/upstream | [v1.9.0-rc.2](https://github.com/kubeflow/kubeflow/tree/v1.9.0-rc.2/components/crud-web-apps/volumes/manifests) |
-| Katib | apps/katib/upstream | [v0.17.0-rc.0](https://github.com/kubeflow/katib/tree/v0.17.0-rc.0/manifests/v1beta1) |
+| Training Operator | apps/training-operator/upstream | [v1.8.0](https://github.com/kubeflow/training-operator/tree/v1.8.0/manifests) |
+| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.9.0](https://github.com/kubeflow/kubeflow/tree/v1.9.0/components/notebook-controller/config) |
+| PVC Viewer Controller | apps/pvcviewer-roller/upstream | [v1.9.0](https://github.com/kubeflow/kubeflow/tree/v1.9.0/components/pvcviewer-controller/config) |
+| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.9.0](https://github.com/kubeflow/kubeflow/tree/v1.9.0/components/tensorboard-controller/config) |
+| Central Dashboard | apps/centraldashboard/upstream | [v1.9.0](https://github.com/kubeflow/kubeflow/tree/v1.9.0/components/centraldashboard/manifests) |
+| Profiles + KFAM | apps/profiles/upstream | [v1.9.0](https://github.com/kubeflow/kubeflow/tree/v1.9.0/components/profile-controller/config) |
+| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.9.0](https://github.com/kubeflow/kubeflow/tree/v1.9.0/components/admission-webhook/manifests) |
+| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.9.0](https://github.com/kubeflow/kubeflow/tree/v1.9.0/components/crud-web-apps/jupyter/manifests) |
+| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.9.0](https://github.com/kubeflow/kubeflow/tree/v1.9.0/components/crud-web-apps/tensorboards/manifests) |
+| Volumes Web App | apps/volumes-web-app/upstream | [v1.9.0](https://github.com/kubeflow/kubeflow/tree/v1.9.0/components/crud-web-apps/volumes/manifests) |
+| Katib | apps/katib/upstream | [v0.17.0](https://github.com/kubeflow/katib/tree/v0.17.0/manifests/v1beta1) |
 | KServe | contrib/kserve/kserve | [0.13.0](https://github.com/kserve/kserve/releases/tag/v0.13.0) |
-| KServe Models Web App | contrib/kserve/models-web-app | [0.13.0-rc.0](https://github.com/kserve/models-web-app/tree/0.13.0-rc.0/config) |
+| KServe Models Web App | contrib/kserve/models-web-app | [0.13.0](https://github.com/kserve/models-web-app/tree/0.13.0/config) |
 | Kubeflow Pipelines | apps/pipeline/upstream | [2.2.0](https://github.com/kubeflow/pipelines/tree/2.2.0/manifests/kustomize) |
 | Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [2.0.5](https://github.com/kubeflow/kfp-tekton/tree/2.0.5/manifests/kustomize) |
 | Kubeflow Model Registry | apps/model-registry/upstream | [v0.2.1-alpha](https://github.com/kubeflow/model-registry/tree/v0.2.1-alpha/manifests/kustomize) |
@@ -117,7 +117,7 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
-  image: kindest/node:v1.29.4
+  image: kindest/node:v1.31.0@sha256:53df588e04085fd41ae12de0c3fe4c72f7013bba32a20e7325357a1ac94ba865
   kubeadmConfigPatches:
   - |
     kind: ClusterConfiguration
@@ -187,6 +187,7 @@ Install cert-manager:
 
 ```sh
 kustomize build common/cert-manager/cert-manager/base | kubectl apply -f -
+kustomize build common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
 echo "Waiting for cert-manager to be ready ..."
 kubectl wait --for=condition=ready pod -l 'app in (cert-manager,webhook)' --timeout=180s -n cert-manager
 kubectl wait --for=jsonpath='{.subsets[0].addresses[0].targetRef.kind}'=Pod endpoints -l 'app in (cert-manager,webhook)' --timeout=180s -n cert-manager
@@ -209,7 +210,6 @@ Install Istio:
 
 ```sh
 echo "Installing Istio configured with external authorization..."
-cd common/istio-1-22
 kustomize build common/istio-1-22/istio-crds/base | kubectl apply -f -
 kustomize build common/istio-1-22/istio-namespace/base | kubectl apply -f -
 kustomize build common/istio-1-22/istio-install/overlays/oauth2-proxy | kubectl apply -f -
@@ -224,7 +224,7 @@ The oauth2-proxy extends your Istio Ingress-Gateway capabilities, to be able to 
 
 ```sh
 echo "Installing oauth2-proxy..."
-kustomize build common/oidc-client/oauth2-proxy/overlays/m2m-self-signed/ | kubectl apply -f -
+kustomize build common/oauth2-proxy/overlays/m2m-self-signed/ | kubectl apply -f -
 kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 ```
 
@@ -268,6 +268,13 @@ Install kubeflow namespace:
 kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 ```
 
+#### Network Policies
+
+Install network policies:
+```sh
+kustomize build common/networkpolicies/base | kubectl apply -f -
+```
+
 #### Kubeflow Roles
 
 Create the Kubeflow ClusterRoles, `kubeflow-view`, `kubeflow-edit` and
@@ -278,6 +285,17 @@ Install kubeflow roles:
 
 ```sh
 kustomize build common/kubeflow-roles/base | kubectl apply -f -
+```
+
+#### Kubeflow Istio Resources
+
+Create the Kubeflow Gateway, `kubeflow-gateway` and ClusterRole, 
+`kubeflow-istio-admin`.
+
+Install kubeflow istio resources:
+
+```sh
+kustomize build common/istio-1-22/kubeflow-istio-resources/base | kubectl apply -f -
 ```
 
 #### Kubeflow Pipelines
@@ -338,7 +356,7 @@ kustomize build apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply
 Install the Central Dashboard official Kubeflow component:
 
 ```sh
-kustomize build apps/centraldashboard/upstream/overlays/kserve | kubectl apply -f -
+kustomize build apps/centraldashboard/upstream/overlays/oauth2-proxy | kubectl apply -f -
 ```
 
 #### Admission Webhook
@@ -463,26 +481,67 @@ If you absolutely need to expose Kubeflow over HTTP, you can disable the `Secure
 
 ---
 
+### Change default user name
+
+For security reasons, we don't want to use the default username and email for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own username and email before deploying. To define it for the default user:
+
+1. Edit `common/dex/overlays/oauth2-proxy/config-map.yaml` and fill the relevant field with your email and preferred username:
+
+    ```yaml
+    ...
+      staticPasswords:
+      - email: <REPLACE_WITH_YOUR_EMAIL>
+        username: <REPLACE_WITH_PREFERRED_USERNAME>
+    ```
+
 ### Change default user password
 
-For security reasons, we don't want to use the default password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password before deploying. To define a password for the default user:
+For security reasons, we don't want to use the default password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password and apply it either **before creating the cluster** or **after creating the cluster**. 
 
-1. Pick a password for the default user, with email `user@example.com`, and hash it using `bcrypt`:
-
-TODO this changed slightly in https://github.com/kubeflow/manifests/pull/2669 and https://github.com/kubeflow/manifests/pull/2229
+Pick a password for the default user, with email `user@example.com`, and hash it using `bcrypt`:
 
     ```sh
     python3 -c 'from passlib.hash import bcrypt; import getpass; print(bcrypt.using(rounds=12, ident="2y").hash(getpass.getpass()))'
     ```
 
-2. Edit `common/dex/base/config-map.yaml` and fill the relevant field with the hash of the password you chose:
+For example, running the above command locally with required packages like _passlib_ would look as follows:
+  ```sh
+  python3 -c 'from passlib.hash import bcrypt; import getpass; print(bcrypt.using(rounds=12, ident="2y").hash(getpass.getpass()))'
+  Password:       <--- Enter the password here
+  $2y$12$vIm8CANhuWui0J1p3jYeGeuM28Qcn76IFMaFWvZCG5ZkKZ4MjTF4u <--- GENERATED_HASH_FOR_ENTERED_PASSWORD
+  ```
+
+#### Before creating the cluster:
+
+1. Edit `common/dex/base/dex-passwords.yaml` and fill the relevant field with the hash of the password you chose:
 
     ```yaml
     ...
-      staticPasswords:
-      - email: user@example.com
-        hash: <enter the generated hash here>
+      stringData:
+        DEX_USER_PASSWORD: <REPLACE_WITH_HASH>
     ```
+
+#### After creating the cluster:
+
+1. Delete the existing secret _dex-passwords_ in auth namespace using the following command:
+
+    ```sh
+    kubectl delete secret dex-passwords -n auth
+    ```
+
+2. Create secret dex-passwords with new hash using the following command:
+
+    ```sh
+    kubectl create secret generic dex-passwords --from-literal=DEX_USER_PASSWORD='REPLACE_WITH_HASH' -n auth
+    ```
+
+3. Recreate the _dex_ pod in auth namespace using the following command:
+
+    ```sh
+    kubectl delete pods --all -n auth
+    ```
+
+4. Try to login using the new dex password.
 
 ## Upgrading and extending
 
@@ -520,6 +579,6 @@ The Kubeflow security working group follows a responsible disclosure policy for 
 ## Frequently Asked Questions
 
 - **Q:** What versions of Istio, Knative, Cert-Manager, Argo, ... are compatible with Kubeflow? \
-  **A:** Please refer to each individual component's documentation for a dependency compatibility range. For Istio, Knative, Dex, Cert-Manager and OIDC-AuthService, the versions in `common` are the ones we have validated.
+  **A:** Please refer to each individual component's documentation for a dependency compatibility range. For Istio, Knative, Dex, Cert-Manager and OAuth2 Proxy, the versions in `common` are the ones we have validated.
 - **Q:** Can I use earlier version of Kustomize with Kubeflow manifests?
   **A:** No, it is not supported anymore, although it might be possible with manual effort.

@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: istiod
+  namespace: istio-system
+spec:
+  template:
+    spec:
+      containers:
+      - name: discovery
+        env:
+        # Istio will refresh the JWT Public Keys provided with
+        # RequestAuthentication by default every 20 minutes. For deployment
+        # from scratch this is not ideal because there is a high chance that
+        # the istiod will be available before dex is available, triggering
+        # Istio mechanism to use a placeholder jwt until refreshed.
+        - name: PILOT_JWT_PUB_KEY_REFRESH_INTERVAL
+          value: "1m"

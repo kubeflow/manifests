@@ -1,4 +1,4 @@
-# Define a GitHub action workflow to determine whether issues 
+# Define a GitHub action workflow to determine whether issues
 # should be added or removed from the Needs Triage Kanban board.
 name: Check Triage Status of Issue
 on:
@@ -10,10 +10,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Update Kanban
-        uses: kubeflow/code-intelligence/Issue_Triage/action@master
-        with:
-          # Letting input NEEDS_TRIAGE_PROJECT_CARD_ID use the default value
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.triage_projects_github_token }}
-
+    - name: Update Kanban
+      uses: kubeflow/code-intelligence/Issue_Triage/action@master
+      with:
+        # Letting input NEEDS_TRIAGE_PROJECT_CARD_ID use the default value
+        ISSUE_NUMBER: ${{ github.event.issue.number }}
+        GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.triage_projects_github_token }}

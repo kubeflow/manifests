@@ -62,7 +62,7 @@ With the above implementation we move all the logic of handling the JWTs to the 
 This proposal aims to put more focus on keeping and validating `id_tokens` but also bridging to the existing functionality of the backends, to avoid extensive changes.
 ### Implementation
 The technical details for the above proposal translate to the following
-1. Common Kubeflow manifests, for all components, for configuring Istio for supporting multiple issuers ([Dex](https://github.com/kubeflow/manifests/blob/v1.9-branch/common/oidc-client/oauth2-proxy/components/istio-external-auth/requestauthentication.dex-jwt.yaml) and [K8s-m2m](https://github.com/kubeflow/manifests/blob/v1.9-branch/common/oidc-client/oauth2-proxy/components/istio-m2m/requestauthentication.yaml)), via `RequestAuthentication` objects
+1. Common Kubeflow manifests, for all components, for configuring Istio for supporting multiple issuers ([Dex](https://github.com/kubeflow/manifests/blob/v1.9-branch/common/oauth2-proxy/components/istio-external-auth/requestauthentication.dex-jwt.yaml) and [K8s-m2m](https://github.com/kubeflow/manifests/blob/v1.9-branch/common/oauth2-proxy/components/istio-m2m/requestauthentication.yaml)), via `RequestAuthentication` objects
 2. `AuthorizationPolicy` objects of components, for allowing access from Istio IngressGateway, will need to be extended for also requiring a JWT
 3. Backends that need to be accessible from other user-namespaces will need to have an `AuthorizationPolicy` that allows any request, only if it has a JWT
 4. Backends don't need any logic for validating the JWTs and their existence
