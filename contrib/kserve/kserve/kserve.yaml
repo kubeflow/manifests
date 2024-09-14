@@ -21284,14 +21284,14 @@ data:
     Art explainer serving runtime default image version.\n           \"defaultImageVersion\":
     \"latest\"\n       }\n   }\n \n # ====================================== STORAGE
     INITIALIZER CONFIGURATION ======================================\n # Example\n
-    storageInitializer: |-\n   {\n       \"image\" : \"kserve/storage-initializer:v0.13.0\",\n
+    storageInitializer: |-\n   {\n       \"image\" : \"kserve/storage-initializer:v0.13.1\",\n
     \      \"memoryRequest\": \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\":
     \"100m\",\n       \"cpuLimit\": \"1\",\n       \"caBundleConfigMapName\": \"\",\n
     \      \"caBundleVolumeMountPath\": \"/etc/ssl/custom-certs\",\n       \"enableDirectPvcVolumeMount\":
     false,\n       \"enableModelcar\": false,\n       \"cpuModelcar\": \"10m\",\n
     \      \"memoryModelcar\": \"15Mi\"\n   }\n storageInitializer: |-\n   {\n       #
     image contains the default storage initializer image uri.\n       \"image\" :
-    \"kserve/storage-initializer:v0.13.0\",\n       \n       # memoryRequest is the
+    \"kserve/storage-initializer:v0.13.1\",\n       \n       # memoryRequest is the
     requests.memory to set for the storage initializer init container.\n       \"memoryRequest\":
     \"100Mi\",\n   \n        # memoryLimit is the limits.memory to set for the storage
     initializer init container.\n       \"memoryLimit\": \"1Gi\",\n       \n       #
@@ -21430,11 +21430,11 @@ data:
     NOTE: This configuration only applicable to serverless deployment.\n       \"pathTemplate\":
     \"/serving/{{ .Namespace }}/{{ .Name }}\"\n   }\n \n # ======================================
     LOGGER CONFIGURATION ======================================\n # Example\n logger:
-    |-\n   {\n       \"image\" : \"kserve/agent:v0.13.0\",\n       \"memoryRequest\":
+    |-\n   {\n       \"image\" : \"kserve/agent:v0.13.1\",\n       \"memoryRequest\":
     \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n
     \      \"cpuLimit\": \"1\",\n       \"defaultUrl\": \"http://default-broker\"\n
     \  }\n logger: |-\n   {\n       # image contains the default logger image uri.\n
-    \      \"image\" : \"kserve/agent:v0.13.0\",\n   \n       # memoryRequest is the
+    \      \"image\" : \"kserve/agent:v0.13.1\",\n   \n       # memoryRequest is the
     requests.memory to set for the logger container.\n       \"memoryRequest\": \"100Mi\",\n
     \      \n       # memoryLimit is the limits.memory to set for the logger container.\n
     \      \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is the requests.cpu
@@ -21443,11 +21443,11 @@ data:
     \"1\",\n       \n       # defaultUrl specifies the default logger url. If logger
     is not specified in the resource this url is used.\n       \"defaultUrl\": \"http://default-broker\"\n
     \  }\n \n # ====================================== BATCHER CONFIGURATION ======================================\n
-    # Example\n batcher: |-\n   {\n       \"image\" : \"kserve/agent:v0.13.0\",\n       \"memoryRequest\":
+    # Example\n batcher: |-\n   {\n       \"image\" : \"kserve/agent:v0.13.1\",\n       \"memoryRequest\":
     \"1Gi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"1\",\n       \"cpuLimit\":
     \"1\",\n       \"maxBatchSize\": \"32\",\n       \"maxLatency\": \"5000\"\n   }\n
     batcher: |-\n   {\n       # image contains the default batcher image uri.\n       \"image\"
-    : \"kserve/agent:v0.13.0\",\n       \n       # memoryRequest is the requests.memory
+    : \"kserve/agent:v0.13.1\",\n       \n       # memoryRequest is the requests.memory
     to set for the batcher container.\n       \"memoryRequest\": \"1Gi\",\n   \n       #
     memoryLimit is the limits.memory to set for the batcher container.\n       \"memoryLimit\":
     \"1Gi\",\n       \n       # cpuRequest is the requests.cpu to set for the batcher
@@ -21457,10 +21457,10 @@ data:
     \      # maxLatency is the default maximum latency in milliseconds for batcher
     to wait and collect the batch.\n       \"maxLatency\": \"5000\"\n   }\n \n # ======================================
     AGENT CONFIGURATION ======================================\n # Example\n agent:
-    |-\n   {\n       \"image\" : \"kserve/agent:v0.13.0\",\n       \"memoryRequest\":
+    |-\n   {\n       \"image\" : \"kserve/agent:v0.13.1\",\n       \"memoryRequest\":
     \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n
     \      \"cpuLimit\": \"1\"\n   }\n agent: |-\n   {\n       # image contains the
-    default agent image uri.\n       \"image\" : \"kserve/agent:v0.13.0\",\n   \n       #
+    default agent image uri.\n       \"image\" : \"kserve/agent:v0.13.1\",\n   \n       #
     memoryRequest is the requests.memory to set for the agent container.\n       \"memoryRequest\":
     \"100Mi\",\n   \n       # memoryLimit is the limits.memory to set for the agent
     container.\n       \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is
@@ -21468,12 +21468,12 @@ data:
     \      \n       # cpuLimit is the limits.cpu to set for the agent container.\n
     \      \"cpuLimit\": \"1\"\n   }\n \n # ======================================
     ROUTER CONFIGURATION ======================================\n # Example\n router:
-    |-\n   {\n       \"image\" : \"kserve/router:v0.13.0\",\n       \"memoryRequest\":
+    |-\n   {\n       \"image\" : \"kserve/router:v0.13.1\",\n       \"memoryRequest\":
     \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n
     \      \"cpuLimit\": \"1\",\n       \"headers\": {\n         \"propagate\": []\n
     \      }\n   }\n # router is the implementation of inference graph.\n router:
     |-\n   {\n       # image contains the default router image uri.\n       \"image\"
-    : \"kserve/router:v0.13.0\",\n       \n       # memoryRequest is the requests.memory
+    : \"kserve/router:v0.13.1\",\n       \n       # memoryRequest is the requests.memory
     to set for the router container.\n       \"memoryRequest\": \"100Mi\",\n       \n
     \      # memoryLimit is the limits.memory to set for the router container.\n       \"memoryLimit\":
     \"1Gi\",\n       \n       # cpuRequest is the requests.cpu to set for the router
@@ -21512,7 +21512,7 @@ data:
     \    \"enablePrometheusScraping\" : \"false\"\n   }"
   agent: |-
     {
-        "image" : "kserve/agent:v0.13.0",
+        "image" : "kserve/agent:v0.13.1",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -21520,7 +21520,7 @@ data:
     }
   batcher: |-
     {
-        "image" : "kserve/agent:v0.13.0",
+        "image" : "kserve/agent:v0.13.1",
         "memoryRequest": "1Gi",
         "memoryLimit": "1Gi",
         "cpuRequest": "1",
@@ -21574,7 +21574,7 @@ data:
     }
   logger: |-
     {
-        "image" : "kserve/agent:v0.13.0",
+        "image" : "kserve/agent:v0.13.1",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -21588,7 +21588,7 @@ data:
     }
   router: |-
     {
-        "image" : "kserve/router:v0.13.0",
+        "image" : "kserve/router:v0.13.1",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -21596,7 +21596,7 @@ data:
     }
   storageInitializer: |-
     {
-        "image" : "kserve/storage-initializer:v0.13.0",
+        "image" : "kserve/storage-initializer:v0.13.1",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -21703,7 +21703,7 @@ spec:
               fieldPath: metadata.namespace
         - name: SECRET_NAME
           value: kserve-webhook-server-cert
-        image: kserve/kserve-controller:v0.13.0
+        image: kserve/kserve-controller:v0.13.1
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 5
