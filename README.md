@@ -43,7 +43,7 @@ This repo periodically syncs all official Kubeflow components from their respect
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
-| Training Operator | apps/training-operator/upstream | [v1.8.0](https://github.com/kubeflow/training-operator/tree/v1.8.0/manifests) |
+| Training Operator | apps/training-operator/upstream | [v1.8.1](https://github.com/kubeflow/training-operator/tree/v1.8.1/manifests) |
 | Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.9.0](https://github.com/kubeflow/kubeflow/tree/v1.9.0/components/notebook-controller/config) |
 | PVC Viewer Controller | apps/pvcviewer-roller/upstream | [v1.9.0](https://github.com/kubeflow/kubeflow/tree/v1.9.0/components/pvcviewer-controller/config) |
 | Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.9.0](https://github.com/kubeflow/kubeflow/tree/v1.9.0/components/tensorboard-controller/config) |
