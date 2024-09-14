@@ -57,7 +57,11 @@ jobs:
           # Apply the patch
           kubectl get "$KIND" "$NAME" -n "$NAMESPACE" &> /dev/null
           if [ $? -eq 0 ]; then
-            kubectl patch "$KIND" "$NAME" -n "$NAMESPACE" --patch-file "$file"
+            if [ "$NAME" = "metacontroller" ]; then
+              kubectl patch "$KIND" statefulset -n kubeflow --patch-file "$file"
+            else
+              kubectl patch "$KIND" "$NAME" -n "$NAMESPACE" --patch-file "$file"
+            fi
             # if [ "$NAME" = "oauth2-proxy" ]; then
             #   kubectl wait -n oauth2-proxy --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s
             # elif [ "$NAME" = "metadata-envoy-deployment" ]; then
