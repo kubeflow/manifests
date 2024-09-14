@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workflow-controller
+  namespace: kubeflow
+spec:
+  template:
+    spec:
+      containers:
+      - name: workflow-controller
+        securityContext:
+          seccompProfile:
+            type: RuntimeDefault
+          runAsNonRoot: true
+      initContainers:
+      - image: docker.io/istio/proxyv2:1.22.1
+        name: istio-init
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+          runAsUser: 1337
+          runAsNonRoot: true

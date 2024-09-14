@@ -58,25 +58,19 @@ jobs:
           kubectl get "$KIND" "$NAME" -n "$NAMESPACE" &> /dev/null
           if [ $? -eq 0 ]; then
             kubectl patch "$KIND" "$NAME" -n "$NAMESPACE" --patch-file "$file"
-            # if [ "$NAME" = "oauth2-proxy" ]; then
-            #   kubectl wait -n oauth2-proxy --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s
-            # elif [ "$NAME" = "metadata-envoy-deployment" ]; then
-            #   kubectl wait -n kubeflow --for=condition=ready pod -l 'component=metadata-envoy' --timeout=180s
-            # elif [ "$NAME" = "metadata-grpc-deployment" ]; then
-            #   kubectl wait -n kubeflow --for=condition=ready pod -l 'component=metadata-grpc-server' --timeout=180s
-            # elif [ "$NAME" = "profiles-deployment" -o "$NAME" = "ml-pipeline" ]; then
-            #   echo "skipping this patch"
-            #   # kubectl describe pod -l 'kustomize.component=profiles' -n kubeflow
-            #   # kubectl wait -n kubeflow --for=condition=ready pod -l 'kustomize.component=profiles' --timeout=300s
-            # else
-            #   echo "Fetching logs for pod: $NAME"
-            #   # kubectl describe pod -l app="$NAME" -n "$NAMESPACE"
-            #   # kubectl delete pod -l app="$NAME" -n "$NAMESPACE"
-            #   kubectl wait -n "$NAMESPACE" --for=condition=ready pod -l app="$NAME" --timeout=600s
-            # fi
+            if [ "$NAME" = "oauth2-proxy" ]; then
+              kubectl wait -n oauth2-proxy --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s
+            elif [ "$NAME" = "metadata-envoy-deployment" ]; then
+              kubectl wait -n kubeflow --for=condition=ready pod -l 'component=metadata-envoy' --timeout=600s
+            elif [ "$NAME" = "metadata-grpc-deployment" ]; then
+              kubectl wait -n kubeflow --for=condition=ready pod -l 'component=metadata-grpc-server' --timeout=600s
+            elif [ "$NAME" = "profiles-deployment" ]; then
+              kubectl wait -n kubeflow --for=condition=ready pod -l 'kustomize.component=profiles' --timeout=300s
+            else
+              kubectl wait -n "$NAMESPACE" --for=condition=ready pod -l app="$NAME" --timeout=600s
+            fi
           fi
         done
-        sleep 60
         # for file in "$DIRECTORY"/*.yaml; do
         #   KIND=$(kubectl get -f "$file" -o jsonpath='{.kind}')
         #   NAME=$(kubectl get -f "$file" -o jsonpath='{.metadata.name}')
