@@ -18,3 +18,13 @@ spec:
           capabilities:
             drop:
             - ALL
+      - image: docker.io/istio/proxyv2:1.22.1
+        name: istio-init
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+          runAsUser: 1337
+          runAsNonRoot: true
