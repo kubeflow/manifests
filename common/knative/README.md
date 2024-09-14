@@ -54,7 +54,7 @@ The manifests for Knative Serving are based off the following:
 
 ## Knative-Eventing
 
-The manifests for Knative Eventing are based off the [v1.15.0 release](https://github.com/knative/eventing/releases/tag/knative-v1.15.0).
+The manifests for Knative Eventing are based off the [v1.15.1 release](https://github.com/knative/eventing/releases/tag/knative-v1.15.1).
 
   - [Eventing Core](https://github.com/knative/eventing/releases/download/knative-v1.12.6/eventing-core.yaml)
   - [In-Memory Channel](https://github.com/knative/eventing/releases/download/knative-v1.12.6/in-memory-channel.yaml)
