@@ -7,9 +7,23 @@ TIMEOUT=120  # timeout in seconds
 SLEEP_INTERVAL=30  # interval between checks in seconds
 RAY_VERSION=2.23.0
 
-while [[ $(kubectl get namespace $NAMESPACE --no-headers 2>/dev/null | wc -l) -eq 0 ]]; do
-    echo "Waiting for namespace $NAMESPACE to be created..."
-    sleep 2
+start_time=$(date +%s)
+for ((i=0; i<TIMEOUT; i+=2)); do
+  if [[ $(kubectl get namespace $NAMESPACE --no-headers 2>/dev/null | wc -l) -eq 1 ]]; then
+    echo "Namespace $NAMESPACE created."
+    break
+  fi
+  
+  current_time=$(date +%s)
+  elapsed_time=$((current_time - start_time))
+  
+  if [ "$elapsed_time" -ge "$TIMEOUT" ]; then
+    echo "Timeout exceeded. Namespace $NAMESPACE not created."
+    exit 1
+  fi
+  
+  echo "Waiting for namespace $NAMESPACE to be created..."
+  sleep 2
 done
 
 echo "Namespace $NAMESPACE is created!"
@@ -57,7 +71,7 @@ kubectl -n $NAMESPACE delete -f raycluster_example.yaml
 
 # Wait for all Ray Pods to be deleted.
 start_time=$(date +%s)
-while true; do
+for ((i=0; i<TIMEOUT; i+=SLEEP_INTERVAL)); do
   pods=$(kubectl -n $NAMESPACE get pods -o json | jq '.items | length')
   if [ "$pods" -eq 0 ]; then
     kill $PID

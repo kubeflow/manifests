@@ -5,10 +5,21 @@ metadata:
 spec:
   action: ALLOW
   rules:
+  - from:
+    - source:
+        principals:
+        - "cluster.local/ns/kubeflow-user-example-com/sa/kubeflow-raycluster"
   - to:
     - operation:
         ports:
         - "6379"
+        - "6380"
+        - "6381"
+        - "6382"
+        - "6383"
+        - "52365"
+        - "8080"
+        - "10012"
 ---
 apiVersion: v1
 kind: Service
@@ -40,37 +51,7 @@ spec:
   - name: metrics-export-port
     port: 8080
     appProtocol: http
-  - name: p10002
-    port: 10002
-    appProtocol: grpc
-  - name: p10003
-    port: 10003
-    appProtocol: grpc
-  - name: p10004
-    port: 10004
-    appProtocol: grpc
-  - name: p10005
-    port: 10005
-    appProtocol: grpc
-  - name: p10006
-    port: 10006
-    appProtocol: grpc
-  - name: p10007
-    port: 10007
-    appProtocol: grpc
-  - name: p10008
-    port: 10008
-    appProtocol: grpc
-  - name: p10009
-    port: 10009
-    appProtocol: grpc
-  - name: p10010
-    port: 10010
-    appProtocol: grpc
-  - name: p10011
-    port: 10011
-    appProtocol: grpc
-  - name: p10012
+  - name: max-worker-port
     port: 10012
     appProtocol: grpc
 ---
@@ -96,6 +77,9 @@ spec:
       max-worker-port: '10012'
       node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.kubeflow-user-example-com.svc.cluster.local
     template:
+      metadata:
+        labels:
+          sidecar.istio.io/inject: "true"
       spec:
         containers:
         - name: ray-head
@@ -140,6 +124,9 @@ spec:
         max-worker-port: '10012'
         node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.kubeflow-user-example-com.svc.cluster.local
       template:
+        metadata:
+          labels:
+            sidecar.istio.io/inject: "true"
         spec:
           containers:
           - name: ray-worker
