@@ -31,8 +31,8 @@ jobs:
       run: |
         kustomize build common/kubeflow-namespace/base | kubectl apply -f -
         ./tests/gh-actions/install_cert_manager.sh
-        ./tests/gh-actions/install_istio_with_ext_auth.sh
-        kustomize build common/istio-1-22/kubeflow-istio-resources/base | kubectl apply -f -
+        ./tests/gh-actions/install_istio-cni.sh
+        kustomize build common/istio-cni-1-22/kubeflow-istio-resources/base | kubectl apply -f -
         ./tests/gh-actions/install_multi_tenancy.sh
         kustomize build ./common/oauth2-proxy/overlays/m2m-self-signed | kubectl apply -f -
         echo "Waiting for all oauth2-proxy pods to become ready..."

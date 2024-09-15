@@ -14,12 +14,7 @@ spec:
           runAsNonRoot: true
       initContainers:
       - image: docker.io/istio/proxyv2:1.22.1
-        name: istio-init
+        name: istio-validation
         securityContext:
-          capabilities:
-            drop:
-            - ALL
           seccompProfile:
             type: RuntimeDefault
-          runAsUser: 1337
-          runAsNonRoot: true
