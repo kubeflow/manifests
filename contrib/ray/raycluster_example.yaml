@@ -81,6 +81,7 @@ spec:
         labels:
           sidecar.istio.io/inject: "true"
       spec:
+        serviceAccountName: default-editor
         containers:
         - name: ray-head
           image: rayproject/ray:2.23.0-py311-cpu
@@ -128,6 +129,7 @@ spec:
           labels:
             sidecar.istio.io/inject: "true"
         spec:
+          serviceAccountName: default-editor
           containers:
           - name: ray-worker
             image: rayproject/ray:2.23.0-py311-cpu
