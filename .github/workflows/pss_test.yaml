@@ -71,7 +71,7 @@ jobs:
             kubectl patch "$KIND" "$NAME" -n "$NAMESPACE" --patch-file "$file"
           fi
         done
-        sleep 600
+        sleep 1200
         # for file in "$DIRECTORY"/*.yaml; do
         #   KIND=$(kubectl get -f "$file" -o jsonpath='{.kind}')
         #   NAME=$(kubectl get -f "$file" -o jsonpath='{.metadata.name}')
