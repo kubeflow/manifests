@@ -26,7 +26,7 @@ for ((i=0; i<TIMEOUT; i+=2)); do
   sleep 2
 done
 
-echo "Namespace $NAMESPACE is created!"
+echo "Namespace $NAMESPACE has been created!"
 
 kubectl label namespace $NAMESPACE istio-injection=enabled
 

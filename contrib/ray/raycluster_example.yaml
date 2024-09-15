@@ -8,7 +8,7 @@ spec:
   - from:
     - source:
         principals:
-        - "cluster.local/ns/kubeflow-user-example-com/sa/kubeflow-raycluster"
+        - "cluster.local/ns/kubeflow-user-example-com/sa/default-editor"
   - to:
     - operation:
         ports:
