@@ -57,21 +57,21 @@ jobs:
           # Apply the patch
           kubectl get "$KIND" "$NAME" -n "$NAMESPACE" &> /dev/null
           if [ $? -eq 0 ]; then
-            if [ "$NAME" = "oauth2-proxy" ]; then
-              kubectl delete pod -n oauth2-proxy -l 'app.kubernetes.io/name=oauth2-proxy'
-            elif [ "$NAME" = "metadata-envoy-deployment" ]; then
-              kubectl delete pod -n kubeflow -l 'component=metadata-envoy'
-            elif [ "$NAME" = "metadata-grpc-deployment" ]; then
-              kubectl delete pod -n kubeflow -l 'component=metadata-grpc-server'
-            elif [ "$NAME" = "profiles-deployment" ]; then
-              kubectl delete pod -n kubeflow -l 'kustomize.component=profiles'
-            else
-              kubectl delete pod -n "$NAMESPACE" -l app="$NAME"
-            fi
+            # if [ "$NAME" = "oauth2-proxy" ]; then
+            #   kubectl delete pod -n oauth2-proxy -l 'app.kubernetes.io/name=oauth2-proxy'
+            # elif [ "$NAME" = "metadata-envoy-deployment" ]; then
+            #   kubectl delete pod -n kubeflow -l 'component=metadata-envoy'
+            # elif [ "$NAME" = "metadata-grpc-deployment" ]; then
+            #   kubectl delete pod -n kubeflow -l 'component=metadata-grpc-server'
+            # elif [ "$NAME" = "profiles-deployment" ]; then
+            #   kubectl delete pod -n kubeflow -l 'kustomize.component=profiles'
+            # else
+            #   kubectl delete pod -n "$NAMESPACE" -l app="$NAME"
+            # fi
             kubectl patch "$KIND" "$NAME" -n "$NAMESPACE" --patch-file "$file"
           fi
         done
-        sleep 300
+        sleep 600
         # for file in "$DIRECTORY"/*.yaml; do
         #   KIND=$(kubectl get -f "$file" -o jsonpath='{.kind}')
         #   NAME=$(kubectl get -f "$file" -o jsonpath='{.metadata.name}')
