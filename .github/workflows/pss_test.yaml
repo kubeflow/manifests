@@ -27,8 +27,9 @@ jobs:
     - name: Install kubectl
       run: ./tests/gh-actions/install_kubectl.sh
 
-    - name: Install all istio-cni resources
+    - name: Install all istio-cni resources and kubeflow namespace
       run: |
+        kustomize build common/kubeflow-namespace/base | kubectl apply -f -
         ./tests/gh-actions/install_cert_manager.sh
         ./tests/gh-actions/install_istio-cni.sh
         kustomize build common/istio-cni-1-22/kubeflow-istio-resources/base | kubectl apply -f -
@@ -42,7 +43,6 @@ jobs:
 
     - name: Install all other deployments of static namespaces
       run: |
-        kustomize build common/kubeflow-namespace/base | kubectl apply -f -
         ./tests/gh-actions/install_multi_tenancy.sh
         kustomize build ./common/oauth2-proxy/overlays/m2m-self-signed | kubectl apply -f -
         echo "Waiting for all oauth2-proxy pods to become ready..."
@@ -68,7 +68,7 @@ jobs:
     #     rm ./kustomization.yaml
     #     kubectl -n kubeflow wait --for=condition=Ready pods -l kustomize.component=profiles --timeout 200s
     #     sleep 100
-        
+
     # - name: Create dynamic user namespace and check for PSS labels present
     #   run: |
     #     kustomize build common/user-namespace/base | kubectl apply -f -
