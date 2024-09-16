@@ -38,6 +38,9 @@ jobs:
       run: |
         kubectl get cm istio-sidecar-injector -n istio-system -o yaml > temporary_patch.yaml
         sed -i '0,/runAsNonRoot: true/{s//&\n              seccompProfile:\n                type: RuntimeDefault/}' temporary_patch.yaml
+        sed -i '/runAsNonRoot: true/{N; /runAsUser: {{ .ProxyUID | default "1337" }}/a\
+                      seccompProfile:\n                type: RuntimeDefault
+        }' temporary_patch.yaml
         kubectl apply -f temporary_patch.yaml
         rm temporary_patch.yaml
 
