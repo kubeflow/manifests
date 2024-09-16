@@ -54,7 +54,7 @@ jobs:
         echo "Waiting for pods in auth namespace to become ready..."
         kubectl wait --for=condition=Ready pods --all --timeout=180s -n auth
 
-    # - name: Configure profile-controller's manager configmap with PSS restricted label 
+    # - name: Configure profile-controller's manager configmap with PSS restricted label
     #   run: |
     #     CONFIGMAP=$(kubectl get cm -n kubeflow | awk '{print $1}' | grep -e "namespace-labels-data")
     #     kubectl get cm $CONFIGMAP -n kubeflow -o yaml > temporary.yaml
