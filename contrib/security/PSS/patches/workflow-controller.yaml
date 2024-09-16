@@ -12,9 +12,3 @@ spec:
           seccompProfile:
             type: RuntimeDefault
           runAsNonRoot: true
-      initContainers:
-      - image: docker.io/istio/proxyv2:1.22.1
-        name: istio-validation
-        securityContext:
-          seccompProfile:
-            type: RuntimeDefault
