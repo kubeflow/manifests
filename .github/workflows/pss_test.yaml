@@ -54,16 +54,16 @@ jobs:
         echo "Waiting for pods in auth namespace to become ready..."
         kubectl wait --for=condition=Ready pods --all --timeout=180s -n auth
 
-    - name: Install KF Pipelines
-      run: ./tests/gh-actions/install_pipelines.sh
-
-    - name: Configure profile-controller's manager with PSS restricted label 
+    - name: Configure profile-controller's manager configmap with PSS restricted label 
       run: |
         CONFIGMAP=$(kubectl get cm -n kubeflow | awk '{print $1}' | grep -e "namespace-labels-data")
         kubectl get cm $CONFIGMAP -n kubeflow -o yaml > temporary.yaml
         sed -i '/app.kubernetes.io\/part-of: "kubeflow-profile"/{s/.*/&\n    pod-security.kubernetes.io\/enforce: "restricted"/}' temporary.yaml
         kubectl apply -f temporary.yaml
         rm temporary.yaml
+
+    - name: Install KF Pipelines
+      run: ./tests/gh-actions/install_pipelines.sh
 
     - name: Create dynamic user namespace and check for PSS labels present
       run: |
