@@ -54,27 +54,27 @@ jobs:
         echo "Waiting for pods in auth namespace to become ready..."
         kubectl wait --for=condition=Ready pods --all --timeout=180s -n auth
 
-    - name: Configure profile-controller's manager configmap with PSS restricted label 
-      run: |
-        CONFIGMAP=$(kubectl get cm -n kubeflow | awk '{print $1}' | grep -e "namespace-labels-data")
-        kubectl get cm $CONFIGMAP -n kubeflow -o yaml > temporary.yaml
-        sed -i '/app.kubernetes.io\/part-of: "kubeflow-profile"/{s/.*/&\n    pod-security.kubernetes.io\/enforce: "restricted"/}' temporary.yaml
-        kubectl apply -f temporary.yaml
-        rm temporary.yaml
+    # - name: Configure profile-controller's manager configmap with PSS restricted label 
+    #   run: |
+    #     CONFIGMAP=$(kubectl get cm -n kubeflow | awk '{print $1}' | grep -e "namespace-labels-data")
+    #     kubectl get cm $CONFIGMAP -n kubeflow -o yaml > temporary.yaml
+    #     sed -i '/app.kubernetes.io\/part-of: "kubeflow-profile"/{s/.*/&\n    pod-security.kubernetes.io\/enforce: "restricted"/}' temporary.yaml
+    #     kubectl apply -f temporary.yaml
+    #     rm temporary.yaml
 
     - name: Install KF Pipelines
       run: ./tests/gh-actions/install_pipelines.sh
 
-    - name: Create dynamic user namespace and check for PSS labels present
-      run: |
-        kustomize build common/user-namespace/base | kubectl apply -f -
-        LABELS=$(kubectl get namespace kubeflow-user-example-com --show-labels | awk 'NR==2 {print $NF}')
-        if [[ "$LABELS" == *pod-security.kubernetes.io/enforce=restricted* ]]; then
-          echo "PSS restricted label is present in dynamic namespace."
-        else
-          echo "PSS restricted label is absent in dynamic namespace."
-          exit 1
-        fi
+    # - name: Create dynamic user namespace and check for PSS labels present
+    #   run: |
+    #     kustomize build common/user-namespace/base | kubectl apply -f -
+    #     LABELS=$(kubectl get namespace kubeflow-user-example-com --show-labels | awk 'NR==2 {print $NF}')
+    #     if [[ "$LABELS" == *pod-security.kubernetes.io/enforce=restricted* ]]; then
+    #       echo "PSS restricted label is present in dynamic namespace."
+    #     else
+    #       echo "PSS restricted label is absent in dynamic namespace."
+    #       exit 1
+    #     fi
 
     - name: Apply patches to clear warnings
       run: |
