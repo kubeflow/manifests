@@ -6,3 +6,4 @@ resources:
 - seaweedfs-deployment.yaml
 - seaweedfs-pvc.yaml
 - seaweedfs-service.yaml
+- seadweedfs-networkpolicy.yaml
