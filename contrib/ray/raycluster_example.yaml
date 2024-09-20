@@ -8,6 +8,7 @@ spec:
   - from:
     - source:
         principals:
+        # kubeflow-user-example-com should be replaced with the namespace where the Ray cluster is being deployed
         - "cluster.local/ns/kubeflow-user-example-com/sa/default-editor"
   - to:
     - operation:
@@ -75,6 +76,7 @@ spec:
       dashboard-agent-listen-port: '52365'
       metrics-export-port: '8080'
       max-worker-port: '10012'
+      # kubeflow-user-example-com should be replaced with the namespace where the Ray cluster is being deployed
       node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.kubeflow-user-example-com.svc.cluster.local
     template:
       metadata:
@@ -123,6 +125,7 @@ spec:
         dashboard-agent-listen-port: '52365'
         metrics-export-port: '8080'
         max-worker-port: '10012'
+        # kubeflow-user-example-com should be replaced with the namespace where the Ray cluster is being deployed
         node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.kubeflow-user-example-com.svc.cluster.local
       template:
         metadata:
