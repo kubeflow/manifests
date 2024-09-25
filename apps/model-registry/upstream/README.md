@@ -6,7 +6,8 @@ This folder contains [Kubeflow Model Registry](https://www.kubeflow.org/docs/com
 
 To install Kubeflow Model Registry, follow [Kubeflow Model Registry deployment documentation](https://www.kubeflow.org/docs/components/model-registry/installation/)
 
-The following instructions will summarize how to deploy Model Registry as separate component in the context of a default Kubeflow >=1.8 installation.
+The following instructions will summarize how to deploy Model Registry as separate component in the context of a default Kubeflow >=1.9 installation.
+Ensure you are running these commands from the directory containing this README.md file (e.g.: you could check with `pwd`).
 
 ```bash
 kubectl apply -k overlays/db

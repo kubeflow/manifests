@@ -43,7 +43,7 @@ This repo periodically syncs all official Kubeflow components from their respect
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
-| Training Operator | apps/training-operator/upstream | [v1.8.0](https://github.com/kubeflow/training-operator/tree/v1.8.0/manifests) |
+| Training Operator | apps/training-operator/upstream | [v1.8.1](https://github.com/kubeflow/training-operator/tree/v1.8.1/manifests) |
 | Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.9.0](https://github.com/kubeflow/kubeflow/tree/v1.9.0/components/notebook-controller/config) |
 | PVC Viewer Controller | apps/pvcviewer-roller/upstream | [v1.9.0](https://github.com/kubeflow/kubeflow/tree/v1.9.0/components/pvcviewer-controller/config) |
 | Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.9.0](https://github.com/kubeflow/kubeflow/tree/v1.9.0/components/tensorboard-controller/config) |
@@ -56,9 +56,9 @@ This repo periodically syncs all official Kubeflow components from their respect
 | Katib | apps/katib/upstream | [v0.17.0](https://github.com/kubeflow/katib/tree/v0.17.0/manifests/v1beta1) |
 | KServe | contrib/kserve/kserve | [0.13.0](https://github.com/kserve/kserve/releases/tag/v0.13.0) |
 | KServe Models Web App | contrib/kserve/models-web-app | [0.13.0](https://github.com/kserve/models-web-app/tree/0.13.0/config) |
-| Kubeflow Pipelines | apps/pipeline/upstream | [2.2.0](https://github.com/kubeflow/pipelines/tree/2.2.0/manifests/kustomize) |
+| Kubeflow Pipelines | apps/pipeline/upstream | [2.3.0](https://github.com/kubeflow/pipelines/tree/2.3.0/manifests/kustomize) |
 | Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [2.0.5](https://github.com/kubeflow/kfp-tekton/tree/2.0.5/manifests/kustomize) |
-| Kubeflow Model Registry | apps/model-registry/upstream | [v0.2.1-alpha](https://github.com/kubeflow/model-registry/tree/v0.2.1-alpha/manifests/kustomize) |
+| Kubeflow Model Registry | apps/model-registry/upstream | [v0.2.5-alpha](https://github.com/kubeflow/model-registry/tree/v0.2.5-alpha/manifests/kustomize) |
 
 The following is also a matrix with versions from common components that are
 used from the different projects of Kubeflow:
