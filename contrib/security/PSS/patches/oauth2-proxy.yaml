@@ -4,7 +4,6 @@ metadata:
   name: oauth2-proxy
   namespace: oauth2-proxy
 spec:
-  replicas: 2
   template:
     spec:
       containers:
