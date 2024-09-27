@@ -8,5 +8,4 @@ kuberay-operator/base:
 
 .PHONY: test
 test:
-	./test.sh
-
+	./test.sh ${KF_PROFILE}

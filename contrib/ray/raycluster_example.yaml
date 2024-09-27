@@ -1,49 +1,92 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ray-workers-head
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals:
+        # kubeflow-user-example-com should be replaced with the namespace where the Ray cluster is being deployed
+        - "cluster.local/ns/kubeflow-user-example-com/sa/default-editor"
+  - to:
+    - operation:
+        ports:
+        - "6379"
+        - "6380"
+        - "6381"
+        - "6382"
+        - "6383"
+        - "52365"
+        - "8080"
+        - "10012"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    ray.io/headless-worker-svc: raycluster-istio
+  name: raycluster-istio-headless-svc
+spec:
+  clusterIP: None
+  selector:
+    ray.io/cluster: kubeflow-raycluster
+  publishNotReadyAddresses: true
+  ports:
+  - name: node-manager-port
+    port: 6380
+    appProtocol: grpc
+  - name: object-manager-port
+    port: 6381
+    appProtocol: grpc
+  - name: runtime-env-agent-port
+    port: 6382
+    appProtocol: grpc
+  - name: dashboard-agent-grpc-port
+    port: 6383
+    appProtocol: grpc
+  - name: dashboard-agent-listen-port
+    port: 52365
+    appProtocol: http
+  - name: metrics-export-port
+    port: 8080
+    appProtocol: http
+  - name: max-worker-port
+    port: 10012
+    appProtocol: grpc
+---
 apiVersion: ray.io/v1
 kind: RayCluster
 metadata:
   name: kubeflow-raycluster
 spec:
   rayVersion: '2.23.0'
-  # If `enableInTreeAutoscaling` is true, the Autoscaler sidecar will be added to the Ray head pod.
   enableInTreeAutoscaling: true
-  # `autoscalerOptions` is an OPTIONAL field specifying configuration overrides for the Ray Autoscaler.
-  # The example configuration shown below below represents the DEFAULT values.
-  # (You may delete autoscalerOptions if the defaults are suitable.)
   autoscalerOptions:
-    # Default: Upscaling is not rate-limited. This mode adds new worker pods to handle increased workload as quiclky as possible.
     upscalingMode: Default 
-    # `idleTimeoutSeconds` is the number of seconds to wait before scaling down a worker pod which is not using Ray resources.
     idleTimeoutSeconds: 60
-  # Ray head pod configuration
   headGroupSpec:
-    # Kubernetes Service Type.
-    serviceType: ClusterIP
-    # The following params are used to complete the ray start: ray start --head --block --dashboard-host: '0.0.0.0' ...
     rayStartParams:
-      # Setting "num-cpus: 0" to avoid any Ray actors or tasks being scheduled on the Ray head Pod.
-      num-cpus: "0"
-      dashboard-host: '0.0.0.0'
-      block: 'true'
-    # pod template
+      num-cpus: '1'
+      node-manager-port: '6380'
+      object-manager-port: '6381'
+      runtime-env-agent-port: '6382'
+      dashboard-agent-grpc-port: '6383'
+      dashboard-agent-listen-port: '52365'
+      metrics-export-port: '8080'
+      max-worker-port: '10012'
+      # kubeflow-user-example-com should be replaced with the namespace where the Ray cluster is being deployed
+      node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.kubeflow-user-example-com.svc.cluster.local
     template:
       metadata:
-        # Custom labels. NOTE: To avoid conflicts with KubeRay operator, do not define custom labels start with `raycluster`.
-        # Refer to https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-        # The ray head must not have an Istio sidecar
-        # TODO add an authorizationpolicy in the future for the ray head
         labels:
-          sidecar.istio.io/inject: "false"
+          sidecar.istio.io/inject: "true"
       spec:
+        serviceAccountName: default-editor
         containers:
         - name: ray-head
           image: rayproject/ray:2.23.0-py311-cpu
-          ports:
-          - containerPort: 6379
-            name: gcs
-          - containerPort: 8265
-            name: dashboard
-          - containerPort: 10001
-            name: client
           lifecycle:
             preStop:
               exec:
@@ -51,10 +94,6 @@ spec:
           volumeMounts:
             - mountPath: /tmp/ray
               name: ray-logs
-          # The resource requests and limits in this config are too small for production!
-          # It is better to use a few large Ray pod than many small ones.
-          # For production, it is ideal to size each Ray pod to take up the
-          # entire Kubernetes node on which it is scheduled.
           resources:
             limits:
               cpu: "1"
@@ -73,68 +112,53 @@ spec:
           - name: ray-logs
             emptyDir: {}
   workerGroupSpecs:
-  # the pod replicas in this group typed worker
-  - replicas: 1
-    minReplicas: 1
-    maxReplicas: 10
-    # logical group name, for this called small-group, also can be functional
-    groupName: small-group
-    rayStartParams:
-      block: 'true'
-    #pod template
-    template:
-      metadata:
-        labels:
-          # Disable the sidecars for the ray wokers
-          # TODO add an authorizationpolicy in the future for the ray worker
-          sidecar.istio.io/inject: "false"
-      spec:
-        containers:
-        - name: ray-worker
-          image: rayproject/ray:2.23.0-py311-cpu
-          lifecycle:
-            preStop:
-              exec:
-                command: ["/bin/sh","-c","ray stop"]
-          # use volumeMounts.Optional.
-          # Refer to https://kubernetes.io/docs/concepts/storage/volumes/
-          volumeMounts:
-            - mountPath: /tmp/ray
-              name: ray-logs
-          # The resource requests and limits in this config are too small for production!
-          # It is better to use a few large Ray pod than many small ones.
-          # For production, it is ideal to size each Ray pod to take up the
-          # entire Kubernetes node on which it is scheduled.
-          resources:
-            limits:
-              cpu: "1"
-              memory: "1G"
-            requests:
-              cpu: "300m"
-              memory: "1G"
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-            runAsNonRoot: true
-            seccompProfile:
-              type: RuntimeDefault
-        initContainers:
-        # the env var $RAY_IP is set by the operator if missing, with the value of the head service name
-        - name: init
-          image: busybox:1.36
-          # Change the cluster postfix if you don't have a default setting
-          command: ['sh', '-c', "until nslookup $RAY_IP.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for K8s Service $RAY_IP; sleep 2; done"]
-          securityContext:
-            runAsUser: 1000
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-            runAsNonRoot: true
-            seccompProfile:
-              type: RuntimeDefault
-        # use volumes
-        # Refer to https://kubernetes.io/docs/concepts/storage/volumes/
-        volumes:
-          - name: ray-logs
-            emptyDir: {}
+    - replicas: 1
+      minReplicas: 1
+      maxReplicas: 1
+      groupName: small-group
+      rayStartParams:
+        num-cpus: '1'
+        node-manager-port: '6380'
+        object-manager-port: '6381'
+        runtime-env-agent-port: '6382'
+        dashboard-agent-grpc-port: '6383'
+        dashboard-agent-listen-port: '52365'
+        metrics-export-port: '8080'
+        max-worker-port: '10012'
+        # kubeflow-user-example-com should be replaced with the namespace where the Ray cluster is being deployed
+        node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.kubeflow-user-example-com.svc.cluster.local
+      template:
+        metadata:
+          labels:
+            sidecar.istio.io/inject: "true"
+        spec:
+          serviceAccountName: default-editor
+          containers:
+          - name: ray-worker
+            image: rayproject/ray:2.23.0-py311-cpu
+            lifecycle:
+              preStop:
+                exec:
+                  command: ["/bin/sh","-c","ray stop"]
+            # use volumeMounts.Optional.
+            # Refer to https://kubernetes.io/docs/concepts/storage/volumes/
+            volumeMounts:
+             - mountPath: /tmp/ray
+               name: ray-logs
+            resources:
+             limits:
+               cpu: "1"
+               memory: "1G"
+             requests:
+               cpu: "300m"
+               memory: "1G"
+            securityContext:
+             allowPrivilegeEscalation: false
+             capabilities:
+               drop: ["ALL"]
+             runAsNonRoot: true
+             seccompProfile:
+               type: RuntimeDefault
+          volumes:
+            - name: ray-logs
+              emptyDir: {}
