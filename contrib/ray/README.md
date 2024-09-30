@@ -54,6 +54,7 @@ kubectl get pod -l app.kubernetes.io/component=kuberay-operator -n kubeflow
 # NAME                                READY   STATUS    RESTARTS   AGE
 # kuberay-operator-5b8cd69758-rkpvh   1/1     Running   0          6m23s
 ```
+> If you are creating a new namespace other than the kubeflow-user-example-com please follow below step otherwise skip the step.
 ## Step 3: Create a namespace
 ```sh
 # Create a namespace: example-"development"
@@ -74,7 +75,7 @@ kubectl label namespace development istio-injection=enabled
     node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.development.svc.cluster.local
 ```
 
-## Step 3: Install RayCluster
+## Step 4: Install RayCluster
 ```sh
 # Create a RayCluster CR, and the KubeRay operator will reconcile a Ray cluster
 # with 1 head Pod and 1 worker Pod.
@@ -95,17 +96,17 @@ kubectl get svc -n $MY_KUBEFLOW_USER_NAMESPACE
     * Python 3.11
     * Ray 2.23.0
 
-## Step 4: Forward the port of Istio's Ingress-Gateway
+## Step 5: Forward the port of Istio's Ingress-Gateway
 * Follow the [instructions](https://github.com/kubeflow/manifests/tree/v1.7-branch#port-forward) to forward the port of Istio's Ingress-Gateway and log in to Kubeflow Central Dashboard.
 
-## Step 5: Create a JupyterLab via Kubeflow Central Dashboard
+## Step 6: Create a JupyterLab via Kubeflow Central Dashboard
 * Click "Notebooks" icon in the left panel.
 * Click "New Notebook"
 * Select `kubeflownotebookswg/jupyter-scipy:v1.9.0` as OCI image (or any other with the same python version)
 * Click "Launch"
 * Click "CONNECT" to connect into the JupyterLab instance.
 
-## Step 6: Use Ray client in the JupyterLab to connect to the RayCluster
+## Step 7: Use Ray client in the JupyterLab to connect to the RayCluster
 * As I mentioned in Step 3, Ray is very sensitive to the Python versions and Ray versions between the server (RayCluster) and client (JupyterLab) sides.
     ```sh
     # Check Python version. The version's MAJOR and MINOR should match with RayCluster (i.e. Python 3.11.9)
