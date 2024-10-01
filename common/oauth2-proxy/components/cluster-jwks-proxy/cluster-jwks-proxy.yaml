@@ -1,0 +1,80 @@
+# the default JWKS endpoint for Kind is not public, and uses a self-signed certificate
+# for the Istio RequestAuthentication to trust it, we need to proxy the cluster's JWKS endpoint over HTTP
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cluster-jwks-proxy
+  namespace: istio-system
+  labels:
+    app.kubernetes.io/name: cluster-jwks-proxy
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cluster-jwks-proxy
+  namespace: istio-system
+  labels:
+    app.kubernetes.io/name: cluster-jwks-proxy
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+  selector:
+    app.kubernetes.io/name: cluster-jwks-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cluster-jwks-proxy
+  namespace: istio-system
+  labels:
+    app.kubernetes.io/name: cluster-jwks-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cluster-jwks-proxy
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cluster-jwks-proxy
+    spec:
+      serviceAccountName: cluster-jwks-proxy
+      containers:
+      - name: kubectl-proxy
+        image: docker.io/bitnami/kubectl
+        ports:
+        - name: http
+          containerPort: 8080
+        startupProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 2
+          httpGet:
+            path: /openid/v1/jwks
+            port: http
+        livenessProbe:
+          initialDelaySeconds: 15
+          periodSeconds: 15
+          timeoutSeconds: 5
+          httpGet:
+            path: /openid/v1/jwks
+            port: http
+        readinessProbe:
+          initialDelaySeconds: 15
+          periodSeconds: 15
+          timeoutSeconds: 5
+          httpGet:
+            path: /openid/v1/jwks
+            port: http
+        args:
+        - proxy
+        - --address=0.0.0.0
+        - --port=8080
+        ## accept all hosts (default is local only)
+        - --accept-hosts=.*
+        ## only accept requests to '/openid/v1/jwks' and '/.well-known/openid-configuration'
+        - --accept-paths=^(?:/openid/v1/jwks)|(?:/.well-known/openid-configuration)$
+        ## reject all methods except 'GET'
+        - --reject-methods=^(POST|PUT|PATCH|DELETE|HEAD|OPTIONS|CONNECT|TRACE)$

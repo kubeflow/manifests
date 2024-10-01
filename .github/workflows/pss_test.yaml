@@ -27,12 +27,11 @@ jobs:
     - name: Install kubectl
       run: ./tests/gh-actions/install_kubectl.sh
 
-    - name: Install all istio-cni resources and kubeflow namespace
-      run: |
-        kustomize build common/kubeflow-namespace/base | kubectl apply -f -
-        ./tests/gh-actions/install_cert_manager.sh
-        ./tests/gh-actions/install_istio-cni.sh
-        kustomize build common/istio-cni-1-22/kubeflow-istio-resources/base | kubectl apply -f -
+    - name: Install cert-manager
+      run: ./tests/gh-actions/install_cert_manager.sh
+
+    - name: Install Istio CNI
+      run: ./tests/gh-actions/install_istio-cni.sh
 
     - name: Configure istio init container with seccompProfile attribute
       run: |
@@ -44,15 +43,25 @@ jobs:
         kubectl apply -f temporary_patch.yaml
         rm temporary_patch.yaml
 
-    - name: Install all other deployments of static namespaces
+    - name: Install oauth2-proxy
+      run: ./tests/gh-actions/install_oauth2-proxy.sh
+
+    - name: Create kubeflow namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+    - name: Install kubeflow-istio-resources
+      run: kustomize build common/istio-cni-1-22/kubeflow-istio-resources/base | kubectl apply -f -
+
+    - name: Install KF Multi Tenancy
+      run: ./tests/gh-actions/install_multi_tenancy.sh
+
+    - name: Install dex
       run: |
-        ./tests/gh-actions/install_multi_tenancy.sh
-        kustomize build ./common/oauth2-proxy/overlays/m2m-self-signed | kubectl apply -f -
-        echo "Waiting for all oauth2-proxy pods to become ready..."
-        kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
+        echo "Installing Dex..."
         kustomize build ./common/dex/overlays/oauth2-proxy | kubectl apply -f -
+
         echo "Waiting for pods in auth namespace to become ready..."
-        kubectl wait --for=condition=Ready pods --all --timeout=180s -n auth
+        kubectl wait --for=condition=ready pods --all --timeout=180s -n auth
 
     - name: Install KF Pipelines
       run: ./tests/gh-actions/install_pipelines.sh

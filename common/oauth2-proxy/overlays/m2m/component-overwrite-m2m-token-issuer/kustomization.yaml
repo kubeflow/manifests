@@ -1,8 +1,0 @@
-apiVersion: kustomize.config.k8s.io/v1alpha1
-kind: Component
-
-configMapGenerator:
-- name: istio-m2m-params
-  behavior: merge
-  literals:
-  - M2M_TOKEN_ISSUER=https://oidc.eks.region.amazonaws.com/id/1234abcd

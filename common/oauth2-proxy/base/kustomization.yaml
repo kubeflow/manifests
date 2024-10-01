@@ -6,15 +6,9 @@ namespace: oauth2-proxy
 resources:
 - namespace.yaml
 - deployment.yaml
-- oauth2-proxy-config.yaml
 - serviceaccount.yaml
 - service.yaml
-
-# To use oauth2-proxy in OpenShift, use openshift distribution of oauth2-proxy
-# available here: https://github.com/openshift/oauth-proxy
-# and add RBAC to enable creation of tokenreviews
-# Token Reviews for OpenShift
-# - rbac.tokenreviews.yaml
+- virtualservice.yaml
 
 secretGenerator:
 - name: oauth2-proxy
@@ -25,6 +19,14 @@ secretGenerator:
   - cookie-secret=7d16fee92f8d11b8940b081b3f8b8acb
 
 configMapGenerator:
+- name: oauth2-proxy
+  files:
+  - oauth2_proxy.cfg
+
+- name: oauth2-proxy-theme
+  files:
+  - kubeflow-logo.svg
+
 - name: oauth2-proxy-parameters
   literals:
   # This will configure oauth2-proxy option --cookie-secure which can force
@@ -53,6 +55,39 @@ configMapGenerator:
   # - EXTRA_JWT_ISSUERS=https://kubernetes.default.svc.cluster.local=https://kubernetes.default.svc.cluster.local
   # - EXTRA_JWT_ISSUERS=https://oidc.eks.region.amazonaws.com/id/1234abcd=https://kubernetes.default.svc
   - EXTRA_JWT_ISSUERS=
+
+replacements:
+- source:
+    version: v1
+    kind: Service
+    name: oauth2-proxy
+    fieldPath: metadata.name
+  targets:
+  - fieldPaths:
+    - spec.http.0.route.0.destination.host
+    options:
+      delimiter: .
+    select:
+      version: v1alpha3
+      group: networking.istio.io
+      kind: VirtualService
+      name: oauth2-proxy
+- source:
+    fieldPath: metadata.namespace
+    kind: Service
+    name: oauth2-proxy
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.http.0.route.0.destination.host
+    options:
+      delimiter: .
+      index: 1
+    select:
+      version: v1alpha3
+      group: networking.istio.io
+      kind: VirtualService
+      name: oauth2-proxy
 
 images:
 - name: quay.io/oauth2-proxy/oauth2-proxy

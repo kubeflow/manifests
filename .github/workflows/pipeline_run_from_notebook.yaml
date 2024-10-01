@@ -24,8 +24,11 @@ jobs:
     - name: Install KinD, Create KinD cluster and Install kustomize
       run: ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
 
-    - name: Install Istio with external authentication
-      run: ./tests/gh-actions/install_istio_with_ext_auth.sh
+    - name: Install Istio
+      run: ./tests/gh-actions/install_istio.sh
+
+    - name: Install oauth2-proxy
+      run: ./tests/gh-actions/install_oauth2-proxy.sh
 
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh
@@ -62,10 +65,6 @@ jobs:
         kubectl wait --for=jsonpath='{.status.readyReplicas}'=1 \
           -f tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml \
           --timeout 600s
-
-    - name: Wait for the kubeflow-m2m-oidc-configurator Job
-      run: |
-        ./tests/gh-actions/wait_for_kubeflow_m2m_oidc_configurator.sh
 
     - name: Copy and execute the pipeline run script in KF Notebook
       run: |

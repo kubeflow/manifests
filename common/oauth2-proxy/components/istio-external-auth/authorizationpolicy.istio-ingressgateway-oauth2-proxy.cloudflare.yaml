@@ -11,9 +11,20 @@ spec:
     matchLabels:
       app: istio-ingressgateway
   rules:
-  - to:
+  # We ONLY authenticate requests that DON'T have an `Authorization` header using oauth2-proxy.
+  # This is because we use RequestAuthentication to authenticate requests with an `Authorization` header.
+  - when:
+    - key: request.headers[authorization]
+      notValues: ["*"]
+    to:
     - operation:
         notPaths:
+        # Exclude dex paths, otherwise users won't be able to log in.
+        - /dex/*
+        - /dex/**
+        - /oauth2/*
+
+        # Exclude paths which are safe to cache by Cloudflare.
         - /favicon*
         - /webcomponentsjs*
         - /vendor.bundle.js

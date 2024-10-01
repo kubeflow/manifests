@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: dex
+  name: oauth2-proxy
 spec:
   gateways:
   - kubeflow/kubeflow-gateway
@@ -10,9 +10,9 @@ spec:
   http:
   - match:
     - uri:
-        prefix: /dex/
+        prefix: /oauth2/
     route:
     - destination:
-        host: DEX_SERVICE.DEX_NAMESPACE.svc.cluster.local
+        host: OAUTH2_PROXY_SERVICE.OAUTH2_PROXY_NAMESPACE.svc.cluster.local
         port:
-          number: 5556
+          number: 80

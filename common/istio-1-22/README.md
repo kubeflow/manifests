@@ -84,7 +84,6 @@ The Istio kustomizations make the following changes:
 - Remove PodDisruptionBudget from `istio-install` and `cluster-local-gateway` kustomizations. See:
     - https://github.com/istio/istio/issues/12602
     - https://github.com/istio/istio/issues/24000
-- Add EnvoyFilter for adding an `X-Forwarded-For` header in requests passing through the Istio Ingressgateway, inside the `istio-install` kustomization.
 - Add Istio AuthorizationPolicy to allow all requests to the Istio Ingressgateway and the Istio cluster-local gateway.
 - Add Istio AuthorizationPolicy in Istio's root namespace, so that sidecars deny traffic by default (explicit deny-by-default authorization model).
 - Add Gateway CRs for the Istio Ingressgateway and the Istio cluster-local gateway, as `istioctl` stopped generating them in later versions.

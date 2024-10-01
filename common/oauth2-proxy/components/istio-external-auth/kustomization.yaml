@@ -3,9 +3,10 @@ kind: Component
 
 resources:
 - authorizationpolicy.istio-ingressgateway-oauth2-proxy.yaml
+- authorizationpolicy.istio-ingressgateway-require-jwt.yaml
 - requestauthentication.dex-jwt.yaml
 
-# If you're running Kubeflow behind CloudFlare, use
-# authorizationpolicy.istio-ingressgateway-oauth2-proxy-cloudflare.yaml
-# instead of
-# authorizationpolicy.istio-ingressgateway-oauth2-proxy.yaml
+# If want to enable caching for some paths (e.g. when using Cloudflare),
+# use the following AuthorizationPolicies instead of the default ones.
+#- authorizationpolicy.istio-ingressgateway-oauth2-proxy.cloudflare.yaml
+#- authorizationpolicy.istio-ingressgateway-require-jwt.cloudflare.yaml
