@@ -30,7 +30,7 @@ jobs:
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh
 
-    - name: Install Istio CNI (with external authentication)
+    - name: Install Istio CNI
       run: ./tests/gh-actions/install_istio-cni.sh
 
     - name: Configure istio init container with seccompProfile attribute
@@ -42,6 +42,9 @@ jobs:
         }' temporary_patch.yaml
         kubectl apply -f temporary_patch.yaml
         rm temporary_patch.yaml
+
+    - name: Install oauth2-proxy
+      run: ./tests/gh-actions/install_oauth2-proxy.sh
 
     - name: Create kubeflow namespace
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
