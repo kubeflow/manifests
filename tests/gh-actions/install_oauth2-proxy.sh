@@ -1,15 +1,5 @@
 #!/bin/bash
 set -e
-echo "Installing Istio configured with external authorization..."
-cd common/istio-1-22
-kustomize build istio-crds/base | kubectl apply -f -
-kustomize build istio-namespace/base | kubectl apply -f -
-kustomize build istio-install/overlays/oauth2-proxy | kubectl apply -f -
-cd -
-
-echo "Waiting for all Istio Pods to become ready..."
-kubectl wait --for=condition=Ready pods --all -n istio-system --timeout=300s \
-  --field-selector=status.phase!=Succeeded
 
 echo "Installing oauth2-proxy..."
 cd common/
