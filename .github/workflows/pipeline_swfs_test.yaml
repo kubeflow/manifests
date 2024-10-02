@@ -2,17 +2,15 @@ name: Deploy and test Kubeflow Pipelines manifests with seaweedfs and m2m auth i
 on:
   pull_request:
     paths:
+    - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
     - .github/workflows/pipeline_swfs_test.yaml
     - apps/pipeline/upstream/**
-    - tests/gh-actions/kind-cluster.yaml
-    - tests/gh-actions/install_kind.sh
-    - tests/gh-actions/install_kustomize.sh
     - tests/gh-actions/install_istio.sh
     - tests/gh-actions/install_cert_manager.sh
+    - tests/gh-actions/install_oauth2-proxy.sh
     - common/cert-manager/**
-    - common/oidc-client/oauth2-proxy/**
+    - common/oauth2-proxy/**
     - common/istio*/**
-    - tests/gh-actions/install_istio_with_ext_auth.sh
     - contrib/seaweedfs/**
 
 jobs:
