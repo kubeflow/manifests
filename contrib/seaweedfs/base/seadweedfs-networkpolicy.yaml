@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: seaweedfs
+spec:
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchExpressions:
+        - key: app.kubernetes.io/part-of
+          operator: In
+          values:
+          - kubeflow-profile
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - istio-system
+    - podSelector: {}
+  podSelector:
+    matchExpressions:
+    - key: app
+      operator: In
+      values:
+      - seaweedfs
+  policyTypes:
+  - Ingress

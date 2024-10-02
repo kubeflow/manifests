@@ -1,0 +1,100 @@
+name: Deploy and test Kubeflow Pipelines manifests with seaweedfs and m2m auth in KinD
+on:
+  pull_request:
+    paths:
+    - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
+    - .github/workflows/pipeline_swfs_test.yaml
+    - apps/pipeline/upstream/**
+    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_cert_manager.sh
+    - tests/gh-actions/install_oauth2-proxy.sh
+    - common/cert-manager/**
+    - common/oauth2-proxy/**
+    - common/istio*/**
+    - contrib/seaweedfs/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install KinD, Create KinD cluster and Install kustomize
+      run: ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
+
+    - name: Install kubectl
+      run: ./tests/gh-actions/install_kubectl.sh
+
+    - name: Install Istio
+      run: ./tests/gh-actions/install_istio.sh
+
+    - name: Install oauth2-proxy
+      run: ./tests/gh-actions/install_oauth2-proxy.sh
+
+    - name: Install cert-manager
+      run: ./tests/gh-actions/install_cert_manager.sh
+
+    - name: Create kubeflow namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+    - name: Install KF Pipelines
+      run: ./tests/gh-actions/install_pipelines.sh
+
+    - name: Install KF Multi Tenancy
+      run: ./tests/gh-actions/install_multi_tenancy.sh
+
+    - name: Install kubeflow-istio-resources
+      run: kustomize build common/istio-1-22/kubeflow-istio-resources/base | kubectl apply -f -
+
+    - name: Create KF Profile
+      run: kustomize build common/user-namespace/base | kubectl apply -f -
+
+    - name: Install seaweedfs
+      run: |
+        kustomize build contrib/seaweedfs/istio | kubectl apply -f -
+        kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/seaweedfs
+        kubectl -n kubeflow exec deploy/seaweedfs -c seaweedfs -- sh -c "echo \"s3.configure -user minio -access_key minio -secret_key minio123 -actions Read,Write,List -apply\" | /usr/bin/weed shell"
+
+    - name: port forward
+      run: |
+        ingress_gateway_service=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
+        nohup kubectl port-forward --namespace istio-system svc/${ingress_gateway_service} 8080:80 &
+        while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
+
+    - name: List and deploy test pipeline with authorized ServiceAccount Token
+      run: |
+        pip3 install kfp==2.4.0
+        KF_PROFILE=kubeflow-user-example-com
+        TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
+
+        python -c '
+        from time import sleep
+        import kfp
+        import sys
+
+        token = sys.argv[1]
+        namespace = sys.argv[2]
+        client = kfp.Client(host="http://localhost:8080/pipeline", existing_token=token)
+
+        pipeline = client.list_pipelines().pipelines[0]
+        pipeline_name = pipeline.display_name
+        pipeline_id = pipeline.pipeline_id
+        pipeline_version_id = client.list_pipeline_versions(pipeline_id).pipeline_versions[0].pipeline_version_id
+        experiment_id = client.create_experiment("seaweedfs-test", namespace=namespace).experiment_id
+
+        print(f"Starting pipeline {pipeline_name}.")
+        run_id = client.run_pipeline(experiment_id=experiment_id, job_name="m2m-test", pipeline_id=pipeline_id, version_id=pipeline_version_id).run_id
+
+        while True:
+          status = client.get_run(run_id=run_id).state
+          if status in ["PENDING", "RUNNING"]:
+            print(f"Waiting for run_id: {run_id}, status: {status}.")
+            sleep(10)
+          else:
+            print(f"Run with id {run_id} finished with status: {status}.")
+            if status != "SUCCEEDED":
+              print("Pipeline failed")
+              raise SystemExit(1)
+            break
+        ' "${TOKEN}" "${KF_PROFILE}"
