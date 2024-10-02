@@ -25,8 +25,11 @@ jobs:
     - name: Create kubeflow namespace
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
-    - name: Install Istio with external authentication
-      run: ./tests/gh-actions/install_istio_with_ext_auth.sh*
+    - name: Install Istio
+      run: ./tests/gh-actions/install_istio.sh
+
+    - name: Install oauth2-proxy
+      run: ./tests/gh-actions/install_oauth2-proxy.sh
 
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh

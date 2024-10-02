@@ -54,11 +54,6 @@ Below is a list of the available Kustomize Components with brief descriptions. C
 * **[central-dashboard](./central-dashboard.md)** - Configures the central
   dashboard to use oauth2-proxy logout URL.
 
-* **[configure-self-signed-kubernetes-oidc-issuer](./configure-self-signed-kubernetes-oidc-issuer.md)** -
-  Creates a Kubernetes Job with RBAC to discover and configure the in-cluster,
-  self-signed default Kubernetes OIDC issuer, essential for using Kubernetes
-  OIDC for M2M Tokens.
-
 * **[istio-external-auth](./istio-external-auth.md)** - Modifies Istio
   configuration to define oauth2-proxy as external authentication middleware via
   envoyExtAuthzHttp extension provider. Adds RequestAuthentication to trust Dex
@@ -70,16 +65,6 @@ Below is a list of the available Kustomize Components with brief descriptions. C
   Authorization header. By default, the OIDC Issuer is the in-cluster Kubernetes
   OIDC.
 
-
-## OpenShift
-
-This deployment of `oauth2-proxy` does not support OpenShift out of the box. To facilitate
-integration with OpenShift:
-* Utilize the OpenShift-specific distribution of `oauth2-proxy`, accessible at:
-    * [OpenShift OAuth Proxy on GitHub](https://github.com/openshift/oauth-proxy)
-* Enable RBAC for token reviews by incorporating the `rbac.tokenreviews.yaml` file into
-  your kustomize. For more details, refer to the relevant comment in `kustomization.yaml`.
-
 ## CloudFlare
 
 CloudFlare requires that certain static, standard web browser assets are accessible without
@@ -90,7 +75,7 @@ Kubeflow instance behind CloudFlare.
 
 This issue can be resolved by defining a set of assets in the Istio `AuthorizationPolicy`
 that do not require authentication. An example `AuthorizationPolicy` for this purpose is
-provided in the file `authorizationpolicy.istio-ingressgateway-oauth2-proxy-cloudflare.yaml`.
+provided in the file `authorizationpolicy.istio-ingressgateway-oauth2-proxy.cloudflare.yaml`.
 
 ## Explaining the Auth Routine
 
@@ -179,7 +164,7 @@ make the following changes to the `example/kustomization.yaml` file:
   # from
   - ../common//oidc-authservice/base
   # to
-  - ../common/oauth2-proxy/overlays/m2m-self-signed
+  - ../common/oauth2-proxy/overlays/m2m-dex-and-kind
   ```
 * change Dex overlay
   ```
@@ -211,7 +196,7 @@ index c1a85789..4a50440c 100644
 -- ../common//oidc-authservice/base
 +- ../common/istio-1-22/istio-install/overlays/oauth2-proxy
 +# oauth2-proxy for OIDC
-+- ../common/oauth2-proxy/overlays/m2m-self-signed
++- ../common/oauth2-proxy/overlays/m2m-dex-and-kind
  # Dex
 -- ../common/dex/overlays/istio
 +- ../common/dex/overlays/oauth2-proxy

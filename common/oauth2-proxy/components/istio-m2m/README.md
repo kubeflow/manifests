@@ -11,9 +11,3 @@ In Kubernetes clusters managed by platform providers, the OIDC issuer is usually
 provider and served behind publicly trusted certificates. In these cases, it's advisable to use
 the platform-managed Kubernetes OIDC issuer in the `RequestAuthentication` for seamless integration
 and authentication compliance with the platform's security standards.
-
-For scenarios where the OIDC issuer is served behind self-signed certificates, the kustomize
-overlay using this component should include the `common/oauth2-proxy/components/configure-self-signed-kubernetes-oidc-issuer`
-component. This additional configuration is necessary to handle the self-signed nature of the
-certificates. This setup is the default in the Kustomize overlay defined in `common/oauth2-proxy/overlays/m2m-self-signed`,
-which is tailored for environments with self-signed OIDC issuers.

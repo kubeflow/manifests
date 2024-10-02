@@ -7,7 +7,8 @@ on:
     - contrib/kserve/**
     - common/oauth2-proxy/**
     - common/istio*/**
-    - tests/gh-actions/install_istio_with_ext_auth.sh*
+    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_oauth2-proxy.sh
     - tests/gh-actions/install_cert_manager.sh
     - common/cert-manager/**
     - tests/gh-actions/install_knative.sh
@@ -30,8 +31,11 @@ jobs:
     - name: Create kubeflow namespace
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
-    - name: Install Istio with external authentication
-      run: ./tests/gh-actions/install_istio_with_ext_auth.sh
+    - name: Install Istio
+      run: ./tests/gh-actions/install_istio.sh
+
+    - name: Install oauth2-proxy
+      run: ./tests/gh-actions/install_oauth2-proxy.sh
 
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh
@@ -58,10 +62,6 @@ jobs:
         INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
         nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
         while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
-
-    - name: Wait for the kubeflow-m2m-oidc-configurator Job
-      run: |
-        ./tests/gh-actions/wait_for_kubeflow_m2m_oidc_configurator.sh
 
     - name: Run kserve tests with m2m token from SA default/default
       run: |

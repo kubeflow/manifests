@@ -6,9 +6,6 @@ resources:
 - ../../base
 - virtual-service.yaml
 
-configurations:
-- params.yaml
-
 replacements:
 - source:
     version: v1

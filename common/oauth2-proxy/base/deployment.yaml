@@ -15,10 +15,12 @@ spec:
         app.kubernetes.io/name: oauth2-proxy
     spec:
       volumes:
-      - name: configmain
+      - name: oauth2-proxy-config
         configMap:
           name: oauth2-proxy
-          defaultMode: 420
+      - name: oauth2-proxy-theme
+        configMap:
+          name: oauth2-proxy-theme
       containers:
       - name: oauth2-proxy
         image: quay.io/oauth2-proxy/oauth2-proxy:latest
@@ -69,9 +71,14 @@ spec:
               name: oauth2-proxy-parameters
               key: EXTRA_JWT_ISSUERS
         volumeMounts:
-        - name: configmain
+        - name: oauth2-proxy-config
           mountPath: /etc/oauth2_proxy/oauth2_proxy.cfg
           subPath: oauth2_proxy.cfg
+          readOnly: true
+        - name: oauth2-proxy-theme
+          mountPath: /custom-theme/kubeflow-logo.svg
+          subPath: kubeflow-logo.svg
+          readOnly: true
         livenessProbe:
           httpGet:
             path: /ping
@@ -79,7 +86,7 @@ spec:
             scheme: HTTP
         readinessProbe:
           httpGet:
-            path: /ping
+            path: /ready
             port: http
             scheme: HTTP
         resources: {}

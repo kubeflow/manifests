@@ -4,11 +4,39 @@ metadata:
   name: m2m-token-issuer
   namespace: istio-system
 spec:
+  # we only apply to the ingress-gateway because:
+  #  - there is no need to verify the same tokens at each sidecar
+  #  - having no selector will apply the RequestAuthentication to ALL
+  #    Pods in the mesh, even ones which are not part of Kubeflow
+  selector:
+    matchLabels:
+      app: istio-ingressgateway
+
   jwtRules:
-  - forwardOriginalToken: true
-    issuer: M2M_TOKEN_ISSUER_PLACEHOLDER
+  - # The `issuer` must be replaced with a Kustomize patch.
+    issuer: PATCH_ME
+
+    # `forwardOriginalToken` is not strictly required to be true.
+    # there are pros and cons to each value:
+    #  - true: the original token is forwarded to the destination service
+    #          which raises the risk of the token leaking
+    #  - false: the original token is stripped from the request
+    #           which will prevent the destination service from
+    #           verifying the token (possibly with its own RequestAuthentication)
+    forwardOriginalToken: true
+
+    # This will unpack the JWTs issued by Kubernetes into the expected headers.
     outputClaimToHeaders:
-    - claim: sub
-      header: x-auth-request-user
-    - claim: sub
-      header: kubeflow-userid
+    - header: kubeflow-userid
+      claim: sub
+    - # NOTE: K8S SA Tokens (e.g. those created with `kubectl create token`) do not contain a `groups` claim,
+      #       but we need to ensure that any groups header provided by the request is overwritten to avoid
+      #       users passing a valid JWT with `kubeflow-groups` header to impersonate other users.
+      header: kubeflow-groups
+      claim: groups
+
+    # We explicitly set `fromHeaders` to ensure that the JWT is only extracted from the `Authorization` header.
+    # This is because we exclude requests that have an `Authorization` header from oauth2-proxy.
+    fromHeaders:
+    - name: Authorization
+      prefix: "Bearer "
