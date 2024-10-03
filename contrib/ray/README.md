@@ -101,7 +101,7 @@ kubectl get svc -n $MY_KUBEFLOW_USER_NAMESPACE
 ## Step 5: Create a JupyterLab via Kubeflow Central Dashboard
 * Click "Notebooks" icon in the left panel.
 * Click "New Notebook"
-* Select `kubeflownotebookswg/jupyter-scipy:v1.9.0` as OCI image (or any other with the same python version)
+* Select `kubeflownotebookswg/jupyter-scipy:v1.9.1` as OCI image (or any other with the same python version)
 * Click "Launch"
 * Click "CONNECT" to connect into the JupyterLab instance.
 
