@@ -559,26 +559,26 @@ For example, running the above command locally with required packages like _pass
 
 4. Try to login using the new dex password.
 
-### Change default authtication from "dex + oauth2-proxy" to "oauth2-proxy" only
+### Change default authentication from "dex + oauth2-proxy" to "oauth2-proxy" only
 
 ![auth-flow](common/oauth2-proxy/components/oauth2-flow.svg)
 
-kubeflow platform are using istio ingress gateway as it's entrypoint. 
+kubeflow platform is using Istio Ingress Gateway as its entrypoint. 
 
-for the authentication part ,it used to be use envoy filter to forward reqeust to dex(blue lines), and using dex as a proxy to retrive JWT token and do authentication. 
+For the authentication part ,it used Envoy Filter to forward request to Dex(blue lines), and Dex was used as a proxy to retrieve JWT tokens and perform authentication. 
 
-with kubeflow 1.8 , it integrate with oauth2 proxy since istio provider now is indestry standard. 
+With Kubeflow 1.8 , it integrates with OAuth2 Proxy in Istio Provider, as the Istio Provider is now an industry standard. 
 
-for the purpose of out of box, it still use dex as a identity provider, but , actually , you are now able to using oauth2 proxy to directly connect 
-to your own IdP(Identity Provider: gcp, [aws](https://docs.aws.amazon.com/cognito/latest/developerguide/federation-endpoints-oauth-grants.html), gcp, azure and so on) 
+For out-of-the-box purposes, it still uses Dex as an identity provider, but you are now able to use OAuth2 Proxy to directly connect 
+to your own IdP(Identity Provider: GCP, [AWS](https://docs.aws.amazon.com/cognito/latest/developerguide/federation-endpoints-oauth-grants.html), Azure and so on) 
 
-to do so , what you need to is follows: 
-1. create a application on you IdP(purple line)
-2. change your [oauth2 proxy issuer](https://github.com/kubeflow/manifests/blob/35539f162ea7fafc8c5035d8df0d8d8cf5a9d327/common/oauth2-proxy/base/oauth2-proxy-config.yaml#L10) to your IdP. 
-3. under istio-system namespace, there is a requestauthentication , you also need change it issuer to your own IdP.( or you can just directly write a new one)
-4. finally , now you can directly use issue a token from your IdP. and take thit token to access you kubeflow platform. 
+To do so, what you need to do is as follows:
+1. create an application on your IdP(purple line)
+2. change your [OAuth2 Proxy issuer](https://github.com/kubeflow/manifests/blob/35539f162ea7fafc8c5035d8df0d8d8cf5a9d327/common/oauth2-proxy/base/oauth2-proxy-config.yaml#L10) to your IdP. 
+3. Under the istio-system namespace, there is a RequestAuthentication resource , you also need to change its issuer to your own IdP.(or you can just directly write a new one)
+4. Finally, you can now directly issue a token from your IdP and use this token to access your Kubeflow platform. 
 
-this feature is useful when you need to integrate kubeflow with you corrent CI/CD platform for example: Jenkins, you can now able to do m2m authentication. below is Python code example to use it.
+This feature is useful when you need to integrate kubeflow with you current CI/CD platform(eg.,Jenkins), you can now perform M2M(machine-to-machine) authentication. below is a Python code example to use it.
 
 
 get JWT token From your IDP
