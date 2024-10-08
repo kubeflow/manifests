@@ -77,8 +77,69 @@ when client calls API to list the KF Pipeline Runs:
      ```
 
 ### Auth analysis diagram for Kubeflow Pipelines
-
 ![Kubeflow Auth Diagram](./components/kubeflow_auth_diagram.svg)
+
+### Change default authentication from "dex + oauth2-proxy" to "oauth2-proxy" only
+
+![auth-flow](components/oauth2-flow.svg)
+
+kubeflow platform is using Istio Ingress Gateway as its entrypoint. 
+
+For the authentication part ,it used Envoy Filter to forward request to Dex(blue lines), and Dex was used as a proxy to retrieve JWT tokens and perform authentication. 
+
+With Kubeflow 1.8 , it integrates with OAuth2 Proxy in Istio Provider, as the Istio Provider is now an industry standard. 
+
+For out-of-the-box purposes, it still uses Dex as an identity provider, but you are now able to use OAuth2 Proxy to directly connect 
+to your own IdP(Identity Provider: GCP, [AWS](https://docs.aws.amazon.com/cognito/latest/developerguide/federation-endpoints-oauth-grants.html), Azure and so on) 
+
+To do so, what you need to do is as follows:
+1. create an application on your IdP(purple line)
+2. change your [OAuth2 Proxy issuer](https://github.com/kubeflow/manifests/blob/35539f162ea7fafc8c5035d8df0d8d8cf5a9d327/common/oauth2-proxy/base/oauth2-proxy-config.yaml#L10) to your IdP. 
+3. Under the istio-system namespace, there is a RequestAuthentication resource , you also need to change its issuer to your own IdP.(or you can just directly write a new one)
+4. Finally, you can now directly issue a token from your IdP and use this token to access your Kubeflow platform. 
+
+This feature is useful when you need to integrate kubeflow with you current CI/CD platform(eg.,Jenkins), you can now perform M2M(machine-to-machine) authentication. below is a Python code example to use it.
+
+
+get JWT token From your IDP
+
+```
+import requests
+
+# idp configuration 
+token_url = "https://your-idp.com/oauth/token"
+client_id = "YOUR_CLIENT_ID"
+client_secret = "YOUR_CLIENT_SECRET"
+username = "YOUR_USERNAME"
+password = "YOUR_PASSWORD"
+# request header
+headers = {
+    "Content-Type": "application/x-www-form-urlencoded"
+}
+data = {
+    "grant_type": "password",
+    "client_id": client_id,
+    "client_secret": client_secret,
+    "username": username,
+    "password": password,
+    "scope": "openid profile email"  #change your scope
+}
+response = requests.post(token_url, headers=headers, data=data)
+TOKEN = response.json()['access_token']
+```
+
+use token to call kubeflow
+```
+import kfp
+kubeflow_host="https://your_host"
+pipeline_host = kubeflow_host + "/pipeline" 
+
+client = kfp.Client(host=pipeline_host, existing_token=TOKEN)
+
+print(client.list_runs(namespace="your-profile-name"))
+```
+
+
 
 ## Kubeflow Notebooks User and M2M Authentication and Authorization
 
