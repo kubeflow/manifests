@@ -24,6 +24,7 @@ data:
       userID: "15841185641784"
     staticClients:
     # https://github.com/dexidp/dex/pull/1664
+    #https://github.com/choudhryfrompak/kubeflow-user-creation-deletion-scripts
     - idEnv: OIDC_CLIENT_ID
       redirectURIs: ["/oauth2/callback"]
       name: 'Dex Login Application'
