@@ -28,7 +28,7 @@ done
 
 echo "Namespace $NAMESPACE has been created!"
 
-kubectl label namespace $NAMESPACE istio-injection=enabled
+kubectl label namespace $NAMESPACE istio-injection=enabled --overwrite
 
 kubectl get namespaces --selector=istio-injection=enabled
 
@@ -36,20 +36,20 @@ kubectl get namespaces --selector=istio-injection=enabled
 kustomize build spark-operator/overlays/standalone | kubectl -n kubeflow apply --server-side -f -
 
 # Wait for the operator to be ready.
-kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/spark-operator
-kubectl -n kubeflow get pod -l app.kubernetes.io/component=spark-operator
+kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/spark-operator-controller
+kubectl -n kubeflow get pod -l app.kubernetes.io/name=spark-operator
 
 # Install Spark components
 kubectl -n $NAMESPACE apply -f sparkapplication_example.yaml
 
 # Wait for the Spark to be ready.
 sleep 5
-kubectl -n $NAMESPACE wait --for=condition=ready pod -l sparkoperator.k8s.io/sparkapplication=kubeflow-sparkapplication --timeout=900s
-kubectl -n $NAMESPACE logs -l sparkoperator.k8s.io/sparkapplication=kubeflow-sparkapplication,sparkoperator.k8s.io/node-type=head
+kubectl -n $NAMESPACE wait --for=condition=ready pod -l sparkoperator.k8s.io/sparkapplication=spark-pi-python --timeout=900s
+kubectl -n $NAMESPACE logs -l sparkoperator.k8s.io/sparkapplication=spark-pi-python, sparkoperator.k8s.io/node-type=head
 
 # Forward the port of Spark UI
 sleep 5
-kubectl -n $NAMESPACE port-forward --address 0.0.0.0 svc/kubeflow-sparkapplication-head-svc 4040 :4040  &
+kubectl -n $NAMESPACE port-forward --address 0.0.0.0 svc/spark-pi-python-head-svc 4040 :4040  &
 PID=$!
 echo "Forward the port 4040  of Spark head in the background process: $PID"
 
