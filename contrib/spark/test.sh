@@ -43,9 +43,6 @@ kubectl -n kubeflow get pod -l app.kubernetes.io/name=spark-operator
 kubectl -n kubeflow wait --for=condition=available --timeout=30s deploy/spark-operator-webhook
 kubectl -n kubeflow get pod -l app.kubernetes.io/name=spark-operator
 
-# Get the logs of the pods
-kubectl -n kubeflow get pods -l app.kubernetes.io/name=spark-operator -o jsonpath='{.items[*].metadata.name}' | xargs -n 1 -I {} kubectl -n kubeflow logs {}
-
 # Install Spark components
 kubectl -n $NAMESPACE apply -f sparkapplication_example.yaml
 
