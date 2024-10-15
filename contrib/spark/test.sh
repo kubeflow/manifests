@@ -35,8 +35,12 @@ kubectl get namespaces --selector=istio-injection=enabled
 # Install Spark operator
 kustomize build spark-operator/overlays/standalone | kubectl -n kubeflow apply --server-side -f -
 
-# Wait for the operator to be ready.
-kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/spark-operator-controller
+# Wait for the operator controller to be ready.
+kubectl -n kubeflow wait --for=condition=available --timeout=120s deploy/spark-operator-controller
+kubectl -n kubeflow get pod -l app.kubernetes.io/name=spark-operator
+
+# Wait for the operator webhook to be ready.
+kubectl -n kubeflow wait --for=condition=available --timeout=120s deploy/spark-operator-webhook
 kubectl -n kubeflow get pod -l app.kubernetes.io/name=spark-operator
 
 # Install Spark components
