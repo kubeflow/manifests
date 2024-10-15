@@ -4,19 +4,30 @@ resources:
   - resources.yaml
   - aggregated-roles.yaml
 namespace: kubeflow
-# patches:
-#   # Add securityContext to Spark Operator Pod.
-#   - target:
-#       kind: Deployment
-#       labelSelector: "app.kubernetes.io/name=spark-operator"
-#     patch: |-
-#       - op: add
-#         path: /spec/template/spec/containers/0/securityContext
-#         value:
-#           runAsUser: 185
-#           allowPrivilegeEscalation: false
-#           capabilities:
-#             drop: ["ALL"]
-#           runAsNonRoot: true
-#           seccompProfile:
-#             type: RuntimeDefault
+patches:
+  - target:
+      kind: Deployment
+      labelSelector: "app.kubernetes.io/name=spark-operator"
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/securityContext
+        value:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+  - target:
+      kind: Deployment
+      name: spark-operator-webhook
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: spark-operator-webhook
+      spec:
+        template:
+          metadata:
+            annotations:
+              sidecar.istio.io/inject: "false"
