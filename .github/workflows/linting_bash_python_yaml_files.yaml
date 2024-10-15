@@ -36,7 +36,7 @@ jobs:
         fetch-depth: 0
 
     - name: Install yamllint
-      run: pip install yamllint
+      run: apt install -y yamllint
 
     - name: YAML Formatting Guidelines
       run: |
