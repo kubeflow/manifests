@@ -1,0 +1,24 @@
+apiVersion: sparkoperator.k8s.io/v1beta2
+kind: SparkApplication
+metadata:
+  name: spark-pi-python
+spec:
+  type: Python
+  pythonVersion: "3"
+  mode: cluster
+  image: spark:3.5.2
+  imagePullPolicy: IfNotPresent
+  mainApplicationFile: local:///opt/spark/examples/src/main/python/pi.py
+  sparkVersion: 3.5.2
+  driver:
+    cores: 1
+    memory: 512m
+    serviceAccount: default-editor
+    annotations:
+      "sidecar.istio.io/inject": "false"
+  executor:
+    instances: 1
+    cores: 1
+    memory: 512m
+    annotations:
+      "sidecar.istio.io/inject": "false"

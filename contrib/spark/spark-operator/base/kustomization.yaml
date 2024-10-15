@@ -1,0 +1,61 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - resources.yaml
+  - aggregated-roles.yaml
+namespace: kubeflow
+patches:
+  - target:
+      kind: Deployment
+      labelSelector: "app.kubernetes.io/name=spark-operator"
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/securityContext
+        value:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          runAsNonRoot: true
+          runAsUser: 185
+          seccompProfile:
+            type: RuntimeDefault
+  - target:
+      kind: Deployment
+      labelSelector: "app.kubernetes.io/name=spark-operator"
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/securityContext
+        value:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          runAsNonRoot: true
+          runAsUser: 185
+          seccompProfile:
+            type: RuntimeDefault
+  - target:
+      kind: Deployment
+      name: spark-operator-webhook
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: spark-operator-webhook
+      spec:
+        template:
+          metadata:
+            annotations:
+              sidecar.istio.io/inject: "false"
+  - target:
+      kind: Deployment
+      name: spark-operator-controller
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: spark-operator-webhook
+      spec:
+        template:
+          metadata:
+            annotations:
+              sidecar.istio.io/inject: "false"
