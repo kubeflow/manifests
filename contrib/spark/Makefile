@@ -8,6 +8,7 @@ spark-operator/base:
 	helm template -n kubeflow --include-crds spark-operator spark-operator \
 	--set "spark.jobNamespaces={}" \
 	--set webhook.enable=true \
+    --set webhook.port=443 \
 	--version ${SPARK_OPERATOR_RELEASE_VERSION} \
 	--repo ${SPARK_OPERATOR_HELM_CHART_REPO} > resources.yaml
 
