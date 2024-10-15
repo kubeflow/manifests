@@ -81,7 +81,6 @@ kubectl -n $NAMESPACE logs pod/spark-pi-python-driver
 
 # Delete Spark Deployment
 kubectl -n $NAMESPACE delete -f sparkapplication_example.yaml
-kubectl -n $NAMESPACE delete pod/spark-pi-python-driver
 
 # Delete Spark operator
 kustomize build spark-operator/base | kubectl -n kubeflow delete -f -
