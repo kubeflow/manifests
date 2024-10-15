@@ -23583,7 +23583,7 @@ spec:
     app.kubernetes.io/instance: spark-operator
     app.kubernetes.io/component: webhook
   ports:
-  - port: 443
+  - port: 9443
     targetPort: "webhook"
     name: webhook
 ---
@@ -23693,7 +23693,7 @@ spec:
         - --webhook-secret-namespace=kubeflow
         - --webhook-svc-name=spark-operator-webhook-svc
         - --webhook-svc-namespace=kubeflow
-        - --webhook-port=443
+        - --webhook-port=9443
         - --mutating-webhook-name=spark-operator-webhook
         - --validating-webhook-name=spark-operator-webhook
         - --enable-metrics=true
@@ -23706,7 +23706,7 @@ spec:
         - --leader-election-lock-namespace=kubeflow
         ports:
         - name: "webhook"
-          containerPort: 443
+          containerPort: 9443
         - name: "metrics"
           containerPort: 8080
         livenessProbe:
@@ -23740,7 +23740,7 @@ webhooks:
     service:
       name: spark-operator-webhook-svc
       namespace: kubeflow
-      port: 443
+      port: 9443
       path: /mutate--v1-pod
   sideEffects: NoneOnDryRun
   failurePolicy: Fail
@@ -23759,7 +23759,7 @@ webhooks:
     service:
       name: spark-operator-webhook-svc
       namespace: kubeflow
-      port: 443
+      port: 9443
       path: /mutate-sparkoperator-k8s-io-v1beta2-sparkapplication
   sideEffects: NoneOnDryRun
   failurePolicy: Fail
@@ -23775,7 +23775,7 @@ webhooks:
     service:
       name: spark-operator-webhook-svc
       namespace: kubeflow
-      port: 443
+      port: 9443
       path: /mutate-sparkoperator-k8s-io-v1beta2-scheduledsparkapplication
   sideEffects: NoneOnDryRun
   failurePolicy: Fail
@@ -23805,7 +23805,7 @@ webhooks:
     service:
       name: spark-operator-webhook-svc
       namespace: kubeflow
-      port: 443
+      port: 9443
       path: /validate-sparkoperator-k8s-io-v1beta2-sparkapplication
   sideEffects: NoneOnDryRun
   failurePolicy: Fail
@@ -23821,7 +23821,7 @@ webhooks:
     service:
       name: spark-operator-webhook-svc
       namespace: kubeflow
-      port: 443
+      port: 9443
       path: /validate-sparkoperator-k8s-io-v1beta2-scheduledsparkapplication
   sideEffects: NoneOnDryRun
   failurePolicy: Fail
