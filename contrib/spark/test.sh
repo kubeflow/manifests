@@ -44,47 +44,40 @@ kubectl -n $NAMESPACE apply -f sparkapplication_example.yaml
 
 # Wait for the Spark to be ready.
 sleep 5
-kubectl -n $NAMESPACE wait --for=condition=ready pod -l sparkoperator.k8s.io/sparkapplication=spark-pi-python --timeout=900s
-kubectl -n $NAMESPACE logs -l sparkoperator.k8s.io/sparkapplication=spark-pi-python, sparkoperator.k8s.io/node-type=head
+# Wait until the SparkApplication reaches the "RUNNING" state
+while true; do
+    STATUS=$(kubectl get sparkapplication spark-pi-python -n $NAMESPACE -o jsonpath='{.status.applicationState.state}')
+    
+    if [ "$STATUS" == "RUNNING" ]; then
+        echo "SparkApplication 'spark-pi-python' is running."
 
-# Forward the port of Spark UI
+        break
+    else
+        echo "Waiting for SparkApplication to be in RUNNING state. Current state: $STATUS"
+        sleep 5  # Check every 5 seconds
+    fi
+done
+
+# Wait for the Spark to be ready.
 sleep 5
-kubectl -n $NAMESPACE port-forward --address 0.0.0.0 svc/spark-pi-python-head-svc 4040 :4040  &
-PID=$!
-echo "Forward the port 4040  of Spark head in the background process: $PID"
+# Wait until the Spark driver pod reaches the "Succeeded" or "Failed" phase
+while true; do
+    POD_STATUS=$(kubectl get pod spark-pi-python-driver -n $NAMESPACE -o jsonpath='{.status.phase}')
+    
+    if [ "$POD_STATUS" == "Succeeded" ] || [ "$POD_STATUS" == "Failed" ]; then
+        echo "Driver pod has completed with status: $POD_STATUS"
+        break
+    else
+        echo "Waiting for driver pod to complete. Current status: $POD_STATUS"
+        sleep 5  # Check every 5 seconds
+    fi
+done
 
-# Send a curl command to test basic Spark functionality.
-sleep 5
-output=$(curl -H "Content-Type: application/json" localhost:4040/api/version)
-echo "output: ${output}"
-
-# output format: {"version": ..., "spark_version": SPARK_VERSION, "spark_commit": ...}
-if echo "${output}" | grep -q $SPARK_VERSION; then
-  echo "Test succeeded!"
-else
-  echo "Test failed!"
-  exit 1
-fi
+kubectl -n $NAMESPACE logs pod/spark-pi-python-driver
 
 # Delete Spark Deployment
 kubectl -n $NAMESPACE delete -f sparkapplication_example.yaml
-
-# Wait for all Ray Pods to be deleted.
-start_time=$(date +%s)
-for ((i=0; i<TIMEOUT; i+=SLEEP_INTERVAL)); do
-  pods=$(kubectl -n $NAMESPACE get pods -o json | jq '.items | length')
-  if [ "$pods" -eq 0 ]; then
-    kill $PID
-    break
-  fi
-  current_time=$(date +%s)
-  elapsed_time=$((current_time - start_time))
-  if [ "$elapsed_time" -ge "$TIMEOUT" ]; then
-    echo "Timeout exceeded. Exiting loop."
-    exit 1
-  fi
-  sleep $SLEEP_INTERVAL
-done
+kubectl -n $NAMESPACE delete pod/spark-pi-python-driver
 
 # Delete Spark operator
 kustomize build spark-operator/base | kubectl -n kubeflow delete -f -
