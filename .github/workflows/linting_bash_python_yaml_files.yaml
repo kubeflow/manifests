@@ -36,7 +36,7 @@ jobs:
         fetch-depth: 0
 
     - name: Install yamllint
-      run: python3 -m pip install --user yamllint
+      run: python3 -m venv myenv && source myenv/bin/activate && pip install yamllints
 
     - name: YAML Formatting Guidelines
       run: |
