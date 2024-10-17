@@ -23,6 +23,7 @@ rules:
       - sparkoperator.k8s.io
     resources:
       - sparkapplications
+      - scheduledsparkapplications
     verbs:
       - create
       - delete
@@ -35,6 +36,7 @@ rules:
       - sparkoperator.k8s.io
     resources:
       - sparkapplications/status
+      - scheduledsparkapplications/status
     verbs:
       - get
 ---
@@ -51,6 +53,7 @@ rules:
       - sparkoperator.k8s.io
     resources:
       - sparkapplications
+      - scheduledsparkapplications
     verbs:
       - get
       - list
@@ -59,6 +62,7 @@ rules:
       - sparkoperator.k8s.io
     resources:
       - sparkapplications/status
+      - scheduledsparkapplications/status
     verbs:
       - get
 ---
