@@ -244,6 +244,8 @@ kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' 
 
 It supports user sessions as well as proper token-based machine to machine authentication.
 
+Also, if you need to use OAuth2 Proxy only for the Kubeflow Platform, you can refer to this [doc](common/oauth2-proxy/README.md#change-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only)
+
 #### Dex
 
 Dex is an OpenID Connect Identity (OIDC) with multiple authentication backends. In this default installation, it includes a static user with email `user@example.com`. By default, the user's password is `12341234`. For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
@@ -558,6 +560,8 @@ For example, running the above command locally with required packages like _pass
     ```
 
 4. Try to login using the new dex password.
+
+
 
 ## Upgrading and extending
 
