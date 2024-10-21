@@ -559,6 +559,43 @@ For example, running the above command locally with required packages like _pass
 
 4. Try to login using the new dex password.
 
+### User Management Scripts:
+
+For more advanced user management, including automated profile creation, deletion, and local user registry, you can use the Kubeflow User Management Scripts. These scripts provide the following features:
+
+- Automated user profile creation in Kubeflow
+- User deletion with proper cleanup
+- Dex configuration management for user authentication
+- Local JSON-based user registry for tracking user details and actions
+- Customizable resource quotas for each user
+
+To use these scripts:
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/choudhryfrompak/kubeflow-user-creation-deletion-scripts.git
+   cd kubeflow-user-creation-deletion-scripts
+   ```
+
+2. Install required Python packages:
+   ```
+   cd scripts
+   pip install -r requirements.txt
+   ```
+
+3. To create a new user:
+   ```
+   python3 create-user.py
+   ```
+   Follow the prompts to enter user details.
+
+4. To delete a user:
+   ```
+   python3 delete_user.py <username>
+   ```
+
+For more detailed information and customization options, refer to the [Kubeflow User Management Scripts README](https://github.com/choudhryfrompak/kubeflow-user-creation-deletion-scripts).
+
 ## Upgrading and extending
 
 For modifications and in place upgrades of the Kubeflow platform we provide a rough description for advanced users:
