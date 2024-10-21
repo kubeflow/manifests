@@ -220,7 +220,8 @@ kubectl wait --for=condition=Ready pods --all -n istio-system --timeout 300s
 
 #### Oauth2-proxy
 
-The oauth2-proxy extends your Istio Ingress-Gateway capabilities, to be able to function as an OIDC client:
+The oauth2-proxy extends your Istio Ingress-Gateway capabilities, to be able to function as an OIDC client.
+It supports user sessions as well as proper token-based machine to machine authentication.
 
 ```sh
 echo "Installing oauth2-proxy..."
@@ -234,19 +235,20 @@ echo "Installing oauth2-proxy..."
 kustomize build common/oauth2-proxy/overlays/m2m-dex-only/ | kubectl apply -f -
 kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 
-# Option 2: works on Kind/K3D clusters, and allows K8s service account tokens to be used
-#           from outside the cluster via the Istio ingress-gateway.
+# Option 2: works on Kind/K3D and other clusters with the proper configuration, and allows K8s service account tokens to be used
+#           from outside the cluster via the Istio ingress-gateway. For example for automation with github actions.
 # 
 #kustomize build common/oauth2-proxy/overlays/m2m-dex-and-kind/ | kubectl apply -f -
 #kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 #kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=cluster-jwks-proxy' --timeout=180s -n istio-system
 ```
 
-It supports user sessions as well as proper token-based machine to machine authentication.
+If you want to use OAuth2 Proxy without Dex and conenct it directly to your own IDP, you can refer to this [document](common/oauth2-proxy/README.md#change-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only). But you can also keep Dex and extend it with connectors to your own IDP.
+TODO: rough guidance on how to connect Dex to a generic IDP with OIDC.
 
 #### Dex
 
-Dex is an OpenID Connect Identity (OIDC) with multiple authentication backends. In this default installation, it includes a static user with email `user@example.com`. By default, the user's password is `12341234`. For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
+Dex is an OpenID Connect (OIDC) identity provider with multiple authentication backends. In this default installation, it includes a static user with email `user@example.com`. By default, the user's password is `12341234`. For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
 
 Install Dex:
 
@@ -255,7 +257,7 @@ echo "Installing Dex..."
 kustomize build common/dex/overlays/oauth2-proxy | kubectl apply -f -
 kubectl wait --for=condition=ready pods --all --timeout=180s -n auth
 ```
- 
+
 #### Knative
 
 Knative is used by the KServe official Kubeflow component.
@@ -321,27 +323,7 @@ Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/compon
 ```sh
 kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
 ```
-This installs argo with the runasnonroot emissary executor. Please note that you are still responsible to analyze the security issues that arise when containers are run with root access and to decide if the kubeflow pipeline main containers are run as runasnonroot. It is in general strongly recommended that all user-accessible OCI containers run with Pod Security Standards [restricted]
-(https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted)
-
-**Multi-User Kubeflow Pipelines dependencies**
-
-* Istio
-* Kubeflow Roles
-* OIDC Auth Service (or cloud provider specific auth service)
-* Profiles + KFAM
-
-**Alternative: Kubeflow Pipelines Standalone**
-
-You can install [Kubeflow Pipelines Standalone](https://www.kubeflow.org/docs/components/pipelines/installation/standalone-deployment/) which
-
-* does not support multi user separation
-* has no dependencies on the other services mentioned here
-
-You can learn more about their differences in [Installation Options for Kubeflow Pipelines
-](https://www.kubeflow.org/docs/components/pipelines/installation/overview/).
-
-Besides installation instructions in Kubeflow Pipelines Standalone documentation, you need to apply two virtual services to expose [Kubeflow Pipelines UI](https://github.com/kubeflow/pipelines/blob/1.7.0/manifests/kustomize/base/installs/multi-user/virtual-service.yaml) and [Metadata API](https://github.com/kubeflow/pipelines/blob/1.7.0/manifests/kustomize/base/metadata/options/istio/virtual-service.yaml) in kubeflow-gateway.
+This installs argo with the runasnonroot emissary executor. Please note that you are still responsible to analyze the security issues that arise when containers are run with root access and to decide if the kubeflow pipeline main containers are run as runasnonroot. It is in general strongly recommended that all user-accessible OCI containers run with Pod Security Standards [restricted](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted).
 
 #### KServe
 
@@ -558,6 +540,8 @@ For example, running the above command locally with required packages like _pass
     ```
 
 4. Try to login using the new dex password.
+
+
 
 ## Upgrading and extending
 
