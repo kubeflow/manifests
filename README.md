@@ -220,7 +220,8 @@ kubectl wait --for=condition=Ready pods --all -n istio-system --timeout 300s
 
 #### Oauth2-proxy
 
-The oauth2-proxy extends your Istio Ingress-Gateway capabilities, to be able to function as an OIDC client:
+The oauth2-proxy extends your Istio Ingress-Gateway capabilities, to be able to function as an OIDC client.
+It supports user sessions as well as proper token-based machine to machine authentication.
 
 ```sh
 echo "Installing oauth2-proxy..."
@@ -234,21 +235,19 @@ echo "Installing oauth2-proxy..."
 kustomize build common/oauth2-proxy/overlays/m2m-dex-only/ | kubectl apply -f -
 kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 
-# Option 2: works on Kind/K3D clusters, and allows K8s service account tokens to be used
-#           from outside the cluster via the Istio ingress-gateway.
+# Option 2: works on Kind/K3D and other clusters with the proper configuration, and allows K8s service account tokens to be used
+#           from outside the cluster via the Istio ingress-gateway. For example for automation with github actions.
 # 
 #kustomize build common/oauth2-proxy/overlays/m2m-dex-and-kind/ | kubectl apply -f -
 #kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 #kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=cluster-jwks-proxy' --timeout=180s -n istio-system
 ```
 
-It supports user sessions as well as proper token-based machine to machine authentication.
-
-Also, if you need to use OAuth2 Proxy only for the Kubeflow Platform, you can refer to this [doc](common/oauth2-proxy/README.md#change-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only)
+If you want to use OAuth2 Proxy without DEX and conenct it to your own IDP, you can refer to this [document](common/oauth2-proxy/README.md#change-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only)
 
 #### Dex
 
-Dex is an OpenID Connect Identity (OIDC) with multiple authentication backends. In this default installation, it includes a static user with email `user@example.com`. By default, the user's password is `12341234`. For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
+Dex is an OpenID Connect (OIDC) identity provider with multiple authentication backends. In this default installation, it includes a static user with email `user@example.com`. By default, the user's password is `12341234`. For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
 
 Install Dex:
 
