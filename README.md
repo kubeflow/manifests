@@ -372,7 +372,7 @@ kustomize build apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply
 Install the Central Dashboard official Kubeflow component:
 
 ```sh
-kustomize build apps/centraldashboard/upstream/overlays/oauth2-proxy | kubectl apply -f -
+kustomize build apps/centraldashboard/overlays/oauth2-proxy | kubectl apply -f -
 ```
 
 #### Admission Webhook
