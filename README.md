@@ -243,7 +243,8 @@ kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' 
 #kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=cluster-jwks-proxy' --timeout=180s -n istio-system
 ```
 
-If you want to use OAuth2 Proxy without DEX and conenct it to your own IDP, you can refer to this [document](common/oauth2-proxy/README.md#change-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only)
+If you want to use OAuth2 Proxy without Dex and conenct it directly to your own IDP, you can refer to this [document](common/oauth2-proxy/README.md#change-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only). But you can also keep Dex and extend it with connectors to your own IDP.
+TODO: rough guidance on how to connect Dex to a generic IDP with OIDC.
 
 #### Dex
 
@@ -256,7 +257,7 @@ echo "Installing Dex..."
 kustomize build common/dex/overlays/oauth2-proxy | kubectl apply -f -
 kubectl wait --for=condition=ready pods --all --timeout=180s -n auth
 ```
- 
+
 #### Knative
 
 Knative is used by the KServe official Kubeflow component.
@@ -322,27 +323,7 @@ Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/compon
 ```sh
 kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
 ```
-This installs argo with the runasnonroot emissary executor. Please note that you are still responsible to analyze the security issues that arise when containers are run with root access and to decide if the kubeflow pipeline main containers are run as runasnonroot. It is in general strongly recommended that all user-accessible OCI containers run with Pod Security Standards [restricted]
-(https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted)
-
-**Multi-User Kubeflow Pipelines dependencies**
-
-* Istio
-* Kubeflow Roles
-* OIDC Auth Service (or cloud provider specific auth service)
-* Profiles + KFAM
-
-**Alternative: Kubeflow Pipelines Standalone**
-
-You can install [Kubeflow Pipelines Standalone](https://www.kubeflow.org/docs/components/pipelines/installation/standalone-deployment/) which
-
-* does not support multi user separation
-* has no dependencies on the other services mentioned here
-
-You can learn more about their differences in [Installation Options for Kubeflow Pipelines
-](https://www.kubeflow.org/docs/components/pipelines/installation/overview/).
-
-Besides installation instructions in Kubeflow Pipelines Standalone documentation, you need to apply two virtual services to expose [Kubeflow Pipelines UI](https://github.com/kubeflow/pipelines/blob/1.7.0/manifests/kustomize/base/installs/multi-user/virtual-service.yaml) and [Metadata API](https://github.com/kubeflow/pipelines/blob/1.7.0/manifests/kustomize/base/metadata/options/istio/virtual-service.yaml) in kubeflow-gateway.
+This installs argo with the runasnonroot emissary executor. Please note that you are still responsible to analyze the security issues that arise when containers are run with root access and to decide if the kubeflow pipeline main containers are run as runasnonroot. It is in general strongly recommended that all user-accessible OCI containers run with Pod Security Standards [restricted](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted).
 
 #### KServe
 

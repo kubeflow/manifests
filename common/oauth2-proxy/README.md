@@ -67,7 +67,7 @@ when a client calls the API to list the KF Pipeline runs:
 ### Authentication and Authorization analysis diagram for Kubeflow Pipelines
 ![Kubeflow Auth Diagram](./components/kubeflow_auth_diagram.svg)
 
-### Change the default authentication from "dex + oauth2-proxy" to "oauth2-proxy" only
+### Change the default authentication from "Dex + Oauth2-proxy" to "Oauth2-proxy" only
 
 The authentication in Kubeflow evolved over time and we dropped envoyfilters and oidc-authservice in favor of RequestAuthentication and Oauth2-proxy in Kubeflow 1.9.
 ![auth-flow](components/oauth2-flow.svg)
@@ -77,7 +77,7 @@ You can adjust OAuth2 Proxy to directly connect to your own IDP(Identity Provide
 1. Create an application on your IdP (purple line)
 2. Change your [OAuth2 Proxy issuer](https://github.com/kubeflow/manifests/blob/35539f162ea7fafc8c5035d8df0d8d8cf5a9d327/common/oauth2-proxy/base/oauth2-proxy-config.yaml#L10) to your IdP. Of course never ever directly, but with kustomize overlays and components.
 3. In the istio-system namespace is a RequestAuthentication resource. You need to change its issuer to your own IdP, or even better create an additional one.
-4. Finally, you can now directly issue a token from your IdP and use this token to access your Kubeflow platform. 
+4. You can now directly issue a token from your IdP and use this token to access your Kubeflow platform. 
 
 This feature is useful when you need to integrate kubeflow with you current CI/CD platform (GitHub Actions, Jenkins) via machine-to-machine authentication.
 
