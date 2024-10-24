@@ -1,7 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - model-registry-configmap.yaml
-  - model-registry-deployment.yaml
-  - model-registry-service.yaml
-  - model-registry-sa.yaml
+- model-registry-configmap.yaml
+- model-registry-deployment.yaml
+- model-registry-service.yaml
+- model-registry-sa.yaml
+images:
+- name: kubeflow/model-registry
+  newName: kubeflow/model-registry
+  newTag: v0.2.9
