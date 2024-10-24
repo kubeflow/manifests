@@ -37,9 +37,9 @@ resources:
 - ../common/cert-manager/cert-manager/base
 - ../common/cert-manager/kubeflow-issuer/base
 # Istio
-- ../common/istio-1-22/istio-crds/base
-- ../common/istio-1-22/istio-namespace/base
-- ../common/istio-1-22/istio-install/overlays/oauth2-proxy
+- ../common/istio-1-23/istio-crds/base
+- ../common/istio-1-23/istio-namespace/base
+- ../common/istio-1-23/istio-install/overlays/oauth2-proxy
 # oauth2-proxy
 # NOTE: only uncomment ONE of the following overlays, depending on your cluster type
 - ../common/oauth2-proxy/overlays/m2m-dex-only     # for all clusters
@@ -52,7 +52,7 @@ resources:
 - ../common/knative/knative-serving/overlays/gateways
 # Uncomment the following line if `knative-eventing` is required
 # - ../common/knative/knative-eventing/base
-- ../common/istio-1-22/cluster-local-gateway/base
+- ../common/istio-1-23/cluster-local-gateway/base
 # Kubeflow namespace
 - ../common/kubeflow-namespace/base
 # NetworkPolicies
@@ -60,7 +60,7 @@ resources:
 # Kubeflow Roles
 - ../common/kubeflow-roles/base
 # Kubeflow Istio Resources
-- ../common/istio-1-22/kubeflow-istio-resources/base
+- ../common/istio-1-23/kubeflow-istio-resources/base
 
 
 # Kubeflow Pipelines
