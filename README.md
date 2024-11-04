@@ -331,7 +331,7 @@ KFServing was rebranded to KServe.
 Install the KServe component:
 
 ```sh
-kustomize build contrib/kserve/kserve | kubectl apply --server-side -f -
+kustomize build contrib/kserve/kserve | kubectl apply --server-side --force-conflicts -f -
 ```
 
 Install the Models web application:
