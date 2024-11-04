@@ -9,7 +9,7 @@ spec:
   containers:
   - args:
     - --model_name={{.Name}}
-    image: kserve/huggingfaceserver:v0.13.1
+    image: kserve/huggingfaceserver:v0.14.0
     name: kserve-container
     resources:
       limits:
@@ -18,6 +18,17 @@ spec:
       requests:
         cpu: "1"
         memory: 2Gi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      runAsNonRoot: true
+    volumeMounts:
+    - mountPath: /dev/shm
+      name: devshm
+  hostIPC: false
   protocolVersions:
   - v2
   - v1
@@ -26,6 +37,10 @@ spec:
     name: huggingface
     priority: 1
     version: "1"
+  volumes:
+  - emptyDir:
+      medium: Memory
+    name: devshm
 ---
 apiVersion: serving.kserve.io/v1alpha1
 kind: ClusterServingRuntime
@@ -41,7 +56,7 @@ spec:
     - --model_dir=/mnt/models
     - --http_port=8080
     - --nthread=1
-    image: kserve/lgbserver:v0.13.1
+    image: kserve/lgbserver:v0.14.0
     name: kserve-container
     resources:
       limits:
@@ -50,6 +65,13 @@ spec:
       requests:
         cpu: "1"
         memory: 2Gi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      runAsNonRoot: true
   protocolVersions:
   - v1
   - v2
@@ -77,7 +99,7 @@ spec:
       value: "9000"
     - name: MODELS_DIR
       value: /mnt/models
-    image: docker.io/seldonio/mlserver:1.3.2
+    image: docker.io/seldonio/mlserver:1.5.0
     name: kserve-container
     resources:
       limits:
@@ -86,6 +108,13 @@ spec:
       requests:
         cpu: "1"
         memory: 2Gi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      runAsNonRoot: true
   protocolVersions:
   - v2
   supportedModelFormats:
@@ -102,13 +131,25 @@ spec:
     priority: 2
     version: "1"
   - autoSelect: true
+    name: xgboost
+    priority: 2
+    version: "2"
+  - autoSelect: true
     name: lightgbm
     priority: 2
     version: "3"
   - autoSelect: true
+    name: lightgbm
+    priority: 2
+    version: "4"
+  - autoSelect: true
     name: mlflow
     priority: 1
     version: "1"
+  - autoSelect: true
+    name: mlflow
+    priority: 1
+    version: "2"
 ---
 apiVersion: serving.kserve.io/v1alpha1
 kind: ClusterServingRuntime
@@ -123,7 +164,7 @@ spec:
     - --model_name={{.Name}}
     - --model_dir=/mnt/models
     - --http_port=8080
-    image: kserve/paddleserver:v0.13.1
+    image: kserve/paddleserver:v0.14.0
     name: kserve-container
     resources:
       limits:
@@ -132,6 +173,13 @@ spec:
       requests:
         cpu: "1"
         memory: 2Gi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      runAsNonRoot: true
   protocolVersions:
   - v1
   - v2
@@ -154,7 +202,7 @@ spec:
     - --model_name={{.Name}}
     - --model_dir=/mnt/models
     - --http_port=8080
-    image: kserve/pmmlserver:v0.13.1
+    image: kserve/pmmlserver:v0.14.0
     name: kserve-container
     resources:
       limits:
@@ -163,6 +211,13 @@ spec:
       requests:
         cpu: "1"
         memory: 2Gi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      runAsNonRoot: true
   protocolVersions:
   - v1
   - v2
@@ -189,7 +244,7 @@ spec:
     - --model_name={{.Name}}
     - --model_dir=/mnt/models
     - --http_port=8080
-    image: kserve/sklearnserver:v0.13.1
+    image: kserve/sklearnserver:v0.14.0
     name: kserve-container
     resources:
       limits:
@@ -198,6 +253,13 @@ spec:
       requests:
         cpu: "1"
         memory: 2Gi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      runAsNonRoot: true
   protocolVersions:
   - v1
   - v2
@@ -233,6 +295,14 @@ spec:
       requests:
         cpu: "1"
         memory: 2Gi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      runAsNonRoot: true
+      runAsUser: 1000
   protocolVersions:
   - v1
   - grpc-v1
@@ -272,6 +342,14 @@ spec:
       requests:
         cpu: "1"
         memory: 2Gi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      runAsNonRoot: true
+      runAsUser: 1000
   protocolVersions:
   - v1
   - v2
@@ -307,6 +385,14 @@ spec:
       requests:
         cpu: "1"
         memory: 2Gi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      runAsNonRoot: true
+      runAsUser: 1000
   protocolVersions:
   - v2
   - grpc-v2
@@ -348,7 +434,7 @@ spec:
     - --model_dir=/mnt/models
     - --http_port=8080
     - --nthread=1
-    image: kserve/xgbserver:v0.13.1
+    image: kserve/xgbserver:v0.14.0
     name: kserve-container
     resources:
       limits:
@@ -357,6 +443,13 @@ spec:
       requests:
         cpu: "1"
         memory: 2Gi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      runAsNonRoot: true
   protocolVersions:
   - v1
   - v2
@@ -372,7 +465,7 @@ metadata:
   name: default
 spec:
   container:
-    image: kserve/storage-initializer:v0.13.1
+    image: kserve/storage-initializer:v0.14.0
     name: storage-initializer
     resources:
       limits:
@@ -385,7 +478,9 @@ spec:
   - prefix: gs://
   - prefix: s3://
   - prefix: hdfs://
+  - prefix: hf://
   - prefix: webhdfs://
   - regex: https://(.+?).blob.core.windows.net/(.+)
   - regex: https://(.+?).file.core.windows.net/(.+)
   - regex: https?://(.+)/(.+)
+  workloadType: initContainer

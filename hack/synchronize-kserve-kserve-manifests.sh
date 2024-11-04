@@ -15,8 +15,8 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-KSERVE_VERSION="v0.13.1"
-COMMIT="v0.13.1" # You can use tags as well
+KSERVE_VERSION="v0.14.0"
+COMMIT="v0.14.0" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kserve}
 BRANCH=${BRANCH:=synchronize-kserve-manifests-${COMMIT?}}
 
@@ -70,8 +70,8 @@ cp $SRC_DIR/kserve/install/"$KSERVE_VERSION"/* $DST_DIR -r
 echo "Successfully copied all manifests."
 
 echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kserve/kserve/tree/.*)"
-DST_TXT="\[$COMMIT\](https://github.com/kserve/kserve/tree/$COMMIT/install/$KSERVE_VERSION)"
+SRC_TXT="\[.*\](https://github.com/kserve/kserve/releases/tag/.*)"
+DST_TXT="\[$COMMIT\](https://github.com/kserve/kserve/releases/tag/$COMMIT/install/$KSERVE_VERSION)"
 
 sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
 
