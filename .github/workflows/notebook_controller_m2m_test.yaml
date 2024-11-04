@@ -7,7 +7,7 @@ on:
     - apps/jupyter/**
     - common/oauth2-proxy/**
     - common/istio*/**
-    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_istio-cni.sh
     - tests/gh-actions/install_oauth2-proxy.sh
     - tests/gh-actions/install_multi_tenancy.sh
 
@@ -28,7 +28,7 @@ jobs:
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
     - name: Install Istio
-      run: ./tests/gh-actions/install_istio.sh
+      run: ./tests/gh-actions/install_istio-cni.sh
 
     - name: Install oauth2-proxy
       run: ./tests/gh-actions/install_oauth2-proxy.sh
