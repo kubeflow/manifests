@@ -5,7 +5,7 @@ on:
     - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
     - .github/workflows/katib_test.yaml
     - apps/katib/upstream/**
-    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_istio-cni.sh
     - tests/gh-actions/install_cert_manager.sh
     - common/cert-manager/**
 
@@ -20,7 +20,7 @@ jobs:
       run: ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
 
     - name: Install Istio
-      run: ./tests/gh-actions/install_istio.sh
+      run: ./tests/gh-actions/install_istio-cni.sh
 
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh
