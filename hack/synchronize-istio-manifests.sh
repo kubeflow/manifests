@@ -15,9 +15,9 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="1.22.1"
-CURRENT_VERSION="1-21" 
-NEW_VERSION="1-22" # Must be a release
+COMMIT="1.23.2"
+CURRENT_VERSION="1-22" 
+NEW_VERSION="1-23" # Must be a release
 
 SRC_DIR=${SRC_DIR:=/tmp/istio} # Must be a release
 BRANCH=${BRANCH:=istio-${COMMIT?}}
