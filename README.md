@@ -22,7 +22,7 @@
 ## Overview of the Kubeflow Platform
 
 This repository is owned by the [Manifests Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md).
-If you are a contributor authoring or editing the packages please see [Best Practices](./documents/KustomizeBestPractices.md).
+If you are a contributor authoring or editing the packages please see [Best Practices](https://kubectl.docs.kubernetes.io/references/kustomize/).
 You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website. Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2). You can also find there our [biweekly meetings](https://bit.ly/kf-wg-manifests-meet), including the commentable [Agenda](https://bit.ly/kf-wg-manifests-notes).
 
 The Kubeflow Manifests repository is organized under three main directories, which include manifests for installing:
@@ -57,7 +57,6 @@ This repo periodically syncs all official Kubeflow components from their respect
 | KServe | contrib/kserve/kserve | [0.13.0](https://github.com/kserve/kserve/releases/tag/v0.13.0) |
 | KServe Models Web App | contrib/kserve/models-web-app | [0.13.0](https://github.com/kserve/models-web-app/tree/0.13.0/config) |
 | Kubeflow Pipelines | apps/pipeline/upstream | [2.3.0](https://github.com/kubeflow/pipelines/tree/2.3.0/manifests/kustomize) |
-| Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [2.0.5](https://github.com/kubeflow/kfp-tekton/tree/2.0.5/manifests/kustomize) |
 | Kubeflow Model Registry | apps/model-registry/upstream | [v0.2.9](https://github.com/kubeflow/model-registry/tree/v0.2.9/manifests/kustomize) |
 
 The following is also a matrix with versions from common components that are
