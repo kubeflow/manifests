@@ -16,12 +16,12 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="1.22.1"  # Must be a release
-CURRENT_VERSION="1-21" 
-NEW_VERSION="1-22" 
+COMMIT="1.23.2"
+CURRENT_VERSION="1-22" 
+NEW_VERSION="1-23" # Must be a release
 
 SRC_DIR=${SRC_DIR:=/tmp/istio-cni}
-BRANCH=${BRANCH:=istio-${COMMIT?}}
+BRANCH=${BRANCH:=istio-cni-${COMMIT?}}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
