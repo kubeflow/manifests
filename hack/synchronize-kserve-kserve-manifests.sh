@@ -70,8 +70,8 @@ cp $SRC_DIR/kserve/install/"$KSERVE_VERSION"/* $DST_DIR -r
 echo "Successfully copied all manifests."
 
 echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kserve/kserve/tree/.*)"
-DST_TXT="\[$COMMIT\](https://github.com/kserve/kserve/tree/$COMMIT/install/$KSERVE_VERSION)"
+SRC_TXT="\[.*\](https://github.com/kserve/kserve/releases/tag/.*)"
+DST_TXT="\[$COMMIT\](https://github.com/kserve/kserve/releases/tag/$COMMIT/install/$KSERVE_VERSION)"
 
 sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
 
