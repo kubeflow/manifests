@@ -154,9 +154,9 @@ make the following changes to the `example/kustomization.yaml` file:
 * use `oauth2-proxy` overlay for istio-install
   ```
   # from
-  - ../common/istio-1-23/istio-install/base
+  - ../common/istio-cni-1-23/istio-install/base
   # to
-  - ../common/istio-1-23/istio-install/overlays/oauth2-proxy
+  - ../common/istio-cni-1-23/istio-install/overlays/oauth2-proxy
   ```
 * change `OIDC Authservice` to `oauth2-proxy for OIDC` and use overlay for m2m
   bearer tokens with self-signed in-cluster issuer
@@ -189,12 +189,12 @@ index c1a85789..4a50440c 100644
 +++ b/example/kustomization.yaml
 @@ -38,11 +38,11 @@ resources:
  # Istio
- - ../common/istio-1-23/istio-crds/base
- - ../common/istio-1-23/istio-namespace/base
--- ../common/istio-1-23/istio-install/base
+ - ../common/istio-cni-1-23/istio-crds/base
+ - ../common/istio-cni-1-23/istio-namespace/base
+-- ../common/istio-cni-1-23/istio-install/base
 -# OIDC Authservice
 -- ../common//oidc-authservice/base
-+- ../common/istio-1-23/istio-install/overlays/oauth2-proxy
++- ../common/istio-cni-1-23/istio-install/overlays/oauth2-proxy
 +# oauth2-proxy for OIDC
 +- ../common/oauth2-proxy/overlays/m2m-dex-and-kind
  # Dex

@@ -34,7 +34,7 @@ jobs:
       run: ./tests/gh-actions/install_oauth2-proxy.sh
 
     - name: Install kubeflow-istio-resources
-      run: kustomize build common/istio-1-23/kubeflow-istio-resources/base | kubectl apply -f -
+      run: kustomize build common/istio-cni-1-23/kubeflow-istio-resources/base | kubectl apply -f -
 
     - name: Install KF Multi Tenancy
       run: ./tests/gh-actions/install_multi_tenancy.sh
