@@ -70,7 +70,7 @@ used from the different projects of Kubeflow:
 
 ## Installation
 
-This is for the installation from scratch. For the in-place upgrade guide please jump to the upgrading and extending section.
+This is for the installation from scratch. For the in-place upgrade guide please jump to the [Upgrading and extending](#upgrading-and-extending) section.
 
 The Manifests WG provides two options for installing Kubeflow official components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
 
@@ -234,16 +234,21 @@ echo "Installing oauth2-proxy..."
 kustomize build common/oauth2-proxy/overlays/m2m-dex-only/ | kubectl apply -f -
 kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 
-# Option 2: works on Kind/K3D and other clusters with the proper configuration, and allows K8s service account tokens to be used
+# Option 2: works on Kind/K3D and many other clusters with the proper configuration, and allows K8s service account tokens to be used
 #           from outside the cluster via the Istio ingress-gateway. For example for automation with github actions.
+#           In the end you need to patch the issuer and jwksUri fields in the requestauthentication resource in the istio-system namespace 
+#           as for example done in /common/oauth2-proxy/overlays/m2m-dex-and-kind/kustomization.yaml
+#           Please follow the guidelines in the section Upgrading and extending below for patching.
+#           curl --insecure -H "Authorization: Bearer `cat /var/run/secrets/kubernetes.io/serviceaccount/token`"  https://kubernetes.default/.well-known/openid-configuration
+#           from a pod in the cluster should provide you with the issuer of your cluster.
 # 
 #kustomize build common/oauth2-proxy/overlays/m2m-dex-and-kind/ | kubectl apply -f -
 #kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 #kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=cluster-jwks-proxy' --timeout=180s -n istio-system
 ```
 
-If you want to use OAuth2 Proxy without Dex and conenct it directly to your own IDP, you can refer to this [document](common/oauth2-proxy/README.md#change-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only). But you can also keep Dex and extend it with connectors to your own IDP.
-TODO: rough guidance on how to connect Dex to a generic IDP with OIDC.
+If you want to use OAuth2 Proxy without Dex and conenct it directly to your own IDP, you can refer to this [document](common/oauth2-proxy/README.md#change-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only). But you can also keep Dex and extend it with connectors to your own IDP as explained in the Dex section below.
+
 
 #### Dex
 
@@ -255,6 +260,62 @@ Install Dex:
 echo "Installing Dex..."
 kustomize build common/dex/overlays/oauth2-proxy | kubectl apply -f -
 kubectl wait --for=condition=ready pods --all --timeout=180s -n auth
+```
+
+To connect to your desired identity providers (LDAP,GitHub,Google,Microsoft,Bitbucket Cloud,LinkedIn,OIDC,SAML,GitLab) please take a look at https://dexidp.io/docs/connectors/oidc/.
+We recommend to use OIDC in general, since it is compatible with most providers as for example azure in the following example.
+You need to modify https://github.com/kubeflow/manifests/blob/master/common/dex/overlays/oauth2-proxy/config-map.yaml and add some environment variables in https://github.com/kubeflow/manifests/blob/master/common/dex/base/deployment.yaml by adding a patch section in your main Kustomization file. For guidance please check out [Upgrading and extending](#upgrading-and-extending).
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dex
+data:
+  config.yaml: |
+    issuer: http://dex.auth.svc.cluster.local:5556/dex
+    storage:
+      type: kubernetes
+      config:
+        inCluster: true
+    web:
+      http: 0.0.0.0:5556
+    logger:
+      level: "debug"
+      format: text
+    oauth2:
+      skipApprovalScreen: true
+    enablePasswordDB: true
+    #### WARNING YOU SHOULD NOT USE THE DEFAULT STATIC PASSWORDS
+    #### and patch /common/dex/base/dex-passwords.yaml in a Kustomize overlay or remove it
+    staticPasswords:
+    - email: user@example.com
+      hashFromEnv: DEX_USER_PASSWORD
+      username: user
+      userID: "15841185641784"
+    staticClients:
+    # https://github.com/dexidp/dex/pull/1664
+    - idEnv: OIDC_CLIENT_ID
+      redirectURIs: ["/oauth2/callback"]
+      name: 'Dex Login Application'
+      secretEnv: OIDC_CLIENT_SECRET
+    #### Here come the connectors to OIDC providers such as Azure, GCP, GitHub, GitLab etc.
+    #### Connector config values starting with a "$" will read from the environment.
+    connectors:
+    - type: oidc
+      id: azure
+      name: azure
+      config:
+        issuer: https://login.microsoftonline.com/$TENANT_ID/v2.0
+        redirectURI: https://$KUBEFLOW_INGRESS_URL/dex/callback
+        clientID: $AZURE_CLIENT_ID
+        clientSecret: $AZURE_CLIENT_SECRET
+        insecureSkipEmailVerified: true
+        scopes:
+        - openid
+        - profile
+        - email
+        #- groups # groups might be used in the future
 ```
 
 #### Knative
