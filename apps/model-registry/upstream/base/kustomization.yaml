@@ -8,4 +8,4 @@ resources:
 images:
 - name: kubeflow/model-registry
   newName: kubeflow/model-registry
-  newTag: v0.2.9
+  newTag: v0.2.10
