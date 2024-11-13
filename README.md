@@ -569,7 +569,9 @@ For security reasons, we don't want to use the default username and email for th
 
 ### Change default user password
 
-For security reasons, we don't want to use the default password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password and apply it either **before creating the cluster** or **after creating the cluster**. 
+If you have an identy provider (LDAP,GitHub,Google,Microsoft,Bitbucket Cloud,LinkedIn,OIDC,SAML,GitLab) available you should use that instead of static passwords and connect it to oauth2-proxy or Dex as explained in the sections above. This is best practices instead of using static passwords. 
+
+For security reasons, we don't want to use the default static password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password and apply it either **before creating the cluster** or **after creating the cluster**. 
 
 Pick a password for the default user, with email `user@example.com`, and hash it using `bcrypt`:
 
