@@ -228,13 +228,13 @@ echo "Installing oauth2-proxy..."
 # Only uncomment ONE of the following overlays, they are mutually exclusive,
 # see `common/oauth2-proxy/overlays/` for more options.
 
-# OPTION 1: works on most clusters, does NOT allow K8s service account 
+# OPTION 1: works on most clusters, does NOT allow K8s service account
 #           tokens to be used from outside the cluster via the Istio ingress-gateway.
 #
 kustomize build common/oauth2-proxy/overlays/m2m-dex-only/ | kubectl apply -f -
 kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 
-# Option 2: works on Kind/K3D and many other clusters with the proper configuration, and allows K8s service account tokens to be used
+# Option 2: works on Kind, K3D, Rancher, GKE and many other clusters with the proper configuration, and allows K8s service account tokens to be used
 #           from outside the cluster via the Istio ingress-gateway. For example for automation with github actions.
 #           In the end you need to patch the issuer and jwksUri fields in the requestauthentication resource in the istio-system namespace 
 #           as for example done in /common/oauth2-proxy/overlays/m2m-dex-and-kind/kustomization.yaml
@@ -245,6 +245,23 @@ kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' 
 #kustomize build common/oauth2-proxy/overlays/m2m-dex-and-kind/ | kubectl apply -f -
 #kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 #kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=cluster-jwks-proxy' --timeout=180s -n istio-system
+
+# OPTION 3: works on most EKS clusters with  K8s service account
+#           tokens to be used from outside the cluster via the Istio ingress-gateway.
+#
+#kustomize build common/oauth2-proxy/overlays/m2m-dex-and-eks/ | kubectl apply -f -
+#kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
+```
+
+If and after you have finished the installation with Kubernetes serviceaccount token support you should be able to create and use the tokens:
+```sh
+kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
+TOKEN="$(kubectl -n $KF_PROFILE_NAMESPACE create token default-editor)"
+client = kfp.Client(host="http://localhost:8080/pipeline", existing_token=token)
+curl -v \
+          --silent --output /dev/stderr --write-out "%{http_code}" \
+          "localhost:8080/jupyter/api/namespaces/${$KF_PROFILE_NAMESPACE}/notebooks" \
+          -H "Authorization: Bearer ${TOKEN}"
 ```
 
 If you want to use OAuth2 Proxy without Dex and conenct it directly to your own IDP, you can refer to this [document](common/oauth2-proxy/README.md#change-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only). But you can also keep Dex and extend it with connectors to your own IDP as explained in the Dex section below.
