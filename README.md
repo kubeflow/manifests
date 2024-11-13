@@ -277,7 +277,7 @@ kustomize build common/dex/overlays/oauth2-proxy | kubectl apply -f -
 kubectl wait --for=condition=ready pods --all --timeout=180s -n auth
 ```
 
-To connect to your desired identity providers (LDAP,GitHub,Google,Microsoft,Bitbucket Cloud,LinkedIn,OIDC,SAML,GitLab) please take a look at https://dexidp.io/docs/connectors/oidc/.
+To connect to your desired identity providers (LDAP,GitHub,Google,Microsoft,OIDC,SAML,GitLab) please take a look at https://dexidp.io/docs/connectors/oidc/.
 We recommend to use OIDC in general, since it is compatible with most providers as for example azure in the following example.
 You need to modify https://github.com/kubeflow/manifests/blob/master/common/dex/overlays/oauth2-proxy/config-map.yaml and add some environment variables in https://github.com/kubeflow/manifests/blob/master/common/dex/base/deployment.yaml by adding a patch section in your main Kustomization file. For guidance please check out [Upgrading and extending](#upgrading-and-extending).
 
@@ -569,7 +569,7 @@ For security reasons, we don't want to use the default username and email for th
 
 ### Change default user password
 
-If you have an identy provider (LDAP,GitHub,Google,Microsoft,Bitbucket Cloud,LinkedIn,OIDC,SAML,GitLab) available you should use that instead of static passwords and connect it to oauth2-proxy or Dex as explained in the sections above. This is best practices instead of using static passwords. 
+If you have an identy provider (LDAP,GitHub,Google,Microsoft,OIDC,SAML,GitLab) available you should use that instead of static passwords and connect it to oauth2-proxy or Dex as explained in the sections above. This is best practices instead of using static passwords. 
 
 For security reasons, we don't want to use the default static password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password and apply it either **before creating the cluster** or **after creating the cluster**. 
 
