@@ -259,10 +259,7 @@ If and after you have finished the installation with Kubernetes serviceaccount t
 kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
 TOKEN="$(kubectl -n $KF_PROFILE_NAMESPACE create token default-editor)"
 client = kfp.Client(host="http://localhost:8080/pipeline", existing_token=token)
-curl -v \
-          --silent --output /dev/stderr --write-out "%{http_code}" \
-          "localhost:8080/jupyter/api/namespaces/${$KF_PROFILE_NAMESPACE}/notebooks" \
-          -H "Authorization: Bearer ${TOKEN}"
+curl -v "localhost:8080/jupyter/api/namespaces/${$KF_PROFILE_NAMESPACE}/notebooks" -H "Authorization: Bearer ${TOKEN}"
 ```
 
 If you want to use OAuth2 Proxy without Dex and conenct it directly to your own IDP, you can refer to this [document](common/oauth2-proxy/README.md#change-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only). But you can also keep Dex and extend it with connectors to your own IDP as explained in the Dex section below.
