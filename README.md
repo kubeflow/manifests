@@ -248,6 +248,7 @@ kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' 
 
 # OPTION 3: works on most EKS clusters with  K8s service account
 #           tokens to be used from outside the cluster via the Istio ingress-gateway.
+#           You have to adjust AWS_REGION and CLUSTER_ID in common/oauth2-proxy/overlays/m2m-dex-and-eks/ first.
 #
 #kustomize build common/oauth2-proxy/overlays/m2m-dex-and-eks/ | kubectl apply -f -
 #kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
