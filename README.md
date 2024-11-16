@@ -70,7 +70,7 @@ used from the different projects of Kubeflow:
 
 ## Installation
 
-This is for the installation from scratch. For the in-place upgrade guide please jump to the upgrading and extending section.
+This is for the installation from scratch. For the in-place upgrade guide please jump to the [Upgrading and extending](#upgrading-and-extending) section.
 
 The Manifests WG provides two options for installing Kubeflow official components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
 
@@ -228,22 +228,42 @@ echo "Installing oauth2-proxy..."
 # Only uncomment ONE of the following overlays, they are mutually exclusive,
 # see `common/oauth2-proxy/overlays/` for more options.
 
-# OPTION 1: works on most clusters, does NOT allow K8s service account 
+# OPTION 1: works on most clusters, does NOT allow K8s service account
 #           tokens to be used from outside the cluster via the Istio ingress-gateway.
 #
 kustomize build common/oauth2-proxy/overlays/m2m-dex-only/ | kubectl apply -f -
 kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 
-# Option 2: works on Kind/K3D and other clusters with the proper configuration, and allows K8s service account tokens to be used
+# Option 2: works on Kind, K3D, Rancher, GKE and many other clusters with the proper configuration, and allows K8s service account tokens to be used
 #           from outside the cluster via the Istio ingress-gateway. For example for automation with github actions.
+#           In the end you need to patch the issuer and jwksUri fields in the requestauthentication resource in the istio-system namespace 
+#           as for example done in /common/oauth2-proxy/overlays/m2m-dex-and-kind/kustomization.yaml
+#           Please follow the guidelines in the section Upgrading and extending below for patching.
+#           curl --insecure -H "Authorization: Bearer `cat /var/run/secrets/kubernetes.io/serviceaccount/token`"  https://kubernetes.default/.well-known/openid-configuration
+#           from a pod in the cluster should provide you with the issuer of your cluster.
 # 
 #kustomize build common/oauth2-proxy/overlays/m2m-dex-and-kind/ | kubectl apply -f -
 #kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 #kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=cluster-jwks-proxy' --timeout=180s -n istio-system
+
+# OPTION 3: works on most EKS clusters with  K8s service account
+#           tokens to be used from outside the cluster via the Istio ingress-gateway.
+#           You have to adjust AWS_REGION and CLUSTER_ID in common/oauth2-proxy/overlays/m2m-dex-and-eks/ first.
+#
+#kustomize build common/oauth2-proxy/overlays/m2m-dex-and-eks/ | kubectl apply -f -
+#kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 ```
 
-If you want to use OAuth2 Proxy without Dex and conenct it directly to your own IDP, you can refer to this [document](common/oauth2-proxy/README.md#change-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only). But you can also keep Dex and extend it with connectors to your own IDP.
-TODO: rough guidance on how to connect Dex to a generic IDP with OIDC.
+If and after you have finished the installation with Kubernetes serviceaccount token support you should be able to create and use the tokens:
+```sh
+kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
+TOKEN="$(kubectl -n $KF_PROFILE_NAMESPACE create token default-editor)"
+client = kfp.Client(host="http://localhost:8080/pipeline", existing_token=token)
+curl -v "localhost:8080/jupyter/api/namespaces/${$KF_PROFILE_NAMESPACE}/notebooks" -H "Authorization: Bearer ${TOKEN}"
+```
+
+If you want to use OAuth2 Proxy without Dex and conenct it directly to your own IDP, you can refer to this [document](common/oauth2-proxy/README.md#change-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only). But you can also keep Dex and extend it with connectors to your own IDP as explained in the Dex section below.
+
 
 #### Dex
 
@@ -255,6 +275,62 @@ Install Dex:
 echo "Installing Dex..."
 kustomize build common/dex/overlays/oauth2-proxy | kubectl apply -f -
 kubectl wait --for=condition=ready pods --all --timeout=180s -n auth
+```
+
+To connect to your desired identity providers (LDAP,GitHub,Google,Microsoft,OIDC,SAML,GitLab) please take a look at https://dexidp.io/docs/connectors/oidc/.
+We recommend to use OIDC in general, since it is compatible with most providers as for example azure in the following example.
+You need to modify https://github.com/kubeflow/manifests/blob/master/common/dex/overlays/oauth2-proxy/config-map.yaml and add some environment variables in https://github.com/kubeflow/manifests/blob/master/common/dex/base/deployment.yaml by adding a patch section in your main Kustomization file. For guidance please check out [Upgrading and extending](#upgrading-and-extending).
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dex
+data:
+  config.yaml: |
+    issuer: http://dex.auth.svc.cluster.local:5556/dex
+    storage:
+      type: kubernetes
+      config:
+        inCluster: true
+    web:
+      http: 0.0.0.0:5556
+    logger:
+      level: "debug"
+      format: text
+    oauth2:
+      skipApprovalScreen: true
+    enablePasswordDB: true
+    #### WARNING YOU SHOULD NOT USE THE DEFAULT STATIC PASSWORDS
+    #### and patch /common/dex/base/dex-passwords.yaml in a Kustomize overlay or remove it
+    staticPasswords:
+    - email: user@example.com
+      hashFromEnv: DEX_USER_PASSWORD
+      username: user
+      userID: "15841185641784"
+    staticClients:
+    # https://github.com/dexidp/dex/pull/1664
+    - idEnv: OIDC_CLIENT_ID
+      redirectURIs: ["/oauth2/callback"]
+      name: 'Dex Login Application'
+      secretEnv: OIDC_CLIENT_SECRET
+    #### Here come the connectors to OIDC providers such as Azure, GCP, GitHub, GitLab etc.
+    #### Connector config values starting with a "$" will read from the environment.
+    connectors:
+    - type: oidc
+      id: azure
+      name: azure
+      config:
+        issuer: https://login.microsoftonline.com/$TENANT_ID/v2.0
+        redirectURI: https://$KUBEFLOW_INGRESS_URL/dex/callback
+        clientID: $AZURE_CLIENT_ID
+        clientSecret: $AZURE_CLIENT_SECRET
+        insecureSkipEmailVerified: true
+        scopes:
+        - openid
+        - profile
+        - email
+        #- groups # groups might be used in the future
 ```
 
 #### Knative
@@ -493,7 +569,9 @@ For security reasons, we don't want to use the default username and email for th
 
 ### Change default user password
 
-For security reasons, we don't want to use the default password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password and apply it either **before creating the cluster** or **after creating the cluster**. 
+If you have an identy provider (LDAP,GitHub,Google,Microsoft,OIDC,SAML,GitLab) available you should use that instead of static passwords and connect it to oauth2-proxy or Dex as explained in the sections above. This is best practices instead of using static passwords. 
+
+For security reasons, we don't want to use the default static password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password and apply it either **before creating the cluster** or **after creating the cluster**. 
 
 Pick a password for the default user, with email `user@example.com`, and hash it using `bcrypt`:
 
