@@ -16,7 +16,7 @@ spec:
     spec:
       serviceAccountName: dex
       containers:
-      - image: ghcr.io/dexidp/dex:v2.39.1
+      - image: ghcr.io/dexidp/dex:v2.41.1
         name: dex
         command: ["dex", "serve", "/etc/dex/cfg/config.yaml"]
         ports:
@@ -35,6 +35,11 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 5556
+            scheme: HTTPS
       volumes:
       - name: config
         configMap:
