@@ -8,7 +8,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-        app: dex
+      app: dex
   template:
     metadata:
       labels:
@@ -16,7 +16,7 @@ spec:
     spec:
       serviceAccountName: dex
       containers:
-      - image: ghcr.io/dexidp/dex:v2.39.1
+      - image: ghcr.io/dexidp/dex:v2.41.1
         name: dex
         command: ["dex", "serve", "/etc/dex/cfg/config.yaml"]
         ports:
@@ -26,15 +26,20 @@ spec:
         - name: config
           mountPath: /etc/dex/cfg
         envFrom:
-          - secretRef:
-              name: dex-oidc-client
-          - secretRef:
-              name: dex-passwords
+        - secretRef:
+            name: dex-oidc-client
+        - secretRef:
+            name: dex-passwords
         env:
-          - name: KUBERNETES_POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
+        - name: KUBERNETES_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        #readinessProbe:
+        #  httpGet:
+        #    path: /healthz
+        #    port: 5556
+        #    scheme: HTTPS
       volumes:
       - name: config
         configMap:
