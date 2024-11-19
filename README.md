@@ -66,7 +66,7 @@ used from the different projects of Kubeflow:
 | - | - | - |
 | Istio | common/istio-1-23 | [1.23.2](https://github.com/istio/istio/releases/tag/1.23.2) |
 | Knative | common/knative/knative-serving <br /> common/knative/knative-eventing | [v1.16.0](https://github.com/knative/serving/releases/tag/knative-v1.16.0) <br /> [v1.16.1](https://github.com/knative/eventing/releases/tag/knative-v1.16.1) |
-| Cert Manager | common/cert-manager | [1.14.5](https://github.com/cert-manager/cert-manager/releases/tag/v1.12.2) |
+| Cert Manager | common/cert-manager | [1.16.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.16.1) |
 
 ## Installation
 
@@ -85,7 +85,7 @@ The `example` directory contains an example kustomization for the single command
 :warning: In both options, we use a default email (`user@example.com`) and password (`12341234`). For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
 
 ### Prerequisites
-- This is the master branch which targets Kubernetes 1.29+
+- This is the master branch which targets Kubernetes around 1.31
 - For the specific Kubernetes version per release consult the [release notes](https://github.com/kubeflow/manifests/releases)
 - Either our local Kind (installed below) or your own Kubernetes cluster with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
 - Kustomize [5.2.1+](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.2.1)
