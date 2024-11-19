@@ -11,7 +11,7 @@ on:
     - common/cert-manager/**
     - common/oauth2-proxy/**
     - common/istio*/**
-    - common/**
+    - common/kubeflow-namespace/**
     - apps/jupyter/**
 
 jobs:
