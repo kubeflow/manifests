@@ -205,13 +205,13 @@ For more troubleshooting info also check out https://cert-manager.io/docs/troubl
 Istio is used by most Kubeflow components to secure their traffic, enforce
 network authorization and implement routing policies.
 
-Install Istio:
+Install Istio-CNI:
 
 ```sh
-echo "Installing Istio configured with external authorization..."
-kustomize build common/istio-1-23/istio-crds/base | kubectl apply -f -
-kustomize build common/istio-1-23/istio-namespace/base | kubectl apply -f -
-kustomize build common/istio-1-23/istio-install/overlays/oauth2-proxy | kubectl apply -f -
+echo "Installing Istio-CNI configured with external authorization..."
+kustomize build common/istio-cni-1-23/istio-crds/base | kubectl apply -f -
+kustomize build common/istio-cni-1-23/istio-namespace/base | kubectl apply -f -
+kustomize build common/istio-cni-1-23/istio-install/overlays/oauth2-proxy | kubectl apply -f -
 
 echo "Waiting for all Istio Pods to become ready..."
 kubectl wait --for=condition=Ready pods --all -n istio-system --timeout 300s
@@ -341,7 +341,7 @@ Install Knative Serving:
 
 ```sh
 kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -
-kustomize build common/istio-1-23/cluster-local-gateway/base | kubectl apply -f -
+kustomize build common/istio-cni-1-23/cluster-local-gateway/base | kubectl apply -f -
 ```
 
 Optionally, you can install Knative Eventing which can be used for inference request logging:
@@ -388,7 +388,7 @@ Create the Kubeflow Gateway, `kubeflow-gateway` and ClusterRole,
 Install kubeflow istio resources:
 
 ```sh
-kustomize build common/istio-1-23/kubeflow-istio-resources/base | kubectl apply -f -
+kustomize build common/istio-cni-1-23/kubeflow-istio-resources/base | kubectl apply -f -
 ```
 
 #### Kubeflow Pipelines
