@@ -56,7 +56,7 @@ For upgrading see [UPGRADE.md](UPGRADE.md)
    ```
 4. Install cert manager
    ```sh
-   kubectl apply -k ../../common/cert-manager/cert-manager/base
+   kubectl apply -k ../../common/cert-manager/base
    kubectl apply -k ../../common/cert-manager/kubeflow-issuer/base
    ```
 5. Install Istio

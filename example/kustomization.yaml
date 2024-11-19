@@ -34,7 +34,7 @@ sortOptions:
 
 resources:
 # Cert-Manager
-- ../common/cert-manager/cert-manager/base
+- ../common/cert-manager/base
 - ../common/cert-manager/kubeflow-issuer/base
 # Istio
 - ../common/istio-1-23/istio-crds/base
