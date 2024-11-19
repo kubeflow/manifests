@@ -1,2 +1,0 @@
-common/knative/knative-eventing-post-install-jobs/base/eventing-post-install.yaml
-common/knative/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml
