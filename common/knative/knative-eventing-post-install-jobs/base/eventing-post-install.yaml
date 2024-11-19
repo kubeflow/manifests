@@ -26,28 +26,28 @@ spec:
       serviceAccountName: knative-eventing-post-install-job
       restartPolicy: OnFailure
       containers:
-        - name: migrate
-          image: gcr.io/knative-releases/knative.dev/pkg/apiextensions/storageversion/cmd/migrate@sha256:f1786ed71c979b93e3fba02c4cfb3df33d97be0cce2c9ef994bfba4cc15a5558
-          args:
-            - "apiserversources.sources.knative.dev"
-            - "brokers.eventing.knative.dev"
-            - "channels.messaging.knative.dev"
-            - "containersources.sources.knative.dev"
-            - "eventtypes.eventing.knative.dev"
-            - "inmemorychannels.messaging.knative.dev"
-            - "parallels.flows.knative.dev"
-            - "pingsources.sources.knative.dev"
-            - "sequences.flows.knative.dev"
-            - "sinkbindings.sources.knative.dev"
-            - "subscriptions.messaging.knative.dev"
-            - "triggers.eventing.knative.dev"
-            - "jobsinks.sinks.knative.dev"
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            capabilities:
-              drop:
-                - ALL
-            seccompProfile:
-              type: RuntimeDefault
+      - name: migrate
+        image: gcr.io/knative-releases/knative.dev/pkg/apiextensions/storageversion/cmd/migrate@sha256:f1786ed71c979b93e3fba02c4cfb3df33d97be0cce2c9ef994bfba4cc15a5558
+        args:
+        - "apiserversources.sources.knative.dev"
+        - "brokers.eventing.knative.dev"
+        - "channels.messaging.knative.dev"
+        - "containersources.sources.knative.dev"
+        - "eventtypes.eventing.knative.dev"
+        - "inmemorychannels.messaging.knative.dev"
+        - "parallels.flows.knative.dev"
+        - "pingsources.sources.knative.dev"
+        - "sequences.flows.knative.dev"
+        - "sinkbindings.sources.knative.dev"
+        - "subscriptions.messaging.knative.dev"
+        - "triggers.eventing.knative.dev"
+        - "jobsinks.sinks.knative.dev"
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault

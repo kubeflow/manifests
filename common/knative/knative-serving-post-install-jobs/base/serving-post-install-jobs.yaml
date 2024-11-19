@@ -24,27 +24,27 @@ spec:
       serviceAccountName: controller
       restartPolicy: OnFailure
       containers:
-        - name: migrate
-          image: gcr.io/knative-releases/knative.dev/pkg/apiextensions/storageversion/cmd/migrate@sha256:c2f7830569ab0b9f40ba785796d7a1d3e2069987528f5ca945ab7a339b0d96e7
-          args:
-            - "services.serving.knative.dev"
-            - "configurations.serving.knative.dev"
-            - "revisions.serving.knative.dev"
-            - "routes.serving.knative.dev"
-            - "domainmappings.serving.knative.dev"
-          resources:
-            requests:
-              cpu: 100m
-              memory: 100Mi
-            limits:
-              cpu: 1000m
-              memory: 1000Mi
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            capabilities:
-              drop:
-                - ALL
-            seccompProfile:
-              type: RuntimeDefault
+      - name: migrate
+        image: gcr.io/knative-releases/knative.dev/pkg/apiextensions/storageversion/cmd/migrate@sha256:c2f7830569ab0b9f40ba785796d7a1d3e2069987528f5ca945ab7a339b0d96e7
+        args:
+        - "services.serving.knative.dev"
+        - "configurations.serving.knative.dev"
+        - "revisions.serving.knative.dev"
+        - "routes.serving.knative.dev"
+        - "domainmappings.serving.knative.dev"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 1000m
+            memory: 1000Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
