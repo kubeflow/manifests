@@ -138,7 +138,7 @@ export KUBECONFIG=/tmp/kubeflow-config
 docker login
 
 kubectl create secret generic regcred \
-    --from-file=.dockerconfigjson=/home/to/.docker/config.json \
+    --from-file=.dockerconfigjson=$HOME/.docker/config.json \
     --type=kubernetes.io/dockerconfigjson
 ```
 
