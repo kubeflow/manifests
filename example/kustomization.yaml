@@ -94,16 +94,10 @@ resources:
 - ../contrib/kserve/kserve
 - ../contrib/kserve/models-web-app/overlays/kubeflow
 
-# Ray and Seldon resources (commented out by default)
-# Ray does not support Istio yet and integration is in alpha state.
+# Ray is an experimental integration
 # Here is the documentation for Ray: https://docs.ray.io/en/latest/
 # Here is the internal documentation for Ray: - ../contrib/ray/README.md
 # - ../contrib/ray/kuberay-operator/overlays/kubeflow
-#
-# Seldon integration notes: Seldon may have specific requirements and limitations.
-# Documentation for Seldon: https://docs.seldon.io/projects/seldon-core/en/latest/
-# Here is the internal documentation for Seldon: - ../contrib/seldon/README.md
-# - ../contrib/seldon/seldon-core-operator/overlays/application
 
 components:
 # Pod Security Standards
