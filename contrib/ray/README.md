@@ -20,7 +20,7 @@ TODO
 
 # Requirements
 * Dependencies
-    * `kustomize`: v5.2.1+ (Kubeflow manifest is sensitive to `kustomize` version.)
+    * `kustomize`: v5.4.3+ (Kubeflow manifest is sensitive to `kustomize` version.)
     * `Kubernetes`: v1.29+
 
 * Computing resources:
