@@ -204,6 +204,8 @@ For more troubleshooting info also check out https://cert-manager.io/docs/troubl
 
 Istio is used by most Kubeflow components to secure their traffic, enforce
 network authorization and implement routing policies.
+If you use Cilium CNI on your cluster, you have to configure it properly for Istio as shown [here](https://docs.cilium.io/en/latest/network/servicemesh/istio/), otherwise you will get RBAC access denied on the central dashboard.
+
 
 Install Istio:
 
