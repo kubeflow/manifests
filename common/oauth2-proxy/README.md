@@ -178,7 +178,7 @@ spec:
 ```
 
 You can also add more RequestAuthentication to support other issuers as for example for M2M access from github actions as explained in the root level Readme.md.
-This feature is useful when you need to integrate Kubeflow with you current CI/CD platform (GitHub Actions, Jenkins) via machine-to-machine authentication.
+This feature is useful when you need to integrate Kubeflow with your current CI/CD platform (GitHub Actions, Jenkins) via machine-to-machine authentication.
 The following is an example for obtaining and using a JWT token From your IDP with Python, but you can also just take a look at our CI/CD test that uses simple Kubernetes serviceaccount tokens to access KFP, Jupyterlabs etc. from GitHub Actions.
 
 ```
