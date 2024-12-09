@@ -34,14 +34,14 @@ sortOptions:
 
 resources:
 # Istio
-- ../../../common/istio-1-23/istio-crds/base
-- ../../../common/istio-1-23/istio-namespace/base
-- ../../../common/istio-1-23/istio-install/overlays/oauth2-proxy
+- ../../../common/istio-cni-1-23/istio-crds/base
+- ../../../common/istio-cni-1-23/istio-namespace/base
+- ../../../common/istio-cni-1-23/istio-install/overlays/oauth2-proxy
 # oauth2-proxy
 - ../../../common/oauth2-proxy/overlays/m2m-dex-and-kind
 # Dex
 - ../../../common/dex/overlays/oauth2-proxy
-- ../../../common/istio-1-23/cluster-local-gateway/base
+- ../../../common/istio-cni-1-23/cluster-local-gateway/base
 # Kubeflow namespace
 - ../../../common/kubeflow-namespace/base
 # NetworkPolicies
@@ -49,7 +49,7 @@ resources:
 # Kubeflow Roles
 - ../../../common/kubeflow-roles/base
 # Kubeflow Istio Resources
-- ../../../common/istio-1-23/kubeflow-istio-resources/base
+- ../../../common/istio-cni-1-23/kubeflow-istio-resources/base
 # Central Dashboard
 - ../../../apps/centraldashboard/overlays/oauth2-proxy
 # Profiles + KFAM
