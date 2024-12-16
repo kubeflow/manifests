@@ -101,6 +101,8 @@ data:
     upstreams = [ "static://200" ]
 
     # skip authentication for these paths
+    # "^/oauth2/callback" was reported as necessary by some people who replace DEX with Keycloak
+    # see https://github.com/kubeflow/manifests/issues/2931#issuecomment-2544252821
     skip_auth_routes = [
       "^/dex/",
     ]
