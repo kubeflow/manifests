@@ -103,7 +103,7 @@ The `example` directory contains an example kustomization for the single command
 #### Prerequisites
 - 32 GB of RAM recommended
 - 16 CPU cores recommended
-- `kind`
+- `kind` 0.26+
 - `docker`
 - Linux kernel subsystem changes to support many pods
     - `sudo sysctl fs.inotify.max_user_instances=2280`
@@ -116,7 +116,7 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
-  image: kindest/node:v1.31.0@sha256:53df588e04085fd41ae12de0c3fe4c72f7013bba32a20e7325357a1ac94ba865
+  image: kindest/node:v1.32.0@sha256:c48c62eac5da28cdadcf560d1d8616cfa6783b58f0d94cf63ad1bf49600cb027
   kubeadmConfigPatches:
   - |
     kind: ClusterConfiguration
