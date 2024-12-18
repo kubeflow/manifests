@@ -26,7 +26,7 @@ from kserve import constants
 logging.basicConfig(level=logging.INFO)
 
 KSERVE_NAMESPACE = "kserve"
-KSERVE_TEST_NAMESPACE = "kserve-test"
+KSERVE_TEST_NAMESPACE = "kubeflow-user-example-com"
 MODEL_CLASS_NAME = "modelClass"
 
 

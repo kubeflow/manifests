@@ -29,9 +29,6 @@ jobs:
     - name: Install kubectl
       run: ./tests/gh-actions/install_kubectl.sh
 
-    - name: Create kubeflow namespace
-      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
-
     - name: Install Istio
       run: ./tests/gh-actions/install_istio.sh
 
@@ -47,8 +44,14 @@ jobs:
     - name: Install KServe
       run: ./tests/gh-actions/install_kserve.sh
 
-    - name: Create test namespace # TODO to be removed and instead we shall use kubeflow-user-example-com
-      run: kubectl create ns kserve-test
+    - name: Install KF Multi Tenancy
+      run: ./tests/gh-actions/install_multi_tenancy.sh
+
+    - name: Install kubeflow-istio-resources
+      run: kustomize build common/istio-1-23/kubeflow-istio-resources/base | kubectl apply -f -
+
+    - name: Create KF Profile
+      run: kustomize build common/user-namespace/base | kubectl apply -f -
 
     - name: Setup python 3.12
       uses: actions/setup-python@v4
@@ -64,13 +67,10 @@ jobs:
         nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
         while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
 
-    - name: Run kserve tests with m2m token from SA default/default # TODO Run kserve tests with m2m token from SA kubeflow-user-example-com/default-editor
+    - name: Run kserve tests with m2m token from SA kubeflow-user-example-com/default-editor
       run: |
-        # TODO run the tests against  kubeflow-user-example-com
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
-        export KSERVE_M2M_TOKEN="$(kubectl -n default create token default)"
-        # TODO export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
-        # TODO in contrib/kserve/tests/utils.py use KSERVE_TEST_NAMESPACE = "kubeflow-user-example-com"
+        export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
         cd ./apps/kserve/tests && pytest . -vs --log-level info
 
     - name: Run and fail kserve tests without kserve m2m token
