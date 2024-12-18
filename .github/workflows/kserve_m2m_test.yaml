@@ -43,11 +43,17 @@ jobs:
     - name: Install knative
       run: ./tests/gh-actions/install_knative.sh
 
-    - name: Build & Apply manifests
+    - name: Install KServe
       run: ./tests/gh-actions/install_kserve.sh
 
-    - name: Create test namespace
-      run: kubectl create ns kserve-test
+    - name: Install KF Multi Tenancy
+      run: ./tests/gh-actions/install_multi_tenancy.sh
+
+    - name: Install kubeflow-istio-resources
+      run: kustomize build common/istio-1-23/kubeflow-istio-resources/base | kubectl apply -f -
+
+    - name: Create KF Profile
+      run: kustomize build common/user-namespace/base | kubectl apply -f -
 
     - name: Setup python 3.9
       uses: actions/setup-python@v4
@@ -63,10 +69,10 @@ jobs:
         nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
         while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
 
-    - name: Run kserve tests with m2m token from SA default/default
+    - name: Run kserve tests with m2m token from SA kubeflow-user-example-com/default-editor
       run: |
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
-        export KSERVE_M2M_TOKEN="$(kubectl -n default create token default)"
+        export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
         cd ./contrib/kserve/tests && pytest . -vs --log-level info
 
     - name: Run and fail kserve tests without kserve m2m token
