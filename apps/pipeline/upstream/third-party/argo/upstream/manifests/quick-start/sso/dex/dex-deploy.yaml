@@ -26,6 +26,14 @@ spec:
           ports:
             - name: http
               containerPort: 5556
+          securityContext:
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+            runAsNonRoot: true
+            capabilities:
+              drop:
+              - ALL
           volumeMounts:
             - mountPath: /data
               name: config

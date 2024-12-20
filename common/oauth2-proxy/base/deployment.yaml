@@ -70,6 +70,14 @@ spec:
             configMapKeyRef:
               name: oauth2-proxy-parameters
               key: EXTRA_JWT_ISSUERS
+        securityContext:
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          runAsNonRoot: true
+          capabilities:
+            drop:
+            - ALL
         volumeMounts:
         - name: oauth2-proxy-config
           mountPath: /etc/oauth2_proxy/oauth2_proxy.cfg
