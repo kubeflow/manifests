@@ -33,10 +33,6 @@ jobs:
     - name: Install Istio CNI
       run: ./tests/gh-actions/install_istio-cni.sh
 
-    - name: Configure istio init container with seccompProfile attribute
-      run: |
-        kubectl get cm istio-sidecar-injector -n istio-system -o yaml
-
     - name: Install oauth2-proxy
       run: ./tests/gh-actions/install_oauth2-proxy.sh
 
