@@ -2462,7 +2462,9 @@ data:
   values: |-
     {
       "gateways": {
-        "seccompProfile": {},
+        "seccompProfile": {
+          "type": RuntimeDefault
+        },
         "securityContext": {}
       },
       "global": {
