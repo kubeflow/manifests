@@ -54,3 +54,7 @@ spec:
     egressGateways:
     - enabled: false
       name: istio-egressgateway
+  values:
+    gateways:
+      seccompProfile:
+        type: RuntimeDefault
