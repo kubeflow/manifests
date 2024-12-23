@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: istio-system
+
+resources:
+- install.yaml
+- gateway_authorizationpolicy.yaml
+- deny_all_authorizationpolicy.yaml
+- gateway.yaml
+
+patches:
+- path: patches/service.yaml
+- path: patches/istio-configmap-disable-tracing.yaml
+- path: patches/disable-debugging.yaml
+- path: patches/istio-ingressgateway-remove-pdb.yaml
+- path: patches/istiod-remove-pdb.yaml
+- path: patches/seccomp-istio-ingressgateway.yaml
+- path: patches/seccomp-istiod.yaml

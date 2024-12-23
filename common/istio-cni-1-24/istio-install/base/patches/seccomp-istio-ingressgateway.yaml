@@ -1,0 +1,16 @@
+# Seccomp profile must be explicitly set to one of the allowed values. Both the Unconfined profile and the absence of a profile are prohibited.
+# According to https://kubernetes.io/docs/concepts/security/pod-security-standards/#:~:text=undefined/null-,Seccomp%20(v1.19%2B),-Seccomp%20profile%20must
+# This is done to enable 'restricted' level security standards for the pods.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: istio-ingressgateway
+  namespace: istio-system
+spec:
+  template:
+    spec:
+      containers:
+      - name: istio-proxy
+        securityContext:
+          seccompProfile:
+            type: RuntimeDefault
