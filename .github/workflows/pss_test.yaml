@@ -11,6 +11,7 @@ on:
     - common/cert-manager/**
     - common/oauth2-proxy/**
     - common/istio*/**
+    - contrib/security/PSS/*
     - tests/gh-actions/install_istio-cni.sh
     - tests/gh-actions/install_multitenancy.sh
 
