@@ -72,9 +72,7 @@ jobs:
             kubectl patch "$KIND" "$NAME" -n "$NAMESPACE" --patch-file "$file"
           fi
         done
-        kubectl get pods -n istio-system
-        kubectl get cm -n istio-system
-        kubectl describe cm istio-sidecar-injector -n istio-system
+        sleep 100
 
     - name: Apply Pod Security Standards baseline levels for static namespaces
       run: ./tests/gh-actions/enable_baseline_PSS.sh
