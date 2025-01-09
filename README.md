@@ -465,7 +465,7 @@ It is still in development.
 Install the PVC Viewer Controller official Kubeflow component:
 
 ```sh
-kustomize build apps/pvcviewer-controller/upstream/default | kubectl apply -f -
+kustomize build apps/pvcviewer-controller/upstream/base | kubectl apply -f -
 ```
 
 #### Profiles + KFAM
