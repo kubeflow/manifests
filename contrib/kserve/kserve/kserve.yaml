@@ -12,92 +12,6 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.16.2
-  name: clusterlocalmodels.serving.kserve.io
-spec:
-  group: serving.kserve.io
-  names:
-    kind: ClusterLocalModel
-    listKind: ClusterLocalModelList
-    plural: clusterlocalmodels
-    singular: clusterlocalmodel
-  scope: Cluster
-  versions:
-  - name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          metadata:
-            type: object
-          spec:
-            properties:
-              modelSize:
-                anyOf:
-                - type: integer
-                - type: string
-                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
-                x-kubernetes-int-or-string: true
-              nodeGroup:
-                type: string
-              sourceModelUri:
-                type: string
-                x-kubernetes-validations:
-                - message: StorageUri is immutable
-                  rule: self == oldSelf
-            required:
-            - modelSize
-            - nodeGroup
-            - sourceModelUri
-            type: object
-          status:
-            properties:
-              copies:
-                properties:
-                  available:
-                    type: integer
-                  failed:
-                    type: integer
-                  total:
-                    type: integer
-                type: object
-              inferenceServices:
-                items:
-                  properties:
-                    name:
-                      type: string
-                    namespace:
-                      type: string
-                  type: object
-                type: array
-              nodeStatus:
-                additionalProperties:
-                  enum:
-                  - ""
-                  - NodeNotReady
-                  - NodeDownloadPending
-                  - NodeDownloading
-                  - NodeDownloaded
-                  - NodeDownloadError
-                  - NodeDeleting
-                  - NodeDeletionError
-                  - NodeDeleted
-                  type: string
-                type: object
-            type: object
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: v0.16.2
   name: clusterservingruntimes.serving.kserve.io
 spec:
   group: serving.kserve.io
@@ -26249,6 +26163,93 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.16.2
+  name: localmodelcaches.serving.kserve.io
+spec:
+  group: serving.kserve.io
+  names:
+    kind: LocalModelCache
+    listKind: LocalModelCacheList
+    plural: localmodelcaches
+    singular: localmodelcache
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              modelSize:
+                anyOf:
+                - type: integer
+                - type: string
+                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                x-kubernetes-int-or-string: true
+              nodeGroups:
+                items:
+                  type: string
+                maxItems: 1
+                minItems: 1
+                type: array
+              sourceModelUri:
+                type: string
+                x-kubernetes-validations:
+                - message: StorageUri is immutable
+                  rule: self == oldSelf
+            required:
+            - modelSize
+            - nodeGroups
+            - sourceModelUri
+            type: object
+          status:
+            properties:
+              copies:
+                properties:
+                  available:
+                    type: integer
+                  failed:
+                    type: integer
+                  total:
+                    type: integer
+                type: object
+              inferenceServices:
+                items:
+                  properties:
+                    name:
+                      type: string
+                    namespace:
+                      type: string
+                  type: object
+                type: array
+              nodeStatus:
+                additionalProperties:
+                  enum:
+                  - ""
+                  - NodeNotReady
+                  - NodeDownloadPending
+                  - NodeDownloading
+                  - NodeDownloaded
+                  - NodeDownloadError
+                  type: string
+                type: object
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.16.2
   name: localmodelnodegroups.serving.kserve.io
 spec:
   group: serving.kserve.io
@@ -26927,6 +26928,67 @@ spec:
         type: object
     served: true
     storage: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.16.2
+  name: localmodelnodes.serving.kserve.io
+spec:
+  group: serving.kserve.io
+  names:
+    kind: LocalModelNode
+    listKind: LocalModelNodeList
+    plural: localmodelnodes
+    singular: localmodelnode
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              localModels:
+                items:
+                  properties:
+                    modelName:
+                      type: string
+                    sourceModelUri:
+                      type: string
+                  required:
+                  - modelName
+                  - sourceModelUri
+                  type: object
+                type: array
+            required:
+            - localModels
+            type: object
+          status:
+            properties:
+              modelStatus:
+                additionalProperties:
+                  enum:
+                  - ""
+                  - ModelDownloadPending
+                  - ModelDownloading
+                  - ModelDownloaded
+                  - ModelDownloadError
+                  type: string
+                type: object
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -31075,6 +31137,16 @@ metadata:
   name: kserve-localmodel-controller-manager
   namespace: kserve
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/instance: kserve-localmodelnode-agent
+    app.kubernetes.io/managed-by: kserve-localmodelnode-agent
+    app.kubernetes.io/name: kserve-localmodelnode-agent
+  name: kserve-localmodelnode-agent
+  namespace: kserve
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -31157,6 +31229,70 @@ rules:
   - update
   - watch
 - apiGroups:
+  - serving.kserve.io
+  resources:
+  - inferenceservices
+  - localmodelnodegroups
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - serving.kserve.io
+  resources:
+  - localmodelcaches
+  - localmodelnodes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - serving.kserve.io
+  resources:
+  - localmodelcaches/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - serving.kserve.io
+  resources:
+  - localmodelnodes/status
+  verbs:
+  - get
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kserve-localmodelnode-agent-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - nodes/status
+  verbs:
+  - get
+  - watch
+- apiGroups:
   - batch
   resources:
   - jobs
@@ -31177,7 +31313,22 @@ rules:
 - apiGroups:
   - serving.kserve.io
   resources:
-  - clusterlocalmodels
+  - clusterstoragecontainers
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - serving.kserve.io
+  resources:
+  - localmodelnodegroups
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - serving.kserve.io
+  resources:
+  - localmodelnodes
   verbs:
   - create
   - delete
@@ -31189,21 +31340,11 @@ rules:
 - apiGroups:
   - serving.kserve.io
   resources:
-  - clusterlocalmodels/status
+  - localmodelnodes/status
   verbs:
   - get
   - patch
   - update
-- apiGroups:
-  - serving.kserve.io
-  resources:
-  - clusterstoragecontainers
-  - inferenceservices
-  - localmodelnodegroups
-  verbs:
-  - get
-  - list
-  - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -31341,13 +31482,6 @@ rules:
 - apiGroups:
   - serving.kserve.io
   resources:
-  - clusterlocalmodels
-  verbs:
-  - get
-  - list
-- apiGroups:
-  - serving.kserve.io
-  resources:
   - clusterservingruntimes
   - clusterservingruntimes/finalizers
   - clusterstoragecontainers
@@ -31378,6 +31512,14 @@ rules:
   - get
   - patch
   - update
+- apiGroups:
+  - serving.kserve.io
+  resources:
+  - localmodelcaches
+  verbs:
+  - get
+  - list
+  - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -31427,6 +31569,19 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
+  name: kserve-localmodelnode-agent-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kserve-localmodelnode-agent-role
+subjects:
+- kind: ServiceAccount
+  name: kserve-localmodelnode-agent
+  namespace: kserve
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
   name: kserve-manager-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -31468,14 +31623,14 @@ data:
     Art explainer serving runtime default image version.\n           \"defaultImageVersion\":
     \"latest\"\n       }\n   }\n \n # ====================================== STORAGE
     INITIALIZER CONFIGURATION ======================================\n # Example\n
-    storageInitializer: |-\n   {\n       \"image\" : \"kserve/storage-initializer:v0.14.0\",\n
+    storageInitializer: |-\n   {\n       \"image\" : \"kserve/storage-initializer:v0.14.1\",\n
     \      \"memoryRequest\": \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\":
     \"100m\",\n       \"cpuLimit\": \"1\",\n       \"caBundleConfigMapName\": \"\",\n
     \      \"caBundleVolumeMountPath\": \"/etc/ssl/custom-certs\",\n       \"enableDirectPvcVolumeMount\":
     false,\n       \"enableModelcar\": false,\n       \"cpuModelcar\": \"10m\",\n
     \      \"memoryModelcar\": \"15Mi\"\n   }\n storageInitializer: |-\n   {\n       #
     image contains the default storage initializer image uri.\n       \"image\" :
-    \"kserve/storage-initializer:v0.14.0\",\n       \n       # memoryRequest is the
+    \"kserve/storage-initializer:v0.14.1\",\n       \n       # memoryRequest is the
     requests.memory to set for the storage initializer init container.\n       \"memoryRequest\":
     \"100Mi\",\n   \n        # memoryLimit is the limits.memory to set for the storage
     initializer init container.\n       \"memoryLimit\": \"1Gi\",\n       \n       #
@@ -31621,11 +31776,11 @@ data:
     NOTE: This configuration only applicable to serverless deployment.\n       \"pathTemplate\":
     \"/serving/{{ .Namespace }}/{{ .Name }}\"\n   }\n \n # ======================================
     LOGGER CONFIGURATION ======================================\n # Example\n logger:
-    |-\n   {\n       \"image\" : \"kserve/agent:v0.14.0\",\n       \"memoryRequest\":
+    |-\n   {\n       \"image\" : \"kserve/agent:v0.14.1\",\n       \"memoryRequest\":
     \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n
     \      \"cpuLimit\": \"1\",\n       \"defaultUrl\": \"http://default-broker\"\n
     \  }\n logger: |-\n   {\n       # image contains the default logger image uri.\n
-    \      \"image\" : \"kserve/agent:v0.14.0\",\n   \n       # memoryRequest is the
+    \      \"image\" : \"kserve/agent:v0.14.1\",\n   \n       # memoryRequest is the
     requests.memory to set for the logger container.\n       \"memoryRequest\": \"100Mi\",\n
     \      \n       # memoryLimit is the limits.memory to set for the logger container.\n
     \      \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is the requests.cpu
@@ -31634,11 +31789,11 @@ data:
     \"1\",\n       \n       # defaultUrl specifies the default logger url. If logger
     is not specified in the resource this url is used.\n       \"defaultUrl\": \"http://default-broker\"\n
     \  }\n \n # ====================================== BATCHER CONFIGURATION ======================================\n
-    # Example\n batcher: |-\n   {\n       \"image\" : \"kserve/agent:v0.14.0\",\n       \"memoryRequest\":
+    # Example\n batcher: |-\n   {\n       \"image\" : \"kserve/agent:v0.14.1\",\n       \"memoryRequest\":
     \"1Gi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"1\",\n       \"cpuLimit\":
     \"1\",\n       \"maxBatchSize\": \"32\",\n       \"maxLatency\": \"5000\"\n   }\n
     batcher: |-\n   {\n       # image contains the default batcher image uri.\n       \"image\"
-    : \"kserve/agent:v0.14.0\",\n       \n       # memoryRequest is the requests.memory
+    : \"kserve/agent:v0.14.1\",\n       \n       # memoryRequest is the requests.memory
     to set for the batcher container.\n       \"memoryRequest\": \"1Gi\",\n   \n       #
     memoryLimit is the limits.memory to set for the batcher container.\n       \"memoryLimit\":
     \"1Gi\",\n       \n       # cpuRequest is the requests.cpu to set for the batcher
@@ -31648,10 +31803,10 @@ data:
     \      # maxLatency is the default maximum latency in milliseconds for batcher
     to wait and collect the batch.\n       \"maxLatency\": \"5000\"\n   }\n \n # ======================================
     AGENT CONFIGURATION ======================================\n # Example\n agent:
-    |-\n   {\n       \"image\" : \"kserve/agent:v0.14.0\",\n       \"memoryRequest\":
+    |-\n   {\n       \"image\" : \"kserve/agent:v0.14.1\",\n       \"memoryRequest\":
     \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n
     \      \"cpuLimit\": \"1\"\n   }\n agent: |-\n   {\n       # image contains the
-    default agent image uri.\n       \"image\" : \"kserve/agent:v0.14.0\",\n   \n       #
+    default agent image uri.\n       \"image\" : \"kserve/agent:v0.14.1\",\n   \n       #
     memoryRequest is the requests.memory to set for the agent container.\n       \"memoryRequest\":
     \"100Mi\",\n   \n       # memoryLimit is the limits.memory to set for the agent
     container.\n       \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is
@@ -31659,12 +31814,12 @@ data:
     \      \n       # cpuLimit is the limits.cpu to set for the agent container.\n
     \      \"cpuLimit\": \"1\"\n   }\n \n # ======================================
     ROUTER CONFIGURATION ======================================\n # Example\n router:
-    |-\n   {\n       \"image\" : \"kserve/router:v0.14.0\",\n       \"memoryRequest\":
+    |-\n   {\n       \"image\" : \"kserve/router:v0.14.1\",\n       \"memoryRequest\":
     \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n
     \      \"cpuLimit\": \"1\",\n       \"headers\": {\n         \"propagate\": []\n
     \      }\n   }\n # router is the implementation of inference graph.\n router:
     |-\n   {\n       # image contains the default router image uri.\n       \"image\"
-    : \"kserve/router:v0.14.0\",\n       \n       # memoryRequest is the requests.memory
+    : \"kserve/router:v0.14.1\",\n       \n       # memoryRequest is the requests.memory
     to set for the router container.\n       \"memoryRequest\": \"100Mi\",\n       \n
     \      # memoryLimit is the limits.memory to set for the router container.\n       \"memoryLimit\":
     \"1Gi\",\n       \n       # cpuRequest is the requests.cpu to set for the router
@@ -31705,12 +31860,15 @@ data:
     localModel: |-\n   {\n     \"enabled\": false,\n     # jobNamespace specifies
     the namespace where the download job will be created.\n     \"jobNamespace\":
     \"kserve-localmodel-jobs\",\n     # defaultJobImage specifies the default image
-    used for the download job.\n     \"defaultJobImage\" : \"kserve/storage-initializer:v0.14.0\",\n
-    \    # Kubernetes modifies the filesystem group ID on the attached volume.\n     \"FSGroup\":
-    1000\n   }"
+    used for the download job.\n     \"defaultJobImage\" : \"kserve/storage-initializer:v0.14.1\",\n
+    \    # Kubernetes modifies the filesystem group ID on the attached volume.\n     \"fsGroup\":
+    1000,\n     # TTL for the download job after it is finished.\n     \"jobTTLSecondsAfterFinished\":
+    3600,\n     # The frequency at which the local model agent reconciles the local
+    models\n     # This is to detect if models are missing from local disk\n     \"reconcilationFrequencyInSecs\":
+    60\n   }"
   agent: |-
     {
-        "image" : "kserve/agent:v0.14.0",
+        "image" : "kserve/agent:v0.14.1",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -31718,7 +31876,7 @@ data:
     }
   batcher: |-
     {
-        "image" : "kserve/agent:v0.14.0",
+        "image" : "kserve/agent:v0.14.1",
         "memoryRequest": "1Gi",
         "memoryLimit": "1Gi",
         "cpuRequest": "1",
@@ -31773,12 +31931,12 @@ data:
     {
       "enabled": false,
       "jobNamespace": "kserve-localmodel-jobs",
-      "defaultJobImage" : "kserve/storage-initializer:v0.14.0",
-      "FSGroup": 1000
+      "defaultJobImage" : "kserve/storage-initializer:v0.14.1",
+      "fsGroup": 1000
     }
   logger: |-
     {
-        "image" : "kserve/agent:v0.14.0",
+        "image" : "kserve/agent:v0.14.1",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -31792,7 +31950,7 @@ data:
     }
   router: |-
     {
-        "image" : "kserve/router:v0.14.0",
+        "image" : "kserve/router:v0.14.1",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -31804,7 +31962,7 @@ data:
     }
   storageInitializer: |-
     {
-        "image" : "kserve/storage-initializer:v0.14.0",
+        "image" : "kserve/storage-initializer:v0.14.1",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -31913,7 +32071,7 @@ spec:
               fieldPath: metadata.namespace
         - name: SECRET_NAME
           value: kserve-webhook-server-cert
-        image: kserve/kserve-controller:v0.14.0
+        image: kserve/kserve-controller:v0.14.1
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 5
@@ -32014,7 +32172,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: kserve/kserve-localmodel-controller:v0.14.0
+        image: kserve/kserve-localmodel-controller:v0.14.1
         imagePullPolicy: Always
         name: manager
         resources:
@@ -32036,6 +32194,75 @@ spec:
         runAsNonRoot: true
       serviceAccountName: kserve-localmodel-controller-manager
       terminationGracePeriodSeconds: 10
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app.kubernetes.io/name: kserve-localmodelnode-agent
+    control-plane: kserve-localmodelnode-agent
+    controller-tools.k8s.io: "1.0"
+  name: kserve-localmodelnode-agent
+  namespace: kserve
+spec:
+  selector:
+    matchLabels:
+      control-plane: kserve-localmodelnode-agent
+      controller-tools.k8s.io: "1.0"
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: manager
+      labels:
+        app.kubernetes.io/name: kserve-localmodelnode-agent
+        control-plane: kserve-localmodelnode-agent
+        controller-tools.k8s.io: "1.0"
+    spec:
+      containers:
+      - command:
+        - /manager
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        image: kserve/kserve-localmodelnode-agent:v0.14.1
+        imagePullPolicy: Always
+        name: manager
+        resources:
+          limits:
+            cpu: 100m
+            memory: 300Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+        volumeMounts:
+        - mountPath: /mnt/models
+          name: models
+          readOnly: false
+      nodeSelector:
+        kserve/localmodel: worker
+      securityContext:
+        runAsNonRoot: true
+      serviceAccountName: kserve-localmodelnode-agent
+      terminationGracePeriodSeconds: 10
+      volumes:
+      - hostPath:
+          path: /models
+          type: DirectoryOrCreate
+        name: models
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -32201,6 +32428,36 @@ webhooks:
     - UPDATE
     resources:
     - inferenceservices
+  sideEffects: None
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: kserve/serving-cert
+  creationTimestamp: null
+  name: localmodelcache.serving.kserve.io
+webhooks:
+- admissionReviewVersions:
+  - v1beta1
+  clientConfig:
+    service:
+      name: kserve-webhook-server-service
+      namespace: kserve
+      path: /validate-serving-kserve-io-v1alpha1-localmodelcache
+  failurePolicy: Fail
+  name: localmodelcache.kserve-webhook-server.validator
+  rules:
+  - apiGroups:
+    - serving.kserve.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    - DELETE
+    resources:
+    - localmodelcaches
   sideEffects: None
 ---
 apiVersion: admissionregistration.k8s.io/v1
