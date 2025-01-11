@@ -4,11 +4,11 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
   labels:
-    app: istio-pilot
-    chart: istio
-    heritage: Tiller
-    istio: security
-    release: istio
+    app.kubernetes.io/instance: istio
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/version: 1.24.2
+    helm.sh/chart: base-1.24.2
   name: authorizationpolicies.security.istio.io
 spec:
   group: security.istio.io
@@ -256,9 +256,10 @@ spec:
                 - name
                 type: object
                 x-kubernetes-validations:
-                - message: Support kinds are core/Service and gateway.networking.k8s.io/Gateway
-                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
-                    \ ['gateway.networking.k8s.io','Gateway']]"
+                - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
+                    gateway.networking.k8s.io/Gateway
+                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
+                    ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
               targetRefs:
                 description: Optional.
                 items:
@@ -290,12 +291,85 @@ spec:
                   - name
                   type: object
                   x-kubernetes-validations:
-                  - message: Support kinds are core/Service and gateway.networking.k8s.io/Gateway
-                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
-                      \ ['gateway.networking.k8s.io','Gateway']]"
+                  - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
+                      gateway.networking.k8s.io/Gateway
+                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
+                      ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                maxItems: 16
                 type: array
             type: object
+            x-kubernetes-validations:
+            - message: only one of targetRefs or selector can be set
+              rule: (has(self.selector)?1:0)+(has(self.targetRef)?1:0)+(has(self.targetRefs)?1:0)<=1
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -535,9 +609,10 @@ spec:
                 - name
                 type: object
                 x-kubernetes-validations:
-                - message: Support kinds are core/Service and gateway.networking.k8s.io/Gateway
-                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
-                    \ ['gateway.networking.k8s.io','Gateway']]"
+                - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
+                    gateway.networking.k8s.io/Gateway
+                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
+                    ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
               targetRefs:
                 description: Optional.
                 items:
@@ -569,12 +644,85 @@ spec:
                   - name
                   type: object
                   x-kubernetes-validations:
-                  - message: Support kinds are core/Service and gateway.networking.k8s.io/Gateway
-                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
-                      \ ['gateway.networking.k8s.io','Gateway']]"
+                  - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
+                      gateway.networking.k8s.io/Gateway
+                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
+                      ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                maxItems: 16
                 type: array
             type: object
+            x-kubernetes-validations:
+            - message: only one of targetRefs or selector can be set
+              rule: (has(self.selector)?1:0)+(has(self.targetRef)?1:0)+(has(self.targetRefs)?1:0)<=1
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -590,10 +738,11 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
   labels:
-    app: istio-pilot
-    chart: istio
-    heritage: Tiller
-    release: istio
+    app.kubernetes.io/instance: istio
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/version: 1.24.2
+    helm.sh/chart: base-1.24.2
   name: destinationrules.networking.istio.io
 spec:
   group: networking.istio.io
@@ -931,8 +1080,34 @@ spec:
                               - ROUND_ROBIN
                               - LEAST_REQUEST
                               type: string
+                            warmup:
+                              description: Represents the warmup configuration of
+                                Service.
+                              properties:
+                                aggression:
+                                  description: This parameter controls the speed of
+                                    traffic increase over the warmup duration.
+                                  format: double
+                                  minimum: 1
+                                  nullable: true
+                                  type: number
+                                duration:
+                                  type: string
+                                  x-kubernetes-validations:
+                                  - message: must be a valid duration greater than
+                                      1ms
+                                    rule: duration(self) >= duration('1ms')
+                                minimumPercent:
+                                  format: double
+                                  maximum: 100
+                                  minimum: 0
+                                  nullable: true
+                                  type: number
+                              required:
+                              - duration
+                              type: object
                             warmupDurationSecs:
-                              description: Represents the warmup duration of Service.
+                              description: 'Deprecated: use `warmup` instead.'
                               type: string
                               x-kubernetes-validations:
                               - message: must be a valid duration greater than 1ms
@@ -1277,9 +1452,34 @@ spec:
                                     - ROUND_ROBIN
                                     - LEAST_REQUEST
                                     type: string
+                                  warmup:
+                                    description: Represents the warmup configuration
+                                      of Service.
+                                    properties:
+                                      aggression:
+                                        description: This parameter controls the speed
+                                          of traffic increase over the warmup duration.
+                                        format: double
+                                        minimum: 1
+                                        nullable: true
+                                        type: number
+                                      duration:
+                                        type: string
+                                        x-kubernetes-validations:
+                                        - message: must be a valid duration greater
+                                            than 1ms
+                                          rule: duration(self) >= duration('1ms')
+                                      minimumPercent:
+                                        format: double
+                                        maximum: 100
+                                        minimum: 0
+                                        nullable: true
+                                        type: number
+                                    required:
+                                    - duration
+                                    type: object
                                   warmupDurationSecs:
-                                    description: Represents the warmup duration of
-                                      Service.
+                                    description: 'Deprecated: use `warmup` instead.'
                                     type: string
                                     x-kubernetes-validations:
                                     - message: must be a valid duration greater than
@@ -1771,8 +1971,32 @@ spec:
                         - ROUND_ROBIN
                         - LEAST_REQUEST
                         type: string
+                      warmup:
+                        description: Represents the warmup configuration of Service.
+                        properties:
+                          aggression:
+                            description: This parameter controls the speed of traffic
+                              increase over the warmup duration.
+                            format: double
+                            minimum: 1
+                            nullable: true
+                            type: number
+                          duration:
+                            type: string
+                            x-kubernetes-validations:
+                            - message: must be a valid duration greater than 1ms
+                              rule: duration(self) >= duration('1ms')
+                          minimumPercent:
+                            format: double
+                            maximum: 100
+                            minimum: 0
+                            nullable: true
+                            type: number
+                        required:
+                        - duration
+                        type: object
                       warmupDurationSecs:
-                        description: Represents the warmup duration of Service.
+                        description: 'Deprecated: use `warmup` instead.'
                         type: string
                         x-kubernetes-validations:
                         - message: must be a valid duration greater than 1ms
@@ -2111,8 +2335,34 @@ spec:
                               - ROUND_ROBIN
                               - LEAST_REQUEST
                               type: string
+                            warmup:
+                              description: Represents the warmup configuration of
+                                Service.
+                              properties:
+                                aggression:
+                                  description: This parameter controls the speed of
+                                    traffic increase over the warmup duration.
+                                  format: double
+                                  minimum: 1
+                                  nullable: true
+                                  type: number
+                                duration:
+                                  type: string
+                                  x-kubernetes-validations:
+                                  - message: must be a valid duration greater than
+                                      1ms
+                                    rule: duration(self) >= duration('1ms')
+                                minimumPercent:
+                                  format: double
+                                  maximum: 100
+                                  minimum: 0
+                                  nullable: true
+                                  type: number
+                              required:
+                              - duration
+                              type: object
                             warmupDurationSecs:
-                              description: Represents the warmup duration of Service.
+                              description: 'Deprecated: use `warmup` instead.'
                               type: string
                               x-kubernetes-validations:
                               - message: must be a valid duration greater than 1ms
@@ -2350,6 +2600,74 @@ spec:
             - host
             type: object
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -2679,8 +2997,34 @@ spec:
                               - ROUND_ROBIN
                               - LEAST_REQUEST
                               type: string
+                            warmup:
+                              description: Represents the warmup configuration of
+                                Service.
+                              properties:
+                                aggression:
+                                  description: This parameter controls the speed of
+                                    traffic increase over the warmup duration.
+                                  format: double
+                                  minimum: 1
+                                  nullable: true
+                                  type: number
+                                duration:
+                                  type: string
+                                  x-kubernetes-validations:
+                                  - message: must be a valid duration greater than
+                                      1ms
+                                    rule: duration(self) >= duration('1ms')
+                                minimumPercent:
+                                  format: double
+                                  maximum: 100
+                                  minimum: 0
+                                  nullable: true
+                                  type: number
+                              required:
+                              - duration
+                              type: object
                             warmupDurationSecs:
-                              description: Represents the warmup duration of Service.
+                              description: 'Deprecated: use `warmup` instead.'
                               type: string
                               x-kubernetes-validations:
                               - message: must be a valid duration greater than 1ms
@@ -3025,9 +3369,34 @@ spec:
                                     - ROUND_ROBIN
                                     - LEAST_REQUEST
                                     type: string
+                                  warmup:
+                                    description: Represents the warmup configuration
+                                      of Service.
+                                    properties:
+                                      aggression:
+                                        description: This parameter controls the speed
+                                          of traffic increase over the warmup duration.
+                                        format: double
+                                        minimum: 1
+                                        nullable: true
+                                        type: number
+                                      duration:
+                                        type: string
+                                        x-kubernetes-validations:
+                                        - message: must be a valid duration greater
+                                            than 1ms
+                                          rule: duration(self) >= duration('1ms')
+                                      minimumPercent:
+                                        format: double
+                                        maximum: 100
+                                        minimum: 0
+                                        nullable: true
+                                        type: number
+                                    required:
+                                    - duration
+                                    type: object
                                   warmupDurationSecs:
-                                    description: Represents the warmup duration of
-                                      Service.
+                                    description: 'Deprecated: use `warmup` instead.'
                                     type: string
                                     x-kubernetes-validations:
                                     - message: must be a valid duration greater than
@@ -3519,8 +3888,32 @@ spec:
                         - ROUND_ROBIN
                         - LEAST_REQUEST
                         type: string
+                      warmup:
+                        description: Represents the warmup configuration of Service.
+                        properties:
+                          aggression:
+                            description: This parameter controls the speed of traffic
+                              increase over the warmup duration.
+                            format: double
+                            minimum: 1
+                            nullable: true
+                            type: number
+                          duration:
+                            type: string
+                            x-kubernetes-validations:
+                            - message: must be a valid duration greater than 1ms
+                              rule: duration(self) >= duration('1ms')
+                          minimumPercent:
+                            format: double
+                            maximum: 100
+                            minimum: 0
+                            nullable: true
+                            type: number
+                        required:
+                        - duration
+                        type: object
                       warmupDurationSecs:
-                        description: Represents the warmup duration of Service.
+                        description: 'Deprecated: use `warmup` instead.'
                         type: string
                         x-kubernetes-validations:
                         - message: must be a valid duration greater than 1ms
@@ -3859,8 +4252,34 @@ spec:
                               - ROUND_ROBIN
                               - LEAST_REQUEST
                               type: string
+                            warmup:
+                              description: Represents the warmup configuration of
+                                Service.
+                              properties:
+                                aggression:
+                                  description: This parameter controls the speed of
+                                    traffic increase over the warmup duration.
+                                  format: double
+                                  minimum: 1
+                                  nullable: true
+                                  type: number
+                                duration:
+                                  type: string
+                                  x-kubernetes-validations:
+                                  - message: must be a valid duration greater than
+                                      1ms
+                                    rule: duration(self) >= duration('1ms')
+                                minimumPercent:
+                                  format: double
+                                  maximum: 100
+                                  minimum: 0
+                                  nullable: true
+                                  type: number
+                              required:
+                              - duration
+                              type: object
                             warmupDurationSecs:
-                              description: Represents the warmup duration of Service.
+                              description: 'Deprecated: use `warmup` instead.'
                               type: string
                               x-kubernetes-validations:
                               - message: must be a valid duration greater than 1ms
@@ -4098,6 +4517,74 @@ spec:
             - host
             type: object
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -4427,8 +4914,34 @@ spec:
                               - ROUND_ROBIN
                               - LEAST_REQUEST
                               type: string
+                            warmup:
+                              description: Represents the warmup configuration of
+                                Service.
+                              properties:
+                                aggression:
+                                  description: This parameter controls the speed of
+                                    traffic increase over the warmup duration.
+                                  format: double
+                                  minimum: 1
+                                  nullable: true
+                                  type: number
+                                duration:
+                                  type: string
+                                  x-kubernetes-validations:
+                                  - message: must be a valid duration greater than
+                                      1ms
+                                    rule: duration(self) >= duration('1ms')
+                                minimumPercent:
+                                  format: double
+                                  maximum: 100
+                                  minimum: 0
+                                  nullable: true
+                                  type: number
+                              required:
+                              - duration
+                              type: object
                             warmupDurationSecs:
-                              description: Represents the warmup duration of Service.
+                              description: 'Deprecated: use `warmup` instead.'
                               type: string
                               x-kubernetes-validations:
                               - message: must be a valid duration greater than 1ms
@@ -4773,9 +5286,34 @@ spec:
                                     - ROUND_ROBIN
                                     - LEAST_REQUEST
                                     type: string
+                                  warmup:
+                                    description: Represents the warmup configuration
+                                      of Service.
+                                    properties:
+                                      aggression:
+                                        description: This parameter controls the speed
+                                          of traffic increase over the warmup duration.
+                                        format: double
+                                        minimum: 1
+                                        nullable: true
+                                        type: number
+                                      duration:
+                                        type: string
+                                        x-kubernetes-validations:
+                                        - message: must be a valid duration greater
+                                            than 1ms
+                                          rule: duration(self) >= duration('1ms')
+                                      minimumPercent:
+                                        format: double
+                                        maximum: 100
+                                        minimum: 0
+                                        nullable: true
+                                        type: number
+                                    required:
+                                    - duration
+                                    type: object
                                   warmupDurationSecs:
-                                    description: Represents the warmup duration of
-                                      Service.
+                                    description: 'Deprecated: use `warmup` instead.'
                                     type: string
                                     x-kubernetes-validations:
                                     - message: must be a valid duration greater than
@@ -5267,8 +5805,32 @@ spec:
                         - ROUND_ROBIN
                         - LEAST_REQUEST
                         type: string
+                      warmup:
+                        description: Represents the warmup configuration of Service.
+                        properties:
+                          aggression:
+                            description: This parameter controls the speed of traffic
+                              increase over the warmup duration.
+                            format: double
+                            minimum: 1
+                            nullable: true
+                            type: number
+                          duration:
+                            type: string
+                            x-kubernetes-validations:
+                            - message: must be a valid duration greater than 1ms
+                              rule: duration(self) >= duration('1ms')
+                          minimumPercent:
+                            format: double
+                            maximum: 100
+                            minimum: 0
+                            nullable: true
+                            type: number
+                        required:
+                        - duration
+                        type: object
                       warmupDurationSecs:
-                        description: Represents the warmup duration of Service.
+                        description: 'Deprecated: use `warmup` instead.'
                         type: string
                         x-kubernetes-validations:
                         - message: must be a valid duration greater than 1ms
@@ -5607,8 +6169,34 @@ spec:
                               - ROUND_ROBIN
                               - LEAST_REQUEST
                               type: string
+                            warmup:
+                              description: Represents the warmup configuration of
+                                Service.
+                              properties:
+                                aggression:
+                                  description: This parameter controls the speed of
+                                    traffic increase over the warmup duration.
+                                  format: double
+                                  minimum: 1
+                                  nullable: true
+                                  type: number
+                                duration:
+                                  type: string
+                                  x-kubernetes-validations:
+                                  - message: must be a valid duration greater than
+                                      1ms
+                                    rule: duration(self) >= duration('1ms')
+                                minimumPercent:
+                                  format: double
+                                  maximum: 100
+                                  minimum: 0
+                                  nullable: true
+                                  type: number
+                              required:
+                              - duration
+                              type: object
                             warmupDurationSecs:
-                              description: Represents the warmup duration of Service.
+                              description: 'Deprecated: use `warmup` instead.'
                               type: string
                               x-kubernetes-validations:
                               - message: must be a valid duration greater than 1ms
@@ -5846,6 +6434,74 @@ spec:
             - host
             type: object
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -5861,10 +6517,11 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
   labels:
-    app: istio-pilot
-    chart: istio
-    heritage: Tiller
-    release: istio
+    app.kubernetes.io/instance: istio
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/version: 1.24.2
+    helm.sh/chart: base-1.24.2
   name: envoyfilters.networking.istio.io
 spec:
   group: networking.istio.io
@@ -6156,9 +6813,11 @@ spec:
                   - name
                   type: object
                   x-kubernetes-validations:
-                  - message: Support kinds are core/Service and gateway.networking.k8s.io/Gateway
-                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
-                      \ ['gateway.networking.k8s.io','Gateway']]"
+                  - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
+                      gateway.networking.k8s.io/Gateway
+                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
+                      ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                maxItems: 16
                 type: array
               workloadSelector:
                 description: Criteria used to select the specific set of pods/VMs
@@ -6166,13 +6825,89 @@ spec:
                 properties:
                   labels:
                     additionalProperties:
+                      maxLength: 63
                       type: string
+                      x-kubernetes-validations:
+                      - message: wildcard is not supported in selector
+                        rule: "!self.contains('*')"
                     description: One or more labels that indicate a specific set of
                       pods/VMs on which the configuration should be applied.
+                    maxProperties: 256
                     type: object
                 type: object
             type: object
+            x-kubernetes-validations:
+            - message: only one of targetRefs or workloadSelector can be set
+              rule: (has(self.workloadSelector)?1:0)+(has(self.targetRefs)?1:0)<=1
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -6188,10 +6923,11 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
   labels:
-    app: istio-pilot
-    chart: istio
-    heritage: Tiller
-    release: istio
+    app.kubernetes.io/instance: istio
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/version: 1.24.2
+    helm.sh/chart: base-1.24.2
   name: gateways.networking.istio.io
 spec:
   group: networking.istio.io
@@ -6361,6 +7097,74 @@ spec:
                 type: array
             type: object
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -6522,6 +7326,74 @@ spec:
                 type: array
             type: object
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -6683,6 +7555,74 @@ spec:
                 type: array
             type: object
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -6698,11 +7638,11 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
   labels:
-    app: istio-pilot
-    chart: istio
-    heritage: Tiller
-    istio: security
-    release: istio
+    app.kubernetes.io/instance: istio
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/version: 1.24.2
+    helm.sh/chart: base-1.24.2
   name: peerauthentications.security.istio.io
 spec:
   group: security.istio.io
@@ -6802,6 +7742,74 @@ spec:
               rule: (has(self.selector) && has(self.selector.matchLabels) && self.selector.matchLabels.size()
                 > 0) || !has(self.portLevelMtls)
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -6893,6 +7901,74 @@ spec:
               rule: (has(self.selector) && has(self.selector.matchLabels) && self.selector.matchLabels.size()
                 > 0) || !has(self.portLevelMtls)
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -6908,10 +7984,11 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
   labels:
-    app: istio-pilot
-    chart: istio
-    heritage: Tiller
-    release: istio
+    app.kubernetes.io/instance: istio
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/version: 1.24.2
+    helm.sh/chart: base-1.24.2
   name: proxyconfigs.networking.istio.io
 spec:
   group: networking.istio.io
@@ -6974,6 +8051,74 @@ spec:
                 type: object
             type: object
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -6989,11 +8134,11 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
   labels:
-    app: istio-pilot
-    chart: istio
-    heritage: Tiller
-    istio: security
-    release: istio
+    app.kubernetes.io/instance: istio
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/version: 1.24.2
+    helm.sh/chart: base-1.24.2
   name: requestauthentications.security.istio.io
 spec:
   group: security.istio.io
@@ -7175,9 +8320,10 @@ spec:
                 - name
                 type: object
                 x-kubernetes-validations:
-                - message: Support kinds are core/Service and gateway.networking.k8s.io/Gateway
-                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
-                    \ ['gateway.networking.k8s.io','Gateway']]"
+                - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
+                    gateway.networking.k8s.io/Gateway
+                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
+                    ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
               targetRefs:
                 description: Optional.
                 items:
@@ -7209,15 +8355,85 @@ spec:
                   - name
                   type: object
                   x-kubernetes-validations:
-                  - message: Support kinds are core/Service and gateway.networking.k8s.io/Gateway
-                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
-                      \ ['gateway.networking.k8s.io','Gateway']]"
+                  - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
+                      gateway.networking.k8s.io/Gateway
+                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
+                      ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                maxItems: 16
                 type: array
             type: object
             x-kubernetes-validations:
-            - message: only one of targetRefs or workloadSelector can be set
+            - message: only one of targetRefs or selector can be set
               rule: (has(self.selector)?1:0)+(has(self.targetRef)?1:0)+(has(self.targetRefs)?1:0)<=1
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -7391,9 +8607,10 @@ spec:
                 - name
                 type: object
                 x-kubernetes-validations:
-                - message: Support kinds are core/Service and gateway.networking.k8s.io/Gateway
-                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
-                    \ ['gateway.networking.k8s.io','Gateway']]"
+                - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
+                    gateway.networking.k8s.io/Gateway
+                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
+                    ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
               targetRefs:
                 description: Optional.
                 items:
@@ -7425,15 +8642,85 @@ spec:
                   - name
                   type: object
                   x-kubernetes-validations:
-                  - message: Support kinds are core/Service and gateway.networking.k8s.io/Gateway
-                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
-                      \ ['gateway.networking.k8s.io','Gateway']]"
+                  - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
+                      gateway.networking.k8s.io/Gateway
+                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
+                      ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                maxItems: 16
                 type: array
             type: object
             x-kubernetes-validations:
-            - message: only one of targetRefs or workloadSelector can be set
+            - message: only one of targetRefs or selector can be set
               rule: (has(self.selector)?1:0)+(has(self.targetRef)?1:0)+(has(self.targetRefs)?1:0)<=1
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -7449,10 +8736,11 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
   labels:
-    app: istio-pilot
-    chart: istio
-    heritage: Tiller
-    release: istio
+    app.kubernetes.io/instance: istio
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/version: 1.24.2
+    helm.sh/chart: base-1.24.2
   name: serviceentries.networking.istio.io
 spec:
   group: networking.istio.io
@@ -7501,7 +8789,9 @@ spec:
               addresses:
                 description: The virtual IP addresses associated with the service.
                 items:
+                  maxLength: 64
                   type: string
+                maxItems: 256
                 type: array
               endpoints:
                 description: One or more endpoints associated with the service.
@@ -7514,11 +8804,11 @@ spec:
                       type: string
                       x-kubernetes-validations:
                       - message: UDS must be an absolute path or abstract socket
-                        rule: "self.startsWith('unix://') ? (self.substring(7,8) ==\
-                          \ '/' || self.substring(7,8) == '@') : true"
+                        rule: "self.startsWith('unix://') ? (self.substring(7,8) ==
+                          '/' || self.substring(7,8) == '@') : true"
                       - message: UDS may not be a dir
-                        rule: "self.startsWith('unix://') ? !self.endsWith('/') :\
-                          \ true"
+                        rule: "self.startsWith('unix://') ? !self.endsWith('/') :
+                          true"
                     labels:
                       additionalProperties:
                         type: string
@@ -7563,8 +8853,8 @@ spec:
                   - message: Address is required
                     rule: has(self.address) || has(self.network)
                   - message: UDS may not include ports
-                    rule: "(has(self.address) && self.address.startsWith('unix://'))\
-                      \ ? !has(self.ports) : true"
+                    rule: "(has(self.address) && self.address.startsWith('unix://'))
+                      ? !has(self.ports) : true"
                 maxItems: 4096
                 type: array
               exportTo:
@@ -7576,6 +8866,11 @@ spec:
                 description: The hosts associated with the ServiceEntry.
                 items:
                   type: string
+                  x-kubernetes-validations:
+                  - message: hostname cannot be wildcard
+                    rule: self != '*'
+                maxItems: 256
+                minItems: 1
                 type: array
               location:
                 description: |-
@@ -7592,14 +8887,19 @@ spec:
                   properties:
                     name:
                       description: Label assigned to the port.
+                      maxLength: 256
                       type: string
                     number:
                       description: A valid non-negative integer port number.
                       maximum: 4294967295
                       minimum: 0
                       type: integer
+                      x-kubernetes-validations:
+                      - message: port must be between 1-65535
+                        rule: 0 < self && self <= 65535
                     protocol:
                       description: The protocol exposed on the port.
+                      maxLength: 256
                       type: string
                     targetPort:
                       description: The port number on the endpoint where the traffic
@@ -7607,11 +8907,21 @@ spec:
                       maximum: 4294967295
                       minimum: 0
                       type: integer
+                      x-kubernetes-validations:
+                      - message: port must be between 1-65535
+                        rule: 0 < self && self <= 65535
                   required:
                   - number
                   - name
                   type: object
+                maxItems: 256
                 type: array
+                x-kubernetes-list-map-keys:
+                - name
+                x-kubernetes-list-type: map
+                x-kubernetes-validations:
+                - message: port number cannot be duplicated
+                  rule: self.all(l1, self.exists_one(l2, l1.number == l2.number))
               resolution:
                 description: |-
                   Service resolution mode for the hosts.
@@ -7634,17 +8944,106 @@ spec:
                 properties:
                   labels:
                     additionalProperties:
+                      maxLength: 63
                       type: string
+                      x-kubernetes-validations:
+                      - message: wildcard is not supported in selector
+                        rule: "!self.contains('*')"
                     description: One or more labels that indicate a specific set of
                       pods/VMs on which the configuration should be applied.
+                    maxProperties: 256
                     type: object
                 type: object
             required:
             - hosts
             type: object
+            x-kubernetes-validations:
+            - message: only one of WorkloadSelector or Endpoints can be set
+              rule: (has(self.workloadSelector)?1:0)+(has(self.endpoints)?1:0)<=1
+            - message: CIDR addresses are allowed only for NONE/STATIC resolution
+                types
+              rule: "!(has(self.addresses) && self.addresses.exists(k, k.contains('/'))
+                && (has(self.resolution) && self.resolution != 'STATIC' && self.resolution
+                != 'NONE'))"
+            - message: NONE mode cannot set endpoints
+              rule: "(!has(self.resolution) || self.resolution == 'NONE') ? !has(self.endpoints)
+                : true"
+            - message: DNS_ROUND_ROBIN mode cannot have multiple endpoints
+              rule: "(has(self.resolution) && self.resolution == 'DNS_ROUND_ROBIN')
+                ? (!has(self.endpoints) || size(self.endpoints) == 1) : true"
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
+        required:
+        - spec
         type: object
     served: true
     storage: false
@@ -7683,7 +9082,9 @@ spec:
               addresses:
                 description: The virtual IP addresses associated with the service.
                 items:
+                  maxLength: 64
                   type: string
+                maxItems: 256
                 type: array
               endpoints:
                 description: One or more endpoints associated with the service.
@@ -7696,11 +9097,11 @@ spec:
                       type: string
                       x-kubernetes-validations:
                       - message: UDS must be an absolute path or abstract socket
-                        rule: "self.startsWith('unix://') ? (self.substring(7,8) ==\
-                          \ '/' || self.substring(7,8) == '@') : true"
+                        rule: "self.startsWith('unix://') ? (self.substring(7,8) ==
+                          '/' || self.substring(7,8) == '@') : true"
                       - message: UDS may not be a dir
-                        rule: "self.startsWith('unix://') ? !self.endsWith('/') :\
-                          \ true"
+                        rule: "self.startsWith('unix://') ? !self.endsWith('/') :
+                          true"
                     labels:
                       additionalProperties:
                         type: string
@@ -7745,8 +9146,8 @@ spec:
                   - message: Address is required
                     rule: has(self.address) || has(self.network)
                   - message: UDS may not include ports
-                    rule: "(has(self.address) && self.address.startsWith('unix://'))\
-                      \ ? !has(self.ports) : true"
+                    rule: "(has(self.address) && self.address.startsWith('unix://'))
+                      ? !has(self.ports) : true"
                 maxItems: 4096
                 type: array
               exportTo:
@@ -7758,6 +9159,11 @@ spec:
                 description: The hosts associated with the ServiceEntry.
                 items:
                   type: string
+                  x-kubernetes-validations:
+                  - message: hostname cannot be wildcard
+                    rule: self != '*'
+                maxItems: 256
+                minItems: 1
                 type: array
               location:
                 description: |-
@@ -7774,14 +9180,19 @@ spec:
                   properties:
                     name:
                       description: Label assigned to the port.
+                      maxLength: 256
                       type: string
                     number:
                       description: A valid non-negative integer port number.
                       maximum: 4294967295
                       minimum: 0
                       type: integer
+                      x-kubernetes-validations:
+                      - message: port must be between 1-65535
+                        rule: 0 < self && self <= 65535
                     protocol:
                       description: The protocol exposed on the port.
+                      maxLength: 256
                       type: string
                     targetPort:
                       description: The port number on the endpoint where the traffic
@@ -7789,11 +9200,21 @@ spec:
                       maximum: 4294967295
                       minimum: 0
                       type: integer
+                      x-kubernetes-validations:
+                      - message: port must be between 1-65535
+                        rule: 0 < self && self <= 65535
                   required:
                   - number
                   - name
                   type: object
+                maxItems: 256
                 type: array
+                x-kubernetes-list-map-keys:
+                - name
+                x-kubernetes-list-type: map
+                x-kubernetes-validations:
+                - message: port number cannot be duplicated
+                  rule: self.all(l1, self.exists_one(l2, l1.number == l2.number))
               resolution:
                 description: |-
                   Service resolution mode for the hosts.
@@ -7816,17 +9237,106 @@ spec:
                 properties:
                   labels:
                     additionalProperties:
+                      maxLength: 63
                       type: string
+                      x-kubernetes-validations:
+                      - message: wildcard is not supported in selector
+                        rule: "!self.contains('*')"
                     description: One or more labels that indicate a specific set of
                       pods/VMs on which the configuration should be applied.
+                    maxProperties: 256
                     type: object
                 type: object
             required:
             - hosts
             type: object
+            x-kubernetes-validations:
+            - message: only one of WorkloadSelector or Endpoints can be set
+              rule: (has(self.workloadSelector)?1:0)+(has(self.endpoints)?1:0)<=1
+            - message: CIDR addresses are allowed only for NONE/STATIC resolution
+                types
+              rule: "!(has(self.addresses) && self.addresses.exists(k, k.contains('/'))
+                && (has(self.resolution) && self.resolution != 'STATIC' && self.resolution
+                != 'NONE'))"
+            - message: NONE mode cannot set endpoints
+              rule: "(!has(self.resolution) || self.resolution == 'NONE') ? !has(self.endpoints)
+                : true"
+            - message: DNS_ROUND_ROBIN mode cannot have multiple endpoints
+              rule: "(has(self.resolution) && self.resolution == 'DNS_ROUND_ROBIN')
+                ? (!has(self.endpoints) || size(self.endpoints) == 1) : true"
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
+        required:
+        - spec
         type: object
     served: true
     storage: false
@@ -7865,7 +9375,9 @@ spec:
               addresses:
                 description: The virtual IP addresses associated with the service.
                 items:
+                  maxLength: 64
                   type: string
+                maxItems: 256
                 type: array
               endpoints:
                 description: One or more endpoints associated with the service.
@@ -7878,11 +9390,11 @@ spec:
                       type: string
                       x-kubernetes-validations:
                       - message: UDS must be an absolute path or abstract socket
-                        rule: "self.startsWith('unix://') ? (self.substring(7,8) ==\
-                          \ '/' || self.substring(7,8) == '@') : true"
+                        rule: "self.startsWith('unix://') ? (self.substring(7,8) ==
+                          '/' || self.substring(7,8) == '@') : true"
                       - message: UDS may not be a dir
-                        rule: "self.startsWith('unix://') ? !self.endsWith('/') :\
-                          \ true"
+                        rule: "self.startsWith('unix://') ? !self.endsWith('/') :
+                          true"
                     labels:
                       additionalProperties:
                         type: string
@@ -7927,8 +9439,8 @@ spec:
                   - message: Address is required
                     rule: has(self.address) || has(self.network)
                   - message: UDS may not include ports
-                    rule: "(has(self.address) && self.address.startsWith('unix://'))\
-                      \ ? !has(self.ports) : true"
+                    rule: "(has(self.address) && self.address.startsWith('unix://'))
+                      ? !has(self.ports) : true"
                 maxItems: 4096
                 type: array
               exportTo:
@@ -7940,6 +9452,11 @@ spec:
                 description: The hosts associated with the ServiceEntry.
                 items:
                   type: string
+                  x-kubernetes-validations:
+                  - message: hostname cannot be wildcard
+                    rule: self != '*'
+                maxItems: 256
+                minItems: 1
                 type: array
               location:
                 description: |-
@@ -7956,14 +9473,19 @@ spec:
                   properties:
                     name:
                       description: Label assigned to the port.
+                      maxLength: 256
                       type: string
                     number:
                       description: A valid non-negative integer port number.
                       maximum: 4294967295
                       minimum: 0
                       type: integer
+                      x-kubernetes-validations:
+                      - message: port must be between 1-65535
+                        rule: 0 < self && self <= 65535
                     protocol:
                       description: The protocol exposed on the port.
+                      maxLength: 256
                       type: string
                     targetPort:
                       description: The port number on the endpoint where the traffic
@@ -7971,11 +9493,21 @@ spec:
                       maximum: 4294967295
                       minimum: 0
                       type: integer
+                      x-kubernetes-validations:
+                      - message: port must be between 1-65535
+                        rule: 0 < self && self <= 65535
                   required:
                   - number
                   - name
                   type: object
+                maxItems: 256
                 type: array
+                x-kubernetes-list-map-keys:
+                - name
+                x-kubernetes-list-type: map
+                x-kubernetes-validations:
+                - message: port number cannot be duplicated
+                  rule: self.all(l1, self.exists_one(l2, l1.number == l2.number))
               resolution:
                 description: |-
                   Service resolution mode for the hosts.
@@ -7998,17 +9530,106 @@ spec:
                 properties:
                   labels:
                     additionalProperties:
+                      maxLength: 63
                       type: string
+                      x-kubernetes-validations:
+                      - message: wildcard is not supported in selector
+                        rule: "!self.contains('*')"
                     description: One or more labels that indicate a specific set of
                       pods/VMs on which the configuration should be applied.
+                    maxProperties: 256
                     type: object
                 type: object
             required:
             - hosts
             type: object
+            x-kubernetes-validations:
+            - message: only one of WorkloadSelector or Endpoints can be set
+              rule: (has(self.workloadSelector)?1:0)+(has(self.endpoints)?1:0)<=1
+            - message: CIDR addresses are allowed only for NONE/STATIC resolution
+                types
+              rule: "!(has(self.addresses) && self.addresses.exists(k, k.contains('/'))
+                && (has(self.resolution) && self.resolution != 'STATIC' && self.resolution
+                != 'NONE'))"
+            - message: NONE mode cannot set endpoints
+              rule: "(!has(self.resolution) || self.resolution == 'NONE') ? !has(self.endpoints)
+                : true"
+            - message: DNS_ROUND_ROBIN mode cannot have multiple endpoints
+              rule: "(has(self.resolution) && self.resolution == 'DNS_ROUND_ROBIN')
+                ? (!has(self.endpoints) || size(self.endpoints) == 1) : true"
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
+        required:
+        - spec
         type: object
     served: true
     storage: true
@@ -8022,10 +9643,11 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
   labels:
-    app: istio-pilot
-    chart: istio
-    heritage: Tiller
-    release: istio
+    app.kubernetes.io/instance: istio
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/version: 1.24.2
+    helm.sh/chart: base-1.24.2
   name: sidecars.networking.istio.io
 spec:
   group: networking.istio.io
@@ -8451,7 +10073,8 @@ spec:
                   type: object
                 type: array
               outboundTrafficPolicy:
-                description: Configuration for the outbound traffic policy.
+                description: Set the default behavior of the sidecar for handling
+                  outbound traffic from the application.
                 properties:
                   egressProxy:
                     properties:
@@ -8489,13 +10112,86 @@ spec:
                 properties:
                   labels:
                     additionalProperties:
+                      maxLength: 63
                       type: string
+                      x-kubernetes-validations:
+                      - message: wildcard is not supported in selector
+                        rule: "!self.contains('*')"
                     description: One or more labels that indicate a specific set of
                       pods/VMs on which the configuration should be applied.
+                    maxProperties: 256
                     type: object
                 type: object
             type: object
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -8915,7 +10611,8 @@ spec:
                   type: object
                 type: array
               outboundTrafficPolicy:
-                description: Configuration for the outbound traffic policy.
+                description: Set the default behavior of the sidecar for handling
+                  outbound traffic from the application.
                 properties:
                   egressProxy:
                     properties:
@@ -8953,13 +10650,86 @@ spec:
                 properties:
                   labels:
                     additionalProperties:
+                      maxLength: 63
                       type: string
+                      x-kubernetes-validations:
+                      - message: wildcard is not supported in selector
+                        rule: "!self.contains('*')"
                     description: One or more labels that indicate a specific set of
                       pods/VMs on which the configuration should be applied.
+                    maxProperties: 256
                     type: object
                 type: object
             type: object
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -9379,7 +11149,8 @@ spec:
                   type: object
                 type: array
               outboundTrafficPolicy:
-                description: Configuration for the outbound traffic policy.
+                description: Set the default behavior of the sidecar for handling
+                  outbound traffic from the application.
                 properties:
                   egressProxy:
                     properties:
@@ -9417,13 +11188,86 @@ spec:
                 properties:
                   labels:
                     additionalProperties:
+                      maxLength: 63
                       type: string
+                      x-kubernetes-validations:
+                      - message: wildcard is not supported in selector
+                        rule: "!self.contains('*')"
                     description: One or more labels that indicate a specific set of
                       pods/VMs on which the configuration should be applied.
+                    maxProperties: 256
                     type: object
                 type: object
             type: object
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -9439,11 +11283,11 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
   labels:
-    app: istio-pilot
-    chart: istio
-    heritage: Tiller
-    istio: telemetry
-    release: istio
+    app.kubernetes.io/instance: istio
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/version: 1.24.2
+    helm.sh/chart: base-1.24.2
   name: telemetries.telemetry.istio.io
 spec:
   group: telemetry.istio.io
@@ -9599,11 +11443,11 @@ spec:
                               type: object
                               x-kubernetes-validations:
                               - message: value must be set when operation is UPSERT
-                                rule: "((has(self.operation) ? self.operation : '')\
-                                  \ == 'UPSERT') ? self.value != '' : true"
+                                rule: "((has(self.operation) ? self.operation : '')
+                                  == 'UPSERT') ? self.value != '' : true"
                               - message: value must not be set when operation is REMOVE
-                                rule: "((has(self.operation) ? self.operation : '')\
-                                  \ == 'REMOVE') ? !has(self.value) : true"
+                                rule: "((has(self.operation) ? self.operation : '')
+                                  == 'REMOVE') ? !has(self.value) : true"
                             description: Optional.
                             type: object
                         type: object
@@ -9677,9 +11521,10 @@ spec:
                 - name
                 type: object
                 x-kubernetes-validations:
-                - message: Support kinds are core/Service and gateway.networking.k8s.io/Gateway
-                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
-                    \ ['gateway.networking.k8s.io','Gateway']]"
+                - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
+                    gateway.networking.k8s.io/Gateway
+                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
+                    ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
               targetRefs:
                 description: Optional.
                 items:
@@ -9711,9 +11556,11 @@ spec:
                   - name
                   type: object
                   x-kubernetes-validations:
-                  - message: Support kinds are core/Service and gateway.networking.k8s.io/Gateway
-                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
-                      \ ['gateway.networking.k8s.io','Gateway']]"
+                  - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
+                      gateway.networking.k8s.io/Gateway
+                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
+                      ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                maxItems: 16
                 type: array
               tracing:
                 description: Optional.
@@ -9825,7 +11672,78 @@ spec:
                   type: object
                 type: array
             type: object
+            x-kubernetes-validations:
+            - message: only one of targetRefs or selector can be set
+              rule: (has(self.selector)?1:0)+(has(self.targetRef)?1:0)+(has(self.targetRefs)?1:0)<=1
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -9973,11 +11891,11 @@ spec:
                               type: object
                               x-kubernetes-validations:
                               - message: value must be set when operation is UPSERT
-                                rule: "((has(self.operation) ? self.operation : '')\
-                                  \ == 'UPSERT') ? self.value != '' : true"
+                                rule: "((has(self.operation) ? self.operation : '')
+                                  == 'UPSERT') ? self.value != '' : true"
                               - message: value must not be set when operation is REMOVE
-                                rule: "((has(self.operation) ? self.operation : '')\
-                                  \ == 'REMOVE') ? !has(self.value) : true"
+                                rule: "((has(self.operation) ? self.operation : '')
+                                  == 'REMOVE') ? !has(self.value) : true"
                             description: Optional.
                             type: object
                         type: object
@@ -10051,9 +11969,10 @@ spec:
                 - name
                 type: object
                 x-kubernetes-validations:
-                - message: Support kinds are core/Service and gateway.networking.k8s.io/Gateway
-                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
-                    \ ['gateway.networking.k8s.io','Gateway']]"
+                - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
+                    gateway.networking.k8s.io/Gateway
+                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
+                    ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
               targetRefs:
                 description: Optional.
                 items:
@@ -10085,9 +12004,11 @@ spec:
                   - name
                   type: object
                   x-kubernetes-validations:
-                  - message: Support kinds are core/Service and gateway.networking.k8s.io/Gateway
-                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
-                      \ ['gateway.networking.k8s.io','Gateway']]"
+                  - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
+                      gateway.networking.k8s.io/Gateway
+                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
+                      ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                maxItems: 16
                 type: array
               tracing:
                 description: Optional.
@@ -10199,7 +12120,78 @@ spec:
                   type: object
                 type: array
             type: object
+            x-kubernetes-validations:
+            - message: only one of targetRefs or selector can be set
+              rule: (has(self.selector)?1:0)+(has(self.targetRef)?1:0)+(has(self.targetRefs)?1:0)<=1
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -10215,10 +12207,11 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
   labels:
-    app: istio-pilot
-    chart: istio
-    heritage: Tiller
-    release: istio
+    app.kubernetes.io/instance: istio
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/version: 1.24.2
+    helm.sh/chart: base-1.24.2
   name: virtualservices.networking.istio.io
 spec:
   group: networking.istio.io
@@ -11195,6 +13188,74 @@ spec:
                 type: array
             type: object
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -12163,6 +14224,74 @@ spec:
                 type: array
             type: object
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -13131,6 +15260,74 @@ spec:
                 type: array
             type: object
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
@@ -13146,10 +15343,11 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
   labels:
-    app: istio-pilot
-    chart: istio
-    heritage: Tiller
-    release: istio
+    app.kubernetes.io/instance: istio
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/version: 1.24.2
+    helm.sh/chart: base-1.24.2
   name: wasmplugins.extensions.istio.io
 spec:
   group: extensions.istio.io
@@ -13319,9 +15517,10 @@ spec:
                 - name
                 type: object
                 x-kubernetes-validations:
-                - message: Support kinds are core/Service and gateway.networking.k8s.io/Gateway
-                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
-                    \ ['gateway.networking.k8s.io','Gateway']]"
+                - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
+                    gateway.networking.k8s.io/Gateway
+                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
+                    ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
               targetRefs:
                 description: Optional.
                 items:
@@ -13353,9 +15552,11 @@ spec:
                   - name
                   type: object
                   x-kubernetes-validations:
-                  - message: Support kinds are core/Service and gateway.networking.k8s.io/Gateway
-                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
-                      \ ['gateway.networking.k8s.io','Gateway']]"
+                  - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
+                      gateway.networking.k8s.io/Gateway
+                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
+                      ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                maxItems: 16
                 type: array
               type:
                 description: |-
@@ -13373,9 +15574,9 @@ spec:
                 type: string
                 x-kubernetes-validations:
                 - message: url must have schema one of [http, https, file, oci]
-                  rule: "isURL(self) ? (url(self).getScheme() in ['', 'http', 'https',\
-                    \ 'oci', 'file']) : (isURL('http://' + self) && url('http://'\
-                    \ +self).getScheme() in ['', 'http', 'https', 'oci', 'file'])"
+                  rule: "isURL(self) ? (url(self).getScheme() in ['', 'http', 'https',
+                    'oci', 'file']) : (isURL('http://' + self) && url('http://' +self).getScheme()
+                    in ['', 'http', 'https', 'oci', 'file'])"
               verificationKey:
                 type: string
               vmConfig:
@@ -13409,8 +15610,8 @@ spec:
                       type: object
                       x-kubernetes-validations:
                       - message: value may only be set when valueFrom is INLINE
-                        rule: "(has(self.valueFrom) ? self.valueFrom : '') != 'HOST'\
-                          \ || !has(self.value)"
+                        rule: "(has(self.valueFrom) ? self.valueFrom : '') != 'HOST'
+                          || !has(self.value)"
                     maxItems: 256
                     type: array
                     x-kubernetes-list-map-keys:
@@ -13420,7 +15621,78 @@ spec:
             required:
             - url
             type: object
+            x-kubernetes-validations:
+            - message: only one of targetRefs or selector can be set
+              rule: (has(self.selector)?1:0)+(has(self.targetRef)?1:0)+(has(self.targetRefs)?1:0)<=1
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         required:
@@ -13438,10 +15710,11 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
   labels:
-    app: istio-pilot
-    chart: istio
-    heritage: Tiller
-    release: istio
+    app.kubernetes.io/instance: istio
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/version: 1.24.2
+    helm.sh/chart: base-1.24.2
   name: workloadentries.networking.istio.io
 spec:
   group: networking.istio.io
@@ -13485,8 +15758,8 @@ spec:
                 type: string
                 x-kubernetes-validations:
                 - message: UDS must be an absolute path or abstract socket
-                  rule: "self.startsWith('unix://') ? (self.substring(7,8) == '/'\
-                    \ || self.substring(7,8) == '@') : true"
+                  rule: "self.startsWith('unix://') ? (self.substring(7,8) == '/'
+                    || self.substring(7,8) == '@') : true"
                 - message: UDS may not be a dir
                   rule: "self.startsWith('unix://') ? !self.endsWith('/') : true"
               labels:
@@ -13533,14 +15806,80 @@ spec:
             - message: Address is required
               rule: has(self.address) || has(self.network)
             - message: UDS may not include ports
-              rule: "(has(self.address) && self.address.startsWith('unix://')) ? !has(self.ports)\
-                \ : true"
+              rule: "(has(self.address) && self.address.startsWith('unix://')) ? !has(self.ports)
+                : true"
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         required:
-        - spec
-        - spec
         - spec
         type: object
     served: true
@@ -13575,8 +15914,8 @@ spec:
                 type: string
                 x-kubernetes-validations:
                 - message: UDS must be an absolute path or abstract socket
-                  rule: "self.startsWith('unix://') ? (self.substring(7,8) == '/'\
-                    \ || self.substring(7,8) == '@') : true"
+                  rule: "self.startsWith('unix://') ? (self.substring(7,8) == '/'
+                    || self.substring(7,8) == '@') : true"
                 - message: UDS may not be a dir
                   rule: "self.startsWith('unix://') ? !self.endsWith('/') : true"
               labels:
@@ -13623,14 +15962,80 @@ spec:
             - message: Address is required
               rule: has(self.address) || has(self.network)
             - message: UDS may not include ports
-              rule: "(has(self.address) && self.address.startsWith('unix://')) ? !has(self.ports)\
-                \ : true"
+              rule: "(has(self.address) && self.address.startsWith('unix://')) ? !has(self.ports)
+                : true"
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         required:
-        - spec
-        - spec
         - spec
         type: object
     served: true
@@ -13665,8 +16070,8 @@ spec:
                 type: string
                 x-kubernetes-validations:
                 - message: UDS must be an absolute path or abstract socket
-                  rule: "self.startsWith('unix://') ? (self.substring(7,8) == '/'\
-                    \ || self.substring(7,8) == '@') : true"
+                  rule: "self.startsWith('unix://') ? (self.substring(7,8) == '/'
+                    || self.substring(7,8) == '@') : true"
                 - message: UDS may not be a dir
                   rule: "self.startsWith('unix://') ? !self.endsWith('/') : true"
               labels:
@@ -13713,14 +16118,80 @@ spec:
             - message: Address is required
               rule: has(self.address) || has(self.network)
             - message: UDS may not include ports
-              rule: "(has(self.address) && self.address.startsWith('unix://')) ? !has(self.ports)\
-                \ : true"
+              rule: "(has(self.address) && self.address.startsWith('unix://')) ? !has(self.ports)
+                : true"
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
         required:
-        - spec
-        - spec
         - spec
         type: object
     served: true
@@ -13733,10 +16204,11 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   labels:
-    app: istio-pilot
-    chart: istio
-    heritage: Tiller
-    release: istio
+    app.kubernetes.io/instance: istio
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: istio
+    app.kubernetes.io/version: 1.24.2
+    helm.sh/chart: base-1.24.2
   name: workloadgroups.networking.istio.io
 spec:
   group: networking.istio.io
@@ -13775,10 +16247,12 @@ spec:
                   annotations:
                     additionalProperties:
                       type: string
+                    maxProperties: 256
                     type: object
                   labels:
                     additionalProperties:
                       type: string
+                    maxProperties: 256
                     type: object
                 type: object
               probe:
@@ -13807,13 +16281,17 @@ spec:
                       command:
                         description: Command to run.
                         items:
+                          minLength: 1
                           type: string
                         type: array
+                    required:
+                    - command
                     type: object
                   failureThreshold:
                     description: Minimum consecutive failures for the probe to be
                       considered failed after having succeeded.
                     format: int32
+                    minimum: 0
                     type: integer
                   httpGet:
                     description: '`httpGet` is performed to a given endpoint and the
@@ -13828,6 +16306,7 @@ spec:
                         items:
                           properties:
                             name:
+                              pattern: ^[-_A-Za-z0-9]+$
                               type: string
                             value:
                               type: string
@@ -13841,8 +16320,14 @@ spec:
                         maximum: 4294967295
                         minimum: 0
                         type: integer
+                        x-kubernetes-validations:
+                        - message: port must be between 1-65535
+                          rule: 0 < self && self <= 65535
                       scheme:
                         type: string
+                        x-kubernetes-validations:
+                        - message: scheme must be one of [HTTP, HTTPS]
+                          rule: self in ['', 'HTTP', 'HTTPS']
                     required:
                     - port
                     type: object
@@ -13850,15 +16335,18 @@ spec:
                     description: Number of seconds after the container has started
                       before readiness probes are initiated.
                     format: int32
+                    minimum: 0
                     type: integer
                   periodSeconds:
                     description: How often (in seconds) to perform the probe.
                     format: int32
+                    minimum: 0
                     type: integer
                   successThreshold:
                     description: Minimum consecutive successes for the probe to be
                       considered successful after having failed.
                     format: int32
+                    minimum: 0
                     type: integer
                   tcpSocket:
                     description: Health is determined by if the proxy is able to connect.
@@ -13869,12 +16357,16 @@ spec:
                         maximum: 4294967295
                         minimum: 0
                         type: integer
+                        x-kubernetes-validations:
+                        - message: port must be between 1-65535
+                          rule: 0 < self && self <= 65535
                     required:
                     - port
                     type: object
                   timeoutSeconds:
                     description: Number of seconds after which the probe times out.
                     format: int32
+                    minimum: 0
                     type: integer
                 type: object
               template:
@@ -13888,8 +16380,8 @@ spec:
                     type: string
                     x-kubernetes-validations:
                     - message: UDS must be an absolute path or abstract socket
-                      rule: "self.startsWith('unix://') ? (self.substring(7,8) ==\
-                        \ '/' || self.substring(7,8) == '@') : true"
+                      rule: "self.startsWith('unix://') ? (self.substring(7,8) ==
+                        '/' || self.substring(7,8) == '@') : true"
                     - message: UDS may not be a dir
                       rule: "self.startsWith('unix://') ? !self.endsWith('/') : true"
                   labels:
@@ -13934,14 +16426,84 @@ spec:
                 type: object
                 x-kubernetes-validations:
                 - message: UDS may not include ports
-                  rule: "(has(self.address) && self.address.startsWith('unix://'))\
-                    \ ? !has(self.ports) : true"
+                  rule: "(has(self.address) && self.address.startsWith('unix://'))
+                    ? !has(self.ports) : true"
             required:
             - template
             type: object
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
+        required:
+        - spec
         type: object
     served: true
     storage: false
@@ -13970,10 +16532,12 @@ spec:
                   annotations:
                     additionalProperties:
                       type: string
+                    maxProperties: 256
                     type: object
                   labels:
                     additionalProperties:
                       type: string
+                    maxProperties: 256
                     type: object
                 type: object
               probe:
@@ -14002,13 +16566,17 @@ spec:
                       command:
                         description: Command to run.
                         items:
+                          minLength: 1
                           type: string
                         type: array
+                    required:
+                    - command
                     type: object
                   failureThreshold:
                     description: Minimum consecutive failures for the probe to be
                       considered failed after having succeeded.
                     format: int32
+                    minimum: 0
                     type: integer
                   httpGet:
                     description: '`httpGet` is performed to a given endpoint and the
@@ -14023,6 +16591,7 @@ spec:
                         items:
                           properties:
                             name:
+                              pattern: ^[-_A-Za-z0-9]+$
                               type: string
                             value:
                               type: string
@@ -14036,8 +16605,14 @@ spec:
                         maximum: 4294967295
                         minimum: 0
                         type: integer
+                        x-kubernetes-validations:
+                        - message: port must be between 1-65535
+                          rule: 0 < self && self <= 65535
                       scheme:
                         type: string
+                        x-kubernetes-validations:
+                        - message: scheme must be one of [HTTP, HTTPS]
+                          rule: self in ['', 'HTTP', 'HTTPS']
                     required:
                     - port
                     type: object
@@ -14045,15 +16620,18 @@ spec:
                     description: Number of seconds after the container has started
                       before readiness probes are initiated.
                     format: int32
+                    minimum: 0
                     type: integer
                   periodSeconds:
                     description: How often (in seconds) to perform the probe.
                     format: int32
+                    minimum: 0
                     type: integer
                   successThreshold:
                     description: Minimum consecutive successes for the probe to be
                       considered successful after having failed.
                     format: int32
+                    minimum: 0
                     type: integer
                   tcpSocket:
                     description: Health is determined by if the proxy is able to connect.
@@ -14064,12 +16642,16 @@ spec:
                         maximum: 4294967295
                         minimum: 0
                         type: integer
+                        x-kubernetes-validations:
+                        - message: port must be between 1-65535
+                          rule: 0 < self && self <= 65535
                     required:
                     - port
                     type: object
                   timeoutSeconds:
                     description: Number of seconds after which the probe times out.
                     format: int32
+                    minimum: 0
                     type: integer
                 type: object
               template:
@@ -14083,8 +16665,8 @@ spec:
                     type: string
                     x-kubernetes-validations:
                     - message: UDS must be an absolute path or abstract socket
-                      rule: "self.startsWith('unix://') ? (self.substring(7,8) ==\
-                        \ '/' || self.substring(7,8) == '@') : true"
+                      rule: "self.startsWith('unix://') ? (self.substring(7,8) ==
+                        '/' || self.substring(7,8) == '@') : true"
                     - message: UDS may not be a dir
                       rule: "self.startsWith('unix://') ? !self.endsWith('/') : true"
                   labels:
@@ -14129,14 +16711,84 @@ spec:
                 type: object
                 x-kubernetes-validations:
                 - message: UDS may not include ports
-                  rule: "(has(self.address) && self.address.startsWith('unix://'))\
-                    \ ? !has(self.ports) : true"
+                  rule: "(has(self.address) && self.address.startsWith('unix://'))
+                    ? !has(self.ports) : true"
             required:
             - template
             type: object
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
+        required:
+        - spec
         type: object
     served: true
     storage: false
@@ -14165,10 +16817,12 @@ spec:
                   annotations:
                     additionalProperties:
                       type: string
+                    maxProperties: 256
                     type: object
                   labels:
                     additionalProperties:
                       type: string
+                    maxProperties: 256
                     type: object
                 type: object
               probe:
@@ -14197,13 +16851,17 @@ spec:
                       command:
                         description: Command to run.
                         items:
+                          minLength: 1
                           type: string
                         type: array
+                    required:
+                    - command
                     type: object
                   failureThreshold:
                     description: Minimum consecutive failures for the probe to be
                       considered failed after having succeeded.
                     format: int32
+                    minimum: 0
                     type: integer
                   httpGet:
                     description: '`httpGet` is performed to a given endpoint and the
@@ -14218,6 +16876,7 @@ spec:
                         items:
                           properties:
                             name:
+                              pattern: ^[-_A-Za-z0-9]+$
                               type: string
                             value:
                               type: string
@@ -14231,8 +16890,14 @@ spec:
                         maximum: 4294967295
                         minimum: 0
                         type: integer
+                        x-kubernetes-validations:
+                        - message: port must be between 1-65535
+                          rule: 0 < self && self <= 65535
                       scheme:
                         type: string
+                        x-kubernetes-validations:
+                        - message: scheme must be one of [HTTP, HTTPS]
+                          rule: self in ['', 'HTTP', 'HTTPS']
                     required:
                     - port
                     type: object
@@ -14240,15 +16905,18 @@ spec:
                     description: Number of seconds after the container has started
                       before readiness probes are initiated.
                     format: int32
+                    minimum: 0
                     type: integer
                   periodSeconds:
                     description: How often (in seconds) to perform the probe.
                     format: int32
+                    minimum: 0
                     type: integer
                   successThreshold:
                     description: Minimum consecutive successes for the probe to be
                       considered successful after having failed.
                     format: int32
+                    minimum: 0
                     type: integer
                   tcpSocket:
                     description: Health is determined by if the proxy is able to connect.
@@ -14259,12 +16927,16 @@ spec:
                         maximum: 4294967295
                         minimum: 0
                         type: integer
+                        x-kubernetes-validations:
+                        - message: port must be between 1-65535
+                          rule: 0 < self && self <= 65535
                     required:
                     - port
                     type: object
                   timeoutSeconds:
                     description: Number of seconds after which the probe times out.
                     format: int32
+                    minimum: 0
                     type: integer
                 type: object
               template:
@@ -14278,8 +16950,8 @@ spec:
                     type: string
                     x-kubernetes-validations:
                     - message: UDS must be an absolute path or abstract socket
-                      rule: "self.startsWith('unix://') ? (self.substring(7,8) ==\
-                        \ '/' || self.substring(7,8) == '@') : true"
+                      rule: "self.startsWith('unix://') ? (self.substring(7,8) ==
+                        '/' || self.substring(7,8) == '@') : true"
                     - message: UDS may not be a dir
                       rule: "self.startsWith('unix://') ? !self.endsWith('/') : true"
                   labels:
@@ -14324,14 +16996,84 @@ spec:
                 type: object
                 x-kubernetes-validations:
                 - message: UDS may not include ports
-                  rule: "(has(self.address) && self.address.startsWith('unix://'))\
-                    \ ? !has(self.ports) : true"
+                  rule: "(has(self.address) && self.address.startsWith('unix://'))
+                    ? !has(self.ports) : true"
             required:
             - template
             type: object
           status:
+            properties:
+              conditions:
+                description: Current service state of the resource.
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                type: array
+              observedGeneration:
+                anyOf:
+                - type: integer
+                - type: string
+                description: Resource Generation to which the Reconciled Condition
+                  refers.
+                x-kubernetes-int-or-string: true
+              validationMessages:
+                description: Includes any errors or warnings detected by Istio's analyzers.
+                items:
+                  properties:
+                    documentationUrl:
+                      description: A url pointing to the Istio documentation for this
+                        specific error type.
+                      type: string
+                    level:
+                      description: |-
+                        Represents how severe a message is.
+
+                        Valid Options: UNKNOWN, ERROR, WARNING, INFO
+                      enum:
+                      - UNKNOWN
+                      - ERROR
+                      - WARNING
+                      - INFO
+                      type: string
+                    type:
+                      properties:
+                        code:
+                          description: A 7 character code matching `^IST[0-9]{4}$`
+                            intended to uniquely identify the message type.
+                          type: string
+                        name:
+                          description: A human-readable name for the message type.
+                          type: string
+                      type: object
+                  type: object
+                type: array
             type: object
             x-kubernetes-preserve-unknown-fields: true
+        required:
+        - spec
         type: object
     served: true
     storage: true
