@@ -37,7 +37,7 @@ jobs:
       run: ./tests/gh-actions/install_kserve.sh
 
     - name: Create test namespace
-      run: kubectl create ns kserve-test
+      run: kubectl create ns kubeflow-user-example-com # warning, this is not a real KF profile
 
     - name: Setup python 3.9
       uses: actions/setup-python@v4
