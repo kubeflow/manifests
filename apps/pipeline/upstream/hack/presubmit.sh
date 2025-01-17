@@ -27,8 +27,8 @@ PATH="$TMP:$PATH"
 pushd "${TMP}"
 
 # Install kustomize
-KUSTOMIZE_VERSION=5.4.3
-# Reference: https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.4.3
+KUSTOMIZE_VERSION=5.2.1
+# Reference: https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.2.1
 curl -s -LO "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VERSION}/kustomize_v${KUSTOMIZE_VERSION}_linux_amd64.tar.gz"
 tar -xzf kustomize_v${KUSTOMIZE_VERSION}_linux_amd64.tar.gz
 chmod +x kustomize
