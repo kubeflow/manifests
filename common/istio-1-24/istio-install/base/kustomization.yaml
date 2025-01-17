@@ -9,6 +9,7 @@ resources:
 - deny_all_authorizationpolicy.yaml
 - gateway.yaml
 - istio-ingressgateway-service.yaml
+- istio-ingressgateway-deployment.yaml
 
 patches:
 - path: patches/service.yaml
