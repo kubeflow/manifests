@@ -504,7 +504,7 @@ kustomize build apps/tensorboard/tensorboard-controller/upstream/overlays/kubefl
 Install the Training Operator official Kubeflow component:
 
 ```sh
-kustomize build apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build apps/training-operator/upstream/overlays/kubeflow | kubectl apply --server-side --force-conflicts -f -
 ```
 
 #### User Namespaces
