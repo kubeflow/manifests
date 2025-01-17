@@ -2,7 +2,6 @@
 set -euo pipefail
 
 echo "Installing KNative ..."
-
 # Retry mechanism for applying Knative manifests
 set +e
 for i in {1..5}; do
