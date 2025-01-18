@@ -6,7 +6,7 @@ resources:
   - namespace.yaml
 images:
   - name: kubeflow/training-operator
-    newTag: "v1-04f9f13"
+    newTag: v1-1155249
 secretGenerator:
   - name: training-operator-webhook-cert
     options:
