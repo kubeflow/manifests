@@ -7,32 +7,36 @@ namespace: kubeflow
 patches:
   - target:
       kind: Deployment
-      labelSelector: "app.kubernetes.io/name=spark-operator"
+      name: spark-operator-webhook
     patch: |-
       - op: add
         path: /spec/template/spec/containers/0/securityContext
         value:
           allowPrivilegeEscalation: false
           capabilities:
-            drop: ["ALL"]
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
           runAsNonRoot: true
-          runAsUser: 185
           seccompProfile:
-            type: RuntimeDefault
+            type: RuntimeDefault # Only this is missing upstream!
   - target:
       kind: Deployment
-      labelSelector: "app.kubernetes.io/name=spark-operator"
+      name: spark-operator-controller
     patch: |-
       - op: add
         path: /spec/template/spec/containers/0/securityContext
         value:
           allowPrivilegeEscalation: false
           capabilities:
-            drop: ["ALL"]
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
           runAsNonRoot: true
-          runAsUser: 185
           seccompProfile:
-            type: RuntimeDefault
+            type: RuntimeDefault # only this is missing upstream!
   - target:
       kind: Deployment
       name: spark-operator-webhook
