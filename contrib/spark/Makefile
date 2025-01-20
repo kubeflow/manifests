@@ -1,4 +1,4 @@
-SPARK_OPERATOR_RELEASE_VERSION ?= 2.0.2
+SPARK_OPERATOR_RELEASE_VERSION ?= 2.1.0
 SPARK_OPERATOR_HELM_CHART_REPO ?= https://kubeflow.github.io/spark-operator
 
 .PHONY: spark-operator/base

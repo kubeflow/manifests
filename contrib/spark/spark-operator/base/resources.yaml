@@ -1,5 +1,5 @@
 ---
-# Source: spark-operator/crds/sparkoperator.k8s.io_scheduledsparkapplications.yaml
+# Source: crds/sparkoperator.k8s.io_scheduledsparkapplications.yaml
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -131,6 +131,12 @@ spec:
                     description: Deps captures all possible types of dependencies
                       of a Spark application.
                     properties:
+                      archives:
+                        description: Archives is a list of archives to be extracted
+                          into the working directory of each executor.
+                        items:
+                          type: string
+                        type: array
                       excludePackages:
                         description: |-
                           ExcludePackages is a list of "groupId:artifactId", to exclude while resolving the
@@ -4751,6 +4757,13 @@ spec:
                           - name
                           type: object
                         type: array
+                      template:
+                        description: |-
+                          Template is a pod template that can be used to define the driver or executor pod configurations that Spark configurations do not support.
+                          Spark version >= 3.0.0 is required.
+                          Ref: https://spark.apache.org/docs/latest/running-on-kubernetes.html#pod-template.
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
                       terminationGracePeriodSeconds:
                         description: Termination grace period seconds for the pod
                         format: int64
@@ -9508,6 +9521,13 @@ spec:
                           - name
                           type: object
                         type: array
+                      template:
+                        description: |-
+                          Template is a pod template that can be used to define the driver or executor pod configurations that Spark configurations do not support.
+                          Spark version >= 3.0.0 is required.
+                          Ref: https://spark.apache.org/docs/latest/running-on-kubernetes.html#pod-template.
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
                       terminationGracePeriodSeconds:
                         description: Termination grace period seconds for the pod
                         format: int64
@@ -10347,6 +10367,23 @@ spec:
                                     May contain labels and annotations that will be copied into the PVC
                                     when creating it. No other fields are allowed and will be rejected during
                                     validation.
+                                  properties:
+                                    annotations:
+                                      additionalProperties:
+                                        type: string
+                                      type: object
+                                    finalizers:
+                                      items:
+                                        type: string
+                                      type: array
+                                    labels:
+                                      additionalProperties:
+                                        type: string
+                                      type: object
+                                    name:
+                                      type: string
+                                    namespace:
+                                      type: string
                                   type: object
                                 spec:
                                   description: |-
@@ -11569,6 +11606,7 @@ spec:
                 required:
                 - driver
                 - executor
+                - mainApplicationFile
                 - sparkVersion
                 - type
                 type: object
@@ -11617,6 +11655,9 @@ spec:
                   application.
                 type: string
             type: object
+        required:
+        - metadata
+        - spec
         type: object
     served: true
     storage: true
@@ -11624,7 +11665,7 @@ spec:
       status: {}
 
 ---
-# Source: spark-operator/crds/sparkoperator.k8s.io_sparkapplications.yaml
+# Source: crds/sparkoperator.k8s.io_sparkapplications.yaml
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -11725,6 +11766,12 @@ spec:
                 description: Deps captures all possible types of dependencies of a
                   Spark application.
                 properties:
+                  archives:
+                    description: Archives is a list of archives to be extracted into
+                      the working directory of each executor.
+                    items:
+                      type: string
+                    type: array
                   excludePackages:
                     description: |-
                       ExcludePackages is a list of "groupId:artifactId", to exclude while resolving the
@@ -16315,6 +16362,13 @@ spec:
                       - name
                       type: object
                     type: array
+                  template:
+                    description: |-
+                      Template is a pod template that can be used to define the driver or executor pod configurations that Spark configurations do not support.
+                      Spark version >= 3.0.0 is required.
+                      Ref: https://spark.apache.org/docs/latest/running-on-kubernetes.html#pod-template.
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
                   terminationGracePeriodSeconds:
                     description: Termination grace period seconds for the pod
                     format: int64
@@ -21042,6 +21096,13 @@ spec:
                       - name
                       type: object
                     type: array
+                  template:
+                    description: |-
+                      Template is a pod template that can be used to define the driver or executor pod configurations that Spark configurations do not support.
+                      Spark version >= 3.0.0 is required.
+                      Ref: https://spark.apache.org/docs/latest/running-on-kubernetes.html#pod-template.
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
                   terminationGracePeriodSeconds:
                     description: Termination grace period seconds for the pod
                     format: int64
@@ -21878,6 +21939,23 @@ spec:
                                 May contain labels and annotations that will be copied into the PVC
                                 when creating it. No other fields are allowed and will be rejected during
                                 validation.
+                              properties:
+                                annotations:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                                finalizers:
+                                  items:
+                                    type: string
+                                  type: array
+                                labels:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                                name:
+                                  type: string
+                                namespace:
+                                  type: string
                               type: object
                             spec:
                               description: |-
@@ -23096,6 +23174,7 @@ spec:
             required:
             - driver
             - executor
+            - mainApplicationFile
             - sparkVersion
             - type
             type: object
@@ -23176,6 +23255,9 @@ spec:
             required:
             - driverInfo
             type: object
+        required:
+        - metadata
+        - spec
         type: object
     served: true
     storage: true
@@ -23186,28 +23268,30 @@ spec:
 # Source: spark-operator/templates/controller/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
+automountServiceAccountToken: true
 metadata:
   name: spark-operator-controller
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.0.2
+    helm.sh/chart: spark-operator-2.1.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 ---
 # Source: spark-operator/templates/webhook/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
+automountServiceAccountToken: true
 metadata:
   name: spark-operator-webhook
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.0.2
+    helm.sh/chart: spark-operator-2.1.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 ---
@@ -23218,10 +23302,10 @@ metadata:
   name: spark-operator-controller
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.0.2
+    helm.sh/chart: spark-operator-2.1.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 rules:
@@ -23303,6 +23387,8 @@ rules:
   - get
   - create
   - delete
+  - list
+  - watch
 - apiGroups:
   - sparkoperator.k8s.io
   resources:
@@ -23335,10 +23421,10 @@ metadata:
   name: spark-operator-webhook
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.0.2
+    helm.sh/chart: spark-operator-2.1.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 rules:
@@ -23409,10 +23495,10 @@ metadata:
   name: spark-operator-controller
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.0.2
+    helm.sh/chart: spark-operator-2.1.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 subjects:
@@ -23431,10 +23517,10 @@ metadata:
   name: spark-operator-webhook
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.0.2
+    helm.sh/chart: spark-operator-2.1.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 subjects:
@@ -23453,10 +23539,10 @@ metadata:
   name: spark-operator-controller
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.0.2
+    helm.sh/chart: spark-operator-2.1.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 rules:
@@ -23483,10 +23569,10 @@ metadata:
   name: spark-operator-webhook
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.0.2
+    helm.sh/chart: spark-operator-2.1.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 rules:
@@ -23528,10 +23614,10 @@ metadata:
   name: spark-operator-controller
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.0.2
+    helm.sh/chart: spark-operator-2.1.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 subjects:
@@ -23550,10 +23636,10 @@ metadata:
   name: spark-operator-webhook
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.0.2
+    helm.sh/chart: spark-operator-2.1.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 subjects:
@@ -23571,10 +23657,10 @@ kind: Service
 metadata:
   name: spark-operator-webhook-svc
   labels:
-    helm.sh/chart: spark-operator-2.0.2
+    helm.sh/chart: spark-operator-2.1.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 spec:
@@ -23593,10 +23679,10 @@ kind: Deployment
 metadata:
   name: spark-operator-controller
   labels:
-    helm.sh/chart: spark-operator-2.0.2
+    helm.sh/chart: spark-operator-2.1.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 spec:
@@ -23619,7 +23705,7 @@ spec:
     spec:
       containers:
       - name: spark-operator-controller
-        image: docker.io/kubeflow/spark-operator:2.0.2
+        image: docker.io/kubeflow/spark-operator:2.1.0
         imagePullPolicy: IfNotPresent
         args:
         - controller
@@ -23639,9 +23725,15 @@ spec:
         - --workqueue-ratelimiter-bucket-qps=50
         - --workqueue-ratelimiter-bucket-size=500
         - --workqueue-ratelimiter-max-delay=6h
+        - --driver-pod-creation-grace-period=10s
+        - --max-tracked-executor-per-app=1000
         ports:
         - name: "metrics"
           containerPort: 8080
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
+          readOnly: false
         livenessProbe:
           httpGet:
             port: 8081
@@ -23652,7 +23744,22 @@ spec:
             port: 8081
             scheme: HTTP
             path: /readyz
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+      volumes:
+      - emptyDir:
+          sizeLimit: 1Gi
+        name: tmp
       serviceAccountName: spark-operator-controller
+      automountServiceAccountToken: true
+      securityContext:
+        fsGroup: 185
 ---
 # Source: spark-operator/templates/webhook/deployment.yaml
 apiVersion: apps/v1
@@ -23660,10 +23767,10 @@ kind: Deployment
 metadata:
   name: spark-operator-webhook
   labels:
-    helm.sh/chart: spark-operator-2.0.2
+    helm.sh/chart: spark-operator-2.1.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 spec:
@@ -23682,7 +23789,7 @@ spec:
     spec:
       containers:
       - name: spark-operator-webhook
-        image: docker.io/kubeflow/spark-operator:2.0.2
+        image: docker.io/kubeflow/spark-operator:2.1.0
         imagePullPolicy: IfNotPresent
         args:
         - webhook
@@ -23709,6 +23816,11 @@ spec:
           containerPort: 9443
         - name: "metrics"
           containerPort: 8080
+        volumeMounts:
+        - mountPath: /etc/k8s-webhook-server/serving-certs
+          name: serving-certs
+          readOnly: false
+          subPath: serving-certs
         livenessProbe:
           httpGet:
             port: 8081
@@ -23719,7 +23831,22 @@ spec:
             port: 8081
             scheme: HTTP
             path: /readyz
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+      volumes:
+      - emptyDir:
+          sizeLimit: 500Mi
+        name: serving-certs
       serviceAccountName: spark-operator-webhook
+      automountServiceAccountToken: true
+      securityContext:
+        fsGroup: 185
 ---
 # Source: spark-operator/templates/webhook/mutatingwebhookconfiguration.yaml
 apiVersion: admissionregistration.k8s.io/v1
@@ -23727,10 +23854,10 @@ kind: MutatingWebhookConfiguration
 metadata:
   name: spark-operator-webhook
   labels:
-    helm.sh/chart: spark-operator-2.0.2
+    helm.sh/chart: spark-operator-2.1.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 webhooks:
@@ -23792,10 +23919,10 @@ kind: ValidatingWebhookConfiguration
 metadata:
   name: spark-operator-webhook
   labels:
-    helm.sh/chart: spark-operator-2.0.2
+    helm.sh/chart: spark-operator-2.1.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 webhooks:
