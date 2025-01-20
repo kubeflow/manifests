@@ -43,7 +43,7 @@ This repo periodically syncs all official Kubeflow components from their respect
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
-| Training Operator | apps/training-operator/upstream | [v1.8.1](https://github.com/kubeflow/training-operator/tree/v1.8.1/manifests) |
+| Training Operator | apps/training-operator/upstream | [v1.9.0-rc.0](https://github.com/kubeflow/training-operator/tree/v1.9.0-rc.0/manifests) |
 | Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.9.2](https://github.com/kubeflow/kubeflow/tree/v1.9.2/components/notebook-controller/config) |
 | PVC Viewer Controller | apps/pvcviewer-controller/upstream | [v1.9.2](https://github.com/kubeflow/kubeflow/tree/v1.9.2/components/pvcviewer-controller/config) |
 | Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.9.2](https://github.com/kubeflow/kubeflow/tree/v1.9.2/components/tensorboard-controller/config) |
@@ -54,17 +54,17 @@ This repo periodically syncs all official Kubeflow components from their respect
 | Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.9.2](https://github.com/kubeflow/kubeflow/tree/v1.9.2/components/crud-web-apps/tensorboards/manifests) |
 | Volumes Web App | apps/volumes-web-app/upstream | [v1.9.2](https://github.com/kubeflow/kubeflow/tree/v1.9.2/components/crud-web-apps/volumes/manifests) |
 | Katib | apps/katib/upstream | [v0.17.0](https://github.com/kubeflow/katib/tree/v0.17.0/manifests/v1beta1) |
-| KServe | contrib/kserve/kserve | [v0.14.0](https://github.com/kserve/kserve/releases/tag/v0.14.0/install/v0.14.0) |
+| KServe | contrib/kserve/kserve | [v0.14.1](https://github.com/kserve/kserve/releases/tag/v0.14.1/install/v0.14.1) |
 | KServe Models Web App | contrib/kserve/models-web-app | [0.13.0](https://github.com/kserve/models-web-app/tree/0.13.0/config) |
 | Kubeflow Pipelines | apps/pipeline/upstream | [2.4.0](https://github.com/kubeflow/pipelines/tree/2.4.0/manifests/kustomize) |
-| Kubeflow Model Registry | apps/model-registry/upstream | [v0.2.10](https://github.com/kubeflow/model-registry/tree/v0.2.10/manifests/kustomize) |
+| Kubeflow Model Registry | apps/model-registry/upstream | [v0.2.12](https://github.com/kubeflow/model-registry/tree/v0.2.12/manifests/kustomize) |
 
 The following is also a matrix with versions from common components that are
 used from the different projects of Kubeflow:
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
-| Istio | common/istio-1-23 | [1.23.2](https://github.com/istio/istio/releases/tag/1.23.2) |
+| Istio | common/istio-1-24 | [1.24.2](https://github.com/istio/istio/releases/tag/1.24.2) |
 | Knative | common/knative/knative-serving <br /> common/knative/knative-eventing | [v1.16.0](https://github.com/knative/serving/releases/tag/knative-v1.16.0) <br /> [v1.16.1](https://github.com/knative/eventing/releases/tag/knative-v1.16.1) |
 | Cert Manager | common/cert-manager | [1.16.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.16.1) |
 
@@ -211,9 +211,9 @@ Install Istio:
 
 ```sh
 echo "Installing Istio configured with external authorization..."
-kustomize build common/istio-1-23/istio-crds/base | kubectl apply -f -
-kustomize build common/istio-1-23/istio-namespace/base | kubectl apply -f -
-kustomize build common/istio-1-23/istio-install/overlays/oauth2-proxy | kubectl apply -f -
+kustomize build common/istio-1-24/istio-crds/base | kubectl apply -f -
+kustomize build common/istio-1-24/istio-namespace/base | kubectl apply -f -
+kustomize build common/istio-1-24/istio-install/overlays/oauth2-proxy | kubectl apply -f -
 
 echo "Waiting for all Istio Pods to become ready..."
 kubectl wait --for=condition=Ready pods --all -n istio-system --timeout 300s
@@ -343,7 +343,7 @@ Install Knative Serving:
 
 ```sh
 kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -
-kustomize build common/istio-1-23/cluster-local-gateway/base | kubectl apply -f -
+kustomize build common/istio-1-24/cluster-local-gateway/base | kubectl apply -f -
 ```
 
 Optionally, you can install Knative Eventing which can be used for inference request logging:
@@ -390,7 +390,7 @@ Create the Kubeflow Gateway, `kubeflow-gateway` and ClusterRole,
 Install kubeflow istio resources:
 
 ```sh
-kustomize build common/istio-1-23/kubeflow-istio-resources/base | kubectl apply -f -
+kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
 ```
 
 #### Kubeflow Pipelines
@@ -504,7 +504,7 @@ kustomize build apps/tensorboard/tensorboard-controller/upstream/overlays/kubefl
 Install the Training Operator official Kubeflow component:
 
 ```sh
-kustomize build apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build apps/training-operator/upstream/overlays/kubeflow | kubectl apply --server-side --force-conflicts -f -
 ```
 
 #### User Namespaces
