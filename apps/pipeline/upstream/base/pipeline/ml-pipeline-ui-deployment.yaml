@@ -24,7 +24,8 @@ spec:
         imagePullPolicy: IfNotPresent
         name: ml-pipeline-ui
         ports:
-        - containerPort: 3000
+        - name: http
+          containerPort: 3000
         volumeMounts:
         - name: config-volume
           mountPath: /etc/config
