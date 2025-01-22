@@ -16,9 +16,29 @@ spec:
     serviceAccount: default-editor
     annotations:
       "sidecar.istio.io/inject": "false"
+    securityContext:
+      capabilities:
+        drop:
+          - ALL
+      runAsUser: 185    # Non-root user
+      runAsGroup: 0     # Root group (as per your requirement)
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
   executor:
     instances: 1
     cores: 1
     memory: 512m
     annotations:
       "sidecar.istio.io/inject": "false"
+    securityContext:
+      capabilities:
+        drop:
+          - ALL
+      runAsUser: 185    # Non-root user (Consistent with driver)
+      runAsGroup: 0     # Root group (Consistent with driver)
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
