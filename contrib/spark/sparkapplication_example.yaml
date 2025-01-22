@@ -20,8 +20,8 @@ spec:
       capabilities:
         drop:
           - ALL
-      runAsUser: 185    # Non-root user
-      runAsGroup: 0     # Root group (as per your requirement)
+      runAsUser: 185
+      runAsGroup: 0
       runAsNonRoot: true
       allowPrivilegeEscalation: false
       seccompProfile:
@@ -36,8 +36,8 @@ spec:
       capabilities:
         drop:
           - ALL
-      runAsUser: 185    # Non-root user (Consistent with driver)
-      runAsGroup: 0     # Root group (Consistent with driver)
+      runAsUser: 185
+      runAsGroup: 0
       runAsNonRoot: true
       allowPrivilegeEscalation: false
       seccompProfile:
