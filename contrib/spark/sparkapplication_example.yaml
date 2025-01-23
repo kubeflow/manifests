@@ -16,9 +16,29 @@ spec:
     serviceAccount: default-editor
     annotations:
       "sidecar.istio.io/inject": "false"
+    securityContext:
+      capabilities:
+        drop:
+          - ALL
+      runAsUser: 185
+      runAsGroup: 0
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
   executor:
     instances: 1
     cores: 1
     memory: 512m
     annotations:
       "sidecar.istio.io/inject": "false"
+    securityContext:
+      capabilities:
+        drop:
+          - ALL
+      runAsUser: 185
+      runAsGroup: 0
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
