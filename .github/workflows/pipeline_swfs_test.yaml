@@ -65,16 +65,16 @@ jobs:
           exit 1
         fi
         kubectl logs -n kubeflow "$PIPELINES_PROFILE_CONTROLLER_POD"
-        
+
         KF_PROFILE=kubeflow-user-example-com
         kubectl -n $KF_PROFILE get pods,configmaps,secrets
 
-        if ! kubectl get secret mlpipeline-minio-artifact -n "${{ env.KF_PROFILE }}" > /dev/null 2>&1; then
-          echo "Error: Secret mlpipeline-minio-artifact not found in namespace ${{ env.KF_PROFILE }}."
+        if ! kubectl get secret mlpipeline-minio-artifact -n $KF_PROFILE > /dev/null 2>&1; then
+          echo "Error: Secret mlpipeline-minio-artifact not found in namespace $KF_PROFILE"
           exit 1
         fi
         echo "Secret mlpipeline-minio-artifact found in namespace ${{ env.KF_PROFILE }}."
-        kubectl get secret mlpipeline-minio-artifact -n "${{ env.KF_PROFILE }}" -o jsonpath='{.data}' | jq -r '. | keys[] as $k | "\($k): $(. | .[$k] | @base64d)"'
+        kubectl get secret mlpipeline-minio-artifact -n $KF_PROFILE -o jsonpath='{.data}' | jq -r '. | keys[] as $k | "\($k): $(. | .[$k] | @base64d)"'
 
     - name: Install seaweedfs
       run: |
