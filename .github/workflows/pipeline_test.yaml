@@ -72,8 +72,7 @@ jobs:
           echo "Error: Secret mlpipeline-minio-artifact not found in namespace $KF_PROFILE"
           exit 1
         fi
-        echo "Secret mlpipeline-minio-artifact found in namespace ${{ env.KF_PROFILE }}."
-        kubectl get secret mlpipeline-minio-artifact -n $KF_PROFILE -o jsonpath='{.data}' | jq -r '. | keys[] as $k | "\($k): $(. | .[$k] | @base64d)"'
+        kubectl get secret mlpipeline-minio-artifact -n "$KF_PROFILE" -o json | jq -r '.data | keys[] as $k | "\($k): \(. | .[$k] | @base64d)"' | tr '\n' ' '
 
     - name: port forward
       run: |
