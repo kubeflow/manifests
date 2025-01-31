@@ -47,7 +47,16 @@ jobs:
       run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
 
     - name: Create KF Profile
-      run: kustomize build common/user-namespace/base | kubectl apply -f -
+      run: |
+        kustomize build common/user-namespace/base | kubectl apply -f -
+        sleep 15 # for the metacontroller to create the secret
+        KF_PROFILE=kubeflow-user-example-com
+        if ! kubectl get secret mlpipeline-minio-artifact -n "${{ env.KF_PROFILE }}" > /dev/null 2>&1; then
+          echo "Error: Secret mlpipeline-minio-artifact not found in namespace ${{ env.KF_PROFILE }}."
+          exit 1
+        fi
+        echo "Secret mlpipeline-minio-artifact found in namespace ${{ env.KF_PROFILE }}."
+        kubectl get secret mlpipeline-minio-artifact -n "${{ env.KF_PROFILE }}" -o jsonpath='{.data}' | jq -r '. | keys[] as $k | "\($k): $(. | .[$k] | @base64d)"'
 
     - name: port forward
       run: |
