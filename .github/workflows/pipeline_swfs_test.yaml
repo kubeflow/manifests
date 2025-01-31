@@ -67,6 +67,8 @@ jobs:
         kubectl logs -n kubeflow "$PIPELINES_PROFILE_CONTROLLER_POD"
         
         KF_PROFILE=kubeflow-user-example-com
+        kubectl -n $KF_PROFILE get pods,configmaps,secrets
+
         if ! kubectl get secret mlpipeline-minio-artifact -n "${{ env.KF_PROFILE }}" > /dev/null 2>&1; then
           echo "Error: Secret mlpipeline-minio-artifact not found in namespace ${{ env.KF_PROFILE }}."
           exit 1
