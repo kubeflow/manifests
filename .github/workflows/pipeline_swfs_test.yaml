@@ -50,7 +50,21 @@ jobs:
     - name: Create KF Profile
       run: |
         kustomize build common/user-namespace/base | kubectl apply -f -
-        sleep 15 # for the metacontroller to create the secret
+        sleep 30 # for the metacontroller to create the secret
+        METACONTROLLER_POD=$(kubectl get pods -n Kubeflow -o jsonpath='{.items[?(@.metadata.name=~"^metacontroller-[^-]+$" || @.metadata.name=="metacontroller")].metadata.name}')
+        if [[ -z "$METACONTROLLER_POD" ]]; then
+          echo "Error: metacontroller pod not found in Kubeflow namespace."
+          exit 1
+        fi
+        kubectl logs -n Kubeflow "$METACONTROLLER_POD"
+
+        PIPELINES_PROFILE_CONTROLLER_POD=$(kubectl get pods -n Kubeflow -o jsonpath='{.items[?(@.metadata.name=~"^kubeflow-pipelines-profile-controller-[^-]+$" || @.metadata.name=="kubeflow-pipelines-profile-controller")].metadata.name}')
+        if [[ -z "$PIPELINES_PROFILE_CONTROLLER_POD" ]]; then
+          echo "Error: kubeflow-pipelines-profile-controller pod not found in Kubeflow namespace."
+          exit 1
+        fi
+        kubectl logs -n Kubeflow "$PIPELINES_PROFILE_CONTROLLER_POD"
+        
         KF_PROFILE=kubeflow-user-example-com
         if ! kubectl get secret mlpipeline-minio-artifact -n "${{ env.KF_PROFILE }}" > /dev/null 2>&1; then
           echo "Error: Secret mlpipeline-minio-artifact not found in namespace ${{ env.KF_PROFILE }}."
