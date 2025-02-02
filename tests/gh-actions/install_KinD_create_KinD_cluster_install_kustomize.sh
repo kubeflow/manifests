@@ -45,7 +45,7 @@ kubeadmConfigPatches:
       name: config
     apiServer:
       extraArgs:
-        \"service-account-issuer\": \"kubernetes.default.svc\"
+        \"service-account-issuer\": \"https://kubernetes.default.svc\"
         \"service-account-signing-key-file\": \"/etc/kubernetes/pki/sa.key\"
 nodes:
 - role: control-plane
