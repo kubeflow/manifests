@@ -40,6 +40,26 @@ curl -sX 'GET' \
   -H 'accept: application/json' | jq
 ```
 
+### UI Installation
+
+There are two main ways to deploy the Model Registry UI:
+
+1. Standalone mode - Use this if you are using Model Registry without the Kubeflow Platform
+
+2. Integrated mode - Use this if you are deploying Model Registry in Kubeflow 
+
+For a standalone install run the following command:
+
+```bash
+kubectl apply -k options/ui/overlays/standalone -n kubeflow
+```
+
+For an integrated install use the istio UI overlay:
+
+```bash
+kubectl apply -k options/ui/overlays/istio -n kubeflow
+```
+
 ## Usage
 
 For a basic usage of the Kubeflow Model Registry, follow the [Kubeflow Model Registry getting started documentation](https://www.kubeflow.org/docs/components/model-registry/getting-started/)
