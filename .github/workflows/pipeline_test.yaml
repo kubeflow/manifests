@@ -81,17 +81,16 @@ jobs:
         nohup kubectl port-forward --namespace istio-system svc/${ingress_gateway_service} 8080:80 &
         while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
 
-    - name: Install Python dependencies
-      run: pip3 install kfp==2.11.0
-
     - name: List and deploy test pipeline with authorized ServiceAccount Token
       run: |
+        pip3 install kfp==2.11.0
         KF_PROFILE=kubeflow-user-example-com
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/gh-actions/pipeline_test.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
 
     - name: Fail to list pipelines with unauthorized ServiceAccount Token
       run: |
+        pip3 install kfp==2.11.0
         KF_PROFILE=kubeflow-user-example-com
         TOKEN="$(kubectl -n default create token default)"
         python3 tests/gh-actions/pipeline_test.py test_unauthorized_access "${TOKEN}" "${KF_PROFILE}"
