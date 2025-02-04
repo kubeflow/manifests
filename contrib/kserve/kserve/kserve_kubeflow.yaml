@@ -31604,6 +31604,7 @@ rules:
     resources:
       - inferenceservices
       - servingruntimes
+      - trainedmodels
     verbs:
       - get
       - list
@@ -31648,6 +31649,7 @@ rules:
     resources:
       - inferenceservices
       - servingruntimes
+      - trainedmodels
     verbs:
       - get
       - list
