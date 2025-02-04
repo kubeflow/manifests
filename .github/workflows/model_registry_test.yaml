@@ -19,6 +19,12 @@ jobs:
     - name: Install KinD, Create KinD cluster and Install kustomize
       run: ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
 
+    - name: Remove AppArmor profile for mysql in KinD on GHA # https://github.com/kubeflow/manifests/issues/2507
+      run: |
+        set -x
+        sudo apt-get install apparmor-profiles
+        sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+
     - name: Install kubectl
       run: ./tests/gh-actions/install_kubectl.sh
 
@@ -45,7 +51,12 @@ jobs:
     - name: Test KF Model Registry deployment
       run: |
         echo "Waiting for all Model Registry Pods to become ready..."
-        kubectl wait --for=condition=available -n kubeflow deployment/model-registry-db --timeout=600s
+        if ! kubectl wait --for=condition=available -n kubeflow deployment/model-registry-db --timeout=600s ; then
+            kubectl events -A
+            kubectl describe deployment/model-registry-db -n kubeflow
+            kubectl logs deployment/model-registry-db -n kubeflow
+            exit 1
+        fi
         kubectl wait --for=condition=available -n kubeflow deployment/model-registry-deployment --timeout=600s
 
     - name: Dry-run KF Model Registry API directly

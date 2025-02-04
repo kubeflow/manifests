@@ -1,0 +1,39 @@
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: model-registry-ui-namespaces-reader
+rules:
+- apiGroups:
+    - ''
+  resources:
+    - namespaces
+  verbs:
+    - get
+    - list
+    - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: model-registry-ui-namespaces-reader-binding
+subjects:
+- kind: ServiceAccount
+  name: model-registry-ui
+roleRef:
+  kind: ClusterRole
+  name: model-registry-ui-namespaces-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: service-access-cluster-binding
+subjects:
+  - kind: User
+    name: user@example.com
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
