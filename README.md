@@ -207,13 +207,13 @@ network authorization and implement routing policies.
 If you use Cilium CNI on your cluster, you have to configure it properly for Istio as shown [here](https://docs.cilium.io/en/latest/network/servicemesh/istio/), otherwise you will get RBAC access denied on the central dashboard.
 
 
-Install Istio:
+Install Istio-CNI:
 
 ```sh
-echo "Installing Istio configured with external authorization..."
-kustomize build common/istio-1-24/istio-crds/base | kubectl apply -f -
-kustomize build common/istio-1-24/istio-namespace/base | kubectl apply -f -
-kustomize build common/istio-1-24/istio-install/overlays/oauth2-proxy | kubectl apply -f -
+echo "Installing Istio-CNI configured with external authorization..."
+kustomize build common/istio-cni-1-24/istio-crds/base | kubectl apply -f -
+kustomize build common/istio-cni-1-24/istio-namespace/base | kubectl apply -f -
+kustomize build common/istio-cni-1-24/istio-install/overlays/oauth2-proxy | kubectl apply -f -
 
 echo "Waiting for all Istio Pods to become ready..."
 kubectl wait --for=condition=Ready pods --all -n istio-system --timeout 300s
@@ -343,7 +343,7 @@ Install Knative Serving:
 
 ```sh
 kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -
-kustomize build common/istio-1-24/cluster-local-gateway/base | kubectl apply -f -
+kustomize build common/istio-cni-1-24/cluster-local-gateway/base | kubectl apply -f -
 ```
 
 Optionally, you can install Knative Eventing which can be used for inference request logging:
@@ -390,7 +390,7 @@ Create the Kubeflow Gateway, `kubeflow-gateway` and ClusterRole,
 Install kubeflow istio resources:
 
 ```sh
-kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
+kustomize build common/istio-cni-1-24/kubeflow-istio-resources/base | kubectl apply -f -
 ```
 
 #### Kubeflow Pipelines
