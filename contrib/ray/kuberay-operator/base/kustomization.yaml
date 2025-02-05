@@ -1,3 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: kubeflow
+
+resources:
+- resources.yaml
+- aggregated-roles.yaml
+
 patches:
 # Add securityContext to KubeRay operator Pod.
 - target:
@@ -14,7 +23,3 @@ patches:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
-namespace: kubeflow
-resources:
-- resources.yaml
-- aggregated-roles.yaml
