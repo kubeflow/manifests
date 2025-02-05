@@ -35,11 +35,10 @@ TODO
   <figcaption>Note: (1) Kubeflow Central Dashboard will be renamed to workbench in the future. (2) Kubeflow Pipeline (KFP) is an important component of Kubeflow, but it is not included in this example.</figcaption>
 </figure>
 
-## Step 1: Install Kubeflow v1.7-branch
-* This example installs Kubeflow with the [v1.9-branch](https://github.com/kubeflow/manifests/tree/v1.9-branch).
-
-* Install all Kubeflow official components and all common services using [one command](https://github.com/kubeflow/manifests/tree/v1.7-branch#install-with-a-single-command).
-    * If you do not want to install all components, you can comment out **KNative**, **Katib**, **Tensorboards Controller**, **Tensorboard Web App**, **Training Operator**, and **KServe** from [example/kustomization.yaml](https://github.com/kubeflow/manifests/blob/v1.7-branch/example/kustomization.yaml).
+## Step 1: Install Kubeflow
+* This example installs Kubeflow with the master branch.
+* Install all Kubeflow official components and all common services using [one command](https://github.com/kubeflow/manifests/tree/master#install-with-a-single-command).
+* If you do not want to install all components, you can comment out **KNative**, **Katib**, **Tensorboards Controller**, **Tensorboard Web App**, **Training Operator**, and **KServe** from [example/kustomization.yaml](https://github.com/kubeflow/manifests/blob/master/example/kustomization.yaml).
 
 ## Step 2: Install KubeRay operator
 
@@ -97,7 +96,7 @@ kubectl get svc -n $MY_KUBEFLOW_USER_NAMESPACE
     * Ray 2.23.0
 
 ## Step 5: Forward the port of Istio's Ingress-Gateway
-* Follow the [instructions](https://github.com/kubeflow/manifests/tree/v1.7-branch#port-forward) to forward the port of Istio's Ingress-Gateway and log in to Kubeflow Central Dashboard.
+* Follow the [instructions](https://github.com/kubeflow/manifests/tree/master#port-forward) to forward the port of Istio's Ingress-Gateway and log in to Kubeflow Central Dashboard.
 
 ## Step 6: Create a JupyterLab via Kubeflow Central Dashboard
 * Click "Notebooks" icon in the left panel.
