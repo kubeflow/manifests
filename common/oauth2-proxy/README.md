@@ -212,6 +212,47 @@ client = kfp.Client(host=pipeline_host, existing_token=TOKEN)
 print(client.list_runs(namespace="your-profile-name"))
 ```
 
+## Known Issues:
+
+Some openidc providers such as Azure provide too large JWTs / Cookies that exceed the limit of most GRPC and gunicorn web application deployments in Kubeflow.
+If removing the groups claim in oauth2-proxy is not enough then you can add an envrionment variable to all web applications
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kserve-models-web-app
+  namespace: kubeflow
+spec:
+  template:
+    spec:
+      containers:
+        - name: kserve-models-web-app # repeat for all other *-web-app-(deployment)
+          env:
+            - name: GUNICORN_CMD_ARGS
+              value: --limit-request-field_size 32000
+```
+
+and modify the KFP GRPC server via
+```
+- path: patches/metadata-grpc-virtualservice-patch.yaml
+  target:
+    kind: VirtualService
+    name: metadata-grpc
+    namespace: kubeflow
+
+# patches/metadata-grpc-virtualservice-patch.yaml
+# Remove the oauth2-proxy cookie that violates the maximum metadata size for a GRPC request
+- op: add
+  path: /spec/http/0/route/0/headers
+  value:
+    request:
+      remove:
+        - Cookie
+```
+
+to fix `received initial metadata size exceeds limit`.
+
 ## Kubeflow Notebooks User and M2M Authentication and Authorization
 
 The underlying mechanism is the same as in Kubeflow Pipelines.
