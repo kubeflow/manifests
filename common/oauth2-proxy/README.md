@@ -292,7 +292,7 @@ This is based on the following:
 
    The docs above mention that while it's possible to enable authentication,
    authorization is more complicated and probably we need to add
-   `AuthorizationPolicy`...
+   `AuthorizationPolicy`
 
    > create an [Istio AuthorizationPolicy](https://istio.io/latest/docs/reference/config/security/authorization-policy/) to grant access to the pods or disable it
 

@@ -36,7 +36,7 @@ TODO
 </figure>
 
 ## Step 1: Install Kubeflow
-* This example installs Kubeflow with the master branch.
+* This example installs Kubeflow with the master branch
 * Install all Kubeflow official components and all common services using [one command](https://github.com/kubeflow/manifests/tree/master#install-with-a-single-command).
 * If you do not want to install all components, you can comment out **KNative**, **Katib**, **Tensorboards Controller**, **Tensorboard Web App**, **Training Operator**, and **KServe** from [example/kustomization.yaml](https://github.com/kubeflow/manifests/blob/master/example/kustomization.yaml).
 
@@ -59,7 +59,7 @@ kubectl get pod -l app.kubernetes.io/component=kuberay-operator -n kubeflow
 # Create a namespace: example-"development"
 kubectl create ns development
 
-# Enable isito-injection for the namespace
+# Enable istio-injection for the namespace
 kubectl label namespace development istio-injection=enabled
 
 # After creating the namespace, You have to do below mentioned changes in raycluster_example.yaml file(Required changes are also mentioned as comments in yaml file itself) 
@@ -69,7 +69,7 @@ kubectl label namespace development istio-injection=enabled
     principals:
     - "cluster.local/ns/development/sa/default-editor"
 
-# 02. Replace the nampespace of node-ip-address of headGroupSpec and workerGroupSpec
+# 02. Replace the namespace of node-ip-address of headGroupSpec and workerGroupSpec
 
     node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.development.svc.cluster.local
 ```
@@ -78,7 +78,7 @@ kubectl label namespace development istio-injection=enabled
 ```sh
 # Create a RayCluster CR, and the KubeRay operator will reconcile a Ray cluster
 # with 1 head Pod and 1 worker Pod.
-# $MY_KUBEFLOW_USER_NAMESPACE is the namesapce that has been created in the above step.
+# $MY_KUBEFLOW_USER_NAMESPACE is the namespace that has been created in the above step.
 export MY_KUBEFLOW_USER_NAMESPACE=development
 kubectl apply -f raycluster_example.yaml -n $MY_KUBEFLOW_USER_NAMESPACE
 
