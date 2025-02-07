@@ -37,7 +37,7 @@ jobs:
         cd apps/katib/upstream
         kubectl create ns kubeflow
         kustomize build installs/katib-with-kubeflow | kubectl apply -f -
-        kubectl wait --for=condition=Ready pods --all -n kubeflow --timeout 300s
+        kubectl wait --for=condition=Ready pods --all -n kubeflow --timeout 5s
 
     - name: Create katib experiment
       run: |
