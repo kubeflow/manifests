@@ -35,11 +35,10 @@ TODO
   <figcaption>Note: (1) Kubeflow Central Dashboard will be renamed to workbench in the future. (2) Kubeflow Pipeline (KFP) is an important component of Kubeflow, but it is not included in this example.</figcaption>
 </figure>
 
-## Step 1: Install Kubeflow v1.7-branch
-* This example installs Kubeflow with the [v1.9-branch](https://github.com/kubeflow/manifests/tree/v1.9-branch).
-
-* Install all Kubeflow official components and all common services using [one command](https://github.com/kubeflow/manifests/tree/v1.7-branch#install-with-a-single-command).
-    * If you do not want to install all components, you can comment out **KNative**, **Katib**, **Tensorboards Controller**, **Tensorboard Web App**, **Training Operator**, and **KServe** from [example/kustomization.yaml](https://github.com/kubeflow/manifests/blob/v1.7-branch/example/kustomization.yaml).
+## Step 1: Install Kubeflow
+* This example installs Kubeflow with the master branch
+* Install all Kubeflow official components and all common services using [one command](https://github.com/kubeflow/manifests/tree/master#install-with-a-single-command).
+* If you do not want to install all components, you can comment out **KNative**, **Katib**, **Tensorboards Controller**, **Tensorboard Web App**, **Training Operator**, and **KServe** from [example/kustomization.yaml](https://github.com/kubeflow/manifests/blob/master/example/kustomization.yaml).
 
 ## Step 2: Install KubeRay operator
 
@@ -54,12 +53,13 @@ kubectl get pod -l app.kubernetes.io/component=kuberay-operator -n kubeflow
 # NAME                                READY   STATUS    RESTARTS   AGE
 # kuberay-operator-5b8cd69758-rkpvh   1/1     Running   0          6m23s
 ```
+> If you are creating a new namespace other than the kubeflow-user-example-com please follow below step otherwise skip the step.
 ## Step 3: Create a namespace
 ```sh
 # Create a namespace: example-"development"
 kubectl create ns development
 
-# Enable isito-injection for the namespace
+# Enable istio-injection for the namespace
 kubectl label namespace development istio-injection=enabled
 
 # After creating the namespace, You have to do below mentioned changes in raycluster_example.yaml file(Required changes are also mentioned as comments in yaml file itself) 
@@ -69,16 +69,16 @@ kubectl label namespace development istio-injection=enabled
     principals:
     - "cluster.local/ns/development/sa/default-editor"
 
-# 02. Replace the nampespace of node-ip-address of headGroupSpec and workerGroupSpec
+# 02. Replace the namespace of node-ip-address of headGroupSpec and workerGroupSpec
 
     node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.development.svc.cluster.local
 ```
 
-## Step 3: Install RayCluster
+## Step 4: Install RayCluster
 ```sh
 # Create a RayCluster CR, and the KubeRay operator will reconcile a Ray cluster
 # with 1 head Pod and 1 worker Pod.
-# $MY_KUBEFLOW_USER_NAMESPACE is the namesapce that has been created in the above step.
+# $MY_KUBEFLOW_USER_NAMESPACE is the namespace that has been created in the above step.
 export MY_KUBEFLOW_USER_NAMESPACE=development
 kubectl apply -f raycluster_example.yaml -n $MY_KUBEFLOW_USER_NAMESPACE
 
@@ -95,17 +95,17 @@ kubectl get svc -n $MY_KUBEFLOW_USER_NAMESPACE
     * Python 3.11
     * Ray 2.23.0
 
-## Step 4: Forward the port of Istio's Ingress-Gateway
-* Follow the [instructions](https://github.com/kubeflow/manifests/tree/v1.7-branch#port-forward) to forward the port of Istio's Ingress-Gateway and log in to Kubeflow Central Dashboard.
+## Step 5: Forward the port of Istio's Ingress-Gateway
+* Follow the [instructions](https://github.com/kubeflow/manifests/tree/master#port-forward) to forward the port of Istio's Ingress-Gateway and log in to Kubeflow Central Dashboard.
 
-## Step 5: Create a JupyterLab via Kubeflow Central Dashboard
+## Step 6: Create a JupyterLab via Kubeflow Central Dashboard
 * Click "Notebooks" icon in the left panel.
 * Click "New Notebook"
 * Select `kubeflownotebookswg/jupyter-scipy:v1.9.1` as OCI image (or any other with the same python version)
 * Click "Launch"
 * Click "CONNECT" to connect into the JupyterLab instance.
 
-## Step 6: Use Ray client in the JupyterLab to connect to the RayCluster
+## Step 7: Use Ray client in the JupyterLab to connect to the RayCluster
 * As I mentioned in Step 3, Ray is very sensitive to the Python versions and Ray versions between the server (RayCluster) and client (JupyterLab) sides.
     ```sh
     # Check Python version. The version's MAJOR and MINOR should match with RayCluster (i.e. Python 3.11.9)
