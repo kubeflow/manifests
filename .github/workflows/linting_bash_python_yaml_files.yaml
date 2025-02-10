@@ -6,7 +6,7 @@ jobs:
   format_python_files:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Python Files Formatting Guidelines
       run: |
@@ -31,7 +31,7 @@ jobs:
   format_YAML_files:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
@@ -100,7 +100,7 @@ jobs:
   format_bash_files:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
