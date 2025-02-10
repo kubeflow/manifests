@@ -9,6 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
     - name: Update Kanban
       uses: kubeflow/code-intelligence/Issue_Triage/action@master

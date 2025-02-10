@@ -25,13 +25,6 @@ jobs:
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh
 
-    # https://kind.sigs.k8s.io/docs/user/known-issues/#apparmor
-    - name: AppArmor
-      run: |
-        set -x
-        sudo apt-get install apparmor-profiles
-        sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
-
     - name: Build & Apply manifests
       run: |
         cd apps/katib/upstream
