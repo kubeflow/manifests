@@ -11,4 +11,4 @@ rules:
   line-length:
     max: 400
   truthy:
-    allowed-values: ['on', 'off']
+    allowed-values: ['on', 'off', 'true', 'false']
