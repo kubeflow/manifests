@@ -4,27 +4,27 @@ body:
 - type: markdown
   attributes:
     value: |
-      Fill out the sections below to help everyone identify and fix the bug
+      Please provide the following details to help us diagnose and fix the issue effectively.
 - type: markdown
   attributes:
     value: |
-      Follow the [Kubeflow installation guidelines](https://github.com/kubeflow/manifests/blob/master/README.md).
+      Follow the [Kubeflow installation guidelines](https://github.com/kubeflow/manifests/blob/master/README.md) before submitting the report.
 - type: checkboxes
   id: Vaildation
   attributes:
     label: Validation Checklist
     options:
-    - label: Is this a Kubeflow issue?
+    - label: I confirm that this is a Kubeflow-related issue.
       required: true
-    - label: Are you posting in the right repository ?
+    - label: I am reporting this in the appropriate repository.
       required: true
-    - label: Did you follow the [Kubeflow installation guideline](https://github.com/kubeflow/manifests/blob/master/README.md) ?
+    - label: I have followed the [Kubeflow installation guidelines](https://github.com/kubeflow/manifests/blob/master/README.md).
       required: true
-    - label: Is the issue report properly structured and detailed with version numbers?
+    - label: The issue report is detailed and includes version numbers where applicable.
       required: true
-    - label: Is this for Kubeflow development ?
+    - label: This issue pertains to Kubeflow development.
       required: false
-    - label: Would you like to work on this issue?
+    - label: I am available to work on this issue.
       required: false
     - label: You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website. Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2).
       required: false
@@ -41,27 +41,26 @@ body:
 - type: textarea
   id: description
   attributes:
-    label: Describe your issue
-    placeholder: When installing Kubeflow I got the following error message from ...
+    label: Detailed Description
+    placeholder: Provide a clear description of the issue and its impact.
   validations:
     required: true
 - type: textarea
   id: steps
   attributes:
-    label: Steps to reproduce the issue
+    label: Steps to Reproduce
     placeholder: |
-      1. Try this ...
-      2. Then do this ...
+      1. Describe the initial setup.
+      2. Detail the steps leading to the issue.
   validations:
     required: true
 - type: textarea
   id: screenshots
   attributes:
-    label: Put here any screenshots or videos (optional)
+    label: Screenshots or Videos (Optional)
 - type: markdown
   attributes:
     value: |
-      > **Note:** Please note that you have to fill required fields to post an issue.
-        If not please close or redo the issue and you can join the CNCF slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website.  Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2).
+      > **Note:** All required fields must be completed before submitting your report.
 
-      **Thanks for reporting this issue! We will get back to you as soon as possible.**
+      Thank you for your contribution.

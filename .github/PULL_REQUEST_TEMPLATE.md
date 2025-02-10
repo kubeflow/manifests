@@ -1,17 +1,17 @@
-# Pull Request Template for Kubeflow manifests Issues
+# Pull Request Template for Kubeflow Manifests
 
-## ✏️ A brief description of the changes
-> I changed ...
+## ✏️ Summary of Changes
+> Describe the changes you have made, including any refactoring or feature additions.
 
-## 📦 List any dependencies that are required for this change
-> My PR depends on #
+## 📦 Dependencies
+> List any dependencies or related PRs (e.g., "Depends on #123").
 
-## 🐛 If this PR is related to an issue, please put the link to the issue here.
-> The following issues are related, because ...
+## 🐛 Related Issues
+> Link any issues that are resolved or affected by this PR.
 
-## ✅ Contributor checklist
-  - Make sure you have tested with kustomize. See [Installation Prerequisites](https://github.com/kubeflow/manifests#prerequisites)
-  - All the commits have been [_signed-off_](https://github.com/kubeflow/community/tree/master/dco-signoff-hook#signing-off-commits)  (To pass the `DCO` check)
+## ✅ Contributor Checklist
+  - [ ] I have tested these changes with kustomize. See [Installation Prerequisites](https://github.com/kubeflow/manifests#prerequisites).
+  - [ ] All commits are [_signed-off_](https://github.com/kubeflow/community/tree/master/dco-signoff-hook#signing-off-commits) to satisfy the DCO check.
 
 ---     
  

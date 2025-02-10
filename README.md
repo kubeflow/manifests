@@ -4,13 +4,14 @@
 
 <!-- toc -->
 
-- [Overview of the Kubeflow Platform](#overview)
+- [Overview of the Kubeflow Platform](#overview-of-the-kubeflow-platform)
 - [Kubeflow components versions](#kubeflow-components-versions)
 - [Installation](#installation)
   * [Prerequisites](#prerequisites)
   * [Install with a single command](#install-with-a-single-command)
   * [Install individual components](#install-individual-components)
   * [Connect to your Kubeflow Cluster](#connect-to-your-kubeflow-cluster)
+  * [Change default user name](#change-default-user-name)
   * [Change default user password](#change-default-user-password)
 - [Upgrading and extending](#upgrading-and-extending)
 - [Release process](#release-process)
@@ -196,7 +197,7 @@ In case you get this error:
 ```
 Error from server (InternalError): error when creating "STDIN": Internal error occurred: failed calling webhook "webhook.cert-manager.io": failed to call webhook: Post "https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s": dial tcp 10.96.202.64:443: connect: connection refused
 ```
-This is because the webhook is not yet ready to receive request. Wait a couple seconds and retry applying the manfiests.
+This is because the webhook is not yet ready to receive requests. Wait a couple of seconds and retry applying the manifests.
 
 For more troubleshooting info also check out https://cert-manager.io/docs/troubleshooting/webhook/
 
@@ -222,7 +223,7 @@ kubectl wait --for=condition=Ready pods --all -n istio-system --timeout 300s
 #### Oauth2-proxy
 
 The oauth2-proxy extends your Istio Ingress-Gateway capabilities, to be able to function as an OIDC client.
-It supports user sessions as well as proper token-based machine to machine authentication.
+It supports user sessions as well as proper token-based machine-to-machine authentication.
 
 ```sh
 echo "Installing oauth2-proxy..."
@@ -256,7 +257,7 @@ kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' 
 #kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 ```
 
-If and after you have finished the installation with Kubernetes serviceaccount token support you should be able to create and use the tokens:
+If and after you have finished the installation with Kubernetes service account token support you should be able to create and use the tokens:
 ```sh
 kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
 TOKEN="$(kubectl -n $KF_PROFILE_NAMESPACE create token default-editor)"
@@ -264,7 +265,7 @@ client = kfp.Client(host="http://localhost:8080/pipeline", existing_token=token)
 curl -v "localhost:8080/jupyter/api/namespaces/${$KF_PROFILE_NAMESPACE}/notebooks" -H "Authorization: Bearer ${TOKEN}"
 ```
 
-If you want to use OAuth2 Proxy without Dex and conenct it directly to your own IDP, you can refer to this [document](common/oauth2-proxy/README.md#change-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only). But you can also keep Dex and extend it with connectors to your own IDP as explained in the Dex section below.
+If you want to use OAuth2 Proxy without Dex and connect it directly to your own IDP, you can refer to this [document](common/oauth2-proxy/README.md#change-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only). But you can also keep Dex and extend it with connectors to your own IDP as explained in the Dex section below.
 
 
 #### Dex
@@ -544,9 +545,9 @@ After running the command, you can access the Kubeflow Central Dashboard by doin
 
 #### NodePort / LoadBalancer / Ingress
 
-In order to connect to Kubeflow using NodePort / LoadBalancer / Ingress, you need to setup HTTPS. The reason is that many of our web applications (e.g., Tensorboard Web Application, Jupyter Web Application, Katib UI) use [Secure Cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies), so accessing Kubeflow with HTTP over a non-localhost domain does not work.
+In order to connect to Kubeflow using NodePort / LoadBalancer / Ingress, you need to set up HTTPS. The reason is that many of our web applications (e.g., Tensorboard Web Application, Jupyter Web Application, Katib UI) use [Secure Cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies), so accessing Kubeflow with HTTP over a non-localhost domain does not work.
 
-Exposing your Kubeflow cluster with proper HTTPS is a simple proces, but dependent on your environment. 
+Exposing your Kubeflow cluster with proper HTTPS is a simple process, but dependent on your environment. You can just expose the `istio-ingressgateway` service in the `istio-system` namespace via nginx-ingress or any other ingress provider. For security reasons do only use `ClusterIP` on the service, not NodePort or something similarly dangerous.
 There are also third-party commercial [distributions](https://www.kubeflow.org/docs/started/installing-kubeflow/#install-a-packaged-kubeflow-distribution) available.
 
 ---
@@ -571,7 +572,7 @@ For security reasons, we don't want to use the default username and email for th
 
 ### Change default user password
 
-If you have an identy provider (LDAP,GitHub,Google,Microsoft,OIDC,SAML,GitLab) available you should use that instead of static passwords and connect it to oauth2-proxy or Dex as explained in the sections above. This is best practices instead of using static passwords. 
+If you have an identity provider (LDAP,GitHub,Google,Microsoft,OIDC,SAML,GitLab) available you should use that instead of static passwords and connect it to oauth2-proxy or Dex as explained in the sections above. This is best practices instead of using static passwords. 
 
 For security reasons, we don't want to use the default static password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password and apply it either **before creating the cluster** or **after creating the cluster**. 
 
