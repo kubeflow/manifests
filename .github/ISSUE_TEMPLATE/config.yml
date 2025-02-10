@@ -5,8 +5,4 @@ contact_links:
     about: Join our CNCF Slack Channel and access Kubeflow community meetings.
   - name: Our channel on the CNCF Slack is kubeflow-platform.
     url: https://app.slack.com/client/T08PSQ7BQ/C073W572LA2
-    about: You can join our channel on the CNCF slack. 
-
-    
-  
-  
+    about: You can join our channel on the CNCF slack.
