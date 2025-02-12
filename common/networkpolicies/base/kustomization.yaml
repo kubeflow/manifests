@@ -17,6 +17,7 @@ resources:
 - ml-pipeline-ui.yaml
 - ml-pipeline.yaml
 - model-registry.yaml
+- model-registry-ui.yaml
 - poddefaults.yaml
 - pvcviewer-webhook.yaml
 - spark-operator-webhook.yaml
