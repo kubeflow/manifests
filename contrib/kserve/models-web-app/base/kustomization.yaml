@@ -6,15 +6,19 @@ resources:
 
 namespace: kserve
 
-commonLabels:
-  kustomize.component: kserve-models-web-app
-  app.kubernetes.io/component: kserve-models-web-app
 
 images:
 - name: kserve/models-web-app
   newName: kserve/models-web-app
   newTag: v0.13.0-rc.0
 configMapGenerator:
-  - name: kserve-models-web-app-config
-    literals:
-    - APP_DISABLE_AUTH="True"
+- literals:
+  - APP_DISABLE_AUTH="True"
+  name: kserve-models-web-app-config
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+labels:
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/component: kserve-models-web-app
+    kustomize.component: kserve-models-web-app
