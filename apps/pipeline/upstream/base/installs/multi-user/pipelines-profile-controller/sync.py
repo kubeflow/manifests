@@ -103,12 +103,6 @@ def server_factory(visualization_server_image,
             # parent is a namespace
             namespace = parent.get("metadata", {}).get("name")
 
-            pipeline_enabled = parent.get("metadata", {}).get(
-                "labels", {}).get("pipelines.kubeflow.org/enabled")
-
-            if pipeline_enabled != "true":
-                return {"status": {}, "children": []}
-
             desired_configmap_count = 1
             desired_resources = []
             if kfp_default_pipeline_root:
