@@ -8,8 +8,6 @@ resources:
 - model-registry-db-service.yaml
 - ../../base
 
-patchesStrategicMerge:
-- patches/model-registry-deployment.yaml
 
 configMapGenerator:
 - envs:
@@ -28,18 +26,45 @@ images:
   newName: mysql
   newTag: 8.0.39
 
-vars:
-- fieldref:
+patches:
+- path: patches/model-registry-deployment.yaml
+replacements:
+- source:
     fieldPath: metadata.name
-  name: MLMD_DB_HOST
-  objref:
-    apiVersion: v1
     kind: Service
     name: model-registry-db
-- name: MYSQL_PORT
-  objref:
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.template.spec.containers.1.args.1
+    options:
+      delimiter: =
+      index: 1
+    select: {}
+- source:
+    fieldPath: data.MYSQL_PORT
     kind: ConfigMap
     name: model-registry-db-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.MYSQL_PORT
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.template.spec.containers.1.args.3
+    options:
+      delimiter: =
+      index: 1
+    select:
+      group: apps
+      kind: Deployment
+      name: model-registry-deployment
+      version: v1
+  - fieldPaths:
+    - |-
+      spec.template.metadata.annotations.[# db doesn't use istio
+      traffic.sidecar.istio.io/excludeOutboundPorts]
+    select: {}
+  - fieldPaths:
+    - spec.template.spec.containers.1.args.3
+    options:
+      delimiter: =
+      index: 1
+    select: {}
