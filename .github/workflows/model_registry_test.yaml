@@ -48,6 +48,10 @@ jobs:
         kustomize build apps/model-registry/upstream/overlays/db | kubectl apply -f -
         kustomize build apps/model-registry/upstream/options/istio | kubectl apply -f -
 
+    - name: Build & Apply KF Model Registry UI manifests
+      run: |
+        kustomize build apps/model-registry/upstream/options/ui/overlays/istio | kubectl apply -f -
+
     - name: Test KF Model Registry deployment
       run: |
         echo "Waiting for all Model Registry Pods to become ready..."
@@ -58,6 +62,10 @@ jobs:
             exit 1
         fi
         kubectl wait --for=condition=available -n kubeflow deployment/model-registry-deployment --timeout=600s
+    - name: Test KF Model Registry deployment
+      run: |
+        echo "Waiting for all Model Registry UI Pods to become ready..."
+        kubectl wait --for=condition=available -n kubeflow deployment/model-registry-ui --timeout=600s
 
     - name: Dry-run KF Model Registry API directly
       run: |
@@ -80,3 +88,9 @@ jobs:
         echo "Dry-run KF Model Registry REST API..."
         export KF_TOKEN="$(kubectl -n default create token default)"
         curl -v -H "Authorization: Bearer "$KF_TOKEN http://localhost:8080/api/model_registry/v1alpha3/registered_models
+
+    - name: Dry-run KF Model Registry REST API UI
+      run: |
+        echo "Dry-run KF Model Registry REST API..."
+        export KF_TOKEN="$(kubectl -n default create token default)"
+        curl -v -H "Authorization: Bearer "$KF_TOKEN -H "kubeflow-userid: user@example.com" http://localhost:8080/model-registry/api/v1/healthcheck
