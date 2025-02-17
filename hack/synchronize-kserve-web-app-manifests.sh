@@ -11,7 +11,7 @@
 # repository, based on that local branch
 
 
-COMMIT="0.13.0" # You can use tags as well
+COMMIT="0.14.0" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kserve-models-web-app}
 BRANCH=${BRANCH:=synchronize-kserve-web-app-manifests-${COMMIT?}}
 
@@ -37,7 +37,7 @@ else
 fi
 echo "Checking out in $SRC_DIR to $COMMIT..."
 
-# Checkout the Model Registry repository
+# Checkout the Kserve Models Web App repository
 mkdir -p $SRC_DIR
 cd $SRC_DIR || exit
 if [ ! -d "models-web-app/.git" ]; then
