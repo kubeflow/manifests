@@ -15,7 +15,7 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="v0.2.13" # You can use tags as well
+COMMIT="v0.14.0-rc.0" # You can use tags as well
 DEV_MODE=${DEV_MODE:=false}
 SRC_DIR=${SRC_DIR:=/tmp/kubeflow-model-registry}
 BRANCH=${BRANCH:=synchronize-kubeflow-model-registry-manifests-${COMMIT?}}
