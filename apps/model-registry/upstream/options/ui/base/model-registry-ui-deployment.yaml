@@ -15,6 +15,10 @@ spec:
         app: model-registry-ui
     spec: 
       serviceAccountName: model-registry-ui
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+        runAsNonRoot: true
       containers:
       - name: model-registry-ui
         image: model-registry-ui-image
@@ -51,3 +55,8 @@ spec:
           - containerPort: 8080
         args:
           - "--port=8080"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL

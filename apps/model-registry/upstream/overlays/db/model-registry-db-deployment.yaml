@@ -19,6 +19,10 @@ spec:
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+        runAsNonRoot: true
       containers:
       - name: db-container
         image: mysql:8.3.0
@@ -46,6 +50,13 @@ spec:
         volumeMounts:
         - name: metadata-mysql
           mountPath: /var/lib/mysql
+        securityContext:
+          runAsUser: 999
+          runAsGroup: 999
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
       volumes:
       - name: metadata-mysql
         persistentVolumeClaim:
