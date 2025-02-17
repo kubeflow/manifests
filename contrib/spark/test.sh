@@ -4,8 +4,6 @@ set -euxo
 
 NAMESPACE=$1
 TIMEOUT=120  # timeout in seconds
-SLEEP_INTERVAL=30  # interval between checks in seconds
-SPARK_VERSION=3.5.2
 
 start_time=$(date +%s)
 for ((i=0; i<TIMEOUT; i+=2)); do
