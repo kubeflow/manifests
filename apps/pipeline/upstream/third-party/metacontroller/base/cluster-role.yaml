@@ -4,7 +4,10 @@ metadata:
   name: kubeflow-metacontroller
 rules:
 - apiGroups: [""]
-  resources: ["namespaces", "namespaces/status"]
+  resources: ["namespaces"]
+  verbs: ["get", "list", "watch", "update"]
+- apiGroups: [""]
+  resources: ["namespaces/status"]
   verbs: ["get", "list", "watch", "update", "patch"]
 - apiGroups: [""]
   resources: ["secrets", "configmaps"]
