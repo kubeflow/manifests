@@ -7,15 +7,16 @@
 - [Overview of the Kubeflow Platform](#overview-of-the-kubeflow-platform)
 - [Kubeflow components versions](#kubeflow-components-versions)
 - [Installation](#installation)
-  * [Prerequisites](#prerequisites)
-  * [Install with a single command](#install-with-a-single-command)
-  * [Install individual components](#install-individual-components)
-  * [Connect to your Kubeflow Cluster](#connect-to-your-kubeflow-cluster)
-  * [Change default user name](#change-default-user-name)
-  * [Change default user password](#change-default-user-password)
+  - [Prerequisites](#prerequisites)
+  - [Install with a single command](#install-with-a-single-command)
+  - [Install individual components](#install-individual-components)
+  - [Connect to your Kubeflow Cluster](#connect-to-your-kubeflow-cluster)
+  - [Change default user name](#change-default-user-name)
+  - [Change default user password](#change-default-user-password)
 - [Upgrading and extending](#upgrading-and-extending)
 - [Release process](#release-process)
 - [CVE Scanning](#cve-scanning)
+- [Pre-commit Hooks](#pre-commit-hooks)
 - [Frequently Asked Questions](#frequently-asked-questions)
 
 <!-- tocstop -->
@@ -172,7 +173,7 @@ ensure CRDs are installed first
 ```
 
 This is because a kustomization applies both a CRD and a CR very quickly, and the CRD
-hasn't become [`Established`](https://github.com/kubernetes/apiextensions-apiserver/blob/a7ee7f91a2d0805f729998b85680a20cfba208d2/pkg/apis/apiextensions/types.go#L276-L279) yet. You can learn more about this in https://github.com/kubernetes/kubectl/issues/1117 and https://github.com/helm/helm/issues/4925.
+hasn't become [`Established`](https://github.com/kubernetes/apiextensions-apiserver/blob/a7ee7f91a2d0805f729998b85680a20cfba208d2/pkg/apis/apiextensions/types.go#L276-L279) yet. You can learn more about this in <https://github.com/kubernetes/kubectl/issues/1117> and <https://github.com/helm/helm/issues/4925>.
 
 If you bump into this error we advise to re-apply the kustomization of the component.
 
@@ -199,7 +200,7 @@ Error from server (InternalError): error when creating "STDIN": Internal error o
 ```
 This is because the webhook is not yet ready to receive requests. Wait a couple of seconds and retry applying the manifests.
 
-For more troubleshooting info also check out https://cert-manager.io/docs/troubleshooting/webhook/
+For more troubleshooting info also check out <https://cert-manager.io/docs/troubleshooting/webhook/>
 
 #### Istio
 
@@ -280,9 +281,9 @@ kustomize build common/dex/overlays/oauth2-proxy | kubectl apply -f -
 kubectl wait --for=condition=ready pods --all --timeout=180s -n auth
 ```
 
-To connect to your desired identity providers (LDAP,GitHub,Google,Microsoft,OIDC,SAML,GitLab) please take a look at https://dexidp.io/docs/connectors/oidc/.
+To connect to your desired identity providers (LDAP,GitHub,Google,Microsoft,OIDC,SAML,GitLab) please take a look at <https://dexidp.io/docs/connectors/oidc/>.
 We recommend to use OIDC in general, since it is compatible with most providers as for example azure in the following example.
-You need to modify https://github.com/kubeflow/manifests/blob/master/common/dex/overlays/oauth2-proxy/config-map.yaml and add some environment variables in https://github.com/kubeflow/manifests/blob/master/common/dex/base/deployment.yaml by adding a patch section in your main Kustomization file. For guidance please check out [Upgrading and extending](#upgrading-and-extending).
+You need to modify <https://github.com/kubeflow/manifests/blob/master/common/dex/overlays/oauth2-proxy/config-map.yaml> and add some environment variables in <https://github.com/kubeflow/manifests/blob/master/common/dex/base/deployment.yaml> by adding a patch section in your main Kustomization file. For guidance please check out [Upgrading and extending](#upgrading-and-extending).
 
 ```yaml
 apiVersion: v1
@@ -655,6 +656,36 @@ The Kubeflow security working group follows a responsible disclosure policy for 
   - Notify the maintainers and contributors
   - Try to provide a fix or mitigation strategy
   - Publicly disclose the CVE details
+
+## Pre-commit Hooks
+
+This repository uses pre-commit hooks to ensure code quality and consistency. The following hooks are configured:
+
+1. **Black** - Python code formatter
+
+2. **Yamllint** - YAML file linter
+
+3. **Shellcheck** - Shell script static analysis
+
+To use these hooks:
+
+1. Install pre-commit:
+
+   ```bash
+   pip install pre-commit
+   ```
+
+2. Install the git hooks:
+
+   ```bash
+   pre-commit install
+   ```
+
+The hooks will run automatically on `git commit`. You can also run them manually:
+
+```bash
+pre-commit run
+```
 
 ## Frequently Asked Questions
 
