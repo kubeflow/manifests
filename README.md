@@ -74,7 +74,7 @@ used from the different projects of Kubeflow:
 
 This is for the installation from scratch. For the in-place upgrade guide please jump to the [Upgrading and extending](#upgrading-and-extending) section.
 
-Although our master branch has extended automated test and is already quite stable,please consider using a stable [release tag / branch](https://github.com/kubeflow/manifests/releases) if you want a more conservative experience.
+Although our master branch has extended automated tests and is already quite stable, please consider using a stable [release tag / branch](https://github.com/kubeflow/manifests/releases) if you want a more conservative experience.
 
 We provide two options for installing the offii Kubeflow components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
 
