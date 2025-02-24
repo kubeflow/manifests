@@ -1,5 +1,6 @@
 # Kubeflow Dex & Keycloak Integration Guide
-This guide explains how to configure Dex to use Keycloak as an external OpenID Connect provider for Kubeflow. 
+
+In addition to the guidelines for GitHub, Google, Microsoft and other OIDC providers in https://github.com/kubeflow/manifests#dex and direct oauth2-proxy connection without DEX to typical OIDC IDP providers such as Azure in https://github.com/kubeflow/manifests/blob/master/common/oauth2-proxy/README.md#change-the-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only we try to roughly explain here how to configure Dex to use Keycloak as an external OpenID Connect provider for Kubeflow. 
 
 > [Note]  
 > ✅ Replace the domains of Keycloak and Kubeflow containing `example.com` with ones that are appropriately tailored to the actual situation.   
