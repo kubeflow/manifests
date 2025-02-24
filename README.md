@@ -339,6 +339,8 @@ data:
         #- groups # groups might be used in the future
 ```
 
+For Keycloak we have rough guidelines in <https://github.com/kubeflow/manifests/blob/master/common/dex/README.md>.
+
 #### Knative
 
 Knative is used by the KServe official Kubeflow component.
