@@ -7,22 +7,23 @@
 - [Overview of the Kubeflow Platform](#overview-of-the-kubeflow-platform)
 - [Kubeflow components versions](#kubeflow-components-versions)
 - [Installation](#installation)
-  * [Prerequisites](#prerequisites)
-  * [Install with a single command](#install-with-a-single-command)
-  * [Install individual components](#install-individual-components)
-  * [Connect to your Kubeflow Cluster](#connect-to-your-kubeflow-cluster)
-  * [Change default user name](#change-default-user-name)
-  * [Change default user password](#change-default-user-password)
+  - [Prerequisites](#prerequisites)
+  - [Install with a single command](#install-with-a-single-command)
+  - [Install individual components](#install-individual-components)
+  - [Connect to your Kubeflow Cluster](#connect-to-your-kubeflow-cluster)
+  - [Change default user name](#change-default-user-name)
+  - [Change default user password](#change-default-user-password)
 - [Upgrading and extending](#upgrading-and-extending)
 - [Release process](#release-process)
 - [CVE Scanning](#cve-scanning)
+- [Pre-commit Hooks](#pre-commit-hooks)
 - [Frequently Asked Questions](#frequently-asked-questions)
 
 <!-- tocstop -->
 
 ## Overview of the Kubeflow Platform
 
-This repository is owned by the [Manifests Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md).
+This repository is owned by the [Platform/Manifests Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md).
 If you are a contributor authoring or editing the packages please see [Best Practices](https://kubectl.docs.kubernetes.io/references/kustomize/).
 You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website. Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2). You can also find there our [biweekly meetings](https://bit.ly/kf-wg-manifests-meet), including the commentable [Agenda](https://bit.ly/kf-wg-manifests-notes).
 
@@ -45,20 +46,20 @@ This repo periodically syncs all official Kubeflow components from their respect
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
 | Training Operator | apps/training-operator/upstream | [778cd72](https://github.com/kubeflow/training-operator/tree/778cd72/manifests) |
-| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.10.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.0/components/notebook-controller/config) |
-| PVC Viewer Controller | apps/pvcviewer-controller/upstream | [v1.10.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.0/components/pvcviewer-controller/config) |
-| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.10.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.0/components/tensorboard-controller/config) |
-| Central Dashboard | apps/centraldashboard/upstream | [v1.10.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.0/components/centraldashboard/manifests) |
-| Profiles + KFAM | apps/profiles/upstream | [v1.10.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.0/components/profile-controller/config) |
-| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.10.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.0/components/admission-webhook/manifests) |
-| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.10.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.0/components/crud-web-apps/jupyter/manifests) |
-| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.10.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.0/components/crud-web-apps/tensorboards/manifests) |
-| Volumes Web App | apps/volumes-web-app/upstream | [v1.10.0-rc.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.0/components/crud-web-apps/volumes/manifests) |
+| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/notebook-controller/config) |
+| PVC Viewer Controller | apps/pvcviewer-controller/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/pvcviewer-controller/config) |
+| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/tensorboard-controller/config) |
+| Central Dashboard | apps/centraldashboard/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/centraldashboard/manifests) |
+| Profiles + KFAM | apps/profiles/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/profile-controller/config) |
+| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/admission-webhook/manifests) |
+| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/crud-web-apps/jupyter/manifests) |
+| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/crud-web-apps/tensorboards/manifests) |
+| Volumes Web App | apps/volumes-web-app/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/crud-web-apps/volumes/manifests) |
 | Katib | apps/katib/upstream | [v0.18.0-rc.0](https://github.com/kubeflow/katib/tree/v0.18.0-rc.0/manifests/v1beta1) |
 | KServe | contrib/kserve/kserve | [v0.14.1](https://github.com/kserve/kserve/releases/tag/v0.14.1/install/v0.14.1) |
-| KServe Models Web App | contrib/kserve/models-web-app | [0.13.0](https://github.com/kserve/models-web-app/tree/0.13.0/config) |
+| KServe Models Web App | contrib/kserve/models-web-app | [v0.14.0-rc.0](https://github.com/kserve/models-web-app/tree/v0.14.0-rc.0/config) |
 | Kubeflow Pipelines | apps/pipeline/upstream | [2.4.0](https://github.com/kubeflow/pipelines/tree/2.4.0/manifests/kustomize) |
-| Kubeflow Model Registry | apps/model-registry/upstream | [v0.2.12](https://github.com/kubeflow/model-registry/tree/v0.2.12/manifests/kustomize) |
+| Kubeflow Model Registry | apps/model-registry/upstream | [v0.2.14](https://github.com/kubeflow/model-registry/tree/v0.2.14/manifests/kustomize) |
 
 The following is also a matrix with versions from common components that are
 used from the different projects of Kubeflow:
@@ -73,7 +74,9 @@ used from the different projects of Kubeflow:
 
 This is for the installation from scratch. For the in-place upgrade guide please jump to the [Upgrading and extending](#upgrading-and-extending) section.
 
-The Manifests WG provides two options for installing Kubeflow official components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
+Although our master branch has extended automated tests and is already quite stable, please consider using a stable [release tag / branch](https://github.com/kubeflow/manifests/releases) if you want a more conservative experience.
+
+We provide two options for installing the offii Kubeflow components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
 
 1. Single-command installation of all components under `apps` and `common`
 2. Multi-command, individual components installation for `apps` and `common`
@@ -172,9 +175,9 @@ ensure CRDs are installed first
 ```
 
 This is because a kustomization applies both a CRD and a CR very quickly, and the CRD
-hasn't become [`Established`](https://github.com/kubernetes/apiextensions-apiserver/blob/a7ee7f91a2d0805f729998b85680a20cfba208d2/pkg/apis/apiextensions/types.go#L276-L279) yet. You can learn more about this in https://github.com/kubernetes/kubectl/issues/1117 and https://github.com/helm/helm/issues/4925.
+has not yet become [`Established`](https://github.com/kubernetes/apiextensions-apiserver/blob/a7ee7f91a2d0805f729998b85680a20cfba208d2/pkg/apis/apiextensions/types.go#L276-L279) yet. You can learn more about this in <https://github.com/kubernetes/kubectl/issues/1117> and <https://github.com/helm/helm/issues/4925>.
 
-If you bump into this error we advise to re-apply the kustomization of the component.
+If you bump into this error, we advise to re-apply the manifests of the component.
 
 ---
 
@@ -199,7 +202,7 @@ Error from server (InternalError): error when creating "STDIN": Internal error o
 ```
 This is because the webhook is not yet ready to receive requests. Wait a couple of seconds and retry applying the manifests.
 
-For more troubleshooting info also check out https://cert-manager.io/docs/troubleshooting/webhook/
+For more troubleshooting info also check out <https://cert-manager.io/docs/troubleshooting/webhook/>
 
 #### Istio
 
@@ -280,9 +283,9 @@ kustomize build common/dex/overlays/oauth2-proxy | kubectl apply -f -
 kubectl wait --for=condition=ready pods --all --timeout=180s -n auth
 ```
 
-To connect to your desired identity providers (LDAP,GitHub,Google,Microsoft,OIDC,SAML,GitLab) please take a look at https://dexidp.io/docs/connectors/oidc/.
+To connect to your desired identity providers (LDAP,GitHub,Google,Microsoft,OIDC,SAML,GitLab) please take a look at <https://dexidp.io/docs/connectors/oidc/>.
 We recommend to use OIDC in general, since it is compatible with most providers as for example azure in the following example.
-You need to modify https://github.com/kubeflow/manifests/blob/master/common/dex/overlays/oauth2-proxy/config-map.yaml and add some environment variables in https://github.com/kubeflow/manifests/blob/master/common/dex/base/deployment.yaml by adding a patch section in your main Kustomization file. For guidance please check out [Upgrading and extending](#upgrading-and-extending).
+You need to modify <https://github.com/kubeflow/manifests/blob/master/common/dex/overlays/oauth2-proxy/config-map.yaml> and add some environment variables in <https://github.com/kubeflow/manifests/blob/master/common/dex/base/deployment.yaml> by adding a patch section in your main Kustomization file. For guidance please check out [Upgrading and extending](#upgrading-and-extending).
 
 ```yaml
 apiVersion: v1
@@ -655,6 +658,36 @@ The Kubeflow security working group follows a responsible disclosure policy for 
   - Notify the maintainers and contributors
   - Try to provide a fix or mitigation strategy
   - Publicly disclose the CVE details
+
+## Pre-commit Hooks
+
+This repository uses pre-commit hooks to ensure code quality and consistency. The following hooks are configured:
+
+1. **Black** - Python code formatter
+
+2. **Yamllint** - YAML file linter
+
+3. **Shellcheck** - Shell script static analysis
+
+To use these hooks:
+
+1. Install pre-commit:
+
+   ```bash
+   pip install pre-commit
+   ```
+
+2. Install the git hooks:
+
+   ```bash
+   pre-commit install
+   ```
+
+The hooks will run automatically on `git commit`. You can also run them manually:
+
+```bash
+pre-commit run
+```
 
 ## Frequently Asked Questions
 

@@ -65,7 +65,7 @@ if [ -d "$DST_DIR" ]; then
     rm -r "$DST_DIR"
 fi
 mkdir -p $DST_DIR
-cp $SRC_DIR/model-registry/manifests/kustomize/* $DST_DIR -r
+cp -r "$SRC_DIR/model-registry/manifests/kustomize/"* "$DST_DIR"
 
 echo "Successfully copied all manifests."
 
@@ -73,7 +73,7 @@ echo "Updating README..."
 SRC_TXT="\[.*\](https://github.com/kubeflow/model-registry/tree/.*/manifests/kustomize)"
 DST_TXT="\[$COMMIT\](https://github.com/kubeflow/model-registry/tree/$COMMIT/manifests/kustomize)"
 
-sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
+sed -i "" "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}/README.md"
 
 echo "Committing the changes..."
 cd $MANIFESTS_DIR
