@@ -175,7 +175,7 @@ ensure CRDs are installed first
 ```
 
 This is because a kustomization applies both a CRD and a CR very quickly, and the CRD
-hasn't become [`Established`](https://github.com/kubernetes/apiextensions-apiserver/blob/a7ee7f91a2d0805f729998b85680a20cfba208d2/pkg/apis/apiextensions/types.go#L276-L279) yet. You can learn more about this in <https://github.com/kubernetes/kubectl/issues/1117> and <https://github.com/helm/helm/issues/4925>.
+has not yet become [`Established`](https://github.com/kubernetes/apiextensions-apiserver/blob/a7ee7f91a2d0805f729998b85680a20cfba208d2/pkg/apis/apiextensions/types.go#L276-L279) yet. You can learn more about this in <https://github.com/kubernetes/kubectl/issues/1117> and <https://github.com/helm/helm/issues/4925>.
 
 If you bump into this error we advise to re-apply the kustomization of the component.
 
