@@ -23,7 +23,7 @@
 
 ## Overview of the Kubeflow Platform
 
-This repository is owned by the [Manifests Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md).
+This repository is owned by the [Platform/Manifests Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md).
 If you are a contributor authoring or editing the packages please see [Best Practices](https://kubectl.docs.kubernetes.io/references/kustomize/).
 You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website. Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2). You can also find there our [biweekly meetings](https://bit.ly/kf-wg-manifests-meet), including the commentable [Agenda](https://bit.ly/kf-wg-manifests-notes).
 
@@ -74,7 +74,9 @@ used from the different projects of Kubeflow:
 
 This is for the installation from scratch. For the in-place upgrade guide please jump to the [Upgrading and extending](#upgrading-and-extending) section.
 
-The Manifests WG provides two options for installing Kubeflow official components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
+Although our master branch has extended automated test and is already quite stable,please consider using a stable [release tag / branch](https://github.com/kubeflow/manifests/releases) if you want a more conservative experience.
+
+We provide two options for installing Kubeflow official components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
 
 1. Single-command installation of all components under `apps` and `common`
 2. Multi-command, individual components installation for `apps` and `common`
