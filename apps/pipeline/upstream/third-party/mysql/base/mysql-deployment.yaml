@@ -58,8 +58,8 @@ spec:
           seccompProfile:
             type: RuntimeDefault
           runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 0
+          runAsUser: 999
+          runAsGroup: 999
           capabilities:
             drop:
             - ALL
@@ -70,6 +70,9 @@ spec:
           requests:
             cpu: 100m
             memory: 800Mi
+      securityContext:
+        fsGroup: 999
+        fsGroupChangePolicy: OnRootMismatch
       volumes:
       - name: mysql-persistent-storage
         persistentVolumeClaim:
