@@ -2571,7 +2571,7 @@ data:
           }
         },
         "externalIstiod": false,
-        "hub": "docker.io/istio",
+        "hub": "gcr.io/istio-release",
         "imagePullPolicy": "",
         "imagePullSecrets": [],
         "istioNamespace": "istio-system",
@@ -2930,7 +2930,7 @@ spec:
         envFrom:
         - configMapRef:
             name: istio-cni-config
-        image: docker.io/istio/install-cni:1.24.2
+        image: gcr.io/istio-release/install-cni:1.24.2
         name: install-cni
         ports:
         - containerPort: 15014
@@ -3100,7 +3100,7 @@ spec:
               resource: limits.cpu
         - name: PLATFORM
           value: ''
-        image: docker.io/istio/pilot:1.24.2
+        image: gcr.io/istio-release/pilot:1.24.2
         name: discovery
         ports:
         - containerPort: 8080
