@@ -127,7 +127,7 @@ spec:
         - name: ISTIO_META_WORKLOAD_NAME
           value: cluster-local-gateway
         - name: ISTIO_META_OWNER
-          value: 
+          value:
             kubernetes://apis/apps/v1/namespaces/istio-system/deployments/cluster-local-gateway
         - name: ISTIO_META_MESH_ID
           value: cluster.local
@@ -141,7 +141,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        image: docker.io/istio/proxyv2:1.24.2
+        image: gcr.io/istio-release/proxyv2:1.24.2
         name: istio-proxy
         ports:
         - containerPort: 15020
