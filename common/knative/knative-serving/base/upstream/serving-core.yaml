@@ -4,7 +4,7 @@ metadata:
   name: knative-serving
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 ---
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
@@ -13,7 +13,7 @@ metadata:
   namespace: knative-serving
   labels:
     serving.knative.dev/controller: "true"
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     app.kubernetes.io/name: knative-serving
 rules:
   - apiGroups: [""]
@@ -30,7 +30,7 @@ metadata:
   name: knative-serving-activator-cluster
   labels:
     serving.knative.dev/controller: "true"
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     app.kubernetes.io/name: knative-serving
 rules:
   - apiGroups: [""]
@@ -45,7 +45,7 @@ kind: ClusterRole
 metadata:
   name: knative-serving-aggregated-addressable-resolver
   labels:
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     app.kubernetes.io/name: knative-serving
 aggregationRule:
   clusterRoleSelectors:
@@ -57,7 +57,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: knative-serving-addressable-resolver
   labels:
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     app.kubernetes.io/name: knative-serving
     duck.knative.dev/addressable: "true"
 rules:
@@ -79,7 +79,7 @@ metadata:
   name: knative-serving-namespaced-admin
   labels:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     app.kubernetes.io/name: knative-serving
 rules:
   - apiGroups: ["serving.knative.dev"]
@@ -95,7 +95,7 @@ metadata:
   name: knative-serving-namespaced-edit
   labels:
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     app.kubernetes.io/name: knative-serving
 rules:
   - apiGroups: ["serving.knative.dev"]
@@ -111,7 +111,7 @@ metadata:
   name: knative-serving-namespaced-view
   labels:
     rbac.authorization.k8s.io/aggregate-to-view: "true"
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     app.kubernetes.io/name: knative-serving
 rules:
   - apiGroups: ["serving.knative.dev", "networking.internal.knative.dev", "autoscaling.internal.knative.dev", "caching.internal.knative.dev"]
@@ -124,7 +124,7 @@ metadata:
   name: knative-serving-core
   labels:
     serving.knative.dev/controller: "true"
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     app.kubernetes.io/name: knative-serving
 rules:
   - apiGroups: [""]
@@ -173,7 +173,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: knative-serving-podspecable-binding
   labels:
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     app.kubernetes.io/name: knative-serving
     duck.knative.dev/podspecable: "true"
 rules:
@@ -195,7 +195,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -203,7 +203,7 @@ metadata:
   name: knative-serving-admin
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 aggregationRule:
   clusterRoleSelectors:
     - matchLabels:
@@ -216,7 +216,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 subjects:
   - kind: ServiceAccount
     name: controller
@@ -233,7 +233,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 subjects:
   - kind: ServiceAccount
     name: controller
@@ -251,7 +251,7 @@ metadata:
   labels:
     app.kubernetes.io/component: activator
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -261,7 +261,7 @@ metadata:
   labels:
     app.kubernetes.io/component: activator
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 subjects:
   - kind: ServiceAccount
     name: activator
@@ -278,7 +278,7 @@ metadata:
   labels:
     app.kubernetes.io/component: activator
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 subjects:
   - kind: ServiceAccount
     name: activator
@@ -294,7 +294,7 @@ metadata:
   name: images.caching.internal.knative.dev
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     knative.dev/crd-install: "true"
 spec:
   group: caching.internal.knative.dev
@@ -456,7 +456,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: networking
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     knative.dev/crd-install: "true"
 spec:
   group: networking.internal.knative.dev
@@ -625,7 +625,7 @@ metadata:
   name: configurations.serving.knative.dev
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     knative.dev/crd-install: "true"
     duck.knative.dev/podspecable: "true"
 spec:
@@ -2192,7 +2192,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: networking
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     knative.dev/crd-install: "true"
 spec:
   group: networking.internal.knative.dev
@@ -2254,7 +2254,7 @@ metadata:
   name: domainmappings.serving.knative.dev
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     knative.dev/crd-install: "true"
 spec:
   group: serving.knative.dev
@@ -2453,7 +2453,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: networking
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     knative.dev/crd-install: "true"
 spec:
   group: networking.internal.knative.dev
@@ -2833,7 +2833,7 @@ metadata:
   name: metrics.autoscaling.internal.knative.dev
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     knative.dev/crd-install: "true"
 spec:
   group: autoscaling.internal.knative.dev
@@ -2960,7 +2960,7 @@ metadata:
   name: podautoscalers.autoscaling.internal.knative.dev
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     knative.dev/crd-install: "true"
 spec:
   group: autoscaling.internal.knative.dev
@@ -3144,7 +3144,7 @@ metadata:
   name: revisions.serving.knative.dev
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     knative.dev/crd-install: "true"
 spec:
   group: serving.knative.dev
@@ -4724,7 +4724,7 @@ metadata:
   name: routes.serving.knative.dev
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     knative.dev/crd-install: "true"
     duck.knative.dev/addressable: "true"
 spec:
@@ -4980,7 +4980,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: networking
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     knative.dev/crd-install: "true"
 spec:
   group: networking.internal.knative.dev
@@ -5188,7 +5188,7 @@ metadata:
   name: services.serving.knative.dev
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     knative.dev/crd-install: "true"
     duck.knative.dev/addressable: "true"
     duck.knative.dev/podspecable: "true"
@@ -6906,9 +6906,9 @@ metadata:
   labels:
     app.kubernetes.io/component: queue-proxy
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 spec:
-  image: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:c61042001b1f21c5d06bdee9b42b5e4524e4370e09d4f46347226f06db29ba0f
+  image: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:698ef80ebc698f4d2bb93c1e85684063a0cf253a83faebcbf106cee444181d8e
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -6918,7 +6918,7 @@ metadata:
   labels:
     app.kubernetes.io/component: autoscaler
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
   annotations:
     knative.dev/example-checksum: "47c2487f"
 data:
@@ -7114,7 +7114,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: controller
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     networking.knative.dev/certificate-provider: cert-manager
   annotations:
     knative.dev/example-checksum: "b7a9a602"
@@ -7169,7 +7169,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: controller
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
   annotations:
     knative.dev/example-checksum: "5b64ff5c"
 data:
@@ -7309,11 +7309,11 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: controller
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
   annotations:
     knative.dev/example-checksum: "720ddb97"
 data:
-  queue-sidecar-image: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:c61042001b1f21c5d06bdee9b42b5e4524e4370e09d4f46347226f06db29ba0f
+  queue-sidecar-image: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:698ef80ebc698f4d2bb93c1e85684063a0cf253a83faebcbf106cee444181d8e
   _example: |-
     ################################
     #                              #
@@ -7419,7 +7419,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: controller
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
   annotations:
     knative.dev/example-checksum: "26c09de5"
 data:
@@ -7469,7 +7469,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: controller
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
   annotations:
     knative.dev/example-checksum: "9ff569ad"
 data:
@@ -7692,7 +7692,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: controller
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
   annotations:
     knative.dev/example-checksum: "aa3813a8"
 data:
@@ -7777,7 +7777,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: controller
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
   annotations:
     knative.dev/example-checksum: "f4b71f57"
 data:
@@ -7822,7 +7822,7 @@ metadata:
   name: config-logging
   namespace: knative-serving
   labels:
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     app.kubernetes.io/component: logging
     app.kubernetes.io/name: knative-serving
   annotations:
@@ -7890,7 +7890,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: networking
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
   annotations:
     knative.dev/example-checksum: "0573e07d"
 data:
@@ -8080,7 +8080,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: observability
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
   annotations:
     knative.dev/example-checksum: "54abd711"
 data:
@@ -8185,7 +8185,7 @@ metadata:
   labels:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: tracing
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
   annotations:
     knative.dev/example-checksum: "26614636"
 data:
@@ -8227,7 +8227,7 @@ metadata:
   labels:
     app.kubernetes.io/component: activator
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 spec:
   minReplicas: 1
   maxReplicas: 20
@@ -8251,7 +8251,7 @@ metadata:
   labels:
     app.kubernetes.io/component: activator
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 spec:
   minAvailable: 80%
   selector:
@@ -8265,7 +8265,7 @@ metadata:
   namespace: knative-serving
   labels:
     app.kubernetes.io/component: activator
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     app.kubernetes.io/name: knative-serving
 spec:
   selector:
@@ -8279,7 +8279,7 @@ spec:
         role: activator
         app.kubernetes.io/component: activator
         app.kubernetes.io/name: knative-serving
-        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/version: "1.16.2"
     spec:
       affinity:
         podAntiAffinity:
@@ -8293,7 +8293,7 @@ spec:
       serviceAccountName: activator
       containers:
         - name: activator
-          image: gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:24c19cbee078925b91cd2e85082b581d53b218b410c083b1005dc06dc549b1d3
+          image: gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:cc39d40985f7b37ba384a857d194a24ac5eae7e204aac4ed9bf4ebfd8d62e721
           resources:
             requests:
               cpu: 300m
@@ -8361,7 +8361,7 @@ metadata:
   labels:
     app: activator
     app.kubernetes.io/component: activator
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     app.kubernetes.io/name: knative-serving
 spec:
   selector:
@@ -8392,7 +8392,7 @@ metadata:
   labels:
     app.kubernetes.io/component: autoscaler
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 spec:
   replicas: 1
   selector:
@@ -8408,7 +8408,7 @@ spec:
         app: autoscaler
         app.kubernetes.io/component: autoscaler
         app.kubernetes.io/name: knative-serving
-        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/version: "1.16.2"
     spec:
       affinity:
         podAntiAffinity:
@@ -8422,7 +8422,7 @@ spec:
       serviceAccountName: controller
       containers:
         - name: autoscaler
-          image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:5e9236452d89363957d4e7e249d57740a8fcd946aed23f8518d94962bf440250
+          image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:59c2e7ad52cea17bedfc2aca9b9e33060bb34f04d35fd71fe61147bcbdb881e4
           resources:
             requests:
               cpu: 100m
@@ -8480,7 +8480,7 @@ metadata:
     app: autoscaler
     app.kubernetes.io/component: autoscaler
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
   name: autoscaler
   namespace: knative-serving
 spec:
@@ -8505,7 +8505,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 spec:
   selector:
     matchLabels:
@@ -8516,7 +8516,7 @@ spec:
         app: controller
         app.kubernetes.io/component: controller
         app.kubernetes.io/name: knative-serving
-        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/version: "1.16.2"
     spec:
       affinity:
         podAntiAffinity:
@@ -8530,7 +8530,7 @@ spec:
       serviceAccountName: controller
       containers:
         - name: controller
-          image: gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256:5fb22b052e6bc98a1a6bbb68c0282ddb50744702acee6d83110302bc990666e9
+          image: gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256:0e47362d044f8eac84595ed0a9fdf22e5dd5a07cc7a5df74e93eb5ad17ad4827
           resources:
             requests:
               cpu: 100m
@@ -8591,7 +8591,7 @@ metadata:
     app: controller
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
   name: controller
   namespace: knative-serving
 spec:
@@ -8613,7 +8613,7 @@ metadata:
   labels:
     app.kubernetes.io/component: webhook
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 spec:
   minReplicas: 1
   maxReplicas: 5
@@ -8637,7 +8637,7 @@ metadata:
   labels:
     app.kubernetes.io/component: webhook
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 spec:
   minAvailable: 80%
   selector:
@@ -8651,7 +8651,7 @@ metadata:
   namespace: knative-serving
   labels:
     app.kubernetes.io/component: webhook
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     app.kubernetes.io/name: knative-serving
 spec:
   selector:
@@ -8664,7 +8664,7 @@ spec:
         app: webhook
         role: webhook
         app.kubernetes.io/component: webhook
-        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/version: "1.16.2"
         app.kubernetes.io/name: knative-serving
     spec:
       affinity:
@@ -8679,7 +8679,7 @@ spec:
       serviceAccountName: controller
       containers:
         - name: webhook
-          image: gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:0fb5a4245aa4737d443658754464cd0a076de959fe14623fb9e9d31318ccce24
+          image: gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:d42e2f83c9018779465860fdc67ce6ada3eac8ba8c47c5c2127c0bb45f9b328a
           resources:
             requests:
               cpu: 100m
@@ -8743,7 +8743,7 @@ metadata:
     app: webhook
     role: webhook
     app.kubernetes.io/component: webhook
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
     app.kubernetes.io/name: knative-serving
   name: webhook
   namespace: knative-serving
@@ -8769,7 +8769,7 @@ metadata:
   labels:
     app.kubernetes.io/component: webhook
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 webhooks:
   - admissionReviewVersions: ["v1", "v1beta1"]
     clientConfig:
@@ -8796,7 +8796,7 @@ metadata:
   labels:
     app.kubernetes.io/component: webhook
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 webhooks:
   - admissionReviewVersions: ["v1", "v1beta1"]
     clientConfig:
@@ -8838,7 +8838,7 @@ metadata:
   labels:
     app.kubernetes.io/component: webhook
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 webhooks:
   - admissionReviewVersions: ["v1", "v1beta1"]
     clientConfig:
@@ -8882,6 +8882,6 @@ metadata:
   labels:
     app.kubernetes.io/component: webhook
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/version: "1.16.2"
 ---
 
