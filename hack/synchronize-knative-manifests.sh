@@ -14,9 +14,9 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-KN_SERVING_RELEASE="v1.16.0" # Must be a release
-KN_EXTENSION_RELEASE="v1.16.0" # Must be a release
-KN_EVENTING_RELEASE="v1.16.1" # Must be a release
+KN_SERVING_RELEASE="v1.17.0" # Must be a release
+KN_EXTENSION_RELEASE="v1.17.0" # Must be a release
+KN_EVENTING_RELEASE="v1.17.2" # Must be a release
 BRANCH=${BRANCH:=synchronize-knative-manifests-${KN_SERVING_RELEASE?}}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )

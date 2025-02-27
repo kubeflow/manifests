@@ -7,7 +7,7 @@ metadata:
     app: "storage-version-migration-eventing"
     app.kubernetes.io/name: knative-eventing
     app.kubernetes.io/component: storage-version-migration-job
-    app.kubernetes.io/version: "1.16.1"
+    app.kubernetes.io/version: "1.17.2"
   name: storage-version-migration-eventing
 spec:
   ttlSecondsAfterFinished: 600
@@ -18,7 +18,7 @@ spec:
         app: "storage-version-migration-eventing"
         app.kubernetes.io/name: knative-eventing
         app.kubernetes.io/component: storage-version-migration-job
-        app.kubernetes.io/version: "1.16.1"
+        app.kubernetes.io/version: "1.17.2"
         sidecar.istio.io/inject: "false"
       annotations:
         sidecar.istio.io/inject: "false"
@@ -26,28 +26,31 @@ spec:
       serviceAccountName: knative-eventing-post-install-job
       restartPolicy: OnFailure
       containers:
-      - name: migrate
-        image: gcr.io/knative-releases/knative.dev/pkg/apiextensions/storageversion/cmd/migrate@sha256:f1786ed71c979b93e3fba02c4cfb3df33d97be0cce2c9ef994bfba4cc15a5558
-        args:
-        - "apiserversources.sources.knative.dev"
-        - "brokers.eventing.knative.dev"
-        - "channels.messaging.knative.dev"
-        - "containersources.sources.knative.dev"
-        - "eventtypes.eventing.knative.dev"
-        - "inmemorychannels.messaging.knative.dev"
-        - "parallels.flows.knative.dev"
-        - "pingsources.sources.knative.dev"
-        - "sequences.flows.knative.dev"
-        - "sinkbindings.sources.knative.dev"
-        - "subscriptions.messaging.knative.dev"
-        - "triggers.eventing.knative.dev"
-        - "jobsinks.sinks.knative.dev"
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          capabilities:
-            drop:
-            - ALL
-          seccompProfile:
-            type: RuntimeDefault
+        - name: migrate
+          image: gcr.io/knative-releases/knative.dev/pkg/apiextensions/storageversion/cmd/migrate@sha256:861978f6cb0e531059f5d1ae307f99a0241f402ddd5ba103b8501e3780866cba
+          args:
+            - "apiserversources.sources.knative.dev"
+            - "brokers.eventing.knative.dev"
+            - "channels.messaging.knative.dev"
+            - "containersources.sources.knative.dev"
+            - "eventtypes.eventing.knative.dev"
+            - "inmemorychannels.messaging.knative.dev"
+            - "parallels.flows.knative.dev"
+            - "pingsources.sources.knative.dev"
+            - "sequences.flows.knative.dev"
+            - "sinkbindings.sources.knative.dev"
+            - "subscriptions.messaging.knative.dev"
+            - "triggers.eventing.knative.dev"
+            - "jobsinks.sinks.knative.dev"
+            - "eventpolicies.eventing.knative.dev"
+            - "integrationsources.sources.knative.dev"
+            - "integrationsinks.sinks.knative.dev"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
