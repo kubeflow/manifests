@@ -60,7 +60,7 @@ if [ -n "$(git status --porcelain)" ]; then
 fi
 
 echo "Copying kserve manifests..."
-DST_DIR=$MANIFESTS_DIR/contrib/kserve/kserve
+DST_DIR=$MANIFESTS_DIR/experimental/kserve/kserve
 if [ -d "$DST_DIR" ]; then
     rm -rf "$DST_DIR"/kserve*
 fi

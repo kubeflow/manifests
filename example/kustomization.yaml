@@ -91,22 +91,22 @@ resources:
 - ../common/user-namespace/base
 
 # KServe
-- ../contrib/kserve/kserve
-- ../contrib/kserve/models-web-app/overlays/kubeflow
+- ../experimental/kserve/kserve
+- ../experimental/kserve/models-web-app/overlays/kubeflow
 
 # Ray is an experimental integration
 # Here is the documentation for Ray: https://docs.ray.io/en/latest/
-# Here is the internal documentation for Ray: - ../contrib/ray/README.md
-# - ../contrib/ray/kuberay-operator/overlays/kubeflow
+# Here is the internal documentation for Ray: - ../experimental/ray/README.md
+# - ../experimental/ray/kuberay-operator/overlays/kubeflow
 
 components:
 # Pod Security Standards
 # https://kubernetes.io/docs/concepts/security/pod-security-standards/
 # Uncomment to enable baseline level standards
-# - ../contrib/security/PSS/static/baseline
+# - ../experimental/security/PSS/static/baseline
 # Uncomment to enable restricted level standards
-# - ../contrib/security/PSS/static/restricted
+# - ../experimental/security/PSS/static/restricted
 # Uncomment to enable baseline level standards for dynamic namespaces
-# - ../contrib/security/PSS/dynamic/baseline
+# - ../experimental/security/PSS/dynamic/baseline
 # Uncomment to enable restricted level standards for dynamic namespaces
-# - ../contrib/security/PSS/dynamic/restricted
+# - ../experimental/security/PSS/dynamic/restricted

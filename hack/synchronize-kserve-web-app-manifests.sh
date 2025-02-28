@@ -55,7 +55,7 @@ if [ -n "$(git status --porcelain)" ]; then
 fi
 
 echo "Copying manifests"
-DST_DIR=$MANIFESTS_DIR/contrib/kserve/models-web-app
+DST_DIR=$MANIFESTS_DIR/experimental/kserve/models-web-app
 if [ -d "$DST_DIR" ]; then
     rm -r "$DST_DIR"
 fi
