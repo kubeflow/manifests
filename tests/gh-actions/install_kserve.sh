@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 echo "Installing Kserve ..."
-cd contrib/kserve
+cd experimental/kserve
 set +e
 kustomize build kserve | kubectl apply --server-side --force-conflicts -f -
 sleep 30

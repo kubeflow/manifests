@@ -72,6 +72,6 @@ sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
 
 echo "Committing the changes..."
 cd $MANIFESTS_DIR || exit
-git add contrib/kserve/models-web-app
+git add experimental/kserve/models-web-app
 git add README.md
 git commit -s -m "Update kserve models web application manifests from ${COMMIT}"

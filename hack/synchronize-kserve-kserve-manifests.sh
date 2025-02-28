@@ -77,6 +77,6 @@ sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
 
 echo "Committing the changes..."
 cd "$MANIFESTS_DIR"
-git add contrib/kserve
+git add experimental/kserve
 git add README.md
 git commit -s -m "Update kserve manifests from ${KSERVE_VERSION}" -m "Update kserve/kserve manifests from ${COMMIT}"

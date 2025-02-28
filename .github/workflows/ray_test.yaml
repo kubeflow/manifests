@@ -4,7 +4,7 @@ on:
     paths:
     - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
     - .github/workflows/ray_test.yaml
-    - contrib/ray/**
+    - experimental/ray/**
 
 jobs:
   build:
@@ -37,6 +37,6 @@ jobs:
 
     - name: Build & Apply manifests
       run: |
-        cd contrib/ray/
+        cd experimental/ray/
         export KF_PROFILE=kubeflow-user-example-com
         make test
