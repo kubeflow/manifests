@@ -36,7 +36,7 @@ wg_dirs = {
     "training": "../apps/training-operator/upstream/overlays",
     "manifests": "../common/cert-manager/cert-manager/base ../common/cert-manager/kubeflow-issuer/base ../common/istio-1-24/istio-crds/base ../common/istio-1-24/istio-namespace/base ../common/istio-1-24/istio-install/overlays/oauth2-proxy ../common/oauth2-proxy/overlays/m2m-self-signed ../common/dex/overlays/oauth2-proxy ../common/knative/knative-serving/overlays/gateways ../common/knative/knative-eventing/base ../common/istio-1-24/cluster-local-gateway/base ../common/kubeflow-namespace/base ../common/kubeflow-roles/base ../common/istio-1-24/kubeflow-istio-resources/base",
     "workbenches": "../apps/pvcviewer-controller/upstream/base ../apps/admission-webhook/upstream/overlays ../apps/centraldashboard/overlays ../apps/jupyter/jupyter-web-app/upstream/overlays ../apps/volumes-web-app/upstream/overlays ../apps/tensorboard/tensorboards-web-app/upstream/overlays ../apps/profiles/upstream/overlays ../apps/jupyter/notebook-controller/upstream/overlays ../apps/tensorboard/tensorboard-controller/upstream/overlays",
-    "serving": "../experimental/kserve - ../experimental/kserve/models-web-app/overlays/kubeflow",
+    "serving": "../apps/kserve - ../apps/kserve/models-web-app/overlays/kubeflow",
     "model-registry": "../apps/model-registry/upstream",
 }
 

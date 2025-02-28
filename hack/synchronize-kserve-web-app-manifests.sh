@@ -55,7 +55,7 @@ if [ -n "$(git status --porcelain)" ]; then
 fi
 
 echo "Copying manifests"
-DST_DIR=$MANIFESTS_DIR/experimental/kserve/models-web-app
+DST_DIR=$MANIFESTS_DIR/apps/kserve/models-web-app
 if [ -d "$DST_DIR" ]; then
     rm -r "$DST_DIR"
 fi
@@ -72,6 +72,6 @@ sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
 
 echo "Committing the changes..."
 cd $MANIFESTS_DIR || exit
-git add experimental/kserve/models-web-app
+git add apps/kserve/models-web-app
 git add README.md
 git commit -s -m "Update kserve models web application manifests from ${COMMIT}"

@@ -60,7 +60,7 @@ if [ -n "$(git status --porcelain)" ]; then
 fi
 
 echo "Copying kserve manifests..."
-DST_DIR=$MANIFESTS_DIR/experimental/kserve/kserve
+DST_DIR=$MANIFESTS_DIR/apps/kserve/kserve
 if [ -d "$DST_DIR" ]; then
     rm -rf "$DST_DIR"/kserve*
 fi
@@ -77,6 +77,6 @@ sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
 
 echo "Committing the changes..."
 cd "$MANIFESTS_DIR"
-git add experimental/kserve
+git add apps/kserve
 git add README.md
 git commit -s -m "Update kserve manifests from ${KSERVE_VERSION}" -m "Update kserve/kserve manifests from ${COMMIT}"
