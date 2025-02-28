@@ -12,7 +12,7 @@ spec:
       name: istio-ingressgateway
     pilot:
       enabled: true
-  hub: docker.io/istio
+  hub: gcr.io/istio-release
   profile: default
   tag: 1.24.2
   values:
@@ -23,4 +23,3 @@ spec:
     global:
       configValidation: true
       istioNamespace: istio-system
-

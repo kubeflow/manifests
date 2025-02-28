@@ -2410,7 +2410,7 @@ data:
           }
         },
         "externalIstiod": false,
-        "hub": "docker.io/istio",
+        "hub": "gcr.io/istio-release",
         "imagePullPolicy": "",
         "imagePullSecrets": [],
         "istioNamespace": "istio-system",
@@ -2788,7 +2788,7 @@ spec:
               resource: limits.cpu
         - name: PLATFORM
           value: ''
-        image: docker.io/istio/pilot:1.24.2
+        image: gcr.io/istio-release/pilot:1.24.2
         name: discovery
         ports:
         - containerPort: 8080
