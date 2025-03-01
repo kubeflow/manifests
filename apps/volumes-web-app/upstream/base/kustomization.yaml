@@ -14,7 +14,7 @@ commonLabels:
 images:
 - name: docker.io/kubeflownotebookswg/volumes-web-app
   newName: docker.io/kubeflownotebookswg/volumes-web-app
-  newTag: v1.9.2
+  newTag: v1.10.0-rc.1
 # We need the name to be unique without the suffix because the original name is what
 # gets used with patches
 configMapGenerator:
@@ -63,6 +63,13 @@ vars:
 - name: VWA_APP_SECURE_COOKIES
   fieldref:
     fieldPath: data.VWA_APP_SECURE_COOKIES
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: parameters
+- name: VWA_APP_ENABLE_METRICS
+  fieldref:
+    fieldPath: data.VWA_APP_ENABLE_METRICS
   objref:
     apiVersion: v1
     kind: ConfigMap

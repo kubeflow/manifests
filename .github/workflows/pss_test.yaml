@@ -11,7 +11,7 @@ on:
     - common/cert-manager/**
     - common/oauth2-proxy/**
     - common/istio*/**
-    - contrib/security/PSS/*
+    - experimental/security/PSS/*
     - tests/gh-actions/install_istio-cni.sh
     - tests/gh-actions/install_multitenancy.sh
 
@@ -70,7 +70,7 @@ jobs:
 
     - name: Apply patches to clear warnings
       run: |
-        DIRECTORY="contrib/security/PSS/patches"
+        DIRECTORY="experimental/security/PSS/patches"
         for file in "$DIRECTORY"/*.yaml; do
           echo "Patching file: $file"
 

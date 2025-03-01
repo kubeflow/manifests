@@ -11,7 +11,7 @@ on:
     - common/cert-manager/**
     - common/oauth2-proxy/**
     - common/istio*/**
-    - contrib/seaweedfs/**
+    - experimental/seaweedfs/**
 
 jobs:
   build:
@@ -77,7 +77,7 @@ jobs:
 
     - name: Install seaweedfs
       run: |
-        kustomize build contrib/seaweedfs/istio | kubectl apply -f -
+        kustomize build experimental/seaweedfs/istio | kubectl apply -f -
         kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/seaweedfs
         kubectl -n kubeflow exec deploy/seaweedfs -c seaweedfs -- sh -c "echo \"s3.configure -user minio -access_key minio -secret_key minio123 -actions Read,Write,List -apply\" | /usr/bin/weed shell"
 

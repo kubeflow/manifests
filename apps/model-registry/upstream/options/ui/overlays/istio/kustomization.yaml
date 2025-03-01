@@ -13,3 +13,5 @@ patches:
       version: v1
       kind: Service
       name: model-registry-ui-service
+
+namespace: kubeflow
