@@ -7,8 +7,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: base-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: base-1.24.3
   name: authorizationpolicies.security.istio.io
 spec:
   group: security.istio.io
@@ -258,8 +258,8 @@ spec:
                 x-kubernetes-validations:
                 - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
                     gateway.networking.k8s.io/Gateway
-                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
-                    ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
+                    \ ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
               targetRefs:
                 description: Optional.
                 items:
@@ -293,8 +293,8 @@ spec:
                   x-kubernetes-validations:
                   - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
                       gateway.networking.k8s.io/Gateway
-                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
-                      ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
+                      \ ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
                 maxItems: 16
                 type: array
             type: object
@@ -611,8 +611,8 @@ spec:
                 x-kubernetes-validations:
                 - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
                     gateway.networking.k8s.io/Gateway
-                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
-                    ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
+                    \ ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
               targetRefs:
                 description: Optional.
                 items:
@@ -646,8 +646,8 @@ spec:
                   x-kubernetes-validations:
                   - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
                       gateway.networking.k8s.io/Gateway
-                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
-                      ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
+                      \ ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
                 maxItems: 16
                 type: array
             type: object
@@ -741,8 +741,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: base-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: base-1.24.3
   name: destinationrules.networking.istio.io
 spec:
   group: networking.istio.io
@@ -1039,9 +1039,7 @@ spec:
                                     type: object
                                   type: array
                                 enabled:
-                                  description: enable locality load balancing, this
-                                    is DestinationRule-level and will override mesh
-                                    wide settings in entirety.
+                                  description: Enable locality load balancing.
                                   nullable: true
                                   type: boolean
                                 failover:
@@ -1159,7 +1157,7 @@ spec:
                             minHealthPercent:
                               description: Outlier detection will be enabled as long
                                 as the associated load balancing pool has at least
-                                min_health_percent hosts in healthy mode.
+                                `minHealthPercent` hosts in healthy mode.
                               format: int32
                               type: integer
                             splitExternalLocalOriginErrors:
@@ -1411,9 +1409,7 @@ spec:
                                           type: object
                                         type: array
                                       enabled:
-                                        description: enable locality load balancing,
-                                          this is DestinationRule-level and will override
-                                          mesh wide settings in entirety.
+                                        description: Enable locality load balancing.
                                         nullable: true
                                         type: boolean
                                       failover:
@@ -1535,7 +1531,7 @@ spec:
                                   minHealthPercent:
                                     description: Outlier detection will be enabled
                                       as long as the associated load balancing pool
-                                      has at least min_health_percent hosts in healthy
+                                      has at least `minHealthPercent` hosts in healthy
                                       mode.
                                     format: int32
                                     type: integer
@@ -1932,8 +1928,7 @@ spec:
                               type: object
                             type: array
                           enabled:
-                            description: enable locality load balancing, this is DestinationRule-level
-                              and will override mesh wide settings in entirety.
+                            description: Enable locality load balancing.
                             nullable: true
                             type: boolean
                           failover:
@@ -2047,7 +2042,7 @@ spec:
                         type: integer
                       minHealthPercent:
                         description: Outlier detection will be enabled as long as
-                          the associated load balancing pool has at least min_health_percent
+                          the associated load balancing pool has at least `minHealthPercent`
                           hosts in healthy mode.
                         format: int32
                         type: integer
@@ -2294,9 +2289,7 @@ spec:
                                     type: object
                                   type: array
                                 enabled:
-                                  description: enable locality load balancing, this
-                                    is DestinationRule-level and will override mesh
-                                    wide settings in entirety.
+                                  description: Enable locality load balancing.
                                   nullable: true
                                   type: boolean
                                 failover:
@@ -2414,7 +2407,7 @@ spec:
                             minHealthPercent:
                               description: Outlier detection will be enabled as long
                                 as the associated load balancing pool has at least
-                                min_health_percent hosts in healthy mode.
+                                `minHealthPercent` hosts in healthy mode.
                               format: int32
                               type: integer
                             splitExternalLocalOriginErrors:
@@ -2956,9 +2949,7 @@ spec:
                                     type: object
                                   type: array
                                 enabled:
-                                  description: enable locality load balancing, this
-                                    is DestinationRule-level and will override mesh
-                                    wide settings in entirety.
+                                  description: Enable locality load balancing.
                                   nullable: true
                                   type: boolean
                                 failover:
@@ -3076,7 +3067,7 @@ spec:
                             minHealthPercent:
                               description: Outlier detection will be enabled as long
                                 as the associated load balancing pool has at least
-                                min_health_percent hosts in healthy mode.
+                                `minHealthPercent` hosts in healthy mode.
                               format: int32
                               type: integer
                             splitExternalLocalOriginErrors:
@@ -3328,9 +3319,7 @@ spec:
                                           type: object
                                         type: array
                                       enabled:
-                                        description: enable locality load balancing,
-                                          this is DestinationRule-level and will override
-                                          mesh wide settings in entirety.
+                                        description: Enable locality load balancing.
                                         nullable: true
                                         type: boolean
                                       failover:
@@ -3452,7 +3441,7 @@ spec:
                                   minHealthPercent:
                                     description: Outlier detection will be enabled
                                       as long as the associated load balancing pool
-                                      has at least min_health_percent hosts in healthy
+                                      has at least `minHealthPercent` hosts in healthy
                                       mode.
                                     format: int32
                                     type: integer
@@ -3849,8 +3838,7 @@ spec:
                               type: object
                             type: array
                           enabled:
-                            description: enable locality load balancing, this is DestinationRule-level
-                              and will override mesh wide settings in entirety.
+                            description: Enable locality load balancing.
                             nullable: true
                             type: boolean
                           failover:
@@ -3964,7 +3952,7 @@ spec:
                         type: integer
                       minHealthPercent:
                         description: Outlier detection will be enabled as long as
-                          the associated load balancing pool has at least min_health_percent
+                          the associated load balancing pool has at least `minHealthPercent`
                           hosts in healthy mode.
                         format: int32
                         type: integer
@@ -4211,9 +4199,7 @@ spec:
                                     type: object
                                   type: array
                                 enabled:
-                                  description: enable locality load balancing, this
-                                    is DestinationRule-level and will override mesh
-                                    wide settings in entirety.
+                                  description: Enable locality load balancing.
                                   nullable: true
                                   type: boolean
                                 failover:
@@ -4331,7 +4317,7 @@ spec:
                             minHealthPercent:
                               description: Outlier detection will be enabled as long
                                 as the associated load balancing pool has at least
-                                min_health_percent hosts in healthy mode.
+                                `minHealthPercent` hosts in healthy mode.
                               format: int32
                               type: integer
                             splitExternalLocalOriginErrors:
@@ -4873,9 +4859,7 @@ spec:
                                     type: object
                                   type: array
                                 enabled:
-                                  description: enable locality load balancing, this
-                                    is DestinationRule-level and will override mesh
-                                    wide settings in entirety.
+                                  description: Enable locality load balancing.
                                   nullable: true
                                   type: boolean
                                 failover:
@@ -4993,7 +4977,7 @@ spec:
                             minHealthPercent:
                               description: Outlier detection will be enabled as long
                                 as the associated load balancing pool has at least
-                                min_health_percent hosts in healthy mode.
+                                `minHealthPercent` hosts in healthy mode.
                               format: int32
                               type: integer
                             splitExternalLocalOriginErrors:
@@ -5245,9 +5229,7 @@ spec:
                                           type: object
                                         type: array
                                       enabled:
-                                        description: enable locality load balancing,
-                                          this is DestinationRule-level and will override
-                                          mesh wide settings in entirety.
+                                        description: Enable locality load balancing.
                                         nullable: true
                                         type: boolean
                                       failover:
@@ -5369,7 +5351,7 @@ spec:
                                   minHealthPercent:
                                     description: Outlier detection will be enabled
                                       as long as the associated load balancing pool
-                                      has at least min_health_percent hosts in healthy
+                                      has at least `minHealthPercent` hosts in healthy
                                       mode.
                                     format: int32
                                     type: integer
@@ -5766,8 +5748,7 @@ spec:
                               type: object
                             type: array
                           enabled:
-                            description: enable locality load balancing, this is DestinationRule-level
-                              and will override mesh wide settings in entirety.
+                            description: Enable locality load balancing.
                             nullable: true
                             type: boolean
                           failover:
@@ -5881,7 +5862,7 @@ spec:
                         type: integer
                       minHealthPercent:
                         description: Outlier detection will be enabled as long as
-                          the associated load balancing pool has at least min_health_percent
+                          the associated load balancing pool has at least `minHealthPercent`
                           hosts in healthy mode.
                         format: int32
                         type: integer
@@ -6128,9 +6109,7 @@ spec:
                                     type: object
                                   type: array
                                 enabled:
-                                  description: enable locality load balancing, this
-                                    is DestinationRule-level and will override mesh
-                                    wide settings in entirety.
+                                  description: Enable locality load balancing.
                                   nullable: true
                                   type: boolean
                                 failover:
@@ -6248,7 +6227,7 @@ spec:
                             minHealthPercent:
                               description: Outlier detection will be enabled as long
                                 as the associated load balancing pool has at least
-                                min_health_percent hosts in healthy mode.
+                                `minHealthPercent` hosts in healthy mode.
                               format: int32
                               type: integer
                             splitExternalLocalOriginErrors:
@@ -6520,8 +6499,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: base-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: base-1.24.3
   name: envoyfilters.networking.istio.io
 spec:
   group: networking.istio.io
@@ -6679,7 +6658,7 @@ spec:
                               additionalProperties:
                                 type: string
                               description: Match on the node metadata supplied by
-                                a proxy when connecting to Istio Pilot.
+                                a proxy when connecting to istiod.
                               type: object
                             proxyVersion:
                               description: A regular expression in golang regex format
@@ -6815,8 +6794,8 @@ spec:
                   x-kubernetes-validations:
                   - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
                       gateway.networking.k8s.io/Gateway
-                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
-                      ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
+                      \ ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
                 maxItems: 16
                 type: array
               workloadSelector:
@@ -6926,8 +6905,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: base-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: base-1.24.3
   name: gateways.networking.istio.io
 spec:
   group: networking.istio.io
@@ -7641,8 +7620,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: base-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: base-1.24.3
   name: peerauthentications.security.istio.io
 spec:
   group: security.istio.io
@@ -7987,8 +7966,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: base-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: base-1.24.3
   name: proxyconfigs.networking.istio.io
 spec:
   group: networking.istio.io
@@ -8137,8 +8116,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: base-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: base-1.24.3
   name: requestauthentications.security.istio.io
 spec:
   group: security.istio.io
@@ -8322,8 +8301,8 @@ spec:
                 x-kubernetes-validations:
                 - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
                     gateway.networking.k8s.io/Gateway
-                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
-                    ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
+                    \ ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
               targetRefs:
                 description: Optional.
                 items:
@@ -8357,8 +8336,8 @@ spec:
                   x-kubernetes-validations:
                   - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
                       gateway.networking.k8s.io/Gateway
-                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
-                      ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
+                      \ ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
                 maxItems: 16
                 type: array
             type: object
@@ -8609,8 +8588,8 @@ spec:
                 x-kubernetes-validations:
                 - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
                     gateway.networking.k8s.io/Gateway
-                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
-                    ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
+                    \ ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
               targetRefs:
                 description: Optional.
                 items:
@@ -8644,8 +8623,8 @@ spec:
                   x-kubernetes-validations:
                   - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
                       gateway.networking.k8s.io/Gateway
-                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
-                      ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
+                      \ ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
                 maxItems: 16
                 type: array
             type: object
@@ -8739,8 +8718,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: base-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: base-1.24.3
   name: serviceentries.networking.istio.io
 spec:
   group: networking.istio.io
@@ -8804,11 +8783,11 @@ spec:
                       type: string
                       x-kubernetes-validations:
                       - message: UDS must be an absolute path or abstract socket
-                        rule: "self.startsWith('unix://') ? (self.substring(7,8) ==
-                          '/' || self.substring(7,8) == '@') : true"
+                        rule: "self.startsWith('unix://') ? (self.substring(7,8) ==\
+                          \ '/' || self.substring(7,8) == '@') : true"
                       - message: UDS may not be a dir
-                        rule: "self.startsWith('unix://') ? !self.endsWith('/') :
-                          true"
+                        rule: "self.startsWith('unix://') ? !self.endsWith('/') :\
+                          \ true"
                     labels:
                       additionalProperties:
                         type: string
@@ -8853,8 +8832,8 @@ spec:
                   - message: Address is required
                     rule: has(self.address) || has(self.network)
                   - message: UDS may not include ports
-                    rule: "(has(self.address) && self.address.startsWith('unix://'))
-                      ? !has(self.ports) : true"
+                    rule: "(has(self.address) && self.address.startsWith('unix://'))\
+                      \ ? !has(self.ports) : true"
                 maxItems: 4096
                 type: array
               exportTo:
@@ -8962,15 +8941,15 @@ spec:
               rule: (has(self.workloadSelector)?1:0)+(has(self.endpoints)?1:0)<=1
             - message: CIDR addresses are allowed only for NONE/STATIC resolution
                 types
-              rule: "!(has(self.addresses) && self.addresses.exists(k, k.contains('/'))
-                && (has(self.resolution) && self.resolution != 'STATIC' && self.resolution
-                != 'NONE'))"
+              rule: "!(has(self.addresses) && self.addresses.exists(k, k.contains('/'))\
+                \ && (has(self.resolution) && self.resolution != 'STATIC' && self.resolution\
+                \ != 'NONE'))"
             - message: NONE mode cannot set endpoints
-              rule: "(!has(self.resolution) || self.resolution == 'NONE') ? !has(self.endpoints)
-                : true"
+              rule: "(!has(self.resolution) || self.resolution == 'NONE') ? !has(self.endpoints)\
+                \ : true"
             - message: DNS_ROUND_ROBIN mode cannot have multiple endpoints
-              rule: "(has(self.resolution) && self.resolution == 'DNS_ROUND_ROBIN')
-                ? (!has(self.endpoints) || size(self.endpoints) == 1) : true"
+              rule: "(has(self.resolution) && self.resolution == 'DNS_ROUND_ROBIN')\
+                \ ? (!has(self.endpoints) || size(self.endpoints) == 1) : true"
           status:
             properties:
               conditions:
@@ -9097,11 +9076,11 @@ spec:
                       type: string
                       x-kubernetes-validations:
                       - message: UDS must be an absolute path or abstract socket
-                        rule: "self.startsWith('unix://') ? (self.substring(7,8) ==
-                          '/' || self.substring(7,8) == '@') : true"
+                        rule: "self.startsWith('unix://') ? (self.substring(7,8) ==\
+                          \ '/' || self.substring(7,8) == '@') : true"
                       - message: UDS may not be a dir
-                        rule: "self.startsWith('unix://') ? !self.endsWith('/') :
-                          true"
+                        rule: "self.startsWith('unix://') ? !self.endsWith('/') :\
+                          \ true"
                     labels:
                       additionalProperties:
                         type: string
@@ -9146,8 +9125,8 @@ spec:
                   - message: Address is required
                     rule: has(self.address) || has(self.network)
                   - message: UDS may not include ports
-                    rule: "(has(self.address) && self.address.startsWith('unix://'))
-                      ? !has(self.ports) : true"
+                    rule: "(has(self.address) && self.address.startsWith('unix://'))\
+                      \ ? !has(self.ports) : true"
                 maxItems: 4096
                 type: array
               exportTo:
@@ -9255,15 +9234,15 @@ spec:
               rule: (has(self.workloadSelector)?1:0)+(has(self.endpoints)?1:0)<=1
             - message: CIDR addresses are allowed only for NONE/STATIC resolution
                 types
-              rule: "!(has(self.addresses) && self.addresses.exists(k, k.contains('/'))
-                && (has(self.resolution) && self.resolution != 'STATIC' && self.resolution
-                != 'NONE'))"
+              rule: "!(has(self.addresses) && self.addresses.exists(k, k.contains('/'))\
+                \ && (has(self.resolution) && self.resolution != 'STATIC' && self.resolution\
+                \ != 'NONE'))"
             - message: NONE mode cannot set endpoints
-              rule: "(!has(self.resolution) || self.resolution == 'NONE') ? !has(self.endpoints)
-                : true"
+              rule: "(!has(self.resolution) || self.resolution == 'NONE') ? !has(self.endpoints)\
+                \ : true"
             - message: DNS_ROUND_ROBIN mode cannot have multiple endpoints
-              rule: "(has(self.resolution) && self.resolution == 'DNS_ROUND_ROBIN')
-                ? (!has(self.endpoints) || size(self.endpoints) == 1) : true"
+              rule: "(has(self.resolution) && self.resolution == 'DNS_ROUND_ROBIN')\
+                \ ? (!has(self.endpoints) || size(self.endpoints) == 1) : true"
           status:
             properties:
               conditions:
@@ -9390,11 +9369,11 @@ spec:
                       type: string
                       x-kubernetes-validations:
                       - message: UDS must be an absolute path or abstract socket
-                        rule: "self.startsWith('unix://') ? (self.substring(7,8) ==
-                          '/' || self.substring(7,8) == '@') : true"
+                        rule: "self.startsWith('unix://') ? (self.substring(7,8) ==\
+                          \ '/' || self.substring(7,8) == '@') : true"
                       - message: UDS may not be a dir
-                        rule: "self.startsWith('unix://') ? !self.endsWith('/') :
-                          true"
+                        rule: "self.startsWith('unix://') ? !self.endsWith('/') :\
+                          \ true"
                     labels:
                       additionalProperties:
                         type: string
@@ -9439,8 +9418,8 @@ spec:
                   - message: Address is required
                     rule: has(self.address) || has(self.network)
                   - message: UDS may not include ports
-                    rule: "(has(self.address) && self.address.startsWith('unix://'))
-                      ? !has(self.ports) : true"
+                    rule: "(has(self.address) && self.address.startsWith('unix://'))\
+                      \ ? !has(self.ports) : true"
                 maxItems: 4096
                 type: array
               exportTo:
@@ -9548,15 +9527,15 @@ spec:
               rule: (has(self.workloadSelector)?1:0)+(has(self.endpoints)?1:0)<=1
             - message: CIDR addresses are allowed only for NONE/STATIC resolution
                 types
-              rule: "!(has(self.addresses) && self.addresses.exists(k, k.contains('/'))
-                && (has(self.resolution) && self.resolution != 'STATIC' && self.resolution
-                != 'NONE'))"
+              rule: "!(has(self.addresses) && self.addresses.exists(k, k.contains('/'))\
+                \ && (has(self.resolution) && self.resolution != 'STATIC' && self.resolution\
+                \ != 'NONE'))"
             - message: NONE mode cannot set endpoints
-              rule: "(!has(self.resolution) || self.resolution == 'NONE') ? !has(self.endpoints)
-                : true"
+              rule: "(!has(self.resolution) || self.resolution == 'NONE') ? !has(self.endpoints)\
+                \ : true"
             - message: DNS_ROUND_ROBIN mode cannot have multiple endpoints
-              rule: "(has(self.resolution) && self.resolution == 'DNS_ROUND_ROBIN')
-                ? (!has(self.endpoints) || size(self.endpoints) == 1) : true"
+              rule: "(has(self.resolution) && self.resolution == 'DNS_ROUND_ROBIN')\
+                \ ? (!has(self.endpoints) || size(self.endpoints) == 1) : true"
           status:
             properties:
               conditions:
@@ -9646,8 +9625,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: base-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: base-1.24.3
   name: sidecars.networking.istio.io
 spec:
   group: networking.istio.io
@@ -11286,8 +11265,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: base-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: base-1.24.3
   name: telemetries.telemetry.istio.io
 spec:
   group: telemetry.istio.io
@@ -11443,11 +11422,11 @@ spec:
                               type: object
                               x-kubernetes-validations:
                               - message: value must be set when operation is UPSERT
-                                rule: "((has(self.operation) ? self.operation : '')
-                                  == 'UPSERT') ? self.value != '' : true"
+                                rule: "((has(self.operation) ? self.operation : '')\
+                                  \ == 'UPSERT') ? self.value != '' : true"
                               - message: value must not be set when operation is REMOVE
-                                rule: "((has(self.operation) ? self.operation : '')
-                                  == 'REMOVE') ? !has(self.value) : true"
+                                rule: "((has(self.operation) ? self.operation : '')\
+                                  \ == 'REMOVE') ? !has(self.value) : true"
                             description: Optional.
                             type: object
                         type: object
@@ -11523,8 +11502,8 @@ spec:
                 x-kubernetes-validations:
                 - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
                     gateway.networking.k8s.io/Gateway
-                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
-                    ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
+                    \ ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
               targetRefs:
                 description: Optional.
                 items:
@@ -11558,8 +11537,8 @@ spec:
                   x-kubernetes-validations:
                   - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
                       gateway.networking.k8s.io/Gateway
-                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
-                      ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
+                      \ ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
                 maxItems: 16
                 type: array
               tracing:
@@ -11891,11 +11870,11 @@ spec:
                               type: object
                               x-kubernetes-validations:
                               - message: value must be set when operation is UPSERT
-                                rule: "((has(self.operation) ? self.operation : '')
-                                  == 'UPSERT') ? self.value != '' : true"
+                                rule: "((has(self.operation) ? self.operation : '')\
+                                  \ == 'UPSERT') ? self.value != '' : true"
                               - message: value must not be set when operation is REMOVE
-                                rule: "((has(self.operation) ? self.operation : '')
-                                  == 'REMOVE') ? !has(self.value) : true"
+                                rule: "((has(self.operation) ? self.operation : '')\
+                                  \ == 'REMOVE') ? !has(self.value) : true"
                             description: Optional.
                             type: object
                         type: object
@@ -11971,8 +11950,8 @@ spec:
                 x-kubernetes-validations:
                 - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
                     gateway.networking.k8s.io/Gateway
-                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
-                    ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
+                    \ ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
               targetRefs:
                 description: Optional.
                 items:
@@ -12006,8 +11985,8 @@ spec:
                   x-kubernetes-validations:
                   - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
                       gateway.networking.k8s.io/Gateway
-                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
-                      ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
+                      \ ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
                 maxItems: 16
                 type: array
               tracing:
@@ -12210,8 +12189,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: base-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: base-1.24.3
   name: virtualservices.networking.istio.io
 spec:
   group: networking.istio.io
@@ -15346,8 +15325,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: base-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: base-1.24.3
   name: wasmplugins.extensions.istio.io
 spec:
   group: extensions.istio.io
@@ -15519,8 +15498,8 @@ spec:
                 x-kubernetes-validations:
                 - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
                     gateway.networking.k8s.io/Gateway
-                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
-                    ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                  rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
+                    \ ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
               targetRefs:
                 description: Optional.
                 items:
@@ -15554,8 +15533,8 @@ spec:
                   x-kubernetes-validations:
                   - message: Support kinds are core/Service, networking.istio.io/ServiceEntry,
                       gateway.networking.k8s.io/Gateway
-                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],
-                      ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
+                    rule: "[self.group, self.kind] in [['core','Service'], ['','Service'],\
+                      \ ['gateway.networking.k8s.io','Gateway'], ['networking.istio.io','ServiceEntry']]"
                 maxItems: 16
                 type: array
               type:
@@ -15574,9 +15553,9 @@ spec:
                 type: string
                 x-kubernetes-validations:
                 - message: url must have schema one of [http, https, file, oci]
-                  rule: "isURL(self) ? (url(self).getScheme() in ['', 'http', 'https',
-                    'oci', 'file']) : (isURL('http://' + self) && url('http://' +self).getScheme()
-                    in ['', 'http', 'https', 'oci', 'file'])"
+                  rule: "isURL(self) ? (url(self).getScheme() in ['', 'http', 'https',\
+                    \ 'oci', 'file']) : (isURL('http://' + self) && url('http://'\
+                    \ +self).getScheme() in ['', 'http', 'https', 'oci', 'file'])"
               verificationKey:
                 type: string
               vmConfig:
@@ -15610,8 +15589,8 @@ spec:
                       type: object
                       x-kubernetes-validations:
                       - message: value may only be set when valueFrom is INLINE
-                        rule: "(has(self.valueFrom) ? self.valueFrom : '') != 'HOST'
-                          || !has(self.value)"
+                        rule: "(has(self.valueFrom) ? self.valueFrom : '') != 'HOST'\
+                          \ || !has(self.value)"
                     maxItems: 256
                     type: array
                     x-kubernetes-list-map-keys:
@@ -15713,8 +15692,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: base-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: base-1.24.3
   name: workloadentries.networking.istio.io
 spec:
   group: networking.istio.io
@@ -15758,8 +15737,8 @@ spec:
                 type: string
                 x-kubernetes-validations:
                 - message: UDS must be an absolute path or abstract socket
-                  rule: "self.startsWith('unix://') ? (self.substring(7,8) == '/'
-                    || self.substring(7,8) == '@') : true"
+                  rule: "self.startsWith('unix://') ? (self.substring(7,8) == '/'\
+                    \ || self.substring(7,8) == '@') : true"
                 - message: UDS may not be a dir
                   rule: "self.startsWith('unix://') ? !self.endsWith('/') : true"
               labels:
@@ -15806,8 +15785,8 @@ spec:
             - message: Address is required
               rule: has(self.address) || has(self.network)
             - message: UDS may not include ports
-              rule: "(has(self.address) && self.address.startsWith('unix://')) ? !has(self.ports)
-                : true"
+              rule: "(has(self.address) && self.address.startsWith('unix://')) ? !has(self.ports)\
+                \ : true"
           status:
             properties:
               conditions:
@@ -15914,8 +15893,8 @@ spec:
                 type: string
                 x-kubernetes-validations:
                 - message: UDS must be an absolute path or abstract socket
-                  rule: "self.startsWith('unix://') ? (self.substring(7,8) == '/'
-                    || self.substring(7,8) == '@') : true"
+                  rule: "self.startsWith('unix://') ? (self.substring(7,8) == '/'\
+                    \ || self.substring(7,8) == '@') : true"
                 - message: UDS may not be a dir
                   rule: "self.startsWith('unix://') ? !self.endsWith('/') : true"
               labels:
@@ -15962,8 +15941,8 @@ spec:
             - message: Address is required
               rule: has(self.address) || has(self.network)
             - message: UDS may not include ports
-              rule: "(has(self.address) && self.address.startsWith('unix://')) ? !has(self.ports)
-                : true"
+              rule: "(has(self.address) && self.address.startsWith('unix://')) ? !has(self.ports)\
+                \ : true"
           status:
             properties:
               conditions:
@@ -16070,8 +16049,8 @@ spec:
                 type: string
                 x-kubernetes-validations:
                 - message: UDS must be an absolute path or abstract socket
-                  rule: "self.startsWith('unix://') ? (self.substring(7,8) == '/'
-                    || self.substring(7,8) == '@') : true"
+                  rule: "self.startsWith('unix://') ? (self.substring(7,8) == '/'\
+                    \ || self.substring(7,8) == '@') : true"
                 - message: UDS may not be a dir
                   rule: "self.startsWith('unix://') ? !self.endsWith('/') : true"
               labels:
@@ -16118,8 +16097,8 @@ spec:
             - message: Address is required
               rule: has(self.address) || has(self.network)
             - message: UDS may not include ports
-              rule: "(has(self.address) && self.address.startsWith('unix://')) ? !has(self.ports)
-                : true"
+              rule: "(has(self.address) && self.address.startsWith('unix://')) ? !has(self.ports)\
+                \ : true"
           status:
             properties:
               conditions:
@@ -16207,8 +16186,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: base-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: base-1.24.3
   name: workloadgroups.networking.istio.io
 spec:
   group: networking.istio.io
@@ -16380,8 +16359,8 @@ spec:
                     type: string
                     x-kubernetes-validations:
                     - message: UDS must be an absolute path or abstract socket
-                      rule: "self.startsWith('unix://') ? (self.substring(7,8) ==
-                        '/' || self.substring(7,8) == '@') : true"
+                      rule: "self.startsWith('unix://') ? (self.substring(7,8) ==\
+                        \ '/' || self.substring(7,8) == '@') : true"
                     - message: UDS may not be a dir
                       rule: "self.startsWith('unix://') ? !self.endsWith('/') : true"
                   labels:
@@ -16426,8 +16405,8 @@ spec:
                 type: object
                 x-kubernetes-validations:
                 - message: UDS may not include ports
-                  rule: "(has(self.address) && self.address.startsWith('unix://'))
-                    ? !has(self.ports) : true"
+                  rule: "(has(self.address) && self.address.startsWith('unix://'))\
+                    \ ? !has(self.ports) : true"
             required:
             - template
             type: object
@@ -16665,8 +16644,8 @@ spec:
                     type: string
                     x-kubernetes-validations:
                     - message: UDS must be an absolute path or abstract socket
-                      rule: "self.startsWith('unix://') ? (self.substring(7,8) ==
-                        '/' || self.substring(7,8) == '@') : true"
+                      rule: "self.startsWith('unix://') ? (self.substring(7,8) ==\
+                        \ '/' || self.substring(7,8) == '@') : true"
                     - message: UDS may not be a dir
                       rule: "self.startsWith('unix://') ? !self.endsWith('/') : true"
                   labels:
@@ -16711,8 +16690,8 @@ spec:
                 type: object
                 x-kubernetes-validations:
                 - message: UDS may not include ports
-                  rule: "(has(self.address) && self.address.startsWith('unix://'))
-                    ? !has(self.ports) : true"
+                  rule: "(has(self.address) && self.address.startsWith('unix://'))\
+                    \ ? !has(self.ports) : true"
             required:
             - template
             type: object
@@ -16950,8 +16929,8 @@ spec:
                     type: string
                     x-kubernetes-validations:
                     - message: UDS must be an absolute path or abstract socket
-                      rule: "self.startsWith('unix://') ? (self.substring(7,8) ==
-                        '/' || self.substring(7,8) == '@') : true"
+                      rule: "self.startsWith('unix://') ? (self.substring(7,8) ==\
+                        \ '/' || self.substring(7,8) == '@') : true"
                     - message: UDS may not be a dir
                       rule: "self.startsWith('unix://') ? !self.endsWith('/') : true"
                   labels:
@@ -16996,8 +16975,8 @@ spec:
                 type: object
                 x-kubernetes-validations:
                 - message: UDS may not include ports
-                  rule: "(has(self.address) && self.address.startsWith('unix://'))
-                    ? !has(self.ports) : true"
+                  rule: "(has(self.address) && self.address.startsWith('unix://'))\
+                    \ ? !has(self.ports) : true"
             required:
             - template
             type: object

@@ -12,3 +12,5 @@ rules:
     max: 400
   truthy:
     allowed-values: ['on', 'off', 'true', 'false']
+  empty-lines: 
+    level: warning
