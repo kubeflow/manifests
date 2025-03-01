@@ -63,10 +63,7 @@ fi
 
 ISTIOCTL=$SRC_DIR/istio-${COMMIT}/bin/istioctl
 cd $ISTIO_NEW
-$ISTIOCTL profile dump default > profile.yaml
 
-# cd $ISTIO_NEW
-# export PATH="$MANIFESTS_DIR/scripts:$PATH"
 $ISTIOCTL manifest generate -f profile.yaml -f profile-overlay.yaml --set components.cni.enabled=true --set components.cni.namespace=kube-system > dump.yaml
 ./split-istio-packages -f dump.yaml
 mv $ISTIO_NEW/crd.yaml $ISTIO_NEW/istio-crds/base
