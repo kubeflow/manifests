@@ -10,6 +10,7 @@ on:
     - tests/gh-actions/install_knative.sh
     - common/knative/**
     - tests/gh-actions/install_kserve.sh
+    - contrib/security/PSS/**
 
 jobs:
   build:
@@ -60,3 +61,18 @@ jobs:
     - name: Run kserve models webapp test
       run: |
         kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app
+
+    - name: Apply Pod Security Standards baseline levels
+      run: ./tests/gh-actions/enable_baseline_PSS.sh
+
+    - name: Unapply applied baseline labels
+      run: |
+        NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow")
+        for NAMESPACE in "${NAMESPACES[@]}"; do
+          if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
+            kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce-
+          fi
+        done
+
+    - name: Applying Pod Security Standards restricted levels
+      run: ./tests/gh-actions/enable_restricted_PSS.sh
