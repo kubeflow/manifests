@@ -63,7 +63,7 @@ fi
 ISTIOCTL=$SRC_DIR/istio-${COMMIT}/bin/istioctl
 cd $ISTIO_NEW
 
-$ISTIOCTL manifest generate -f profile-overlay.yaml > dump.yaml
+$ISTIOCTL manifest generate -f profile.yaml -f profile-overlay.yaml > dump.yaml
 ./split-istio-packages -f dump.yaml
 mv $ISTIO_NEW/crd.yaml $ISTIO_NEW/istio-crds/base
 mv $ISTIO_NEW/install.yaml $ISTIO_NEW/istio-install/base

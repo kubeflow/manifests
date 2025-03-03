@@ -1339,7 +1339,7 @@ data:
         spec:
           initContainers:
             - name: grpc-bootstrap-init
-              image: registry.k8s.io/busybox:1.28
+              image: busybox:1.28
               volumeMounts:
                 - mountPath: /var/lib/grpc/data/
                   name: grpc-io-proxyless-bootstrap
@@ -2413,7 +2413,7 @@ data:
           }
         },
         "externalIstiod": false,
-        "hub": "docker.io/istio",
+        "hub": "gcr.io/istio-release",
         "imagePullPolicy": "",
         "imagePullSecrets": [],
         "istioNamespace": "istio-system",
@@ -2483,7 +2483,7 @@ data:
         "sts": {
           "servicePort": 0
         },
-        "tag": "1.24.3",
+        "tag": "1.24.2",
         "variant": "",
         "waypoint": {
           "affinity": {},
@@ -2791,7 +2791,7 @@ spec:
               resource: limits.cpu
         - name: PLATFORM
           value: ''
-        image: docker.io/istio/pilot:1.24.3
+        image: gcr.io/istio-release/pilot:1.24.2
         name: discovery
         ports:
         - containerPort: 8080
