@@ -7,7 +7,7 @@ on:
     - apps/jupyter/notebook-controller/upstream/**
     - tests/gh-actions/install_istio.sh
     - common/istio*/**
-    - contrib/security/PSS/**
+    - experimental/security/PSS/**
 
 jobs:
   build:
