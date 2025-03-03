@@ -47,10 +47,8 @@ old version is `X1.Y1.Z1`:
     `split-istio-packages` is a python script in the same folder as this file.
     The `ruamel.yaml` version used is 0.16.12.
 
-    `--cluster-specific` is a flag that determines if a current K8s cluster context will be used to dynamically
-    detect default settings. Ensure you have a target cluster ready before running the above commands.
-    We set this flag because `istioctl manifest generate` generates manifest files with resources that are no
-    longer supported in Kubernetes 1.25 (`policy/v1beta1`). See: <https://github.com/istio/istio/issues/41220>
+    `--cluster-specific` is a flag that determines if a current K8s cluster context will be used to dynamically detect default settings. Ensure you have a target cluster ready before running the above commands.
+    We target Kubernetes 1.32+ for compatibility. The `--cluster-specific` flag helps ensure generated resources are compatible with your cluster version and configuration.
 
     ---
 

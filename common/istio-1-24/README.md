@@ -38,6 +38,17 @@ old version is `X1.Y1.Z1`:
         mv $ISTIO_NEW/cluster-local-gateway.yaml $ISTIO_NEW/cluster-local-gateway/base
         rm dump.yaml
 
+    ---
+    **NOTE**
+
+    `split-istio-packages` is a python script in the same folder as this file.
+    The `ruamel.yaml` version used is 0.16.12.
+
+    `--cluster-specific` is a flag that determines if a current K8s cluster context will be used to dynamically detect default settings. Ensure you have a target cluster ready before running the above commands.
+    We target Kubernetes 1.32+ for compatibility. The `--cluster-specific` flag helps ensure generated resources are compatible with your cluster version and configuration.
+
+    ---
+
 ## Changes to Istio's upstream manifests
 
 ### Changes to the upstream IstioOperator profile
