@@ -10,7 +10,7 @@ on:
     - tests/gh-actions/install_knative.sh
     - common/knative/**
     - tests/gh-actions/install_kserve.sh
-    - contrib/security/PSS/**
+    - experimental/security/PSS/**
 
 jobs:
   build:
