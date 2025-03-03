@@ -8,7 +8,7 @@ on:
     - tests/gh-actions/install_istio.sh
     - tests/gh-actions/install_cert_manager.sh
     - common/cert-manager/**
-    - contrib/security/PSS/*
+    - experimental/security/PSS/*
 
 jobs:
   build:
