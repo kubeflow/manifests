@@ -17,3 +17,4 @@ patches:
 - path: patches/istiod-remove-pdb.yaml
 # - path: patches/seccomp-istio-ingressgateway.yaml
 - path: patches/seccomp-istiod.yaml
+- path: patches/update-busybox-image.yaml

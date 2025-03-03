@@ -1339,7 +1339,7 @@ data:
         spec:
           initContainers:
             - name: grpc-bootstrap-init
-              image: busybox:1.28
+              image: registry.k8s.io/busybox:1.28
               volumeMounts:
                 - mountPath: /var/lib/grpc/data/
                   name: grpc-io-proxyless-bootstrap
