@@ -4,7 +4,7 @@ The Kubeflow manifests are a collection of community maintained manifests to ins
 The Kubeflow Manifests contain all Kubeflow Components, Kubeflow Central Dashboard, and other Kubeflow applications that comprise the **Kubeflow Platform**.
 This installation is helpful when you want to try out the end-to-end Kubeflow Platform capabilities.
  
-If you want a stable / conservative experience we reccommend to use the [latest stable release](https://github.com/kubeflow/manifests/releases), but please consider the more up-to-date docuemntation in the master branch.
+If you want a stable / conservative experience we recommend to use the [latest stable release](https://github.com/kubeflow/manifests/releases), but please consider the more up-to-date documentation in the master branch.
 - [**Kubeflow 1.9:**](/docs/releases/kubeflow-1.9/)
   - [`v1.9.1`](https://github.com/kubeflow/manifests/tree/v1.9.1#installation)
 - [**SOON TO BE RELESEAD Kubeflow 1.10:**](/docs/releases/kubeflow-1.9/)
