@@ -43,9 +43,9 @@ The Kubeflow Manifests repository is organized under three main directories, whi
 
 | Directory | Purpose |
 | - | - |
-| `apps` | Kubeflow's official components, as maintained by the respective Kubeflow WGs |
+| `applications` | Kubeflow's official components, as maintained by the respective Kubeflow WGs |
 | `common` | Common services, as maintained by the Manifests WG |
-| `contrib` | 3rd party contributed applications (e.g. Ray, Kserve), which are maintained externally and are not part of a Kubeflow WG |
+| `experimental` | 3rd party contributed applications (e.g. Ray, Kserve), which are maintained externally and are not part of a Kubeflow WG |
 
 All components are deployable with `kustomize`. You can choose to deploy the whole Kubeflow platform or individual components.
 
