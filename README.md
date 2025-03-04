@@ -104,7 +104,7 @@ The `example` directory contains an example kustomization for the single command
 - This is the master branch which targets Kubernetes around 1.32
 - For the specific Kubernetes version per release consult the [release notes](https://github.com/kubeflow/manifests/releases)
 - Either our local Kind (installed below) or your own Kubernetes cluster with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
-- Kustomize [5.4.3+](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.2.1)
+- Kustomize [5.4.3+](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.4.3)
 - Kubectl in a version that is [compatible with your Kubernetes cluster](https://kubernetes.io/releases/version-skew-policy/#kubectl)
 
 ---
