@@ -1,7 +1,13 @@
 # Istio-CNI
 
 This uses istio-cni as described here <https://istio.io/latest/docs/setup/additional-setup/cni/>.
-Please be aware of Kserve and initcontainers <https://istio.io/latest/docs/setup/additional-setup/cni/#compatibility-with-application-init-containers>. Either use runasuser : 1337 xor add the annotation traffic.sidecar.istio.io/excludeOutboundIPRanges: 0.0.0.0/0 for kserve inferenceservices.
+
+This configuration also enables native sidecars for Istio through the `ENABLE_NATIVE_SIDECARS=true` environment variable in istiod. Native sidecars (introduced in Kubernetes 1.28 as an alpha feature) help address issues with init containers and application lifecycle management. Learn more about native sidecars at <https://istio.io/latest/blog/2023/native-sidecars/>.
+
+With native sidecars enabled, init containers should be able to access the network through the Istio proxy. However, if you still encounter issues with KServe and init containers, you can refer to <https://istio.io/latest/docs/setup/additional-setup/cni/#compatibility-with-application-init-containers> and either:
+
+1. Use `runAsUser: 1337` in your init containers, OR
+2. Add the annotation `traffic.sidecar.istio.io/excludeOutboundIPRanges: 0.0.0.0/0` to your KServe inferenceservices.
 
 ## Upgrade Istio Manifests
 
