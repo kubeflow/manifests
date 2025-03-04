@@ -84,7 +84,7 @@ This section covers the installation from scratch. For the in-place upgrade guid
 
 Although our master branch has extended automated tests and is already quite stable, please consider using a stable [release tag/branch](https://github.com/kubeflow/manifests/releases) for a more conservative experience.
 
-We provide two options for installing the official Kubeflow components and common services with Kustomize. The aim is to help users install easily and and building distributions of Kubeflow by deriving / deviating from the Kubeflow manifests:
+We provide two options for installing the official Kubeflow components and common services with Kustomize. The aim is to help users install easily and building distributions of Kubeflow by deriving / deviating from the Kubeflow manifests:
 
 1. Single-command installation of all components under `apps` and `common`
 2. Multi-command, individual component installation for `apps` and `common`
