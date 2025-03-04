@@ -101,10 +101,10 @@ The `example` directory contains an example kustomization for the single command
 :warning: In both options, we use a default email (`user@example.com`) and password (`12341234`). For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
 
 ### Prerequisites
-- This is the master branch which targets Kubernetes around 1.31
+- This is the master branch which targets Kubernetes around 1.32
 - For the specific Kubernetes version per release consult the [release notes](https://github.com/kubeflow/manifests/releases)
 - Either our local Kind (installed below) or your own Kubernetes cluster with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
-- Kustomize [5.2.1+](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.2.1)
+- Kustomize [5.4.3+](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.4.3)
 - Kubectl in a version that is [compatible with your Kubernetes cluster](https://kubernetes.io/releases/version-skew-policy/#kubectl)
 
 ---
@@ -117,13 +117,15 @@ The `example` directory contains an example kustomization for the single command
 ### Install with a single command
 
 #### Prerequisites
-- 32 GB of RAM recommended
-- 16 CPU cores recommended
+- 16 GB of RAM recommended
+- 8 CPU cores recommended
 - `kind` 0.26+
 - `docker`
 - Linux kernel subsystem changes to support many pods
     - `sudo sysctl fs.inotify.max_user_instances=2280`
     - `sudo sysctl fs.inotify.max_user_watches=1255360`
+ 
+You can exclude components from the example kustomization file to fit Kubeflow into 4-8 Gigabyte of memory and 2-4 CPU cores.
 
 #### Create kind cluster
 ```sh
