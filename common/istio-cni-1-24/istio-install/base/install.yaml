@@ -3063,6 +3063,8 @@ spec:
         - --keepaliveMaxServerConnectionAge
         - 30m
         env:
+        - name: ENABLE_NATIVE_SIDECARS
+          value: 'true'
         - name: REVISION
           value: default
         - name: PILOT_CERT_PROVIDER
