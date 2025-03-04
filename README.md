@@ -1,32 +1,31 @@
 # Kubeflow Manifests
 
-The Kubeflow manifests are a collection of community maintained manifests to install Kubeflow in popular Kubernetes clusters such as Kind, Minikube, Rancher, EKS, AKS, GKE.
-The Kubeflow Manifests contain all Kubeflow Components, Kubeflow Central Dashboard, and other Kubeflow applications that comprise the **Kubeflow Platform**.
-This installation is helpful when you want to try out the end-to-end Kubeflow Platform capabilities.
- 
-If you want a stable / conservative experience we recommend to use the [latest stable release](https://github.com/kubeflow/manifests/releases), but please consider the more up-to-date documentation in the master branch.
+The **Kubeflow Manifests** are a collection of community-maintained manifests for installing Kubeflow in popular Kubernetes clusters such as Kind, Minikube, Rancher, EKS, AKS, and GKE. The manifests include all Kubeflow components (Pipelines, Kserve, etc.), the **Kubeflow Central Dashboard**, and other applications that comprise the **Kubeflow Platform**. This installation is beneficial for users wanting to explore the end-to-end capabilities of the Kubeflow Platform.
+
+For a stable and conservative experience, we recommend using the [latest stable release](https://github.com/kubeflow/manifests/releases). However, please consult the more up-to-date documentation in the master branch.
+
 - [**Kubeflow 1.9:**](/docs/releases/kubeflow-1.9/)
   - [`v1.9.1`](https://github.com/kubeflow/manifests/tree/v1.9.1#installation)
-- [**SOON TO BE RELESEAD Kubeflow 1.10:**](/docs/releases/kubeflow-1.9/)
+- [**SOON TO BE RELEASED Kubeflow 1.10:**](/docs/releases/kubeflow-1.9/)
   - [`v1.10.0`](https://github.com/kubeflow/manifests/tree/v1.10.0#installation)
 
-You can also install the master branch of [`kubeflow/manifests`](https://github.com/kubeflow/manifests) by following the instructions [here](https://github.com/kubeflow/manifests?tab=readme-ov-file#installation) and provide us feedback.
+You can also install the master branch of [`kubeflow/manifests`](https://github.com/kubeflow/manifests) by following the instructions [here](https://github.com/kubeflow/manifests?tab=readme-ov-file#installation) and providing us with feedback.
 
 ## Table of Contents
 
 <!-- toc -->
 
 - [Overview of the Kubeflow Platform](#overview-of-the-kubeflow-platform)
-- [Kubeflow components versions](#kubeflow-components-versions)
+- [Kubeflow Components Versions](#kubeflow-components-versions)
 - [Installation](#installation)
   - [Prerequisites](#prerequisites)
-  - [Install with a single command](#install-with-a-single-command)
-  - [Install individual components](#install-individual-components)
-  - [Connect to your Kubeflow Cluster](#connect-to-your-kubeflow-cluster)
-  - [Change default user name](#change-default-user-name)
-  - [Change default user password](#change-default-user-password)
-- [Upgrading and extending](#upgrading-and-extending)
-- [Release process](#release-process)
+  - [Install with a Single Command](#install-with-a-single-command)
+  - [Install Individual Components](#install-individual-components)
+  - [Connect to Your Kubeflow Cluster](#connect-to-your-kubeflow-cluster)
+  - [Change Default User Name](#change-default-user-name)
+  - [Change Default User Password](#change-default-user-password)
+- [Upgrading and Extending](#upgrading-and-extending)
+- [Release Process](#release-process)
 - [CVE Scanning](#cve-scanning)
 - [Pre-commit Hooks](#pre-commit-hooks)
 - [Frequently Asked Questions](#frequently-asked-questions)
@@ -35,25 +34,23 @@ You can also install the master branch of [`kubeflow/manifests`](https://github.
 
 ## Overview of the Kubeflow Platform
 
-This repository is owned by the [Platform/Manifests Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md).
-If you are a contributor authoring or editing the packages please see [Best Practices](https://kubectl.docs.kubernetes.io/references/kustomize/).
-You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website. Our channel on the CNCF Slack is here [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2). You can also find there our [biweekly meetings](https://bit.ly/kf-wg-manifests-meet), including the commentable [Agenda](https://bit.ly/kf-wg-manifests-notes).
+This repository is owned by the [Platform/Manifests Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md). If you are a contributor authoring or editing the packages, please see [Best Practices](https://kubectl.docs.kubernetes.io/references/kustomize/). You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website. Our channel on the CNCF Slack is [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2). You can also find our [biweekly meetings](https://bit.ly/kf-wg-manifests-meet), including the commentable [Agenda](https://bit.ly/kf-wg-manifests-notes).
 
 The Kubeflow Manifests repository is organized under three main directories, which include manifests for installing:
 
 | Directory | Purpose |
 | - | - |
-| `applications` | Kubeflow's official components, as maintained by the respective Kubeflow WGs |
-| `common` | Common services, as maintained by the Manifests WG |
-| `experimental` | 3rd party contributed applications (e.g. Ray, Kserve), which are maintained externally and are not part of a Kubeflow WG |
+| `applications` | Kubeflow's official components, maintained by the respective Kubeflow WGs |
+| `common` | Common services, maintained by the Manifests WG |
+| `experimental` | Third-party integrations and platform experiments (e.g., Ray, SeaweedFS, or security improvements) |
 
-All components are deployable with `kustomize`. You can choose to deploy the whole Kubeflow platform or individual components.
+All components are deployable with `kustomize`. You can choose to deploy the entire Kubeflow platform or individual components.
 
-## Kubeflow components versions
+## Kubeflow Components Versions
 
-### Kubeflow Version: master
+### Kubeflow Version: Master
 
-This repo periodically syncs all official Kubeflow components from their respective upstream repos. The following matrix shows the git version that we include for each component:
+This repository periodically synchronizes all official Kubeflow components from the respective upstream repositories. The following matrix shows the git version included for each component:
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
@@ -73,8 +70,7 @@ This repo periodically syncs all official Kubeflow components from their respect
 | Kubeflow Pipelines | apps/pipeline/upstream | [2.4.1](https://github.com/kubeflow/pipelines/tree/2.4.1/manifests/kustomize) |
 | Kubeflow Model Registry | apps/model-registry/upstream | [v0.2.14](https://github.com/kubeflow/model-registry/tree/v0.2.14/manifests/kustomize) |
 
-The following is also a matrix with versions from common components that are
-used from the different projects of Kubeflow:
+The following matrix shows the versions of common components used across different Kubeflow projects:
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
@@ -84,28 +80,28 @@ used from the different projects of Kubeflow:
 
 ## Installation
 
-This is for the installation from scratch. For the in-place upgrade guide please jump to the [Upgrading and extending](#upgrading-and-extending) section.
+This section covers the installation from scratch. For the in-place upgrade guide, please jump to the [Upgrading and Extending](#upgrading-and-extending) section.
 
-Although our master branch has extended automated tests and is already quite stable, please consider using a stable [release tag / branch](https://github.com/kubeflow/manifests/releases) if you want a more conservative experience.
+Although our master branch has extended automated tests and is already quite stable, please consider using a stable [release tag/branch](https://github.com/kubeflow/manifests/releases) for a more conservative experience.
 
-We provide two options for installing the offii Kubeflow components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
+We provide two options for installing the official Kubeflow components and common services with Kustomize. The aim is to help users install easily and building distributions of Kubeflow by deriving / deviating from the Kubeflow manifests:
 
 1. Single-command installation of all components under `apps` and `common`
-2. Multi-command, individual components installation for `apps` and `common`
+2. Multi-command, individual component installation for `apps` and `common`
 
 Option 1 targets ease of deployment for end users. \
-Option 2 targets customization and ability to pick and choose individual components.
+Option 2 targets customization, allowing users to pick and choose individual components.
 
 The `example` directory contains an example kustomization for the single command to be able to run.
 
 :warning: In both options, we use a default email (`user@example.com`) and password (`12341234`). For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
 
 ### Prerequisites
-- This is the master branch which targets Kubernetes around 1.32
-- For the specific Kubernetes version per release consult the [release notes](https://github.com/kubeflow/manifests/releases)
-- Either our local Kind (installed below) or your own Kubernetes cluster with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/)
-- Kustomize [5.4.3+](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.4.3)
-- Kubectl in a version that is [compatible with your Kubernetes cluster](https://kubernetes.io/releases/version-skew-policy/#kubectl)
+- This is the master branch, which targets Kubernetes version 1.32.
+- For the specific Kubernetes version per release, consult the [release notes](https://github.com/kubeflow/manifests/releases).
+- Either our local Kind (installed below) or your own Kubernetes cluster with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/).
+- Kustomize version [5.4.3+](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.4.3).
+- Kubectl version compatible with your Kubernetes cluster ([Version Skew Policy](https://kubernetes.io/releases/version-skew-policy/#kubectl)).
 
 ---
 **NOTE**
@@ -114,20 +110,19 @@ The `example` directory contains an example kustomization for the single command
 
 ---
 
-### Install with a single command
+### Install with a Single Command
 
 #### Prerequisites
-- 16 GB of RAM recommended
-- 8 CPU cores recommended
-- `kind` 0.26+
-- `docker`
-- Linux kernel subsystem changes to support many pods
+- 16 GB of RAM recommended.
+- 8 CPU cores recommended.
+- `kind` version 0.26+.
+- `docker` or a more modern tool such as `podman` to run the OCI images for the Kind cluster.
+- Linux kernel subsystem changes to support many pods:
     - `sudo sysctl fs.inotify.max_user_instances=2280`
     - `sudo sysctl fs.inotify.max_user_watches=1255360`
- 
-You can exclude components from the example kustomization file to fit Kubeflow into 4-8 Gigabyte of memory and 2-4 CPU cores.
+- You can exclude components from the `example/kustomization.yaml` to fit Kubeflow into 4-8 GB of memory and 2-4 CPU cores.
 
-#### Create kind cluster
+#### Create Kind Cluster
 ```sh
 cat <<EOF | kind create cluster --name=kubeflow --config=-
 kind: Cluster
@@ -145,13 +140,13 @@ nodes:
 EOF
 ```
 
-#### Save kubeconfig
+#### Save Kubeconfig
 ```sh
 kind get kubeconfig --name kubeflow > /tmp/kubeflow-config
 export KUBECONFIG=/tmp/kubeflow-config
 ```
 
-#### Create a Secret based on existing credentials in order to pull the images
+#### Create a Secret Based on Existing Credentials to Pull the Images
 ```sh
 docker login
 
@@ -166,11 +161,11 @@ You can install all Kubeflow official components (residing under `apps`) and all
 while ! kustomize build example | kubectl apply --server-side --force-conflicts -f -; do echo "Retrying to apply resources"; sleep 20; done
 ```
 
-Once, everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](#connect-to-your-kubeflow-cluster).
+Once everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](#connect-to-your-kubeflow-cluster).
 
 Congratulations! You can now start experimenting and running your end-to-end ML workflows with Kubeflow.
 
-### Install individual components
+### Install Individual Components
 
 In this section, we will install each Kubeflow official component (under `apps`) and each common service (under `common`) separately, using just `kubectl` and `kustomize`.
 
@@ -180,7 +175,7 @@ If all the following commands are executed, the result is the same as in the abo
 - Enable the user or distribution owner to pick and choose only the components they need.
 
 ---
-**Troubleshooting note**
+**Troubleshooting Note**
 
 We've seen errors like the following when applying the kustomizations of different components:
 ```
@@ -188,17 +183,15 @@ error: resource mapping not found for name: "<RESOURCE_NAME>" namespace: "<SOME_
 ensure CRDs are installed first
 ```
 
-This is because a kustomization applies both a CRD and a CR very quickly, and the CRD
-has not yet become [`Established`](https://github.com/kubernetes/apiextensions-apiserver/blob/a7ee7f91a2d0805f729998b85680a20cfba208d2/pkg/apis/apiextensions/types.go#L276-L279) yet. You can learn more about this in <https://github.com/kubernetes/kubectl/issues/1117> and <https://github.com/helm/helm/issues/4925>.
+This is because a kustomization applies both a CRD and a CR very quickly, and the CRD has not yet become [`Established`](https://github.com/kubernetes/apiextensions-apiserver/blob/a7ee7f91a2d0805f729998b85680a20cfba208d2/pkg/apis/apiextensions/types.go#L276-L279) yet. You can learn more about this in <https://github.com/kubernetes/kubectl/issues/1117> and <https://github.com/helm/helm/issues/4925>.
 
-If you bump into this error, we advise to re-apply the manifests of the component.
+If you encounter this error, we advise re-applying the manifests of the component.
 
 ---
 
 #### cert-manager
 
-Cert-manager is used by many Kubeflow components to provide certificates for
-admission webhooks.
+Cert-manager is used by many Kubeflow components to provide certificates for admission webhooks.
 
 Install cert-manager:
 
@@ -210,20 +203,17 @@ kubectl wait --for=condition=ready pod -l 'app in (cert-manager,webhook)' --time
 kubectl wait --for=jsonpath='{.subsets[0].addresses[0].targetRef.kind}'=Pod endpoints -l 'app in (cert-manager,webhook)' --timeout=180s -n cert-manager
 ```
 
-In case you get this error:
+In case you encounter this error:
 ```
 Error from server (InternalError): error when creating "STDIN": Internal error occurred: failed calling webhook "webhook.cert-manager.io": failed to call webhook: Post "https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s": dial tcp 10.96.202.64:443: connect: connection refused
 ```
 This is because the webhook is not yet ready to receive requests. Wait a couple of seconds and retry applying the manifests.
 
-For more troubleshooting info also check out <https://cert-manager.io/docs/troubleshooting/webhook/>
+For more troubleshooting info, also check out <https://cert-manager.io/docs/troubleshooting/webhook/>.
 
 #### Istio
 
-Istio is used by most Kubeflow components to secure their traffic, enforce
-network authorization and implement routing policies.
-If you use Cilium CNI on your cluster, you have to configure it properly for Istio as shown [here](https://docs.cilium.io/en/latest/network/servicemesh/istio/), otherwise you will get RBAC access denied on the central dashboard.
-
+Istio is used by most Kubeflow components to secure their traffic, enforce network authorization, and implement routing policies. If you use Cilium CNI on your cluster, you must configure it properly for Istio as shown [here](https://docs.cilium.io/en/latest/network/servicemesh/istio/); otherwise, you will encounter RBAC access denied on the central dashboard.
 
 Install Istio:
 
@@ -239,14 +229,13 @@ kubectl wait --for=condition=Ready pods --all -n istio-system --timeout 300s
 
 #### Oauth2-proxy
 
-The oauth2-proxy extends your Istio Ingress-Gateway capabilities, to be able to function as an OIDC client.
-It supports user sessions as well as proper token-based machine-to-machine authentication.
+The oauth2-proxy extends your Istio Ingress-Gateway capabilities to function as an OIDC client. It supports user sessions as well as proper token-based machine-to-machine authentication.
 
 ```sh
 echo "Installing oauth2-proxy..."
 
-# Only uncomment ONE of the following overlays, they are mutually exclusive,
-# see `common/oauth2-proxy/overlays/` for more options.
+# Only uncomment ONE of the following overlays, as they are mutually exclusive.
+# See `common/oauth2-proxy/overlays/` for more options.
 
 # OPTION 1: works on most clusters, does NOT allow K8s service account
 #           tokens to be used from outside the cluster via the Istio ingress-gateway.
@@ -254,11 +243,11 @@ echo "Installing oauth2-proxy..."
 kustomize build common/oauth2-proxy/overlays/m2m-dex-only/ | kubectl apply -f -
 kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 
-# Option 2: works on Kind, K3D, Rancher, GKE and many other clusters with the proper configuration, and allows K8s service account tokens to be used
-#           from outside the cluster via the Istio ingress-gateway. For example for automation with github actions.
-#           In the end you need to patch the issuer and jwksUri fields in the requestauthentication resource in the istio-system namespace 
-#           as for example done in /common/oauth2-proxy/overlays/m2m-dex-and-kind/kustomization.yaml
-#           Please follow the guidelines in the section Upgrading and extending below for patching.
+# Option 2: works on Kind, K3D, Rancher, GKE, and many other clusters with the proper configuration, and allows K8s service account tokens to be used
+#           from outside the cluster via the Istio ingress-gateway. For example, for automation with GitHub Actions.
+#           In the end, you need to patch the issuer and jwksUri fields in the request authentication resource in the istio-system namespace 
+#           as done in /common/oauth2-proxy/overlays/m2m-dex-and-kind/kustomization.yaml.
+#           Please follow the guidelines in the section Upgrading and Extending below for patching.
 #           curl --insecure -H "Authorization: Bearer `cat /var/run/secrets/kubernetes.io/serviceaccount/token`"  https://kubernetes.default/.well-known/openid-configuration
 #           from a pod in the cluster should provide you with the issuer of your cluster.
 # 
@@ -266,7 +255,7 @@ kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' 
 #kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 #kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=cluster-jwks-proxy' --timeout=180s -n istio-system
 
-# OPTION 3: works on most EKS clusters with  K8s service account
+# OPTION 3: works on most EKS clusters with K8s service account
 #           tokens to be used from outside the cluster via the Istio ingress-gateway.
 #           You have to adjust AWS_REGION and CLUSTER_ID in common/oauth2-proxy/overlays/m2m-dex-and-eks/ first.
 #
@@ -274,7 +263,7 @@ kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' 
 #kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 ```
 
-If and after you have finished the installation with Kubernetes service account token support you should be able to create and use the tokens:
+If and after you finish the installation with Kubernetes service account token support, you should be able to create and use the tokens:
 ```sh
 kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
 TOKEN="$(kubectl -n $KF_PROFILE_NAMESPACE create token default-editor)"
@@ -282,12 +271,11 @@ client = kfp.Client(host="http://localhost:8080/pipeline", existing_token=token)
 curl -v "localhost:8080/jupyter/api/namespaces/${$KF_PROFILE_NAMESPACE}/notebooks" -H "Authorization: Bearer ${TOKEN}"
 ```
 
-If you want to use OAuth2 Proxy without Dex and connect it directly to your own IDP, you can refer to this [document](common/oauth2-proxy/README.md#change-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only). But you can also keep Dex and extend it with connectors to your own IDP as explained in the Dex section below.
-
+If you want to use OAuth2 Proxy without Dex and connect it directly to your own IDP, you can refer to this [document](common/oauth2-proxy/README.md#change-default-authentication-from-dex--oauth2-proxy-to-oauth2-proxy-only). However, you can also keep Dex and extend it with connectors to your own IDP as explained in the Dex section below.
 
 #### Dex
 
-Dex is an OpenID Connect (OIDC) identity provider with multiple authentication backends. In this default installation, it includes a static user with email `user@example.com`. By default, the user's password is `12341234`. For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
+Dex is an OpenID Connect (OIDC) identity provider with multiple authentication backends. In this default installation, it includes a static user with the email `user@example.com`. By default, the user's password is `12341234`. For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
 
 Install Dex:
 
@@ -297,9 +285,7 @@ kustomize build common/dex/overlays/oauth2-proxy | kubectl apply -f -
 kubectl wait --for=condition=ready pods --all --timeout=180s -n auth
 ```
 
-To connect to your desired identity providers (LDAP,GitHub,Google,Microsoft,OIDC,SAML,GitLab) please take a look at <https://dexidp.io/docs/connectors/oidc/>.
-We recommend to use OIDC in general, since it is compatible with most providers as for example azure in the following example.
-You need to modify <https://github.com/kubeflow/manifests/blob/master/common/dex/overlays/oauth2-proxy/config-map.yaml> and add some environment variables in <https://github.com/kubeflow/manifests/blob/master/common/dex/base/deployment.yaml> by adding a patch section in your main Kustomization file. For guidance please check out [Upgrading and extending](#upgrading-and-extending).
+To connect to your desired identity providers (LDAP, GitHub, Google, Microsoft, OIDC, SAML, GitLab), please take a look at <https://dexidp.io/docs/connectors/oidc/>. We recommend using OIDC in general since it is compatible with most providers. For example, Azure in the following example. You need to modify <https://github.com/kubeflow/manifests/blob/master/common/dex/overlays/oauth2-proxy/config-map.yaml> and add some environment variables in <https://github.com/kubeflow/manifests/blob/master/common/dex/base/deployment.yaml> by adding a patch section in your main Kustomization file. For guidance, please check out [Upgrading and Extending](#upgrading-and-extending).
 
 ```yaml
 apiVersion: v1
@@ -321,7 +307,7 @@ data:
     oauth2:
       skipApprovalScreen: true
     enablePasswordDB: true
-    #### WARNING YOU SHOULD NOT USE THE DEFAULT STATIC PASSWORDS
+    #### WARNING: YOU SHOULD NOT USE THE DEFAULT STATIC PASSWORDS
     #### and patch /common/dex/base/dex-passwords.yaml in a Kustomize overlay or remove it
     staticPasswords:
     - email: user@example.com
@@ -334,7 +320,7 @@ data:
       redirectURIs: ["/oauth2/callback"]
       name: 'Dex Login Application'
       secretEnv: OIDC_CLIENT_SECRET
-    #### Here come the connectors to OIDC providers such as Azure, GCP, GitHub, GitLab etc.
+    #### Here come the connectors to OIDC providers such as Azure, GCP, GitHub, GitLab, etc.
     #### Connector config values starting with a "$" will read from the environment.
     connectors:
     - type: oidc
@@ -353,7 +339,7 @@ data:
         #- groups # groups might be used in the future
 ```
 
-For Keycloak we have rough guidelines in <https://github.com/kubeflow/manifests/blob/master/common/dex/README.md>.
+For Keycloak, we have rough guidelines in <https://github.com/kubeflow/manifests/blob/master/common/dex/README.md>.
 
 #### Knative
 
@@ -366,7 +352,7 @@ kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply
 kustomize build common/istio-1-24/cluster-local-gateway/base | kubectl apply -f -
 ```
 
-Optionally, you can install Knative Eventing which can be used for inference request logging:
+Optionally, you can install Knative Eventing, which can be used for inference request logging:
 
 ```sh
 kustomize build common/knative/knative-eventing/base | kubectl apply -f -
@@ -374,10 +360,9 @@ kustomize build common/knative/knative-eventing/base | kubectl apply -f -
 
 #### Kubeflow Namespace
 
-Create the namespace where the Kubeflow components will live in. This namespace
-is named `kubeflow`.
+Create the namespace where the Kubeflow components will reside. This namespace is named `kubeflow`.
 
-Install kubeflow namespace:
+Install the Kubeflow namespace:
 
 ```sh
 kustomize build common/kubeflow-namespace/base | kubectl apply -f -
@@ -392,11 +377,9 @@ kustomize build common/networkpolicies/base | kubectl apply -f -
 
 #### Kubeflow Roles
 
-Create the Kubeflow ClusterRoles, `kubeflow-view`, `kubeflow-edit` and
-`kubeflow-admin`. Kubeflow components aggregate permissions to these
-ClusterRoles.
+Create the Kubeflow ClusterRoles: `kubeflow-view`, `kubeflow-edit`, and `kubeflow-admin`. Kubeflow components aggregate permissions to these ClusterRoles.
 
-Install kubeflow roles:
+Install Kubeflow roles:
 
 ```sh
 kustomize build common/kubeflow-roles/base | kubectl apply -f -
@@ -404,10 +387,9 @@ kustomize build common/kubeflow-roles/base | kubectl apply -f -
 
 #### Kubeflow Istio Resources
 
-Create the Kubeflow Gateway, `kubeflow-gateway` and ClusterRole, 
-`kubeflow-istio-admin`.
+Create the Kubeflow Gateway `kubeflow-gateway` and ClusterRole `kubeflow-istio-admin`.
 
-Install kubeflow istio resources:
+Install Kubeflow Istio resources:
 
 ```sh
 kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
@@ -420,7 +402,7 @@ Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/compon
 ```sh
 kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
 ```
-This installs argo with the runasnonroot emissary executor. Please note that you are still responsible to analyze the security issues that arise when containers are run with root access and to decide if the kubeflow pipeline main containers are run as runasnonroot. It is in general strongly recommended that all user-accessible OCI containers run with Pod Security Standards [restricted](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted).
+This installs Argo with the runasnonroot emissary executor. Please note that you are still responsible for analyzing the security issues that arise when containers are run with root access and for deciding if the Kubeflow pipeline main containers are run as runasnonroot. It is generally strongly recommended that all user-accessible OCI containers run with Pod Security Standards [restricted](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted).
 
 #### KServe
 
@@ -478,7 +460,7 @@ kustomize build apps/jupyter/jupyter-web-app/upstream/overlays/istio | kubectl a
 
 #### Workspaces (Notebooks 2.0)
 
-It is still in development.
+This feature is still in development.
 
 #### PVC Viewer Controller 
 
@@ -490,8 +472,7 @@ kustomize build apps/pvcviewer-controller/upstream/base | kubectl apply -f -
 
 #### Profiles + KFAM
 
-Install the Profile Controller and the Kubeflow Access-Management (KFAM) official Kubeflow
-components:
+Install the Profile Controller and the Kubeflow Access-Management (KFAM) official Kubeflow components:
 
 ```sh
 kustomize build apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
@@ -535,15 +516,15 @@ Finally, create a new namespace for the default user (named `kubeflow-user-examp
 kustomize build common/user-namespace/base | kubectl apply -f -
 ```
 
-### Connect to your Kubeflow Cluster
+### Connect to Your Kubeflow Cluster
 
-After installation, it will take some time for all Pods to become ready. Make sure all Pods are ready before trying to connect, otherwise you might get unexpected errors. To check that all Kubeflow-related Pods are ready, use the following commands:
+After installation, it will take some time for all Pods to become ready. Ensure all Pods are ready before trying to connect; otherwise, you might encounter unexpected errors. To check that all Kubeflow-related Pods are ready, use the following commands:
 
 ```sh
 kubectl get pods -n cert-manager
 kubectl get pods -n istio-system
 kubectl get pods -n auth
-kubectl get pods -n knative-eventing
+kubectl get pods -n oauth2-proxy
 kubectl get pods -n knative-serving
 kubectl get pods -n kubeflow
 kubectl get pods -n kubeflow-user-example-com
@@ -551,7 +532,7 @@ kubectl get pods -n kubeflow-user-example-com
 
 #### Port-Forward
 
-The default way of accessing Kubeflow is via port-forward. This enables you to get started quickly without imposing any requirements on your environment. Run the following to port-forward Istio's Ingress-Gateway to local port `8080`:
+The default way of accessing Kubeflow is via port-forwarding. This enables you to get started quickly without imposing any requirements on your environment. Run the following to port-forward Istio's Ingress-Gateway to local port `8080`:
 
 ```sh
 kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
@@ -559,15 +540,14 @@ kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
 
 After running the command, you can access the Kubeflow Central Dashboard by doing the following:
 
-1. Open your browser and visit `http://localhost:8080`. You should get the Dex login screen.
-2. Login with the default user's credentials. The default email address is `user@example.com` and the default password is `12341234`.
+1. Open your browser and visit `http://localhost:8080`. You should see the Dex login screen.
+2. Log in with the default user's credentials. The default email address is `user@example.com`, and the default password is `12341234`.
 
 #### NodePort / LoadBalancer / Ingress
 
-In order to connect to Kubeflow using NodePort / LoadBalancer / Ingress, you need to set up HTTPS. The reason is that many of our web applications (e.g., Tensorboard Web Application, Jupyter Web Application, Katib UI) use [Secure Cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies), so accessing Kubeflow with HTTP over a non-localhost domain does not work.
+To connect to Kubeflow using NodePort / LoadBalancer / Ingress, you need to set up HTTPS. The reason is that many of our web applications (e.g., Tensorboard Web Application, Jupyter Web Application, Katib UI) use [Secure Cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies), so accessing Kubeflow with HTTP over a non-localhost domain does not work.
 
-Exposing your Kubeflow cluster with proper HTTPS is a simple process, but dependent on your environment. You can just expose the `istio-ingressgateway` service in the `istio-system` namespace via nginx-ingress or any other ingress provider. For security reasons do only use `ClusterIP` on the service, not NodePort or something similarly dangerous.
-There are also third-party commercial [distributions](https://www.kubeflow.org/docs/started/installing-kubeflow/#install-a-packaged-kubeflow-distribution) available.
+Exposing your Kubeflow cluster with proper HTTPS is a straightforward process but depends on your environment. You can expose the `istio-ingressgateway` service in the `istio-system` namespace via nginx-ingress or any other ingress provider. For security reasons, only use `ClusterIP` on the service, not NodePort or something similarly dangerous. There is third-party [commercial support](https://www.kubeflow.org/docs/started/support/) available.
 
 ---
 **NOTE**
@@ -576,7 +556,7 @@ If you absolutely need to expose Kubeflow over HTTP, you can disable the `Secure
 
 ---
 
-### Change default user name
+### Change Default User Name
 
 For security reasons, we don't want to use the default username and email for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own username and email before deploying. To define it for the default user:
 
@@ -589,9 +569,9 @@ For security reasons, we don't want to use the default username and email for th
         username: <REPLACE_WITH_PREFERRED_USERNAME>
     ```
 
-### Change default user password
+### Change Default User Password
 
-If you have an identity provider (LDAP,GitHub,Google,Microsoft,OIDC,SAML,GitLab) available you should use that instead of static passwords and connect it to oauth2-proxy or Dex as explained in the sections above. This is best practices instead of using static passwords. 
+If you have an identity provider (LDAP, GitHub, Google, Microsoft, OIDC, SAML, GitLab) available, you should use that instead of static passwords and connect it to oauth2-proxy or Dex as explained in the sections above. This is best practice instead of using static passwords. 
 
 For security reasons, we don't want to use the default static password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password and apply it either **before creating the cluster** or **after creating the cluster**. 
 
@@ -608,7 +588,7 @@ For example, running the above command locally with required packages like _pass
   $2y$12$vIm8CANhuWui0J1p3jYeGeuM28Qcn76IFMaFWvZCG5ZkKZ4MjTF4u <--- GENERATED_HASH_FOR_ENTERED_PASSWORD
   ```
 
-#### Before creating the cluster:
+#### Before Creating the Cluster:
 
 1. Edit `common/dex/base/dex-passwords.yaml` and fill the relevant field with the hash of the password you chose:
 
@@ -618,72 +598,64 @@ For example, running the above command locally with required packages like _pass
         DEX_USER_PASSWORD: <REPLACE_WITH_HASH>
     ```
 
-#### After creating the cluster:
+#### After Creating the Cluster:
 
-1. Delete the existing secret _dex-passwords_ in auth namespace using the following command:
+1. Delete the existing secret _dex-passwords_ in the auth namespace using the following command:
 
     ```sh
     kubectl delete secret dex-passwords -n auth
     ```
 
-2. Create secret dex-passwords with new hash using the following command:
+2. Create the secret dex-passwords with the new hash using the following command:
 
     ```sh
     kubectl create secret generic dex-passwords --from-literal=DEX_USER_PASSWORD='REPLACE_WITH_HASH' -n auth
     ```
 
-3. Recreate the _dex_ pod in auth namespace using the following command:
+3. Recreate the _dex_ pod in the auth namespace using the following command:
 
     ```sh
     kubectl delete pods --all -n auth
     ```
 
-4. Try to login using the new dex password.
+4. Try to log in using the new Dex password.
 
+## Upgrading and Extending
 
+For modifications and in-place upgrades of the Kubeflow platform, we provide a rough description for advanced users:
 
-## Upgrading and extending
+- Never edit the manifests directly; use Kustomize overlays and [components](https://github.com/kubernetes-sigs/kustomize/blob/master/examples/components.md) on top of the [example.yaml](https://github.com/kubeflow/manifests/blob/master/example/kustomization.yaml).
+- This allows you to upgrade by just referencing the new manifests, building with Kustomize, and running `kubectl apply` again.
+- You might have to adjust your overlays and components if needed.
+- You might need to prune old resources. For that, you would add [labels](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/labels/) to all your resources from the start.
+- With labels, you can use `kubectl apply` with `--prune` and `--dry-run` to list prunable resources.
+- Sometimes there are major changes; for example, in the 1.9 release, we switched to oauth2-proxy, which needs additional attention.
+- Nevertheless, with a bit of Kubernetes knowledge, one should be able to upgrade.
 
-For modifications and in place upgrades of the Kubeflow platform we provide a rough description for advanced users:
+## Release Process
 
-- Never ever edit the manifests directly, use Kustomize overlays and [components](https://github.com/kubernetes-sigs/kustomize/blob/master/examples/components.md) on top of the [example.yaml](https://github.com/kubeflow/manifests/blob/master/example/kustomization.yaml).
-- This allows you to upgrade by just referencing the new manifests, building with kustomize and running `kubectl apply` again.
-- You might have to adjust your over the top overlays and components if needed.
-- You might have to prune old resources. For that you would add [labels](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/labels/) to all your resources from the start.
-- With labels you can use `kubectl apply` with `--prune` and `--dry-run` to list prunable resources.
-- Sometimes there are major changes, e.g. in the 1.9 release we switch to oauth2-proxy, which need additional attention.
-- Nevertheless with a bit of Kubernetes knowledge one should be able to upgrade.
-
-## Release process
-
-The Manifest Working Group releases Kubeflow based on the [release timeline](https://github.com/kubeflow/community/blob/master/releases/handbook.md#timeline).
- The community and the release team work closely with the Manifest Working Group to define the specific dates at the start of the [release cycle](https://github.com/kubeflow/community/blob/master/releases/handbook.md#releasing)
- and follow the [release versioning policy](https://github.com/kubeflow/community/blob/master/releases/handbook.md#versioning-policy),
- as defined in the [Kubeflow release handbook](https://github.com/kubeflow/community/blob/master/releases/handbook.md).
+The Manifest Working Group releases Kubeflow based on the [release timeline](https://github.com/kubeflow/community/blob/master/releases/handbook.md#timeline). The community and the release team work closely with the Manifest Working Group to define the specific dates at the start of the [release cycle](https://github.com/kubeflow/community/blob/master/releases/handbook.md#releasing) and follow the [release versioning policy](https://github.com/kubeflow/community/blob/master/releases/handbook.md#versioning-policy), as defined in the [Kubeflow release handbook](https://github.com/kubeflow/community/blob/master/releases/handbook.md).
 
 ## CVE Scanning
 
-To view all past security scans, head to the [Image Extracting and Security Scanning GitHub Action workflow](https://github.com/kubeflow/manifests/actions/workflows/trivy.yaml). In the logs of the workflow you can expand the `Run image extracting and security scanning script` step to view the CVE logs. You will find a per-image CVE scan and a JSON dump of per-WorkingGroup aggregated metrics.
-You can run the Python script from the workflow file locally on your machine to obtain the detailed JSON files for any git commit.
+To view all past security scans, head to the [Image Extracting and Security Scanning GitHub Action workflow](https://github.com/kubeflow/manifests/actions/workflows/trivy.yaml). In the logs of the workflow, you can expand the `Run image extracting and security scanning script` step to view the CVE logs. You will find a per-image CVE scan and a JSON dump of per-WorkingGroup aggregated metrics. You can run the Python script from the workflow file locally on your machine to obtain the detailed JSON files for any git commit.
 
 The Kubeflow security working group follows a responsible disclosure policy for CVE results:
 
 - **Internal Review**: All CVE findings are initially reviewed internally by the security working group.
 - **Severity Assessment**: Each CVE is assessed for severity and potential impact on the Kubeflow project.
 - **Disclosure**: For high and critical severity CVEs, the security working group will:
-  - Notify the maintainers and contributors
-  - Try to provide a fix or mitigation strategy
-  - Publicly disclose the CVE details
+  - Notify the maintainers and contributors.
+  - Try to provide a fix or mitigation strategy.
+  - Publicly disclose the CVE details.
 
 ## Pre-commit Hooks
 
 This repository uses pre-commit hooks to ensure code quality and consistency. The following hooks are configured:
 
-1. **Black** - Python code formatter
-
-2. **Yamllint** - YAML file linter
-
-3. **Shellcheck** - Shell script static analysis
+1. **Black** - Python code formatter.
+2. **Yamllint** - YAML file linter.
+3. **Shellcheck** - Shell script static analysis.
 
 To use these hooks:
 
@@ -708,6 +680,6 @@ pre-commit run
 ## Frequently Asked Questions
 
 - **Q:** What versions of Istio, Knative, Cert-Manager, Argo, ... are compatible with Kubeflow? \
-  **A:** Please refer to each individual component's documentation for a dependency compatibility range. For Istio, Knative, Dex, Cert-Manager and OAuth2 Proxy, the versions in `common` are the ones we have validated.
-- **Q:** Can I use earlier version of Kustomize with Kubeflow manifests?
+  **A:** Please refer to each individual component's documentation for a dependency compatibility range. For Istio, Knative, Dex, Cert-Manager, and OAuth2 Proxy, the versions in `common` are the ones we have validated.
+- **Q:** Can I use an earlier version of Kustomize with Kubeflow manifests? \
   **A:** No, it is not supported anymore, although it might be possible with manual effort.
