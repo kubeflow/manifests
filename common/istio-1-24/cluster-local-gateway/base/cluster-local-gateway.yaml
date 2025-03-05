@@ -7,8 +7,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-ingressgateway
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: istio-ingress-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: istio-ingress-1.24.3
     install.operator.istio.io/owning-resource: unknown
     istio: cluster-local-gateway
     istio.io/rev: default
@@ -26,8 +26,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-ingressgateway
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: istio-ingress-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: istio-ingress-1.24.3
     install.operator.istio.io/owning-resource: unknown
     istio: cluster-local-gateway
     istio.io/rev: default
@@ -58,9 +58,9 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: istio-ingressgateway
         app.kubernetes.io/part-of: istio
-        app.kubernetes.io/version: 1.24.2
+        app.kubernetes.io/version: 1.24.3
         chart: gateways
-        helm.sh/chart: istio-ingress-1.24.2
+        helm.sh/chart: istio-ingress-1.24.3
         heritage: Tiller
         install.operator.istio.io/owning-resource: unknown
         istio: cluster-local-gateway
@@ -127,8 +127,7 @@ spec:
         - name: ISTIO_META_WORKLOAD_NAME
           value: cluster-local-gateway
         - name: ISTIO_META_OWNER
-          value: 
-            kubernetes://apis/apps/v1/namespaces/istio-system/deployments/cluster-local-gateway
+          value: kubernetes://apis/apps/v1/namespaces/istio-system/deployments/cluster-local-gateway
         - name: ISTIO_META_MESH_ID
           value: cluster.local
         - name: TRUST_DOMAIN
@@ -141,7 +140,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        image: docker.io/istio/proxyv2:1.24.2
+        image: gcr.io/istio-release/proxyv2:1.24.2
         name: istio-proxy
         ports:
         - containerPort: 15020
@@ -258,8 +257,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-ingressgateway
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: istio-ingress-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: istio-ingress-1.24.3
     install.operator.istio.io/owning-resource: unknown
     istio: cluster-local-gateway
     istio.io/rev: default
@@ -282,8 +281,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-ingressgateway
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: istio-ingress-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: istio-ingress-1.24.3
     install.operator.istio.io/owning-resource: unknown
     istio.io/rev: default
     operator.istio.io/component: IngressGateways
@@ -308,8 +307,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-ingressgateway
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: istio-ingress-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: istio-ingress-1.24.3
     install.operator.istio.io/owning-resource: unknown
     istio.io/rev: default
     operator.istio.io/component: IngressGateways
@@ -333,8 +332,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-ingressgateway
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: istio-ingress-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: istio-ingress-1.24.3
     install.operator.istio.io/owning-resource: unknown
     istio: cluster-local-gateway
     istio.io/rev: default
@@ -367,8 +366,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-ingressgateway
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.24.2
-    helm.sh/chart: istio-ingress-1.24.2
+    app.kubernetes.io/version: 1.24.3
+    helm.sh/chart: istio-ingress-1.24.3
     install.operator.istio.io/owning-resource: unknown
     istio: cluster-local-gateway
     istio.io/rev: default
