@@ -57,3 +57,4 @@ spec:
       - name: hooks
         configMap:
           name: kubeflow-pipelines-profile-controller-code
+
