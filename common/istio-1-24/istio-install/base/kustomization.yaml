@@ -23,4 +23,3 @@ patches:
 images:
 - name: busybox
   newName: registry.k8s.io/busybox
-  newTag: "1.28"
