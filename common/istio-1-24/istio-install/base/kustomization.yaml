@@ -17,7 +17,7 @@ patches:
 - path: patches/disable-debugging.yaml
 # - path: patches/istio-ingressgateway-remove-pdb.yaml
 - path: patches/istiod-remove-pdb.yaml
-# - path: patches/seccomp-istio-ingressgateway.yaml
+- path: patches/seccomp-istio-ingressgateway.yaml
 - path: patches/seccomp-istiod.yaml
 
 images:
