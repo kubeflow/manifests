@@ -71,6 +71,7 @@ jobs:
     - name: Apply patches to clear warnings
       run: |
         DIRECTORY="experimental/security/PSS/patches"
+        shopt -s nullglob  # Enable nullglob to avoid wildcard expansion issues if the directory is empty
         for file in "$DIRECTORY"/*.yaml; do
           echo "Patching file: $file"
 
