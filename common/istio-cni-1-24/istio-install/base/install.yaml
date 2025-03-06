@@ -711,7 +711,7 @@ data:
   AMBIENT_ENABLED: 'false'
   AMBIENT_IPV6: 'true'
   CHAINED_CNI_PLUGIN: 'true'
-  CURRENT_AGENT_VERSION: 1.24.2
+  CURRENT_AGENT_VERSION: 1.24.3
   EXCLUDED_NAMESPACES: kube-system
   REPAIR_BROKEN_POD_LABEL_KEY: cni.istio.io/uninitialized
   REPAIR_BROKEN_POD_LABEL_VALUE: 'true'
@@ -2663,7 +2663,7 @@ data:
         "sts": {
           "servicePort": 0
         },
-        "tag": "1.24.2",
+        "tag": "1.24.3",
         "variant": "",
         "waypoint": {
           "affinity": {},
@@ -2952,7 +2952,7 @@ spec:
         envFrom:
         - configMapRef:
             name: istio-cni-config
-        image: gcr.io/istio-release/install-cni:1.24.2
+        image: gcr.io/istio-release/install-cni:1.24.3
         name: install-cni
         ports:
         - containerPort: 15014
@@ -3355,7 +3355,7 @@ spec:
               resource: limits.cpu
         - name: PLATFORM
           value: ''
-        image: gcr.io/istio-release/pilot:1.24.2
+        image: gcr.io/istio-release/pilot:1.24.3
         name: discovery
         ports:
         - containerPort: 8080

@@ -18,7 +18,7 @@ spec:
           value: "true"
   hub: gcr.io/istio-release
   profile: default
-  tag: 1.24.2
+  tag: 1.24.3
   values:
     defaultRevision: ""
     gateways:

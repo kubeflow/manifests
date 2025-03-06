@@ -2502,7 +2502,7 @@ data:
         "sts": {
           "servicePort": 0
         },
-        "tag": "1.24.2",
+        "tag": "1.24.3",
         "variant": "",
         "waypoint": {
           "affinity": {},
@@ -3043,7 +3043,7 @@ spec:
               resource: limits.cpu
         - name: PLATFORM
           value: ''
-        image: gcr.io/istio-release/pilot:1.24.2
+        image: gcr.io/istio-release/pilot:1.24.3
         name: discovery
         ports:
         - containerPort: 8080
