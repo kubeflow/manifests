@@ -10,7 +10,7 @@ on:
     - tests/gh-actions/install_oauth2-proxy.sh
     - common/cert-manager/**
     - common/oauth2-proxy/**
-    - common/istio/**
+    - common/istio*/**
     - tests/gh-actions/pipeline_test.py
 
 jobs:
