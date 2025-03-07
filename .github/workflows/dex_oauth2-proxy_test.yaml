@@ -3,7 +3,11 @@ on:
   pull_request:
     paths:
     - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
-    - .github/workflows/dex_test.yaml
+    - .github/workflows/dex_oauth2-proxy.yaml
+    - common/cert-manager/**
+    - common/oauth2-proxy/**
+    - common/istio*/**
+    - experimental/security/PSS/*
     - common/dex/base/**
     - tests/gh-actions/install_istio.sh
 

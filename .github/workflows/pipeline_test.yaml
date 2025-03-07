@@ -12,6 +12,7 @@ on:
     - common/oauth2-proxy/**
     - common/istio/**
     - tests/gh-actions/pipeline_test.py
+    - experimental/security/PSS/*
 
 jobs:
   build:
