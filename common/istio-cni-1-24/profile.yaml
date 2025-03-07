@@ -24,6 +24,8 @@ spec:
     gateways:
       istio-egressgateway: {}
       istio-ingressgateway: {}
+      seccompProfile:
+        type: RuntimeDefault
     global:
       configValidation: true
       istioNamespace: istio-system
