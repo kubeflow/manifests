@@ -48,6 +48,8 @@ patches:
       spec:
         template:
           metadata:
+            labels:
+              sidecar.istio.io/inject: "false"
             annotations:
               sidecar.istio.io/inject: "false"
   - target:
@@ -61,5 +63,7 @@ patches:
       spec:
         template:
           metadata:
+          labels:
+              sidecar.istio.io/inject: "false"
             annotations:
               sidecar.istio.io/inject: "false"
