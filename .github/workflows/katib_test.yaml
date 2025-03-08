@@ -6,6 +6,7 @@ on:
     - .github/workflows/katib_test.yaml
     - apps/katib/upstream/**
     - tests/gh-actions/install_istio.sh
+    - common/istio*/**
     - tests/gh-actions/install_cert_manager.sh
     - common/cert-manager/**
     - experimental/security/PSS/*

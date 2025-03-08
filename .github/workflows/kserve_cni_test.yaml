@@ -4,7 +4,8 @@ on:
     paths:
     - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
     - .github/workflows/kserve_cni_test.yaml
-    - common/istio-cni-1-24/**
+    - tests/gh-actions/install_istio.sh
+    - common/istio*/**
     - tests/gh-actions/install_cert_manager.sh
     - common/cert-manager/**
     - tests/gh-actions/install_knative-cni.sh
