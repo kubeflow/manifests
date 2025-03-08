@@ -11,6 +11,8 @@ on:
     - common/knative/**
     - tests/gh-actions/install_kserve.sh
     - experimental/security/PSS/**
+    - common/istio*/**
+    - tests/gh-actions/install_istio.sh
 
 jobs:
   build:

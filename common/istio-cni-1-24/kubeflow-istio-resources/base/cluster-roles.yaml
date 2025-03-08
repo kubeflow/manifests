@@ -22,7 +22,7 @@ metadata:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-istio-admin: "true"
 rules:
-- apiGroups: 
+- apiGroups:
   - istio.io
   - networking.istio.io
   resources: ["*"]
@@ -30,11 +30,12 @@ rules:
   - get
   - list
   - watch
-  - create
-  - delete
-  - deletecollection
-  - patch
-  - update
+  # For security reasons we do not enable this by default. It could destabilize the platform and allow exploits.
+  #- create
+  #- delete
+  #- deletecollection
+  #- patch
+  #- update
 
 ---
 

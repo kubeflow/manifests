@@ -6,6 +6,7 @@ on:
     - .github/workflows/centraldashboard_test.yaml
     - apps/centraldashboard/upstream/**
     - tests/gh-actions/install_istio.sh
+    - common/istio*/**
 
 jobs:
   build:
