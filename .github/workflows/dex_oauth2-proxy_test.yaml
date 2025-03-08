@@ -1,24 +1,19 @@
-name: Apply PSS labels to namespaces
+name: Build & Apply Dex manifests in KinD
 on:
   pull_request:
     paths:
     - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
-    - .github/workflows/*
-    - tests/gh-actions/kind-cluster.yaml
-    - apps/profiles/upstream/**
-    - apps/pipeline/upstream/**
-    - common/dex/**
+    - .github/workflows/dex_oauth2-proxy.yaml
     - common/cert-manager/**
     - common/oauth2-proxy/**
     - common/istio*/**
     - experimental/security/PSS/*
-    - tests/gh-actions/install_istio-cni.sh
-    - tests/gh-actions/install_multitenancy.sh
+    - common/dex/base/**
+    - tests/gh-actions/install_istio.sh
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -26,24 +21,11 @@ jobs:
     - name: Install KinD, Create KinD cluster and Install kustomize
       run: ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
 
-    - name: Install kubectl
-      run: ./tests/gh-actions/install_kubectl.sh
-
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh
 
     - name: Install Istio CNI
       run: ./tests/gh-actions/install_istio-cni.sh
-
-    - name: Configure istio init container with seccompProfile attribute
-      run: |
-        kubectl get cm istio-sidecar-injector -n istio-system -o yaml > temporary_patch.yaml
-        sed -i '0,/runAsNonRoot: true/{s//&\n              seccompProfile:\n                type: RuntimeDefault/}' temporary_patch.yaml
-        sed -i '/runAsNonRoot: true/{N; /runAsUser: {{ .ProxyUID | default "1337" }}/a\
-                      seccompProfile:\n                type: RuntimeDefault
-        }' temporary_patch.yaml
-        kubectl apply -f temporary_patch.yaml
-        rm temporary_patch.yaml
 
     - name: Install oauth2-proxy
       run: ./tests/gh-actions/install_oauth2-proxy.sh
@@ -65,27 +47,21 @@ jobs:
         echo "Waiting for pods in auth namespace to become ready..."
         kubectl wait --for=condition=ready pods --all --timeout=180s -n auth
 
-    - name: Install KF Pipelines
-      run: ./tests/gh-actions/install_pipelines.sh
-
-    - name: Apply patches to clear warnings
+    - name: Build & Apply manifests
       run: |
-        DIRECTORY="experimental/security/PSS/patches"
-        shopt -s nullglob  # Enable nullglob to avoid wildcard expansion issues if the directory is empty
-        for file in "$DIRECTORY"/*.yaml; do
-          echo "Patching file: $file"
+        while ! kustomize build ./tests/gh-actions/deploy-dex-login-environment | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 20; done
+        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
 
-          KIND=$(kubectl get -f "$file" -o jsonpath='{.kind}')
-          NAME=$(kubectl get -f "$file" -o jsonpath='{.metadata.name}')
-          NAMESPACE=$(kubectl get -f "$file" -o jsonpath='{.metadata.namespace}')
+    - name: port forward
+      run: |
+        ingress_gateway_service=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
+        nohup kubectl port-forward --namespace istio-system svc/${ingress_gateway_service} 8080:80 &
+        while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
 
-          # Apply the patch
-          kubectl get "$KIND" "$NAME" -n "$NAMESPACE" &> /dev/null
-          if [ $? -eq 0 ]; then
-            kubectl patch "$KIND" "$NAME" -n "$NAMESPACE" --patch-file "$file"
-          fi
-        done
-        sleep 300
+    - name: test dex login
+      run: |
+        pip3 install requests
+        ./tests/gh-actions/test_dex_login.py
 
     - name: Apply Pod Security Standards baseline levels for static namespaces
       run: ./tests/gh-actions/enable_baseline_PSS.sh
