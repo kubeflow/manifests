@@ -41,6 +41,7 @@ spec:
           runAsNonRoot: true
           runAsUser: 1000
           runAsGroup: 0
+          fsGroup: 1000
           capabilities:
             drop:
             - ALL
