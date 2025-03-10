@@ -13,6 +13,7 @@ spec:
     metadata:
       labels:
         component: metadata-envoy
+        sidecar.istio.io/inject: "false"
       annotations:
         sidecar.istio.io/inject: "false"
     spec:

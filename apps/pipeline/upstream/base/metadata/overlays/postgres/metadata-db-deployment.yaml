@@ -16,6 +16,7 @@ spec:
       name: db
       labels:
         component: db
+        sidecar.istio.io/inject: "false"
       annotations:
         sidecar.istio.io/inject: "false"
     spec:

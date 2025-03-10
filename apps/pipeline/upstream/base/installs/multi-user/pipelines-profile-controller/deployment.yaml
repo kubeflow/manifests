@@ -6,6 +6,8 @@ spec:
   replicas: 1
   template:
     metadata:
+      labels:
+        sidecar.istio.io/inject: "false"
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
