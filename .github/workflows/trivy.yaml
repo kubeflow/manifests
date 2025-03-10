@@ -19,15 +19,12 @@ jobs:
     # Install kustomize
     - name: Install kustomize
       run: |
-        sudo apt update
-        sudo apt install snapd
-        sudo snap install kustomize
+        bash tests/gh-actions/install_kustomize.sh
 
     # Install trivy
     - name: Install trivy
       run: |
-        sudo apt update
-        sudo snap install trivy
+        bash tests/gh-actions/install_trivy.sh
 
     # Install Python
     - name: Setup Python

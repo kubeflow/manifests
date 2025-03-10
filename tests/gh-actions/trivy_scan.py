@@ -204,14 +204,13 @@ for file in files:
             with open(scan_output_file, "r") as json_file:
                 scan_data = json.load(json_file)
 
-            # Updated to handle Trivy's list output format
-            if not scan_data or not any(result.get("Vulnerabilities") for result in scan_data if isinstance(result, dict)):
+            if not scan_data.get("Results"):
                 log(f"No vulnerabilities found in {image_name}:{image_tag}")
             else:
                 vulnerabilities_list = [
                     result["Vulnerabilities"]
-                    for result in scan_data
-                    if isinstance(result, dict) and "Vulnerabilities" in result and result["Vulnerabilities"]
+                    for result in scan_data["Results"]
+                    if "Vulnerabilities" in result and result["Vulnerabilities"]
                 ]
 
                 if not vulnerabilities_list:
