@@ -3,11 +3,11 @@ name: Image Extracting and Security Scanning
 on:
   push:
     branches:
-      - master
+    - master
   pull_request:
     paths:
-      - '.github/workflows/trivy.yaml'
-      - 'tests/gh-actions/trivy_scan.py'
+    - '.github/workflows/trivy.yaml'
+    - 'tests/gh-actions/trivy_scan.py'
 
 jobs:
   image-extraction-and-security-scan:
