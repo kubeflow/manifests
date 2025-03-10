@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  pull_request:
     paths:
       - '.github/workflows/trivy.yaml'
       - 'tests/gh-actions/trivy_scan.py'
