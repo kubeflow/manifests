@@ -38,7 +38,7 @@ jobs:
 
     - name: Run image extracting and security scanning script
       run: |
-        cd hack
+        cd tests/gh-actions
         python3 trivy_scan.py
 
     - name: Upload trivy scanned_results
