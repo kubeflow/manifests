@@ -14,6 +14,4 @@
 
 
 # Scanning reports of trivy
-docs/image_lists/summary_of_severity_counts_for_WG/
-docs/image_lists/severity_counts_with_images_for_WG/
-docs/image_lists/security_scan_reports/
+image_lists/*

@@ -4,6 +4,10 @@ on:
   push:
     branches:
     - master
+  pull_request:
+    paths:
+    - '.github/workflows/trivy.yaml'
+    - 'tests/gh-actions/trivy_scan.py'
 
 jobs:
   image-extraction-and-security-scan:
@@ -15,15 +19,12 @@ jobs:
     # Install kustomize
     - name: Install kustomize
       run: |
-        sudo apt update
-        sudo apt install snapd
-        sudo snap install kustomize
+        bash tests/gh-actions/install_kustomize.sh
 
     # Install trivy
     - name: Install trivy
       run: |
-        sudo apt update
-        sudo snap install trivy
+        bash tests/gh-actions/install_trivy.sh
 
     # Install Python
     - name: Setup Python
@@ -38,7 +39,7 @@ jobs:
 
     - name: Run image extracting and security scanning script
       run: |
-        cd hack
+        cd tests/gh-actions
         python3 trivy_scan.py
 
     - name: Upload trivy scanned_results
