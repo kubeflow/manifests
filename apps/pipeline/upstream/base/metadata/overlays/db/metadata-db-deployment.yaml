@@ -17,8 +17,6 @@ spec:
       labels:
         component: db
         sidecar.istio.io/inject: "false"
-      annotations:
-        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: db-container
@@ -50,4 +48,3 @@ spec:
       - name: metadata-mysql
         persistentVolumeClaim:
           claimName: metadata-mysql
-

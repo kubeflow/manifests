@@ -8,8 +8,6 @@ spec:
     metadata:
       labels:
         sidecar.istio.io/inject: "false"
-      annotations:
-        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: profile-controller
@@ -59,4 +57,3 @@ spec:
       - name: hooks
         configMap:
           name: kubeflow-pipelines-profile-controller-code
-

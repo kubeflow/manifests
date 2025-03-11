@@ -17,15 +17,13 @@ spec:
       labels:
         component: db
         sidecar.istio.io/inject: "false"
-      annotations:
-        sidecar.istio.io/inject: "false"
     spec:
       containers:
       - name: db-container
         image: postgres
         env:
-          - name: PGDATA
-            value: /var/lib/postgresql/data/pgdata
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
         envFrom:
         - configMapRef:
             name: metadata-postgres-db-parameters
@@ -41,4 +39,3 @@ spec:
       - name: metadata-postgres
         persistentVolumeClaim:
           claimName: metadata-postgres
-
