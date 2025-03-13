@@ -11,9 +11,8 @@ spec:
       component: model-registry-server
   template:
     metadata:
-      annotations:
-        sidecar.istio.io/inject: "true"
       labels:
+        sidecar.istio.io/inject: "true"
         component: model-registry-server
     spec:
       securityContext:
