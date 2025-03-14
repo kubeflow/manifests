@@ -1,0 +1,9 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: prune-egress
+spec:
+  egress:
+  - hosts:
+    - "./*" # use mTLS within the namespace
+    - "kubeflow/*" # use mTLS when communicating with kubeflow namespace
