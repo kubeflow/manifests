@@ -22,6 +22,16 @@ spec:
     spec:
       containers:
       - name: profile-controller
+        securityContext:
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 0
+          capabilities:
+            drop:
+            - ALL
         image: alpine/k8s:1.29.13
         command: ["python", "/hooks/sync.py"]
         env:
@@ -32,8 +42,6 @@ spec:
               key: appVersion
         - name: AWS_ENDPOINT_URL
           value: http://minio-service:8111
-        # The following AWS_* vars can be any value. They are just needed for botocore to work
-        # seaweedfs does not need auth or region on the IAM.
         - name: AWS_REGION
           value: us-east-1
         - name: AWS_ACCESS_KEY_ID

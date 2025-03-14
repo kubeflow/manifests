@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: seaweedfs
-        image: 'chrislusf/seaweedfs:3.82'
+        image: 'chrislusf/seaweedfs:3.85'
         args:
         - 'server'
         - '-dir=/data'
