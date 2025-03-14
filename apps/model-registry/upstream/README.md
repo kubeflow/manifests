@@ -40,6 +40,49 @@ curl -sX 'GET' \
   -H 'accept: application/json' | jq
 ```
 
+### UI Installation
+
+There are two main ways to deploy the Model Registry UI:
+
+1. Standalone mode - Use this if you are using Model Registry without the Kubeflow Platform (**Note: You will need a custom standalone image**)
+
+2. Integrated mode - Use this if you are deploying Model Registry in Kubeflow 
+
+For a standalone install, we recommend following the [Model Registry UI standalone deployment documentation](../../clients/ui/docs/local-deployment-guide-ui.md).
+
+For an integrated install use the kubeflow UI overlay:
+
+```bash
+kubectl apply -k options/ui/overlays/istio -n kubeflow
+```
+
+To make Model Registry UI accessible from the Kubeflow UI, you need to add the following to your Kubeflow UI configmap:
+
+```bash
+kubectl edit configmap -n kubeflow centraldashboard-config
+```
+
+```yaml
+apiVersion: v1
+data:
+  links: |-
+    {
+        "menuLinks": [
+            {
+                "icon": "assignment",
+                "link": "/model-registry/",
+                "text": "Model Registry",
+                "type": "item"
+            },
+            ...
+```
+
+Or you can add it in one line with:
+
+```bash
+kubectl get configmap centraldashboard-config -n kubeflow -o json | jq '.data.links |= (fromjson | .menuLinks += [{"icon": "assignment", "link": "/model-registry/", "text": "Model Registry", "type": "item"}] | tojson)' | kubectl apply -f - -n kubeflow
+````
+
 ## Usage
 
 For a basic usage of the Kubeflow Model Registry, follow the [Kubeflow Model Registry getting started documentation](https://www.kubeflow.org/docs/components/model-registry/getting-started/)

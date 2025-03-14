@@ -2,7 +2,15 @@ kind: Service
 apiVersion: v1
 metadata:
   labels:
-    app: metadata
+    app: model-registry-service
+    app.kubernetes.io/component: model-registry
+    app.kubernetes.io/instance: model-registry-service
+    app.kubernetes.io/name: model-registry-service
+    app.kubernetes.io/part-of: model-registry
+    component: model-registry
+  annotations:
+    displayName: Kubeflow Model Registry
+    description: An example model registry
   name: model-registry-service
 spec:
   selector:

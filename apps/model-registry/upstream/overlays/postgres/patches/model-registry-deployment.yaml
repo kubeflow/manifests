@@ -16,9 +16,9 @@ spec:
           - $patch: replace
           envFrom:
           - configMapRef:
-              name: metadata-postgres-db-parameters
+              name: metadata-registry-db-parameters
           - secretRef:
-              name: metadata-postgres-db-secrets
+              name: metadata-registry-db-secrets
           - configMapRef:
               name: model-registry-configmap
           args: ["--grpc_port=$(MODEL_REGISTRY_GRPC_SERVICE_PORT)",

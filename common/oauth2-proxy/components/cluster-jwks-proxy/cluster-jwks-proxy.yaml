@@ -44,6 +44,14 @@ spec:
       containers:
       - name: kubectl-proxy
         image: docker.io/bitnami/kubectl
+        securityContext:
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          runAsNonRoot: true
+          capabilities:
+            drop:
+            - ALL
         ports:
         - name: http
           containerPort: 8080

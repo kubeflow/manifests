@@ -17,9 +17,9 @@ resources:
 - ml-pipeline-ui.yaml
 - ml-pipeline.yaml
 - model-registry.yaml
+- model-registry-ui.yaml
 - poddefaults.yaml
 - pvcviewer-webhook.yaml
-- seldon.yaml
 - spark-operator-webhook.yaml
 - tensorboards-web-app.yaml
 - training-operator-webhook.yaml

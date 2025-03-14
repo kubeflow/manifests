@@ -3,7 +3,7 @@ kind: Namespace
 metadata:
   name: knative-eventing
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 ---
 apiVersion: v1
@@ -12,7 +12,7 @@ metadata:
   name: eventing-controller
   namespace: knative-eventing
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -20,7 +20,7 @@ kind: ClusterRoleBinding
 metadata:
   name: eventing-controller
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -36,7 +36,7 @@ kind: ClusterRoleBinding
 metadata:
   name: eventing-controller-resolver
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -52,7 +52,7 @@ kind: ClusterRoleBinding
 metadata:
   name: eventing-controller-source-observer
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -68,7 +68,7 @@ kind: ClusterRoleBinding
 metadata:
   name: eventing-controller-sources-controller
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -84,7 +84,7 @@ kind: ClusterRoleBinding
 metadata:
   name: eventing-controller-manipulator
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -95,13 +95,54 @@ roleRef:
   name: channelable-manipulator
   apiGroup: rbac.authorization.k8s.io
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: eventing-controller-crossnamespace-subscriber
+  labels:
+    app.kubernetes.io/version: "1.16.4"
+    app.kubernetes.io/name: knative-eventing
+subjects:
+  - kind: ServiceAccount
+    name: eventing-controller
+    namespace: knative-eventing
+roleRef:
+  kind: ClusterRole
+  name: crossnamespace-subscriber
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: job-sink
+  namespace: knative-eventing
+  labels:
+    app.kubernetes.io/version: "1.16.4"
+    app.kubernetes.io/name: knative-eventing
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: knative-eventing-job-sink
+  labels:
+    app.kubernetes.io/version: "1.16.4"
+    app.kubernetes.io/name: knative-eventing
+subjects:
+  - kind: ServiceAccount
+    name: job-sink
+    namespace: knative-eventing
+roleRef:
+  kind: ClusterRole
+  name: knative-eventing-job-sink
+  apiGroup: rbac.authorization.k8s.io
+---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: pingsource-mt-adapter
   namespace: knative-eventing
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -109,7 +150,7 @@ kind: ClusterRoleBinding
 metadata:
   name: knative-eventing-pingsource-mt-adapter
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -126,7 +167,7 @@ metadata:
   name: eventing-webhook
   namespace: knative-eventing
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -134,7 +175,7 @@ kind: ClusterRoleBinding
 metadata:
   name: eventing-webhook
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -151,7 +192,7 @@ metadata:
   namespace: knative-eventing
   name: eventing-webhook
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -167,7 +208,7 @@ kind: ClusterRoleBinding
 metadata:
   name: eventing-webhook-resolver
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -183,7 +224,7 @@ kind: ClusterRoleBinding
 metadata:
   name: eventing-webhook-podspecable-binding
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 subjects:
   - kind: ServiceAccount
@@ -200,7 +241,7 @@ metadata:
   name: config-br-default-channel
   namespace: knative-eventing
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 data:
   channel-template-spec: |
@@ -213,7 +254,7 @@ metadata:
   name: config-br-defaults
   namespace: knative-eventing
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 data:
   default-br-config: |
@@ -234,7 +275,7 @@ metadata:
   name: default-ch-webhook
   namespace: knative-eventing
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 data:
   default-ch-config: |
@@ -251,10 +292,9 @@ kind: ConfigMap
 metadata:
   name: config-ping-defaults
   namespace: knative-eventing
-  labels:
   annotations:
     knative.dev/example-checksum: "9185c153"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 data:
   _example: |
@@ -285,17 +325,19 @@ metadata:
   labels:
     knative.dev/config-propagation: original
     knative.dev/config-category: eventing
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 data:
   kreference-group: "disabled"
   delivery-retryafter: "disabled"
   delivery-timeout: "enabled"
   kreference-mapping: "disabled"
-  new-trigger-filters: "enabled"
   transport-encryption: "disabled"
   eventtype-auto-create: "disabled"
-  authentication.oidc: "disabled"
+  authentication-oidc: "disabled"
+  default-authorization-mode: "allow-same-namespace"
+  cross-namespace-event-links: "disabled"
+  new-apiserversource-filters: "disabled"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -336,7 +378,7 @@ metadata:
   name: config-leader-election
   namespace: knative-eventing
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
   annotations:
     knative.dev/example-checksum: "f7948630"
@@ -384,7 +426,7 @@ metadata:
   labels:
     knative.dev/config-propagation: original
     knative.dev/config-category: eventing
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 data:
   zap-logger-config: |
@@ -419,7 +461,7 @@ metadata:
   labels:
     knative.dev/config-propagation: original
     knative.dev/config-category: eventing
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
   annotations:
     knative.dev/example-checksum: "f46cf09d"
@@ -478,7 +520,7 @@ metadata:
   name: config-sugar
   namespace: knative-eventing
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
   annotations:
     knative.dev/example-checksum: "62dfac6f"
@@ -522,7 +564,7 @@ metadata:
   labels:
     knative.dev/config-propagation: original
     knative.dev/config-category: eventing
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
   annotations:
     knative.dev/example-checksum: "0492ceb0"
@@ -564,8 +606,9 @@ metadata:
   labels:
     knative.dev/high-availability: "true"
     app.kubernetes.io/component: eventing-controller
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
+    bindings.knative.dev/exclude: "true"
 spec:
   selector:
     matchLabels:
@@ -575,7 +618,7 @@ spec:
       labels:
         app: eventing-controller
         app.kubernetes.io/component: eventing-controller
-        app.kubernetes.io/version: "1.12.6"
+        app.kubernetes.io/version: "1.16.4"
         app.kubernetes.io/name: knative-eventing
     spec:
       affinity:
@@ -592,7 +635,7 @@ spec:
       containers:
         - name: eventing-controller
           terminationMessagePolicy: FallbackToLogsOnError
-          image: gcr.io/knative-releases/knative.dev/eventing/cmd/controller@sha256:7579c5a8b1dee07c382120a8bc1a6594aea4519d0cf652989f5d9a675b11a0de
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/controller@sha256:806330a39dfac379cd39a771c2e42f3a9998d0f214fe38f28bcb101c554a5a7a
           resources:
             requests:
               cpu: 100m
@@ -609,7 +652,7 @@ spec:
             - name: METRICS_DOMAIN
               value: knative.dev/eventing
             - name: APISERVER_RA_IMAGE
-              value: gcr.io/knative-releases/knative.dev/eventing/cmd/apiserver_receive_adapter@sha256:4ed3e39a11f4fc3358787433beaea4a9e72773ea7710bf4beb95aa8770515c9e
+              value: gcr.io/knative-releases/knative.dev/eventing/cmd/apiserver_receive_adapter@sha256:681680716067c6466511f391822e35e0fd5c4eaf97405b058532ca082f3a8ba4
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -650,12 +693,151 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: job-sink
+  namespace: knative-eventing
+  labels:
+    app.kubernetes.io/component: job-sink
+    app.kubernetes.io/version: "1.16.4"
+    app.kubernetes.io/name: knative-eventing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      sinks.knative.dev/sink: job-sink
+  template:
+    metadata:
+      labels:
+        sinks.knative.dev/sink: job-sink
+        app.kubernetes.io/component: job-sink
+        app.kubernetes.io/version: "1.16.4"
+        app.kubernetes.io/name: knative-eventing
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    sinks.knative.dev/sink: job-sink
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+      enableServiceLinks: false
+      containers:
+        - name: job-sink
+          terminationMessagePolicy: FallbackToLogsOnError
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/jobsink@sha256:3e5270924afeeccc8dfe31142a1c7f7e3ec3489df11b4c81f69f352a788ad207
+          env:
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: CONTAINER_NAME
+              value: job-sink
+            - name: CONFIG_LOGGING_NAME
+              value: config-logging
+            - name: CONFIG_OBSERVABILITY_NAME
+              value: config-observability
+            - name: METRICS_DOMAIN
+              value: knative.dev/internal/eventing
+            - name: INGRESS_PORT
+              value: "8080"
+            - name: INGRESS_PORT_HTTPS
+              value: "8443"
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 2
+            successThreshold: 1
+            timeoutSeconds: 1
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 2
+            successThreshold: 1
+            timeoutSeconds: 1
+            initialDelaySeconds: 5
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 8443
+              name: https
+              protocol: TCP
+            - containerPort: 9092
+              name: metrics
+              protocol: TCP
+          terminationMessagePath: /dev/termination-log
+          resources:
+            requests:
+              cpu: 125m
+              memory: 64Mi
+            limits:
+              cpu: 1000m
+              memory: 2048Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+      serviceAccountName: job-sink
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    sinks.knative.dev/sink: job-sink
+    app.kubernetes.io/component: job-sink
+    app.kubernetes.io/version: "1.16.4"
+    app.kubernetes.io/name: knative-eventing
+  name: job-sink
+  namespace: knative-eventing
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 8443
+    - name: http-metrics
+      port: 9092
+      protocol: TCP
+      targetPort: 9092
+  selector:
+    sinks.knative.dev/sink: job-sink
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: pingsource-mt-adapter
   namespace: knative-eventing
   labels:
     app.kubernetes.io/component: pingsource-mt-adapter
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
+    bindings.knative.dev/exclude: "true"
 spec:
   replicas: 0
   selector:
@@ -668,7 +850,7 @@ spec:
         eventing.knative.dev/source: ping-source-controller
         sources.knative.dev/role: adapter
         app.kubernetes.io/component: pingsource-mt-adapter
-        app.kubernetes.io/version: "1.12.6"
+        app.kubernetes.io/version: "1.16.4"
         app.kubernetes.io/name: knative-eventing
     spec:
       affinity:
@@ -684,7 +866,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: dispatcher
-          image: gcr.io/knative-releases/knative.dev/eventing/cmd/mtping@sha256:9d74e8c69d671ad10fdfd84d33569fde5c16c9f95824ea288d2cb6fd69e32f4d
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/mtping@sha256:1ccb821e1a4edf4cb6b35449e1ec9d03c9098d9a19361a06c0e8f6fc6dd2117a
           env:
             - name: SYSTEM_NAMESPACE
               value: ''
@@ -741,7 +923,7 @@ metadata:
   namespace: knative-eventing
   labels:
     app.kubernetes.io/component: eventing-webhook
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 spec:
   scaleTargetRef:
@@ -765,7 +947,7 @@ metadata:
   namespace: knative-eventing
   labels:
     app.kubernetes.io/component: eventing-webhook
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 spec:
   minAvailable: 80%
@@ -780,8 +962,9 @@ metadata:
   namespace: knative-eventing
   labels:
     app.kubernetes.io/component: eventing-webhook
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
+    bindings.knative.dev/exclude: "true"
 spec:
   selector:
     matchLabels:
@@ -793,7 +976,7 @@ spec:
         app: eventing-webhook
         role: eventing-webhook
         app.kubernetes.io/component: eventing-webhook
-        app.kubernetes.io/version: "1.12.6"
+        app.kubernetes.io/version: "1.16.4"
         app.kubernetes.io/name: knative-eventing
     spec:
       affinity:
@@ -810,7 +993,7 @@ spec:
       containers:
         - name: eventing-webhook
           terminationMessagePolicy: FallbackToLogsOnError
-          image: gcr.io/knative-releases/knative.dev/eventing/cmd/webhook@sha256:cd577cb977a2830b29bb799cf146bbffe0241d65eef1c680ec158af97b18d4fa
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/webhook@sha256:be90d7813786da265dbda2408742b4783e4f69e73719cb3b6e2c103d631ed721
           resources:
             requests:
               cpu: 100m
@@ -878,7 +1061,7 @@ metadata:
   labels:
     role: eventing-webhook
     app.kubernetes.io/component: eventing-webhook
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
   name: eventing-webhook
   namespace: knative-eventing
@@ -898,7 +1081,7 @@ metadata:
     eventing.knative.dev/source: "true"
     duck.knative.dev/source: "true"
     knative.dev/crd-install: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
   annotations:
     registry.knative.dev/eventTypes: |
@@ -944,6 +1127,7 @@ spec:
           properties:
             spec:
               type: object
+              x-kubernetes-preserve-unknown-fields: true
               required:
                 - resources
               properties:
@@ -1035,7 +1219,7 @@ spec:
                       description: CACerts is the Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                       type: string
                     audience:
-                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                       type: string
                 namespaceSelector:
                   description: NamespaceSelector is a label selector to capture the namespaces that should be watched by the source.
@@ -1076,6 +1260,11 @@ spec:
                     serviceAccountName:
                       description: ServiceAccountName is the name of the generated service account used for this components OIDC authentication.
                       type: string
+                    serviceAccountNames:
+                      description: ServiceAccountNames is the list of names of the generated service accounts used for this components OIDC authentication.
+                      type: array
+                      items:
+                        type: string
                 ceAttributes:
                   description: CloudEventAttributes are the specific attributes that the Source uses as part of its CloudEvents.
                   type: array
@@ -1125,6 +1314,9 @@ spec:
                 sinkCACerts:
                   description: CACerts is the Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                   type: string
+                sinkAudience:
+                  description: Audience is the OIDC audience of the sink. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                  type: string
                 namespaces:
                   description: Namespaces show the namespaces currently watched by the ApiServerSource
                   type: array
@@ -1160,7 +1352,7 @@ metadata:
   labels:
     knative.dev/crd-install: "true"
     duck.knative.dev/addressable: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 spec:
   group: eventing.knative.dev
@@ -1232,7 +1424,7 @@ spec:
                           description: Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                           type: string
                         audience:
-                          description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                          description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                           type: string
                     retry:
                       description: Retry is the minimum number of retries the sender should attempt when sending an event before moving it to the dead letter sink.
@@ -1273,6 +1465,18 @@ spec:
                   description: Annotations is additional Status fields for the Resource to save some additional State as well as convey more information to the user. This is roughly akin to Annotations on any k8s resource, just the reconciler conveying richer information outwards.
                   type: object
                   x-kubernetes-preserve-unknown-fields: true
+                policies:
+                  description: List of applied EventPolicies
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      apiVersion:
+                        description: The API version of the applied EventPolicy. This indicates, which version of EventPolicy is supported by the resource.
+                        type: string
+                      name:
+                        description: The name of the applied EventPolicy
+                        type: string
                 conditions:
                   description: Conditions the latest available observations of a resource's current state.
                   type: array
@@ -1305,6 +1509,9 @@ spec:
                   type: string
                 deadLetterSinkCACerts:
                   description: Certification Authority (CA) certificates in PEM format according to https://www.rfc-editor.org/rfc/rfc7468.
+                  type: string
+                deadLetterSinkAudience:
+                  description: OIDC audience of the dead letter sink.
                   type: string
                 observedGeneration:
                   description: ObservedGeneration is the 'Generation' of the Service that was last processed by the controller.
@@ -1345,7 +1552,7 @@ metadata:
     knative.dev/crd-install: "true"
     messaging.knative.dev/subscribable: "true"
     duck.knative.dev/addressable: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 spec:
   group: messaging.knative.dev
@@ -1428,7 +1635,7 @@ spec:
                           description: Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                           type: string
                         audience:
-                          description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                          description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                           type: string
                     retry:
                       description: Retry is the minimum number of retries the sender should attempt when sending an event before moving it to the dead letter sink.
@@ -1483,6 +1690,9 @@ spec:
                         description: Generation of the origin of the subscriber with uid:UID.
                         type: integer
                         format: int64
+                      name:
+                        description: The name of the subscription
+                        type: string
                       replyUri:
                         description: ReplyURI is the endpoint for the reply
                         type: string
@@ -1504,6 +1714,18 @@ spec:
                       uid:
                         description: UID is used to understand the origin of the subscriber.
                         type: string
+                      auth:
+                        description: Auth provides the relevant information for OIDC authentication.
+                        type: object
+                        properties:
+                          serviceAccountName:
+                            description: ServiceAccountName is the name of the generated service account used for this components OIDC authentication.
+                            type: string
+                          serviceAccountNames:
+                            description: ServiceAccountNames is the list of names of the generated service accounts used for this components OIDC authentication.
+                            type: array
+                            items:
+                              type: string
             status:
               description: Status represents the current state of the Channel. This data may be out of date.
               type: object
@@ -1554,6 +1776,18 @@ spec:
                     namespace:
                       description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ This is optional field, it gets defaulted to the object holding it if left out.'
                       type: string
+                policies:
+                  description: List of applied EventPolicies
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      apiVersion:
+                        description: The API version of the applied EventPolicy. This indicates, which version of EventPolicy is supported by the resource.
+                        type: string
+                      name:
+                        description: The name of the applied EventPolicy
+                        type: string
                 conditions:
                   description: Conditions the latest available observations of a resource's current state.
                   type: array
@@ -1603,6 +1837,9 @@ spec:
                 deadLetterSinkCACerts:
                   description: Certification Authority (CA) certificates in PEM format according to https://www.rfc-editor.org/rfc/rfc7468.
                   type: string
+                deadLetterSinkAudience:
+                  description: OIDC audience of the dead letter sink.
+                  type: string
                 observedGeneration:
                   description: ObservedGeneration is the 'Generation' of the Service that was last processed by the controller.
                   type: integer
@@ -1633,6 +1870,11 @@ spec:
                           serviceAccountName:
                             description: ServiceAccountName is the name of the generated service account used for this components OIDC authentication.
                             type: string
+                          serviceAccountNames:
+                            description: ServiceAccountNames is the list of names of the generated service accounts used for this components OIDC authentication.
+                            type: array
+                            items:
+                              type: string
   names:
     kind: Channel
     plural: channels
@@ -1653,7 +1895,7 @@ metadata:
     eventing.knative.dev/source: "true"
     duck.knative.dev/source: "true"
     knative.dev/crd-install: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
   name: containersources.sources.knative.dev
 spec:
@@ -1707,7 +1949,7 @@ spec:
                       description: CACerts is the Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                       type: string
                     audience:
-                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                       type: string
                 template:
                   type: object
@@ -1727,6 +1969,11 @@ spec:
                     serviceAccountName:
                       description: ServiceAccountName is the name of the generated service account used for this components OIDC authentication.
                       type: string
+                    serviceAccountNames:
+                      description: ServiceAccountNames is the list of names of the generated service accounts used for this components OIDC authentication.
+                      type: array
+                      items:
+                        type: string
                 ceAttributes:
                   description: CloudEventAttributes are the specific attributes that the Source uses as part of its CloudEvents.
                   type: array
@@ -1776,6 +2023,9 @@ spec:
                 sinkCACerts:
                   description: CACerts is the Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                   type: string
+                sinkAudience:
+                  description: Audience is the OIDC audience of the sink.
+                  type: string
       additionalPrinterColumns:
         - name: Sink
           type: string
@@ -1802,15 +2052,15 @@ spec:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: eventtypes.eventing.knative.dev
+  name: eventpolicies.eventing.knative.dev
   labels:
     knative.dev/crd-install: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 spec:
   group: eventing.knative.dev
   versions:
-    - name: v1beta1
+    - name: v1alpha1
       served: true
       storage: true
       subresources:
@@ -1818,55 +2068,133 @@ spec:
       schema:
         openAPIV3Schema:
           type: object
-          description: 'EventType represents a type of event that can be consumed from a Broker.'
           properties:
             spec:
-              description: 'Spec defines the desired state of the EventType.'
+              description: Spec defines the desired state of the EventPolicy.
               type: object
               properties:
-                broker:
-                  type: string
-                reference:
-                  description: Reference Broker. For example
-                  type: object
-                  properties:
-                    apiVersion:
-                      description: API version of the referent.
-                      type: string
-                    kind:
-                      description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
-                      type: string
-                    name:
-                      description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
-                      type: string
-                    namespace:
-                      description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ This is an optional field, it gets defaulted to the object holding it if left out.'
-                      type: string
-                description:
-                  description: 'Description is an optional field used to describe the EventType, in any meaningful way.'
-                  type: string
-                schema:
-                  description: 'Schema is a URI, it represents the CloudEvents schemaurl extension attribute. It may be a JSON schema, a protobuf schema, etc. It is optional.'
-                  type: string
-                schemaData:
-                  description: 'SchemaData allows the CloudEvents schema to be stored directly in the EventType. Content is dependent on the encoding. Optional attribute. The contents are not validated or manipulated by the system.'
-                  type: string
-                source:
-                  description: 'Source is a URI, it represents the CloudEvents source.'
-                  type: string
-                type:
-                  description: 'Type represents the CloudEvents type. It is authoritative.'
-                  type: string
+                from:
+                  description: From is the list of sources or oidc identities, which are allowed to send events to the targets (.spec.to).
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      ref:
+                        description: Ref contains a direct reference to a resource which is allowed to send events to the target.
+                        type: object
+                        properties:
+                          apiVersion:
+                            description: API version of the referent.
+                            type: string
+                          kind:
+                            description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                            type: string
+                          name:
+                            description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                            type: string
+                          namespace:
+                            description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ This is optional field, it gets defaulted to the object holding it if left out.'
+                            type: string
+                      sub:
+                        description: Sub sets the OIDC identity name to be allowed to send events to the target. It is also possible to set a glob-like pattern to match any suffix.
+                        type: string
+                to:
+                  description: To lists all resources for which this policy applies. Resources in this list must act like an ingress and have an audience. The resources are part of the same namespace as the EventPolicy. An empty list means it applies to all resources in the EventPolicies namespace
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      ref:
+                        description: Ref contains the direct reference to a target
+                        type: object
+                        properties:
+                          apiVersion:
+                            description: API version of the referent.
+                            type: string
+                          kind:
+                            description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                            type: string
+                          name:
+                            description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                            type: string
+                      selector:
+                        description: Selector contains a selector to group targets
+                        type: object
+                        properties:
+                          apiVersion:
+                            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+                            type: string
+                          kind:
+                            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                            type: string
+                          matchExpressions:
+                            description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                key:
+                                  description: key is the label key that the selector applies to.
+                                  type: string
+                                operator:
+                                  description: operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.
+                                  type: string
+                                values:
+                                  description: values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
+                                  type: array
+                                  items:
+                                    type: string
+                          matchLabels:
+                            description: matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
+                            type: object
+                            x-kubernetes-preserve-unknown-fields: true
+                filters:
+                  description: 'Filters is an array of SubscriptionsAPIFilters that evaluate to true or false. If any filter expression in the array evaluates to false, the event will not continue pass the ingress of the target resources of the policy'
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      all:
+                        description: 'All evaluates to true if all the nested expressions evaluate to true. It must contain at least one filter expression'
+                        type: array
+                        items:
+                          type: object
+                          x-kubernetes-preserve-unknown-fields: true
+                      any:
+                        description: 'Any evaluates to true if any of the nested expressions evaluate to true. It must contain at least one filter expression'
+                        type: array
+                        items:
+                          type: object
+                          x-kubernetes-preserve-unknown-fields: true
+                      cesql:
+                        description: 'CESQL is a CloudEvents SQL v1 expression that will evaluate to true or false for each CloudEvent.'
+                        type: string
+                      exact:
+                        description: 'Exact evaluates to true if the values of the matching CloudEvents attributes all exactly match with the associated value string specified (case sensitive)'
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
+                      not:
+                        description: 'Not evaluates to true if the nested expression evaluates to false.'
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
+                      prefix:
+                        description: 'Prefix evaluates to true if the values of the matching CloudEvents attributes all start with the associated value string specified (case sensitive)'
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
+                      suffix:
+                        description: 'Exact evaluates to true if the values of the matching CloudEvents attributes all end with the associated value string specified (case sensitive)'
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
             status:
-              description: 'Status represents the current state of the EventType. This data may be out of date.'
+              description: Status represents the current state of the EventPolicy. This data may be out of date.
               type: object
               properties:
                 annotations:
-                  description: 'Annotations is additional Status fields for the Resource to save some additional State as well as convey more information to the user. This is roughly akin to Annotations on any k8s resource, just the reconciler conveying richer information outwards.'
+                  description: Annotations is additional Status fields for the Resource to save some additional State as well as convey more information to the user. This is roughly akin to Annotations on any k8s resource, just the reconciler conveying richer information outwards.
                   type: object
                   x-kubernetes-preserve-unknown-fields: true
                 conditions:
-                  description: 'Conditions the latest available observations of a resource''s current state.'
+                  description: Conditions the latest available observations of a resource's current state.
                   type: array
                   items:
                     type: object
@@ -1875,67 +2203,76 @@ spec:
                       - status
                     properties:
                       lastTransitionTime:
-                        description: 'LastTransitionTime is the last time the condition transitioned from one status to another. We use VolatileTime in place of metav1.Time to exclude this from creating equality.Semantic differences (all other things held constant).'
+                        description: LastTransitionTime is the last time the condition transitioned from one status to another. We use VolatileTime in place of metav1.Time to exclude this from creating equality.Semantic differences (all other things held constant).
                         type: string
                       message:
-                        description: 'A human readable message indicating details about the transition.'
+                        description: A human readable message indicating details about the transition.
                         type: string
                       reason:
-                        description: 'The reason for the condition''s last transition.'
+                        description: The reason for the condition's last transition.
                         type: string
                       severity:
-                        description: 'Severity with which to treat failures of this type of condition. When this is not specified, it defaults to Error.'
+                        description: Severity with which to treat failures of this type of condition. When this is not specified, it defaults to Error.
                         type: string
                       status:
-                        description: 'Status of the condition, one of True, False, Unknown.'
+                        description: Status of the condition, one of True, False, Unknown.
                         type: string
                       type:
-                        description: 'Type of condition.'
+                        description: Type of condition.
                         type: string
+                from:
+                  description: From is the list of resolved oidc identities from .spec.from
+                  type: array
+                  items:
+                    type: string
                 observedGeneration:
-                  description: 'ObservedGeneration is the ''Generation'' of the Service that was last processed by the controller.'
+                  description: ObservedGeneration is the 'Generation' of the Service that was last processed by the controller.
                   type: integer
                   format: int64
       additionalPrinterColumns:
-        - name: Type
-          type: string
-          jsonPath: ".spec.type"
-        - name: Source
-          type: string
-          jsonPath: ".spec.source"
-        - name: Schema
-          type: string
-          jsonPath: ".spec.schema"
-        - name: Reference Name
-          type: string
-          jsonPath: ".spec.reference.name"
-        - name: Reference Kind
-          type: string
-          jsonPath: ".spec.reference.kind"
-        - name: Description
-          type: string
-          jsonPath: ".spec.description"
         - name: Ready
           type: string
           jsonPath: ".status.conditions[?(@.type==\"Ready\")].status"
         - name: Reason
           type: string
           jsonPath: ".status.conditions[?(@.type==\"Ready\")].reason"
-    - subresources:
+  names:
+    kind: EventPolicy
+    plural: eventpolicies
+    singular: eventpolicy
+    categories:
+      - all
+      - knative
+      - eventing
+  scope: Namespaced
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: eventtypes.eventing.knative.dev
+  labels:
+    knative.dev/crd-install: "true"
+    app.kubernetes.io/version: "1.16.4"
+    app.kubernetes.io/name: knative-eventing
+spec:
+  group: eventing.knative.dev
+  versions:
+    - name: v1beta3
+      served: true
+      storage: false
+      subresources:
         status: {}
       schema:
         openAPIV3Schema:
           type: object
-          description: 'EventType represents a type of event that can be consumed from a Broker.'
+          description: 'EventType represents a type of event that can be consumed from a resource.'
           properties:
             spec:
               description: 'Spec defines the desired state of the EventType.'
               type: object
               properties:
-                broker:
-                  type: string
                 reference:
-                  description: Reference Broker. For example
+                  description: Reference a resource. For example, Broker.
                   type: object
                   properties:
                     apiVersion:
@@ -1949,6 +2286,125 @@ spec:
                       type: string
                     namespace:
                       description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ This is an optional field, it gets defaulted to the object holding it if left out.'
+                      type: string
+                    address:
+                      description: 'Address points to a specific Address Name'
+                      type: string
+                description:
+                  description: 'Description is an optional field used to describe the EventType, in any meaningful way.'
+                  type: string
+                attributes:
+                  description: "CloudEvent attribute and extension attributes."
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - name
+                    properties:
+                      name:
+                        type: string
+                        description: "Name of the CloudEvent attribute."
+                      required:
+                        type: boolean
+                        description: "Indicates whether the attribute is required."
+                      value:
+                        type: string
+                        description: "Value of the attribute. May be a template string using curly brackets {} to represent variable sections of the string."
+            status:
+              description: 'Status represents the current state of the EventType. This data may be out of date.'
+              type: object
+              properties:
+                annotations:
+                  description: 'Annotations is additional Status fields for the Resource to save some additional State as well as convey more information to the user. This is roughly akin to Annotations on any k8s resource, just the reconciler conveying richer information outwards.'
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                conditions:
+                  description: 'Conditions the latest available observations of a resource''s current state.'
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - type
+                      - status
+                    properties:
+                      lastTransitionTime:
+                        description: 'LastTransitionTime is the last time the condition transitioned from one status to another. We use VolatileTime in place of metav1.Time to exclude this from creating equality.Semantic differences (all other things held constant).'
+                        type: string
+                      message:
+                        description: 'A human readable message indicating details about the transition.'
+                        type: string
+                      reason:
+                        description: 'The reason for the condition''s last transition.'
+                        type: string
+                      severity:
+                        description: 'Severity with which to treat failures of this type of condition. When this is not specified, it defaults to Error.'
+                        type: string
+                      status:
+                        description: 'Status of the condition, one of True, False, Unknown.'
+                        type: string
+                      type:
+                        description: 'Type of condition.'
+                        type: string
+                observedGeneration:
+                  description: 'ObservedGeneration is the ''Generation'' of the Service that was last processed by the controller.'
+                  type: integer
+                  format: int64
+      additionalPrinterColumns:
+        - name: Type
+          type: string
+          jsonPath: ".spec.attributes[?(@.name=='type')].value"
+        - name: Source
+          type: string
+          jsonPath: ".spec.attributes[?(@.name=='source')].value"
+        - name: Reference Name
+          type: string
+          jsonPath: ".spec.reference.name"
+        - name: Reference Kind
+          type: string
+          jsonPath: ".spec.reference.kind"
+        - name: Description
+          type: string
+          jsonPath: ".spec.description"
+        - name: Ready
+          type: string
+          jsonPath: ".status.conditions[?(@.type==\"Ready\")].status"
+        - name: Reason
+          type: string
+          jsonPath: ".status.conditions[?(@.type==\"Ready\")].reason"
+    - name: v1beta2
+      served: true
+      storage: true
+      subresources:
+        status: {}
+      schema:
+        openAPIV3Schema:
+          type: object
+          description: 'EventType represents a type of event that can be consumed from a resource.'
+          properties:
+            spec:
+              description: 'Spec defines the desired state of the EventType.'
+              type: object
+              properties:
+                broker:
+                  type: string
+                reference:
+                  description: Reference a resource. For example, Broker.
+                  type: object
+                  properties:
+                    apiVersion:
+                      description: API version of the referent.
+                      type: string
+                    kind:
+                      description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                      type: string
+                    name:
+                      description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                      type: string
+                    namespace:
+                      description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ This is an optional field, it gets defaulted to the object holding it if left out.'
+                      type: string
+                    address:
+                      description: 'Address points to a specific Address Name'
                       type: string
                 description:
                   description: 'Description is an optional field used to describe the EventType, in any meaningful way.'
@@ -2029,9 +2485,122 @@ spec:
         - name: Reason
           type: string
           jsonPath: ".status.conditions[?(@.type==\"Ready\")].reason"
-      name: v1beta2
+    - name: v1beta1
       served: true
       storage: false
+      subresources:
+        status: {}
+      schema:
+        openAPIV3Schema:
+          type: object
+          description: 'EventType represents a type of event that can be consumed from a resource.'
+          properties:
+            spec:
+              description: 'Spec defines the desired state of the EventType.'
+              type: object
+              properties:
+                broker:
+                  type: string
+                reference:
+                  description: Reference a resource. For example, Broker.
+                  type: object
+                  properties:
+                    apiVersion:
+                      description: API version of the referent.
+                      type: string
+                    kind:
+                      description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                      type: string
+                    name:
+                      description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                      type: string
+                    namespace:
+                      description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ This is an optional field, it gets defaulted to the object holding it if left out.'
+                      type: string
+                    address:
+                      description: 'Address points to a specific Address Name'
+                      type: string
+                description:
+                  description: 'Description is an optional field used to describe the EventType, in any meaningful way.'
+                  type: string
+                schema:
+                  description: 'Schema is a URI, it represents the CloudEvents schemaurl extension attribute. It may be a JSON schema, a protobuf schema, etc. It is optional.'
+                  type: string
+                schemaData:
+                  description: 'SchemaData allows the CloudEvents schema to be stored directly in the EventType. Content is dependent on the encoding. Optional attribute. The contents are not validated or manipulated by the system.'
+                  type: string
+                source:
+                  description: 'Source is a URI, it represents the CloudEvents source.'
+                  type: string
+                type:
+                  description: 'Type represents the CloudEvents type. It is authoritative.'
+                  type: string
+            status:
+              description: 'Status represents the current state of the EventType. This data may be out of date.'
+              type: object
+              properties:
+                annotations:
+                  description: 'Annotations is additional Status fields for the Resource to save some additional State as well as convey more information to the user. This is roughly akin to Annotations on any k8s resource, just the reconciler conveying richer information outwards.'
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                conditions:
+                  description: 'Conditions the latest available observations of a resource''s current state.'
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - type
+                      - status
+                    properties:
+                      lastTransitionTime:
+                        description: 'LastTransitionTime is the last time the condition transitioned from one status to another. We use VolatileTime in place of metav1.Time to exclude this from creating equality.Semantic differences (all other things held constant).'
+                        type: string
+                      message:
+                        description: 'A human readable message indicating details about the transition.'
+                        type: string
+                      reason:
+                        description: 'The reason for the condition''s last transition.'
+                        type: string
+                      severity:
+                        description: 'Severity with which to treat failures of this type of condition. When this is not specified, it defaults to Error.'
+                        type: string
+                      status:
+                        description: 'Status of the condition, one of True, False, Unknown.'
+                        type: string
+                      type:
+                        description: 'Type of condition.'
+                        type: string
+                observedGeneration:
+                  description: 'ObservedGeneration is the ''Generation'' of the Service that was last processed by the controller.'
+                  type: integer
+                  format: int64
+      additionalPrinterColumns:
+        - name: Type
+          type: string
+          jsonPath: ".spec.type"
+        - name: Source
+          type: string
+          jsonPath: ".spec.source"
+        - name: Schema
+          type: string
+          jsonPath: ".spec.schema"
+        - name: Reference Name
+          type: string
+          jsonPath: ".spec.reference.name"
+        - name: Reference Kind
+          type: string
+          jsonPath: ".spec.reference.kind"
+        - name: Description
+          type: string
+          jsonPath: ".spec.description"
+        - name: Ready
+          type: string
+          jsonPath: ".status.conditions[?(@.type==\"Ready\")].status"
+        - name: Reason
+          type: string
+          jsonPath: ".status.conditions[?(@.type==\"Ready\")].reason"
+      deprecated: true
+      deprecationWarning: "eventing.knative.dev/v1beta1 EventType is deprecated; see https://knative.dev/docs/eventing/event-registry/ for instructions to migrate to eventing.knative.dev/v1beta2 EventType"
   names:
     kind: EventType
     plural: eventtypes
@@ -2053,11 +2622,148 @@ spec:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
+  name: jobsinks.sinks.knative.dev
+  labels:
+    knative.dev/crd-install: "true"
+    duck.knative.dev/addressable: "true"
+    app.kubernetes.io/version: "1.16.4"
+    app.kubernetes.io/name: knative-eventing
+spec:
+  group: sinks.knative.dev
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      subresources:
+        status: {}
+      schema:
+        openAPIV3Schema:
+          description: 'JobSink triggers long-running jobs when an event occur.'
+          type: object
+          properties:
+            spec:
+              description: Spec defines the desired state of the JobSink.
+              type: object
+              properties:
+                job:
+                  type: object
+                  description: Full Job resource object, see https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#job-v1-batch for more details.
+                  x-kubernetes-preserve-unknown-fields: true
+            status:
+              description: Status represents the current state of the JobSink. This data may be out of date.
+              type: object
+              properties:
+                address:
+                  description: JobSink is Addressable. It exposes the endpoint as an URI to schedule long running jobs when an even occurs.
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    url:
+                      type: string
+                    CACerts:
+                      type: string
+                    audience:
+                      type: string
+                addresses:
+                  description: JobSink is Addressable. It exposes the endpoint as an URI to schedule long running jobs when an even occurs.
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      url:
+                        type: string
+                      CACerts:
+                        type: string
+                      audience:
+                        type: string
+                job:
+                  type: object
+                  properties:
+                    selector:
+                      type: string
+                      description: Label selector for all scheduled jobs
+                annotations:
+                  description: Annotations is additional Status fields for the Resource to save some additional State as well as convey more information to the user. This is roughly akin to Annotations on any k8s resource, just the reconciler conveying richer information outwards.
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                policies:
+                  description: List of applied EventPolicies
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      apiVersion:
+                        description: The API version of the applied EventPolicy. This indicates, which version of EventPolicy is supported by the resource.
+                        type: string
+                      name:
+                        description: The name of the applied EventPolicy
+                        type: string
+                conditions:
+                  description: Conditions the latest available observations of a resource's current state.
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - type
+                      - status
+                    properties:
+                      lastTransitionTime:
+                        description: 'LastTransitionTime is the last time the condition transitioned from one status to another. We use VolatileTime in place of metav1.Time to exclude this from creating equality.Semantic differences (all other things held constant).'
+                        type: string
+                      message:
+                        description: 'A human readable message indicating details about the transition.'
+                        type: string
+                      reason:
+                        description: 'The reason for the condition''s last transition.'
+                        type: string
+                      severity:
+                        description: 'Severity with which to treat failures of this type of condition. When this is not specified, it defaults to Error.'
+                        type: string
+                      status:
+                        description: 'Status of the condition, one of True, False, Unknown.'
+                        type: string
+                      type:
+                        description: 'Type of condition.'
+                        type: string
+                observedGeneration:
+                  description: ObservedGeneration is the 'Generation' of the Service that was last processed by the controller.
+                  type: integer
+                  format: int64
+      additionalPrinterColumns:
+        - name: URL
+          type: string
+          jsonPath: .status.address.url
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp
+        - name: Ready
+          type: string
+          jsonPath: ".status.conditions[?(@.type==\"Ready\")].status"
+        - name: Reason
+          type: string
+          jsonPath: ".status.conditions[?(@.type==\"Ready\")].reason"
+  names:
+    kind: JobSink
+    plural: jobsinks
+    singular: jobsink
+    categories:
+      - all
+      - knative
+      - eventing
+      - sink
+  scope: Namespaced
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
   name: parallels.flows.knative.dev
   labels:
     knative.dev/crd-install: "true"
     duck.knative.dev/addressable: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 spec:
   group: flows.knative.dev
@@ -2120,7 +2826,7 @@ spec:
                                 description: Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                                 type: string
                               audience:
-                                description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                                description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                                 type: string
                           retry:
                             description: Retry is the minimum number of retries the sender should attempt when sending an event before moving it to the dead letter sink.
@@ -2154,7 +2860,7 @@ spec:
                             description: Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                             type: string
                           audience:
-                            description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                            description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                             type: string
                       reply:
                         description: Reply is a Reference to where the result of Subscriber of this case gets sent to. If not specified, sent the result to the Parallel Reply
@@ -2183,7 +2889,7 @@ spec:
                             description: Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                             type: string
                           audience:
-                            description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                            description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                             type: string
                       subscriber:
                         description: Subscriber receiving the event when the filter passes
@@ -2212,7 +2918,7 @@ spec:
                             description: Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                             type: string
                           audience:
-                            description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                            description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                             type: string
                 channelTemplate:
                   description: ChannelTemplate specifies which Channel CRD to use. If left unspecified, it is set to the default Channel CRD for the namespace (or cluster, in case there are no defaults for the namespace).
@@ -2255,7 +2961,7 @@ spec:
                       description: Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                       type: string
                     audience:
-                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                       type: string
             status:
               description: Status represents the current state of the Parallel. This data may be out of date.
@@ -2298,6 +3004,11 @@ spec:
                     serviceAccountName:
                       description: ServiceAccountName is the name of the generated service account used for this components OIDC authentication.
                       type: string
+                    serviceAccountNames:
+                      description: ServiceAccountNames is the list of names of the generated service accounts used for this components OIDC authentication.
+                      type: array
+                      items:
+                        type: string
                 branchStatuses:
                   description: BranchStatuses is an array of corresponding to branch statuses. Matches the Spec.Branches array in the order.
                   type: array
@@ -2449,6 +3160,18 @@ spec:
                               uid:
                                 description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
                                 type: string
+                policies:
+                  description: List of applied EventPolicies
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      apiVersion:
+                        description: The API version of the applied EventPolicy. This indicates, which version of EventPolicy is supported by the resource.
+                        type: string
+                      name:
+                        description: The name of the applied EventPolicy
+                        type: string
                 conditions:
                   description: Conditions the latest available observations of a resource's current state.
                   type: array
@@ -2553,7 +3276,7 @@ metadata:
     eventing.knative.dev/source: "true"
     duck.knative.dev/source: "true"
     knative.dev/crd-install: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
   annotations:
     registry.knative.dev/eventTypes: |
@@ -2567,6 +3290,162 @@ metadata:
 spec:
   group: sources.knative.dev
   versions:
+    - name: v1
+      served: true
+      storage: true
+      subresources:
+        status: {}
+      schema:
+        openAPIV3Schema:
+          type: object
+          description: 'PingSource describes an event source with a fixed payload produced on a specified cron schedule.'
+          properties:
+            spec:
+              type: object
+              description: 'PingSourceSpec defines the desired state of the PingSource (from the client).'
+              properties:
+                ceOverrides:
+                  description: 'CloudEventOverrides defines overrides to control the output format and modifications of the event sent to the sink.'
+                  type: object
+                  properties:
+                    extensions:
+                      description: 'Extensions specify what attribute are added or overridden on the outbound event. Each `Extensions` key-value pair are set on the event as an attribute extension independently.'
+                      type: object
+                      additionalProperties:
+                        type: string
+                      x-kubernetes-preserve-unknown-fields: true
+                contentType:
+                  description: 'ContentType is the media type of `data` or `dataBase64`. Default is empty.'
+                  type: string
+                data:
+                  description: 'Data is data used as the body of the event posted to the sink. Default is empty. Mutually exclusive with `dataBase64`.'
+                  type: string
+                dataBase64:
+                  description: "DataBase64 is the base64-encoded string of the actual event's body posted to the sink. Default is empty. Mutually exclusive with `data`."
+                  type: string
+                schedule:
+                  description: 'Schedule is the cron schedule. Defaults to `* * * * *`.'
+                  type: string
+                sink:
+                  description: 'Sink is a reference to an object that will resolve to a uri to use as the sink.'
+                  type: object
+                  properties:
+                    ref:
+                      description: 'Ref points to an Addressable.'
+                      type: object
+                      properties:
+                        apiVersion:
+                          description: 'API version of the referent.'
+                          type: string
+                        kind:
+                          description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                          type: string
+                        name:
+                          description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                          type: string
+                        namespace:
+                          description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ This is optional field, it gets defaulted to the object holding it if left out.'
+                          type: string
+                    uri:
+                      description: 'URI can be an absolute URL(non-empty scheme and non-empty host) pointing to the target or a relative URI. Relative URIs will be resolved using the base URI retrieved from Ref.'
+                      type: string
+                    CACerts:
+                      description: CACerts is the Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
+                      type: string
+                    audience:
+                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
+                      type: string
+                timezone:
+                  description: 'Timezone modifies the actual time relative to the specified timezone. Defaults to the system time zone. More general information about time zones: https://www.iana.org/time-zones List of valid timezone values: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones'
+                  type: string
+            status:
+              type: object
+              description: 'PingSourceStatus defines the observed state of PingSource (from the controller).'
+              properties:
+                annotations:
+                  description: 'Annotations is additional Status fields for the Resource to save some additional State as well as convey more information to the user. This is roughly akin to Annotations on any k8s resource, just the reconciler conveying richer information outwards.'
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                auth:
+                  description: Auth provides the relevant information for OIDC authentication.
+                  type: object
+                  properties:
+                    serviceAccountName:
+                      description: ServiceAccountName is the name of the generated service account used for this components OIDC authentication.
+                      type: string
+                    serviceAccountNames:
+                      description: ServiceAccountNames is the list of names of the generated service accounts used for this components OIDC authentication.
+                      type: array
+                      items:
+                        type: string
+                ceAttributes:
+                  description: 'CloudEventAttributes are the specific attributes that the Source uses as part of its CloudEvents.'
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      source:
+                        description: 'Source is the CloudEvents source attribute.'
+                        type: string
+                      type:
+                        description: 'Type refers to the CloudEvent type attribute.'
+                        type: string
+                conditions:
+                  description: 'Conditions the latest available observations of a resource''s current state.'
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - type
+                      - status
+                    properties:
+                      lastTransitionTime:
+                        description: 'LastTransitionTime is the last time the condition transitioned from one status to another. We use VolatileTime in place of metav1.Time to exclude this from creating equality.Semantic differences (all other things held constant).'
+                        type: string
+                      message:
+                        description: 'A human readable message indicating details about the transition.'
+                        type: string
+                      reason:
+                        description: 'The reason for the condition''s last transition.'
+                        type: string
+                      severity:
+                        description: 'Severity with which to treat failures of this type of condition. When this is not specified, it defaults to Error.'
+                        type: string
+                      status:
+                        description: 'Status of the condition, one of True, False, Unknown.'
+                        type: string
+                      type:
+                        description: 'Type of condition.'
+                        type: string
+                observedGeneration:
+                  description: 'ObservedGeneration is the "Generation" of the Service that was last processed by the controller.'
+                  type: integer
+                  format: int64
+                sinkUri:
+                  description: 'SinkURI is the current active sink URI that has been configured for the Source.'
+                  type: string
+                sinkCACerts:
+                  description: CACerts is the Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
+                  type: string
+                sinkAudience:
+                  description: sinkAudience is the OIDC audience of the sink.
+                  type: string
+      additionalPrinterColumns:
+        - name: Sink
+          type: string
+          jsonPath: .status.sinkUri
+        - name: Schedule
+          type: string
+          jsonPath: .spec.schedule
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp
+        - name: Ready
+          type: string
+          jsonPath: ".status.conditions[?(@.type=='Ready')].status"
+        - name: Reason
+          type: string
+          jsonPath: ".status.conditions[?(@.type=='Ready')].reason"
     - name: v1beta2
       served: true
       storage: false
@@ -2630,7 +3509,7 @@ spec:
                       description: CACerts is the Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                       type: string
                     audience:
-                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                       type: string
                 timezone:
                   description: 'Timezone modifies the actual time relative to the specified timezone. Defaults to the system time zone. More general information about time zones: https://www.iana.org/time-zones List of valid timezone values: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones'
@@ -2650,6 +3529,11 @@ spec:
                     serviceAccountName:
                       description: ServiceAccountName is the name of the generated service account used for this components OIDC authentication.
                       type: string
+                    serviceAccountNames:
+                      description: ServiceAccountNames is the list of names of the generated service accounts used for this components OIDC authentication.
+                      type: array
+                      items:
+                        type: string
                 ceAttributes:
                   description: 'CloudEventAttributes are the specific attributes that the Source uses as part of its CloudEvents.'
                   type: array
@@ -2699,150 +3583,8 @@ spec:
                 sinkCACerts:
                   description: CACerts is the Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                   type: string
-      additionalPrinterColumns:
-        - name: Sink
-          type: string
-          jsonPath: .status.sinkUri
-        - name: Schedule
-          type: string
-          jsonPath: .spec.schedule
-        - name: Age
-          type: date
-          jsonPath: .metadata.creationTimestamp
-        - name: Ready
-          type: string
-          jsonPath: ".status.conditions[?(@.type=='Ready')].status"
-        - name: Reason
-          type: string
-          jsonPath: ".status.conditions[?(@.type=='Ready')].reason"
-    - subresources:
-        status: {}
-      schema:
-        openAPIV3Schema:
-          type: object
-          description: 'PingSource describes an event source with a fixed payload produced on a specified cron schedule.'
-          properties:
-            spec:
-              type: object
-              description: 'PingSourceSpec defines the desired state of the PingSource (from the client).'
-              properties:
-                ceOverrides:
-                  description: 'CloudEventOverrides defines overrides to control the output format and modifications of the event sent to the sink.'
-                  type: object
-                  properties:
-                    extensions:
-                      description: 'Extensions specify what attribute are added or overridden on the outbound event. Each `Extensions` key-value pair are set on the event as an attribute extension independently.'
-                      type: object
-                      additionalProperties:
-                        type: string
-                      x-kubernetes-preserve-unknown-fields: true
-                contentType:
-                  description: 'ContentType is the media type of `data` or `dataBase64`. Default is empty.'
-                  type: string
-                data:
-                  description: 'Data is data used as the body of the event posted to the sink. Default is empty. Mutually exclusive with `dataBase64`.'
-                  type: string
-                dataBase64:
-                  description: "DataBase64 is the base64-encoded string of the actual event's body posted to the sink. Default is empty. Mutually exclusive with `data`."
-                  type: string
-                schedule:
-                  description: 'Schedule is the cron schedule. Defaults to `* * * * *`.'
-                  type: string
-                sink:
-                  description: 'Sink is a reference to an object that will resolve to a uri to use as the sink.'
-                  type: object
-                  properties:
-                    ref:
-                      description: 'Ref points to an Addressable.'
-                      type: object
-                      properties:
-                        apiVersion:
-                          description: 'API version of the referent.'
-                          type: string
-                        kind:
-                          description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
-                          type: string
-                        name:
-                          description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
-                          type: string
-                        namespace:
-                          description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ This is optional field, it gets defaulted to the object holding it if left out.'
-                          type: string
-                    uri:
-                      description: 'URI can be an absolute URL(non-empty scheme and non-empty host) pointing to the target or a relative URI. Relative URIs will be resolved using the base URI retrieved from Ref.'
-                      type: string
-                    CACerts:
-                      description: CACerts is the Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
-                      type: string
-                    audience:
-                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
-                      type: string
-                timezone:
-                  description: 'Timezone modifies the actual time relative to the specified timezone. Defaults to the system time zone. More general information about time zones: https://www.iana.org/time-zones List of valid timezone values: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones'
-                  type: string
-            status:
-              type: object
-              description: 'PingSourceStatus defines the observed state of PingSource (from the controller).'
-              properties:
-                annotations:
-                  description: 'Annotations is additional Status fields for the Resource to save some additional State as well as convey more information to the user. This is roughly akin to Annotations on any k8s resource, just the reconciler conveying richer information outwards.'
-                  type: object
-                  x-kubernetes-preserve-unknown-fields: true
-                auth:
-                  description: Auth provides the relevant information for OIDC authentication.
-                  type: object
-                  properties:
-                    serviceAccountName:
-                      description: ServiceAccountName is the name of the generated service account used for this components OIDC authentication.
-                      type: string
-                ceAttributes:
-                  description: 'CloudEventAttributes are the specific attributes that the Source uses as part of its CloudEvents.'
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      source:
-                        description: 'Source is the CloudEvents source attribute.'
-                        type: string
-                      type:
-                        description: 'Type refers to the CloudEvent type attribute.'
-                        type: string
-                conditions:
-                  description: 'Conditions the latest available observations of a resource''s current state.'
-                  type: array
-                  items:
-                    type: object
-                    required:
-                      - type
-                      - status
-                    properties:
-                      lastTransitionTime:
-                        description: 'LastTransitionTime is the last time the condition transitioned from one status to another. We use VolatileTime in place of metav1.Time to exclude this from creating equality.Semantic differences (all other things held constant).'
-                        type: string
-                      message:
-                        description: 'A human readable message indicating details about the transition.'
-                        type: string
-                      reason:
-                        description: 'The reason for the condition''s last transition.'
-                        type: string
-                      severity:
-                        description: 'Severity with which to treat failures of this type of condition. When this is not specified, it defaults to Error.'
-                        type: string
-                      status:
-                        description: 'Status of the condition, one of True, False, Unknown.'
-                        type: string
-                      type:
-                        description: 'Type of condition.'
-                        type: string
-                observedGeneration:
-                  description: 'ObservedGeneration is the "Generation" of the Service that was last processed by the controller.'
-                  type: integer
-                  format: int64
-                sinkUri:
-                  description: 'SinkURI is the current active sink URI that has been configured for the Source.'
-                  type: string
-                sinkCACerts:
-                  description: CACerts is the Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
+                sinkAudience:
+                  description: sinkAudience is the OIDC audience of the sink.
                   type: string
       additionalPrinterColumns:
         - name: Sink
@@ -2860,9 +3602,8 @@ spec:
         - name: Reason
           type: string
           jsonPath: ".status.conditions[?(@.type=='Ready')].reason"
-      name: v1
-      served: true
-      storage: true
+      deprecated: true
+      deprecationWarning: "sources.knative.dev/v1beta2 PingSource is deprecated; see https://knative.dev/docs/eventing/sources/ping-source/ for instructions to migrate to sources.knative.dev/v1 PingSource"
   names:
     categories:
       - all
@@ -2888,7 +3629,7 @@ metadata:
   labels:
     knative.dev/crd-install: "true"
     duck.knative.dev/addressable: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 spec:
   group: flows.knative.dev
@@ -2947,6 +3688,9 @@ spec:
                     CACerts:
                       type: string
                       description: Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the reply.
+                    audience:
+                      description: Audience is the OIDC audience of the reply. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
+                      type: string
                 steps:
                   description: Steps is the list of Destinations (processors / functions) that will be called in the order provided. Each step has its own delivery options
                   type: array
@@ -2990,7 +3734,7 @@ spec:
                                 description: Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                                 type: string
                               audience:
-                                description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                                description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                                 type: string
                           retry:
                             description: Retry is the minimum number of retries the sender should attempt when sending an event before moving it to the dead letter sink.
@@ -3063,6 +3807,11 @@ spec:
                     serviceAccountName:
                       description: ServiceAccountName is the name of the generated service account used for this components OIDC authentication.
                       type: string
+                    serviceAccountNames:
+                      description: ServiceAccountNames is the list of names of the generated service accounts used for this components OIDC authentication.
+                      type: array
+                      items:
+                        type: string
                 channelStatuses:
                   description: ChannelStatuses is an array of corresponding Channel statuses. Matches the Spec.Steps array in the order.
                   type: array
@@ -3119,6 +3868,18 @@ spec:
                           type:
                             description: Type of condition.
                             type: string
+                policies:
+                  description: List of applied EventPolicies
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      apiVersion:
+                        description: The API version of the applied EventPolicy. This indicates, which version of EventPolicy is supported by the resource.
+                        type: string
+                      name:
+                        description: The name of the applied EventPolicy
+                        type: string
                 conditions:
                   description: Conditions the latest available observations of a resource's current state.
                   type: array
@@ -3237,7 +3998,7 @@ metadata:
     duck.knative.dev/source: "true"
     duck.knative.dev/binding: "true"
     knative.dev/crd-install: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
   name: sinkbindings.sources.knative.dev
 spec:
@@ -3291,7 +4052,7 @@ spec:
                       description: CACerts is the Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                       type: string
                     audience:
-                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                       type: string
                 subject:
                   description: Subject references the resource(s) whose "runtime contract" should be augmented by Binding implementations.
@@ -3348,6 +4109,11 @@ spec:
                     serviceAccountName:
                       description: ServiceAccountName is the name of the generated service account used for this components OIDC authentication.
                       type: string
+                    serviceAccountNames:
+                      description: ServiceAccountNames is the list of names of the generated service accounts used for this components OIDC authentication.
+                      type: array
+                      items:
+                        type: string
                 ceAttributes:
                   description: CloudEventAttributes are the specific attributes that the Source uses as part of its CloudEvents.
                   type: array
@@ -3397,6 +4163,12 @@ spec:
                 sinkCACerts:
                   description: CACerts is the Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                   type: string
+                sinkAudience:
+                  description: Audience is the OIDC audience of the sink.
+                  type: string
+                oidcTokenSecretName:
+                  description: Name of the secret with the OIDC token for the sink.
+                  type: string
       additionalPrinterColumns:
         - name: Sink
           type: string
@@ -3427,7 +4199,7 @@ metadata:
   name: subscriptions.messaging.knative.dev
   labels:
     knative.dev/crd-install: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 spec:
   group: messaging.knative.dev
@@ -3446,7 +4218,7 @@ spec:
               type: object
               properties:
                 channel:
-                  description: 'Reference to a channel that will be used to create the subscription. You can specify only the following fields of the KReference: kind, apiVersion and name. The resource pointed by this KReference must meet the contract to the ChannelableSpec duck type. If the resource does not meet this contract it will be reflected in the Subscription''s status.  This field is immutable. We have no good answer on what happens to the events that are currently in the channel being consumed from and what the semantics there should be. For now, you can always delete the Subscription and recreate it to point to a different channel, giving the user more control over what semantics should be used (drain the channel first, possibly have events dropped, etc.)'
+                  description: 'Reference to a channel that will be used to create the subscription. You can specify only the following fields of the KReference: kind, apiVersion, name and namespace. The resource pointed by this KReference must meet the contract to the ChannelableSpec duck type. If the resource does not meet this contract it will be reflected in the Subscription''s status.  This field is immutable. We have no good answer on what happens to the events that are currently in the channel being consumed from and what the semantics there should be. For now, you can always delete the Subscription and recreate it to point to a different channel, giving the user more control over what semantics should be used (drain the channel first, possibly have events dropped, etc.)'
                   type: object
                   properties:
                     apiVersion:
@@ -3457,6 +4229,9 @@ spec:
                       type: string
                     name:
                       description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                      type: string
+                    namespace:
+                      description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ This is optional field, it gets defaulted to the object holding it if left out.'
                       type: string
                   x-kubernetes-preserve-unknown-fields: true
                 delivery:
@@ -3496,7 +4271,7 @@ spec:
                           description: Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                           type: string
                         audience:
-                          description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                          description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                           type: string
                     retry:
                       description: Retry is the minimum number of retries the sender should attempt when sending an event before moving it to the dead letter sink.
@@ -3530,7 +4305,7 @@ spec:
                       description: Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                       type: string
                     audience:
-                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                       type: string
                 subscriber:
                   description: Subscriber is reference to (optional) function for processing events. Events from the Channel will be delivered here and replies are sent to a Destination as specified by the Reply.
@@ -3560,7 +4335,7 @@ spec:
                       description: Certification Authority (CA) certificates in PEM format that the subscription trusts when sending events to the sink.
                       type: string
                     audience:
-                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                       type: string
             status:
               type: object
@@ -3576,6 +4351,11 @@ spec:
                     serviceAccountName:
                       description: ServiceAccountName is the name of the generated service account used for this components OIDC authentication.
                       type: string
+                    serviceAccountNames:
+                      description: ServiceAccountNames is the list of names of the generated service accounts used for this components OIDC authentication.
+                      type: array
+                      items:
+                        type: string
                 conditions:
                   description: Conditions the latest available observations of a resource's current state.
                   type: array
@@ -3616,6 +4396,9 @@ spec:
                       type: string
                     deadLetterSinkCACerts:
                       description: Certification Authority (CA) certificates in PEM format according to https://www.rfc-editor.org/rfc/rfc7468.
+                      type: string
+                    deadLetterSinkAudience:
+                      description: OIDC audience of the dead letter sink.
                       type: string
                     replyUri:
                       description: ReplyURI is the fully resolved URI for the spec.reply.
@@ -3663,7 +4446,7 @@ metadata:
   name: triggers.eventing.knative.dev
   labels:
     knative.dev/crd-install: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 spec:
   group: eventing.knative.dev
@@ -3702,6 +4485,22 @@ spec:
                 broker:
                   description: Broker is the broker that this trigger receives events from.
                   type: string
+                brokerRef:
+                  description: 'Reference to a broker that is enabled for cross-namespace referencing. You can specify only the following fields of the KReference: kind, apiVersion, name and namespace.'
+                  type: object
+                  properties:
+                    apiVersion:
+                      description: API version of the referent.
+                      type: string
+                    kind:
+                      description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                      type: string
+                    name:
+                      description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                      type: string
+                    namespace:
+                      description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/'
+                      type: string
                 delivery:
                   description: Delivery contains the delivery spec for this specific trigger.
                   type: object
@@ -3740,20 +4539,60 @@ spec:
                           description: Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                           type: string
                         audience:
-                          description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                          description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                           type: string
                     retry:
                       description: Retry is the minimum number of retries the sender should attempt when sending an event before moving it to the dead letter sink.
                       type: integer
                       format: int32
+                    format:
+                      description: Format is the format used to serialize the event into a http request when delivering the event. It can be json (for structured events), binary (for binary events), or unset.
+                      type: string
                 filter:
-                  description: 'Filter is the filter to apply against all events from the Broker. Only events that pass this filter will be sent to the Subscriber. If not specified, will default to allowing all events. '
+                  description: 'Filter is the filter to apply against all events from the Broker. Only events that pass this filter will be sent to the Subscriber. If not specified, will default to allowing all events.'
                   type: object
                   properties:
                     attributes:
-                      description: 'Attributes filters events by exact match on event context attributes. Each key in the map is compared with the equivalent key in the event context. An event passes the filter if all values are equal to the specified values.  Nested context attributes are not supported as keys. Only string values are supported. '
+                      description: 'Attributes filters events by exact match on event context attributes. Each key in the map is compared with the equivalent key in the event context. An event passes the filter if all values are equal to the specified values.  Nested context attributes are not supported as keys. Only string values are supported.'
                       type: object
                       x-kubernetes-preserve-unknown-fields: true
+                filters:
+                  description: 'Filters is an array of SubscriptionsAPIFilter that evaluate to true or false. If any filter expression in the array evaluates to false, the event must not be sent to the Subscriber. If all the filter expressions in the array evaluate to true, the event must be attempted to be delivered. Absence of a filter or empty array implies a value of true. In the event of users specifying both Filter and Filters, then the latter will override the former. This will allow users to try out the effect of the new Filters field without compromising the existing attribute-based Filter and try it out on existing Trigger objects.'
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      all:
+                        description: 'All evaluates to true if all the nested expressions evaluate to true. It must contain at least one filter expression.'
+                        type: array
+                        items:
+                          type: object
+                          x-kubernetes-preserve-unknown-fields: true
+                      any:
+                        description: 'Any evaluates to true if at least one of the nested expressions evaluates to true. It must contain at least one filter expression.'
+                        type: array
+                        items:
+                          type: object
+                          x-kubernetes-preserve-unknown-fields: true
+                      cesql:
+                        description: 'CESQL is a CloudEvents SQL expression that will be evaluated to true or false against each CloudEvent.'
+                        type: string
+                      exact:
+                        description: 'Exact evaluates to true if the values of the matching CloudEvents attributes all exactly match with the associated value String specified (case-sensitive). The keys are the names of the CloudEvents attributes to be matched, and their values are the String values to use in the comparison. The attribute name and value specified in the filter express must not be empty strings.'
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
+                      not:
+                        description: 'Not evaluates to true if the nested expression evaluates to false.'
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
+                      prefix:
+                        description: 'Prefix evaluates to true if the values of the matching CloudEvents attributes all start with the associated value String specified (case sensitive). The keys are the names of the CloudEvents attributes to be matched, and their values are the String values to use in the comparison. The attribute name and value specified in the filter express must not be empty strings.'
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
+                      suffix:
+                        description: 'Suffix evaluates to true if the values of the matching CloudEvents attributes all end with the associated value String specified (case sensitive). The keys are the names of the CloudEvents attributes to be matched, and their values are the String values to use in the comparison. The attribute name and value specified in the filter express must not be empty strings.'
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
                 subscriber:
                   description: Subscriber is the addressable that receives events from the Broker that pass the Filter. It is required.
                   type: object
@@ -3781,7 +4620,7 @@ spec:
                       description: Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.
                       type: string
                     audience:
-                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.
+                      description: Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.
                       type: string
             status:
               description: Status represents the current state of the Trigger. This data may be out of date.
@@ -3798,6 +4637,11 @@ spec:
                     serviceAccountName:
                       description: ServiceAccountName is the name of the generated service account used for this components OIDC authentication.
                       type: string
+                    serviceAccountNames:
+                      description: ServiceAccountNames is the list of names of the generated service accounts used for this components OIDC authentication.
+                      type: array
+                      items:
+                        type: string
                 conditions:
                   description: Conditions the latest available observations of a resource's current state.
                   type: array
@@ -3831,6 +4675,9 @@ spec:
                 deadLetterSinkCACerts:
                   description: Certification Authority (CA) certificates in PEM format according to https://www.rfc-editor.org/rfc/rfc7468.
                   type: string
+                deadLetterSinkAudience:
+                  description: OIDC audience of the dead letter sink.
+                  type: string
                 observedGeneration:
                   description: ObservedGeneration is the 'Generation' of the Service that was last processed by the controller.
                   type: integer
@@ -3840,6 +4687,9 @@ spec:
                   type: string
                 subscriberCACerts:
                   description: Certification Authority (CA) certificates in PEM format according to https://www.rfc-editor.org/rfc/rfc7468.
+                  type: string
+                subscriberAudience:
+                  description: OIDC audience of the subscriber.
                   type: string
   names:
     kind: Trigger
@@ -3856,7 +4706,7 @@ kind: ClusterRole
 metadata:
   name: addressable-resolver
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 aggregationRule:
   clusterRoleSelectors:
@@ -3870,7 +4720,7 @@ metadata:
   name: service-addressable-resolver
   labels:
     duck.knative.dev/addressable: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -3888,7 +4738,7 @@ metadata:
   name: serving-addressable-resolver
   labels:
     duck.knative.dev/addressable: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -3909,7 +4759,7 @@ metadata:
   name: channel-addressable-resolver
   labels:
     duck.knative.dev/addressable: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -3934,7 +4784,7 @@ metadata:
   name: broker-addressable-resolver
   labels:
     duck.knative.dev/addressable: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -3953,7 +4803,7 @@ metadata:
   name: flows-addressable-resolver
   labels:
     duck.knative.dev/addressable: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -3968,12 +4818,31 @@ rules:
       - list
       - watch
 ---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: jobsinks-addressable-resolver
+  labels:
+    duck.knative.dev/addressable: "true"
+    app.kubernetes.io/version: "1.16.4"
+    app.kubernetes.io/name: knative-eventing
+rules:
+  - apiGroups:
+      - sinks.knative.dev
+    resources:
+      - jobsinks
+      - jobsinks/status
+    verbs:
+      - get
+      - list
+      - watch
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: eventing-broker-filter
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -3999,7 +4868,7 @@ kind: ClusterRole
 metadata:
   name: eventing-broker-ingress
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -4016,7 +4885,7 @@ kind: ClusterRole
 metadata:
   name: eventing-config-reader
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -4033,7 +4902,7 @@ kind: ClusterRole
 metadata:
   name: channelable-manipulator
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 aggregationRule:
   clusterRoleSelectors:
@@ -4047,7 +4916,7 @@ metadata:
   name: meta-channelable-manipulator
   labels:
     duck.knative.dev/channelable: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -4070,7 +4939,7 @@ metadata:
   name: knative-eventing-namespaced-admin
   labels:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups: ["eventing.knative.dev"]
@@ -4083,7 +4952,7 @@ metadata:
   name: knative-messaging-namespaced-admin
   labels:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups: ["messaging.knative.dev"]
@@ -4096,7 +4965,7 @@ metadata:
   name: knative-flows-namespaced-admin
   labels:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups: ["flows.knative.dev"]
@@ -4109,7 +4978,7 @@ metadata:
   name: knative-sources-namespaced-admin
   labels:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups: ["sources.knative.dev"]
@@ -4122,7 +4991,7 @@ metadata:
   name: knative-bindings-namespaced-admin
   labels:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups: ["bindings.knative.dev"]
@@ -4132,13 +5001,26 @@ rules:
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
+  name: knative-sinks-namespaced-admin
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    app.kubernetes.io/version: "1.16.4"
+    app.kubernetes.io/name: knative-eventing
+rules:
+  - apiGroups: ["sinks.knative.dev"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
   name: knative-eventing-namespaced-edit
   labels:
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
-  - apiGroups: ["eventing.knative.dev", "messaging.knative.dev", "sources.knative.dev", "flows.knative.dev", "bindings.knative.dev"]
+  - apiGroups: ["eventing.knative.dev", "messaging.knative.dev", "sources.knative.dev", "flows.knative.dev", "bindings.knative.dev", "sinks.knative.dev"]
     resources: ["*"]
     verbs: ["create", "update", "patch", "delete"]
 ---
@@ -4148,10 +5030,10 @@ metadata:
   name: knative-eventing-namespaced-view
   labels:
     rbac.authorization.k8s.io/aggregate-to-view: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
-  - apiGroups: ["eventing.knative.dev", "messaging.knative.dev", "sources.knative.dev", "flows.knative.dev", "bindings.knative.dev"]
+  - apiGroups: ["eventing.knative.dev", "messaging.knative.dev", "sources.knative.dev", "flows.knative.dev", "bindings.knative.dev", "sinks.knative.dev"]
     resources: ["*"]
     verbs: ["get", "list", "watch"]
 ---
@@ -4160,7 +5042,7 @@ kind: ClusterRole
 metadata:
   name: knative-eventing-controller
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -4174,6 +5056,7 @@ rules:
       - "events"
       - "serviceaccounts"
       - "pods"
+      - "serviceaccounts/token"
     verbs:
       - "get"
       - "list"
@@ -4195,6 +5078,14 @@ rules:
       - "patch"
       - "watch"
   - apiGroups:
+      - "batch"
+    resources:
+      - "jobs"
+    verbs:
+      - "get"
+      - "list"
+      - "watch"
+  - apiGroups:
       - "apps"
     resources:
       - "deployments/finalizers"
@@ -4204,6 +5095,7 @@ rules:
       - "rbac.authorization.k8s.io"
     resources:
       - "rolebindings"
+      - "roles"
     verbs:
       - "get"
       - "list"
@@ -4221,6 +5113,21 @@ rules:
       - "triggers/status"
       - "eventtypes"
       - "eventtypes/status"
+      - "eventpolicies"
+      - "eventpolicies/status"
+    verbs:
+      - "get"
+      - "list"
+      - "create"
+      - "update"
+      - "delete"
+      - "patch"
+      - "watch"
+  - apiGroups:
+      - "sinks.knative.dev"
+    resources:
+      - "jobsinks"
+      - "jobsinks/status"
     verbs:
       - "get"
       - "list"
@@ -4234,6 +5141,12 @@ rules:
     resources:
       - "brokers/finalizers"
       - "triggers/finalizers"
+    verbs:
+      - "update"
+  - apiGroups:
+      - "sinks.knative.dev"
+    resources:
+      - "jobsinks/finalizers"
     verbs:
       - "update"
   - apiGroups:
@@ -4309,9 +5222,133 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  name: crossnamespace-subscriber
+  labels:
+    app.kubernetes.io/version: "1.16.4"
+    app.kubernetes.io/name: knative-eventing
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        duck.knative.dev/crossnamespace-subscribable: "true"
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: channel-subscriber
+  labels:
+    duck.knative.dev/crossnamespace-subscribable: "true"
+    app.kubernetes.io/version: "1.16.4"
+    app.kubernetes.io/name: knative-eventing
+rules:
+  - apiGroups:
+      - messaging.knative.dev
+    resources:
+      - channels
+    verbs:
+      - knsubscribe
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: broker-subscriber
+  labels:
+    duck.knative.dev/crossnamespace-subscribable: "true"
+    app.kubernetes.io/version: "1.16.4"
+    app.kubernetes.io/name: knative-eventing
+rules:
+  - apiGroups:
+      - eventing.knative.dev
+    resources:
+      - brokers
+    verbs:
+      - knsubscribe
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: knative-eventing-job-sink
+  labels:
+    app.kubernetes.io/version: "1.16.4"
+    app.kubernetes.io/name: knative-eventing
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - "configmaps"
+      - "secrets"
+    verbs:
+      - "get"
+      - "list"
+      - "watch"
+  - apiGroups:
+      - ""
+    resources:
+      - "secrets"
+    verbs:
+      - "create"
+      - "update"
+      - "delete"
+  - apiGroups:
+      - "batch"
+    resources:
+      - "jobs"
+    verbs:
+      - "create"
+      - "update"
+      - "delete"
+      - "get"
+      - "list"
+      - "watch"
+  - apiGroups:
+      - sinks.knative.dev
+    resources:
+      - jobsinks
+      - jobsinks/status
+    verbs:
+      - get
+      - list
+      - watch
+      - patch
+  - apiGroups:
+      - sinks.knative.dev
+    resources:
+      - jobsinks/finalizers
+    verbs:
+      - "patch"
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - "create"
+      - "patch"
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+  - apiGroups:
+      - eventing.knative.dev
+    resources:
+      - eventpolicies
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
   name: knative-eventing-pingsource-mt-adapter
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -4322,6 +5359,12 @@ rules:
       - "get"
       - "list"
       - "watch"
+  - apiGroups:
+      - ""
+    resources:
+      - "serviceaccounts/token"
+    verbs:
+      - "create"
   - apiGroups:
       - sources.knative.dev
     resources:
@@ -4362,7 +5405,7 @@ kind: ClusterRole
 metadata:
   name: podspecable-binding
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 aggregationRule:
   clusterRoleSelectors:
@@ -4376,7 +5419,7 @@ metadata:
   name: builtin-podspecable-binding
   labels:
     duck.knative.dev/podspecable: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -4404,7 +5447,7 @@ kind: ClusterRole
 metadata:
   name: source-observer
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 aggregationRule:
   clusterRoleSelectors:
@@ -4418,7 +5461,7 @@ metadata:
   name: eventing-sources-source-observer
   labels:
     duck.knative.dev/source: "true"
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -4438,7 +5481,7 @@ kind: ClusterRole
 metadata:
   name: knative-eventing-sources-controller
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -4538,7 +5581,7 @@ kind: ClusterRole
 metadata:
   name: knative-eventing-webhook
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -4546,6 +5589,9 @@ rules:
     resources:
       - "configmaps"
     verbs:
+      - "create"
+      - "update"
+      - "delete"
       - "get"
       - "list"
       - "watch"
@@ -4628,6 +5674,14 @@ rules:
       - "create"
       - "patch"
   - apiGroups:
+      - eventing.knative.dev
+    resources:
+      - eventpolicies
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
       - ""
     resources:
       - "serviceaccounts"
@@ -4639,9 +5693,36 @@ rules:
       - "delete"
       - "patch"
       - "watch"
+  - apiGroups:
+      - ""
+    resources:
+      - "serviceaccounts/token"
+    verbs:
+      - "create"
+  - apiGroups:
+      - ""
+    resources:
+      - "secrets"
+    verbs:
+      - "get"
+      - "list"
+      - "create"
+      - "update"
+      - "delete"
+      - "patch"
+      - "watch"
+  - apiGroups:
+      - "authorization.k8s.io"
+    resources:
+      - "subjectaccessreviews"
+    verbs:
+      - "create"
   - apiGroups: ["apiextensions.k8s.io"]
     resources: ["customresourcedefinitions"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["create"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -4649,7 +5730,7 @@ metadata:
   namespace: knative-eventing
   name: knative-eventing-webhook
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 rules:
   - apiGroups:
@@ -4669,7 +5750,7 @@ kind: ValidatingWebhookConfiguration
 metadata:
   name: config.webhook.eventing.knative.dev
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 webhooks:
   - admissionReviewVersions: ["v1", "v1beta1"]
@@ -4682,6 +5763,9 @@ webhooks:
     name: config.webhook.eventing.knative.dev
     namespaceSelector:
       matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values: ["knative-eventing"]
     timeoutSeconds: 10
 ---
 apiVersion: admissionregistration.k8s.io/v1
@@ -4689,7 +5773,7 @@ kind: MutatingWebhookConfiguration
 metadata:
   name: webhook.eventing.knative.dev
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 webhooks:
   - admissionReviewVersions: ["v1", "v1beta1"]
@@ -4707,7 +5791,7 @@ kind: ValidatingWebhookConfiguration
 metadata:
   name: validation.webhook.eventing.knative.dev
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 webhooks:
   - admissionReviewVersions: ["v1", "v1beta1"]
@@ -4726,7 +5810,7 @@ metadata:
   name: eventing-webhook-certs
   namespace: knative-eventing
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 ---
 apiVersion: admissionregistration.k8s.io/v1
@@ -4734,7 +5818,7 @@ kind: MutatingWebhookConfiguration
 metadata:
   name: sinkbindings.webhook.sources.knative.dev
   labels:
-    app.kubernetes.io/version: "1.12.6"
+    app.kubernetes.io/version: "1.16.4"
     app.kubernetes.io/name: knative-eventing
 webhooks:
   - admissionReviewVersions: ["v1", "v1beta1"]

@@ -13,11 +13,11 @@ patchesStrategicMerge:
 - patches/model-registry-deployment.yaml
 
 configMapGenerator:
-- name: metadata-postgres-db-parameters
+- name: metadata-registry-db-parameters
   envs:
   - params.env
 secretGenerator:
-- name: metadata-postgres-db-secrets
+- name: metadata-registry-db-secrets
   envs:
   - secrets.env
 generatorOptions:
@@ -39,7 +39,7 @@ vars:
 - name: POSTGRES_PORT
   objref:
     kind: ConfigMap
-    name: model-registry-db-parameters
+    name: metadata-registry-db-parameters
     apiVersion: v1
   fieldref:
     fieldpath: data.POSTGRES_PORT

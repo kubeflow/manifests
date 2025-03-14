@@ -6,6 +6,7 @@ on:
     - .github/workflows/jupyter_web_application_test.yaml
     - apps/jupyter/jupyter-web-app/upstream/**
     - tests/gh-actions/install_istio.sh
+    - common/istio*/**
 
 jobs:
   build:

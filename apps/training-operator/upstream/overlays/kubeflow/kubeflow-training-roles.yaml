@@ -25,9 +25,9 @@ rules:
       - mpijobs
       - tfjobs
       - pytorchjobs
-      - mxjobs
       - xgboostjobs
       - paddlejobs
+      - jaxjobs
     verbs:
       - create
       - delete
@@ -42,9 +42,9 @@ rules:
       - mpijobs/status
       - tfjobs/status
       - pytorchjobs/status
-      - mxjobs/status
       - xgboostjobs/status
       - paddlejobs/status
+      - jaxjobs/status
     verbs:
       - get
   - apiGroups:
@@ -80,9 +80,9 @@ rules:
       - mpijobs
       - tfjobs
       - pytorchjobs
-      - mxjobs
       - xgboostjobs
       - paddlejobs
+      - jaxjobs
     verbs:
       - get
       - list
@@ -93,8 +93,8 @@ rules:
       - mpijobs/status
       - tfjobs/status
       - pytorchjobs/status
-      - mxjobs/status
       - xgboostjobs/status
       - paddlejobs/status
+      - jaxjobs/status
     verbs:
       - get

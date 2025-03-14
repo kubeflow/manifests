@@ -1,0 +1,22 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: 24.2.0
+    hooks:
+      - id: black
+        files: ^(common|example)/.*\.py$
+        exclude: .*upstream.*
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        files: ^(common|example|hack|tests|\.github)/.*\.ya?ml$
+        exclude: .*upstream.*
+        args: [--config-file=.yamllint.yaml]
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.6
+    hooks:
+      - id: shellcheck
+        files: ^.*\.sh$
+        exclude: (^apps/.*|.*upstream.*)

@@ -1,0 +1,24 @@
+resources:
+- rbac.yaml
+- service.yaml
+- deployment.yaml
+- istio.yaml
+
+namespace: kserve
+
+
+images:
+- name: kserve/models-web-app
+  newName: kserve/models-web-app
+  newTag: v0.14.0-rc.0
+configMapGenerator:
+- literals:
+  - APP_DISABLE_AUTH="True"
+  name: kserve-models-web-app-config
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+labels:
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/component: kserve-models-web-app
+    kustomize.component: kserve-models-web-app

@@ -1,0 +1,6 @@
+namespace: kubeflow
+resources:
+- ../../base
+
+patches:
+- path: disable-injection.yaml

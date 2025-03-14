@@ -58,6 +58,7 @@ rules:
       - "list"
       - "watch"
       - "patch"
+      - "update"
   - apiGroups:
       - apps
     resources:
@@ -96,7 +97,6 @@ rules:
       - pytorchjobs
       - mpijobs
       - xgboostjobs
-      - mxjobs
     verbs:
       - "get"
       - "list"
@@ -127,6 +127,7 @@ rules:
       - "watch"
       - "list"
       - "patch"
+      - "update"
 ---
 apiVersion: v1
 kind: ServiceAccount

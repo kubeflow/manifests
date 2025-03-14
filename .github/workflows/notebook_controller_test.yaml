@@ -7,6 +7,7 @@ on:
     - apps/jupyter/notebook-controller/upstream/**
     - tests/gh-actions/install_istio.sh
     - common/istio*/**
+    - experimental/security/PSS/**
 
 jobs:
   build:
@@ -27,3 +28,18 @@ jobs:
         kubectl create ns kubeflow
         kustomize build overlays/kubeflow | kubectl apply -f -
         kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
+
+    - name: Apply Pod Security Standards baseline levels
+      run: ./tests/gh-actions/enable_baseline_PSS.sh
+
+    - name: Unapply applied baseline labels
+      run: |
+        NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow")
+        for NAMESPACE in "${NAMESPACES[@]}"; do
+          if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
+            kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce-
+          fi
+        done
+
+    - name: Applying Pod Security Standards restricted levels
+      run: ./tests/gh-actions/enable_restricted_PSS.sh

@@ -11,7 +11,7 @@ on:
     - common/cert-manager/**
     - common/oauth2-proxy/**
     - common/istio*/**
-    - contrib/seaweedfs/**
+    - experimental/seaweedfs/**
 
 jobs:
   build:
@@ -45,14 +45,39 @@ jobs:
       run: ./tests/gh-actions/install_multi_tenancy.sh
 
     - name: Install kubeflow-istio-resources
-      run: kustomize build common/istio-1-23/kubeflow-istio-resources/base | kubectl apply -f -
+      run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
 
     - name: Create KF Profile
-      run: kustomize build common/user-namespace/base | kubectl apply -f -
+      run: |
+        kustomize build common/user-namespace/base | kubectl apply -f -
+        sleep 30 # for the metacontroller to create the secret
+
+        METACONTROLLER_POD=$(kubectl get pods -n kubeflow -o json | jq -r '.items[] | select(.metadata.name | startswith("metacontroller")) | .metadata.name')
+        if [[ -z "$METACONTROLLER_POD" ]]; then
+          echo "Error: metacontroller pod not found in kubeflow namespace."
+          exit 1
+        fi
+        kubectl logs -n kubeflow "$METACONTROLLER_POD"
+
+        PIPELINES_PROFILE_CONTROLLER_POD=$(kubectl get pods -n kubeflow -o json | jq -r '.items[] | select(.metadata.name | startswith("kubeflow-pipelines-profile-controller")) | .metadata.name')
+        if [[ -z "$PIPELINES_PROFILE_CONTROLLER_POD" ]]; then
+          echo "Error: kubeflow-pipelines-profile-controller pod not found in kubeflow namespace."
+          exit 1
+        fi
+        kubectl logs -n kubeflow "$PIPELINES_PROFILE_CONTROLLER_POD"
+
+        KF_PROFILE=kubeflow-user-example-com
+        kubectl -n $KF_PROFILE get pods,configmaps,secrets
+
+        if ! kubectl get secret mlpipeline-minio-artifact -n $KF_PROFILE > /dev/null 2>&1; then
+          echo "Error: Secret mlpipeline-minio-artifact not found in namespace $KF_PROFILE"
+          exit 1
+        fi
+        kubectl get secret mlpipeline-minio-artifact -n "$KF_PROFILE" -o json | jq -r '.data | keys[] as $k | "\($k): \(. | .[$k] | @base64d)"' | tr '\n' ' '
 
     - name: Install seaweedfs
       run: |
-        kustomize build contrib/seaweedfs/istio | kubectl apply -f -
+        kustomize build experimental/seaweedfs/istio | kubectl apply -f -
         kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/seaweedfs
         kubectl -n kubeflow exec deploy/seaweedfs -c seaweedfs -- sh -c "echo \"s3.configure -user minio -access_key minio -secret_key minio123 -actions Read,Write,List -apply\" | /usr/bin/weed shell"
 
@@ -64,37 +89,7 @@ jobs:
 
     - name: List and deploy test pipeline with authorized ServiceAccount Token
       run: |
-        pip3 install kfp==2.4.0
+        pip3 install kfp==2.11.0
         KF_PROFILE=kubeflow-user-example-com
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
-
-        python -c '
-        from time import sleep
-        import kfp
-        import sys
-
-        token = sys.argv[1]
-        namespace = sys.argv[2]
-        client = kfp.Client(host="http://localhost:8080/pipeline", existing_token=token)
-
-        pipeline = client.list_pipelines().pipelines[0]
-        pipeline_name = pipeline.display_name
-        pipeline_id = pipeline.pipeline_id
-        pipeline_version_id = client.list_pipeline_versions(pipeline_id).pipeline_versions[0].pipeline_version_id
-        experiment_id = client.create_experiment("seaweedfs-test", namespace=namespace).experiment_id
-
-        print(f"Starting pipeline {pipeline_name}.")
-        run_id = client.run_pipeline(experiment_id=experiment_id, job_name="m2m-test", pipeline_id=pipeline_id, version_id=pipeline_version_id).run_id
-
-        while True:
-          status = client.get_run(run_id=run_id).state
-          if status in ["PENDING", "RUNNING"]:
-            print(f"Waiting for run_id: {run_id}, status: {status}.")
-            sleep(10)
-          else:
-            print(f"Run with id {run_id} finished with status: {status}.")
-            if status != "SUCCEEDED":
-              print("Pipeline failed")
-              raise SystemExit(1)
-            break
-        ' "${TOKEN}" "${KF_PROFILE}"
+        python3 tests/gh-actions/pipeline_test.py run_pipeline "${TOKEN}" "${KF_PROFILE}"

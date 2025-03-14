@@ -146,7 +146,7 @@ notebooks.
 
 As the first iteration, test the Kubeflow integration using the
 existing [e2e mnist python script](https://github.com/kubeflow/manifests/tree/master/tests/e2e)
-and [e2e mnist notebook](https://github.com/kubeflow/pipelines/blob/master/samples/contrib/kubeflow-e2e-mnist/kubeflow-e2e-mnist.ipynb)
+and [e2e mnist notebook](https://github.com/kubeflow/pipelines/blob/master/samples/experimental/kubeflow-e2e-mnist/kubeflow-e2e-mnist.ipynb)
 .
 
 - [Python script](#python-script)

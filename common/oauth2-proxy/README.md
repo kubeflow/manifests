@@ -76,12 +76,111 @@ You can adjust OAuth2 Proxy to directly connect to your own IDP(Identity Provide
 
 1. Create an application on your IdP (purple line)
 2. Change your [OAuth2 Proxy issuer](https://github.com/kubeflow/manifests/blob/35539f162ea7fafc8c5035d8df0d8d8cf5a9d327/common/oauth2-proxy/base/oauth2-proxy-config.yaml#L10) to your IdP. Of course never ever directly, but with kustomize overlays and components.
+
+Here is an example of patching oauth2-proxy to connect directly to Azure IDP and skip Dex.
+This is enterprise integration so feel free to hire consultants or pay for commercial distributions if you need more help.
+For example Azure returns rather large headers compared to other IDPs, so maybe you need to annotate the nginx-ingress to support that.
+
+```
+# based on https://github.com/kubeflow/manifests/blob/master/common/oauth2-proxy/base/oauth2_proxy.cfg
+# and https://oauth2-proxy.github.io/oauth2-proxy/configuration/providers/azure/
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oauth2-proxy
+  namespace: oauth2-proxy
+data:
+  oauth2_proxy.cfg: |
+    provider = "oidc"
+    oidc_issuer_url = "https://login.microsoftonline.com/$MY_TENANT/v2.0"
+    scope = "openid email profile" # remove groups since they are not used yet
+    email_domains = [ "*" ]
+
+    # serve a static HTTP 200 upstream on for authentication success
+    # we are using oauth2-proxy as an ExtAuthz to "check" each request, not pass it on
+    upstreams = [ "static://200" ]
+
+    # skip authentication for these paths
+    skip_auth_routes = [
+      "^/dex/",
+    ]
+
+    # requests to paths matching these regex patterns will receive a 401 Unauthorized response
+    # when not authenticated, instead of being redirected to the login page with a 302,
+    # this prevents background requests being redirected to the login page,
+    # and the accumulation of CSRF cookies
+    api_routes = [
+      # Generic
+      # NOTE: included because most background requests contain these paths
+      "/api/",
+      "/apis/",
+
+      # Kubeflow Pipelines
+      # NOTE: included because KFP UI makes MANY background requests to these paths but because they are
+      #       not `application/json` requests, oauth2-proxy will redirect them to the login page
+      "^/ml_metadata",
+    ]
+
+    skip_provider_button = true
+    set_authorization_header = true
+    set_xauthrequest = true
+    cookie_name = "oauth2_proxy_kubeflow"
+    cookie_expire = "24h"
+    cookie_refresh = "1h" # This improves the user experience a lot
+    redirect_url = "https://$MY_PUBLIC_KUBEFLOW_DOMAIN/oauth2/callback"
+    relative_redirect_url = false
+```
+
 3. In the istio-system namespace is a RequestAuthentication resource. You need to change its issuer to your own IdP, or even better create an additional one.
-4. You can now directly issue a token from your IdP and use this token to access your Kubeflow platform. 
 
-This feature is useful when you need to integrate kubeflow with you current CI/CD platform (GitHub Actions, Jenkins) via machine-to-machine authentication.
+```
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: azure-aad-requestauthentication
+  namespace: istio-system
+spec:
+  # we only apply to the ingress-gateway because:
+  #  - there is no need to verify the same tokens at each sidecar
+  #  - having no selector will apply to the RequestAuthentication to ALL
+  #    Pods in the mesh, even ones which are not part of Kubeflow
+  selector:
+    matchLabels:
+      app: istio-ingressgateway
 
-Example for obtaining and using a JWT token From your IDP:
+  jwtRules:
+  - issuer: https://login.microsoftonline.com/$MY_TENANT/v2.0
+
+    # `forwardOriginalToken` is not strictly required to be true.
+    # there are pros and cons to each value:
+    #  - true: the original token is forwarded to the destination service
+    #          which raises the risk of the token leaking
+    #  - false: the original token is stripped from the request
+    #           which will prevent the destination service from
+    #           verifying the token (possibly with its own RequestAuthentication)
+    forwardOriginalToken: true
+
+    # This will unpack the JWTs issued by Dex or other IDPs into the expected headers.
+    # It is applied to BOTH the m2m tokens from outside the cluster (which skip
+    # oauth2-proxy because they already have a dex JWT), AND user requests which were
+    # authenticated by oauth2-proxy (which injected a dex JWT).
+    outputClaimToHeaders:
+    - header: kubeflow-userid
+      claim: email
+    - header: kubeflow-groups
+      claim: groups
+
+    # We explicitly set `fromHeaders` to ensure that the JWT is only extracted from the `Authorization` header.
+    # This is because we exclude requests that have an `Authorization` header from oauth2-proxy.
+    fromHeaders:
+    - name: Authorization
+      prefix: "Bearer "
+```
+
+You can also add more RequestAuthentication to support other issuers as for example for M2M access from github actions as explained in the root level Readme.md.
+This feature is useful when you need to integrate Kubeflow with your current CI/CD platform (GitHub Actions, Jenkins) via machine-to-machine authentication.
+The following is an example for obtaining and using a JWT token From your IDP with Python, but you can also just take a look at our CI/CD test that uses simple Kubernetes serviceaccount tokens to access KFP, Jupyterlabs etc. from GitHub Actions.
+
 ```
 import requests
 token_url = "https://your-idp.com/oauth/token"
@@ -112,6 +211,47 @@ pipeline_host = kubeflow_host + "/pipeline"
 client = kfp.Client(host=pipeline_host, existing_token=TOKEN)
 print(client.list_runs(namespace="your-profile-name"))
 ```
+
+## Known Issues:
+
+Some openidc providers such as Azure provide too large JWTs / Cookies that exceed the limit of most GRPC and gunicorn web application deployments in Kubeflow.
+If removing the groups claim in oauth2-proxy is not enough then you can add an envrionment variable to all web applications
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kserve-models-web-app
+  namespace: kubeflow
+spec:
+  template:
+    spec:
+      containers:
+        - name: kserve-models-web-app # repeat for all other *-web-app-(deployment)
+          env:
+            - name: GUNICORN_CMD_ARGS
+              value: --limit-request-field_size 32000
+```
+
+and modify the KFP GRPC server via
+```
+- path: patches/metadata-grpc-virtualservice-patch.yaml
+  target:
+    kind: VirtualService
+    name: metadata-grpc
+    namespace: kubeflow
+
+# patches/metadata-grpc-virtualservice-patch.yaml
+# Remove the oauth2-proxy cookie that violates the maximum metadata size for a GRPC request
+- op: add
+  path: /spec/http/0/route/0/headers
+  value:
+    request:
+      remove:
+        - Cookie
+```
+
+to fix `received initial metadata size exceeds limit`.
 
 ## Kubeflow Notebooks User and M2M Authentication and Authorization
 
@@ -152,7 +292,7 @@ This is based on the following:
 
    The docs above mention that while it's possible to enable authentication,
    authorization is more complicated and probably we need to add
-   `AuthorizationPolicy`...
+   `AuthorizationPolicy`
 
    > create an [Istio AuthorizationPolicy](https://istio.io/latest/docs/reference/config/security/authorization-policy/) to grant access to the pods or disable it
 
