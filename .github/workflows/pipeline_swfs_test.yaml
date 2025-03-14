@@ -47,6 +47,11 @@ jobs:
     - name: Install kubeflow-istio-resources
       run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
 
+    - name: Install seaweedfs
+      run: |
+        kustomize build experimental/seaweedfs/istio | kubectl apply -f -
+        kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/seaweedfs
+
     - name: Create KF Profile
       run: |
         kustomize build common/user-namespace/base | kubectl apply -f -
@@ -74,12 +79,6 @@ jobs:
           exit 1
         fi
         kubectl get secret mlpipeline-minio-artifact -n "$KF_PROFILE" -o json | jq -r '.data | keys[] as $k | "\($k): \(. | .[$k] | @base64d)"' | tr '\n' ' '
-
-    - name: Install seaweedfs
-      run: |
-        kustomize build experimental/seaweedfs/istio | kubectl apply -f -
-        kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/seaweedfs
-        kubectl -n kubeflow exec deploy/seaweedfs -c seaweedfs -- sh -c "echo \"s3.configure -user minio -access_key minio -secret_key minio123 -actions Read,Write,List -apply\" | /usr/bin/weed shell"
 
     - name: port forward
       run: |
