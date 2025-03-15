@@ -6,7 +6,7 @@ on:
     - .github/workflows/pipeline_run_from_notebook.yaml
     - apps/jupyter/notebook-controller/upstream/**
     - apps/pipeline/upstream/**
-    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_istio-cni.sh
     - tests/gh-actions/install_cert_manager.sh
     - common/cert-manager/**
     - common/oauth2-proxy/**
