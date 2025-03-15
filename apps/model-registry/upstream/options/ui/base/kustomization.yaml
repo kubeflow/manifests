@@ -8,6 +8,6 @@ resources:
 - model-registry-ui-service-account.yaml
 
 images:
-- name: model-registry-ui-image
+- name: model-registry-ui
   newName: docker.io/kubeflow/model-registry-ui
-  newTag: v0.2.14
+  newTag: v0.2.15
