@@ -21,7 +21,7 @@ spec:
         runAsNonRoot: true
       containers:
       - name: model-registry-ui
-        image: model-registry-ui-image
+        image: model-registry-ui
         imagePullPolicy: Always
         livenessProbe:
           tcpSocket:
