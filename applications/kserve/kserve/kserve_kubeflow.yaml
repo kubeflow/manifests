@@ -32908,6 +32908,8 @@ spec:
             runAsNonRoot: true
       securityContext:
         runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: kserve-controller-manager
       terminationGracePeriodSeconds: 10
       volumes:
@@ -32971,6 +32973,8 @@ spec:
             runAsNonRoot: true
       securityContext:
         runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: kserve-localmodel-controller-manager
       terminationGracePeriodSeconds: 10
 ---
