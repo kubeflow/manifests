@@ -112,4 +112,3 @@ jobs:
 
     - name: Applying Pod Security Standards restricted levels for static namespaces
       run: ./tests/gh-actions/enable_restricted_PSS.sh
-
