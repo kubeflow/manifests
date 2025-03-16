@@ -44,5 +44,6 @@ jobs:
     - name: Build & Apply manifests
       run: |
         cd apps/spark/
+        chmod u+x spark*
         ../../tests/gh-actions/spark_install.sh
         ../../tests/gh-actions/spark_test.sh "kubeflow-user-example-com"
