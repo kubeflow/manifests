@@ -45,6 +45,7 @@ jobs:
     - name: Build & Apply manifests
       run: |
         cd apps/spark
+        # TODO remove the debugging lines
         ls -lah  ../../tests/gh-actions/
         chmod u+x ./../tests/gh-actions/spark*
         ../../tests/gh-actions/spark_install.sh
