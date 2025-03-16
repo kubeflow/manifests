@@ -16,7 +16,7 @@ IFS=$'\n\t'
 
 # You can use tags or commit hashes
 SPARK_OPERATOR_VERSION=${SPARK_OPERATOR_VERSION:="2.1.0"}
-SPARK_OPERATOR_HELM_CHART_REPO=${SPARK_OPERATOR_HELM_CHART_REPO:="https://kubeflow.github.io/spark-operator"}
+SPARK_OPERATOR_HELM_CHART_REPOSITORY=${SPARK_OPERATOR_HELM_CHART_REPOSITORY:="https://kubeflow.github.io/spark-operator"}
 DEV_MODE=${DEV_MODE:=false}
 BRANCH=${BRANCH:=synchronize-spark-operator-manifests-${SPARK_OPERATOR_VERSION?}}
 
@@ -42,23 +42,13 @@ DST_DIR=$MANIFESTS_DIR/apps/spark/spark-operator/base
 mkdir -p $DST_DIR
 cd $DST_DIR
 
-# Create a kustomization.yaml file if it doesn't exist
-if [ ! -f kustomization.yaml ]; then
-    cat > kustomization.yaml << EOF
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-- resources.yaml
-EOF
-fi
-
 # Generate the manifests using Helm
 helm template -n kubeflow --include-crds spark-operator spark-operator \
 --set "spark.jobNamespaces={}" \
 --set webhook.enable=true \
 --set webhook.port=9443 \
 --version ${SPARK_OPERATOR_VERSION} \
---repo ${SPARK_OPERATOR_HELM_CHART_REPO} > resources.yaml
+--repo ${SPARK_OPERATOR_HELM_CHART_REPOSITORY} > resources.yaml
 
 echo "Successfully generated manifests."
 
