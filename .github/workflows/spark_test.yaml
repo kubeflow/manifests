@@ -44,5 +44,5 @@ jobs:
     - name: Build & Apply manifests
       run: |
         cd apps/spark/
-        export KF_PROFILE=kubeflow-user-example-com
-        make test
+        ../../tests/gh-actions/spark_install.sh
+        ../../tests/gh-actions/spark_test.sh "kubeflow-user-example-com"
