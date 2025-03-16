@@ -47,6 +47,6 @@ jobs:
         cd apps/spark
         # TODO remove the debugging lines
         ls -lah  ../../tests/gh-actions/
-        chmod u+x ./../tests/gh-actions/spark*
+        chmod u+x ../../tests/gh-actions/spark*
         ../../tests/gh-actions/spark_install.sh
         ../../tests/gh-actions/spark_test.sh "kubeflow-user-example-com"
