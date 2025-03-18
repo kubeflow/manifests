@@ -32,7 +32,7 @@ spec:
           capabilities:
             drop:
             - ALL
-        image: alpine/k8s:1.29.13
+        image: docker.io/alpine/k8s:1.32.3
         command: ["python", "/hooks/sync.py"]
         env:
         - name: KFP_VERSION
