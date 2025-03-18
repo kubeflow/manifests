@@ -52,6 +52,18 @@ jobs:
     - name: Create KF Profile
       run: kustomize build common/user-namespace/base | kubectl apply -f -
 
+    - name: Wait for KF Profile to be ready
+      run: |
+        echo "Waiting for namespace to be active..."
+        kubectl wait --for=jsonpath='{.status.phase}'=Active namespace/kubeflow-user-example-com --timeout=60s
+        echo "Waiting for default-editor service account..."
+        # First wait for the namespace to have resources initialized
+        sleep 10
+        # Check if service account exists
+        kubectl get serviceaccounts -n kubeflow-user-example-com
+        # Wait for the service account to be created
+        kubectl wait --for=condition=exists serviceaccount/default-editor -n kubeflow-user-example-com --timeout=90s
+
     - name: Apply KServe predictor AuthorizationPolicy
       run: |
           cat <<EOF | kubectl apply -f -
