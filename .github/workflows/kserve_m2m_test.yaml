@@ -15,7 +15,6 @@ on:
     - common/knative/**
     - tests/gh-actions/install_knative.sh
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -48,10 +47,27 @@ jobs:
       run: ./tests/gh-actions/install_multi_tenancy.sh
 
     - name: Install kubeflow-istio-resources
-      run: kustomize build common/istio-1-23/kubeflow-istio-resources/base | kubectl apply -f -
+      run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
 
     - name: Create KF Profile
       run: kustomize build common/user-namespace/base | kubectl apply -f -
+
+    - name: Apply KServe predictor AuthorizationPolicy
+      run: |
+          cat <<EOF | kubectl apply -f -
+          apiVersion: security.istio.io/v1beta1
+          kind: AuthorizationPolicy
+          metadata:
+            name: sklearn-iris-predictor-allow
+            namespace: kubeflow-user-example-com
+          spec:
+            selector:
+              matchLabels:
+                serving.knative.dev/service: sklearn-iris-predictor
+            action: ALLOW
+            rules:
+            - {}
+          EOF
 
     - name: Setup python 3.12
       uses: actions/setup-python@v4
