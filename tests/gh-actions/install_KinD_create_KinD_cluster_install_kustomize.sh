@@ -50,11 +50,11 @@ kubeadmConfigPatches:
 nodes:
 # test according to https://github.com/kubernetes-sigs/kind/releases/tag/v0.27.0
 - role: control-plane
-  image: kindest/node:v1.30.10@sha256:4de75d0e82481ea846c0ed1de86328d821c1e6a6a91ac37bf804e5313670e507
+  image: v1.31.6: kindest/node:v1.31.6@sha256:28b7cbb993dfe093c76641a0c95807637213c9109b761f1d422c2400e22b8e87
 - role: worker
-  image: kindest/node:v1.30.10@sha256:4de75d0e82481ea846c0ed1de86328d821c1e6a6a91ac37bf804e5313670e507
+  image: v1.31.6: kindest/node:v1.31.6@sha256:28b7cbb993dfe093c76641a0c95807637213c9109b761f1d422c2400e22b8e87
 - role: worker
-  image: kindest/node:v1.30.10@sha256:4de75d0e82481ea846c0ed1de86328d821c1e6a6a91ac37bf804e5313670e507
+  image: v1.31.6: kindest/node:v1.31.6@sha256:28b7cbb993dfe093c76641a0c95807637213c9109b761f1d422c2400e22b8e87
 " | kind create cluster --config -
 
 
