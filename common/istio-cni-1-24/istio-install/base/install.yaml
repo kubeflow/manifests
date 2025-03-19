@@ -3316,7 +3316,7 @@ spec:
         - 30m
         env:
         - name: ENABLE_NATIVE_SIDECARS
-          value: 'false'
+          value: 'true'
         - name: REVISION
           value: default
         - name: PILOT_CERT_PROVIDER
