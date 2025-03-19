@@ -20,7 +20,7 @@ if [ -e /swapfile ]; then
 fi
 
 {
-    curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.26.0/kind-linux-amd64
+    curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.27.0/kind-linux-amd64
     chmod +x ./kind
     sudo mv kind /usr/local/bin
 } || { echo "Failed to install KinD"; exit 1; }
@@ -48,12 +48,13 @@ kubeadmConfigPatches:
         \"service-account-issuer\": \"https://kubernetes.default.svc\"
         \"service-account-signing-key-file\": \"/etc/kubernetes/pki/sa.key\"
 nodes:
+# test according to https://github.com/kubernetes-sigs/kind/releases/tag/v0.27.0
 - role: control-plane
-  image: kindest/node:v1.32.0@sha256:c48c62eac5da28cdadcf560d1d8616cfa6783b58f0d94cf63ad1bf49600cb027
+  image: kindest/node:v1.30.10@sha256:4de75d0e82481ea846c0ed1de86328d821c1e6a6a91ac37bf804e5313670e507
 - role: worker
-  image: kindest/node:v1.32.0@sha256:c48c62eac5da28cdadcf560d1d8616cfa6783b58f0d94cf63ad1bf49600cb027
+  image: kindest/node:v1.30.10@sha256:4de75d0e82481ea846c0ed1de86328d821c1e6a6a91ac37bf804e5313670e507
 - role: worker
-  image: kindest/node:v1.32.0@sha256:c48c62eac5da28cdadcf560d1d8616cfa6783b58f0d94cf63ad1bf49600cb027
+  image: kindest/node:v1.30.10@sha256:4de75d0e82481ea846c0ed1de86328d821c1e6a6a91ac37bf804e5313670e507
 " | kind create cluster --config -
 
 
