@@ -48,13 +48,12 @@ kubeadmConfigPatches:
         \"service-account-issuer\": \"https://kubernetes.default.svc\"
         \"service-account-signing-key-file\": \"/etc/kubernetes/pki/sa.key\"
 nodes:
-# test according to https://github.com/kubernetes-sigs/kind/releases/tag/v0.27.0
 - role: control-plane
-  image: v1.31.6: kindest/node:v1.31.6@sha256:28b7cbb993dfe093c76641a0c95807637213c9109b761f1d422c2400e22b8e87
+  image: kindest/node:v1.31.6@sha256:28b7cbb993dfe093c76641a0c95807637213c9109b761f1d422c2400e22b8e87
 - role: worker
-  image: v1.31.6: kindest/node:v1.31.6@sha256:28b7cbb993dfe093c76641a0c95807637213c9109b761f1d422c2400e22b8e87
+  image: kindest/node:v1.31.6@sha256:28b7cbb993dfe093c76641a0c95807637213c9109b761f1d422c2400e22b8e87
 - role: worker
-  image: v1.31.6: kindest/node:v1.31.6@sha256:28b7cbb993dfe093c76641a0c95807637213c9109b761f1d422c2400e22b8e87
+  image: kindest/node:v1.31.6@sha256:28b7cbb993dfe093c76641a0c95807637213c9109b761f1d422c2400e22b8e87
 " | kind create cluster --config -
 
 
