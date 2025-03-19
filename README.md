@@ -115,7 +115,7 @@ The `example` directory contains an example kustomization for the single command
 #### Prerequisites
 - 16 GB of RAM recommended.
 - 8 CPU cores recommended.
-- `kind` version 0.26+.
+- `kind` version 0.27+.
 - `docker` or a more modern tool such as `podman` to run the OCI images for the Kind cluster.
 - Linux kernel subsystem changes to support many pods:
     - `sudo sysctl fs.inotify.max_user_instances=2280`
