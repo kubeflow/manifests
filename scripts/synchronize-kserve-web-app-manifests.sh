@@ -1,15 +1,7 @@
 #!/usr/bin/env bash
-
-# This script aims at helping create a PR to update the manifests of the
-# kserve/models-web-app repository.
-# This script:
-# 1. Checks out a new branch
-# 2. Copies files to the correct places
-# 3. Commits the changes
-#
-# Afterwards the developers can submit the PR to the kubeflow/manifests
-# repository, based on that local branch
-
+# This script helps to create a PR to update the manifests
+set -euxo pipefail
+IFS=$'\n\t'
 
 COMMIT="v0.14.0-rc.0" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kserve-models-web-app}

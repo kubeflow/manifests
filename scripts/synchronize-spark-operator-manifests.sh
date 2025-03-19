@@ -1,16 +1,5 @@
 #!/usr/bin/env bash
-# This script aims at helping create a PR to update the manifests of the
-# kubeflow/spark-operator repository.
-# This script:
-# 1. Checks out a new branch
-# 2. Generates the manifests using Helm
-# 3. Commits the changes
-#
-# Afterwards the developers can submit the PR to the kubeflow/manifests
-# repository, based on that local branch
-# It must be executed directly from its directory
-
-# strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
+# This script helps to create a PR to update the manifests
 set -euxo pipefail
 IFS=$'\n\t'
 

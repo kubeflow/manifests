@@ -1,20 +1,9 @@
 #!/usr/bin/env bash
-
-# This script aims at helping create a PR to update the manifests of the
-# kubeflow/kubeflow repo.
-# This script:
-# 1. Checks out a new branch
-# 2. Copies files to the correct places
-# 3. Commits the changes
-#
-# Afterwards the developers can submit the PR to the kubeflow/manifests
-# repo, based on that local branch
-
-# strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
-set -euo pipefail
+# This script helps to create a PR to update the manifests
+set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="v1.10.0-rc.1" # You can use tags as well
+COMMIT="v1.10.0-rc.2" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kubeflow-kubeflow}
 BRANCH=${BRANCH:=synchronize-kubeflow-kubeflow-manifests-${COMMIT?}}
 
