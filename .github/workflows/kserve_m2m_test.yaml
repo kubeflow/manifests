@@ -50,10 +50,10 @@ jobs:
     - name: Create test namespace
       run: kubectl create ns kserve-test
 
-    - name: Setup python 3.9
+    - name: Setup python 3.12
       uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: 3.12
 
     - name: Install test dependencies
       run: pip install -r ./apps/kserve/tests/requirements.txt
@@ -80,3 +80,7 @@ jobs:
           echo "Task failed successfully!"
           echo "This is a provisional way of testing that m2m is enabled for kserve."
         fi
+
+    - name: Run kserve models webapp test
+      run: |
+        kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app
