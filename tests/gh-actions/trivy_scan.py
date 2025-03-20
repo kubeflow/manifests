@@ -26,7 +26,7 @@ wg_dirs = {
     "workbenches": "../../apps/pvcviewer-controller/upstream/base ../../apps/admission-webhook/upstream/overlays ../../apps/centraldashboard/overlays ../../apps/jupyter/jupyter-web-app/upstream/overlays ../../apps/volumes-web-app/upstream/overlays ../../apps/tensorboard/tensorboards-web-app/upstream/overlays ../../apps/profiles/upstream/overlays ../../apps/jupyter/notebook-controller/upstream/overlays ../../apps/tensorboard/tensorboard-controller/upstream/overlays",
     "kserve": "../../apps/kserve - ../../apps/kserve/models-web-app/overlays/kubeflow",
     "model-registry": "../../apps/model-registry/upstream",
-    "spark": "apps/spark/spark-operator/overlays/kubeflow",
+    "spark": "../../apps/spark/spark-operator/overlays/kubeflow",
 }
 
 DIRECTORY = "../../image_lists"
