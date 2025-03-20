@@ -44,16 +44,16 @@ jobs:
     - name: Install knative
       run: ./tests/gh-actions/install_knative.sh
 
-    - name: Build & Apply manifests
+    - name: Install KServe
       run: ./tests/gh-actions/install_kserve.sh
 
-    - name: Create test namespace
+    - name: Create test namespace # TODO to be removed and instead we shall use kubeflow-user-example-com
       run: kubectl create ns kserve-test
 
-    - name: Setup python 3.9
+    - name: Setup python 3.12
       uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: 3.12
 
     - name: Install test dependencies
       run: pip install -r ./apps/kserve/tests/requirements.txt
@@ -64,10 +64,13 @@ jobs:
         nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
         while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
 
-    - name: Run kserve tests with m2m token from SA default/default
+    - name: Run kserve tests with m2m token from SA default/default # TODO Run kserve tests with m2m token from SA kubeflow-user-example-com/default-editor
       run: |
+        # TODO run the tests against  kubeflow-user-example-com
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
         export KSERVE_M2M_TOKEN="$(kubectl -n default create token default)"
+        # TODO export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
+        # TODO in contrib/kserve/tests/utils.py use KSERVE_TEST_NAMESPACE = "kubeflow-user-example-com"
         cd ./apps/kserve/tests && pytest . -vs --log-level info
 
     - name: Run and fail kserve tests without kserve m2m token
@@ -80,3 +83,7 @@ jobs:
           echo "Task failed successfully!"
           echo "This is a provisional way of testing that m2m is enabled for kserve."
         fi
+
+    - name: Run kserve models webapp test
+      run: |
+        kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app
