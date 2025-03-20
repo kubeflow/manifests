@@ -31,12 +31,12 @@ from prettytable import PrettyTable
 
 # Dictionary mapping Kubeflow workgroups to directories containing kustomization files
 wg_dirs = {
-    "automl": "../../apps/katib/upstream/installs",
+    "katib": "../../apps/katib/upstream/installs",
     "pipelines": "../../apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user",
-    "training": "../../apps/training-operator/upstream/overlays",
+    "trainer": "../../apps/training-operator/upstream/overlays",
     "manifests": "../../common/cert-manager/cert-manager/base ../../common/cert-manager/kubeflow-issuer/base ../../common/istio-1-24/istio-crds/base ../../common/istio-1-24/istio-namespace/base ../../common/istio-1-24/istio-install/overlays/oauth2-proxy ../../common/oauth2-proxy/overlays/m2m-self-signed ../../common/dex/overlays/oauth2-proxy ../../common/knative/knative-serving/overlays/gateways ../../common/knative/knative-eventing/base ../../common/istio-1-24/cluster-local-gateway/base ../../common/kubeflow-namespace/base ../../common/kubeflow-roles/base ../../common/istio-1-24/kubeflow-istio-resources/base",
     "workbenches": "../../apps/pvcviewer-controller/upstream/base ../../apps/admission-webhook/upstream/overlays ../../apps/centraldashboard/overlays ../../apps/jupyter/jupyter-web-app/upstream/overlays ../../apps/volumes-web-app/upstream/overlays ../../apps/tensorboard/tensorboards-web-app/upstream/overlays ../../apps/profiles/upstream/overlays ../../apps/jupyter/notebook-controller/upstream/overlays ../../apps/tensorboard/tensorboard-controller/upstream/overlays",
-    "serving": "../../apps/kserve - ../../apps/kserve/models-web-app/overlays/kubeflow",
+    "kserve": "../../apps/kserve - ../../apps/kserve/models-web-app/overlays/kubeflow",
     "model-registry": "../../apps/model-registry/upstream",
     "spark": "apps/spark/spark-operator/overlays/kubeflow",
 }
@@ -361,13 +361,14 @@ with open(summary_file, "r") as file:
 
 # Define a mapping for working group names
 groupnames = {
-    "Automl": "AutoML",
+    "Katib": "Katib",
     "Pipelines": "Pipelines",
     "Workbenches": "Workbenches(Notebooks)",
-    "Serving": "Kserve",
+    "Kserve": "Kserve",
     "Manifests": "Manifests",
-    "Training": "Training",
+    "Trainer": "Trainer",
     "Model-registry": "Model Registry",
+    "Spark": "Spark",
     "total": "All Images",
 }
 
