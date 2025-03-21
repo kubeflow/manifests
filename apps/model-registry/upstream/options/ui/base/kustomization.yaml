@@ -9,5 +9,5 @@ resources:
 
 images:
 - name: model-registry-ui
-  newName: docker.io/kubeflow/model-registry-ui
-  newTag: v0.2.15
+  newName: ghcr.io/kubeflow/model-registry/ui
+  newTag: v0.2.15.3
