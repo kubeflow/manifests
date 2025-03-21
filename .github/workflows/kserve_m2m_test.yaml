@@ -37,12 +37,6 @@ jobs:
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh
 
-    - name: Create kubeflow namespace
-      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
-
-    - name: Install kubeflow-istio-resources
-      run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
-
     - name: Install knative
       run: ./tests/gh-actions/install_knative.sh
 
@@ -52,16 +46,36 @@ jobs:
     - name: Install KF Multi Tenancy
       run: ./tests/gh-actions/install_multi_tenancy.sh
 
-    - name: Create KF Profile # this creates the namespace kubeflow-user-example-com
-      run: kustomize build common/user-namespace/base | kubectl apply -f -
+    - name: Install kubeflow-istio-resources
+      run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
 
-    - name: Wait for KF Profile to be ready
+    - name: Create KF Profile
       run: |
-        set -euxo
-        kubectl get namespace kubeflow-user-example-com
-        kubectl wait --for=jsonpath='{.status.phase}'=Active namespace/kubeflow-user-example-com --timeout=30s
-        kubectl get serviceaccounts -n kubeflow-user-example-com
-        kubectl wait --for=condition=exists serviceaccount/default-editor -n kubeflow-user-example-com --timeout=30s
+        kustomize build common/user-namespace/base | kubectl apply -f -
+        sleep 30 # for the metacontroller to create the secret
+
+        METACONTROLLER_POD=$(kubectl get pods -n kubeflow -o json | jq -r '.items[] | select(.metadata.name | startswith("metacontroller")) | .metadata.name')
+        if [[ -z "$METACONTROLLER_POD" ]]; then
+          echo "Error: metacontroller pod not found in kubeflow namespace."
+          exit 1
+        fi
+        kubectl logs -n kubeflow "$METACONTROLLER_POD"
+
+        PIPELINES_PROFILE_CONTROLLER_POD=$(kubectl get pods -n kubeflow -o json | jq -r '.items[] | select(.metadata.name | startswith("kubeflow-pipelines-profile-controller")) | .metadata.name')
+        if [[ -z "$PIPELINES_PROFILE_CONTROLLER_POD" ]]; then
+          echo "Error: kubeflow-pipelines-profile-controller pod not found in kubeflow namespace."
+          exit 1
+        fi
+        kubectl logs -n kubeflow "$PIPELINES_PROFILE_CONTROLLER_POD"
+
+        KF_PROFILE=kubeflow-user-example-com
+        kubectl -n $KF_PROFILE get pods,configmaps,secrets
+
+        if ! kubectl get secret mlpipeline-minio-artifact -n $KF_PROFILE > /dev/null 2>&1; then
+          echo "Error: Secret mlpipeline-minio-artifact not found in namespace $KF_PROFILE"
+          exit 1
+        fi
+        kubectl get secret mlpipeline-minio-artifact -n "$KF_PROFILE" -o json | jq -r '.data | keys[] as $k | "\($k): \(. | .[$k] | @base64d)"' | tr '\n' ' '
 
     - name: Apply KServe predictor AuthorizationPolicy
       run: |
