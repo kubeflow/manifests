@@ -72,11 +72,15 @@ jobs:
             exit 1
         fi
         kubectl wait --for=condition=available -n kubeflow deployment/model-registry-deployment --timeout=600s
-    - name: Test KF Model Registry deployment
+    - name: Test KF Model Registry UI deployment
       run: |
         echo "Waiting for all Model Registry UI Pods to become ready..."
-        kubectl wait --for=condition=available -n kubeflow deployment/model-registry-ui --timeout=600s
-
+        if ! kubectl wait --for=condition=available -n kubeflow deployment/model-registry-ui --timeout=600s ; then
+            kubectl events -A
+            kubectl describe deployment/model-registry-ui -n kubeflow
+            kubectl logs deployment/model-registry-ui -n kubeflow
+            exit 1
+        fi
     - name: Dry-run KF Model Registry API directly
       run: |
         echo "Dry-run KF Model Registry API directly..."
