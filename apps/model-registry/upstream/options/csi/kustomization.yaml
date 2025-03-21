@@ -5,6 +5,6 @@ namespace: kubeflow
 resources:
 - clusterstoragecontainer.yaml
 images:
-- name: kubeflow/model-registry-storage-initializer
-  newName: kubeflow/model-registry-storage-initializer
-  newTag: v0.2.15
+- name: ghcr.io/kubeflow/model-registry/storage-initializer
+  newName: ghcr.io/kubeflow/model-registry/storage-initializer
+  newTag: v0.2.15.3

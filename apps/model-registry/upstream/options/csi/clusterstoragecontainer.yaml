@@ -5,7 +5,7 @@ metadata:
 spec:
   container:
     name: storage-initializer
-    image: kubeflow/model-registry-storage-initializer:latest
+    image: ghcr.io/kubeflow/model-registry/storage-initializer:latest
     env:
     - name: MODEL_REGISTRY_BASE_URL
       value: "model-registry-service.kubeflow.svc.cluster.local:8080"

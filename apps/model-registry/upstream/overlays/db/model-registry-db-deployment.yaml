@@ -16,7 +16,6 @@ spec:
       name: db
       labels:
         component: db
-      annotations:
         sidecar.istio.io/inject: "false"
     spec:
       securityContext:
