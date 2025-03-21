@@ -37,6 +37,9 @@ jobs:
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh
 
+    - name: Create kubeflow namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
     - name: Install knative
       run: ./tests/gh-actions/install_knative.sh
 
