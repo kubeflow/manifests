@@ -19,6 +19,9 @@ spec:
         katib.kubeflow.org/component: mysql
         sidecar.istio.io/inject: "false"
     spec:
+      securityContext:
+        fsGroup: 999
+        fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: katib-mysql
           image: mysql:8.0.29
@@ -68,11 +71,12 @@ spec:
             - name: katib-mysql
               mountPath: /var/lib/mysql
           securityContext:
-            runAsNonRoot: true
             allowPrivilegeEscalation: false
-            runAsUser: 1000
             seccompProfile:
               type: RuntimeDefault
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 999
             capabilities:
               drop:
               - ALL
