@@ -55,6 +55,11 @@ jobs:
     - name: Create KF Profile
       run: kustomize build common/user-namespace/base | kubectl apply -f -
 
+    - name: Create namespace directly (workaround for testing)
+      run: |
+          kubectl create namespace kubeflow-user-example-com
+          kubectl label namespace kubeflow-user-example-com istio-injection=enabled
+
     - name: Wait for KF Profile to be ready
       run: |
         echo "Waiting for namespace to be active..."
