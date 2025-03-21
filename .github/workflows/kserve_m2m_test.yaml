@@ -15,7 +15,6 @@ on:
     - common/knative/**
     - tests/gh-actions/install_knative.sh
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,9 +28,6 @@ jobs:
     - name: Install kubectl
       run: ./tests/gh-actions/install_kubectl.sh
 
-    - name: Create kubeflow namespace
-      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
-
     - name: Install Istio
       run: ./tests/gh-actions/install_istio.sh
 
@@ -41,14 +37,51 @@ jobs:
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh
 
+    - name: Create kubeflow namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
     - name: Install knative
       run: ./tests/gh-actions/install_knative.sh
 
     - name: Install KServe
       run: ./tests/gh-actions/install_kserve.sh
 
-    - name: Create test namespace # TODO to be removed and instead we shall use kubeflow-user-example-com
-      run: kubectl create ns kserve-test
+    - name: Install KF Multi Tenancy
+      run: ./tests/gh-actions/install_multi_tenancy.sh
+
+    - name: Install kubeflow-istio-resources
+      run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
+
+    - name: Create KF Profile
+      run: |
+        kustomize build common/user-namespace/base | kubectl apply -f -
+        sleep 30 # for the Profile controller to create the namespace from the profile
+
+        PROFILE_CONTROLLER_POD=$(kubectl get pods -n kubeflow -o json | jq -r '.items[] | select(.metadata.name | startswith("profiles-deployment")) | .metadata.name')
+        if [[ -z "$PROFILE_CONTROLLER_POD" ]]; then
+          echo "Error: profiles-deployment pod not found in kubeflow namespace."
+          exit 1
+        fi
+        kubectl logs -n kubeflow "$PROFILE_CONTROLLER_POD"
+        KF_PROFILE=kubeflow-user-example-com
+        kubectl -n $KF_PROFILE get pods,configmaps,secrets
+
+    - name: Apply KServe predictor AuthorizationPolicy
+      run: |
+          cat <<EOF | kubectl apply -f -
+          apiVersion: security.istio.io/v1beta1
+          kind: AuthorizationPolicy
+          metadata:
+            name: sklearn-iris-predictor-allow
+            namespace: kubeflow-user-example-com
+          spec:
+            selector:
+              matchLabels:
+                serving.knative.dev/service: sklearn-iris-predictor
+            action: ALLOW
+            rules:
+            - {}
+          EOF
 
     - name: Setup python 3.12
       uses: actions/setup-python@v4
@@ -64,13 +97,10 @@ jobs:
         nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
         while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
 
-    - name: Run kserve tests with m2m token from SA default/default # TODO Run kserve tests with m2m token from SA kubeflow-user-example-com/default-editor
+    - name: Run kserve tests with m2m token from SA kubeflow-user-example-com/default-editor
       run: |
-        # TODO run the tests against  kubeflow-user-example-com
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
-        export KSERVE_M2M_TOKEN="$(kubectl -n default create token default)"
-        # TODO export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
-        # TODO in contrib/kserve/tests/utils.py use KSERVE_TEST_NAMESPACE = "kubeflow-user-example-com"
+        export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
         cd ./apps/kserve/tests && pytest . -vs --log-level info
 
     - name: Run and fail kserve tests without kserve m2m token
@@ -87,3 +117,18 @@ jobs:
     - name: Run kserve models webapp test
       run: |
         kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app
+
+    - name: Apply Pod Security Standards baseline levels
+      run: ./tests/gh-actions/enable_baseline_PSS.sh
+
+    - name: Unapply applied baseline labels
+      run: |
+        NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow" "knative-serving")
+        for NAMESPACE in "${NAMESPACES[@]}"; do
+          if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
+            kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce-
+          fi
+        done
+
+    - name: Applying Pod Security Standards restricted levels
+      run: ./tests/gh-actions/enable_restricted_PSS.sh
