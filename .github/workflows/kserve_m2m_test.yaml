@@ -37,20 +37,23 @@ jobs:
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh
 
+    - name: Create kubeflow namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+    - name: Install kubeflow-istio-resources
+      run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
+
     - name: Install knative
       run: ./tests/gh-actions/install_knative.sh
 
     - name: Install KServe
       run: ./tests/gh-actions/install_kserve.sh
 
-    - name: Install KF Multi Tenancy
-      run: ./tests/gh-actions/install_multi_tenancy.sh
-
-    - name: Install kubeflow-istio-resources
-      run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
-
     - name: Create KF Profile
       run: kustomize build common/user-namespace/base | kubectl apply -f -
+
+    - name: Install KF Multi Tenancy
+      run: ./tests/gh-actions/install_multi_tenancy.sh
 
     - name: Wait for KF Profile to be ready
       run: |
