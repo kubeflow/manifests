@@ -49,11 +49,11 @@ jobs:
     - name: Install KServe
       run: ./tests/gh-actions/install_kserve.sh
 
-    - name: Create KF Profile
-      run: kustomize build common/user-namespace/base | kubectl apply -f -
-
     - name: Install KF Multi Tenancy
       run: ./tests/gh-actions/install_multi_tenancy.sh
+
+    - name: Create KF Profile
+      run: kustomize build common/user-namespace/base | kubectl apply -f -
 
     - name: Wait for KF Profile to be ready
       run: |
