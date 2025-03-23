@@ -9,7 +9,7 @@ on:
     - common/istio*/**
     - experimental/security/PSS/*
     - common/dex/base/**
-    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_istio*.sh
 
 jobs:
   build:
