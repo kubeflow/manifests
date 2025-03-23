@@ -83,6 +83,53 @@ jobs:
             - {}
           EOF
 
+    - name: Apply additional KServe path AuthorizationPolicy
+      run: |
+          cat <<EOF | kubectl apply -f -
+          apiVersion: security.istio.io/v1beta1
+          kind: AuthorizationPolicy
+          metadata:
+            name: allow-in-cluster-kserve
+            namespace: kubeflow-user-example-com
+          spec:
+            rules:
+              - to:
+                  - operation:
+                      paths:
+                        - /v1/models/*
+                        - /v2/models/*
+          EOF
+
+    - name: Add KServe path-based routing for external access
+      run: |
+        cat <<EOF | kubectl apply -f -
+        apiVersion: networking.istio.io/v1beta1
+        kind: VirtualService
+        metadata:
+          name: isvc-sklearn-external
+          namespace: kubeflow-user-example-com
+        spec:
+          gateways:
+            - kubeflow/kubeflow-gateway
+          hosts:
+            - '*'
+          http:
+            - match:
+                - uri:
+                    prefix: /kserve/kubeflow-user-example-com/isvc-sklearn/
+              rewrite:
+                uri: /
+              route:
+                - destination:
+                    host: knative-local-gateway.istio-system.svc.cluster.local
+                  headers:
+                    request:
+                      set:
+                        Host: isvc-sklearn-predictor-default.kubeflow-user-example-com.svc.cluster.local
+                  weight: 100
+              timeout: 300s
+        EOF
+
     - name: Setup python 3.12
       uses: actions/setup-python@v4
       with:
@@ -113,6 +160,18 @@ jobs:
           echo "Task failed successfully!"
           echo "This is a provisional way of testing that m2m is enabled for kserve."
         fi
+
+    - name: Test path-based external access
+      run: |
+        export KSERVE_INGRESS_HOST_PORT=localhost:8080
+        export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
+
+        # Test external path-based access
+        curl -v -H "Host: isvc-sklearn.kubeflow-user-example-com.example.com" \
+            -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
+            -H "Content-Type: application/json" \
+            "http://${KSERVE_INGRESS_HOST_PORT}/kserve/kubeflow-user-example-com/isvc-sklearn/v1/models/isvc-sklearn:predict" \
+            -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}'
 
     - name: Run kserve models webapp test
       run: |
