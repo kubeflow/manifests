@@ -7,7 +7,7 @@ on:
     - apps/kserve/**
     - tests/gh-actions/install_kserve.sh
     - common/istio*/**
-    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_istio*.sh
     - common/oauth2-proxy/**
     - tests/gh-actions/install_oauth2-proxy.sh
     - common/cert-manager/**
@@ -83,7 +83,7 @@ jobs:
             - {}
           EOF
 
-    - name: Apply additional KServe path AuthorizationPolicy
+    - name: Apply additional KServe path AuthorizationPolicy # TODO must be restricted to the variable of the same namespace and istio-system or knative-serving, what ever is strictly required, please find the minimal secure set
       run: |
           cat <<EOF | kubectl apply -f -
           apiVersion: security.istio.io/v1beta1
@@ -150,7 +150,7 @@ jobs:
         export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
         cd ./apps/kserve/tests && pytest . -vs --log-level info
 
-    - name: Run and fail kserve tests without kserve m2m token
+    - name: Run and fail kserve tests without kserve m2m token # You should try no tken and token from the wrong namespace
       run: |
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
         cd ./apps/kserve/tests
@@ -161,7 +161,7 @@ jobs:
           echo "This is a provisional way of testing that m2m is enabled for kserve."
         fi
 
-    - name: Test path-based external access
+    - name: Test path-based external access # We also need a test with a token from another namespace that fails.  # You should try no tken and token from the wrong namespace
       run: |
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
         export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
