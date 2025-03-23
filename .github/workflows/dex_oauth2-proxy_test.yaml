@@ -25,7 +25,7 @@ jobs:
       run: ./tests/gh-actions/install_cert_manager.sh
 
     - name: Install Istio CNI
-      run: ./tests/gh-actions/install_istio-cni.sh
+      run: ./tests/gh-actions/install_istio-cni.sh 
 
     - name: Install oauth2-proxy
       run: ./tests/gh-actions/install_oauth2-proxy.sh
@@ -46,11 +46,6 @@ jobs:
 
         echo "Waiting for pods in auth namespace to become ready..."
         kubectl wait --for=condition=ready pods --all --timeout=180s -n auth
-
-    - name: Build & Apply manifests
-      run: |
-        while ! kustomize build ./tests/gh-actions/deploy-dex-login-environment | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 20; done
-        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
 
     - name: port forward
       run: |
