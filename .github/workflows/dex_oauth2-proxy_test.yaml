@@ -25,7 +25,7 @@ jobs:
       run: ./tests/gh-actions/install_cert_manager.sh
 
     - name: Install Istio CNI
-      run: ./tests/gh-actions/install_istio-cni.sh 
+      run: ./tests/gh-actions/install_istio-cni.sh
 
     - name: Install oauth2-proxy
       run: ./tests/gh-actions/install_oauth2-proxy.sh
