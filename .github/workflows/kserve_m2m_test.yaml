@@ -28,7 +28,7 @@ jobs:
     - name: Install kubectl
       run: ./tests/gh-actions/install_kubectl.sh
 
-    - name: Install Istio
+    - name: Install Istio CNI
       run: ./tests/gh-actions/install_istio-cni.sh
 
     - name: Install oauth2-proxy
@@ -40,8 +40,8 @@ jobs:
     - name: Create kubeflow namespace
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
-    - name: Install knative
-      run: ./tests/gh-actions/install_knative.sh
+    - name: Install knative CNI
+      run: ./tests/gh-actions/install_knative-cni.sh
 
     - name: Install KServe
       run: ./tests/gh-actions/install_kserve.sh
@@ -83,22 +83,25 @@ jobs:
             - {}
           EOF
 
-    - name: Apply additional KServe path AuthorizationPolicy # TODO must be restricted to the variable of the same namespace and istio-system or knative-serving, what ever is strictly required, please find the minimal secure set
+    - name: Apply additional KServe path AuthorizationPolicy
       run: |
-          cat <<EOF | kubectl apply -f -
-          apiVersion: security.istio.io/v1beta1
-          kind: AuthorizationPolicy
-          metadata:
-            name: allow-in-cluster-kserve
-            namespace: kubeflow-user-example-com
-          spec:
-            rules:
-              - to:
-                  - operation:
-                      paths:
-                        - /v1/models/*
-                        - /v2/models/*
-          EOF
+        cat <<EOF | kubectl apply -f -
+        apiVersion: security.istio.io/v1beta1
+        kind: AuthorizationPolicy
+        metadata:
+          name: allow-in-cluster-kserve
+          namespace: kubeflow-user-example-com
+        spec:
+          rules:
+            - from:
+                - source:
+                    namespaces: [".", "istio-system", "knative-serving"]
+              to:
+                - operation:
+                    paths:
+                      - /v1/models/*
+                      - /v2/models/*
+        EOF
 
     - name: Add KServe path-based routing for external access
       run: |
@@ -144,13 +147,24 @@ jobs:
         nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
         while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
 
+    - name: Verify CNI is being used instead of init containers
+      run: |
+        INIT_CONTAINERS=$(kubectl get pods -A -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{range .spec.initContainers[*]}{.name}{"\n"}{end}{"\n"}{end}' | grep istio-init || echo "none")
+        if [[ "$INIT_CONTAINERS" != "none" ]]; then
+          echo "Error: Found istio-init containers, CNI is not being used properly"
+          echo "$INIT_CONTAINERS"
+          exit 1
+        else
+          echo "Success: No istio-init containers found, CNI is working correctly"
+        fi
+
     - name: Run kserve tests with m2m token from SA kubeflow-user-example-com/default-editor
       run: |
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
         export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
         cd ./apps/kserve/tests && pytest . -vs --log-level info
 
-    - name: Run and fail kserve tests without kserve m2m token # You should try no tken and token from the wrong namespace
+    - name: Run and fail kserve tests without kserve m2m token
       run: |
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
         cd ./apps/kserve/tests
@@ -161,7 +175,25 @@ jobs:
           echo "This is a provisional way of testing that m2m is enabled for kserve."
         fi
 
-    - name: Test path-based external access # We also need a test with a token from another namespace that fails.  # You should try no tken and token from the wrong namespace
+    - name: Test that token from attacker namespace is rejected
+      run: |
+        export KSERVE_INGRESS_HOST_PORT=localhost:8080
+        kubectl create ns kubeflow-user-example-com-attacker
+        kubectl create serviceaccount attacker-sa -n kubeflow-user-example-com-attacker
+        export ATTACKER_TOKEN="$(kubectl -n kubeflow-user-example-com-attacker create token attacker-sa)"
+        RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: isvc-sklearn.kubeflow-user-example-com.example.com" \
+            -H "Authorization: Bearer ${ATTACKER_TOKEN}" \
+            -H "Content-Type: application/json" \
+            "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
+            -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}')
+        if [[ "$RESPONSE" == "403" || "$RESPONSE" == "401" ]]; then
+          echo "Security test passed: Request with attacker token was correctly rejected with $RESPONSE"
+        else
+          echo "Security test failed: Request with attacker token returned $RESPONSE instead of 403/401"
+          exit 1
+        fi
+
+    - name: Test path-based external access
       run: |
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
         export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
