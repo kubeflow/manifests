@@ -82,7 +82,7 @@ jobs:
           spec:
             selector:
               matchLabels:
-                serving.knative.dev/service: isvc-sklearn-predictor-default
+                serving.knative.dev/service: isvc-sklearn-predictor
             action: ALLOW
             rules:
             - from:
