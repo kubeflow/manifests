@@ -66,6 +66,11 @@ jobs:
         KF_PROFILE=kubeflow-user-example-com
         kubectl -n $KF_PROFILE get pods,configmaps,secrets
 
+    - name: Diagnose KServe Service Labels
+      run: |
+        echo "=== KServe Predictor Service Labels ==="
+        kubectl get pods -n kubeflow-user-example-com -l serving.knative.dev/service=isvc-sklearn-predictor-default --show-labels
+
     - name: Apply KServe predictor AuthorizationPolicy
       run: |
           cat <<EOF | kubectl apply -f -
@@ -80,7 +85,18 @@ jobs:
                 serving.knative.dev/service: isvc-sklearn-predictor-default
             action: ALLOW
             rules:
-            - {}
+            - from:
+                - source:
+                    namespaces:
+                    - "kubeflow-user-example-com"
+                    - "istio-system"
+                    - "knative-serving"
+                    - "default"
+              to:
+                - operation:
+                    paths:
+                    - "/v1/models/*"
+                    - "/v2/models/*"
           EOF
 
     - name: Apply additional KServe path AuthorizationPolicy
@@ -160,6 +176,22 @@ jobs:
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
         export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
         cd ./apps/kserve/tests && pytest . -vs --log-level info
+
+    - name: Detailed KServe Access Diagnostics
+      run: |
+        export KSERVE_INGRESS_HOST_PORT=localhost:8080
+        export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
+
+        echo "=== AuthorizationPolicy Details ==="
+        kubectl get authorizationpolicy -n kubeflow-user-example-com -o yaml
+
+        echo "=== Detailed Curl Test ==="
+        curl -vv \
+          -H "Host: isvc-sklearn.kubeflow-user-example-com.example.com" \
+          -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
+          -H "Content-Type: application/json" \
+          "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
+          -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}'
 
     - name: Run and fail kserve tests without kserve m2m token
       run: |
