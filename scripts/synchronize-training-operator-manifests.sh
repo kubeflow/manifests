@@ -3,7 +3,7 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="778cd72" #"v1.9.0" # You can use tags as well
+COMMIT="v1.9.1" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kubeflow-training-operator}
 BRANCH=${BRANCH:=synchronize-kubeflow-training-operator-manifests-${COMMIT?}}
 
