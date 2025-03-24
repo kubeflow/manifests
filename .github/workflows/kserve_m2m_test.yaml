@@ -66,32 +66,38 @@ jobs:
         KF_PROFILE=kubeflow-user-example-com
         kubectl -n $KF_PROFILE get pods,configmaps,secrets
 
-    - name: Apply KServe AuthorizationPolicy
+    - name: Apply KServe predictor AuthorizationPolicy
       run: |
           cat <<EOF | kubectl apply -f -
           apiVersion: security.istio.io/v1beta1
           kind: AuthorizationPolicy
           metadata:
-            name: kserve-model-access-control
+            name: sklearn-iris-predictor-allow
             namespace: kubeflow-user-example-com
           spec:
             selector:
               matchLabels:
-                serving.knative.dev/service: sklearn-iris-predictor
+                serving.knative.dev/service: isvc-sklearn-predictor-default
             action: ALLOW
             rules:
-            - from:
-                - source:
-                    namespaces: ["kubeflow-user-example-com"]
-                - source:
-                    namespaces: ["istio-system"]
-                - source:
-                    namespaces: ["knative-serving"]
-              to:
-                - operation:
-                    paths:
-                      - "/v1/models/*"
-                      - "/v2/models/*"
+            - {}
+          EOF
+
+    - name: Apply additional KServe path AuthorizationPolicy
+      run: |
+          cat <<EOF | kubectl apply -f -
+          apiVersion: security.istio.io/v1beta1
+          kind: AuthorizationPolicy
+          metadata:
+            name: allow-in-cluster-kserve
+            namespace: kubeflow-user-example-com
+          spec:
+            rules:
+              - to:
+                  - operation:
+                      paths:
+                        - /v1/models/*
+                        - /v2/models/*
           EOF
 
     - name: Add KServe path-based routing for external access
