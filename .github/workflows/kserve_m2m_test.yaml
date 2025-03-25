@@ -87,11 +87,21 @@ jobs:
             rules:
             - from:
                 - source:
-                    namespaces:
-                    - "kubeflow-user-example-com"
-                    - "istio-system"
-                    - "knative-serving"
-                    - "default"
+                    principals:
+                    - "cluster.local/ns/kubeflow-user-example-com/sa/default-editor"
+                    - "cluster.local/ns/kubeflow-user-example-com/sa/default"
+                    - "cluster.local/ns/kubeflow-user-example-com/sa/default-viewer"
+                    - "cluster.local/ns/knative-serving/sa/controller"
+                    - "cluster.local/ns/knative-serving/sa/activator"
+                    - "cluster.local/ns/knative-serving/sa/default"
+                    - "cluster.local/ns/istio-system/sa/cluster-jwks-proxy"
+                    - "cluster.local/ns/istio-system/sa/cluster-local-gateway-service-account"
+                    - "cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account"
+                    - "cluster.local/ns/istio-system/sa/istiod"
+                    - "cluster.local/ns/kubeflow/sa/kserve-controller-manager"
+                    - "cluster.local/ns/kubeflow/sa/kserve-localmodel-controller-manager"
+                    - "cluster.local/ns/kubeflow/sa/kserve-localmodelnode-agent"
+                    - "cluster.local/ns/kubeflow/sa/kserve-models-web-app"
               to:
                 - operation:
                     paths:
