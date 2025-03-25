@@ -9,7 +9,7 @@ on:
     - common/istio*/**
     - experimental/security/PSS/*
     - common/dex/base/**
-    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_istio*.sh
 
 jobs:
   build:
@@ -47,10 +47,23 @@ jobs:
         echo "Waiting for pods in auth namespace to become ready..."
         kubectl wait --for=condition=ready pods --all --timeout=180s -n auth
 
-    - name: Build & Apply manifests
+    - name: Install central-dashboard
       run: |
-        while ! kustomize build ./tests/gh-actions/deploy-dex-login-environment | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 20; done
+        kustomize build apps/centraldashboard/upstream/overlays/kserve | kubectl apply -f -
         kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
+
+    - name: Create KF Profile
+      run: |
+        kustomize build common/user-namespace/base | kubectl apply -f -
+        sleep 30 # for the Profile controller to create the namespace from the profile
+        PROFILE_CONTROLLER_POD=$(kubectl get pods -n kubeflow -o json | jq -r '.items[] | select(.metadata.name | startswith("profiles-deployment")) | .metadata.name')
+        if [[ -z "$PROFILE_CONTROLLER_POD" ]]; then
+          echo "Error: profiles-deployment pod not found in kubeflow namespace."
+          exit 1
+        fi
+        kubectl logs -n kubeflow "$PROFILE_CONTROLLER_POD"
+        KF_PROFILE=kubeflow-user-example-com
+        kubectl -n $KF_PROFILE get pods,configmaps,secrets
 
     - name: port forward
       run: |
