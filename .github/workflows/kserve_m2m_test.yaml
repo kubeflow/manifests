@@ -71,39 +71,40 @@ jobs:
         echo "=== KServe Predictor Service Labels ==="
         kubectl get pods -n kubeflow-user-example-com -l serving.knative.dev/service=isvc-sklearn-predictor-default --show-labels
 
-    - name: Apply KServe predictor AuthorizationPolicy
-      run: |
-          cat <<EOF | kubectl apply -f -
-          apiVersion: security.istio.io/v1beta1
-          kind: AuthorizationPolicy
-          metadata:
-            name: sklearn-iris-predictor-allow
-            namespace: kubeflow-user-example-com
-          spec:
-            selector:
-              matchLabels:
-                serving.knative.dev/service: isvc-sklearn-predictor
-            action: ALLOW
-            rules:
-            - from:
-                - source:
-                    namespaces:
-                    - "istio-system"
-                    - "knative-serving"
-                    - "kubeflow"
-                    - "kubeflow-user-example-com"
-                - principals:
-                  - "cluster.local/ns/kubeflow-user-example-com/sa/default-editor"
-                  - "cluster.local/ns/kubeflow-user-example-com/sa/default"
-                  - "cluster.local/ns/kubeflow-user-example-com/sa/default-viewer"
-              to:
-                - operation:
-                    paths:
-                    - "/v1/models/*"
-                    - "/v2/models/*"
-          EOF
+    # TODO for follow up PR
+    #- name: Apply KServe predictor AuthorizationPolicy
+    #  run: |
+    #      cat <<EOF | kubectl apply -f -
+    #      apiVersion: security.istio.io/v1beta1
+    #      kind: AuthorizationPolicy
+    #      metadata:
+    #        name: sklearn-iris-predictor-allow
+    #        namespace: kubeflow-user-example-com
+    #      spec:
+    #        selector:
+    #          matchLabels:
+    #            serving.knative.dev/service: isvc-sklearn-predictor
+    #        action: ALLOW
+    #        rules:
+    #        - from:
+    #            - source:
+    #                namespaces:
+    #                - "istio-system"
+    #                - "knative-serving"
+    #               - "kubeflow"
+    #              - "kubeflow-user-example-com"
+    #            - principals:
+    #              - "cluster.local/ns/kubeflow-user-example-com/sa/default-editor"
+    #              - "cluster.local/ns/kubeflow-user-example-com/sa/default"
+    #              - "cluster.local/ns/kubeflow-user-example-com/sa/default-viewer"
+    #          to:
+    #            - operation:
+    #                paths:
+    #                - "/v1/models/*"
+    #                - "/v2/models/*"
+    #     EOF
 
-    - name: Apply additional KServe path AuthorizationPolicy
+    - name: Apply INSECURE KServe AuthorizationPolicy
       run: |
           cat <<EOF | kubectl apply -f -
           apiVersion: security.istio.io/v1beta1
@@ -208,7 +209,7 @@ jobs:
       #    echo "Task failed successfully!"
       #    echo "This is a provisional way of testing that m2m is enabled for kserve."
       #  fi
-      
+
     # TODO FOR FOLLOW UP PR
     #- name: Test that token from attacker namespace is rejected
     #  run: |
