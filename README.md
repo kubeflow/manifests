@@ -5,7 +5,7 @@ The **Kubeflow Manifests** are a collection of community-maintained manifests fo
 For a stable and conservative experience, we recommend using the [latest stable release](https://github.com/kubeflow/manifests/releases). However, please consult the more up-to-date documentation in the master branch.
 
 - **Kubeflow 1.10:**
-  - [`v1.10.0`](https://github.com/kubeflow/manifests/tree/v1.10.0#installation)
+  - [`v1.10.0`](https://github.com/kubeflow/manifests/tree/v1.10-branch)
 
 You can also install the master branch of [`kubeflow/manifests`](https://github.com/kubeflow/manifests) by following the instructions [here](https://github.com/kubeflow/manifests?tab=readme-ov-file#installation) and providing us with feedback.
 
