@@ -3,7 +3,7 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-COMMIT="v0.18.0-rc.0" # You can use tags as well
+COMMIT="v0.18.0" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kubeflow-katib}
 BRANCH=${BRANCH:=synchronize-kubeflow-katib-manifests-${COMMIT?}}
 
