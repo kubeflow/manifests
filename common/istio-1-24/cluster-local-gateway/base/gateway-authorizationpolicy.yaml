@@ -1,12 +1,10 @@
-# Enforce OAuth2-proxy authentication for cluster-local-gateway
+# Allow all traffic to the cluster-local-gateway
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: cluster-local-gateway-oauth2-proxy
+  name: cluster-local-gateway
 spec:
-  action: CUSTOM
-  provider:
-    name: oauth2-proxy
+  action: ALLOW
   selector:
     # Same as the cluster-local-gateway Service selector
     matchLabels:
