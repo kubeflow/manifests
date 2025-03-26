@@ -6,7 +6,7 @@ spec:
   replicas: 1
   template:
     metadata:
-      annotations:
+      labels:
         sidecar.istio.io/inject: "false"
     spec:
       containers:
@@ -57,4 +57,3 @@ spec:
       - name: hooks
         configMap:
           name: kubeflow-pipelines-profile-controller-code
-
