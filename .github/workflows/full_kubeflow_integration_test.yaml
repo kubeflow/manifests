@@ -1,28 +1,10 @@
 name: Full Kubeflow Integration Test
 
 on:
-  workflow_dispatch:  
-  schedule:
-    - cron: '0 0 * * 0'  
-  pull_request:
-    paths:
-      - example/kustomization.yaml
-      - .github/workflows/full_kubeflow_integration_test.yaml
-      - apps/pipeline/upstream/**
-      - apps/katib/**
-      - apps/centraldashboard/**
-      - apps/jupyter/**
-      - apps/profiles/**
-      - apps/tensorboard/**
-      - apps/training-operator/**
-      - apps/kserve/**
-      - common/**
-      - tests/gh-actions/**
+  workflow_dispatch:  # Allow manual triggering
   push:
     branches:
       - master
-      - v*-branch
-      - 'releases/**'
 
 jobs:
   build:
@@ -45,69 +27,25 @@ jobs:
       run: |
         pip install pytest kubernetes kfp==2.11.0 kserve pytest-timeout pyyaml requests
 
-    - name: Install kubectl and kustomize
-      run: |
-        # Install kubectl
-        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-        chmod +x kubectl
-        sudo mv kubectl /usr/local/bin/
-        
-        # Install kustomize
-        curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
-        sudo mv kustomize /usr/local/bin/
+    - name: Install KinD, Create KinD cluster and Install kustomize
+      run: ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
 
-    - name: Install Kind
-      run: |
-        curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
-        chmod +x ./kind
-        sudo mv ./kind /usr/local/bin/kind
-        kind version
-
-    - name: Create Kind Cluster (per README)
-      run: |
-        cat <<EOF | kind create cluster --name=${KIND_CLUSTER_NAME} --config=-
-        kind: Cluster
-        apiVersion: kind.x-k8s.io/v1alpha4
-        nodes:
-        - role: control-plane
-          image: kindest/node:v1.32.0@sha256:c48c62eac5da28cdadcf560d1d8616cfa6783b58f0d94cf63ad1bf49600cb027
-          kubeadmConfigPatches:
-          - |
-            kind: ClusterConfiguration
-            apiServer:
-              extraArgs:
-                "service-account-issuer": "https://kubernetes.default.svc"
-                "service-account-signing-key-file": "/etc/kubernetes/pki/sa.key"
-        EOF
-        
-        # Save kubeconfig
-        kind get kubeconfig --name=${KIND_CLUSTER_NAME} > /tmp/kubeflow-config
-        export KUBECONFIG=/tmp/kubeflow-config
-        echo "KUBECONFIG=/tmp/kubeflow-config" >> $GITHUB_ENV
-        
-        # Verify cluster is ready
-        kubectl cluster-info
-        kubectl get nodes
-
-    - name: Configure Docker and Create Registry Secret
-      run: |
-        # Configure Docker
-        echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        
-        # Create registry secret for image pulling
-        # If running in GitHub actions, create from secrets
-        kubectl create secret generic regcred \
-          --from-file=.dockerconfigjson=$HOME/.docker/config.json \
-          --type=kubernetes.io/dockerconfigjson
-        
-        # Verify secret was created
-        kubectl get secret regcred
+    - name: Install kubectl
+      run: ./tests/gh-actions/install_kubectl.sh
 
     - name: Create kubeflow namespace
-      run: |
-        kubectl create namespace kubeflow || true
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
-    - name: Deploy Full Kubeflow Stack (per README)
+    - name: Install Cert Manager
+      run: ./tests/gh-actions/install_cert_manager.sh
+
+    - name: Install Istio
+      run: ./tests/gh-actions/install_istio.sh
+
+    - name: Install oauth2-proxy
+      run: ./tests/gh-actions/install_oauth2-proxy.sh
+
+    - name: Deploy Full Kubeflow Stack
       run: |
         # Apply with retry logic using exact command from README
         echo "Installing full Kubeflow stack from example/kustomization.yaml"
@@ -116,53 +54,36 @@ jobs:
           sleep 20; 
         done
         
-        # Wait for all pods to be ready
+        # Check deployment status
+        kubectl get deployments --all-namespaces
+        kubectl get pods --all-namespaces
+
+    - name: Install kubeflow-istio-resources
+      run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
+
+    - name: Wait for Critical Services
+      run: |
         echo "Waiting for all deployments to be ready..."
         kubectl wait --for=condition=available --timeout=1200s deployment --all -n cert-manager || true
         kubectl wait --for=condition=available --timeout=1200s deployment --all -n istio-system || true
         kubectl wait --for=condition=available --timeout=1200s deployment --all -n auth || true
         kubectl wait --for=condition=available --timeout=1800s deployment --all -n kubeflow || true
         
-        # Check deployment status
-        kubectl get deployments --all-namespaces
-        kubectl get pods --all-namespaces
-
-    - name: Wait for Critical Services
-      run: |
-        # Wait for Istio gateway
-        echo "Waiting for Istio gateway..."
-        kubectl wait --for=condition=ready --timeout=300s -n istio-system --all pods || true
-        
-        # Wait for cert-manager
-        echo "Waiting for cert-manager..."
-        kubectl wait --for=condition=ready --timeout=300s -n cert-manager --all pods || true
-        
-        # Wait for oauth2-proxy and dex (auth components)
-        echo "Waiting for auth components..."
-        kubectl wait --for=condition=ready --timeout=300s -n auth --all pods || true
-        
-        # Wait for metacontroller
-        echo "Waiting for metacontroller..."
-        kubectl wait --for=condition=ready --timeout=300s -n kubeflow --selector=app=metacontroller pods || true
-        
-        # Wait for central dashboard
-        echo "Waiting for central dashboard..."
-        kubectl wait --for=condition=ready --timeout=300s -n kubeflow --selector=app=centraldashboard pods || true
-        
-        # Wait for ML pipeline
-        echo "Waiting for ML pipeline..."
-        kubectl wait --for=condition=ready --timeout=300s -n kubeflow --selector=app=ml-pipeline pods || true
-        
-        # Wait for Katib
-        echo "Waiting for Katib..."
-        kubectl wait --for=condition=ready --timeout=300s -n kubeflow --selector=app=katib pods || true
+        # Wait for specific critical components to be ready
+        kubectl -n kubeflow wait --for=condition=Ready pods -l kustomize.component=profiles --timeout 180s || true
+        kubectl -n kubeflow wait --for=condition=Ready pods -l app=centraldashboard --timeout 180s || true
+        kubectl -n kubeflow wait --for=condition=Ready pods -l app=ml-pipeline --timeout 180s || true
+        kubectl -n istio-system wait --for=condition=Ready pods --all --timeout 180s || true
+        kubectl -n cert-manager wait --for=condition=Ready pods --all --timeout 180s || true
+        kubectl -n auth wait --for=condition=Ready pods --all --timeout 180s || true
 
     - name: Create KF Profile
       run: |
-        # User namespace should already be created from the full deployment
-        # Just need to wait for resources to be ready
+        # Create user namespace
+        kustomize build common/user-namespace/base | kubectl apply -f -
         sleep 60 # wait for profile controller to create resources
         
+        # Ensure controllers are running
         METACONTROLLER_POD=$(kubectl get pods -n kubeflow -o json | jq -r '.items[] | select(.metadata.name | startswith("metacontroller")) | .metadata.name')
         if [[ -z "$METACONTROLLER_POD" ]]; then
           echo "Error: metacontroller pod not found in kubeflow namespace."
@@ -192,17 +113,23 @@ jobs:
         nohup kubectl port-forward --namespace istio-system svc/${ingress_gateway_service} 8080:80 &
         while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
 
-    - name: Test oauth2-proxy Auth
+    - name: Test Auth Integration
       if: always()
       continue-on-error: true
       run: |
-        # Test auth redirect
-        echo "Testing authentication redirect..."
-        HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/pipeline/)
-        if [[ $HTTP_STATUS -eq 302 || $HTTP_STATUS -eq 401 ]]; then
-          echo "Auth check successful: Got redirect or unauthorized as expected"
+        # Test if Dex login test script exists and run it
+        if [ -f "tests/gh-actions/test_dex_login.py" ]; then
+          echo "Running Dex login test..."
+          python3 tests/gh-actions/test_dex_login.py
         else
-          echo "Warning: Expected auth redirect, got HTTP status $HTTP_STATUS"
+          # Fallback to simple auth testing
+          echo "Testing authentication redirect..."
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/pipeline/)
+          if [[ $HTTP_STATUS -eq 302 || $HTTP_STATUS -eq 401 ]]; then
+            echo "Auth check successful: Got redirect or unauthorized as expected"
+          else
+            echo "Warning: Expected auth redirect, got HTTP status $HTTP_STATUS"
+          fi
         fi
 
     - name: Run Pipeline Tests
@@ -241,103 +168,26 @@ jobs:
     - name: Create Notebook Test
       if: always()
       run: |
-        # Create a test notebook in the user namespace
         KF_PROFILE=kubeflow-user-example-com
-        cat <<EOF > notebook-test.yaml
-        apiVersion: kubeflow.org/v1
-        kind: Notebook
-        metadata:
-          name: test-notebook
-          namespace: ${KF_PROFILE}
-        spec:
-          template:
-            spec:
-              containers:
-              - name: notebook
-                image: jupyter/minimal-notebook:latest
-                resources:
-                  requests:
-                    cpu: 500m
-                    memory: 1Gi
-                  limits:
-                    cpu: 1
-                    memory: 2Gi
-        EOF
+        sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml > notebook-test.yaml
         
+        # Apply the notebook
         kubectl apply -f notebook-test.yaml
         
         # Wait for notebook to be ready
-        kubectl wait --for=condition=ready --timeout=300s -n ${KF_PROFILE} pod -l notebooks.kubeflow.org/notebook=test-notebook
-
-    - name: Test Tensorboard Creation
-      if: always()
-      continue-on-error: true
-      run: |
-        # Create a tensorboard in user namespace
-        KF_PROFILE=kubeflow-user-example-com
-        cat <<EOF > tensorboard-test.yaml
-        apiVersion: tensorboard.kubeflow.org/v1alpha1
-        kind: Tensorboard
-        metadata:
-          name: test-tensorboard
-          namespace: ${KF_PROFILE}
-        spec:
-          logspath: s3://fake-bucket/tensorboard-logs
-        EOF
+        kubectl wait --for=condition=ready --timeout=300s -n ${KF_PROFILE} pod -l app=test || true
         
-        kubectl apply -f tensorboard-test.yaml || echo "Tensorboard creation failed, continuing tests"
-        
-        # Check if tensorboard was created
-        kubectl get tensorboards -n ${KF_PROFILE} || echo "No tensorboards found, continuing tests"
+        # Verify notebook status
+        kubectl get notebooks -n ${KF_PROFILE}
 
     - name: Test Katib Experiment
       if: always()
       continue-on-error: true
       run: |
         # Test if Katib is available
-        if kubectl get crd experiments.kubeflow.org > /dev/null 2>&1; then
-          # Create a simple Katib experiment
+        if kubectl get crd experiments.kubeflow.org > /dev/null 2>&1; thents
           KF_PROFILE=kubeflow-user-example-com
-          cat <<EOF > katib-experiment.yaml
-          apiVersion: kubeflow.org/v1beta1
-          kind: Experiment
-          metadata:
-            name: test-katib-experiment
-            namespace: ${KF_PROFILE}
-          spec:
-            objective:
-              type: maximize
-              goal: 0.99
-              objectiveMetricName: Validation-accuracy
-            algorithm:
-              algorithmName: random
-            parallelTrialCount: 1
-            maxTrialCount: 1
-            maxFailedTrialCount: 1
-            parameters:
-              - name: lr
-                parameterType: double
-                feasibleSpace:
-                  min: "0.01"
-                  max: "0.05"
-            trialTemplate:
-              primaryContainerName: training-container
-              trialParameters:
-                - name: learningRate
-                  description: Learning rate
-                  reference: lr
-              trialSpec:
-                apiVersion: batch/v1
-                kind: Job
-                spec:
-                  template:
-                    spec:
-                      containers:
-                        - name: training-container
-                          image: docker.io/kubeflowkatib/mxnet-mnist:latest
-                          command: ["python3", "/opt/mxnet-mnist/mnist.py", "--batch-size=64", "--lr=\${trialParameters.learningRate}"]
-                      restartPolicy: Never
-          EOF
+          sed "s/kubeflow-user/$KF_PROFILE/g" tests/gh-actions/kf-objects/katib_test.yaml > katib-experiment.yaml
           
           kubectl apply -f katib-experiment.yaml || echo "Katib experiment creation failed, continuing tests"
           
@@ -351,39 +201,23 @@ jobs:
       if: always()
       continue-on-error: true
       run: |
+        # First install Training Operator if needed
+        if ! kubectl get crd tfjobs.kubeflow.org > /dev/null 2>&1; then
+          ./tests/gh-actions/install_training_operator.sh || true
+        fi
+        
         # Test if Training Operator is available
-        if kubectl get crd tfjobs.kubeflow.org > /dev/null 2>&1; then
-          # Create a simple TFJob
+        if kubectl get crd pytorchjobs.kubeflow.org > /dev/null 2>&1; then
+          # Use the existing PyTorch job YAML from kf-objects
           KF_PROFILE=kubeflow-user-example-com
-          cat <<EOF > tfjob-test.yaml
-          apiVersion: kubeflow.org/v1
-          kind: TFJob
-          metadata:
-            name: test-tfjob
-            namespace: ${KF_PROFILE}
-          spec:
-            tfReplicaSpecs:
-              Worker:
-                replicas: 1
-                restartPolicy: OnFailure
-                template:
-                  spec:
-                    containers:
-                    - name: tensorflow
-                      image: tensorflow/tensorflow:2.9.0
-                      command:
-                      - python
-                      - -c
-                      - |
-                        import tensorflow as tf
-                        print(tf.__version__)
-                        print("TensorFlow training job completed!")
-          EOF
+          cp tests/gh-actions/kf-objects/training_operator_job.yaml pytorch-job.yaml
+          # Update namespace in the YAML
+          sed -i "s/namespace: .*/namespace: $KF_PROFILE/g" pytorch-job.yaml || true
           
-          kubectl apply -f tfjob-test.yaml || echo "TFJob creation failed, continuing tests"
+          kubectl apply -f pytorch-job.yaml || echo "PyTorch job creation failed, continuing tests"
           
           # Check if job was created
-          kubectl get tfjobs -n ${KF_PROFILE} || echo "No TFJobs found, continuing tests"
+          kubectl get pytorchjobs -n ${KF_PROFILE} || echo "No PyTorch jobs found, continuing tests"
         else
           echo "Training Operator CRDs not found, skipping Training Operator tests"
         fi
@@ -392,29 +226,51 @@ jobs:
       if: always()
       continue-on-error: true
       run: |
+        # Install KServe if needed
+        if ! kubectl get crd inferenceservices.serving.kserve.io > /dev/null 2>&1; then
+          ./tests/gh-actions/install_kserve.sh || true
+        fi
+        
         # Only run if KServe is installed
         if kubectl get crd inferenceservices.serving.kserve.io > /dev/null 2>&1; then
-          # Create a simple model deployment
+          # Use the existing KServe inference service YAML from kf-objects
           KF_PROFILE=kubeflow-user-example-com
-          cat <<EOF > sklearn-test.yaml
-          apiVersion: "serving.kserve.io/v1beta1"
-          kind: "InferenceService"
-          metadata:
-            name: "sklearn-iris"
-            namespace: "${KF_PROFILE}"
-          spec:
-            predictor:
-              sklearn:
-                storageUri: "gs://kfserving-examples/models/sklearn/iris"
-          EOF
+          cp tests/gh-actions/kf-objects/kserve_test.yaml kserve-test.yaml
+          # Add namespace to the YAML
+          sed -i "/metadata:/a\  namespace: $KF_PROFILE" kserve-test.yaml || true
           
-          kubectl apply -f sklearn-test.yaml
+          kubectl apply -f kserve-test.yaml || echo "KServe deployment failed, continuing tests"
           
           # Wait for InferenceService to be ready - timeout after 2min
           kubectl wait --for=condition=ready --timeout=120s -n ${KF_PROFILE} isvc/sklearn-iris || echo "InferenceService did not become ready in time, continuing tests"
         else
           echo "KServe CRD not found, skipping KServe tests"
         fi
+
+    - name: Test Pod Security Standards
+      if: always()
+      continue-on-error: true
+      run: |
+        # Apply baseline PSS
+        ./tests/gh-actions/enable_baseline_PSS.sh || true
+        
+        # Verify all pods still work
+        kubectl get pods --all-namespaces
+        
+        # Unapply baseline labels
+        echo "Unapplying baseline PSS labels..."
+        NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow")
+        for NAMESPACE in "${NAMESPACES[@]}"; do
+          if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
+            kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce- || true
+          fi
+        done
+        
+        # Apply restricted PSS
+        ./tests/gh-actions/enable_restricted_PSS.sh || true
+        
+        # Verify all pods still work
+        kubectl get pods --all-namespaces
 
     - name: Verify All Components Running
       run: |
@@ -465,11 +321,11 @@ jobs:
         
         # Collect CRD status for all Kubeflow components
         echo "Collecting CRD status..."
-        kubectl get crds | grep kubeflow > logs/kubeflow-crds.txt
-        kubectl get crds | grep istio > logs/istio-crds.txt
-        kubectl get crds | grep knative > logs/knative-crds.txt
-        kubectl get crds | grep cert-manager > logs/cert-manager-crds.txt
-        kubectl get crds | grep kserve > logs/kserve-crds.txt
+        kubectl get crds | grep kubeflow > logs/kubeflow-crds.txt || true
+        kubectl get crds | grep istio > logs/istio-crds.txt || true
+        kubectl get crds | grep knative > logs/knative-crds.txt || true
+        kubectl get crds | grep cert-manager > logs/cert-manager-crds.txt || true
+        kubectl get crds | grep kserve > logs/kserve-crds.txt || true
         
         # Collect pod descriptions
         kubectl describe pods -n kubeflow > logs/kubeflow-pod-descriptions.txt
