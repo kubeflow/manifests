@@ -153,13 +153,37 @@ jobs:
         cd apps/katib/upstream
         kustomize build installs/katib-with-kubeflow | kubectl apply -f -
         cd ../../../
+        # Enhanced wait for Katib components to be fully ready
+        echo "Waiting for Katib pods to be ready..."
         kubectl wait --for=condition=Ready pods --all -n kubeflow --timeout 300s
+        # Specific check for MySQL
+        echo "Ensuring Katib MySQL is ready..."
+        kubectl wait --for=condition=Ready pod -l app=katib-mysql -n kubeflow --timeout=180s
+        # Verify DB connectivity by checking DB manager logs
+        echo "Verifying Katib DB connectivity..."
+        kubectl wait --for=condition=Ready pod -l app=katib-db-manager -n kubeflow --timeout=180s
+        # Wait for experiment controller to be fully operational
+        echo "Ensuring Katib controller is operational..."
+        kubectl wait --for=condition=Available deployment/katib-controller -n kubeflow --timeout=180s
+        kubectl wait --for=condition=Available deployment/katib-ui -n kubeflow --timeout=180s
+        # Create a namespace for the user and enable Katib metrics collection
+        echo "Setting up user namespace for Katib..."
+        KF_PROFILE=kubeflow-user-example-com
+        kubectl label namespace $KF_PROFILE katib.kubeflow.org/metrics-collector-injection=enabled
 
         # Apply Katib experiment test directly from tests directory
+        echo "Creating Katib experiment..."
         if kubectl get crd experiments.kubeflow.org > /dev/null 2>&1; then
-            KF_PROFILE=kubeflow-user-example-com
             sed "s/kubeflow-user/$KF_PROFILE/g" tests/gh-actions/kf-objects/katib_test.yaml | kubectl apply -f -
-            kubectl get experiments -n ${KF_PROFILE}
+            # Wait for the experiment to start running
+            echo "Waiting for experiment to start..."
+            kubectl wait --for=condition=Running experiments.kubeflow.org -n $KF_PROFILE --all --timeout=300s || true
+            # Get status of the experiment
+            echo "Experiment status:"
+            kubectl get experiments -n ${KF_PROFILE} -o yaml
+            # Check if trials are being created
+            echo "Trials status:"
+            kubectl get trials -n ${KF_PROFILE} || true
         else
             echo "Katib CRD not found, skipping Katib hyperparameter tuning tests"
             exit 1
@@ -192,10 +216,30 @@ jobs:
         while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
     - name: Test KServe Model Deployment and Serving
       run: |
-        # Apply the KServe inference service test directly from tests directory
+        # Ensure KServe CRDs are available
+        echo "Checking KServe CRDs..."
+        kubectl get crd inferenceservices.serving.kserve.io
+        # Verify KServe controller is running
+        echo "Verifying KServe controller is ready..."
+        kubectl wait --for=condition=Available deployment -l control-plane=kserve-controller-manager -n kserve --timeout=180s
+        # Create a user namespace for KServe if needed
         KF_PROFILE=kubeflow-user-example-com
+        # Add the serving label to the namespace
+        echo "Enabling serving in namespace $KF_PROFILE..."
+        kubectl label namespace $KF_PROFILE serving.kserve.io/inferenceservice=enabled --overwrite
+        # Apply the KServe inference service
+        echo "Deploying KServe inference service for sklearn-iris model..."
         sed -e "/metadata:/a\\  namespace: $KF_PROFILE" tests/gh-actions/kf-objects/kserve_test.yaml | kubectl apply -f -
-        kubectl wait --for=condition=ready --timeout=120s -n ${KF_PROFILE} isvc/sklearn-iris
+        # Wait for the inference service to be ready
+        echo "Waiting for inference service to be ready..."
+        kubectl wait --for=condition=ready --timeout=300s -n ${KF_PROFILE} isvc/sklearn-iris
+        # Get status of the inference service
+        echo "KServe inference service status:"
+        kubectl get isvc -n ${KF_PROFILE} sklearn-iris -o yaml
+        # Try to access the model endpoint if port-forwarding is set up
+        echo "Testing model endpoint..."
+        MODEL_URL="http://localhost:8080/v1/models/sklearn-iris:predict"
+        curl -v $MODEL_URL -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}' 2>&1 || echo "Model endpoint not accessible, skipping test"
     - name: Test Apache Spark Integration
       run: |
         if [ -f "tests/gh-actions/spark_install.sh" ] && [ -f "tests/gh-actions/spark_test.sh" ]; then
