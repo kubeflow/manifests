@@ -4,9 +4,9 @@ on:
   push:
     branches:
     - master
-#  pull_request:
-#    branches:
-#    - master
+  pull_request:
+    branches:
+    - master
 jobs:
   build:
     name: End-to-End Integration Test
@@ -148,6 +148,13 @@ jobs:
         fi
     - name: Test Katib Hyperparameter Tuning
       run: |
+        # Install Katib
+        echo "Installing Katib..."
+        cd apps/katib/upstream
+        kustomize build installs/katib-with-kubeflow | kubectl apply -f -
+        cd ../../../
+        kubectl wait --for=condition=Ready pods --all -n kubeflow --timeout 300s
+        
         # Apply Katib experiment test directly from tests directory
         if kubectl get crd experiments.kubeflow.org > /dev/null 2>&1; then
             KF_PROFILE=kubeflow-user-example-com
@@ -175,7 +182,11 @@ jobs:
         fi
     - name: Install KNative Serving Platform
       run: ./tests/gh-actions/install_knative.sh
-    # TODO install Kserve
+    
+    # Install KServe
+    - name: Install KServe
+      run: ./tests/gh-actions/install_kserve.sh
+    
     - name: Setup Port Forwarding for Istio Gateway
       run: |
         ingress_gateway_service=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
@@ -183,20 +194,10 @@ jobs:
         while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
     - name: Test KServe Model Deployment and Serving
       run: |
-        # Install KServe if needed using the script from tests directory
-        if ! kubectl get crd inferenceservices.serving.kserve.io > /dev/null 2>&1; then
-            ./tests/gh-actions/install_kserve.sh
-        fi
-
         # Apply the KServe inference service test directly from tests directory
-        if kubectl get crd inferenceservices.serving.kserve.io > /dev/null 2>&1; then
-            KF_PROFILE=kubeflow-user-example-com
-            sed -e "/metadata:/a\\  namespace: $KF_PROFILE" tests/gh-actions/kf-objects/kserve_test.yaml | kubectl apply -f -
-            kubectl wait --for=condition=ready --timeout=120s -n ${KF_PROFILE} isvc/sklearn-iris
-        else
-            echo "KServe CRD not found, skipping model serving tests"
-            exit 1
-        fi
+        KF_PROFILE=kubeflow-user-example-com
+        sed -e "/metadata:/a\\  namespace: $KF_PROFILE" tests/gh-actions/kf-objects/kserve_test.yaml | kubectl apply -f -
+        kubectl wait --for=condition=ready --timeout=120s -n ${KF_PROFILE} isvc/sklearn-iris
     - name: Test Apache Spark Integration
       run: |
         if [ -f "tests/gh-actions/spark_install.sh" ] && [ -f "tests/gh-actions/spark_test.sh" ]; then
