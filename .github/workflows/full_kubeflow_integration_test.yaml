@@ -154,7 +154,7 @@ jobs:
         kustomize build installs/katib-with-kubeflow | kubectl apply -f -
         cd ../../../
         kubectl wait --for=condition=Ready pods --all -n kubeflow --timeout 300s
-        
+
         # Apply Katib experiment test directly from tests directory
         if kubectl get crd experiments.kubeflow.org > /dev/null 2>&1; then
             KF_PROFILE=kubeflow-user-example-com
@@ -182,11 +182,9 @@ jobs:
         fi
     - name: Install KNative Serving Platform
       run: ./tests/gh-actions/install_knative.sh
-    
     # Install KServe
     - name: Install KServe
       run: ./tests/gh-actions/install_kserve.sh
-    
     - name: Setup Port Forwarding for Istio Gateway
       run: |
         ingress_gateway_service=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
