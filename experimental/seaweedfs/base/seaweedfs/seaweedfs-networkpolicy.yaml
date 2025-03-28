@@ -11,13 +11,15 @@ spec:
           operator: In
           values:
           - kubeflow-profile
+    ports:
+    - port: 8333
+  - from:
     - namespaceSelector:
         matchExpressions:
         - key: kubernetes.io/metadata.name
           operator: In
           values:
           - istio-system
-    - podSelector: {}
   podSelector:
     matchExpressions:
     - key: app
