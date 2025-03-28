@@ -197,6 +197,9 @@ def server_factory(visualization_server_image,
                                             "cpu": "500m",
                                             "memory": "1Gi"
                                         },
+                                    },
+                                    "securityContext": {
+                                        "allowPrivilegeEscalation": False                                        
                                     }
                                 }],
                                 "serviceAccountName":
@@ -327,6 +330,9 @@ def server_factory(visualization_server_image,
                                             "cpu": "100m",
                                             "memory": "500Mi"
                                         },
+                                    },
+                                    "securityContext": {
+                                        "allowPrivilegeEscalation": False
                                     }
                                 }],
                                 "serviceAccountName":
