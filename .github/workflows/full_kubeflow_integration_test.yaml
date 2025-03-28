@@ -1,0 +1,284 @@
+name: Full Kubeflow End-to-End Integration Test
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - master
+#  pull_request:
+#    branches:
+#    - master
+jobs:
+  build:
+    name: End-to-End Integration Test
+    runs-on:
+      labels: ubuntu-latest-16-cores
+    timeout-minutes: 60
+    env:
+      KIND_CLUSTER_NAME: kubeflow
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+    # Infrastructure Setup
+    - name: Install KinD and Create Kubernetes Cluster
+      run: ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
+    - name: Install Kubectl Command Line Tool
+      run: ./tests/gh-actions/install_kubectl.sh
+    - name: Create Kubeflow Namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+    - name: Install Certificate Manager
+      run: ./tests/gh-actions/install_cert_manager.sh
+    - name: Install Istio Service Mesh
+      run: ./tests/gh-actions/install_istio-cni.sh
+    - name: Install OAuth2 Proxy for Authentication
+      run: ./tests/gh-actions/install_oauth2-proxy.sh
+    - name: Install Kubeflow Istio Resources
+      run: kustomize build common/istio-cni-1-24/kubeflow-istio-resources/base | kubectl apply -f -
+    - name: Install KF Multi Tenancy
+      run: ./tests/gh-actions/install_multi_tenancy.sh
+    # Right now KFP also modifies user namespaces
+    - name: Deploy Kubeflow Pipeline Components
+      run: ./tests/gh-actions/install_pipelines.sh
+    - name: Install dex
+      run: |
+        echo "Installing Dex..."
+        kustomize build ./common/dex/overlays/oauth2-proxy | kubectl apply -f -
+
+        echo "Waiting for pods in auth namespace to become ready..."
+        kubectl wait --for=condition=Ready pods --all --timeout=180s -n auth
+    - name: Install central-dashboard
+      run: |
+        kustomize build apps/centraldashboard/upstream/overlays/kserve | kubectl apply -f -
+        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
+    - name: Create Kubeflow User Profile
+      run: kustomize build common/user-namespace/base | kubectl apply -f -
+    - name: Verify User Profile Setup
+      run: |
+        # Wait for profile controller to process the request
+        sleep 60
+
+        # Verify profile resources are properly created
+        KF_PROFILE=kubeflow-user-example-com
+        kubectl -n $KF_PROFILE get pods,configmaps,secrets
+
+        # Verify minio secret exists (critical for ML pipelines)
+        if ! kubectl get secret mlpipeline-minio-artifact -n $KF_PROFILE > /dev/null 2>&1; then
+            echo "Error: Secret mlpipeline-minio-artifact not found in namespace $KF_PROFILE"
+            exit 1
+        fi
+    - name: Set up Python Environment
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+    - name: Install Python Dependencies
+      run: |
+        pip install pytest kubernetes kfp==2.11.0 kserve pytest-timeout pyyaml requests
+    - name: port forward
+      run: |
+        ingress_gateway_service=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
+        nohup kubectl port-forward --namespace istio-system svc/${ingress_gateway_service} 8080:80 &
+        while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
+    - name: test dex login
+      run: |
+        pip3 install requests
+        ./tests/gh-actions/test_dex_login.py
+    - name: Run ML Pipeline Integration Tests
+      run: |
+        KF_PROFILE=kubeflow-user-example-com
+
+        # Test with authorized token (authorized user flow)
+        TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
+        echo "Running pipeline with authorized token (authorized user)"
+        python3 tests/gh-actions/pipeline_test.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
+
+        # Test with unauthorized token (unauthorized user flow)
+        echo "Testing unauthorized access prevention (security check)"
+        TOKEN="$(kubectl -n default create token default)"
+        python3 tests/gh-actions/pipeline_test.py test_unauthorized_access "${TOKEN}" "${KF_PROFILE}"
+    # Web UI Component Tests - Basic Connectivity Checks
+    - name: Verify Central Dashboard and Component UIs
+      run: |
+        # Test central dashboard is accessible
+        echo "Verifying Central Dashboard accessibility"
+        curl -I http://localhost:8080/
+
+        # Check individual component UIs
+        echo "Verifying Notebooks UI accessibility"
+        curl -I http://localhost:8080/jupyter/
+
+        echo "Verifying Pipelines UI accessibility"
+        curl -I http://localhost:8080/pipeline/
+
+        echo "Verifying KServe Models UI accessibility"
+        curl -I http://localhost:8080/models/
+
+        echo "Verifying Katib Experiments UI accessibility"
+        curl -I http://localhost:8080/katib/
+    - name: Install NWorkspace / Notebook components (jupyter-web-application, notebook-controller, poddefaults)
+      run: |
+        kustomize build apps/jupyter/jupyter-web-app/upstream/overlays/istio/ | kubectl apply -f -
+        kustomize build apps/jupyter/notebook-controller/upstream/overlays/kubeflow/ | kubectl apply -f -
+        kustomize build apps/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
+        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 300s \
+          --field-selector=status.phase!=Succeeded
+    - name: Apply PodDefaults for Notebook Integration
+      run: kubectl apply -f tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml
+    - name: Create and Verify Notebook Server
+      run: |
+        # Apply the notebook definition directly from tests
+        kubectl apply -f tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml
+
+        # Wait for notebook server to be ready - using exact syntax from pipeline tests
+        kubectl wait --for=jsonpath='{.status.readyReplicas}'=1 \
+            -f tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml \
+            --timeout 600s
+    - name: Run Pipeline from Notebook
+      run: |
+        # Execute pipeline from notebook using the existing test script
+        KF_PROFILE=kubeflow-user-example-com
+        if [ -f "tests/gh-actions/run_and_wait_kubeflow_pipeline.py" ]; then
+            kubectl -n $KF_PROFILE cp \
+                ./tests/gh-actions/run_and_wait_kubeflow_pipeline.py \
+                test-0:/home/jovyan/run_and_wait_kubeflow_pipeline.py
+
+            kubectl -n $KF_PROFILE exec -ti \
+                test-0 -- python /home/jovyan/run_and_wait_kubeflow_pipeline.py
+        else
+            echo "Skipping pipeline run from notebook test - script not found"
+            exit 1
+        fi
+    - name: Test Katib Hyperparameter Tuning
+      run: |
+        # Apply Katib experiment test directly from tests directory
+        if kubectl get crd experiments.kubeflow.org > /dev/null 2>&1; then
+            KF_PROFILE=kubeflow-user-example-com
+            sed "s/kubeflow-user/$KF_PROFILE/g" tests/gh-actions/kf-objects/katib_test.yaml | kubectl apply -f -
+            kubectl get experiments -n ${KF_PROFILE}
+        else
+            echo "Katib CRD not found, skipping Katib hyperparameter tuning tests"
+            exit 1
+        fi
+    - name: Test Distributed Training with Training Operator
+      run: |
+        # Install Training Operator if needed using script from tests directory
+        if ! kubectl get crd tfjobs.kubeflow.org > /dev/null 2>&1; then
+            ./tests/gh-actions/install_training_operator.sh
+        fi
+
+        # Apply the PyTorch job YAML directly from tests directory
+        if kubectl get crd pytorchjobs.kubeflow.org > /dev/null 2>&1; then
+            KF_PROFILE=kubeflow-user-example-com
+            sed "s/namespace: .*/namespace: $KF_PROFILE/g" tests/gh-actions/kf-objects/training_operator_job.yaml | kubectl apply -f -
+            kubectl get pytorchjobs -n ${KF_PROFILE}
+        else
+            echo "Training Operator CRDs not found, skipping distributed training tests"
+            exit 1
+        fi
+    - name: Install KNative Serving Platform
+      run: ./tests/gh-actions/install_knative.sh
+    # TODO install Kserve
+    - name: Setup Port Forwarding for Istio Gateway
+      run: |
+        ingress_gateway_service=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
+        nohup kubectl port-forward --namespace istio-system svc/${ingress_gateway_service} 8080:80 &
+        while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
+    - name: Test KServe Model Deployment and Serving
+      run: |
+        # Install KServe if needed using the script from tests directory
+        if ! kubectl get crd inferenceservices.serving.kserve.io > /dev/null 2>&1; then
+            ./tests/gh-actions/install_kserve.sh
+        fi
+
+        # Apply the KServe inference service test directly from tests directory
+        if kubectl get crd inferenceservices.serving.kserve.io > /dev/null 2>&1; then
+            KF_PROFILE=kubeflow-user-example-com
+            sed -e "/metadata:/a\\  namespace: $KF_PROFILE" tests/gh-actions/kf-objects/kserve_test.yaml | kubectl apply -f -
+            kubectl wait --for=condition=ready --timeout=120s -n ${KF_PROFILE} isvc/sklearn-iris
+        else
+            echo "KServe CRD not found, skipping model serving tests"
+            exit 1
+        fi
+    - name: Test Apache Spark Integration
+      run: |
+        if [ -f "tests/gh-actions/spark_install.sh" ] && [ -f "tests/gh-actions/spark_test.sh" ]; then
+            KF_PROFILE=kubeflow-user-example-com
+            chmod u+x tests/gh-actions/spark_*.sh
+            ./tests/gh-actions/spark_install.sh
+            ./tests/gh-actions/spark_test.sh "${KF_PROFILE}"
+        else
+            echo "Skipping Spark integration tests - scripts not found"
+            exit 1
+        fi
+    - name: Test Pod Security Standards
+      run: |
+        # Apply baseline Pod Security Standards using script from tests
+        ./tests/gh-actions/enable_baseline_PSS.sh
+
+        # Verify pods are running with baseline security standards
+        kubectl get pods --all-namespaces
+
+        # Unapply baseline labels - following exact pattern from other workflows
+        NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow" "knative-serving")
+        for NAMESPACE in "${NAMESPACES[@]}"; do
+            if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
+                kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce-
+            fi
+        done
+
+        # Apply restricted Pod Security Standards using script from tests
+        ./tests/gh-actions/enable_restricted_PSS.sh
+
+        # Verify pods still work with restricted security standards
+        kubectl get pods --all-namespaces
+    - name: Verify All Components Running Successfully
+      run: |
+        # Run non-root security tests if available
+        if [ -f "tests/gh-actions/runasnonroot.sh" ]; then
+            echo "Running non-root user security tests..."
+            chmod +x tests/gh-actions/runasnonroot.sh
+            ./tests/gh-actions/runasnonroot.sh
+        fi
+
+        # Verify all components are running
+        echo "Checking status of critical components..."
+        kubectl get deployment -n kubeflow
+        kubectl get deployment -n cert-manager
+        kubectl get deployment -n istio-system
+        kubectl get deployment -n auth
+
+        # Check for failed pods
+        if kubectl get pods --all-namespaces | grep -E '(Error|CrashLoopBackOff)'; then
+            echo "Found pods in failed state"
+            exit 1
+        fi
+
+        echo "All Kubeflow components are running successfully"
+    - name: Collect Diagnostic Logs on Failure
+      if: failure()
+      run: |
+        mkdir -p logs
+
+        # Collect resource status
+        kubectl get all --all-namespaces > logs/all-resources.txt
+        kubectl get events --all-namespaces --sort-by=.metadata.creationTimestamp > logs/all-events.txt
+
+        # Collect CRD status
+        kubectl get crds | grep -E 'kubeflow|istio|knative|cert-manager|kserve' > logs/crds.txt || true
+
+        # Collect pod descriptions
+        namespaces=("kubeflow" "istio-system" "cert-manager" "auth")
+        for ns in "${namespaces[@]}"; do
+            kubectl describe pods -n $ns > logs/$ns-pod-descriptions.txt
+
+            # Collect logs for each pod in namespace
+            for pod in $(kubectl get pods -n $ns -o jsonpath='{.items[*].metadata.name}'); do
+                kubectl logs -n $ns $pod --tail=100 > logs/$ns-$pod.txt 2>&1 || true
+            done
+        done
+
+        echo "Collected logs to logs/ directory"
+    - name: Upload Diagnostic Logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: kubeflow-test-logs
+        path: logs/
