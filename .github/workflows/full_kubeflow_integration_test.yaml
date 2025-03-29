@@ -229,7 +229,7 @@ jobs:
             exit 1
         fi
     - name: Install KNative Serving Platform
-      run: ./tests/gh-actions/install_knative.sh
+      run: ./tests/gh-actions/install_knative-cni.sh
     # Install KServe
     - name: Install KServe
       run: ./tests/gh-actions/install_kserve.sh
