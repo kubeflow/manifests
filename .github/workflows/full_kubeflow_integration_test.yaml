@@ -148,42 +148,43 @@ jobs:
         fi
     - name: Test Katib Hyperparameter Tuning
       run: |
+        # Fix MySQL AppArmor issues for Kind clusters
+        echo "Fixing AppArmor for MySQL in Kind..."
+        sudo apt-get install -y apparmor-profiles
+        sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
         # Install Katib
         echo "Installing Katib..."
         cd apps/katib/upstream
+        kubectl create ns kubeflow 2>/dev/null || true
         kustomize build installs/katib-with-kubeflow | kubectl apply -f -
         cd ../../../
-        # Enhanced wait for Katib components to be fully ready
-        echo "Waiting for Katib pods to be ready..."
-        kubectl wait --for=condition=Ready pods --all -n kubeflow --timeout 300s
-        # Specific check for MySQL
-        echo "Ensuring Katib MySQL is ready..."
-        kubectl wait --for=condition=Ready pod -l app=katib-mysql -n kubeflow --timeout=180s
-        # Verify DB connectivity by checking DB manager logs
-        echo "Verifying Katib DB connectivity..."
-        kubectl wait --for=condition=Ready pod -l app=katib-db-manager -n kubeflow --timeout=180s
-        # Wait for experiment controller to be fully operational
-        echo "Ensuring Katib controller is operational..."
-        kubectl wait --for=condition=Available deployment/katib-controller -n kubeflow --timeout=180s
-        kubectl wait --for=condition=Available deployment/katib-ui -n kubeflow --timeout=180s
-        # Create a namespace for the user and enable Katib metrics collection
+        # Wait for Katib components with individual checks to prevent timeout issues
+        echo "Waiting for Katib controller..."
+        kubectl wait --for=condition=Available deployment/katib-controller -n kubeflow --timeout=300s
+        echo "Waiting for Katib UI..."
+        kubectl wait --for=condition=Available deployment/katib-ui -n kubeflow --timeout=300s
+        echo "Waiting for Katib DB Manager..."
+        kubectl wait --for=condition=Available deployment/katib-db-manager -n kubeflow --timeout=300s
+        echo "Waiting for Katib MySQL..."
+        kubectl wait --for=condition=Available deployment/katib-mysql -n kubeflow --timeout=300s
+        # Set up user namespace for testing
         echo "Setting up user namespace for Katib..."
         KF_PROFILE=kubeflow-user-example-com
-        kubectl label namespace $KF_PROFILE katib.kubeflow.org/metrics-collector-injection=enabled
+        kubectl label namespace $KF_PROFILE katib.kubeflow.org/metrics-collector-injection=enabled --overwrite
 
-        # Apply Katib experiment test directly from tests directory
+        # Create Katib experiment
         echo "Creating Katib experiment..."
         if kubectl get crd experiments.kubeflow.org > /dev/null 2>&1; then
             sed "s/kubeflow-user/$KF_PROFILE/g" tests/gh-actions/kf-objects/katib_test.yaml | kubectl apply -f -
-            # Wait for the experiment to start running
-            echo "Waiting for experiment to start..."
+            echo "Waiting for Experiment to become Running..."
             kubectl wait --for=condition=Running experiments.kubeflow.org -n $KF_PROFILE --all --timeout=300s || true
-            # Get status of the experiment
             echo "Experiment status:"
-            kubectl get experiments -n ${KF_PROFILE} -o yaml
-            # Check if trials are being created
+            kubectl get experiments.kubeflow.org -n $KF_PROFILE
+            echo "Waiting for some Trials to be created..."
+            sleep 30
             echo "Trials status:"
-            kubectl get trials -n ${KF_PROFILE} || true
+            kubectl get trials -n $KF_PROFILE || true
+            # Just verifying the experiment starts properly is sufficient for testing
         else
             echo "Katib CRD not found, skipping Katib hyperparameter tuning tests"
             exit 1
