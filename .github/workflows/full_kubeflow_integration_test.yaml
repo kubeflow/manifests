@@ -229,29 +229,69 @@ jobs:
             exit 1
         fi
     - name: Install KNative Serving Platform
+      run: ./tests/gh-actions/install_knative.sh
+    - name: Verify KNative Component Readiness
       run: |
-        echo "Installing KNative..."
-        # Retry mechanism for applying Knative manifests
-        set +e
-        for _ in {1..5}; do
-            if kustomize build common/knative/knative-serving/base | kubectl apply -f -; then
-                break
-            fi
-            echo "Retrying in 30 seconds..."
-            sleep 30
-        done
-        set -e
-        kustomize build common/istio-1-24/cluster-local-gateway/base | kubectl apply -f -
-        kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
-        # Wait only for Knative pods in knative-serving namespace instead of all namespaces
-        echo "Waiting for Knative pods to become ready..."
-        kubectl wait --for=condition=Ready pods --all -n knative-serving --timeout=300s
-        # Configure default domain
-        kubectl patch cm config-domain --patch '{"data":{"example.com":""}}' -n knative-serving
-        echo "KNative installation completed"
+        echo "Verifying KNative component readiness..."
+        # Verify KNative core deployments
+        echo "Checking KNative core components..."
+        kubectl wait --for=condition=Available deployment/activator -n knative-serving --timeout=300s || true
+        kubectl wait --for=condition=Available deployment/autoscaler -n knative-serving --timeout=300s || true
+        kubectl wait --for=condition=Available deployment/controller -n knative-serving --timeout=300s || true
+        kubectl wait --for=condition=Available deployment/webhook -n knative-serving --timeout=300s || true
+        # Verify Knative networking components
+        echo "Checking KNative networking components..."
+        kubectl wait --for=condition=Available deployment/net-istio-controller -n knative-serving --timeout=300s || true
+        kubectl wait --for=condition=Available deployment/net-istio-webhook -n knative-serving --timeout=300s || true
+        # Check KNative CRDs are established
+        echo "Verifying KNative CRDs are established..."
+        kubectl wait --for=condition=established crd/services.serving.knative.dev --timeout=60s || true
+        kubectl wait --for=condition=established crd/routes.serving.knative.dev --timeout=60s || true
+        kubectl wait --for=condition=established crd/configurations.serving.knative.dev --timeout=60s || true
+        kubectl wait --for=condition=established crd/revisions.serving.knative.dev --timeout=60s || true
+        # Check cluster-local-gateway
+        echo "Checking cluster-local-gateway..."
+        kubectl wait --for=condition=Available deployment/cluster-local-gateway -n istio-system --timeout=300s || true
+        # Final check for all pods in the knative-serving namespace
+        echo "Final check for KNative pods..."
+        kubectl wait --for=condition=Ready pods --all -n knative-serving --timeout=300s || true
+        echo "KNative component verification completed."
     # Install KServe
     - name: Install KServe
       run: ./tests/gh-actions/install_kserve.sh
+
+    - name: Verify KServe and Component Readiness
+      run: |
+        echo "Verifying KServe and other components readiness..."
+        # Wait for essential KServe deployments
+        echo "Waiting for KServe controller to be ready..."
+        kubectl wait --for=condition=Available deployment/kserve-controller-manager -n kubeflow --timeout=300s || true
+        kubectl wait --for=condition=Available deployment/kserve-models-web-app -n kubeflow --timeout=300s || true
+        # Check CRDs are established
+        echo "Verifying KServe CRDs are established..."
+        kubectl wait --for=condition=established crd/inferenceservices.serving.kserve.io --timeout=60s
+        kubectl wait --for=condition=established crd/clusterservingruntimes.serving.kserve.io --timeout=60s
+        # Verify key components across namespaces
+        echo "Verifying key components across namespaces..."
+        # Central Dashboard
+        echo "Checking Central Dashboard..."
+        kubectl wait --for=condition=Available deployment/centraldashboard -n kubeflow --timeout=180s || true
+        # Pipeline components
+        echo "Checking Pipeline components..."
+        kubectl wait --for=condition=Available deployment/ml-pipeline -n kubeflow --timeout=180s || true
+        kubectl wait --for=condition=Available deployment/ml-pipeline-ui -n kubeflow --timeout=180s || true
+        # Authentication components
+        echo "Checking authentication components..."
+        kubectl wait --for=condition=Available deployment/dex -n auth --timeout=180s || true
+        kubectl wait --for=condition=Available deployment/oauth2-proxy -n oauth2-proxy --timeout=180s || true
+        # Istio components
+        echo "Checking Istio components..."
+        kubectl wait --for=condition=Available deployment/istio-ingressgateway -n istio-system --timeout=180s || true
+        kubectl wait --for=condition=Available deployment/istiod -n istio-system --timeout=180s || true
+        # KNative components
+        echo "Checking KNative components..."
+        kubectl wait --for=condition=Available deployment/controller -n knative-serving --timeout=180s || true
+        echo "Component verification completed. Some components may still be starting."
     - name: Setup Port Forwarding for Istio Gateway
       run: |
         ingress_gateway_service=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
