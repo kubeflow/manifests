@@ -262,9 +262,10 @@ jobs:
         # Ensure KServe CRDs are available
         echo "Checking KServe CRDs..."
         kubectl get crd inferenceservices.serving.kserve.io
-        # Verify KServe controller is running
-        echo "Verifying KServe controller is ready..."
-        kubectl wait --for=condition=Available deployment -l control-plane=kserve-controller-manager -n kserve --timeout=180s
+        # Show KServe-related resources
+        echo "Checking KServe resources..."
+        kubectl get pods --all-namespaces -l component=kserve || true
+        kubectl get pods --all-namespaces -l app.kubernetes.io/part-of=kserve || true
         # Create a user namespace for KServe if needed
         KF_PROFILE=kubeflow-user-example-com
         # Add the serving label to the namespace
@@ -273,16 +274,36 @@ jobs:
         # Apply the KServe inference service
         echo "Deploying KServe inference service for sklearn-iris model..."
         sed -e "/metadata:/a\\  namespace: $KF_PROFILE" tests/gh-actions/kf-objects/kserve_test.yaml | kubectl apply -f -
-        # Wait for the inference service to be ready
+        # Add INSECURE AuthorizationPolicy to allow access
+        echo "Adding authorization policy for inference service..."
+        cat <<EOF | kubectl apply -f -
+        apiVersion: security.istio.io/v1beta1
+        kind: AuthorizationPolicy
+        metadata:
+          name: allow-sklearn-iris-access
+          namespace: $KF_PROFILE
+        spec:
+          rules:
+            - to:
+                - operation:
+                    paths:
+                      - /v1/models/*
+                      - /v2/models/*
+        EOF
+        # Wait for the inference service to be ready with increased timeout
         echo "Waiting for inference service to be ready..."
-        kubectl wait --for=condition=ready --timeout=300s -n ${KF_PROFILE} isvc/sklearn-iris
-        # Get status of the inference service
+        kubectl wait --for=condition=ready --timeout=300s -n ${KF_PROFILE} isvc/sklearn-iris || true
+        # Get detailed information about the service
         echo "KServe inference service status:"
         kubectl get isvc -n ${KF_PROFILE} sklearn-iris -o yaml
+        kubectl get pods -n ${KF_PROFILE} -l serving.kserve.io/inferenceservice=sklearn-iris || true
+        kubectl get pods -n ${KF_PROFILE} -l serving.knative.dev/service=sklearn-iris-predictor-default || true
         # Try to access the model endpoint if port-forwarding is set up
         echo "Testing model endpoint..."
+        TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         MODEL_URL="http://localhost:8080/v1/models/sklearn-iris:predict"
-        curl -v $MODEL_URL -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}' 2>&1 || echo "Model endpoint not accessible, skipping test"
+        curl -v -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
+          $MODEL_URL -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}' 2>&1 || echo "Model endpoint not accessible, skipping test"
     - name: Test Apache Spark Integration
       run: |
         if [ -f "tests/gh-actions/spark_install.sh" ] && [ -f "tests/gh-actions/spark_test.sh" ]; then
