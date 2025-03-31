@@ -127,13 +127,6 @@ jobs:
     # KNative and KServe Installation
     - name: Install KNative Serving Platform
       run: ./tests/gh-actions/install_knative.sh
-    - name: Verify KNative Component Readiness
-      run: |
-        echo "Verifying KNative component readiness..."
-        kubectl wait --for=condition=Available deployment/activator -n knative-serving --timeout=300s || true
-        kubectl wait --for=condition=Available deployment/autoscaler -n knative-serving --timeout=300s || true
-        kubectl wait --for=condition=Available deployment/controller -n knative-serving --timeout=300s || true
-        kubectl wait --for=condition=Available deployment/webhook -n knative-serving --timeout=300s || true
 
     - name: Install KServe
       run: ./tests/gh-actions/install_kserve.sh
@@ -182,10 +175,6 @@ jobs:
         # Detailed diagnostics similar to what's done in kserve_m2m_test.yaml
         echo "=== AuthorizationPolicy Details ==="
         kubectl get authorizationpolicy -n $KF_PROFILE -o yaml
-
-        # Test models webapp as in the individual workflow
-        echo "Verifying KServe models web app..."
-        kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app
     # Apache Spark Installation
     - name: Install Apache Spark
       run: |
@@ -233,9 +222,51 @@ jobs:
     # Setup port forwarding for gateway access
     - name: Port Forward Istio Gateway
       run: |
+        # Ensure kubectl is using the correct config for the Kind cluster
+        export KUBECONFIG="${HOME}/.kube/config"
+
+        # Verify cluster connection before proceeding
+        echo "Verifying connection to Kind cluster..."
+        kubectl cluster-info
+        kubectl get nodes
+
+        # Get Istio gateway service and set up port forwarding
+        echo "Setting up port forwarding for Istio gateway..."
         INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
+
+        # Check if the service was found
+        if [ -z "$INGRESS_GATEWAY_SERVICE" ]; then
+          echo "Error: Could not find istio-ingressgateway service"
+          kubectl get svc --namespace istio-system
+          exit 1
+        fi
+
+        echo "Found Istio gateway service: $INGRESS_GATEWAY_SERVICE"
+
+        # Start port forwarding in background
         nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
-        while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
+        PORT_FORWARD_PID=$!
+        echo "Port forwarding started with PID: $PORT_FORWARD_PID"
+
+        # Verify port forwarding is working
+        MAX_RETRIES=30
+        RETRY_COUNT=0
+        echo "Verifying port forwarding is working..."
+        until curl -s -o /dev/null -w "%{http_code}" localhost:8080 | grep -q "200\|302\|404"; do
+          RETRY_COUNT=$((RETRY_COUNT+1))
+          if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
+            echo "Port forwarding failed after $MAX_RETRIES attempts"
+            echo "Checking port forwarding process:"
+            ps -ef | grep port-forward
+            echo "Checking network connections:"
+            netstat -tuln | grep 8080 || echo "No process listening on port 8080"
+            exit 1
+          fi
+          echo "Waiting for port-forwarding (attempt $RETRY_COUNT/$MAX_RETRIES)..."
+          sleep 2
+        done
+
+        echo "Port-forwarding ready and verified"
     # Authentication Tests
     - name: Test Dex Authentication
       run: |
