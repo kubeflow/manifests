@@ -630,6 +630,22 @@ For modifications and in-place upgrades of the Kubeflow platform, we provide a r
 - Sometimes there are major changes; for example, in the 1.9 release, we switched to oauth2-proxy, which needs additional attention.
 - Nevertheless, with a bit of Kubernetes knowledge, one should be able to upgrade.
 
+### Kubernetes upgrade fails due to `PodDisruptionBudget`
+
+To work around this remove these `PodDisruptionBudget`s for the time of the upgrade.
+You can most easily find them via the `k9s` pdb overview of this resource, alternatively with this command:
+
+```
+$ kubectl get --all-namespaces PodDisruptionBudget
+```
+
+As of now the following `PodDisruptionBudget`s are problematic in the upgrade
+context, all due to the `minAvailable` attribute:
+
+- **eventing-webhook** from _knative-eventing_
+- **activator-pdb** from _knative-serving_
+- **webhook-pdb** from _knative-serving_
+
 ## Release Process
 
 The Manifest Working Group releases Kubeflow based on the [release timeline](https://github.com/kubeflow/community/blob/master/releases/handbook.md#timeline). The community and the release team work closely with the Manifest Working Group to define the specific dates at the start of the [release cycle](https://github.com/kubeflow/community/blob/master/releases/handbook.md#releasing) and follow the [release versioning policy](https://github.com/kubeflow/community/blob/master/releases/handbook.md#versioning-policy), as defined in the [Kubeflow release handbook](https://github.com/kubeflow/community/blob/master/releases/handbook.md).
