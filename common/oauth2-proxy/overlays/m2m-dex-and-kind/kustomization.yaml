@@ -33,3 +33,25 @@ patches:
     kind: RequestAuthentication
     name: m2m-token-issuer
     namespace: istio-system
+
+- patch: |-
+    - op: add
+      path: /spec/jwtRules/-
+      value:
+        issuer: "https://kubernetes.default.svc"
+        jwksUri: "http://cluster-jwks-proxy.istio-system.svc.cluster.local/openid/v1/jwks"
+        forwardOriginalToken: true
+        outputClaimToHeaders:
+        - header: kubeflow-userid
+          claim: sub
+        - header: kubeflow-groups
+          claim: groups
+        fromHeaders:
+        - name: Authorization
+          prefix: "Bearer "
+  target:
+    group: security.istio.io
+    version: v1beta1
+    kind: RequestAuthentication
+    name: m2m-token-issuer
+    namespace: istio-system
