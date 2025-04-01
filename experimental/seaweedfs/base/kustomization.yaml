@@ -3,7 +3,5 @@ kind: Kustomization
 namespace: kubeflow
 
 resources:
-- seaweedfs-deployment.yaml
-- seaweedfs-pvc.yaml
-- seaweedfs-service.yaml
-- seadweedfs-networkpolicy.yaml
+- seaweedfs/
+- pipeline-profile-controller/

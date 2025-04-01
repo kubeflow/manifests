@@ -12,11 +12,23 @@ spec:
     - source:
         principals:
         - cluster.local/ns/kubeflow/sa/ml-pipeline
-  - from:
-    - source:
-        principals:
         - cluster.local/ns/kubeflow/sa/ml-pipeline-ui
-  # Allow traffic from User Pipeline Pods, which don't have a sidecar.
+    to:
+    - operation:
+        ports: ["8333"]
+  # Allow traffic to s3 endpoint from User Pipeline Pods, which don't have a sidecar.
+  - {}
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: pipeline-profile-controller
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app: kubeflow-pipelines-profile-controller
+  rules:
   - {}
 ---
 apiVersion: "networking.istio.io/v1alpha3"
