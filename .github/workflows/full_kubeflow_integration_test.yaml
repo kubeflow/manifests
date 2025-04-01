@@ -210,6 +210,23 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
+    # Set up cluster access configuration
+    - name: Setup Cluster Access
+      run: |
+        # Get the kubeconfig from the running kind cluster
+        kind get kubeconfig --name=${KIND_CLUSTER_NAME} > ${HOME}/.kube/kind-config
+        echo "KUBECONFIG=${HOME}/.kube/kind-config" >> $GITHUB_ENV
+
+        # Verify connection to the cluster
+        echo "Verifying connection to Kind cluster..."
+        kubectl cluster-info
+        kubectl get nodes
+
+        # Print debug info
+        echo "Current kubectl context:"
+        kubectl config current-context
+
     # Set up test environment
     - name: Setup Python 3.12
       uses: actions/setup-python@v4
@@ -219,17 +236,10 @@ jobs:
     - name: Install Test Dependencies
       run: |
         pip install pytest kubernetes kfp==2.11.0 kserve pytest-timeout pyyaml requests
+
     # Setup port forwarding for gateway access
     - name: Port Forward Istio Gateway
       run: |
-        # Ensure kubectl is using the correct config for the Kind cluster
-        export KUBECONFIG="${HOME}/.kube/config"
-
-        # Verify cluster connection before proceeding
-        echo "Verifying connection to Kind cluster..."
-        kubectl cluster-info
-        kubectl get nodes
-
         # Get Istio gateway service and set up port forwarding
         echo "Setting up port forwarding for Istio gateway..."
         INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
