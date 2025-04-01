@@ -20,6 +20,7 @@ jobs:
     timeout-minutes: 40
     outputs:
       kf_profile: ${{ env.KF_PROFILE }}
+      cluster_state: success
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -32,6 +33,33 @@ jobs:
 
     - name: Create kubeflow namespace
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+    # Save KinD cluster configuration for test job
+    - name: Export Cluster Configuration
+      run: |
+        # Create directory for configuration
+        mkdir -p cluster-config
+
+        # Save kubeconfig
+        kind get kubeconfig --name=${KIND_CLUSTER_NAME} > cluster-config/kind-config
+
+        # Save cluster nodes and status information
+        kubectl get nodes -o wide > cluster-config/nodes.txt
+        kubectl cluster-info > cluster-config/cluster-info.txt
+        kubectl get namespace > cluster-config/namespaces.txt
+
+        # Save cluster version
+        kubectl version --output=json > cluster-config/version.json
+
+        echo "Cluster configuration saved to cluster-config directory"
+
+    - name: Upload Cluster Configuration
+      uses: actions/upload-artifact@v4
+      with:
+        name: kind-cluster-config
+        path: cluster-config/
+        retention-days: 1
+
     # Core Platform Components
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh
@@ -207,23 +235,64 @@ jobs:
     env:
       KIND_CLUSTER_NAME: kubeflow
       KF_PROFILE: ${{ needs.setup-and-install.outputs.kf_profile }}
+      CLUSTER_STATE: ${{ needs.setup-and-install.outputs.cluster_state }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
+    # Check setup job completed successfully
+    - name: Verify Setup Job Status
+      run: |
+        if [ "$CLUSTER_STATE" != "success" ]; then
+          echo "Error: Previous setup job did not complete successfully"
+          echo "Cluster state reported as: $CLUSTER_STATE"
+          exit 1
+        fi
+
+    # Download and restore cluster configuration
+    - name: Download Cluster Configuration
+      uses: actions/download-artifact@v4
+      with:
+        name: kind-cluster-config
+        path: cluster-config
 
     # Set up cluster access configuration
     - name: Setup Cluster Access
       run: |
         # Ensure the .kube directory exists
         mkdir -p ${HOME}/.kube
-        # Get the kubeconfig from the running kind cluster
-        kind get kubeconfig --name=${KIND_CLUSTER_NAME} > ${HOME}/.kube/kind-config
+
+        # Use the saved kubeconfig
+        cp cluster-config/kind-config ${HOME}/.kube/kind-config
+        chmod 600 ${HOME}/.kube/kind-config
         echo "KUBECONFIG=${HOME}/.kube/kind-config" >> $GITHUB_ENV
 
-        # Verify connection to the cluster
+        # Wait for cluster to be fully accessible with retries
+        MAX_RETRIES=10
+        RETRY_COUNT=0
+
         echo "Verifying connection to Kind cluster..."
+        until kubectl cluster-info; do
+          RETRY_COUNT=$((RETRY_COUNT+1))
+          if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
+            echo "Failed to connect to Kind cluster after $MAX_RETRIES attempts"
+            exit 1
+          fi
+          echo "Waiting for cluster to be accessible (attempt $RETRY_COUNT/$MAX_RETRIES)..."
+          sleep 5
+        done
+
+        # Verify cluster state and print diagnostics
+        echo "Cluster info from previous job:"
+        cat cluster-config/cluster-info.txt
+
+        echo "Current cluster state:"
         kubectl cluster-info
         kubectl get nodes
+
+        echo "Verifying namespaces..."
+        kubectl get namespace | grep kubeflow
+        kubectl get namespace | grep $KF_PROFILE
 
         # Print debug info
         echo "Current kubectl context:"
