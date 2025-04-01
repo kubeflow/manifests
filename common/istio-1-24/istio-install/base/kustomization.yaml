@@ -8,6 +8,7 @@ resources:
 - gateway_authorizationpolicy.yaml
 - deny_all_authorizationpolicy.yaml
 - gateway.yaml
+- sidecar-prune-egress.yaml
 
 patches:
 - path: patches/service.yaml
