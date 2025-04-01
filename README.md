@@ -1,6 +1,10 @@
 # Kubeflow Manifests
 
-The **Kubeflow Manifests** are a collection of community-maintained manifests for installing Kubeflow in popular Kubernetes clusters such as Kind, Minikube, Rancher, EKS, AKS, and GKE. The manifests include all Kubeflow components (Pipelines, Kserve, etc.), the **Kubeflow Central Dashboard**, and other applications that comprise the **Kubeflow Platform**. This installation is beneficial for users wanting to explore the end-to-end capabilities of the Kubeflow Platform.
+The Kubeflow Manifests are community maintained kustomize manifests which are tested to deploy a minimum-viable Kubeflow Platform on **[Kind](https://kind.sigs.k8s.io/)** clusters.
+They are aggregated by the Manifests Working Group, and are intended to be used as the base of packaged distributions and by those with Kubernetes knowledge.
+
+The manifests include all **Kubeflow Components** (Pipelines, Kserve, etc.), **Kubeflow Central Dashboard**, and other applications that comprise the [Kubeflow Platform](https://www.kubeflow.org/docs/started/introduction/#what-is-kubeflow-platform).
+This installation is beneficial for users wanting to explore the end-to-end capabilities of the Kubeflow Platform.
 
 For a stable and conservative experience, we recommend using the [latest stable release](https://github.com/kubeflow/manifests/releases). However, please consult the more up-to-date documentation in the master branch.
 
