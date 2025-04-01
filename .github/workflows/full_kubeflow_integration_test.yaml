@@ -214,6 +214,8 @@ jobs:
     # Set up cluster access configuration
     - name: Setup Cluster Access
       run: |
+        # Ensure the .kube directory exists
+        mkdir -p ${HOME}/.kube
         # Get the kubeconfig from the running kind cluster
         kind get kubeconfig --name=${KIND_CLUSTER_NAME} > ${HOME}/.kube/kind-config
         echo "KUBECONFIG=${HOME}/.kube/kind-config" >> $GITHUB_ENV
