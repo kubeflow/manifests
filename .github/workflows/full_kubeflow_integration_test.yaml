@@ -11,6 +11,8 @@ on:
 env:
   KIND_CLUSTER_NAME: kubeflow
   KF_PROFILE: kubeflow-user-example-com
+  # Set Kind network to host to make it accessible across jobs
+  KIND_NETWORK: kind
 
 jobs:
   setup-and-install:
@@ -21,12 +23,17 @@ jobs:
     outputs:
       kf_profile: ${{ env.KF_PROFILE }}
       cluster_state: success
+      runner_id: ${{ runner.name }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
     # Base Infrastructure Setup
     - name: Install KinD, Create KinD cluster and Install kustomize
-      run: ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
+      run: |
+        # Create kind network (if not exists) to make the cluster accessible across jobs
+        docker network create kind || true
+        # Run the install script
+        ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
 
     - name: Install kubectl
       run: ./tests/gh-actions/install_kubectl.sh
@@ -40,8 +47,11 @@ jobs:
         # Create directory for configuration
         mkdir -p cluster-config
 
-        # Save kubeconfig
-        kind get kubeconfig --name=${KIND_CLUSTER_NAME} > cluster-config/kind-config
+        # Save kubeconfig with proper server address instead of localhost
+        kind get kubeconfig --name=${KIND_CLUSTER_NAME} --internal > cluster-config/kind-config
+
+        # Remove any localhost references from the kubeconfig
+        sed -i 's/server: https:\/\/127.0.0.1:[0-9]*/server: https:\/\/'${KIND_CLUSTER_NAME}'-control-plane:6443/g' cluster-config/kind-config
 
         # Save cluster nodes and status information
         kubectl get nodes -o wide > cluster-config/nodes.txt
@@ -236,9 +246,24 @@ jobs:
       KIND_CLUSTER_NAME: kubeflow
       KF_PROFILE: ${{ needs.setup-and-install.outputs.kf_profile }}
       CLUSTER_STATE: ${{ needs.setup-and-install.outputs.cluster_state }}
+      # Set Kind network to host
+      KIND_NETWORK: kind
+      # Use the same runner if possible to maintain container access
+      RUNNER_ID: ${{ needs.setup-and-install.outputs.runner_id }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
+    # Diagnostic step to check if Kind is already running
+    - name: Check for existing Kind clusters
+      run: |
+        echo "Checking for existing Kind clusters..."
+        if command -v kind &> /dev/null; then
+          kind get clusters || echo "No Kind clusters found"
+          docker ps || echo "No docker containers found"
+        else
+          echo "Kind CLI not installed yet"
+        fi
 
     # Check setup job completed successfully
     - name: Verify Setup Job Status
@@ -248,6 +273,8 @@ jobs:
           echo "Cluster state reported as: $CLUSTER_STATE"
           exit 1
         fi
+        echo "Runner ID from previous job: $RUNNER_ID"
+        echo "Current runner ID: $(hostname)"
 
     # Download and restore cluster configuration
     - name: Download Cluster Configuration
@@ -255,6 +282,36 @@ jobs:
       with:
         name: kind-cluster-config
         path: cluster-config
+
+    # Reinstall Kind if needed
+    - name: Reinstall Kind if needed
+      run: |
+        # Install Kind if not already installed
+        if ! command -v kind &> /dev/null; then
+          echo "Installing Kind..."
+          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.27.0/kind-linux-amd64
+          chmod +x ./kind
+          sudo mv kind /usr/local/bin
+        fi
+
+        # Create kind network if it doesn't exist
+        docker network create kind || true
+
+        # Check if the Kind cluster still exists in this runner
+        if ! kind get clusters | grep -q "${KIND_CLUSTER_NAME}"; then
+          echo "Kind cluster '${KIND_CLUSTER_NAME}' not found. Need to recreate or reconnect."
+
+          # Check if container with the same name exists
+          if docker ps -a | grep -q "${KIND_CLUSTER_NAME}-control-plane"; then
+            echo "Container exists but is not recognized by Kind. Starting it..."
+            docker start "${KIND_CLUSTER_NAME}-control-plane" || true
+            docker start "${KIND_CLUSTER_NAME}-worker" || true
+            docker start "${KIND_CLUSTER_NAME}-worker2" || true
+            sleep 5
+          fi
+        else
+          echo "Kind cluster '${KIND_CLUSTER_NAME}' exists."
+        fi
 
     # Set up cluster access configuration
     - name: Setup Cluster Access
@@ -267,6 +324,23 @@ jobs:
         chmod 600 ${HOME}/.kube/kind-config
         echo "KUBECONFIG=${HOME}/.kube/kind-config" >> $GITHUB_ENV
 
+        # Export KIND_CLUSTER_NAME for subsequent steps
+        echo "KIND_CLUSTER_NAME=${KIND_CLUSTER_NAME}" >> $GITHUB_ENV
+
+        # Update /etc/hosts to make the kind control plane hostname resolvable
+        echo "127.0.0.1 ${KIND_CLUSTER_NAME}-control-plane" | sudo tee -a /etc/hosts
+
+        # Get API server port if container exists
+        if docker ps | grep -q "${KIND_CLUSTER_NAME}-control-plane"; then
+          API_PORT=$(docker port ${KIND_CLUSTER_NAME}-control-plane 6443/tcp | cut -d ':' -f 2)
+          echo "API Server port: ${API_PORT}"
+
+          # Update kubeconfig to point to the right port
+          sed -i "s|server: .*|server: https://127.0.0.1:${API_PORT}|g" ${HOME}/.kube/kind-config
+        else
+          echo "Warning: Kind control plane container not found"
+        fi
+
         # Wait for cluster to be fully accessible with retries
         MAX_RETRIES=10
         RETRY_COUNT=0
@@ -276,7 +350,22 @@ jobs:
           RETRY_COUNT=$((RETRY_COUNT+1))
           if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
             echo "Failed to connect to Kind cluster after $MAX_RETRIES attempts"
-            exit 1
+            echo "Debug information:"
+            echo "Docker containers:"
+            docker ps
+            echo "Network information:"
+            ip addr
+            echo "Kubeconfig contents:"
+            cat ${HOME}/.kube/kind-config
+
+            echo "Attempting to install Kind from scratch as a last resort..."
+            ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
+            # Update KUBECONFIG with the new cluster
+            kind get kubeconfig --name=${KIND_CLUSTER_NAME} > ${HOME}/.kube/kind-config
+            echo "New kubeconfig after reinstall:"
+            cat ${HOME}/.kube/kind-config
+            # Try one more time
+            kubectl cluster-info || exit 1
           fi
           echo "Waiting for cluster to be accessible (attempt $RETRY_COUNT/$MAX_RETRIES)..."
           sleep 5
@@ -291,8 +380,8 @@ jobs:
         kubectl get nodes
 
         echo "Verifying namespaces..."
-        kubectl get namespace | grep kubeflow
-        kubectl get namespace | grep $KF_PROFILE
+        kubectl get namespace | grep kubeflow || echo "Kubeflow namespace not found"
+        kubectl get namespace | grep $KF_PROFILE || echo "Profile namespace not found"
 
         # Print debug info
         echo "Current kubectl context:"
