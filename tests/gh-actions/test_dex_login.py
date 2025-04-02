@@ -52,94 +52,155 @@ class DexSessionManager:
         Get the session cookies by authenticating against Dex
         :return: a string of session cookies in the form "key1=value1; key2=value2"
         """
+        max_retries = 3
+        retry_delay = 2
+        
+        for attempt in range(max_retries):
+            try:
+                # use a persistent session (for cookies)
+                s = requests.Session()
+                
+                # Add user-agent to avoid some security blocks or {} brackets also worked
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'
+                }
 
-        # use a persistent session (for cookies)
-        s = requests.Session()
-
-        # GET the endpoint_url, which should redirect to Dex
-        resp = s.get(
-            self._endpoint_url, allow_redirects=True, verify=not self._skip_tls_verify
-        )
-        if resp.status_code == 200:
-            pass
-        elif resp.status_code == 403:
-            # if we get 403, we might be at the oauth2-proxy sign-in page
-            # the default path to start the sign-in flow is `/oauth2/start?rd=<url>`
-            url_obj = urlsplit(resp.url)
-            url_obj = url_obj._replace(
-                path="/oauth2/start", query=urlencode({"rd": url_obj.path})
-            )
-            resp = s.get(
-                url_obj.geturl(), allow_redirects=True, verify=not self._skip_tls_verify
-            )
-        else:
-            raise RuntimeError(
-                f"HTTP status code '{resp.status_code}' for GET against: {self._endpoint_url}"
-            )
-
-        # if we were NOT redirected, then the endpoint is unsecured
-        if len(resp.history) == 0:
-            # no cookies are needed
-            return ""
-
-        # if we are at `../auth` path, we need to select an auth type
-        url_obj = urlsplit(resp.url)
-        if re.search(r"/auth$", url_obj.path):
-            url_obj = url_obj._replace(
-                path=re.sub(r"/auth$", f"/auth/{self._dex_auth_type}", url_obj.path)
-            )
-
-        # if we are at `../auth/xxxx/login` path, then we are at the login page
-        if re.search(r"/auth/.*/login$", url_obj.path):
-            dex_login_url = url_obj.geturl()
-        else:
-            # otherwise, we need to follow a redirect to the login page
-            resp = s.get(
-                url_obj.geturl(), allow_redirects=True, verify=not self._skip_tls_verify
-            )
-            if resp.status_code != 200:
-                raise RuntimeError(
-                    f"HTTP status code '{resp.status_code}' for GET against: {url_obj.geturl()}"
+                # GET the endpoint_url, which should redirect to Dex
+                resp = s.get(
+                    self._endpoint_url, 
+                    headers=headers,
+                    allow_redirects=True, 
+                    verify=not self._skip_tls_verify,
+                    timeout=30
                 )
-            dex_login_url = resp.url
+                
+                if resp.status_code == 200:
+                    pass
+                elif resp.status_code == 403:
+                    # Start OAuth2 flow explicitly
+                    url_obj = urlsplit(resp.url)
+                    oauth_url = f"{url_obj.scheme}://{url_obj.netloc}/oauth2/start?rd={url_obj.path or '/'}"
+                    resp = s.get(
+                        oauth_url,
+                        headers=headers,
+                        allow_redirects=True,
+                        verify=not self._skip_tls_verify,
+                        timeout=30
+                    )
+                else:
+                    raise RuntimeError(
+                        f"HTTP status code '{resp.status_code}' for GET against: {self._endpoint_url}"
+                    )
 
-        # attempt Dex login
-        resp = s.post(
-            dex_login_url,
-            data={"login": self._dex_username, "password": self._dex_password},
-            allow_redirects=True,
-            verify=not self._skip_tls_verify,
-        )
-        if resp.status_code != 200:
-            raise RuntimeError(
-                f"HTTP status code '{resp.status_code}' for POST against: {dex_login_url}"
-            )
+                # if we were NOT redirected, then the endpoint is unsecured
+                if len(resp.history) == 0:
+                    # no cookies are needed
+                    return ""
 
-        # if we were NOT redirected, then the login credentials were probably invalid
-        if len(resp.history) == 0:
-            raise RuntimeError(
-                f"Login credentials are probably invalid - "
-                f"No redirect after POST to: {dex_login_url}"
-            )
+                # Navigate to auth path if needed
+                url_obj = urlsplit(resp.url)
+                if re.search(r"/auth$", url_obj.path):
+                    auth_url = re.sub(r"/auth$", f"/auth/{self._dex_auth_type}", resp.url)
+                    resp = s.get(
+                        auth_url,
+                        headers=headers,
+                        allow_redirects=True,
+                        verify=not self._skip_tls_verify,
+                        timeout=30
+                    )
 
-        # if we are at `../approval` path, we need to approve the login
-        url_obj = urlsplit(resp.url)
-        if re.search(r"/approval$", url_obj.path):
-            dex_approval_url = url_obj.geturl()
+                # Determine login URL
+                if re.search(r"/auth/.*/login", urlsplit(resp.url).path):
+                    dex_login_url = resp.url
+                else:
+                    # Get redirected to login page
+                    resp = s.get(
+                        resp.url,
+                        headers=headers,
+                        allow_redirects=True,
+                        verify=not self._skip_tls_verify,
+                        timeout=30
+                    )
+                    dex_login_url = resp.url
 
-            # approve the login
-            resp = s.post(
-                dex_approval_url,
-                data={"approval": "approve"},
-                allow_redirects=True,
-                verify=not self._skip_tls_verify,
-            )
-            if resp.status_code != 200:
-                raise RuntimeError(
-                    f"HTTP status code '{resp.status_code}' for POST against: {url_obj.geturl()}"
+                # Check for and extract CSRF token
+                login_data = {
+                    "login": self._dex_username,
+                    "password": self._dex_password
+                }
+                
+                # Find and add CSRF token if present
+                csrf_match = re.search(r'name="_csrf".*?value="([^"]+)"', resp.text)
+                if csrf_match:
+                    login_data["_csrf"] = csrf_match.group(1)
+                    
+                # Wait a moment before submitting the form (helps with some race conditions)
+                import time
+                time.sleep(1)
+                    
+                # attempt Dex login with proper headers
+                resp = s.post(
+                    dex_login_url,
+                    data=login_data,
+                    headers=headers,
+                    allow_redirects=True,
+                    verify=not self._skip_tls_verify,
+                    timeout=30
                 )
+                
+                # Handle 403 specifically - might need to restart oauth flow
+                if resp.status_code == 403:
+                    # Let's try one more approach - go through the oauth2 flow again
+                    oauth_url = f"{urlsplit(self._endpoint_url).scheme}://{urlsplit(self._endpoint_url).netloc}/oauth2/start"
+                    resp = s.get(
+                        oauth_url,
+                        headers=headers,
+                        allow_redirects=True,
+                        verify=not self._skip_tls_verify,
+                        timeout=30
+                    )
+                    
+                    # Continue with normal flow after restart
+                    if resp.status_code == 200:
+                        # If we have cookies now, we're good
+                        if s.cookies:
+                            return "; ".join([f"{c.name}={c.value}" for c in s.cookies])
+                
+                if resp.status_code != 200:
+                    raise RuntimeError(
+                        f"HTTP status code '{resp.status_code}' for POST against: {dex_login_url}"
+                    )
 
-        return "; ".join([f"{c.name}={c.value}" for c in s.cookies])
+                # if we are at `../approval` path, we need to approve the login
+                url_obj = urlsplit(resp.url)
+                if re.search(r"/approval$", url_obj.path):
+                    dex_approval_url = url_obj.geturl()
+                    # approve the login
+                    resp = s.post(
+                        dex_approval_url,
+                        data={"approval": "approve"},
+                        headers=headers,
+                        allow_redirects=True,
+                        verify=not self._skip_tls_verify,
+                        timeout=30
+                    )
+
+                # Return the cookies if we have them
+                if s.cookies:
+                    return "; ".join([f"{c.name}={c.value}" for c in s.cookies])
+                else:
+                    raise RuntimeError("No cookies received after login flow")
+                
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    print(f"Attempt {attempt+1} failed: {str(e)}")
+                    print(f"Retrying in {retry_delay} seconds...")
+                    import time
+                    time.sleep(retry_delay)
+                    retry_delay *= 2  # Exponential backoff
+                else:
+                    print(f"All {max_retries} attempts failed. Last error: {str(e)}")
+                    raise
 
 KUBEFLOW_ENDPOINT = "http://localhost:8080"
 KUBEFLOW_USERNAME = "user@example.com"
