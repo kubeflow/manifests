@@ -25,18 +25,16 @@ fi
     sudo mv kind /usr/local/bin
 } || { echo "Failed to install KinD"; exit 1; }
 
-
 echo "Creating KinD cluster ..."
-echo "
+cat << EOF > kind-config.yaml
 apiVersion: kind.x-k8s.io/v1alpha4
 kind: Cluster
 # Configure registry for KinD.
 containerdConfigPatches:
 - |-
-  [plugins.\"io.containerd.grpc.v1.cri\".registry.mirrors.\"REGISTRY_NAME:REGISTRY_PORT\"]
-    endpoint = [\"http://REGISTRY_NAME:REGISTRY_PORT\"]
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."REGISTRY_NAME:REGISTRY_PORT"]
+    endpoint = ["http://REGISTRY_NAME:REGISTRY_PORT"]
 # This is needed in order to support projected volumes with service account tokens.
-# See: https://kubernetes.slack.com/archives/CEKK1KTN2/p1600268272383600
 kubeadmConfigPatches:
   - |
     apiVersion: kubeadm.k8s.io/v1beta2
@@ -45,17 +43,37 @@ kubeadmConfigPatches:
       name: config
     apiServer:
       extraArgs:
-        \"service-account-issuer\": \"https://kubernetes.default.svc\"
-        \"service-account-signing-key-file\": \"/etc/kubernetes/pki/sa.key\"
+        "service-account-issuer": "https://kubernetes.default.svc"
+        "service-account-signing-key-file": "/etc/kubernetes/pki/sa.key"
 nodes:
 - role: control-plane
-  image: kindest/node:v1.32.2@sha256:f226345927d7e348497136874b6d207e0b32cc52154ad8323129352923a3142f
+  image: kindest/node:v1.27.3@sha256:3966ac761ae0136263ffdb6cfd4db23ef8a83cba8a463690e98317add2c9ba72
+  kubeadmConfigPatches:
+    - |
+      kind: InitConfiguration
+      nodeRegistration:
+        kubeletExtraArgs:
+          node-labels: "ingress-ready=true"
+  extraPortMappings:
+    - containerPort: 80
+      hostPort: 80
+      protocol: TCP
+    - containerPort: 443
+      hostPort: 443
+      protocol: TCP
 - role: worker
-  image: kindest/node:v1.32.2@sha256:f226345927d7e348497136874b6d207e0b32cc52154ad8323129352923a3142f
+  image: kindest/node:v1.27.3@sha256:3966ac761ae0136263ffdb6cfd4db23ef8a83cba8a463690e98317add2c9ba72
 - role: worker
-  image: kindest/node:v1.32.2@sha256:f226345927d7e348497136874b6d207e0b32cc52154ad8323129352923a3142f
-" | kind create cluster --config -
+  image: kindest/node:v1.27.3@sha256:3966ac761ae0136263ffdb6cfd4db23ef8a83cba8a463690e98317add2c9ba72
+EOF
 
+# Create the cluster with the new config
+kind create cluster --name "${KIND_CLUSTER_NAME:-kubeflow}" --config kind-config.yaml
+
+# Verify cluster is running
+echo "Verifying cluster status..."
+kubectl cluster-info
+kubectl get nodes
 
 echo "Install Kustomize ..."
 {
@@ -64,3 +82,10 @@ echo "Install Kustomize ..."
     chmod a+x kustomize
     sudo mv kustomize /usr/local/bin/kustomize
 } || { echo "Failed to install Kustomize"; exit 1; }
+
+# Save cluster configuration for other jobs
+mkdir -p cluster-config
+kind get kubeconfig --name="${KIND_CLUSTER_NAME:-kubeflow}" > cluster-config/kind-config
+kubectl cluster-info > cluster-config/cluster-info.txt
+kubectl get nodes -o wide > cluster-config/nodes.txt
+kubectl version --output=json > cluster-config/version.json
