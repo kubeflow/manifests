@@ -2,8 +2,12 @@
 set -euxo
 
 NAMESPACE=$1
+
+# Make sure we're in the repository root directory
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo "${GITHUB_WORKSPACE:-$(pwd)}")
+
 # Define the path to the spark application example YAML
-SPARK_APP_YAML="apps/spark/sparkapplication_example.yaml"
+SPARK_APP_YAML="${REPO_ROOT}/apps/spark/sparkapplication_example.yaml"
 
 # Verify the file exists
 if [ ! -f "$SPARK_APP_YAML" ]; then
