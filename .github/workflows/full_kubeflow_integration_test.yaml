@@ -193,6 +193,15 @@ jobs:
         kustomize build apps/jupyter/notebook-controller/upstream/overlays/kubeflow/ | kubectl apply -f -
         echo "Installing Admission Webhook..."
         kustomize build apps/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
+
+        # Verify Admission Webhook installed the PodDefault CRD
+        echo "Verifying PodDefault CRD installation..."
+        kubectl get crd poddefaults.kubeflow.org || {
+          echo "PodDefault CRD not found, directly installing it..."
+          kubectl apply -f https://raw.githubusercontent.com/kubeflow/kubeflow/master/components/admission-webhook/manifests/base/crd.yaml
+        }
+
+        # Wait for pods to become ready
         echo "Waiting for pods to become ready..."
         kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 300s \
           --field-selector=status.phase!=Succeeded
@@ -626,6 +635,15 @@ jobs:
     # Notebook Tests
     - name: Test Notebook Creation and Operation
       run: |
+        # Verify PodDefault CRD exists before applying PodDefault
+        echo "Verifying PodDefault CRD is available..."
+        if ! kubectl get crd poddefaults.kubeflow.org > /dev/null 2>&1; then
+          echo "PodDefault CRD not found, installing it..."
+          kubectl apply -f https://raw.githubusercontent.com/kubeflow/kubeflow/master/components/admission-webhook/manifests/base/crd.yaml
+          # Wait for CRD to be established
+          kubectl wait --for=condition=established crd/poddefaults.kubeflow.org --timeout=60s
+        fi
+
         # Apply PodDefaults for notebook access to pipelines
         kubectl apply -f tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml
         # Create notebook server
