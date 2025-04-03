@@ -11,26 +11,26 @@ on:
 env:
   KIND_CLUSTER_NAME: kubeflow
   KF_PROFILE: kubeflow-user-example-com
-  # Set Kind network to host to make it accessible across jobs
   KIND_NETWORK: kind
 
 jobs:
-  setup-and-install:
-    name: Setup and Install Kubeflow Components
+  kubeflow-integration:
+    name: Kubeflow Installation and Testing
     runs-on:
       labels: ubuntu-latest-16-cores
-    timeout-minutes: 40
-    outputs:
-      kf_profile: ${{ env.KF_PROFILE }}
-      cluster_state: success
-      runner_id: ${{ runner.name }}
+    timeout-minutes: 60
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
+    # =============== INSTALLATION PHASE ===============
+    - name: "📦 PHASE 1: INSTALLATION - Setup Base Infrastructure"
+      run: echo "Starting Kubeflow installation phase..."
+
     # Base Infrastructure Setup
     - name: Install KinD, Create KinD cluster and Install kustomize
       run: |
-        # Create kind network (if not exists) to make the cluster accessible across jobs
+        # Create kind network (if not exists) to make the cluster accessible
         docker network create kind || true
         # Run the install script
         ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
@@ -40,35 +40,6 @@ jobs:
 
     - name: Create kubeflow namespace
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
-
-    # Save KinD cluster configuration for test job
-    - name: Export Cluster Configuration
-      run: |
-        # Create directory for configuration
-        mkdir -p cluster-config
-
-        # Save kubeconfig with proper server address instead of localhost
-        kind get kubeconfig --name=${KIND_CLUSTER_NAME} --internal > cluster-config/kind-config
-
-        # Remove any localhost references from the kubeconfig
-        sed -i 's/server: https:\/\/127.0.0.1:[0-9]*/server: https:\/\/'${KIND_CLUSTER_NAME}'-control-plane:6443/g' cluster-config/kind-config
-
-        # Save cluster nodes and status information
-        kubectl get nodes -o wide > cluster-config/nodes.txt
-        kubectl cluster-info > cluster-config/cluster-info.txt
-        kubectl get namespace > cluster-config/namespaces.txt
-
-        # Save cluster version
-        kubectl version --output=json > cluster-config/version.json
-
-        echo "Cluster configuration saved to cluster-config directory"
-
-    - name: Upload Cluster Configuration
-      uses: actions/upload-artifact@v4
-      with:
-        name: kind-cluster-config
-        path: cluster-config/
-        retention-days: 1
 
     # Core Platform Components
     - name: Install cert-manager
@@ -121,6 +92,7 @@ jobs:
 
     - name: Install kubeflow-istio-resources
       run: kustomize build common/istio-cni-1-24/kubeflow-istio-resources/base | kubectl apply -f -
+
     # Authentication Components
     - name: Install KF Multi Tenancy
       run: ./tests/gh-actions/install_multi_tenancy.sh
@@ -160,6 +132,7 @@ jobs:
             kubectl rollout restart deployment -n auth dex
           fi
         fi
+
     # Core Kubeflow Components
     - name: Install central-dashboard
       run: |
@@ -168,6 +141,7 @@ jobs:
 
     - name: Install Kubeflow Pipelines
       run: ./tests/gh-actions/install_pipelines.sh
+
     # User Profile Setup
     - name: Create KF Profile
       run: |
@@ -184,6 +158,7 @@ jobs:
             echo "Error: Secret mlpipeline-minio-artifact not found in namespace $KF_PROFILE"
             exit 1
         fi
+
     # Notebook Components
     - name: Install Notebook components
       run: |
@@ -245,6 +220,38 @@ jobs:
 
     - name: Install KServe
       run: ./tests/gh-actions/install_kserve.sh
+
+    # Apache Spark Installation
+    - name: Install Apache Spark
+      run: |
+        echo "Installing Apache Spark..."
+        chmod u+x tests/gh-actions/spark_*.sh
+        ./tests/gh-actions/spark_install.sh
+
+    # Verify all components installed successfully
+    - name: Verify All Components Installed Successfully
+      run: |
+        echo "Checking status of critical components..."
+        kubectl get deployment -n kubeflow
+        kubectl get deployment -n cert-manager
+        kubectl get deployment -n istio-system
+        kubectl get deployment -n auth
+
+        # Check for failed pods
+        if kubectl get pods --all-namespaces | grep -E '(Error|CrashLoopBackOff)'; then
+            echo "Found pods in failed state"
+            exit 1
+        fi
+
+        echo "All Kubeflow components installed successfully"
+
+    # =============== TESTING PHASE ===============
+    - name: "🧪 PHASE 2: TESTING - Setup Test Environment"
+      run: |
+        echo "Starting Kubeflow testing phase..."
+        # Install test dependencies
+        pip install pytest kubernetes kfp==2.11.0 kserve pytest-timeout pyyaml requests
+
     # KServe Tests
     - name: Test KServe Model Deployment and Serving
       run: |
@@ -276,7 +283,7 @@ jobs:
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
         export KSERVE_M2M_TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
 
-        # Run the KServe tests using the same Python test scripts used by the individual KServe workflow
+        # Run the KServe tests
         cd ./apps/kserve/tests && pytest . -vs --log-level info || {
           echo "KServe tests failed with exit code $?"
           echo "Displaying additional debug information:"
@@ -287,192 +294,9 @@ jobs:
           echo "Continuing workflow despite test failures"
         }
 
-        # Detailed diagnostics similar to what's done in kserve_m2m_test.yaml
+        # Detailed diagnostics
         echo "=== AuthorizationPolicy Details ==="
         kubectl get authorizationpolicy -n $KF_PROFILE -o yaml
-    # Apache Spark Installation
-    - name: Install Apache Spark
-      run: |
-        echo "Installing Apache Spark..."
-        chmod u+x tests/gh-actions/spark_*.sh
-        ./tests/gh-actions/spark_install.sh
-    # Verify all components installed successfully
-    - name: Verify All Components Installed Successfully
-      run: |
-        echo "Checking status of critical components..."
-        kubectl get deployment -n kubeflow
-        kubectl get deployment -n cert-manager
-        kubectl get deployment -n istio-system
-        kubectl get deployment -n auth
-
-        # Check for failed pods
-        if kubectl get pods --all-namespaces | grep -E '(Error|CrashLoopBackOff)'; then
-            echo "Found pods in failed state"
-            exit 1
-        fi
-
-        echo "All Kubeflow components installed successfully"
-
-  test-components:
-    name: Test Kubeflow Components
-    needs: setup-and-install
-    runs-on:
-      labels: ubuntu-latest-16-cores
-    timeout-minutes: 30
-    env:
-      KIND_CLUSTER_NAME: kubeflow
-      KF_PROFILE: ${{ needs.setup-and-install.outputs.kf_profile }}
-      CLUSTER_STATE: ${{ needs.setup-and-install.outputs.cluster_state }}
-      # Set Kind network to host
-      KIND_NETWORK: kind
-      # Use the same runner if possible to maintain container access
-      RUNNER_ID: ${{ needs.setup-and-install.outputs.runner_id }}
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    # Diagnostic step to check if Kind is already running
-    - name: Check for existing Kind clusters
-      run: |
-        echo "Checking for existing Kind clusters..."
-        if command -v kind &> /dev/null; then
-          kind get clusters || echo "No Kind clusters found"
-          docker ps || echo "No docker containers found"
-        else
-          echo "Kind CLI not installed yet"
-        fi
-
-    # Check setup job completed successfully
-    - name: Verify Setup Job Status
-      run: |
-        if [ "$CLUSTER_STATE" != "success" ]; then
-          echo "Error: Previous setup job did not complete successfully"
-          echo "Cluster state reported as: $CLUSTER_STATE"
-          exit 1
-        fi
-        echo "Runner ID from previous job: $RUNNER_ID"
-        echo "Current runner ID: $(hostname)"
-
-    # Download and restore cluster configuration
-    - name: Download Cluster Configuration
-      uses: actions/download-artifact@v4
-      with:
-        name: kind-cluster-config
-        path: cluster-config
-
-    # Reinstall Kind if needed
-    - name: Reinstall Kind if needed
-      run: |
-        # Install Kind if not already installed
-        if ! command -v kind &> /dev/null; then
-          echo "Installing Kind..."
-          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.27.0/kind-linux-amd64
-          chmod +x ./kind
-          sudo mv kind /usr/local/bin
-        fi
-
-        # Create kind network if it doesn't exist
-        docker network create kind || true
-
-        # Check if the Kind cluster still exists in this runner
-        if ! kind get clusters | grep -q "${KIND_CLUSTER_NAME}"; then
-          echo "Kind cluster '${KIND_CLUSTER_NAME}' not found. Need to recreate or reconnect."
-
-          # Check if container with the same name exists
-          if docker ps -a | grep -q "${KIND_CLUSTER_NAME}-control-plane"; then
-            echo "Container exists but is not recognized by Kind. Starting it..."
-            docker start "${KIND_CLUSTER_NAME}-control-plane" || true
-            docker start "${KIND_CLUSTER_NAME}-worker" || true
-            docker start "${KIND_CLUSTER_NAME}-worker2" || true
-            sleep 5
-          fi
-        else
-          echo "Kind cluster '${KIND_CLUSTER_NAME}' exists."
-        fi
-
-    # Set up cluster access configuration
-    - name: Setup Cluster Access
-      run: |
-        # Ensure the .kube directory exists
-        mkdir -p ${HOME}/.kube
-
-        # Use the saved kubeconfig
-        cp cluster-config/kind-config ${HOME}/.kube/kind-config
-        chmod 600 ${HOME}/.kube/kind-config
-        echo "KUBECONFIG=${HOME}/.kube/kind-config" >> $GITHUB_ENV
-
-        # Export KIND_CLUSTER_NAME for subsequent steps
-        echo "KIND_CLUSTER_NAME=${KIND_CLUSTER_NAME}" >> $GITHUB_ENV
-
-        # Update /etc/hosts to make the kind control plane hostname resolvable
-        echo "127.0.0.1 ${KIND_CLUSTER_NAME}-control-plane" | sudo tee -a /etc/hosts
-
-        # Get API server port if container exists
-        if docker ps | grep -q "${KIND_CLUSTER_NAME}-control-plane"; then
-          API_PORT=$(docker port ${KIND_CLUSTER_NAME}-control-plane 6443/tcp | cut -d ':' -f 2)
-          echo "API Server port: ${API_PORT}"
-
-          # Update kubeconfig to point to the right port
-          sed -i "s|server: .*|server: https://127.0.0.1:${API_PORT}|g" ${HOME}/.kube/kind-config
-        else
-          echo "Warning: Kind control plane container not found"
-        fi
-
-        # Wait for cluster to be fully accessible with retries
-        MAX_RETRIES=10
-        RETRY_COUNT=0
-
-        echo "Verifying connection to Kind cluster..."
-        until kubectl cluster-info; do
-          RETRY_COUNT=$((RETRY_COUNT+1))
-          if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
-            echo "Failed to connect to Kind cluster after $MAX_RETRIES attempts"
-            echo "Debug information:"
-            echo "Docker containers:"
-            docker ps
-            echo "Network information:"
-            ip addr
-            echo "Kubeconfig contents:"
-            cat ${HOME}/.kube/kind-config
-
-            echo "Attempting to install Kind from scratch as a last resort..."
-            ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
-            # Update KUBECONFIG with the new cluster
-            kind get kubeconfig --name=${KIND_CLUSTER_NAME} > ${HOME}/.kube/kind-config
-            echo "New kubeconfig after reinstall:"
-            cat ${HOME}/.kube/kind-config
-            # Try one more time
-            kubectl cluster-info || exit 1
-          fi
-          echo "Waiting for cluster to be accessible (attempt $RETRY_COUNT/$MAX_RETRIES)..."
-          sleep 5
-        done
-
-        # Verify cluster state and print diagnostics
-        echo "Cluster info from previous job:"
-        cat cluster-config/cluster-info.txt
-
-        echo "Current cluster state:"
-        kubectl cluster-info
-        kubectl get nodes
-
-        echo "Verifying namespaces..."
-        kubectl get namespace | grep kubeflow || echo "Kubeflow namespace not found"
-        kubectl get namespace | grep $KF_PROFILE || echo "Profile namespace not found"
-
-        # Print debug info
-        echo "Current kubectl context:"
-        kubectl config current-context
-
-    # Set up test environment
-    - name: Setup Python 3.12
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.12'
-
-    - name: Install Test Dependencies
-      run: |
-        pip install pytest kubernetes kfp==2.11.0 kserve pytest-timeout pyyaml requests
 
     # Setup port forwarding for gateway access
     - name: Port Forward Istio Gateway
@@ -570,11 +394,13 @@ jobs:
         fi
 
         echo "Port forwarding setup completed. Will proceed with tests."
+
     # Authentication Tests
     - name: Test Dex Authentication
       run: |
         chmod +x tests/gh-actions/test_dex_auth.sh
         ./tests/gh-actions/test_dex_auth.sh
+
     # UI Component Tests
     - name: Test Web UI Components
       run: |
@@ -632,6 +458,7 @@ jobs:
 
         # Continue workflow even if some UI tests fail
         echo "Web UI tests completed. Proceeding with next tests."
+
     # Notebook Tests
     - name: Test Notebook Creation and Operation
       run: |
@@ -640,48 +467,88 @@ jobs:
         echo "Current namespaces:"
         kubectl get namespaces
 
-        # Verify PodDefault CRD exists before applying PodDefault
-        echo "Verifying PodDefault CRD is available..."
-        if ! kubectl get crd poddefaults.kubeflow.org > /dev/null 2>&1; then
-          echo "PodDefault CRD not found, installing it..."
-          kubectl apply -f https://raw.githubusercontent.com/kubeflow/kubeflow/master/components/admission-webhook/manifests/base/crd.yaml
-          # Wait for CRD to be established
-          kubectl wait --for=condition=established crd/poddefaults.kubeflow.org --timeout=60s
-        fi
+        # Apply PodDefaults for notebook access to pipelines
+        echo "Applying PodDefault with namespace $KF_PROFILE..."
+        cat << EOF | kubectl apply -f -
+        apiVersion: kubeflow.org/v1alpha1
+        kind: PodDefault
+        metadata:
+          name: access-ml-pipeline
+          namespace: $KF_PROFILE
+        spec:
+          desc: Allow access to Kubeflow Pipelines
+          selector:
+            matchLabels:
+              access-ml-pipeline: "true"
+          env:
+            - name: KF_PIPELINES_SA_TOKEN_PATH
+              value: /var/run/secrets/kubeflow/pipelines/token
+          volumes:
+            - name: volume-kf-pipeline-token
+              projected:
+                sources:
+                  - serviceAccountToken:
+                      path: token
+                      expirationSeconds: 7200
+                      audience: pipelines.kubeflow.org
+          volumeMounts:
+            - mountPath: /var/run/secrets/kubeflow/pipelines
+              name: volume-kf-pipeline-token
+              readOnly: true
+        EOF
 
-        # Verify namespace exists or create it
-        echo "Verifying namespace $KF_PROFILE exists..."
-        if ! kubectl get namespace $KF_PROFILE > /dev/null 2>&1; then
-          echo "Namespace $KF_PROFILE not found. Creating it manually..."
-          kubectl create namespace $KF_PROFILE
+        # Apply notebook
+        echo "Applying Notebook..."
+        cat << EOF | kubectl apply -f -
+        apiVersion: kubeflow.org/v1
+        kind: Notebook
+        metadata:
+          name: test
+          namespace: $KF_PROFILE
+          labels:
+            access-ml-pipeline: "true"
+            app: test
+        spec:
+          template:
+            spec:
+              containers:
+              - name: test
+                image: ghcr.io/kubeflow/kubeflow/notebook-servers/jupyter-scipy:v1.10.0-rc.2
+                imagePullPolicy: IfNotPresent
+                resources:
+                  limits:
+                    cpu: "0.6"
+                    memory: 1.2Gi
+                  requests:
+                    cpu: "0.5"
+                    memory: 1Gi
+              serviceAccountName: default-editor
+        EOF
 
-          # Create the necessary service account for notebooks
-          kubectl create serviceaccount default-editor -n $KF_PROFILE
-          kubectl create rolebinding default-editor-role --clusterrole=edit --serviceaccount=$KF_PROFILE:default-editor -n $KF_PROFILE
-
-          # Create the pipeline secret if needed
-          if ! kubectl get secret mlpipeline-minio-artifact -n $KF_PROFILE > /dev/null 2>&1; then
-            echo "Creating dummy mlpipeline-minio-artifact secret for tests..."
-            kubectl create secret generic mlpipeline-minio-artifact -n $KF_PROFILE --from-literal=accesskey=minio --from-literal=secretkey=minio123
+        # Wait for notebook to be ready with retries
+        echo "Waiting for notebook to be ready with retries..."
+        max_retries=6
+        for i in $(seq 1 $max_retries); do
+          if kubectl get notebook test -n $KF_PROFILE >/dev/null 2>&1; then
+            echo "Notebook resource found, waiting for readiness..."
+            if kubectl wait --for=jsonpath='{.status.readyReplicas}'=1 notebook/test -n $KF_PROFILE --timeout=60s; then
+              echo "Notebook is ready!"
+              break
+            fi
           fi
 
-          # Label the namespace for Katib
-          kubectl label namespace $KF_PROFILE katib.kubeflow.org/metrics-collector-injection=enabled --overwrite
-        fi
+          if [ $i -eq $max_retries ]; then
+            echo "Max retries reached. Continuing anyway."
+          else
+            echo "Retry $i/$max_retries - waiting 20 seconds before next attempt"
+            sleep 20
+          fi
+        done
 
-        # Apply PodDefaults for notebook access to pipelines with namespace substitution
-        echo "Applying PodDefault with namespace $KF_PROFILE..."
-        sed "s/namespace: kubeflow-user-example-com/namespace: $KF_PROFILE/g" tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml | kubectl apply -f -
+        # Show status for debugging
+        kubectl get pods -n $KF_PROFILE
+        kubectl get notebook test -n $KF_PROFILE -o yaml
 
-        # Create notebook server with namespace substitution if needed
-        echo "Creating notebook server in namespace $KF_PROFILE..."
-        sed "s/namespace: kubeflow-user-example-com/namespace: $KF_PROFILE/g" tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml | kubectl apply -f -
-
-        # Wait for notebook server to be ready
-        echo "Waiting for notebook server to be ready..."
-        kubectl wait --for=jsonpath='{.status.readyReplicas}'=1 \
-            notebook/test -n $KF_PROFILE \
-            --timeout 600s
     # Pipeline Tests
     - name: Test ML Pipeline Integration
       run: |
@@ -694,6 +561,7 @@ jobs:
         echo "Testing unauthorized access prevention (security check)"
         TOKEN="$(kubectl -n default create token default)"
         python3 tests/gh-actions/pipeline_test.py test_unauthorized_access "${TOKEN}" "${KF_PROFILE}"
+
     # Test Pipeline from Notebook
     - name: Test Running Pipeline from Notebook
       run: |
@@ -710,6 +578,7 @@ jobs:
             echo "Skipping pipeline run from notebook test - script not found"
             exit 1
         fi
+
     # Katib Tests
     - name: Test Katib Hyperparameter Tuning
       run: |
