@@ -644,14 +644,26 @@ jobs:
           kubectl wait --for=condition=established crd/poddefaults.kubeflow.org --timeout=60s
         fi
 
-        # Apply PodDefaults for notebook access to pipelines
-        kubectl apply -f tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml
-        # Create notebook server
-        kubectl apply -f tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml
+        # Verify namespace exists
+        echo "Verifying namespace $KF_PROFILE exists..."
+        if ! kubectl get namespace $KF_PROFILE > /dev/null 2>&1; then
+          echo "Error: Namespace $KF_PROFILE not found. Profile may not have been created properly."
+          kubectl get namespace
+          exit 1
+        fi
+
+        # Apply PodDefaults for notebook access to pipelines with namespace substitution
+        echo "Applying PodDefault with namespace $KF_PROFILE..."
+        sed "s/namespace: kubeflow-user-example-com/namespace: $KF_PROFILE/g" tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml | kubectl apply -f -
+
+        # Create notebook server with namespace substitution if needed
+        echo "Creating notebook server in namespace $KF_PROFILE..."
+        sed "s/namespace: kubeflow-user-example-com/namespace: $KF_PROFILE/g" tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml | kubectl apply -f -
 
         # Wait for notebook server to be ready
+        echo "Waiting for notebook server to be ready..."
         kubectl wait --for=jsonpath='{.status.readyReplicas}'=1 \
-            -f tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml \
+            notebook/test -n $KF_PROFILE \
             --timeout 600s
     # Pipeline Tests
     - name: Test ML Pipeline Integration
