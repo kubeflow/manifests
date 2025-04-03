@@ -626,14 +626,6 @@ jobs:
     # Notebook Tests
     - name: Test Notebook Creation and Operation
       run: |
-        # Install PodDefault CRD first
-        echo "Installing PodDefault CRD..."
-        kustomize build apps/admission-webhook/upstream/base | kubectl apply -f -
-
-        # Wait for CRD to be ready
-        echo "Waiting for PodDefault CRD to be ready..."
-        kubectl wait --for=condition=Established crd/poddefaults.kubeflow.org --timeout=60s
-
         # Apply PodDefaults for notebook access to pipelines
         kubectl apply -f tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml
         # Create notebook server
