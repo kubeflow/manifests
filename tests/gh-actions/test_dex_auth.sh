@@ -1,7 +1,13 @@
 #!/bin/bash
 set -e
 
+# Create and activate a Python virtual environment
+echo "Creating Python virtual environment..."
+python3 -m venv /tmp/dex-test-venv
+source /tmp/dex-test-venv/bin/activate
+
 # Install requirements
+echo "Installing Python requirements..."
 pip3 install requests passlib
 
 # Check if auth namespace exists
@@ -15,13 +21,13 @@ if ! kubectl get namespace auth &>/dev/null; then
   if ! kubectl get crd virtualservices.networking.istio.io &>/dev/null; then
     echo "Istio VirtualService CRD not found. Installing Istio CRDs first..."
     # Apply Istio CRDs
-    kubectl apply -f common/istio-cni-1-24/istio-crds/base/crds.yaml || {
+    kubectl apply -f common/istio-cni-1-24/istio-crds/base/crd.yaml || {
       echo "Error applying Istio CRDs from expected path. Searching for the CRD files..."
       # Try to find istio CRDs in the repo
       ISTIO_CRD_PATH=$(find . -name "*istio-crds*" -type d | head -1)
       if [ -n "$ISTIO_CRD_PATH" ]; then
         echo "Found Istio CRDs at: $ISTIO_CRD_PATH"
-        kubectl apply -f $ISTIO_CRD_PATH/base/crds.yaml || true
+        kubectl apply -f $ISTIO_CRD_PATH/base/crd.yaml || true
       else
         echo "Could not find Istio CRD directory. Installing Dex without the VirtualService."
       fi
