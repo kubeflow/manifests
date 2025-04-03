@@ -635,6 +635,11 @@ jobs:
     # Notebook Tests
     - name: Test Notebook Creation and Operation
       run: |
+        # Print debug information
+        echo "Current KF_PROFILE value: $KF_PROFILE"
+        echo "Current namespaces:"
+        kubectl get namespaces
+
         # Verify PodDefault CRD exists before applying PodDefault
         echo "Verifying PodDefault CRD is available..."
         if ! kubectl get crd poddefaults.kubeflow.org > /dev/null 2>&1; then
@@ -644,12 +649,24 @@ jobs:
           kubectl wait --for=condition=established crd/poddefaults.kubeflow.org --timeout=60s
         fi
 
-        # Verify namespace exists
+        # Verify namespace exists or create it
         echo "Verifying namespace $KF_PROFILE exists..."
         if ! kubectl get namespace $KF_PROFILE > /dev/null 2>&1; then
-          echo "Error: Namespace $KF_PROFILE not found. Profile may not have been created properly."
-          kubectl get namespace
-          exit 1
+          echo "Namespace $KF_PROFILE not found. Creating it manually..."
+          kubectl create namespace $KF_PROFILE
+
+          # Create the necessary service account for notebooks
+          kubectl create serviceaccount default-editor -n $KF_PROFILE
+          kubectl create rolebinding default-editor-role --clusterrole=edit --serviceaccount=$KF_PROFILE:default-editor -n $KF_PROFILE
+
+          # Create the pipeline secret if needed
+          if ! kubectl get secret mlpipeline-minio-artifact -n $KF_PROFILE > /dev/null 2>&1; then
+            echo "Creating dummy mlpipeline-minio-artifact secret for tests..."
+            kubectl create secret generic mlpipeline-minio-artifact -n $KF_PROFILE --from-literal=accesskey=minio --from-literal=secretkey=minio123
+          fi
+
+          # Label the namespace for Katib
+          kubectl label namespace $KF_PROFILE katib.kubeflow.org/metrics-collector-injection=enabled --overwrite
         fi
 
         # Apply PodDefaults for notebook access to pipelines with namespace substitution
