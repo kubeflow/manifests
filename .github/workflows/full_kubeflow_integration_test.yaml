@@ -641,7 +641,12 @@ jobs:
         NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow" "knative-serving")
         for NAMESPACE in "${NAMESPACES[@]}"; do
             if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
-                kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce-
+                # Check if the enforce label exists before trying to remove it
+                if kubectl get namespace $NAMESPACE -o jsonpath='{.metadata.labels.pod-security\.kubernetes\.io/enforce}' > /dev/null 2>&1; then
+                    kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce-
+                else
+                    echo "Label pod-security.kubernetes.io/enforce not found on namespace $NAMESPACE, skipping..."
+                fi
             fi
         done
 
