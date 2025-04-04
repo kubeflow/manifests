@@ -13,3 +13,22 @@ kustomize build kserve | kubectl apply --server-side --force-conflicts -f -
 kustomize build models-web-app/overlays/kubeflow | kubectl apply --server-side --force-conflicts -f -
 kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=600s \
   --field-selector=status.phase!=Succeeded
+
+# Verify KServe components
+echo "Verifying KServe components..."
+kubectl wait --for=condition=Available deployment/kserve-controller-manager -n kubeflow --timeout=300s || echo "KServe controller not yet available"
+
+# Verify KServe models web app
+echo "Verifying KServe models web app..."
+kubectl wait --for=condition=Available deployment/kserve-models-web-app -n kubeflow --timeout=300s || echo "KServe models web app not yet available"
+
+# Display KServe component status
+echo "KServe component status:"
+kubectl get deployment -n kubeflow -l app.kubernetes.io/name=kserve
+
+# Verify CRDs are properly installed
+echo "Verifying KServe CRDs..."
+kubectl get crd | grep -E 'inferenceservice|servingruntimes'
+
+# Return to the original directory
+cd ../../

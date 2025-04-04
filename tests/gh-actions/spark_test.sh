@@ -2,11 +2,24 @@
 set -euxo
 
 NAMESPACE=$1
+
+# Make sure we're in the repository root directory
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo "${GITHUB_WORKSPACE:-$(pwd)}")
+
+# Define the path to the spark application example YAML
+SPARK_APP_YAML="${REPO_ROOT}/apps/spark/sparkapplication_example.yaml"
+
+# Verify the file exists
+if [ ! -f "$SPARK_APP_YAML" ]; then
+    echo "Error: Spark application YAML not found at $SPARK_APP_YAML"
+    exit 1
+fi
+
 kubectl label namespace $NAMESPACE istio-injection=enabled --overwrite
 kubectl get namespaces --selector=istio-injection=enabled
-kubectl -n $NAMESPACE apply -f sparkapplication_example.yaml
+kubectl -n $NAMESPACE apply -f "$SPARK_APP_YAML"
 
-# Wait for the Spark aapplication is on the custer.
+# Wait for the Spark application is on the cluster.
 sleep 5
 # Wait until the SparkApplication reaches the "RUNNING" state
 while true; do
@@ -40,4 +53,4 @@ done
 kubectl -n $NAMESPACE logs pod/spark-pi-python-driver
 
 # Delete Spark Deployment
-kubectl -n $NAMESPACE delete -f sparkapplication_example.yaml
+kubectl -n $NAMESPACE delete -f "$SPARK_APP_YAML"
