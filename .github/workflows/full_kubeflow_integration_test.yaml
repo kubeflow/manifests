@@ -8,6 +8,7 @@ on:
     branches:
     - master
 
+# TODO do you ned th
 env:
   KIND_CLUSTER_NAME: kubeflow
   KF_PROFILE: kubeflow-user-example-com
@@ -23,17 +24,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    # =============== INSTALLATION PHASE ===============
-    - name: "📦 PHASE 1: INSTALLATION - Setup Base Infrastructure"
-      run: echo "Starting Kubeflow installation phase..."
-
-    # Base Infrastructure Setup
     - name: Install KinD, Create KinD cluster and Install kustomize
-      run: |
-        # Create kind network (if not exists) to make the cluster accessible
-        docker network create kind || true
-        # Run the install script
-        ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
+      run: ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
 
     - name: Install kubectl
       run: ./tests/gh-actions/install_kubectl.sh
@@ -41,51 +33,11 @@ jobs:
     - name: Create kubeflow namespace
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
-    # Core Platform Components
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh
 
     - name: Install Istio CNI
       run: ./tests/gh-actions/install_istio-cni.sh
-
-    # Add verification step for Istio gateway
-    - name: Verify Istio Gateway Installation
-      run: |
-        echo "Verifying Istio gateway installation..."
-        kubectl get namespace istio-system
-
-        # Check for the ingressgateway deployment
-        echo "Checking for ingressgateway deployment..."
-        kubectl get deployment -n istio-system istio-ingressgateway || true
-
-        # Check for gateway services
-        echo "Checking for gateway services..."
-        kubectl get svc -n istio-system -l app=istio-ingressgateway
-
-        # Find the gateway service using various selectors
-        echo "Finding gateway service with different selectors..."
-        for SELECTOR in "app=istio-ingressgateway" "istio=ingressgateway" "app.kubernetes.io/name=istio-ingressgateway"; do
-          echo "Checking selector: $SELECTOR"
-          kubectl get svc -n istio-system -l "$SELECTOR" || true
-        done
-
-        # Check if gateway CRD exists
-        echo "Checking Gateway CRD..."
-        GATEWAY_CRD=$(kubectl get gateway.networking.istio.io -n istio-system -o name 2>/dev/null) || true
-        if [ -n "$GATEWAY_CRD" ]; then
-          echo "Gateway CRD found: $GATEWAY_CRD"
-        else
-          echo "Gateway CRD not found, creating default gateway..."
-          kubectl apply -f common/istio-cni-1-24/istio-install/base/gateway.yaml
-        fi
-
-        # Wait for gateway to be ready
-        echo "Waiting for gateway pods to become ready..."
-        kubectl wait --for=condition=Available deployment/istio-ingressgateway -n istio-system --timeout=300s || {
-          echo "Warning: Istio gateway deployment not ready, checking pod status..."
-          kubectl get pods -n istio-system -l app=istio-ingressgateway
-          kubectl describe pods -n istio-system -l app=istio-ingressgateway
-        }
 
     - name: Install oauth2-proxy
       run: ./tests/gh-actions/install_oauth2-proxy.sh
@@ -98,40 +50,7 @@ jobs:
       run: ./tests/gh-actions/install_multi_tenancy.sh
 
     - name: Install dex
-      run: |
-        echo "Installing Dex..."
-        # Create auth namespace if it doesn't exist
-        kubectl create namespace auth 2>/dev/null || true
-
-        # Apply Dex configuration
-        kustomize build ./common/dex/overlays/oauth2-proxy | kubectl apply -f -
-
-        echo "Waiting for pods in auth namespace to become ready..."
-        # Check if there are any pods in the auth namespace before waiting
-        if kubectl get pods -n auth 2>/dev/null | grep -q "No resources found"; then
-          echo "No pods found in auth namespace yet. Waiting for pods to be created..."
-          sleep 30
-        fi
-
-        # Wait for pods to be ready with timeout and continue on error
-        kubectl wait --for=condition=Ready pods --all -n auth --timeout=180s || {
-          echo "Warning: Not all pods in auth namespace are ready. Checking their status..."
-          kubectl get pods -n auth
-          echo "Will continue workflow regardless."
-        }
-
-        # Create Dex password secret if it doesn't exist
-        if ! kubectl get secret -n auth dex-secret &>/dev/null; then
-          echo "Creating Dex password secret..."
-          pip3 install passlib || true
-          # The default password in the test script is 12341234
-          kubectl create secret generic dex-secret -n auth --from-literal=DEX_USER_PASSWORD=$(python3 -c 'from passlib.hash import bcrypt; print(bcrypt.using(rounds=12, ident="2y").hash("12341234"))')
-
-          # Restart Dex if it exists
-          if kubectl get deployment -n auth dex &>/dev/null; then
-            kubectl rollout restart deployment -n auth dex
-          fi
-        fi
+      run:  kustomize build ./common/dex/overlays/oauth2-proxy | kubectl apply -f -
 
     # Core Kubeflow Components
     - name: Install central-dashboard
@@ -159,8 +78,7 @@ jobs:
             exit 1
         fi
 
-    # Notebook Components
-    - name: Install Notebook components
+    - name: Install Notebook components # This stuff belongs into a script that is used for this workflow and individual notebook-related workflows
       run: |
         echo "Installing Jupyter Web App..."
         kustomize build apps/jupyter/jupyter-web-app/upstream/overlays/istio/ | kubectl apply -f -
@@ -181,8 +99,7 @@ jobs:
         kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 300s \
           --field-selector=status.phase!=Succeeded
 
-    # Katib Installation
-    - name: Install Katib
+    - name: Install Katib #this stuff belongs insto a script, that is used for all katib related individual workflows and here as well.
       run: |
         # Fix MySQL AppArmor issues for Kind clusters
         echo "Fixing AppArmor for MySQL in Kind..."
@@ -207,297 +124,46 @@ jobs:
         echo "Setting up user namespace for Katib..."
         kubectl label namespace $KF_PROFILE katib.kubeflow.org/metrics-collector-injection=enabled --overwrite
 
-    # Training Operator Installation
     - name: Install Training Operator
-      run: |
-        if ! kubectl get crd tfjobs.kubeflow.org > /dev/null 2>&1; then
-            ./tests/gh-actions/install_training_operator.sh
-        fi
+      run:  ./tests/gh-actions/install_training_operator.sh
 
-    # KNative and KServe Installation
-    - name: Install KNative Serving Platform
+    - name: Install KNative
       run: ./tests/gh-actions/install_knative.sh
 
     - name: Install KServe
       run: ./tests/gh-actions/install_kserve.sh
 
-    # Apache Spark Installation
-    - name: Install Apache Spark
+    - name: Install Apache Spark # This belongs into a script that should be used for all spark related workflows
       run: |
         echo "Installing Apache Spark..."
         chmod u+x tests/gh-actions/spark_*.sh
         ./tests/gh-actions/spark_install.sh
 
-    # Verify all components installed successfully
-    - name: Verify All Components Installed Successfully
-      run: |
-        echo "Checking status of critical components..."
-        kubectl get deployment -n kubeflow
-        kubectl get deployment -n cert-manager
-        kubectl get deployment -n istio-system
-        kubectl get deployment -n auth
-
-        # Check for failed pods
-        if kubectl get pods --all-namespaces | grep -E '(Error|CrashLoopBackOff)'; then
-            echo "Found pods in failed state"
-            exit 1
-        fi
-
-        echo "All Kubeflow components installed successfully"
-
-    # =============== TESTING PHASE ===============
-    - name: "🧪 PHASE 2: TESTING - Setup Test Environment"
+    - name:  Install python dependencies
       run: |
         echo "Starting Kubeflow testing phase..."
-        # Install test dependencies
         pip install pytest kubernetes kfp==2.11.0 kserve pytest-timeout pyyaml requests
 
-    # KServe Tests
-    - name: Test KServe Model Deployment and Serving
-      run: |
-        # Install required KServe test dependencies
-        echo "Installing KServe test dependencies..."
-        pip install -r ./apps/kserve/tests/requirements.txt
+    # https://github.com/kubeflow/manifests/blob/master/.github/workflows/kserve_m2m_test.yaml is still in progress
+    #- name: Test KServe Model Deployment and Serving
+    #  run: |
 
-        # If using updated KServe client, try to fix compatibility issues
-        echo "Checking for and handling KServe client issues..."
-        # Create a debug script to examine and diagnose constant issues
-        cat > fix_kserve_constants.py << 'EOF'
-        from kserve import constants
-        print("Available constants in kserve.constants module:")
-        for attr in dir(constants):
-            if not attr.startswith('_'):
-                print(f"  {attr} = {getattr(constants, attr)}")
-        # Add any missing constants
-        if not hasattr(constants, 'KSERVE_KIND'):
-            print("Adding missing KSERVE_KIND constant")
-            setattr(constants, 'KSERVE_KIND', 'InferenceService')
-        EOF
-        python fix_kserve_constants.py
-
-        # Enable serving in user namespace if not already enabled
-        echo "Enabling serving in namespace $KF_PROFILE..."
-        kubectl label namespace $KF_PROFILE serving.kserve.io/inferenceservice=enabled --overwrite
-
-        # Set environment variables needed by the KServe test scripts
-        export KSERVE_INGRESS_HOST_PORT=localhost:8080
-        export KSERVE_M2M_TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
-
-        # Run the KServe tests
-        cd ./apps/kserve/tests && pytest . -vs --log-level info || {
-          echo "KServe tests failed with exit code $?"
-          echo "Displaying additional debug information:"
-          kubectl get inferenceservice -n $KF_PROFILE
-          kubectl describe inferenceservice -n $KF_PROFILE
-          kubectl get pods -n $KF_PROFILE
-          # Continue workflow despite test failures
-          echo "Continuing workflow despite test failures"
-        }
-
-        # Detailed diagnostics
-        echo "=== AuthorizationPolicy Details ==="
-        kubectl get authorizationpolicy -n $KF_PROFILE -o yaml
-
-    # Setup port forwarding for gateway access
     - name: Port Forward Istio Gateway
       run: |
-        # Try different approaches to find the Istio gateway service
-        echo "Setting up port forwarding for Istio gateway..."
+        INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
+        nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
+        while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
 
-        # Check if istio-system namespace exists
-        if ! kubectl get namespace istio-system &>/dev/null; then
-          echo "Warning: istio-system namespace not found. Istio may not be installed properly."
-          # List available namespaces for debugging
-          echo "Available namespaces:"
-          kubectl get namespaces
-
-          # Check if Istio might be in a different namespace
-          ISTIO_NS=$(kubectl get ns -o name | grep -i istio | sed 's|namespace/||' | head -1)
-          if [ -n "$ISTIO_NS" ]; then
-            echo "Found potential Istio namespace: $ISTIO_NS"
-          else
-            echo "No Istio-like namespace found. Falling back to kubeflow namespace."
-            ISTIO_NS="kubeflow"
-          fi
-        else
-          ISTIO_NS="istio-system"
-        fi
-
-        echo "Checking for gateway service in namespace: $ISTIO_NS"
-
-        # List all services in the namespace to help diagnose issues
-        echo "Services in $ISTIO_NS namespace:"
-        kubectl get svc -n $ISTIO_NS
-
-        # Try different selector patterns that might match the gateway
-        for SELECTOR in "app=istio-ingressgateway" "istio=ingressgateway" "app.kubernetes.io/name=istio-ingressgateway"; do
-          echo "Trying to find gateway with selector: $SELECTOR"
-          GATEWAY_SVC=$(kubectl get svc -n $ISTIO_NS -l "$SELECTOR" -o jsonpath='{.items[*].metadata.name}' 2>/dev/null) || true
-
-          if [ -n "$GATEWAY_SVC" ]; then
-            echo "Found gateway service: $GATEWAY_SVC in namespace $ISTIO_NS"
-            break
-          fi
-        done
-
-        # If still not found, try to get any service with "gateway" in the name
-        if [ -z "$GATEWAY_SVC" ]; then
-          echo "No gateway found with standard selectors, trying name-based search..."
-          GATEWAY_SVC=$(kubectl get svc -n $ISTIO_NS | grep -i gateway | head -1 | awk '{print $1}') || true
-        fi
-
-        # If we found a gateway service, set up port forwarding
-        if [ -n "$GATEWAY_SVC" ]; then
-          echo "Setting up port forwarding for gateway service: $GATEWAY_SVC in namespace $ISTIO_NS"
-          # Start port forwarding in background
-          nohup kubectl port-forward -n $ISTIO_NS svc/$GATEWAY_SVC 8080:80 &
-          PORT_FORWARD_PID=$!
-          echo "Port forwarding started with PID: $PORT_FORWARD_PID"
-
-          # Verify port forwarding is working
-          MAX_RETRIES=30
-          RETRY_COUNT=0
-          echo "Verifying port forwarding is working..."
-          until curl -s -o /dev/null -w "%{http_code}" localhost:8080 | grep -q "200\|302\|404"; do
-            RETRY_COUNT=$((RETRY_COUNT+1))
-            if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
-              echo "Port forwarding failed after $MAX_RETRIES attempts"
-              echo "Checking port forwarding process:"
-              ps -ef | grep port-forward
-              echo "Checking network connections:"
-              netstat -tuln | grep 8080 || echo "No process listening on port 8080"
-              break
-            fi
-            echo "Waiting for port-forwarding (attempt $RETRY_COUNT/$MAX_RETRIES)..."
-            sleep 2
-          done
-        else
-          # As a fallback, manually create port forwarding to a known gateway IP if discoverable
-          echo "Warning: No gateway service found. Trying fallback approach..."
-
-          # Check if istio-ingress pods are running
-          INGRESS_POD=$(kubectl get pods -n $ISTIO_NS -l app=istio-ingressgateway -o jsonpath='{.items[0].metadata.name}' 2>/dev/null) || true
-
-          if [ -n "$INGRESS_POD" ]; then
-            echo "Found ingress pod: $INGRESS_POD, setting up direct port forwarding"
-            nohup kubectl port-forward -n $ISTIO_NS pod/$INGRESS_POD 8080:8080 &
-            echo "Direct pod port forwarding started"
-          else
-            echo "Warning: Could not find Istio gateway service or pods."
-            echo "Tests requiring Istio gateway access may fail."
-            echo "Creating dummy port forwarder for compatibility..."
-
-            # Create a simple HTTP server as a fallback
-            nohup python3 -m http.server 8080 &
-            echo "Started fallback HTTP server on port 8080"
-          fi
-        fi
-
-        echo "Port forwarding setup completed. Will proceed with tests."
-
-    # Authentication Tests
     - name: Test Dex Authentication
       run: |
         chmod +x tests/gh-actions/test_dex_auth.sh
         ./tests/gh-actions/test_dex_auth.sh
 
-    # UI Component Tests
-    - name: Test Web UI Components
+    - name: Test Notebook Creation and Operation # That stuff belongs into a script. if its more than 3 lines it belongs into a script.
       run: |
-        # Make sure the gateway port forwarding is working
-        echo "Verifying gateway connectivity..."
-        if ! curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/ | grep -q "200\|302\|404"; then
-          echo "Warning: Gateway port forwarding not working. Attempting to fix..."
-          # Kill any existing port forwards
-          pkill -f "kubectl port-forward" || true
-          sleep 2
-
-          # Try direct port forwarding to ingressgateway pod
-          INGRESS_POD=$(kubectl get pods -n istio-system -l app=istio-ingressgateway -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)
-          if [ -n "$INGRESS_POD" ]; then
-            echo "Setting up direct port forwarding to ingressgateway pod: $INGRESS_POD"
-            nohup kubectl port-forward -n istio-system pod/$INGRESS_POD 8080:8080 &
-            sleep 5
-          else
-            echo "Warning: Could not find ingressgateway pod. Starting fallback HTTP server..."
-            nohup python3 -m http.server 8080 &
-            sleep 2
-          fi
-        fi
-
-        # Function to test UI access with retry
-        test_ui_access() {
-          local url=$1
-          local name=$2
-          local max_retries=3
-          local retry=0
-
-          echo "Verifying $name UI accessibility"
-          while [ $retry -lt $max_retries ]; do
-            status=$(curl -s -o /dev/null -w "%{http_code}" $url)
-            if [[ "$status" =~ ^(200|302|404)$ ]]; then
-              echo "$name UI accessible: HTTP $status"
-              return 0
-            fi
-            retry=$((retry+1))
-            echo "$name UI not accessible (HTTP $status). Retry $retry/$max_retries..."
-            sleep 5
-          done
-          echo "Warning: $name UI not accessible after $max_retries retries"
-          return 1
-        }
-
-        # Test central dashboard is accessible
-        test_ui_access "http://localhost:8080/" "Central Dashboard" || true
-
-        # Test component UIs
-        test_ui_access "http://localhost:8080/jupyter/" "Notebooks" || true
-        test_ui_access "http://localhost:8080/pipeline/" "Pipelines" || true
-        test_ui_access "http://localhost:8080/models/" "KServe Models" || true
-        test_ui_access "http://localhost:8080/katib/" "Katib Experiments" || true
-
-        # Continue workflow even if some UI tests fail
-        echo "Web UI tests completed. Proceeding with next tests."
-
-    # Notebook Tests
-    - name: Test Notebook Creation and Operation
-      run: |
-        # Print debug information
-        echo "Current KF_PROFILE value: $KF_PROFILE"
-        echo "Current namespaces:"
-        kubectl get namespaces
-
-        # Apply PodDefaults using existing test object file with namespace substitution
-        echo "Applying PodDefault with namespace $KF_PROFILE..."
-        sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml | kubectl apply -f -
-
-        # Apply notebook using existing test object file with namespace substitution
-        echo "Applying Notebook..."
-        sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml | kubectl apply -f -
-
-        # Wait for notebook to be ready with retries
-        echo "Waiting for notebook to be ready with retries..."
-        max_retries=6
-        for i in $(seq 1 $max_retries); do
-          if kubectl get notebook test -n $KF_PROFILE >/dev/null 2>&1; then
-            echo "Notebook resource found, waiting for readiness..."
-            if kubectl wait --for=jsonpath='{.status.readyReplicas}'=1 notebook/test -n $KF_PROFILE --timeout=60s; then
-              echo "Notebook is ready!"
-              break
-            fi
-          fi
-
-          if [ $i -eq $max_retries ]; then
-            echo "Max retries reached. Continuing anyway."
-          else
-            echo "Retry $i/$max_retries - waiting 20 seconds before next attempt"
-            sleep 20
-          fi
-        done
-
-        # Show status for debugging
-        kubectl get pods -n $KF_PROFILE
-        kubectl get notebook test -n $KF_PROFILE -o yaml
+        # why are there even more lines than in https://github.com/kubeflow/manifests/blob/bdc911dbc3c7976ddcf35d95bb7844b9c9ac1832/.github/workflows/pipeline_run_from_notebook.yaml#L62 ?
+        # keep it minimal!
+        echo "here where way tooooooo many lines"
 
     # Pipeline Tests
     - name: Test ML Pipeline Integration
@@ -529,17 +195,12 @@ jobs:
             exit 1
         fi
 
-    # Katib Tests
-    - name: Test Katib Hyperparameter Tuning
+    - name: Test Katib Hyperparameter Tuning # More than 3 lines so it must be in a reusable script that is used for katib rleated workflows. And its way to long and verbose, the opposite of minimal
       run: |
         echo "Creating Katib experiment..."
         if kubectl get crd experiments.kubeflow.org > /dev/null 2>&1; then
-            # Apply the experiment
             sed "s/kubeflow-user/$KF_PROFILE/g" tests/gh-actions/kf-objects/katib_test.yaml | kubectl apply -f -
-            # Wait for the experiment to run
-            echo "Waiting for Experiment to become Running..."
             kubectl wait --for=condition=Running experiments.kubeflow.org -n $KF_PROFILE --all --timeout=300s || true
-            # Check status
             echo "Experiment status:"
             kubectl get experiments.kubeflow.org -n $KF_PROFILE
 
@@ -615,20 +276,11 @@ jobs:
     # Final Verification
     - name: Verify All Components Running Successfully
       run: |
-        # Verify all components are running
-        echo "Checking status of critical components..."
-        kubectl get deployment -n kubeflow
-        kubectl get deployment -n cert-manager
-        kubectl get deployment -n istio-system
-        kubectl get deployment -n auth
-
-        # Check for failed pods
+        # Just output the failed pods here directly, keep it minimal without comments
         if kubectl get pods --all-namespaces | grep -E '(Error|CrashLoopBackOff)'; then
             echo "Found pods in failed state"
             exit 1
         fi
-
-        echo "All Kubeflow components are running successfully"
 
     # Collect logs on failure
     - name: Collect Diagnostic Logs on Failure
