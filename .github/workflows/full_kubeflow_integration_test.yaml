@@ -467,63 +467,13 @@ jobs:
         echo "Current namespaces:"
         kubectl get namespaces
 
-        # Apply PodDefaults for notebook access to pipelines
+        # Apply PodDefaults using existing test object file with namespace substitution
         echo "Applying PodDefault with namespace $KF_PROFILE..."
-        cat << EOF | kubectl apply -f -
-        apiVersion: kubeflow.org/v1alpha1
-        kind: PodDefault
-        metadata:
-          name: access-ml-pipeline
-          namespace: $KF_PROFILE
-        spec:
-          desc: Allow access to Kubeflow Pipelines
-          selector:
-            matchLabels:
-              access-ml-pipeline: "true"
-          env:
-            - name: KF_PIPELINES_SA_TOKEN_PATH
-              value: /var/run/secrets/kubeflow/pipelines/token
-          volumes:
-            - name: volume-kf-pipeline-token
-              projected:
-                sources:
-                  - serviceAccountToken:
-                      path: token
-                      expirationSeconds: 7200
-                      audience: pipelines.kubeflow.org
-          volumeMounts:
-            - mountPath: /var/run/secrets/kubeflow/pipelines
-              name: volume-kf-pipeline-token
-              readOnly: true
-        EOF
+        sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml | kubectl apply -f -
 
-        # Apply notebook
+        # Apply notebook using existing test object file with namespace substitution
         echo "Applying Notebook..."
-        cat << EOF | kubectl apply -f -
-        apiVersion: kubeflow.org/v1
-        kind: Notebook
-        metadata:
-          name: test
-          namespace: $KF_PROFILE
-          labels:
-            access-ml-pipeline: "true"
-            app: test
-        spec:
-          template:
-            spec:
-              containers:
-              - name: test
-                image: ghcr.io/kubeflow/kubeflow/notebook-servers/jupyter-scipy:v1.10.0-rc.2
-                imagePullPolicy: IfNotPresent
-                resources:
-                  limits:
-                    cpu: "0.6"
-                    memory: 1.2Gi
-                  requests:
-                    cpu: "0.5"
-                    memory: 1Gi
-              serviceAccountName: default-editor
-        EOF
+        sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml | kubectl apply -f -
 
         # Wait for notebook to be ready with retries
         echo "Waiting for notebook to be ready with retries..."
