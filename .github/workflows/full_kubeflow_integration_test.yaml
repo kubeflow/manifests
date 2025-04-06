@@ -95,6 +95,12 @@ jobs:
         python3 tests/gh-actions/pipeline_test.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
         python3 tests/gh-actions/pipeline_test.py test_unauthorized_access "$(kubectl -n default create token default)" "${KF_PROFILE}"
 
+        # Apply PodDefault for pipeline access token before creating notebook
+        if [ -f "tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml" ]; then
+            sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml | kubectl apply -f -
+            echo "Applied PodDefault for ML Pipeline access"
+        fi
+
         if [ -f "tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml" ]; then
             sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml | kubectl apply -f -
             echo "Waiting for notebook pod to be ready..."
@@ -104,8 +110,11 @@ jobs:
         # Notebook Pipeline
         if [ -f "tests/gh-actions/run_and_wait_kubeflow_pipeline.py" ]; then
             if kubectl get pod -l app=test -n $KF_PROFILE 2>/dev/null | grep -q "test-0"; then
-                kubectl -n $KF_PROFILE cp ./tests/gh-actions/run_and_wait_kubeflow_pipeline.py test-0:/home/jovyan/run_and_wait_kubeflow_pipeline.py
-                kubectl -n $KF_PROFILE exec -ti test-0 -- python /home/jovyan/run_and_wait_kubeflow_pipeline.py
+                cp tests/gh-actions/run_and_wait_kubeflow_pipeline.py /tmp/run_pipeline_script.py
+                sed -i "s/experiment_namespace = \"kubeflow-user-example-com\"/experiment_namespace = \"$KF_PROFILE\"/g" /tmp/run_pipeline_script.py
+                kubectl -n $KF_PROFILE cp /tmp/run_pipeline_script.py test-0:/home/jovyan/run_and_wait_kubeflow_pipeline.py
+
+                kubectl -n $KF_PROFILE exec --user=jovyan test-0 -- python /home/jovyan/run_and_wait_kubeflow_pipeline.py
             else
                 echo "Notebook pod test-0 not found, skipping notebook pipeline test"
             fi
