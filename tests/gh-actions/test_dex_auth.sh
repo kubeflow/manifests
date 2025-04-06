@@ -243,39 +243,31 @@ echo "Modifying test script for better error handling..."
 cp tests/gh-actions/test_dex_login.py tests/gh-actions/test_dex_login_modified.py
 sed -i 's/raise RuntimeError/print("ERROR:")/g' tests/gh-actions/test_dex_login_modified.py
 
-# Create a patching script to avoid complex sed commands
-cat > /tmp/patch_dex_script.py << 'EOF'
+# Use Python to modify the file instead of complex sed commands
+cat > /tmp/fix_dex_login.py << 'EOF'
 #!/usr/bin/env python3
-
+import re
 with open('tests/gh-actions/test_dex_login_modified.py', 'r') as f:
     content = f.read()
-
-# Add time module
-if 'import time' not in content:
-    content = content.replace('import re', 'import re, time')
-
-# Replace the single authentication attempt with retry logic
-content = content.replace(
-    'session_cookies = dex_session_manager.get_session_cookies()',
-    '''# Try multiple authentication attempts
-        for attempt in range(3):
-            print(f"Authentication attempt {attempt+1}/3")
-            session_cookies = dex_session_manager.get_session_cookies()
-            if session_cookies:
-                break
-            print("Retrying authentication...")
-            time.sleep(5)'''
-)
-
+content = re.sub('import re', 'import re, time', content, count=1)
+retry_pattern = r'([ \t]+)session_cookies = dex_session_manager\.get_session_cookies\(\)'
+replacement = r"""\1# Try with retries
+\1for _attempt in range(3):
+\1    print(f"Authentication attempt {_attempt+1}/3")
+\1    session_cookies = dex_session_manager.get_session_cookies()
+\1    if session_cookies:
+\1        break
+\1    print("Retrying...")
+\1    time.sleep(5)"""
+content = re.sub(retry_pattern, replacement, content, count=1)
 with open('tests/gh-actions/test_dex_login_modified.py', 'w') as f:
     f.write(content)
 EOF
 
-# Execute the patch script
-chmod +x /tmp/patch_dex_script.py
-python3 /tmp/patch_dex_script.py
+# Run the fix script
+python3 /tmp/fix_dex_login.py
 
-# Run original test script
+# Run the test script
 echo "Running Dex login test script..."
 python3 tests/gh-actions/test_dex_login_modified.py || echo "Dex login test failed, but continuing workflow"
 
