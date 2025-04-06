@@ -114,7 +114,7 @@ jobs:
                 sed -i "s/experiment_namespace = \"kubeflow-user-example-com\"/experiment_namespace = \"$KF_PROFILE\"/g" /tmp/run_pipeline_script.py
                 kubectl -n $KF_PROFILE cp /tmp/run_pipeline_script.py test-0:/home/jovyan/run_and_wait_kubeflow_pipeline.py
 
-                kubectl -n $KF_PROFILE exec --user=jovyan test-0 -- python /home/jovyan/run_and_wait_kubeflow_pipeline.py
+                kubectl -n $KF_PROFILE exec test-0 -- python /home/jovyan/run_and_wait_kubeflow_pipeline.py
             else
                 echo "Notebook pod test-0 not found, skipping notebook pipeline test"
             fi
