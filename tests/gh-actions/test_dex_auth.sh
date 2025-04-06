@@ -242,8 +242,38 @@ done
 echo "Modifying test script for better error handling..."
 cp tests/gh-actions/test_dex_login.py tests/gh-actions/test_dex_login_modified.py
 sed -i 's/raise RuntimeError/print("ERROR:")/g' tests/gh-actions/test_dex_login_modified.py
-sed -i 's/import re/import re, time/g' tests/gh-actions/test_dex_login_modified.py
-sed -i 's/session_cookies = dex_session_manager.get_session_cookies()/for attempt in range(3):\n        print(f"Authentication attempt {attempt+1}/3")\n        session_cookies = dex_session_manager.get_session_cookies()\n        if session_cookies:\n            break\n        print("Retrying authentication...")\n        time.sleep(5)/g' tests/gh-actions/test_dex_login_modified.py
+
+# Create a patching script to avoid complex sed commands
+cat > /tmp/patch_dex_script.py << 'EOF'
+#!/usr/bin/env python3
+
+with open('tests/gh-actions/test_dex_login_modified.py', 'r') as f:
+    content = f.read()
+
+# Add time module
+if 'import time' not in content:
+    content = content.replace('import re', 'import re, time')
+
+# Replace the single authentication attempt with retry logic
+content = content.replace(
+    'session_cookies = dex_session_manager.get_session_cookies()',
+    '''# Try multiple authentication attempts
+        for attempt in range(3):
+            print(f"Authentication attempt {attempt+1}/3")
+            session_cookies = dex_session_manager.get_session_cookies()
+            if session_cookies:
+                break
+            print("Retrying authentication...")
+            time.sleep(5)'''
+)
+
+with open('tests/gh-actions/test_dex_login_modified.py', 'w') as f:
+    f.write(content)
+EOF
+
+# Execute the patch script
+chmod +x /tmp/patch_dex_script.py
+python3 /tmp/patch_dex_script.py
 
 # Run original test script
 echo "Running Dex login test script..."
