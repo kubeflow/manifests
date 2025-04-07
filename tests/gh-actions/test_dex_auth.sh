@@ -1,12 +1,10 @@
 #!/bin/bash
 set -e
 
-# Setup Python environment
 python3 -m venv /tmp/dex-test-venv
 source /tmp/dex-test-venv/bin/activate
 pip3 install -q requests passlib
 
-# Ensure auth namespace exists
 if ! kubectl get namespace auth &>/dev/null; then
   kubectl create namespace auth
   
@@ -29,7 +27,6 @@ if ! kubectl get namespace auth &>/dev/null; then
   sleep 5
 fi
 
-# Ensure Dex deployment exists
 if ! kubectl get deployment -n auth dex &>/dev/null; then
   if kubectl get crd virtualservices.networking.istio.io &>/dev/null; then
     kustomize build ./common/dex/overlays/oauth2-proxy | kubectl apply -f -
@@ -41,12 +38,10 @@ fi
 
 # Create Dex pod if missing - use kustomize to apply standard configs
 if kubectl get pod -l app=dex -n auth 2>/dev/null | grep -q "No resources found"; then
-  # Use kustomize to apply the standard configuration rather than manual deployment
   kustomize build ./common/dex/overlays/oauth2-proxy | kubectl apply -f -
   sleep 5
 fi
 
-# Wait for pod
 kubectl wait --for=condition=Ready pod -l app=dex -n auth --timeout=180s
 
 # Set up Dex password
@@ -107,9 +102,7 @@ kubectl create secret generic oidc-client-secret -n oauth2-proxy \
   --from-literal=OIDC_CLIENT_SECRET=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok \
   --dry-run=client -o yaml | kubectl apply -f -
 
-# Ensure Dex deployment has correct environment variables through kustomize
 if ! kubectl get deploy -n auth dex -o yaml | grep -q "OIDC_CLIENT_ID"; then
-  # Create the secrets first to ensure they're available for the deployment
   kubectl create secret generic dex-secret -n auth \
     --from-literal=DEX_USER_PASSWORD=$(python3 -c 'from passlib.hash import bcrypt; print(bcrypt.using(rounds=12, ident="2y").hash("12341234"))') \
     --dry-run=client -o yaml | kubectl apply -f -
@@ -130,7 +123,6 @@ if kubectl get deployment -n oauth2-proxy oauth2-proxy &>/dev/null; then
   kubectl rollout restart deployment -n oauth2-proxy oauth2-proxy
 fi
 
-# Test Dex connectivity
 RETRY_COUNT=0
 MAX_RETRIES=3
 until curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/dex/health 2>/dev/null | grep -q "200\|302\|404"; do
@@ -142,7 +134,6 @@ until curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/dex/health 2>
   sleep 10
 done
 
-# Run test with retries
 sed -i 's/raise RuntimeError/print("ERROR:"); exit 1/g' tests/gh-actions/test_dex_login.py
 
 python3 - <<'EOF'
