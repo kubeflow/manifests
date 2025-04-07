@@ -9,9 +9,7 @@ on:
     - master
 
 env:
-  KIND_CLUSTER_NAME: kubeflow
   KF_PROFILE: kubeflow-user-example-com
-  KIND_NETWORK: kind
 
 jobs:
   kubeflow-integration:
@@ -79,7 +77,7 @@ jobs:
         # Dependencies
         pip install pytest kubernetes kfp==2.11.0 kserve pytest-timeout pyyaml requests
 
-    - name: Setup Gateway
+    - name: Port-forward the istio-ingress gateway
       run: |
         GATEWAY=$(kubectl get svc -n istio-system -l app=istio-ingressgateway -o jsonpath='{.items[0].metadata.name}')
         nohup kubectl port-forward -n istio-system svc/$GATEWAY 8080:80 &
@@ -87,10 +85,8 @@ jobs:
 
     - name: Test Dex Authentication
       run: |
-        # Authentication
         chmod +x tests/gh-actions/test_dex_auth.sh && ./tests/gh-actions/test_dex_auth.sh
 
-        # ML Pipeline
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/gh-actions/pipeline_test.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
         python3 tests/gh-actions/pipeline_test.py test_unauthorized_access "$(kubectl -n default create token default)" "${KF_PROFILE}"
