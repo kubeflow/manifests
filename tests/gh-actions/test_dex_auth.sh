@@ -8,19 +8,6 @@ pip3 install -q requests passlib
 if ! kubectl get namespace auth &>/dev/null; then
   kubectl create namespace auth
   
-  if ! kubectl get crd virtualservices.networking.istio.io &>/dev/null; then
-    kubectl apply -f common/istio-cni-1-24/istio-crds/base/crd.yaml || {
-      ISTIO_CRD_PATH=$(find . -name "*istio-crds*" -type d | head -1)
-      if [ -n "$ISTIO_CRD_PATH" ]; then
-        kubectl apply -f $ISTIO_CRD_PATH/base/crd.yaml
-      else
-        echo "Error: Could not find Istio CRD directory"
-        exit 1
-      fi
-      sleep 5
-    }
-  fi
-  
   kustomize build ./common/dex/overlays/oauth2-proxy | kubectl apply -f - || {
     kustomize build ./common/dex/overlays/oauth2-proxy | grep -v "kind: VirtualService" | kubectl apply -f -
   }
@@ -28,15 +15,10 @@ if ! kubectl get namespace auth &>/dev/null; then
 fi
 
 if ! kubectl get deployment -n auth dex &>/dev/null; then
-  if kubectl get crd virtualservices.networking.istio.io &>/dev/null; then
-    kustomize build ./common/dex/overlays/oauth2-proxy | kubectl apply -f -
-  else
-    kustomize build ./common/dex/overlays/oauth2-proxy | grep -v "kind: VirtualService" | kubectl apply -f -
-  fi
+  kustomize build ./common/dex/overlays/oauth2-proxy | kubectl apply -f -
   sleep 5
 fi
 
-# Create Dex pod if missing - use kustomize to apply standard configs
 if kubectl get pod -l app=dex -n auth 2>/dev/null | grep -q "No resources found"; then
   kustomize build ./common/dex/overlays/oauth2-proxy | kubectl apply -f -
   sleep 5
@@ -44,7 +26,6 @@ fi
 
 kubectl wait --for=condition=Ready pod -l app=dex -n auth --timeout=180s
 
-# Set up Dex password
 if ! kubectl get secret -n auth dex-secret > /dev/null 2>&1; then
   kubectl create secret generic dex-secret -n auth --from-literal=DEX_USER_PASSWORD=$(python3 -c 'from passlib.hash import bcrypt; print(bcrypt.using(rounds=12, ident="2y").hash("12341234"))')
   if kubectl get deployment -n auth dex &>/dev/null; then
@@ -53,7 +34,6 @@ if ! kubectl get secret -n auth dex-secret > /dev/null 2>&1; then
   fi
 fi
 
-# Fix redirect URI if needed
 if kubectl get cm -n auth dex -o yaml | grep -q "redirectURIs.*http://authservice"; then
   kubectl apply -f - <<EOF
 apiVersion: v1
@@ -91,7 +71,6 @@ EOF
   sleep 5
 fi
 
-# Create OIDC client secrets
 kubectl create secret generic oidc-client-secret -n auth \
   --from-literal=OIDC_CLIENT_ID=kubeflow-oidc-authservice \
   --from-literal=OIDC_CLIENT_SECRET=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok \
@@ -118,7 +97,6 @@ if ! kubectl get deploy -n auth dex -o yaml | grep -q "OIDC_CLIENT_ID"; then
   kubectl rollout status deployment -n auth dex --timeout=180s
 fi
 
-# Restart OAuth2 proxy to ensure it picks up changes
 if kubectl get deployment -n oauth2-proxy oauth2-proxy &>/dev/null; then
   kubectl rollout restart deployment -n oauth2-proxy oauth2-proxy
 fi
