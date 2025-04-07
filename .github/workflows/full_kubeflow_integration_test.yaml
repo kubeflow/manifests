@@ -111,8 +111,8 @@ jobs:
         # Notebook Pipeline
         if [ -f "tests/gh-actions/run_and_wait_kubeflow_pipeline.py" ]; then
             if kubectl get pod -l app=test -n $KF_PROFILE 2>/dev/null | grep -q "test-0"; then
-                # Create k8s authentication token
-                NB_TOKEN=$(kubectl -n $KF_PROFILE create token default-editor)
+                # Create k8s authentication token with the correct audience
+                NB_TOKEN=$(kubectl -n $KF_PROFILE create token default-editor --audience="pipelines.kubeflow.org")
 
                 # Copy script with namespace updated
                 cp tests/gh-actions/run_and_wait_kubeflow_pipeline.py /tmp/run_pipeline_script.py
