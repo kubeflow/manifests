@@ -1,9 +1,8 @@
 #!/bin/bash
 set -euxo
 
-# Make sure we're in the repository root directory
-REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo "${GITHUB_WORKSPACE:-$(pwd)}")
-cd "${REPO_ROOT}"
+REPOSITORY_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo "${GITHUB_WORKSPACE:-$(pwd)}")
+cd "${REPOSITORY_ROOT}"
 
 # Install Spark operator
 kustomize build apps/spark/spark-operator/overlays/standalone | kubectl -n kubeflow apply --server-side -f -

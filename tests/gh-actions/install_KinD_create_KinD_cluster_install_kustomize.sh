@@ -58,10 +58,8 @@ nodes:
   image: kindest/node:v1.32.2@sha256:f226345927d7e348497136874b6d207e0b32cc52154ad8323129352923a3142f
 - role: worker
   image: kindest/node:v1.32.2@sha256:f226345927d7e348497136874b6d207e0b32cc52154ad8323129352923a3142f
-" | kind create cluster --name=${KIND_CLUSTER_NAME} --config - --wait 120s
+" | kind create cluster --config - --wait 120s
 
-# Verify the cluster is accessible
-echo "Verifying cluster accessibility..."
 kubectl cluster-info
 
 echo "Install Kustomize ..."
