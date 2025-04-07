@@ -19,4 +19,3 @@ kustomize build common/istio-cni-1-24/kubeflow-istio-resources/base | kubectl ap
 
 kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=300s \
   --field-selector=status.phase!=Succeeded
-kubectl patch cm config-domain --patch '{"data":{"example.com":""}}' -n knative-serving
