@@ -118,14 +118,14 @@ jobs:
                 cp tests/gh-actions/run_and_wait_kubeflow_pipeline.py /tmp/run_pipeline_script.py
                 sed -i "s/experiment_namespace = \"kubeflow-user-example-com\"/experiment_namespace = \"$KF_PROFILE\"/g" /tmp/run_pipeline_script.py
 
+                # Modify the script to use a token from environment variable
+                sed -i '/client = kfp.Client()/c\import os\ntoken = os.environ.get("KF_TOKEN")\nclient = kfp.Client(host="http://ml-pipeline.kubeflow.svc.cluster.local:8888", existing_token=token)' /tmp/run_pipeline_script.py
+
                 # Add the token to the environment
                 kubectl -n $KF_PROFILE cp /tmp/run_pipeline_script.py test-0:/home/jovyan/run_and_wait_kubeflow_pipeline.py
 
-                # Set up temporary token file in the pod for authorization, then run the script
-                kubectl -n $KF_PROFILE exec test-0 -- bash -c "mkdir -p /var/run/secrets/kubeflow/pipelines/ && \
-                    echo -n '${NB_TOKEN}' > /tmp/token && \
-                    cat /tmp/token > /var/run/secrets/kubeflow/pipelines/token && \
-                    python /home/jovyan/run_and_wait_kubeflow_pipeline.py"
+                # Run with token as an environment variable
+                kubectl -n $KF_PROFILE exec test-0 -- env KF_TOKEN="$NB_TOKEN" python /home/jovyan/run_and_wait_kubeflow_pipeline.py
             else
                 echo "Notebook pod test-0 not found, skipping notebook pipeline test"
             fi
