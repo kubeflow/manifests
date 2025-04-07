@@ -95,26 +95,37 @@ jobs:
         python3 tests/gh-actions/pipeline_test.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
         python3 tests/gh-actions/pipeline_test.py test_unauthorized_access "$(kubectl -n default create token default)" "${KF_PROFILE}"
 
-        # Apply PodDefault for pipeline access token before creating notebook
+        # Apply PodDefault for pipeline access token before creating notebook only if it doesn't exist
         if [ -f "tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml" ]; then
-            sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml | kubectl apply -f -
-            echo "Applied PodDefault for ML Pipeline access"
+            if ! kubectl get poddefault -n $KF_PROFILE access-ml-pipeline &>/dev/null; then
+                sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml | kubectl apply -f -
+            fi
         fi
 
+        # Create test notebook
         if [ -f "tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml" ]; then
             sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml | kubectl apply -f -
-            echo "Waiting for notebook pod to be ready..."
-            kubectl wait --for=condition=Ready pod -l app=test -n $KF_PROFILE --timeout=300s || echo "Notebook pod not ready, but continuing"
+            kubectl wait --for=condition=Ready pod -l app=test -n $KF_PROFILE --timeout=300s || true
         fi
 
         # Notebook Pipeline
         if [ -f "tests/gh-actions/run_and_wait_kubeflow_pipeline.py" ]; then
             if kubectl get pod -l app=test -n $KF_PROFILE 2>/dev/null | grep -q "test-0"; then
+                # Create k8s authentication token
+                NB_TOKEN=$(kubectl -n $KF_PROFILE create token default-editor)
+
+                # Copy script with namespace updated
                 cp tests/gh-actions/run_and_wait_kubeflow_pipeline.py /tmp/run_pipeline_script.py
                 sed -i "s/experiment_namespace = \"kubeflow-user-example-com\"/experiment_namespace = \"$KF_PROFILE\"/g" /tmp/run_pipeline_script.py
+
+                # Add the token to the environment
                 kubectl -n $KF_PROFILE cp /tmp/run_pipeline_script.py test-0:/home/jovyan/run_and_wait_kubeflow_pipeline.py
 
-                kubectl -n $KF_PROFILE exec test-0 -- python /home/jovyan/run_and_wait_kubeflow_pipeline.py
+                # Set up temporary token file in the pod for authorization, then run the script
+                kubectl -n $KF_PROFILE exec test-0 -- bash -c "mkdir -p /var/run/secrets/kubeflow/pipelines/ && \
+                    echo -n '${NB_TOKEN}' > /tmp/token && \
+                    cat /tmp/token > /var/run/secrets/kubeflow/pipelines/token && \
+                    python /home/jovyan/run_and_wait_kubeflow_pipeline.py"
             else
                 echo "Notebook pod test-0 not found, skipping notebook pipeline test"
             fi
