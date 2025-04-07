@@ -4,7 +4,7 @@ set -euxo
 NAMESPACE=$1
 REPOSITORY_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo "${GITHUB_WORKSPACE:-$(pwd)}")
 SPARK_APPLICATION_YAML="${REPOSITORY_ROOT}/apps/spark/sparkapplication_example.yaml"
-if [ ! -f "$SPARK_APP_YAML" ]; then
+if [ ! -f "$SPARK_APPLICATION_YAML" ]; then
     echo "Error: Spark application YAML not found at $SPARK_APPLICATION_YAML"
     exit 1
 fi

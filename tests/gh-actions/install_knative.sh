@@ -17,9 +17,8 @@ set -e
 kustomize build common/istio-1-24/cluster-local-gateway/base | kubectl apply -f -
 kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
 
-kubectl patch cm config-domain --patch '{"data":{"example.com":""}}' -n knative-serving
 kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=300s \
   --field-selector=status.phase!=Succeeded
 kubectl wait --for=condition=Available deployment -n knative-serving --timeout=10s
-
+kubectl patch cm config-domain --patch '{"data":{"example.com":""}}' -n knative-serving
 kubectl get deployment -n knative-serving
