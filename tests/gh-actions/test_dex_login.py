@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import re
+import time
 from urllib.parse import urlsplit, urlencode
-
 import requests
 import urllib3
 
@@ -54,122 +54,125 @@ class DexSessionManager:
         """
         max_retries = 3
         retry_delay = 2
-        
+
+        # Use a persistent session for cookies
+        session = requests.Session()
+
         for attempt in range(max_retries):
             try:
-                # use a persistent session (for cookies)
-                s = requests.Session()
-
                 # GET the endpoint_url, which should redirect to Dex
-                resp = s.get(
-                    self._endpoint_url, allow_redirects=True, verify=not self._skip_tls_verify
+                response = session.get(
+                    self._endpoint_url,
+                    allow_redirects=True,
+                    verify=not self._skip_tls_verify
                 )
-                if resp.status_code == 200:
+                if response.status_code == 200:
                     pass
-                elif resp.status_code == 403:
+                elif response.status_code == 403:
                     # if we get 403, we might be at the oauth2-proxy sign-in page
                     # the default path to start the sign-in flow is `/oauth2/start?rd=<url>`
-                    url_obj = urlsplit(resp.url)
-                    url_obj = url_obj._replace(
-                        path="/oauth2/start", query=urlencode({"rd": url_obj.path})
+                    url_object = urlsplit(response.url)
+                    url_object = url_object._replace(
+                        path="/oauth2/start",
+                        query=urlencode({"rd": url_object.path})
                     )
-                    resp = s.get(
-                        url_obj.geturl(), allow_redirects=True, verify=not self._skip_tls_verify
+                    response = session.get(
+                        url_object.geturl(),
+                        allow_redirects=True,
+                        verify=not self._skip_tls_verify
                     )
                 else:
                     raise RuntimeError(
-                        f"HTTP status code '{resp.status_code}' for GET against: {self._endpoint_url}"
+                        f"HTTP status code '{response.status_code}' for GET against: {self._endpoint_url}"
                     )
 
                 # if we were NOT redirected, then the endpoint is unsecured
-                if len(resp.history) == 0:
-                    # no cookies are needed
+                if len(response.history) == 0:
+                    # No cookies are needed
                     return ""
 
                 # if we are at `../auth` path, we need to select an auth type
-                url_obj = urlsplit(resp.url)
-                if re.search(r"/auth$", url_obj.path):
-                    url_obj = url_obj._replace(
-                        path=re.sub(r"/auth$", f"/auth/{self._dex_auth_type}", url_obj.path)
+                url_object = urlsplit(response.url)
+                if re.search(r"/auth$", url_object.path):
+                    url_object = url_object._replace(
+                        path=re.sub(r"/auth$", f"/auth/{self._dex_auth_type}", url_object.path)
                     )
 
                 # if we are at `../auth/xxxx/login` path, then we are at the login page
-                if re.search(r"/auth/.*/login$", url_obj.path):
-                    dex_login_url = url_obj.geturl()
+                if re.search(r"/auth/.*/login$", url_object.path):
+                    dex_login_url = url_object.geturl()
                 else:
                     # otherwise, we need to follow a redirect to the login page
-                    resp = s.get(
-                        url_obj.geturl(), allow_redirects=True, verify=not self._skip_tls_verify
+                    response = session.get(
+                        url_object.geturl(),
+                        allow_redirects=True,
+                        verify=not self._skip_tls_verify
                     )
-                    if resp.status_code != 200:
+                    if response.status_code != 200:
                         raise RuntimeError(
-                            f"HTTP status code '{resp.status_code}' for GET against: {url_obj.geturl()}"
+                            f"HTTP status code '{response.status_code}' for GET against: {url_object.geturl()}"
                         )
-                    dex_login_url = resp.url
+                    dex_login_url = response.url
 
                 # attempt Dex login
-                resp = s.post(
+                response = session.post(
                     dex_login_url,
                     data={"login": self._dex_username, "password": self._dex_password},
                     allow_redirects=True,
                     verify=not self._skip_tls_verify,
                 )
-                
+
                 # Handle 403 specifically - might need to restart oauth flow
-                if resp.status_code == 403:
-                    # Let's try one more approach - go through the oauth2 flow again
+                if response.status_code == 403:
+                    # Try one more approach - go through the oauth2 flow again
                     oauth_url = f"{urlsplit(self._endpoint_url).scheme}://{urlsplit(self._endpoint_url).netloc}/oauth2/start"
-                    resp = s.get(
+                    response = session.get(
                         oauth_url,
                         allow_redirects=True,
                         verify=not self._skip_tls_verify,
                     )
-                    
                     # Continue with normal flow after restart
-                    if resp.status_code == 200 and s.cookies:
-                        return "; ".join([f"{c.name}={c.value}" for c in s.cookies])
-                
-                if resp.status_code != 200:
+                    if response.status_code == 200 and session.cookies:
+                        return "; ".join([f"{c.name}={c.value}" for c in session.cookies])
+
+                if response.status_code != 200:
                     raise RuntimeError(
-                        f"HTTP status code '{resp.status_code}' for POST against: {dex_login_url}"
+                        f"HTTP status code '{response.status_code}' for POST against: {dex_login_url}"
                     )
 
                 # if we were NOT redirected, then the login credentials were probably invalid
-                if len(resp.history) == 0:
+                if len(response.history) == 0:
                     raise RuntimeError(
                         f"Login credentials are probably invalid - "
                         f"No redirect after POST to: {dex_login_url}"
                     )
 
                 # if we are at `../approval` path, we need to approve the login
-                url_obj = urlsplit(resp.url)
-                if re.search(r"/approval$", url_obj.path):
-                    dex_approval_url = url_obj.geturl()
-
-                    # approve the login
-                    resp = s.post(
+                url_object = urlsplit(response.url)
+                if re.search(r"/approval$", url_object.path):
+                    dex_approval_url = url_object.geturl()
+                    # Approve the login
+                    response = session.post(
                         dex_approval_url,
                         data={"approval": "approve"},
                         allow_redirects=True,
                         verify=not self._skip_tls_verify,
                     )
-                    if resp.status_code != 200:
+                    if response.status_code != 200:
                         raise RuntimeError(
-                            f"HTTP status code '{resp.status_code}' for POST against: {url_obj.geturl()}"
+                            f"HTTP status code '{response.status_code}' for POST against: {url_object.geturl()}"
                         )
 
-                return "; ".join([f"{c.name}={c.value}" for c in s.cookies])
-                
+                return "; ".join([f"{c.name}={c.value}" for c in session.cookies])
+
             except Exception as e:
-                if attempt < max_retries - 1:
-                    print(f"Attempt {attempt+1} failed: {str(e)}")
-                    print(f"Retrying in {retry_delay} seconds...")
-                    import time
-                    time.sleep(retry_delay)
-                    retry_delay *= 2  # Exponential backoff
-                else:
+                if attempt == max_retries - 1:  # Last attempt
                     print(f"All {max_retries} attempts failed. Last error: {str(e)}")
                     raise
+                print(f"Attempt {attempt + 1} failed: {str(e)}")
+                print(f"Retrying in {retry_delay} seconds...")
+                time.sleep(retry_delay)
+                retry_delay *= 2  # Exponential backoff
 
 
 KUBEFLOW_ENDPOINT = "http://localhost:8080"
