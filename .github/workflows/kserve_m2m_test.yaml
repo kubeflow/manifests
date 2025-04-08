@@ -53,18 +53,7 @@ jobs:
       run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
 
     - name: Create KF Profile
-      run: |
-        kustomize build common/user-namespace/base | kubectl apply -f -
-        sleep 30 # for the Profile controller to create the namespace from the profile
-
-        PROFILE_CONTROLLER_POD=$(kubectl get pods -n kubeflow -o json | jq -r '.items[] | select(.metadata.name | startswith("profiles-deployment")) | .metadata.name')
-        if [[ -z "$PROFILE_CONTROLLER_POD" ]]; then
-          echo "Error: profiles-deployment pod not found in kubeflow namespace."
-          exit 1
-        fi
-        kubectl logs -n kubeflow "$PROFILE_CONTROLLER_POD"
-        KF_PROFILE=kubeflow-user-example-com
-        kubectl -n $KF_PROFILE get pods,configmaps,secrets
+      run: ./tests/gh-actions/install_kubeflow_profile.sh
 
     - name: Diagnose KServe Service Labels
       run: |
@@ -160,10 +149,7 @@ jobs:
       run: pip install -r ./apps/kserve/tests/requirements.txt
 
     - name: Port forward
-      run: |
-        INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
-        nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
-        while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
+      run: ./tests/gh-actions/port_forward_gateway.sh
 
     - name: Verify CNI is being used instead of init containers
       run: |

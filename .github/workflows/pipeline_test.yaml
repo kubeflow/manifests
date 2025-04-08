@@ -49,38 +49,19 @@ jobs:
       run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
 
     - name: Create KF Profile
+      run: ./tests/gh-actions/install_kubeflow_profile.sh
+
+    - name: Verify Pipeline Integration
       run: |
-        kustomize build common/user-namespace/base | kubectl apply -f -
-        sleep 30 # for the metacontroller to create the secret
-
-        METACONTROLLER_POD=$(kubectl get pods -n kubeflow -o json | jq -r '.items[] | select(.metadata.name | startswith("metacontroller")) | .metadata.name')
-        if [[ -z "$METACONTROLLER_POD" ]]; then
-          echo "Error: metacontroller pod not found in kubeflow namespace."
-          exit 1
-        fi
-        kubectl logs -n kubeflow "$METACONTROLLER_POD"
-
-        PIPELINES_PROFILE_CONTROLLER_POD=$(kubectl get pods -n kubeflow -o json | jq -r '.items[] | select(.metadata.name | startswith("kubeflow-pipelines-profile-controller")) | .metadata.name')
-        if [[ -z "$PIPELINES_PROFILE_CONTROLLER_POD" ]]; then
-          echo "Error: kubeflow-pipelines-profile-controller pod not found in kubeflow namespace."
-          exit 1
-        fi
-        kubectl logs -n kubeflow "$PIPELINES_PROFILE_CONTROLLER_POD"
-
         KF_PROFILE=kubeflow-user-example-com
-        kubectl -n $KF_PROFILE get pods,configmaps,secrets
-
         if ! kubectl get secret mlpipeline-minio-artifact -n $KF_PROFILE > /dev/null 2>&1; then
           echo "Error: Secret mlpipeline-minio-artifact not found in namespace $KF_PROFILE"
           exit 1
         fi
         kubectl get secret mlpipeline-minio-artifact -n "$KF_PROFILE" -o json | jq -r '.data | keys[] as $k | "\($k): \(. | .[$k] | @base64d)"' | tr '\n' ' '
 
-    - name: port forward
-      run: |
-        ingress_gateway_service=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
-        nohup kubectl port-forward --namespace istio-system svc/${ingress_gateway_service} 8080:80 &
-        while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
+    - name: Port forward
+      run: ./tests/gh-actions/port_forward_gateway.sh
 
     - name: List and deploy test pipeline with authorized ServiceAccount Token
       run: |

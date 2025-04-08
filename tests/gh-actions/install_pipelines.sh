@@ -9,4 +9,15 @@ kustomize build env/cert-manager/platform-agnostic-multi-user | kubectl apply -f
 sleep 60
 kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=600s \
   --field-selector=status.phase!=Succeeded
+
+kubectl wait --for=condition=Available deployment/ml-pipeline -n kubeflow --timeout=10s 
+kubectl wait --for=condition=Available deployment/ml-pipeline-ui -n kubeflow --timeout=10s 
+kubectl wait --for=condition=Available deployment/ml-pipeline-persistenceagent -n kubeflow --timeout=10s
+kubectl wait --for=condition=Available deployment/ml-pipeline-scheduledworkflow -n kubeflow --timeout=10s
+kubectl wait --for=condition=Available deployment/ml-pipeline-viewer-crd -n kubeflow --timeout=10s 
+kubectl wait --for=condition=Available deployment/cache-server -n kubeflow --timeout=10s 
+kubectl wait --for=condition=Available deployment/metadata-writer -n kubeflow --timeout=10s 
+kubectl wait --for=condition=Available deployment/minio -n kubeflow --timeout=10s
+kubectl wait --for=condition=Available deployment/mysql -n kubeflow --timeout=10s
+kubectl get deployment -n kubeflow -l app=ml-pipeline
 cd -

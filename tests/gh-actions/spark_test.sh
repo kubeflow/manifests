@@ -2,11 +2,14 @@
 set -euxo
 
 NAMESPACE=$1
+REPOSITORY_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo "${GITHUB_WORKSPACE:-$(pwd)}")
+SPARK_APPLICATION_YAML="${REPOSITORY_ROOT}/apps/spark/sparkapplication_example.yaml"
+
 kubectl label namespace $NAMESPACE istio-injection=enabled --overwrite
 kubectl get namespaces --selector=istio-injection=enabled
-kubectl -n $NAMESPACE apply -f sparkapplication_example.yaml
+kubectl -n $NAMESPACE apply -f "$SPARK_APPLICATION_YAML"
 
-# Wait for the Spark aapplication is on the custer.
+# Wait for the Spark application
 sleep 5
 # Wait until the SparkApplication reaches the "RUNNING" state
 while true; do
@@ -40,4 +43,4 @@ done
 kubectl -n $NAMESPACE logs pod/spark-pi-python-driver
 
 # Delete Spark Deployment
-kubectl -n $NAMESPACE delete -f sparkapplication_example.yaml
+kubectl -n $NAMESPACE delete -f "$SPARK_APPLICATION_YAML"
