@@ -5,12 +5,9 @@ python3 -m venv /tmp/dex-test-venv
 source /tmp/dex-test-venv/bin/activate
 pip3 install -q requests passlib
 
-# Check if auth namespace exists, if not, run install_dex.sh
-if ! kubectl get namespace auth &>/dev/null; then
-  kubectl create namespace auth
-  # Use the reusable install_dex.sh script
-  ./tests/gh-actions/install_dex.sh
-fi
+# Install Dex
+./tests/gh-actions/install_dex.sh
+
 
 # Ensure Dex deployment exists
 if ! kubectl get deployment -n auth dex &>/dev/null; then

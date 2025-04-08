@@ -130,29 +130,20 @@ jobs:
         sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/gh-actions/kf-objects/notebook.test.kubeflow-user-example.com.yaml | kubectl apply -f -
         kubectl wait --for=condition=Ready pod -l app=test -n $KF_PROFILE --timeout=300s
 
-    - name: Prepare Pipeline Script
+    - name: Copy and execute the pipeline run script in KF Notebook
       run: |
-        # Copy script to the notebook pod and update namespace
-        cp tests/gh-actions/run_and_wait_kubeflow_pipeline.py /tmp/run_pipeline_script.py
-        sed -i "s/experiment_namespace = \"kubeflow-user-example-com\"/experiment_namespace = \"$KF_PROFILE\"/" /tmp/run_pipeline_script.py
+        # Create modified copy of the pipeline script
+        cp tests/gh-actions/run_and_wait_kubeflow_pipeline.py /tmp/run_pipeline_temp.py
+        # Update namespace in the pipeline script
+        sed -i "s/experiment_namespace = \"kubeflow-user-example-com\"/experiment_namespace = \"$KF_PROFILE\"/g" /tmp/run_pipeline_temp.py
+        # Add improved exception handling
+        sed -i 's/except Exception:/except Exception as e:/g' /tmp/run_pipeline_temp.py
+        sed -i 's/logger.info("Experiment not found, trying to create experiment.")/logger.info("Experiment not found, trying to create experiment. Error: " + str(e))/g' /tmp/run_pipeline_temp.py
 
-        # Update script to use the token from PodDefault mount
-        sed -i '/client = kfp.Client()/i\import os\nimport logging' /tmp/run_pipeline_script.py
-        sed -i '/client = kfp.Client()/i\token_path = "/var/run/secrets/kubeflow/pipelines/token"\ntoken = None\nif os.path.exists(token_path):\n    with open(token_path, "r") as f:\n        token = f.read().strip()\nelse:\n    logging.warning(f"Token file not found at {token_path}")\n' /tmp/run_pipeline_script.py
-        sed -i 's/client = kfp.Client()/client = kfp.Client(host="http:\/\/ml-pipeline.kubeflow.svc.cluster.local:8888", existing_token=token)/' /tmp/run_pipeline_script.py
+        # Copy to the notebook pod
+        kubectl -n $KF_PROFILE cp /tmp/run_pipeline_temp.py test-0:/home/jovyan/run_and_wait_kubeflow_pipeline.py
 
-        # Add additional error logging
-        sed -i "s/logger.info(\"Experiment not found, trying to create experiment.\")/logger.info(\"Experiment not found, trying to create experiment. Error: \" + str(e))/" /tmp/run_pipeline_script.py
-
-        # Add run ID logging
-        sed -i "/client.create_run_from_pipeline_func/,/enable_caching=False,/ s/)/)\n    logger.info(f\"Pipeline run created with id: {run.run_id}\")/" /tmp/run_pipeline_script.py
-
-        # Copy the script to the notebook pod
-        kubectl -n $KF_PROFILE cp /tmp/run_pipeline_script.py test-0:/home/jovyan/run_and_wait_kubeflow_pipeline.py
-
-    - name: Run Notebook Pipeline
-      run: |
-        # Execute the script with the token injected by PodDefault
+        # Execute without -ti (interactive terminal) flag for GitHub Actions compatibility
         kubectl -n $KF_PROFILE exec test-0 -- python /home/jovyan/run_and_wait_kubeflow_pipeline.py
 
     - name: Run Katib Test
