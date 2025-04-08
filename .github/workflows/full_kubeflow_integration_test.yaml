@@ -72,7 +72,6 @@ jobs:
     - name: Wait for All Pods to be Ready
       run: kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 300s --field-selector=status.phase!=Succeeded
 
-    - name: Install Katib - Prepare
       run: |
         sudo apt-get install -y apparmor-profiles
         sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
