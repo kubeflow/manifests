@@ -162,7 +162,7 @@ jobs:
       run: |
         NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow" "knative-serving")
         for namespace in "${NAMESPACES[@]}"; do
-            kubectl label namespace $NS pod-security.kubernetes.io/enforce-
+            kubectl label namespace $namespace pod-security.kubernetes.io/enforce-
         done
 
     - name: Apply Pod Security Standards Restricted

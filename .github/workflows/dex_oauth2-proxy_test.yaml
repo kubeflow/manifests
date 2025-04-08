@@ -55,10 +55,10 @@ jobs:
       run: |
         # Install Python requirements
         pip3 install -q requests
-        
+
         # Run the Dex login test
         python3 tests/gh-actions/test_dex_login.py
-        
+
         echo "Dex login test completed successfully."
 
     - name: Apply Pod Security Standards baseline levels for static namespaces
