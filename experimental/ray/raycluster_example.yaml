@@ -9,6 +9,7 @@ spec:
     - source:
         principals:
         # kubeflow-user-example-com should be replaced with the namespace where the Ray cluster is being deployed
+        # TODO automatically use the current namespace
         - "cluster.local/ns/kubeflow-user-example-com/sa/default-editor"
   - to:
     - operation:
@@ -77,6 +78,7 @@ spec:
       metrics-export-port: '8080'
       max-worker-port: '10012'
       # kubeflow-user-example-com should be replaced with the namespace where the Ray cluster is being deployed
+      # TODO automatically use the current namespace
       node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.kubeflow-user-example-com.svc.cluster.local
     template:
       metadata:
@@ -86,7 +88,7 @@ spec:
         serviceAccountName: default-editor
         containers:
         - name: ray-head
-          image: rayproject/ray:2.23.0-py311-cpu
+          image: rayproject/ray:2.23.0-py311-cpu # TODO update
           lifecycle:
             preStop:
               exec:
@@ -126,6 +128,7 @@ spec:
         metrics-export-port: '8080'
         max-worker-port: '10012'
         # kubeflow-user-example-com should be replaced with the namespace where the Ray cluster is being deployed
+        # TODO automatically use the current namespace
         node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.kubeflow-user-example-com.svc.cluster.local
       template:
         metadata:
@@ -135,7 +138,7 @@ spec:
           serviceAccountName: default-editor
           containers:
           - name: ray-worker
-            image: rayproject/ray:2.23.0-py311-cpu
+            image: rayproject/ray:2.23.0-py311-cpu # TODO update
             lifecycle:
               preStop:
                 exec:
