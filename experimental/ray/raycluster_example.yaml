@@ -62,7 +62,7 @@ kind: RayCluster
 metadata:
   name: kubeflow-raycluster
 spec:
-  rayVersion: '2.23.0'
+  rayVersion: '2.44.1'
   enableInTreeAutoscaling: true
   autoscalerOptions:
     upscalingMode: Default 
@@ -87,8 +87,8 @@ spec:
       spec:
         serviceAccountName: default-editor
         containers:
-        - name: ray-head
-          image: rayproject/ray:2.23.0-py311-cpu # TODO update
+        - name: ray-head # TODO why call it headless with a head...
+          image: rayproject/ray:2.44.1-py311-cpu
           lifecycle:
             preStop:
               exec:
@@ -138,7 +138,7 @@ spec:
           serviceAccountName: default-editor
           containers:
           - name: ray-worker
-            image: rayproject/ray:2.23.0-py311-cpu # TODO update
+            image: rayproject/ray:2.44.1-py311-cpu
             lifecycle:
               preStop:
                 exec:
