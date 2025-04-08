@@ -30,10 +30,6 @@ echo "Creating KinD cluster ..."
 echo "
 apiVersion: kind.x-k8s.io/v1alpha4
 kind: Cluster
-# Use network defined in workflow
-networking:
-  apiServerAddress: \"0.0.0.0\" # Bind to all interfaces
-  apiServerPort: 6443
 # Configure registry for KinD.
 containerdConfigPatches:
 - |-
