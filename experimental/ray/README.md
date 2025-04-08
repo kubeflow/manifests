@@ -1,8 +1,3 @@
-TODO
-- The ray dashboard, worker and head must only be available from inside your kubeflow user namespace
-- Reenable the istio sidecar for the ray head and worker in the user namespace and provide the corresponding Istio Authorizationpolicies. We can keep the istio sidecar for the deployment kuberay-operator in the namespace kubeflow, since it does NOT use a webhook, but something else to reconcile rayclusters. This means we also do not need a networkpolicy for the ray operator.
-
-
 > Credit: This manifest refers a lot to the engineering blog ["Building a Machine Learning Platform with Kubeflow and Ray on Google Kubernetes Engine"](https://cloud.google.com/blog/products/ai-machine-learning/build-a-ml-platform-with-kubeflow-and-ray-on-gke) from Google Cloud.
 
 # Ray
@@ -21,7 +16,7 @@ TODO
 # Requirements
 * Dependencies
     * `kustomize`: v5.4.3+ (Kubeflow manifest is sensitive to `kustomize` version.)
-    * `Kubernetes`: v1.29+
+    * `Kubernetes`: v1.32+
 
 * Computing resources:
     * 16GB RAM

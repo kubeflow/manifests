@@ -10,4 +10,4 @@ spec:
       - name: kuberay-operator
         env:
         - name: ENABLE_INIT_CONTAINER_INJECTION
-          value: "false"
+          value: "false" # TODO maybe we can drop that with istio native sidecars
