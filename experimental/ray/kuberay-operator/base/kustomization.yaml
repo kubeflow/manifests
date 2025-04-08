@@ -6,4 +6,4 @@ namespace: kubeflow
 resources:
 - resources.yaml
 - aggregated-roles.yaml
-# The securitycontext for PSS restricted is not directly provided in the upstream manifests
+# The securitycontext for PSS restricted is now directly provided in the upstream manifests
