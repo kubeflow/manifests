@@ -81,7 +81,8 @@ done
 
 sed -i 's/raise RuntimeError/print("ERROR:"); exit 1/g' tests/gh-actions/test_dex_login.py
 
-python3 - <<'EOF'
+# Create a temporary python script file instead of using heredoc
+cat > /tmp/update_dex_login.py << 'PYTHONEOF'
 import re
 with open('tests/gh-actions/test_dex_login.py', 'r') as f:
     content = f.read()
@@ -99,4 +100,8 @@ replacement = r"""\1# Try with retries
 content = re.sub(retry_pattern, replacement, content, count=1)
 with open('tests/gh-actions/test_dex_login.py', 'w') as f:
     f.write(content)
-EOF 
+PYTHONEOF
+
+# Execute the temporary python script
+python3 /tmp/update_dex_login.py
+rm /tmp/update_dex_login.py
