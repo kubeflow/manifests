@@ -1,7 +1,6 @@
 #!/bin/bash
-set -e
+set -euxo pipefail
 
-# Configure Dex ConfigMap if needed
 if kubectl get cm -n auth dex -o yaml | grep -q "redirectURIs.*http://authservice"; then
   kubectl apply -f - <<EOF
 apiVersion: v1
@@ -60,7 +59,6 @@ if ! kubectl get deploy -n auth dex -o yaml | grep -q "OIDC_CLIENT_ID"; then
     --from-literal=OIDC_CLIENT_SECRET=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok \
     --dry-run=client -o yaml | kubectl apply -f -
 
-  # Use the reusable install_dex.sh script to apply standard configuration
   ./tests/gh-actions/install_dex.sh
 fi
 
@@ -102,6 +100,5 @@ with open('tests/gh-actions/test_dex_login.py', 'w') as f:
     f.write(content)
 PYTHONEOF
 
-# Execute the temporary python script
 python3 /tmp/update_dex_login.py
 rm /tmp/update_dex_login.py

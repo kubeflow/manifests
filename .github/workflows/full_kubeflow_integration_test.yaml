@@ -111,7 +111,14 @@ jobs:
       run: chmod +x tests/gh-actions/oauth2_dex_credentials.sh && ./tests/gh-actions/oauth2_dex_credentials.sh
 
     - name: Test Dex Login
-      run: ./tests/gh-actions/test_dex_login_wrapper.sh
+      run: |
+        # Install Python requirements
+        pip3 install -q requests
+
+        # Run the Dex login test
+        python3 tests/gh-actions/test_dex_login.py
+
+        echo "Dex login test completed successfully."
 
     - name: Test Pipeline Access with Authorized Token
       run: |

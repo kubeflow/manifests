@@ -52,7 +52,14 @@ jobs:
       run: ./tests/gh-actions/port_forward_gateway.sh
 
     - name: Test dex login
-      run: ./tests/gh-actions/test_dex_login_wrapper.sh
+      run: |
+        # Install Python requirements
+        pip3 install -q requests
+        
+        # Run the Dex login test
+        python3 tests/gh-actions/test_dex_login.py
+        
+        echo "Dex login test completed successfully."
 
     - name: Apply Pod Security Standards baseline levels for static namespaces
       run: ./tests/gh-actions/enable_baseline_PSS.sh
