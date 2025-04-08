@@ -79,15 +79,9 @@ jobs:
 
     - name: Install Katib
       run: cd apps/katib/upstream && kustomize build installs/katib-with-kubeflow | kubectl apply -f - && cd ../../../
-
-    - name: Wait for Katib Controller
       run: kubectl wait --for=condition=Available deployment/katib-controller -n kubeflow --timeout=300s
-
-    - name: Wait for Katib MySQL
-      run: kubectl wait --for=condition=Available deployment/katib-mysql -n kubeflow --timeout=300s
-
-    - name: Configure Katib in Profile
-      run: kubectl label namespace $KF_PROFILE katib.kubeflow.org/metrics-collector-injection=enabled --overwrite
+      kubectl wait --for=condition=Available deployment/katib-mysql -n kubeflow --timeout=300s
+      kubectl label namespace $KF_PROFILE katib.kubeflow.org/metrics-collector-injection=enabled --overwrite
 
     - name: Install Training Operator
       run: ./tests/gh-actions/install_training_operator.sh
