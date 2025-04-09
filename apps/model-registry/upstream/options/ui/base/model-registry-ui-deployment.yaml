@@ -24,8 +24,10 @@ spec:
         image: model-registry-ui
         imagePullPolicy: Always
         livenessProbe:
-          tcpSocket:
+          httpGet:
+            path: /healthcheck
             port: 8080
+            scheme: HTTP
           initialDelaySeconds: 30
           timeoutSeconds: 15
           periodSeconds: 30
@@ -33,12 +35,9 @@ spec:
           failureThreshold: 3
         readinessProbe:
           httpGet:
-            path: /api/v1/healthcheck
+            path: /healthcheck
             port: 8080
             scheme: HTTP
-            httpHeaders:
-            - name: kubeflow-userid
-              value: user@example.com
           initialDelaySeconds: 15
           timeoutSeconds: 15
           periodSeconds: 30
