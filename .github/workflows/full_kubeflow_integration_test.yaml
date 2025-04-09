@@ -1,4 +1,4 @@
-name: Full Kubeflow End-to-End Integration Test
+name: End-to-End Integration Test
 on:
   workflow_dispatch:
   push:
