@@ -10,6 +10,7 @@ on:
     - experimental/security/PSS/*
     - common/dex/base/**
     - tests/gh-actions/install_istio*.sh
+    - tests/gh-actions/test_dex_login.py
 
 jobs:
   build:
