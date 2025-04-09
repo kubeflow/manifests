@@ -13,7 +13,7 @@ on:
     - common/cert-manager/**
     - tests/gh-actions/install_cert_manager.sh
     - common/knative/**
-    - tests/gh-actions/install_knative.sh
+    - tests/gh-actions/install_knative*.sh
 
 jobs:
   build:

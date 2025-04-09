@@ -6,7 +6,7 @@ echo "Installing KNative with Istio-CNI ..."
 # Retry mechanism for applying Knative manifests
 set +e
 for _ in {1..5}; do
-    if kustomize build common/knative/knative-serving/base | kubectl apply -f -; then
+    if kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -; then
         break
     fi
     echo "Retrying in 30 seconds..."
