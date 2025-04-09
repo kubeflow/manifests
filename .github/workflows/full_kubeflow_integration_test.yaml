@@ -1,4 +1,4 @@
-name: Full Kubeflow End-to-End Integration Test
+name: End-to-End Integration Test
 on:
   workflow_dispatch:
   push:
@@ -73,17 +73,7 @@ jobs:
       run: kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 300s --field-selector=status.phase!=Succeeded
 
     - name: Install Katib
-      run: |
-        sudo apt-get install -y apparmor-profiles
-        sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
-
-        cd apps/katib/upstream && kustomize build installs/katib-with-kubeflow | kubectl apply -f - && cd ../../../
-
-        kubectl wait --for=condition=Available deployment/katib-controller -n kubeflow --timeout=300s
-
-        kubectl wait --for=condition=Available deployment/katib-mysql -n kubeflow --timeout=300s
-
-        kubectl label namespace $KF_PROFILE katib.kubeflow.org/metrics-collector-injection=enabled --overwrite
+      run: ./tests/gh-actions/install_katib.sh
 
     - name: Install Training Operator
       run: ./tests/gh-actions/install_training_operator.sh
