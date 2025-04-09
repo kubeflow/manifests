@@ -28,15 +28,18 @@ jobs:
     - name: Install cert-manager
       run: ./tests/gh-actions/install_cert_manager.sh
 
-    - name: Install Katib
+    - name: Create namespaces
       run: |
         kubectl create ns kubeflow
+        kubectl create namespace kubeflow-user
+
+    - name: Install Katib
+      run: |
         export KF_PROFILE=kubeflow-user
         ./tests/gh-actions/install_katib.sh
 
     - name: Create katib experiment
       run: |
-        kubectl create namespace kubeflow-user
         kubectl label namespace kubeflow-user katib.kubeflow.org/metrics-collector-injection=enabled
         kubectl apply -f tests/gh-actions/kf-objects/katib_test.yaml
 
