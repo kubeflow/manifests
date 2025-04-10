@@ -114,7 +114,10 @@ jobs:
 
     - name: Test Pipeline Access with Unauthorized Token
       run: |
-        python3 tests/gh-actions/pipeline_test.py test_unauthorized_access "$(kubectl -n default create token default)" "${KF_PROFILE}"
+        kubectl create namespace test-unauthorized
+        kubectl create serviceaccount test-unauthorized -n test-unauthorized
+        UNAUTH_TOKEN=$(kubectl -n test-unauthorized create token test-unauthorized)
+        python3 tests/gh-actions/pipeline_test.py test_unauthorized_access "$UNAUTH_TOKEN" "${KF_PROFILE}"
 
     - name: Test Volumes Web App API
       run: ./tests/gh-actions/test_volumes_web_app.sh "${KF_PROFILE}"
