@@ -54,6 +54,11 @@ jobs:
     - name: Install Training Operator
       run: ./tests/gh-actions/install_training_operator.sh
 
+    - name: Verify CRDs are ready
+      run: |
+        kubectl api-resources | grep -q "pytorchjob"
+        kubectl get crd pytorchjobs.kubeflow.org
+
     - name: Install Dependencies
       run: pip install pytest kubernetes requests
 
