@@ -69,7 +69,7 @@ jobs:
       run: ./tests/gh-actions/test_training_operator.sh "${KF_PROFILE}"
 
     - name: Test with Authorized Token
-      run: kubectl get pytorchjobs -n $KF_PROFILE --token="$(kubectl -n $KF_PROFILE create token default-editor --audience=training.kubeflow.org)"
+      run: kubectl get pytorchjobs -n $KF_PROFILE --token="$(kubectl -n $KF_PROFILE create token default-editor)"
 
     - name: Test with Unauthorized Token
       run: |

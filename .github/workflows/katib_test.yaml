@@ -67,7 +67,7 @@ jobs:
 
 
     - name: Test Authorized Katib Access
-      run: kubectl get experiments.kubeflow.org -n $KF_PROFILE --token="$(kubectl -n $KF_PROFILE create token default-editor --audience=katib.kubeflow.org)"
+      run: kubectl get experiments.kubeflow.org -n $KF_PROFILE --token="$(kubectl -n $KF_PROFILE create token default-editor)"
 
     - name: Test Unauthorized Katib Access
       run: |
