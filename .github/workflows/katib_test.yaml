@@ -6,11 +6,14 @@ on:
     - tests/gh-actions/install_katib.sh
     - .github/workflows/katib_test.yaml
     - apps/katib/upstream/**
-    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_istio-cni.sh
     - common/istio*/**
     - tests/gh-actions/install_cert_manager.sh
     - common/cert-manager/**
     - experimental/security/PSS/*
+
+env:
+  KF_PROFILE: kubeflow-user-example-com
 
 jobs:
   build:
@@ -22,35 +25,62 @@ jobs:
     - name: Install KinD, Create KinD cluster and Install kustomize
       run: ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
 
-    - name: Install Istio
-      run: ./tests/gh-actions/install_istio.sh
+    - name: Install kubectl
+      run: ./tests/gh-actions/install_kubectl.sh
 
-    - name: Install cert-manager
+    - name: Create Kubeflow Namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+    - name: Install Certificate Manager
       run: ./tests/gh-actions/install_cert_manager.sh
 
-    - name: Create namespaces
-      run: |
-        kubectl create ns kubeflow
-        kubectl create namespace kubeflow-user
+    - name: Install Istio CNI
+      run: ./tests/gh-actions/install_istio-cni.sh
+
+    - name: Install OAuth2 Proxy
+      run: ./tests/gh-actions/install_oauth2-proxy.sh
+
+    - name: Install Kubeflow Istio Resources
+      run: kustomize build common/istio-cni-1-24/kubeflow-istio-resources/base | kubectl apply -f -
+
+    - name: Install Multi-Tenancy
+      run: ./tests/gh-actions/install_multi_tenancy.sh
+
+    - name: Create KF Profile
+      run: ./tests/gh-actions/install_kubeflow_profile.sh
 
     - name: Install Katib
+      run: ./tests/gh-actions/install_katib.sh
+
+    - name: Install Training Operator
+      run: ./tests/gh-actions/install_training_operator.sh
+
+    - name: Install Dependencies
+      run: pip install pytest kubernetes kfp==2.11.0 requests
+
+    - name: Port-forward the istio-ingress gateway
+      run: ./tests/gh-actions/port_forward_gateway.sh
+
+    - name: Run Katib Test
       run: |
-        export KF_PROFILE=kubeflow-user
-        ./tests/gh-actions/install_katib.sh
+        sed "s/kubeflow-user/$KF_PROFILE/g" tests/gh-actions/kf-objects/katib_test.yaml | kubectl apply -f -
+        kubectl wait --for=condition=Running experiments.kubeflow.org -n $KF_PROFILE --all --timeout=300s
+        sleep 30
 
-    - name: Create katib experiment
+    - name: Run Training Operator Test
       run: |
-        kubectl label namespace kubeflow-user katib.kubeflow.org/metrics-collector-injection=enabled
-        kubectl apply -f tests/gh-actions/kf-objects/katib_test.yaml
+        sed 's/namespace: .*/namespace: '"$KF_PROFILE"'/g' tests/gh-actions/kf-objects/training_operator_job.yaml | kubectl apply -f -
+        kubectl wait --for=condition=Succeeded pytorchjobs -n $KF_PROFILE --all --timeout=600s
 
-        echo "Waiting for Experiment to become Running..."
-        kubectl wait --for=condition=Running experiments.kubeflow.org -n kubeflow-user --all --timeout 300s
+    - name: Test Katib with Authorized Token
+      run: |
+        TOKEN="$(kubectl -n $KF_PROFILE create token default-editor --audience=katib.kubeflow.org)"
+        kubectl get experiments.kubeflow.org -n $KF_PROFILE --token="$TOKEN"
 
-        echo "Waiting for all Trials to become Succeeded..."
-        kubectl wait --for=condition=Succeeded trials.kubeflow.org -n kubeflow-user --all --timeout 600s
-
-        echo "Waiting for the Experiment to become Succeeded..."
-        kubectl wait --for=condition=Succeeded experiments.kubeflow.org -n kubeflow-user --all --timeout 300s
+    - name: Test Katib with Unauthorized Token
+      run: |
+        TOKEN="$(kubectl -n default create token default)"
+        kubectl get experiments.kubeflow.org -n $KF_PROFILE --token="$TOKEN" 2>&1 | grep -q "Forbidden"
 
     - name: Apply Pod Security Standards baseline levels
       run: ./tests/gh-actions/enable_baseline_PSS.sh

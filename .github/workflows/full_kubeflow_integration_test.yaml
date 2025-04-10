@@ -69,6 +69,9 @@ jobs:
     - name: Install PodDefaults CRD
       run: kubectl get crd poddefaults.kubeflow.org || kubectl apply -f https://raw.githubusercontent.com/kubeflow/kubeflow/master/components/admission-webhook/manifests/base/crd.yaml
 
+    - name: Install Volumes Web App
+      run: ./tests/gh-actions/install_volumes_web_app.sh
+
     - name: Wait for All Pods to be Ready
       run: kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 300s --field-selector=status.phase!=Succeeded
 
@@ -113,6 +116,9 @@ jobs:
       run: |
         python3 tests/gh-actions/pipeline_test.py test_unauthorized_access "$(kubectl -n default create token default)" "${KF_PROFILE}"
 
+    - name: Test Volumes Web App API
+      run: ./tests/gh-actions/test_volumes_web_app.sh "${KF_PROFILE}"
+
     - name: Apply PodDefault for Pipeline Access Token
       run: sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml | kubectl apply -f -
 
@@ -141,6 +147,11 @@ jobs:
     - name: Run Training Operator Test
       run: |
         sed 's/namespace: .*/namespace: '"$KF_PROFILE"'/g' tests/gh-actions/kf-objects/training_operator_job.yaml | kubectl apply -f -
+
+    - name: Run KServe Test
+      run: |
+        sed 's/namespace: .*/namespace: '"$KF_PROFILE"'/g' tests/gh-actions/kf-objects/kserve_test.yaml | kubectl apply -f -
+        kubectl wait --for=condition=Ready inferenceservice -n $KF_PROFILE --all --timeout=300s
 
     - name: Run Spark Test
       run: chmod u+x tests/gh-actions/spark_*.sh && ./tests/gh-actions/spark_test.sh "${KF_PROFILE}"
