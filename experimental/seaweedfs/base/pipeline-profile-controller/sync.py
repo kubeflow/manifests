@@ -20,6 +20,8 @@ import base64
 # From awscli installed in alpine/k8s image
 import botocore.session
 
+S3_BUCKET_NAME = 'mlpipeline'
+
 session = botocore.session.get_session()
 iam = session.create_client('iam', region_name='foobar')
 
@@ -121,7 +123,7 @@ def server_factory(visualization_server_image,
                         "namespace": namespace,
                     },
                     "data": {
-                        "defaultPipelineRoot": f"minio://kubeflow/{namespace}/v2/artifacts",
+                        "defaultPipelineRoot": f"minio://{S3_BUCKET_NAME}/private-artifacts/{namespace}/v2/artifacts",
                     },
                 },
                 {
@@ -144,16 +146,16 @@ def server_factory(visualization_server_image,
                         "name": "artifact-repositories",
                         "namespace": namespace,
                         "annotations": {
-                            "workflows.argoproj.io/default-artifact-repository": "default-seaweedfs-namespaced"
+                            "workflows.argoproj.io/default-artifact-repository": "default-namespaced"
                         }
                     },
                     "data": {
-                        "default-seaweedfs-namespaced": json.dumps({
+                        "default-namespaced": json.dumps({
                             "archiveLogs": True,
                             "s3": {
                                 "endpoint": "minio-service.kubeflow:9000",
-                                "bucket": "kubeflow",
-                                "keyFormat": f"{namespace}/artifacts/{{{{workflow.name}}}}/{{{{workflow.creationTimestamp.Y}}}}/{{{{workflow.creationTimestamp.m}}}}/{{{{workflow.creationTimestamp.d}}}}/{{{{pod.name}}}}",
+                                "bucket": S3_BUCKET_NAME,
+                                "keyFormat": f"private-artifacts/{namespace}/{{{{workflow.name}}}}/{{{{workflow.creationTimestamp.Y}}}}/{{{{workflow.creationTimestamp.m}}}}/{{{{workflow.creationTimestamp.d}}}}/{{{{pod.name}}}}",
                                 "insecure": True,
                                 "accessKeySecret": {
                                     "name": "mlpipeline-minio-artifact",
@@ -167,223 +169,14 @@ def server_factory(visualization_server_image,
                         })
                     }
                 },
-                # Visualization server related manifests below
-                {
-                    "apiVersion": "apps/v1",
-                    "kind": "Deployment",
-                    "metadata": {
-                        "labels": {
-                            "app": "ml-pipeline-visualizationserver"
-                        },
-                        "name": "ml-pipeline-visualizationserver",
-                        "namespace": namespace,
-                    },
-                    "spec": {
-                        "selector": {
-                            "matchLabels": {
-                                "app": "ml-pipeline-visualizationserver"
-                            },
-                        },
-                        "template": {
-                            "metadata": {
-                                "labels": {
-                                    "app": "ml-pipeline-visualizationserver"
-                                },
-                                "annotations": disable_istio_sidecar and {
-                                    "sidecar.istio.io/inject": "false"
-                                } or {},
-                            },
-                            "spec": {
-                                "containers": [{
-                                    "image": f"{visualization_server_image}:{visualization_server_tag}",
-                                    "imagePullPolicy":
-                                        "IfNotPresent",
-                                    "name":
-                                        "ml-pipeline-visualizationserver",
-                                    "ports": [{
-                                        "containerPort": 8888
-                                    }],
-                                    "resources": {
-                                        "requests": {
-                                            "cpu": "50m",
-                                            "memory": "200Mi"
-                                        },
-                                        "limits": {
-                                            "cpu": "500m",
-                                            "memory": "1Gi"
-                                        },
-                                    }
-                                }],
-                                "serviceAccountName":
-                                    "default-editor",
-                            },
-                        },
-                    },
-                },
-                {
-                    "apiVersion": "networking.istio.io/v1alpha3",
-                    "kind": "DestinationRule",
-                    "metadata": {
-                        "name": "ml-pipeline-visualizationserver",
-                        "namespace": namespace,
-                    },
-                    "spec": {
-                        "host": "ml-pipeline-visualizationserver",
-                        "trafficPolicy": {
-                            "tls": {
-                                "mode": "ISTIO_MUTUAL"
-                            }
-                        }
-                    }
-                },
-                {
-                    "apiVersion": "security.istio.io/v1beta1",
-                    "kind": "AuthorizationPolicy",
-                    "metadata": {
-                        "name": "ml-pipeline-visualizationserver",
-                        "namespace": namespace,
-                    },
-                    "spec": {
-                        "selector": {
-                            "matchLabels": {
-                                "app": "ml-pipeline-visualizationserver"
-                            }
-                        },
-                        "rules": [{
-                            "from": [{
-                                "source": {
-                                    "principals": ["cluster.local/ns/kubeflow/sa/ml-pipeline"]
-                                }
-                            }]
-                        }]
-                    }
-                },
-                {
-                    "apiVersion": "v1",
-                    "kind": "Service",
-                    "metadata": {
-                        "name": "ml-pipeline-visualizationserver",
-                        "namespace": namespace,
-                    },
-                    "spec": {
-                        "ports": [{
-                            "name": "http",
-                            "port": 8888,
-                            "protocol": "TCP",
-                            "targetPort": 8888,
-                        }],
-                        "selector": {
-                            "app": "ml-pipeline-visualizationserver",
-                        },
-                    },
-                },
-                # Artifact fetcher related resources below.
-                {
-                    "apiVersion": "apps/v1",
-                    "kind": "Deployment",
-                    "metadata": {
-                        "labels": {
-                            "app": "ml-pipeline-ui-artifact"
-                        },
-                        "name": "ml-pipeline-ui-artifact",
-                        "namespace": namespace,
-                    },
-                    "spec": {
-                        "selector": {
-                            "matchLabels": {
-                                "app": "ml-pipeline-ui-artifact"
-                            }
-                        },
-                        "template": {
-                            "metadata": {
-                                "labels": {
-                                    "app": "ml-pipeline-ui-artifact"
-                                },
-                                "annotations": disable_istio_sidecar and {
-                                    "sidecar.istio.io/inject": "false"
-                                } or {},
-                            },
-                            "spec": {
-                                "containers": [{
-                                    "name":
-                                        "ml-pipeline-ui-artifact",
-                                    "image": f"{frontend_image}:{frontend_tag}",
-                                    "imagePullPolicy":
-                                        "IfNotPresent",
-                                    "ports": [{
-                                        "containerPort": 3000
-                                    }],
-                                    "env": [
-                                        {
-                                            "name": "MINIO_ACCESS_KEY",
-                                            "valueFrom": {
-                                                "secretKeyRef": {
-                                                    "key": "accesskey",
-                                                    "name": "mlpipeline-minio-artifact"
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "name": "MINIO_SECRET_KEY",
-                                            "valueFrom": {
-                                                "secretKeyRef": {
-                                                    "key": "secretkey",
-                                                    "name": "mlpipeline-minio-artifact"
-                                                }
-                                            }
-                                        }
-                                    ],
-                                    "resources": {
-                                        "requests": {
-                                            "cpu": "10m",
-                                            "memory": "70Mi"
-                                        },
-                                        "limits": {
-                                            "cpu": "100m",
-                                            "memory": "500Mi"
-                                        },
-                                    }
-                                }],
-                                "serviceAccountName":
-                                    "default-editor"
-                            }
-                        }
-                    }
-                },
-                {
-                    "apiVersion": "v1",
-                    "kind": "Service",
-                    "metadata": {
-                        "name": "ml-pipeline-ui-artifact",
-                        "namespace": namespace,
-                        "labels": {
-                            "app": "ml-pipeline-ui-artifact"
-                        }
-                    },
-                    "spec": {
-                        "ports": [{
-                            "name":
-                                "http",  # name is required to let istio understand request protocol
-                            "port": 80,
-                            "protocol": "TCP",
-                            "targetPort": 3000
-                        }],
-                        "selector": {
-                            "app": "ml-pipeline-ui-artifact"
-                        }
-                    }
-                },
             ]
             print('Received request:\n', json.dumps(parent, sort_keys=True))
             print('Desired resources except secrets:\n', json.dumps(desired_resources, sort_keys=True))
 
             # Moved after the print argument because this is sensitive data.
 
-            # This could lead to the creation of multiple access keys for the same profile
-            # which is not an imminent problem, but yet not that elegant. But it is simple
-            # and ensures that there is always a secret with valid keys.
-            # That is likely why metacontroller docs recommend not having any side effects in the
-            # hook function.
+            # Check if secret is already there when the controller made the request. If yes, then
+            # use it. Else create a new credentials on seaweedfs for the namespace.
             if s3_secret := attachments["Secret.v1"].get(f"{namespace}/mlpipeline-minio-artifact"):
                 desired_resources.append(s3_secret)
                 print('Using existing secret')
@@ -404,10 +197,12 @@ def server_factory(visualization_server_image,
                                     "s3:List*"
                                 ],
                                 "Resource": [
-                                    f"arn:aws:s3:::kubeflow/{namespace}/*"
+                                    f"arn:aws:s3:::{S3_BUCKET_NAME}/artifacts/*",
+                                    f"arn:aws:s3:::{S3_BUCKET_NAME}/private-artifacts/{namespace}/*",
+                                    f"arn:aws:s3:::{S3_BUCKET_NAME}/private/{namespace}/*",
+                                    f"arn:aws:s3:::{S3_BUCKET_NAME}/shared/*",
                                 ]
-                            }
-                            ]
+                            }]
                         })
                 )
                 desired_resources.insert(

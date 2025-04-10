@@ -17,6 +17,7 @@ spec:
     metadata:
       labels:
         app: seaweedfs
+        application-crd-id: kubeflow-pipelines
     spec:
       containers:
       - name: seaweedfs
@@ -68,3 +69,4 @@ spec:
       - name: data
         persistentVolumeClaim:
           claimName: seaweedfs-pvc
+      serviceAccountName: seaweedfs
