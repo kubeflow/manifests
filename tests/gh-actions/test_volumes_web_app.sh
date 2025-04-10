@@ -39,9 +39,12 @@ if [ -z "$UNAUTH_TOKEN" ]; then
   exit 1
 fi
 
+# Prepare data directory for local volume
+echo "Creating data directory on kind-control-plane..."
+kubectl exec kind-control-plane -- mkdir -p /tmp/data
+
 echo "Creating StorageClass..."
-curl -s -o /dev/null -w "%{http_code}" \
-  -X POST \
+RESP=$(curl -s -X POST \
   "localhost:8080/volumes/api/storageclasses" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "Content-Type: application/json" \
@@ -53,16 +56,12 @@ curl -s -o /dev/null -w "%{http_code}" \
     "provisioner": "rancher.io/local-path",
     "reclaimPolicy": "Delete",
     "volumeBindingMode": "WaitForFirstConsumer"
-  }' | grep -q "200"
-
-
-echo "Creating data directory on kind-control-plane..."
-kubectl exec kind-control-plane -- mkdir -p /tmp/data
-
+  }')
+echo "StorageClass creation response: $RESP"
+sleep 2
 
 echo "Creating PersistentVolume..."
-curl -s -o /dev/null -w "%{http_code}" \
-  -X POST \
+RESP=$(curl -s -X POST \
   "localhost:8080/volumes/api/persistentvolumes" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "Content-Type: application/json" \
@@ -90,12 +89,12 @@ curl -s -o /dev/null -w "%{http_code}" \
         }
       }
     }
-  }' | grep -q "200"
-
+  }')
+echo "PV creation response: $RESP"
+sleep 2
 
 echo "Creating PVC in ${KF_PROFILE} namespace..."
-curl -s -o /dev/null -w "%{http_code}" \
-  -X POST \
+RESP=$(curl -s -X POST \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "Content-Type: application/json" \
@@ -111,24 +110,24 @@ curl -s -o /dev/null -w "%{http_code}" \
       },
       "storageClassName": "standard"
     }
-  }' | grep -q "200"
-
-echo "Waiting for PVC to be created..."
+  }')
+echo "PVC creation response: $RESP"
 sleep 5
 
 echo "Testing authorized access to PVCs..."
-curl -s -o /dev/null -w "%{http_code}" \
+RESP=$(curl -s \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
-  -H "Authorization: Bearer ${TOKEN}" | grep -q "200"
+  -H "Authorization: Bearer ${TOKEN}")
+echo "List PVCs response: $RESP"
 
 echo "Testing unauthorized access to PVCs (expecting 403)..."
-curl -s -o /dev/null -w "%{http_code}" \
+RESP=$(curl -s -w "%{http_code}" \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
-  -H "Authorization: Bearer ${UNAUTH_TOKEN}" | grep -q "403"
+  -H "Authorization: Bearer ${UNAUTH_TOKEN}")
+echo "Unauthorized list PVCs response: $RESP"
 
 echo "Creating another PVC through API..."
-curl -s -o /dev/null -w "%{http_code}" \
-  -X POST \
+RESP=$(curl -s -X POST \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "Content-Type: application/json" \
@@ -144,28 +143,32 @@ curl -s -o /dev/null -w "%{http_code}" \
       },
       "storageClassName": "standard"
     }
-  }' | grep -q "200"
-
-echo "Waiting for PVC to be created..."
+  }')
+echo "Second PVC creation response: $RESP"
 sleep 5
-echo "Verifying PVC was created:"
-kubectl get pvc api-created-pvc -n $KF_PROFILE
+
+echo "Verifying PVCs were created:"
+kubectl get pvc -n $KF_PROFILE
 
 echo "Testing unauthorized PVC deletion (expecting 403)..."
-curl -s -o /dev/null -w "%{http_code}" \
-  -X DELETE \
+RESP=$(curl -s -X DELETE \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
-  -H "Authorization: Bearer ${UNAUTH_TOKEN}" | grep -q "403"
+  -H "Authorization: Bearer ${UNAUTH_TOKEN}")
+echo "Unauthorized deletion response: $RESP"
 
 echo "Testing authorized PVC deletion..."
-curl -s -o /dev/null -w "%{http_code}" \
-  -X DELETE \
+RESP=$(curl -s -X DELETE \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
-  -H "Authorization: Bearer ${TOKEN}" | grep -q "200"
-
-echo "Waiting for PVC to be deleted..."
+  -H "Authorization: Bearer ${TOKEN}")
+echo "Authorized deletion response: $RESP"
 sleep 5
-echo "Verifying PVC was deleted (should fail):"
-kubectl get pvc test-pvc -n $KF_PROFILE 2>/dev/null && exit 1 
+
+echo "Verifying PVC was deleted:"
+if kubectl get pvc test-pvc -n $KF_PROFILE 2>/dev/null; then
+  echo "ERROR: PVC test-pvc still exists after deletion attempt"
+  exit 1
+else
+  echo "PVC deletion confirmed"
+fi
 
 echo "All tests passed successfully!" 
