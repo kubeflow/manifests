@@ -3,7 +3,6 @@ set -e
 
 KF_PROFILE=${1:-kubeflow-user-example-com}
 
-# Add timeout and retry for API availability check
 echo "Checking API availability..."
 MAX_RETRIES=12
 RETRY_INTERVAL=5
@@ -39,78 +38,73 @@ if [ -z "$UNAUTH_TOKEN" ]; then
   exit 1
 fi
 
-# Prepare data directory for local volume
-echo "Creating data directory on kind-control-plane..."
-kubectl exec kind-control-plane -- mkdir -p /tmp/data
-
 echo "Creating StorageClass..."
 RESP=$(curl -s -X POST \
   "localhost:8080/volumes/api/storageclasses" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "Content-Type: application/json" \
-  -d '{
-    "name": "standard",
-    "annotations": {
-      "storageclass.kubernetes.io/is-default-class": "true"
+  -d "{
+    \"name\": \"standard\",
+    \"annotations\": {
+      \"storageclass.kubernetes.io/is-default-class\": \"true\"
     },
-    "provisioner": "rancher.io/local-path",
-    "reclaimPolicy": "Delete",
-    "volumeBindingMode": "WaitForFirstConsumer"
-  }')
+    \"provisioner\": \"rancher.io/local-path\",
+    \"reclaimPolicy\": \"Delete\",
+    \"volumeBindingMode\": \"Immediate\"
+  }")
 echo "StorageClass creation response: $RESP"
 sleep 2
 
-echo "Creating PersistentVolume..."
-RESP=$(curl -s -X POST \
-  "localhost:8080/volumes/api/persistentvolumes" \
-  -H "Authorization: Bearer ${TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "test-pv",
-    "spec": {
-      "capacity": {
-        "storage": "1Gi"
-      },
-      "accessModes": ["ReadWriteOnce"],
-      "persistentVolumeReclaimPolicy": "Delete",
-      "volumeMode": "Filesystem",
-      "local": {
-        "path": "/tmp/data"
-      },
-      "nodeAffinity": {
-        "required": {
-          "nodeSelectorTerms": [{
-            "matchExpressions": [{
-              "key": "kubernetes.io/hostname",
-              "operator": "In",
-              "values": ["kind-control-plane"]
-            }]
-          }]
-        }
-      }
-    }
-  }')
-echo "PV creation response: $RESP"
-sleep 2
+STORAGE_CLASS_NAME="standard"
+kubectl get storageclass $STORAGE_CLASS_NAME || {
+  echo "StorageClass creation failed, looking for existing StorageClass..."
+  DEFAULT_SC=$(kubectl get storageclass -o=jsonpath='{.items[?(@.metadata.annotations.storageclass\.kubernetes\.io/is-default-class=="true")].metadata.name}')
+  if [ -n "$DEFAULT_SC" ]; then
+    echo "Found default StorageClass: $DEFAULT_SC"
+    STORAGE_CLASS_NAME=$DEFAULT_SC
+  else
+    DEFAULT_SC=$(kubectl get storageclass -o=jsonpath='{.items[0].metadata.name}')
+    if [ -n "$DEFAULT_SC" ]; then
+      echo "No default StorageClass found, using first available: $DEFAULT_SC"
+      STORAGE_CLASS_NAME=$DEFAULT_SC
+    else
+      echo "No StorageClass found, creating one with kubectl..."
+      cat <<EOF | kubectl apply -f -
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: rancher.io/local-path
+volumeBindingMode: Immediate
+reclaimPolicy: Delete
+EOF
+      STORAGE_CLASS_NAME="standard"
+    fi
+  fi
+  
+  echo "Using StorageClass: $STORAGE_CLASS_NAME"
+}
 
-echo "Creating PVC in ${KF_PROFILE} namespace..."
+echo "Directly creating PVC in ${KF_PROFILE} namespace..."
 RESP=$(curl -s -X POST \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "Content-Type: application/json" \
-  -d '{
-    "name": "test-pvc",
-    "namespace": "'${KF_PROFILE}'",
-    "spec": {
-      "accessModes": ["ReadWriteOnce"],
-      "resources": {
-        "requests": {
-          "storage": "1Gi"
+  -d "{
+    \"name\": \"test-pvc\",
+    \"namespace\": \"${KF_PROFILE}\",
+    \"spec\": {
+      \"accessModes\": [\"ReadWriteOnce\"],
+      \"resources\": {
+        \"requests\": {
+          \"storage\": \"1Gi\"
         }
       },
-      "storageClassName": "standard"
+      \"storageClassName\": \"${STORAGE_CLASS_NAME}\"
     }
-  }')
+  }")
 echo "PVC creation response: $RESP"
 sleep 5
 
@@ -131,19 +125,19 @@ RESP=$(curl -s -X POST \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "Content-Type: application/json" \
-  -d '{
-    "name": "api-created-pvc",
-    "namespace": "'${KF_PROFILE}'",
-    "spec": {
-      "accessModes": ["ReadWriteOnce"],
-      "resources": {
-        "requests": {
-          "storage": "1Gi"
+  -d "{
+    \"name\": \"api-created-pvc\",
+    \"namespace\": \"${KF_PROFILE}\",
+    \"spec\": {
+      \"accessModes\": [\"ReadWriteOnce\"],
+      \"resources\": {
+        \"requests\": {
+          \"storage\": \"1Gi\"
         }
       },
-      "storageClassName": "standard"
+      \"storageClassName\": \"${STORAGE_CLASS_NAME}\"
     }
-  }')
+  }")
 echo "Second PVC creation response: $RESP"
 sleep 5
 
