@@ -63,6 +63,7 @@ jobs:
     - name: Run Training Operator Test
       run: |
         sed 's/namespace: .*/namespace: '"$KF_PROFILE"'/g' tests/gh-actions/kf-objects/training_operator_job.yaml | kubectl apply -f -
+        sleep 10
         kubectl wait --for=condition=Succeeded pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=600s
 
     - name: Test Training Operator with Authorized Token

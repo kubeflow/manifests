@@ -32,6 +32,8 @@ spec:
   storageClassName: standard
 EOF
 
+kubectl wait --for=condition=Bound pvc/test-pvc -n $KF_PROFILE --timeout=60s
+
 TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
 curl -s -o /dev/null -w "%{http_code}" \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
@@ -61,6 +63,7 @@ curl -s -o /dev/null -w "%{http_code}" \
     }
   }' | grep -q "200"
 
+kubectl wait --for=condition=Bound pvc/api-created-pvc -n $KF_PROFILE --timeout=60s
 kubectl get pvc api-created-pvc -n $KF_PROFILE
 
 curl -s -o /dev/null -w "%{http_code}" \
@@ -73,4 +76,5 @@ curl -s -o /dev/null -w "%{http_code}" \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
   -H "Authorization: Bearer ${TOKEN}" | grep -q "200"
 
+sleep 5
 kubectl get pvc test-pvc -n $KF_PROFILE 2>/dev/null && exit 1 
