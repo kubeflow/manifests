@@ -3,95 +3,26 @@ set -e
 
 KF_PROFILE=${1:-kubeflow-user-example-com}
 
-echo "Checking API availability..."
-MAX_RETRIES=12
-RETRY_INTERVAL=5
-API_READY=false
-
-for i in $(seq 1 $MAX_RETRIES); do
-  echo "Attempt $i of $MAX_RETRIES to connect to API endpoint..."
-  if curl -s -o /dev/null -w "%{http_code}" "localhost:8080/volumes/api/storageclasses" | grep -q "40"; then
-    echo "API endpoint is available"
-    API_READY=true
-    break
-  fi
-  echo "API endpoint not available yet, waiting ${RETRY_INTERVAL}s..."
-  sleep $RETRY_INTERVAL
-done
-
-if [ "$API_READY" != "true" ]; then
-  echo "ERROR: Volumes Web App API is not available after $(($MAX_RETRIES * $RETRY_INTERVAL))s"
+curl -s -o /dev/null -w "%{http_code}" "localhost:8080/volumes/api/storageclasses" | grep -q "40" || {
+  echo "Volumes Web App API is not available"
   exit 1
-fi
-
-echo "Creating service account tokens..."
-TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
-if [ -z "$TOKEN" ]; then
-  echo "ERROR: Failed to create token for default-editor in $KF_PROFILE namespace"
-  kubectl get serviceaccount -n $KF_PROFILE
-  exit 1
-fi
-
-UNAUTH_TOKEN="$(kubectl -n default create token default)"
-if [ -z "$UNAUTH_TOKEN" ]; then
-  echo "ERROR: Failed to create token for default in default namespace"
-  exit 1
-fi
-
-echo "Creating StorageClass..."
-RESP=$(curl -s -X POST \
-  "localhost:8080/volumes/api/storageclasses" \
-  -H "Authorization: Bearer ${TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d "{
-    \"name\": \"standard\",
-    \"annotations\": {
-      \"storageclass.kubernetes.io/is-default-class\": \"true\"
-    },
-    \"provisioner\": \"rancher.io/local-path\",
-    \"reclaimPolicy\": \"Delete\",
-    \"volumeBindingMode\": \"Immediate\"
-  }")
-echo "StorageClass creation response: $RESP"
-sleep 2
-
-STORAGE_CLASS_NAME="standard"
-kubectl get storageclass $STORAGE_CLASS_NAME || {
-  echo "StorageClass creation failed, looking for existing StorageClass..."
-  DEFAULT_SC=$(kubectl get storageclass -o=jsonpath='{.items[?(@.metadata.annotations.storageclass\.kubernetes\.io/is-default-class=="true")].metadata.name}')
-  if [ -n "$DEFAULT_SC" ]; then
-    echo "Found default StorageClass: $DEFAULT_SC"
-    STORAGE_CLASS_NAME=$DEFAULT_SC
-  else
-    DEFAULT_SC=$(kubectl get storageclass -o=jsonpath='{.items[0].metadata.name}')
-    if [ -n "$DEFAULT_SC" ]; then
-      echo "No default StorageClass found, using first available: $DEFAULT_SC"
-      STORAGE_CLASS_NAME=$DEFAULT_SC
-    else
-      echo "No StorageClass found, creating one with kubectl..."
-      cat <<EOF | kubectl apply -f -
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: standard
-  annotations:
-    storageclass.kubernetes.io/is-default-class: "true"
-provisioner: rancher.io/local-path
-volumeBindingMode: Immediate
-reclaimPolicy: Delete
-EOF
-      STORAGE_CLASS_NAME="standard"
-    fi
-  fi
-  
-  echo "Using StorageClass: $STORAGE_CLASS_NAME"
 }
 
-echo "Directly creating PVC in ${KF_PROFILE} namespace..."
-RESP=$(curl -s -X POST \
+TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
+UNAUTH_TOKEN="$(kubectl -n default create token default)"
+
+CSRF_COOKIE=$(curl -s -c - "localhost:8080/volumes/" | grep XSRF-TOKEN | cut -f 7)
+CSRF_HEADER=${CSRF_COOKIE}
+
+SC_NAME="standard"
+kubectl get storageclass $SC_NAME > /dev/null 2>&1
+
+curl -s -X POST \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "Content-Type: application/json" \
+  -H "X-XSRF-TOKEN: ${CSRF_HEADER}" \
+  -b "XSRF-TOKEN=${CSRF_COOKIE}" \
   -d "{
     \"name\": \"test-pvc\",
     \"namespace\": \"${KF_PROFILE}\",
@@ -102,29 +33,28 @@ RESP=$(curl -s -X POST \
           \"storage\": \"1Gi\"
         }
       },
-      \"storageClassName\": \"${STORAGE_CLASS_NAME}\"
+      \"storageClassName\": \"${SC_NAME}\"
     }
-  }")
-echo "PVC creation response: $RESP"
-sleep 5
+  }" > /dev/null
 
-echo "Testing authorized access to PVCs..."
-RESP=$(curl -s \
+curl -s \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
-  -H "Authorization: Bearer ${TOKEN}")
-echo "List PVCs response: $RESP"
+  -H "Authorization: Bearer ${TOKEN}" \
+  -H "X-XSRF-TOKEN: ${CSRF_HEADER}" \
+  -b "XSRF-TOKEN=${CSRF_COOKIE}" > /dev/null
 
-echo "Testing unauthorized access to PVCs (expecting 403)..."
-RESP=$(curl -s -w "%{http_code}" \
+
+UNAUTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
   -H "Authorization: Bearer ${UNAUTH_TOKEN}")
-echo "Unauthorized list PVCs response: $RESP"
+[[ "$UNAUTH_STATUS" == "403" ]] || exit 1
 
-echo "Creating another PVC through API..."
-RESP=$(curl -s -X POST \
+curl -s -X POST \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "Content-Type: application/json" \
+  -H "X-XSRF-TOKEN: ${CSRF_HEADER}" \
+  -b "XSRF-TOKEN=${CSRF_COOKIE}" \
   -d "{
     \"name\": \"api-created-pvc\",
     \"namespace\": \"${KF_PROFILE}\",
@@ -135,34 +65,23 @@ RESP=$(curl -s -X POST \
           \"storage\": \"1Gi\"
         }
       },
-      \"storageClassName\": \"${STORAGE_CLASS_NAME}\"
+      \"storageClassName\": \"${SC_NAME}\"
     }
-  }")
-echo "Second PVC creation response: $RESP"
-sleep 5
+  }" > /dev/null
 
-echo "Verifying PVCs were created:"
-kubectl get pvc -n $KF_PROFILE
-
-echo "Testing unauthorized PVC deletion (expecting 403)..."
-RESP=$(curl -s -X DELETE \
+curl -s -X DELETE \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
-  -H "Authorization: Bearer ${UNAUTH_TOKEN}")
-echo "Unauthorized deletion response: $RESP"
+  -H "Authorization: Bearer ${UNAUTH_TOKEN}" \
+  -H "X-XSRF-TOKEN: ${CSRF_HEADER}" \
+  -b "XSRF-TOKEN=${CSRF_COOKIE}" > /dev/null
 
-echo "Testing authorized PVC deletion..."
-RESP=$(curl -s -X DELETE \
+curl -s -X DELETE \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
-  -H "Authorization: Bearer ${TOKEN}")
-echo "Authorized deletion response: $RESP"
-sleep 5
+  -H "Authorization: Bearer ${TOKEN}" \
+  -H "X-XSRF-TOKEN: ${CSRF_HEADER}" \
+  -b "XSRF-TOKEN=${CSRF_COOKIE}" > /dev/null
 
-echo "Verifying PVC was deleted:"
-if kubectl get pvc test-pvc -n $KF_PROFILE 2>/dev/null; then
-  echo "ERROR: PVC test-pvc still exists after deletion attempt"
-  exit 1
-else
-  echo "PVC deletion confirmed"
-fi
+
+kubectl get pvc test-pvc -n $KF_PROFILE 2>/dev/null && exit 1
 
 echo "All tests passed successfully!" 
