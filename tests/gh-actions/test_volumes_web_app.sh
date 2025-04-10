@@ -3,6 +3,18 @@ set -e
 
 KF_PROFILE=${1:-kubeflow-user-example-com}
 
+kubectl apply -f - <<EOF
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: rancher.io/local-path
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+EOF
+
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: PersistentVolume
@@ -14,10 +26,22 @@ spec:
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Delete
-  storageClassName: standard
-  hostPath:
+  volumeMode: Filesystem
+  local:
     path: /tmp/data
----
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - kind-control-plane
+EOF
+
+kubectl exec -it kind-control-plane -- mkdir -p /tmp/data
+
+cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -32,7 +56,7 @@ spec:
   storageClassName: standard
 EOF
 
-kubectl wait --for=condition=Bound pvc/test-pvc -n $KF_PROFILE --timeout=60s
+sleep 5
 
 TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
 curl -s -o /dev/null -w "%{http_code}" \
@@ -63,7 +87,7 @@ curl -s -o /dev/null -w "%{http_code}" \
     }
   }' | grep -q "200"
 
-kubectl wait --for=condition=Bound pvc/api-created-pvc -n $KF_PROFILE --timeout=60s
+sleep 5
 kubectl get pvc api-created-pvc -n $KF_PROFILE
 
 curl -s -o /dev/null -w "%{http_code}" \

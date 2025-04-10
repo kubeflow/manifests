@@ -68,20 +68,13 @@ jobs:
         sleep 30
 
     - name: Run Training Operator Test
-      run: |
-        sed 's/namespace: .*/namespace: '"$KF_PROFILE"'/g' tests/gh-actions/kf-objects/training_operator_job.yaml | kubectl apply -f -
-        sleep 10
-        kubectl wait --for=condition=Succeeded pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=600s
+      run: ./tests/gh-actions/test_training_operator.sh "${KF_PROFILE}"
 
-    - name: Test Katib with Authorized Token
-      run: |
-        TOKEN="$(kubectl -n $KF_PROFILE create token default-editor --audience=katib.kubeflow.org)"
-        kubectl get experiments.kubeflow.org -n $KF_PROFILE --token="$TOKEN"
+    - name: Test Authorized Katib Access
+      run: kubectl get experiments.kubeflow.org -n $KF_PROFILE --token="$(kubectl -n $KF_PROFILE create token default-editor --audience=katib.kubeflow.org)"
 
-    - name: Test Katib with Unauthorized Token
-      run: |
-        TOKEN="$(kubectl -n default create token default)"
-        kubectl get experiments.kubeflow.org -n $KF_PROFILE --token="$TOKEN" 2>&1 | grep -q "Forbidden"
+    - name: Test Unauthorized Katib Access
+      run: kubectl get experiments.kubeflow.org -n $KF_PROFILE --token="$(kubectl -n default create token default)" 2>&1 | grep -q "Forbidden"
 
     - name: Apply Pod Security Standards baseline levels
       run: ./tests/gh-actions/enable_baseline_PSS.sh

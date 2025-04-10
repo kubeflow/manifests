@@ -57,7 +57,7 @@ jobs:
     - name: Wait for VWA Pods
       run: |
         kubectl wait --for=condition=Ready pods --all -n kubeflow --timeout 300s
-        sleep 5
+        sleep 15
 
     - name: Port-forward the istio-ingress gateway
       run: ./tests/gh-actions/port_forward_gateway.sh

@@ -145,8 +145,7 @@ jobs:
         sleep 30
 
     - name: Run Training Operator Test
-      run: |
-        sed 's/namespace: .*/namespace: '"$KF_PROFILE"'/g' tests/gh-actions/kf-objects/training_operator_job.yaml | kubectl apply -f -
+      run: ./tests/gh-actions/test_training_operator.sh "${KF_PROFILE}"
 
     - name: Run KServe Test
       run: |
