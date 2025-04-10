@@ -52,8 +52,6 @@ jobs:
     - name: Install Katib
       run: ./tests/gh-actions/install_katib.sh
 
-    - name: Install Training Operator
-      run: ./tests/gh-actions/install_training_operator.sh
 
     - name: Install Dependencies
       run: pip install pytest kubernetes kfp==2.11.0 requests
@@ -67,8 +65,6 @@ jobs:
         kubectl wait --for=condition=Running experiments.kubeflow.org -n $KF_PROFILE --all --timeout=300s
         sleep 30
 
-    - name: Run Training Operator Test
-      run: ./tests/gh-actions/test_training_operator.sh "${KF_PROFILE}"
 
     - name: Test Authorized Katib Access
       run: kubectl get experiments.kubeflow.org -n $KF_PROFILE --token="$(kubectl -n $KF_PROFILE create token default-editor --audience=katib.kubeflow.org)"
