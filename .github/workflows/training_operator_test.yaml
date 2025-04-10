@@ -54,10 +54,17 @@ jobs:
     - name: Install Training Operator
       run: ./tests/gh-actions/install_training_operator.sh
 
-    - name: Verify CRDs are ready
+    - name: Verify Training Operator Installation
       run: |
-        kubectl api-resources | grep -q "pytorchjob"
-        kubectl get crd pytorchjobs.kubeflow.org
+        echo "Checking Training Operator deployment..."
+        kubectl get deployments -n kubeflow training-operator -o wide
+        kubectl get pods -n kubeflow -l app=training-operator -o wide
+        
+        echo "Checking CRDs..."
+        kubectl get crd pytorchjobs.kubeflow.org -o yaml
+        
+        echo "Verifying API resources..."
+        kubectl api-resources | grep -E 'pytorchjob|tfjob'
 
     - name: Install Dependencies
       run: pip install pytest kubernetes requests
@@ -67,6 +74,18 @@ jobs:
 
     - name: Run Training Operator Test
       run: ./tests/gh-actions/test_training_operator.sh "${KF_PROFILE}"
+
+    - name: Verify Job Status (if test failed)
+      if: failure()
+      run: |
+        echo "Checking all PyTorch jobs in namespace..."
+        kubectl get pytorchjobs -n $KF_PROFILE -o wide
+        
+        echo "Checking Training Operator logs..."
+        kubectl logs -n kubeflow -l app=training-operator --tail=50
+        
+        echo "Checking for any related events..."
+        kubectl get events -n $KF_PROFILE --sort-by='.metadata.creationTimestamp'
 
     - name: Test with Authorized Token
       run: kubectl get pytorchjobs -n $KF_PROFILE --token="$(kubectl -n $KF_PROFILE create token default-editor --audience=training.kubeflow.org)"

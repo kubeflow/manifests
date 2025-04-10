@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -euxo pipefail
 
 cd apps/training-operator/upstream
 kustomize build overlays/kubeflow | kubectl apply --server-side --force-conflicts -f -
