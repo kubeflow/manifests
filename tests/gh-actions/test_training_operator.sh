@@ -14,14 +14,5 @@ kubectl get pytorchjob/pytorch-simple -n $KF_PROFILE
 
 kubectl wait --for=condition=Running pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=180s
 
-# Try to wait for Succeeded, but don't fail if it's still Running after timeout
-kubectl wait --for=condition=Succeeded pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=450s || {
-  STATE=$(kubectl get pytorchjob/pytorch-simple -n $KF_PROFILE -o custom-columns=STATE:.status.conditions[0].type --no-headers)
-  if [ "$STATE" == "Running" ]; then
-    echo "Job still running, considering test successful"
-    exit 0
-  else
-    echo "Job failed with state: $STATE"
-    exit 1
-  fi
-}
+kubectl wait --for=condition=Succeeded pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=450s || \
+[ "$(kubectl get pytorchjob/pytorch-simple -n $KF_PROFILE -o custom-columns=STATE:.status.conditions[0].type --no-headers)" == "Running" ] || exit 1
