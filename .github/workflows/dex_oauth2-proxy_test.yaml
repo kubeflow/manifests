@@ -9,7 +9,7 @@ on:
     - common/istio*/**
     - experimental/security/PSS/*
     - common/dex/base/**
-    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_istio*.sh
 
 jobs:
   build:
@@ -40,28 +40,26 @@ jobs:
       run: ./tests/gh-actions/install_multi_tenancy.sh
 
     - name: Install dex
-      run: |
-        echo "Installing Dex..."
-        kustomize build ./common/dex/overlays/oauth2-proxy | kubectl apply -f -
+      run: ./tests/gh-actions/install_dex.sh
 
-        echo "Waiting for pods in auth namespace to become ready..."
-        kubectl wait --for=condition=ready pods --all --timeout=180s -n auth
+    - name: Install central-dashboard
+      run: ./tests/gh-actions/install_central_dashboard.sh
 
-    - name: Build & Apply manifests
-      run: |
-        while ! kustomize build ./tests/gh-actions/deploy-dex-login-environment | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 20; done
-        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s
+    - name: Create KF Profile
+      run: ./tests/gh-actions/install_kubeflow_profile.sh
 
-    - name: port forward
-      run: |
-        ingress_gateway_service=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
-        nohup kubectl port-forward --namespace istio-system svc/${ingress_gateway_service} 8080:80 &
-        while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
+    - name: Port forward the istio-ingress gateway
+      run: ./tests/gh-actions/port_forward_gateway.sh
 
-    - name: test dex login
+    - name: Test dex login
       run: |
-        pip3 install requests
-        ./tests/gh-actions/test_dex_login.py
+        # Install Python requirements
+        pip3 install -q requests
+
+        # Run the Dex login test
+        python3 tests/gh-actions/test_dex_login.py
+
+        echo "Dex login test completed successfully."
 
     - name: Apply Pod Security Standards baseline levels for static namespaces
       run: ./tests/gh-actions/enable_baseline_PSS.sh

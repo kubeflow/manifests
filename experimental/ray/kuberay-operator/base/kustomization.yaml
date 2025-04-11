@@ -6,20 +6,4 @@ namespace: kubeflow
 resources:
 - resources.yaml
 - aggregated-roles.yaml
-
-patches:
-# Add securityContext to KubeRay operator Pod.
-- target:
-    kind: Deployment
-    labelSelector: "app.kubernetes.io/name=kuberay-operator"
-  patch: |-
-    - op: add
-      path: /spec/template/spec/containers/0/securityContext
-      value:
-        runAsUser: 1000
-        allowPrivilegeEscalation: false
-        capabilities:
-          drop: ["ALL"]
-        runAsNonRoot: true
-        seccompProfile:
-          type: RuntimeDefault
+# The securitycontext for PSS restricted is now directly provided in the upstream manifests

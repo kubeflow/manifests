@@ -1,18 +1,5 @@
 #!/usr/bin/env bash
-@ -1,88 +0,0 @@
-
-# This script aims at helping create a PR to update the manifests of the
-# knative.
-# This script:
-# 1. Checks out a new branch
-# 2. Download files into the correct places
-# 3. Commits the changes
-#
-# Afterwards the developers can submit the PR to the kubeflow/manifests
-# repo, based on that local branch
-# It must be executed directly from its directory
-
-# strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
+# This script helps to create a PR to update the manifests
 set -euxo pipefail
 IFS=$'\n\t'
 

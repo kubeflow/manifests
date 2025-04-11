@@ -54,7 +54,7 @@ jobs:
           --field-selector=status.phase!=Succeeded
 
     - name: Create KF Profile
-      run: kustomize build common/user-namespace/base | kubectl apply -f -
+      run: ./tests/gh-actions/install_kubeflow_profile.sh
 
     - name: Apply PodDefaults to access ml-pipeline with projected token
       run: kubectl apply -f tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml

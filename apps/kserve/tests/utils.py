@@ -26,7 +26,7 @@ from kserve import constants
 logging.basicConfig(level=logging.INFO)
 
 KSERVE_NAMESPACE = "kserve"
-KSERVE_TEST_NAMESPACE = "kserve-test"
+KSERVE_TEST_NAMESPACE = "kubeflow-user-example-com"
 MODEL_CLASS_NAME = "modelClass"
 
 
@@ -91,7 +91,7 @@ def predict_str(
     # temporary sleep until this is fixed https://github.com/kserve/kserve/issues/604
     time.sleep(10)
     cluster_ip = get_cluster_ip()
-    host = urlparse(isvc["status"]["url"]).netloc
+    host = f"{service_name}.{KSERVE_TEST_NAMESPACE}.example.com"
     headers = {
         "Host": host,
         "Content-Type": "application/json",

@@ -4,10 +4,8 @@ The **Kubeflow Manifests** are a collection of community-maintained manifests fo
 
 For a stable and conservative experience, we recommend using the [latest stable release](https://github.com/kubeflow/manifests/releases). However, please consult the more up-to-date documentation in the master branch.
 
-- [**Kubeflow 1.9:**](/docs/releases/kubeflow-1.9/)
-  - [`v1.9.1`](https://github.com/kubeflow/manifests/tree/v1.9.1#installation)
-- [**SOON TO BE RELEASED Kubeflow 1.10:**](/docs/releases/kubeflow-1.9/)
-  - [`v1.10.0`](https://github.com/kubeflow/manifests/tree/v1.10.0#installation)
+- **Kubeflow 1.10:**
+  - [`v1.10.0`](https://github.com/kubeflow/manifests/tree/v1.10-branch)
 
 You can also install the master branch of [`kubeflow/manifests`](https://github.com/kubeflow/manifests) by following the instructions [here](https://github.com/kubeflow/manifests?tab=readme-ov-file#installation) and providing us with feedback.
 
@@ -54,21 +52,21 @@ This repository periodically synchronizes all official Kubeflow components from 
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
-| Training Operator | apps/training-operator/upstream | [778cd72](https://github.com/kubeflow/training-operator/tree/778cd72/manifests) |
-| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/notebook-controller/config) |
-| PVC Viewer Controller | apps/pvcviewer-controller/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/pvcviewer-controller/config) |
-| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/tensorboard-controller/config) |
-| Central Dashboard | apps/centraldashboard/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/centraldashboard/manifests) |
-| Profiles + KFAM | apps/profiles/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/profile-controller/config) |
-| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/admission-webhook/manifests) |
-| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/crud-web-apps/jupyter/manifests) |
-| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/crud-web-apps/tensorboards/manifests) |
-| Volumes Web App | apps/volumes-web-app/upstream | [v1.10.0-rc.1](https://github.com/kubeflow/kubeflow/tree/v1.10.0-rc.1/components/crud-web-apps/volumes/manifests) |
-| Katib | apps/katib/upstream | [v0.18.0-rc.0](https://github.com/kubeflow/katib/tree/v0.18.0-rc.0/manifests/v1beta1) |
+| Training Operator | apps/training-operator/upstream | [v1.9.1](https://github.com/kubeflow/training-operator/tree/v1.9.1/manifests) |
+| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/notebook-controller/config) |
+| PVC Viewer Controller | apps/pvcviewer-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/pvcviewer-controller/config) |
+| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/tensorboard-controller/config) |
+| Central Dashboard | apps/centraldashboard/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/centraldashboard/manifests) |
+| Profiles + KFAM | apps/profiles/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/profile-controller/config) |
+| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/admission-webhook/manifests) |
+| Jupyter Web App | apps/jupyter/jupyter-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/jupyter/manifests) |
+| Tensorboards Web App | apps/tensorboard/tensorboards-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/tensorboards/manifests) |
+| Volumes Web App | apps/volumes-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/volumes/manifests) |
+| Katib | apps/katib/upstream | [v0.18.0](https://github.com/kubeflow/katib/tree/v0.18.0/manifests/v1beta1) |
 | KServe | apps/kserve/kserve | [v0.14.1](https://github.com/kserve/kserve/releases/tag/v0.14.1/install/v0.14.1) |
 | KServe Models Web App | apps/kserve/models-web-app | [v0.14.0-rc.0](https://github.com/kserve/models-web-app/tree/v0.14.0-rc.0/config) |
 | Kubeflow Pipelines | apps/pipeline/upstream | [2.4.1](https://github.com/kubeflow/pipelines/tree/2.4.1/manifests/kustomize) |
-| Kubeflow Model Registry | apps/model-registry/upstream | [v0.2.14](https://github.com/kubeflow/model-registry/tree/v0.2.14/manifests/kustomize) |
+| Kubeflow Model Registry | apps/model-registry/upstream | [v0.2.16](https://github.com/kubeflow/model-registry/tree/v0.2.16/manifests/kustomize) |
 
 The following matrix shows the versions of common components used across different Kubeflow projects:
 
@@ -115,7 +113,7 @@ The `example` directory contains an example kustomization for the single command
 #### Prerequisites
 - 16 GB of RAM recommended.
 - 8 CPU cores recommended.
-- `kind` version 0.26+.
+- `kind` version 0.27+.
 - `docker` or a more modern tool such as `podman` to run the OCI images for the Kind cluster.
 - Linux kernel subsystem changes to support many pods:
     - `sudo sysctl fs.inotify.max_user_instances=2280`
@@ -199,7 +197,7 @@ Install cert-manager:
 kustomize build common/cert-manager/base | kubectl apply -f -
 kustomize build common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
 echo "Waiting for cert-manager to be ready ..."
-kubectl wait --for=condition=ready pod -l 'app in (cert-manager,webhook)' --timeout=180s -n cert-manager
+kubectl wait --for=condition=Ready pod -l 'app in (cert-manager,webhook)' --timeout=180s -n cert-manager
 kubectl wait --for=jsonpath='{.subsets[0].addresses[0].targetRef.kind}'=Pod endpoints -l 'app in (cert-manager,webhook)' --timeout=180s -n cert-manager
 ```
 
@@ -241,7 +239,7 @@ echo "Installing oauth2-proxy..."
 #           tokens to be used from outside the cluster via the Istio ingress-gateway.
 #
 kustomize build common/oauth2-proxy/overlays/m2m-dex-only/ | kubectl apply -f -
-kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
+kubectl wait --for=condition=Ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 
 # Option 2: works on Kind, K3D, Rancher, GKE, and many other clusters with the proper configuration, and allows K8s service account tokens to be used
 #           from outside the cluster via the Istio ingress-gateway. For example, for automation with GitHub Actions.
@@ -252,15 +250,15 @@ kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' 
 #           from a pod in the cluster should provide you with the issuer of your cluster.
 # 
 #kustomize build common/oauth2-proxy/overlays/m2m-dex-and-kind/ | kubectl apply -f -
-#kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
-#kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=cluster-jwks-proxy' --timeout=180s -n istio-system
+#kubectl wait --for=condition=Ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
+#kubectl wait --for=condition=Ready pod -l 'app.kubernetes.io/name=cluster-jwks-proxy' --timeout=180s -n istio-system
 
 # OPTION 3: works on most EKS clusters with K8s service account
 #           tokens to be used from outside the cluster via the Istio ingress-gateway.
 #           You have to adjust AWS_REGION and CLUSTER_ID in common/oauth2-proxy/overlays/m2m-dex-and-eks/ first.
 #
 #kustomize build common/oauth2-proxy/overlays/m2m-dex-and-eks/ | kubectl apply -f -
-#kubectl wait --for=condition=ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
+#kubectl wait --for=condition=Ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 ```
 
 If and after you finish the installation with Kubernetes service account token support, you should be able to create and use the tokens:
@@ -282,7 +280,7 @@ Install Dex:
 ```sh
 echo "Installing Dex..."
 kustomize build common/dex/overlays/oauth2-proxy | kubectl apply -f -
-kubectl wait --for=condition=ready pods --all --timeout=180s -n auth
+kubectl wait --for=condition=Ready pods --all --timeout=180s -n auth
 ```
 
 To connect to your desired identity providers (LDAP, GitHub, Google, Microsoft, OIDC, SAML, GitLab), please take a look at <https://dexidp.io/docs/connectors/oidc/>. We recommend using OIDC in general since it is compatible with most providers. For example, Azure in the following example. You need to modify <https://github.com/kubeflow/manifests/blob/master/common/dex/overlays/oauth2-proxy/config-map.yaml> and add some environment variables in <https://github.com/kubeflow/manifests/blob/master/common/dex/base/deployment.yaml> by adding a patch section in your main Kustomization file. For guidance, please check out [Upgrading and Extending](#upgrading-and-extending).
@@ -632,6 +630,22 @@ For modifications and in-place upgrades of the Kubeflow platform, we provide a r
 - Sometimes there are major changes; for example, in the 1.9 release, we switched to oauth2-proxy, which needs additional attention.
 - Nevertheless, with a bit of Kubernetes knowledge, one should be able to upgrade.
 
+### Kubernetes upgrade fails due to `PodDisruptionBudget`
+
+To work around this remove these `PodDisruptionBudget`s for the time of the upgrade.
+You can most easily find them via the `k9s` pdb overview of this resource, alternatively with this command:
+
+```
+$ kubectl get --all-namespaces PodDisruptionBudget
+```
+
+As of now the following `PodDisruptionBudget`s are problematic in the upgrade
+context, all due to the `minAvailable` attribute:
+
+- **eventing-webhook** from _knative-eventing_
+- **activator-pdb** from _knative-serving_
+- **webhook-pdb** from _knative-serving_
+
 ## Release Process
 
 The Manifest Working Group releases Kubeflow based on the [release timeline](https://github.com/kubeflow/community/blob/master/releases/handbook.md#timeline). The community and the release team work closely with the Manifest Working Group to define the specific dates at the start of the [release cycle](https://github.com/kubeflow/community/blob/master/releases/handbook.md#releasing) and follow the [release versioning policy](https://github.com/kubeflow/community/blob/master/releases/handbook.md#versioning-policy), as defined in the [Kubeflow release handbook](https://github.com/kubeflow/community/blob/master/releases/handbook.md).
@@ -679,7 +693,7 @@ pre-commit run
 
 ## Frequently Asked Questions
 
-- **Q:** What versions of Istio, Knative, Cert-Manager, Argo, ... are compatible with Kubeflow? \
+- **Q:** What versions of Istio, Knative, Cert-Manager, Argo, ... are compatible with Kubeflow?
   **A:** Please refer to each individual component's documentation for a dependency compatibility range. For Istio, Knative, Dex, Cert-Manager, and OAuth2 Proxy, the versions in `common` are the ones we have validated.
-- **Q:** Can I use an earlier version of Kustomize with Kubeflow manifests? \
-  **A:** No, it is not supported anymore, although it might be possible with manual effort.
+- **Q:** Can I use Kubeflow in an air-gapped environment?
+  **A:** Yes you can. You just need to to get the list of images from our [trivy CVE scanning script](https://github.com/kubeflow/manifests/blob/master/tests/gh-actions/trivy_scan.py), mirror them and replace the references in the manifests with kustomize components and overlays, see [Upgrading and Extending](#upgrading-and-extending). You could also use a simple kyverno policy to replace the images at runtime, which could be easier to maintain.

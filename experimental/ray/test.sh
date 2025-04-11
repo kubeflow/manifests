@@ -5,7 +5,7 @@ set -euxo
 NAMESPACE=$1
 TIMEOUT=120  # timeout in seconds
 SLEEP_INTERVAL=30  # interval between checks in seconds
-RAY_VERSION=2.23.0
+RAY_VERSION=2.44.1
 
 start_time=$(date +%s)
 for ((i=0; i<TIMEOUT; i+=2)); do
@@ -44,7 +44,7 @@ kubectl -n $NAMESPACE apply -f raycluster_example.yaml
 
 # Wait for the RayCluster to be ready.
 sleep 5
-kubectl -n $NAMESPACE wait --for=condition=ready pod -l ray.io/cluster=kubeflow-raycluster --timeout=900s
+kubectl -n $NAMESPACE wait --for=condition=Ready pod -l ray.io/cluster=kubeflow-raycluster --timeout=900s
 kubectl -n $NAMESPACE logs -l ray.io/cluster=kubeflow-raycluster,ray.io/node-type=head
 
 # Forward the port of Dashboard

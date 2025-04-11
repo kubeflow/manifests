@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: test
-        image: kubeflownotebookswg/jupyter-scipy:v1.10.0-rc.1
+        image: ghcr.io/kubeflow/kubeflow/notebook-servers/jupyter-scipy:v1.10.0-rc.2
         imagePullPolicy: IfNotPresent
         resources:
           limits:

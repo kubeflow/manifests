@@ -9,3 +9,5 @@ resources:
 patches:
 - path: patches/gateway-selector-in-knative-serving.yaml
 - path: patches/gateway-selector-in-istio-system.yaml
+- path: patches/config-domain.yaml
+

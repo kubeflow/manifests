@@ -1,8 +1,3 @@
-TODO
-- The ray dashboard, worker and head must only be available from inside your kubeflow user namespace
-- Reenable the istio sidecar for the ray head and worker in the user namespace and provide the corresponding Istio Authorizationpolicies. We can keep the istio sidecar for the deployment kuberay-operator in the namespace kubeflow, since it does NOT use a webhook, but something else to reconcile rayclusters. This means we also do not need a networkpolicy for the ray operator.
-
-
 > Credit: This manifest refers a lot to the engineering blog ["Building a Machine Learning Platform with Kubeflow and Ray on Google Kubernetes Engine"](https://cloud.google.com/blog/products/ai-machine-learning/build-a-ml-platform-with-kubeflow-and-ray-on-gke) from Google Cloud.
 
 # Ray
@@ -21,7 +16,7 @@ TODO
 # Requirements
 * Dependencies
     * `kustomize`: v5.4.3+ (Kubeflow manifest is sensitive to `kustomize` version.)
-    * `Kubernetes`: v1.29+
+    * `Kubernetes`: v1.32+
 
 * Computing resources:
     * 16GB RAM
@@ -126,29 +121,29 @@ kubectl get svc -n $MY_KUBEFLOW_USER_NAMESPACE
     # {'node:10.244.0.41': 1.0, 'memory': 3000000000.0, 'node:10.244.0.40': 1.0, 'object_store_memory': 805386239.0, 'CPU': 2.0}
 
     # Try Ray task
-@ray.remote
-def f(x):
-    return x * x
-
-futures = [f.remote(i) for i in range(4)]
-print(ray.get(futures)) # [0, 1, 4, 9]
-
-# Try Ray actor
-@ray.remote
-class Counter(object):
-    def __init__(self):
-        self.n = 0
-
-    def increment(self):
-        self.n += 1
-
-    def read(self):
-        return self.n
-
-counters = [Counter.remote() for i in range(4)]
-[c.increment.remote() for c in counters]
-futures = [c.read.remote() for c in counters]
-print(ray.get(futures)) # [1, 1, 1, 1]
+    @ray.remote
+    def f(x):
+        return x * x
+    
+    futures = [f.remote(i) for i in range(4)]
+    print(ray.get(futures)) # [0, 1, 4, 9]
+    
+    # Try Ray actor
+    @ray.remote
+    class Counter(object):
+        def __init__(self):
+            self.n = 0
+    
+        def increment(self):
+            self.n += 1
+    
+        def read(self):
+            return self.n
+    
+    counters = [Counter.remote() for i in range(4)]
+    [c.increment.remote() for c in counters]
+    futures = [c.read.remote() for c in counters]
+    print(ray.get(futures)) # [1, 1, 1, 1]
     ```
 
 # Upgrading

@@ -9,6 +9,7 @@ spec:
     - source:
         principals:
         # kubeflow-user-example-com should be replaced with the namespace where the Ray cluster is being deployed
+        # TODO automatically use the current namespace
         - "cluster.local/ns/kubeflow-user-example-com/sa/default-editor"
   - to:
     - operation:
@@ -61,7 +62,7 @@ kind: RayCluster
 metadata:
   name: kubeflow-raycluster
 spec:
-  rayVersion: '2.23.0'
+  rayVersion: '2.44.1'
   enableInTreeAutoscaling: true
   autoscalerOptions:
     upscalingMode: Default 
@@ -77,6 +78,7 @@ spec:
       metrics-export-port: '8080'
       max-worker-port: '10012'
       # kubeflow-user-example-com should be replaced with the namespace where the Ray cluster is being deployed
+      # TODO automatically use the current namespace
       node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.kubeflow-user-example-com.svc.cluster.local
     template:
       metadata:
@@ -85,8 +87,8 @@ spec:
       spec:
         serviceAccountName: default-editor
         containers:
-        - name: ray-head
-          image: rayproject/ray:2.23.0-py311-cpu
+        - name: ray-head # TODO why call it headless with a head...
+          image: rayproject/ray:2.44.1-py311-cpu
           lifecycle:
             preStop:
               exec:
@@ -126,6 +128,7 @@ spec:
         metrics-export-port: '8080'
         max-worker-port: '10012'
         # kubeflow-user-example-com should be replaced with the namespace where the Ray cluster is being deployed
+        # TODO automatically use the current namespace
         node-ip-address: $(hostname -I | tr -d ' ' | sed 's/\./-/g').raycluster-istio-headless-svc.kubeflow-user-example-com.svc.cluster.local
       template:
         metadata:
@@ -135,7 +138,7 @@ spec:
           serviceAccountName: default-editor
           containers:
           - name: ray-worker
-            image: rayproject/ray:2.23.0-py311-cpu
+            image: rayproject/ray:2.44.1-py311-cpu
             lifecycle:
               preStop:
                 exec:
