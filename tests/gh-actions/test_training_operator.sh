@@ -14,4 +14,4 @@ kubectl get pytorchjob/pytorch-simple -n $KF_PROFILE
 
 kubectl wait --for=condition=Running pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=180s
 
-kubectl wait --for=condition=Succeeded pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=450s 
+kubectl wait --for=condition=Succeeded pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=250s 
