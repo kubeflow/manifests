@@ -69,7 +69,7 @@ jobs:
     - name: Install PodDefaults CRD
       run: kubectl get crd poddefaults.kubeflow.org || kubectl apply -f https://raw.githubusercontent.com/kubeflow/kubeflow/master/components/admission-webhook/manifests/base/crd.yaml
 
-    - name: Install Volumes Web App
+    - name: Install Volumes Web Application
       run: ./tests/gh-actions/install_volumes_web_app.sh
 
     - name: Wait for All Pods to be Ready
@@ -116,10 +116,10 @@ jobs:
       run: |
         kubectl create namespace test-unauthorized
         kubectl create serviceaccount test-unauthorized -n test-unauthorized
-        UNAUTH_TOKEN=$(kubectl -n test-unauthorized create token test-unauthorized)
-        python3 tests/gh-actions/pipeline_test.py test_unauthorized_access "$UNAUTH_TOKEN" "${KF_PROFILE}"
+        UNAUTHORIZED_TOKEN=$(kubectl -n test-unauthorized create token test-unauthorized)
+        python3 tests/gh-actions/pipeline_test.py test_unauthorized_access "$UNAUTHORIZED_TOKEN" "${KF_PROFILE}"
 
-    - name: Test Volumes Web App API
+    - name: Test Volumes Web Application API
       run: ./tests/gh-actions/test_volumes_web_app.sh "${KF_PROFILE}"
 
     - name: Apply PodDefault for Pipeline Access Token

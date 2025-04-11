@@ -9,13 +9,13 @@ curl -s -o /dev/null -w "%{http_code}" "localhost:8080/volumes/api/storageclasse
 }
 
 TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
-UNAUTH_TOKEN="$(kubectl -n default create token default)"
+UNAUTHORIZED_TOKEN="$(kubectl -n default create token default)"
 
 CSRF_COOKIE=$(curl -s -c - "localhost:8080/volumes/" | grep XSRF-TOKEN | cut -f 7)
 CSRF_HEADER=${CSRF_COOKIE}
 
-SC_NAME="standard"
-kubectl get storageclass $SC_NAME > /dev/null 2>&1
+STORAGE_CLASS_NAME="standard"
+kubectl get storageclass $STORAGE_CLASS_NAME > /dev/null 2>&1
 
 curl -s -X POST \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
@@ -44,10 +44,10 @@ curl -s \
   -b "XSRF-TOKEN=${CSRF_COOKIE}" > /dev/null
 
 
-UNAUTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+UNAUTHORIZED_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
-  -H "Authorization: Bearer ${UNAUTH_TOKEN}")
-[[ "$UNAUTH_STATUS" == "403" ]] || exit 1
+  -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}")
+[[ "$UNAUTHORIZED_STATUS" == "403" ]] || exit 1
 
 curl -s -X POST \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
@@ -71,7 +71,7 @@ curl -s -X POST \
 
 curl -s -X DELETE \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
-  -H "Authorization: Bearer ${UNAUTH_TOKEN}" \
+  -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}" \
   -H "X-XSRF-TOKEN: ${CSRF_HEADER}" \
   -b "XSRF-TOKEN=${CSRF_COOKIE}" > /dev/null
 
