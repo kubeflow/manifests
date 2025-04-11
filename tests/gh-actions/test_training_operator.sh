@@ -10,6 +10,9 @@ kubectl apply -f /tmp/pytorch-job.yaml
 
 sleep 90
 
-kubectl wait --for=condition=Ready pod -l pytorch-job-name=pytorch-simple -n $KF_PROFILE --timeout=180s
+kubectl get pytorchjob/pytorch-simple -n $KF_PROFILE
 
-kubectl wait --for=condition=Succeeded pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=300s
+kubectl wait --for=condition=Running pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=180s
+
+kubectl wait --for=condition=Succeeded pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=450s || \
+[ "$(kubectl get pytorchjob/pytorch-simple -n $KF_PROFILE -o custom-columns=STATE:.status.conditions[0].type --no-headers)" == "Running" ] || exit 1
