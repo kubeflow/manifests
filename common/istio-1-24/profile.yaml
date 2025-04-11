@@ -16,6 +16,10 @@ spec:
         env:
         - name: ENABLE_NATIVE_SIDECARS
           value: "true"
+        - name: PILOT_ENABLE_GATEWAY_API
+          value: "true"
+        - name: PILOT_ENABLE_GATEWAY_API_DEPLOYMENT_CONTROLLER
+          value: "true"
   hub: gcr.io/istio-release
   profile: default
   tag: 1.24.3

@@ -6,6 +6,7 @@ IFS=$'\n\t'
 COMMIT="1.24.3"
 CURRENT_VERSION="1-24" 
 NEW_VERSION="1-24" # Must be a release
+GATEWAY_API_VERSION="v1.2.1"
 
 SRC_DIR=${SRC_DIR:=/tmp/istio} # Must be a release
 BRANCH=${BRANCH:=istio-${COMMIT?}}
@@ -57,6 +58,10 @@ mv $ISTIO_NEW/crd.yaml $ISTIO_NEW/istio-crds/base
 mv $ISTIO_NEW/install.yaml $ISTIO_NEW/istio-install/base
 mv $ISTIO_NEW/cluster-local-gateway.yaml $ISTIO_NEW/cluster-local-gateway/base
 rm dump.yaml
+
+# Download and update Gateway API CRDs
+echo "Downloading Gateway API CRDs version ${GATEWAY_API_VERSION}..."
+curl -L "https://github.com/kubernetes-sigs/gateway-api/releases/download/${GATEWAY_API_VERSION}/standard-install.yaml" -o "${ISTIO_NEW}/istio-crds/base/gateway-api-crds.yaml"
 
 if [ -n "$(git status --porcelain)" ]; then
   echo "WARNING: You have uncommitted changes"
