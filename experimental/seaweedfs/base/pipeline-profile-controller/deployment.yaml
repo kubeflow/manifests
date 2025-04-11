@@ -7,7 +7,18 @@ spec:
     spec:
       containers:
       - name: profile-controller
-        image: alpine/k8s:1.29.13
+        securityContext:
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 0
+          capabilities:
+            drop:
+            - ALL
+        image: docker.io/alpine/k8s:1.32.3
+        command: ["python", "/hooks/sync.py"]
         env:
         - name: KFP_VERSION
           valueFrom:
