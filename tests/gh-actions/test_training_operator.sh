@@ -6,10 +6,8 @@ cat tests/gh-actions/kf-objects/training_operator_job.yaml | \
 sed 's/name: pytorch-simple/name: pytorch-simple\n  namespace: '"$KF_PROFILE"'/g' > /tmp/pytorch-job.yaml
 kubectl apply -f /tmp/pytorch-job.yaml
 
-sleep 90
-kubectl get pytorchjob/pytorch-simple -n $KF_PROFILE
+kubectl wait --for=jsonpath='{.status.conditions[0].type}=Created' pytorchjob.kubeflow.org/pytorch-simple -n $KF_PROFILE --timeout=60s
 
-kubectl wait --for=condition=Running pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=180s
+kubectl wait --for=condition=Ready pod -l pytorch-job-name=pytorch-simple -n $KF_PROFILE --timeout=180s
 
-kubectl wait --for=condition=Succeeded pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=450s || \
-  kubectl get pytorchjob/pytorch-simple -n $KF_PROFILE -o jsonpath='{.status.conditions[0].type}' | grep -E '(Running|Created|Succeeded)' || exit 1
+kubectl wait --for=condition=Succeeded pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=450s
