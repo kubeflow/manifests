@@ -13,6 +13,7 @@ CURRENT_VERSION="1-24"
 NEW_VERSION="1-24" # Must be a release
 SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/${COMPONENT_NAME}}
 BRANCH_NAME=${BRANCH_NAME:=${COMPONENT_NAME}-${COMMIT?}}
+GATEWAY_API_VERSION="v1.2.1"
 
 # Path configurations
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
@@ -55,7 +56,28 @@ find "$MANIFESTS_DIRECTORY" -type f -not -path '*/.git/*' -exec sed -i "s/istio-
 cd "$MANIFESTS_DIRECTORY"
 if [ "$CURRENT_VERSION" != "$NEW_VERSION" ]; then
   rm -rf $ISTIO_OLD
+# Download and update Gateway API CRDs
+echo "Downloading Gateway API CRDs version ${GATEWAY_API_VERSION}..."
+curl -L "https://github.com/kubernetes-sigs/gateway-api/releases/download/${GATEWAY_API_VERSION}/standard-install.yaml" -o "${ISTIO_NEW}/istio-crds/base/gateway-api-crds.yaml"
+
+if [ -n "$(git status --porcelain)" ]; then
+  echo "WARNING: You have uncommitted changes"
 fi
 commit_changes "$MANIFESTS_DIRECTORY" "Upgrade istio to v.${COMMIT}" "."
 
 echo "Synchronization completed successfully."
+# Update README.md to synchronize with the upgraded Istio version
+echo "Updating README..."
+SRC_TXT="\[.*\](https://github.com/istio/istio/releases/tag/.*)"
+DST_TXT="\[$COMMIT\](https://github.com/istio/istio/releases/tag/$COMMIT)"
+
+sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
+
+#Synchronize the updated directory names with other files
+find "$MANIFESTS_DIR" -type f -not -path '*/.git/*' -exec sed -i "s/istio-${CURRENT_VERSION}/istio-${NEW_VERSION}/g" {} +
+
+echo "Committing the changes..."
+cd "$MANIFESTS_DIR"
+rm -rf $ISTIO_OLD
+git add .
+git commit -s -m "Upgrade istio to v.${COMMIT}"
