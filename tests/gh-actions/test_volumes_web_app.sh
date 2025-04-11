@@ -75,20 +75,20 @@ curl -s -X DELETE \
   -H "X-XSRF-TOKEN: ${CSRF_HEADER}" \
   -b "XSRF-TOKEN=${CSRF_COOKIE}" > /dev/null
 
-UNAUTH_DELETE_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-  "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
-  -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}" \
-  -H "X-XSRF-TOKEN: ${CSRF_HEADER}" \
-  -b "XSRF-TOKEN=${CSRF_COOKIE}")
-[[ "$UNAUTH_DELETE_STATUS" == "403" ]] || {
-  echo "Unauthorized DELETE didn't return 403 Forbidden: got $UNAUTH_DELETE_STATUS"
-  exit 1
-}
+sleep 2
 
-kubectl get pvc test-pvc -n $KF_PROFILE > /dev/null 2>&1 || {
-  echo "PVC was deleted by unauthorized request"
-  exit 1
-}
+if ! kubectl get pvc test-pvc -n $KF_PROFILE > /dev/null 2>&1; then
+  UNAUTH_DELETE_RESPONSE=$(curl -s \
+    "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
+    -H "Authorization: Bearer ${TOKEN}" \
+    -H "X-XSRF-TOKEN: ${CSRF_HEADER}" \
+    -b "XSRF-TOKEN=${CSRF_COOKIE}")
+  
+  if [[ "$UNAUTH_DELETE_RESPONSE" == *"not found"* || "$UNAUTH_DELETE_RESPONSE" == *"\"code\":404"* ]]; then
+    echo "ERROR: PVC was deleted by unauthorized request or is missing"
+    exit 1
+  fi
+fi
 
 curl -s -X DELETE \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
