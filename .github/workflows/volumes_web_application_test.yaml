@@ -75,7 +75,10 @@ jobs:
       run: |
         echo "Waiting for Volumes Web App to be fully ready..."
         sleep 30
-        curl -v "localhost:8080/volumes/"
+
+        AUTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "localhost:8080/volumes/")
+        echo "VWA auth status: $AUTH_STATUS"
+
         kubectl get pods -n kubeflow -l app=volumes-web-app
         kubectl get svc -n kubeflow | grep volumes-web-app
 
