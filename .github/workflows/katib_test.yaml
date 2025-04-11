@@ -74,7 +74,13 @@ jobs:
         kubectl create namespace test-unauthorized
         kubectl create serviceaccount test-unauthorized -n test-unauthorized
         UNAUTH_TOKEN=$(kubectl -n test-unauthorized create token test-unauthorized)
-        ! kubectl get experiments.kubeflow.org -n $KF_PROFILE --token="$UNAUTH_TOKEN" 2>/dev/null
+        if kubectl get experiments.kubeflow.org -n $KF_PROFILE --token="$UNAUTH_TOKEN" 2>&1 | grep -q -E '(Forbidden|Unauthorized|denied)'; then
+          echo "Access properly denied"
+        else
+          kubectl get experiments.kubeflow.org -n $KF_PROFILE --token="$UNAUTH_TOKEN" && echo "ERROR: Unauthorized access was allowed" && exit 1
+          echo "Test failed for unexpected reason"
+          exit 1
+        fi
 
     - name: Apply Pod Security Standards baseline levels
       run: ./tests/gh-actions/enable_baseline_PSS.sh
