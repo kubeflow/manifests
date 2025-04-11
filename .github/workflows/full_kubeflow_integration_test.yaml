@@ -152,7 +152,7 @@ jobs:
 
     - name: Run KServe Test
       run: |
-        sed 's/namespace: .*/namespace: '"$KF_PROFILE"'/g' tests/gh-actions/kf-objects/kserve_test.yaml | kubectl apply -f -
+        sed "s/PROFILE_NAMESPACE/$KF_PROFILE/g" tests/gh-actions/kf-objects/kserve_test.yaml | kubectl apply -f -
         sleep 30
         kubectl get inferenceservice -n $KF_PROFILE
         kubectl wait --for=condition=Ready inferenceservice.serving.kserve.io/sklearn-iris -n $KF_PROFILE --timeout=300s
