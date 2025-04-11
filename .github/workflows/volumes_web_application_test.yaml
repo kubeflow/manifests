@@ -71,5 +71,13 @@ jobs:
     - name: Port-forward the istio-ingress gateway
       run: ./tests/gh-actions/port_forward_gateway.sh
 
+    - name: Ensure VWA is accessible
+      run: |
+        echo "Waiting for Volumes Web App to be fully ready..."
+        sleep 30
+        curl -v "localhost:8080/volumes/"
+        kubectl get pods -n kubeflow -l app=volumes-web-app
+        kubectl get svc -n kubeflow | grep volumes-web-app
+
     - name: Test Volumes Web App API
       run: ./tests/gh-actions/test_volumes_web_app.sh "${KF_PROFILE}"

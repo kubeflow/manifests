@@ -11,10 +11,14 @@ UNAUTHORIZED_TOKEN="$(kubectl -n default create token default)"
 MAX_RETRIES=5
 for i in $(seq 1 $MAX_RETRIES); do
   echo "Attempt $i to get CSRF token..."
-  CSRF_COOKIE=$(curl -s -c - "localhost:8080/volumes/" | grep XSRF-TOKEN | cut -f 7)
+  
+  COOKIE_FILE=$(mktemp)
+  curl -s -c "$COOKIE_FILE" "localhost:8080/volumes/" > /dev/null
+  CSRF_COOKIE=$(grep XSRF-TOKEN "$COOKIE_FILE" | tail -1 | awk '{print $7}')
+  rm -f "$COOKIE_FILE"
   
   if [ -n "$CSRF_COOKIE" ]; then
-    echo "Successfully retrieved CSRF token"
+    echo "Got CSRF token: ${CSRF_COOKIE:0:5}..."
     break
   fi
   
