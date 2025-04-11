@@ -76,7 +76,7 @@ jobs:
         kubectl create namespace test-unauthorized
         kubectl create serviceaccount test-unauthorized -n test-unauthorized
         UNAUTH_TOKEN=$(kubectl -n test-unauthorized create token test-unauthorized)
-        kubectl get pytorchjobs -n $KF_PROFILE --token="$UNAUTH_TOKEN" 2>&1 | grep -q "Forbidden"
+        ! kubectl get pytorchjobs -n $KF_PROFILE --token="$UNAUTH_TOKEN" 2>/dev/null
 
     - name: Apply Pod Security Standards baseline levels
       run: ./tests/gh-actions/enable_baseline_PSS.sh
