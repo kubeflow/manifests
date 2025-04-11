@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euxo pipefail
+set -euo pipefail
 
 KF_PROFILE=${1:-kubeflow-user-example-com}
 
@@ -8,8 +8,33 @@ curl -s -o /dev/null -w "%{http_code}" "localhost:8080/volumes/api/storageclasse
 TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
 UNAUTHORIZED_TOKEN="$(kubectl -n default create token default)"
 
-CSRF_COOKIE=$(curl -s -c - "localhost:8080/volumes/" | grep XSRF-TOKEN | cut -f 7)
-[ -n "$CSRF_COOKIE" ] || exit 1
+MAX_RETRIES=5
+for i in $(seq 1 $MAX_RETRIES); do
+  echo "Attempt $i to get CSRF token..."
+  CSRF_COOKIE=$(curl -s -c - "localhost:8080/volumes/" | grep XSRF-TOKEN | cut -f 7)
+  
+  if [ -n "$CSRF_COOKIE" ]; then
+    echo "Successfully retrieved CSRF token"
+    break
+  fi
+  
+  if [ $i -eq $MAX_RETRIES ]; then
+    echo "Failed to get CSRF token after $MAX_RETRIES attempts"
+    echo "Attempting to debug the issue:"
+    echo "Checking if volumes-web-app is running:"
+    kubectl get pods -n kubeflow -l app=volumes-web-app
+    echo "Checking VWA service:"
+    kubectl get svc -n kubeflow | grep volumes-web-app
+    echo "Checking port-forward status:"
+    ps aux | grep port-forward
+    curl -v "localhost:8080/volumes/" || true
+    exit 1
+  fi
+  
+  echo "Retrying in 5 seconds..."
+  sleep 5
+done
+
 CSRF_HEADER=${CSRF_COOKIE}
 
 STORAGE_CLASS_NAME="standard"
