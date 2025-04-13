@@ -165,15 +165,8 @@ jobs:
     - name: Verify Components
       run: kubectl get pods --all-namespaces | grep -E '(Error|CrashLoopBackOff)' && exit 1 || true
 
-    - name: Install Metrics Server with Insecure TLS
-      run: |
-          curl -sL https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml > metrics-server.yaml
-          sed -i 's/- args:/- args:\n        - --kubelet-insecure-tls/' metrics-server.yaml
-          kubectl apply -f metrics-server.yaml
-          kubectl wait --for=condition=Available deployment/metrics-server -n kube-system --timeout=300s
-
-    - name: Wait for All Pods to be Ready
-      run: kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 300s --field-selector=status.phase!=Succeeded
+    - name: Install Metrics Server
+      run: .tests/gh-actions/install_metrics-server.sh
 
     - name: Check Pod Resource Usage
       run: |
