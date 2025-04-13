@@ -63,6 +63,8 @@ jobs:
       run: |
         sed "s/kubeflow-user/$KF_PROFILE/g" tests/gh-actions/kf-objects/katib_test.yaml | kubectl apply -f -
         kubectl wait --for=condition=Running experiments.kubeflow.org -n $KF_PROFILE --all --timeout=300s
+        echo "Waiting for all Trials to become Succeeded..."
+        kubectl wait --for=condition=Succeeded trials.kubeflow.org -n $KF_PROFILE --all --timeout=600s
         sleep 30
 
 
