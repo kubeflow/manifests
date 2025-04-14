@@ -10,8 +10,8 @@ on:
     - common/oauth2-proxy/**
     - tests/gh-actions/install_oauth2-proxy.sh
     - tests/gh-actions/install_multi_tenancy.sh
-    - tests/gh-actions/install_volumes_web_app.sh
-    - tests/gh-actions/test_volumes_web_app.sh
+    - tests/gh-actions/install_volumes_web_application.sh
+    - tests/gh-actions/test_volumes_web_application.sh
 
 env:
   KF_PROFILE: kubeflow-user-example-com
