@@ -7,7 +7,6 @@ UNAUTHORIZED_TOKEN="$(kubectl -n default create token default)"
 
 curl --fail --show-error "localhost:8080/volumes/" -H "Authorization: Bearer ${TOKEN}" -v -c /tmp/xcrf.txt
 
-echo /tmp/xcrf.txt
 XSRFTOKEN=$(grep XSRF-TOKEN /tmp/xcrf.txt | cut -f 7)
 
 STORAGE_CLASS_NAME="standard"
@@ -18,7 +17,6 @@ curl --fail --show-error \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "X-XSRF-TOKEN: $XSRFTOKEN" -H "Cookie: XSRF-TOKEN=$XSRFTOKEN"
 
-echo "Creating test-pvc..."
 curl --fail --show-error -X POST \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
   -H "Authorization: Bearer ${TOKEN}" \
@@ -33,10 +31,8 @@ curl --fail --show-error -X POST \
     \"class\": \"${STORAGE_CLASS_NAME}\"
   }"
 
-echo "Verifying PVC creation..."
 kubectl get pvc test-pvc -n $KF_PROFILE
 
-echo "Testing unauthorized access..."
 UNAUTHORIZED_STATUS=$(curl --silent --output /dev/null -w "%{http_code}" \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
   -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}" \
@@ -47,7 +43,6 @@ if [[ "$UNAUTHORIZED_STATUS" != "403" ]]; then
   exit 1
 fi
 
-echo "Creating api-created-pvc..."
 curl --fail --show-error -X POST \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
   -H "Authorization: Bearer ${TOKEN}" \
@@ -64,7 +59,6 @@ curl --fail --show-error -X POST \
 
 kubectl get pvc -n $KF_PROFILE
 
-echo "Testing unauthorized deletion..."
 UNAUTH_DELETE_STATUS=$(curl --silent --output /dev/null -w "%{http_code}" -X DELETE \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
   -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}" \
@@ -79,7 +73,6 @@ if ! kubectl get pvc test-pvc -n $KF_PROFILE > /dev/null 2>&1; then
   exit 1
 fi
 
-echo "Deleting test-pvc with authorized request..."
 curl --fail --show-error -X DELETE \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
   -H "Authorization: Bearer ${TOKEN}" \
@@ -91,7 +84,6 @@ if kubectl get pvc test-pvc -n $KF_PROFILE > /dev/null 2>&1; then
   exit 1
 fi
 
-echo "Cleaning up api-created-pvc..."
 curl --fail --show-error -X DELETE \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/api-created-pvc" \
   -H "Authorization: Bearer ${TOKEN}" \
