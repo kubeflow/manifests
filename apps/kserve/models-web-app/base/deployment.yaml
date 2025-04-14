@@ -13,6 +13,10 @@ spec:
       labels:
         app.kubernetes.io/component: kserve-models-web-app
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - image: kserve/models-web-app:latest
         imagePullPolicy: Always
@@ -41,4 +45,10 @@ spec:
           timeoutSeconds: 1
           failureThreshold: 3
           successThreshold: 1
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          runAsUser: 1000
       serviceAccountName: kserve-models-web-app
