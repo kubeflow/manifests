@@ -57,7 +57,7 @@ jobs:
     - name: Create KF Profile
       run: ./tests/gh-actions/install_kubeflow_profile.sh
 
-    - name: Install Jupyter Web App
+    - name: Install Jupyter Web Application
       run: kustomize build apps/jupyter/jupyter-web-app/upstream/overlays/istio/ | kubectl apply -f -
 
     - name: Install Notebook Controller
@@ -71,9 +71,6 @@ jobs:
 
     - name: Install Volumes Web Application
       run: ./tests/gh-actions/install_volumes_web_app.sh
-
-    - name: Wait for All Pods to be Ready
-      run: kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 300s --field-selector=status.phase!=Succeeded
 
     - name: Install Katib
       run: ./tests/gh-actions/install_katib.sh
@@ -89,6 +86,9 @@ jobs:
 
     - name: Install Spark
       run: chmod u+x tests/gh-actions/spark_*.sh && ./tests/gh-actions/spark_install.sh
+
+    - name: Wait for All Pods to be Ready
+      run: kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 60s --field-selector=status.phase!=Succeeded
 
     - name: Install Dependencies
       run: pip install pytest kubernetes kfp==2.11.0 kserve pytest-timeout pyyaml requests
@@ -120,7 +120,7 @@ jobs:
         python3 tests/gh-actions/pipeline_test.py test_unauthorized_access "$UNAUTHORIZED_TOKEN" "${KF_PROFILE}"
 
     - name: Test Volumes Web Application API
-      run: ./tests/gh-actions/test_volumes_web_app.sh "${KF_PROFILE}"
+      run: ./tests/gh-actions/test_volumes_web_application.sh "${KF_PROFILE}"
 
     - name: Apply PodDefault for Pipeline Access Token
       run: sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/gh-actions/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml | kubectl apply -f -
