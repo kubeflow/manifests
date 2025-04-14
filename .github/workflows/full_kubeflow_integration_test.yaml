@@ -141,11 +141,6 @@ jobs:
 
         kubectl -n $KF_PROFILE exec test-0 -- python /home/jovyan/run_and_wait_kubeflow_pipeline.py
 
-    - name: Disable Istio injection for Katib trials
-      run: |
-        kubectl label namespace $KF_PROFILE istio-injection- --overwrite
-        kubectl label namespace $KF_PROFILE sidecar.istio.io/inject=false --overwrite
-
     - name: Run Katib Test
       run: |
         sed "s/kubeflow-user/$KF_PROFILE/g" tests/gh-actions/kf-objects/katib_test.yaml | kubectl apply -f -
