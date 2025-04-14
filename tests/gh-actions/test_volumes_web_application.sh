@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euxo -pipefail
+set -euxo pipefail
 KF_PROFILE=${1:-kubeflow-user-example-com}
 
 curl --fail --show-error "localhost:8080/volumes/api/storageclasses"
