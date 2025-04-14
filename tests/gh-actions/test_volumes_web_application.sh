@@ -4,11 +4,18 @@ KF_PROFILE=${1:-kubeflow-user-example-com}
 
 TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
 UNAUTHORIZED_TOKEN="$(kubectl -n default create token default)"
-curl -v --fail --show-error "localhost:8080/volumes/api/storageclasses -H "Authorization: Bearer ${TOKEN}"
-CSRF_COOKIE=$(curl --fail --show-error -c - "localhost:8080/volumes/" -H "Authorization: Bearer ${TOKEN}" | grep XSRF-TOKEN | cut -f 7)
-CSRF_HEADER=${CSRF_COOKIE}
+curl --fail --show-error "localhost:8080/volumes/" -H "Authorization: Bearer ${TOKEN}" -v -c /tmp/xcrf.txt
+echo /tmp/xcrf.txt
+CSRF_COOKIE=$(cat /tmp/xcrf.txt | grep XSRF-TOKEN | cut -f 7)
+CSRF_HEADER=${CSRF_COOKIE} # TODO WHY IS THIS DUPLICATED?
 STORAGE_CLASS_NAME="standard"
+
 kubectl get storageclass $STORAGE_CLASS_NAME
+curl --fail --show-error \
+  "localhost:8080/volumes/api/storageclasses" \
+  -H "Authorization: Bearer ${TOKEN}" \
+  -H "X-XSRF-TOKEN: ${CSRF_HEADER}" \
+  -b "XSRF-TOKEN=${CSRF_COOKIE}"
 
 curl --fail --show-error -X POST \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
@@ -28,7 +35,7 @@ curl --fail --show-error -X POST \
       },
       \"storageClassName\": \"${STORAGE_CLASS_NAME}\"
     }
-  }" > /dev/null
+  }"
 
 curl --fail --show-error \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
