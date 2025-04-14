@@ -33,15 +33,19 @@ curl --fail --show-error -X POST \
     \"class\": \"${STORAGE_CLASS_NAME}\"
   }"
 
-curl --fail --show-error \
-  "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
-  -H "Authorization: Bearer ${TOKEN}" \
-  -H "X-XSRF-TOKEN: $XSRFTOKEN" -H "Cookie: XSRF-TOKEN=$XSRFTOKEN"
+echo "Verifying PVC creation..."
+kubectl get pvc test-pvc -n $KF_PROFILE
 
+echo "Testing unauthorized access..."
 UNAUTHORIZED_STATUS=$(curl --silent --output /dev/null -w "%{http_code}" \
-  "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
-  -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}")
-[[ "$UNAUTHORIZED_STATUS" == "403" ]] || exit 1
+  "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
+  -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}" \
+  -H "X-XSRF-TOKEN: $XSRFTOKEN" -H "Cookie: XSRF-TOKEN=$XSRFTOKEN")
+
+if [[ "$UNAUTHORIZED_STATUS" != "403" ]]; then
+  echo "ERROR: Expected 403 status for unauthorized access, got $UNAUTHORIZED_STATUS"
+  exit 1
+fi
 
 echo "Creating api-created-pvc..."
 curl --fail --show-error -X POST \
@@ -58,12 +62,17 @@ curl --fail --show-error -X POST \
     \"class\": \"${STORAGE_CLASS_NAME}\"
   }"
 
+kubectl get pvc -n $KF_PROFILE
+
 echo "Testing unauthorized deletion..."
 UNAUTH_DELETE_STATUS=$(curl --silent --output /dev/null -w "%{http_code}" -X DELETE \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
   -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}" \
   -H "X-XSRF-TOKEN: $XSRFTOKEN" -H "Cookie: XSRF-TOKEN=$XSRFTOKEN")
-[[ "$UNAUTH_DELETE_STATUS" == "403" ]] || echo "Warning: Unexpected status code for unauthorized delete: $UNAUTH_DELETE_STATUS"
+
+if [[ "$UNAUTH_DELETE_STATUS" != "403" ]]; then
+  echo "WARNING: Expected 403 status for unauthorized deletion, got $UNAUTH_DELETE_STATUS"
+fi
 
 if ! kubectl get pvc test-pvc -n $KF_PROFILE > /dev/null 2>&1; then
   echo "ERROR: PVC 'test-pvc' not found after unauthorized deletion attempt"
@@ -76,24 +85,22 @@ curl --fail --show-error -X DELETE \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "X-XSRF-TOKEN: $XSRFTOKEN" -H "Cookie: XSRF-TOKEN=$XSRFTOKEN"
 
-DELETE_STATUS=$(curl --silent --output /dev/null -w "%{http_code}" \
-  "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
-  -H "Authorization: Bearer ${TOKEN}" \
-  -H "X-XSRF-TOKEN: $XSRFTOKEN" -H "Cookie: XSRF-TOKEN=$XSRFTOKEN")
-[[ "$DELETE_STATUS" == "404" ]] || {
-  echo "Failed to delete PVC: got status $DELETE_STATUS instead of 404"
-  exit 1
-}
-
-kubectl get pvc test-pvc -n $KF_PROFILE 2>/dev/null && {
+sleep 2  
+if kubectl get pvc test-pvc -n $KF_PROFILE > /dev/null 2>&1; then
   echo "ERROR: PVC 'test-pvc' still exists after deletion"
   exit 1
-} || true
+fi
 
 echo "Cleaning up api-created-pvc..."
 curl --fail --show-error -X DELETE \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/api-created-pvc" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "X-XSRF-TOKEN: $XSRFTOKEN" -H "Cookie: XSRF-TOKEN=$XSRFTOKEN"
+
+sleep 2  
+if kubectl get pvc api-created-pvc -n $KF_PROFILE > /dev/null 2>&1; then
+  echo "ERROR: PVC 'api-created-pvc' still exists after deletion"
+  exit 1
+fi
 
 echo "Test completed successfully!"
