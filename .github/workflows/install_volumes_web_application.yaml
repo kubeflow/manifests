@@ -1,4 +1,4 @@
-name: Build & Apply VWA manifests in KinD
+name: Build & Apply Volumes Web Application manifests in KinD
 on:
   pull_request:
     paths:
@@ -51,7 +51,7 @@ jobs:
     - name: Create KF Profile
       run: ./tests/gh-actions/install_kubeflow_profile.sh
 
-    - name: Install Volumes Web App
+    - name: Install Volumes Web Application
       run: ./tests/gh-actions/install_volumes_web_app.sh
 
     - name: Wait for VWA Pods
@@ -63,4 +63,4 @@ jobs:
       run: ./tests/gh-actions/port_forward_gateway.sh
 
     - name: Test Volumes Web App API
-      run: ./tests/gh-actions/test_volumes_web_app.sh "${KF_PROFILE}"
+      run: ./tests/gh-actions/test_volumes_web_application.sh "${KF_PROFILE}"
