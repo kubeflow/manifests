@@ -52,7 +52,7 @@ jobs:
       run: ./tests/gh-actions/install_kubeflow_profile.sh
 
     - name: Install Volumes Web Application
-      run: ./tests/gh-actions/install_volumes_web_app.sh
+      run: ./tests/gh-actions/install_volumes_web_application.sh
 
     - name: Wait for VWA Pods
       run: |
