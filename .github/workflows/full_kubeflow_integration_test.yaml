@@ -143,7 +143,7 @@ jobs:
 
     - name: Run Katib Test
       run: |
-        sed "s/kubeflow-user/$KF_PROFILE/g" tests/gh-actions/kf-objects/katib_test.yaml | kubectl apply -f -
+        kubectl apply -f tests/gh-actions/kf-objects/katib_test.yaml
         kubectl wait --for=condition=Running experiments.kubeflow.org -n $KF_PROFILE --all --timeout=300s
         echo "Waiting for all Trials to be Completed..."
         kubectl wait --for=condition=Created trials.kubeflow.org -n $KF_PROFILE --all --timeout=60s
@@ -156,7 +156,7 @@ jobs:
 
     - name: Run KServe Test
       run: |
-        sed "s/PROFILE_NAMESPACE/$KF_PROFILE/g" tests/gh-actions/kf-objects/kserve_test.yaml | kubectl apply -f -
+        kubectl apply -f tests/gh-actions/kf-objects/kserve_test.yaml
         sleep 30
         kubectl get inferenceservice -n $KF_PROFILE
         kubectl wait --for=condition=Ready inferenceservice.serving.kserve.io/sklearn-iris -n $KF_PROFILE --timeout=300s
