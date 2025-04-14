@@ -19,7 +19,7 @@ curl --fail --show-error -X POST \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "Content-Type: application/json" \
-  -H "X-XSRF-TOKEN: $XSRFTOKEN" -H "Cookie: XSRF-TOKEN=$XSRFTOKEN"
+  -H "X-XSRF-TOKEN: $XSRFTOKEN" -H "Cookie: XSRF-TOKEN=$XSRFTOKEN" \
   -d "{
     \"name\": \"test-pvc\",
     \"namespace\": \"${KF_PROFILE}\",
@@ -39,7 +39,6 @@ curl --fail --show-error \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "X-XSRF-TOKEN: $XSRFTOKEN" -H "Cookie: XSRF-TOKEN=$XSRFTOKEN"
 
-
 UNAUTHORIZED_STATUS=$(curl --fail --silent --show-error -o /dev/null -w "%{http_code}" \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
   -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}")
@@ -49,7 +48,7 @@ curl --fail --show-error -X POST \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "Content-Type: application/json" \
-  -H "X-XSRF-TOKEN: $XSRFTOKEN" -H "Cookie: XSRF-TOKEN=$XSRFTOKEN"
+  -H "X-XSRF-TOKEN: $XSRFTOKEN" -H "Cookie: XSRF-TOKEN=$XSRFTOKEN" \
   -d "{
     \"name\": \"api-created-pvc\",
     \"namespace\": \"${KF_PROFILE}\",
