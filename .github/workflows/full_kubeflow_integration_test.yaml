@@ -70,7 +70,7 @@ jobs:
       run: kubectl get crd poddefaults.kubeflow.org || kubectl apply -f https://raw.githubusercontent.com/kubeflow/kubeflow/master/components/admission-webhook/manifests/base/crd.yaml
 
     - name: Install Volumes Web Application
-      run: ./tests/gh-actions/install_volumes_web_app.sh
+      run: ./tests/gh-actions/install_volumes_web_application.sh
 
     - name: Install Katib
       run: ./tests/gh-actions/install_katib.sh
