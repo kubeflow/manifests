@@ -2,14 +2,11 @@
 set -euxo pipefail
 KF_PROFILE=${1:-kubeflow-user-example-com}
 
-curl --fail --show-error "localhost:8080/volumes/api/storageclasses"
-
 TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
 UNAUTHORIZED_TOKEN="$(kubectl -n default create token default)"
-
-CSRF_COOKIE=$(curl -s -c - "localhost:8080/volumes/" | grep XSRF-TOKEN | cut -f 7)
+curl -v --fail --show-error "localhost:8080/volumes/api/storageclasses -H "Authorization: Bearer ${TOKEN}"
+CSRF_COOKIE=$(curl --fail --show-error -c - "localhost:8080/volumes/" -H "Authorization: Bearer ${TOKEN}" | grep XSRF-TOKEN | cut -f 7)
 CSRF_HEADER=${CSRF_COOKIE}
-
 STORAGE_CLASS_NAME="standard"
 kubectl get storageclass $STORAGE_CLASS_NAME
 
