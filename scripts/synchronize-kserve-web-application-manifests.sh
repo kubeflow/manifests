@@ -5,7 +5,7 @@ IFS=$'\n\t'
 
 COMMIT="v0.14.0" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kserve-models-web-app}
-BRANCH=${BRANCH:=synchronize-kserve-web-app-manifests-${COMMIT?}}
+BRANCH=${BRANCH:=synchronize-kserve-web-application-manifests-${COMMIT?}}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
