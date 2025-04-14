@@ -11,6 +11,7 @@ on:
 
 jobs:
   stale:
+    if: ${{ github.repository == 'kubeflow/manifests' }}
     runs-on: ubuntu-latest
     permissions:
       issues: write

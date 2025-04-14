@@ -11,6 +11,7 @@ on:
 
 jobs:
   image-extraction-and-security-scan:
+    if: ${{ github.repository == 'kubeflow/manifests' }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
