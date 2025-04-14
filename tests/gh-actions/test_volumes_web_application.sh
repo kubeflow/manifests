@@ -2,7 +2,7 @@
 set -euxo -pipefail
 KF_PROFILE=${1:-kubeflow-user-example-com}
 
-curl --fail --silent --show-error "localhost:8080/volumes/api/storageclasses"
+curl --fail --show-error "localhost:8080/volumes/api/storageclasses"
 
 TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
 UNAUTHORIZED_TOKEN="$(kubectl -n default create token default)"
@@ -13,7 +13,7 @@ CSRF_HEADER=${CSRF_COOKIE}
 STORAGE_CLASS_NAME="standard"
 kubectl get storageclass $STORAGE_CLASS_NAME > /dev/null 2>&1
 
-curl --fail --silent --show-error -X POST \
+curl --fail --show-error -X POST \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "Content-Type: application/json" \
@@ -33,7 +33,7 @@ curl --fail --silent --show-error -X POST \
     }
   }" > /dev/null
 
-curl --fail --silent --show-error \
+curl --fail --show-error \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "X-XSRF-TOKEN: ${CSRF_HEADER}" \
@@ -45,7 +45,7 @@ UNAUTHORIZED_STATUS=$(curl --fail --silent --show-error -o /dev/null -w "%{http_
   -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}")
 [[ "$UNAUTHORIZED_STATUS" == "403" ]] || exit 1
 
-curl --fail --silent --show-error -X POST \
+curl --fail --show-error -X POST \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "Content-Type: application/json" \
@@ -65,7 +65,7 @@ curl --fail --silent --show-error -X POST \
     }
   }" > /dev/null
 
-curl --fail --silent --show-error -X DELETE \
+curl --fail --show-error -X DELETE \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
   -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}" \
   -H "X-XSRF-TOKEN: ${CSRF_HEADER}" \
@@ -84,13 +84,13 @@ if ! kubectl get pvc test-pvc -n $KF_PROFILE > /dev/null 2>&1; then
   fi
 fi
 
-curl --fail --silent --show-error -X DELETE \
+curl --fail --show-error -X DELETE \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "X-XSRF-TOKEN: ${CSRF_HEADER}" \
   -b "XSRF-TOKEN=${CSRF_COOKIE}" > /dev/null
 
-DELETE_STATUS=$(curl --fail --silent --show-error -o /dev/null -w "%{http_code}" \
+DELETE_STATUS=$(curl --fail --show-error -o /dev/null -w "%{http_code}" \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "X-XSRF-TOKEN: ${CSRF_HEADER}" \
@@ -101,5 +101,3 @@ DELETE_STATUS=$(curl --fail --silent --show-error -o /dev/null -w "%{http_code}"
 }
 
 kubectl get pvc test-pvc -n $KF_PROFILE 2>/dev/null && exit 1
-
-echo "All tests passed successfully!" 
