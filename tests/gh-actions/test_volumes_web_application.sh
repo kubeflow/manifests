@@ -11,7 +11,7 @@ CSRF_COOKIE=$(curl -s -c - "localhost:8080/volumes/" | grep XSRF-TOKEN | cut -f 
 CSRF_HEADER=${CSRF_COOKIE}
 
 STORAGE_CLASS_NAME="standard"
-kubectl get storageclass $STORAGE_CLASS_NAME > /dev/null 2>&1
+kubectl get storageclass $STORAGE_CLASS_NAME
 
 curl --fail --show-error -X POST \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
