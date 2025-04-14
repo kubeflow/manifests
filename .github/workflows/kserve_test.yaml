@@ -162,7 +162,7 @@ jobs:
         export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
 
         RESPONSE=$(curl -s -w "%{http_code}" \
-          -H "Host: isvc-sklearn-predictor.kubeflow-user-example-com.example.com" \
+          -H "Host: isvc-sklearn.kubeflow-user-example-com.example.com" \
           -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
           -H "Content-Type: application/json" \
           "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
@@ -185,7 +185,7 @@ jobs:
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
 
         RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
-          -H "Host: isvc-sklearn-predictor.kubeflow-user-example-com.example.com" \
+          -H "Host: isvc-sklearn.kubeflow-user-example-com.example.com" \
           -H "Content-Type: application/json" \
           "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
           -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
@@ -208,7 +208,7 @@ jobs:
         export ATTACKER_TOKEN="$(kubectl -n kubeflow-user-example-com-attacker create token attacker-sa)"
 
         RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
-          -H "Host: isvc-sklearn-predictor.kubeflow-user-example-com.example.com" \
+          -H "Host: isvc-sklearn.kubeflow-user-example-com.example.com" \
           -H "Authorization: Bearer ${ATTACKER_TOKEN}" \
           -H "Content-Type: application/json" \
           "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
@@ -267,8 +267,7 @@ jobs:
         export ATTACKER_TOKEN="$(kubectl -n kubeflow-user-example-com-attacker create token attacker-sa)"
 
         RESPONSE=$(curl -s -w "%{http_code}" \
-          -H "Hostisauthenticated.com" \
-          -H "Host: isvc-sklearn-predictor.kubeflow-user-example-com.example.com" \
+          -H "Host: isvc-sklearn.kubeflow-user-example-com.example.com" \
           -H "Authorization: Bearer ${ATTACKER_TOKEN}" \
           -H "Content-Type: application/json" \
           "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
@@ -397,7 +396,7 @@ jobs:
         export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
 
         # Test external path-based access
-        curl -v -H "Host: isvc-sklearn-predictor.kubeflow-user-example-com.example.com" \
+        curl -v -H "Host: isvc-sklearn.kubeflow-user-example-com.example.com" \
             -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
             -H "Content-Type: application/json" \
             "http://${KSERVE_INGRESS_HOST_PORT}/kserve/kubeflow-user-example-com/isvc-sklearn/v1/models/isvc-sklearn:predict" \
