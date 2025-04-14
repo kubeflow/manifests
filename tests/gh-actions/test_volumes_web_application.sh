@@ -4,8 +4,8 @@ KF_PROFILE=${1:-kubeflow-user-example-com}
 
 TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
 UNAUTHORIZED_TOKEN="$(kubectl -n default create token default)"
-curl --fail --show-error "localhost:8080/volumes/" -H "Authorization: Bearer ${TOKEN}" -v -c /tmp/xcrf.txt
-echo /tmp/xcrf.txt
+curl --fail --show-error "localhost:8080/volumes/" -H "Authorization: Bearer ${TOKEN}" -v -c /tmp/xcrf.txt > /dev/null
+cat /tmp/xcrf.txt
 XSRFTOKEN=$(grep XSRF-TOKEN /tmp/xcrf.txt | cut -f 7)
 STORAGE_CLASS_NAME="standard"
 
@@ -20,19 +20,21 @@ curl --fail --show-error -X POST \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "Content-Type: application/json" \
   -H "X-XSRF-TOKEN: $XSRFTOKEN" -H "Cookie: XSRF-TOKEN=$XSRFTOKEN" \
-  -d "{
-    \"name\": \"test-pvc\",
-    \"namespace\": \"${KF_PROFILE}\",
-    \"spec\": {
-      \"accessModes\": [\"ReadWriteOnce\"],
-      \"resources\": {
-        \"requests\": {
-          \"storage\": \"1Gi\"
-        }
-      },
-      \"storageClassName\": \"${STORAGE_CLASS_NAME}\"
-    }
-  }"
+  -d @- << EOF
+{
+  "name": "test-pvc",
+  "namespace": "${KF_PROFILE}",
+  "spec": {
+    "accessModes": ["ReadWriteOnce"],
+    "resources": {
+      "requests": {
+        "storage": "1Gi"
+      }
+    },
+    "storageClassName": "${STORAGE_CLASS_NAME}"
+  }
+}
+EOF
 
 curl --fail --show-error \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs" \
@@ -49,19 +51,21 @@ curl --fail --show-error -X POST \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "Content-Type: application/json" \
   -H "X-XSRF-TOKEN: $XSRFTOKEN" -H "Cookie: XSRF-TOKEN=$XSRFTOKEN" \
-  -d "{
-    \"name\": \"api-created-pvc\",
-    \"namespace\": \"${KF_PROFILE}\",
-    \"spec\": {
-      \"accessModes\": [\"ReadWriteOnce\"],
-      \"resources\": {
-        \"requests\": {
-          \"storage\": \"1Gi\"
-        }
-      },
-      \"storageClassName\": \"${STORAGE_CLASS_NAME}\"
-    }
-  }" > /dev/null
+  -d @- << EOF > /dev/null
+{
+  "name": "api-created-pvc",
+  "namespace": "${KF_PROFILE}",
+  "spec": {
+    "accessModes": ["ReadWriteOnce"],
+    "resources": {
+      "requests": {
+        "storage": "1Gi"
+      }
+    },
+    "storageClassName": "${STORAGE_CLASS_NAME}"
+  }
+}
+EOF
 
 curl --fail --show-error -X DELETE \
   "localhost:8080/volumes/api/namespaces/${KF_PROFILE}/pvcs/test-pvc" \
