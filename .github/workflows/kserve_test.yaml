@@ -43,6 +43,9 @@ jobs:
     - name: Install knative CNI
       run: ./tests/gh-actions/install_knative-cni.sh
 
+    - name: Apply cluster-local-gateway overlays with oauth2-proxy  # The overlay we are applying
+      run: kustomize build common/istio-1-24/cluster-local-gateway/overlays/oauth2-proxy/ | kubectl apply -f -
+
     - name: Install KServe
       run: ./tests/gh-actions/install_kserve.sh
 
@@ -55,61 +58,51 @@ jobs:
     - name: Create KF Profile
       run: ./tests/gh-actions/install_kubeflow_profile.sh
 
+    - name: Deploy InferenceService  # Any inference Service
+      run: |
+        cat <<EOF | kubectl apply -f -
+        apiVersion: "serving.kserve.io/v1beta1"
+        kind: "InferenceService"
+        metadata:
+          name: "isvc-sklearn"
+          namespace: kubeflow-user-example-com
+        spec:
+          predictor:
+            sklearn:
+              storageUri: "gs://kfserving-examples/models/sklearn/1.0/model"
+        EOF
+
+        # Wait for the InferenceService to be ready
+        kubectl wait --for=condition=Ready inferenceservice isvc-sklearn -n kubeflow-user-example-com --timeout=300s
+
+        # Verify what knative service was created
+        echo "=== KServe Predictor Service Details ==="
+        kubectl get ksvc -n kubeflow-user-example-com -l serving.kserve.io/inferenceservice=isvc-sklearn
+
     - name: Diagnose KServe Service Labels
       run: |
         echo "=== KServe Predictor Service Labels ==="
-        kubectl get pods -n kubeflow-user-example-com -l serving.knative.dev/service=isvc-sklearn-predictor-default --show-labels
+        kubectl get pods -n kubeflow-user-example-com -l serving.knative.dev/service=isvc-sklearn-predictor --show-labels
 
-    # TODO for follow up PR
-    #- name: Apply KServe predictor AuthorizationPolicy
-    #  run: |
-    #      cat <<EOF | kubectl apply -f -
-    #      apiVersion: security.istio.io/v1beta1
-    #      kind: AuthorizationPolicy
-    #      metadata:
-    #        name: sklearn-iris-predictor-allow
-    #        namespace: kubeflow-user-example-com
-    #      spec:
-    #        selector:
-    #          matchLabels:
-    #            serving.knative.dev/service: isvc-sklearn-predictor
-    #        action: ALLOW
-    #        rules:
-    #        - from:
-    #            - source:
-    #                namespaces:
-    #                - "istio-system"
-    #                - "knative-serving"
-    #               - "kubeflow"
-    #              - "kubeflow-user-example-com"
-    #            - principals:
-    #              - "cluster.local/ns/kubeflow-user-example-com/sa/default-editor"
-    #              - "cluster.local/ns/kubeflow-user-example-com/sa/default"
-    #              - "cluster.local/ns/kubeflow-user-example-com/sa/default-viewer"
-    #          to:
-    #            - operation:
-    #                paths:
-    #                - "/v1/models/*"
-    #                - "/v2/models/*"
-    #     EOF
-
-    - name: Apply INSECURE KServe AuthorizationPolicy
+    # Allow everything, since principals are stripped off so cant control via sources, namespaces we will handle that at gateway level
+    - name: Apply open AuthorizationPolicy for the KServe service
       run: |
-          cat <<EOF | kubectl apply -f -
-          apiVersion: security.istio.io/v1beta1
-          kind: AuthorizationPolicy
-          metadata:
-            name: allow-in-cluster-kserve
-            namespace: kubeflow-user-example-com
-          spec:
-            rules:
-              - to:
-                  - operation:
-                      paths:
-                        - /v1/models/*
-                        - /v2/models/*
-          EOF
+        cat <<EOF | kubectl apply -f -
+        apiVersion: security.istio.io/v1beta1
+        kind: AuthorizationPolicy
+        metadata:
+          name: isvc-sklearn-predictor-allow
+          namespace: kubeflow-user-example-com
+        spec:
+          selector:
+            matchLabels:
+              serving.knative.dev/service: isvc-sklearn-predictor
+          action: ALLOW
+          rules:
+          - {}
+        EOF
 
+    # Path Based
     - name: Add KServe path-based routing for external access
       run: |
         cat <<EOF | kubectl apply -f -
@@ -135,7 +128,7 @@ jobs:
                   headers:
                     request:
                       set:
-                        Host: isvc-sklearn-predictor-default.kubeflow-user-example-com.svc.cluster.local
+                        Host: isvc-sklearn-predictor.kubeflow-user-example-com.svc.cluster.local
                   weight: 100
               timeout: 300s
         EOF
@@ -162,58 +155,241 @@ jobs:
           echo "Success: No istio-init containers found, CNI is working correctly"
         fi
 
+    # Test 1: External access with valid token from correct namespace, Must Pass
+    - name: Test external access with valid token
+      run: |
+        export KSERVE_INGRESS_HOST_PORT=localhost:8080
+        export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
+
+        RESPONSE=$(curl -s -w "%{http_code}" \
+          -H "Host: isvc-sklearn-predictor.kubeflow-user-example-com.example.com" \
+          -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
+          -H "Content-Type: application/json" \
+          "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
+          -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
+
+        HTTP_CODE=${RESPONSE: -3}
+        RESPONSE_BODY=${RESPONSE:0:${#RESPONSE}-3}
+
+        if [[ "$HTTP_CODE" == "200" && "$RESPONSE_BODY" == *"predictions"* ]]; then
+          echo "Test passed: Valid token access successful with code $HTTP_CODE"
+        else
+          echo "Test failed: Valid token access returned $HTTP_CODE"
+          echo "Response: $RESPONSE_BODY"
+          exit 1
+        fi
+
+    # Test 2: External access without token, Must Fail, Redirects to login page
+    - name: Test external access without token
+      run: |
+        export KSERVE_INGRESS_HOST_PORT=localhost:8080
+
+        RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+          -H "Host: isvc-sklearn-predictor.kubeflow-user-example-com.example.com" \
+          -H "Content-Type: application/json" \
+          "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
+          -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
+
+        if [[ "$RESPONSE" == "403" ]]; then
+          echo "Test passed: Unauthenticated request correctly rejected with $RESPONSE"
+        else
+          echo "Test failed: Unauthenticated request returned $RESPONSE instead of 403"
+          exit 1
+        fi
+
+    # Test 3: External access with token from unauthorized namespace, Must Fail
+    - name: Test external access with token from unauthorized namespace
+      run: |
+        export KSERVE_INGRESS_HOST_PORT=localhost:8080
+
+        # Create attacker namespace and service account
+        kubectl create ns kubeflow-user-example-com-attacker
+        kubectl create serviceaccount attacker-sa -n kubeflow-user-example-com-attacker
+        export ATTACKER_TOKEN="$(kubectl -n kubeflow-user-example-com-attacker create token attacker-sa)"
+
+        RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+          -H "Host: isvc-sklearn-predictor.kubeflow-user-example-com.example.com" \
+          -H "Authorization: Bearer ${ATTACKER_TOKEN}" \
+          -H "Content-Type: application/json" \
+          "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
+          -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
+
+        if [[ "$RESPONSE" == "403" ]]; then
+          echo "Test passed: Unauthorized namespace token correctly rejected with $RESPONSE"
+        else
+          echo "Test failed: Unauthorized namespace token returned $RESPONSE instead of 403"
+          exit 1
+        fi
+
+    # Test 4: Add unauthorized namespace to policy and test again, Must Pass
+    - name: Add unauthorized namespace to policy and test again
+      run: |
+        export KSERVE_INGRESS_HOST_PORT=localhost:8080
+
+        # Update the cluster-local-gateway AuthorizationPolicy to allow attacker namespace
+        kubectl apply -f - <<EOF
+        apiVersion: security.istio.io/v1
+        kind: AuthorizationPolicy
+        metadata:
+          name: cluster-local-gateway
+          namespace: istio-system
+        spec:
+          selector:
+            matchLabels:
+              app: cluster-local-gateway
+              istio: cluster-local-gateway
+          action: ALLOW
+          rules:
+          - to:
+            - operation:
+                hosts: ["*.kubeflow-user-example-com.svc.cluster.local"]
+            when:
+            - key: request.headers[kubeflow-userid]
+              values:
+                - "system:serviceaccount:kubeflow-user-example-com:*"
+                - "system:serviceaccount:attacker-namespace:*"
+          - to:
+            - operation:
+                hosts: ["*.kubeflow-user-example-com.svc.cluster.local"]
+            when:
+            - key: request.auth.claims[sub]
+              values:
+                - "system:serviceaccount:kubeflow-user-example-com:*"
+          - to:
+            - operation:
+                paths: ["/healthz", "/metrics", "/wait-for-drain"]
+        EOF
+
+        # Ensure policy is applied
+        sleep 5
+
+        # Try with attacker token again
+        export ATTACKER_TOKEN="$(kubectl -n kubeflow-user-example-com-attacker create token attacker-sa)"
+
+        RESPONSE=$(curl -s -w "%{http_code}" \
+          -H "Hostisauthenticated.com" \
+          -H "Host: isvc-sklearn-predictor.kubeflow-user-example-com.example.com" \
+          -H "Authorization: Bearer ${ATTACKER_TOKEN}" \
+          -H "Content-Type: application/json" \
+          "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
+          -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
+
+        HTTP_CODE=${RESPONSE: -3}
+        RESPONSE_BODY=${RESPONSE:0:${#RESPONSE}-3}
+
+        if [[ "$HTTP_CODE" == "200" && "$RESPONSE_BODY" == *"predictions"* ]]; then
+          echo "Test passed: Previously unauthorized token now works with code $HTTP_CODE"
+        else
+          echo "Test failed: Previously unauthorized token still doesn't work with code $HTTP_CODE"
+          echo "Response: $RESPONSE_BODY"
+          exit 1
+        fi
+
+        # Restore original policy
+        kubectl apply -f - <<EOF
+        apiVersion: security.istio.io/v1
+        kind: AuthorizationPolicy
+        metadata:
+          name: cluster-local-gateway
+          namespace: istio-system
+        spec:
+          selector:
+            matchLabels:
+              app: cluster-local-gateway
+              istio: cluster-local-gateway
+          action: ALLOW
+          rules:
+          - to:
+            - operation:
+                hosts: ["*.kubeflow-user-example-com.svc.cluster.local"]
+            when:
+            - key: request.headers[kubeflow-userid]
+              values: ["system:serviceaccount:kubeflow-user-example-com:*"]
+          - to:
+            - operation:
+                hosts: ["*.kubeflow-user-example-com.svc.cluster.local"]
+            when:
+            - key: request.auth.claims[sub]
+              values: ["system:serviceaccount:kubeflow-user-example-com:*"]
+          - to:
+            - operation:
+                paths: ["/healthz", "/metrics", "/wait-for-drain"]
+        EOF
+
+    # Test 5: Internal access with token from same namespace
+    - name: Test internal access with token from same namespace
+      run: |
+        # Create a pod in the same namespace to test internal access
+        kubectl run -n kubeflow-user-example-com curl-test --image=curlimages/curl --restart=Never -- sleep 3600
+
+        # Wait for the pod to be ready
+        kubectl wait --for=condition=ready pod/curl-test -n kubeflow-user-example-com --timeout=60s
+
+        # Run test from inside the pod with token
+        RESULT=$(kubectl exec -n kubeflow-user-example-com curl-test -- \
+          curl -s -w "\n%{http_code}" \
+          -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
+          -H "Content-Type: application/json" \
+          "http://isvc-sklearn-predictor.kubeflow-user-example-com.svc.cluster.local/v1/models/isvc-sklearn:predict" \
+          -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
+
+        HTTP_CODE=$(echo "$RESULT" | tail -n1)
+        RESPONSE_BODY=$(echo "$RESULT" | head -n1)
+
+        if [[ "$HTTP_CODE" == "200" && "$RESPONSE_BODY" == *"predictions"* ]]; then
+          echo "Test passed: Internal access with token successful with code $HTTP_CODE"
+        else
+          echo "Test failed: Internal access with token returned $HTTP_CODE"
+          echo "Response: $RESPONSE_BODY"
+          exit 1
+        fi
+
+    # Test 6: Internal access without token
+    - name: Test internal access without token
+      run: |
+        # Run test from inside the pod without token
+        RESULT=$(kubectl exec -n kubeflow-user-example-com curl-test -- \
+          curl -s -o /dev/null -w "%{http_code}" \
+          -H "Content-Type: application/json" \
+          "http://isvc-sklearn-predictor.kubeflow-user-example-com.svc.cluster.local/v1/models/isvc-sklearn:predict" \
+          -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
+
+        if [[ "$RESULT" == "403" ]]; then
+          echo "Test passed: Internal access without token correctly rejected with $RESULT"
+        else
+          echo "Test failed: Internal access without token returned $RESULT instead of 403"
+          exit 1
+        fi
+
+    # Test 7: Internal access from different namespace
+    - name: Test internal access from different namespace
+      run: |
+        # Create a pod in the attacker namespace
+        kubectl run -n kubeflow-user-example-com-attacker curl-test --image=curlimages/curl --restart=Never -- sleep 3600
+
+        # Wait for the pod to be ready
+        kubectl wait --for=condition=ready pod/curl-test -n kubeflow-user-example-com-attacker --timeout=60s
+
+        # Run test from attacker namespace pod
+        RESULT=$(kubectl exec -n kubeflow-user-example-com-attacker curl-test -- \
+          curl -s -o /dev/null -w "%{http_code}" \
+          -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
+          -H "Content-Type: application/json" \
+          "http://isvc-sklearn-predictor.kubeflow-user-example-com.svc.cluster.local/v1/models/isvc-sklearn:predict" \
+          -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
+
+        if [[ "$RESULT" == "403" ]]; then
+          echo "Test passed: Internal access from different namespace correctly rejected with $RESULT"
+        else
+          echo "Test failed: Internal access from different namespace returned $RESULT instead of 403"
+          exit 1
+        fi
+
     - name: Run kserve tests with m2m token from SA kubeflow-user-example-com/default-editor
       run: |
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
         export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
         cd ./apps/kserve/tests && pytest . -vs --log-level info
-
-    - name: Detailed KServe Access Diagnostics
-      run: |
-        export KSERVE_INGRESS_HOST_PORT=localhost:8080
-        export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
-
-        echo "=== AuthorizationPolicy Details ==="
-        kubectl get authorizationpolicy -n kubeflow-user-example-com -o yaml
-
-        echo "=== Detailed Curl Test ==="
-        curl -vv \
-          -H "Host: isvc-sklearn.kubeflow-user-example-com.example.com" \
-          -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
-          -H "Content-Type: application/json" \
-          "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
-          -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}'
-
-    # TODO FOR FOLLOW UP PR
-    #- name: Run and fail kserve tests without kserve m2m token
-      #run: |
-      #  export KSERVE_INGRESS_HOST_PORT=localhost:8080
-      #  cd ./apps/kserve/tests
-      #  if pytest . -vs --log-level info; then
-      #    echo "This test should fail with an HTTP redirect to oauth2-proxy/dex auth."; exit 1
-      #  else
-      #    echo "Task failed successfully!"
-      #    echo "This is a provisional way of testing that m2m is enabled for kserve."
-      #  fi
-
-    # TODO FOR FOLLOW UP PR
-    #- name: Test that token from attacker namespace is rejected
-    #  run: |
-    #    export KSERVE_INGRESS_HOST_PORT=localhost:8080
-    #    kubectl create ns kubeflow-user-example-com-attacker
-    #    kubectl create serviceaccount attacker-sa -n kubeflow-user-example-com-attacker
-    #    export ATTACKER_TOKEN="$(kubectl -n kubeflow-user-example-com-attacker create token attacker-sa)"
-    #    RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: isvc-sklearn.kubeflow-user-example-com.example.com" \
-    #        -H "Authorization: Bearer ${ATTACKER_TOKEN}" \
-    #        -H "Content-Type: application/json" \
-    #        "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
-    #        -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}')
-    #    if [[ "$RESPONSE" == "403" || "$RESPONSE" == "401" ]]; then
-    #      echo "Security test passed: Request with attacker token was correctly rejected with $RESPONSE"
-    #    else
-    #      echo "Security test failed: Request with attacker token returned $RESPONSE instead of 403/401"
-    #      exit 1
-    #    fi
 
     - name: Test path-based external access
       run: |
@@ -221,7 +397,7 @@ jobs:
         export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
 
         # Test external path-based access
-        curl -v -H "Host: isvc-sklearn.kubeflow-user-example-com.example.com" \
+        curl -v -H "Host: isvc-sklearn-predictor.kubeflow-user-example-com.example.com" \
             -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
             -H "Content-Type: application/json" \
             "http://${KSERVE_INGRESS_HOST_PORT}/kserve/kubeflow-user-example-com/isvc-sklearn/v1/models/isvc-sklearn:predict" \

@@ -1,0 +1,33 @@
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: cluster-local-gateway-jwt
+  namespace: istio-system
+spec:
+  selector:
+    matchLabels:
+      app: cluster-local-gateway
+      istio: cluster-local-gateway
+  jwtRules:
+  - issuer: "https://kubernetes.default.svc.cluster.local"
+    jwksUri: "http://cluster-jwks-proxy.istio-system.svc.cluster.local/openid/v1/jwks"
+    forwardOriginalToken: true
+    outputClaimToHeaders:
+    - header: kubeflow-userid
+      claim: email
+    - header: kubeflow-groups
+      claim: groups
+    fromHeaders:
+    - name: Authorization
+      prefix: "Bearer "
+  - issuer: "https://kubernetes.default.svc"
+    jwksUri: "http://cluster-jwks-proxy.istio-system.svc.cluster.local/openid/v1/jwks"
+    forwardOriginalToken: true
+    outputClaimToHeaders:
+    - header: kubeflow-userid
+      claim: email
+    - header: kubeflow-groups
+      claim: groups
+    fromHeaders:
+    - name: Authorization
+      prefix: "Bearer "
