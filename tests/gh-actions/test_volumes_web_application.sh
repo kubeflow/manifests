@@ -6,7 +6,7 @@ TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
 UNAUTHORIZED_TOKEN="$(kubectl -n default create token default)"
 curl --fail --show-error "localhost:8080/volumes/" -H "Authorization: Bearer ${TOKEN}" -v -c /tmp/xcrf.txt
 echo /tmp/xcrf.txt
-XSRFTOKEN=$(cat /tmp/xcrf.txt | grep -o 'XSRF-TOKEN[^>]*' | grep -o '[^ ]*$')
+XSRFTOKEN=$(grep XSRF-TOKEN /tmp/xcrf.txt | cut -f 7)
 STORAGE_CLASS_NAME="standard"
 
 kubectl get storageclass $STORAGE_CLASS_NAME
