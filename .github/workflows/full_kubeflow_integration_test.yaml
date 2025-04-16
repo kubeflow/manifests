@@ -80,7 +80,7 @@ jobs:
       run: ./tests/gh-actions/install_training_operator.sh
 
     - name: Install Knative
-      run: ./tests/gh-actions/install_knative.sh
+      run: ./tests/gh-actions/install_knative-cni.sh
 
     - name: Install KServe
       run: ./tests/gh-actions/install_kserve.sh
@@ -196,6 +196,20 @@ jobs:
         curl -s --fail \
           "localhost:8080/model-registry/api/v1/model_registry?namespace=${KF_PROFILE}" \
           -H "Authorization: Bearer ${KF_TOKEN}"
+
+    - name: Test Model Registry API with Unauthorized Token
+      run: |
+        UNAUTHORIZED_TOKEN=$(kubectl -n test-unauthorized create token test-unauthorized || kubectl -n test-unauthorized create token default)
+
+        STATUS_CODE=$(curl -s \
+          --output /dev/stderr --write-out "%{http_code}" \
+          "localhost:8080/model-registry/api/v1/model_registry?namespace=${KF_PROFILE}" \
+          -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}")
+
+        if test $STATUS_CODE -ne 403; then
+          echo "Error: Unauthorized access was not correctly rejected. Got status code: ${STATUS_CODE}"
+          exit 1
+        fi
 
     - name: Apply Pod Security Standards Baseline
       run: ./tests/gh-actions/enable_baseline_PSS.sh
