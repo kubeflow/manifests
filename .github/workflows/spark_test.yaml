@@ -1,4 +1,4 @@
-name: Build & Apply Spark manifest in KinD
+name: Deploy and Test Spark in KinD
 on:
   pull_request:
     paths:

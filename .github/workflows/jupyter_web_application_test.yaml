@@ -1,4 +1,4 @@
-name: Build & Apply JWA manifests in KinD
+name: Test Jupyter Web Application in KinD
 on:
   pull_request:
     paths:

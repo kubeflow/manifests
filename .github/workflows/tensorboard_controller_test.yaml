@@ -1,4 +1,4 @@
-name: Build & Apply Tensorboard Controller manifests in KinD
+name: Test Tensorboard Controller in KinD
 on:
   pull_request:
     paths:

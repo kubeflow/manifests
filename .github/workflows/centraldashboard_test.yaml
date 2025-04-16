@@ -1,4 +1,4 @@
-name: Build & Apply CentralDashboard manifests in KinD
+name: Test Central Dashboard in KinD
 on:
   pull_request:
     paths:
