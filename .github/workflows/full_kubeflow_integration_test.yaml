@@ -88,6 +88,15 @@ jobs:
     - name: Install Spark
       run: chmod u+x tests/gh-actions/spark_*.sh && ./tests/gh-actions/spark_install.sh
 
+    - name: Install Model Registry
+      run: |
+        kustomize build apps/model-registry/upstream/overlays/db | kubectl apply -f -
+        kustomize build apps/model-registry/upstream/options/istio | kubectl apply -f -
+
+    - name: Install Model Registry UI
+      run: |
+        kustomize build apps/model-registry/upstream/options/ui/overlays/istio | kubectl apply -f -
+
     - name: Wait for All Pods to be Ready
       run: kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 60s --field-selector=status.phase!=Succeeded
 
@@ -165,15 +174,6 @@ jobs:
 
     - name: Run Spark Test
       run: chmod u+x tests/gh-actions/spark_*.sh && ./tests/gh-actions/spark_test.sh "${KF_PROFILE}"
-
-    - name: Install Model Registry
-      run: |
-        kustomize build apps/model-registry/upstream/overlays/db | kubectl apply -f -
-        kustomize build apps/model-registry/upstream/options/istio | kubectl apply -f -
-
-    - name: Install Model Registry UI
-      run: |
-        kustomize build apps/model-registry/upstream/options/ui/overlays/istio | kubectl apply -f -
 
     - name: Test Model Registry Deployment
       run: |
