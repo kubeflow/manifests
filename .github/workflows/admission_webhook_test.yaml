@@ -1,4 +1,4 @@
-name: Test Admission Webhook 
+name: Test Admission Webhook
 on:
   pull_request:
     paths:

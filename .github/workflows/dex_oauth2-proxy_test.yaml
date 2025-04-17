@@ -1,4 +1,4 @@
-name: Test Dex and OAuth2 Proxy 
+name: Test Dex and OAuth2 Proxy
 on:
   pull_request:
     paths:
