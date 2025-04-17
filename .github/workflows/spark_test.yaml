@@ -1,4 +1,4 @@
-name: Deploy and Test Spark
+name: Test Spark
 on:
   pull_request:
     paths:
