@@ -188,7 +188,7 @@ jobs:
                   - "/metrics"
                   - "/wait-for-drain"
         EOF
-        sleep 30
+        sleep 100
         export ATTACKER_TOKEN="$(kubectl -n kubeflow-user-example-com-attacker create token attacker-sa)"
         curl --fail --show-error -H "Host: isvc-sklearn.kubeflow-user-example-com.example.com" \
           -H "Authorization: Bearer ${ATTACKER_TOKEN}" \
@@ -199,7 +199,7 @@ jobs:
     - name: Apply cluster-local-gateway overlays with oauth2-proxy Again
       run: |
         kustomize build common/istio-cni-1-24/cluster-local-gateway/overlays/oauth2-proxy/ | kubectl apply -f -
-        sleep 30
+        sleep 100
 
     - name: Test internal access with token from same namespace
       run: |
