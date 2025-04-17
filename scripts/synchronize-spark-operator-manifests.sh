@@ -4,7 +4,7 @@ set -euxo pipefail
 IFS=$'\n\t'
 
 # You can use tags or commit hashes
-SPARK_OPERATOR_VERSION=${SPARK_OPERATOR_VERSION:="2.1.0"}
+SPARK_OPERATOR_VERSION=${SPARK_OPERATOR_VERSION:="2.1.1"}
 SPARK_OPERATOR_HELM_CHART_REPO=${SPARK_OPERATOR_HELM_CHART_REPO:="https://kubeflow.github.io/spark-operator"}
 DEV_MODE=${DEV_MODE:=false}
 BRANCH=${BRANCH:=synchronize-spark-operator-manifests-${SPARK_OPERATOR_VERSION?}}
@@ -65,7 +65,5 @@ echo "Committing the changes..."
 cd $MANIFESTS_DIR
 git add apps/spark
 git add README.md
-git add scripts/synchronize-spark-operator-manifests.sh
+git add scripts
 git commit -s -m "Update kubeflow/spark-operator manifests to ${SPARK_OPERATOR_VERSION}"
-
-echo "Changes committed to branch ${BRANCH}. You can now push and create a PR."
