@@ -1,4 +1,4 @@
-name: Create Pipeline Run from Kubeflow Notebook
+name: Test Pipeline run from Jupyterlab
 on:
   pull_request:
     paths:
