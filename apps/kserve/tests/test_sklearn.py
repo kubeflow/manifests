@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import os
+import time
 
 from kubernetes import client
 from kubernetes.client import V1ResourceRequirements
@@ -53,6 +54,13 @@ def test_sklearn_kserve():
     kserve_client = KServeClient(
         config_file=os.environ.get("KUBECONFIG", "~/.kube/config")
     )
+    
+    try:
+        kserve_client.delete(service_name, KSERVE_TEST_NAMESPACE)
+        time.sleep(10)
+    except:
+        pass
+        
     kserve_client.create(isvc)
     kserve_client.wait_isvc_ready(service_name, namespace=KSERVE_TEST_NAMESPACE)
     res = predict(service_name, "./data/iris_input.json")
