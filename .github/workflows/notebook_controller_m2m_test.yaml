@@ -1,4 +1,4 @@
-name: Test Notebook Controller with m2m auth manifests
+name: Test Notebook Controller
 on:
   pull_request:
     paths:
