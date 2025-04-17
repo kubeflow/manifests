@@ -1,4 +1,4 @@
-name: Deploy and test Kubeflow Pipelines manifests with m2m auth in KinD
+name: Deploy and test Kubeflow Pipelines manifests with m2m auth
 on:
   pull_request:
     paths:

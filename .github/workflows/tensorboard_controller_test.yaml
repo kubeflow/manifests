@@ -1,4 +1,4 @@
-name: Test Tensorboard Controller in KinD
+name: Test Tensorboard Controller
 on:
   pull_request:
     paths:

@@ -1,4 +1,4 @@
-name: Deploy and Test Katib in KinD
+name: Deploy and Test Katib
 on:
   pull_request:
     paths:

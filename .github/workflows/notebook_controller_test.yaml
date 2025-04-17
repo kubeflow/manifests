@@ -1,4 +1,4 @@
-name: Test Notebook Controller in KinD
+name: Test Notebook Controller
 on:
   pull_request:
     paths:

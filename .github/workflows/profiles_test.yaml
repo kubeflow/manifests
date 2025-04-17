@@ -1,4 +1,4 @@
-name: Test Profiles in KinD
+name: Test Profiles
 on:
   pull_request:
     paths:

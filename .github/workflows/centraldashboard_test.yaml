@@ -1,4 +1,4 @@
-name: Test Central Dashboard in KinD
+name: Test Central Dashboard 
 on:
   pull_request:
     paths:

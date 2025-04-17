@@ -1,4 +1,4 @@
-name: Test Tensorboards Web Application in KinD
+name: Test Tensorboards Web Application
 on:
   pull_request:
     paths:

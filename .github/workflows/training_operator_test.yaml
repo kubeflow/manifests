@@ -1,4 +1,4 @@
-name: Deploy and Test Training Operator in KinD
+name: Deploy and Test Training Operator
 on:
   pull_request:
     paths:

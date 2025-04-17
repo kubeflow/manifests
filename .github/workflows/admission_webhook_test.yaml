@@ -1,4 +1,4 @@
-name: Test Admission Webhook in KinD
+name: Test Admission Webhook 
 on:
   pull_request:
     paths:
