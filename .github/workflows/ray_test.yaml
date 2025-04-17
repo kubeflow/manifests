@@ -1,4 +1,4 @@
-name: Deploy and Test Ray
+name: Test Ray
 on:
   pull_request:
     paths:
