@@ -1,4 +1,4 @@
-name: Deploy and test KServe with m2m auth
+name: Deploy and test KServe
 on:
   pull_request:
     paths:
