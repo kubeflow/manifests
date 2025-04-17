@@ -1,6 +1,6 @@
 # If anyone changes or improve the following tests for Model Registry, please
 # consider reflecting the same changes on https://github.com/kubeflow/model-registry
-name: Deploy and test Kubeflow Model Registry
+name: Test Model Registry
 on:
   pull_request:
     paths:
