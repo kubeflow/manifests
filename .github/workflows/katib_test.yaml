@@ -1,4 +1,4 @@
-name: Build & Apply Katib manifests in KinD
+name: Deploy and Test Katib
 on:
   pull_request:
     paths:

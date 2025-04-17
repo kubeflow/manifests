@@ -1,4 +1,4 @@
-name: Build & Apply Training Operator manifests in KinD
+name: Deploy and Test Training Operator
 on:
   pull_request:
     paths:

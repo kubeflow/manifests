@@ -1,4 +1,4 @@
-name: Deploy and test KServe with m2m auth in KinD
+name: Test KServe
 on:
   pull_request:
     paths:

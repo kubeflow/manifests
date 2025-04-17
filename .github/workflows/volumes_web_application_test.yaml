@@ -1,4 +1,4 @@
-name: Build & Apply Volumes Web Application manifests in KinD
+name: Deploy and Test Volumes Web Application
 on:
   pull_request:
     paths:

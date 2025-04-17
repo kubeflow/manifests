@@ -1,6 +1,6 @@
 # If anyone changes or improve the following tests for Model Registry, please
 # consider reflecting the same changes on https://github.com/kubeflow/model-registry
-name: Deploy and test Kubeflow Model Registry
+name: Test Model Registry
 on:
   pull_request:
     paths:
@@ -33,7 +33,7 @@ jobs:
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
     - name: Install Istio
-      run: ./tests/gh-actions/install_istio.sh
+      run: ./tests/gh-actions/install_istio-cni.sh
 
     - name: Install oauth2-proxy
       run: ./tests/gh-actions/install_oauth2-proxy.sh
@@ -131,6 +131,6 @@ jobs:
             -H "Authorization: Bearer ${KF_TOKEN}")
 
         if test $STATUS_CODE -ne 403; then
-            echo "Error, this call should fail to list notebooks in namespace ${KF_PROFILE}."
+            echo "Error, this call should fail to list model registry resources in namespace ${KF_PROFILE}."
             exit 1
         fi
