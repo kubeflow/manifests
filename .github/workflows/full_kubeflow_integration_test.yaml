@@ -1,4 +1,4 @@
-name: End-to-End Integration Test
+name: Test End-to-End Integration
 on:
   workflow_dispatch:
   push:
