@@ -108,13 +108,24 @@ jobs:
         [[ "$INIT_CONTAINERS" == "none" ]] || exit 1
 
     - name: Apply cluster-local-gateway overlays with oauth2-proxy
-      run: kustomize build common/istio-cni-1-24/cluster-local-gateway/overlays/oauth2-proxy/ | kubectl apply -f -
+      run: |
+        kustomize build common/istio-cni-1-24/cluster-local-gateway/overlays/oauth2-proxy/ | kubectl apply -f -
+        echo "Waiting for configurations to apply..."
+        sleep 20
+        echo "Checking configurations:"
+        kubectl get requestauthentication -n istio-system
+        kubectl get authorizationpolicy -n istio-system
+        kubectl get svc -n istio-system | grep jwks
 
-    - name: Test external access with valid token
+    - name: Debug KServe request with valid token
       run: |
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
         export KSERVE_M2M_TOKEN="$(kubectl -n kubeflow-user-example-com create token default-editor)"
-        curl --fail --show-error -H "Host: isvc-sklearn.kubeflow-user-example-com.example.com" \
+        echo "Token format:"
+        echo $KSERVE_M2M_TOKEN | awk -F. '{print $2}' | base64 -d 2>/dev/null | sed 's/}/}\n/g'
+        echo "Looking for sub claim format:"
+        echo $KSERVE_M2M_TOKEN | awk -F. '{print $2}' | base64 -d 2>/dev/null | grep -o '"sub":[^,}]*'
+        curl -v --fail --show-error -H "Host: isvc-sklearn.kubeflow-user-example-com.example.com" \
           -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
           -H "Content-Type: application/json" \
           "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
