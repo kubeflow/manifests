@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euxo pipefail
 
 NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow")
 
@@ -13,3 +14,10 @@ for NAMESPACE in "${NAMESPACES[@]}"; do
         fi
     fi
 done
+
+VIOLATIONS=$(kubectl get pods --all-namespaces -o json | jq -r '.items[] | select(.metadata.namespace as $ns | ["istio-system", "auth", "cert-manager", "oauth2-proxy", "kubeflow"] | index($ns) != null) | select(.status.message != null and .status.message | contains("violate PodSecurity"))')
+
+if [ -n "$VIOLATIONS" ]; then
+    echo "$VIOLATIONS" | jq -r '.metadata.namespace + "/" + .metadata.name + ": " + .status.message'
+    exit 1
+fi
