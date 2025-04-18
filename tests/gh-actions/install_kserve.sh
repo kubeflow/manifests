@@ -10,7 +10,9 @@ for ((i=1; i<=3; i++)); do
     kubectl get secret kserve-webhook-server-cert -n kubeflow -o name
 done
 set -e
-echo "Waiting for crd/clusterservingruntimes.serving.kserve.io to be available ..."
+
+kubectl -n kubeflow delete DaemonSet kserve-localmodelnode-agent # TODO https://github.com/kserve/kserve/issues/4402
+
 kubectl wait --for condition=established --timeout=30s crd/clusterservingruntimes.serving.kserve.io
 kustomize build kserve | kubectl apply --server-side --force-conflicts -f -
 
