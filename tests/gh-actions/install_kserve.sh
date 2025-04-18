@@ -4,8 +4,10 @@ echo "Installing Kserve ..."
 cd apps/kserve
 set +e
 for ((i=1; i<=3; i++)); do
-    kustomize build kserve | kubectl apply --server-side --force-conflicts -f -
-    sleep 30
+    if kustomize build kserve | kubectl apply --server-side --force-conflicts -f -; then
+        break
+    fi
+    kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=60s --field-selector=status.phase!=Succeeded
     kubectl wait --for=condition=Ready certificate/serving-cert -n kubeflow --timeout=60s
     kubectl get secret kserve-webhook-server-cert -n kubeflow -o name
 done
