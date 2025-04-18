@@ -10,6 +10,10 @@ set -e
 echo "Waiting for crd/clusterservingruntimes.serving.kserve.io to be available ..."
 kubectl wait --for condition=established --timeout=30s crd/clusterservingruntimes.serving.kserve.io
 kustomize build kserve | kubectl apply --server-side --force-conflicts -f -
+
+kubectl wait --for=condition=Ready certificate/serving-cert -n kubeflow --timeout=60s
+kubectl get secret kserve-webhook-server-cert -n kubeflow -o name
+
 kustomize build models-web-app/overlays/kubeflow | kubectl apply --server-side --force-conflicts -f -
 kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=600s \
   --field-selector=status.phase!=Succeeded
