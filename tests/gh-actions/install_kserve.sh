@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -euxo pipefail
 echo "Installing Kserve ..."
 cd apps/kserve
 set +e
