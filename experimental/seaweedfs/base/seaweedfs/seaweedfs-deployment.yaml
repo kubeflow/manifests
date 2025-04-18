@@ -17,16 +17,22 @@ spec:
     metadata:
       labels:
         app: seaweedfs
+        application-crd-id: kubeflow-pipelines
     spec:
       containers:
       - name: seaweedfs
-        image: 'chrislusf/seaweedfs:3.69'
+        image: 'chrislusf/seaweedfs:3.85'
         args:
         - 'server'
         - '-dir=/data'
         - '-s3'
+        - '-iam'
         ports:
         - containerPort: 8333
+        - containerPort: 8111
+        - containerPort: 9333
+        - containerPort: 19333
+        - containerPort: 8888
         readinessProbe:
           httpGet:
             path: /status
@@ -63,3 +69,4 @@ spec:
       - name: data
         persistentVolumeClaim:
           claimName: seaweedfs-pvc
+      serviceAccountName: seaweedfs

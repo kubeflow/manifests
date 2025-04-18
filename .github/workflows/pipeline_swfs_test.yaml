@@ -38,11 +38,11 @@ jobs:
     - name: Create kubeflow namespace
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
-    - name: Install KF Pipelines
-      run: ./tests/gh-actions/install_pipelines.sh
-
     - name: Install KF Multi Tenancy
       run: ./tests/gh-actions/install_multi_tenancy.sh
+
+    - name: Install KF Pipelines
+      run: ./tests/gh-actions/install_pipelines_swfs.sh
 
     - name: Install kubeflow-istio-resources
       run: kustomize build common/istio-cni-1-24/kubeflow-istio-resources/base | kubectl apply -f -
@@ -59,12 +59,6 @@ jobs:
         fi
         kubectl get secret mlpipeline-minio-artifact -n "$KF_PROFILE" -o json | jq -r '.data | keys[] as $k | "\($k): \(. | .[$k] | @base64d)"' | tr '\n' ' '
 
-    - name: Install seaweedfs
-      run: |
-        kustomize build experimental/seaweedfs/istio | kubectl apply -f -
-        kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/seaweedfs
-        kubectl -n kubeflow exec deploy/seaweedfs -c seaweedfs -- sh -c "echo \"s3.configure -user minio -access_key minio -secret_key minio123 -actions Read,Write,List -apply\" | /usr/bin/weed shell"
-
     - name: Port forward
       run: ./tests/gh-actions/port_forward_gateway.sh
 
@@ -74,3 +68,27 @@ jobs:
         KF_PROFILE=kubeflow-user-example-com
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/gh-actions/pipeline_test.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
+
+    - name: Fail to list pipelines with unauthorized ServiceAccount Token
+      run: |
+        pip3 install kfp==2.11.0
+        KF_PROFILE=kubeflow-user-example-com
+        TOKEN="$(kubectl -n default create token default)"
+        python3 tests/gh-actions/pipeline_test.py test_unauthorized_access "${TOKEN}" "${KF_PROFILE}"
+        echo "Test succeeded. Token from unauthorized ServiceAccount cannot list pipelines in $KF_PROFILE namespace."
+
+
+    - name: Apply Pod Security Standards baseline levels for static namespaces
+      run: ./tests/gh-actions/enable_baseline_PSS.sh
+
+    - name: Unapply applied baseline labels
+      run: |
+        NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow")
+        for NAMESPACE in "${NAMESPACES[@]}"; do
+          if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
+            kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce-
+          fi
+        done
+
+    - name: Applying Pod Security Standards restricted levels for static namespaces
+      run: ./tests/gh-actions/enable_restricted_PSS.sh
