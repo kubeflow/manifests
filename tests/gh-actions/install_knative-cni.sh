@@ -1,9 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "Installing KNative with Istio-CNI ..."
-
-# Retry mechanism for applying Knative manifests
 set +e
 for ((i=1; i<=3; i++)); do
     if kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -; then
