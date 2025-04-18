@@ -1004,6 +1004,8 @@ spec:
                               properties:
                                 name:
                                   type: string
+                                request:
+                                  type: string
                               required:
                                 - name
                               type: object
@@ -1338,10 +1340,12 @@ spec:
                           diskURI:
                             type: string
                           fsType:
+                            default: ext4
                             type: string
                           kind:
                             type: string
                           readOnly:
+                            default: false
                             type: boolean
                         required:
                           - diskName
@@ -1701,6 +1705,13 @@ spec:
                         required:
                           - path
                         type: object
+                      image:
+                        properties:
+                          pullPolicy:
+                            type: string
+                          reference:
+                            type: string
+                        type: object
                       iscsi:
                         properties:
                           chapAuthDiscovery:
@@ -1714,6 +1725,7 @@ spec:
                           iqn:
                             type: string
                           iscsiInterface:
+                            default: default
                             type: string
                           lun:
                             format: int32
@@ -1962,6 +1974,7 @@ spec:
                           image:
                             type: string
                           keyring:
+                            default: /etc/ceph/keyring
                             type: string
                           monitors:
                             items:
@@ -1969,6 +1982,7 @@ spec:
                             type: array
                             x-kubernetes-list-type: atomic
                           pool:
+                            default: rbd
                             type: string
                           readOnly:
                             type: boolean
@@ -1980,6 +1994,7 @@ spec:
                             type: object
                             x-kubernetes-map-type: atomic
                           user:
+                            default: admin
                             type: string
                         required:
                           - image
@@ -1988,6 +2003,7 @@ spec:
                       scaleIO:
                         properties:
                           fsType:
+                            default: xfs
                             type: string
                           gateway:
                             type: string
@@ -2005,6 +2021,7 @@ spec:
                           sslEnabled:
                             type: boolean
                           storageMode:
+                            default: ThinProvisioned
                             type: string
                           storagePool:
                             type: string
@@ -2966,6 +2983,8 @@ spec:
                                   properties:
                                     name:
                                       type: string
+                                    request:
+                                      type: string
                                   required:
                                     - name
                                   type: object
@@ -3220,7 +3239,9 @@ spec:
                       additionalProperties:
                         type: string
                       type: object
-                    size:
+                    pipelineParallelSize:
+                      type: integer
+                    tensorParallelSize:
                       type: integer
                     tolerations:
                       items:
@@ -3264,10 +3285,12 @@ spec:
                               diskURI:
                                 type: string
                               fsType:
+                                default: ext4
                                 type: string
                               kind:
                                 type: string
                               readOnly:
+                                default: false
                                 type: boolean
                             required:
                               - diskName
@@ -3627,6 +3650,13 @@ spec:
                             required:
                               - path
                             type: object
+                          image:
+                            properties:
+                              pullPolicy:
+                                type: string
+                              reference:
+                                type: string
+                            type: object
                           iscsi:
                             properties:
                               chapAuthDiscovery:
@@ -3640,6 +3670,7 @@ spec:
                               iqn:
                                 type: string
                               iscsiInterface:
+                                default: default
                                 type: string
                               lun:
                                 format: int32
@@ -3888,6 +3919,7 @@ spec:
                               image:
                                 type: string
                               keyring:
+                                default: /etc/ceph/keyring
                                 type: string
                               monitors:
                                 items:
@@ -3895,6 +3927,7 @@ spec:
                                 type: array
                                 x-kubernetes-list-type: atomic
                               pool:
+                                default: rbd
                                 type: string
                               readOnly:
                                 type: boolean
@@ -3906,6 +3939,7 @@ spec:
                                 type: object
                                 x-kubernetes-map-type: atomic
                               user:
+                                default: admin
                                 type: string
                             required:
                               - image
@@ -3914,6 +3948,7 @@ spec:
                           scaleIO:
                             properties:
                               fsType:
+                                default: xfs
                                 type: string
                               gateway:
                                 type: string
@@ -3931,6 +3966,7 @@ spec:
                               sslEnabled:
                                 type: boolean
                               storageMode:
+                                default: ThinProvisioned
                                 type: string
                               storagePool:
                                 type: string
@@ -4490,6 +4526,8 @@ spec:
                           items:
                             properties:
                               name:
+                                type: string
+                              request:
                                 type: string
                             required:
                               - name
@@ -5227,9 +5265,17 @@ spec:
                       type: object
                   type: object
                 maxReplicas:
+                  format: int32
                   type: integer
                 minReplicas:
+                  format: int32
                   type: integer
+                nodeName:
+                  type: string
+                nodeSelector:
+                  additionalProperties:
+                    type: string
+                  type: object
                 nodes:
                   additionalProperties:
                     properties:
@@ -5276,6 +5322,8 @@ spec:
                         properties:
                           name:
                             type: string
+                          request:
+                            type: string
                         required:
                           - name
                         type: object
@@ -5308,10 +5356,29 @@ spec:
                     - rps
                   type: string
                 scaleTarget:
+                  format: int32
                   type: integer
+                serviceAccountName:
+                  type: string
                 timeout:
                   format: int64
                   type: integer
+                tolerations:
+                  items:
+                    properties:
+                      effect:
+                        type: string
+                      key:
+                        type: string
+                      operator:
+                        type: string
+                      tolerationSeconds:
+                        format: int64
+                        type: integer
+                      value:
+                        type: string
+                    type: object
+                  type: array
               required:
                 - nodes
               type: object
@@ -6294,6 +6361,8 @@ spec:
                                 properties:
                                   name:
                                     type: string
+                                  request:
+                                    type: string
                                 required:
                                   - name
                                 type: object
@@ -6544,6 +6613,148 @@ spec:
                           x-kubernetes-list-type: map
                         workingDir:
                           type: string
+                      type: object
+                    autoScaling:
+                      properties:
+                        metrics:
+                          items:
+                            properties:
+                              external:
+                                properties:
+                                  metric:
+                                    properties:
+                                      backend:
+                                        enum:
+                                          - prometheus
+                                          - graphite
+                                        type: string
+                                      namespace:
+                                        type: string
+                                      query:
+                                        type: string
+                                      serverAddress:
+                                        type: string
+                                    type: object
+                                  target:
+                                    properties:
+                                      averageUtilization:
+                                        format: int32
+                                        type: integer
+                                      averageValue:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                      type:
+                                        enum:
+                                          - Utilization
+                                          - Value
+                                          - AverageValue
+                                        type: string
+                                      value:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                    type: object
+                                required:
+                                  - metric
+                                  - target
+                                type: object
+                              podmetric:
+                                properties:
+                                  metric:
+                                    properties:
+                                      backend:
+                                        enum:
+                                          - opentelemetry
+                                        type: string
+                                      metricNames:
+                                        items:
+                                          type: string
+                                        type: array
+                                      operationOverTime:
+                                        type: string
+                                      query:
+                                        type: string
+                                      serverAddress:
+                                        type: string
+                                    type: object
+                                  target:
+                                    properties:
+                                      averageUtilization:
+                                        format: int32
+                                        type: integer
+                                      averageValue:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                      type:
+                                        enum:
+                                          - Utilization
+                                          - Value
+                                          - AverageValue
+                                        type: string
+                                      value:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                    type: object
+                                required:
+                                  - metric
+                                  - target
+                                type: object
+                              resource:
+                                properties:
+                                  name:
+                                    enum:
+                                      - cpu
+                                      - memory
+                                    type: string
+                                  target:
+                                    properties:
+                                      averageUtilization:
+                                        format: int32
+                                        type: integer
+                                      averageValue:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                      type:
+                                        enum:
+                                          - Utilization
+                                          - Value
+                                          - AverageValue
+                                        type: string
+                                      value:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                    type: object
+                                required:
+                                  - name
+                                  - target
+                                type: object
+                              type:
+                                enum:
+                                  - Resource
+                                  - External
+                                  - PodMetric
+                                type: string
+                            required:
+                              - type
+                            type: object
+                          type: array
                       type: object
                     automountServiceAccountToken:
                       type: boolean
@@ -7000,6 +7211,8 @@ spec:
                                 items:
                                   properties:
                                     name:
+                                      type: string
+                                    request:
                                       type: string
                                   required:
                                     - name
@@ -7757,6 +7970,8 @@ spec:
                                   properties:
                                     name:
                                       type: string
+                                    request:
+                                      type: string
                                   required:
                                     - name
                                   type: object
@@ -8012,8 +8227,10 @@ spec:
                           type: string
                       type: object
                     maxReplicas:
+                      format: int32
                       type: integer
                     minReplicas:
+                      format: int32
                       type: integer
                     nodeName:
                       type: string
@@ -8056,13 +8273,10 @@ spec:
                         properties:
                           name:
                             type: string
-                          source:
-                            properties:
-                              resourceClaimName:
-                                type: string
-                              resourceClaimTemplateName:
-                                type: string
-                            type: object
+                          resourceClaimName:
+                            type: string
+                          resourceClaimTemplateName:
+                            type: string
                         required:
                           - name
                         type: object
@@ -8070,6 +8284,39 @@ spec:
                       x-kubernetes-list-map-keys:
                         - name
                       x-kubernetes-list-type: map
+                    resources:
+                      properties:
+                        claims:
+                          items:
+                            properties:
+                              name:
+                                type: string
+                              request:
+                                type: string
+                            required:
+                              - name
+                            type: object
+                          type: array
+                          x-kubernetes-list-map-keys:
+                            - name
+                          x-kubernetes-list-type: map
+                        limits:
+                          additionalProperties:
+                            anyOf:
+                              - type: integer
+                              - type: string
+                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                            x-kubernetes-int-or-string: true
+                          type: object
+                        requests:
+                          additionalProperties:
+                            anyOf:
+                              - type: integer
+                              - type: string
+                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                            x-kubernetes-int-or-string: true
+                          type: object
+                      type: object
                     restartPolicy:
                       type: string
                     runtimeClassName:
@@ -8081,7 +8328,14 @@ spec:
                         - concurrency
                         - rps
                       type: string
+                    scaleMetricType:
+                      enum:
+                        - Utilization
+                        - Value
+                        - AverageValue
+                      type: string
                     scaleTarget:
+                      format: int32
                       type: integer
                     schedulerName:
                       type: string
@@ -8121,6 +8375,8 @@ spec:
                         runAsUser:
                           format: int64
                           type: integer
+                        seLinuxChangePolicy:
+                          type: string
                         seLinuxOptions:
                           properties:
                             level:
@@ -8147,6 +8403,8 @@ spec:
                             type: integer
                           type: array
                           x-kubernetes-list-type: atomic
+                        supplementalGroupsPolicy:
+                          type: string
                         sysctls:
                           items:
                             properties:
@@ -8288,10 +8546,12 @@ spec:
                               diskURI:
                                 type: string
                               fsType:
+                                default: ext4
                                 type: string
                               kind:
                                 type: string
                               readOnly:
+                                default: false
                                 type: boolean
                             required:
                               - diskName
@@ -8651,6 +8911,13 @@ spec:
                             required:
                               - path
                             type: object
+                          image:
+                            properties:
+                              pullPolicy:
+                                type: string
+                              reference:
+                                type: string
+                            type: object
                           iscsi:
                             properties:
                               chapAuthDiscovery:
@@ -8664,6 +8931,7 @@ spec:
                               iqn:
                                 type: string
                               iscsiInterface:
+                                default: default
                                 type: string
                               lun:
                                 format: int32
@@ -8912,6 +9180,7 @@ spec:
                               image:
                                 type: string
                               keyring:
+                                default: /etc/ceph/keyring
                                 type: string
                               monitors:
                                 items:
@@ -8919,6 +9188,7 @@ spec:
                                 type: array
                                 x-kubernetes-list-type: atomic
                               pool:
+                                default: rbd
                                 type: string
                               readOnly:
                                 type: boolean
@@ -8930,6 +9200,7 @@ spec:
                                 type: object
                                 x-kubernetes-map-type: atomic
                               user:
+                                default: admin
                                 type: string
                             required:
                               - image
@@ -8938,6 +9209,7 @@ spec:
                           scaleIO:
                             properties:
                               fsType:
+                                default: xfs
                                 type: string
                               gateway:
                                 type: string
@@ -8955,6 +9227,7 @@ spec:
                               sslEnabled:
                                 type: boolean
                               storageMode:
+                                default: ThinProvisioned
                                 type: string
                               storagePool:
                                 type: string
@@ -9477,6 +9750,148 @@ spec:
                       additionalProperties:
                         type: string
                       type: object
+                    autoScaling:
+                      properties:
+                        metrics:
+                          items:
+                            properties:
+                              external:
+                                properties:
+                                  metric:
+                                    properties:
+                                      backend:
+                                        enum:
+                                          - prometheus
+                                          - graphite
+                                        type: string
+                                      namespace:
+                                        type: string
+                                      query:
+                                        type: string
+                                      serverAddress:
+                                        type: string
+                                    type: object
+                                  target:
+                                    properties:
+                                      averageUtilization:
+                                        format: int32
+                                        type: integer
+                                      averageValue:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                      type:
+                                        enum:
+                                          - Utilization
+                                          - Value
+                                          - AverageValue
+                                        type: string
+                                      value:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                    type: object
+                                required:
+                                  - metric
+                                  - target
+                                type: object
+                              podmetric:
+                                properties:
+                                  metric:
+                                    properties:
+                                      backend:
+                                        enum:
+                                          - opentelemetry
+                                        type: string
+                                      metricNames:
+                                        items:
+                                          type: string
+                                        type: array
+                                      operationOverTime:
+                                        type: string
+                                      query:
+                                        type: string
+                                      serverAddress:
+                                        type: string
+                                    type: object
+                                  target:
+                                    properties:
+                                      averageUtilization:
+                                        format: int32
+                                        type: integer
+                                      averageValue:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                      type:
+                                        enum:
+                                          - Utilization
+                                          - Value
+                                          - AverageValue
+                                        type: string
+                                      value:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                    type: object
+                                required:
+                                  - metric
+                                  - target
+                                type: object
+                              resource:
+                                properties:
+                                  name:
+                                    enum:
+                                      - cpu
+                                      - memory
+                                    type: string
+                                  target:
+                                    properties:
+                                      averageUtilization:
+                                        format: int32
+                                        type: integer
+                                      averageValue:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                      type:
+                                        enum:
+                                          - Utilization
+                                          - Value
+                                          - AverageValue
+                                        type: string
+                                      value:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                    type: object
+                                required:
+                                  - name
+                                  - target
+                                type: object
+                              type:
+                                enum:
+                                  - Resource
+                                  - External
+                                  - PodMetric
+                                type: string
+                            required:
+                              - type
+                            type: object
+                          type: array
+                      type: object
                     automountServiceAccountToken:
                       type: boolean
                     batcher:
@@ -9932,6 +10347,8 @@ spec:
                                 items:
                                   properties:
                                     name:
+                                      type: string
+                                    request:
                                       type: string
                                   required:
                                     - name
@@ -10673,6 +11090,8 @@ spec:
                                 properties:
                                   name:
                                     type: string
+                                  request:
+                                    type: string
                                 required:
                                   - name
                                 type: object
@@ -11374,6 +11793,8 @@ spec:
                                   properties:
                                     name:
                                       type: string
+                                    request:
+                                      type: string
                                   required:
                                     - name
                                   type: object
@@ -12049,6 +12470,8 @@ spec:
                                 properties:
                                   name:
                                     type: string
+                                  request:
+                                    type: string
                                 required:
                                   - name
                                 type: object
@@ -12314,8 +12737,10 @@ spec:
                           type: string
                       type: object
                     maxReplicas:
+                      format: int32
                       type: integer
                     minReplicas:
+                      format: int32
                       type: integer
                     model:
                       properties:
@@ -12761,6 +13186,8 @@ spec:
                               items:
                                 properties:
                                   name:
+                                    type: string
+                                  request:
                                     type: string
                                 required:
                                   - name
@@ -13455,6 +13882,8 @@ spec:
                               items:
                                 properties:
                                   name:
+                                    type: string
+                                  request:
                                     type: string
                                 required:
                                   - name
@@ -14154,6 +14583,8 @@ spec:
                                 properties:
                                   name:
                                     type: string
+                                  request:
+                                    type: string
                                 required:
                                   - name
                                 type: object
@@ -14838,6 +15269,8 @@ spec:
                               items:
                                 properties:
                                   name:
+                                    type: string
+                                  request:
                                     type: string
                                 required:
                                   - name
@@ -15531,6 +15964,8 @@ spec:
                                 properties:
                                   name:
                                     type: string
+                                  request:
+                                    type: string
                                 required:
                                   - name
                                 type: object
@@ -15794,13 +16229,10 @@ spec:
                         properties:
                           name:
                             type: string
-                          source:
-                            properties:
-                              resourceClaimName:
-                                type: string
-                              resourceClaimTemplateName:
-                                type: string
-                            type: object
+                          resourceClaimName:
+                            type: string
+                          resourceClaimTemplateName:
+                            type: string
                         required:
                           - name
                         type: object
@@ -15808,6 +16240,39 @@ spec:
                       x-kubernetes-list-map-keys:
                         - name
                       x-kubernetes-list-type: map
+                    resources:
+                      properties:
+                        claims:
+                          items:
+                            properties:
+                              name:
+                                type: string
+                              request:
+                                type: string
+                            required:
+                              - name
+                            type: object
+                          type: array
+                          x-kubernetes-list-map-keys:
+                            - name
+                          x-kubernetes-list-type: map
+                        limits:
+                          additionalProperties:
+                            anyOf:
+                              - type: integer
+                              - type: string
+                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                            x-kubernetes-int-or-string: true
+                          type: object
+                        requests:
+                          additionalProperties:
+                            anyOf:
+                              - type: integer
+                              - type: string
+                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                            x-kubernetes-int-or-string: true
+                          type: object
+                      type: object
                     restartPolicy:
                       type: string
                     runtimeClassName:
@@ -15819,7 +16284,14 @@ spec:
                         - concurrency
                         - rps
                       type: string
+                    scaleMetricType:
+                      enum:
+                        - Utilization
+                        - Value
+                        - AverageValue
+                      type: string
                     scaleTarget:
+                      format: int32
                       type: integer
                     schedulerName:
                       type: string
@@ -15859,6 +16331,8 @@ spec:
                         runAsUser:
                           format: int64
                           type: integer
+                        seLinuxChangePolicy:
+                          type: string
                         seLinuxOptions:
                           properties:
                             level:
@@ -15885,6 +16359,8 @@ spec:
                             type: integer
                           type: array
                           x-kubernetes-list-type: atomic
+                        supplementalGroupsPolicy:
+                          type: string
                         sysctls:
                           items:
                             properties:
@@ -16353,6 +16829,8 @@ spec:
                               items:
                                 properties:
                                   name:
+                                    type: string
+                                  request:
                                     type: string
                                 required:
                                   - name
@@ -17040,6 +17518,8 @@ spec:
                               items:
                                 properties:
                                   name:
+                                    type: string
+                                  request:
                                     type: string
                                 required:
                                   - name
@@ -17806,6 +18286,8 @@ spec:
                                 properties:
                                   name:
                                     type: string
+                                  request:
+                                    type: string
                                 required:
                                   - name
                                 type: object
@@ -18081,10 +18563,12 @@ spec:
                               diskURI:
                                 type: string
                               fsType:
+                                default: ext4
                                 type: string
                               kind:
                                 type: string
                               readOnly:
+                                default: false
                                 type: boolean
                             required:
                               - diskName
@@ -18444,6 +18928,13 @@ spec:
                             required:
                               - path
                             type: object
+                          image:
+                            properties:
+                              pullPolicy:
+                                type: string
+                              reference:
+                                type: string
+                            type: object
                           iscsi:
                             properties:
                               chapAuthDiscovery:
@@ -18457,6 +18948,7 @@ spec:
                               iqn:
                                 type: string
                               iscsiInterface:
+                                default: default
                                 type: string
                               lun:
                                 format: int32
@@ -18705,6 +19197,7 @@ spec:
                               image:
                                 type: string
                               keyring:
+                                default: /etc/ceph/keyring
                                 type: string
                               monitors:
                                 items:
@@ -18712,6 +19205,7 @@ spec:
                                 type: array
                                 x-kubernetes-list-type: atomic
                               pool:
+                                default: rbd
                                 type: string
                               readOnly:
                                 type: boolean
@@ -18723,6 +19217,7 @@ spec:
                                 type: object
                                 x-kubernetes-map-type: atomic
                               user:
+                                default: admin
                                 type: string
                             required:
                               - image
@@ -18731,6 +19226,7 @@ spec:
                           scaleIO:
                             properties:
                               fsType:
+                                default: xfs
                                 type: string
                               gateway:
                                 type: string
@@ -18748,6 +19244,7 @@ spec:
                               sslEnabled:
                                 type: boolean
                               storageMode:
+                                default: ThinProvisioned
                                 type: string
                               storagePool:
                                 type: string
@@ -19710,6 +20207,8 @@ spec:
                                       properties:
                                         name:
                                           type: string
+                                        request:
+                                          type: string
                                       required:
                                         - name
                                       type: object
@@ -20414,6 +20913,8 @@ spec:
                                     items:
                                       properties:
                                         name:
+                                          type: string
+                                        request:
                                           type: string
                                       required:
                                         - name
@@ -21128,6 +21629,8 @@ spec:
                                       properties:
                                         name:
                                           type: string
+                                        request:
+                                          type: string
                                       required:
                                         - name
                                       type: object
@@ -21385,6 +21888,8 @@ spec:
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
                           type: object
+                        pipelineParallelSize:
+                          type: integer
                         preemptionPolicy:
                           type: string
                         priority:
@@ -21406,13 +21911,10 @@ spec:
                             properties:
                               name:
                                 type: string
-                              source:
-                                properties:
-                                  resourceClaimName:
-                                    type: string
-                                  resourceClaimTemplateName:
-                                    type: string
-                                type: object
+                              resourceClaimName:
+                                type: string
+                              resourceClaimTemplateName:
+                                type: string
                             required:
                               - name
                             type: object
@@ -21420,6 +21922,39 @@ spec:
                           x-kubernetes-list-map-keys:
                             - name
                           x-kubernetes-list-type: map
+                        resources:
+                          properties:
+                            claims:
+                              items:
+                                properties:
+                                  name:
+                                    type: string
+                                  request:
+                                    type: string
+                                required:
+                                  - name
+                                type: object
+                              type: array
+                              x-kubernetes-list-map-keys:
+                                - name
+                              x-kubernetes-list-type: map
+                            limits:
+                              additionalProperties:
+                                anyOf:
+                                  - type: integer
+                                  - type: string
+                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                x-kubernetes-int-or-string: true
+                              type: object
+                            requests:
+                              additionalProperties:
+                                anyOf:
+                                  - type: integer
+                                  - type: string
+                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                x-kubernetes-int-or-string: true
+                              type: object
+                          type: object
                         restartPolicy:
                           type: string
                         runtimeClassName:
@@ -21462,6 +21997,8 @@ spec:
                             runAsUser:
                               format: int64
                               type: integer
+                            seLinuxChangePolicy:
+                              type: string
                             seLinuxOptions:
                               properties:
                                 level:
@@ -21488,6 +22025,8 @@ spec:
                                 type: integer
                               type: array
                               x-kubernetes-list-type: atomic
+                            supplementalGroupsPolicy:
+                              type: string
                             sysctls:
                               items:
                                 properties:
@@ -21521,10 +22060,10 @@ spec:
                           type: boolean
                         shareProcessNamespace:
                           type: boolean
-                        size:
-                          type: integer
                         subdomain:
                           type: string
+                        tensorParallelSize:
+                          type: integer
                         terminationGracePeriodSeconds:
                           format: int64
                           type: integer
@@ -21628,10 +22167,12 @@ spec:
                                   diskURI:
                                     type: string
                                   fsType:
+                                    default: ext4
                                     type: string
                                   kind:
                                     type: string
                                   readOnly:
+                                    default: false
                                     type: boolean
                                 required:
                                   - diskName
@@ -21991,6 +22532,13 @@ spec:
                                 required:
                                   - path
                                 type: object
+                              image:
+                                properties:
+                                  pullPolicy:
+                                    type: string
+                                  reference:
+                                    type: string
+                                type: object
                               iscsi:
                                 properties:
                                   chapAuthDiscovery:
@@ -22004,6 +22552,7 @@ spec:
                                   iqn:
                                     type: string
                                   iscsiInterface:
+                                    default: default
                                     type: string
                                   lun:
                                     format: int32
@@ -22252,6 +22801,7 @@ spec:
                                   image:
                                     type: string
                                   keyring:
+                                    default: /etc/ceph/keyring
                                     type: string
                                   monitors:
                                     items:
@@ -22259,6 +22809,7 @@ spec:
                                     type: array
                                     x-kubernetes-list-type: atomic
                                   pool:
+                                    default: rbd
                                     type: string
                                   readOnly:
                                     type: boolean
@@ -22270,6 +22821,7 @@ spec:
                                     type: object
                                     x-kubernetes-map-type: atomic
                                   user:
+                                    default: admin
                                     type: string
                                 required:
                                   - image
@@ -22278,6 +22830,7 @@ spec:
                               scaleIO:
                                 properties:
                                   fsType:
+                                    default: xfs
                                     type: string
                                   gateway:
                                     type: string
@@ -22295,6 +22848,7 @@ spec:
                                   sslEnabled:
                                     type: boolean
                                   storageMode:
+                                    default: ThinProvisioned
                                     type: string
                                   storagePool:
                                     type: string
@@ -22804,6 +23358,8 @@ spec:
                               items:
                                 properties:
                                   name:
+                                    type: string
+                                  request:
                                     type: string
                                 required:
                                   - name
@@ -23503,6 +24059,148 @@ spec:
                       additionalProperties:
                         type: string
                       type: object
+                    autoScaling:
+                      properties:
+                        metrics:
+                          items:
+                            properties:
+                              external:
+                                properties:
+                                  metric:
+                                    properties:
+                                      backend:
+                                        enum:
+                                          - prometheus
+                                          - graphite
+                                        type: string
+                                      namespace:
+                                        type: string
+                                      query:
+                                        type: string
+                                      serverAddress:
+                                        type: string
+                                    type: object
+                                  target:
+                                    properties:
+                                      averageUtilization:
+                                        format: int32
+                                        type: integer
+                                      averageValue:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                      type:
+                                        enum:
+                                          - Utilization
+                                          - Value
+                                          - AverageValue
+                                        type: string
+                                      value:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                    type: object
+                                required:
+                                  - metric
+                                  - target
+                                type: object
+                              podmetric:
+                                properties:
+                                  metric:
+                                    properties:
+                                      backend:
+                                        enum:
+                                          - opentelemetry
+                                        type: string
+                                      metricNames:
+                                        items:
+                                          type: string
+                                        type: array
+                                      operationOverTime:
+                                        type: string
+                                      query:
+                                        type: string
+                                      serverAddress:
+                                        type: string
+                                    type: object
+                                  target:
+                                    properties:
+                                      averageUtilization:
+                                        format: int32
+                                        type: integer
+                                      averageValue:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                      type:
+                                        enum:
+                                          - Utilization
+                                          - Value
+                                          - AverageValue
+                                        type: string
+                                      value:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                    type: object
+                                required:
+                                  - metric
+                                  - target
+                                type: object
+                              resource:
+                                properties:
+                                  name:
+                                    enum:
+                                      - cpu
+                                      - memory
+                                    type: string
+                                  target:
+                                    properties:
+                                      averageUtilization:
+                                        format: int32
+                                        type: integer
+                                      averageValue:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                      type:
+                                        enum:
+                                          - Utilization
+                                          - Value
+                                          - AverageValue
+                                        type: string
+                                      value:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                    type: object
+                                required:
+                                  - name
+                                  - target
+                                type: object
+                              type:
+                                enum:
+                                  - Resource
+                                  - External
+                                  - PodMetric
+                                type: string
+                            required:
+                              - type
+                            type: object
+                          type: array
+                      type: object
                     automountServiceAccountToken:
                       type: boolean
                     batcher:
@@ -23958,6 +24656,8 @@ spec:
                                 items:
                                   properties:
                                     name:
+                                      type: string
+                                    request:
                                       type: string
                                   required:
                                     - name
@@ -24715,6 +25415,8 @@ spec:
                                   properties:
                                     name:
                                       type: string
+                                    request:
+                                      type: string
                                   required:
                                     - name
                                   type: object
@@ -24970,8 +25672,10 @@ spec:
                           type: string
                       type: object
                     maxReplicas:
+                      format: int32
                       type: integer
                     minReplicas:
+                      format: int32
                       type: integer
                     nodeName:
                       type: string
@@ -25014,13 +25718,10 @@ spec:
                         properties:
                           name:
                             type: string
-                          source:
-                            properties:
-                              resourceClaimName:
-                                type: string
-                              resourceClaimTemplateName:
-                                type: string
-                            type: object
+                          resourceClaimName:
+                            type: string
+                          resourceClaimTemplateName:
+                            type: string
                         required:
                           - name
                         type: object
@@ -25028,6 +25729,39 @@ spec:
                       x-kubernetes-list-map-keys:
                         - name
                       x-kubernetes-list-type: map
+                    resources:
+                      properties:
+                        claims:
+                          items:
+                            properties:
+                              name:
+                                type: string
+                              request:
+                                type: string
+                            required:
+                              - name
+                            type: object
+                          type: array
+                          x-kubernetes-list-map-keys:
+                            - name
+                          x-kubernetes-list-type: map
+                        limits:
+                          additionalProperties:
+                            anyOf:
+                              - type: integer
+                              - type: string
+                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                            x-kubernetes-int-or-string: true
+                          type: object
+                        requests:
+                          additionalProperties:
+                            anyOf:
+                              - type: integer
+                              - type: string
+                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                            x-kubernetes-int-or-string: true
+                          type: object
+                      type: object
                     restartPolicy:
                       type: string
                     runtimeClassName:
@@ -25039,7 +25773,14 @@ spec:
                         - concurrency
                         - rps
                       type: string
+                    scaleMetricType:
+                      enum:
+                        - Utilization
+                        - Value
+                        - AverageValue
+                      type: string
                     scaleTarget:
+                      format: int32
                       type: integer
                     schedulerName:
                       type: string
@@ -25079,6 +25820,8 @@ spec:
                         runAsUser:
                           format: int64
                           type: integer
+                        seLinuxChangePolicy:
+                          type: string
                         seLinuxOptions:
                           properties:
                             level:
@@ -25105,6 +25848,8 @@ spec:
                             type: integer
                           type: array
                           x-kubernetes-list-type: atomic
+                        supplementalGroupsPolicy:
+                          type: string
                         sysctls:
                           items:
                             properties:
@@ -25246,10 +25991,12 @@ spec:
                               diskURI:
                                 type: string
                               fsType:
+                                default: ext4
                                 type: string
                               kind:
                                 type: string
                               readOnly:
+                                default: false
                                 type: boolean
                             required:
                               - diskName
@@ -25609,6 +26356,13 @@ spec:
                             required:
                               - path
                             type: object
+                          image:
+                            properties:
+                              pullPolicy:
+                                type: string
+                              reference:
+                                type: string
+                            type: object
                           iscsi:
                             properties:
                               chapAuthDiscovery:
@@ -25622,6 +26376,7 @@ spec:
                               iqn:
                                 type: string
                               iscsiInterface:
+                                default: default
                                 type: string
                               lun:
                                 format: int32
@@ -25870,6 +26625,7 @@ spec:
                               image:
                                 type: string
                               keyring:
+                                default: /etc/ceph/keyring
                                 type: string
                               monitors:
                                 items:
@@ -25877,6 +26633,7 @@ spec:
                                 type: array
                                 x-kubernetes-list-type: atomic
                               pool:
+                                default: rbd
                                 type: string
                               readOnly:
                                 type: boolean
@@ -25888,6 +26645,7 @@ spec:
                                 type: object
                                 x-kubernetes-map-type: atomic
                               user:
+                                default: admin
                                 type: string
                             required:
                               - image
@@ -25896,6 +26654,7 @@ spec:
                           scaleIO:
                             properties:
                               fsType:
+                                default: xfs
                                 type: string
                               gateway:
                                 type: string
@@ -25913,6 +26672,7 @@ spec:
                               sslEnabled:
                                 type: boolean
                               storageMode:
+                                default: ThinProvisioned
                                 type: string
                               storagePool:
                                 type: string
@@ -26200,7 +26960,6 @@ spec:
                 nodeGroups:
                   items:
                     type: string
-                  maxItems: 1
                   minItems: 1
                   type: array
                 sourceModelUri:
@@ -26399,10 +27158,12 @@ spec:
                         diskURI:
                           type: string
                         fsType:
+                          default: ext4
                           type: string
                         kind:
                           type: string
                         readOnly:
+                          default: false
                           type: boolean
                       required:
                         - diskName
@@ -26651,6 +27412,7 @@ spec:
                         iqn:
                           type: string
                         iscsiInterface:
+                          default: default
                           type: string
                         lun:
                           format: int32
@@ -26802,6 +27564,7 @@ spec:
                         image:
                           type: string
                         keyring:
+                          default: /etc/ceph/keyring
                           type: string
                         monitors:
                           items:
@@ -26809,6 +27572,7 @@ spec:
                           type: array
                           x-kubernetes-list-type: atomic
                         pool:
+                          default: rbd
                           type: string
                         readOnly:
                           type: boolean
@@ -26821,6 +27585,7 @@ spec:
                           type: object
                           x-kubernetes-map-type: atomic
                         user:
+                          default: admin
                           type: string
                       required:
                         - image
@@ -26829,6 +27594,7 @@ spec:
                     scaleIO:
                       properties:
                         fsType:
+                          default: xfs
                           type: string
                         gateway:
                           type: string
@@ -26847,6 +27613,7 @@ spec:
                         sslEnabled:
                           type: boolean
                         storageMode:
+                          default: ThinProvisioned
                           type: string
                         storagePool:
                           type: string
@@ -28008,6 +28775,8 @@ spec:
                               properties:
                                 name:
                                   type: string
+                                request:
+                                  type: string
                               required:
                                 - name
                               type: object
@@ -28342,10 +29111,12 @@ spec:
                           diskURI:
                             type: string
                           fsType:
+                            default: ext4
                             type: string
                           kind:
                             type: string
                           readOnly:
+                            default: false
                             type: boolean
                         required:
                           - diskName
@@ -28705,6 +29476,13 @@ spec:
                         required:
                           - path
                         type: object
+                      image:
+                        properties:
+                          pullPolicy:
+                            type: string
+                          reference:
+                            type: string
+                        type: object
                       iscsi:
                         properties:
                           chapAuthDiscovery:
@@ -28718,6 +29496,7 @@ spec:
                           iqn:
                             type: string
                           iscsiInterface:
+                            default: default
                             type: string
                           lun:
                             format: int32
@@ -28966,6 +29745,7 @@ spec:
                           image:
                             type: string
                           keyring:
+                            default: /etc/ceph/keyring
                             type: string
                           monitors:
                             items:
@@ -28973,6 +29753,7 @@ spec:
                             type: array
                             x-kubernetes-list-type: atomic
                           pool:
+                            default: rbd
                             type: string
                           readOnly:
                             type: boolean
@@ -28984,6 +29765,7 @@ spec:
                             type: object
                             x-kubernetes-map-type: atomic
                           user:
+                            default: admin
                             type: string
                         required:
                           - image
@@ -28992,6 +29774,7 @@ spec:
                       scaleIO:
                         properties:
                           fsType:
+                            default: xfs
                             type: string
                           gateway:
                             type: string
@@ -29009,6 +29792,7 @@ spec:
                           sslEnabled:
                             type: boolean
                           storageMode:
+                            default: ThinProvisioned
                             type: string
                           storagePool:
                             type: string
@@ -29970,6 +30754,8 @@ spec:
                                   properties:
                                     name:
                                       type: string
+                                    request:
+                                      type: string
                                   required:
                                     - name
                                   type: object
@@ -30224,7 +31010,9 @@ spec:
                       additionalProperties:
                         type: string
                       type: object
-                    size:
+                    pipelineParallelSize:
+                      type: integer
+                    tensorParallelSize:
                       type: integer
                     tolerations:
                       items:
@@ -30268,10 +31056,12 @@ spec:
                               diskURI:
                                 type: string
                               fsType:
+                                default: ext4
                                 type: string
                               kind:
                                 type: string
                               readOnly:
+                                default: false
                                 type: boolean
                             required:
                               - diskName
@@ -30631,6 +31421,13 @@ spec:
                             required:
                               - path
                             type: object
+                          image:
+                            properties:
+                              pullPolicy:
+                                type: string
+                              reference:
+                                type: string
+                            type: object
                           iscsi:
                             properties:
                               chapAuthDiscovery:
@@ -30644,6 +31441,7 @@ spec:
                               iqn:
                                 type: string
                               iscsiInterface:
+                                default: default
                                 type: string
                               lun:
                                 format: int32
@@ -30892,6 +31690,7 @@ spec:
                               image:
                                 type: string
                               keyring:
+                                default: /etc/ceph/keyring
                                 type: string
                               monitors:
                                 items:
@@ -30899,6 +31698,7 @@ spec:
                                 type: array
                                 x-kubernetes-list-type: atomic
                               pool:
+                                default: rbd
                                 type: string
                               readOnly:
                                 type: boolean
@@ -30910,6 +31710,7 @@ spec:
                                 type: object
                                 x-kubernetes-map-type: atomic
                               user:
+                                default: admin
                                 type: string
                             required:
                               - image
@@ -30918,6 +31719,7 @@ spec:
                           scaleIO:
                             properties:
                               fsType:
+                                default: xfs
                                 type: string
                               gateway:
                                 type: string
@@ -30935,6 +31737,7 @@ spec:
                               sslEnabled:
                                 type: boolean
                               storageMode:
+                                default: ThinProvisioned
                                 type: string
                               storagePool:
                                 type: string
@@ -31459,6 +32262,39 @@ rules:
       - update
       - watch
   - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - httproutes
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - keda.sh
+    resources:
+      - scaledobjects
+      - scaledobjects/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - keda.sh
+    resources:
+      - scaledobjects/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
       - networking.istio.io
     resources:
       - virtualservices
@@ -31491,6 +32327,27 @@ rules:
       - patch
       - update
       - watch
+  - apiGroups:
+      - opentelemetry.io
+    resources:
+      - opentelemetrycollectors
+      - opentelemetrycollectors/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - opentelemetry.io
+    resources:
+      - opentelemetrycollectors/status
+    verbs:
+      - get
+      - patch
+      - update
   - apiGroups:
       - serving.knative.dev
     resources:
@@ -31602,8 +32459,10 @@ rules:
   - apiGroups:
       - serving.kserve.io
     resources:
+      - inferencegraphs
       - inferenceservices
       - servingruntimes
+      - trainedmodels
     verbs:
       - get
       - list
@@ -31646,8 +32505,10 @@ rules:
   - apiGroups:
       - serving.kserve.io
     resources:
+      - inferencegraphs
       - inferenceservices
       - servingruntimes
+      - trainedmodels
     verbs:
       - get
       - list
@@ -31750,10 +32611,10 @@ subjects:
 ---
 apiVersion: v1
 data:
-  _example: "################################\n#                              #\n#    EXAMPLE CONFIGURATION     #\n#                              #\n################################\n\n# This block is not actually functional configuration,\n# but serves to illustrate the available configuration\n# options and document them in a way that is accessible\n# to users that `kubectl edit` this config map.\n#\n# These sample configuration options may be copied out of\n# this example block and unindented to be in the data block\n# to actually change the configuration.\n\n# ====================================== EXPLAINERS CONFIGURATION ======================================\n# Example\nexplainers: |-\n  {\n      \"art\": {\n          \"image\" : \"kserve/art-explainer\",\n          \"defaultImageVersion\": \"latest\"\n      }\n  }\n# Art Explainer runtime configuration\n explainers: |-\n   {\n       # Art explainer runtime configuration\n       \"art\": {\n           # image contains the default Art explainer serving runtime image uri.\n           \"image\" : \"kserve/art-explainer\",\n   \n           # defautltImageVersion contains the Art explainer serving runtime default image version.\n           \"defaultImageVersion\": \"latest\"\n       }\n   }\n \n # ====================================== STORAGE INITIALIZER CONFIGURATION ======================================\n # Example\n storageInitializer: |-\n   {\n       \"image\" : \"kserve/storage-initializer:v0.14.1\",\n       \"memoryRequest\": \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n       \"cpuLimit\": \"1\",\n       \"caBundleConfigMapName\": \"\",\n       \"caBundleVolumeMountPath\": \"/etc/ssl/custom-certs\",\n       \"enableDirectPvcVolumeMount\": false,\n       \"enableModelcar\": false,\n       \"cpuModelcar\": \"10m\",\n       \"memoryModelcar\": \"15Mi\"\n   }\n storageInitializer: |-\n   {\n       # image contains the default storage initializer image uri.\n       \"image\" : \"kserve/storage-initializer:v0.14.1\",\n       \n       # memoryRequest is the requests.memory to set for the storage initializer init container.\n       \"memoryRequest\": \"100Mi\",\n   \n        # memoryLimit is the limits.memory to set for the storage initializer init container.\n       \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is the requests.cpu to set for the storage initializer init container.\n       \"cpuRequest\": \"100m\",\n       \n       # cpuLimit is the limits.cpu to set for the storage initializer init container.\n       \"cpuLimit\": \"1\",\n   \n       # caBundleConfigMapName is the ConfigMap will be copied to a user namespace for the storage initializer init container.\n       \"caBundleConfigMapName\": \"\",\n\n       # caBundleVolumeMountPath is the mount point for the configmap set by caBundleConfigMapName for the storage initializer init container.\n       \"caBundleVolumeMountPath\": \"/etc/ssl/custom-certs\",\n\n       # enableDirectPvcVolumeMount controls whether users can mount pvc volumes directly.\n       # if pvc volume is provided in storageuri then the pvc volume is directly mounted to /mnt/models in the user container.\n       # rather than symlink it to a shared volume. For more info see https://github.com/kserve/kserve/issues/2737\n       \"enableDirectPvcVolumeMount\": true,\n\n       # enableModelcar enabled allows you to directly access an OCI container image by\n       # using a source URL with an \"oci://\" schema.\n       \"enableModelcar\": false,\n\n       # cpuModelcar is the cpu request and limit that is used for the passive modelcar container. It can be\n       # set very low, but should be allowed by any Kubernetes LimitRange that might apply.\n       \"cpuModelcar\": \"10m\",\n\n       # cpuModelcar is the memory request and limit that is used for the passive modelcar container. It can be\n       # set very low, but should be allowed by any Kubernetes LimitRange that might apply.\n       \"memoryModelcar\": \"15Mi\",\n\n       # uidModelcar is the UID under with which the modelcar process and the main container is running.\n       # Some Kubernetes clusters might require this to be root (0). If not set the user id is left untouched (default)\n       \"uidModelcar\": 10\n   }\n \n # ====================================== CREDENTIALS ======================================\n # Example\n credentials: |-\n   {\n      \"storageSpecSecretName\": \"storage-config\",\n      \"storageSecretNameAnnotation\": \"serving.kserve.io/storageSecretName\",\n      \"gcs\": {\n          \"gcsCredentialFileName\": \"gcloud-application-credentials.json\"\n      },\n      \"s3\": {\n          \"s3AccessKeyIDName\": \"AWS_ACCESS_KEY_ID\",\n          \"s3SecretAccessKeyName\": \"AWS_SECRET_ACCESS_KEY\",\n          \"s3Endpoint\": \"\",\n          \"s3UseHttps\": \"\",\n          \"s3Region\": \"\",\n          \"s3VerifySSL\": \"\",\n          \"s3UseVirtualBucket\": \"\",\n          \"s3UseAccelerate\": \"\",\n          \"s3UseAnonymousCredential\": \"\",\n          \"s3CABundle\": \"\"\n      }\n   }\n # This is a global configuration used for downloading models from the cloud storage.\n # You can override this configuration by specifying the annotations on service account or static secret.\n # https://kserve.github.io/website/master/modelserving/storage/s3/s3/\n # For a quick reference about AWS ENV variables:\n # AWS Cli: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html\n # Boto: https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#using-environment-variables\n #\n # The `s3AccessKeyIDName` and `s3SecretAccessKeyName` fields are only used from this configmap when static credentials (IAM User Access Key Secret)\n # are used as the authentication method for AWS S3.\n # The rest of the fields are used in both authentication methods (IAM Role for Service Account & IAM User Access Key Secret) if a non-empty value is provided.\n credentials: |-\n   {\n      # storageSpecSecretName contains the secret name which has the credentials for downloading the model.\n      # This option is used when specifying the storage spec on isvc yaml.\n      \"storageSpecSecretName\": \"storage-config\",\n\n      # The annotation can be specified on isvc yaml to allow overriding with the secret name reference from the annotation value.\n      # When using storageUri the order of the precedence is: secret name reference annotation > secret name references from service account\n      # When using storageSpec the order of the precedence is: secret name reference annotation > storageSpecSecretName in configmap\n\n      # Configuration for google cloud storage\n      \"gcs\": {\n          # gcsCredentialFileName specifies the filename of the gcs credential\n          \"gcsCredentialFileName\": \"gcloud-application-credentials.json\"\n      },\n      \n      # Configuration for aws s3 storage. This add the corresponding environmental variables to the storage initializer init container.\n      # For more info on s3 storage see https://kserve.github.io/website/master/modelserving/storage/s3/s3/\n      \"s3\": {\n          # s3AccessKeyIDName specifies the s3 access key id name\n          \"s3AccessKeyIDName\": \"AWS_ACCESS_KEY_ID\",\n   \n          # s3SecretAccessKeyName specifies the s3 secret access key name\n          \"s3SecretAccessKeyName\": \"AWS_SECRET_ACCESS_KEY\",\n          \n          # s3Endpoint specifies the s3 endpoint\n          \"s3Endpoint\": \"\",\n          \n          # s3UseHttps controls whether to use secure https or unsecure http to download models.\n          # Allowed values are 0 and 1.\n          \"s3UseHttps\": \"\",\n   \n          # s3Region specifies the region of the bucket.\n          \"s3Region\": \"\",\n          \n          # s3VerifySSL controls whether to verify the tls/ssl certificate.\n          \"s3VerifySSL\": \"\",\n          \n          # s3UseVirtualBucket configures whether it is a virtual bucket or not.\n          \"s3UseVirtualBucket\": \"\",\n\n          # s3UseAccelerate configures whether to use transfer acceleration.\n          \"s3UseAccelerate\": \"\",\n           \n          # s3UseAnonymousCredential configures whether to use anonymous credentials to download the model or not.\n          \"s3UseAnonymousCredential\": \"\",\n          \n          # s3CABundle specifies the path to a certificate bundle to use for HTTPS certificate validation.\n          \"s3CABundle\": \"\"\n      }\n   }\n \n # ====================================== INGRESS CONFIGURATION ======================================\n # Example\n ingress: |-\n   {\n       \"ingressGateway\" : \"knative-serving/knative-ingress-gateway\",\n       \"localGateway\" : \"knative-serving/knative-local-gateway\",\n       \"localGatewayService\" : \"knative-local-gateway.istio-system.svc.cluster.local\",\n       \"ingressDomain\"  : \"example.com\",\n       \"additionalIngressDomains\": [\"additional-example.com\", \"additional-example-1.com\"],\n       \"ingressClassName\" : \"istio\",\n       \"domainTemplate\": \"{{ .Name }}-{{ .Namespace }}.{{ .IngressDomain }}\",\n       \"urlScheme\": \"http\",\n       \"disableIstioVirtualHost\": false,\n       \"disableIngressCreation\": false\n   }\n ingress: |-\n   {\n       # ingressGateway specifies the ingress gateway to serve external traffic.\n       # The gateway should be specified in format <gateway namespace>/<gateway name>\n       # NOTE: This configuration only applicable for serverless deployment with Istio configured as network layer.\n       \"ingressGateway\" : \"knative-serving/knative-ingress-gateway\",\n \n       # knativeLocalGatewayService specifies the hostname of the Knative's local gateway service.\n       # The default KServe configurations are re-using the Istio local gateways for Knative. In this case, this\n       # knativeLocalGatewayService field can be left unset. When unset, the value of \"localGatewayService\" will be used.\n       # However, sometimes it may be better to have local gateways specifically for KServe (e.g. when enabling strict mTLS in Istio).\n       # Under such setups where KServe is needed to have its own local gateways, the values of the \"localGateway\" and\n       # \"localGatewayService\" should point to the KServe local gateways. Then, this knativeLocalGatewayService field\n       # should point to the Knative's local gateway service.\n       # NOTE: This configuration only applicable for serverless deployment with Istio configured as network layer.\n       \"knativeLocalGatewayService\": \"\",\n \n       # localGateway specifies the gateway which handles the network traffic within the cluster.\n       # NOTE: This configuration only applicable for serverless deployment with Istio configured as network layer.\n       \"localGateway\" : \"knative-serving/knative-local-gateway\",\n \n       # localGatewayService specifies the hostname of the local gateway service.\n       # NOTE: This configuration only applicable for serverless deployment with Istio configured as network layer.\n       \"localGatewayService\" : \"knative-local-gateway.istio-system.svc.cluster.local\",\n \n       # ingressDomain specifies the domain name which is used for creating the url.\n       # If ingressDomain is empty then example.com is used as default domain.\n       # NOTE: This configuration only applicable for raw deployment.\n       \"ingressDomain\"  : \"example.com\",\n\n       # additionalIngressDomains specifies the additional domain names which are used for creating the url.\n       \"additionalIngressDomains\": [\"additional-example.com\", \"additional-example-1.com\"]\n\n       # ingressClassName specifies the ingress controller to use for ingress traffic.\n       # This is optional and if omitted the default ingress in the cluster is used.\n       # https://kubernetes.io/docs/concepts/services-networking/ingress/#default-ingress-class\n       # NOTE: This configuration only applicable for raw deployment.\n       \"ingressClassName\" : \"istio\",\n \n       # domainTemplate specifies the template for generating domain/url for each inference service by combining variable from:\n       # Name of the inference service  ( {{ .Name}} )\n       # Namespace of the inference service ( {{ .Namespace }} )\n       # Annotation of the inference service ( {{ .Annotations.key }} )\n       # Label of the inference service ( {{ .Labels.key }} )\n       # IngressDomain ( {{ .IngressDomain }} )\n       # If domain template is empty the default template {{ .Name }}-{{ .Namespace }}.{{ .IngressDomain }} is used.\n       # NOTE: This configuration only applicable for raw deployment.\n       \"domainTemplate\": \"{{ .Name }}-{{ .Namespace }}.{{ .IngressDomain }}\",\n \n       # urlScheme specifies the url scheme to use for inference service and inference graph.\n       # If urlScheme is empty then by default http is used.\n       \"urlScheme\": \"http\",\n \n       # disableIstioVirtualHost controls whether to use istio as network layer.\n       # By default istio is used as the network layer. When DisableIstioVirtualHost is true, KServe does not\n       # create the top level virtual service thus Istio is no longer required for serverless mode.\n       # By setting this field to true, user can use other networking layers supported by knative.\n       # For more info https://github.com/kserve/kserve/pull/2380, https://kserve.github.io/website/master/admin/serverless/kourier_networking/.\n       # NOTE: This configuration is only applicable to serverless deployment.\n       \"disableIstioVirtualHost\": false,\n\n       # disableIngressCreation controls whether to disable ingress creation for raw deployment mode.\n       \"disableIngressCreation\": false,\n \n       # pathTemplate specifies the template for generating path based url for each inference service.\n       # The following variables can be used in the template for generating url.\n       # Name of the inference service  ( {{ .Name}} )\n       # Namespace of the inference service ( {{ .Namespace }} )\n       # For more info https://github.com/kserve/kserve/issues/2257.\n       # NOTE: This configuration only applicable to serverless deployment.\n       \"pathTemplate\": \"/serving/{{ .Namespace }}/{{ .Name }}\"\n   }\n \n # ====================================== LOGGER CONFIGURATION ======================================\n # Example\n logger: |-\n   {\n       \"image\" : \"kserve/agent:v0.14.1\",\n       \"memoryRequest\": \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n       \"cpuLimit\": \"1\",\n       \"defaultUrl\": \"http://default-broker\"\n   }\n logger: |-\n   {\n       # image contains the default logger image uri.\n       \"image\" : \"kserve/agent:v0.14.1\",\n   \n       # memoryRequest is the requests.memory to set for the logger container.\n       \"memoryRequest\": \"100Mi\",\n       \n       # memoryLimit is the limits.memory to set for the logger container.\n       \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is the requests.cpu to set for the logger container.\n       \"cpuRequest\": \"100m\",\n       \n       # cpuLimit is the limits.cpu to set for the logger container.\n       \"cpuLimit\": \"1\",\n       \n       # defaultUrl specifies the default logger url. If logger is not specified in the resource this url is used.\n       \"defaultUrl\": \"http://default-broker\"\n   }\n \n # ====================================== BATCHER CONFIGURATION ======================================\n # Example\n batcher: |-\n   {\n       \"image\" : \"kserve/agent:v0.14.1\",\n       \"memoryRequest\": \"1Gi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"1\",\n       \"cpuLimit\": \"1\",\n       \"maxBatchSize\": \"32\",\n       \"maxLatency\": \"5000\"\n   }\n batcher: |-\n   {\n       # image contains the default batcher image uri.\n       \"image\" : \"kserve/agent:v0.14.1\",\n       \n       # memoryRequest is the requests.memory to set for the batcher container.\n       \"memoryRequest\": \"1Gi\",\n   \n       # memoryLimit is the limits.memory to set for the batcher container.\n       \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is the requests.cpu to set for the batcher container.\n       \"cpuRequest\": \"1\",\n       \n       # cpuLimit is the limits.cpu to set for the batcher container.\n       \"cpuLimit\": \"1\"\n\n       # maxBatchSize is the default maximum batch size for batcher.\n       \"maxBatchSize\": \"32\",\n\n       # maxLatency is the default maximum latency in milliseconds for batcher to wait and collect the batch.\n       \"maxLatency\": \"5000\"\n   }\n \n # ====================================== AGENT CONFIGURATION ======================================\n # Example\n agent: |-\n   {\n       \"image\" : \"kserve/agent:v0.14.1\",\n       \"memoryRequest\": \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n       \"cpuLimit\": \"1\"\n   }\n agent: |-\n   {\n       # image contains the default agent image uri.\n       \"image\" : \"kserve/agent:v0.14.1\",\n   \n       # memoryRequest is the requests.memory to set for the agent container.\n       \"memoryRequest\": \"100Mi\",\n   \n       # memoryLimit is the limits.memory to set for the agent container.\n       \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is the requests.cpu to set for the agent container.\n       \"cpuRequest\": \"100m\",\n       \n       # cpuLimit is the limits.cpu to set for the agent container.\n       \"cpuLimit\": \"1\"\n   }\n \n # ====================================== ROUTER CONFIGURATION ======================================\n # Example\n router: |-\n   {\n       \"image\" : \"kserve/router:v0.14.1\",\n       \"memoryRequest\": \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n       \"cpuLimit\": \"1\",\n       \"headers\": {\n         \"propagate\": []\n       }\n   }\n # router is the implementation of inference graph.\n router: |-\n   {\n       # image contains the default router image uri.\n       \"image\" : \"kserve/router:v0.14.1\",\n       \n       # memoryRequest is the requests.memory to set for the router container.\n       \"memoryRequest\": \"100Mi\",\n       \n       # memoryLimit is the limits.memory to set for the router container.\n       \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is the requests.cpu to set for the router container.\n       \"cpuRequest\": \"100m\",\n       \n       # cpuLimit is the limits.cpu to set for the router container.\n       \"cpuLimit\": \"1\",\n       \n       # Propagate the specified headers to all the steps specified in an InferenceGraph. \n       # You can either specify the exact header names or use [Golang supported regex patterns]\n       # (https://pkg.go.dev/regexp/syntax@go1.21.3#hdr-Syntax) to propagate multiple headers.\n       \"headers\": {\n         \"propagate\": [\n            \"Authorization\",\n            \"Test-Header-*\",\n            \"*Trace-Id*\"\n         ]\n       }\n   }\n \n # ====================================== DEPLOYMENT CONFIGURATION ======================================\n # Example\n deploy: |-\n   {\n     \"defaultDeploymentMode\": \"Serverless\"\n   }\n deploy: |-\n   {\n     # defaultDeploymentMode specifies the default deployment mode of the kserve. The supported values are\n     # Serverless, RawDeployment and ModelMesh. Users can override the deployment mode at service level\n     # by adding the annotation serving.kserve.io/deploymentMode.For more info on deployment mode visit\n     # Serverless https://kserve.github.io/website/master/admin/serverless/serverless/\n     # RawDeployment https://kserve.github.io/website/master/admin/kubernetes_deployment/\n     # ModelMesh https://kserve.github.io/website/master/admin/modelmesh/\n     \"defaultDeploymentMode\": \"Serverless\"\n   }\n \n # ====================================== METRICS CONFIGURATION ======================================\n # Example\n metricsAggregator: |-\n   {\n     \"enableMetricAggregation\": \"false\",\n     \"enablePrometheusScraping\" : \"false\"\n   }\n # For more info see https://github.com/kserve/kserve/blob/master/qpext/README.md\n metricsAggregator: |-\n   {\n     # enableMetricAggregation configures metric aggregation annotation. This adds the annotation serving.kserve.io/enable-metric-aggregation to every\n     # service with the specified boolean value. If true enables metric aggregation in queue-proxy by setting env vars in the queue proxy container\n     # to configure scraping ports.\n     \"enableMetricAggregation\": \"false\",\n     \n     # enablePrometheusScraping configures metric aggregation annotation. This adds the annotation serving.kserve.io/enable-metric-aggregation to every\n     # service with the specified boolean value. If true, prometheus annotations are added to the pod. If serving.kserve.io/enable-metric-aggregation is false,\n     # the prometheus port is set with the default prometheus scraping port 9090, otherwise the prometheus port annotation is set with the metric aggregation port.\n     \"enablePrometheusScraping\" : \"false\"\n   }\n  \n # ====================================== LOCALMODEL CONFIGURATION ======================================\n # Example\n localModel: |-\n   {\n     \"enabled\": false,\n     # jobNamespace specifies the namespace where the download job will be created.\n     \"jobNamespace\": \"kserve-localmodel-jobs\",\n     # defaultJobImage specifies the default image used for the download job.\n     \"defaultJobImage\" : \"kserve/storage-initializer:v0.14.1\",\n     # Kubernetes modifies the filesystem group ID on the attached volume.\n     \"fsGroup\": 1000,\n     # TTL for the download job after it is finished.\n     \"jobTTLSecondsAfterFinished\": 3600,\n     # The frequency at which the local model agent reconciles the local models\n     # This is to detect if models are missing from local disk\n     \"reconcilationFrequencyInSecs\": 60\n   }"
+  _example: "################################\n#                              #\n#    EXAMPLE CONFIGURATION     #\n#                              #\n################################\n\n# This block is not actually functional configuration,\n# but serves to illustrate the available configuration\n# options and document them in a way that is accessible\n# to users that `kubectl edit` this config map.\n#\n# These sample configuration options may be copied out of\n# this example block and unindented to be in the data block\n# to actually change the configuration.\n\n# ====================================== EXPLAINERS CONFIGURATION ======================================\n# Example\nexplainers: |-\n  {\n      \"art\": {\n          \"image\" : \"kserve/art-explainer\",\n          \"defaultImageVersion\": \"latest\"\n      }\n  }\n# Art Explainer runtime configuration\n explainers: |-\n   {\n       # Art explainer runtime configuration\n       \"art\": {\n           # image contains the default Art explainer serving runtime image uri.\n           \"image\" : \"kserve/art-explainer\",\n   \n           # defautltImageVersion contains the Art explainer serving runtime default image version.\n           \"defaultImageVersion\": \"latest\"\n       }\n   }\n# ====================================== ISVC CONFIGURATION ======================================\n# Example   \n inferenceService: |-\n  {\n    \"serviceAnnotationDisallowedList\": [\n      \"my.custom.annotation/1\"  \n    ],\n    \"serviceLabelDisallowedList\": [\n      \"my.custom.label.1\"  \n    ]\n   }\n# Example of isvc configuration\ninferenceService: |-\n  {\n    # ServiceAnnotationDisallowedList is a list of annotations that are not allowed to be propagated to Knative \n    # revisions, which prevents the reconciliation loop to be triggered if the annotations is \n    # configured here are used.\n    # Default values are:\n    #  \"autoscaling.knative.dev/min-scale\",\n    #  \"autoscaling.knative.dev/max-scale\",\n    #  \"internal.serving.kserve.io/storage-initializer-sourceuri\",\n    #  \"kubectl.kubernetes.io/last-applied-configuration\"\n    # Any new value will be appended to the list.\n    \"serviceAnnotationDisallowedList\": [\n      \"my.custom.annotation/1\"  \n    ],\n    # ServiceLabelDisallowedList is a list of labels that are not allowed to be propagated to Knative revisions\n    # which prevents the reconciliation loop to be triggered if the labels is configured here are used.\n    \"serviceLabelDisallowedList\": [\n      \"my.custom.label.1\"  \n    ]\n  }  \n# ====================================== MultiNode CONFIGURATION ======================================\n# Example   \nmultiNode: |-\n  {\n    \"customGPUResourceTypeList\": [\n      \"custom.com/gpu\"\n    ]\n  }\n# Example of multinode configuration\nmultiNode: |-\n  {      \n    # CustomGPUResourceTypeList is a list of custom GPU resource types intended to identify the GPU type of a resource,\n    # not to restrict the user from using a specific GPU type.\n    # The MultiNode runtime pod will dynamically add GPU resources based on the registered GPU types.\n    \"customGPUResourceTypeList\": [\n      \"custom.com/gpu\"\n    ]\n  }  \n # ====================================== OTelCollector CONFIGURATION ======================================\n # Example\n opentelemetryCollector: |-\n   {\n     # scrapeInterval is the interval at which the OpenTelemetry Collector will scrape the metrics.\n     \"scrapeInterval\": \"5s\",\n     # metricScalerEndpoint is the endpoint from which the KEDA's ScaledObject will scrape the metrics.\n     \"metricScalerEndpoint\": \"keda-otel-scaler.keda.svc:4318\",\n     # metricReceiverEndpoint is the endpoint from which the OpenTelemetry Collector will scrape the metrics.\n      \"metricReceiverEndpoint\": \"keda-otel-scaler.keda.svc:4317\"\n   }\n  \n # ====================================== STORAGE INITIALIZER CONFIGURATION ======================================\n # Example\n storageInitializer: |-\n   {\n       \"image\" : \"kserve/storage-initializer:v0.15.0\",\n       \"memoryRequest\": \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n       \"cpuLimit\": \"1\",\n       \"caBundleConfigMapName\": \"\",\n       \"caBundleVolumeMountPath\": \"/etc/ssl/custom-certs\",\n       \"enableDirectPvcVolumeMount\": false,\n       \"enableModelcar\": false,\n       \"cpuModelcar\": \"10m\",\n       \"memoryModelcar\": \"15Mi\"\n   }\n storageInitializer: |-\n   {\n       # image contains the default storage initializer image uri.\n       \"image\" : \"kserve/storage-initializer:v0.15.0\",\n       \n       # memoryRequest is the requests.memory to set for the storage initializer init container.\n       \"memoryRequest\": \"100Mi\",\n   \n        # memoryLimit is the limits.memory to set for the storage initializer init container.\n       \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is the requests.cpu to set for the storage initializer init container.\n       \"cpuRequest\": \"100m\",\n       \n       # cpuLimit is the limits.cpu to set for the storage initializer init container.\n       \"cpuLimit\": \"1\",\n   \n       # caBundleConfigMapName is the ConfigMap will be copied to a user namespace for the storage initializer init container.\n       \"caBundleConfigMapName\": \"\",\n\n       # caBundleVolumeMountPath is the mount point for the configmap set by caBundleConfigMapName for the storage initializer init container.\n       \"caBundleVolumeMountPath\": \"/etc/ssl/custom-certs\",\n\n       # enableDirectPvcVolumeMount controls whether users can mount pvc volumes directly.\n       # if pvc volume is provided in storageuri then the pvc volume is directly mounted to /mnt/models in the user container.\n       # rather than symlink it to a shared volume. For more info see https://github.com/kserve/kserve/issues/2737\n       \"enableDirectPvcVolumeMount\": true,\n\n       # enableModelcar enabled allows you to directly access an OCI container image by\n       # using a source URL with an \"oci://\" schema.\n       \"enableModelcar\": false,\n\n       # cpuModelcar is the cpu request and limit that is used for the passive modelcar container. It can be\n       # set very low, but should be allowed by any Kubernetes LimitRange that might apply.\n       \"cpuModelcar\": \"10m\",\n\n       # cpuModelcar is the memory request and limit that is used for the passive modelcar container. It can be\n       # set very low, but should be allowed by any Kubernetes LimitRange that might apply.\n       \"memoryModelcar\": \"15Mi\",\n\n       # uidModelcar is the UID under with which the modelcar process and the main container is running.\n       # Some Kubernetes clusters might require this to be root (0). If not set the user id is left untouched (default)\n       \"uidModelcar\": 10\n   }\n \n # ====================================== CREDENTIALS ======================================\n # Example\n credentials: |-\n   {\n      \"storageSpecSecretName\": \"storage-config\",\n      \"storageSecretNameAnnotation\": \"serving.kserve.io/storageSecretName\",\n      \"gcs\": {\n          \"gcsCredentialFileName\": \"gcloud-application-credentials.json\"\n      },\n      \"s3\": {\n          \"s3AccessKeyIDName\": \"AWS_ACCESS_KEY_ID\",\n          \"s3SecretAccessKeyName\": \"AWS_SECRET_ACCESS_KEY\",\n          \"s3Endpoint\": \"\",\n          \"s3UseHttps\": \"\",\n          \"s3Region\": \"\",\n          \"s3VerifySSL\": \"\",\n          \"s3UseVirtualBucket\": \"\",\n          \"s3UseAccelerate\": \"\",\n          \"s3UseAnonymousCredential\": \"\",\n          \"s3CABundle\": \"\"\n      }\n   }\n # This is a global configuration used for downloading models from the cloud storage.\n # You can override this configuration by specifying the annotations on service account or static secret.\n # https://kserve.github.io/website/master/modelserving/storage/s3/s3/\n # For a quick reference about AWS ENV variables:\n # AWS Cli: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html\n # Boto: https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#using-environment-variables\n #\n # The `s3AccessKeyIDName` and `s3SecretAccessKeyName` fields are only used from this configmap when static credentials (IAM User Access Key Secret)\n # are used as the authentication method for AWS S3.\n # The rest of the fields are used in both authentication methods (IAM Role for Service Account & IAM User Access Key Secret) if a non-empty value is provided.\n credentials: |-\n   {\n      # storageSpecSecretName contains the secret name which has the credentials for downloading the model.\n      # This option is used when specifying the storage spec on isvc yaml.\n      \"storageSpecSecretName\": \"storage-config\",\n\n      # The annotation can be specified on isvc yaml to allow overriding with the secret name reference from the annotation value.\n      # When using storageUri the order of the precedence is: secret name reference annotation > secret name references from service account\n      # When using storageSpec the order of the precedence is: secret name reference annotation > storageSpecSecretName in configmap\n\n      # Configuration for google cloud storage\n      \"gcs\": {\n          # gcsCredentialFileName specifies the filename of the gcs credential\n          \"gcsCredentialFileName\": \"gcloud-application-credentials.json\"\n      },\n      \n      # Configuration for aws s3 storage. This add the corresponding environmental variables to the storage initializer init container.\n      # For more info on s3 storage see https://kserve.github.io/website/master/modelserving/storage/s3/s3/\n      \"s3\": {\n          # s3AccessKeyIDName specifies the s3 access key id name\n          \"s3AccessKeyIDName\": \"AWS_ACCESS_KEY_ID\",\n   \n          # s3SecretAccessKeyName specifies the s3 secret access key name\n          \"s3SecretAccessKeyName\": \"AWS_SECRET_ACCESS_KEY\",\n          \n          # s3Endpoint specifies the s3 endpoint\n          \"s3Endpoint\": \"\",\n          \n          # s3UseHttps controls whether to use secure https or unsecure http to download models.\n          # Allowed values are 0 and 1.\n          \"s3UseHttps\": \"\",\n   \n          # s3Region specifies the region of the bucket.\n          \"s3Region\": \"\",\n          \n          # s3VerifySSL controls whether to verify the tls/ssl certificate.\n          \"s3VerifySSL\": \"\",\n          \n          # s3UseVirtualBucket configures whether it is a virtual bucket or not.\n          \"s3UseVirtualBucket\": \"\",\n\n          # s3UseAccelerate configures whether to use transfer acceleration.\n          \"s3UseAccelerate\": \"\",\n           \n          # s3UseAnonymousCredential configures whether to use anonymous credentials to download the model or not.\n          \"s3UseAnonymousCredential\": \"\",\n          \n          # s3CABundle specifies the path to a certificate bundle to use for HTTPS certificate validation.\n          \"s3CABundle\": \"\"\n      }\n   }\n \n # ====================================== INGRESS CONFIGURATION ======================================\n # Example\n ingress: |-\n   {    \n       \"enableGatewayApi\": false,\n       \"kserveIngressGateway\": \"kserve/kserve-ingress-gateway\",\n       \"ingressGateway\" : \"knative-serving/knative-ingress-gateway\",\n       \"localGateway\" : \"knative-serving/knative-local-gateway\",\n       \"localGatewayService\" : \"knative-local-gateway.istio-system.svc.cluster.local\",\n       \"ingressDomain\"  : \"example.com\",\n       \"additionalIngressDomains\": [\"additional-example.com\", \"additional-example-1.com\"],\n       \"ingressClassName\" : \"istio\",\n       \"domainTemplate\": \"{{ .Name }}-{{ .Namespace }}.{{ .IngressDomain }}\",\n       \"urlScheme\": \"http\",\n       \"disableIstioVirtualHost\": false,\n       \"disableIngressCreation\": false\n   }\n ingress: |-\n   {   \n       # enableGatewayApi specifies whether to use Gateway API instead of Ingress to serve external traffic.\n       \"enableGatewayApi\": false,\n\n       # KServe implements [Gateway API](https://gateway-api.sigs.k8s.io/) to serve external traffic. \n       # By default, KServe configures a default gateway to serve external traffic.\n       # But, KServe can be configured to use a custom gateway by modifying this configuration.\n       # The gateway should be specified in format <gateway namespace>/<gateway name>\n       # NOTE: This configuration only applicable for raw deployment.\n       \"kserveIngressGateway\": \"kserve/kserve-ingress-gateway\",\n \n       # ingressGateway specifies the ingress gateway to serve external traffic.\n       # The gateway should be specified in format <gateway namespace>/<gateway name>\n       # NOTE: This configuration only applicable for serverless deployment with Istio configured as network layer.\n       \"ingressGateway\" : \"knative-serving/knative-ingress-gateway\",\n \n       # knativeLocalGatewayService specifies the hostname of the Knative's local gateway service.\n       # The default KServe configurations are re-using the Istio local gateways for Knative. In this case, this\n       # knativeLocalGatewayService field can be left unset. When unset, the value of \"localGatewayService\" will be used.\n       # However, sometimes it may be better to have local gateways specifically for KServe (e.g. when enabling strict mTLS in Istio).\n       # Under such setups where KServe is needed to have its own local gateways, the values of the \"localGateway\" and\n       # \"localGatewayService\" should point to the KServe local gateways. Then, this knativeLocalGatewayService field\n       # should point to the Knative's local gateway service.\n       # NOTE: This configuration only applicable for serverless deployment with Istio configured as network layer.\n       \"knativeLocalGatewayService\": \"\",\n \n       # localGateway specifies the gateway which handles the network traffic within the cluster.\n       # NOTE: This configuration only applicable for serverless deployment with Istio configured as network layer.\n       \"localGateway\" : \"knative-serving/knative-local-gateway\",\n \n       # localGatewayService specifies the hostname of the local gateway service.\n       # NOTE: This configuration only applicable for serverless deployment with Istio configured as network layer.\n       \"localGatewayService\" : \"knative-local-gateway.istio-system.svc.cluster.local\",\n \n       # ingressDomain specifies the domain name which is used for creating the url.\n       # If ingressDomain is empty then example.com is used as default domain.\n       # NOTE: This configuration only applicable for raw deployment.\n       \"ingressDomain\"  : \"example.com\",\n\n       # additionalIngressDomains specifies the additional domain names which are used for creating the url.\n       \"additionalIngressDomains\": [\"additional-example.com\", \"additional-example-1.com\"]\n\n       # ingressClassName specifies the ingress controller to use for ingress traffic.\n       # This is optional and if omitted the default ingress in the cluster is used.\n       # https://kubernetes.io/docs/concepts/services-networking/ingress/#default-ingress-class\n       # NOTE: This configuration only applicable for raw deployment.\n       \"ingressClassName\" : \"istio\",\n \n       # domainTemplate specifies the template for generating domain/url for each inference service by combining variable from:\n       # Name of the inference service  ( {{ .Name}} )\n       # Namespace of the inference service ( {{ .Namespace }} )\n       # Annotation of the inference service ( {{ .Annotations.key }} )\n       # Label of the inference service ( {{ .Labels.key }} )\n       # IngressDomain ( {{ .IngressDomain }} )\n       # If domain template is empty the default template {{ .Name }}-{{ .Namespace }}.{{ .IngressDomain }} is used.\n       # NOTE: This configuration only applicable for raw deployment.\n       \"domainTemplate\": \"{{ .Name }}-{{ .Namespace }}.{{ .IngressDomain }}\",\n \n       # urlScheme specifies the url scheme to use for inference service and inference graph.\n       # If urlScheme is empty then by default http is used.\n       \"urlScheme\": \"http\",\n \n       # disableIstioVirtualHost controls whether to use istio as network layer.\n       # By default istio is used as the network layer. When DisableIstioVirtualHost is true, KServe does not\n       # create the top level virtual service thus Istio is no longer required for serverless mode.\n       # By setting this field to true, user can use other networking layers supported by knative.\n       # For more info https://github.com/kserve/kserve/pull/2380, https://kserve.github.io/website/master/admin/serverless/kourier_networking/.\n       # NOTE: This configuration is only applicable to serverless deployment.\n       \"disableIstioVirtualHost\": false,\n\n       # disableIngressCreation controls whether to disable ingress creation for raw deployment mode.\n       \"disableIngressCreation\": false,\n \n       # pathTemplate specifies the template for generating path based url for each inference service.\n       # The following variables can be used in the template for generating url.\n       # Name of the inference service  ( {{ .Name}} )\n       # Namespace of the inference service ( {{ .Namespace }} )\n       # For more info https://github.com/kserve/kserve/issues/2257.\n       # NOTE: This configuration only applicable to serverless deployment.\n       \"pathTemplate\": \"/serving/{{ .Namespace }}/{{ .Name }}\"\n   }\n \n # ====================================== LOGGER CONFIGURATION ======================================\n # Example\n logger: |-\n   {\n       \"image\" : \"kserve/agent:v0.15.0\",\n       \"memoryRequest\": \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n       \"cpuLimit\": \"1\",\n       \"defaultUrl\": \"http://default-broker\"\n   }\n logger: |-\n   {\n       # image contains the default logger image uri.\n       \"image\" : \"kserve/agent:v0.15.0\",\n   \n       # memoryRequest is the requests.memory to set for the logger container.\n       \"memoryRequest\": \"100Mi\",\n       \n       # memoryLimit is the limits.memory to set for the logger container.\n       \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is the requests.cpu to set for the logger container.\n       \"cpuRequest\": \"100m\",\n       \n       # cpuLimit is the limits.cpu to set for the logger container.\n       \"cpuLimit\": \"1\",\n       \n       # defaultUrl specifies the default logger url. If logger is not specified in the resource this url is used.\n       \"defaultUrl\": \"http://default-broker\"\n   }\n \n # ====================================== BATCHER CONFIGURATION ======================================\n # Example\n batcher: |-\n   {\n       \"image\" : \"kserve/agent:v0.15.0\",\n       \"memoryRequest\": \"1Gi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"1\",\n       \"cpuLimit\": \"1\",\n       \"maxBatchSize\": \"32\",\n       \"maxLatency\": \"5000\"\n   }\n batcher: |-\n   {\n       # image contains the default batcher image uri.\n       \"image\" : \"kserve/agent:v0.15.0\",\n       \n       # memoryRequest is the requests.memory to set for the batcher container.\n       \"memoryRequest\": \"1Gi\",\n   \n       # memoryLimit is the limits.memory to set for the batcher container.\n       \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is the requests.cpu to set for the batcher container.\n       \"cpuRequest\": \"1\",\n       \n       # cpuLimit is the limits.cpu to set for the batcher container.\n       \"cpuLimit\": \"1\"\n\n       # maxBatchSize is the default maximum batch size for batcher.\n       \"maxBatchSize\": \"32\",\n\n       # maxLatency is the default maximum latency in milliseconds for batcher to wait and collect the batch.\n       \"maxLatency\": \"5000\"\n   }\n \n # ====================================== AGENT CONFIGURATION ======================================\n # Example\n agent: |-\n   {\n       \"image\" : \"kserve/agent:v0.15.0\",\n       \"memoryRequest\": \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n       \"cpuLimit\": \"1\"\n   }\n agent: |-\n   {\n       # image contains the default agent image uri.\n       \"image\" : \"kserve/agent:v0.15.0\",\n   \n       # memoryRequest is the requests.memory to set for the agent container.\n       \"memoryRequest\": \"100Mi\",\n   \n       # memoryLimit is the limits.memory to set for the agent container.\n       \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is the requests.cpu to set for the agent container.\n       \"cpuRequest\": \"100m\",\n       \n       # cpuLimit is the limits.cpu to set for the agent container.\n       \"cpuLimit\": \"1\"\n   }\n \n # ====================================== ROUTER CONFIGURATION ======================================\n # Example\n router: |-\n   {\n       \"image\" : \"kserve/router:v0.15.0\",\n       \"memoryRequest\": \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n       \"cpuLimit\": \"1\",\n       \"headers\": {\n         \"propagate\": []\n       },\n       \"imagePullPolicy\": \"IfNotPresent\",\n       \"imagePullSecrets\": [\"docker-secret\"]\n   }\n # router is the implementation of inference graph.\n router: |-\n   {\n       # image contains the default router image uri.\n       \"image\" : \"kserve/router:v0.15.0\",\n       \n       # memoryRequest is the requests.memory to set for the router container.\n       \"memoryRequest\": \"100Mi\",\n       \n       # memoryLimit is the limits.memory to set for the router container.\n       \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is the requests.cpu to set for the router container.\n       \"cpuRequest\": \"100m\",\n       \n       # cpuLimit is the limits.cpu to set for the router container.\n       \"cpuLimit\": \"1\",\n       \n       # Propagate the specified headers to all the steps specified in an InferenceGraph. \n       # You can either specify the exact header names or use [Golang supported regex patterns]\n       # (https://pkg.go.dev/regexp/syntax@go1.21.3#hdr-Syntax) to propagate multiple headers.\n       \"headers\": {\n         \"propagate\": [\n            \"Authorization\",\n            \"Test-Header-*\",\n            \"*Trace-Id*\"\n         ]\n       }\n\n       # imagePullPolicy specifies when the router image should be pulled from registry.\n       \"imagePullPolicy\": \"IfNotPresent\",\n       \n       # # imagePullSecrets specifies the list of secrets to be used for pulling the router image from registry.\n       # https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/\n       \"imagePullSecrets\": [\"docker-secret\"]\n   }\n \n # ====================================== DEPLOYMENT CONFIGURATION ======================================\n # Example\n deploy: |-\n   {\n     \"defaultDeploymentMode\": \"Serverless\"\n   }\n deploy: |-\n   {\n     # defaultDeploymentMode specifies the default deployment mode of the kserve. The supported values are\n     # Serverless, RawDeployment and ModelMesh. Users can override the deployment mode at service level\n     # by adding the annotation serving.kserve.io/deploymentMode.For more info on deployment mode visit\n     # Serverless https://kserve.github.io/website/master/admin/serverless/serverless/\n     # RawDeployment https://kserve.github.io/website/master/admin/kubernetes_deployment/\n     # ModelMesh https://kserve.github.io/website/master/admin/modelmesh/\n     \"defaultDeploymentMode\": \"Serverless\"\n   }\n\n # ====================================== SERVICE CONFIGURATION ======================================\n # Example\n service: |-\n   {\n     \"serviceClusterIPNone\":  false\n   }\n service: |-\n   {\n      # ServiceClusterIPNone is a boolean flag to indicate if the service should have a clusterIP set to None.\n      # If the DeploymentMode is Raw, the default value for ServiceClusterIPNone if not set is false\n      # \"serviceClusterIPNone\":  false\n   }\n\n # ====================================== METRICS CONFIGURATION ======================================\n # Example\n metricsAggregator: |-\n   {\n     \"enableMetricAggregation\": \"false\",\n     \"enablePrometheusScraping\" : \"false\"\n   }\n # For more info see https://github.com/kserve/kserve/blob/master/qpext/README.md\n metricsAggregator: |-\n   {\n     # enableMetricAggregation configures metric aggregation annotation. This adds the annotation serving.kserve.io/enable-metric-aggregation to every\n     # service with the specified boolean value. If true enables metric aggregation in queue-proxy by setting env vars in the queue proxy container\n     # to configure scraping ports.\n     \"enableMetricAggregation\": \"false\",\n     \n     # enablePrometheusScraping configures metric aggregation annotation. This adds the annotation serving.kserve.io/enable-metric-aggregation to every\n     # service with the specified boolean value. If true, prometheus annotations are added to the pod. If serving.kserve.io/enable-metric-aggregation is false,\n     # the prometheus port is set with the default prometheus scraping port 9090, otherwise the prometheus port annotation is set with the metric aggregation port.\n     \"enablePrometheusScraping\" : \"false\"\n   }\n  \n # ====================================== LOCALMODEL CONFIGURATION ======================================\n # Example\n localModel: |-\n   {\n     \"enabled\": false,\n     # jobNamespace specifies the namespace where the download job will be created.\n     \"jobNamespace\": \"kserve-localmodel-jobs\",\n     # defaultJobImage specifies the default image used for the download job.\n     \"defaultJobImage\" : \"kserve/storage-initializer:v0.15.0\",\n     # Kubernetes modifies the filesystem group ID on the attached volume.\n     \"fsGroup\": 1000,\n     # TTL for the download job after it is finished.\n     \"jobTTLSecondsAfterFinished\": 3600,\n     # The frequency at which the local model agent reconciles the local models\n     # This is to detect if models are missing from local disk\n     \"reconcilationFrequencyInSecs\": 60,\n     # This is to disable localmodel pv and pvc management for namespaces without isvcs\n     \"disableVolumeManagement\": false\n   }\n  \n # ====================================== LOCALMODEL CONFIGURATION ======================================\n # Example\n inferenceservice: |-\n   {\n     \"resource\": {\n         \"cpuLimit\": \"1\",\n         \"memoryLimit\": \"2Gi\",\n         \"cpuRequest\": \"1\",\n         \"memoryRequest\": \"2Gi\"\n       }\n   }\n  inferenceservice: |-\n    {\n      # resource contains the default resource configuration for the inference service.\n      # you can override this configuration by specifying the resources in the inference service yaml.\n      # If you want to unbound the resource (limits and requests), you can set the value to null or \"\" \n      # or just remove the specific field from the config.\n      \"resource\": {\n          # cpuLimit is the limits.cpu to set for the inference service.\n          \"cpuLimit\": \"1\",\n          \n          # memoryLimit is the limits.memory to set for the inference service.\n          \"memoryLimit\": \"2Gi\",\n          \n          # cpuRequest is the requests.cpu to set for the inference service.\n          \"cpuRequest\": \"1\",\n          \n          # memoryRequest is the requests.memory to set for the inference service.\n          \"memoryRequest\": \"2Gi\"\n        }\n    }"
   agent: |-
     {
-        "image" : "kserve/agent:v0.14.1",
+        "image" : "kserve/agent:v0.15.0",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -31761,7 +32622,7 @@ data:
     }
   batcher: |-
     {
-        "image" : "kserve/agent:v0.14.1",
+        "image" : "kserve/agent:v0.15.0",
         "memoryRequest": "1Gi",
         "memoryLimit": "1Gi",
         "cpuRequest": "1",
@@ -31800,28 +32661,26 @@ data:
             "defaultImageVersion": "latest"
         }
     }
-  ingress: |-
+  inferenceService: |-
     {
-      "ingressGateway": "kubeflow/kubeflow-gateway",
-      "localGateway": "knative-serving/knative-local-gateway",
-      "localGatewayService": "knative-local-gateway.istio-system.svc.cluster.local",
-      "ingressDomain": "example.com",
-      "ingressClassName": "istio",
-      "domainTemplate": "{{ .Name }}-{{ .Namespace }}.{{ .IngressDomain }}",
-      "urlScheme": "http",
-      "disableIstioVirtualHost": false,
-      "disableIngressCreation": false
+      "resource": {
+          "cpuLimit": "1",
+          "memoryLimit": "2Gi",
+          "cpuRequest": "1",
+          "memoryRequest": "2Gi"
+        }
     }
+  ingress: "{\n  \"enableGatewayApi\": false,\n  \"kserveIngressGateway\": \"kserve/kserve-ingress-gateway\",\n  \"ingressGateway\": \"kubeflow/kubeflow-gateway\",\n  \"localGateway\": \"knative-serving/knative-local-gateway\",\n  \"localGatewayService\": \"knative-local-gateway.istio-system.svc.cluster.local\",\n  \"ingressDomain\": \"example.com\",\n  \"ingressClassName\": \"istio\",\n  \"domainTemplate\": \"{{ .Name }}-{{ .Namespace }}.{{ .IngressDomain }}\",\n  \"urlScheme\": \"http\",\n  \"disableIstioVirtualHost\": false,\n  \"disableIngressCreation\": false\n}"
   localModel: |-
     {
       "enabled": false,
       "jobNamespace": "kserve-localmodel-jobs",
-      "defaultJobImage" : "kserve/storage-initializer:v0.14.1",
+      "defaultJobImage" : "kserve/storage-initializer:v0.15.0",
       "fsGroup": 1000
     }
   logger: |-
     {
-        "image" : "kserve/agent:v0.14.1",
+        "image" : "kserve/agent:v0.15.0",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -31833,13 +32692,20 @@ data:
       "enableMetricAggregation": "false",
       "enablePrometheusScraping" : "false"
     }
+  opentelemetryCollector: |-
+    {
+      "scrapeInterval": "5s",
+      "metricReceiverEndpoint": "keda-otel-scaler.keda.svc:4317",
+      "metricScalerEndpoint": "keda-otel-scaler.keda.svc:4318"
+    }
   router: |-
     {
-        "image" : "kserve/router:v0.14.1",
+        "image" : "kserve/router:v0.15.0",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
-        "cpuLimit": "1"
+        "cpuLimit": "1",
+        "imagePullPolicy": "IfNotPresent"
     }
   security: |-
     {
@@ -31847,7 +32713,7 @@ data:
     }
   storageInitializer: |-
     {
-        "image" : "kserve/storage-initializer:v0.14.1",
+        "image" : "kserve/storage-initializer:v0.15.0",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -31980,14 +32846,14 @@ spec:
                   fieldPath: metadata.namespace
             - name: SECRET_NAME
               value: kserve-webhook-server-cert
-          image: kserve/kserve-controller:v0.14.1
+          image: kserve/kserve-controller:v0.15.0
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 5
             httpGet:
               path: /healthz
               port: 8081
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
             timeoutSeconds: 5
           name: manager
           ports:
@@ -31995,11 +32861,11 @@ spec:
               name: webhook-server
               protocol: TCP
           readinessProbe:
-            failureThreshold: 10
+            failureThreshold: 5
             httpGet:
               path: /readyz
               port: 8081
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
             periodSeconds: 5
             timeoutSeconds: 5
           resources:
@@ -32085,7 +32951,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-          image: kserve/kserve-localmodel-controller:v0.14.1
+          image: kserve/kserve-localmodel-controller:v0.15.0
           imagePullPolicy: Always
           name: manager
           resources:
@@ -32147,7 +33013,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-          image: kserve/kserve-localmodelnode-agent:v0.14.1
+          image: kserve/kserve-localmodelnode-agent:v0.15.0
           imagePullPolicy: Always
           name: manager
           resources:

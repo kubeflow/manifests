@@ -16,6 +16,7 @@ on:
 
 jobs:
   build:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -65,14 +66,14 @@ jobs:
 
     - name: List and deploy test pipeline with authorized ServiceAccount Token
       run: |
-        pip3 install kfp==2.11.0
+        pip3 install kfp==2.12.1
         KF_PROFILE=kubeflow-user-example-com
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/gh-actions/pipeline_test.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
 
     - name: Fail to list pipelines with unauthorized ServiceAccount Token
       run: |
-        pip3 install kfp==2.11.0
+        pip3 install kfp==2.12.1
         KF_PROFILE=kubeflow-user-example-com
         TOKEN="$(kubectl -n default create token default)"
         python3 tests/gh-actions/pipeline_test.py test_unauthorized_access "${TOKEN}" "${KF_PROFILE}"
