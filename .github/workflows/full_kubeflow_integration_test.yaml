@@ -52,6 +52,12 @@ jobs:
     - name: Install Central Dashboard
       run: ./tests/gh-actions/install_central_dashboard.sh
 
+    - name: Install Knative
+      run: ./tests/gh-actions/install_knative-cni.sh
+
+    - name: Install KServe
+      run: ./tests/gh-actions/install_kserve.sh
+
     - name: Install Pipelines
       run: ./tests/gh-actions/install_pipelines.sh
 
@@ -78,12 +84,6 @@ jobs:
 
     - name: Install Training Operator
       run: ./tests/gh-actions/install_training_operator.sh
-
-    - name: Install Knative
-      run: ./tests/gh-actions/install_knative-cni.sh
-
-    - name: Install KServe
-      run: ./tests/gh-actions/install_kserve.sh
 
     - name: Install Model Registry
       run: |
