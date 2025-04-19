@@ -14,8 +14,6 @@ for NAMESPACE in "${NAMESPACES[@]}"; do
                 echo "CRITICAL: PSS restricted violations detected in namespace $NAMESPACE"
                 HAS_VIOLATIONS=true
             fi
-        else
-            echo "Patch file for namespace $NAMESPACE not found, skipping..."
         fi
     fi
 done
@@ -23,7 +21,6 @@ done
 FAILING_PODS=$(kubectl get pods --all-namespaces --field-selector=status.phase=Failed -o json | jq -r '.items[] | select(.metadata.namespace as $ns | ["istio-system", "auth", "cert-manager", "oauth2-proxy", "kubeflow"] | index($ns) != null) | .metadata.namespace + "/" + .metadata.name')
 
 if [ -n "$FAILING_PODS" ]; then
-    echo "CRITICAL: Failed pods detected after applying PSS restricted:"
     echo "$FAILING_PODS"
     exit 1
 fi
