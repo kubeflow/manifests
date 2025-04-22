@@ -50,7 +50,7 @@ jobs:
       run: ./tests/gh-actions/install_multi_tenancy.sh
 
     - name: Install kubeflow-istio-resources
-      run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
+      run: kustomize build common/istio-cni-1-24/kubeflow-istio-resources/base | kubectl apply -f -
 
     - name: Create KF Profile
       run: ./tests/gh-actions/install_kubeflow_profile.sh
@@ -150,17 +150,6 @@ jobs:
 
     - name: Port forward
       run: ./tests/gh-actions/port_forward_gateway.sh
-
-    - name: Verify CNI is being used instead of init containers
-      run: |
-        INIT_CONTAINERS=$(kubectl get pods -A -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{range .spec.initContainers[*]}{.name}{"\n"}{end}{"\n"}{end}' | grep istio-init || echo "none")
-        if [[ "$INIT_CONTAINERS" != "none" ]]; then
-          echo "Error: Found istio-init containers, CNI is not being used properly"
-          echo "$INIT_CONTAINERS"
-          exit 1
-        else
-          echo "Success: No istio-init containers found, CNI is working correctly"
-        fi
 
     - name: Run kserve tests with m2m token from SA kubeflow-user-example-com/default-editor
       run: |

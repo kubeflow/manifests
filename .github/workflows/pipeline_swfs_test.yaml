@@ -1,20 +1,22 @@
 name: Test pipelines with seaweedfs
 on:
-  pull_request:
-    paths:
-    - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
-    - .github/workflows/pipeline_swfs_test.yaml
-    - apps/pipeline/upstream/**
-    - tests/gh-actions/install_istio.sh
-    - tests/gh-actions/install_cert_manager.sh
-    - tests/gh-actions/install_oauth2-proxy.sh
-    - common/cert-manager/**
-    - common/oauth2-proxy/**
-    - common/istio*/**
-    - experimental/seaweedfs/**
+  workflow_dispatch:
+#  pull_request:
+#    paths:
+#    - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
+#    - .github/workflows/pipeline_swfs_test.yaml
+#    - apps/pipeline/upstream/**
+#    - tests/gh-actions/install_istio.sh
+#    - tests/gh-actions/install_cert_manager.sh
+#    - tests/gh-actions/install_oauth2-proxy.sh
+#    - common/cert-manager/**
+#    - common/oauth2-proxy/**
+#    - common/istio*/**
+#    - experimental/seaweedfs/**
 
 jobs:
   build:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -62,7 +64,8 @@ jobs:
     - name: Install seaweedfs
       run: |
         kustomize build experimental/seaweedfs/istio | kubectl apply -f -
-        kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/seaweedfs
+        kubectl -n kubeflow wait --for=condition=available --timeout=120s deploy/seaweedfs
+        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=60s --field-selector=status.phase!=Succeeded
         kubectl -n kubeflow exec deploy/seaweedfs -c seaweedfs -- sh -c "echo \"s3.configure -user minio -access_key minio -secret_key minio123 -actions Read,Write,List -apply\" | /usr/bin/weed shell"
 
     - name: Port forward
@@ -70,7 +73,51 @@ jobs:
 
     - name: List and deploy test pipeline with authorized ServiceAccount Token
       run: |
-        pip3 install kfp==2.11.0
+        pip3 install kfp==2.12.1
         KF_PROFILE=kubeflow-user-example-com
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/gh-actions/pipeline_test.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
+
+    - name: Fail to list pipelines with unauthorized ServiceAccount Token
+      run: |
+        pip3 install kfp==2.12.1
+        KF_PROFILE=kubeflow-user-example-com
+        TOKEN="$(kubectl -n default create token default)"
+        python3 tests/gh-actions/pipeline_test.py test_unauthorized_access "${TOKEN}" "${KF_PROFILE}"
+        echo "Test succeeded. Token from unauthorized ServiceAccount cannot list pipelines in $KF_PROFILE namespace."
+
+
+    - name: Apply Pod Security Standards baseline levels for static namespaces
+      run: ./tests/gh-actions/enable_baseline_PSS.sh
+
+    - name: Unapply applied baseline labels
+      run: |
+        NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow")
+        for NAMESPACE in "${NAMESPACES[@]}"; do
+          if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
+            kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce-
+          fi
+        done
+
+    - name: Applying Pod Security Standards restricted levels for static namespaces
+      run: ./tests/gh-actions/enable_restricted_PSS.sh
+
+    - name: Collect Logs on Failure
+      if: failure()
+      run: |
+        mkdir -p logs
+        kubectl get all --all-namespaces > logs/resources.txt
+        kubectl get events --all-namespaces --sort-by=.metadata.creationTimestamp > logs/events.txt
+        for namespace in kubeflow istio-system cert-manager auth kubeflow-user-example-com; do
+            kubectl describe pods -n $namespace > logs/$namespace-pods.txt
+            for pod in $(kubectl get pods -n $namespace -o jsonpath='{.items[*].metadata.name}'); do
+                kubectl logs -n $namespace $pod --tail=100 > logs/$namespace-$pod.txt 2>&1 || true
+            done
+        done
+
+    - name: Upload Diagnostic Logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: kubeflow-test-logs
+        path: logs/

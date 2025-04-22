@@ -3,8 +3,8 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
-KSERVE_VERSION="v0.14.1"
-COMMIT="v0.14.1" # You can use tags as well
+KSERVE_VERSION="v0.15.0"
+COMMIT="v0.15.0" # You can use tags as well
 SRC_DIR=${SRC_DIR:=/tmp/kserve}
 BRANCH=${BRANCH:=synchronize-kserve-manifests-${COMMIT?}}
 
@@ -67,4 +67,5 @@ echo "Committing the changes..."
 cd "$MANIFESTS_DIR"
 git add apps/kserve
 git add README.md
+git add scripts
 git commit -s -m "Update kserve manifests from ${KSERVE_VERSION}" -m "Update kserve/kserve manifests from ${COMMIT}"
