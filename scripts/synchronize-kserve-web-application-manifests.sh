@@ -1,69 +1,39 @@
 #!/usr/bin/env bash
-# This script helps to create a PR to update the manifests
-set -euxo pipefail
-IFS=$'\n\t'
-
-COMMIT="v0.14.0" # You can use tags as well
-SRC_DIR=${SRC_DIR:=/tmp/kserve-models-web-app}
-BRANCH=${BRANCH:=synchronize-kserve-web-application-manifests-${COMMIT?}}
+# This script helps to create a PR to update the KServe Models Web App manifests
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${SCRIPT_DIR}/lib.sh"
+
+setup_error_handling
+
+COMPONENT_NAME="models-web-app"
+REPO_NAME="kserve/models-web-app"
+REPO_URL="https://github.com/kserve/models-web-app.git"
+COMMIT="v0.14.0"
+REPO_DIR="models-web-app"
+SRC_DIR=${SRC_DIR:=/tmp/kserve-${COMPONENT_NAME}}
+BRANCH=${BRANCH:=synchronize-kserve-${COMPONENT_NAME}-manifests-${COMMIT?}}
+
+# Path configurations
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
+SRC_MANIFESTS_PATH="config"
+DST_MANIFESTS_PATH="apps/kserve/${COMPONENT_NAME}"
 
-echo "Creating branch: ${BRANCH}"
+# README update patterns
+SRC_TXT="\[.*\](https://github.com/${REPO_NAME}/tree/.*)"
+DST_TXT="\[${COMMIT}\](https://github.com/${REPO_NAME}/tree/${COMMIT}/${SRC_MANIFESTS_PATH})"
 
-if [ -n "$(git status --porcelain)" ]; then
-  echo "WARNING: You have uncommitted changes"
-fi
+create_branch "$BRANCH"
 
-if [ "$(git branch --list $BRANCH)" ]
-then
-   echo "WARNING: Branch $BRANCH already exists."
-fi
-
-# Create the branch in the manifests repository
-if ! git show-ref --verify --quiet refs/heads/$BRANCH; then
-    git checkout -b $BRANCH
-else
-    echo "Branch $BRANCH already exists."
-fi
-echo "Checking out in $SRC_DIR to $COMMIT..."
-
-# Checkout the Kserve Models Web Application repository
-mkdir -p $SRC_DIR
-cd $SRC_DIR || exit
-if [ ! -d "models-web-app/.git" ]; then
-    git clone https://github.com/kserve/models-web-app.git
-fi
-cd $SRC_DIR/models-web-app || exit
-if ! git rev-parse --verify --quiet $COMMIT; then
-    git checkout -b $COMMIT
-else
-    git checkout $COMMIT
-fi
-
-if [ -n "$(git status --porcelain)" ]; then
-  echo "WARNING: You have uncommitted changes"
-fi
+clone_and_checkout "$SRC_DIR" "$REPO_URL" "$REPO_DIR" "$COMMIT"
 
 echo "Copying manifests"
-DST_DIR=$MANIFESTS_DIR/apps/kserve/models-web-app
-if [ -d "$DST_DIR" ]; then
-    rm -r "$DST_DIR"
-fi
-mkdir -p $DST_DIR
-cp $SRC_DIR/models-web-app/config/* $DST_DIR -r
+copy_manifests "${SRC_DIR}/${REPO_DIR}/${SRC_MANIFESTS_PATH}" "${MANIFESTS_DIR}/${DST_MANIFESTS_PATH}"
 
-echo "Successfully copied all manifests."
+update_readme "$MANIFESTS_DIR" "$SRC_TXT" "$DST_TXT"
 
-echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kserve/models-web-app/tree/.*)"
-DST_TXT="\[$COMMIT\](https://github.com/kserve/models-web-app/tree/$COMMIT/config)"
+commit_changes "$MANIFESTS_DIR" "Update kserve models web application manifests from ${COMMIT}" \
+  "${DST_MANIFESTS_PATH}" \
+  "README.md"
 
-sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
-
-echo "Committing the changes..."
-cd $MANIFESTS_DIR || exit
-git add apps/kserve/models-web-app
-git add README.md
-git commit -s -m "Update kserve models web application manifests from ${COMMIT}"
+echo "Synchronization completed successfully."

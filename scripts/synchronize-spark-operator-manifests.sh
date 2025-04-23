@@ -1,33 +1,27 @@
 #!/usr/bin/env bash
-# This script helps to create a PR to update the manifests
-set -euxo pipefail
-IFS=$'\n\t'
+# This script helps to create a PR to update the Spark Operator manifests
 
-# You can use tags or commit hashes
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${SCRIPT_DIR}/lib.sh"
+
+setup_error_handling
+
+COMPONENT_NAME="spark-operator"
 SPARK_OPERATOR_VERSION=${SPARK_OPERATOR_VERSION:="2.1.1"}
 SPARK_OPERATOR_HELM_CHART_REPO=${SPARK_OPERATOR_HELM_CHART_REPO:="https://kubeflow.github.io/spark-operator"}
 DEV_MODE=${DEV_MODE:=false}
-BRANCH=${BRANCH:=synchronize-spark-operator-manifests-${SPARK_OPERATOR_VERSION?}}
+BRANCH=${BRANCH:=synchronize-${COMPONENT_NAME}-manifests-${SPARK_OPERATOR_VERSION?}}
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# Path configurations
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
+DST_MANIFESTS_PATH="apps/spark/${COMPONENT_NAME}/base"
 
-echo "Creating branch: ${BRANCH}"
-if [ -n "$(git status --porcelain)" ]; then
-  echo "WARNING: You have uncommitted changes"
-fi
-
-# Create the branch in the manifests repository
-if ! git show-ref --verify --quiet refs/heads/$BRANCH; then
-    git checkout -b $BRANCH
-else
-    echo "Branch $BRANCH already exists."
-fi
+create_branch "$BRANCH"
 
 echo "Generating manifests from Helm chart version ${SPARK_OPERATOR_VERSION}..."
 
 # Generate the manifests using Helm
-DST_DIR=$MANIFESTS_DIR/apps/spark/spark-operator/base
+DST_DIR=$MANIFESTS_DIR/$DST_MANIFESTS_PATH
 mkdir -p $DST_DIR
 cd $DST_DIR
 
@@ -41,7 +35,6 @@ resources:
 EOF
 fi
 
-# Generate the manifests using Helm
 helm template -n kubeflow --include-crds spark-operator spark-operator \
 --set "spark.jobNamespaces={}" \
 --set webhook.enable=true \
@@ -61,9 +54,9 @@ else
     sed -i 's/Spark Operator.*|.*apps\/spark\/spark-operator[^|]*|.*[0-9]\.[0-9]\.[0-9]/Spark Operator	|	apps\/spark\/spark-operator	|	'"${SPARK_OPERATOR_VERSION}"'/g' "${MANIFESTS_DIR}/README.md"
 fi
 
-echo "Committing the changes..."
-cd $MANIFESTS_DIR
-git add apps/spark
-git add README.md
-git add scripts
-git commit -s -m "Update kubeflow/spark-operator manifests to ${SPARK_OPERATOR_VERSION}"
+commit_changes "$MANIFESTS_DIR" "Update kubeflow/${COMPONENT_NAME} manifests to ${SPARK_OPERATOR_VERSION}" \
+  "apps/spark" \
+  "README.md" \
+  "scripts"
+
+echo "Synchronization completed successfully."

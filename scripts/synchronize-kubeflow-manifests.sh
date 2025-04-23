@@ -1,172 +1,99 @@
 #!/usr/bin/env bash
-# This script helps to create a PR to update the manifests
-set -euxo pipefail
-IFS=$'\n\t'
-
-COMMIT="v1.10.0" # You can use tags as well
-SRC_DIR=${SRC_DIR:=/tmp/kubeflow-kubeflow}
-BRANCH=${BRANCH:=synchronize-kubeflow-kubeflow-manifests-${COMMIT?}}
+# This script helps to create a PR to update the Kubeflow manifests
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${SCRIPT_DIR}/lib.sh"
+
+setup_error_handling
+
+COMPONENT_NAME="kubeflow"
+REPO_NAME="kubeflow/kubeflow"
+REPO_URL="https://github.com/kubeflow/kubeflow.git"
+COMMIT="v1.10.0"
+REPO_DIR="kubeflow"
+SRC_DIR=${SRC_DIR:=/tmp/${COMPONENT_NAME}-${COMPONENT_NAME}}
+BRANCH=${BRANCH:=synchronize-${COMPONENT_NAME}-${COMPONENT_NAME}-manifests-${COMMIT?}}
+
+# Path configurations
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
 
-echo "Creating branch: ${BRANCH}"
+create_branch "$BRANCH"
 
-if [ -n "$(git status --porcelain)" ]; then
-  echo "WARNING: You have uncommitted changes"
-fi
+clone_and_checkout "$SRC_DIR" "$REPO_URL" "$REPO_DIR" "$COMMIT"
 
-if [ `git branch --list $BRANCH` ]
-then
-   echo "WARNING: Branch $BRANCH already exists."
-fi
+# Function to copy manifests for a specific component
+copy_component_manifests() {
+    local component_name=$1
+    local src_path=$2
+    local dst_path=$3
+    local readme_path_pattern=$4
+    
+    echo "Copying ${component_name} manifests..."
+    
+    local dst_dir="${MANIFESTS_DIR}/${dst_path}"
+    if [ -d "$dst_dir" ]; then
+        rm -r "$dst_dir"
+    fi
+    mkdir -p "$dst_dir"
+    
+    cp "${SRC_DIR}/${REPO_DIR}/${src_path}/"* "$dst_dir" -r
+    
+    echo "Updating README for ${component_name}..."
+    local src_txt="\[.*\](https://github.com/${REPO_NAME}/tree/.*/components/${readme_path_pattern})"
+    local dst_txt="\[${COMMIT}\](https://github.com/${REPO_NAME}/tree/${COMMIT}/components/${readme_path_pattern})"
+    
+    update_readme "$MANIFESTS_DIR" "$src_txt" "$dst_txt"
+}
 
-# Create the branch in the manifests repository
-if ! git show-ref --verify --quiet refs/heads/$BRANCH; then
-    git checkout -b $BRANCH
-else
-    echo "Branch $BRANCH already exists."
-fi
-echo "Checking out in $SRC_DIR to $COMMIT..."
+copy_component_manifests "admission-webhook" \
+    "components/admission-webhook/manifests" \
+    "apps/admission-webhook/upstream" \
+    "admission-webhook/manifests"
 
-# Checkout the upstream repository
-mkdir -p $SRC_DIR
-cd $SRC_DIR
-if [ ! -d "kubeflow/.git" ]; then
-    git clone https://github.com/kubeflow/kubeflow.git
-fi
-cd $SRC_DIR/kubeflow
-if ! git rev-parse --verify --quiet $COMMIT; then
-    git checkout -b $COMMIT
-else
-    git checkout $COMMIT
-fi
+copy_component_manifests "centraldashboard" \
+    "components/centraldashboard/manifests" \
+    "apps/centraldashboard/upstream" \
+    "centraldashboard/manifests"
 
-if [ -n "$(git status --porcelain)" ]; then
-  echo "WARNING: You have uncommitted changes"
-fi
+copy_component_manifests "jupyter-web-app" \
+    "components/crud-web-apps/jupyter/manifests" \
+    "apps/jupyter/jupyter-web-app/upstream" \
+    "crud-web-apps/jupyter/manifests"
 
-echo "Copying admission-webhook manifests..."
-DST_DIR=$MANIFESTS_DIR/apps/admission-webhook/upstream
-if [ -d "$DST_DIR" ]; then
-    rm -r "$DST_DIR"
-fi
-mkdir -p $DST_DIR
-cp $SRC_DIR/kubeflow/components/admission-webhook/manifests/* $DST_DIR -r
+copy_component_manifests "volumes-web-app" \
+    "components/crud-web-apps/volumes/manifests" \
+    "apps/volumes-web-app/upstream" \
+    "crud-web-apps/volumes/manifests"
 
-echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/admission-webhook/manifests)"
-DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/admission-webhook/manifests)"
-sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
+copy_component_manifests "tensorboards-web-app" \
+    "components/crud-web-apps/tensorboards/manifests" \
+    "apps/tensorboard/tensorboards-web-app/upstream" \
+    "crud-web-apps/tensorboards/manifests"
 
-echo "Copying centraldashboard manifests..."
-DST_DIR=$MANIFESTS_DIR/apps/centraldashboard/upstream
-if [ -d "$DST_DIR" ]; then
-    rm -r "$DST_DIR"
-fi
-mkdir -p $DST_DIR
-cp $SRC_DIR/kubeflow/components/centraldashboard/manifests/* $DST_DIR -r
+copy_component_manifests "profile-controller" \
+    "components/profile-controller/config" \
+    "apps/profiles/upstream" \
+    "profile-controller/config"
 
-echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/centraldashboard/manifests)"
-DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/centraldashboard/manifests)"
-sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
+copy_component_manifests "notebook-controller" \
+    "components/notebook-controller/config" \
+    "apps/jupyter/notebook-controller/upstream" \
+    "notebook-controller/config"
 
-echo "Copying jupyter-web-app manifests..."
-DST_DIR=$MANIFESTS_DIR/apps/jupyter/jupyter-web-app/upstream
-if [ -d "$DST_DIR" ]; then
-    rm -r "$DST_DIR"
-fi
-mkdir -p $DST_DIR
-cp $SRC_DIR/kubeflow/components/crud-web-apps/jupyter/manifests/* $DST_DIR -r
+copy_component_manifests "tensorboard-controller" \
+    "components/tensorboard-controller/config" \
+    "apps/tensorboard/tensorboard-controller/upstream" \
+    "tensorboard-controller/config"
 
-echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/crud-web-apps/jupyter/manifests)"
-DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/crud-web-apps/jupyter/manifests)"
-sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
-
-echo "Copying volumes-web-app manifests..."
-DST_DIR=$MANIFESTS_DIR/apps/volumes-web-app/upstream
-if [ -d "$DST_DIR" ]; then
-    rm -r "$DST_DIR"
-fi
-mkdir -p $DST_DIR
-cp $SRC_DIR/kubeflow/components/crud-web-apps/volumes/manifests/* $DST_DIR -r
-
-echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/crud-web-apps/volumes/manifests)"
-DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/crud-web-apps/volumes/manifests)"
-sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
-
-echo "Copying tensorboards-web-app manifests..."
-DST_DIR=$MANIFESTS_DIR/apps/tensorboard/tensorboards-web-app/upstream
-if [ -d "$DST_DIR" ]; then
-    rm -r "$DST_DIR"
-fi
-mkdir -p $DST_DIR
-cp $SRC_DIR/kubeflow/components/crud-web-apps/tensorboards/manifests/* $DST_DIR -r
-
-echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/crud-web-apps/tensorboards/manifests)"
-DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/crud-web-apps/tensorboards/manifests)"
-sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
-
-echo "Copying profile-controller manifests..."
-DST_DIR=$MANIFESTS_DIR/apps/profiles/upstream
-if [ -d "$DST_DIR" ]; then
-    rm -r "$DST_DIR"
-fi
-mkdir -p $DST_DIR
-cp $SRC_DIR/kubeflow/components/profile-controller/config/* $DST_DIR -r
-
-echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/profile-controller/config)"
-DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/profile-controller/config)"
-sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
-
-echo "Copying notebook-controller manifests..."
-DST_DIR=$MANIFESTS_DIR/apps/jupyter/notebook-controller/upstream
-if [ -d "$DST_DIR" ]; then
-    rm -r "$DST_DIR"
-fi
-mkdir -p $DST_DIR
-cp $SRC_DIR/kubeflow/components/notebook-controller/config/* $DST_DIR -r
-
-echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/notebook-controller/config)"
-DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/notebook-controller/config)"
-sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
-
-echo "Copying tensorboard-controller manifests..."
-DST_DIR=$MANIFESTS_DIR/apps/tensorboard/tensorboard-controller/upstream
-if [ -d "$DST_DIR" ]; then
-    rm -r "$DST_DIR"
-fi
-mkdir -p $DST_DIR
-cp $SRC_DIR/kubeflow/components/tensorboard-controller/config/* $DST_DIR -r
-
-echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/tensorboard-controller/config)"
-DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/tensorboard-controller/config)"
-sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
-
-echo "Copying pvcviewer-controller manifests..."
-DST_DIR=$MANIFESTS_DIR/apps/pvcviewer-controller/upstream
-if [ -d "$DST_DIR" ]; then
-    rm -r "$DST_DIR"
-fi
-mkdir -p $DST_DIR
-cp $SRC_DIR/kubeflow/components/pvcviewer-controller/config/* $DST_DIR -r
-
-echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kubeflow/kubeflow/tree/.*/components/pvcviewer-controller/config)"
-DST_TXT="\[$COMMIT\](https://github.com/kubeflow/kubeflow/tree/$COMMIT/components/pvcviewer-controller/config)"
-sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
+copy_component_manifests "pvcviewer-controller" \
+    "components/pvcviewer-controller/config" \
+    "apps/pvcviewer-controller/upstream" \
+    "pvcviewer-controller/config"
 
 echo "Successfully copied all manifests."
 
-echo "Committing the changes..."
-cd $MANIFESTS_DIR
-git add apps
-git add README.md
-git commit -s -m "Update kubeflow/kubeflow manifests from ${COMMIT}"
+commit_changes "$MANIFESTS_DIR" "Update ${REPO_NAME} manifests from ${COMMIT}" \
+  "apps" \
+  "README.md"
+
+echo "Synchronization completed successfully."

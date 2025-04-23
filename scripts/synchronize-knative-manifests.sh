@@ -1,62 +1,40 @@
 #!/usr/bin/env bash
-# This script helps to create a PR to update the manifests
-set -euxo pipefail
-IFS=$'\n\t'
+# This script helps to create a PR to update the Knative manifests
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${SCRIPT_DIR}/lib.sh"
+
+setup_error_handling
+
+COMPONENT_NAME="knative"
 KN_SERVING_RELEASE="v1.16.2" # Must be a release
 KN_EXTENSION_RELEASE="v1.16.0" # Must be a release
 KN_EVENTING_RELEASE="v1.16.4" # Must be a release
-BRANCH=${BRANCH:=synchronize-knative-manifests-${KN_SERVING_RELEASE?}}
+BRANCH=${BRANCH:=synchronize-${COMPONENT_NAME}-manifests-${KN_SERVING_RELEASE?}}
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# Path configurations
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
+DST_DIR=$MANIFESTS_DIR/common/${COMPONENT_NAME}
 
-# replace source regex ($1) with target regex ($2)
-# in file ($3)
-replace_in_file() {
-  SRC_TXT=$1
-  DST_TXT=$2
-  sed -i "s|$SRC_TXT|$DST_TXT|g" $3
-}
+create_branch "$BRANCH"
 
-echo "Creating branch: ${BRANCH}"
+check_uncommitted_changes
 
-if [ -n "$(git status --porcelain)" ]; then
-  echo "WARNING: You have uncommitted changes"
-fi
-if [ `git branch --list $BRANCH` ]
-then
-   echo "WARNING: Branch $BRANCH already exists."
-fi
-
-# Create the branch in the manifests repository
-if ! git show-ref --verify --quiet refs/heads/$BRANCH; then
-    git checkout -b $BRANCH
-else
-    echo "Branch $BRANCH already exists."
-fi
-
-if [ -n "$(git status --porcelain)" ]; then
-  echo "WARNING: You have uncommitted changes"
-fi
-
-DST_DIR=$MANIFESTS_DIR/common/knative
+# Clean up existing files (keep README and OWNERS)
 if [ -d "$DST_DIR" ]; then
-    # keep README and OWNERS file
-    rm -r "$DST_DIR/knative-serving/base/upstream"
-    rm "$DST_DIR/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml"
-    rm -r "$DST_DIR/knative-eventing/base/upstream"
-    rm "$DST_DIR/knative-eventing-post-install-jobs/base/eventing-post-install.yaml"
+    rm -r "$DST_DIR/knative-serving/base/upstream" 2>/dev/null || true
+    rm "$DST_DIR/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml" 2>/dev/null || true
+    rm -r "$DST_DIR/knative-eventing/base/upstream" 2>/dev/null || true
+    rm "$DST_DIR/knative-eventing-post-install-jobs/base/eventing-post-install.yaml" 2>/dev/null || true
 fi
 
+# Create required directories
 mkdir -p "$DST_DIR/knative-serving/base/upstream"
 mkdir -p "$DST_DIR/knative-serving-post-install-jobs/base"
 mkdir -p "$DST_DIR/knative-eventing/base/upstream"
 mkdir -p "$DST_DIR/knative-eventing-post-install-jobs/base"
 
 echo "Downloading knative-serving manifests..."
-# No need to install serving-crds.
-# See: https://github.com/knative/serving/issues/9945
 wget -O $DST_DIR/knative-serving/base/upstream/serving-core.yaml "https://github.com/knative/serving/releases/download/knative-$KN_SERVING_RELEASE/serving-core.yaml"
 wget -O $DST_DIR/knative-serving/base/upstream/net-istio.yaml "https://github.com/knative-extensions/net-istio/releases/download/knative-$KN_EXTENSION_RELEASE/net-istio.yaml"
 wget -O $DST_DIR/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml "https://github.com/knative/serving/releases/download/knative-$KN_SERVING_RELEASE/serving-post-install-jobs.yaml"
@@ -69,12 +47,9 @@ yq eval -i 'explode(.)' $DST_DIR/knative-serving/base/upstream/serving-core.yaml
 yq eval -i 'explode(.)' $DST_DIR/knative-serving/base/upstream/net-istio.yaml
 yq eval -i 'explode(.)' $DST_DIR/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml
 
-# We are not using the '|=' operator because it generates an empty object
-# ({}) which crashes kustomize.
 yq eval -i 'select(.kind == "Job" and .metadata.generateName == "storage-version-migration-serving-") | .metadata.name = "storage-version-migration-serving"' $DST_DIR/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml
 
 echo "Downloading knative-eventing manifests..."
-
 wget -O $DST_DIR/knative-eventing/base/upstream/eventing-core.yaml "https://github.com/knative/eventing/releases/download/knative-$KN_EVENTING_RELEASE/eventing-core.yaml"
 wget -O $DST_DIR/knative-eventing/base/upstream/in-memory-channel.yaml "https://github.com/knative/eventing/releases/download/knative-$KN_EVENTING_RELEASE/in-memory-channel.yaml"
 wget -O $DST_DIR/knative-eventing/base/upstream/mt-channel-broker.yaml "https://github.com/knative/eventing/releases/download/knative-$KN_EVENTING_RELEASE/mt-channel-broker.yaml"
@@ -90,8 +65,6 @@ yq eval -i 'explode(.)' $DST_DIR/knative-eventing/base/upstream/in-memory-channe
 yq eval -i 'explode(.)' $DST_DIR/knative-eventing/base/upstream/mt-channel-broker.yaml
 yq eval -i 'explode(.)' $DST_DIR/knative-eventing-post-install-jobs/base/eventing-post-install.yaml
 
-# We are not using the '|=' operator because it generates an empty object
-# ({}) which crashes kustomize.
 yq eval -i 'select(.kind == "Job" and .metadata.generateName == "storage-version-migration-eventing-") | .metadata.name = "storage-version-migration-eventing"' $DST_DIR/knative-eventing-post-install-jobs/base/eventing-post-install.yaml
 
 yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-observability") | not)' $DST_DIR/knative-eventing/base/upstream/in-memory-channel.yaml 
@@ -99,7 +72,14 @@ yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-tracing")
 
 echo "Successfully copied all manifests."
 
-echo "Updating README..."
+echo "Updating READMEs..."
+# Helper function to replace text in files
+replace_in_file() {
+  local SRC_TXT=$1
+  local DST_TXT=$2
+  local FILE=$3
+  sed -i "s|$SRC_TXT|$DST_TXT|g" $FILE
+}
 
 replace_in_file \
   "\[.*\](https://github.com/knative/serving/releases/tag/knative-.*) <" \
@@ -126,8 +106,8 @@ replace_in_file \
   "The manifests for Knative Eventing are based off the \[$KN_EVENTING_RELEASE release\](https://github.com/knative/eventing/releases/tag/knative-$KN_EVENTING_RELEASE)" \
   $DST_DIR/README.md
 
-echo "Committing the changes..."
-cd $MANIFESTS_DIR
-git add $DST_DIR
-git add README.md
-git commit -s -m "Update common/knative manifests from ${KN_SERVING_RELEASE}/${KN_EVENTING_RELEASE}"
+commit_changes "$MANIFESTS_DIR" "Update common/knative manifests from ${KN_SERVING_RELEASE}/${KN_EVENTING_RELEASE}" \
+  "$DST_DIR" \
+  "README.md"
+
+echo "Synchronization completed successfully."

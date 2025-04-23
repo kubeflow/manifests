@@ -1,69 +1,38 @@
 #!/usr/bin/env bash
-# This script helps to create a PR to update the manifests
-set -euxo pipefail
-IFS=$'\n\t'
-
-COMMIT="v0.18.0" # You can use tags as well
-SRC_DIR=${SRC_DIR:=/tmp/kubeflow-katib}
-BRANCH=${BRANCH:=synchronize-kubeflow-katib-manifests-${COMMIT?}}
+# This script helps to create a PR to update the Katib manifests
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${SCRIPT_DIR}/lib.sh"
+
+setup_error_handling
+
+COMPONENT_NAME="katib"
+REPO_NAME="kubeflow/katib"
+REPO_URL="https://github.com/kubeflow/katib.git"
+COMMIT="v0.18.0"
+REPO_DIR="katib"
+SRC_DIR=${SRC_DIR:=/tmp/kubeflow-${COMPONENT_NAME}}
+BRANCH=${BRANCH:=synchronize-${COMPONENT_NAME}-manifests-${COMMIT?}}
+
+# Path configurations
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
+SRC_MANIFESTS_PATH="manifests/v1beta1"
+DST_MANIFESTS_PATH="apps/${COMPONENT_NAME}/upstream"
 
-echo "Creating branch: ${BRANCH}"
+# README update patterns
+SRC_TXT="\[.*\](https://github.com/${REPO_NAME}/tree/.*/manifests/v1beta1)"
+DST_TXT="\[${COMMIT}\](https://github.com/${REPO_NAME}/tree/${COMMIT}/manifests/v1beta1)"
 
-if [ -n "$(git status --porcelain)" ]; then
-  echo "WARNING: You have uncommitted changes"
-fi
-if [ `git branch --list $BRANCH` ]
-then
-   echo "WARNING: Branch $BRANCH already exists."
-fi
+create_branch "$BRANCH"
 
-# Create the branch in the manifests repository
-if ! git show-ref --verify --quiet refs/heads/$BRANCH; then
-    git checkout -b $BRANCH
-else
-    echo "Branch $BRANCH already exists."
-fi
-echo "Checking out in $SRC_DIR to $COMMIT..."
+clone_and_checkout "$SRC_DIR" "$REPO_URL" "$REPO_DIR" "$COMMIT"
 
-# Checkout the KFP repositorysitory
-mkdir -p $SRC_DIR
-cd $SRC_DIR
-if [ ! -d "katib/.git" ]; then
-    git clone https://github.com/kubeflow/katib.git
-fi
-cd $SRC_DIR/katib
-if ! git rev-parse --verify --quiet $COMMIT; then
-    git checkout -b $COMMIT
-else
-    git checkout $COMMIT
-fi
+copy_manifests "${SRC_DIR}/${REPO_DIR}/${SRC_MANIFESTS_PATH}" "${MANIFESTS_DIR}/${DST_MANIFESTS_PATH}"
 
+update_readme "$MANIFESTS_DIR" "$SRC_TXT" "$DST_TXT"
 
-if [ -n "$(git status --porcelain)" ]; then
-  echo "WARNING: You have uncommitted changes"
-fi
+commit_changes "$MANIFESTS_DIR" "Update ${REPO_NAME} manifests from ${COMMIT}" \
+  "apps" \
+  "README.md"
 
-echo "Copying katib manifests..."
-DST_DIR=$MANIFESTS_DIR/apps/katib/upstream
-if [ -d "$DST_DIR" ]; then
-    rm -r "$DST_DIR"
-fi
-cp $SRC_DIR/katib/manifests/v1beta1 $DST_DIR -r
-
-
-echo "Successfully copied all manifests."
-
-echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kubeflow/katib/tree/.*/manifests/v1beta1)"
-DST_TXT="\[$COMMIT\](https://github.com/kubeflow/katib/tree/$COMMIT/manifests/v1beta1)"
-
-sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
-
-echo "Committing the changes..."
-cd $MANIFESTS_DIR
-git add apps
-git add README.md
-git commit -s -m "Update kubeflow/katib manifests from ${COMMIT}"
+echo "Synchronization completed successfully."

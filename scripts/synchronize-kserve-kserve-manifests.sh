@@ -1,71 +1,47 @@
 #!/usr/bin/env bash
-# This script helps to create a PR to update the manifests
-set -euxo pipefail
-IFS=$'\n\t'
-
-KSERVE_VERSION="v0.15.0"
-COMMIT="v0.15.0" # You can use tags as well
-SRC_DIR=${SRC_DIR:=/tmp/kserve}
-BRANCH=${BRANCH:=synchronize-kserve-manifests-${COMMIT?}}
+# This script helps to create a PR to update the KServe manifests
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${SCRIPT_DIR}/lib.sh"
+
+setup_error_handling
+
+COMPONENT_NAME="kserve"
+REPO_NAME="kserve/kserve"
+REPO_URL="https://github.com/kserve/kserve.git"
+KSERVE_VERSION="v0.15.0"
+COMMIT="v0.15.0"
+REPO_DIR="kserve"
+SRC_DIR=${SRC_DIR:=/tmp/${COMPONENT_NAME}}
+BRANCH=${BRANCH:=synchronize-${COMPONENT_NAME}-manifests-${COMMIT?}}
+
+# Path configurations
 MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
+SRC_MANIFESTS_PATH="install/${KSERVE_VERSION}"
+DST_MANIFESTS_PATH="apps/${COMPONENT_NAME}/${COMPONENT_NAME}"
 
-echo "Creating branch: ${BRANCH}"
+# README update patterns
+SRC_TXT="\[.*\](https://github.com/${REPO_NAME}/releases/tag/.*)"
+DST_TXT="\[${COMMIT}\](https://github.com/${REPO_NAME}/releases/tag/${COMMIT}/install/${KSERVE_VERSION})"
 
-if [ -n "$(git status --porcelain)" ]; then
-  echo "WARNING: You have uncommitted changes"
-fi
-if [ `git branch --list $BRANCH` ]
-then
-   echo "WARNING: Branch $BRANCH already exists."
-fi
+create_branch "$BRANCH"
 
-# Create the branch in the manifests repository
-if ! git show-ref --verify --quiet refs/heads/$BRANCH; then
-    git checkout -b $BRANCH
-else
-    echo "Branch $BRANCH already exists."
-fi
-echo "Checking out in $SRC_DIR to $COMMIT..."
-
-# Checkout the kserve repository
-mkdir -p $SRC_DIR
-cd $SRC_DIR
-if [ ! -d "kserve/.git" ]; then
-    git clone https://github.com/kserve/kserve.git
-fi
-cd $SRC_DIR/kserve
-if ! git rev-parse --verify --quiet $COMMIT; then
-    git checkout -b $COMMIT
-else
-    git checkout $COMMIT
-fi
-
-
-if [ -n "$(git status --porcelain)" ]; then
-  echo "WARNING: You have uncommitted changes"
-fi
+clone_and_checkout "$SRC_DIR" "$REPO_URL" "$REPO_DIR" "$COMMIT"
 
 echo "Copying kserve manifests..."
-DST_DIR=$MANIFESTS_DIR/apps/kserve/kserve
+DST_DIR=$MANIFESTS_DIR/$DST_MANIFESTS_PATH
 if [ -d "$DST_DIR" ]; then
     rm -rf "$DST_DIR"/kserve*
 fi
-cp $SRC_DIR/kserve/install/"$KSERVE_VERSION"/* $DST_DIR -r
-
+cp $SRC_DIR/$REPO_DIR/$SRC_MANIFESTS_PATH/* $DST_DIR -r
 
 echo "Successfully copied all manifests."
 
-echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kserve/kserve/releases/tag/.*)"
-DST_TXT="\[$COMMIT\](https://github.com/kserve/kserve/releases/tag/$COMMIT/install/$KSERVE_VERSION)"
+update_readme "$MANIFESTS_DIR" "$SRC_TXT" "$DST_TXT"
 
-sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
+commit_changes "$MANIFESTS_DIR" "Update ${REPO_NAME} manifests from ${KSERVE_VERSION}" \
+  "apps/${COMPONENT_NAME}" \
+  "README.md" \
+  "scripts"
 
-echo "Committing the changes..."
-cd "$MANIFESTS_DIR"
-git add apps/kserve
-git add README.md
-git add scripts
-git commit -s -m "Update kserve manifests from ${KSERVE_VERSION}" -m "Update kserve/kserve manifests from ${COMMIT}"
+echo "Synchronization completed successfully."
