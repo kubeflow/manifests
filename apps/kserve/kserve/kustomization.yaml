@@ -1,6 +1,16 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  # Install Kserve in kubeflow namespace
-  - kserve_kubeflow.yaml
-  - kserve-cluster-resources.yaml
+# Install Kserve in kubeflow namespace
+- kserve_kubeflow.yaml
+- kserve-cluster-resources.yaml
+
+# Patch to delete the kserve-localmodelnode-agent DaemonSet
+patches:
+- patch: |
+     apiVersion: apps/v1
+     kind: DaemonSet
+     metadata:
+       name: kserve-localmodelnode-agent
+       namespace: kubeflow
+     $patch: delete
