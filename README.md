@@ -627,7 +627,7 @@ For modifications and in-place upgrades of the Kubeflow platform, we provide a r
 - You might have to adjust your overlays and components if needed.
 - You might need to prune old resources. For that, you would add [labels](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/labels/) to all your resources from the start.
 - With labels, you can use `kubectl apply` with `--prune` and `--dry-run` to list prunable resources.
-- Sometimes there are major changes; for example, in the 1.9 release, we switched to oauth2-proxy, which needs additional attention.
+- Sometimes there are major changes; for example, in the 1.9 release, we switched to oauth2-proxy, which needs additional attention (cleanup istio-system once); or 1.9.1 -> 1.10 `kubectl delete clusterrolebinding meta-controller-cluster-role-binding`
 - Nevertheless, with a bit of Kubernetes knowledge, one should be able to upgrade.
 
 ### Kubernetes upgrade fails due to `PodDisruptionBudget`

@@ -12,6 +12,7 @@
 ## ✅ Contributor Checklist
   - [ ] I have tested these changes with kustomize. See [Installation Prerequisites](https://github.com/kubeflow/manifests#prerequisites).
   - [ ] All commits are [_signed-off_](https://github.com/kubeflow/community/tree/master/dco-signoff-hook#signing-off-commits) to satisfy the DCO check.
+  - [ ] I have considered adding my company to the adopters page to support Kubeflow and help the community, since I expect help from the community for my issue (see [1.](https://github.com/kubeflow/community/issues/833) and [2.](https://github.com/kubeflow/community/blob/master/ADOPTERS.md#adopters-of-kubeflow-platform)).
 
 ---     
  
