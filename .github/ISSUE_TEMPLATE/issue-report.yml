@@ -22,6 +22,8 @@ body:
       required: true
     - label: The issue report is detailed and includes version numbers where applicable.
       required: true
+    - label: I have considered adding my company to the adopters page to support Kubeflow and help the community, since I expect help from the community for my issue (see [1.](https://github.com/kubeflow/community/issues/833) and [2.](https://github.com/kubeflow/community/blob/master/ADOPTERS.md#adopters-of-kubeflow-platform)
+      required: true
     - label: This issue pertains to Kubeflow development.
       required: false
     - label: I am available to work on this issue.
