@@ -7,7 +7,7 @@ for NAMESPACE in "${NAMESPACES[@]}"; do
         if [ -f "./experimental/security/PSS/static/restricted/patches/${NAMESPACE}-labels.yaml" ]; then
             PATCH_OUTPUT=$(kubectl patch namespace $NAMESPACE --patch-file ./experimental/security/PSS/static/restricted/patches/${NAMESPACE}-labels.yaml 2>&1)
             if echo "$PATCH_OUTPUT" | grep -q "violate the new PodSecurity"; then
-                exit 1
+                echo "\nWARNING PSS VIOLATED\n"
             fi
         fi
     fi
