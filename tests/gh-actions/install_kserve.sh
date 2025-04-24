@@ -13,8 +13,6 @@ for ((i=1; i<=3; i++)); do
 done
 set -e
 
-kubectl -n kubeflow delete DaemonSet kserve-localmodelnode-agent # TODO https://github.com/kserve/kserve/issues/4402
-
 kubectl wait --for condition=established --timeout=30s crd/clusterservingruntimes.serving.kserve.io
 kustomize build kserve | kubectl apply --server-side --force-conflicts -f -
 
