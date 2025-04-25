@@ -41,7 +41,7 @@ jobs:
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
     - name: Install KF Pipelines
-      run: ./tests/gh-actions/install_pipelines.sh
+      run: ./tests/gh-actions/install_pipelines_swfs.sh
 
     - name: Install KF Multi Tenancy
       run: ./tests/gh-actions/install_multi_tenancy.sh
@@ -60,13 +60,6 @@ jobs:
           exit 1
         fi
         kubectl get secret mlpipeline-minio-artifact -n "$KF_PROFILE" -o json | jq -r '.data | keys[] as $k | "\($k): \(. | .[$k] | @base64d)"' | tr '\n' ' '
-
-    - name: Install seaweedfs
-      run: |
-        kustomize build experimental/seaweedfs/istio | kubectl apply -f -
-        kubectl -n kubeflow wait --for=condition=available --timeout=120s deploy/seaweedfs
-        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=60s --field-selector=status.phase!=Succeeded
-        kubectl -n kubeflow exec deploy/seaweedfs -c seaweedfs -- sh -c "echo \"s3.configure -user minio -access_key minio -secret_key minio123 -actions Read,Write,List -apply\" | /usr/bin/weed shell"
 
     - name: Port forward
       run: ./tests/gh-actions/port_forward_gateway.sh
@@ -101,23 +94,3 @@ jobs:
 
     - name: Applying Pod Security Standards restricted levels for static namespaces
       run: ./tests/gh-actions/enable_restricted_PSS.sh
-
-    - name: Collect Logs on Failure
-      if: failure()
-      run: |
-        mkdir -p logs
-        kubectl get all --all-namespaces > logs/resources.txt
-        kubectl get events --all-namespaces --sort-by=.metadata.creationTimestamp > logs/events.txt
-        for namespace in kubeflow istio-system cert-manager auth kubeflow-user-example-com; do
-            kubectl describe pods -n $namespace > logs/$namespace-pods.txt
-            for pod in $(kubectl get pods -n $namespace -o jsonpath='{.items[*].metadata.name}'); do
-                kubectl logs -n $namespace $pod --tail=100 > logs/$namespace-$pod.txt 2>&1 || true
-            done
-        done
-
-    - name: Upload Diagnostic Logs
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: kubeflow-test-logs
-        path: logs/
