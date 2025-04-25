@@ -16,3 +16,8 @@ patches:
 - path: patches/knative-serving-namespaced-view.yaml
 - path: patches/service-labels.yaml
 - path: patches/remove-gateway.yaml
+- path: patches/seccomp.yaml
+  target:
+    kind: Deployment
+    namespace: knative-serving
+    name: "(autoscaler|activator|controller|net-istio-webhook|webhook)"
