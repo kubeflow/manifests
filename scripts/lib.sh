@@ -31,23 +31,23 @@ create_branch() {
 }
 
 clone_and_checkout() {
-  local src_dir="$1"
-  local repo_url="$2"
-  local repo_dir="$3"
+  local source_directory="$1"
+  local repository_url="$2"
+  local repository_directory="$3"
   local commit="$4"
   
-  echo "Checking out in $src_dir to $commit..."
+  echo "Checking out in $source_directory to $commit..."
   
-  mkdir -p "$src_dir"
-  cd "$src_dir"
+  mkdir -p "$source_directory"
+  cd "$source_directory"
   
   # Clone repository if it doesn't exist
-  if [ ! -d "$repo_dir/.git" ]; then
-    git clone "$repo_url" "$repo_dir"
+  if [ ! -d "$repository_directory/.git" ]; then
+    git clone "$repository_url" "$repository_directory"
   fi
   
   # Checkout to specific commit
-  cd "$src_dir/$repo_dir"
+  cd "$source_directory/$repository_directory"
   if ! git rev-parse --verify --quiet "$commit"; then
     git checkout -b "$commit"
   else
@@ -59,39 +59,39 @@ clone_and_checkout() {
 
 # Copy manifests from source to destination
 copy_manifests() {
-  local src="$1"
-  local dst="$2"
+  local source="$1"
+  local destination="$2"
   
   echo "Copying manifests..."
   
-  if [ -d "$dst" ]; then
-    rm -r "$dst"
+  if [ -d "$destination" ]; then
+    rm -r "$destination"
   fi
   
-  cp "$src" "$dst" -r
+  cp "$source" "$destination" -r
   echo "Successfully copied all manifests."
 }
 
 # Update README with new commit reference
 update_readme() {
-  local manifests_dir="$1"
-  local src_txt="$2"
-  local dst_txt="$3"
+  local manifests_directory="$1"
+  local source_text="$2"
+  local destination_text="$3"
   
-  sed -i "s|$src_txt|$dst_txt|g" "${manifests_dir}/README.md"
+  sed -i "s|$source_text|$destination_text|g" "${manifests_directory}/README.md"
 }
 
 # Commit changes to git repository
 commit_changes() {
-  local manifests_dir="$1"
-  local commit_msg="$2"
+  local manifests_directory="$1"
+  local commit_message="$2"
   local paths_to_add=("${@:3}")
   
-  cd "$manifests_dir"
+  cd "$manifests_directory"
   
   for path in "${paths_to_add[@]}"; do
     git add "$path"
   done
   
-  git commit -s -m "$commit_msg"
+  git commit -s -m "$commit_message"
 } 

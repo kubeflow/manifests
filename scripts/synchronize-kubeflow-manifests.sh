@@ -1,48 +1,48 @@
 #!/usr/bin/env bash
 # This script helps to create a PR to update the Kubeflow manifests
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-source "${SCRIPT_DIR}/lib.sh"
+SCRIPT_DIRECTORY=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${SCRIPT_DIRECTORY}/lib.sh"
 
 setup_error_handling
 
 COMPONENT_NAME="kubeflow"
-REPO_NAME="kubeflow/kubeflow"
-REPO_URL="https://github.com/kubeflow/kubeflow.git"
+REPOSITORY_NAME="kubeflow/kubeflow"
+REPOSITORY_URL="https://github.com/kubeflow/kubeflow.git"
 COMMIT="v1.10.0"
-REPO_DIR="kubeflow"
-SRC_DIR=${SRC_DIR:=/tmp/${COMPONENT_NAME}-${COMPONENT_NAME}}
-BRANCH=${BRANCH:=synchronize-${COMPONENT_NAME}-${COMPONENT_NAME}-manifests-${COMMIT?}}
+REPOSITORY_DIRECTORY="kubeflow"
+SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/${COMPONENT_NAME}-${COMPONENT_NAME}}
+BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-${COMPONENT_NAME}-manifests-${COMMIT?}}
 
 # Path configurations
-MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
+MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
 
-create_branch "$BRANCH"
+create_branch "$BRANCH_NAME"
 
-clone_and_checkout "$SRC_DIR" "$REPO_URL" "$REPO_DIR" "$COMMIT"
+clone_and_checkout "$SOURCE_DIRECTORY" "$REPOSITORY_URL" "$REPOSITORY_DIRECTORY" "$COMMIT"
 
 # Function to copy manifests for a specific component
 copy_component_manifests() {
     local component_name=$1
-    local src_path=$2
-    local dst_path=$3
+    local source_path=$2
+    local destination_path=$3
     local readme_path_pattern=$4
     
     echo "Copying ${component_name} manifests..."
     
-    local dst_dir="${MANIFESTS_DIR}/${dst_path}"
-    if [ -d "$dst_dir" ]; then
-        rm -r "$dst_dir"
+    local destination_directory="${MANIFESTS_DIRECTORY}/${destination_path}"
+    if [ -d "$destination_directory" ]; then
+        rm -r "$destination_directory"
     fi
-    mkdir -p "$dst_dir"
+    mkdir -p "$destination_directory"
     
-    cp "${SRC_DIR}/${REPO_DIR}/${src_path}/"* "$dst_dir" -r
+    cp "${SOURCE_DIRECTORY}/${REPOSITORY_DIRECTORY}/${source_path}/"* "$destination_directory" -r
     
     echo "Updating README for ${component_name}..."
-    local src_txt="\[.*\](https://github.com/${REPO_NAME}/tree/.*/components/${readme_path_pattern})"
-    local dst_txt="\[${COMMIT}\](https://github.com/${REPO_NAME}/tree/${COMMIT}/components/${readme_path_pattern})"
+    local source_text="\[.*\](https://github.com/${REPOSITORY_NAME}/tree/.*/components/${readme_path_pattern})"
+    local destination_text="\[${COMMIT}\](https://github.com/${REPOSITORY_NAME}/tree/${COMMIT}/components/${readme_path_pattern})"
     
-    update_readme "$MANIFESTS_DIR" "$src_txt" "$dst_txt"
+    update_readme "$MANIFESTS_DIRECTORY" "$source_text" "$destination_text"
 }
 
 copy_component_manifests "admission-webhook" \
@@ -92,7 +92,7 @@ copy_component_manifests "pvcviewer-controller" \
 
 echo "Successfully copied all manifests."
 
-commit_changes "$MANIFESTS_DIR" "Update ${REPO_NAME} manifests from ${COMMIT}" \
+commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" \
   "apps" \
   "README.md"
 

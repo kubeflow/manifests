@@ -1,39 +1,39 @@
 #!/usr/bin/env bash
 # This script helps to create a PR to update the KServe Models Web App manifests
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-source "${SCRIPT_DIR}/lib.sh"
+SCRIPT_DIRECTORY=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${SCRIPT_DIRECTORY}/lib.sh"
 
 setup_error_handling
 
 COMPONENT_NAME="models-web-app"
-REPO_NAME="kserve/models-web-app"
-REPO_URL="https://github.com/kserve/models-web-app.git"
+REPOSITORY_NAME="kserve/models-web-app"
+REPOSITORY_URL="https://github.com/kserve/models-web-app.git"
 COMMIT="v0.14.0"
-REPO_DIR="models-web-app"
-SRC_DIR=${SRC_DIR:=/tmp/kserve-${COMPONENT_NAME}}
-BRANCH=${BRANCH:=synchronize-kserve-${COMPONENT_NAME}-manifests-${COMMIT?}}
+REPOSITORY_DIRECTORY="models-web-app"
+SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/kserve-${COMPONENT_NAME}}
+BRANCH_NAME=${BRANCH_NAME:=synchronize-kserve-${COMPONENT_NAME}-manifests-${COMMIT?}}
 
 # Path configurations
-MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
-SRC_MANIFESTS_PATH="config"
-DST_MANIFESTS_PATH="apps/kserve/${COMPONENT_NAME}"
+MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
+SOURCE_MANIFESTS_PATH="config"
+DESTINATION_MANIFESTS_PATH="apps/kserve/${COMPONENT_NAME}"
 
 # README update patterns
-SRC_TXT="\[.*\](https://github.com/${REPO_NAME}/tree/.*)"
-DST_TXT="\[${COMMIT}\](https://github.com/${REPO_NAME}/tree/${COMMIT}/${SRC_MANIFESTS_PATH})"
+SOURCE_TEXT="\[.*\](https://github.com/${REPOSITORY_NAME}/tree/.*)"
+DESTINATION_TEXT="\[${COMMIT}\](https://github.com/${REPOSITORY_NAME}/tree/${COMMIT}/${SOURCE_MANIFESTS_PATH})"
 
-create_branch "$BRANCH"
+create_branch "$BRANCH_NAME"
 
-clone_and_checkout "$SRC_DIR" "$REPO_URL" "$REPO_DIR" "$COMMIT"
+clone_and_checkout "$SOURCE_DIRECTORY" "$REPOSITORY_URL" "$REPOSITORY_DIRECTORY" "$COMMIT"
 
 echo "Copying manifests"
-copy_manifests "${SRC_DIR}/${REPO_DIR}/${SRC_MANIFESTS_PATH}" "${MANIFESTS_DIR}/${DST_MANIFESTS_PATH}"
+copy_manifests "${SOURCE_DIRECTORY}/${REPOSITORY_DIRECTORY}/${SOURCE_MANIFESTS_PATH}" "${MANIFESTS_DIRECTORY}/${DESTINATION_MANIFESTS_PATH}"
 
-update_readme "$MANIFESTS_DIR" "$SRC_TXT" "$DST_TXT"
+update_readme "$MANIFESTS_DIRECTORY" "$SOURCE_TEXT" "$DESTINATION_TEXT"
 
-commit_changes "$MANIFESTS_DIR" "Update kserve models web application manifests from ${COMMIT}" \
-  "${DST_MANIFESTS_PATH}" \
+commit_changes "$MANIFESTS_DIRECTORY" "Update kserve models web application manifests from ${COMMIT}" \
+  "${DESTINATION_MANIFESTS_PATH}" \
   "README.md"
 
 echo "Synchronization completed successfully."
