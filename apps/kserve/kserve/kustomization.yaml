@@ -14,3 +14,29 @@ patches:
        name: kserve-localmodelnode-agent
        namespace: kubeflow
      $patch: delete
+
+- patch: | 
+     apiVersion: apps/v1
+     kind: Deployment
+     metadata:
+       name: kserve-controller-manager
+       namespace: kubeflow
+     spec:
+      template:
+        spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+
+- patch: | 
+     apiVersion: apps/v1
+     kind: Deployment
+     metadata:
+       name: kserve-localmodel-controller-manager
+       namespace: kubeflow
+     spec:
+      template:
+        spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
