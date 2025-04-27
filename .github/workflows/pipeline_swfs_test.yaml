@@ -1,23 +1,24 @@
 name: Test pipelines with seaweedfs
 on:
   workflow_dispatch:
-#  pull_request:
-#    paths:
-#    - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
-#    - .github/workflows/pipeline_swfs_test.yaml
-#    - apps/pipeline/upstream/**
-#    - tests/gh-actions/install_istio.sh
-#    - tests/gh-actions/install_cert_manager.sh
-#    - tests/gh-actions/install_oauth2-proxy.sh
-#    - common/cert-manager/**
-#    - common/oauth2-proxy/**
-#    - common/istio*/**
-#    - experimental/seaweedfs/**
+  pull_request:
+    paths:
+    # - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
+    - .github/workflows/pipeline_swfs_test.yaml
+    - apps/pipeline/upstream/**
+    # - tests/gh-actions/install_istio.sh
+    # - tests/gh-actions/install_cert_manager.sh
+    # - tests/gh-actions/install_oauth2-proxy.sh
+    # - common/cert-manager/**
+    # - common/oauth2-proxy/**
+    # - common/istio*/**
+    - experimental/seaweedfs/**
 
 jobs:
   build:
     timeout-minutes: 15
-    runs-on: ubuntu-latest
+    runs-on:
+      labels: ubuntu-latest-16-cores
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -41,7 +42,7 @@ jobs:
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
     - name: Install KF Pipelines
-      run: ./tests/gh-actions/install_pipelines.sh
+      run: ./tests/gh-actions/install_pipelines_swfs.sh
 
     - name: Install KF Multi Tenancy
       run: ./tests/gh-actions/install_multi_tenancy.sh
@@ -60,13 +61,6 @@ jobs:
           exit 1
         fi
         kubectl get secret mlpipeline-minio-artifact -n "$KF_PROFILE" -o json | jq -r '.data | keys[] as $k | "\($k): \(. | .[$k] | @base64d)"' | tr '\n' ' '
-
-    - name: Install seaweedfs
-      run: |
-        kustomize build experimental/seaweedfs/istio | kubectl apply -f -
-        kubectl -n kubeflow wait --for=condition=available --timeout=120s deploy/seaweedfs
-        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=60s --field-selector=status.phase!=Succeeded
-        kubectl -n kubeflow exec deploy/seaweedfs -c seaweedfs -- sh -c "echo \"s3.configure -user minio -access_key minio -secret_key minio123 -actions Read,Write,List -apply\" | /usr/bin/weed shell"
 
     - name: Port forward
       run: ./tests/gh-actions/port_forward_gateway.sh
