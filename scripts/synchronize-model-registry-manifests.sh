@@ -1,70 +1,47 @@
 #!/usr/bin/env bash
-# This script helps to create a PR to update the manifests
-set -euxo pipefail
-IFS=$'\n\t'
+# This script helps to create a PR to update the Model Registry manifests
 
-COMMIT="v0.2.13" # You can use tags as well
+SCRIPT_DIRECTORY=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${SCRIPT_DIRECTORY}/lib.sh"
+
+setup_error_handling
+
+COMPONENT_NAME="model-registry"
+REPOSITORY_NAME="kubeflow/model-registry"
+REPOSITORY_URL="https://github.com/kubeflow/model-registry.git"
+COMMIT="v0.2.13"
+REPOSITORY_DIRECTORY="model-registry"
 DEV_MODE=${DEV_MODE:=false}
-SRC_DIR=${SRC_DIR:=/tmp/kubeflow-model-registry}
-BRANCH=${BRANCH:=synchronize-kubeflow-model-registry-manifests-${COMMIT?}}
+SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/kubeflow-${COMPONENT_NAME}}
+BRANCH_NAME=${BRANCH_NAME:=synchronize-kubeflow-${COMPONENT_NAME}-manifests-${COMMIT?}}
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
+# Path configurations
+MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
+SOURCE_MANIFESTS_PATH="manifests/kustomize"
+DESTINATION_MANIFESTS_PATH="apps/${COMPONENT_NAME}/upstream"
 
-echo "Creating branch: ${BRANCH}"
+# README update patterns
+SOURCE_TEXT="\[.*\](https://github.com/${REPOSITORY_NAME}/tree/.*/manifests/kustomize)"
+DESTINATION_TEXT="\[${COMMIT}\](https://github.com/${REPOSITORY_NAME}/tree/${COMMIT}/manifests/kustomize)"
 
-if [ -n "$(git status --porcelain)" ]; then
-  echo "WARNING: You have uncommitted changes"
+create_branch "$BRANCH_NAME"
+
+clone_and_checkout "$SOURCE_DIRECTORY" "$REPOSITORY_URL" "$REPOSITORY_DIRECTORY" "$COMMIT"
+
+echo "Copying ${COMPONENT_NAME} manifests..."
+DESTINATION_DIRECTORY=$MANIFESTS_DIRECTORY/$DESTINATION_MANIFESTS_PATH
+if [ -d "$DESTINATION_DIRECTORY" ]; then
+    rm -r "$DESTINATION_DIRECTORY"
 fi
-
-if [ `git branch --list $BRANCH` ]
-then
-   echo "WARNING: Branch $BRANCH already exists."
-fi
-
-# Create the branch in the manifests repository
-if ! git show-ref --verify --quiet refs/heads/$BRANCH; then
-    git checkout -b $BRANCH
-else
-    echo "Branch $BRANCH already exists."
-fi
-echo "Checking out in $SRC_DIR to $COMMIT..."
-
-# Checkout the Model Registry repository
-mkdir -p $SRC_DIR
-cd $SRC_DIR
-if [ ! -d "model-registry/.git" ]; then
-    git clone https://github.com/kubeflow/model-registry.git
-fi
-cd $SRC_DIR/model-registry
-if ! git rev-parse --verify --quiet $COMMIT; then
-    git checkout -b $COMMIT
-else
-    git checkout $COMMIT
-fi
-
-if [ -n "$(git status --porcelain)" ]; then
-  echo "WARNING: You have uncommitted changes"
-fi
-
-echo "Copying model-registry manifests..."
-DST_DIR=$MANIFESTS_DIR/apps/model-registry/upstream
-if [ -d "$DST_DIR" ]; then
-    rm -r "$DST_DIR"
-fi
-mkdir -p $DST_DIR
-cp -r "$SRC_DIR/model-registry/manifests/kustomize/"* "$DST_DIR"
+mkdir -p $DESTINATION_DIRECTORY
+cp -r "$SOURCE_DIRECTORY/$REPOSITORY_DIRECTORY/$SOURCE_MANIFESTS_PATH/"* "$DESTINATION_DIRECTORY"
 
 echo "Successfully copied all manifests."
 
-echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kubeflow/model-registry/tree/.*/manifests/kustomize)"
-DST_TXT="\[$COMMIT\](https://github.com/kubeflow/model-registry/tree/$COMMIT/manifests/kustomize)"
+update_readme "$MANIFESTS_DIRECTORY" "$SOURCE_TEXT" "$DESTINATION_TEXT"
 
-sed -i "" "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}/README.md"
+commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" \
+  "apps" \
+  "README.md"
 
-echo "Committing the changes..."
-cd $MANIFESTS_DIR
-git add apps
-git add README.md
-git commit -s -m "Update kubeflow/model-registry manifests from ${COMMIT}"
+echo "Synchronization completed successfully."

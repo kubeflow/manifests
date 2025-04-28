@@ -1,71 +1,38 @@
 #!/usr/bin/env bash
-# This script helps to create a PR to update the manifests
-set -euxo pipefail
-IFS=$'\n\t'
+# This script helps to create a PR to update the Training Operator manifests
 
-COMMIT="v1.9.1" # You can use tags as well
-SRC_DIR=${SRC_DIR:=/tmp/kubeflow-training-operator}
-BRANCH=${BRANCH:=synchronize-kubeflow-training-operator-manifests-${COMMIT?}}
+SCRIPT_DIRECTORY=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${SCRIPT_DIRECTORY}/lib.sh"
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-MANIFESTS_DIR=$(dirname $SCRIPT_DIR)
+setup_error_handling
 
-echo "Creating branch: ${BRANCH}"
+COMPONENT_NAME="training-operator"
+REPOSITORY_NAME="kubeflow/training-operator"
+REPOSITORY_URL="https://github.com/kubeflow/training-operator.git"
+COMMIT="v1.9.1"
+REPOSITORY_DIRECTORY="training-operator"
+SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/kubeflow-${COMPONENT_NAME}}
+BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${COMMIT?}}
 
-if [ -n "$(git status --porcelain)" ]; then
-  echo "WARNING: You have uncommitted changes"
-fi
+# Path configurations
+MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
+SOURCE_MANIFESTS_PATH="manifests"
+DESTINATION_MANIFESTS_PATH="apps/${COMPONENT_NAME}/upstream"
 
-if [ `git branch --list $BRANCH` ]
-then
-   echo "WARNING: Branch $BRANCH already exists."
-fi
+# README update patterns
+SOURCE_TEXT="\[.*\](https://github.com/${REPOSITORY_NAME}/tree/.*/manifests)"
+DESTINATION_TEXT="\[${COMMIT}\](https://github.com/${REPOSITORY_NAME}/tree/${COMMIT}/manifests)"
 
-# Create the branch in the manifests repository
-if ! git show-ref --verify --quiet refs/heads/$BRANCH; then
-  git checkout -b $BRANCH
-else
-    echo "Branch $BRANCH already exists."
-fi
+create_branch "$BRANCH_NAME"
 
-echo "Checking out in $SRC_DIR to $COMMIT..."
+clone_and_checkout "$SOURCE_DIRECTORY" "$REPOSITORY_URL" "$REPOSITORY_DIRECTORY" "$COMMIT"
 
-# Checkout the Training Operator repository
-mkdir -p $SRC_DIR
-cd $SRC_DIR
-if [ ! -d "training-operator/.git" ]; then
-    git clone https://github.com/kubeflow/training-operator.git
-fi
-cd $SRC_DIR/training-operator
-if ! git rev-parse --verify --quiet $COMMIT; then
-    git checkout -b $COMMIT
-else
-    git checkout $COMMIT
-fi
+copy_manifests "${SOURCE_DIRECTORY}/${REPOSITORY_DIRECTORY}/${SOURCE_MANIFESTS_PATH}" "${MANIFESTS_DIRECTORY}/${DESTINATION_MANIFESTS_PATH}"
 
-if [ -n "$(git status --porcelain)" ]; then
-  echo "WARNING: You have uncommitted changes"
-fi
+update_readme "$MANIFESTS_DIRECTORY" "$SOURCE_TEXT" "$DESTINATION_TEXT"
 
-echo "Copying training-operator manifests..."
-DST_DIR=$MANIFESTS_DIR/apps/training-operator/upstream
-if [ -d "$DST_DIR" ]; then
-    rm -r "$DST_DIR"
-fi
-cp $SRC_DIR/training-operator/manifests $DST_DIR -r
+commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" \
+  "apps" \
+  "README.md"
 
-
-echo "Successfully copied all manifests."
-
-echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/kubeflow/training-operator/tree/.*/manifests)"
-DST_TXT="\[$COMMIT\](https://github.com/kubeflow/training-operator/tree/$COMMIT/manifests)"
-
-sed -i "s|$SRC_TXT|$DST_TXT|g" ${MANIFESTS_DIR}/README.md
-
-# DEV: Comment out these commands if you are testing locally
-echo "Committing the changes..."
-cd $MANIFESTS_DIR
-git add apps
-git add README.md
-git commit -s -m "Update kubeflow/training-operator manifests from ${COMMIT}"
+echo "Synchronization completed successfully."
