@@ -95,7 +95,7 @@ jobs:
         kustomize build apps/model-registry/upstream/options/ui/overlays/istio | kubectl apply -f -
 
     - name: Install Spark
-      run: chmod u+x tests/gh-actions/spark_*.sh && ./tests/gh-actions/install_spark.sh
+      run: chmod u+x tests/gh-actions/*.sh && ./tests/gh-actions/install_spark.sh
 
     - name: Wait for All Pods to be Ready
       run: kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 60s --field-selector=status.phase!=Succeeded
@@ -173,7 +173,7 @@ jobs:
 # TODO the individual KServe tests is currently being restructured. Afterwards we can also test inferencing
 
     - name: Run Spark Test
-      run: chmod u+x tests/gh-actions/spark_*.sh && ./tests/gh-actions/test_spark.sh "${KF_PROFILE}"
+      run: chmod u+x tests/gh-actions/*.sh && ./tests/gh-actions/test_spark.sh "${KF_PROFILE}"
 
     - name: Test Model Registry Deployment
       run: |
