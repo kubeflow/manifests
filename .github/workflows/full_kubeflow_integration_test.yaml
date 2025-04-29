@@ -95,13 +95,13 @@ jobs:
         kustomize build apps/model-registry/upstream/options/ui/overlays/istio | kubectl apply -f -
 
     - name: Install Spark
-      run: chmod u+x tests/gh-actions/spark_*.sh && ./tests/gh-actions/spark_install.sh
+      run: chmod u+x tests/gh-actions/spark_*.sh && ./tests/gh-actions/install_spark.sh
 
     - name: Wait for All Pods to be Ready
       run: kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 60s --field-selector=status.phase!=Succeeded
 
     - name: Install Dependencies
-      run: pip install pytest kubernetes kfp==2.11.0 kserve pytest-timeout pyyaml requests
+      run: pip install pytest kubernetes kfp==2.13.0 kserve pytest-timeout pyyaml requests
 
     - name: Port-forward the istio-ingress gateway
       run: ./tests/gh-actions/port_forward_gateway.sh
@@ -120,14 +120,14 @@ jobs:
     - name: Test Pipeline Access with Authorized Token
       run: |
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
-        python3 tests/gh-actions/pipeline_test.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
+        python3 tests/gh-actions/test_pipeline.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
 
     - name: Test Pipeline Access with Unauthorized Token
       run: |
         kubectl create namespace test-unauthorized
         kubectl create serviceaccount test-unauthorized -n test-unauthorized
         UNAUTHORIZED_TOKEN=$(kubectl -n test-unauthorized create token test-unauthorized)
-        python3 tests/gh-actions/pipeline_test.py test_unauthorized_access "$UNAUTHORIZED_TOKEN" "${KF_PROFILE}"
+        python3 tests/gh-actions/test_pipeline.py test_unauthorized_access "$UNAUTHORIZED_TOKEN" "${KF_PROFILE}"
 
     - name: Test Volumes Web Application API
       run: ./tests/gh-actions/test_volumes_web_application.sh "${KF_PROFILE}"
@@ -173,7 +173,7 @@ jobs:
 # TODO the individual KServe tests is currently being restructured. Afterwards we can also test inferencing
 
     - name: Run Spark Test
-      run: chmod u+x tests/gh-actions/spark_*.sh && ./tests/gh-actions/spark_test.sh "${KF_PROFILE}"
+      run: chmod u+x tests/gh-actions/spark_*.sh && ./tests/gh-actions/test_spark.sh "${KF_PROFILE}"
 
     - name: Test Model Registry Deployment
       run: |
