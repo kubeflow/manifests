@@ -26,6 +26,7 @@ spec:
             - --port=8080
             - --mlmd-hostname=localhost
             - --mlmd-port=9090
+            - --datastore-type=mlmd
           command:
             - /model-registry
             - proxy
