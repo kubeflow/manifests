@@ -2,14 +2,14 @@
 # This script helps to create a PR to update the Kubeflow Pipelines manifests
 
 SCRIPT_DIRECTORY=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-source "${SCRIPT_DIRECTORY}/lib.sh"
+source "${SCRIPT_DIRECTORY}/library.sh"
 
 setup_error_handling
 
 COMPONENT_NAME="pipelines"
 REPOSITORY_NAME="kubeflow/pipelines"
 REPOSITORY_URL="https://github.com/kubeflow/pipelines.git"
-COMMIT="2.4.1"
+COMMIT="2.5.0"
 REPOSITORY_DIRECTORY="pipelines"
 SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/kubeflow-${COMPONENT_NAME}}
 BRANCH_NAME=${BRANCH_NAME:=synchronize-kubeflow-${COMPONENT_NAME}-manifests-${COMMIT?}}
