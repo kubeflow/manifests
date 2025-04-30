@@ -93,7 +93,7 @@ data:
   oauth2_proxy.cfg: |
     provider = "oidc"
     oidc_issuer_url = "https://login.microsoftonline.com/$MY_TENANT/v2.0"
-    scope = "openid email profile" # remove groups since they are not used yet
+    scope = "openid email offline_access" # removed groups and profile to decrease the size and added offline_access to enable refresh tokens
     email_domains = [ "*" ]
 
     # serve a static HTTP 200 upstream on for authentication success
@@ -126,7 +126,7 @@ data:
     set_xauthrequest = true
     cookie_name = "oauth2_proxy_kubeflow"
     cookie_expire = "24h"
-    cookie_refresh = "1h" # This improves the user experience a lot
+    cookie_refresh = "59m" # This improves the user experience a lot
     redirect_url = "https://$MY_PUBLIC_KUBEFLOW_DOMAIN/oauth2/callback"
     relative_redirect_url = false
 ```
