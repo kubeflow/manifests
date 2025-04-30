@@ -2,7 +2,7 @@
 # This script helps to create a PR to update the Spark Operator manifests
 
 SCRIPT_DIRECTORY=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-source "${SCRIPT_DIRECTORY}/lib.sh"
+source "${SCRIPT_DIRECTORY}/library.sh"
 
 setup_error_handling
 
