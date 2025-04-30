@@ -1,6 +1,7 @@
 #!/bin/bash
 set -euxo pipefail
 
+sudo apt-get update
 sudo apt-get install -y apparmor-profiles
 sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
 
