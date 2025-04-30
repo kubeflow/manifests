@@ -166,11 +166,7 @@ jobs:
 
     - name: Run KServe Test
       run: |
-        kubectl apply -f tests/gh-actions/kf-objects/kserve_test.yaml
-        sleep 30
-        kubectl get inferenceservice -n $KF_PROFILE
-        kubectl wait --for=condition=Ready inferenceservice.serving.kserve.io/sklearn-iris -n $KF_PROFILE --timeout=300s
-# TODO the individual KServe tests is currently being restructured. Afterwards we can also test inferencing
+        ./tests/gh-actions/test_kserve.sh ${KF_PROFILE}
 
     - name: Run Spark Test
       run: chmod u+x tests/gh-actions/*.sh && ./tests/gh-actions/test_spark.sh "${KF_PROFILE}"
