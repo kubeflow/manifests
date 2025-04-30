@@ -2,8 +2,8 @@
 set -euxo pipefail
 
 NAMESPACE=${1:-kubeflow-user-example-com}
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-TEST_DIR="${SCRIPT_DIR}/kserve"
+SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+TEST_DIRECTORY="${SCRIPT_DIRECTORY}/kserve"
 
 echo "=== KServe Predictor Service Labels ==="
 kubectl get pods -n ${NAMESPACE} -l serving.knative.dev/service=isvc-sklearn-predictor-default --show-labels
@@ -53,12 +53,12 @@ EOF
 
 if ! command -v pytest &> /dev/null; then
   echo "Installing test dependencies..."
-  pip install -r ${TEST_DIR}/requirements.txt
+  pip install -r ${TEST_DIRECTORY}/requirements.txt
 fi
 
 export KSERVE_INGRESS_HOST_PORT=${KSERVE_INGRESS_HOST_PORT:-localhost:8080}
 export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
-cd ${TEST_DIR} && pytest . -vs --log-level info
+cd ${TEST_DIRECTORY} && pytest . -vs --log-level info
 
 echo "=== Testing path-based external access ==="
 curl -v -H "Host: isvc-sklearn.${NAMESPACE}.example.com" \
