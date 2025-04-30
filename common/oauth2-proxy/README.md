@@ -126,7 +126,7 @@ data:
     set_xauthrequest = true
     cookie_name = "oauth2_proxy_kubeflow"
     cookie_expire = "24h"
-    cookie_refresh = "1h" # This improves the user experience a lot
+    cookie_refresh = "59m" # This improves the user experience a lot
     redirect_url = "https://$MY_PUBLIC_KUBEFLOW_DOMAIN/oauth2/callback"
     relative_redirect_url = false
 ```
