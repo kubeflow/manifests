@@ -93,7 +93,7 @@ data:
   oauth2_proxy.cfg: |
     provider = "oidc"
     oidc_issuer_url = "https://login.microsoftonline.com/$MY_TENANT/v2.0"
-    scope = "openid email profile" # remove groups since they are not used yet
+    scope = "openid email offline_access" # removed groups and profile to decrease the size and added offline_access to enable refresh tokens
     email_domains = [ "*" ]
 
     # serve a static HTTP 200 upstream on for authentication success
