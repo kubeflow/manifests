@@ -78,7 +78,11 @@ update_readme() {
   local source_text="$2"
   local destination_text="$3"
   
-  sed -i "s|$source_text|$destination_text|g" "${manifests_directory}/README.md"
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i "" "s|$source_text|$destination_text|g" "${manifests_directory}/README.md" # BSD sed of Mac OSX
+  else
+    sed -i "s|$source_text|$destination_text|g" "${manifests_directory}/README.md" # GNU sed of Linux
+  fi
 }
 
 # Commit changes to git repository
