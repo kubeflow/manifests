@@ -1,8 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - resources.yaml
-  - aggregated-roles.yaml
+- resources.yaml
+- aggregated-roles.yaml
 namespace: kubeflow
 patches:
   - target:
@@ -48,7 +48,7 @@ patches:
       spec:
         template:
           metadata:
-            annotations:
+            labels:
               sidecar.istio.io/inject: "false"
   - target:
       kind: Deployment
@@ -57,9 +57,9 @@ patches:
       apiVersion: apps/v1
       kind: Deployment
       metadata:
-        name: spark-operator-webhook
+        name: spark-operator-controller
       spec:
         template:
           metadata:
-            annotations:
+            labels:
               sidecar.istio.io/inject: "false"

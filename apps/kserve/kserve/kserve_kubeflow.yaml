@@ -32826,12 +32826,12 @@ spec:
     metadata:
       annotations:
         kubectl.kubernetes.io/default-container: manager
-        sidecar.istio.io/inject: "false"
       labels:
         app: kserve
         app.kubernetes.io/name: kserve
         control-plane: kserve-controller-manager
         controller-tools.k8s.io: "1.0"
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
         - args:
