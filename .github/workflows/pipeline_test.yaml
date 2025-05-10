@@ -5,7 +5,7 @@ on:
     - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
     - .github/workflows/test_pipeline.yaml
     - apps/pipeline/upstream/**
-    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_istio-cni.sh
     - tests/gh-actions/install_cert_manager.sh
     - tests/gh-actions/install_oauth2-proxy.sh
     - common/cert-manager/**
@@ -47,7 +47,7 @@ jobs:
       run: ./tests/gh-actions/install_multi_tenancy.sh
 
     - name: Install kubeflow-istio-resources
-      run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
+      run: kustomize build common/istio-cni-1-24/kubeflow-istio-resources/base | kubectl apply -f -
 
     - name: Create KF Profile
       run: ./tests/gh-actions/install_kubeflow_profile.sh
@@ -94,4 +94,3 @@ jobs:
 
     - name: Applying Pod Security Standards restricted levels for static namespaces
       run: ./tests/gh-actions/enable_restricted_PSS.sh
-

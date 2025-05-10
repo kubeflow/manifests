@@ -10,3 +10,4 @@ resources:
 
 patches:
 - path: patches/remove-pdb.yaml
+- path: patches/seccomp-cluster-local-gateway.yaml
