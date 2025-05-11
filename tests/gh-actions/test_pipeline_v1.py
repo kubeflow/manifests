@@ -26,7 +26,8 @@ def run_v1_pipeline(token, namespace):
         hello_world_pipeline,
         experiment_name=experiment.name,
         run_name="v1-hello-world",
-        namespace=namespace
+        namespace=namespace,
+        arguments={}
     )
     
     for iteration in range(15):
