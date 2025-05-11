@@ -100,9 +100,6 @@ jobs:
     - name: Wait for All Pods to be Ready
       run: kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 60s --field-selector=status.phase!=Succeeded
 
-    - name: Install Dependencies
-      run: pip install pytest kubernetes kfp==2.13.0 kserve pytest-timeout pyyaml requests
-
     - name: Port-forward the istio-ingress gateway
       run: ./tests/gh-actions/port_forward_gateway.sh
 
@@ -112,13 +109,18 @@ jobs:
     - name: Test Dex Login
       run: |
         pip3 install -q requests
-
         python3 tests/gh-actions/test_dex_login.py
-
         echo "Dex login test completed successfully."
 
-    - name: Test Pipeline Access with Authorized Token
+    - name: V1 Pipeline Test
       run: |
+        pip3 install "kfp>=1.8.22,<2.0.0"
+        TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
+        python3 tests/gh-actions/test_pipeline_v1.py "${TOKEN}" "${KF_PROFILE}"
+
+    - name: V2 Pipeline Test
+      run: |
+        pip3 install -U "kfp>=2.13.0"
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/gh-actions/test_pipeline.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
 
