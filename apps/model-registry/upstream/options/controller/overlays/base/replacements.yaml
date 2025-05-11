@@ -1,0 +1,110 @@
+- source:
+    kind: ConfigMap
+    name: model-registry-controller-parameters
+    fieldPath: data.NAMESPACE_LABEL
+  targets:
+    - select:
+        kind: Deployment
+        name: controller-manager
+      fieldPaths:
+        - spec.template.spec.containers.[name=manager].env.[name=NAMESPACE_LABEL].value
+- source:
+    kind: ConfigMap
+    name: model-registry-controller-parameters
+    fieldPath: data.NAME_LABEL
+  targets:
+    - select:
+        kind: Deployment
+        name: controller-manager
+      fieldPaths:
+        - spec.template.spec.containers.[name=manager].env.[name=NAME_LABEL].value
+- source:
+    kind: ConfigMap
+    name: model-registry-controller-parameters
+    fieldPath: data.URL_ANNOTATION
+  targets:
+    - select:
+        kind: Deployment
+        name: controller-manager
+      fieldPaths:
+        - spec.template.spec.containers.[name=manager].env.[name=URL_ANNOTATION].value
+- source:
+    kind: ConfigMap
+    name: model-registry-controller-parameters
+    fieldPath: data.INFERENCE_SERVICE_ID_LABEL
+  targets:
+    - select:
+        kind: Deployment
+        name: controller-manager
+      fieldPaths:
+        - spec.template.spec.containers.[name=manager].env.[name=INFERENCE_SERVICE_ID_LABEL].value
+- source:
+    kind: ConfigMap
+    name: model-registry-controller-parameters
+    fieldPath: data.MODEL_VERSION_ID_LABEL
+  targets:
+    - select:
+        kind: Deployment
+        name: controller-manager
+      fieldPaths:
+        - spec.template.spec.containers.[name=manager].env.[name=MODEL_VERSION_ID_LABEL].value
+- source:
+    kind: ConfigMap
+    name: model-registry-controller-parameters
+    fieldPath: data.REGISTERED_MODEL_ID_LABEL
+  targets:
+    - select:
+        kind: Deployment
+        name: controller-manager
+      fieldPaths:
+        - spec.template.spec.containers.[name=manager].env.[name=REGISTERED_MODEL_ID_LABEL].value
+- source:
+    kind: ConfigMap
+    name: model-registry-controller-parameters
+    fieldPath: data.FINALIZER
+  targets:
+    - select:
+        kind: Deployment
+        name: controller-manager
+      fieldPaths:
+        - spec.template.spec.containers.[name=manager].env.[name=FINALIZER].value
+- source:
+    kind: ConfigMap
+    name: model-registry-controller-parameters
+    fieldPath: data.SERVICE_ANNOTATION
+  targets:
+    - select:
+        kind: Deployment
+        name: controller-manager
+      fieldPaths:
+        - spec.template.spec.containers.[name=manager].env.[name=SERVICE_ANNOTATION].value
+- source:
+    kind: ConfigMap
+    name: model-registry-controller-parameters
+    fieldPath: data.REGISTRIES_NAMESPACE
+  targets:
+    - select:
+        kind: Deployment
+        name: controller-manager
+      fieldPaths:
+        - spec.template.spec.containers.[name=manager].env.[name=REGISTRIES_NAMESPACE].value
+- source:
+    kind: ConfigMap
+    name: model-registry-controller-parameters
+    fieldPath: data.SKIP_TLS_VERIFY
+  targets:
+    - select:
+        kind: Deployment
+        name: controller-manager
+      fieldPaths:
+        - spec.template.spec.containers.[name=manager].env.[name=SKIP_TLS_VERIFY].value
+- source:
+    kind: ConfigMap
+    name: model-registry-controller-parameters
+    fieldPath: data.INFERENCE_SERVICE_CONTROLLER
+  targets:
+    - select:
+        kind: Deployment
+        name: controller-manager
+      fieldPaths:
+        - spec.template.spec.containers.[name=manager].env.[name=INFERENCE_SERVICE_CONTROLLER].value
