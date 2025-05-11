@@ -111,7 +111,7 @@ jobs:
         pip3 install -q requests
         python3 tests/gh-actions/test_dex_login.py
         echo "Dex login test completed successfully."
-        
+
     - name: V1 Pipeline Test
       run: |
         pip3 install "kfp>=1.8.22,<2.0.0"
