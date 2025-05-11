@@ -73,7 +73,7 @@ jobs:
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/gh-actions/test_pipeline_v1.py "${TOKEN}" "${KF_PROFILE}"
 
-    - name: List and deploy test pipeline with authorized ServiceAccount Token
+    - name: V2 Pipeline Test
       run: |
         pip3 install -U kfp==2.13.0
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
