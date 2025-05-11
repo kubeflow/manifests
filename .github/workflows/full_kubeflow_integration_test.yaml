@@ -117,7 +117,7 @@ jobs:
 
         echo "Dex login test completed successfully."
 
-    - name: Test Pipeline Access with Authorized Token
+    - name: V2 Pipeline Test
       run: |
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/gh-actions/test_pipeline.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
