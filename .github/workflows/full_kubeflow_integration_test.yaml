@@ -115,7 +115,6 @@ jobs:
     - name: V1 Pipeline Test
       run: |
         pip3 install "kfp>=1.8.22,<2.0.0"
-        KF_PROFILE=kubeflow-user-example-com
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/gh-actions/test_pipeline_v1.py "${TOKEN}" "${KF_PROFILE}"
 
