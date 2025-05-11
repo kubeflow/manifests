@@ -15,6 +15,9 @@ on:
     - tests/gh-actions/test_pipeline_v1.py
     - experimental/security/PSS/*
 
+env:
+  KF_PROFILE: kubeflow-user-example-com
+
 jobs:
   build:
     timeout-minutes: 15
@@ -68,14 +71,12 @@ jobs:
     - name: V1 Pipeline Test
       run: |
         pip3 install "kfp>=1.8.22,<2.0.0"
-        KF_PROFILE=kubeflow-user-example-com
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/gh-actions/test_pipeline_v1.py "${TOKEN}" "${KF_PROFILE}"
 
     - name: List and deploy test pipeline with authorized ServiceAccount Token
       run: |
         pip3 install kfp==2.13.0
-        KF_PROFILE=kubeflow-user-example-com
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/gh-actions/test_pipeline.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
 
