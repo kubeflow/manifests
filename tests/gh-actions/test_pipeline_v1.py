@@ -3,19 +3,19 @@
 import kfp
 import sys
 import time
-from kfp import dsl
 
-@dsl.component
-def hello_world():
-    print("Hello World from Kubeflow Pipelines V1!")
-    return "Hello World"
+def hello_world_op():
+    from kfp.components import func_to_container_op
+    
+    def hello_world():
+        print("Hello World from Kubeflow Pipelines V1!")
+        return "Hello World"
+    
+    return func_to_container_op(hello_world)
 
-@dsl.pipeline(
-    name="Hello World V1 Pipeline",
-    description="A simple pipeline that prints Hello World"
-)
 def hello_world_pipeline():
-    hello_world()
+    hello_op = hello_world_op()
+    hello_op()
 
 def run_v1_pipeline(token, namespace):
     client = kfp.Client(host="http://localhost:8080/pipeline", existing_token=token)
