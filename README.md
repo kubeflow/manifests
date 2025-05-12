@@ -67,6 +67,7 @@ This repository periodically synchronizes all official Kubeflow components from 
 | KServe Models Web Application | apps/kserve/models-web-app | [v0.14.0](https://github.com/kserve/models-web-app/tree/v0.14.0/config) |
 | Kubeflow Pipelines | apps/pipeline/upstream | [2.5.0](https://github.com/kubeflow/pipelines/tree/2.5.0/manifests/kustomize) |
 | Kubeflow Model Registry | apps/model-registry/upstream | [v0.2.17](https://github.com/kubeflow/model-registry/tree/v0.2.17/manifests/kustomize) |
+| Spark Operator | apps/spark/spark-operator | [2.1.1](https://github.com/kubeflow/spark-operator/tree/v2.1.1) |
 
 The following matrix shows the versions of common components used across different Kubeflow projects:
 
@@ -504,6 +505,14 @@ Install the Training Operator official Kubeflow component:
 
 ```sh
 kustomize build apps/training-operator/upstream/overlays/kubeflow | kubectl apply --server-side --force-conflicts -f -
+```
+
+#### Spark Operator
+
+Install the Spark Operator:
+
+```sh
+kustomize build apps/spark/spark-operator/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### User Namespaces

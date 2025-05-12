@@ -45,7 +45,6 @@ resources:
 - ../common/oauth2-proxy/overlays/m2m-dex-only     # for all clusters
 #- ../common/oauth2-proxy/overlays/m2m-dex-and-kind # for KIND clusters (allows K8S JWTs for gateway auth)
 #- ../common/oauth2-proxy/overlays/m2m-dex-and-eks  # for EKS clusters (NOTE: requires you to configure issuer, see overlay)
-
 # Dex
 - ../common/dex/overlays/oauth2-proxy
 # KNative
@@ -61,8 +60,6 @@ resources:
 - ../common/kubeflow-roles/base
 # Kubeflow Istio Resources
 - ../common/istio-1-24/kubeflow-istio-resources/base
-
-
 # Kubeflow Pipelines
 - ../apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
 # Katib
@@ -89,10 +86,11 @@ resources:
 - ../apps/training-operator/upstream/overlays/kubeflow
 # User namespace
 - ../common/user-namespace/base
-
 # KServe
 - ../apps/kserve/kserve
 - ../apps/kserve/models-web-app/overlays/kubeflow
+# Spark Operator
+- ../apps/spark/spark-operator/overlays/kubeflow
 
 # Ray is an experimental integration
 # Here is the documentation for Ray: https://docs.ray.io/en/latest/
