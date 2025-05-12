@@ -11,8 +11,8 @@ on:
     - common/cert-manager/**
     - common/oauth2-proxy/**
     - common/istio*/**
-    - tests/gh-actions/test_pipeline.py
     - tests/gh-actions/test_pipeline_v1.py
+    - tests/gh-actions/test_pipeline_v2.py
     - experimental/security/PSS/*
 
 env:
@@ -51,7 +51,7 @@ jobs:
       run: ./tests/gh-actions/install_multi_tenancy.sh
 
     - name: Install kubeflow-istio-resources
-      run: kustomize build common/istio-cni-1-24/kubeflow-istio-resources/base | kubectl apply -f -
+      run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
 
     - name: Create KF Profile
       run: ./tests/gh-actions/install_kubeflow_profile.sh
@@ -64,6 +64,20 @@ jobs:
         fi
         kubectl get secret mlpipeline-minio-artifact -n "$KF_PROFILE" -o json | jq -r '.data | keys[] as $k | "\($k): \(. | .[$k] | @base64d)"' | tr '\n' ' '
 
+    - name: Verify KF Pipeline pods are ready
+      run: |
+        echo "Checking Pipeline components..."
+        kubectl get pods -n kubeflow -l app=ml-pipeline
+        kubectl get pods -n kubeflow -l app=ml-pipeline-persistenceagent
+        kubectl get pods -n kubeflow -l app=ml-pipeline-scheduledworkflow
+        kubectl get pods -n kubeflow -l app=ml-pipeline-ui
+        kubectl get pods -n kubeflow -l app=ml-pipeline-viewer-crd
+        kubectl get pods -n kubeflow -l app=metadata-writer
+
+        kubectl wait --for=condition=Ready pods -l app=ml-pipeline -n kubeflow --timeout=120s
+        kubectl wait --for=condition=Ready pods -l app=ml-pipeline-persistenceagent -n kubeflow --timeout=60s
+        kubectl wait --for=condition=Ready pods -l app=ml-pipeline-ui -n kubeflow --timeout=60s
+
     - name: Port forward
       run: ./tests/gh-actions/port_forward_gateway.sh
 
@@ -73,19 +87,17 @@ jobs:
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/gh-actions/test_pipeline_v1.py "${TOKEN}" "${KF_PROFILE}"
 
-    - name: V2 Pipeline Test
+    - name: Run V2 Pipeline Test
       run: |
-        pip3 install -U "kfp==2.13.0"
+        pip3 install "kfp>=2.13.0"
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
-        python3 tests/gh-actions/test_pipeline.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
+        python3 tests/gh-actions/test_pipeline_v2.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
 
-    - name: Fail to list pipelines with unauthorized ServiceAccount Token
+    - name: Test unauthorized access
       run: |
-        pip3 install -U "kfp==2.13.0"
         TOKEN="$(kubectl -n default create token default)"
-        python3 tests/gh-actions/test_pipeline.py test_unauthorized_access "${TOKEN}" "${KF_PROFILE}"
+        python3 tests/gh-actions/test_pipeline_v2.py test_unauthorized_access "${TOKEN}" "${KF_PROFILE}"
         echo "Test succeeded. Token from unauthorized ServiceAccount cannot list pipelines in $KF_PROFILE namespace."
-
 
     - name: Apply Pod Security Standards baseline levels for static namespaces
       run: ./tests/gh-actions/enable_baseline_PSS.sh
