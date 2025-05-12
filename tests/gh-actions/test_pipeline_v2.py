@@ -43,10 +43,8 @@ def run_pipeline(token, namespace):
         
         for _ in range(30): 
             status = client.get_run(run_id=run_id).state
-            print(f"Pipeline status: {status}")
             
             if status == "SUCCEEDED":
-                print("V2 pipeline test successful!")
                 return
             elif status not in ["PENDING", "RUNNING"]:
                 print(f"Pipeline failed with status: {status}")
@@ -64,11 +62,10 @@ def run_pipeline(token, namespace):
                 
             time.sleep(10)
         
-        print("Pipeline execution timed out")
         sys.exit(1)
         
-    except Exception as e:
-        print(f"Error in pipeline execution: {e}")
+    except Exception as exception:
+        print(f"Error in pipeline execution: {exception}")
         sys.exit(1)
 
 
@@ -77,18 +74,14 @@ def test_unauthorized_access(token, namespace):
 
     try:
         pipeline = client.list_runs(namespace=namespace)
-        print("ERROR: Unauthorized access test failed - was able to list pipelines")
         sys.exit(1)
     except ApiException as exception:
         if exception.status != 403:
-            print(f"Expected 403 error, but got {exception.status}")
             sys.exit(1)
-        print("Unauthorized access test passed - received 403 as expected")
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print(f"Usage: {sys.argv[0]} <action> <token> <namespace>")
         sys.exit(1)
     
     action = sys.argv[1]
@@ -100,5 +93,4 @@ if __name__ == "__main__":
     elif action == "test_unauthorized_access":
         test_unauthorized_access(token, namespace)
     else:
-        print(f"Unknown action: {action}")
         sys.exit(1)
