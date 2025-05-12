@@ -32,7 +32,7 @@ def run_pipeline(token, namespace):
     
     run = client.create_run_from_pipeline_func(
         hello_world_pipeline,
-        experiment_name=experiment.name,
+        experiment_name="v2-pipeline-test",
         run_name="v2-hello-world",
         namespace=namespace,
         arguments={}
