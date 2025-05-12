@@ -66,7 +66,6 @@ jobs:
 
     - name: Verify KF Pipeline pods are ready
       run: |
-        echo "Checking Pipeline components..."
         kubectl get pods -n kubeflow -l app=ml-pipeline
         kubectl get pods -n kubeflow -l app=ml-pipeline-persistenceagent
         kubectl get pods -n kubeflow -l app=ml-pipeline-scheduledworkflow
@@ -87,7 +86,7 @@ jobs:
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/gh-actions/test_pipeline_v1.py "${TOKEN}" "${KF_PROFILE}"
 
-    - name: Run V2 Pipeline Test
+    - name: V2 Pipeline Test
       run: |
         pip3 install "kfp>=2.13.0"
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
