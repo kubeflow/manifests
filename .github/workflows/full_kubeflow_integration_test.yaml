@@ -122,14 +122,14 @@ jobs:
       run: |
         pip3 install -U "kfp>=2.13.0"
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
-        python3 tests/gh-actions/test_pipeline.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
+        python3 tests/gh-actions/test_pipeline_v2.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
 
     - name: Test Pipeline Access with Unauthorized Token
       run: |
         kubectl create namespace test-unauthorized
         kubectl create serviceaccount test-unauthorized -n test-unauthorized
         UNAUTHORIZED_TOKEN=$(kubectl -n test-unauthorized create token test-unauthorized)
-        python3 tests/gh-actions/test_pipeline.py test_unauthorized_access "$UNAUTHORIZED_TOKEN" "${KF_PROFILE}"
+        python3 tests/gh-actions/test_pipeline_v2.py test_unauthorized_access "$UNAUTHORIZED_TOKEN" "${KF_PROFILE}"
 
     - name: Test Volumes Web Application API
       run: ./tests/gh-actions/test_volumes_web_application.sh "${KF_PROFILE}"

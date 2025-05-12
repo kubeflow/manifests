@@ -11,8 +11,8 @@ on:
     - common/cert-manager/**
     - common/oauth2-proxy/**
     - common/istio*/**
-    - tests/gh-actions/test_pipeline.py
     - tests/gh-actions/test_pipeline_v1.py
+    - tests/gh-actions/test_pipeline_v2.py
     - experimental/security/PSS/*
 
 env:
@@ -64,6 +64,9 @@ jobs:
         fi
         kubectl get secret mlpipeline-minio-artifact -n "$KF_PROFILE" -o json | jq -r '.data | keys[] as $k | "\($k): \(. | .[$k] | @base64d)"' | tr '\n' ' '
 
+    - name: Wait for All Pods to be Ready
+      run: kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 60s --field-selector=status.phase!=Succeeded
+
     - name: Port forward
       run: ./tests/gh-actions/port_forward_gateway.sh
 
@@ -75,17 +78,15 @@ jobs:
 
     - name: V2 Pipeline Test
       run: |
-        pip3 install -U kfp==2.13.0
+        pip3 install "kfp>=2.13.0"
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
-        python3 tests/gh-actions/test_pipeline.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
+        python3 tests/gh-actions/test_pipeline_v2.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
 
-    - name: Fail to list pipelines with unauthorized ServiceAccount Token
+    - name: Test unauthorized access
       run: |
-        pip3 install -U kfp==2.13.0
         TOKEN="$(kubectl -n default create token default)"
-        python3 tests/gh-actions/test_pipeline.py test_unauthorized_access "${TOKEN}" "${KF_PROFILE}"
+        python3 tests/gh-actions/test_pipeline_v2.py test_unauthorized_access "${TOKEN}" "${KF_PROFILE}"
         echo "Test succeeded. Token from unauthorized ServiceAccount cannot list pipelines in $KF_PROFILE namespace."
-
 
     - name: Apply Pod Security Standards baseline levels for static namespaces
       run: ./tests/gh-actions/enable_baseline_PSS.sh
