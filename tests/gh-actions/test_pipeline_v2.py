@@ -13,7 +13,10 @@ def hello_world():
     return "Hello World"
 
 
-@dsl.pipeline(name="v2-hello-world-pipeline", description="A simple hello world pipeline")
+@dsl.pipeline(
+    name="v2-hello-world-pipeline",
+    description="A minimal hello world pipeline for testing"
+)
 def hello_world_pipeline():
     hello_world()
 
@@ -28,33 +31,45 @@ def run_pipeline(token, namespace):
         print(f"Error connecting to KFP server: {e}")
         sys.exit(1)
     
-    experiment = client.create_experiment("v2-pipeline-test", namespace=namespace)
-    
-    run = client.create_run_from_pipeline_func(
-        hello_world_pipeline,
-        experiment_name="v2-pipeline-test",
-        run_name="v2-hello-world",
-        namespace=namespace,
-        arguments={}
-    )
-    
-    run_id = run.run_id
-    
-    for iteration in range(30):  
-        status = client.get_run(run_id=run_id).state
-        print(f"Pipeline status: {status}")
+    try:
+        experiment = client.create_experiment("v2-pipeline-test", namespace=namespace)
+        print(f"Experiment details: {experiment}")
         
-        if status == "SUCCEEDED":
-            print("V2 pipeline executed successfully!")
-            return
-        elif status not in ["PENDING", "RUNNING"]:
-            print(f"Pipeline failed with status: {status}")
-            sys.exit(1)
-            
-        time.sleep(10)
-    
-    print("Pipeline execution timed out")
-    sys.exit(1)
+        run = client.create_run_from_pipeline_func(
+            hello_world_pipeline,
+            experiment_name="v2-pipeline-test",
+            run_name="v2-hello-world",
+            namespace=namespace,
+            arguments={}
+        )
+        
+        run_id = run.run_id
+        print(f"Run details: {run}")
+        
+        for iteration in range(30):
+            try:
+                run_response = client.get_run(run_id=run_id)
+                status = run_response.state
+                print(f"Pipeline status: {status}")
+                
+                if status == "SUCCEEDED":
+                    print("V2 pipeline executed successfully!")
+                    return
+                elif status not in ["PENDING", "RUNNING"]:
+                    print(f"Pipeline failed with status: {status}")
+                    print(f"Run details: {run_response}")
+                    sys.exit(1)
+            except Exception as e:
+                print(f"Error checking run status: {e}")
+                sys.exit(1)
+                
+            time.sleep(10)
+        
+        print("Pipeline execution timed out")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Error running pipeline: {e}")
+        sys.exit(1)
 
 
 def test_unauthorized_access(token, namespace):
