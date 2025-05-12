@@ -64,18 +64,8 @@ jobs:
         fi
         kubectl get secret mlpipeline-minio-artifact -n "$KF_PROFILE" -o json | jq -r '.data | keys[] as $k | "\($k): \(. | .[$k] | @base64d)"' | tr '\n' ' '
 
-    - name: Verify KF Pipeline pods are ready
-      run: |
-        kubectl get pods -n kubeflow -l app=ml-pipeline
-        kubectl get pods -n kubeflow -l app=ml-pipeline-persistenceagent
-        kubectl get pods -n kubeflow -l app=ml-pipeline-scheduledworkflow
-        kubectl get pods -n kubeflow -l app=ml-pipeline-ui
-        kubectl get pods -n kubeflow -l app=ml-pipeline-viewer-crd
-        kubectl get pods -n kubeflow -l app=metadata-writer
-
-        kubectl wait --for=condition=Ready pods -l app=ml-pipeline -n kubeflow --timeout=120s
-        kubectl wait --for=condition=Ready pods -l app=ml-pipeline-persistenceagent -n kubeflow --timeout=60s
-        kubectl wait --for=condition=Ready pods -l app=ml-pipeline-ui -n kubeflow --timeout=60s
+    - name: Wait for All Pods to be Ready
+      run: kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 60s --field-selector=status.phase!=Succeeded
 
     - name: Port forward
       run: ./tests/gh-actions/port_forward_gateway.sh
