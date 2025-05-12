@@ -509,10 +509,10 @@ kustomize build apps/training-operator/upstream/overlays/kubeflow | kubectl appl
 
 #### Spark Operator
 
-Install the Spark Operator with UI for Apache Spark application management and monitoring:
+Install the Spark Operator:
 
 ```sh
-kustomize build apps/spark/spark-operator/overlays/standalone | kubectl apply -f -
+kustomize build apps/spark/spark-operator/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### User Namespaces
