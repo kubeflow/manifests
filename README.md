@@ -534,7 +534,6 @@ kubectl get pods -n auth
 kubectl get pods -n oauth2-proxy
 kubectl get pods -n knative-serving
 kubectl get pods -n kubeflow
-kubectl get pods -l app.kubernetes.io/name=spark-operator -n kubeflow
 kubectl get pods -n kubeflow-user-example-com
 ```
 
