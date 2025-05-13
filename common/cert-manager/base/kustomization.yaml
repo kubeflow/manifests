@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
 - upstream/cert-manager.yaml
+- namespace.yaml
 
 # XXX: Do NOT use the namespace transformer, as cert-manager defines resources
 # in two namespaces, 'cert-manager' and 'kube-system'.
