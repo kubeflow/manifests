@@ -4,4 +4,3 @@ metadata:
   name: oauth2-proxy
   labels:
     pod-security.kubernetes.io/enforce: restricted
-
