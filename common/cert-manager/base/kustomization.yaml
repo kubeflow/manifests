@@ -5,7 +5,14 @@ resources:
 - upstream/cert-manager.yaml
 
 patches:
-- path:  namespace-patch.yaml
+- patch: |-
+    - op: replace
+      path: /metadata/labels
+      value:
+        pod-security.kubernetes.io/enforce: restricted
+  target:
+    kind: Namespace
+    name: cert-manager
 
 # XXX: Do NOT use the namespace transformer, as cert-manager defines resources
 # in two namespaces, 'cert-manager' and 'kube-system'.
