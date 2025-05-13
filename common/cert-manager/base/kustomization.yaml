@@ -6,10 +6,9 @@ resources:
 
 patches:
 - patch: |-
-    - op: replace
-      path: /metadata/labels
-      value:
-        pod-security.kubernetes.io/enforce: restricted
+    - op: add
+      path: /metadata/labels/pod-security.kubernetes.io~1enforce
+      value: restricted
   target:
     kind: Namespace
     name: cert-manager
