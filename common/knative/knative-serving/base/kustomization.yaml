@@ -20,4 +20,4 @@ patches:
   target:
     kind: Deployment
     namespace: knative-serving
-    name: "(autoscaler|activator|controller|net-istio-webhook|webhook)"
+    name: "(autoscaler|activator|controller|net-istio-webhook|webhook|net-istio-controller)"
