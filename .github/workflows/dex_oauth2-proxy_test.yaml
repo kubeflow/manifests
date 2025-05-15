@@ -10,7 +10,7 @@ on:
     - experimental/security/PSS/*
     - common/dex/base/**
     - tests/istio*.sh
-    - tests/test_dex_login.py
+    - tests/dex_login_test.py
 
 jobs:
   build:
