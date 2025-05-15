@@ -7,7 +7,7 @@ on:
   pull_request:
     paths:
     - '.github/workflows/trivy.yaml'
-    - 'tests/gh-actions/trivy_scan.py'
+    - 'tests/trivy_scan.py'
 
 jobs:
   image-extraction-and-security-scan:
@@ -20,12 +20,12 @@ jobs:
     # Install kustomize
     - name: Install kustomize
       run: |
-        bash tests/gh-actions/install_kustomize.sh
+        bash tests/kustomize_install.sh
 
     # Install trivy
     - name: Install trivy
       run: |
-        bash tests/gh-actions/install_trivy.sh
+        bash tests/trivy_install.sh
 
     # Install Python
     - name: Setup Python
@@ -40,7 +40,7 @@ jobs:
 
     - name: Run image extracting and security scanning script
       run: |
-        cd tests/gh-actions
+        cd tests
         python3 trivy_scan.py
 
     - name: Upload trivy scanned_results

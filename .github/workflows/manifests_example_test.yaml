@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install kustomize
-      run: ./tests/gh-actions/install_kustomize.sh
+      run: ./tests/kustomize_install.sh
 
     - name: Unit Test
       run: |
