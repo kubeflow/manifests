@@ -2,7 +2,7 @@
 set -euxo pipefail
 KF_PROFILE=${1:-kubeflow-user-example-com}
 
-cat tests/gh-actions/kf-objects/training_operator_job.yaml | \
+cat tests/training_operator_job.yaml | \
 sed 's/name: pytorch-simple/name: pytorch-simple\n  namespace: '"$KF_PROFILE"'/g' > /tmp/pytorch-job.yaml
 kubectl apply -f /tmp/pytorch-job.yaml
 
