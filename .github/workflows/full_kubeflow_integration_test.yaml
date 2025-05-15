@@ -135,11 +135,11 @@ jobs:
       run: ./tests/volumes_web_application_test.sh "${KF_PROFILE}"
 
     - name: Apply PodDefault for Pipeline Access Token
-      run: sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/kf-objects/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml | kubectl apply -f -
+      run: sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/poddefaults.access-ml-pipeline.kubeflow-user-example-com.yaml | kubectl apply -f -
 
     - name: Create Test Notebook
       run: |
-        sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/kf-objects/notebook.test.kubeflow-user-example.com.yaml | kubectl apply -f -
+        sed "s/kubeflow-user-example-com/$KF_PROFILE/g" tests/notebook.test.kubeflow-user-example.com.yaml | kubectl apply -f -
         kubectl wait --for=condition=Ready pod -l app=test -n $KF_PROFILE --timeout=300s
 
     - name: Copy and execute the pipeline run script in KF Notebook

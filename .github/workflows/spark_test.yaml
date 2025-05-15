@@ -48,5 +48,5 @@ jobs:
         # TODO remove the debugging lines
         ls -lah  ../../tests/
         chmod u+x ../../tests/*.sh
-        ../../tests/install_spark.sh
-        ../../tests/test_spark.sh "kubeflow-user-example-com"
+        ../../tests/spark_install.sh
+        ../../tests/spark_test.sh "kubeflow-user-example-com"
