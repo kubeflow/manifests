@@ -7,7 +7,7 @@ spec:
     metadata:
       annotations:
         # db doesn't use istio
-        traffic.sidecar.istio.io/excludeOutboundPorts: $(MYSQL_PORT)
+        traffic.sidecar.istio.io/excludeOutboundPorts: MYSQL_PORT_PLACEHOLDER
     spec:
       containers:
         - name: rest-container
@@ -35,8 +35,8 @@ spec:
           - configMapRef:
               name: model-registry-configmap
           args: ["--grpc_port=$(MODEL_REGISTRY_GRPC_SERVICE_PORT)",
-                 "--mysql_config_host=$(MLMD_DB_HOST)",
+                 "--mysql_config_host=MLMD_DB_HOST_PLACEHOLDER",
                  "--mysql_config_database=$(MYSQL_DATABASE)",
-                 "--mysql_config_port=$(MYSQL_PORT)",
+                 "--mysql_config_port=MYSQL_PORT_PLACEHOLDER",
                  "--mysql_config_user=$(MYSQL_USER_NAME)",
                  "--mysql_config_password=$(MYSQL_ROOT_PASSWORD)"]
