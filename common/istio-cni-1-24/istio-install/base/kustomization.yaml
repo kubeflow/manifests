@@ -1,6 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+#namespace: istio-system # this does not work, because the istio-cni daemonset should be in kube-system
+
 resources:
 - install.yaml
 - gateway_authorizationpolicy.yaml
