@@ -164,7 +164,7 @@ jobs:
         kubectl get trials.kubeflow.org -n $KF_PROFILE
 
     - name: Run Training Operator Test
-      run: ./tests/test_training_operator.sh "${KF_PROFILE}"
+      run: ./tests/training_operator_test.sh "${KF_PROFILE}"
 
     - name: Run KServe Test
       run: |
