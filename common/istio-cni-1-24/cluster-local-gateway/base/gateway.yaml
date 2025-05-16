@@ -1,17 +1,15 @@
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: gateway.networking.k8s.io/v1beta1
 kind: Gateway
 metadata:
   name: cluster-local-gateway
   labels:
     release: istio
 spec:
-  selector:
-    app: cluster-local-gateway
-    istio: cluster-local-gateway
-  servers:
-  - port:
-      number: 80
-      name: http
-      protocol: HTTP
-    hosts:
-    - '*'
+  gatewayClassName: istio
+  listeners:
+  - name: http
+    port: 80
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: All
