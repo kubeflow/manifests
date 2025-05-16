@@ -1,9 +1,9 @@
 import kfp
 from kfp import dsl
-import kfp.components as comp
+import sys
 
 
-@comp.create_component_from_func
+@dsl.component
 def echo_op():
     print("Test pipeline")
 
@@ -13,17 +13,50 @@ def hello_world_pipeline():
     echo_task = echo_op()
 
 
-if __name__ == "__main__":
-    # Run the Kubeflow Pipeline in the user's namespace.
+def run_pipeline(token, namespace):
     kfp_client = kfp.Client(
-        host="http://localhost:3000", namespace="kubeflow-user-example-com"
+        host="http://localhost:3000", 
+        namespace=namespace,
+        cookies=""
     )
     kfp_client.runs.api_client.default_headers.update(
-        {"kubeflow-userid": "kubeflow-user-example-com"}
+        {"Authorization": f"Bearer {token}", "kubeflow-userid": namespace}
     )
-    # create the KFP run
-    run_id = kfp_client.create_run_from_pipeline_func(
+    kfp_client.create_run_from_pipeline_func(
         hello_world_pipeline,
-        namespace="kubeflow-user-example-com",
+        namespace=namespace,
         arguments={},
-    ).run_id
+    )
+
+
+def test_unauthorized_access(token, namespace):
+    try:
+        kfp_client = kfp.Client(
+            host="http://localhost:3000", 
+            namespace=namespace,
+            cookies=""
+        )
+        kfp_client.runs.api_client.default_headers.update(
+            {"Authorization": f"Bearer {token}", "kubeflow-userid": namespace}
+        )
+        
+        kfp_client.list_pipelines()
+        sys.exit(1)
+    except Exception:
+        sys.exit(0)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        sys.exit(1)
+    
+    action = sys.argv[1]
+    token = sys.argv[2]
+    namespace = sys.argv[3]
+    
+    if action == "run_pipeline":
+        run_pipeline(token, namespace)
+    elif action == "test_unauthorized_access":
+        test_unauthorized_access(token, namespace)
+    else:
+        sys.exit(1)
