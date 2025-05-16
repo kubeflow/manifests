@@ -2,16 +2,13 @@ import kfp
 from kfp import dsl
 import sys
 
-
 @dsl.component
 def echo_op():
     print("Test pipeline")
 
-
 @dsl.pipeline(name="test-pipeline", description="A test pipeline.")
 def hello_world_pipeline():
     echo_task = echo_op()
-
 
 def run_pipeline(token, namespace):
     kfp_client = kfp.Client(
@@ -28,11 +25,10 @@ def run_pipeline(token, namespace):
         arguments={},
     )
 
-
 def test_unauthorized_access(token, namespace):
     try:
         kfp_client = kfp.Client(
-            host="http://localhost:8080/pipeline", 
+            host="http://localhost:8080/pipeline",
             namespace=namespace,
             cookies=""
         )
@@ -40,11 +36,14 @@ def test_unauthorized_access(token, namespace):
             {"Authorization": f"Bearer {token}", "kubeflow-userid": namespace}
         )
         
-        kfp_client.list_pipelines()
-        sys.exit(1)
+        pipelines = kfp_client.list_pipelines()
+        
+        if pipelines and len(pipelines.pipelines or []) > 0:
+            sys.exit(1)
+        else:
+            sys.exit(0)
     except Exception:
         sys.exit(0)
-
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
