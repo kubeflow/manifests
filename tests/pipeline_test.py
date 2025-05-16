@@ -11,37 +11,23 @@ def hello_world_pipeline():
     echo_task = echo_op()
 
 def run_pipeline(token, namespace):
-    kfp_client = kfp.Client(
-        host="http://localhost:8080/pipeline", 
-        namespace=namespace,
-        cookies=""
-    )
-    kfp_client.runs.api_client.default_headers.update(
-        {"Authorization": f"Bearer {token}", "kubeflow-userid": namespace}
-    )
-    kfp_client.create_run_from_pipeline_func(
+    client = kfp.Client(host="http://localhost:8080/pipeline", existing_token=token)
+    
+    experiment = client.create_experiment("default", namespace=namespace)
+    
+    client.create_run_from_pipeline_func(
         hello_world_pipeline,
+        experiment_name=experiment.name,
         namespace=namespace,
         arguments={},
     )
 
 def test_unauthorized_access(token, namespace):
     try:
-        kfp_client = kfp.Client(
-            host="http://localhost:8080/pipeline",
-            namespace=namespace,
-            cookies=""
-        )
-        kfp_client.runs.api_client.default_headers.update(
-            {"Authorization": f"Bearer {token}", "kubeflow-userid": namespace}
-        )
+        client = kfp.Client(host="http://localhost:8080/pipeline", existing_token=token)
         
-        pipelines = kfp_client.list_pipelines()
-        
-        if pipelines and len(pipelines.pipelines or []) > 0:
-            sys.exit(1)
-        else:
-            sys.exit(0)
+        client.list_runs(namespace=namespace)
+        sys.exit(1)
     except Exception:
         sys.exit(0)
 
