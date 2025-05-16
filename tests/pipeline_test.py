@@ -41,9 +41,9 @@ def test_unauthorized_access(token, namespace):
         )
         
         kfp_client.list_pipelines()
-        sys.exit(1)
+        return False
     except Exception:
-        sys.exit(0)
+        return True
 
 
 if __name__ == "__main__":
@@ -57,6 +57,8 @@ if __name__ == "__main__":
     if action == "run_pipeline":
         run_pipeline(token, namespace)
     elif action == "test_unauthorized_access":
-        test_unauthorized_access(token, namespace)
+        success = test_unauthorized_access(token, namespace)
+        if not success:
+            sys.exit(1)
     else:
         sys.exit(1)
