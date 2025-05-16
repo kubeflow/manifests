@@ -15,7 +15,7 @@ def hello_world_pipeline():
 
 def run_pipeline(token, namespace):
     kfp_client = kfp.Client(
-        host="http://localhost:8080", 
+        host="http://localhost:8080/pipeline", 
         namespace=namespace,
         cookies=""
     )
@@ -32,7 +32,7 @@ def run_pipeline(token, namespace):
 def test_unauthorized_access(token, namespace):
     try:
         kfp_client = kfp.Client(
-            host="http://localhost:8080", 
+            host="http://localhost:8080/pipeline", 
             namespace=namespace,
             cookies=""
         )
