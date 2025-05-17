@@ -7,7 +7,7 @@ on:
     - apps/jupyter/**
     - common/oauth2-proxy/**
     - common/istio*/**
-    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_istio*.sh
     - tests/gh-actions/install_oauth2-proxy.sh
     - tests/gh-actions/install_multi_tenancy.sh
 
