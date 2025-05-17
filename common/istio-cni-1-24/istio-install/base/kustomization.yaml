@@ -17,6 +17,7 @@ patches:
 - path: patches/istiod-remove-pdb.yaml
 - path: patches/seccomp-istio-ingressgateway.yaml
 - path: patches/seccomp-istiod.yaml
+- path: patches/multi-path-cni-bindir.yaml
 
 images:
 - name: busybox
