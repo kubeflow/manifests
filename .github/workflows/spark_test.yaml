@@ -6,7 +6,7 @@ on:
     - .github/workflows/test_spark.yaml
     - apps/spark/**
     - tests/gh-actions/spark*.sh
-    - tests/gh-actions/install_istio.sh
+    - tests/gh-actions/install_istio*.sh
     - tests/gh-actions/install_cert_manager.sh
     - tests/gh-actions/install_oauth2-proxy.sh
     - common/cert-manager/**
