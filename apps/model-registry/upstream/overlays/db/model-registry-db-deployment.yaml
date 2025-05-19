@@ -24,7 +24,7 @@ spec:
         runAsNonRoot: true
       containers:
       - name: db-container
-        image: mysql:8.3.0
+        image: mysql
         args:
         - --datadir
         - /var/lib/mysql/datadir
