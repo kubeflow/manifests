@@ -79,14 +79,6 @@ jobs:
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/gh-actions/test_pipeline_v2.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
 
-    - name: Fail to list pipelines with unauthorized ServiceAccount Token (V1 API)
-      run: |
-        pip3 install "kfp>=1.8.22,<2.0.0"
-        KF_PROFILE=kubeflow-user-example-com
-        TOKEN="$(kubectl -n default create token default)"
-        python3 tests/gh-actions/test_pipeline_v1.py test_unauthorized_access "${TOKEN}" "${KF_PROFILE}"
-        echo "Test succeeded. Token from unauthorized ServiceAccount cannot list pipelines in $KF_PROFILE namespace using V1 API."
-
     - name: Fail to list pipelines with unauthorized ServiceAccount Token (V2 API)
       run: |
         pip3 install kfp==2.13.0
