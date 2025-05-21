@@ -1,0 +1,9 @@
+fullnameOverride: spark-operator-mwa-unique
+serviceAccount:
+  create: false
+  name: spark-operator-mwa-sa
+rbac:
+  create: false
+webhook:
+  enable: false
+sparkJobNamespaces: [] 
