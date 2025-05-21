@@ -17,13 +17,6 @@ configMapGenerator:
 - literals:
   - APP_DISABLE_AUTH="True"
   name: kserve-models-web-app-config
-helmCharts:
-- name: spark-operator
-  repo: https://kubeflow.github.io/spark-operator
-  version: 2.1.1
-  releaseName: spark-operator
-  includeCRDs: false
-  valuesFile: spark-operator-values.yaml
 
 labels:
 - includeSelectors: true
