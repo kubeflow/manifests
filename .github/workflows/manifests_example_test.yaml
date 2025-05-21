@@ -19,4 +19,4 @@ jobs:
 
     - name: Unit Test
       run: |
-        kustomize build example
+        kustomize build --enable-helm example
