@@ -1,6 +1,5 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: kubeflow
 
 resources:
 - model-registry-db-pvc.yaml
@@ -8,8 +7,6 @@ resources:
 - model-registry-db-service.yaml
 - ../../base
 
-patchesStrategicMerge:
-- patches/model-registry-deployment.yaml
 
 configMapGenerator:
 - envs:
@@ -26,20 +23,47 @@ generatorOptions:
 images:
 - name: mysql
   newName: mysql
-  newTag: 8.0.39
+  newTag: 8.3.0
 
-vars:
-- fieldref:
+patches:
+- path: patches/model-registry-deployment.yaml
+replacements:
+- source:
     fieldPath: metadata.name
-  name: MLMD_DB_HOST
-  objref:
-    apiVersion: v1
     kind: Service
     name: model-registry-db
-- name: MYSQL_PORT
-  objref:
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.template.spec.containers.1.args.1
+    options:
+      delimiter: =
+      index: 1
+    select:
+      group: apps
+      kind: Deployment
+      name: model-registry-deployment
+      version: v1
+- source:
+    fieldPath: data.MYSQL_PORT
     kind: ConfigMap
     name: model-registry-db-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.MYSQL_PORT
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.template.spec.containers.1.args.3
+    options:
+      delimiter: =
+      index: 1
+    select:
+      group: apps
+      kind: Deployment
+      name: model-registry-deployment
+      version: v1
+  - fieldPaths:
+    - spec.template.metadata.annotations.[traffic.sidecar.istio.io/excludeOutboundPorts]
+    select:
+      group: apps
+      kind: Deployment
+      name: model-registry-deployment
+      version: v1

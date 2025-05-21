@@ -1,25 +1,21 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: kubeflow
 
-bases:
-- ../../base
 resources:
 - model-registry-db-pvc.yaml
 - model-registry-db-deployment.yaml
 - model-registry-db-service.yaml
+- ../../base
 
-patchesStrategicMerge:
-- patches/model-registry-deployment.yaml
 
 configMapGenerator:
-- name: metadata-registry-db-parameters
-  envs:
+- envs:
   - params.env
+  name: metadata-registry-db-parameters
 secretGenerator:
-- name: metadata-registry-db-secrets
-  envs:
+- envs:
   - secrets.env
+  name: metadata-registry-db-secrets
 generatorOptions:
   disableNameSuffixHash: true
 
@@ -28,18 +24,45 @@ images:
   newName: postgres
   newTag: 14.7-alpine3.17
 
-vars:
-- name: MLMD_DB_HOST
-  objref:
+patches:
+- path: patches/model-registry-deployment.yaml
+replacements:
+- source:
+    fieldPath: metadata.name
     kind: Service
     name: metadata-postgres-db
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.name
-- name: POSTGRES_PORT
-  objref:
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.template.spec.containers.0.args.2
+    options:
+      delimiter: =
+      index: 1
+    select:
+      group: apps
+      kind: Deployment
+      name: model-registry-deployment
+      version: v1
+- source:
+    fieldPath: data.POSTGRES_PORT
     kind: ConfigMap
     name: metadata-registry-db-parameters
-    apiVersion: v1
-  fieldref:
-    fieldpath: data.POSTGRES_PORT
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.template.metadata.annotations.[traffic.sidecar.istio.io/excludeOutboundPorts]
+    select:
+      group: apps
+      kind: Deployment
+      name: model-registry-deployment
+      version: v1
+  - fieldPaths:
+    - spec.template.spec.containers.0.args.3
+    options:
+      delimiter: =
+      index: 1
+    select:
+      group: apps
+      kind: Deployment
+      name: model-registry-deployment
+      version: v1
