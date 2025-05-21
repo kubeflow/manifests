@@ -29,8 +29,8 @@ helmCharts:
     webhook.port: 9443
     rbac:
       create: false
-    serviceAccounts:
-      sparkoperator:
+    sparkOperator:
+      serviceAccount:
         create: false
 
 labels:
