@@ -27,6 +27,10 @@ helmCharts:
     spark.jobNamespaces: {} # To match the synchronize script
     webhook.enable: true
     webhook.port: 9443
+    rbac:
+      create: false
+    serviceAccount:
+      create: false
 
 labels:
 - includeSelectors: true
