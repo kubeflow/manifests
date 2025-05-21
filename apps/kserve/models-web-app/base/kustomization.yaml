@@ -22,7 +22,7 @@ helmCharts:
   repo: https://kubeflow.github.io/spark-operator
   version: 2.1.1
   releaseName: spark-operator
-  includeCRDs: true
+  includeCRDs: false
   valuesInline:
     spark.jobNamespaces: {} # To match the synchronize script
     webhook.enable: true
