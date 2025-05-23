@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: knative-serving
-  labels:
-    pod-security.kubernetes.io/enforce: restricted
