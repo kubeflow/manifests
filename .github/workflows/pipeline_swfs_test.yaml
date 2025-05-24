@@ -13,6 +13,7 @@ on:
     # - common/oauth2-proxy/**
     # - common/istio*/**
     - experimental/seaweedfs/**
+    - tests/gh-actions/test_swfs_namespace_isolation.sh
 
 jobs:
   build:
@@ -28,6 +29,13 @@ jobs:
 
     - name: Install kubectl
       run: ./tests/gh-actions/install_kubectl.sh
+
+    - name: Install AWS CLI
+      run: |
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install
+        aws --version
 
     - name: Install Istio
       run: ./tests/gh-actions/install_istio-cni.sh
@@ -87,6 +95,8 @@ jobs:
         python3 tests/gh-actions/test_pipeline_v2.py test_unauthorized_access "${TOKEN}" "${KF_PROFILE}"
         echo "Test succeeded. Token from unauthorized ServiceAccount cannot list pipelines in $KF_PROFILE namespace."
 
+    - name: Test SeaweedFS Namespace Isolation
+      run: ./tests/gh-actions/test_swfs_namespace_isolation.sh
 
     - name: Apply Pod Security Standards baseline levels for static namespaces
       run: ./tests/gh-actions/enable_baseline_PSS.sh
@@ -109,11 +119,13 @@ jobs:
         mkdir -p logs
         kubectl get all --all-namespaces > logs/resources.txt
         kubectl get events --all-namespaces --sort-by=.metadata.creationTimestamp > logs/events.txt
-        for namespace in kubeflow istio-system cert-manager auth kubeflow-user-example-com; do
-            kubectl describe pods -n $namespace > logs/$namespace-pods.txt
-            for pod in $(kubectl get pods -n $namespace -o jsonpath='{.items[*].metadata.name}'); do
-                kubectl logs -n $namespace $pod --tail=100 > logs/$namespace-$pod.txt 2>&1 || true
-            done
+        for namespace in kubeflow istio-system cert-manager auth kubeflow-user-example-com test-profile-1 test-profile-2; do
+            if kubectl get namespace $namespace >/dev/null 2>&1; then
+                kubectl describe pods -n $namespace > logs/$namespace-pods.txt
+                for pod in $(kubectl get pods -n $namespace -o jsonpath='{.items[*].metadata.name}'); do
+                    kubectl logs -n $namespace $pod --tail=100 > logs/$namespace-$pod.txt 2>&1 || true
+                done
+            fi
         done
 
     - name: Upload Diagnostic Logs
