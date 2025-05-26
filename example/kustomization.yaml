@@ -40,6 +40,8 @@ resources:
 - ../common/istio-cni-1-24/istio-crds/base
 - ../common/istio-cni-1-24/istio-namespace/base
 - ../common/istio-cni-1-24/istio-install/overlays/oauth2-proxy
+# NOTE: For Google Kubernetes Engine (GKE), use:
+# - ../common/istio-cni-1-24/istio-install/overlays/gke
 # oauth2-proxy
 # NOTE: only uncomment ONE of the following overlays, depending on your cluster type
 - ../common/oauth2-proxy/overlays/m2m-dex-only     # for all clusters
