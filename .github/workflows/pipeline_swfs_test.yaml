@@ -14,6 +14,7 @@ on:
     # - common/istio*/**
     - experimental/seaweedfs/**
     - tests/gh-actions/test_swfs_namespace_isolation.sh
+    - tests/gh-actions/s3_test_helper.py
 
 jobs:
   build:
@@ -29,13 +30,6 @@ jobs:
 
     - name: Install kubectl
       run: ./tests/gh-actions/install_kubectl.sh
-
-    - name: Install AWS CLI
-      run: |
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        unzip awscliv2.zip
-        sudo ./aws/install --update
-        aws --version
 
     - name: Install Istio
       run: ./tests/gh-actions/install_istio-cni.sh
