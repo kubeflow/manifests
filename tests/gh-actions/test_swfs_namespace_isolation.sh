@@ -18,6 +18,7 @@ if ! python3 -c "import boto3" 2>/dev/null; then
     pip3 install boto3
 fi
 
+PORT_FORWARD_PID=""
 # Cleanup function
 cleanup() {
     echo "Cleaning up..."
@@ -56,13 +57,12 @@ EOF
 
     # Wait for namespaces
     echo "Waiting for namespaces..."
-    for i in {1..30}; do
+    for i in {1..6}; do
         if kubectl get namespace test-profile-1 test-profile-2 >/dev/null 2>&1; then
             echo "Namespaces created"
             return 0
         fi
-        echo "Waiting... ($i/30)"
-        sleep 5
+        sleep 10
     done
 
     echo "Error: Namespaces not created"
