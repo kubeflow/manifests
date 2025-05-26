@@ -2985,8 +2985,6 @@ spec:
         volumeMounts:
         - mountPath: /host/opt/cni/bin
           name: cni-bin-dir
-        - mountPath: /host/home/kubernetes/bin
-          name: cni-bin-dir-gcp
         - mountPath: /host/proc
           name: cni-host-procfs
           readOnly: true
@@ -3010,9 +3008,6 @@ spec:
       - hostPath:
           path: /opt/cni/bin
         name: cni-bin-dir
-      - hostPath:
-          path: /home/kubernetes/bin
-        name: cni-bin-dir-gcp
       - hostPath:
           path: /proc
           type: Directory

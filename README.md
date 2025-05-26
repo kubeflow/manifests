@@ -223,7 +223,12 @@ Install Istio:
 echo "Installing Istio CNI configured with external authorization..."
 kustomize build common/istio-cni-1-24/istio-crds/base | kubectl apply -f -
 kustomize build common/istio-cni-1-24/istio-namespace/base | kubectl apply -f -
+
+# For most platforms (Kind, Minikube, AKS, EKS, etc.)
 kustomize build common/istio-cni-1-24/istio-install/overlays/oauth2-proxy | kubectl apply -f -
+
+# For Google Kubernetes Engine (GKE), use:
+# kustomize build common/istio-cni-1-24/istio-install/overlays/gke | kubectl apply -f -
 
 echo "Waiting for all Istio Pods to become ready..."
 kubectl wait --for=condition=Ready pods --all -n istio-system --timeout 300s
@@ -713,3 +718,5 @@ pre-commit run
   **A:** Yes you can. You just need to to get the list of images from our [trivy CVE scanning script](https://github.com/kubeflow/manifests/blob/master/tests/gh-actions/trivy_scan.py), mirror them and replace the references in the manifests with kustomize components and overlays, see [Upgrading and Extending](#upgrading-and-extending). You could also use a simple kyverno policy to replace the images at runtime, which could be easier to maintain.
 - **Q:** Why does Kubeflow use Istio CNI instead of standard Istio?
   **A:** Istio CNI provides better security by eliminating the need for privileged init containers, making it more compatible with Pod Security Standards (PSS). It also enables native sidecars support introduced in Kubernetes 1.28, which helps address issues with init containers and application lifecycle management.
+- **Q:** Why does Istio CNI fail on Google Kubernetes Engine (GKE)?
+  **A:** GKE mounts `/opt/cni/bin` as read-only. Use the GKE overlay: `kustomize build common/istio-cni-1-24/istio-install/overlays/gke | kubectl apply -f -`

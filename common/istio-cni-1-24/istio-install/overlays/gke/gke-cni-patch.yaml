@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: istio-cni-node
+  namespace: kube-system
+spec:
+  template:
+    spec:
+      volumes:
+      - hostPath:
+          path: /home/kubernetes/bin
+        name: cni-bin-dir
