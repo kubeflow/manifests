@@ -39,8 +39,6 @@ apiVersion: kubeflow.org/v1
 kind: Profile
 metadata:
   name: test-profile-1
-  labels:
-    pipelines.kubeflow.org/enabled: "true"
 spec:
   owner:
     kind: User
@@ -50,8 +48,6 @@ apiVersion: kubeflow.org/v1
 kind: Profile
 metadata:
   name: test-profile-2
-  labels:
-    pipelines.kubeflow.org/enabled: "true"
 spec:
   owner:
     kind: User
@@ -78,13 +74,13 @@ wait_for_credentials() {
     local namespace=$1
     echo "Waiting for S3 credentials in $namespace..."
 
-    for i in {1..60}; do
+    for i in {1..10}; do
         if kubectl get secret -n $namespace mlpipeline-minio-artifact >/dev/null 2>&1; then
             echo "Credentials found"
             return 0
         fi
         echo "Waiting... ($i/60)"
-        sleep 5
+        sleep 10
     done
 
     echo "Error: No credentials found"
