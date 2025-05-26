@@ -1,27 +1,29 @@
 #!/bin/bash
 set -e
 
-# Colors for output
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-YELLOW='\033[0;33m'
-NC='\033[0m' # No Color
-
-echo -e "${YELLOW}SeaweedFS Security Test - Unauthorized Access Check${NC}"
+echo "SeaweedFS Security Test - Unauthorized Access Check"
 echo "Testing if one namespace can access files from another namespace"
 
 # Check dependencies
-for cmd in kubectl aws jq; do
+for cmd in kubectl python3; do
     if ! command -v $cmd &> /dev/null; then
-        echo -e "${RED}Error: $cmd is required but not installed${NC}"
+        echo "Error: $cmd is required but not installed"
         exit 1
     fi
 done
 
+# Install boto3 if not available
+if ! python3 -c "import boto3" 2>/dev/null; then
+    echo "Installing boto3..."
+    pip3 install boto3
+fi
+
 # Cleanup function
 cleanup() {
-    echo -e "\n${YELLOW}Cleaning up...${NC}"
-    [ -n "$PORT_FORWARD_PID" ] && kill $PORT_FORWARD_PID 2>/dev/null || true
+    echo "Cleaning up..."
+    if [ -n "$PORT_FORWARD_PID" ]; then
+        kill $PORT_FORWARD_PID 2>/dev/null || true
+    fi
     rm -f test-file.txt accessed-file.txt
     kubectl delete profile test-profile-1 test-profile-2 --ignore-not-found
 }
@@ -29,7 +31,7 @@ trap cleanup EXIT
 
 # Create test profiles
 create_profiles() {
-    echo -e "\n${YELLOW}Creating test profiles...${NC}"
+    echo "Creating test profiles..."
 
     # Create both profiles
     kubectl apply -f - <<EOF
@@ -60,14 +62,14 @@ EOF
     echo "Waiting for namespaces..."
     for i in {1..30}; do
         if kubectl get namespace test-profile-1 test-profile-2 >/dev/null 2>&1; then
-            echo -e "${GREEN}Namespaces created${NC}"
+            echo "Namespaces created"
             return 0
         fi
         echo "Waiting... ($i/30)"
         sleep 5
     done
 
-    echo -e "${RED}Error: Namespaces not created${NC}"
+    echo "Error: Namespaces not created"
     exit 1
 }
 
@@ -78,14 +80,14 @@ wait_for_credentials() {
 
     for i in {1..60}; do
         if kubectl get secret -n $namespace mlpipeline-minio-artifact >/dev/null 2>&1; then
-            echo -e "${GREEN}Credentials found${NC}"
+            echo "Credentials found"
             return 0
         fi
         echo "Waiting... ($i/60)"
         sleep 5
     done
 
-    echo -e "${RED}Error: No credentials found${NC}"
+    echo "Error: No credentials found"
     return 1
 }
 
@@ -113,7 +115,7 @@ setup_port_forward() {
 # Upload test file
 upload_file() {
     local namespace=$1
-    echo -e "\n${YELLOW}Uploading test file to $namespace...${NC}"
+    echo "Uploading test file to $namespace..."
 
     local creds=$(get_credentials $namespace)
     local access_key=$(echo $creds | cut -d: -f1)
@@ -121,14 +123,13 @@ upload_file() {
 
     setup_port_forward
 
-    echo "Test file for $namespace" > test-file.txt
-
-    AWS_ACCESS_KEY_ID=$access_key \
-    AWS_SECRET_ACCESS_KEY=$secret_key \
-    AWS_ENDPOINT_URL=http://localhost:8333 \
-    aws s3 cp test-file.txt s3://mlpipeline/private-artifacts/$namespace/test-file.txt
-
-    rm -f test-file.txt
+    python3 tests/gh-actions/s3_test_helper.py upload \
+        --access-key "$access_key" \
+        --secret-key "$secret_key" \
+        --endpoint-url "http://localhost:8333" \
+        --bucket "mlpipeline" \
+        --key "private-artifacts/$namespace/test-file.txt" \
+        --content "Test file for $namespace"
 }
 
 # Test unauthorized access
@@ -136,7 +137,7 @@ test_unauthorized_access() {
     local from_namespace=$1
     local target_namespace=$2
 
-    echo -e "\n${YELLOW}Testing unauthorized access from $from_namespace to $target_namespace...${NC}"
+    echo "Testing unauthorized access from $from_namespace to $target_namespace..."
 
     local creds=$(get_credentials $from_namespace)
     local access_key=$(echo $creds | cut -d: -f1)
@@ -145,25 +146,25 @@ test_unauthorized_access() {
     setup_port_forward
 
     # Try to access the other namespace's file
-    if AWS_ACCESS_KEY_ID=$access_key \
-       AWS_SECRET_ACCESS_KEY=$secret_key \
-       AWS_ENDPOINT_URL=http://localhost:8333 \
-       aws s3 cp s3://mlpipeline/private-artifacts/$target_namespace/test-file.txt ./accessed-file.txt 2>/dev/null; then
+    # Note: Python script returns 0 when access is denied (good), 1 when access succeeds (bad)
+    if python3 tests/gh-actions/s3_test_helper.py download \
+        --access-key "$access_key" \
+        --secret-key "$secret_key" \
+        --endpoint-url "http://localhost:8333" \
+        --bucket "mlpipeline" \
+        --key "private-artifacts/$target_namespace/test-file.txt"; then
 
-        echo -e "${RED}SECURITY ISSUE: Unauthorized access successful!${NC}"
-        echo "File contents:"
-        cat ./accessed-file.txt
-        rm -f ./accessed-file.txt
-        return 1
-    else
-        echo -e "${GREEN}Security OK: Access denied as expected${NC}"
+        echo "Security OK: Access denied as expected"
         return 0
+    else
+        echo "SECURITY ISSUE: Unauthorized access successful!"
+        return 1
     fi
 }
 
 # Main test function
 main() {
-    echo -e "\n${YELLOW}Starting security test...${NC}"
+    echo "Starting security test..."
 
     # Create test profiles
     create_profiles
@@ -173,26 +174,26 @@ main() {
     sleep 30
 
     wait_for_credentials "test-profile-1" || {
-        echo -e "${RED}Failed to get credentials for test-profile-1${NC}"
+        echo "Failed to get credentials for test-profile-1"
         exit 1
     }
 
     wait_for_credentials "test-profile-2" || {
-        echo -e "${RED}Failed to get credentials for test-profile-2${NC}"
+        echo "Failed to get credentials for test-profile-2"
         exit 1
     }
 
     # Upload file to first namespace
     upload_file "test-profile-1" || {
-        echo -e "${RED}Failed to upload file${NC}"
+        echo "Failed to upload file"
         exit 1
     }
 
     # Test unauthorized access
     if test_unauthorized_access "test-profile-2" "test-profile-1"; then
-        echo -e "\n${GREEN}SECURITY TEST PASSED: No unauthorized access detected${NC}"
+        echo "SECURITY TEST PASSED: No unauthorized access detected"
     else
-        echo -e "\n${RED}SECURITY TEST FAILED: Unauthorized access detected${NC}"
+        echo "SECURITY TEST FAILED: Unauthorized access detected"
         echo "This indicates a security vulnerability in the SeaweedFS setup"
         exit 1
     fi
