@@ -112,9 +112,9 @@ upload_file() {
     local namespace=$1
     echo "Uploading test file to $namespace..."
 
-    local creds=$(get_credentials $namespace)
-    local access_key=$(echo $creds | cut -d: -f1)
-    local secret_key=$(echo $creds | cut -d: -f2)
+    local credentials=$(get_credentials $namespace)
+    local access_key=$(echo $credentials | cut -d: -f1)
+    local secret_key=$(echo $credentials | cut -d: -f2)
 
     setup_port_forward
 
@@ -134,9 +134,9 @@ test_unauthorized_access() {
 
     echo "Testing unauthorized access from $from_namespace to $target_namespace..."
 
-    local creds=$(get_credentials $from_namespace)
-    local access_key=$(echo $creds | cut -d: -f1)
-    local secret_key=$(echo $creds | cut -d: -f2)
+    local credentials=$(get_credentials $from_namespace)
+    local access_key=$(echo $credentials | cut -d: -f1)
+    local secret_key=$(echo $credentials | cut -d: -f2)
 
     setup_port_forward
 
