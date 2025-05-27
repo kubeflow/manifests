@@ -4,3 +4,4 @@ metadata:
   name: knative-serving
   labels:
     istio-injection: enabled
+    pod-security.kubernetes.io/enforce: restricted
