@@ -1,9 +1,24 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- resources.yaml
+# - resources.yaml # This will be replaced by helmCharts
 - aggregated-roles.yaml
 namespace: kubeflow
+
+helmCharts:
+- name: spark-operator
+  repo: https://kubeflow.github.io/spark-operator
+  version: "2.1.1"
+  releaseName: spark-operator
+  namespace: kubeflow
+  includeCRDs: true 
+  valuesInline:
+    spark:
+      jobNamespaces: [] 
+    webhook:
+      enable: true
+      port: 9443
+
 patches:
   - target:
       kind: Deployment
