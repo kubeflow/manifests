@@ -59,7 +59,7 @@ if ! kubectl get deploy -n auth dex -o yaml | grep -q "OIDC_CLIENT_ID"; then
     --from-literal=OIDC_CLIENT_SECRET=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok \
     --dry-run=client -o yaml | kubectl apply -f -
 
-  ./tests/install_dex.sh
+  ./tests/dex_install.sh
 fi
 
 if kubectl get deployment -n oauth2-proxy oauth2-proxy &>/dev/null; then
