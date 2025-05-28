@@ -55,7 +55,7 @@ jobs:
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
     - name: Install KF Pipelines
-      run: ./tests/pipelines_install.sh
+      run: ./tests/pipelines_swfs_install.sh
 
     - name: Install KF Multi Tenancy
       run: ./tests/multi_tenancy_install.sh
