@@ -20,7 +20,7 @@ jobs:
     # Install kustomize
     - name: Install kustomize
       run: |
-        bash tests/install_kustomize.sh
+        bash tests/kustomize_install.sh
 
     # Install trivy
     - name: Install trivy
