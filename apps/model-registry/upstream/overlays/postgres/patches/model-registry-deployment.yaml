@@ -7,7 +7,7 @@ spec:
     metadata:
       annotations:
         # db doesn't use istio
-        traffic.sidecar.istio.io/excludeOutboundPorts: $(POSTGRES_PORT)
+        traffic.sidecar.istio.io/excludeOutboundPorts: POSTGRES_PORT_PLACEHOLDER
     spec:
       containers:
         - name: grpc-container
@@ -23,8 +23,8 @@ spec:
               name: model-registry-configmap
           args: ["--grpc_port=$(MODEL_REGISTRY_GRPC_SERVICE_PORT)",
                  "--metadata_source_config_type=postgresql",
-                 "--postgres_config_host=$(MLMD_DB_HOST)",
-                 "--postgres_config_port=$(POSTGRES_PORT)",
+                 "--postgres_config_host=MLMD_DB_HOST_PLACEHOLDER",
+                 "--postgres_config_port=POSTGRES_PORT_PLACEHOLDER",
                  "--postgres_config_dbname=$(POSTGRES_DBNAME)",
                  "--postgres_config_user=$(POSTGRES_USER)",
                  "--postgres_config_password=$(POSTGRES_PASSWORD)",

@@ -91,7 +91,7 @@ spec:
           args: ["--grpc_port=9090",
                  "--mysql_config_database=$(MYSQL_DATABASE)",
                  "--mysql_config_host=$(MYSQL_HOST)",
-                 "--mysql_config_port=$(MYSQL_PORT)",
+                 "--mysql_config_port=MYSQL_PORT_PLACEHOLDER",
                  "--mysql_config_user=$(DBCONFIG_USER)",
                  "--mysql_config_password=$(DBCONFIG_PASSWORD)",
                  "--enable_database_upgrade=true"

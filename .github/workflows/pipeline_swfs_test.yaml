@@ -13,15 +13,28 @@ on:
     # - common/oauth2-proxy/**
     # - common/istio*/**
     - experimental/seaweedfs/**
+    - tests/gh-actions/test_swfs_namespace_isolation.sh
+    - tests/gh-actions/s3_test_helper.py
 
 jobs:
   build:
     timeout-minutes: 15
     runs-on:
-      labels: ubuntu-latest-16-cores
+      labels: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
+    - name: Remove unused software
+      run: |
+        df -h # Check disk space before removal
+        sudo rm -rf /usr/share/dotnet # Example: Remove .NET SDK
+        sudo rm -rf /usr/local/lib/android # Example: Remove Android SDK
+        sudo rm -rf /opt/ghc # Example: Remove Haskell
+        df -h # Check disk space after removal
+
+    - name: Proactively prune OCI system on GHA runner
+      run: docker system prune -a --volumes --force
 
     - name: Install KinD, Create KinD cluster and Install kustomize
       run: ./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
@@ -62,6 +75,7 @@ jobs:
         fi
         kubectl get secret mlpipeline-minio-artifact -n "$KF_PROFILE" -o json | jq -r '.data | keys[] as $k | "\($k): \(. | .[$k] | @base64d)"' | tr '\n' ' '
 
+
     - name: Port forward
       run: ./tests/port_forward_gateway.sh
 
@@ -71,6 +85,9 @@ jobs:
         KF_PROFILE=kubeflow-user-example-com
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/pipeline_v1_test.py "${TOKEN}" "${KF_PROFILE}"
+
+    - name: Prune images inside Kind cluster
+      run: docker exec kind-control-plane bash -c "crictl images prune"
 
     - name: List and deploy test pipeline with V2 API
       run: |
@@ -87,6 +104,8 @@ jobs:
         python3 tests/test_pipeline_v2_test.py test_unauthorized_access "${TOKEN}" "${KF_PROFILE}"
         echo "Test succeeded. Token from unauthorized ServiceAccount cannot list pipelines in $KF_PROFILE namespace."
 
+    - name: Test SeaweedFS Namespace Isolation
+      run: ./tests/gh-actions/test_swfs_namespace_isolation.sh
 
     - name: Apply Pod Security Standards baseline levels for static namespaces
       run: ./tests/enable_baseline_PSS.sh
@@ -109,11 +128,13 @@ jobs:
         mkdir -p logs
         kubectl get all --all-namespaces > logs/resources.txt
         kubectl get events --all-namespaces --sort-by=.metadata.creationTimestamp > logs/events.txt
-        for namespace in kubeflow istio-system cert-manager auth kubeflow-user-example-com; do
-            kubectl describe pods -n $namespace > logs/$namespace-pods.txt
-            for pod in $(kubectl get pods -n $namespace -o jsonpath='{.items[*].metadata.name}'); do
-                kubectl logs -n $namespace $pod --tail=100 > logs/$namespace-$pod.txt 2>&1 || true
-            done
+        for namespace in kubeflow istio-system cert-manager auth kubeflow-user-example-com test-profile-1 test-profile-2; do
+            if kubectl get namespace $namespace >/dev/null 2>&1; then
+                kubectl describe pods -n $namespace > logs/$namespace-pods.txt
+                for pod in $(kubectl get pods -n $namespace -o jsonpath='{.items[*].metadata.name}'); do
+                    kubectl logs -n $namespace $pod --tail=100 > logs/$namespace-$pod.txt 2>&1 || true
+                done
+            fi
         done
 
     - name: Upload Diagnostic Logs

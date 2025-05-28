@@ -52,12 +52,12 @@ jobs:
 
     - name: Build & Apply KF Model Registry manifests
       run: |
-        kustomize build apps/model-registry/upstream/overlays/db | kubectl apply -f -
-        kustomize build apps/model-registry/upstream/options/istio | kubectl apply -f -
+        kustomize build apps/model-registry/upstream/overlays/db | kubectl apply -n kubeflow -f -
+        kustomize build apps/model-registry/upstream/options/istio | kubectl apply -n kubeflow -f -
 
     - name: Build & Apply KF Model Registry UI manifests
       run: |
-        kustomize build apps/model-registry/upstream/options/ui/overlays/istio | kubectl apply -f -
+        kustomize build apps/model-registry/upstream/options/ui/overlays/istio | kubectl apply -n kubeflow -f -
 
     - name: Test KF Model Registry deployment
       run: |
