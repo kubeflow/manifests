@@ -7,7 +7,7 @@
 # - Summary of security counts with images a JSON file inside ../../image_lists/summary_of_severity_counts_for_WG folder
 # 4. Generate a summary of the security scan reports
 # - The summary will be saved in JSON format inside ../../image_lists/summary_of_severity_counts_for_WG folder
-# The script must be executed from the tests/gh-actions folder as it uses relative paths
+# The script must be executed from the tests/ folder as it uses relative paths
 
 import os
 import subprocess

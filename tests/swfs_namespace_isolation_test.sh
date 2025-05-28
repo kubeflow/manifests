@@ -118,7 +118,7 @@ upload_file() {
 
     setup_port_forward
 
-    python3 tests/gh-actions/s3_test_helper.py upload \
+    python3 tests/s3_helper_test.py upload \
         --access-key "$access_key" \
         --secret-key "$secret_key" \
         --endpoint-url "http://localhost:8333" \
@@ -142,7 +142,7 @@ test_unauthorized_access() {
 
     # Try to access the other namespace's file
     # Note: Python script returns 0 when access is denied (good), 1 when access succeeds (bad)
-    if python3 tests/gh-actions/s3_test_helper.py download \
+    if python3 tests/s3_helper_test.py download \
         --access-key "$access_key" \
         --secret-key "$secret_key" \
         --endpoint-url "http://localhost:8333" \
