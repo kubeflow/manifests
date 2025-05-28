@@ -52,48 +52,11 @@ jobs:
     - name: Port forward the istio-ingress gateway
       run: ./tests/port_forward_gateway.sh
 
-    - name: Wait for services to be ready
-      run: |
-        echo "Waiting for services to be ready..."
-        
-        kubectl wait --for=condition=ready pod -l app=dex -n auth --timeout=300s
-        
-        kubectl wait --for=condition=ready pod -l app=oauth2-proxy -n oauth2-proxy --timeout=300s
-        
-        kubectl wait --for=condition=ready pod -l app=centraldashboard -n kubeflow --timeout=300s
-        
-        sleep 30
-        
-        for i in {1..10}; do
-          if curl -s -f http://localhost:8080 >/dev/null 2>&1 || curl -s -I http://localhost:8080 2>/dev/null | grep -q "HTTP/"; then
-            echo "Port forwarding is working"
-            break
-          fi
-          echo "Attempt $i: Port forwarding not ready, waiting..."
-          sleep 10
-        done
-
     - name: Test dex login
       run: |
         # Install Python requirements
         pip3 install -q requests
 
-        echo "=== Debugging port forwarding ==="
-        curl -v http://localhost:8080 || echo "Direct curl failed"
-        
-        echo "=== Port forward processes ==="
-        ps aux | grep port-forward || echo "No port-forward processes found"
-        
-        echo "=== Port forward logs ==="
-        cat /tmp/port-forward.log || echo "No port-forward log found"
-        
-        echo "=== Port 8080 status ==="
-        netstat -tlnp | grep 8080 || echo "Port 8080 not listening"
-        
-        echo "=== Pod status ==="
-        kubectl get pods -A | grep -E "(dex|oauth2|central|istio-ingress)"
-        
-        echo "=== Running Dex login test ==="
         # Run the Dex login test
         python3 tests/dex_login_test.py
 
