@@ -13,7 +13,7 @@ on:
     - common/oauth2-proxy/**
     - tests/oauth2-proxy_install.sh
     - common/cert-manager/**
-    - tests/cert_manager_install.sh
+    - tests/istio*
     - common/knative/**
     - tests/knative-cni_install.sh
 

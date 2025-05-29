@@ -7,7 +7,7 @@ on:
     - apps/jupyter/notebook-controller/upstream/**
     - apps/pipeline/upstream/**
     - tests/istio-cni_install.sh
-    - tests/cert_manager_install.sh
+    - tests/istio*
     - common/cert-manager/**
     - common/oauth2-proxy/**
     - common/istio*/**

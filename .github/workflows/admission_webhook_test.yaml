@@ -6,7 +6,7 @@ on:
     - .github/workflows/admission_webhook_test.yaml
     - apps/admission-webhook/upstream/**
     - tests/istio-cni_install.sh
-    - tests/cert_manager_install.sh
+    - tests/istio*
     - common/cert-manager/**
     - common/istio*/**
 

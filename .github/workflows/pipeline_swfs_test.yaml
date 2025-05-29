@@ -7,7 +7,7 @@ on:
     - .github/workflows/pipeline_swfs_test.yaml
     - apps/pipeline/upstream/**
     - tests/istio-cni_install.sh
-    - tests/cert_manager_install.sh
+    - tests/istio*
     - tests/oauth2-proxy_install.sh
     - common/cert-manager/**
     - common/oauth2-proxy/**

@@ -8,7 +8,7 @@ on:
     - apps/katib/upstream/**
     - tests/istio-cni_install.sh
     - common/istio*/**
-    - tests/cert_manager_install.sh
+    - tests/istio*
     - common/cert-manager/**
     - experimental/security/PSS/*
 
