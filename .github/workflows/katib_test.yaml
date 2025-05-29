@@ -80,7 +80,7 @@ jobs:
         kubectl get experiments.kubeflow.org -n $KF_PROFILE --token="$UNAUTHORIZED_TOKEN" >/dev/null
 
     - name: Apply Pod Security Standards baseline levels
-      run: ./tests/baseline_PSS_enable.sh
+      run: ./tests/PSS_baseline_enable.sh
 
     - name: Unapply applied baseline labels
       run: |
@@ -92,4 +92,4 @@ jobs:
         done
 
     - name: Applying Pod Security Standards restricted levels
-      run: ./tests/restricted_PSS_enable.sh
+      run: ./tests/PSS_restricted_enable.sh
