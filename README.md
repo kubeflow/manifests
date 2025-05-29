@@ -715,7 +715,7 @@ pre-commit run
 - **Q:** What versions of Istio, Knative, Cert-Manager, Argo, ... are compatible with Kubeflow?
   **A:** Please refer to each individual component's documentation for a dependency compatibility range. For Istio, Knative, Dex, Cert-Manager, and OAuth2 Proxy, the versions in `common` are the ones we have validated.
 - **Q:** Can I use Kubeflow in an air-gapped environment?
-  **A:** Yes you can. You just need to to get the list of images from our [trivy CVE scanning script](https://github.com/kubeflow/manifests/blob/master/tests/gh-actions/trivy_scan.py), mirror them and replace the references in the manifests with kustomize components and overlays, see [Upgrading and Extending](#upgrading-and-extending). You could also use a simple kyverno policy to replace the images at runtime, which could be easier to maintain.
+  **A:** Yes you can. You just need to to get the list of images from our [trivy CVE scanning script](https://github.com/kubeflow/manifests/blob/master/tests/trivy_scan.py), mirror them and replace the references in the manifests with kustomize components and overlays, see [Upgrading and Extending](#upgrading-and-extending). You could also use a simple kyverno policy to replace the images at runtime, which could be easier to maintain.
 - **Q:** Why does Kubeflow use Istio CNI instead of standard Istio?
   **A:** Istio CNI provides better security by eliminating the need for privileged init containers, making it more compatible with Pod Security Standards (PSS). It also enables native sidecars support introduced in Kubernetes 1.28, which helps address issues with init containers and application lifecycle management.
 - **Q:** Why does Istio CNI fail on Google Kubernetes Engine (GKE) with "read-only file system" errors?

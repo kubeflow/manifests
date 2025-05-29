@@ -59,7 +59,7 @@ if ! kubectl get deploy -n auth dex -o yaml | grep -q "OIDC_CLIENT_ID"; then
     --from-literal=OIDC_CLIENT_SECRET=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok \
     --dry-run=client -o yaml | kubectl apply -f -
 
-  ./tests/gh-actions/install_dex.sh
+  ./tests/dex_install.sh
 fi
 
 if kubectl get deployment -n oauth2-proxy oauth2-proxy &>/dev/null; then
@@ -77,12 +77,12 @@ until curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/dex/health 2>
   sleep 10
 done
 
-sed -i 's/raise RuntimeError/print("ERROR:"); exit 1/g' tests/gh-actions/test_dex_login.py
+sed -i 's/raise RuntimeError/print("ERROR:"); exit 1/g' tests/dex_login_test.py
 
 # Create a temporary python script file instead of using heredoc
 cat > /tmp/update_dex_login.py << 'PYTHONEOF'
 import re
-with open('tests/gh-actions/test_dex_login.py', 'r') as f:
+with open('tests/dex_login_test.py', 'r') as f:
     content = f.read()
 content = re.sub('import re', 'import re, time, sys', content, count=1)
 retry_pattern = r'([ \t]+)session_cookies = dex_session_manager\.get_session_cookies\(\)'
@@ -96,7 +96,7 @@ replacement = r"""\1# Try with retries
 \1        sys.exit(1)
 \1    time.sleep(5)"""
 content = re.sub(retry_pattern, replacement, content, count=1)
-with open('tests/gh-actions/test_dex_login.py', 'w') as f:
+with open('tests/dex_login_test.py', 'w') as f:
     f.write(content)
 PYTHONEOF
 
