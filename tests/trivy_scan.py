@@ -1,12 +1,12 @@
 # The script:
 # 1. Extract all the images used by the Kubeflow Working Groups
-# - The reported image lists are saved in respective files under ../../image_lists directory
+# - The reported image lists are saved in respective files under ../image_lists directory
 # 2. Scan the reported images using Trivy for security vulnerabilities
-# - Scanned reports will be saved in JSON format inside ../../image_lists/security_scan_reports/ folder for each Working Group
+# - Scanned reports will be saved in JSON format inside ../image_lists/security_scan_reports/ folder for each Working Group
 # 3. The script will also generate a summary of the security scan reports with severity counts for each Working Group with images
-# - Summary of security counts with images a JSON file inside ../../image_lists/summary_of_severity_counts_for_WG folder
+# - Summary of security counts with images a JSON file inside ../image_lists/summary_of_severity_counts_for_WG folder
 # 4. Generate a summary of the security scan reports
-# - The summary will be saved in JSON format inside ../../image_lists/summary_of_severity_counts_for_WG folder
+# - The summary will be saved in JSON format inside ../image_lists/summary_of_severity_counts_for_WG folder
 # The script must be executed from the tests/ folder as it uses relative paths
 
 import os
@@ -19,17 +19,17 @@ from prettytable import PrettyTable
 
 # Dictionary mapping Kubeflow workgroups to directories containing kustomization files
 wg_dirs = {
-    "katib": "../../apps/katib/upstream/installs",
-    "pipelines": "../../apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user",
-    "trainer": "../../apps/training-operator/upstream/overlays",
-    "manifests": "../../common/cert-manager/cert-manager/base ../../common/cert-manager/kubeflow-issuer/base ../../common/istio-1-24/istio-crds/base ../../common/istio-1-24/istio-namespace/base ../../common/istio-1-24/istio-install/overlays/oauth2-proxy ../../common/oauth2-proxy/overlays/m2m-self-signed ../../common/dex/overlays/oauth2-proxy ../../common/knative/knative-serving/overlays/gateways ../../common/knative/knative-eventing/base ../../common/istio-1-24/cluster-local-gateway/base ../../common/kubeflow-namespace/base ../../common/kubeflow-roles/base ../../common/istio-1-24/kubeflow-istio-resources/base",
-    "workbenches": "../../apps/pvcviewer-controller/upstream/base ../../apps/admission-webhook/upstream/overlays ../../apps/centraldashboard/overlays ../../apps/jupyter/jupyter-web-app/upstream/overlays ../../apps/volumes-web-app/upstream/overlays ../../apps/tensorboard/tensorboards-web-app/upstream/overlays ../../apps/profiles/upstream/overlays ../../apps/jupyter/notebook-controller/upstream/overlays ../../apps/tensorboard/tensorboard-controller/upstream/overlays",
-    "kserve": "../../apps/kserve - ../../apps/kserve/models-web-app/overlays/kubeflow",
-    "model-registry": "../../apps/model-registry/upstream",
-    "spark": "../../apps/spark/spark-operator/overlays/kubeflow",
+    "katib": "../apps/katib/upstream/installs",
+    "pipelines": "../apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user",
+    "trainer": "../apps/training-operator/upstream/overlays",
+    "manifests": "../common/cert-manager/cert-manager/base ../common/cert-manager/kubeflow-issuer/base ../common/istio-1-24/istio-crds/base ../common/istio-1-24/istio-namespace/base ../common/istio-1-24/istio-install/overlays/oauth2-proxy ../common/oauth2-proxy/overlays/m2m-self-signed ../common/dex/overlays/oauth2-proxy ../common/knative/knative-serving/overlays/gateways ../common/knative/knative-eventing/base ../common/istio-1-24/cluster-local-gateway/base ../common/kubeflow-namespace/base ../common/kubeflow-roles/base ../common/istio-1-24/kubeflow-istio-resources/base",
+    "workbenches": "../apps/pvcviewer-controller/upstream/base ../apps/admission-webhook/upstream/overlays ../apps/centraldashboard/overlays ../apps/jupyter/jupyter-web-app/upstream/overlays ../apps/volumes-web-app/upstream/overlays ../apps/tensorboard/tensorboards-web-app/upstream/overlays ../apps/profiles/upstream/overlays ../apps/jupyter/notebook-controller/upstream/overlays ../apps/tensorboard/tensorboard-controller/upstream/overlays",
+    "kserve": "../apps/kserve - ../apps/kserve/models-web-app/overlays/kubeflow",
+    "model-registry": "../apps/model-registry/upstream",
+    "spark": "../apps/spark/spark-operator/overlays/kubeflow",
 }
 
-DIRECTORY = "../../image_lists"
+DIRECTORY = "../image_lists"
 os.makedirs(DIRECTORY, exist_ok=True)
 SCAN_REPORTS_DIR = os.path.join(DIRECTORY, "security_scan_reports")
 ALL_SEVERITY_COUNTS = os.path.join(DIRECTORY, "severity_counts_with_images_for_WG")
@@ -50,7 +50,7 @@ def log(*args, **kwargs):
 
 def save_images(wg, images, version):
     # Saves a list of container images to a text file named after the workgroup and version.
-    output_file = f"../../image_lists/kf_{version}_{wg}_images.txt"
+    output_file = f"../image_lists/kf_{version}_{wg}_images.txt"
     with open(output_file, "w") as f:
         f.write("\n".join(images))
     log(f"File {output_file} successfully created")
