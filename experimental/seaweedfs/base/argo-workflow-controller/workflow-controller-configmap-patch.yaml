@@ -9,15 +9,9 @@ data:
   artifactRepository: |
     archiveLogs: true
     s3:
-      endpoint: "minio-service.kubeflow:9000"
-      bucket: "mlpipeline"
-      # keyFormat is a format pattern to define how artifacts will be organized in a bucket.
-      # It can reference workflow metadata variables such as workflow.namespace, workflow.name,
-      # This ensures artifacts are isolated per namespace for security
-      # Format: private-artifacts/{namespace}/{workflow}/{date}/{pod}
-      # This matches the pattern used by the SeaweedFS profile controller
-      keyFormat: "private-artifacts/{{workflow.namespace}}/{{workflow.name}}/{{workflow.creationTimestamp.Y}}/{{workflow.creationTimestamp.m}}/{{workflow.creationTimestamp.d}}/{{pod.name}}"
-      # insecure will disable TLS. Primarily used for minio installs not configured with TLS
+      endpoint: minio-service.kubeflow:9000
+      bucket: mlpipeline
+      keyFormat: private-artifacts/{{workflow.namespace}}/{{workflow.name}}/{{workflow.creationTimestamp.Y}}/{{workflow.creationTimestamp.m}}/{{workflow.creationTimestamp.d}}/{{pod.name}}
       insecure: true
       accessKeySecret:
         name: mlpipeline-minio-artifact
