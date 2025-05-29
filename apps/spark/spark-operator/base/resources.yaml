@@ -23,6 +23,9 @@ spec:
     - jsonPath: .spec.schedule
       name: Schedule
       type: string
+    - jsonPath: .spec.timeZone
+      name: TimeZone
+      type: string
     - jsonPath: .spec.suspend
       name: Suspend
       type: string
@@ -3120,6 +3123,10 @@ spec:
                         description: Memory is the amount of memory to request for
                           the pod.
                         type: string
+                      memoryLimit:
+                        description: MemoryLimit overrides the memory limit of the
+                          pod.
+                        type: string
                       memoryOverhead:
                         description: MemoryOverhead is the amount of off-heap memory
                           to allocate in cluster mode, in MiB unless otherwise specified.
@@ -5291,6 +5298,13 @@ spec:
                           of executors if dynamic allocation is enabled.
                         format: int32
                         type: integer
+                      shuffleTrackingEnabled:
+                        description: |-
+                          ShuffleTrackingEnabled enables shuffle file tracking for executors, which allows dynamic allocation without
+                          the need for an external shuffle service. This option will try to keep alive executors that are storing
+                          shuffle data for active jobs. If external shuffle service is enabled, set ShuffleTrackingEnabled to false.
+                          ShuffleTrackingEnabled is true by default if dynamicAllocation.enabled is true.
+                        type: boolean
                       shuffleTrackingTimeout:
                         description: |-
                           ShuffleTrackingTimeout controls the timeout in milliseconds for executors that are holding
@@ -8243,6 +8257,10 @@ spec:
                       memory:
                         description: Memory is the amount of memory to request for
                           the pod.
+                        type: string
+                      memoryLimit:
+                        description: MemoryLimit overrides the memory limit of the
+                          pod.
                         type: string
                       memoryOverhead:
                         description: MemoryOverhead is the amount of off-heap memory
@@ -12386,6 +12404,13 @@ spec:
                 - sparkVersion
                 - type
                 type: object
+              timeZone:
+                description: |-
+                  TimeZone is the time zone in which the cron schedule will be interpreted in.
+                  This value is passed to time.LoadLocation, so it must be either "Local", "UTC",
+                  or a valid IANA location name e.g. "America/New_York".
+                  Defaults to "Local".
+                type: string
             required:
             - schedule
             - template
@@ -15515,6 +15540,9 @@ spec:
                     description: Memory is the amount of memory to request for the
                       pod.
                     type: string
+                  memoryLimit:
+                    description: MemoryLimit overrides the memory limit of the pod.
+                    type: string
                   memoryOverhead:
                     description: MemoryOverhead is the amount of off-heap memory to
                       allocate in cluster mode, in MiB unless otherwise specified.
@@ -17679,6 +17707,13 @@ spec:
                       executors if dynamic allocation is enabled.
                     format: int32
                     type: integer
+                  shuffleTrackingEnabled:
+                    description: |-
+                      ShuffleTrackingEnabled enables shuffle file tracking for executors, which allows dynamic allocation without
+                      the need for an external shuffle service. This option will try to keep alive executors that are storing
+                      shuffle data for active jobs. If external shuffle service is enabled, set ShuffleTrackingEnabled to false.
+                      ShuffleTrackingEnabled is true by default if dynamicAllocation.enabled is true.
+                    type: boolean
                   shuffleTrackingTimeout:
                     description: |-
                       ShuffleTrackingTimeout controls the timeout in milliseconds for executors that are holding
@@ -20615,6 +20650,9 @@ spec:
                   memory:
                     description: Memory is the amount of memory to request for the
                       pod.
+                    type: string
+                  memoryLimit:
+                    description: MemoryLimit overrides the memory limit of the pod.
                     type: string
                   memoryOverhead:
                     description: MemoryOverhead is the amount of off-heap memory to
@@ -24839,10 +24877,10 @@ metadata:
   name: spark-operator-controller
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.1.1
+    helm.sh/chart: spark-operator-2.2.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.1.1"
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 ---
@@ -24854,10 +24892,10 @@ metadata:
   name: spark-operator-webhook
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.1.1
+    helm.sh/chart: spark-operator-2.2.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.1.1"
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 ---
@@ -24868,10 +24906,10 @@ metadata:
   name: spark-operator-controller
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.1.1
+    helm.sh/chart: spark-operator-2.2.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.1.1"
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 rules:
@@ -24987,10 +25025,10 @@ metadata:
   name: spark-operator-webhook
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.1.1
+    helm.sh/chart: spark-operator-2.2.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.1.1"
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 rules:
@@ -25061,10 +25099,10 @@ metadata:
   name: spark-operator-controller
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.1.1
+    helm.sh/chart: spark-operator-2.2.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.1.1"
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 subjects:
@@ -25083,10 +25121,10 @@ metadata:
   name: spark-operator-webhook
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.1.1
+    helm.sh/chart: spark-operator-2.2.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.1.1"
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 subjects:
@@ -25105,10 +25143,10 @@ metadata:
   name: spark-operator-controller
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.1.1
+    helm.sh/chart: spark-operator-2.2.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.1.1"
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 rules:
@@ -25135,10 +25173,10 @@ metadata:
   name: spark-operator-webhook
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.1.1
+    helm.sh/chart: spark-operator-2.2.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.1.1"
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 rules:
@@ -25180,10 +25218,10 @@ metadata:
   name: spark-operator-controller
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.1.1
+    helm.sh/chart: spark-operator-2.2.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.1.1"
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 subjects:
@@ -25202,10 +25240,10 @@ metadata:
   name: spark-operator-webhook
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.1.1
+    helm.sh/chart: spark-operator-2.2.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.1.1"
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 subjects:
@@ -25223,10 +25261,10 @@ kind: Service
 metadata:
   name: spark-operator-webhook-svc
   labels:
-    helm.sh/chart: spark-operator-2.1.1
+    helm.sh/chart: spark-operator-2.2.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.1.1"
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 spec:
@@ -25245,10 +25283,10 @@ kind: Deployment
 metadata:
   name: spark-operator-controller
   labels:
-    helm.sh/chart: spark-operator-2.1.1
+    helm.sh/chart: spark-operator-2.2.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.1.1"
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 spec:
@@ -25271,7 +25309,7 @@ spec:
     spec:
       containers:
       - name: spark-operator-controller
-        image: docker.io/kubeflow/spark-operator:2.1.1
+        image: ghcr.io/kubeflow/spark-operator/controller:2.2.0
         imagePullPolicy: IfNotPresent
         args:
         - controller
@@ -25337,10 +25375,10 @@ kind: Deployment
 metadata:
   name: spark-operator-webhook
   labels:
-    helm.sh/chart: spark-operator-2.1.1
+    helm.sh/chart: spark-operator-2.2.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.1.1"
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 spec:
@@ -25359,7 +25397,7 @@ spec:
     spec:
       containers:
       - name: spark-operator-webhook
-        image: docker.io/kubeflow/spark-operator:2.1.1
+        image: ghcr.io/kubeflow/spark-operator/controller:2.2.0
         imagePullPolicy: IfNotPresent
         args:
         - webhook
@@ -25427,10 +25465,10 @@ kind: MutatingWebhookConfiguration
 metadata:
   name: spark-operator-webhook
   labels:
-    helm.sh/chart: spark-operator-2.1.1
+    helm.sh/chart: spark-operator-2.2.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.1.1"
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 webhooks:
@@ -25492,10 +25530,10 @@ kind: ValidatingWebhookConfiguration
 metadata:
   name: spark-operator-webhook
   labels:
-    helm.sh/chart: spark-operator-2.1.1
+    helm.sh/chart: spark-operator-2.2.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.1.1"
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 webhooks:
