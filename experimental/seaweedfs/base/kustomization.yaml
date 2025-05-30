@@ -13,6 +13,7 @@ configMapGenerator:
 patches:
 - path: minio-service-patch.yaml
 - path: pipeline-profile-controller/deployment.yaml
+- path: argo-workflow-controller/workflow-controller-configmap-patch.yaml
 - patch: |-
     apiVersion: apps/v1
     kind: Deployment
