@@ -301,7 +301,7 @@ metadata:
   name: dex
 data:
   config.yaml: |
-    issuer: http://dex.auth.svc.cluster.local:5556/dex
+    issuer: https://$KUBEFLOW_INGRESS_URL/dex
     storage:
       type: kubernetes
       config:
