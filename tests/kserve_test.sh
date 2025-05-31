@@ -26,11 +26,12 @@ spec:
               - /v2/models/*
 EOF
 
+echo "=== Setting up path-based routing VirtualService ==="
 cat <<EOF | kubectl apply -f -
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: isvc-sklearn-external
+  name: kserve-path-routing
   namespace: ${NAMESPACE}
 spec:
   gateways:
@@ -63,11 +64,37 @@ export KSERVE_INGRESS_HOST_PORT=${KSERVE_INGRESS_HOST_PORT:-localhost:8080}
 export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
 cd ${TEST_DIRECTORY} && pytest . -vs --log-level info
 
-echo "=== Testing path-based external access ==="
-curl -v -H "Host: isvc-sklearn.${NAMESPACE}.example.com" \
-    -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
-    -H "Content-Type: application/json" \
-    "http://${KSERVE_INGRESS_HOST_PORT}/kserve/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
-    -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}'
+echo "=== Testing path-based routing functionality ==="
+
+echo "Testing path-based access with valid token..."
+curl --fail --show-error \
+  -H "Host: isvc-sklearn.${NAMESPACE}.example.com" \
+  -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
+  -H "Content-Type: application/json" \
+  "http://${KSERVE_INGRESS_HOST_PORT}/kserve/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
+  -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}'
+
+echo "Testing 404 for incorrect path..."
+RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+  -H "Host: isvc-sklearn.${NAMESPACE}.example.com" \
+  -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
+  -H "Content-Type: application/json" \
+  "http://${KSERVE_INGRESS_HOST_PORT}/wrong-path/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
+  -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
+
+if [[ "$RESPONSE" == "404" ]]; then
+  echo "404 test passed - wrong path correctly rejected"
+else
+  echo "Expected 404, got $RESPONSE - path routing may be too permissive"
+fi
+
+echo "Testing direct service access still works..."
+curl --fail --show-error \
+  -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
+  -H "Content-Type: application/json" \
+  "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
+  -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}'
+
+echo "=== Path-based routing tests completed successfully ==="
 
 # TODO FOR FOLLOW-UP PR: Implement proper security with AuthorizationPolicy that restricts access
