@@ -5,6 +5,21 @@ NAMESPACE=${1:-kubeflow-user-example-com}
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TEST_DIRECTORY="${SCRIPT_DIRECTORY}/kserve"
 
+# Deploy test inference service
+cat <<EOF | kubectl apply -f -
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "isvc-sklearn"
+  namespace: ${NAMESPACE}
+spec:
+  predictor:
+    sklearn:
+      storageUri: "gs://kfserving-examples/models/sklearn/1.0/model"
+EOF
+
+kubectl wait --for=condition=Ready inferenceservice/isvc-sklearn -n ${NAMESPACE} --timeout=300s
+
 echo "=== KServe Predictor Service Labels ==="
 kubectl get pods -n ${NAMESPACE} -l serving.knative.dev/service=isvc-sklearn-predictor --show-labels
 
@@ -12,18 +27,15 @@ cat <<EOF | kubectl apply -f -
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-in-cluster-kserve
+  name: allow-kserve-access
   namespace: ${NAMESPACE}
 spec:
+  action: ALLOW
+  rules:
+  - {}
   selector:
     matchLabels:
       serving.knative.dev/service: isvc-sklearn-predictor
-  rules:
-    - to:
-        - operation:
-            paths:
-              - /v1/models/*
-              - /v2/models/*
 EOF
 
 echo "=== Creating dedicated Gateway for path-based routing ==="
