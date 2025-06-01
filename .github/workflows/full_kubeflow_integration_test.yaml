@@ -208,7 +208,7 @@ jobs:
           echo "Error: Unauthorized access was not correctly rejected. Got status code: ${STATUS_CODE}"
           exit 1
         fi
- 
+
     - name: Apply Pod Security Standards Baseline
       run: ./tests/PSS_baseline_enable.sh
 
