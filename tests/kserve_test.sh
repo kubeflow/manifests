@@ -63,6 +63,8 @@ fi
 
 kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true --timeout=60s
 
+kubectl delete authorizationpolicy allow-kserve-access -n ${NAMESPACE} --ignore-not-found=true
+
 export KSERVE_INGRESS_HOST_PORT=${KSERVE_INGRESS_HOST_PORT:-localhost:8080}
 export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
 export KSERVE_TEST_NAMESPACE=${NAMESPACE}
