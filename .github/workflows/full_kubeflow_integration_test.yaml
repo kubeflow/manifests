@@ -208,10 +208,7 @@ jobs:
           echo "Error: Unauthorized access was not correctly rejected. Got status code: ${STATUS_CODE}"
           exit 1
         fi
-    - name: Apply PSS Baseline for Profiles Namespaces
-      run: |
-        kustomize build experimental/security/PSS/dynamic/baseline | kubectl apply -f -
-
+ 
     - name: Apply Pod Security Standards Baseline
       run: ./tests/PSS_baseline_enable.sh
 
