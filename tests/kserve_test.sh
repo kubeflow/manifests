@@ -5,39 +5,6 @@ NAMESPACE=${1:-kubeflow-user-example-com}
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TEST_DIRECTORY="${SCRIPT_DIRECTORY}/kserve"
 
-# Deploy test inference service
-cat <<EOF | kubectl apply -f -
-apiVersion: "serving.kserve.io/v1beta1"
-kind: "InferenceService"
-metadata:
-  name: "isvc-sklearn"
-  namespace: ${NAMESPACE}
-spec:
-  predictor:
-    sklearn:
-      storageUri: "gs://kfserving-examples/models/sklearn/1.0/model"
-EOF
-
-kubectl wait --for=condition=Ready inferenceservice/isvc-sklearn -n ${NAMESPACE} --timeout=300s
-
-echo "=== KServe Predictor Service Labels ==="
-kubectl get pods -n ${NAMESPACE} -l serving.knative.dev/service=isvc-sklearn-predictor --show-labels
-
-cat <<EOF | kubectl apply -f -
-apiVersion: security.istio.io/v1beta1
-kind: AuthorizationPolicy
-metadata:
-  name: allow-kserve-access
-  namespace: ${NAMESPACE}
-spec:
-  action: ALLOW
-  rules:
-  - {}
-  selector:
-    matchLabels:
-      serving.knative.dev/service: isvc-sklearn-predictor
-EOF
-
 echo "=== Creating dedicated Gateway for path-based routing ==="
 cat <<EOF | kubectl apply -f -
 apiVersion: networking.istio.io/v1beta1
@@ -96,8 +63,40 @@ fi
 
 export KSERVE_INGRESS_HOST_PORT=${KSERVE_INGRESS_HOST_PORT:-localhost:8080}
 export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
+export KSERVE_TEST_NAMESPACE=${NAMESPACE}
 cd ${TEST_DIRECTORY} && pytest . -vs --log-level info
 
+echo "=== InferenceService for additional tests ==="
+cat <<EOF | kubectl apply -f -
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "isvc-sklearn"
+  namespace: ${NAMESPACE}
+spec:
+  predictor:
+    sklearn:
+      storageUri: "gs://kfserving-examples/models/sklearn/1.0/model"
+EOF
+
+kubectl wait --for=condition=Ready inferenceservice/isvc-sklearn -n ${NAMESPACE} --timeout=300s
+
+cat <<EOF | kubectl apply -f -
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-kserve-access
+  namespace: ${NAMESPACE}
+spec:
+  action: ALLOW
+  rules:
+  - {}
+  selector:
+    matchLabels:
+      serving.knative.dev/service: isvc-sklearn-predictor
+EOF
+
+kubectl get pods -n ${NAMESPACE} -l serving.knative.dev/service=isvc-sklearn-predictor --show-labels
 echo "=== Testing path-based routing functionality ==="
 
 echo "Testing path-based access with valid token..."
