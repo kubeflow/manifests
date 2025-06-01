@@ -61,6 +61,8 @@ if ! command -v pytest &> /dev/null; then
   pip install -r ${TEST_DIRECTORY}/requirements.txt
 fi
 
+kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true --timeout=60s
+
 export KSERVE_INGRESS_HOST_PORT=${KSERVE_INGRESS_HOST_PORT:-localhost:8080}
 export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
 export KSERVE_TEST_NAMESPACE=${NAMESPACE}
