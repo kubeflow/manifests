@@ -45,6 +45,9 @@ spec:
    - kserve-path.${NAMESPACE}.example.com
 EOF
 
+kubectl wait --for=condition=Ready gateway/kserve-path-gateway -n ${NAMESPACE} --timeout=60s || true
+kubectl get gateway kserve-path-gateway -n ${NAMESPACE} -o yaml
+
 echo "=== Setting up path-based routing VirtualService ==="
 cat <<EOF | kubectl apply -f -
 apiVersion: networking.istio.io/v1beta1
