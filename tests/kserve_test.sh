@@ -68,6 +68,22 @@ kubectl delete authorizationpolicy allow-kserve-access -n ${NAMESPACE} --ignore-
 export KSERVE_INGRESS_HOST_PORT=${KSERVE_INGRESS_HOST_PORT:-localhost:8080}
 export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
 export KSERVE_TEST_NAMESPACE=${NAMESPACE}
+
+cat <<EOF | kubectl apply -f -
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-kserve-access
+  namespace: ${NAMESPACE}
+spec:
+  action: ALLOW
+  rules:
+  - {}
+  selector:
+    matchLabels:
+      serving.knative.dev/service: isvc-sklearn-predictor
+EOF
+
 cd ${TEST_DIRECTORY} && pytest . -vs --log-level info
 
 echo "=== InferenceService for additional tests ==="
@@ -85,20 +101,7 @@ EOF
 
 kubectl wait --for=condition=Ready inferenceservice/isvc-sklearn -n ${NAMESPACE} --timeout=300s
 
-cat <<EOF | kubectl apply -f -
-apiVersion: security.istio.io/v1beta1
-kind: AuthorizationPolicy
-metadata:
-  name: allow-kserve-access
-  namespace: ${NAMESPACE}
-spec:
-  action: ALLOW
-  rules:
-  - {}
-  selector:
-    matchLabels:
-      serving.knative.dev/service: isvc-sklearn-predictor
-EOF
+
 
 kubectl get pods -n ${NAMESPACE} -l serving.knative.dev/service=isvc-sklearn-predictor --show-labels
 echo "=== Testing path-based routing functionality ==="
