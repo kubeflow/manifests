@@ -7,6 +7,9 @@ spec:
     metadata:
       name: init-seaweedfs
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       restartPolicy: OnFailure
       containers:
       - name: init-seaweedfs
@@ -57,8 +60,6 @@ spec:
           # image defaults to root user
           runAsUser: 1001
           runAsGroup: 1001
-          seccompProfile:
-            type: RuntimeDefault
           capabilities:
             drop:
             - ALL
