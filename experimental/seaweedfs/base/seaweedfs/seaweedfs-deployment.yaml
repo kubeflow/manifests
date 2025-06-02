@@ -18,10 +18,10 @@ spec:
       labels:
         app: seaweedfs
         application-crd-id: kubeflow-pipelines
-    securityContext:
-      seccompProfile:
-        type: RuntimeDefault
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: seaweedfs
         image: 'chrislusf/seaweedfs:3.85'
