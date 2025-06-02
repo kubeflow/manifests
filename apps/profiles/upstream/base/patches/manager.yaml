@@ -5,6 +5,9 @@ metadata:
 spec:
   template:
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       volumes:
         - name: namespace-labels
           configMap:
