@@ -8,7 +8,7 @@ source "${SCRIPT_DIRECTORY}/library.sh"
 setup_error_handling
 
 COMPONENT_NAME="istio"
-COMMIT="1.24.3"
+COMMIT="1.26.1"
 CURRENT_VERSION="1-24" 
 NEW_VERSION="1-24" # Must be a release
 SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/${COMPONENT_NAME}}

@@ -7,7 +7,19 @@
 # - Summary of security counts with images a JSON file inside ../image_lists/summary_of_severity_counts_for_WG folder
 # 4. Generate a summary of the security scan reports
 # - The summary will be saved in JSON format inside ../image_lists/summary_of_severity_counts_for_WG folder
-# The script must be executed from the tests/ folder as it uses relative paths
+# 5. Before run this file you have to
+#    1. Install kustomize
+#       - sudo apt install snapd
+#       - sudo snap install kustomize
+#    2. Install trivy
+#       - sudo apt install snapd
+#       - sudo snap install trivy
+#    4. Install Python
+#    5. Install prettytable
+#       - pip install prettytable
+
+# The script must be executed from the hack folder as it use relative paths
+
 
 import os
 import subprocess
@@ -19,14 +31,13 @@ from prettytable import PrettyTable
 
 # Dictionary mapping Kubeflow workgroups to directories containing kustomization files
 wg_dirs = {
-    "katib": "../../apps/katib/upstream/installs",
-    "pipelines": "../../apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user",
-    "trainer": "../../apps/training-operator/upstream/overlays",
-    "manifests": "../../common/cert-manager/cert-manager/base ../../common/cert-manager/kubeflow-issuer/base ../../common/istio-1-26/istio-crds/base ../../common/istio-1-26/istio-namespace/base ../../common/istio-1-26/istio-install/overlays/oauth2-proxy ../../common/oauth2-proxy/overlays/m2m-self-signed ../../common/dex/overlays/oauth2-proxy ../../common/knative/knative-serving/overlays/gateways ../../common/knative/knative-eventing/base ../../common/istio-1-26/cluster-local-gateway/base ../../common/kubeflow-namespace/base ../../common/kubeflow-roles/base ../../common/istio-1-26/kubeflow-istio-resources/base",
-    "workbenches": "../../apps/pvcviewer-controller/upstream/base ../../apps/admission-webhook/upstream/overlays ../../apps/centraldashboard/overlays ../../apps/jupyter/jupyter-web-app/upstream/overlays ../../apps/volumes-web-app/upstream/overlays ../../apps/tensorboard/tensorboards-web-app/upstream/overlays ../../apps/profiles/upstream/overlays ../../apps/jupyter/notebook-controller/upstream/overlays ../../apps/tensorboard/tensorboard-controller/upstream/overlays",
-    "kserve": "../../apps/kserve - ../../apps/kserve/models-web-app/overlays/kubeflow",
-    "model-registry": "../../apps/model-registry/upstream",
-    "spark": "../../apps/spark/spark-operator/overlays/kubeflow",
+    "automl": "../apps/katib/upstream/installs",
+    "pipelines": "../apps/pipeline/upstream/env ../apps/kfp-tekton/upstream/env",
+    "training": "../apps/training-operator/upstream/overlays",
+    "manifests": "../common/cert-manager/cert-manager/base ../common/cert-manager/kubeflow-issuer/base ../common/istio-1-26/istio-crds/base ../common/istio-1-26/istio-namespace/base ../common/istio-1-26/istio-install/overlays/oauth2-proxy ../common/oauth2-proxy/overlays/m2m-self-signed ../common/dex/overlays/oauth2-proxy ../common/knative/knative-serving/overlays/gateways ../common/knative/knative-eventing/base ../common/istio-1-26/cluster-local-gateway/base ../common/kubeflow-namespace/base ../common/kubeflow-roles/base ../common/istio-1-26/kubeflow-istio-resources/base",
+    "workbenches": "../apps/pvcviewer-controller/upstream/base ../apps/admission-webhook/upstream/overlays ../apps/centraldashboard/overlays ../apps/jupyter/jupyter-web-app/upstream/overlays ../apps/volumes-web-app/upstream/overlays ../apps/tensorboard/tensorboards-web-app/upstream/overlays ../apps/profiles/upstream/overlays ../apps/jupyter/notebook-controller/upstream/overlays ../apps/tensorboard/tensorboard-controller/upstream/overlays",
+    "serving": "../apps/kserve - ../apps/kserve/models-web-app/overlays/kubeflow",
+    "model-registry": "../apps/model-registry/upstream",
 }
 
 DIRECTORY = "../image_lists"
@@ -348,21 +359,20 @@ with open(summary_file, "r") as file:
     data = json.load(file)
 
 # Define a mapping for working group names
-working_group_name_mapping = {
-    "Katib": "Katib",
+groupnames = {
+    "Automl": "AutoML",
     "Pipelines": "Pipelines",
     "Workbenches": "Workbenches(Notebooks)",
-    "Kserve": "Kserve",
+    "Serving": "Kserve",
     "Manifests": "Manifests",
-    "Trainer": "Trainer",
+    "Training": "Training",
     "Model-registry": "Model Registry",
-    "Spark": "Spark",
     "total": "All Images",
 }
 
 # Create PrettyTable
-summary_table = PrettyTable()
-summary_table.field_names = [
+table = PrettyTable()
+table.field_names = [
     "Working Group",
     "Images",
     "Critical CVE",
@@ -372,30 +382,31 @@ summary_table.field_names = [
 ]
 
 # Populate the table with data
-for working_group_key in working_group_name_mapping:
-    if working_group_key in data:  # Check if the working group exists in the data
-        working_group_data = data[working_group_key]
-        summary_table.add_row(
+for group_name in groupnames:
+    if group_name in data:  # Check if group_name exists in data
+        value = data[group_name]
+        table.add_row(
             [
-                working_group_name_mapping[working_group_key],
-                working_group_data["images"],
-                working_group_data["CRITICAL"],
-                working_group_data["HIGH"],
-                working_group_data["MEDIUM"],
-                working_group_data["LOW"],
+                groupnames[group_name],
+                value["images"],
+                value["CRITICAL"],
+                value["HIGH"],
+                value["MEDIUM"],
+                value["LOW"],
             ]
         )
 
 # log the table
-log(summary_table)
+log(table)
+
 
 # Write the table output to a file in the specified folder
-summary_table_output_file = (
+output_file = (
     SUMMARY_OF_SEVERITY_COUNTS + "/summary_of_severity_counts_for_WGs_in_table.txt"
 )
-with open(summary_table_output_file, "w") as file:
-    file.write(str(summary_table))
+with open(output_file, "w") as f:
+    f.write(str(table))
 
-log("Output saved to:", summary_table_output_file)
-log("Severity counts with images respect to WGs are saved in the", ALL_SEVERITY_COUNTS)
-log("Scanned JSON reports on images are saved in", SCAN_REPORTS_DIR)
+log("Output saved to:", output_file)
+log("Severity counts with images respect to WGs are saved in the",ALL_SEVERITY_COUNTS)
+log("Scanned Json reports on images are saved in",SCAN_REPORTS_DIR)

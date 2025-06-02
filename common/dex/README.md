@@ -179,9 +179,9 @@ spec:
 ISTIO_REQUEST_AUTH_CONFIG
 
 
-# For Kubeflow 1.91, change istio-1-24 to istio-1-22
-kustomize build common/istio-1-24/istio-install/overlays/oauth2-proxy | kubectl delete -f -
-kustomize build common/istio-1-24/istio-install/overlays/oauth2-proxy | kubectl apply -f -
+# For Kubeflow 1.91, change istio-1-26 to istio-1-22
+kustomize build common/istio-1-26/istio-install/overlays/oauth2-proxy | kubectl delete -f -
+kustomize build common/istio-1-26/istio-install/overlays/oauth2-proxy | kubectl apply -f -
 kustomize build common/oauth2-proxy/overlays/m2m-dex-only/ | kubectl delete -f -
 kustomize build common/oauth2-proxy/overlays/m2m-dex-only/ | kubectl apply -f -
 ```
