@@ -6,7 +6,6 @@ on:
     - .github/workflows/training_operator_test.yaml
     - apps/training-operator/upstream/**
     - tests/training_operator_job.yaml
-    - tests/istio-cni_install.sh
     - tests/istio*
     - tests/oauth2-proxy_install.sh
     - common/cert-manager/**

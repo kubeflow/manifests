@@ -9,7 +9,7 @@ on:
     - common/istio*/**
     - experimental/security/PSS/*
     - common/dex/base/**
-    - tests/istio-cni_install.sh
+    - tests/istio*
     - tests/dex_login_test.py
 
 jobs:

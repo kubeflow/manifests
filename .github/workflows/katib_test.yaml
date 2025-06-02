@@ -6,7 +6,6 @@ on:
     - tests/katib_install.sh
     - .github/workflows/katib_test.yaml
     - apps/katib/upstream/**
-    - tests/istio-cni_install.sh
     - common/istio*/**
     - tests/istio*
     - common/cert-manager/**

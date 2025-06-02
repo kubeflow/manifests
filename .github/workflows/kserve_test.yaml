@@ -9,7 +9,6 @@ on:
     - tests/kserve_test.sh
     - tests/kserve_install.sh
     - common/istio*/**
-    - tests/istio-cni_install.sh
     - common/oauth2-proxy/**
     - tests/oauth2-proxy_install.sh
     - common/cert-manager/**

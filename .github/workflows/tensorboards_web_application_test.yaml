@@ -5,7 +5,7 @@ on:
     - tests/install_KinD_create_KinD_cluster_install_kustomize.sh
     - .github/workflows/tensorboards_web_application_test.yaml
     - apps/tensorboard/tensorboards-web-app/upstream/**
-    - tests/istio-cni_install.sh
+    - tests/istio*
     - common/istio*/**
 
 jobs:
