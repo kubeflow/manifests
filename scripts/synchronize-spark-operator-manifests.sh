@@ -45,9 +45,9 @@ echo "Successfully generated manifests."
 
 # Use OS-compatible sed command
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' 's/Spark Operator[^|]*|[^|]*apps\/spark\/spark-operator[^|]*|[^|]*[0-9]\.[0-9]\.[0-9]/Spark Operator	|	apps\/spark\/spark-operator	|	'"${SPARK_OPERATOR_VERSION}"'/g' "${MANIFESTS_DIRECTORY}/README.md"
+    sed -i '' 's/Spark Operator[^|]*|[^|]*apps\/spark\/spark-operator[^|]*|[^|]*\[[0-9]\.[0-9]\.[0-9]\]([^)]*)/Spark Operator	|	apps\/spark\/spark-operator	|	['"${SPARK_OPERATOR_VERSION}"'](https:\/\/github.com\/kubeflow\/spark-operator\/tree\/v'"${SPARK_OPERATOR_VERSION}"')/g' "${MANIFESTS_DIRECTORY}/README.md"
 else
-    sed -i 's/Spark Operator.*|.*apps\/spark\/spark-operator[^|]*|.*[0-9]\.[0-9]\.[0-9]/Spark Operator	|	apps\/spark\/spark-operator	|	'"${SPARK_OPERATOR_VERSION}"'/g' "${MANIFESTS_DIRECTORY}/README.md"
+    sed -i 's/Spark Operator.*|.*apps\/spark\/spark-operator[^|]*|.*\[[0-9]\.[0-9]\.[0-9]\]([^)]*)/Spark Operator	|	apps\/spark\/spark-operator	|	['"${SPARK_OPERATOR_VERSION}"'](https:\/\/github.com\/kubeflow\/spark-operator\/tree\/v'"${SPARK_OPERATOR_VERSION}"')/g' "${MANIFESTS_DIRECTORY}/README.md"
 fi
 
 commit_changes "$MANIFESTS_DIRECTORY" "Update kubeflow/${COMPONENT_NAME} manifests to ${SPARK_OPERATOR_VERSION}" \
