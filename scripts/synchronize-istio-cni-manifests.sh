@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# This script helps to create a PR to update the Istio CNI manifests
+# This script helps to create a PR to update the unified Istio manifests
 
 SCRIPT_DIRECTORY=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source "${SCRIPT_DIRECTORY}/library.sh"
 
 setup_error_handling
 
-COMPONENT_NAME="istio-cni"
-COMMIT="1.26.1"
-CURRENT_VERSION="1-24" 
-NEW_VERSION="1-24" # Must be a release
+COMPONENT_NAME="istio"
+COMMIT="1.27.0"  # Update this for new versions
+CURRENT_VERSION="1-26" 
+NEW_VERSION="1-27"  # Update this for new versions
 SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/${COMPONENT_NAME}}
 BRANCH_NAME=${BRANCH_NAME:=${COMPONENT_NAME}-${COMMIT?}}
 
@@ -35,12 +35,19 @@ fi
 ISTIOCTL=$SOURCE_DIRECTORY/istio-${COMMIT}/bin/istioctl
 cd $ISTIO_NEW
 
-$ISTIOCTL manifest generate -f profile.yaml -f profile-overlay.yaml --set components.cni.enabled=true --set components.cni.namespace=kube-system > dump.yaml
+echo "Generating CNI manifests (default)..."
+$ISTIOCTL manifest generate -f profile.yaml -f profile-overlay.yaml \
+  --set components.cni.enabled=true \
+  --set components.cni.namespace=kube-system > dump.yaml
 ./split-istio-packages -f dump.yaml
-mv $ISTIO_NEW/crd.yaml $ISTIO_NEW/istio-crds/base
-mv $ISTIO_NEW/install.yaml $ISTIO_NEW/istio-install/base
-mv $ISTIO_NEW/cluster-local-gateway.yaml $ISTIO_NEW/cluster-local-gateway/base
+mv $ISTIO_NEW/crd.yaml $ISTIO_NEW/istio-crds/base/
+mv $ISTIO_NEW/install.yaml $ISTIO_NEW/istio-install/base/
+mv $ISTIO_NEW/cluster-local-gateway.yaml $ISTIO_NEW/cluster-local-gateway/base/
 rm dump.yaml
+
+echo "Generating non-CNI manifests (insecure overlay)..."
+$ISTIOCTL manifest generate -f profile.yaml -f profile-overlay.yaml \
+  --set components.cni.enabled=false > istio-install/overlays/insecure/install-insecure.yaml
 
 check_uncommitted_changes
 
@@ -50,12 +57,12 @@ DESTINATION_TEXT="\[$COMMIT\](https://github.com/istio/istio/releases/tag/$COMMI
 update_readme "$MANIFESTS_DIRECTORY" "$SOURCE_TEXT" "$DESTINATION_TEXT"
 
 echo "Synchronizing directory names..."
-find "$MANIFESTS_DIRECTORY" -type f -not -path '*/.git/*' -exec sed -i "s/istio-cni-${CURRENT_VERSION}/istio-cni-${NEW_VERSION}/g" {} +
+find "$MANIFESTS_DIRECTORY" -type f -not -path '*/.git/*' -exec sed -i "s/istio-${CURRENT_VERSION}/istio-${NEW_VERSION}/g" {} +
 
 cd "$MANIFESTS_DIRECTORY"
 if [ "$CURRENT_VERSION" != "$NEW_VERSION" ]; then
   rm -rf $ISTIO_OLD
 fi
-commit_changes "$MANIFESTS_DIRECTORY" "Upgrade istio-cni to v.${COMMIT}" "."
+commit_changes "$MANIFESTS_DIRECTORY" "Upgrade istio to v.${COMMIT}" "."
 
 echo "Synchronization completed successfully."
