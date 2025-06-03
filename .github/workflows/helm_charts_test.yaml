@@ -16,10 +16,13 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install Helm
-      run: ./tests/helm_install.sh
+      run: |
+        chmod +x tests/helm_install.sh
+        ./tests/helm_install.sh
 
     - name: Run Helm Chart Tests
       run: |
+        chmod +x experimental/helm/scripts/test-helm-charts.sh
         cd experimental/helm
         ./scripts/test-helm-charts.sh
 
