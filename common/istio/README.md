@@ -8,13 +8,7 @@ CNI eliminates privileged init containers and improves security compliance with 
 
 ### Default (CNI-enabled - Recommended)
 ```bash
-kubectl apply -k istio-install/base
-```
-
-### Insecure Istio (CNI-disabled)
-For environments that don't support CNI:
-```bash
-kubectl apply -k istio-install/overlays/insecure
+kubectl apply -k istio-install/overlays/oauth2-proxy
 ```
 
 ### GKE-specific CNI
@@ -25,10 +19,10 @@ GKE mounts `/opt/cni/bin` as read-only for security reasons, preventing the Isti
 kubectl apply -k istio-install/overlays/gke
 ```
 
-### OAuth2-proxy integration
-For clusters with oauth2-proxy authentication:
+### Insecure Istio (CNI-disabled)
+For environments that don't support CNI:
 ```bash
-kubectl apply -k istio-install/overlays/oauth2-proxy
+kubectl apply -k istio-install/overlays/insecure
 ```
 
 ## CNI Benefits
@@ -41,10 +35,10 @@ kubectl apply -k istio-install/overlays/oauth2-proxy
 
 ## Troubleshooting
 
-With native sidecars enabled, init containers should access the network through the Istio proxy. If you encounter issues with KServe and init containers:
+If you still encounter probelms, even with native sidecars enabled, you might try the following:
 
-1. Use `runAsUser: 1337` in your init containers, OR
-2. Add annotation `traffic.sidecar.istio.io/excludeOutboundIPRanges: 0.0.0.0/0` to your KServe inferenceservices
+1. Use `runAsUser: 1337` in your init containers, or
+2. Add the annotation `traffic.sidecar.istio.io/excludeOutboundIPRanges: 0.0.0.0/0` to your KServe inferenceservices
 
 ## Upgrade Istio Manifests
 For upgrading Istio to newer versions, use the synchronization script:
