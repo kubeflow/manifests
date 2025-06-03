@@ -3,7 +3,7 @@ set -euo pipefail
 
 echo "Installing Profiles Controller"
 kustomize build apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
-kustomize build experimental/security/PSS/dynamic/baseline  | kubectl apply -f -
+kustomize build apps/profiles/pss | kubectl apply -f -
 kubectl -n kubeflow wait --for=condition=Ready pods -l kustomize.component=profiles --timeout 180s
 
 echo "Installing Multitenancy Kubeflow Roles"
