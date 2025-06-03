@@ -178,6 +178,12 @@ spec:
       prefix: "Bearer "
 ISTIO_REQUEST_AUTH_CONFIG
 
+kustomize build common/istio/istio-install/overlays/oauth2-proxy | kubectl delete -f -
+kustomize build common/istio/istio-install/overlays/oauth2-proxy | kubectl apply -f -
+kustomize build common/oauth2-proxy/overlays/m2m-dex-only/ | kubectl delete -f -
+kustomize build common/oauth2-proxy/overlays/m2m-dex-only/ | kubectl apply -f -
+```
+
 ## Final Checks
 - **Review Logs**: Make sure to tail the logs of the Dex, OAuth2 Proxy, and Istio ingress gateway deployments to verify that the configurations are working as expected.
 - **Test Authentication**: Try accessing your Kubeflow endpoint (ex. https://kubeflow.example.com) and verify that you’re redirected to Keycloak for authentication and that after login you are correctly returned to Kubeflow.
