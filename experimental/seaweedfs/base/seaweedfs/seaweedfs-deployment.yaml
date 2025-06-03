@@ -19,6 +19,9 @@ spec:
         app: seaweedfs
         application-crd-id: kubeflow-pipelines
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: seaweedfs
         image: 'chrislusf/seaweedfs:3.85'
@@ -50,8 +53,6 @@ spec:
           # image defaults to root user
           runAsUser: 1001
           runAsGroup: 1001
-          seccompProfile:
-            type: RuntimeDefault
           capabilities:
             drop:
             - ALL
