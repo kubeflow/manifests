@@ -5,5 +5,9 @@ namespace: kubeflow
 resources:
 - ../../../../../apps/profiles/upstream/overlays/kubeflow
 
-patches:
-- path: namespace-labels.yaml
+configMapGenerator:
+- name: namespace-labels-data
+  namespace: kubeflow
+  behavior: merge
+  files:
+  - namespace-labels.yaml
