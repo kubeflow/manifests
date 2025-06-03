@@ -1,6 +1,6 @@
 # Istio
 
-We use Istio 1.26 with CNI as the default configuration as described here <https://istio.io/latest/docs/setup/additional-setup/cni/>.
+We use Istio with CNI as the default configuration as described here <https://istio.io/latest/docs/setup/additional-setup/cni/>.
 
 CNI eliminates privileged init containers and improves security compliance with Pod Security Standards. This configuration also enables native sidecars for Istio through the `ENABLE_NATIVE_SIDECARS=true` environment variable in istiod.
 
