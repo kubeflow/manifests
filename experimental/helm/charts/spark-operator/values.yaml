@@ -1,0 +1,23 @@
+# Default values for spark-operator 
+
+# Kubeflow-specific RBAC roles for multi-tenancy
+kubeflowRBAC:
+  enabled: true
+
+spark-operator:
+  spark:
+    # Include empty string to watch all namespaces
+    jobNamespaces: 
+      - ""
+  
+  webhook:
+    enable: true
+    port: 9443
+    labels:
+      sidecar.istio.io/inject: "false"
+  
+  controller:
+    labels:
+      sidecar.istio.io/inject: "false"
+  
+  namespace: kubeflow 

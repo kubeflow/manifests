@@ -1,0 +1,38 @@
+name: Verify Helm vs Kustomize Manifests
+on:
+  pull_request:
+    paths:
+    - tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+    - .github/workflows/helm_vs_kustomize_verification.yaml
+    - apps/spark/spark-operator/**
+    - experimental/helm/charts/spark-operator/**
+    - experimental/helm/kubeflow/**
+    - scripts/synchronize-spark-operator-manifests.sh
+    - tests/helm_kustomize_compare_manifests.sh
+
+jobs:
+  verify-spark-operator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install KinD, Create KinD cluster and Install kustomize
+      run: ./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+
+    - name: Install Helm
+      run: ./tests/helm_install.sh
+
+    - name: Run Helm vs Kustomize verification
+      run: ./tests/helm_kustomize_compare_manifests.sh spark-operator
+
+    - name: Upload artifacts on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: manifest-comparison-artifacts
+        path: |
+          /tmp/kustomize-spark-operator.yaml
+          /tmp/helm-spark-operator.yaml
+          /tmp/compare-spark-operator.py 

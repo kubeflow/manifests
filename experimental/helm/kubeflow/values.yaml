@@ -1,0 +1,16 @@
+# Default values for Kubeflow umbrella chart
+
+# Global settings
+global:
+  namespace: kubeflow
+
+# Enable/disable individual components
+spark-operator:
+  enabled: true
+  # These values will be passed to the spark-operator subchart
+  spark-operator:
+    spark:
+      jobNamespaces: []
+    webhook:
+      enable: true
+      port: 9443 
