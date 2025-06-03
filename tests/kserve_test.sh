@@ -6,7 +6,7 @@ SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TEST_DIRECTORY="${SCRIPT_DIRECTORY}/kserve"
 
 echo "=== KServe Predictor Service Labels ==="
-kubectl get pods -n ${NAMESPACE} -l serving.knative.dev/service=isvc-sklearn-predictor-default --show-labels
+kubectl get pods -n ${NAMESPACE} -l serving.knative.dev/service=isvc-sklearn-predictor --show-labels
 
 cat <<EOF | kubectl apply -f -
 apiVersion: security.istio.io/v1beta1
@@ -15,6 +15,9 @@ metadata:
   name: allow-in-cluster-kserve
   namespace: ${NAMESPACE}
 spec:
+  selector:
+    matchLabels:
+      serving.knative.dev/service: isvc-sklearn-predictor
   rules:
     - to:
         - operation:
@@ -46,7 +49,7 @@ spec:
           headers:
             request:
               set:
-                Host: isvc-sklearn-predictor-default.${NAMESPACE}.svc.cluster.local
+                Host: isvc-sklearn-predictor.${NAMESPACE}.svc.cluster.local
           weight: 100
       timeout: 300s
 EOF
