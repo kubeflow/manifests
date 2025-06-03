@@ -30,6 +30,31 @@ For clusters with oauth2-proxy authentication:
 kubectl apply -k istio-install/overlays/oauth2-proxy
 ```
 
+## Switching Between Modes
+
+**Important**: You must delete the current installation before switching to avoid resource conflicts.
+
+### Switch from CNI to Non-CNI
+```bash
+kubectl delete -k common/istio-1-26/istio-install/base/
+kubectl apply -k common/istio-1-26/istio-install/overlays/insecure/
+```
+
+### Switch from Non-CNI to CNI
+```bash
+kubectl delete -k common/istio-1-26/istio-install/overlays/insecure/
+kubectl apply -k common/istio-1-26/istio-install/base/
+```
+
+### Verify the switch
+```bash
+# Check for CNI DaemonSet (should exist only in CNI mode)
+kubectl get daemonset -n kube-system istio-cni-node
+
+# Check Istio pods are running
+kubectl get pods -n istio-system
+```
+
 ## CNI Benefits
 
 - **Security**: No privileged init containers required
