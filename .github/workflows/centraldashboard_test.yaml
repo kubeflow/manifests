@@ -2,10 +2,10 @@ name: Test Central Dashboard
 on:
   pull_request:
     paths:
-    - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
+    - tests/install_KinD_create_KinD_cluster_install_kustomize.sh
     - .github/workflows/centraldashboard_test.yaml
     - apps/centraldashboard/upstream/**
-    - tests/gh-actions/install_istio*.sh
+    - tests/istio*
     - common/istio*/**
 
 jobs:
@@ -16,10 +16,10 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install KinD, Create KinD cluster and Install kustomize
-      run: ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
+      run: ./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
 
     - name: Install Istio
-      run: ./tests/gh-actions/install_istio-cni.sh
+      run: ./tests/istio-cni_install.sh
 
     - name: Create kubeflow namespace
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -

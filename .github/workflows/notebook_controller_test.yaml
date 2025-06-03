@@ -2,14 +2,14 @@ name: Test Notebook Controller
 on:
   pull_request:
     paths:
-    - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
+    - tests/install_KinD_create_KinD_cluster_install_kustomize.sh
     - .github/workflows/notebook_controller_m2m_test.yaml
     - apps/jupyter/**
     - common/oauth2-proxy/**
     - common/istio*/**
-    - tests/gh-actions/install_istio*.sh
-    - tests/gh-actions/install_oauth2-proxy.sh
-    - tests/gh-actions/install_multi_tenancy.sh
+    - tests/istio*
+    - tests/oauth2-proxy_install.sh
+    - tests/multi_tenancy_install.sh
 
 jobs:
   build:
@@ -19,25 +19,25 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install KinD, Create KinD cluster and Install kustomize
-      run: ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
+      run: ./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
 
     - name: Install kubectl
-      run: ./tests/gh-actions/install_kubectl.sh
+      run: ./tests/kubectl_install.sh
 
     - name: Create kubeflow namespace
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
     - name: Install Istio
-      run: ./tests/gh-actions/install_istio-cni.sh
+      run: ./tests/istio-cni_install.sh
 
     - name: Install oauth2-proxy
-      run: ./tests/gh-actions/install_oauth2-proxy.sh
+      run: ./tests/oauth2-proxy_install.sh
 
     - name: Install kubeflow-istio-resources
       run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
 
     - name: Install KF Multi Tenancy
-      run: ./tests/gh-actions/install_multi_tenancy.sh
+      run: ./tests/multi_tenancy_install.sh
 
     - name: Build & Apply manifests
       run: |

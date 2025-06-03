@@ -2,13 +2,12 @@ name: Deploy and Test Training Operator
 on:
   pull_request:
     paths:
-    - tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
+    - tests/install_KinD_create_KinD_cluster_install_kustomize.sh
     - .github/workflows/training_operator_test.yaml
     - apps/training-operator/upstream/**
-    - tests/gh-actions/kf-objects/training_operator_job.yaml
-    - tests/gh-actions/install_istio-cni.sh
-    - tests/gh-actions/install_cert_manager.sh
-    - tests/gh-actions/install_oauth2-proxy.sh
+    - tests/training_operator_job.yaml
+    - tests/istio*
+    - tests/oauth2-proxy_install.sh
     - common/cert-manager/**
     - common/oauth2-proxy/**
     - common/istio*/**
@@ -25,34 +24,34 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install KinD, Create KinD cluster and Install kustomize
-      run: ./tests/gh-actions/install_KinD_create_KinD_cluster_install_kustomize.sh
+      run: ./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
 
     - name: Install kubectl
-      run: ./tests/gh-actions/install_kubectl.sh
+      run: ./tests/kubectl_install.sh
 
     - name: Create Kubeflow Namespace
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
     - name: Install Certificate Manager
-      run: ./tests/gh-actions/install_cert_manager.sh
+      run: ./tests/cert_manager_install.sh
 
     - name: Install Istio CNI
-      run: ./tests/gh-actions/install_istio-cni.sh
+      run: ./tests/istio-cni_install.sh
 
     - name: Install OAuth2 Proxy
-      run: ./tests/gh-actions/install_oauth2-proxy.sh
+      run: ./tests/oauth2-proxy_install.sh
 
     - name: Install Kubeflow Istio Resources
       run: kustomize build common/istio-cni-1-24/kubeflow-istio-resources/base | kubectl apply -f -
 
     - name: Install Multi-Tenancy
-      run: ./tests/gh-actions/install_multi_tenancy.sh
+      run: ./tests/multi_tenancy_install.sh
 
     - name: Create KF Profile
-      run: ./tests/gh-actions/install_kubeflow_profile.sh
+      run: ./tests/kubeflow_profile_install.sh
 
     - name: Install Training Operator
-      run: ./tests/gh-actions/install_training_operator.sh
+      run: ./tests/training_operator_install.sh
 
     - name: Verify CRDs are ready
       run: |
@@ -63,10 +62,10 @@ jobs:
       run: pip install pytest kubernetes requests
 
     - name: Port-forward the istio-ingress gateway
-      run: ./tests/gh-actions/port_forward_gateway.sh
+      run: ./tests/port_forward_gateway.sh
 
     - name: Run Training Operator Test
-      run: ./tests/gh-actions/test_training_operator.sh "${KF_PROFILE}"
+      run: ./tests/training_operator_test.sh "${KF_PROFILE}"
 
     - name: Test with Authorized Token
       run: kubectl get pytorchjobs -n $KF_PROFILE --token="$(kubectl -n $KF_PROFILE create token default-editor)"
@@ -79,7 +78,7 @@ jobs:
         kubectl get pytorchjobs -n $KF_PROFILE --token="$UNAUTHORIZED_TOKEN" >/dev/null
 
     - name: Apply Pod Security Standards baseline levels
-      run: ./tests/gh-actions/enable_baseline_PSS.sh
+      run: ./tests/PSS_baseline_enable.sh
 
     - name: Unapply applied baseline labels
       run: |
@@ -91,4 +90,4 @@ jobs:
         done
 
     - name: Applying Pod Security Standards restricted levels
-      run: ./tests/gh-actions/enable_restricted_PSS.sh
+      run: ./tests/PSS_restricted_enable.sh
