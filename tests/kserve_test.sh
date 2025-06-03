@@ -46,7 +46,7 @@ spec:
           headers:
             request:
               set:
-                Host: isvc-sklearn-predictor-default.${NAMESPACE}.svc.cluster.local
+                Host: isvc-sklearn-predictor.${NAMESPACE}.svc.cluster.local
           weight: 100
       timeout: 300s
 EOF
