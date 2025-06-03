@@ -78,8 +78,8 @@ resources:
 - ../apps/jupyter/jupyter-web-app/upstream/overlays/istio
 # Notebook Controller
 - ../apps/jupyter/notebook-controller/upstream/overlays/kubeflow
-# Profiles + KFAM
-- ../apps/profiles/upstream/overlays/kubeflow
+# Profiles + KFAM with PSS (Pod Security Standards)
+- ../apps/profiles/pss
 # PVC Viewer
 - ../apps/pvcviewer-controller/upstream/base
 # Volumes Web App
