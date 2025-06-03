@@ -1,8 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "Installing Profiles Controller"
-kustomize build apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
+echo "Installing Profiles Controller with PSS (Pod Security Standards)"
 kustomize build apps/profiles/pss | kubectl apply -f -
 kubectl -n kubeflow wait --for=condition=Ready pods -l kustomize.component=profiles --timeout 180s
 
