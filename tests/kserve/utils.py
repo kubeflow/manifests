@@ -102,7 +102,7 @@ def predict_str(
         headers.update({"Authorization": f"Bearer {token}"})
         logging.info("M2M Token Found.")
     except M2mTokenNotAvailable:
-        logging.warn("M2M Token Not found, client authentication disabled.")
+        logging.warning("M2M Token Not found, client authentication disabled.")
 
     if model_name is None:
         model_name = service_name
