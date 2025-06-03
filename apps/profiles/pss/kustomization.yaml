@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: kubeflow
 
 resources:
-- ../../../../../apps/profiles/upstream/overlays/kubeflow
+- ../upstream/overlays/kubeflow
 
 configMapGenerator:
 - name: namespace-labels-data
