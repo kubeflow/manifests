@@ -1,13 +1,47 @@
-# Istio-CNI
+# Istio 1.26
 
-This uses istio-cni as described here <https://istio.io/latest/docs/setup/additional-setup/cni/>.
+This uses Istio 1.26 with CNI as the default configuration as described here <https://istio.io/latest/docs/setup/additional-setup/cni/>.
 
-This configuration also enables native sidecars for Istio through the `ENABLE_NATIVE_SIDECARS=true` environment variable in istiod. Native sidecars (introduced in Kubernetes 1.28 as an alpha feature) help address issues with init containers and application lifecycle management. Learn more about native sidecars at <https://istio.io/latest/blog/2023/native-sidecars/>.
+CNI eliminates privileged init containers and improves security compliance with Pod Security Standards. This configuration also enables native sidecars for Istio through the `ENABLE_NATIVE_SIDECARS=true` environment variable in istiod.
 
-With native sidecars enabled, init containers should be able to access the network through the Istio proxy. However, if you still encounter issues with KServe and init containers, you can refer to <https://istio.io/latest/docs/setup/additional-setup/cni/#compatibility-with-application-init-containers> and either:
+## Installation Options
+
+### Default (CNI-enabled - Recommended)
+```bash
+kubectl apply -k istio-install/base
+```
+
+### Standard Istio (Legacy compatibility)
+For environments that don't support CNI:
+```bash
+kubectl apply -k istio-install/overlays/standard
+```
+
+### GKE-specific CNI
+For Google Kubernetes Engine clusters:
+```bash
+kubectl apply -k istio-install/overlays/gke
+```
+
+### OAuth2-proxy integration
+For clusters with oauth2-proxy authentication:
+```bash
+kubectl apply -k istio-install/overlays/oauth2-proxy
+```
+
+## CNI Benefits
+
+- **Security**: No privileged init containers required
+- **Compatibility**: Better alignment with Pod Security Standards
+- **Performance**: Native sidecars support for improved lifecycle management
+- **Simplicity**: Reduces container complexity
+
+## Troubleshooting
+
+With native sidecars enabled, init containers should access the network through the Istio proxy. If you encounter issues with KServe and init containers:
 
 1. Use `runAsUser: 1337` in your init containers, OR
-2. Add the annotation `traffic.sidecar.istio.io/excludeOutboundIPRanges: 0.0.0.0/0` to your KServe inferenceservices.
+2. Add annotation `traffic.sidecar.istio.io/excludeOutboundIPRanges: 0.0.0.0/0` to your KServe inferenceservices
 
 ## Upgrade Istio Manifests
 
@@ -21,8 +55,8 @@ old version is `X1.Y1.Z1`:
     kustomization for the new Istio version:
 
         export MANIFESTS_SRC=<path/to/manifests/repo>
-        export ISTIO_OLD=$MANIFESTS_SRC/common/istio-cni-X1-Y1
-        export ISTIO_NEW=$MANIFESTS_SRC/common/istio-cni-X-Y
+        export ISTIO_OLD=$MANIFESTS_SRC/common/istio-1-26
+        export ISTIO_NEW=$MANIFESTS_SRC/common/istio-X-Y
         cp -a $ISTIO_OLD $ISTIO_NEW
 
 2. Download `istioctl` for version `X.Y.Z`:
@@ -40,7 +74,7 @@ old version is `X1.Y1.Z1`:
 
         export PATH="$MANIFESTS_SRC/scripts:$PATH"
         cd $ISTIO_NEW
-        istioctl manifest generate --cluster-specific -f profile.yaml -f profile-overlay.yaml --set components.cni.enabled=true --set components.cni.namespace=kube-system > dump.yaml
+        istioctl manifest generate -f profile.yaml -f profile-overlay.yaml --set components.cni.enabled=true --set components.cni.namespace=kube-system > dump.yaml
         ./split-istio-packages -f dump.yaml
         mv $ISTIO_NEW/crd.yaml $ISTIO_NEW/istio-crds/base
         mv $ISTIO_NEW/install.yaml $ISTIO_NEW/istio-install/base
@@ -60,28 +94,18 @@ old version is `X1.Y1.Z1`:
 
 ## Changes to Istio's upstream manifests
 
-### Changes to the upstream IstioOperator profile
+### Profile modifications
 
-Changes to Istio's upstream profile `default` are the following:
+- Add `cluster-local-gateway` component for KServe
+- Disable EgressGateway component
+- Enable CNI by default
 
-- Add a `cluster-local-gateway` component for Kserve. Knative-local-gateway is now obsolete <https://github.com/kubeflow/manifests/pull/2355/commits/adc00b804404ea08685a044ae595be0bed9adb59>.
-- Disable the EgressGateway component. We do not use it and it adds unnecessary complexity.
+### Kustomize modifications
 
-Those changes are captured in the [profile-overlay.yaml](profile-overlay.yaml)
-file.
-
-### Changes to the upstream manifests using kustomize
-
-The Istio kustomizations make the following changes:
-
-- Remove PodDisruptionBudget from `istio-install` and `cluster-local-gateway` kustomizations. See:
-  - <https://github.com/istio/istio/issues/12602>
-  - <https://github.com/istio/istio/issues/24000>
-- Add Istio AuthorizationPolicy to allow all requests to the Istio Ingressgateway and the Istio cluster-local gateway.
-- Add Istio AuthorizationPolicy in Istio's root namespace, so that sidecars deny traffic by default (explicit deny-by-default authorization model).
-- Add Gateway CRs for the Istio Ingressgateway and the Istio cluster-local gateway, as `istioctl` stopped generating them in later versions.
-- Add the istio-system namespace object to `istio-namespace`, as `istioctl` stopped generating it in later versions.
-- Configure TCP KeepAlives.
-- Disable tracing as it causes DNS breakdown. See:
-  <https://github.com/istio/istio/issues/29898>
-- Set ENABLE_DEBUG_ON_HTTP=false according to <https://istio.io/latest/docs/ops/best-practices/security/#control-plane>
+- Remove PodDisruptionBudgets for compatibility
+- Add AuthorizationPolicies for security
+- Add Gateway CRs and namespace objects
+- Configure TCP KeepAlives
+- Disable tracing to prevent DNS issues
+- Set `ENABLE_DEBUG_ON_HTTP=false` for security
+- Add seccomp profiles for Pod Security Standards compliance
