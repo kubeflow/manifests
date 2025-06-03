@@ -11,13 +11,14 @@ CNI eliminates privileged init containers and improves security compliance with 
 kubectl apply -k istio-install/base
 ```
 
-### Standard Istio (Legacy compatibility)
+### Insecure Istio (CNI-disabled)
 For environments that don't support CNI:
 ```bash
-kubectl apply -k istio-install/overlays/standard
+kubectl apply -k istio-install/overlays/insecure
 ```
 
 ### GKE-specific CNI
+GKE mounts `/opt/cni/bin` as read-only for security reasons, preventing the Istio CNI installer from writing the CNI binary. Use the GKE-specific overlay: `kubectl apply -k common/istio-1-26/istio-install/overlays/gke`. This overlay uses GKE's writable CNI directory at `/home/kubernetes/bin`. For more details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites) and [Platform Prerequisites](https://istio.io/latest/docs/ambient/install/platform-prerequisites/).-`
 For Google Kubernetes Engine clusters:
 ```bash
 kubectl apply -k istio-install/overlays/gke
@@ -35,6 +36,7 @@ kubectl apply -k istio-install/overlays/oauth2-proxy
 - **Compatibility**: Better alignment with Pod Security Standards
 - **Performance**: Native sidecars support for improved lifecycle management
 - **Simplicity**: Reduces container complexity
+- **Startup Time**: Significantly faster startup in many cases
 
 ## Troubleshooting
 
