@@ -5,6 +5,10 @@ metadata:
   namespace: kubeflow
 data:
   namespace-labels.yaml: |
+    # This file is a duplicate of apps/profiles/upstream/base/namespace-labels.yaml
+    # as using only the required label to merge it with the existing config map of profiles
+    # deployment to enable PSS for profile namespaces, leads to creation of a new config map
+    # with just the PSS label and replaces the pre-exisiting labels in the deployed config map.
     # Below is a list of labels to be set by default.
     #
     # To add a namespace label, use `key: 'value'`, for example:
