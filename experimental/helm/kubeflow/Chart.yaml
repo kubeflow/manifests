@@ -7,6 +7,6 @@ appVersion: "1.10.0"
 
 dependencies:
   - name: spark-operator
-    version: 0.1.0
+    version: 2.2.0
     repository: "file://../charts/spark-operator"
     condition: spark-operator.enabled 

@@ -8,7 +8,9 @@ on:
     - experimental/helm/charts/spark-operator/**
     - experimental/helm/kubeflow/**
     - scripts/synchronize-spark-operator-manifests.sh
+    - scripts/synchronize-spark-operator-helm-chart.sh
     - tests/helm_kustomize_compare_manifests.sh
+    - tests/helm_kustomize_compare_manifests.py
 
 jobs:
   verify-spark-operator:
@@ -28,7 +30,7 @@ jobs:
         chmod +x tests/helm_install.sh
         ./tests/helm_install.sh
 
-    - name: Run Helm vs Kustomize verification
+    - name: Run Helm vs Kustomize verification for Spark Operator
       run: |
         chmod +x tests/helm_kustomize_compare_manifests.sh
         ./tests/helm_kustomize_compare_manifests.sh spark-operator
@@ -37,8 +39,8 @@ jobs:
       if: failure()
       uses: actions/upload-artifact@v4
       with:
-        name: manifest-comparison-artifacts
+        name: spark-operator-manifest-comparison-artifacts
         path: |
           /tmp/kustomize-spark-operator.yaml
           /tmp/helm-spark-operator.yaml
-          /tmp/compare-spark-operator.py
+
