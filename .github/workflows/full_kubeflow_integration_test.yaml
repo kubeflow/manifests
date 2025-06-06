@@ -111,7 +111,7 @@ jobs:
         pip3 install -q requests
         python3 tests/dex_login_test.py
         echo "Dex login test completed successfully."
-        
+
     - name: Verify Pipeline Integration
       run: |
         KF_PROFILE=kubeflow-user-example-com
