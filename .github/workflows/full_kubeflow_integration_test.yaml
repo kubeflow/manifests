@@ -59,7 +59,7 @@ jobs:
       run: ./tests/kserve_install.sh
 
     - name: Install Pipelines
-      run: ./tests/pipelines_install.sh
+      run: ./tests/pipelines_swfs_install.sh
 
     - name: Create KF Profile
       run: ./tests/kubeflow_profile_install.sh
@@ -111,6 +111,15 @@ jobs:
         pip3 install -q requests
         python3 tests/dex_login_test.py
         echo "Dex login test completed successfully."
+        
+    - name: Verify Pipeline Integration
+      run: |
+        KF_PROFILE=kubeflow-user-example-com
+        if ! kubectl get secret mlpipeline-minio-artifact -n $KF_PROFILE > /dev/null 2>&1; then
+          echo "Error: Secret mlpipeline-minio-artifact not found in namespace $KF_PROFILE"
+          exit 1
+        fi
+        kubectl get secret mlpipeline-minio-artifact -n "$KF_PROFILE" -o json | jq -r '.data | keys[] as $k | "\($k): \(. | .[$k] | @base64d)"' | tr '\n' ' '
 
     - name: V1 Pipeline Test
       run: |
@@ -130,6 +139,9 @@ jobs:
         kubectl create serviceaccount test-unauthorized -n test-unauthorized
         UNAUTHORIZED_TOKEN=$(kubectl -n test-unauthorized create token test-unauthorized)
         python3 tests/pipeline_v2_test.py test_unauthorized_access "$UNAUTHORIZED_TOKEN" "${KF_PROFILE}"
+
+    - name: Test SeaweedFS Namespace Isolation
+      run: ./tests/swfs_namespace_isolation_test.sh
 
     - name: Test Volumes Web Application API
       run: ./tests/volumes_web_application_test.sh "${KF_PROFILE}"
