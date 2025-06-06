@@ -58,7 +58,7 @@ jobs:
     - name: Install KServe
       run: ./tests/kserve_install.sh
 
-    - name: Install Pipelines
+    - name: Install Pipelines with SeaweedFS
       run: ./tests/pipelines_swfs_install.sh
 
     - name: Create KF Profile
