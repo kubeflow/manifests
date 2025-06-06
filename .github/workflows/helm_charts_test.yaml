@@ -2,9 +2,8 @@ name: Test Helm Charts
 on:
   pull_request:
     paths:
-    - experimental/helm/charts/**
     - experimental/helm/kubeflow/**
-    - experimental/helm/scripts/test-helm-charts.sh
+    - experimental/helm/scripts/**
     - .github/workflows/helm_charts_test.yaml
 
 jobs:

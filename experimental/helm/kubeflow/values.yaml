@@ -1,16 +1,86 @@
-# Default values for Kubeflow umbrella chart
+# Default values for Kubeflow AIO Helm chart
 
 # Global settings
 global:
-  namespace: kubeflow
+  kubeflowNamespace: kubeflow
+  istioNamespace: istio-system
+  certManagerNamespace: cert-manager
+  domain: example.com
 
-# Enable/disable individual components
-spark-operator:
+# External components (synced from upstream charts)
+sparkOperator:
   enabled: true
-  # These values will be passed to the spark-operator subchart
-  spark-operator:
-    spark:
-      jobNamespaces: []
-    webhook:
-      enable: true
-      port: 9443 
+  # Values passed to synced spark-operator templates
+  spark:
+    jobNamespaces: []
+  webhook:
+    enable: true
+    port: 9443 
+  # Kubeflow-specific configuration
+  kubeflowRBAC:
+    enabled: true
+
+trainingOperator:
+  enabled: false
+  # Will be added when we sync training-operator
+
+certManager:
+  enabled: false
+  # Will be added when we sync cert-manager
+
+istio:
+  enabled: false
+  # Will be added when we sync istio
+
+oauth2Proxy:
+  enabled: false
+  # Will be added when we sync oauth2-proxy
+
+dex:
+  enabled: false
+  # Will be added when we sync dex
+
+# Core Kubeflow components (custom templates)
+centraldashboard:
+  enabled: false
+  # Will be added when we convert from Kustomize
+
+profiles:
+  enabled: false
+  # Will be added when we convert from Kustomize
+
+jupyter:
+  enabled: false
+  # Will be added when we convert from Kustomize
+
+pipelines:
+  enabled: false
+  # Will be added when we convert from Kustomize
+
+kserve:
+  enabled: false
+  # Will be added when we convert from Kustomize
+
+katib:
+  enabled: false
+  # Will be added when we convert from Kustomize
+
+tensorboard:
+  enabled: false
+  # Will be added when we convert from Kustomize
+
+volumesWebApp:
+  enabled: false
+  # Will be added when we convert from Kustomize
+
+admissionWebhook:
+  enabled: false
+  # Will be added when we convert from Kustomize
+
+pvcviewerController:
+  enabled: false
+  # Will be added when we convert from Kustomize
+
+modelRegistry:
+  enabled: false
+  # Will be added when we convert from Kustomize 

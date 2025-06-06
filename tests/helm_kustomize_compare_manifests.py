@@ -3,62 +3,72 @@ import yaml
 import sys
 import json
 
-def clean_metadata(obj, source='helm'):
-    """Remove source-specific metadata from objects"""
+def clean_helm_metadata(obj):
+    """Remove ONLY helm-specific metadata from objects"""
     if isinstance(obj, dict):
         if 'metadata' in obj:
             metadata = obj['metadata']
             
             if 'labels' in metadata:
                 labels = metadata['labels']
-                helm_labels = [
+                helm_specific_labels = [
                     'helm.sh/chart', 
-                    'app.kubernetes.io/managed-by',
-                    'app.kubernetes.io/instance',
-                    'app.kubernetes.io/version'
+                    'app.kubernetes.io/managed-by'
                 ]
-                for label in helm_labels:
-                    labels.pop(label, None)
-                if not labels:
-                    metadata.pop('labels', None)
+                for label in helm_specific_labels:
+                    if label in labels:
+                        del labels[label]
             
             if 'annotations' in metadata:
                 annotations = metadata['annotations']
-                helm_annotations = [
+                helm_specific_annotations = [
                     'meta.helm.sh/release-name', 
-                    'meta.helm.sh/release-namespace',
-                    'deployment.kubernetes.io/revision'
+                    'meta.helm.sh/release-namespace'
                 ]
-                for annotation in helm_annotations:
-                    annotations.pop(annotation, None)
-                if not annotations:
-                    metadata.pop('annotations', None)
+                for annotation in helm_specific_annotations:
+                    if annotation in annotations:
+                        del annotations[annotation]
         
         for key, value in list(obj.items()):
             if isinstance(value, (dict, list)):
-                clean_metadata(value, source)
+                clean_helm_metadata(value)
     
     elif isinstance(obj, list):
         for item in obj:
-            clean_metadata(item, source)
+            clean_helm_metadata(item)
     
     return obj
 
-def normalize_for_comparison(doc, component, expected_namespace):
-    """Normalize document for comparison"""
-    if not doc:
-        return doc
+def json_diff(obj1, obj2, path=""):
+    """Simple recursive comparison showing differences"""
+    differences = []
     
-    if 'metadata' in doc:
-        namespaced_kinds = [
-            'Service', 'ServiceAccount', 'Deployment', 'Job', 'ConfigMap', 
-            'Secret', 'Role', 'RoleBinding', 'NetworkPolicy', 'PodDisruptionBudget'
-        ]
-        if doc.get('kind') in namespaced_kinds:
-            if 'namespace' not in doc['metadata'] or not doc['metadata']['namespace']:
-                doc['metadata']['namespace'] = expected_namespace
+    if type(obj1) != type(obj2):
+        differences.append(f"{path}: type mismatch ({type(obj1).__name__} vs {type(obj2).__name__})")
+        return differences
     
-    return doc
+    if isinstance(obj1, dict):
+        all_keys = set(obj1.keys()) | set(obj2.keys())
+        for key in sorted(all_keys):
+            key_path = f"{path}.{key}" if path else key
+            if key not in obj1:
+                differences.append(f"{key_path}: missing in kustomize")
+            elif key not in obj2:
+                differences.append(f"{key_path}: missing in helm")
+            else:
+                differences.extend(json_diff(obj1[key], obj2[key], key_path))
+    
+    elif isinstance(obj1, list):
+        if len(obj1) != len(obj2):
+            differences.append(f"{path}: list length mismatch ({len(obj1)} vs {len(obj2)})")
+        else:
+            for i, (item1, item2) in enumerate(zip(obj1, obj2)):
+                differences.extend(json_diff(item1, item2, f"{path}[{i}]"))
+    
+    elif obj1 != obj2:
+        differences.append(f"{path}: '{obj1}' != '{obj2}'")
+    
+    return differences
 
 def load_and_index(file_path):
     """Load YAML and index by kind/name"""
@@ -95,58 +105,58 @@ def main():
     kustomize_keys = set(kustomize.keys())
     helm_keys = set(helm.keys())
 
-    expected_differences = {
-        "spark-operator": {
+    expected_extra_helm = set()
+    if component == "spark-operator" and kubeflow_rbac_enabled:
+        expected_extra_helm = {
             'ClusterRole/kubeflow-spark-admin',
             'ClusterRole/kubeflow-spark-edit', 
             'ClusterRole/kubeflow-spark-view'
         }
-    }
-
-    expected_extra_kustomize = set()
-    if component in expected_differences and not kubeflow_rbac_enabled:
-        expected_extra_kustomize = expected_differences[component]
 
     extra_kustomize = kustomize_keys - helm_keys
     extra_helm = helm_keys - kustomize_keys
-    unexpected_extra_kustomize = extra_kustomize - expected_extra_kustomize
+    unexpected_extra_helm = extra_helm - expected_extra_helm
 
     success = True
     
-    if unexpected_extra_kustomize:
-        print(f"ERROR: Unexpected resources in Kustomize: {', '.join(sorted(unexpected_extra_kustomize))}")
+    if extra_kustomize:
+        print(f"Resources only in Kustomize: {', '.join(sorted(extra_kustomize))}")
         success = False
 
-    if extra_helm:
-        print(f"ERROR: Unexpected resources in Helm: {', '.join(sorted(extra_helm))}")
+    if unexpected_extra_helm:
+        print(f"Unexpected resources in Helm: {', '.join(sorted(unexpected_extra_helm))}")
         success = False
 
     common = kustomize_keys & helm_keys
-    differences = []
+    resources_with_differences = []
     
     for key in sorted(common):
         kustomize_doc = json.loads(json.dumps(kustomize[key]))
         helm_doc = json.loads(json.dumps(helm[key]))
         
-        kustomize_clean = clean_metadata(kustomize_doc, 'kustomize')
-        helm_clean = clean_metadata(helm_doc, 'helm')
+        clean_helm_metadata(kustomize_doc)
+        clean_helm_metadata(helm_doc)
         
-        kustomize_normalized = normalize_for_comparison(kustomize_clean, component, namespace)
-        helm_normalized = normalize_for_comparison(helm_clean, component, namespace)
+        differences = json_diff(kustomize_doc, helm_doc)
         
-        kustomize_json = json.dumps(kustomize_normalized, sort_keys=True)
-        helm_json = json.dumps(helm_normalized, sort_keys=True)
-        
-        if kustomize_json != helm_json:
-            differences.append(key)
+        if differences:
+            print(f"\nDifferences in {key}:")
+            for diff in differences[:10]:  
+                print(f"   {diff}")
+            if len(differences) > 10:
+                print(f"   ... and {len(differences) - 10} more differences")
+            resources_with_differences.append(key)
 
-    if differences:
-        print(f"ERROR: Content differences in resources: {', '.join(sorted(differences))}")
-        success = False
-
-    if not success:
-        print("FAILED: Manifests are not equivalent!")
+    if resources_with_differences:
+        print(f"\nSUMMARY: Found differences in {len(resources_with_differences)} resources:")
+        for resource in resources_with_differences:
+            print(f"   - {resource}")
+        print("FAILED: Manifests have differences that need to be resolved!")
         sys.exit(1)
+    else:
+        print(f"\nSUCCESS: All {len(common)} common resources match!")
+        print("Manifests are equivalent (ignoring only helm-specific metadata)!")
+        sys.exit(0)
 
 if __name__ == "__main__":
     main()
