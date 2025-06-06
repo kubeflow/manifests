@@ -18,9 +18,12 @@ COMPONENTS=(
 )
 
 for component in "${COMPONENTS[@]}"; do
-    sync_script="$SCRIPT_DIR/sync-${component}.sh"
-    [ -f "$sync_script" ] && bash "$sync_script"
+    sync_script="$SCRIPT_DIR/synchronize-${component}.sh"
+    if [ -f "$sync_script" ]; then
+        echo "Syncing $component..."
+        bash "$sync_script"
+    fi
 done
 
 cd "$CHART_DIR"
-helm template kubeflow . --debug --dry-run > /dev/null 
+helm template kubeflow . --debug --dry-run > /dev/null && echo "Success: AIO chart templates correctly!" 
