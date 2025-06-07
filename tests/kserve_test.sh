@@ -68,11 +68,13 @@ spec:
       serving.knative.dev/service: test-sklearn-predictor
 EOF
 
+kubectl delete virtualservice test-sklearn-path -n ${NAMESPACE} --ignore-not-found=true
+
 cat <<EOF | kubectl apply -f -
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: test-sklearn-external
+  name: test-sklearn-path
   namespace: ${NAMESPACE}
 spec:
   gateways:
