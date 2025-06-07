@@ -14,7 +14,21 @@ export KSERVE_INGRESS_HOST_PORT=${KSERVE_INGRESS_HOST_PORT:-localhost:8080}
 export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
 export KSERVE_TEST_NAMESPACE=${NAMESPACE}
 
-# Run pytest first (creates and cleans up isvc-sklearn)
+cat <<EOF | kubectl apply -f -
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-test-sklearn
+  namespace: ${NAMESPACE}
+spec:
+  action: ALLOW
+  rules:
+  - {}
+  selector:
+    matchLabels:
+      serving.knative.dev/service: test-sklearn-predictor
+EOF
+
 cd ${TEST_DIRECTORY} && pytest . -vs --log-level info
 
 cat <<EOF | kubectl apply -f -
@@ -37,21 +51,6 @@ spec:
 EOF
 
 kubectl wait --for=condition=Ready inferenceservice/test-sklearn -n ${NAMESPACE} --timeout=300s
-
-cat <<EOF | kubectl apply -f -
-apiVersion: security.istio.io/v1beta1
-kind: AuthorizationPolicy
-metadata:
-  name: allow-test-sklearn
-  namespace: ${NAMESPACE}
-spec:
-  action: ALLOW
-  rules:
-  - {}
-  selector:
-    matchLabels:
-      serving.knative.dev/service: test-sklearn-predictor
-EOF
 
 cat <<EOF | kubectl apply -f -
 apiVersion: networking.istio.io/v1beta1
