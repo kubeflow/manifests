@@ -18,7 +18,7 @@ cat <<EOF | kubectl apply -f -
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-test-sklearn
+  name: allow-isvc-sklearn
   namespace: ${NAMESPACE}
 spec:
   action: ALLOW
@@ -26,9 +26,10 @@ spec:
   - {}
   selector:
     matchLabels:
-      serving.knative.dev/service: test-sklearn-predictor
+      serving.knative.dev/service: isvc-sklearn-predictor
 EOF
 
+# Run pytest first (creates and cleans up isvc-sklearn)
 cd ${TEST_DIRECTORY} && pytest . -vs --log-level info
 
 cat <<EOF | kubectl apply -f -
@@ -51,6 +52,21 @@ spec:
 EOF
 
 kubectl wait --for=condition=Ready inferenceservice/test-sklearn -n ${NAMESPACE} --timeout=300s
+
+cat <<EOF | kubectl apply -f -
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-test-sklearn
+  namespace: ${NAMESPACE}
+spec:
+  action: ALLOW
+  rules:
+  - {}
+  selector:
+    matchLabels:
+      serving.knative.dev/service: test-sklearn-predictor
+EOF
 
 cat <<EOF | kubectl apply -f -
 apiVersion: networking.istio.io/v1beta1
