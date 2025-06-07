@@ -78,20 +78,21 @@ spec:
       serving.knative.dev/service: test-sklearn-predictor
 EOF
 
-sleep 10
+sleep 30
 
 kubectl get authorizationpolicy -A | grep -E "(ALLOW|istio-system)"
 kubectl get authorizationpolicy -n istio-system -o yaml
+kubectl get requestauthentication -n istio-system -o yaml
 
 echo "Testing path-based access with valid token..."
-curl --fail --show-error \
+curl -v --fail --show-error \
  -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
  -H "Content-Type: application/json" \
  "http://${KSERVE_INGRESS_HOST_PORT}/kserve/${NAMESPACE}/test-sklearn/v1/models/test-sklearn:predict" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}'
 
 echo "Testing direct service access still works..."
-curl --fail --show-error \
+curl -v --fail --show-error \
   -H "Host: test-sklearn-predictor.${NAMESPACE}.example.com" \
   -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
   -H "Content-Type: application/json" \
