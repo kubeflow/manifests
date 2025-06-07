@@ -80,6 +80,9 @@ EOF
 
 sleep 10
 
+kubectl get authorizationpolicy -A | grep -E "(ALLOW|istio-system)"
+kubectl get authorizationpolicy -n istio-system -o yaml
+
 echo "Testing path-based access with valid token..."
 curl --fail --show-error \
  -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
@@ -110,6 +113,8 @@ spec:
     matchLabels:
       serving.knative.dev/service: isvc-sklearn-predictor
 EOF
+
+kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
 
 cd ${TEST_DIRECTORY} && pytest . -vs --log-level info
 
