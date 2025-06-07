@@ -78,14 +78,7 @@ spec:
       serving.knative.dev/service: test-sklearn-predictor
 EOF
 
-sleep 40
-
-kubectl get authorizationpolicy -A | grep -E "(ALLOW|istio-system)"
-kubectl get authorizationpolicy -n istio-system -o yaml
-kubectl get requestauthentication -n istio-system -o yaml
-kubectl get pods -n istio-system | grep cluster-jwks-proxy
-kubectl get pods --all-namespaces
-kubectl get svc -n istio-system | grep cluster-jwks-proxy
+sleep 300
 
 echo "Testing path-based access with valid token..."
 curl -v --fail --show-error \
