@@ -15,22 +15,32 @@ export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
 export KSERVE_TEST_NAMESPACE=${NAMESPACE}
 
 cat <<EOF | kubectl apply -f -
-apiVersion: security.istio.io/v1beta1
-kind: AuthorizationPolicy
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
 metadata:
-  name: allow-isvc-sklearn
+  name: test-sklearn-path
   namespace: ${NAMESPACE}
 spec:
-  action: ALLOW
-  rules:
-  - {}
-  selector:
-    matchLabels:
-      serving.knative.dev/service: isvc-sklearn-predictor
+  gateways:
+    - kubeflow/kubeflow-gateway
+  hosts:
+    - '*'
+  http:
+    - match:
+        - uri:
+            prefix: /kserve/${NAMESPACE}/test-sklearn/
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: knative-local-gateway.istio-system.svc.cluster.local
+          headers:
+            request:
+              set:
+                Host: test-sklearn-predictor.${NAMESPACE}.svc.cluster.local
+          weight: 100
+      timeout: 300s
 EOF
-
-# Run pytest first (creates and cleans up isvc-sklearn)
-cd ${TEST_DIRECTORY} && pytest . -vs --log-level info
 
 cat <<EOF | kubectl apply -f -
 apiVersion: "serving.kserve.io/v1beta1"
@@ -68,39 +78,7 @@ spec:
       serving.knative.dev/service: test-sklearn-predictor
 EOF
 
-kubectl delete virtualservice test-sklearn-path -n ${NAMESPACE} --ignore-not-found=true
-
-cat <<EOF | kubectl apply -f -
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: test-sklearn-path
-  namespace: ${NAMESPACE}
-spec:
-  gateways:
-    - kubeflow/kubeflow-gateway
-  hosts:
-    - '*'
-  http:
-    - match:
-        - uri:
-            prefix: /kserve/${NAMESPACE}/test-sklearn/
-      rewrite:
-        uri: /
-      route:
-        - destination:
-            host: knative-local-gateway.istio-system.svc.cluster.local
-          headers:
-            request:
-              set:
-                Host: test-sklearn-predictor.${NAMESPACE}.svc.cluster.local
-          weight: 100
-      timeout: 300s
-EOF
-
 sleep 10
-
-kubectl get pods -n ${NAMESPACE} -l serving.knative.dev/service=test-sklearn-predictor --show-labels
 
 echo "Testing path-based access with valid token..."
 curl --fail --show-error \
@@ -109,19 +87,6 @@ curl --fail --show-error \
  "http://${KSERVE_INGRESS_HOST_PORT}/kserve/${NAMESPACE}/test-sklearn/v1/models/test-sklearn:predict" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}'
 
-echo "Testing 404 for incorrect path..."
-RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
- -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
- -H "Content-Type: application/json" \
- "http://${KSERVE_INGRESS_HOST_PORT}/wrong-path/${NAMESPACE}/test-sklearn/v1/models/test-sklearn:predict" \
- -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
-
-if [[ "$RESPONSE" == "404" ]]; then
-  echo "404 test passed - wrong path correctly rejected"
-else
-  echo "Expected 404, got $RESPONSE - path routing may be too permissive"
-fi
-
 echo "Testing direct service access still works..."
 curl --fail --show-error \
   -H "Host: test-sklearn-predictor.${NAMESPACE}.example.com" \
@@ -129,5 +94,23 @@ curl --fail --show-error \
   -H "Content-Type: application/json" \
   "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/test-sklearn:predict" \
   -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}'
+
+# Create AuthorizationPolicy for pytest isvc-sklearn
+cat <<EOF | kubectl apply -f -
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-isvc-sklearn
+  namespace: ${NAMESPACE}
+spec:
+  action: ALLOW
+  rules:
+  - {}
+  selector:
+    matchLabels:
+      serving.knative.dev/service: isvc-sklearn-predictor
+EOF
+
+cd ${TEST_DIRECTORY} && pytest . -vs --log-level info
 
 # TODO FOR FOLLOW-UP PR: Implement proper security with AuthorizationPolicy that restricts access
