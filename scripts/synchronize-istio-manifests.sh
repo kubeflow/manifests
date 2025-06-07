@@ -7,13 +7,13 @@ source "${SCRIPT_DIRECTORY}/library.sh"
 setup_error_handling
 
 COMPONENT_NAME="istio"
-COMMIT="1.27.0"  # Update this for new versions
+COMMIT="1.26.1"  # Update this for new versions
 SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/${COMPONENT_NAME}}
 BRANCH_NAME=${BRANCH_NAME:=${COMPONENT_NAME}-${COMMIT?}}
 
 # Path configurations
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
-ISTIO_DIR=$MANIFESTS_DIRECTORY/common/${COMPONENT_NAME}
+ISTIO_DIRECTORY=$MANIFESTS_DIRECTORY/common/${COMPONENT_NAME}
 
 create_branch "$BRANCH_NAME"
 
@@ -26,16 +26,16 @@ if [ ! -d "istio-${COMMIT}" ]; then
 fi
 
 ISTIOCTL=$SOURCE_DIRECTORY/istio-${COMMIT}/bin/istioctl
-cd $ISTIO_DIR
+cd $ISTIO_DIRECTORY
 
 echo "Generating CNI manifests (default)..."
 $ISTIOCTL manifest generate -f profile.yaml -f profile-overlay.yaml \
   --set components.cni.enabled=true \
   --set components.cni.namespace=kube-system > dump.yaml
 ./split-istio-packages -f dump.yaml
-mv $ISTIO_DIR/crd.yaml $ISTIO_DIR/istio-crds/base/
-mv $ISTIO_DIR/install.yaml $ISTIO_DIR/istio-install/base/
-mv $ISTIO_DIR/cluster-local-gateway.yaml $ISTIO_DIR/cluster-local-gateway/base/
+mv $ISTIO_DIRECTORY/crd.yaml $ISTIO_DIRECTORY/istio-crds/base/
+mv $ISTIO_DIRECTORY/install.yaml $ISTIO_DIRECTORY/istio-install/base/
+mv $ISTIO_DIRECTORY/cluster-local-gateway.yaml $ISTIO_DIRECTORY/cluster-local-gateway/base/
 rm dump.yaml
 
 echo "Generating non-CNI manifests (insecure overlay)..."
