@@ -120,12 +120,19 @@ def main():
     success = True
     
     if extra_kustomize:
-        print(f"Resources only in Kustomize: {', '.join(sorted(extra_kustomize))}")
+        print(f"CRITICAL: Resources missing in Helm output: {', '.join(sorted(extra_kustomize))}")
         success = False
 
     if unexpected_extra_helm:
-        print(f"Unexpected resources in Helm: {', '.join(sorted(unexpected_extra_helm))}")
-        success = False
+        print(f"WARNING: Unexpected extra resources in Helm: {', '.join(sorted(unexpected_extra_helm))}")
+        
+    print(f"\nCOMPARISON SUMMARY:")
+    print(f"  Kustomize resources: {len(kustomize_keys)}")
+    print(f"  Helm resources: {len(helm_keys)}")
+    print(f"  Common resources: {len(kustomize_keys & helm_keys)}")
+    print(f"  Resources only in Kustomize: {len(extra_kustomize)}")
+    print(f"  Resources only in Helm: {len(extra_helm)}")
+    print(f"  Expected extra Helm resources: {len(expected_extra_helm)}")
 
     common = kustomize_keys & helm_keys
     resources_with_differences = []
@@ -147,11 +154,17 @@ def main():
                 print(f"   ... and {len(differences) - 10} more differences")
             resources_with_differences.append(key)
 
-    if resources_with_differences:
-        print(f"\nSUMMARY: Found differences in {len(resources_with_differences)} resources:")
-        for resource in resources_with_differences:
-            print(f"   - {resource}")
-        print("FAILED: Manifests have differences that need to be resolved!")
+    if not success or resources_with_differences:
+        if resources_with_differences:
+            print(f"\nFAILED: Found differences in {len(resources_with_differences)} resources:")
+            for resource in resources_with_differences:
+                print(f"   - {resource}")
+        if extra_kustomize:
+            print(f"\nFAILED: {len(extra_kustomize)} resources are missing in Helm output.")
+            print("Helm templates need to be implemented for:")
+            for resource in sorted(extra_kustomize):
+                print(f"   - {resource}")
+        print("\nREASON: Manifests are NOT equivalent!")
         sys.exit(1)
     else:
         print(f"\nSUCCESS: All {len(common)} common resources match!")

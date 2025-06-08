@@ -13,6 +13,7 @@ case $COMPONENT in
     "spark-operator")
         KUSTOMIZE_PATH="apps/spark/spark-operator/base"
         NAMESPACE="kubeflow"
+        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/external/spark-operator"
         ;;
     *)
         echo "Unknown component: $COMPONENT"
@@ -22,6 +23,18 @@ case $COMPONENT in
 esac
 
 cd "$ROOT_DIR"
+
+if [ ! -d "$HELM_TEMPLATE_PATH" ]; then
+    echo "ERROR: Helm template directory does not exist: $HELM_TEMPLATE_PATH"
+    exit 1
+fi
+
+TEMPLATE_FILES=$(find "$HELM_TEMPLATE_PATH" -name "*.yaml" -o -name "*.yml" -o -name "*.tpl" | wc -l)
+if [ "$TEMPLATE_FILES" -eq 0 ]; then
+    echo "ERROR: No Helm template files found in $HELM_TEMPLATE_PATH"
+    echo "Please implement the Helm templates for $COMPONENT before running this comparison."
+    exit 1
+fi
 
 KUSTOMIZE_OUTPUT="/tmp/kustomize-${COMPONENT}.yaml"
 kustomize build "$KUSTOMIZE_PATH" > "$KUSTOMIZE_OUTPUT" || {
@@ -56,7 +69,6 @@ else
     
     echo "Kustomize output: $KUSTOMIZE_LINES lines"
     echo "Helm output: $HELM_LINES lines"
-    echo "   python3 $COMPARE_SCRIPT $KUSTOMIZE_OUTPUT $HELM_OUTPUT $COMPONENT $NAMESPACE $KUBEFLOW_RBAC_ENABLED"
 fi
 
 rm -f "$KUSTOMIZE_OUTPUT" "$HELM_OUTPUT" 
