@@ -12,7 +12,7 @@ spec:
   - from:
     - source:
         principals:
-        - cluster.local/ns/kubeflow/sa/kubeflow-gateway-istio
+        - cluster.local/ns/istio-system/sa/kubeflow-gateway-istio
 
   # Allow all requests with an `authorization` header but NOT a `kubeflow-userid` header.
   # This is needed to allow Kubernetes JWTs to be passed to the KFP API.

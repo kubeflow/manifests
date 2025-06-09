@@ -1,5 +1,4 @@
 # RBAC configuration for Gateway API service account
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -74,4 +73,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kubeflow-gateway-istio
-  namespace: kubeflow 
+  namespace: istio-system 

@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euxo pipefail
 
-GATEWAY_SERVICE=$(kubectl get svc -n kubeflow -l app=kubeflow-gateway-istio -o jsonpath='{.items[0].metadata.name}')
+GATEWAY_SERVICE=$(kubectl get svc kubeflow-gateway-istio -n kubeflow -o jsonpath='{.metadata.name}')
 nohup kubectl port-forward -n kubeflow svc/$GATEWAY_SERVICE 8080:80 &
 timeout 60s bash -c 'until curl -s localhost:8080 > /dev/null || curl -s -I localhost:8080 | grep -q "HTTP/"; do sleep 5; done' 

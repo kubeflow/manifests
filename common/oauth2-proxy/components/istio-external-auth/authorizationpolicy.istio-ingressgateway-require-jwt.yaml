@@ -27,7 +27,7 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: kubeflow-gateway-require-jwt
-  namespace: kubeflow
+  namespace: istio-system
 spec:
   action: DENY
   selector:

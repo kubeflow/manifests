@@ -3,7 +3,7 @@ apiVersion: security.istio.io/v1beta1
 kind: RequestAuthentication
 metadata:
   name: kubeflow-gateway-dex-jwt
-  namespace: kubeflow
+  namespace: istio-system
 spec:
   # Apply to kubeflow-gateway pods specifically
   selector:

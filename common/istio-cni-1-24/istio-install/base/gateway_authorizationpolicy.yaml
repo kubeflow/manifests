@@ -19,7 +19,7 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: kubeflow-gateway-allow-all
-  namespace: kubeflow
+  namespace: istio-system
 spec:
   action: ALLOW
   selector:
@@ -33,7 +33,7 @@ apiVersion: security.istio.io/v1
 kind: RequestAuthentication
 metadata:
   name: dex-jwt-gateway-api
-  namespace: kubeflow
+  namespace: istio-system
 spec:
   jwtRules:
   - forwardOriginalToken: true

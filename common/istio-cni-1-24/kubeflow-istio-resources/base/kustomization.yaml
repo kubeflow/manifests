@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- kf-istio-resources.yaml
+- gateway-api.yaml
 - cluster-roles.yaml
 - gateway-api-rbac.yaml
 namespace: kubeflow

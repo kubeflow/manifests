@@ -74,4 +74,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kubeflow-gateway-istio
-  namespace: kubeflow 
+  namespace: istio-system 

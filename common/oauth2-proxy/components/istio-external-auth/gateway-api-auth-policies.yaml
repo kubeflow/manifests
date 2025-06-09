@@ -3,7 +3,7 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: kubeflow-gateway-allow-health-checks
-  namespace: kubeflow
+  namespace: istio-system
 spec:
   action: ALLOW
   selector:
@@ -23,7 +23,7 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: kubeflow-gateway-allow-auth-endpoints
-  namespace: kubeflow
+  namespace: istio-system
 spec:
   action: ALLOW
   selector:
@@ -43,7 +43,7 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: kubeflow-gateway-allow-authenticated
-  namespace: kubeflow
+  namespace: istio-system
 spec:
   action: ALLOW
   selector:

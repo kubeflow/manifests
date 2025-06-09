@@ -8,7 +8,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/kubeflow/sa/kubeflow-gateway-istio
+              - cluster.local/ns/istio-system/sa/kubeflow-gateway-istio
   selector:
     matchLabels:
       app: volumes-web-app

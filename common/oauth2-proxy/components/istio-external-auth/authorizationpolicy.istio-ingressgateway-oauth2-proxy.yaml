@@ -28,7 +28,7 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: kubeflow-gateway-oauth2-proxy
-  namespace: kubeflow
+  namespace: istio-system
 spec:
   action: CUSTOM
   provider:
