@@ -66,18 +66,3 @@ fi
 commit_changes "$MANIFESTS_DIRECTORY" "Upgrade istio to v.${COMMIT}" "."
 
 echo "Synchronization completed successfully."
-# Update README.md to synchronize with the upgraded Istio version
-echo "Updating README..."
-SRC_TXT="\[.*\](https://github.com/istio/istio/releases/tag/.*)"
-DST_TXT="\[$COMMIT\](https://github.com/istio/istio/releases/tag/$COMMIT)"
-
-sed -i "s|$SRC_TXT|$DST_TXT|g" "${MANIFESTS_DIR}"/README.md
-
-#Synchronize the updated directory names with other files
-find "$MANIFESTS_DIR" -type f -not -path '*/.git/*' -exec sed -i "s/istio-${CURRENT_VERSION}/istio-${NEW_VERSION}/g" {} +
-
-echo "Committing the changes..."
-cd "$MANIFESTS_DIR"
-rm -rf $ISTIO_OLD
-git add .
-git commit -s -m "Upgrade istio to v.${COMMIT}"
