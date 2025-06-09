@@ -3,4 +3,5 @@ kind: Kustomization
 resources:
 - kf-istio-resources.yaml
 - cluster-roles.yaml
+- gateway-api-rbac.yaml
 namespace: kubeflow
