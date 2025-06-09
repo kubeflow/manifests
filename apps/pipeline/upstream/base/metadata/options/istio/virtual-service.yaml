@@ -1,21 +1,23 @@
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
 metadata:
   name: metadata-grpc
   namespace: kubeflow
 spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /ml_metadata
-    rewrite:
-      uri: /ml_metadata
-    route:
-    - destination:
-        host: metadata-envoy-service.kubeflow.svc.cluster.local
-        port:
-          number: 9090
+  parentRefs:
+  - name: kubeflow-gateway
+    namespace: kubeflow
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /ml_metadata
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /ml_metadata
+    backendRefs:
+    - name: metadata-envoy-service
+      port: 9090

@@ -27,7 +27,7 @@ spec:
     resource: services
     updateStrategy:
       method: InPlace
-  - apiVersion: networking.istio.io/v1alpha3
+  - apiVersion: networking.istio.io/v1beta1
     resource: destinationrules
     updateStrategy:
       method: InPlace

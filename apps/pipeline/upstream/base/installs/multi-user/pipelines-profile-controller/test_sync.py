@@ -22,7 +22,7 @@ DATA_INCORRECT_CHILDREN = {
         "ConfigMap.v1": [],
         "Deployment.apps/v1": [],
         "Service.v1": [],
-        "DestinationRule.networking.istio.io/v1alpha3": [],
+        "DestinationRule.networking.istio.io/v1beta1": [],
         "AuthorizationPolicy.security.istio.io/v1beta1": [],
     }
 }
@@ -41,7 +41,7 @@ DATA_CORRECT_CHILDREN = {
         "ConfigMap.v1": [1],
         "Deployment.apps/v1": [1, 1],
         "Service.v1": [1, 1],
-        "DestinationRule.networking.istio.io/v1alpha3": [1],
+        "DestinationRule.networking.istio.io/v1beta1": [1],
         "AuthorizationPolicy.security.istio.io/v1beta1": [1],
     }
 }
