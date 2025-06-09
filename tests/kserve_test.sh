@@ -78,7 +78,7 @@ spec:
       serving.knative.dev/service: test-sklearn-predictor
 EOF
 
-sleep 300
+sleep 60
 
 echo "Testing path-based access with valid token..."
 curl -v --fail --show-error \
