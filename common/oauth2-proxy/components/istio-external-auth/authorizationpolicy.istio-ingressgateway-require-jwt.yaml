@@ -22,3 +22,33 @@ spec:
         - /dex/*
         - /dex/**
         - /oauth2/*
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: kubeflow-gateway-require-jwt
+  namespace: kubeflow
+spec:
+  action: DENY
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: kubeflow-gateway
+  rules:
+  # Deny requests that don't have a verified JWT (from a RequestAuthentication)
+  # Note, even user requests that have been authenticated by oauth2-proxy will have a JWT,
+  # because oauth2-proxy injects a Dex JWT into the request.
+  # Only apply this to requests that have an Authorization header, allowing oauth2-proxy
+  # to handle requests without Authorization headers.
+  - from:
+    - source:
+        notRequestPrincipals: ["*"]
+    to:
+    - operation:
+        notPaths:
+        # Exclude dex paths, otherwise users won't be able to log in.
+        - /dex/*
+        - /dex/**
+        - /oauth2/*
+    when:
+    - key: request.headers[authorization]
+      values: ["*"]

@@ -1,0 +1,55 @@
+# Gateway API specific authorization policies for proper RBAC access
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: kubeflow-gateway-allow-health-checks
+  namespace: kubeflow
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: kubeflow-gateway
+  rules:
+  - to:
+    - operation:
+        paths:
+        - /healthz
+        - /ready
+        - /ping
+        - /stats/prometheus
+---
+# Allow direct access to login/logout endpoints
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: kubeflow-gateway-allow-auth-endpoints
+  namespace: kubeflow
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: kubeflow-gateway
+  rules:
+  - to:
+    - operation:
+        paths:
+        - /dex/*
+        - /oauth2/*
+        - /auth/*
+        - /logout
+---
+# Allow authenticated requests through the gateway
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: kubeflow-gateway-allow-authenticated
+  namespace: kubeflow
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: kubeflow-gateway
+  rules:
+  - from:
+    - source:
+        requestPrincipals: ["*"] 

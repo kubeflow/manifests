@@ -1,0 +1,28 @@
+# Gateway API specific RequestAuthentication for kubeflow-gateway pods  
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: kubeflow-gateway-dex-jwt
+  namespace: kubeflow
+spec:
+  # Apply to kubeflow-gateway pods specifically
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: kubeflow-gateway
+  
+  jwtRules:
+  - issuer: http://dex.auth.svc.cluster.local:5556/dex
+    # Forward the original token to allow downstream services to verify it
+    forwardOriginalToken: true
+    
+    # Extract user information from JWT claims and put into headers
+    outputClaimToHeaders:
+    - header: kubeflow-userid
+      claim: email
+    - header: kubeflow-groups  
+      claim: groups
+    
+    # Only extract JWT from Authorization header with Bearer prefix
+    fromHeaders:
+    - name: Authorization
+      prefix: "Bearer " 

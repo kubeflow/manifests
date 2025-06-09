@@ -23,3 +23,29 @@ spec:
         - /dex/*
         - /dex/**
         - /oauth2/*
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: kubeflow-gateway-oauth2-proxy
+  namespace: kubeflow
+spec:
+  action: CUSTOM
+  provider:
+    name: oauth2-proxy
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: kubeflow-gateway
+  rules:
+  # We ONLY authenticate requests that DON'T have an `Authorization` header using oauth2-proxy.
+  # This is because we use RequestAuthentication to authenticate requests with an `Authorization` header.
+  - when:
+    - key: request.headers[authorization]
+      notValues: ["*"]
+    to:
+    - operation:
+        notPaths:
+        # Exclude dex paths, otherwise users won't be able to log in.
+        - /dex/*
+        - /dex/**
+        - /oauth2/*
