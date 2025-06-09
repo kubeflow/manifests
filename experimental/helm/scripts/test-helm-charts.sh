@@ -19,7 +19,7 @@ test_chart() {
         helm dependency update "$chart_path"
     fi
     
-    helm install --dry-run "test-$chart_name" "$chart_path" > /dev/null
+    helm template "test-$chart_name" "$chart_path" > /dev/null
     echo "✓ $chart_name"
 }
 
