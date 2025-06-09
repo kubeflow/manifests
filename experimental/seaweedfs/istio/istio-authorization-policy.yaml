@@ -21,7 +21,7 @@ spec:
   # handled well by istio (AuthPolicy). Instead, access to the sensitive ports will be limited by the NetworkPolicy.
   - {}
 ---
-apiVersion: "networking.istio.io/v1alpha3"
+apiVersion: "networking.istio.io/v1beta1"
 kind: DestinationRule
 metadata:
   name: ml-pipeline-seaweedfs

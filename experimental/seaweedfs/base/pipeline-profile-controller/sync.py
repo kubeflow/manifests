@@ -109,7 +109,7 @@ def server_factory(visualization_server_image,
                     len(attachments["ConfigMap.v1"]) == 3 and
                     len(attachments["Deployment.apps/v1"]) == 2 and
                     len(attachments["Service.v1"]) == 2 and
-                    len(attachments["DestinationRule.networking.istio.io/v1alpha3"]) == 1 and
+                    len(attachments["DestinationRule.networking.istio.io/v1beta1"]) == 1 and
                     len(attachments["AuthorizationPolicy.security.istio.io/v1beta1"]) == 1 and
                     "True" or "False"
             }
