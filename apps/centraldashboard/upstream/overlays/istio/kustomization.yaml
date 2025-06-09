@@ -7,37 +7,18 @@ resources:
 namespace: kubeflow
 replacements:
 - source:
-    fieldPath: metadata.namespace
+    fieldPath: metadata.name
     kind: Service
     name: centraldashboard
     version: v1
   targets:
   - fieldPaths:
-    - spec.http.0.route.0.destination.host
-    options:
-      delimiter: .
-      index: 1
+    - spec.rules.0.backendRefs.0.name
     select:
-      group: networking.istio.io
-      kind: VirtualService
+      group: gateway.networking.k8s.io
+      kind: HTTPRoute
       name: centraldashboard
-      version: v1alpha3
-- source:
-    fieldPath: data.CD_CLUSTER_DOMAIN
-    kind: ConfigMap
-    name: centraldashboard-parameters
-    version: v1
-  targets:
-  - fieldPaths:
-    - spec.http.0.route.0.destination.host
-    options:
-      delimiter: .
-      index: 3
-    select:
-      group: networking.istio.io
-      kind: VirtualService
-      name: centraldashboard
-      version: v1alpha3
+      version: v1beta1
 configurations:
 - params.yaml
 labels:
