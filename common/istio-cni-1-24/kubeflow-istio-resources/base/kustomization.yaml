@@ -4,4 +4,4 @@ resources:
 - gateway-api.yaml
 - cluster-roles.yaml
 - gateway-api-rbac.yaml
-namespace: kubeflow
+namespace: istio-system
