@@ -11,10 +11,12 @@ COMPONENT="spark-operator"
 VERSION="2.2.0"
 REPO="https://kubeflow.github.io/spark-operator"
 TEMPLATES_DIR="$CHART_DIR/templates/external/${COMPONENT}"
+CRDS_DIR="$CHART_DIR/crds"
 NAMESPACE="kubeflow"
 
 rm -rf "$TEMPLATES_DIR"
 mkdir -p "$TEMPLATES_DIR"
+mkdir -p "$CRDS_DIR"
 
 TEMP_DIR=$(mktemp -d)
 cd "$TEMP_DIR"
@@ -33,8 +35,7 @@ helm template "$COMPONENT" "$COMPONENT" \
 cp -r "$COMPONENT/templates/"* "$TEMPLATES_DIR/"
 
 [ -d "$COMPONENT/crds" ] && {
-    mkdir -p "$TEMPLATES_DIR/crds"
-    cp -r "$COMPONENT/crds/"* "$TEMPLATES_DIR/crds/"
+    cp -r "$COMPONENT/crds/"* "$CRDS_DIR/"
 }
 
 python3 "$SCRIPT_DIR/patch-templates.py" "$TEMPLATES_DIR" "$COMPONENT"
