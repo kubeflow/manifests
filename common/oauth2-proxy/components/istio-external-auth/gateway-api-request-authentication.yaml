@@ -12,6 +12,7 @@ spec:
   
   jwtRules:
   - issuer: http://dex.auth.svc.cluster.local:5556/dex
+    jwksUri: http://dex.auth.svc.cluster.local:5556/dex/keys
     # Forward the original token to allow downstream services to verify it
     forwardOriginalToken: true
     
