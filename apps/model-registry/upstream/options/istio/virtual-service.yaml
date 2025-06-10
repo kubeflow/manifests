@@ -1,29 +1,27 @@
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
 metadata:
   name: model-registry
 spec:
-  gateways:
-  - kubeflow-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /api/model_registry/
-    route:
-    - destination:
-        host: model-registry-service.kubeflow.svc.cluster.local
-        port:
-          number: 8080
-  - match:
-    - port: 9090
-    - authority:
-        regex: model-registry-service(\..+)?(:9090)?
-    - uri:
-        prefix: /ml_metadata.MetadataStoreService/
-    route:
-    - destination:
-        host: model-registry-service.kubeflow.svc.cluster.local
-        port:
-          number: 9090
+  parentRefs:
+  - name: kubeflow-gateway
+    namespace: istio-system
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /api/model_registry/
+    backendRefs:
+    - name: model-registry-service
+      port: 8080
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /ml_metadata.MetadataStoreService/
+    - headers:
+      - name: ":authority"
+        value: "model-registry-service"
+        type: RegularExpression
+    backendRefs:
+    - name: model-registry-service
+      port: 9090
