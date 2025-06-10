@@ -5,4 +5,48 @@ resources:
 - ../oauth2-proxy
 
 patches:
-- path: disable-cni-patch.yaml
+
+- target:
+    kind: ConfigMap
+    name: istio-sidecar-injector
+    namespace: istio-system
+  patch: |-
+    - op: replace
+      path: /data/merged-values
+      value: |
+        {
+          "cni": {
+            "enabled": false,
+            "provider": "default"
+          }
+        }
+
+- target:
+    kind: DaemonSet
+    name: istio-cni-node
+    namespace: kube-system
+  patch: |-
+    apiVersion: apps/v1
+    kind: DaemonSet
+    metadata:
+      name: istio-cni-node
+      namespace: kube-system
+    $patch: delete
+
+# error when applying this patch: pilot.cni.enabled false
+# - target:
+#     kind: ConfigMap
+#     name: istio-sidecar-injector
+#     namespace: istio-system
+#   patch: |-
+#     - op: replace
+#       path: /data/values
+#       value: |
+#         {
+#           "pilot": {
+#             "cni": {
+#               "enabled": false,
+#               "provider": "default"
+#             }
+#           }
+#         }
