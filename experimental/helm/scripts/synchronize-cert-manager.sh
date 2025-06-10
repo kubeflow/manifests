@@ -11,10 +11,12 @@ COMPONENT="cert-manager"
 VERSION="v1.16.1"
 REPO="https://charts.jetstack.io"
 TEMPLATES_DIR="$CHART_DIR/templates/external/${COMPONENT}"
+CRDS_DIR="$CHART_DIR/crds"
 NAMESPACE="cert-manager"
 
 rm -rf "$TEMPLATES_DIR"
 mkdir -p "$TEMPLATES_DIR"
+mkdir -p "$CRDS_DIR"
 
 TEMP_DIR=$(mktemp -d)
 cd "$TEMP_DIR"
@@ -31,12 +33,12 @@ helm template "$COMPONENT" "$COMPONENT" \
     --set startupapicheck.enabled=false \
     --output-dir .
 
-cp -r "$COMPONENT/templates/"* "$TEMPLATES_DIR/"
-
-[ -d "$COMPONENT/crds" ] && {
-    mkdir -p "$TEMPLATES_DIR/crds"
-    cp -r "$COMPONENT/crds/"* "$TEMPLATES_DIR/crds/"
-}
+for file in "$COMPONENT/templates/"*.yaml; do
+    if [ -f "$file" ] && [[ ! "$(basename "$file")" == crds.yaml ]]; then
+        cp "$file" "$TEMPLATES_DIR/"
+    fi
+done
+cat "$COMPONENT/templates/crds.yaml" > "$CRDS_DIR/cert-manager-crds.yaml"
 
 python3 "$SCRIPT_DIR/patch-templates.py" "$TEMPLATES_DIR" "$COMPONENT"
 
