@@ -19,7 +19,7 @@ spec:
         type: PathPrefix
         value: /ml_metadata.MetadataStoreService/
     - headers:
-      - name: ":authority"
+      - name: "authority"
         value: "model-registry-service"
         type: RegularExpression
     backendRefs:
