@@ -1,21 +1,23 @@
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
 metadata:
   name: kserve-models-web-app
   namespace: kserve
 spec:
-  gateways:
-  - knative-serving/knative-ingress-gateway
-  hosts:
-  - '*'
-  http:
-  - match:
-    - uri:
-        prefix: /kserve-endpoints/
-    rewrite:
-      uri: /
-    route:
-    - destination:
-        host: kserve-models-web-app.kserve.svc.cluster.local
-        port:
-          number: 80
+  parentRefs:
+  - name: knative-ingress-gateway
+    namespace: knative-serving
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /kserve-endpoints/
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /
+    backendRefs:
+    - name: kserve-models-web-app
+      port: 80

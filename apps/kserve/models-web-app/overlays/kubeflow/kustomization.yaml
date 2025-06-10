@@ -35,8 +35,8 @@ labels:
 patches:
 - path: patches/web-app-vsvc.yaml
   target:
-    group: networking.istio.io
-    kind: VirtualService
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
     name: kserve-models-web-app
     namespace: kserve
     version: v1beta1
