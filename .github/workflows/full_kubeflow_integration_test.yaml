@@ -248,6 +248,17 @@ jobs:
     - name: Verify Components
       run: kubectl get pods --all-namespaces | grep -E '(Error|CrashLoopBackOff)' && exit 1 || true
 
+    - name: Install Metrics Server
+      run: ./tests/gh-actions/install_metrics-server.sh
+
+    - name: Check Pod Resource Usage
+      run: |
+        echo "==== Pod Resource Usage ===="
+        kubectl top pods --all-namespaces
+
+        echo "==== Container Resource Usage ===="
+        kubectl top pods --all-namespaces --containers
+
     - name: Collect Logs on Failure
       if: failure()
       run: |
