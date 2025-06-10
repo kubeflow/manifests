@@ -89,10 +89,7 @@ jobs:
 
     # for these steps below ensure same steps as kserve (ie: Istio with external authentication, cert-manager, knative) so to achieve same setup
     - name: Port forward Istio gateway
-      run: |
-        INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
-        nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
-        while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
+      run: ./tests/port_forward_istio_gateway.sh
 
     - name: Dry-run KF Model Registry REST API
       run: |
