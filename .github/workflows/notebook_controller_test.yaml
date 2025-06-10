@@ -50,11 +50,8 @@ jobs:
       run: kustomize build common/user-namespace/base | kubectl apply -f -
 
     - name: Port forward
-      run: |
-        INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
-        nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
-        while ! curl localhost:8080; do echo waiting for port-forwarding; sleep 1; done; echo port-forwarding ready
-
+      run: ./tests/port_forward_gateway.sh
+        
     - name: List notebooks over API with authorized SA Token
       run: |
         KF_PROFILE=kubeflow-user-example-com
