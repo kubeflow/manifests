@@ -13,7 +13,9 @@ def clean_helm_metadata(obj):
                 labels = metadata['labels']
                 helm_specific_labels = [
                     'helm.sh/chart', 
-                    'app.kubernetes.io/managed-by'
+                    'app.kubernetes.io/managed-by',
+                    'app.kubernetes.io/instance',
+                    'app.kubernetes.io/version'
                 ]
                 for label in helm_specific_labels:
                     if label in labels:

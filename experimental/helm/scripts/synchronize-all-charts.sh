@@ -9,9 +9,9 @@ CHART_DIR="$HELM_DIR/kubeflow"
 
 COMPONENTS=(
     "spark-operator"
+    "cert-manager"
     # Add more components as we implement them
     # "training-operator"
-    # "cert-manager"
     # "istio"
     # "oauth2-proxy"
     # "dex"

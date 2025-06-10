@@ -37,7 +37,7 @@ cp -r "$COMPONENT/templates/"* "$TEMPLATES_DIR/"
     cp -r "$COMPONENT/crds/"* "$TEMPLATES_DIR/crds/"
 }
 
-python3 "$SCRIPT_DIR/patch-templates.py" "$TEMPLATES_DIR"
+python3 "$SCRIPT_DIR/patch-templates.py" "$TEMPLATES_DIR" "$COMPONENT"
 
 cd "$CHART_DIR"
 rm -rf "$TEMP_DIR"

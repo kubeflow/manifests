@@ -1,21 +1,27 @@
 name: Verify Helm vs Kustomize Manifests
+
 on:
   pull_request:
     paths:
     - tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+    - tests/helm_install.sh
     - .github/workflows/helm_vs_kustomize_verification.yaml
     - apps/spark/spark-operator/**
+    - common/cert-manager/**
     - experimental/helm/kubeflow/**
     - experimental/helm/scripts/**
-    - scripts/synchronize-spark-operator-manifests.sh
-    - scripts/synchronize-spark-operator-helm-chart.sh
     - tests/helm_kustomize_compare_manifests.sh
     - tests/helm_kustomize_compare_manifests.py
 
 jobs:
-  verify-spark-operator:
+  verify-components:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        component: [spark-operator, cert-manager]
+      fail-fast: false
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -30,17 +36,16 @@ jobs:
         chmod +x tests/helm_install.sh
         ./tests/helm_install.sh
 
-    - name: Run Helm vs Kustomize verification for Spark Operator
+    - name: Run Helm vs Kustomize verification for ${{ matrix.component }}
       run: |
         chmod +x tests/helm_kustomize_compare_manifests.sh
-        ./tests/helm_kustomize_compare_manifests.sh spark-operator
+        ./tests/helm_kustomize_compare_manifests.sh ${{ matrix.component }}
 
     - name: Upload artifacts on failure
       if: failure()
       uses: actions/upload-artifact@v4
       with:
-        name: spark-operator-manifest-comparison-artifacts
+        name: ${{ matrix.component }}-manifest-comparison-artifacts
         path: |
-          /tmp/kustomize-spark-operator.yaml
-          /tmp/helm-spark-operator.yaml
-
+          /tmp/kustomize-${{ matrix.component }}.yaml
+          /tmp/helm-aio-${{ matrix.component }}.yaml

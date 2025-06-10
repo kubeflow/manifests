@@ -25,8 +25,17 @@ trainingOperator:
   # Will be added when we sync training-operator
 
 certManager:
-  enabled: false
-  # Will be added when we sync cert-manager
+  enabled: true
+  installCRDs: true
+  global:
+    leaderElection:
+      namespace: kube-system
+  startupapicheck:
+    enabled: false
+  # Kubeflow-specific settings
+  kubeflowIssuer:
+    enabled: true
+    name: kubeflow-self-signing-issuer
 
 istio:
   enabled: false
