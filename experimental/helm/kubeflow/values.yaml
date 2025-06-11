@@ -51,8 +51,108 @@ dex:
 
 # Core Kubeflow components (custom templates)
 centraldashboard:
-  enabled: false
-  # Will be added when we convert from Kustomize
+  enabled: true
+  image:
+    repository: ghcr.io/kubeflow/kubeflow/central-dashboard
+    tag: v1.10.0
+    pullPolicy: IfNotPresent
+  replicas: 1
+  # Overlay configurations
+  istio:
+    enabled: false  
+  oauth2Proxy:
+    enabled: false  
+  kserve:
+    enabled: false 
+  config:
+    clusterDomain: cluster.local
+    useridHeader: kubeflow-userid
+    useridPrefix: ""
+    registrationFlow: false
+    collectMetrics: true
+    logoutUrl: "/oauth2/sign_out"
+    profilesKfamServiceHost: profiles-kfam.kubeflow
+  # Dashboard configuration for links, settings etc.
+  dashboardConfig:
+    settings:
+      DASHBOARD_FORCE_IFRAME: true
+    links:
+      menuLinks:
+        - icon: "book"
+          link: "/jupyter/"
+          text: "Notebooks"
+          type: "item"
+        - icon: "assessment"
+          link: "/tensorboards/"
+          text: "TensorBoards"
+          type: "item"
+        - icon: "device:storage"
+          link: "/volumes/"
+          text: "Volumes"
+          type: "item"
+        - icon: "kubeflow:katib"
+          link: "/katib/"
+          text: "Katib Experiments"
+          type: "item"
+        - icon: "kubeflow:pipeline-centered"
+          text: "Pipelines"
+          type: "section"
+          items:
+            - link: "/pipeline/#/pipelines"
+              text: "Pipelines"
+              type: "item"
+            - link: "/pipeline/#/experiments"
+              text: "Experiments"
+              type: "item"
+            - link: "/pipeline/#/runs"
+              text: "Runs"
+              type: "item"
+            - link: "/pipeline/#/recurringruns"
+              text: "Recurring Runs"
+              type: "item"
+            - link: "/pipeline/#/artifacts"
+              text: "Artifacts"
+              type: "item"
+            - link: "/pipeline/#/executions"
+              text: "Executions"
+              type: "item"
+      externalLinks: []
+      documentationItems:
+        - desc: "The Kubeflow website"
+          link: "https://www.kubeflow.org/"
+          text: "Kubeflow Website"
+        - desc: "Documentation for Kubeflow Pipelines"
+          link: "https://www.kubeflow.org/docs/components/pipelines/"
+          text: "Kubeflow Pipelines Documentation"
+        - desc: "Documentation for Kubeflow Notebooks"
+          link: "https://www.kubeflow.org/docs/components/notebooks/"
+          text: "Kubeflow Notebooks Documentation"
+        - desc: "Documentation for Kubeflow Training Operator"
+          link: "https://www.kubeflow.org/docs/components/training/"
+          text: "Kubeflow Training Operator Documentation"
+        - desc: "Documentation for Katib"
+          link: "https://www.kubeflow.org/docs/components/katib/"
+          text: "Katib Documentation"
+      quickLinks:
+        - desc: "Kubeflow Notebooks"
+          link: "/jupyter/new"
+          text: "Create a new Notebook"
+        - desc: "Kubeflow Pipelines"
+          link: "/pipeline/#/pipelines"
+          text: "Upload a Pipeline"
+        - desc: "Pipelines"
+          link: "/pipeline/#/runs"
+          text: "View Pipeline Runs"
+  service:
+    port: 80
+    targetPort: 8082
+    type: ClusterIP
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: 8082
+    initialDelaySeconds: 30
+    periodSeconds: 30
 
 profiles:
   enabled: false

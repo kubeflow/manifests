@@ -7,6 +7,7 @@ on:
     - tests/helm_install.sh
     - .github/workflows/helm_vs_kustomize_verification.yaml
     - apps/spark/spark-operator/**
+    - apps/centraldashboard/**
     - common/cert-manager/**
     - experimental/helm/kubeflow/**
     - experimental/helm/scripts/**
@@ -19,7 +20,7 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        component: [spark-operator, cert-manager]
+        component: [spark-operator, cert-manager, centraldashboard, centraldashboard-istio, centraldashboard-kserve, centraldashboard-oauth2-proxy]
       fail-fast: false
 
     steps:
