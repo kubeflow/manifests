@@ -45,7 +45,7 @@ jobs:
       run: ./tests/multi_tenancy_install.sh
 
     - name: Install kubeflow-istio-resources
-      run: kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
+      run: kustomize build common/istio-cni-1-24/kubeflow-istio-resources/base | kubectl apply -f -
 
     - name: Create KF Profile
       run: kustomize build common/user-namespace/base | kubectl apply -f -
@@ -88,8 +88,8 @@ jobs:
           -H 'accept: application/json'
 
     # for these steps below ensure same steps as kserve (ie: Istio with external authentication, cert-manager, knative) so to achieve same setup
-    - name: Port forward Istio gateway
-      run: ./tests/port_forward_istio_gateway.sh
+    - name: Port forward
+      run: ./tests/port_forward_gateway.sh
 
     - name: Dry-run KF Model Registry REST API
       run: |

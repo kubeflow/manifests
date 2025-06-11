@@ -5,41 +5,46 @@ NAMESPACE=${1:-kubeflow-user-example-com}
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TEST_DIRECTORY="${SCRIPT_DIRECTORY}/kserve"
 
-if ! command -v pytest &> /dev/null; then
-  echo "Installing test dependencies..."
-  pip install -r ${TEST_DIRECTORY}/requirements.txt
-fi
+echo "=== KServe Predictor Service Labels ==="
+kubectl get pods -n ${NAMESPACE} -l serving.knative.dev/service=isvc-sklearn-predictor --show-labels || true
 
 export KSERVE_INGRESS_HOST_PORT=${KSERVE_INGRESS_HOST_PORT:-localhost:8080}
 export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
 export KSERVE_TEST_NAMESPACE=${NAMESPACE}
 
 cat <<EOF | kubectl apply -f -
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
 metadata:
   name: test-sklearn-path
   namespace: ${NAMESPACE}
 spec:
-  gateways:
-    - kubeflow/kubeflow-gateway
-  hosts:
-    - '*'
-  http:
-    - match:
-        - uri:
-            prefix: /kserve/${NAMESPACE}/test-sklearn/
-      rewrite:
-        uri: /
-      route:
-        - destination:
-            host: knative-local-gateway.istio-system.svc.cluster.local
-          headers:
-            request:
-              set:
-                Host: test-sklearn-predictor.${NAMESPACE}.svc.cluster.local
-          weight: 100
-      timeout: 300s
+  parentRefs:
+  - name: kubeflow-gateway
+    namespace: istio-system
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /kserve/${NAMESPACE}/isvc-sklearn/
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /
+    - type: RequestHeaderModifier
+      requestHeaderModifier:
+        set:
+        - name: Host
+          value: isvc-sklearn-predictor.${NAMESPACE}.svc.cluster.local
+    backendRefs:
+    - name: knative-local-gateway
+      namespace: istio-system
+      port: 80
+      weight: 100
+    timeouts:
+      request: 300s
 EOF
 
 cat <<EOF | kubectl apply -f -
