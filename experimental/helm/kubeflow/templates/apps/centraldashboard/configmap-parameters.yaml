@@ -1,0 +1,18 @@
+{{- if .Values.centraldashboard.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: centraldashboard-parameters
+  namespace: {{ .Values.global.kubeflowNamespace }}
+  labels:
+    app: centraldashboard
+    app.kubernetes.io/component: centraldashboard
+    app.kubernetes.io/name: centraldashboard
+    kustomize.component: centraldashboard
+data:
+  CD_CLUSTER_DOMAIN: {{ .Values.centraldashboard.config.clusterDomain | quote }}
+  CD_USERID_HEADER: {{ .Values.centraldashboard.config.useridHeader | quote }}
+  CD_USERID_PREFIX: {{ .Values.centraldashboard.config.useridPrefix | quote }}
+  CD_REGISTRATION_FLOW: {{ .Values.centraldashboard.config.registrationFlow | quote }}
+  CD_COLLECT_METRICS: {{ .Values.centraldashboard.config.collectMetrics | quote }}
+{{- end }}

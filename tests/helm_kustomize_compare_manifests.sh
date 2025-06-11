@@ -20,9 +20,29 @@ case $COMPONENT in
         NAMESPACE="cert-manager"
         HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/external/cert-manager"
         ;;
+    "centraldashboard")
+        KUSTOMIZE_PATH="apps/centraldashboard/upstream/base"
+        NAMESPACE="kubeflow"
+        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/apps/centraldashboard"
+        ;;
+    "centraldashboard-istio")
+        KUSTOMIZE_PATH="apps/centraldashboard/upstream/overlays/istio"
+        NAMESPACE="kubeflow"
+        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/apps/centraldashboard"
+        ;;
+    "centraldashboard-kserve")
+        KUSTOMIZE_PATH="apps/centraldashboard/upstream/overlays/kserve"
+        NAMESPACE="kubeflow"
+        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/apps/centraldashboard"
+        ;;
+    "centraldashboard-oauth2-proxy")
+        KUSTOMIZE_PATH="apps/centraldashboard/overlays/oauth2-proxy"
+        NAMESPACE="kubeflow"
+        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/apps/centraldashboard"
+        ;;
     *)
         echo "Unknown component: $COMPONENT"
-        echo "Supported components: spark-operator, cert-manager"
+        echo "Supported components: spark-operator, cert-manager, centraldashboard, centraldashboard-istio, centraldashboard-kserve, centraldashboard-oauth2-proxy"
         exit 1
         ;;
 esac
@@ -58,11 +78,52 @@ cd "$CHART_DIR"
 HELM_OUTPUT="/tmp/helm-aio-${COMPONENT}.yaml"
 TEMP_VALUES_FILE="/tmp/test-values-${COMPONENT}.yaml"
 
-case $COMPONENT in
-    "cert-manager")
-        cat > "$TEMP_VALUES_FILE" << EOF
+create_base_values() {
+    cat > "$TEMP_VALUES_FILE" << EOF
 sparkOperator:
   enabled: false
+certManager:
+  enabled: false
+trainingOperator:
+  enabled: false
+istio:
+  enabled: false
+oauth2Proxy:
+  enabled: false
+dex:
+  enabled: false
+centraldashboard:
+  enabled: false
+profiles:
+  enabled: false
+jupyter:
+  enabled: false
+pipelines:
+  enabled: false
+kserve:
+  enabled: false
+katib:
+  enabled: false
+tensorboard:
+  enabled: false
+volumesWebApp:
+  enabled: false
+admissionWebhook:
+  enabled: false
+pvcviewerController:
+  enabled: false
+modelRegistry:
+  enabled: false
+EOF
+}
+
+append_component_config() {
+    local component=$1
+    
+    case $component in
+        "cert-manager")
+            cat >> "$TEMP_VALUES_FILE" << EOF
+
 certManager:
   enabled: true
   installCRDs: true
@@ -74,40 +135,11 @@ certManager:
   kubeflowIssuer:
     enabled: true
     name: kubeflow-self-signing-issuer
-trainingOperator:
-  enabled: false
-istio:
-  enabled: false
-oauth2Proxy:
-  enabled: false
-dex:
-  enabled: false
-centraldashboard:
-  enabled: false
-profiles:
-  enabled: false
-jupyter:
-  enabled: false
-pipelines:
-  enabled: false
-kserve:
-  enabled: false
-katib:
-  enabled: false
-tensorboard:
-  enabled: false
-volumesWebApp:
-  enabled: false
-admissionWebhook:
-  enabled: false
-pvcviewerController:
-  enabled: false
-modelRegistry:
-  enabled: false
 EOF
-        ;;
-    "spark-operator")
-        cat > "$TEMP_VALUES_FILE" << EOF
+            ;;
+        "spark-operator")
+            cat >> "$TEMP_VALUES_FILE" << EOF
+
 sparkOperator:
   enabled: true
   spark:
@@ -117,41 +149,145 @@ sparkOperator:
     port: 9443
   kubeflowRBAC:
     enabled: true
-certManager:
-  enabled: false
-trainingOperator:
-  enabled: false
-istio:
-  enabled: false
-oauth2Proxy:
-  enabled: false
-dex:
-  enabled: false
-centraldashboard:
-  enabled: false
-profiles:
-  enabled: false
-jupyter:
-  enabled: false
-pipelines:
-  enabled: false
-kserve:
-  enabled: false
-katib:
-  enabled: false
-tensorboard:
-  enabled: false
-volumesWebApp:
-  enabled: false
-admissionWebhook:
-  enabled: false
-pvcviewerController:
-  enabled: false
-modelRegistry:
-  enabled: false
 EOF
-        ;;
-esac
+            ;;
+        "centraldashboard")
+            cat >> "$TEMP_VALUES_FILE" << EOF
+
+centraldashboard:
+  enabled: true
+  image:
+    repository: ghcr.io/kubeflow/kubeflow/central-dashboard
+    tag: v1.10.0
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    clusterDomain: cluster.local
+    useridHeader: kubeflow-userid
+    useridPrefix: ""
+    registrationFlow: false
+    collectMetrics: true
+    logoutUrl: "/oauth2/sign_out"
+    profilesKfamServiceHost: profiles-kfam.kubeflow
+  service:
+    port: 80
+    targetPort: 8082
+    type: ClusterIP
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: 8082
+    initialDelaySeconds: 30
+    periodSeconds: 30
+EOF
+            ;;
+        "centraldashboard-istio")
+            cat >> "$TEMP_VALUES_FILE" << EOF
+
+centraldashboard:
+  enabled: true
+  istio:
+    enabled: true
+  image:
+    repository: ghcr.io/kubeflow/kubeflow/central-dashboard
+    tag: v1.10.0
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    clusterDomain: cluster.local
+    useridHeader: kubeflow-userid
+    useridPrefix: ""
+    registrationFlow: false
+    collectMetrics: true
+    logoutUrl: "/oauth2/sign_out"
+    profilesKfamServiceHost: profiles-kfam.kubeflow
+  service:
+    port: 80
+    targetPort: 8082
+    type: ClusterIP
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: 8082
+    initialDelaySeconds: 30
+    periodSeconds: 30
+EOF
+            ;;
+        "centraldashboard-kserve")
+            cat >> "$TEMP_VALUES_FILE" << EOF
+
+centraldashboard:
+  enabled: true
+  istio:
+    enabled: true
+  kserve:
+    enabled: true
+  image:
+    repository: ghcr.io/kubeflow/kubeflow/central-dashboard
+    tag: v1.10.0
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    clusterDomain: cluster.local
+    useridHeader: kubeflow-userid
+    useridPrefix: ""
+    registrationFlow: false
+    collectMetrics: true
+    logoutUrl: "/oauth2/sign_out"
+    profilesKfamServiceHost: profiles-kfam.kubeflow
+  service:
+    port: 80
+    targetPort: 8082
+    type: ClusterIP
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: 8082
+    initialDelaySeconds: 30
+    periodSeconds: 30
+EOF
+            ;;
+        "centraldashboard-oauth2-proxy")
+            cat >> "$TEMP_VALUES_FILE" << EOF
+
+centraldashboard:
+  enabled: true
+  istio:
+    enabled: true
+  kserve:
+    enabled: true
+  oauth2Proxy:
+    enabled: true
+  image:
+    repository: ghcr.io/kubeflow/kubeflow/central-dashboard
+    tag: v1.10.0
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    clusterDomain: cluster.local
+    useridHeader: kubeflow-userid
+    useridPrefix: ""
+    registrationFlow: false
+    collectMetrics: true
+    logoutUrl: "/oauth2/sign_out"
+    profilesKfamServiceHost: profiles-kfam.kubeflow
+  service:
+    port: 80
+    targetPort: 8082
+    type: ClusterIP
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: 8082
+    initialDelaySeconds: 30
+    periodSeconds: 30
+EOF
+            ;;
+    esac
+}
+
+create_base_values
+append_component_config "$COMPONENT"
 
 helm template kubeflow . --namespace "$NAMESPACE" --include-crds --values "$TEMP_VALUES_FILE" > "$HELM_OUTPUT"
 rm -f "$TEMP_VALUES_FILE"
