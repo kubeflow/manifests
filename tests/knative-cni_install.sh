@@ -10,8 +10,8 @@ for ((i=1; i<=3; i++)); do
 done
 set -e
 
-kustomize build common/istio-cni-1-24/cluster-local-gateway/base | kubectl apply -f -
-kustomize build common/istio-cni-1-24/kubeflow-istio-resources/base | kubectl apply -f -
+kustomize build common/istio/cluster-local-gateway/base | kubectl apply -f -
+kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
 
 kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=60s --field-selector=status.phase!=Succeeded
 kubectl wait --for=condition=Available deployment/activator -n knative-serving --timeout=10s

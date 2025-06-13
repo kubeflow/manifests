@@ -72,7 +72,7 @@ The following matrix shows the versions of common components used across differe
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
-| Istio | common/istio-cni-1-24 | [1.24.3](https://github.com/istio/istio/releases/tag/1.24.3) |
+| Istio | common/istio | [1.26.1](https://github.com/istio/istio/releases/tag/1.26.1) |
 | Knative | common/knative/knative-serving <br /> common/knative/knative-eventing | [v1.16.2](https://github.com/knative/serving/releases/tag/knative-v1.16.2) <br /> [v1.16.4](https://github.com/knative/eventing/releases/tag/knative-v1.16.4) |
 | Cert Manager | common/cert-manager | [1.16.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.16.1) |
 
@@ -217,14 +217,14 @@ Install Istio:
 
 ```sh
 echo "Installing Istio CNI configured with external authorization..."
-kustomize build common/istio-cni-1-24/istio-crds/base | kubectl apply -f -
-kustomize build common/istio-cni-1-24/istio-namespace/base | kubectl apply -f -
+kustomize build common/istio/istio-crds/base | kubectl apply -f -
+kustomize build common/istio/istio-namespace/base | kubectl apply -f -
 
 # For most platforms (Kind, Minikube, AKS, EKS, etc.)
-kustomize build common/istio-cni-1-24/istio-install/overlays/oauth2-proxy | kubectl apply -f -
+kustomize build common/istio/istio-install/overlays/oauth2-proxy | kubectl apply -f -
 
 # For Google Kubernetes Engine (GKE), use:
-# kustomize build common/istio-cni-1-24/istio-install/overlays/gke | kubectl apply -f -
+# kustomize build common/istio/istio-install/overlays/gke | kubectl apply -f -
 
 echo "Waiting for all Istio Pods to become ready..."
 kubectl wait --for=condition=Ready pods --all -n istio-system --timeout 300s
@@ -352,7 +352,7 @@ Install Knative Serving:
 
 ```sh
 kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -
-kustomize build common/istio-cni-1-24/cluster-local-gateway/base | kubectl apply -f -
+kustomize build common/istio/cluster-local-gateway/base | kubectl apply -f -
 ```
 
 Optionally, you can install Knative Eventing, which can be used for inference request logging:
@@ -395,7 +395,7 @@ Create the Kubeflow Gateway `kubeflow-gateway` and ClusterRole `kubeflow-istio-a
 Install Kubeflow Istio resources:
 
 ```sh
-kustomize build common/istio-1-24/kubeflow-istio-resources/base | kubectl apply -f -
+kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
 ```
 
 #### Kubeflow Pipelines
@@ -715,4 +715,4 @@ pre-commit run
 - **Q:** Why does Kubeflow use Istio CNI instead of standard Istio?
   **A:** Istio CNI provides better security by eliminating the need for privileged init containers, making it more compatible with Pod Security Standards (PSS). It also enables native sidecars support introduced in Kubernetes 1.28, which helps address issues with init containers and application lifecycle management.
 - **Q:** Why does Istio CNI fail on Google Kubernetes Engine (GKE) with "read-only file system" errors?
-  **A:** GKE mounts `/opt/cni/bin` as read-only for security reasons, preventing the Istio CNI installer from writing the CNI binary. Use the GKE-specific overlay: `kubectl apply -k common/istio-cni-1-24/istio-install/overlays/gke`. This overlay uses GKE's writable CNI directory at `/home/kubernetes/bin`. For more details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites) and [Platform Prerequisites](https://istio.io/latest/docs/ambient/install/platform-prerequisites/).-`
+  **A:** GKE mounts `/opt/cni/bin` as read-only for security reasons, preventing the Istio CNI installer from writing the CNI binary. Use the GKE-specific overlay: `kubectl apply -k common/istio/istio-install/overlays/gke`. This overlay uses GKE's writable CNI directory at `/home/kubernetes/bin`. For more details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites) and [Platform Prerequisites](https://istio.io/latest/docs/ambient/install/platform-prerequisites/).-`

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 echo "Installing Istio-cni (with ExtAuthZ from oauth2-proxy) ..."
-cd common/istio-cni-1-24
+cd common/istio
 kustomize build istio-crds/base | kubectl apply -f -
 kustomize build istio-namespace/base | kubectl apply -f -
 kustomize build istio-install/overlays/oauth2-proxy | kubectl apply -f -

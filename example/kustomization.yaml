@@ -37,13 +37,13 @@ resources:
 - ../common/cert-manager/base
 - ../common/cert-manager/kubeflow-issuer/base
 # Istio
-- ../common/istio-cni-1-24/istio-crds/base
-- ../common/istio-cni-1-24/istio-namespace/base
-- ../common/istio-cni-1-24/istio-install/overlays/oauth2-proxy
+- ../common/istio/istio-crds/base
+- ../common/istio/istio-namespace/base
+- ../common/istio/istio-install/overlays/oauth2-proxy
 # NOTE: For Google Kubernetes Engine (GKE), use:
-# - ../common/istio-cni-1-24/istio-install/overlays/gke
+# - ../common/istio/istio-install/overlays/gke
 #GKE mounts `/opt/cni/bin` as read-only for security reasons, preventing the Istio CNI installer from writing the CNI binary.
-#Use the GKE-specific overlay: `kubectl apply -k common/istio-cni-1-24/istio-install/overlays/gke`.
+#Use the GKE-specific overlay: `kubectl apply -k common/istio/istio-install/overlays/gke`.
 #This overlay uses GKE's writable CNI directory at `/home/kubernetes/bin`.
 #For more details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites) and [Platform Prerequisites](https://istio.io/latest/docs/ambient/install/platform-prerequisites/)
 # oauth2-proxy
@@ -57,7 +57,7 @@ resources:
 - ../common/knative/knative-serving/overlays/gateways
 # Uncomment the following line if `knative-eventing` is required
 # - ../common/knative/knative-eventing/base
-- ../common/istio-cni-1-24/cluster-local-gateway/base
+- ../common/istio/cluster-local-gateway/base
 # Kubeflow namespace
 - ../common/kubeflow-namespace/base
 # NetworkPolicies
@@ -65,7 +65,7 @@ resources:
 # Kubeflow Roles
 - ../common/kubeflow-roles/base
 # Kubeflow Istio Resources
-- ../common/istio-cni-1-24/kubeflow-istio-resources/base
+- ../common/istio/kubeflow-istio-resources/base
 # Kubeflow Pipelines
 - ../apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
 # Katib
