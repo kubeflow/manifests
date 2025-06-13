@@ -1,0 +1,148 @@
+name: Test Istio CNI and Non-CNI Installation
+
+on:
+  pull_request:
+    paths:
+    - tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+    - tests/istio*
+    - .github/workflows/istio_cni_test.yaml
+    - common/istio/**
+    - common/cert-manager/**
+
+env:
+  KF_PROFILE: kubeflow-user-example-com
+
+jobs:
+  test-istio-cni:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        istio-mode: ['cni', 'insecure']
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install KinD, Create KinD cluster and Install kustomize
+      run: ./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+
+    - name: Install kubectl
+      run: ./tests/kubectl_install.sh
+
+    - name: Create Kubeflow Namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+    - name: Install Certificate Manager
+      run: ./tests/cert_manager_install.sh
+
+    - name: Install Istio CNI
+      if: matrix.istio-mode == 'cni'
+      run: kustomize build common/istio/istio-install/overlays/oauth2-proxy | kubectl apply -f -
+
+    - name: Install Istio Insecure (Non-CNI)
+      if: matrix.istio-mode == 'insecure'
+      run: kustomize build common/istio/istio-install/overlays/insecure | kubectl apply -f -
+
+    - name: Wait for Istio deployment
+      run: |
+        kubectl wait --for=condition=available --timeout=300s deployment/istiod -n istio-system
+        kubectl get pods -n istio-system
+
+    - name: Verify CNI Installation
+      if: matrix.istio-mode == 'cni'
+      run: |
+        kubectl get daemonset istio-cni-node -n kube-system
+        kubectl rollout status daemonset/istio-cni-node -n kube-system --timeout=120s
+
+        kubectl logs -n kube-system -l k8s-app=istio-cni-node --tail=20
+
+        kubectl logs -n istio-system deployment/istiod | grep "cniNamespace.*istio-system" || {
+          echo "CNI namespace not properly configured"
+          kubectl logs -n istio-system deployment/istiod | grep -i cni
+        }
+
+        kubectl get deployment istiod -n istio-system -o yaml | grep -A5 -B5 "ISTIO_CNI_ENABLED" || echo "CNI env check"
+
+    - name: Verify Insecure Installation
+      if: matrix.istio-mode == 'insecure'
+      run: |
+        if kubectl get daemonset istio-cni-node -n kube-system 2>/dev/null; then
+          echo "ERROR: CNI DaemonSet should be deleted in insecure mode"
+          exit 1
+        fi
+
+        kubectl get deployment istiod -n istio-system -o yaml | grep -A5 -B5 "ISTIO_CNI_ENABLED.*false" || echo "CNI disabled check"
+
+    - name: Install OAuth2 Proxy
+      run: ./tests/oauth2-proxy_install.sh
+
+    - name: Install Kubeflow Istio Resources
+      run: kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
+
+    - name: Install Multi-Tenancy
+      run: ./tests/multi_tenancy_install.sh
+
+    - name: Create KF Profile
+      run: ./tests/kubeflow_profile_install.sh
+
+    - name: Test sidecar injection
+      run: |
+        kubectl create deployment test-app --image=nginx -n $KF_PROFILE
+        kubectl wait --for=condition=available --timeout=120s deployment/test-app -n $KF_PROFILE
+
+        SIDECAR_COUNT=$(kubectl get pods -n $KF_PROFILE -l app=test-app -o jsonpath='{.items[0].spec.containers[*].name}' | grep -o istio-proxy | wc -l)
+        if [ "$SIDECAR_COUNT" -eq 0 ]; then
+          echo "ERROR: Sidecar injection failed"
+          kubectl describe pod -n $KF_PROFILE -l app=test-app
+          exit 1
+        fi
+        echo "Sidecar injection successful"
+
+    - name: Test CNI-specific functionality
+      if: matrix.istio-mode == 'cni'
+      run: |
+        INIT_CONTAINERS=$(kubectl get pods -n $KF_PROFILE -l app=test-app -o jsonpath='{.items[0].spec.initContainers[*].name}')
+        if [[ "$INIT_CONTAINERS" != *"istio-validation"* ]]; then
+          echo "ERROR: Expected istio-validation init container in CNI mode"
+          kubectl describe pod -n $KF_PROFILE -l app=test-app
+          exit 1
+        fi
+
+    - name: Test Non-CNI functionality
+      if: matrix.istio-mode == 'insecure'
+      run: |
+        INIT_CONTAINERS=$(kubectl get pods -n $KF_PROFILE -l app=test-app -o jsonpath='{.items[0].spec.initContainers[*].name}')
+        if [ -z "$INIT_CONTAINERS" ]; then
+          echo "WARNING: No init containers found in insecure mode"
+        fi
+        echo "Init containers in insecure mode: $INIT_CONTAINERS"
+
+    - name: Port-forward the istio-ingress gateway
+      run: ./tests/port_forward_gateway.sh
+
+    - name: Test basic connectivity
+      run: |
+        kubectl expose deployment test-app --port=80 --target-port=80 -n $KF_PROFILE
+
+        kubectl run test-client --image=busybox --rm -i --restart=Never -n $KF_PROFILE -- \
+          wget -qO- --timeout=10 test-app.$KF_PROFILE.svc.cluster.local || {
+          echo "ERROR: Basic connectivity test failed"
+          kubectl logs -n $KF_PROFILE -l app=test-app -c istio-proxy --tail=20 || true
+          exit 1
+        }
+        echo "Basic connectivity test passed"
+
+    - name: Apply Pod Security Standards baseline levels
+      run: ./tests/PSS_baseline_enable.sh
+
+    - name: Collect debug information on failure
+      if: failure()
+      run: |
+        kubectl get pods -n istio-system -o wide
+
+        kubectl logs -n istio-system deployment/istiod --tail=30 || true
+
+        kubectl logs -n kube-system daemonset/istio-cni-node --tail=20 || true
+
+        kubectl get pods -n $KF_PROFILE -o wide || true
+        kubectl describe pod -n $KF_PROFILE -l app=test-app || true
