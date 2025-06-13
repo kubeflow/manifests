@@ -91,7 +91,7 @@ def predict_str(
     # temporary sleep until this is fixed https://github.com/kserve/kserve/issues/604
     time.sleep(10)
     cluster_ip = get_cluster_ip()
-    host = f"{service_name}.{KSERVE_TEST_NAMESPACE}.example.com"
+    host = f"{service_name}-predictor.{KSERVE_TEST_NAMESPACE}.example.com"
     headers = {
         "Host": host,
         "Content-Type": "application/json",

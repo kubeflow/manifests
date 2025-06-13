@@ -5,6 +5,8 @@ resources:
 - authorizationpolicy.istio-ingressgateway-oauth2-proxy.yaml
 - authorizationpolicy.istio-ingressgateway-require-jwt.yaml
 - requestauthentication.dex-jwt.yaml
+- gateway-api-auth-policies.yaml
+- gateway-api-request-authentication.yaml
 
 # If want to enable caching for some paths (e.g. when using Cloudflare),
 # use the following AuthorizationPolicies instead of the default ones.

@@ -8,7 +8,7 @@ setup_error_handling
 
 COMPONENT_NAME="knative"
 KN_SERVING_RELEASE="v1.16.2" # Must be a release
-KN_EXTENSION_RELEASE="v1.16.0" # Must be a release
+KN_EXTENSION_RELEASE="v1.18.0" # Must be a release
 KN_EVENTING_RELEASE="v1.16.4" # Must be a release
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${KN_SERVING_RELEASE?}}
 
@@ -36,11 +36,11 @@ mkdir -p "$DESTINATION_DIRECTORY/knative-eventing-post-install-jobs/base"
 
 echo "Downloading knative-serving manifests..."
 wget -O $DESTINATION_DIRECTORY/knative-serving/base/upstream/serving-core.yaml "https://github.com/knative/serving/releases/download/knative-$KN_SERVING_RELEASE/serving-core.yaml"
-wget -O $DESTINATION_DIRECTORY/knative-serving/base/upstream/net-istio.yaml "https://github.com/knative-extensions/net-istio/releases/download/knative-$KN_EXTENSION_RELEASE/net-istio.yaml"
+wget -O $DESTINATION_DIRECTORY/knative-serving/base/upstream/net-gateway-api.yaml "https://github.com/knative-extensions/net-gateway-api/releases/download/knative-$KN_EXTENSION_RELEASE/net-gateway-api.yaml"
 wget -O $DESTINATION_DIRECTORY/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml "https://github.com/knative/serving/releases/download/knative-$KN_SERVING_RELEASE/serving-post-install-jobs.yaml"
 
 yq eval -i '... comments=""' $DESTINATION_DIRECTORY/knative-serving/base/upstream/serving-core.yaml
-yq eval -i '... comments=""' $DESTINATION_DIRECTORY/knative-serving/base/upstream/net-istio.yaml
+yq eval -i '... comments=""' $DESTINATION_DIRECTORY/knative-serving/base/upstream/net-gateway-api.yaml
 yq eval -i '... comments=""' $DESTINATION_DIRECTORY/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml
 
 yq eval -i 'explode(.)' $DESTINATION_DIRECTORY/knative-serving/base/upstream/serving-core.yaml
@@ -94,8 +94,8 @@ replace_in_file \
   $DESTINATION_DIRECTORY/README.md
 
 replace_in_file \
-  "\[Knative ingress controller for Istio (v.*)\](https://github.com/knative-extensions/net-istio/releases/tag/knative-v.*)" \
-  "\[Knative ingress controller for Istio ($KN_EXTENSION_RELEASE)\](https://github.com/knative-extensions/net-istio/releases/tag/knative-$KN_EXTENSION_RELEASE)" \
+  "\[Knative ingress controller for Istio (v.*)\](https://github.com/knative-extensions/net-gateway-api/releases/tag/knative-v.*)" \
+  "\[Knative ingress controller for Istio ($KN_EXTENSION_RELEASE)\](https://github.com/knative-extensions/net-gateway-api/releases/tag/knative-$KN_EXTENSION_RELEASE)" \
   $DESTINATION_DIRECTORY/README.md
 
 replace_in_file \

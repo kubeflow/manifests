@@ -10,7 +10,7 @@ spec:
   #    Pods in the mesh, even ones which are not part of Kubeflow
   selector:
     matchLabels:
-      app: istio-ingressgateway
+      gateway.networking.k8s.io/gateway-name: kubeflow-gateway
 
   jwtRules:
   - # The `issuer` must be replaced with a Kustomize patch.

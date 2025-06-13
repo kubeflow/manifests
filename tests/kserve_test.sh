@@ -15,31 +15,38 @@ export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
 export KSERVE_TEST_NAMESPACE=${NAMESPACE}
 
 cat <<EOF | kubectl apply -f -
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
 metadata:
   name: test-sklearn-path
   namespace: ${NAMESPACE}
 spec:
-  gateways:
-    - kubeflow/kubeflow-gateway
-  hosts:
-    - '*'
-  http:
-    - match:
-        - uri:
-            prefix: /kserve/${NAMESPACE}/test-sklearn/
-      rewrite:
-        uri: /
-      route:
-        - destination:
-            host: knative-local-gateway.istio-system.svc.cluster.local
-          headers:
-            request:
-              set:
-                Host: test-sklearn-predictor.${NAMESPACE}.svc.cluster.local
-          weight: 100
-      timeout: 300s
+  parentRefs:
+  - name: kubeflow-gateway
+    namespace: istio-system
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /kserve/${NAMESPACE}/test-sklearn/
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /
+    - type: RequestHeaderModifier
+      requestHeaderModifier:
+        set:
+        - name: Host
+          value: test-sklearn-predictor.${NAMESPACE}.svc.cluster.local
+    backendRefs:
+    - name: cluster-local-gateway-istio
+      namespace: istio-system
+      port: 80
+      weight: 100
+    timeouts:
+      request: 300s
 EOF
 
 cat <<EOF | kubectl apply -f -
@@ -83,8 +90,9 @@ sleep 60
 echo "Testing path-based access with valid token..."
 curl -v --fail --show-error \
  -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
+ -H "Host: test-sklearn-predictor.${NAMESPACE}.example.com" \
  -H "Content-Type: application/json" \
- "http://${KSERVE_INGRESS_HOST_PORT}/kserve/${NAMESPACE}/test-sklearn/v1/models/test-sklearn:predict" \
+ "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/test-sklearn:predict" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}'
 
 echo "Testing direct service access still works..."
@@ -94,6 +102,9 @@ curl -v --fail --show-error \
   -H "Content-Type: application/json" \
   "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/test-sklearn:predict" \
   -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}'
+
+kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
+sleep 10
 
 # Create AuthorizationPolicy for pytest isvc-sklearn
 cat <<EOF | kubectl apply -f -
@@ -110,8 +121,6 @@ spec:
     matchLabels:
       serving.knative.dev/service: isvc-sklearn-predictor
 EOF
-
-kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
 
 cd ${TEST_DIRECTORY} && pytest . -vs --log-level info
 

@@ -14,27 +14,9 @@ replacements:
     fieldPath: metadata.name
   targets:
   - fieldPaths:
-    - spec.http.0.route.0.destination.host
-    options:
-      delimiter: .
+    - spec.rules.0.backendRefs.0.name
     select:
-      version: v1alpha3
-      group: networking.istio.io
-      kind: VirtualService
-      name: dex
-- source:
-    fieldPath: metadata.namespace
-    kind: Service
-    name: dex
-    version: v1
-  targets:
-  - fieldPaths:
-    - spec.http.0.route.0.destination.host
-    options:
-      delimiter: .
-      index: 1
-    select:
-      version: v1alpha3
-      group: networking.istio.io
-      kind: VirtualService
+      version: v1beta1
+      group: gateway.networking.k8s.io
+      kind: HTTPRoute
       name: dex

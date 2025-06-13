@@ -13,3 +13,39 @@ spec:
       istio: ingressgateway
   rules:
   - {}
+---
+# Allow all traffic to the kubeflow-gateway (Gateway API)
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: kubeflow-gateway-allow-all
+  namespace: kubeflow
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: kubeflow-gateway
+  rules:
+  - {}
+---
+# RequestAuthentication for Gateway API
+apiVersion: security.istio.io/v1
+kind: RequestAuthentication
+metadata:
+  name: dex-jwt-gateway-api
+  namespace: kubeflow
+spec:
+  jwtRules:
+  - forwardOriginalToken: true
+    fromHeaders:
+    - name: Authorization
+      prefix: 'Bearer '
+    issuer: http://dex.auth.svc.cluster.local:5556/dex
+    outputClaimToHeaders:
+    - claim: email
+      header: kubeflow-userid
+    - claim: groups
+      header: kubeflow-groups
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: kubeflow-gateway
