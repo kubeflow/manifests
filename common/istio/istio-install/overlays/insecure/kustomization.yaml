@@ -5,21 +5,37 @@ resources:
 - ../oauth2-proxy
 
 patches:
-
 - target:
     kind: ConfigMap
     name: istio-sidecar-injector
     namespace: istio-system
   patch: |-
-    - op: replace
-      path: /data/merged-values
-      value: |
-        {
-          "cni": {
-            "enabled": false,
-            "provider": "default"
-          }
-        }
+    [
+      {
+        "op": "replace",
+        "path": "/data/values",
+        "value": "{\n  \"cni\": {\n    \"enabled\": false\n  }\n}"
+      }
+    ]
+- target:
+    kind: Deployment
+    name: istiod
+    namespace: istio-system
+  patch: |-
+    [
+      {
+        "op": "replace",
+        "path": "/spec/template/spec/containers/0/env",
+        "value": [
+          {"name": "ENABLE_NATIVE_SIDECARS", "value": "true"},
+          {"name": "ISTIO_CNI_ENABLED", "value": "false"},
+          {"name": "INJECTION_WEBHOOK_CONFIG_NAME", "value": "istio-sidecar-injector"},
+          {"name": "VALIDATION_WEBHOOK_CONFIG_NAME", "value": "istio-validator-istio-system"},
+          {"name": "EXTERNAL_ISTIOD", "value": "false"},
+          {"name": "PILOT_CERT_PROVIDER", "value": "istiod"}
+        ]
+      }
+    ]
 
 - target:
     kind: DaemonSet
@@ -32,21 +48,3 @@ patches:
       name: istio-cni-node
       namespace: kube-system
     $patch: delete
-
-# error when applying this patch: pilot.cni.enabled false
-# - target:
-#     kind: ConfigMap
-#     name: istio-sidecar-injector
-#     namespace: istio-system
-#   patch: |-
-#     - op: replace
-#       path: /data/values
-#       value: |
-#         {
-#           "pilot": {
-#             "cni": {
-#               "enabled": false,
-#               "provider": "default"
-#             }
-#           }
-#         }
