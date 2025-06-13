@@ -1,0 +1,410 @@
+# Copyright 2021 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: knative-gateway-api-admin
+  labels:
+    networking.knative.dev/ingress-provider: net-gateway-api
+    app.kubernetes.io/component: net-gateway-api
+    app.kubernetes.io/name: knative-serving
+    app.kubernetes.io/version: "1.18.0"
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        serving.knative.dev/controller: "true"
+rules: [] # Rules are automatically filled in by the controller manager.
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: knative-gateway-api-core
+  labels:
+    serving.knative.dev/controller: "true"
+    networking.knative.dev/ingress-provider: net-gateway-api
+    app.kubernetes.io/component: net-gateway-api
+    app.kubernetes.io/name: knative-serving
+    app.kubernetes.io/version: "1.18.0"
+rules:
+  - apiGroups: ["gateway.networking.k8s.io"]
+    resources: ["httproutes", "referencegrants", "referencepolicies"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+  - apiGroups: ["gateway.networking.k8s.io"]
+    resources: ["gateways"]
+    verbs: ["get", "list", "update", "patch", "watch"]
+
+---
+# Copyright 2021 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: net-gateway-api-controller
+  namespace: knative-serving
+  labels:
+    networking.knative.dev/ingress-provider: net-gateway-api
+    app.kubernetes.io/component: net-gateway-api
+    app.kubernetes.io/version: "1.18.0"
+    app.kubernetes.io/name: knative-serving
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: net-gateway-api-controller
+  template:
+    metadata:
+      labels:
+        app: net-gateway-api-controller
+    spec:
+      # To avoid node becoming SPOF, spread our replicas to different nodes.
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: net-gateway-api-controller
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+      serviceAccountName: controller
+      containers:
+        - name: controller
+          # This is the Go import path for the binary that is containerized
+          # and substituted here.
+          image: gcr.io/knative-releases/knative.dev/net-gateway-api/cmd/controller@sha256:cf6eb5b8d4364976c449d489363e69453d003508bd27cf1548bf1fec78c876c7
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 1000m
+              memory: 1000Mi
+          ports:
+            - name: metrics
+              containerPort: 9090
+            - name: profiling
+              containerPort: 8008
+          env:
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CONFIG_LOGGING_NAME
+              value: config-logging
+            - name: CONFIG_OBSERVABILITY_NAME
+              value: config-observability
+            - name: METRICS_DOMAIN
+              value: knative.dev/net-gateway-api
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+
+---
+# Copyright 2024 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: net-gateway-api-webhook
+  namespace: knative-serving
+  labels:
+    app.kubernetes.io/component: net-gateway-api
+    app.kubernetes.io/name: knative-serving
+    app.kubernetes.io/version: "1.18.0"
+    networking.knative.dev/ingress-provider: gateway-api
+spec:
+  selector:
+    matchLabels:
+      app: net-gateway-api-webhook
+      role: net-gateway-api-webhook
+  template:
+    metadata:
+      labels:
+        app: net-gateway-api-webhook
+        role: net-gateway-api-webhook
+        app.kubernetes.io/component: net-gateway-api
+        app.kubernetes.io/name: knative-serving
+        app.kubernetes.io/version: "1.18.0"
+    spec:
+      serviceAccountName: controller
+      containers:
+        - name: webhook
+          # This is the Go import path for the binary that is containerized
+          # and substituted here.
+          image: gcr.io/knative-releases/knative.dev/net-gateway-api/cmd/webhook@sha256:fa238aa79849f272a763a0871472236fb3246bcc5ec6c91692074967e36c50ec
+          resources:
+            requests:
+              cpu: 20m
+              memory: 20Mi
+            limits:
+              cpu: 200m
+              memory: 200Mi
+          env:
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CONFIG_LOGGING_NAME
+              value: config-logging
+            - name: CONFIG_OBSERVABILITY_NAME
+              value: config-observability
+            # TODO(https://github.com/knative/pkg/pull/953): Remove stackdriver specific config
+            - name: METRICS_DOMAIN
+              value: knative.dev/net-gateway-api
+            - name: WEBHOOK_NAME
+              value: net-gateway-api-webhook
+            # If you change WEBHOOK_PORT, you will also need to change the
+            # containerPort "https-webhook" to the same value.
+            - name: WEBHOOK_PORT
+              value: "8443"
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          readinessProbe:
+            periodSeconds: 1
+            httpGet:
+              scheme: HTTPS
+              port: 8443
+            failureThreshold: 3
+          livenessProbe:
+            periodSeconds: 1
+            httpGet:
+              scheme: HTTPS
+              port: 8443
+            failureThreshold: 6
+            initialDelaySeconds: 20
+          ports:
+            - name: metrics
+              containerPort: 9090
+            - name: profiling
+              containerPort: 8008
+            - name: https-webhook
+              containerPort: 8443
+
+---
+# Copyright 2024 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: net-gateway-api-webhook-certs
+  namespace: knative-serving
+  labels:
+    app.kubernetes.io/component: net-gateway-api
+    app.kubernetes.io/name: knative-serving
+    app.kubernetes.io/version: "1.18.0"
+    networking.knative.dev/ingress-provider: gateway-api
+
+---
+# Copyright 2024 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: net-gateway-api-webhook
+  namespace: knative-serving
+  labels:
+    role: net-gateway-api-webhook
+    app.kubernetes.io/component: net-gateway-api
+    app.kubernetes.io/name: knative-serving
+    app.kubernetes.io/version: "1.18.0"
+    networking.knative.dev/ingress-provider: gateway-api
+spec:
+  ports:
+    # Define metrics and profiling for them to be accessible within service meshes.
+    - name: http-metrics
+      port: 9090
+      targetPort: metrics
+    - name: http-profiling
+      port: 8008
+      targetPort: profiling
+    - name: https-webhook
+      port: 443
+      targetPort: https-webhook
+  selector:
+    app: net-gateway-api-webhook
+
+---
+# Copyright 2024 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: config.webhook.gateway-api.networking.internal.knative.dev
+  labels:
+    app.kubernetes.io/component: net-gateway-api
+    app.kubernetes.io/name: knative-serving
+    app.kubernetes.io/version: "1.18.0"
+    networking.knative.dev/ingress-provider: gateway-api
+webhooks:
+  - admissionReviewVersions:
+      - v1
+      - v1beta1
+    clientConfig:
+      service:
+        name: net-gateway-api-webhook
+        namespace: knative-serving
+    failurePolicy: Fail
+    sideEffects: None
+    name: config.webhook.gateway-api.networking.internal.knative.dev
+    objectSelector:
+      matchLabels:
+        app.kubernetes.io/name: knative-serving
+        app.kubernetes.io/component: net-gateway-api
+
+---
+# Copyright 2021 The Knative Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-gateway
+  namespace: knative-serving
+  labels:
+    networking.knative.dev/ingress-provider: net-gateway-api
+    app.kubernetes.io/component: net-gateway-api
+    app.kubernetes.io/name: knative-serving
+    app.kubernetes.io/version: "1.18.0"
+data:
+  # external-gateways defines the Gateway to be used for external traffic
+  external-gateways: |
+    - class: istio
+      gateway: istio-system/kubeflow-gateway
+      service: istio-system/kubeflow-gateway-istio
+      supported-features:
+      - HTTPRouteRequestTimeout
+
+  _example: |
+    ################################
+    #                              #
+    #    EXAMPLE CONFIGURATION     #
+    #                              #
+    ################################
+
+    # This block is not actually functional configuration,
+    # but serves to illustrate the available configuration
+    # options and document them in a way that is accessible
+    # to users that `kubectl edit` this config map.
+    #
+    # These sample configuration options may be copied out of
+    # this example block and unindented to be in the data block
+    # to actually change the configuration.
+
+    # When configuring Gateways below if 'service' is not provided,
+    # net-gateway-api will use the first address on the Gateway status
+    # for probing. This is useful when the Gateway proxy is off cluster.
+    #
+    # See: https://github.com/knative-extensions/net-gateway-api/issues/665
+
+    # external-gateways defines the Gateway to be used for external traffic
+    external-gateways: |
+      - class: istio
+        gateway: istio-system/knative-gateway
+        service: istio-system/istio-ingressgateway
+        supported-features:
+        - HTTPRouteRequestTimeout
+
+    # local-gateways defines the Gateway to be used for cluster local traffic
+    local-gateways: |
+      - class: istio
+        gateway: istio-system/knative-local-gateway
+        service: istio-system/knative-local-gateway
+        supported-features:
+        - HTTPRouteRequestTimeout
+
+---

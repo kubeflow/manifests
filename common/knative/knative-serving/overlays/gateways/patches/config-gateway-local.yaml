@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-gateway
+  namespace: knative-serving
+data:
+  # Add local gateway configuration for cluster-local traffic
+  local-gateways: |
+    - class: istio
+      gateway: istio-system/cluster-local-gateway
+      service: istio-system/cluster-local-gateway-istio
+      supported-features:
+      - HTTPRouteRequestTimeout 

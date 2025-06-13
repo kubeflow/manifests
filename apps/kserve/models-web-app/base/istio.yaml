@@ -5,8 +5,8 @@ metadata:
   namespace: kserve
 spec:
   parentRefs:
-  - name: knative-ingress-gateway
-    namespace: knative-serving
+  - name: kubeflow-gateway
+    namespace: istio-system
   rules:
   - matches:
     - path:
