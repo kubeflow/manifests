@@ -5,8 +5,10 @@ NAMESPACE=${1:-kubeflow-user-example-com}
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TEST_DIRECTORY="${SCRIPT_DIRECTORY}/kserve"
 
-echo "=== KServe Predictor Service Labels ==="
-kubectl get pods -n ${NAMESPACE} -l serving.knative.dev/service=isvc-sklearn-predictor --show-labels || true
+if ! command -v pytest &> /dev/null; then
+  echo "Installing test dependencies..."
+  pip install -r ${TEST_DIRECTORY}/requirements.txt
+fi
 
 export KSERVE_INGRESS_HOST_PORT=${KSERVE_INGRESS_HOST_PORT:-localhost:8080}
 export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
@@ -26,7 +28,7 @@ spec:
   - matches:
     - path:
         type: PathPrefix
-        value: /kserve/${NAMESPACE}/isvc-sklearn/
+        value: /kserve/${NAMESPACE}/test-sklearn/
     filters:
     - type: URLRewrite
       urlRewrite:
@@ -37,9 +39,9 @@ spec:
       requestHeaderModifier:
         set:
         - name: Host
-          value: isvc-sklearn-predictor.${NAMESPACE}.svc.cluster.local
+          value: test-sklearn-predictor.${NAMESPACE}.svc.cluster.local
     backendRefs:
-    - name: knative-local-gateway
+    - name: cluster-local-gateway-istio
       namespace: istio-system
       port: 80
       weight: 100
@@ -88,8 +90,9 @@ sleep 60
 echo "Testing path-based access with valid token..."
 curl -v --fail --show-error \
  -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
+ -H "Host: test-sklearn-predictor.${NAMESPACE}.example.com" \
  -H "Content-Type: application/json" \
- "http://${KSERVE_INGRESS_HOST_PORT}/kserve/${NAMESPACE}/test-sklearn/v1/models/test-sklearn:predict" \
+ "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/test-sklearn:predict" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}'
 
 echo "Testing direct service access still works..."
@@ -99,6 +102,9 @@ curl -v --fail --show-error \
   -H "Content-Type: application/json" \
   "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/test-sklearn:predict" \
   -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}'
+
+kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
+sleep 10
 
 # Create AuthorizationPolicy for pytest isvc-sklearn
 cat <<EOF | kubectl apply -f -
@@ -115,8 +121,6 @@ spec:
     matchLabels:
       serving.knative.dev/service: isvc-sklearn-predictor
 EOF
-
-kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
 
 cd ${TEST_DIRECTORY} && pytest . -vs --log-level info
 
