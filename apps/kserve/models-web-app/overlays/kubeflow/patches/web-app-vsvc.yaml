@@ -1,14 +1,10 @@
 - op: replace
-  path: /spec/gateways
+  path: /spec/parentRefs
   value:
-    - kubeflow/kubeflow-gateway
+    - name: kubeflow-gateway
+      namespace: istio-system
 - op: replace
-  path: /spec/http/0/route/0/destination
+  path: /spec/rules/0/backendRefs/0
   value:
-    host: kserve-models-web-app.kubeflow.svc.cluster.local
-    port:
-      number: 80
-- op: replace
-  path: /spec/gateways
-  value:
-    - kubeflow/kubeflow-gateway
+    name: kserve-models-web-app
+    port: 80

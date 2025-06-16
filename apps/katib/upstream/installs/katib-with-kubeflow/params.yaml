@@ -1,4 +1,4 @@
 ---
 varReference:
-  - path: spec/http/route/destination/host
-    kind: VirtualService
+  - path: spec/rules/backendRefs/name
+    kind: HTTPRoute

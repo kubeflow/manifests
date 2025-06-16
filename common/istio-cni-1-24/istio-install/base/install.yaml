@@ -3317,6 +3317,10 @@ spec:
         env:
         - name: ENABLE_NATIVE_SIDECARS
           value: 'true'
+        - name: PILOT_ENABLE_GATEWAY_API
+          value: 'true'
+        - name: PILOT_ENABLE_GATEWAY_API_DEPLOYMENT_CONTROLLER
+          value: 'true'
         - name: REVISION
           value: default
         - name: PILOT_CERT_PROVIDER
