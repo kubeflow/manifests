@@ -12,3 +12,4 @@ patches:
     kind: Deployment
     name: model-registry-ui
     version: v1
+namespace: kubeflow
