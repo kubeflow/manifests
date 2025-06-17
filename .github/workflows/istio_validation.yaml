@@ -13,7 +13,7 @@ env:
   KF_PROFILE: kubeflow-user-example-com
 
 jobs:
-  test-istio-cni:
+  test-istio:
     runs-on: ubuntu-latest
     strategy:
       matrix:
