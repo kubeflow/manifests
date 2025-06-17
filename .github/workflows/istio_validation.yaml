@@ -155,6 +155,7 @@ jobs:
           wget -qO- --timeout=10 test-app.$KF_PROFILE.svc.cluster.local
 
     - name: Apply Pod Security Standards baseline levels
+      if: matrix.istio-mode == 'cni'
       run: ./tests/PSS_baseline_enable.sh
 
     - name: Collect debug information on failure
