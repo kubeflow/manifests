@@ -105,10 +105,13 @@ jobs:
         kubectl create deployment test-app --image=nginx -n $KF_PROFILE
         kubectl wait --for=condition=available --timeout=120s deployment/test-app -n $KF_PROFILE
 
-        SIDECAR_COUNT=$(kubectl get pods -n $KF_PROFILE -l app=test-app -o jsonpath='{.items[0].spec.containers[*].name}' | grep -o istio-proxy | wc -l)
-        if [ "$SIDECAR_COUNT" -eq 0 ]; then
-          echo "ERROR: Sidecar injection failed"
-          kubectl describe pod -n $KF_PROFILE -l app=test-app
+        # With native sidecars, istio-proxy runs as a persistent init container
+        POD_NAME=$(kubectl get pods -n $KF_PROFILE -l app=test-app -o jsonpath='{.items[0].metadata.name}')
+        ISTIO_PROXY_RUNNING=$(kubectl get pod $POD_NAME -n $KF_PROFILE -o jsonpath='{.status.initContainerStatuses[?(@.name=="istio-proxy")].state.running}' | jq -r 'has("startedAt")')
+
+        if [ "$ISTIO_PROXY_RUNNING" != "true" ]; then
+          echo "ERROR: Sidecar injection failed - istio-proxy not running as native sidecar"
+          kubectl describe pod $POD_NAME -n $KF_PROFILE
           exit 1
         fi
         echo "Sidecar injection successful"
