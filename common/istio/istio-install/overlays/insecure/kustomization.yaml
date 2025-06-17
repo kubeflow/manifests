@@ -6,6 +6,7 @@ resources:
 
 patches:
 - path: configmap-patch.yaml
+- path: pss-warning-patch.yaml
 - target:
     kind: Deployment
     name: istiod
