@@ -25,7 +25,7 @@ wg_dirs = {
     "manifests": "../common/cert-manager/cert-manager/base ../common/cert-manager/kubeflow-issuer/base ../common/istio/istio-crds/base ../common/istio/istio-namespace/base ../common/istio/istio-install/overlays/oauth2-proxy ../common/oauth2-proxy/overlays/m2m-self-signed ../common/dex/overlays/oauth2-proxy ../common/knative/knative-serving/overlays/gateways ../common/knative/knative-eventing/base ../common/istio/cluster-local-gateway/base ../common/kubeflow-namespace/base ../common/kubeflow-roles/base ../common/istio/kubeflow-istio-resources/base",
     "workbenches": "../apps/pvcviewer-controller/upstream/base ../apps/admission-webhook/upstream/overlays ../apps/centraldashboard/overlays ../apps/jupyter/jupyter-web-app/upstream/overlays ../apps/volumes-web-app/upstream/overlays ../apps/tensorboard/tensorboards-web-app/upstream/overlays ../apps/profiles/upstream/overlays ../apps/jupyter/notebook-controller/upstream/overlays ../apps/tensorboard/tensorboard-controller/upstream/overlays",
     "kserve": "../apps/kserve - ../apps/kserve/models-web-app/overlays/kubeflow",
-    "model-registry": "../apps/model-registry/upstream",
+    "model-registry": "../apps/model-registry/upstream/overlays/db ../apps/model-registry/upstream/options/istio ../apps/model-registry/upstream/options/ui/overlays/istio",
     "spark": "../apps/spark/spark-operator/overlays/kubeflow",
 }
 
