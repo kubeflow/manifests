@@ -5,18 +5,7 @@ resources:
 - ../oauth2-proxy
 
 patches:
-- target:
-    kind: ConfigMap
-    name: istio-sidecar-injector
-    namespace: istio-system
-  patch: |-
-    [
-      {
-        "op": "replace",
-        "path": "/data/values",
-        "value": "{\n  \"cni\": {\n    \"enabled\": false\n  }\n}"
-      }
-    ]
+- path: configmap-patch.yaml
 - target:
     kind: Deployment
     name: istiod
@@ -36,7 +25,6 @@ patches:
         ]
       }
     ]
-
 - target:
     kind: DaemonSet
     name: istio-cni-node
