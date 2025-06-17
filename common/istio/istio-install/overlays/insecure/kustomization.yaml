@@ -5,6 +5,7 @@ resources:
 - ../oauth2-proxy
 - ../../../istio-namespace/base
 - namespaces-pss-privileged.yaml
+- allow-namespace-traffic.yaml
 
 patches:
 - path: configmap-patch.yaml
