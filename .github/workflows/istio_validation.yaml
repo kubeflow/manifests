@@ -84,7 +84,7 @@ jobs:
         fi
 
         # Verify configmap has pilot.cni.enabled=false
-        kubectl get configmap istio-sidecar-injector -n istio-system -o jsonpath='{.data.values}' | grep -q '"enabled": false' || \
+        kubectl get configmap istio-sidecar-injector -n istio-system -o jsonpath='{.data.values}' | grep -q 'enabled: false' || \
           (echo "ERROR: pilot.cni.enabled should be false in configmap values" && \
            kubectl get configmap istio-sidecar-injector -n istio-system -o jsonpath='{.data.values}' && exit 1)
 
