@@ -84,11 +84,9 @@ jobs:
         fi
 
         # Verify configmap has pilot.cni.enabled=false
-        PILOT_CNI_ENABLED=$(kubectl get configmap istio-sidecar-injector -n istio-system -o jsonpath='{.data.values}' | jq -r '.pilot.cni.enabled')
-        if [ "$PILOT_CNI_ENABLED" != "false" ]; then
-          echo "ERROR: pilot.cni.enabled should be false, got: $PILOT_CNI_ENABLED"
-          exit 1
-        fi
+        kubectl get configmap istio-sidecar-injector -n istio-system -o jsonpath='{.data.values}' | grep -q '"enabled": false' || \
+          (echo "ERROR: pilot.cni.enabled should be false in configmap values" && \
+           kubectl get configmap istio-sidecar-injector -n istio-system -o jsonpath='{.data.values}' && exit 1)
 
     - name: Install OAuth2 Proxy
       run: ./tests/oauth2-proxy_install.sh
