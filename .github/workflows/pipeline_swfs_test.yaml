@@ -60,7 +60,7 @@ jobs:
       run: ./tests/multi_tenancy_install.sh
 
     - name: Install kubeflow-istio-resources
-      run: kustomize build common/istio-cni-1-24/kubeflow-istio-resources/base | kubectl apply -f -
+      run: kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
 
     - name: Create KF Profile
       run: ./tests/kubeflow_profile_install.sh

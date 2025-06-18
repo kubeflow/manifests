@@ -42,7 +42,7 @@ jobs:
       run: ./tests/oauth2-proxy_install.sh
 
     - name: Install Kubeflow Istio Resources
-      run: kustomize build common/istio-cni-1-24/kubeflow-istio-resources/base | kubectl apply -f -
+      run: kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
 
     - name: Install Multi-Tenancy
       run: ./tests/multi_tenancy_install.sh

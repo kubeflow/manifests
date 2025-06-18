@@ -36,7 +36,7 @@ jobs:
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
     - name: Install kubeflow-istio-resources
-      run: kustomize build common/istio-cni-1-24/kubeflow-istio-resources/base | kubectl apply -f -
+      run: kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
 
     - name: Install KF Pipelines
       run: ./tests/pipelines_install.sh

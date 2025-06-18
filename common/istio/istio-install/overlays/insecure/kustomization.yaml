@@ -1,0 +1,51 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../oauth2-proxy
+- ../../../istio-namespace/base
+- namespaces-pss-privileged.yaml
+- allow-namespace-traffic.yaml
+
+patches:
+- path: configmap-patch.yaml
+- target:
+    kind: Namespace
+    name: istio-system
+  patch: |-
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: istio-system
+      labels:
+        pod-security.kubernetes.io/enforce: privileged
+- target:
+    kind: Deployment
+    name: istiod
+    namespace: istio-system
+  patch: |-
+    [
+      {
+        "op": "replace",
+        "path": "/spec/template/spec/containers/0/env",
+        "value": [
+          {"name": "ENABLE_NATIVE_SIDECARS", "value": "true"},
+          {"name": "ISTIO_CNI_ENABLED", "value": "false"},
+          {"name": "INJECTION_WEBHOOK_CONFIG_NAME", "value": "istio-sidecar-injector"},
+          {"name": "VALIDATION_WEBHOOK_CONFIG_NAME", "value": "istio-validator-istio-system"},
+          {"name": "EXTERNAL_ISTIOD", "value": "false"},
+          {"name": "PILOT_CERT_PROVIDER", "value": "istiod"}
+        ]
+      }
+    ]
+- target:
+    kind: DaemonSet
+    name: istio-cni-node
+    namespace: kube-system
+  patch: |-
+    apiVersion: apps/v1
+    kind: DaemonSet
+    metadata:
+      name: istio-cni-node
+      namespace: kube-system
+    $patch: delete
