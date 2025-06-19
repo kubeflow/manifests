@@ -91,7 +91,7 @@ jobs:
     - name: Install Model Registry
       run: |
         kustomize build applications/model-registry/upstream/overlays/db | kubectl apply -n kubeflow -f -
-        kustomize build appapplications/model-registry/upstream/options/istio | kubectl apply -n kubeflow -f -
+        kustomize build applications/model-registry/upstream/options/istio | kubectl apply -n kubeflow -f -
 
     - name: Install Model Registry UI
       run: |
