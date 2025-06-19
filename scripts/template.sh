@@ -19,7 +19,7 @@ BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${COMMIT?}}  
 
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
 SOURCE_MANIFESTS_PATH="manifests"   # Path within source repo where manifests are
-DESTINATION_MANIFESTS_PATH="apps/${COMPONENT_NAME}/upstream"  # Destination path within manifests repo
+DESTINATION_MANIFESTS_PATH="applications/${COMPONENT_NAME}/upstream"  # Destination path within manifests repo
 
 SOURCE_TEXT="\[.*\](https://github.com/${REPOSITORY_NAME}/tree/.*/manifests)"
 DESTINATION_TEXT="\[${COMMIT}\](https://github.com/${REPOSITORY_NAME}/tree/${COMMIT}/manifests)"

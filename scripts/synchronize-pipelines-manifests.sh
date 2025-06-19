@@ -17,7 +17,7 @@ BRANCH_NAME=${BRANCH_NAME:=synchronize-kubeflow-${COMPONENT_NAME}-manifests-${CO
 # Path configurations
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
 SOURCE_MANIFESTS_PATH="manifests/kustomize"
-DESTINATION_MANIFESTS_PATH="apps/pipeline/upstream"
+DESTINATION_MANIFESTS_PATH="applications/pipeline/upstream"
 
 # README update patterns
 SOURCE_TEXT="\[.*\](https://github.com/${REPOSITORY_NAME}/tree/.*/manifests/kustomize)"
@@ -33,7 +33,7 @@ copy_manifests "${SOURCE_DIRECTORY}/${REPOSITORY_DIRECTORY}/${SOURCE_MANIFESTS_P
 update_readme "$MANIFESTS_DIRECTORY" "$SOURCE_TEXT" "$DESTINATION_TEXT"
 
 commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" \
-  "apps" \
+  "applications" \
   "README.md"
 
 echo "Synchronization completed successfully."

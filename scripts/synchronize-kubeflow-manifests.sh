@@ -47,53 +47,53 @@ copy_component_manifests() {
 
 copy_component_manifests "admission-webhook" \
     "components/admission-webhook/manifests" \
-    "apps/admission-webhook/upstream" \
+    "applications/admission-webhook/upstream" \
     "admission-webhook/manifests"
 
 copy_component_manifests "centraldashboard" \
     "components/centraldashboard/manifests" \
-    "apps/centraldashboard/upstream" \
+    "applications/centraldashboard/upstream" \
     "centraldashboard/manifests"
 
 copy_component_manifests "jupyter-web-app" \
-    "components/crud-web-apps/jupyter/manifests" \
-    "apps/jupyter/jupyter-web-app/upstream" \
-    "crud-web-apps/jupyter/manifests"
+    "components/crud-web-applications/jupyter/manifests" \
+    "applications/jupyter/jupyter-web-app/upstream" \
+    "crud-web-applications/jupyter/manifests"
 
 copy_component_manifests "volumes-web-app" \
-    "components/crud-web-apps/volumes/manifests" \
-    "apps/volumes-web-app/upstream" \
-    "crud-web-apps/volumes/manifests"
+    "components/crud-web-applications/volumes/manifests" \
+    "applications/volumes-web-app/upstream" \
+    "crud-web-applications/volumes/manifests"
 
 copy_component_manifests "tensorboards-web-app" \
-    "components/crud-web-apps/tensorboards/manifests" \
-    "apps/tensorboard/tensorboards-web-app/upstream" \
-    "crud-web-apps/tensorboards/manifests"
+    "components/crud-web-applications/tensorboards/manifests" \
+    "applications/tensorboard/tensorboards-web-app/upstream" \
+    "crud-web-applications/tensorboards/manifests"
 
 copy_component_manifests "profile-controller" \
     "components/profile-controller/config" \
-    "apps/profiles/upstream" \
+    "applications/profiles/upstream" \
     "profile-controller/config"
 
 copy_component_manifests "notebook-controller" \
     "components/notebook-controller/config" \
-    "apps/jupyter/notebook-controller/upstream" \
+    "applications/jupyter/notebook-controller/upstream" \
     "notebook-controller/config"
 
 copy_component_manifests "tensorboard-controller" \
     "components/tensorboard-controller/config" \
-    "apps/tensorboard/tensorboard-controller/upstream" \
+    "applications/tensorboard/tensorboard-controller/upstream" \
     "tensorboard-controller/config"
 
 copy_component_manifests "pvcviewer-controller" \
     "components/pvcviewer-controller/config" \
-    "apps/pvcviewer-controller/upstream" \
+    "applications/pvcviewer-controller/upstream" \
     "pvcviewer-controller/config"
 
 echo "Successfully copied all manifests."
 
 commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" \
-  "apps" \
+  "applications" \
   "README.md"
 
 echo "Synchronization completed successfully."

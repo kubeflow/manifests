@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euxo pipefail
 echo "Installing Kserve ..."
-cd apps/kserve
+cd applications/kserve
 set +e
 for ((i=1; i<=3; i++)); do
     if kustomize build kserve | kubectl apply --server-side --force-conflicts -f -; then

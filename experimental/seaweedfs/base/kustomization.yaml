@@ -4,7 +4,7 @@ namespace: kubeflow
 
 resources:
 - seaweedfs/
-- ../../../apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
+- ../../../applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
 configMapGenerator:
 - name: kubeflow-pipelines-profile-controller-code
   behavior: replace

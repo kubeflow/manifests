@@ -67,36 +67,36 @@ resources:
 # Kubeflow Istio Resources
 - ../common/istio/kubeflow-istio-resources/base
 # Kubeflow Pipelines
-- ../apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
+- ../applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
 # Katib
-- ../apps/katib/upstream/installs/katib-with-kubeflow
+- ../applications/katib/upstream/installs/katib-with-kubeflow
 # Central Dashboard
-- ../apps/centraldashboard/overlays/oauth2-proxy
+- ../applications/centraldashboard/overlays/oauth2-proxy
 # Admission Webhook
-- ../apps/admission-webhook/upstream/overlays/cert-manager
+- ../applications/admission-webhook/upstream/overlays/cert-manager
 # Jupyter Web App
-- ../apps/jupyter/jupyter-web-app/upstream/overlays/istio
+- ../applications/jupyter/jupyter-web-app/upstream/overlays/istio
 # Notebook Controller
-- ../apps/jupyter/notebook-controller/upstream/overlays/kubeflow
+- ../applications/jupyter/notebook-controller/upstream/overlays/kubeflow
 # Profiles + KFAM with PSS (Pod Security Standards)
-- ../apps/profiles/pss
+- ../applications/profiles/pss
 # PVC Viewer
-- ../apps/pvcviewer-controller/upstream/base
+- ../applications/pvcviewer-controller/upstream/base
 # Volumes Web App
-- ../apps/volumes-web-app/upstream/overlays/istio
+- ../applications/volumes-web-app/upstream/overlays/istio
 # Tensorboards Controller
-- ../apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
+- ../applications/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
 # Tensorboard Web App
-- ../apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
+- ../applications/tensorboard/tensorboards-web-app/upstream/overlays/istio
 # Training Operator
-- ../apps/training-operator/upstream/overlays/kubeflow
+- ../applications/training-operator/upstream/overlays/kubeflow
 # User namespace
 - ../common/user-namespace/base
 # KServe
-- ../apps/kserve/kserve
-- ../apps/kserve/models-web-app/overlays/kubeflow
+- ../applications/kserve/kserve
+- ../applications/kserve/models-web-app/overlays/kubeflow
 # Spark Operator
-- ../apps/spark/spark-operator/overlays/kubeflow
+- ../applications/spark/spark-operator/overlays/kubeflow
 
 # Ray is an experimental integration
 # Here is the documentation for Ray: https://docs.ray.io/en/latest/

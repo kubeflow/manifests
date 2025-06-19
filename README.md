@@ -51,22 +51,22 @@ This repository periodically synchronizes all official Kubeflow components from 
 
 | Component | Local Manifests Path | Upstream Revision |
 | - | - | - |
-| Training Operator | apps/training-operator/upstream | [v1.9.2](https://github.com/kubeflow/training-operator/tree/v1.9.2/manifests) |
-| Notebook Controller | apps/jupyter/notebook-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/notebook-controller/config) |
-| PVC Viewer Controller | apps/pvcviewer-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/pvcviewer-controller/config) |
-| Tensorboard Controller | apps/tensorboard/tensorboard-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/tensorboard-controller/config) |
-| Central Dashboard | apps/centraldashboard/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/centraldashboard/manifests) |
-| Profiles + KFAM | apps/profiles/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/profile-controller/config) |
-| PodDefaults Webhook | apps/admission-webhook/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/admission-webhook/manifests) |
-| Jupyter Web Application | apps/jupyter/jupyter-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/jupyter/manifests) |
-| Tensorboards Web Application | apps/tensorboard/tensorboards-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/tensorboards/manifests) |
-| Volumes Web Application | apps/volumes-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/volumes/manifests) |
-| Katib | apps/katib/upstream | [v0.18.0](https://github.com/kubeflow/katib/tree/v0.18.0/manifests/v1beta1) |
-| KServe | apps/kserve/kserve | [v0.15.0](https://github.com/kserve/kserve/releases/tag/v0.15.0/install/v0.15.0) |
-| KServe Models Web Application | apps/kserve/models-web-app | [v0.14.0](https://github.com/kserve/models-web-app/tree/v0.14.0/config) |
-| Kubeflow Pipelines | apps/pipeline/upstream | [2.5.0](https://github.com/kubeflow/pipelines/tree/2.5.0/manifests/kustomize) |
-| Kubeflow Model Registry | apps/model-registry/upstream | [v0.2.19](https://github.com/kubeflow/model-registry/tree/v0.2.19/manifests/kustomize) |
-| Spark Operator | apps/spark/spark-operator | [2.2.0](https://github.com/kubeflow/spark-operator/tree/v2.2.0) |
+| Training Operator | applications/training-operator/upstream | [v1.9.2](https://github.com/kubeflow/training-operator/tree/v1.9.2/manifests) |
+| Notebook Controller | applications/jupyter/notebook-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/notebook-controller/config) |
+| PVC Viewer Controller | applications/pvcviewer-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/pvcviewer-controller/config) |
+| Tensorboard Controller | applications/tensorboard/tensorboard-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/tensorboard-controller/config) |
+| Central Dashboard | applications/centraldashboard/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/centraldashboard/manifests) |
+| Profiles + KFAM | applications/profiles/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/profile-controller/config) |
+| PodDefaults Webhook | applications/admission-webhook/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/admission-webhook/manifests) |
+| Jupyter Web Application | applications/jupyter/jupyter-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/jupyter/manifests) |
+| Tensorboards Web Application | applications/tensorboard/tensorboards-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/tensorboards/manifests) |
+| Volumes Web Application | applications/volumes-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/volumes/manifests) |
+| Katib | applications/katib/upstream | [v0.18.0](https://github.com/kubeflow/katib/tree/v0.18.0/manifests/v1beta1) |
+| KServe | applications/kserve/kserve | [v0.15.0](https://github.com/kserve/kserve/releases/tag/v0.15.0/install/v0.15.0) |
+| KServe Models Web Application | applications/kserve/models-web-app | [v0.14.0](https://github.com/kserve/models-web-app/tree/v0.14.0/config) |
+| Kubeflow Pipelines | applications/pipeline/upstream | [2.5.0](https://github.com/kubeflow/pipelines/tree/2.5.0/manifests/kustomize) |
+| Kubeflow Model Registry | applications/model-registry/upstream | [v0.2.19](https://github.com/kubeflow/model-registry/tree/v0.2.19/manifests/kustomize) |
+| Spark Operator | applications/spark/spark-operator | [2.2.0](https://github.com/kubeflow/spark-operator/tree/v2.2.0) |
 
 The following matrix shows the versions of common components used across different Kubeflow projects:
 
@@ -84,8 +84,8 @@ Although our master branch has extended automated tests and is already quite sta
 
 We provide two options for installing the official Kubeflow components and common services with Kustomize. The aim is to help users install easily and building distributions of Kubeflow by deriving / deviating from the Kubeflow manifests:
 
-1. Single-command installation of all components under `apps` and `common`
-2. Multi-command, individual component installation for `apps` and `common`
+1. Single-command installation of all components under `applications` and `common`
+2. Multi-command, individual component installation for `applications` and `common`
 
 Option 1 targets ease of deployment for end users. \
 Option 2 targets customization, allowing users to pick and choose individual components.
@@ -153,7 +153,7 @@ kubectl create secret generic regcred \
     --type=kubernetes.io/dockerconfigjson
 ```
 
-You can install all Kubeflow official components (residing under `apps`) and all common services (residing under `common`) using the following command:
+You can install all Kubeflow official components (residing under `applications`) and all common services (residing under `common`) using the following command:
 
 ```sh
 while ! kustomize build example | kubectl apply --server-side --force-conflicts -f -; do echo "Retrying to apply resources"; sleep 20; done
@@ -165,7 +165,7 @@ Congratulations! You can now start experimenting and running your end-to-end ML 
 
 ### Install Individual Components
 
-In this section, we will install each Kubeflow official component (under `apps`) and each common service (under `common`) separately, using just `kubectl` and `kustomize`.
+In this section, we will install each Kubeflow official component (under `applications`) and each common service (under `common`) separately, using just `kubectl` and `kustomize`.
 
 If all the following commands are executed, the result is the same as in the above section of the single command installation. The purpose of this section is to:
 
@@ -403,7 +403,7 @@ kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
 Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/components/pipelines/multi-user/) official Kubeflow component:
 
 ```sh
-kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
+kustomize build /pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
 ```
 This installs Argo with the runasnonroot emissary executor. Please note that you are still responsible for analyzing the security issues that arise when containers are run with root access and for deciding if the Kubeflow pipeline main containers are run as runasnonroot. It is generally strongly recommended that all user-accessible OCI containers run with Pod Security Standards [restricted](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted).
 
@@ -414,13 +414,13 @@ KFServing was rebranded to KServe.
 Install the KServe component:
 
 ```sh
-kustomize build apps/kserve/kserve | kubectl apply --server-side --force-conflicts -f -
+kustomize build applications/kserve/kserve | kubectl apply --server-side --force-conflicts -f -
 ```
 
 Install the Models web application:
 
 ```sh
-kustomize build apps/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
+kustomize build applications/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### Katib
@@ -428,7 +428,7 @@ kustomize build apps/kserve/models-web-app/overlays/kubeflow | kubectl apply -f 
 Install the Katib official Kubeflow component:
 
 ```sh
-kustomize build apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
+kustomize build applications/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
 ```
 
 #### Central Dashboard
@@ -436,7 +436,7 @@ kustomize build apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply
 Install the Central Dashboard official Kubeflow component:
 
 ```sh
-kustomize build apps/centraldashboard/overlays/oauth2-proxy | kubectl apply -f -
+kustomize build applications/centraldashboard/overlays/oauth2-proxy | kubectl apply -f -
 ```
 
 #### Admission Webhook
@@ -444,7 +444,7 @@ kustomize build apps/centraldashboard/overlays/oauth2-proxy | kubectl apply -f -
 Install the Admission Webhook for PodDefaults:
 
 ```sh
-kustomize build apps/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
+kustomize build applications/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
 ```
 
 #### Notebooks 1.0
@@ -452,13 +452,13 @@ kustomize build apps/admission-webhook/upstream/overlays/cert-manager | kubectl 
 Install the Notebook Controller official Kubeflow component:
 
 ```sh
-kustomize build apps/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build applications/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 Install the Jupyter Web Application official Kubeflow component:
 
 ```sh
-kustomize build apps/jupyter/jupyter-web-app/upstream/overlays/istio | kubectl apply -f -
+kustomize build applications/jupyter/jupyter-web-app/upstream/overlays/istio | kubectl apply -f -
 ```
 
 #### Workspaces (Notebooks 2.0)
@@ -470,7 +470,7 @@ This feature is still in development.
 Install the PVC Viewer Controller official Kubeflow component:
 
 ```sh
-kustomize build apps/pvcviewer-controller/upstream/base | kubectl apply -f -
+kustomize build applications/pvcviewer-controller/upstream/base | kubectl apply -f -
 ```
 
 #### Profiles + KFAM
@@ -478,7 +478,7 @@ kustomize build apps/pvcviewer-controller/upstream/base | kubectl apply -f -
 Install the Profile Controller and the Kubeflow Access-Management (KFAM) official Kubeflow components:
 
 ```sh
-kustomize build apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build applications/profiles/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### Volumes Web Application
@@ -486,7 +486,7 @@ kustomize build apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
 Install the Volumes Web Application official Kubeflow component:
 
 ```sh
-kustomize build apps/volumes-web-app/upstream/overlays/istio | kubectl apply -f -
+kustomize build applications/volumes-web-app/upstream/overlays/istio | kubectl apply -f -
 ```
 
 #### Tensorboard
@@ -494,13 +494,13 @@ kustomize build apps/volumes-web-app/upstream/overlays/istio | kubectl apply -f 
 Install the Tensorboards Web Application official Kubeflow component:
 
 ```sh
-kustomize build apps/tensorboard/tensorboards-web-app/upstream/overlays/istio | kubectl apply -f -
+kustomize build applications/tensorboard/tensorboards-web-app/upstream/overlays/istio | kubectl apply -f -
 ```
 
 Install the Tensorboard Controller official Kubeflow component:
 
 ```sh
-kustomize build apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build applications/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### Training Operator
@@ -508,7 +508,7 @@ kustomize build apps/tensorboard/tensorboard-controller/upstream/overlays/kubefl
 Install the Training Operator official Kubeflow component:
 
 ```sh
-kustomize build apps/training-operator/upstream/overlays/kubeflow | kubectl apply --server-side --force-conflicts -f -
+kustomize build applications/training-operator/upstream/overlays/kubeflow | kubectl apply --server-side --force-conflicts -f -
 ```
 
 #### Spark Operator
@@ -516,7 +516,7 @@ kustomize build apps/training-operator/upstream/overlays/kubeflow | kubectl appl
 Install the Spark Operator:
 
 ```sh
-kustomize build apps/spark/spark-operator/overlays/kubeflow | kubectl apply -f -
+kustomize build applications/spark/spark-operator/overlays/kubeflow | kubectl apply -f -
 ```
 
 **Note:** The Ray component in the experimental folder is configured to disable Istio sidecar injection for its head and worker pods to ensure compatibility with Istio CNI.

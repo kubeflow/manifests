@@ -17,7 +17,7 @@ BRANCH_NAME=${BRANCH_NAME:=synchronize-kserve-${COMPONENT_NAME}-manifests-${COMM
 # Path configurations
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
 SOURCE_MANIFESTS_PATH="config"
-DESTINATION_MANIFESTS_PATH="apps/kserve/${COMPONENT_NAME}"
+DESTINATION_MANIFESTS_PATH="applications/kserve/${COMPONENT_NAME}"
 
 # README update patterns
 SOURCE_TEXT="\[.*\](https://github.com/${REPOSITORY_NAME}/tree/.*)"

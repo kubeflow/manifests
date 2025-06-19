@@ -19,14 +19,14 @@ from prettytable import PrettyTable
 
 # Dictionary mapping Kubeflow workgroups to directories containing kustomization files
 wg_dirs = {
-    "katib": "../apps/katib/upstream/installs",
-    "pipelines": "../apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user",
-    "trainer": "../apps/training-operator/upstream/overlays",
+    "katib": "../applications/katib/upstream/installs",
+    "pipelines": "../applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user",
+    "trainer": "../applications/training-operator/upstream/overlays",
     "manifests": "../common/cert-manager/cert-manager/base ../common/cert-manager/kubeflow-issuer/base ../common/istio/istio-crds/base ../common/istio/istio-namespace/base ../common/istio/istio-install/overlays/oauth2-proxy ../common/oauth2-proxy/overlays/m2m-self-signed ../common/dex/overlays/oauth2-proxy ../common/knative/knative-serving/overlays/gateways ../common/knative/knative-eventing/base ../common/istio/cluster-local-gateway/base ../common/kubeflow-namespace/base ../common/kubeflow-roles/base ../common/istio/kubeflow-istio-resources/base",
-    "workbenches": "../apps/pvcviewer-controller/upstream/base ../apps/admission-webhook/upstream/overlays ../apps/centraldashboard/overlays ../apps/jupyter/jupyter-web-app/upstream/overlays ../apps/volumes-web-app/upstream/overlays ../apps/tensorboard/tensorboards-web-app/upstream/overlays ../apps/profiles/upstream/overlays ../apps/jupyter/notebook-controller/upstream/overlays ../apps/tensorboard/tensorboard-controller/upstream/overlays",
-    "kserve": "../apps/kserve - ../apps/kserve/models-web-app/overlays/kubeflow",
-    "model-registry": "../apps/model-registry/upstream/overlays/db ../apps/model-registry/upstream/options/istio ../apps/model-registry/upstream/options/ui/overlays/istio",
-    "spark": "../apps/spark/spark-operator/overlays/kubeflow",
+    "workbenches": "../applications/pvcviewer-controller/upstream/base ../applications/admission-webhook/upstream/overlays ../applications/centraldashboard/overlays ../applications/jupyter/jupyter-web-app/upstream/overlays ../applications/volumes-web-app/upstream/overlays ../applications/tensorboard/tensorboards-web-app/upstream/overlays ../applications/profiles/upstream/overlays ../applications/jupyter/notebook-controller/upstream/overlays ../applications/tensorboard/tensorboard-controller/upstream/overlays",
+    "kserve": "../applications/kserve - ../applications/kserve/models-web-app/overlays/kubeflow",
+    "model-registry": "../applications/model-registry/upstream/overlays/db ../applications/model-registry/upstream/options/istio ../applications/model-registry/upstream/options/ui/overlays/istio",
+    "spark": "../applications/spark/spark-operator/overlays/kubeflow",
 }
 
 DIRECTORY = "../image_lists"
