@@ -403,7 +403,7 @@ kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
 Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/components/pipelines/multi-user/) official Kubeflow component:
 
 ```sh
-kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
+kustomize build /pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
 ```
 This installs Argo with the runasnonroot emissary executor. Please note that you are still responsible for analyzing the security issues that arise when containers are run with root access and for deciding if the Kubeflow pipeline main containers are run as runasnonroot. It is generally strongly recommended that all user-accessible OCI containers run with Pod Security Standards [restricted](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted).
 

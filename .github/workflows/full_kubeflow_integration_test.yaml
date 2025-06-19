@@ -68,13 +68,13 @@ jobs:
       run: ./tests/kubeflow_profile_install.sh
 
     - name: Install Jupyter Web Application
-      run: kustomize build apps/jupyter/jupyter-web-app/upstream/overlays/istio/ | kubectl apply -f -
+      run: kustomize build applications/jupyter/jupyter-web-app/upstream/overlays/istio/ | kubectl apply -f -
 
     - name: Install Notebook Controller
-      run: kustomize build apps/jupyter/notebook-controller/upstream/overlays/kubeflow/ | kubectl apply -f -
+      run: kustomize build applications/jupyter/notebook-controller/upstream/overlays/kubeflow/ | kubectl apply -f -
 
     - name: Install Admission Webhook
-      run: kustomize build apps/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
+      run: kustomize build applications/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
 
     - name: Install PodDefaults CRD
       run: kubectl get crd poddefaults.kubeflow.org || kubectl apply -f https://raw.githubusercontent.com/kubeflow/kubeflow/master/components/admission-webhook/manifests/base/crd.yaml
@@ -90,12 +90,12 @@ jobs:
 
     - name: Install Model Registry
       run: |
-        kustomize build apps/model-registry/upstream/overlays/db | kubectl apply -n kubeflow -f -
-        kustomize build apps/model-registry/upstream/options/istio | kubectl apply -n kubeflow -f -
+        kustomize build applications/model-registry/upstream/overlays/db | kubectl apply -n kubeflow -f -
+        kustomize build appapplications/model-registry/upstream/options/istio | kubectl apply -n kubeflow -f -
 
     - name: Install Model Registry UI
       run: |
-        kustomize build apps/model-registry/upstream/options/ui/overlays/istio | kubectl apply -n kubeflow -f -
+        kustomize build applications/model-registry/upstream/options/ui/overlays/istio | kubectl apply -n kubeflow -f -
 
     - name: Install Spark
       run: chmod u+x tests/*.sh && ./tests/spark_install.sh

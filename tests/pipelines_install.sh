@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 echo "Installing Pipelines ..."
-cd apps/pipeline/upstream
+cd applications/pipeline/upstream
 kubectl apply -f third-party/metacontroller/base/crd.yaml
 echo "Waiting for crd/compositecontrollers.metacontroller.k8s.io to be available ..."
 kubectl wait --for condition=established --timeout=30s crd/compositecontrollers.metacontroller.k8s.io

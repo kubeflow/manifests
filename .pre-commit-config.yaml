@@ -19,4 +19,4 @@ repos:
     hooks:
       - id: shellcheck
         files: ^.*\.sh$
-        exclude: (^apps/.*|.*upstream.*)
+        exclude: (^applications/.*|.*upstream.*)
