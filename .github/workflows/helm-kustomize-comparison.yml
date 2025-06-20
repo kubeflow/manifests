@@ -1,0 +1,47 @@
+name: Helm vs Kustomize Comparison
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'charts/katib/**'
+      - 'apps/katib/upstream/**'
+      - 'tests/compare_all_scenarios.sh'
+      - '.github/workflows/helm-kustomize-comparison.yml'
+  workflow_dispatch:
+
+jobs:
+  compare-all-scenarios:
+    runs-on: ubuntu-latest
+    name: Compare All Scenarios    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyyaml
+
+    - name: Install Helm
+      run: |
+        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        chmod 700 get_helm.sh
+        ./get_helm.sh
+        rm get_helm.sh
+
+    - name: Install kustomize
+      run: ./tests/kustomize_install.sh
+
+    - name: Run all scenarios comparison
+      env:
+        VERBOSE: "true"
+      run: |
+        cd tests
+        chmod +x scripts/compare_all_scenarios.sh
+        ./compare_all_scenarios.sh 
