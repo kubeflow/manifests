@@ -4,16 +4,17 @@ on:
   pull_request:
     branches: [master]
     paths:
-      - 'charts/katib/**'
-      - 'apps/katib/upstream/**'
-      - 'tests/compare_all_scenarios.sh'
-      - '.github/workflows/helm-kustomize-comparison.yml'
+    - 'charts/katib/**'
+    - 'apps/katib/upstream/**'
+    - 'tests/compare_all_scenarios.sh'
+    - '.github/workflows/helm-kustomize-comparison.yml'
   workflow_dispatch:
 
 jobs:
   compare-all-scenarios:
     runs-on: ubuntu-latest
-    name: Compare All Scenarios    
+    name: Compare All Scenarios
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -44,4 +45,4 @@ jobs:
       run: |
         cd tests
         chmod +x ./compare_all_scenarios.sh
-        ./compare_all_scenarios.sh 
+        ./compare_all_scenarios.sh
