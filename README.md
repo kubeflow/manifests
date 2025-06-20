@@ -25,6 +25,7 @@ You can also install the master branch of [`kubeflow/manifests`](https://github.
 - [Release Process](#release-process)
 - [CVE Scanning](#cve-scanning)
 - [Pre-commit Hooks](#pre-commit-hooks)
+- [Resource Usage by Components](#resource-usage-by-components)
 - [Frequently Asked Questions](#frequently-asked-questions)
 
 <!-- tocstop -->
@@ -705,6 +706,95 @@ The hooks will run automatically on `git commit`. You can also run them manually
 ```bash
 pre-commit run
 ```
+
+## Resource Usage by Components
+
+The following tables show the observed CPU and memory usage for each Kubeflow component:
+
+### Kubeflow Core
+
+| Component | CPU Usage (cores) | Memory Usage |
+|:---:|:---:|:---:|
+| admission-webhook | 1m | 14Mi |
+| centraldashboard | 3m | 153Mi |
+| jupyter-web-app | 2m | 236Mi |
+| notebook-controller | 4m | 85Mi |
+| profiles-deployment | 4m | 101Mi |
+| volumes-web-app | 2m | 232Mi |
+
+### Pipelines
+
+| Component | CPU Usage (cores) | Memory Usage |
+|:---:|:---:|:---:|
+| ml-pipeline (API server) | 13m | 109Mi |
+| ml-pipeline-ui | 11m | 126Mi |
+| ml-pipeline-visualizationserver | 10m | 151Mi |
+| ml-pipeline-persistenceagent | 3m | 83Mi |
+| ml-pipeline-scheduledworkflow | 3m | 78Mi |
+| ml-pipeline-viewer-crd | 3m | 80Mi |
+| minio | 2m | 73Mi |
+| mysql | 4m | 449Mi |
+| workflow-controller | 5m | 89Mi |
+
+### KServe
+
+| Component | CPU Usage (cores) | Memory Usage |
+|:---:|:---:|:---:|
+| kserve-controller-manager | 3m | 53Mi |
+| kserve-localmodel-controller-manager | 3m | 86Mi |
+| kserve-models-web-app | 3m | 256Mi |
+
+### Model Registry
+
+| Component | CPU Usage (cores) | Memory Usage |
+|:---:|:---:|:---:|
+| model-registry-db | 18m | 380Mi |
+| model-registry-deployment | 5m | 74Mi |
+| model-registry-ui | 2m | 70Mi |
+
+### Metadata
+
+| Component | CPU Usage (cores) | Memory Usage |
+|:---:|:---:|:---:|
+| metadata-envoy-deployment | 5m | 28Mi |
+| metadata-grpc-deployment | 3m | 70Mi |
+| metadata-writer | 3m | 127Mi |
+
+### Katib
+
+| Component | CPU Usage (cores) | Memory Usage |
+|:---:|:---:|:---:|
+| katib-controller | 1m | 26Mi |
+| katib-db-manager | 0m | 10Mi |
+| katib-mysql | 6m | 367Mi |
+| katib-ui | 2m | 70Mi |
+
+### Trainer
+
+| Component | CPU Usage (cores) | Memory Usage |
+|:---:|:---:|:---:|
+| training-operator | 2m | 28Mi |
+
+### Spark
+
+| Component | CPU Usage (cores) | Memory Usage |
+|:---:|:---:|:---:|
+| spark-operator-controller | 1m | 20Mi |
+| spark-operator-webhook | 2m | 19Mi |
+
+### Other Components
+
+| Component | CPU Usage (cores) | Memory Usage |
+|:---:|:---:|:---:|
+| istiod | 7m | 233Mi |
+| istio-ingressgateway | 2m | 69Mi |
+| cluster-local-gateway | 2m | 66Mi |
+| dex | 1m | 12Mi |
+| oauth2-proxy | 1m | 8Mi |
+| cache-server | 2m | 76Mi |
+| metacontroller | 2m | 22Mi |
+
+Use this as a reference when planning your Kubeflow installation to allocate appropriate resources and decide which components to enable based on your available infrastructure.
 
 ## Frequently Asked Questions
 
