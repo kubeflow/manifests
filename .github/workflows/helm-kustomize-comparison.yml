@@ -43,5 +43,5 @@ jobs:
         VERBOSE: "true"
       run: |
         cd tests
-        chmod +x scripts/compare_all_scenarios.sh
+        chmod +x ./compare_all_scenarios.sh
         ./compare_all_scenarios.sh 
