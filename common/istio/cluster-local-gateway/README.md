@@ -27,9 +27,10 @@ When investigating the gateway architecture, you'll notice that:
 
 ### Why This Design?
 
-- **Backward Compatibility**: KServe has hardcoded references to `knative-local-gateway` throughout its configuration
-- **Abstraction Layer**: This allows the underlying implementation to change without breaking KServe
-- **Single Gateway**: Reduces resource usage by having one set of gateway pods handle both names
+- **KServe Configuration**: KServe's ingress configuration explicitly references `knative-local-gateway` in its ConfigMap
+- **Knative Integration**: Knative Serving creates the `knative-local-gateway` service by default
+- **Resource Optimization**: Instead of running separate gateway pods, Kubeflow redirects the service to use existing `cluster-local-gateway` pods
+- **Abstraction Layer**: This allows KServe to use its expected service name while leveraging Kubeflow's gateway infrastructure
 
 ### Verification
 
