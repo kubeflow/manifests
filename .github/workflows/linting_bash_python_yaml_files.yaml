@@ -122,7 +122,7 @@ jobs:
     - name: Set up changed files
       id: changed_files
       run: |
-        git diff --name-only origin/master...HEAD | grep -E '^[AM].*\.sh$' | grep -v '^apps/' | awk '{print $2}' > changed_files_in_PR.txt || true
+        git diff --name-only origin/master...HEAD | grep -E '^[AM].*\.sh$' | grep -v '^applications/' | awk '{print $2}' > changed_files_in_PR.txt || true
         if [ ! -s changed_files_in_PR.txt ]; then
           echo "No bash files have changed in this PR."
         fi
