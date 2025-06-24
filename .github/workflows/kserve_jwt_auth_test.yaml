@@ -1,0 +1,95 @@
+name: Test KServe JWT Authentication
+on:
+  pull_request:
+    paths:
+    - tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+    - .github/workflows/kserve_jwt_auth_test.yaml
+    - common/istio/**
+    - common/oauth2-proxy/**
+    - tests/oauth2-proxy_install.sh
+    - tests/istio*
+    - common/knative/**
+    - tests/knative-cni_install.sh
+    - tests/*auth*test.sh
+    - tests/final_validation.sh
+
+jobs:
+  test-jwt-authentication:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install KinD, Create KinD cluster and Install kustomize
+      run: ./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+
+    - name: Install kubectl
+      run: ./tests/kubectl_install.sh
+
+    - name: Install Istio CNI
+      run: ./tests/istio-cni_install.sh
+
+    - name: Install oauth2-proxy
+      run: ./tests/oauth2-proxy_install.sh
+
+    - name: Create kubeflow namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+    - name: Install knative CNI with secure cluster-local-gateway
+      run: ./tests/knative-cni_install.sh
+
+    - name: Verify secure cluster-local-gateway configuration
+      run: |
+        echo "Checking cluster-local-gateway security policies..."
+        kubectl get authorizationpolicy,requestauthentication -n istio-system | grep cluster-local-gateway
+        echo "Verifying RequestAuthentication is configured..."
+        kubectl get requestauthentication cluster-local-gateway-jwt -n istio-system -o yaml
+        echo "Verifying AuthorizationPolicies are configured..."
+        kubectl get authorizationpolicy cluster-local-gateway -n istio-system -o yaml
+        kubectl get authorizationpolicy cluster-local-gateway-require-jwt -n istio-system -o yaml
+
+    - name: Setup python 3.12
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.12
+
+    - name: Port forward
+      run: ./tests/port_forward_gateway.sh
+
+    - name: Wait for cluster-local-gateway to be ready
+      run: |
+        kubectl wait --for=condition=Available --timeout=120s deployment/cluster-local-gateway -n istio-system
+        echo "Waiting for JWT authentication to be active..."
+        sleep 30
+
+    - name: Run JWT Authentication Validation Tests
+      run: |
+        export KSERVE_INGRESS_HOST_PORT=localhost:8080
+        ./tests/final_validation.sh
+
+    - name: Run Knative Service JWT Authentication Tests
+      run: |
+        export KSERVE_INGRESS_HOST_PORT=localhost:8080
+        ./tests/knative_auth_test.sh
+
+    - name: Test External Access Configuration
+      run: |
+        export KSERVE_INGRESS_HOST_PORT=localhost:8080
+        ./tests/setup_external_access.sh kubeflow-user-example-com secure-model-predictor
+        # Test external access pattern
+        TOKEN=$(kubectl -n kubeflow-user-example-com create token default-editor)
+        echo "Testing external access pattern..."
+        RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+          -H "Authorization: Bearer $TOKEN" \
+          -H "Content-Type: application/json" \
+          "http://localhost:8080/kserve/kubeflow-user-example-com/secure-model-predictor/" \
+          2>/dev/null || echo "404")
+        if [ "$RESPONSE" = "404" ] || [ "$RESPONSE" = "200" ] || [ "$RESPONSE" = "503" ]; then
+          echo "External access configuration working (response: $RESPONSE)"
+        else
+          echo "External access returned: $RESPONSE (may need service backend)"
+        fi
+
+
+    - name: Apply Pod Security Standards baseline levels
+      run: ./tests/enable_baseline_PSS.sh

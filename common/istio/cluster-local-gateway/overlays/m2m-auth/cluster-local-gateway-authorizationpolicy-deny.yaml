@@ -1,0 +1,27 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: cluster-local-gateway-require-jwt
+  namespace: istio-system
+spec:
+  selector:
+    matchLabels:
+      app: cluster-local-gateway
+      istio: cluster-local-gateway
+  action: DENY
+  rules:
+  # Deny requests without a valid principal (JWT)
+  - from:
+    - source:
+        notRequestPrincipals: ["*"]
+    to:
+    - operation:
+        # Exclude Knative health check and metrics paths
+        notPaths:
+        - "/healthz"
+        - "/ready"
+        - "/wait-for-drain"
+        - "/metrics"
+        - "/stats/prometheus"
+        - "*/healthz"
+        - "*/ready"
