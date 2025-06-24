@@ -11,7 +11,7 @@ CHART_DIR="$HELM_DIR/kubeflow"
 
 case $COMPONENT in
     "spark-operator")
-        KUSTOMIZE_PATH="apps/spark/spark-operator/base"
+        KUSTOMIZE_PATH="applications/spark/spark-operator/base"
         NAMESPACE="kubeflow"
         HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/external/spark-operator"
         ;;
@@ -21,24 +21,24 @@ case $COMPONENT in
         HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/external/cert-manager"
         ;;
     "centraldashboard")
-        KUSTOMIZE_PATH="apps/centraldashboard/upstream/base"
+        KUSTOMIZE_PATH="applications/centraldashboard/upstream/base"
         NAMESPACE="kubeflow"
-        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/apps/centraldashboard"
+        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/applications/centraldashboard"
         ;;
     "centraldashboard-istio")
-        KUSTOMIZE_PATH="apps/centraldashboard/upstream/overlays/istio"
+        KUSTOMIZE_PATH="applications/centraldashboard/upstream/overlays/istio"
         NAMESPACE="kubeflow"
-        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/apps/centraldashboard"
+        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/applications/centraldashboard"
         ;;
     "centraldashboard-kserve")
-        KUSTOMIZE_PATH="apps/centraldashboard/upstream/overlays/kserve"
+        KUSTOMIZE_PATH="applications/centraldashboard/upstream/overlays/kserve"
         NAMESPACE="kubeflow"
-        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/apps/centraldashboard"
+        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/applications/centraldashboard"
         ;;
     "centraldashboard-oauth2-proxy")
-        KUSTOMIZE_PATH="apps/centraldashboard/overlays/oauth2-proxy"
+        KUSTOMIZE_PATH="applications/centraldashboard/overlays/oauth2-proxy"
         NAMESPACE="kubeflow"
-        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/apps/centraldashboard"
+        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/applications/centraldashboard"
         ;;
     *)
         echo "Unknown component: $COMPONENT"
