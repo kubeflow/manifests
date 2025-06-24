@@ -12,6 +12,10 @@ on:
     - tests/istio*
     - tests/dex_login_test.py
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   build:
     runs-on: ubuntu-latest

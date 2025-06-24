@@ -13,6 +13,10 @@ on:
     - tests/volumes_web_application_install.sh
     - tests/volumes_web_application_test.sh
 
+permissions:
+  contents: read
+  actions: read
+
 env:
   KF_PROFILE: kubeflow-user-example-com
 

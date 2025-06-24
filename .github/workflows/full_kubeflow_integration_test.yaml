@@ -8,6 +8,10 @@ on:
     branches:
     - master
 
+permissions:
+  contents: read
+  actions: read
+
 env:
   KF_PROFILE: kubeflow-user-example-com
 

@@ -4,6 +4,10 @@ on:
 - push
 - pull_request
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   build:
     name: Test

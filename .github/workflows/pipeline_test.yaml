@@ -14,6 +14,9 @@ on:
     - tests/pipeline_v2_test.py
     - experimental/security/PSS/*
 
+permissions:
+  contents: read
+  actions: read
 env:
   KF_PROFILE: kubeflow-user-example-com
 

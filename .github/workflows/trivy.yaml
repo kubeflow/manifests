@@ -9,6 +9,10 @@ on:
     - '.github/workflows/trivy.yaml'
     - 'tests/trivy_scan.py'
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   image-extraction-and-security-scan:
     if: ${{ github.repository == 'kubeflow/manifests' }}
