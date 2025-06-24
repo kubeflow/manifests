@@ -13,6 +13,9 @@ on:
     - common/kubeflow-namespace/**
     - applications/jupyter/**
 
+permissions:
+  contents: read
+  actions: read
 jobs:
   build:
     runs-on: ubuntu-latest

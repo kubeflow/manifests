@@ -16,6 +16,10 @@ on:
     - common/knative/**
     - tests/knative-cni_install.sh
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   build:
     runs-on: ubuntu-latest

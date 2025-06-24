@@ -2,6 +2,10 @@ name: Proper linting on Bash, Python, and YAML files
 
 on: [pull_request]
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   format_python_files:
     runs-on: ubuntu-latest
