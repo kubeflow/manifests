@@ -104,6 +104,26 @@ jobs:
     - name: Create KF Profile
       run: ./tests/kubeflow_profile_install.sh
 
+    - name: Create AuthorizationPolicy for test namespace (insecure mode only)
+      if: matrix.istio-mode == 'insecure'
+      run: |
+        # Create AuthorizationPolicy to allow traffic within the test namespace
+        # This is needed because Istio has a global deny-all policy
+        # The profile controller doesn't create this automatically
+        cat <<EOF | kubectl apply -f -
+        apiVersion: security.istio.io/v1beta1
+        kind: AuthorizationPolicy
+        metadata:
+          name: allow-test-namespace-traffic
+          namespace: $KF_PROFILE
+        spec:
+          action: ALLOW
+          rules:
+          - from:
+            - source:
+                namespaces: ["$KF_PROFILE"]
+        EOF
+
     - name: Test sidecar injection
       run: |
         kubectl create deployment test-app --image=nginx -n $KF_PROFILE
