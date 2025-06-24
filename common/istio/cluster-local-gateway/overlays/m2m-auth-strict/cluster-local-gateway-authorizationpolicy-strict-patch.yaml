@@ -1,0 +1,35 @@
+# Namespace-aware authorization for cluster-local-gateway
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: cluster-local-gateway
+  namespace: istio-system
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app: cluster-local-gateway
+      istio: cluster-local-gateway
+  rules:
+  # Rule 1: Allow requests with valid JWT tokens
+  # The namespace matching will be enforced by service-level policies
+  - from:
+    - source:
+        requestPrincipals: ["*"]
+  # Rule 2: Allow health check and metrics endpoints without authentication
+  - to:
+    - operation:
+        paths:
+        - "/healthz"
+        - "/ready"
+        - "/wait-for-drain"
+        - "/metrics"
+        - "/stats/prometheus"
+        - "*/healthz"
+        - "*/ready"
+  # Rule 3: Allow system namespaces for internal operations
+  - from:
+    - source:
+        principals:
+        - "cluster.local/ns/istio-system/sa/*"
+        - "cluster.local/ns/knative-serving/sa/*"

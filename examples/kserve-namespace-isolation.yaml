@@ -1,0 +1,64 @@
+# Example: Namespace isolation for KServe InferenceServices
+# This should be applied in each namespace that hosts InferenceServices
+
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: kserve-namespace-isolation
+  namespace: REPLACE_WITH_TARGET_NAMESPACE  # e.g., kubeflow-user-example-com
+spec:
+  action: ALLOW
+  # Apply to all KServe predictor services in this namespace
+  selector:
+    matchLabels:
+      serving.knative.dev/service: "*-predictor*"
+  rules:
+  # Rule 1: Allow access from service accounts in the SAME namespace
+  - from:
+    - source:
+        principals: ["cluster.local/ns/REPLACE_WITH_TARGET_NAMESPACE/sa/*"]
+  # Rule 2: Allow access from system namespaces (for Knative/Istio operations)
+  - from:
+    - source:
+        principals:
+        - "cluster.local/ns/istio-system/sa/*"
+        - "cluster.local/ns/knative-serving/sa/*"
+  # Rule 3: Allow health checks and readiness probes
+  - to:
+    - operation:
+        paths:
+        - "*/healthz"
+        - "*/ready"
+        - "/healthz"
+        - "/ready"
+
+---
+# Alternative: More permissive policy that allows same namespace + explicit cross-namespace access
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: kserve-cross-namespace-access
+  namespace: REPLACE_WITH_TARGET_NAMESPACE
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      serving.knative.dev/service: "*-predictor*"
+  rules:
+  # Rule 1: Allow access from same namespace
+  - from:
+    - source:
+        principals: ["cluster.local/ns/REPLACE_WITH_TARGET_NAMESPACE/sa/*"]
+  # Rule 2: Allow access from explicitly authorized namespaces
+  - from:
+    - source:
+        principals: 
+        - "cluster.local/ns/kubeflow-user-example-com/sa/*"
+        - "cluster.local/ns/kubeflow-user-alice/sa/*"
+        # Add more authorized namespaces as needed
+  # Rule 3: System namespaces
+  - from:
+    - source:
+        principals:
+        - "cluster.local/ns/istio-system/sa/*"
+        - "cluster.local/ns/knative-serving/sa/*"
