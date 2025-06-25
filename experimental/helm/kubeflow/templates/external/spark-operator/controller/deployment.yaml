@@ -1,0 +1,94 @@
+{{- if .Values.sparkOperator.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-operator-controller
+  labels:
+    helm.sh/chart: spark-operator-2.2.0
+    app.kubernetes.io/name: spark-operator
+    app.kubernetes.io/instance: spark-operator
+    app.kubernetes.io/version: 2.2.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: controller
+  namespace: '{{ include "kubeflow.namespace" . }}'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: spark-operator
+      app.kubernetes.io/instance: spark-operator
+      app.kubernetes.io/component: controller
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: spark-operator
+        app.kubernetes.io/instance: spark-operator
+        app.kubernetes.io/component: controller
+        sidecar.istio.io/inject: 'false'
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '8080'
+        prometheus.io/path: /metrics
+    spec:
+      containers:
+      - name: spark-operator-controller
+        image: ghcr.io/kubeflow/spark-operator/controller:2.2.0
+        imagePullPolicy: IfNotPresent
+        args:
+        - controller
+        - start
+        - --zap-log-level=info
+        - --namespaces=""
+        - --controller-threads=10
+        - --enable-ui-service=true
+        - --enable-metrics=true
+        - --metrics-bind-address=:8080
+        - --metrics-endpoint=/metrics
+        - --metrics-prefix=
+        - --metrics-labels=app_type
+        - --metrics-job-start-latency-buckets=30,60,90,120,150,180,210,240,270,300
+        - --leader-election=true
+        - --leader-election-lock-name=spark-operator-controller-lock
+        - --leader-election-lock-namespace=kubeflow
+        - --workqueue-ratelimiter-bucket-qps=50
+        - --workqueue-ratelimiter-bucket-size=500
+        - --workqueue-ratelimiter-max-delay=6h
+        - --driver-pod-creation-grace-period=10s
+        - --max-tracked-executor-per-app=1000
+        ports:
+        - name: metrics
+          containerPort: 8080
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
+          readOnly: false
+        livenessProbe:
+          httpGet:
+            port: 8081
+            scheme: HTTP
+            path: /healthz
+        readinessProbe:
+          httpGet:
+            port: 8081
+            scheme: HTTP
+            path: /readyz
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+      volumes:
+      - emptyDir:
+          sizeLimit: 1Gi
+        name: tmp
+      serviceAccountName: spark-operator-controller
+      automountServiceAccountToken: true
+      securityContext:
+        fsGroup: 185
+{{- end }}

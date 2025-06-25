@@ -1,0 +1,26 @@
+{{- if .Values.certManager.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cert-manager-cainjector
+  namespace: '{{ .Values.global.certManagerNamespace }}'
+  labels:
+    app: cainjector
+    app.kubernetes.io/name: cainjector
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/component: cainjector
+    app.kubernetes.io/version: v1.16.1
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: cert-manager-v1.16.1
+spec:
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 9402
+    name: http-metrics
+  selector:
+    app.kubernetes.io/name: cainjector
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/component: cainjector
+{{- end }}

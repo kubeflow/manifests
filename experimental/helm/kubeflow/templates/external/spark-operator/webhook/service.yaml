@@ -1,0 +1,24 @@
+{{- if .Values.sparkOperator.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-operator-webhook-svc
+  labels:
+    helm.sh/chart: spark-operator-2.2.0
+    app.kubernetes.io/name: spark-operator
+    app.kubernetes.io/instance: spark-operator
+    app.kubernetes.io/version: 2.2.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: webhook
+  namespace: '{{ include "kubeflow.namespace" . }}'
+spec:
+  selector:
+    app.kubernetes.io/name: spark-operator
+    app.kubernetes.io/instance: spark-operator
+    app.kubernetes.io/component: webhook
+  ports:
+  - port: 9443
+    targetPort: webhook
+    name: webhook
+{{- end }}
