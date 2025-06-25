@@ -1,0 +1,13 @@
+{{- if .Values.certManager.enabled }}
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: kubeflow-self-signing-issuer
+  labels:
+    {{- include "kubeflow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cert-manager
+    app.kubernetes.io/name: cert-manager
+    kustomize.component: cert-manager
+spec:
+  selfSigned: {}
+{{- end }}
