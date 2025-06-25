@@ -86,6 +86,10 @@ def load_and_index(file_path):
             kind = doc['kind']
             name = doc['metadata'].get('name', 'unnamed')
             key = f"{kind}/{name}"
+            
+            if kind == "ClusterIssuer" and 'webhooks' in doc:
+                del doc['webhooks']
+                    
             indexed[key] = doc
     
     return indexed
@@ -107,6 +111,10 @@ def main():
     kustomize_keys = set(kustomize.keys())
     helm_keys = set(helm.keys())
 
+    kustomize_crds = {key for key in kustomize_keys if key.startswith('CustomResourceDefinition/')}
+    helm_crds = {key for key in helm_keys if key.startswith('CustomResourceDefinition/')}
+    extra_helm_crds = helm_crds - kustomize_crds
+
     expected_extra_helm = set()
     if component == "spark-operator" and kubeflow_rbac_enabled:
         expected_extra_helm = {
@@ -114,6 +122,12 @@ def main():
             'ClusterRole/kubeflow-spark-edit', 
             'ClusterRole/kubeflow-spark-view'
         }
+    elif component == "cert-manager":
+        expected_extra_helm = {
+            'ValidatingWebhookConfiguration/cert-manager-webhook'
+        }
+
+    expected_extra_helm.update(extra_helm_crds)
 
     extra_kustomize = kustomize_keys - helm_keys
     extra_helm = helm_keys - kustomize_keys
