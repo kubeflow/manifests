@@ -709,90 +709,30 @@ pre-commit run
 
 ## Resource Usage by Components
 
-The following tables show the observed CPU and memory usage for each Kubeflow component:
+The following table shows the resource requirements for each Kubeflow component, calculated as the maximum of actual usage and configured requests for CPU/memory, plus storage requirements from PVCs:
 
-### Kubeflow Core
+| Component | CPU (cores) | Memory (Mi) | Storage (GB) |
+|-----------|-------------|-------------|--------------|
+| Auth | 3m | 27Mi | 0GB |
+| Cert Manager | 3m | 130Mi | 0GB |
+| Istio | 850m | 2464Mi | 0GB |
+| Katib | 4m | 107Mi | 3GB |
+| Kubeflow Core | 17m | 828Mi | 0GB |
+| KServe | 600m | 1200Mi | 0GB |
+| Metadata | 10m | 225Mi | 40GB |
+| Model Registry | 500m | 2048Mi | 0GB |
+| Pipelines | 770m | 3276Mi | 60GB |
+| Spark | 5m | 36Mi | 0GB |
+| Training | 2m | 26Mi | 0GB |
+| Other | 1615m | 1698Mi | 36GB |
 
-| Component | CPU Usage (cores) | Memory Usage |
-|:---:|:---:|:---:|
-| admission-webhook | 1m | 14Mi |
-| centraldashboard | 3m | 153Mi |
-| jupyter-web-app | 2m | 236Mi |
-| notebook-controller | 4m | 85Mi |
-| profiles-deployment | 4m | 101Mi |
-| volumes-web-app | 2m | 232Mi |
+### Resource Notes
 
-### Pipelines
-
-| Component | CPU Usage (cores) | Memory Usage |
-|:---:|:---:|:---:|
-| ml-pipeline (API server) | 13m | 109Mi |
-| ml-pipeline-ui | 11m | 126Mi |
-| ml-pipeline-visualizationserver | 10m | 151Mi |
-| ml-pipeline-persistenceagent | 3m | 83Mi |
-| ml-pipeline-scheduledworkflow | 3m | 78Mi |
-| ml-pipeline-viewer-crd | 3m | 80Mi |
-| minio | 2m | 73Mi |
-| mysql | 4m | 449Mi |
-| workflow-controller | 5m | 89Mi |
-
-### KServe
-
-| Component | CPU Usage (cores) | Memory Usage |
-|:---:|:---:|:---:|
-| kserve-controller-manager | 3m | 53Mi |
-| kserve-localmodel-controller-manager | 3m | 86Mi |
-| kserve-models-web-app | 3m | 256Mi |
-
-### Model Registry
-
-| Component | CPU Usage (cores) | Memory Usage |
-|:---:|:---:|:---:|
-| model-registry-db | 18m | 380Mi |
-| model-registry-deployment | 5m | 74Mi |
-| model-registry-ui | 2m | 70Mi |
-
-### Metadata
-
-| Component | CPU Usage (cores) | Memory Usage |
-|:---:|:---:|:---:|
-| metadata-envoy-deployment | 5m | 28Mi |
-| metadata-grpc-deployment | 3m | 70Mi |
-| metadata-writer | 3m | 127Mi |
-
-### Katib
-
-| Component | CPU Usage (cores) | Memory Usage |
-|:---:|:---:|:---:|
-| katib-controller | 1m | 26Mi |
-| katib-db-manager | 0m | 10Mi |
-| katib-mysql | 6m | 367Mi |
-| katib-ui | 2m | 70Mi |
-
-### Trainer
-
-| Component | CPU Usage (cores) | Memory Usage |
-|:---:|:---:|:---:|
-| training-operator | 2m | 28Mi |
-
-### Spark
-
-| Component | CPU Usage (cores) | Memory Usage |
-|:---:|:---:|:---:|
-| spark-operator-controller | 1m | 20Mi |
-| spark-operator-webhook | 2m | 19Mi |
-
-### Other Components
-
-| Component | CPU Usage (cores) | Memory Usage |
-|:---:|:---:|:---:|
-| istiod | 7m | 233Mi |
-| istio-ingressgateway | 2m | 69Mi |
-| cluster-local-gateway | 2m | 66Mi |
-| dex | 1m | 12Mi |
-| oauth2-proxy | 1m | 8Mi |
-| cache-server | 2m | 76Mi |
-| metacontroller | 2m | 22Mi |
+- **CPU values** represent the maximum between actual observed usage and configured resource requests
+- **Memory values** represent the maximum between actual observed usage and configured resource requests  
+- **Storage values** represent the total PVC allocations from manifest files
+- Components with high resource requests (like Istio, KServe) may be over-provisioned compared to actual usage
+- Storage requirements are persistent and represent the minimum disk space needed
 
 Use this as a reference when planning your Kubeflow installation to allocate appropriate resources and decide which components to enable based on your available infrastructure.
 
