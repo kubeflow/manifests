@@ -707,13 +707,13 @@ The hooks will run automatically on `git commit`. You can also run them manually
 pre-commit run
 ```
 
-## Resource Usage by Components
+## Resource Usage by components
 
 The following table shows the resource requirements for each Kubeflow component, calculated as the maximum of actual usage and configured requests for CPU/memory, plus storage requirements from PVCs:
 
 | Component | CPU (cores) | Memory (Mi) | Storage (GB) |
 |-----------|-------------|-------------|--------------|
-| Auth | 3m | 27Mi | 0GB |
+| Dex + OAuth2-Proxy | 3m | 27Mi | 0GB |
 | Cert Manager | 3m | 130Mi | 0GB |
 | Istio | 850m | 2464Mi | 0GB |
 | Katib | 4m | 107Mi | 3GB |
@@ -728,8 +728,8 @@ The following table shows the resource requirements for each Kubeflow component,
 
 ### Resource Notes
 
-- **CPU values** represent the maximum between actual observed usage and configured resource requests
-- **Memory values** represent the maximum between actual observed usage and configured resource requests  
+- **CPU values** represent the maximum of actual observed usage and configured resource requests
+- **Memory values** represent the maximum of actual observed usage and configured resource requests  
 - **Storage values** represent the total PVC allocations from manifest files
 - Components with high resource requests (like Istio, KServe) may be over-provisioned compared to actual usage
 - Storage requirements are persistent and represent the minimum disk space needed
