@@ -725,6 +725,7 @@ The following table shows the resource requirements for each Kubeflow component,
 | Spark | 5m | 36Mi | 0GB |
 | Training | 2m | 26Mi | 0GB |
 | Other | 1615m | 1698Mi | 36GB |
+| **Total** | **4379m** | **12065Mi** | **139GB** |
 
 ### Resource Notes
 

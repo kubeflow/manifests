@@ -253,11 +253,9 @@ jobs:
 
     - name: Check Pod Resource Usage
       run: |
-        echo "==== Pod Resource Usage ===="
-        kubectl top pods --all-namespaces
-
-        echo "==== Container Resource Usage ===="
-        kubectl top pods --all-namespaces --containers
+        echo "==== Resource Usage Table ===="
+        pip3 install -q PyYAML
+        python3 scripts/generate_resource_table.py
 
     - name: Collect Logs on Failure
       if: failure()
