@@ -25,7 +25,7 @@ You can also install the master branch of [`kubeflow/manifests`](https://github.
 - [Release Process](#release-process)
 - [CVE Scanning](#cve-scanning)
 - [Pre-commit Hooks](#pre-commit-hooks)
-- [Resource Usage by Components](#resource-usage-by-components)
+- [Resource Usage by components](#resource-usage-by-components)
 - [Frequently Asked Questions](#frequently-asked-questions)
 
 <!-- tocstop -->
