@@ -1,0 +1,54 @@
+{{- if .Values.database.postgres.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metadata-postgres-db
+  labels:
+    component: db
+spec:
+  selector:
+    matchLabels:
+      component: db
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      name: db
+      labels:
+        component: db
+        sidecar.istio.io/inject: "false"
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+        runAsNonRoot: true
+      containers:
+      - name: db-container
+        image: {{ .Values.database.postgres.image.repository }}:{{ .Values.database.postgres.image.tag }}
+        env:
+          - name: PGDATA
+            value: /var/lib/postgresql/data/pgdata
+        envFrom:
+        - configMapRef:
+            name: metadata-registry-db-parameters
+        - secretRef:
+            name: metadata-registry-db-secrets
+        ports:
+        - name: postgres
+          containerPort: 5432
+        volumeMounts:
+        - name: metadata-postgres
+          mountPath: /var/lib/postgresql/data
+        securityContext:
+          runAsUser: 70
+          runAsGroup: 70
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+      volumes:
+      - name: metadata-postgres
+        persistentVolumeClaim:
+          claimName: metadata-postgres
+{{- end }}

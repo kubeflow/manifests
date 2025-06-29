@@ -1,0 +1,19 @@
+{{- if and .Values.ui.enabled .Values.ui.istio.enabled .Values.ui.istio.authorizationPolicy.enabled }}
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: model-registry-ui
+  namespace: {{ include "model-registry.namespace" . }}
+  labels:
+    app: model-registry-ui
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+  selector:
+    matchLabels:
+      app: model-registry-ui
+{{- end }}

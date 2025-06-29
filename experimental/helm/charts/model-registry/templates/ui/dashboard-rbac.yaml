@@ -1,0 +1,55 @@
+{{- if and .Values.ui.enabled .Values.ui.standalone.enabled }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: model-registry-ui-namespaces-reader
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ui
+rules:
+- apiGroups:
+    - ''
+  resources:
+    - namespaces
+  verbs:
+    - get
+    - list
+    - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: model-registry-ui-namespaces-reader-binding
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ui
+subjects:
+- kind: ServiceAccount
+  name: {{ include "model-registry.fullname" . }}-ui
+  namespace: {{ include "model-registry.namespace" . }}
+roleRef:
+  kind: ClusterRole
+  name: model-registry-ui-namespaces-reader
+  apiGroup: rbac.authorization.k8s.io
+{{- if .Values.ui.standalone.serviceAccess.enabled }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: service-access-cluster-binding
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ui
+subjects:
+  {{- range .Values.ui.standalone.serviceAccess.users }}
+  - kind: User
+    name: {{ . }}
+    apiGroup: rbac.authorization.k8s.io
+  {{- end }}
+roleRef:
+  kind: ClusterRole
+  name: {{ .Values.ui.standalone.serviceAccess.clusterRole | default "cluster-admin" }}
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}
+{{- end }} 

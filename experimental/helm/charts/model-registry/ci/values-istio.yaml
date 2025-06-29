@@ -1,0 +1,55 @@
+# CI values for testing Istio service mesh integration
+
+server:
+  enabled: false
+  
+istio:
+  enabled: true
+  
+  virtualService:
+    enabled: true
+    hosts: 
+    - "*"
+    gateways:
+    - "kubeflow-gateway"
+    
+  destinationRule:
+    enabled: true
+    trafficPolicy:
+      tls:
+        mode: ISTIO_MUTUAL
+        
+  authorizationPolicy:
+    enabled: true
+    selector:
+      matchLabels:
+        component: model-registry-server
+    rules:
+    - {}
+          
+  gateway:
+    enabled: false
+    
+database:
+  type: external
+  mysql:
+    enabled: false
+  postgres:
+    enabled: false
+  external:
+    enabled: false
+  
+ui:
+  enabled: false
+  
+controller:
+  enabled: false
+  rbac:
+    create: false
+  
+monitoring:
+  enabled: false
+  
+storage:
+  csi:
+    enabled: false 

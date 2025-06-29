@@ -1,0 +1,95 @@
+{{- if .Values.ui.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "model-registry.ui.fullname" . }}
+  {{- if .Values.global.includeNamespace }}
+  namespace: {{ include "model-registry.namespace" . }}
+  {{- end }}
+  labels:
+    {{- include "model-registry.ui.labels" . | nindent 4 }}
+    app: model-registry-ui
+spec:
+  replicas: {{ .Values.ui.replicas }}
+  selector:
+    matchLabels:
+      app: model-registry-ui
+  template:
+    metadata:
+      labels:
+        app: model-registry-ui
+      {{- with .Values.ui.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "model-registry.ui.serviceAccountName" . }}
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: {{ .Chart.Name }}-ui
+        image: {{ include "model-registry.ui.image" . }}
+        imagePullPolicy: {{ include "model-registry.ui.imagePullPolicy" . }}
+        ports:
+        - containerPort: {{ .Values.ui.containerPort }}
+        {{- if .Values.ui.args }}
+        args:
+          {{- toYaml .Values.ui.args | nindent 10 }}
+        {{- else }}
+        args:
+        - "--port={{ .Values.ui.containerPort }}"
+        {{- end }}
+        {{- if .Values.ui.livenessProbe.enabled }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.ui.livenessProbe.path }}
+            port: {{ .Values.ui.containerPort }}
+            scheme: HTTP
+          initialDelaySeconds: {{ .Values.ui.livenessProbe.initialDelaySeconds }}
+          timeoutSeconds: {{ .Values.ui.livenessProbe.timeoutSeconds }}
+          periodSeconds: {{ .Values.ui.livenessProbe.periodSeconds }}
+          successThreshold: {{ .Values.ui.livenessProbe.successThreshold }}
+          failureThreshold: {{ .Values.ui.livenessProbe.failureThreshold }}
+        {{- end }}
+        {{- if .Values.ui.readinessProbe.enabled }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.ui.readinessProbe.path }}
+            port: {{ .Values.ui.containerPort }}
+            scheme: HTTP
+          initialDelaySeconds: {{ .Values.ui.readinessProbe.initialDelaySeconds }}
+          timeoutSeconds: {{ .Values.ui.readinessProbe.timeoutSeconds }}
+          periodSeconds: {{ .Values.ui.readinessProbe.periodSeconds }}
+          successThreshold: {{ .Values.ui.readinessProbe.successThreshold }}
+          failureThreshold: {{ .Values.ui.readinessProbe.failureThreshold }}
+        {{- end }}
+        resources:
+          {{- toYaml .Values.ui.resources | nindent 10 }}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        {{- with .Values.ui.env }}
+        env:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      {{- with .Values.ui.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.ui.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.ui.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

@@ -1,0 +1,62 @@
+# Values for controller-network-policy scenario
+# This matches the network-policy-only 
+
+global:
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+
+controller:
+  enabled: false
+  
+  useBasicNames: true
+  
+  # controller features
+  serviceAccount:
+    create: false
+    
+  rbac:
+    create: false
+    
+  # NetworkPolicy
+  networkPolicy:
+    enabled: true
+    name: allow-metrics-traffic
+    namespace: system
+    labels:
+      app.kubernetes.io/name: controller
+      app.kubernetes.io/managed-by: kustomize
+    podSelector:
+      matchLabels:
+        control-plane: controller-manager
+    ingress:
+      - from:
+          - namespaceSelector:
+              matchLabels:
+                metrics: enabled
+        ports:
+          - port: 8443
+            protocol: TCP
+
+# monitoring
+monitoring:
+  enabled: false
+  serviceMonitor:
+    enabled: false
+
+server:
+  enabled: false
+  
+ui:
+  enabled: false
+  
+database:
+  mysql:
+    enabled: false
+  postgres:
+    enabled: false
+  external:
+    enabled: false
+    
+security:
+  podSecurityPolicy:
+    enabled: false 

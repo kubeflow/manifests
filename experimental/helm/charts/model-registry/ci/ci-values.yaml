@@ -1,0 +1,42 @@
+# CI values for model-registry chart
+# This file contains minimal configuration for CI/CD testing
+
+global:
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+
+server:
+  enabled: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+database:
+  type: sqlite  
+  mysql:
+    enabled: false  
+
+ui:
+  enabled: false  
+
+controller:
+  enabled: false  
+  rbac:
+    create: false  
+
+istio:
+  enabled: false  
+
+monitoring:
+  enabled: false  
+
+security:
+  networkPolicy:
+    enabled: false  
+  podSecurityPolicy:
+    enabled: false  

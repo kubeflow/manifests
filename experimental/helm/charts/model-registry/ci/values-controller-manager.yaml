@@ -1,0 +1,56 @@
+# Minimal values for controller-manager scenario
+# This matches the basic controller manager 
+
+global:
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+
+controller:
+  enabled: true
+  replicas: 1
+  
+  useBasicNames: true
+  
+  image:
+    repository: controller
+    tag: "latest"
+    pullPolicy: IfNotPresent
+    
+  resources:
+    limits:
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+      
+  metrics:
+    enabled: false
+    
+  serviceAccount:
+    create: false  
+    
+  rbac:
+    create: false  
+
+server:
+  enabled: false
+  
+ui:
+  enabled: false
+  
+database:
+  mysql:
+    enabled: false
+  postgres:
+    enabled: false
+  external:
+    enabled: false
+    
+monitoring:
+  enabled: false
+  
+security:
+  networkPolicy:
+    enabled: false
+  podSecurityPolicy:
+    enabled: false 

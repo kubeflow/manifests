@@ -1,0 +1,62 @@
+{{- if and .Values.monitoring.enabled .Values.monitoring.serviceMonitor.enabled }}
+{{- if .Values.monitoring.serviceMonitor.name }}
+{{/* Controller ServiceMonitor for prometheus scenario */}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Values.monitoring.serviceMonitor.name }}
+  namespace: {{ .Values.monitoring.serviceMonitor.namespace | default (include "model-registry.namespace" .) }}
+  labels:
+    {{- with .Values.monitoring.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.monitoring.serviceMonitor.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    {{- with .Values.monitoring.serviceMonitor.selector }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  endpoints:
+  {{- range .Values.monitoring.serviceMonitor.endpoints }}
+  - port: {{ .port }}
+    path: {{ .path }}
+    scheme: {{ .scheme }}
+    {{- if .bearerTokenFile }}
+    bearerTokenFile: {{ .bearerTokenFile }}
+    {{- end }}
+    {{- if .tlsConfig }}
+    tlsConfig:
+      {{- toYaml .tlsConfig | nindent 6 }}
+    {{- end }}
+  {{- end }}
+{{- else }}
+{{/* Default Server ServiceMonitor */}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "model-registry.fullname" . }}-servicemonitor
+  namespace: {{ include "model-registry.namespace" . }}
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+    {{- with .Values.monitoring.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.monitoring.serviceMonitor.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "model-registry.server.selectorLabels" . | nindent 6 }}
+  endpoints:
+  - port: http-api
+    interval: {{ .Values.monitoring.serviceMonitor.interval }}
+    scrapeTimeout: {{ .Values.monitoring.serviceMonitor.scrapeTimeout }}
+    path: /metrics
+    scheme: http
+{{- end }}
+{{- end }} 

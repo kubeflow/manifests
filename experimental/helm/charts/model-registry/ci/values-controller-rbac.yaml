@@ -1,0 +1,41 @@
+# Values for controller-rbac scenario
+# This matches the RBAC-only controller 
+
+global:
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+
+controller:
+  enabled: false  
+  
+
+  useBasicNames: true
+  
+  serviceAccount:
+    create: true
+    
+  rbac:
+    create: true
+
+server:
+  enabled: false
+  
+ui:
+  enabled: false
+  
+database:
+  mysql:
+    enabled: false
+  postgres:
+    enabled: false
+  external:
+    enabled: false
+    
+monitoring:
+  enabled: false
+  
+security:
+  networkPolicy:
+    enabled: false
+  podSecurityPolicy:
+    enabled: false 

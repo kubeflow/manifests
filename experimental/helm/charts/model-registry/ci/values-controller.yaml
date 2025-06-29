@@ -1,0 +1,58 @@
+# CI values for testing controller functionality
+controller:
+  enabled: true
+  replicaCount: 1
+  useSimpleNames: true
+  
+  image:
+    repository: ghcr.io/kubeflow/model-registry/controller
+    tag: "latest"
+    pullPolicy: IfNotPresent
+    
+  resources:
+    limits:
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+      
+  metrics:
+    enabled: true
+    service:
+      type: ClusterIP
+      port: 8443
+      targetPort: 8443
+      
+  networkPolicy:
+    enabled: false
+    
+  rbac:
+    create: true
+    rules: []
+      
+  serviceAccount:
+    create: true
+    automount: true
+
+monitoring:
+  enabled: false
+  serviceMonitor:
+    enabled: false
+    
+server:
+  enabled: false
+  
+ui:
+  enabled: false
+  
+database:
+  mysql:
+    enabled: false
+  postgres:
+    enabled: false
+  external:
+    enabled: false
+    
+storage:
+  csi:
+    enabled: false 

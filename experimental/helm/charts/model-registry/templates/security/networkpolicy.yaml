@@ -1,0 +1,55 @@
+{{- if or (and .Values.controller.enabled .Values.controller.networkPolicy.enabled) (and (not .Values.controller.enabled) .Values.controller.networkPolicy.enabled) }}
+{{- if .Values.controller.networkPolicy.name }}
+{{/* Network Policy for network-policy-only scenario */}}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Values.controller.networkPolicy.name }}
+  namespace: {{ .Values.controller.networkPolicy.namespace | default (include "model-registry.namespace" .) }}
+  labels:
+    {{- with .Values.controller.networkPolicy.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  podSelector:
+    {{- with .Values.controller.networkPolicy.podSelector }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  policyTypes:
+    - Ingress
+  ingress:
+  {{- range .Values.controller.networkPolicy.ingress }}
+  - {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- else }}
+{{/* Default NetworkPolicy for controller deployment scenarios */}}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "model-registry.fullname" . }}-allow-metrics-traffic
+  namespace: {{ include "model-registry.namespace" . }}
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+    app.kubernetes.io/component: controller
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "model-registry.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: controller
+      control-plane: controller-manager
+  policyTypes:
+    - Ingress
+  ingress:
+    # This allows ingress traffic from any namespace with the label metrics: enabled
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            metrics: enabled  # Only from namespaces with this label
+      ports:
+        - port: {{ .Values.controller.metrics.service.targetPort | default 8443 }}
+          protocol: TCP
+    {{- with .Values.controller.networkPolicy.additionalIngress }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+{{- end }}
+{{- end }} 

@@ -1,0 +1,18 @@
+{{- if and .Values.istio.enabled .Values.istio.authorizationPolicy.enabled }}
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: model-registry-service
+  {{- if .Values.global.includeNamespace }}
+  namespace: {{ include "model-registry.namespace" . }}
+  {{- end }}
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      component: model-registry-server
+  rules:
+  - {}
+{{- end }}

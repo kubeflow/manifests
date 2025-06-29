@@ -1,0 +1,58 @@
+# Values for controller-prometheus scenario
+# This matches the prometheus monitoring-only 
+
+global:
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+
+controller:
+  enabled: false
+  
+  useBasicNames: true
+  
+  serviceAccount:
+    create: false
+    
+  rbac:
+    create: false
+
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    name: controller-manager-metrics-monitor
+    namespace: system
+    labels:
+      control-plane: controller-manager
+      app.kubernetes.io/name: controller
+      app.kubernetes.io/managed-by: kustomize
+    endpoints:
+      - path: /metrics
+        port: https
+        scheme: https
+        bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+        tlsConfig:
+          insecureSkipVerify: true
+    selector:
+      matchLabels:
+        control-plane: controller-manager
+
+server:
+  enabled: false
+  
+ui:
+  enabled: false
+  
+database:
+  mysql:
+    enabled: false
+  postgres:
+    enabled: false
+  external:
+    enabled: false
+    
+security:
+  networkPolicy:
+    enabled: false
+  podSecurityPolicy:
+    enabled: false 

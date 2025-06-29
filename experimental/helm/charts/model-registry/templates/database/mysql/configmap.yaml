@@ -1,0 +1,10 @@
+{{- if .Values.database.mysql.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: model-registry-db-parameters
+data:
+  MYSQL_DATABASE: {{ .Values.database.mysql.auth.database | quote }}
+  MYSQL_PORT: {{ .Values.database.mysql.service.port | quote }}
+  MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+{{- end }} 

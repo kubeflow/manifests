@@ -1,0 +1,66 @@
+# CI values for model-registry with PostgreSQL database
+# This matches the postgres overlay configuration
+
+global:
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+
+server:
+  enabled: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+database:
+  type: postgres
+  mysql:
+    enabled: false
+  postgres:
+    enabled: true
+    image:
+      repository: postgres
+      tag: "14.7-alpine3.17"
+    auth:
+      database: mlmdpostgres
+      username: root
+      password: "password"
+    resources:
+      limits:
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    persistence:
+      enabled: true  
+      size: 20Gi      
+  external:
+    enabled: false
+
+ui:
+  enabled: false
+
+controller:
+  enabled: false
+  rbac:
+    create: false
+
+istio:
+  enabled: false
+
+monitoring:
+  enabled: false
+
+security:
+  networkPolicy:
+    enabled: false
+  podSecurityPolicy:
+    enabled: false
+
+rbac:
+  create: true 
