@@ -20,4 +20,4 @@ patches:
 
 images:
 - name: busybox
-  newName: registry.k8s.io/busybox
+  newName: ghcr.io/containerd/busybox
