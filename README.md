@@ -25,6 +25,7 @@ You can also install the master branch of [`kubeflow/manifests`](https://github.
 - [Release Process](#release-process)
 - [CVE Scanning](#cve-scanning)
 - [Pre-commit Hooks](#pre-commit-hooks)
+- [Resource Usage by components](#resource-usage-by-components)
 - [Frequently Asked Questions](#frequently-asked-questions)
 
 <!-- tocstop -->
@@ -705,6 +706,36 @@ The hooks will run automatically on `git commit`. You can also run them manually
 ```bash
 pre-commit run
 ```
+
+## Resource Usage by components
+
+The following table shows the resource requirements for each Kubeflow component, calculated as the maximum of actual usage and configured requests for CPU/memory, plus storage requirements from PVCs:
+
+| Component | CPU (cores) | Memory (Mi) | Storage (GB) |
+|-----------|-------------|-------------|--------------|
+| Dex + OAuth2-Proxy | 3m | 27Mi | 0GB |
+| Cert Manager | 3m | 130Mi | 0GB |
+| Istio | 850m | 2464Mi | 0GB |
+| Katib | 4m | 107Mi | 3GB |
+| Kubeflow Core | 17m | 828Mi | 0GB |
+| KServe | 600m | 1200Mi | 0GB |
+| Metadata | 10m | 225Mi | 40GB |
+| Model Registry | 500m | 2048Mi | 0GB |
+| Pipelines | 770m | 3276Mi | 60GB |
+| Spark | 5m | 36Mi | 0GB |
+| Training | 2m | 26Mi | 0GB |
+| Other | 1615m | 1698Mi | 36GB |
+| **Total** | **4379m** | **12065Mi** | **139GB** |
+
+### Resource Notes
+
+- **CPU values** represent the maximum of actual observed usage and configured resource requests
+- **Memory values** represent the maximum of actual observed usage and configured resource requests  
+- **Storage values** represent the total PVC allocations from manifest files
+- Components with high resource requests (like Istio, KServe) may be over-provisioned compared to actual usage
+- Storage requirements are persistent and represent the minimum disk space needed
+
+Use this as a reference when planning your Kubeflow installation to allocate appropriate resources and decide which components to enable based on your available infrastructure.
 
 ## Frequently Asked Questions
 

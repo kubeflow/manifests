@@ -248,6 +248,15 @@ jobs:
     - name: Verify Components
       run: kubectl get pods --all-namespaces | grep -E '(Error|CrashLoopBackOff)' && exit 1 || true
 
+    - name: Install Metrics Server
+      run: ./tests/metrics-server_install.sh
+
+    - name: Check Pod Resource Usage
+      run: |
+        echo "==== Resource Usage Table ===="
+        pip3 install -q PyYAML
+        python3 scripts/generate_resource_table.py
+
     - name: Collect Logs on Failure
       if: failure()
       run: |
