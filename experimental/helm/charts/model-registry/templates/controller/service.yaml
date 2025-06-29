@@ -1,0 +1,24 @@
+{{- if and .Values.controller.enabled .Values.controller.metrics.enabled (not .Values.controller.useSimpleNames) }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "model-registry.controller.fullname" . }}-metrics-service
+  namespace: {{ include "model-registry.namespace" . }}
+  labels:
+    {{- include "model-registry.controller.labels" . | nindent 4 }}
+    control-plane: controller-manager
+  {{- with .Values.controller.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.controller.service.type }}
+  ports:
+  - name: https
+    port: {{ .Values.controller.metrics.port }}
+    protocol: TCP
+    targetPort: https
+  selector:
+    {{- include "model-registry.controller.selectorLabels" . | nindent 4 }}
+    control-plane: controller-manager
+{{- end }} 

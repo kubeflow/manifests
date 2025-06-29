@@ -1,0 +1,17 @@
+{{- if and .Values.istio.enabled .Values.istio.destinationRule.enabled }}
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: model-registry-service
+  {{- if .Values.global.includeNamespace }}
+  namespace: {{ include "model-registry.namespace" . }}
+  {{- end }}
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+spec:
+  host: model-registry-service.kubeflow.svc.cluster.local
+  {{- with .Values.istio.destinationRule.trafficPolicy }}
+  trafficPolicy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

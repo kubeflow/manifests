@@ -1,0 +1,99 @@
+{{- if and .Values.ui.enabled .Values.ui.rbac.create }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: model-registry-ui-services-reader
+  labels:
+    {{- include "model-registry.ui.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: model-registry-ui-services-reader-binding
+  labels:
+    {{- include "model-registry.ui.labels" . | nindent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "model-registry.ui.serviceAccountName" . }}
+  {{- if .Values.global.includeNamespace }}
+  namespace: {{ include "model-registry.namespace" . }}
+  {{- end }}
+roleRef:
+  kind: ClusterRole
+  name: model-registry-ui-services-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: model-registry-retrieve-clusterrolebindings
+  labels:
+    {{- include "model-registry.ui.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: model-registry-retrieve-clusterrolebindings-binding
+  labels:
+    {{- include "model-registry.ui.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: model-registry-retrieve-clusterrolebindings
+subjects:
+- kind: ServiceAccount
+  name: {{ include "model-registry.ui.serviceAccountName" . }}
+  {{- if .Values.global.includeNamespace }}
+  namespace: {{ include "model-registry.namespace" . }}
+  {{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: model-registry-create-sars
+  labels:
+    {{- include "model-registry.ui.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: model-registry-create-sars-binding
+  labels:
+    {{- include "model-registry.ui.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: model-registry-create-sars
+subjects:
+- kind: ServiceAccount
+  name: {{ include "model-registry.ui.serviceAccountName" . }}
+  {{- if .Values.global.includeNamespace }}
+  namespace: {{ include "model-registry.namespace" . }}
+  {{- end }}
+{{- end }}

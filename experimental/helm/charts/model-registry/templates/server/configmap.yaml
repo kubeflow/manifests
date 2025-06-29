@@ -1,0 +1,23 @@
+{{- if .Values.server.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: model-registry-configmap
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+    app.kubernetes.io/component: server
+    component: model-registry-server
+  {{- with .Values.commonAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  MODEL_REGISTRY_REST_SERVICE_HOST: "model-registry-service"
+  MODEL_REGISTRY_REST_SERVICE_PORT: "{{ .Values.server.rest.port }}"
+  MODEL_REGISTRY_GRPC_SERVICE_HOST: "model-registry-service"
+  MODEL_REGISTRY_GRPC_SERVICE_PORT: "{{ .Values.server.grpc.port }}"
+  MODEL_REGISTRY_DATA_STORE_TYPE: "{{ .Values.server.dataStoreType }}"
+  {{- range $key, $value := .Values.configMap.data }}
+  {{ $key }}: "{{ $value }}"
+  {{- end }}
+{{- end }} 

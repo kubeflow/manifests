@@ -1,0 +1,9 @@
+{{- if .Values.database.postgres.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: metadata-registry-db-parameters
+data:
+  POSTGRES_PORT: {{ .Values.database.postgres.service.port | quote }}
+  POSTGRES_DBNAME: {{ .Values.database.postgres.auth.database | quote }}
+{{- end }}

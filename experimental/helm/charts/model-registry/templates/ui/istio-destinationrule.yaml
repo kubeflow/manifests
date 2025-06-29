@@ -1,0 +1,14 @@
+{{- if and .Values.ui.enabled .Values.ui.istio.enabled .Values.ui.istio.destinationRule.enabled }}
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: model-registry-ui
+  namespace: {{ include "model-registry.namespace" . }}
+  labels:
+    app: model-registry-ui
+spec:
+  host: {{ include "model-registry.ui.fullname" . }}-service.{{ include "model-registry.namespace" . }}.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+{{- end }} 
