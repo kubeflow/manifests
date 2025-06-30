@@ -6,9 +6,10 @@ on:
     paths:
     - 'charts/**'
     - '/applications/model-registry/**'
-    - 'tests/compare_all_scenarios.sh'
-    - 'tests/compare_helm_kustomize.sh'
-    - 'tests/compare_manifests.py'
+    - 'tests/helm_compare_all_scenarios.sh'
+    - 'tests/helm_kustomize_compare.sh'
+    - 'tests/helm_compare_manifests.py'
+    - 'helm-kustomize-comparison.yml'
   workflow_dispatch:
 
 jobs:
