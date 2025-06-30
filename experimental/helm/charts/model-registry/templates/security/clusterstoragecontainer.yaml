@@ -7,16 +7,12 @@ metadata:
 spec:
   container:
     name: storage-initializer
-    image: {{ .Values.storage.csi.image.repository }}:{{ .Values.storage.csi.image.tag | default .Chart.AppVersion }}
+    image: {{ .Values.storage.csi.image.repository }}:{{ .Values.storage.csi.image.tag | default .Values.global.imageTag }}
     env:
     - name: MODEL_REGISTRY_BASE_URL
-      value: "model-registry-service.kubeflow.svc.cluster.local:8080"
+      value: "{{ include "model-registry.service.fullhost" . }}:{{ .Values.server.rest.port }}"
     resources:
-      requests:
-        memory: 100Mi
-        cpu: 100m
-      limits:
-        memory: 1Gi
+      {{- toYaml .Values.storage.csi.resources | nindent 6 }}
   supportedUriFormats:
-    - prefix: model-registry://
+    {{- toYaml .Values.storage.csi.supportedUriFormats | nindent 4 }}
 {{- end }}

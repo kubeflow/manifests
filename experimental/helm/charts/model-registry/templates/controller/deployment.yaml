@@ -206,9 +206,9 @@ spec:
         command:
         - /manager
         args:
-        - --metrics-bind-address=:8443
-        - --leader-elect
-        - --health-probe-bind-address=:8081
+          - --metrics-bind-address=:{{ .Values.controller.ports.metrics }}
+          - --leader-elect
+          - --health-probe-bind-address=:{{ .Values.controller.ports.health }}
         env:
         - name: NAMESPACE_LABEL
           value: {{ .Values.controller.env.namespaceLabel | quote }}
@@ -237,13 +237,13 @@ spec:
         {{- end }}
         ports:
         - name: health
-          containerPort: 8081
+          containerPort: {{ .Values.controller.ports.health }}
           protocol: TCP
         {{- if .Values.controller.livenessProbe.enabled }}
         livenessProbe:
           httpGet:
             path: /healthz
-            port: 8081
+            port: {{ .Values.controller.ports.health }}
           initialDelaySeconds: {{ .Values.controller.livenessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.controller.livenessProbe.periodSeconds }}
           timeoutSeconds: {{ .Values.controller.livenessProbe.timeoutSeconds }}
@@ -253,7 +253,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /readyz
-            port: 8081
+            port: {{ .Values.controller.ports.health }}
           initialDelaySeconds: {{ .Values.controller.readinessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.controller.readinessProbe.periodSeconds }}
           timeoutSeconds: {{ .Values.controller.readinessProbe.timeoutSeconds }}

@@ -8,7 +8,7 @@ metadata:
     app: model-registry-ui
 spec:
   gateways:
-  - kubeflow-gateway
+  - {{ .Values.istio.gateway.name }}
   hosts:
   - '*'
   http:
@@ -25,5 +25,5 @@ spec:
     - destination:
         host: {{ include "model-registry.ui.fullname" . }}-service.{{ include "model-registry.namespace" . }}.svc.cluster.local
         port:
-          number: 80
+          number: {{ .Values.ui.service.port }}
 {{- end }} 

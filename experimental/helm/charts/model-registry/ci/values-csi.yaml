@@ -20,7 +20,7 @@ storage:
       value: "model-registry-service.kubeflow.svc.cluster.local:8080"
       
     supportedUriFormats:
-    - "model-registry://"
+    - prefix: "model-registry://"
     
 server:
   enabled: false

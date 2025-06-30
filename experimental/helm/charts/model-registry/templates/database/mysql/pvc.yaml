@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: metadata-mysql
+  name: {{ include "model-registry.mysql.pvcName" . }}
 spec:
   accessModes:
   - ReadWriteOnce

@@ -12,7 +12,7 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
 {{- else if .Values.controller.useSimpleNames }}
   name: controller-controller-manager
-  namespace: kubeflow
+  namespace: {{ include "model-registry.namespace" . }}
   labels:
     app.kubernetes.io/name: controller
     app.kubernetes.io/managed-by: kustomize
@@ -43,7 +43,7 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
 {{- else if .Values.controller.useSimpleNames }}
   name: controller-leader-election-role
-  namespace: kubeflow
+  namespace: {{ include "model-registry.namespace" . }}
   labels:
     app.kubernetes.io/name: controller
     app.kubernetes.io/managed-by: kustomize

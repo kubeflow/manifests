@@ -53,8 +53,8 @@ spec:
               name: model-registry-configmap
           args: ["--grpc_port=$(MODEL_REGISTRY_GRPC_SERVICE_PORT)",
                  "--metadata_source_config_type=postgresql",
-                 "--postgres_config_host=metadata-postgres-db",
-                 "--postgres_config_port=5432",
+                 "--postgres_config_host={{ include "model-registry.postgres.serviceName" . }}",
+                 "--postgres_config_port={{ .Values.database.postgres.service.port }}",
                  "--postgres_config_dbname=$(POSTGRES_DBNAME)",
                  "--postgres_config_user=$(POSTGRES_USER)",
                  "--postgres_config_password=$(POSTGRES_PASSWORD)",
@@ -171,9 +171,9 @@ spec:
           - configMapRef:
               name: model-registry-configmap
           args: ["--grpc_port=$(MODEL_REGISTRY_GRPC_SERVICE_PORT)",
-                 "--mysql_config_host=model-registry-db",
+                 "--mysql_config_host={{ include "model-registry.mysql.serviceName" . }}",
                  "--mysql_config_database=$(MYSQL_DATABASE)",
-                 "--mysql_config_port=3306",
+                 "--mysql_config_port={{ .Values.database.mysql.service.port }}",
                  "--mysql_config_user=$(MYSQL_USER_NAME)",
                  "--mysql_config_password=$(MYSQL_ROOT_PASSWORD)"]
           command: ["/bin/metadata_store_server"]

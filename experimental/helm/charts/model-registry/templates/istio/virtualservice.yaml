@@ -23,18 +23,18 @@ spec:
         prefix: /api/model_registry/
     route:
     - destination:
-        host: model-registry-service.kubeflow.svc.cluster.local
+        host: {{ include "model-registry.service.fullhost" . }}
         port:
-          number: 8080
+          number: {{ .Values.server.rest.port }}
   - match:
-    - port: 9090
+    - port: {{ .Values.server.grpc.port }}
     - authority:
-        regex: model-registry-service(\..+)?(:9090)?
+        regex: {{ include "model-registry.service.name" . }}(\..+)?(:{{ .Values.server.grpc.port }})?
     - uri:
         prefix: /ml_metadata.MetadataStoreService/
     route:
     - destination:
-        host: model-registry-service.kubeflow.svc.cluster.local
+        host: {{ include "model-registry.service.fullhost" . }}
         port:
-          number: 9090
+          number: {{ .Values.server.grpc.port }}
 {{- end }}

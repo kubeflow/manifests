@@ -25,6 +25,8 @@ global:
   imagePullSecrets: []
   # -- Global annotations to add to the resources
   annotations: {}
+  # -- Include namespace in resource names
+  includeNamespace: false
 
 # Core server configuration
 server:
@@ -288,6 +290,12 @@ controller:
   enabled: false
   # -- Number of controller replicas
   replicas: 1
+  useSimpleNames: false
+  
+  # -- Controller ports configuration
+  ports:
+    health: 8081
+    metrics: 8443
   
   image:
     # -- Controller image repository
@@ -401,6 +409,23 @@ controller:
 database:
   type: mysql  
   
+  # -- Database resource naming configuration
+  resourceNames:
+    mysql:
+      # -- PVC name for MySQL 
+      pvcName: ""
+      # -- Service name for MySQL   
+      serviceName: ""
+      # -- Deployment name for MySQL 
+      deploymentName: ""
+    postgres:
+      # -- PVC name for Postgres 
+      pvcName: ""
+      # -- Service name for Postgres 
+      serviceName: ""
+      # -- Deployment name for Postgres 
+      deploymentName: ""
+  
   mysql:
     enabled: true
     image:
@@ -414,6 +439,8 @@ database:
       existingSecret: ""
     service:
       port: 3306
+      # -- Service name 
+      name: ""
     persistence:
       enabled: true
       size: 10Gi
@@ -430,6 +457,8 @@ database:
       existingSecret: ""
     service:
       port: 5432
+      # -- Service name 
+      name: ""
     persistence:
       enabled: true
       size: 20Gi
@@ -459,9 +488,9 @@ istio:
     # -- Enable Istio Gateway
     enabled: false
     # -- Gateway name
-    name: ""
+    name: "kubeflow-gateway"
     # -- Gateway hosts
-    hosts: []
+    hosts: ["*"]
     # -- Gateway TLS configuration
     tls: {}
     
@@ -469,9 +498,9 @@ istio:
     # -- Enable Istio VirtualService
     enabled: false
     # -- VirtualService hosts
-    hosts: []
+    hosts: ["*"]
     # -- VirtualService gateways
-    gateways: []
+    gateways: ["kubeflow-gateway"]
     
   destinationRule:
     # -- Enable Istio DestinationRule
@@ -586,4 +615,17 @@ storage:
     
     # -- Supported URI formats
     supportedUriFormats:
-    - "model-registry://" 
+    - prefix: "model-registry://"
+
+# Service configuration
+service:
+  # -- Service name for model registry
+  name: ""
+  # -- Service port configuration
+  ports:
+    http: 8080
+    grpc: 9090
+  # -- Service display configuration
+  annotations:
+    displayName: "Kubeflow Model Registry"
+    description: "An example model registry" 

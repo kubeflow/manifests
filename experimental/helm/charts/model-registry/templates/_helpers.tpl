@@ -305,7 +305,11 @@ Namespace helper
 Service name for model registry
 */}}
 {{- define "model-registry.service.name" -}}
+{{- if .Values.service.name }}
+{{- .Values.service.name }}
+{{- else }}
 {{- printf "%s-service" (include "model-registry.fullname" .) }}
+{{- end }}
 {{- end }}
 
 {{/*
@@ -314,6 +318,110 @@ ConfigMap name for model registry
 {{- define "model-registry.configMap.name" -}}
 {{- printf "%s-configmap" (include "model-registry.fullname" .) }}
 {{- end }}
+
+{{/*
+Get the full service URL for configuring resources
+*/}}
+{{- define "model-registry.service.fullhost" -}}
+{{- $serviceName := include "model-registry.service.name" . -}}
+{{- $namespace := include "model-registry.namespace" . -}}
+{{- printf "%s.%s.svc.cluster.local" $serviceName $namespace -}}
+{{- end -}}
+
+{{/*
+controller simple service account name 
+*/}}
+{{- define "model-registry.controller.simpleServiceAccountName" -}}
+{{- if .Values.controller.useSimpleNames -}}
+controller-controller-manager
+{{- else -}}
+{{- include "model-registry.fullname" . }}-controller-manager
+{{- end -}}
+{{- end -}}
+
+{{/*
+MySQL PVC name
+*/}}
+{{- define "model-registry.mysql.pvcName" -}}
+{{- if .Values.database.resourceNames.mysql.pvcName -}}
+{{- .Values.database.resourceNames.mysql.pvcName -}}
+{{- else -}}
+metadata-mysql
+{{- end -}}
+{{- end -}}
+
+{{/*
+MySQL service name
+*/}}
+{{- define "model-registry.mysql.serviceName" -}}
+{{- if .Values.database.resourceNames.mysql.serviceName -}}
+{{- .Values.database.resourceNames.mysql.serviceName -}}
+{{- else if .Values.database.mysql.service.name -}}
+{{- .Values.database.mysql.service.name -}}
+{{- else -}}
+model-registry-db
+{{- end -}}
+{{- end -}}
+
+{{/*
+MySQL deployment name
+*/}}
+{{- define "model-registry.mysql.deploymentName" -}}
+{{- if .Values.database.resourceNames.mysql.deploymentName -}}
+{{- .Values.database.resourceNames.mysql.deploymentName -}}
+{{- else -}}
+model-registry-db
+{{- end -}}
+{{- end -}}
+
+{{/*
+Postgres PVC name
+*/}}
+{{- define "model-registry.postgres.pvcName" -}}
+{{- if .Values.database.resourceNames.postgres.pvcName -}}
+{{- .Values.database.resourceNames.postgres.pvcName -}}
+{{- else -}}
+metadata-postgres
+{{- end -}}
+{{- end -}}
+
+{{/*
+Postgres service name
+*/}}
+{{- define "model-registry.postgres.serviceName" -}}
+{{- if .Values.database.resourceNames.postgres.serviceName -}}
+{{- .Values.database.resourceNames.postgres.serviceName -}}
+{{- else if .Values.database.postgres.service.name -}}
+{{- .Values.database.postgres.service.name -}}
+{{- else -}}
+metadata-postgres-db
+{{- end -}}
+{{- end -}}
+
+{{/*
+Postgres deployment name
+*/}}
+{{- define "model-registry.postgres.deploymentName" -}}
+{{- if .Values.database.resourceNames.postgres.deploymentName -}}
+{{- .Values.database.resourceNames.postgres.deploymentName -}}
+{{- else -}}
+metadata-postgres-db
+{{- end -}}
+{{- end -}}
+
+{{/*
+Service display name for annotations
+*/}}
+{{- define "model-registry.service.displayName" -}}
+{{- .Values.service.annotations.displayName | default "Kubeflow Model Registry" -}}
+{{- end -}}
+
+{{/*
+Service description for annotations
+*/}}
+{{- define "model-registry.service.description" -}}
+{{- .Values.service.annotations.description | default "An example model registry" -}}
+{{- end -}}
 
 {{/*
 Validate database configuration

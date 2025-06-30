@@ -2,17 +2,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: model-registry-service
+  name: {{ include "model-registry.service.name" . }}
   labels:
-    app: model-registry-service
+    app: {{ include "model-registry.service.name" . }}
     app.kubernetes.io/component: model-registry
-    app.kubernetes.io/instance: model-registry-service
-    app.kubernetes.io/name: model-registry-service
+    app.kubernetes.io/instance: {{ include "model-registry.service.name" . }}
+    app.kubernetes.io/name: {{ include "model-registry.service.name" . }}
     app.kubernetes.io/part-of: model-registry
     component: model-registry
   annotations:
-    displayName: Kubeflow Model Registry
-    description: An example model registry
+    displayName: {{ include "model-registry.service.displayName" . }}
+    description: {{ include "model-registry.service.description" . }}
     {{- with .Values.server.service.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
