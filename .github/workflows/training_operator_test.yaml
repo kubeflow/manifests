@@ -59,8 +59,9 @@ jobs:
 
     - name: Verify CRDs are ready
       run: |
-        kubectl api-resources | grep -q "pytorchjob"
-        kubectl get crd pytorchjobs.kubeflow.org
+        kubectl get crd trainjobs.trainer.kubeflow.org
+        kubectl get crd clustertrainingruntimes.trainer.kubeflow.org
+        kubectl get crd trainingruntimes.trainer.kubeflow.org
 
     - name: Install Dependencies
       run: pip install pytest kubernetes requests
@@ -72,21 +73,21 @@ jobs:
       run: ./tests/training_operator_test.sh "${KF_PROFILE}"
 
     - name: Test with Authorized Token
-      run: kubectl get pytorchjobs -n $KF_PROFILE --token="$(kubectl -n $KF_PROFILE create token default-editor)"
+      run: kubectl get trainjobs -n $KF_PROFILE --token="$(kubectl -n $KF_PROFILE create token default-editor)"
 
     - name: Test with Unauthorized Token
       run: |
         kubectl create namespace test-unauthorized
         kubectl create serviceaccount test-unauthorized -n test-unauthorized
         UNAUTHORIZED_TOKEN=$(kubectl -n test-unauthorized create token test-unauthorized)
-        kubectl get pytorchjobs -n $KF_PROFILE --token="$UNAUTHORIZED_TOKEN" >/dev/null
+        kubectl get trainjobs -n $KF_PROFILE --token="$UNAUTHORIZED_TOKEN" >/dev/null
 
     - name: Apply Pod Security Standards baseline levels
       run: ./tests/PSS_baseline_enable.sh
 
     - name: Unapply applied baseline labels
       run: |
-        NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow")
+        NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow" "kubeflow-system")
         for NAMESPACE in "${NAMESPACES[@]}"; do
           if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
             kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce-

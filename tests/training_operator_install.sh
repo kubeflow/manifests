@@ -2,13 +2,20 @@
 set -euo pipefail
 
 cd applications/training-operator/upstream
-kustomize build overlays/kubeflow-platform | kubectl apply --server-side --force-conflicts -f -
 
-kubectl wait --for=condition=Available deployment/training-operator -n kubeflow --timeout=180s
+kustomize build base/crds | kubectl apply --server-side --force-conflicts -f -
 
+until kubectl api-resources | grep -q "trainjobs"; do sleep 1; done
 
-kubectl get deployment -n kubeflow training-operator
-kubectl get pods -n kubeflow -l app=training-operator
-kubectl get crd | grep -E 'tfjobs.kubeflow.org|pytorchjobs.kubeflow.org'
+kustomize build overlays/manager | kubectl apply --server-side --force-conflicts -f -
+kubectl wait --for=condition=Available deployment/kubeflow-trainer-controller-manager -n kubeflow-system --timeout=180s
+
+kubectl apply --server-side --force-conflicts -f overlays/kubeflow-platform/kubeflow-trainer-roles.yaml
+kustomize build overlays/runtimes | kubectl apply --server-side --force-conflicts -f -
+
+kubectl get deployment -n kubeflow-system kubeflow-trainer-controller-manager
+kubectl get pods -n kubeflow-system -l app.kubernetes.io/name=trainer
+kubectl get crd | grep -E 'trainer.kubeflow.org'
+kubectl get clustertrainingruntimes
 
 cd -
