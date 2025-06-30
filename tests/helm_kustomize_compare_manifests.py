@@ -105,6 +105,10 @@ def main():
     namespace = sys.argv[4] if len(sys.argv) > 4 else "kubeflow"
     kubeflow_rbac_enabled = sys.argv[5].lower() == 'true' if len(sys.argv) > 5 else False
 
+    if component not in ["spark-operator", "cert-manager"]:
+        print(f"ERROR: Unsupported component '{component}'. Only 'spark-operator' and 'cert-manager' are supported.")
+        sys.exit(1)
+
     kustomize = load_and_index(kustomize_file)
     helm = load_and_index(helm_file)
 
@@ -143,6 +147,8 @@ def main():
         print(f"WARNING: Unexpected extra resources in Helm: {', '.join(sorted(unexpected_extra_helm))}")
         
     print(f"\nCOMPARISON SUMMARY:")
+    print(f"  Component: {component}")
+    print(f"  Namespace: {namespace}")
     print(f"  Kustomize resources: {len(kustomize_keys)}")
     print(f"  Helm resources: {len(helm_keys)}")
     print(f"  Common resources: {len(kustomize_keys & helm_keys)}")

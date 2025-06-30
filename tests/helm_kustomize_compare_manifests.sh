@@ -7,60 +7,51 @@ COMPONENT=${1:-"cert-manager"}
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 HELM_DIR="$ROOT_DIR/experimental/helm"
-CHART_DIR="$HELM_DIR/kubeflow"
 
 case $COMPONENT in
     "spark-operator")
         KUSTOMIZE_PATH="applications/spark/spark-operator/base"
         NAMESPACE="kubeflow"
-        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/external/spark-operator"
         ;;
     "cert-manager")
         KUSTOMIZE_PATH="common/cert-manager/base"
         NAMESPACE="cert-manager"
-        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/external/cert-manager"
-        ;;
-    "centraldashboard")
-        KUSTOMIZE_PATH="applications/centraldashboard/upstream/base"
-        NAMESPACE="kubeflow"
-        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/applications/centraldashboard"
-        ;;
-    "centraldashboard-istio")
-        KUSTOMIZE_PATH="applications/centraldashboard/upstream/overlays/istio"
-        NAMESPACE="kubeflow"
-        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/applications/centraldashboard"
-        ;;
-    "centraldashboard-kserve")
-        KUSTOMIZE_PATH="applications/centraldashboard/upstream/overlays/kserve"
-        NAMESPACE="kubeflow"
-        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/applications/centraldashboard"
-        ;;
-    "centraldashboard-oauth2-proxy")
-        KUSTOMIZE_PATH="applications/centraldashboard/overlays/oauth2-proxy"
-        NAMESPACE="kubeflow"
-        HELM_TEMPLATE_PATH="experimental/helm/kubeflow/templates/applications/centraldashboard"
         ;;
     *)
-        echo "Unknown component: $COMPONENT"
-        echo "Supported components: spark-operator, cert-manager, centraldashboard, centraldashboard-istio, centraldashboard-kserve, centraldashboard-oauth2-proxy"
+        echo "ERROR: Unsupported component: $COMPONENT"
+        echo "Only 'spark-operator' and 'cert-manager' are supported."
+        echo "Centraldashboard support has been removed in favor of dynamic generation."
         exit 1
         ;;
 esac
 
 cd "$ROOT_DIR"
 
+# Check if we're running in an environment where Helm templates should be generated
+# (like GitHub Actions) vs using existing templates
+HELM_CHART_DIR="$HELM_DIR/kubeflow"
+if [ ! -d "$HELM_CHART_DIR" ]; then
+    echo "ERROR: Helm chart directory not found: $HELM_CHART_DIR"
+    echo "This script expects Helm templates to be generated first."
+    echo "Run the appropriate synchronization script from experimental/helm/scripts/ first."
+    exit 1
+fi
+
+HELM_TEMPLATE_PATH="$HELM_CHART_DIR/templates/external/$COMPONENT"
 if [ ! -d "$HELM_TEMPLATE_PATH" ]; then
     echo "ERROR: Helm template directory does not exist: $HELM_TEMPLATE_PATH"
+    echo "Run: experimental/helm/scripts/synchronize-${COMPONENT}.sh"
     exit 1
 fi
 
 TEMPLATE_FILES=$(find "$HELM_TEMPLATE_PATH" -name "*.yaml" -o -name "*.yml" -o -name "*.tpl" | wc -l)
 if [ "$TEMPLATE_FILES" -eq 0 ]; then
     echo "ERROR: No Helm template files found in $HELM_TEMPLATE_PATH"
-    echo "Please implement the Helm templates for $COMPONENT before running this comparison."
+    echo "Please run the synchronization script: experimental/helm/scripts/synchronize-${COMPONENT}.sh"
     exit 1
 fi
 
+echo "Generating Kustomize manifests for $COMPONENT..."
 KUSTOMIZE_OUTPUT="/tmp/kustomize-${COMPONENT}.yaml"
 case $COMPONENT in
     "cert-manager")
@@ -74,12 +65,22 @@ case $COMPONENT in
         ;;
 esac
 
-cd "$CHART_DIR"
+echo "Generating Helm manifests for $COMPONENT..."
+cd "$HELM_CHART_DIR"
 HELM_OUTPUT="/tmp/helm-aio-${COMPONENT}.yaml"
 TEMP_VALUES_FILE="/tmp/test-values-${COMPONENT}.yaml"
 
-create_base_values() {
+  # Create values file with only the target component enabled
+create_values_for_component() {
+    local component=$1
+    
     cat > "$TEMP_VALUES_FILE" << EOF
+# Global settings
+global:
+  kubeflowNamespace: kubeflow
+  certManagerNamespace: cert-manager
+
+# Disable all components by default
 sparkOperator:
   enabled: false
 certManager:
@@ -115,15 +116,12 @@ pvcviewerController:
 modelRegistry:
   enabled: false
 EOF
-}
-
-append_component_config() {
-    local component=$1
     
     case $component in
         "cert-manager")
             cat >> "$TEMP_VALUES_FILE" << EOF
 
+# Enable cert-manager
 certManager:
   enabled: true
   installCRDs: true
@@ -140,6 +138,7 @@ EOF
         "spark-operator")
             cat >> "$TEMP_VALUES_FILE" << EOF
 
+# Enable spark-operator
 sparkOperator:
   enabled: true
   spark:
@@ -151,153 +150,26 @@ sparkOperator:
     enabled: true
 EOF
             ;;
-        "centraldashboard")
-            cat >> "$TEMP_VALUES_FILE" << EOF
-
-centraldashboard:
-  enabled: true
-  image:
-    repository: ghcr.io/kubeflow/kubeflow/central-dashboard
-    tag: v1.10.0
-    pullPolicy: IfNotPresent
-  replicas: 1
-  config:
-    clusterDomain: cluster.local
-    useridHeader: kubeflow-userid
-    useridPrefix: ""
-    registrationFlow: false
-    collectMetrics: true
-    logoutUrl: "/oauth2/sign_out"
-    profilesKfamServiceHost: profiles-kfam.kubeflow
-  service:
-    port: 80
-    targetPort: 8082
-    type: ClusterIP
-  livenessProbe:
-    httpGet:
-      path: /healthz
-      port: 8082
-    initialDelaySeconds: 30
-    periodSeconds: 30
-EOF
-            ;;
-        "centraldashboard-istio")
-            cat >> "$TEMP_VALUES_FILE" << EOF
-
-centraldashboard:
-  enabled: true
-  istio:
-    enabled: true
-  image:
-    repository: ghcr.io/kubeflow/kubeflow/central-dashboard
-    tag: v1.10.0
-    pullPolicy: IfNotPresent
-  replicas: 1
-  config:
-    clusterDomain: cluster.local
-    useridHeader: kubeflow-userid
-    useridPrefix: ""
-    registrationFlow: false
-    collectMetrics: true
-    logoutUrl: "/oauth2/sign_out"
-    profilesKfamServiceHost: profiles-kfam.kubeflow
-  service:
-    port: 80
-    targetPort: 8082
-    type: ClusterIP
-  livenessProbe:
-    httpGet:
-      path: /healthz
-      port: 8082
-    initialDelaySeconds: 30
-    periodSeconds: 30
-EOF
-            ;;
-        "centraldashboard-kserve")
-            cat >> "$TEMP_VALUES_FILE" << EOF
-
-centraldashboard:
-  enabled: true
-  istio:
-    enabled: true
-  kserve:
-    enabled: true
-  image:
-    repository: ghcr.io/kubeflow/kubeflow/central-dashboard
-    tag: v1.10.0
-    pullPolicy: IfNotPresent
-  replicas: 1
-  config:
-    clusterDomain: cluster.local
-    useridHeader: kubeflow-userid
-    useridPrefix: ""
-    registrationFlow: false
-    collectMetrics: true
-    logoutUrl: "/oauth2/sign_out"
-    profilesKfamServiceHost: profiles-kfam.kubeflow
-  service:
-    port: 80
-    targetPort: 8082
-    type: ClusterIP
-  livenessProbe:
-    httpGet:
-      path: /healthz
-      port: 8082
-    initialDelaySeconds: 30
-    periodSeconds: 30
-EOF
-            ;;
-        "centraldashboard-oauth2-proxy")
-            cat >> "$TEMP_VALUES_FILE" << EOF
-
-centraldashboard:
-  enabled: true
-  istio:
-    enabled: true
-  kserve:
-    enabled: true
-  oauth2Proxy:
-    enabled: true
-  image:
-    repository: ghcr.io/kubeflow/kubeflow/central-dashboard
-    tag: v1.10.0
-    pullPolicy: IfNotPresent
-  replicas: 1
-  config:
-    clusterDomain: cluster.local
-    useridHeader: kubeflow-userid
-    useridPrefix: ""
-    registrationFlow: false
-    collectMetrics: true
-    logoutUrl: "/oauth2/sign_out"
-    profilesKfamServiceHost: profiles-kfam.kubeflow
-  service:
-    port: 80
-    targetPort: 8082
-    type: ClusterIP
-  livenessProbe:
-    httpGet:
-      path: /healthz
-      port: 8082
-    initialDelaySeconds: 30
-    periodSeconds: 30
-EOF
-            ;;
     esac
 }
 
-create_base_values
-append_component_config "$COMPONENT"
+create_values_for_component "$COMPONENT"
 
 helm template kubeflow . --namespace "$NAMESPACE" --include-crds --values "$TEMP_VALUES_FILE" > "$HELM_OUTPUT"
 rm -f "$TEMP_VALUES_FILE"
 
 KUBEFLOW_RBAC_ENABLED="false"
-if [ "$COMPONENT" = "spark-operator" ] && [ -f "$CHART_DIR/values.yaml" ]; then
-    grep -A 10 "sparkOperator:" "$CHART_DIR/values.yaml" | grep -A 5 "kubeflowRBAC:" | grep -q "enabled: true" && KUBEFLOW_RBAC_ENABLED="true"
+if [ "$COMPONENT" = "spark-operator" ]; then
+    INTEGRATIONS_FILE="$HELM_CHART_DIR/templates/integrations/spark-operator-rbac.yaml"
+    if [ -f "$INTEGRATIONS_FILE" ]; then
+        KUBEFLOW_RBAC_ENABLED="true"
+    fi
 fi
 
+echo "Comparing manifests for $COMPONENT..."
 cd "$ROOT_DIR"
 python3 "$ROOT_DIR/tests/helm_kustomize_compare_manifests.py" "$KUSTOMIZE_OUTPUT" "$HELM_OUTPUT" "$COMPONENT" "$NAMESPACE" "$KUBEFLOW_RBAC_ENABLED"
 
-rm -f "$KUSTOMIZE_OUTPUT" "$HELM_OUTPUT" 
+rm -f "$KUSTOMIZE_OUTPUT" "$HELM_OUTPUT"
+
+echo "Comparison completed for $COMPONENT" 

@@ -6,10 +6,8 @@ on:
     - tests/install_KinD_create_KinD_cluster_install_kustomize.sh
     - tests/helm_install.sh
     - .github/workflows/helm_vs_kustomize_verification.yaml
-    - apps/spark/spark-operator/**
-    - apps/centraldashboard/**
+    - applications/spark/spark-operator/**
     - common/cert-manager/**
-    - experimental/helm/kubeflow/**
     - experimental/helm/scripts/**
     - tests/helm_kustomize_compare_manifests.sh
     - tests/helm_kustomize_compare_manifests.py
@@ -20,7 +18,7 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        component: [spark-operator, cert-manager, centraldashboard, centraldashboard-istio, centraldashboard-kserve, centraldashboard-oauth2-proxy]
+        component: [spark-operator, cert-manager]
       fail-fast: false
 
     steps:
@@ -37,9 +35,17 @@ jobs:
         chmod +x tests/helm_install.sh
         ./tests/helm_install.sh
 
+    - name: Setup minimal Helm chart structure
+      run: |
+        chmod +x experimental/helm/scripts/setup-test-chart.sh
+        experimental/helm/scripts/setup-test-chart.sh
+
+    - name: Generate Helm templates for ${{ matrix.component }}
+      run: |
+        experimental/helm/scripts/synchronize-${{ matrix.component }}.sh
+
     - name: Run Helm vs Kustomize verification for ${{ matrix.component }}
       run: |
-        chmod +x tests/helm_kustomize_compare_manifests.sh
         ./tests/helm_kustomize_compare_manifests.sh ${{ matrix.component }}
 
     - name: Upload artifacts on failure
@@ -50,3 +56,9 @@ jobs:
         path: |
           /tmp/kustomize-${{ matrix.component }}.yaml
           /tmp/helm-aio-${{ matrix.component }}.yaml
+
+    - name: Cleanup generated Helm templates
+      if: always()
+      run: |
+        rm -rf experimental/helm/kubeflow/templates/external/${{ matrix.component }}
+        rm -f experimental/helm/kubeflow/crds/*-${{ matrix.component }}*.yaml
