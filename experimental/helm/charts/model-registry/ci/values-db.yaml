@@ -22,7 +22,7 @@ database:
     enabled: true
     image:
       repository: mysql
-      tag: "8.3"
+      tag: "8.3.0"
     auth:
       database: metadb
       username: "root"

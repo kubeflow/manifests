@@ -107,8 +107,7 @@ spec:
           {{- end }}
           {{- if .Values.server.rest.readinessProbe.enabled }}
           readinessProbe:
-            httpGet:
-              path: {{ .Values.server.rest.readinessProbe.path }}
+            tcpSocket:
               port: http-api
             initialDelaySeconds: {{ .Values.server.rest.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.server.rest.readinessProbe.periodSeconds }}
@@ -149,8 +148,7 @@ spec:
           {{- end }}
           {{- if .Values.server.rest.readinessProbe.enabled }}
           readinessProbe:
-            httpGet:
-              path: {{ .Values.server.rest.readinessProbe.path }}
+            tcpSocket:
               port: http-api
             initialDelaySeconds: {{ .Values.server.rest.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.server.rest.readinessProbe.periodSeconds }}
@@ -227,8 +225,7 @@ spec:
           {{- end }}
           {{- if .Values.server.rest.readinessProbe.enabled }}
           readinessProbe:
-            httpGet:
-              path: {{ .Values.server.rest.readinessProbe.path }}
+            tcpSocket:
               port: http-api
             initialDelaySeconds: {{ .Values.server.rest.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.server.rest.readinessProbe.periodSeconds }}

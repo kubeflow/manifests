@@ -104,11 +104,10 @@ server:
     # -- REST API readiness probe configuration
     readinessProbe:
       enabled: true
-      initialDelaySeconds: 10
-      periodSeconds: 60
+      initialDelaySeconds: 3
+      periodSeconds: 5
       timeoutSeconds: 2
       failureThreshold: 3
-      path: /readyz/isDirty
     
   # gRPC configuration  
   grpc:
@@ -177,7 +176,7 @@ ui:
     # -- UI image repository
     repository: model-registry-ui
     # -- UI image tag 
-    tag: ""
+    tag: "v0.2.19"
     # -- UI image pull policy 
     pullPolicy: ""
     
@@ -272,6 +271,16 @@ ui:
       - user@example.com
       # -- Cluster role to assign
       clusterRole: cluster-admin
+      
+  # -- Istio configuration for UI
+  istio:
+    enabled: false
+    virtualService:
+      enabled: false
+    destinationRule:
+      enabled: false
+    authorizationPolicy:
+      enabled: false
 
 # Controller configuration  
 controller:
