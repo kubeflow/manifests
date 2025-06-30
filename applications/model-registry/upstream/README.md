@@ -134,3 +134,13 @@ kubectl delete -k options/istio -n kubeflow
 # Delete model registry db and deployment
 kubectl delete -k overlays/db -n kubeflow
 ```
+
+## Error `error: error connecting to datastore: Dirty database version {version}. Fix and force version.`
+
+If you see this error for your model registry deployment, it means that your schema migration has failed. 
+
+The solution to this problem requires the user to manually resolve the issue and change the database dirty state to '0' before traffic can be routed to the pod. 
+
+You can accomplish this by using `kubectl exec` for the particular model registry db deployment and running the following query:
+
+`USE metadb; UPDATE schema_migrations SET dirty = 0;`

@@ -24,43 +24,12 @@ spec:
           args:
             - --hostname=0.0.0.0
             - --port=8080
-            - --mlmd-hostname=localhost
-            - --mlmd-port=9090
-            - --datastore-type=mlmd
+            - --datastore-type=embedmd
+            - --embedmd-database-dsn=$(DBCONFIG_USER):$(DBCONFIG_PASSWORD)@tcp($(MYSQL_HOST):$(MYSQL_PORT))/$(MYSQL_DATABASE)?charset=utf8mb4
           command:
             - /model-registry
             - proxy
           image: ghcr.io/kubeflow/model-registry/server:latest
-          # empty placeholder environment for patching
-          env: []
-          ports:
-            - name: http-api
-              containerPort: 8080
-          livenessProbe:
-            initialDelaySeconds: 30
-            periodSeconds: 5
-            tcpSocket:
-              port: http-api
-            timeoutSeconds: 2
-          readinessProbe:
-            initialDelaySeconds: 3
-            periodSeconds: 5
-            tcpSocket:
-              port: http-api
-            timeoutSeconds: 2
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-        - name: grpc-container
-          # ! Sync to the same MLMD version:
-          # * backend/metadata_writer/requirements.in and requirements.txt
-          # * @kubeflow/frontend/src/mlmd/generated
-          # * .cloudbuild.yaml and .release.cloudbuild.yaml
-          # * manifests/kustomize/base/metadata/base/model-registry-deployment.yaml
-          # * test/tag_for_hosted.sh
-          image: gcr.io/tfx-oss-public/ml_metadata_store_server:1.14.0
           env:
           - name: DBCONFIG_USER
             valueFrom:
@@ -76,7 +45,7 @@ spec:
             valueFrom:
               configMapKeyRef:
                 name: pipeline-install-config
-                key: mlmdDb
+                key: embedmdDb
           - name: MYSQL_HOST
             valueFrom:
               configMapKeyRef:
@@ -87,33 +56,23 @@ spec:
               configMapKeyRef:
                 name: pipeline-install-config
                 key: dbPort
-          command: ["/bin/metadata_store_server"]
-          args: ["--grpc_port=9090",
-                 "--mysql_config_database=$(MYSQL_DATABASE)",
-                 "--mysql_config_host=$(MYSQL_HOST)",
-                 "--mysql_config_port=MYSQL_PORT_PLACEHOLDER",
-                 "--mysql_config_user=$(DBCONFIG_USER)",
-                 "--mysql_config_password=$(DBCONFIG_PASSWORD)",
-                 "--enable_database_upgrade=true"
-                 ]
           ports:
-          - name: grpc-api
-            containerPort: 9090
+            - name: http-api
+              containerPort: 8080
           livenessProbe:
-            tcpSocket:
-              port: grpc-api
-            initialDelaySeconds: 3
+            initialDelaySeconds: 30
             periodSeconds: 5
+            tcpSocket:
+              port: http-api
             timeoutSeconds: 2
           readinessProbe:
-            tcpSocket:
-              port: grpc-api
-            initialDelaySeconds: 3
-            periodSeconds: 5
+            initialDelaySeconds: 10
+            periodSeconds: 60
+            httpGet:
+              path: /readyz/isDirty
+              port: http-api
             timeoutSeconds: 2
           securityContext:
-            runAsUser: 65534
-            runAsGroup: 65534
             allowPrivilegeEscalation: false
             capabilities:
               drop:

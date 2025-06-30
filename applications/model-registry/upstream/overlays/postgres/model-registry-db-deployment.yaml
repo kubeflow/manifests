@@ -22,6 +22,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
         runAsNonRoot: true
+        fsGroup: 70
       containers:
       - name: db-container
         image: postgres
