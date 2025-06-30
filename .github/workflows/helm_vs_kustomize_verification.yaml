@@ -3,17 +3,17 @@ name: Verify Helm vs Kustomize Manifests
 on:
   pull_request:
     paths:
+    - .github/workflows/helm_vs_kustomize_verification.yaml
     - tests/install_KinD_create_KinD_cluster_install_kustomize.sh
     - tests/helm_install.sh
-    - .github/workflows/helm_vs_kustomize_verification.yaml
+    - tests/helm_kustomize_compare_manifests.sh
+    - tests/helm_kustomize_compare_manifests.py
     - applications/spark/spark-operator/**
     - common/cert-manager/**
     - experimental/helm/scripts/**
-    - tests/helm_kustomize_compare_manifests.sh
-    - tests/helm_kustomize_compare_manifests.py
 
 jobs:
-  verify-components:
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
@@ -26,36 +26,19 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install KinD, Create KinD cluster and Install kustomize
-      run: |
-        chmod +x tests/install_KinD_create_KinD_cluster_install_kustomize.sh
-        ./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+      run: ./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
 
     - name: Install Helm
-      run: |
-        chmod +x tests/helm_install.sh
-        ./tests/helm_install.sh
+      run: ./tests/helm_install.sh
 
-    - name: Setup minimal Helm chart structure
-      run: |
-        chmod +x experimental/helm/scripts/setup-test-chart.sh
-        experimental/helm/scripts/setup-test-chart.sh
+    - name: Setup Helm chart structure
+      run: ./experimental/helm/scripts/setup-test-chart.sh
 
     - name: Generate Helm templates for ${{ matrix.component }}
-      run: |
-        experimental/helm/scripts/synchronize-${{ matrix.component }}.sh
+      run: ./experimental/helm/scripts/synchronize-${{ matrix.component }}.sh
 
     - name: Run Helm vs Kustomize verification for ${{ matrix.component }}
-      run: |
-        ./tests/helm_kustomize_compare_manifests.sh ${{ matrix.component }}
-
-    - name: Upload artifacts on failure
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ matrix.component }}-manifest-comparison-artifacts
-        path: |
-          /tmp/kustomize-${{ matrix.component }}.yaml
-          /tmp/helm-aio-${{ matrix.component }}.yaml
+      run: ./tests/helm_kustomize_compare_manifests.sh ${{ matrix.component }}
 
     - name: Cleanup generated Helm templates
       if: always()
