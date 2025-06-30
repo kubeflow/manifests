@@ -1,0 +1,32 @@
+{{- if .Values.server.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "model-registry.service.name" . }}
+  labels:
+    app: {{ include "model-registry.service.name" . }}
+    app.kubernetes.io/component: model-registry
+    app.kubernetes.io/instance: {{ include "model-registry.service.name" . }}
+    app.kubernetes.io/name: {{ include "model-registry.service.name" . }}
+    app.kubernetes.io/part-of: model-registry
+    component: model-registry
+  annotations:
+    displayName: {{ include "model-registry.service.displayName" . }}
+    description: {{ include "model-registry.service.description" . }}
+    {{- with .Values.server.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ .Values.server.service.type }}
+  selector:
+    component: model-registry-server
+  ports:
+    - port: {{ .Values.server.rest.port }}
+      protocol: TCP
+      appProtocol: http
+      name: http-api
+    - port: {{ .Values.server.grpc.port }}
+      protocol: TCP
+      appProtocol: grpc
+      name: grpc-api
+{{- end }} 

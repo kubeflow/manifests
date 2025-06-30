@@ -1,0 +1,631 @@
+# Default values for model-registry.
+
+# -- String to partially override release name.
+nameOverride: ""
+
+# -- String to fully override release name.
+fullnameOverride: ""
+
+# -- Common labels to add to the resources.
+commonLabels: {}
+
+# -- Common annotations to add to the resources.
+commonAnnotations: {}
+
+# Global settings
+global:
+  namespace: kubeflow
+  # -- Image registry for Model Registry images
+  imageRegistry: ghcr.io/kubeflow/model-registry
+  # -- Global image tag for all Model Registry components
+  imageTag: latest
+  # -- Global image pull policy
+  imagePullPolicy: IfNotPresent
+  # -- Global image pull secrets
+  imagePullSecrets: []
+  # -- Global annotations to add to the resources
+  annotations: {}
+  # -- Include namespace in resource names
+  includeNamespace: false
+
+# Core server configuration
+server:
+  # -- Enable the Model Registry server
+  enabled: true
+  # -- Number of server replicas
+  replicas: 1
+  
+  # -- Data store type for the model registry 
+  dataStoreType: mlmd
+  
+  image:
+    # -- Server image repository
+    repository: server
+    # -- Server image tag (overrides global.imageTag if set)
+    tag: "v0.2.19"
+    # -- Server image pull policy (overrides global.imagePullPolicy if set)
+    pullPolicy: ""
+    
+  # -- Server resource requests and limits
+  resources: {}
+    
+  # -- Node selector for server pods
+  nodeSelector: {}
+  
+  # -- Tolerations for server pods
+  tolerations: []
+  
+  # -- Affinity rules for server pods
+  affinity: {}
+  
+  # -- Security context for server pods
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+    runAsNonRoot: true
+  
+  # -- Security context for server containers
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+    
+  # -- Extra labels for server pods
+  labels: {}
+  
+  # -- Extra annotations for server pods
+  annotations: {}
+  
+  # -- Environment variables for server containers
+  env: []
+  
+  # -- Volume mounts for server containers
+  volumeMounts: []
+  
+  # -- Volumes for server pods
+  volumes: []
+  
+  # REST API configuration
+  rest:
+    # -- REST API port
+    port: 8080
+    # -- REST API hostname
+    hostname: "0.0.0.0"
+    # -- REST API container name
+    containerName: rest-container
+    
+    # -- REST API liveness probe configuration
+    livenessProbe:
+      enabled: true
+      initialDelaySeconds: 30
+      periodSeconds: 5
+      timeoutSeconds: 2
+      failureThreshold: 3
+      
+    # -- REST API readiness probe configuration
+    readinessProbe:
+      enabled: true
+      initialDelaySeconds: 3
+      periodSeconds: 5
+      timeoutSeconds: 2
+      failureThreshold: 3
+    
+  # gRPC configuration  
+  grpc:
+    # -- gRPC port
+    port: 9090
+    # -- hostname for gRPC
+    mlmdHostname: localhost
+    # -- port for gRPC
+    mlmdPort: 9090
+    # -- gRPC container name
+    containerName: grpc-container
+    # -- store server image
+    mlmdImage: gcr.io/tfx-oss-public/ml_metadata_store_server:1.14.0
+    
+    # -- gRPC liveness probe configuration
+    livenessProbe:
+      enabled: true
+      initialDelaySeconds: 3
+      periodSeconds: 5
+      timeoutSeconds: 2
+      failureThreshold: 3
+      
+    # -- gRPC readiness probe configuration
+    readinessProbe:
+      enabled: true
+      initialDelaySeconds: 3
+      periodSeconds: 5
+      timeoutSeconds: 2
+      failureThreshold: 3
+    
+    # -- gRPC security context
+    securityContext:
+      runAsUser: 65534
+      runAsGroup: 65534
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+    
+  service:
+    # -- Server service type
+    type: ClusterIP
+    # -- Server service annotations
+    annotations: {}
+    # -- Server service labels
+    labels: {}
+    
+  serviceAccount:
+    # -- Create service account for server
+    create: true
+    # -- Service account name for server
+    name: ""
+    # -- Annotations for server service account
+    annotations: {}
+    # -- Whether to automount service account token
+    automountServiceAccountToken: true
+
+# UI configuration
+ui:
+  # -- Enable the Model Registry UI
+  enabled: false
+  # -- Number of UI replicas
+  replicas: 1
+  
+  image:
+    # -- UI image repository
+    repository: model-registry-ui
+    # -- UI image tag 
+    tag: "v0.2.19"
+    # -- UI image pull policy 
+    pullPolicy: ""
+    
+  # -- UI container port
+  containerPort: 8080
+  
+  # -- UI resource requests and limits
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 2Gi
+    
+  # -- Node selector for UI pods
+  nodeSelector: {}
+  
+  # -- Tolerations for UI pods
+  tolerations: []
+  
+  # -- Affinity rules for UI pods
+  affinity: {}
+  
+  # -- Security context for UI pods
+  podSecurityContext: {}
+  
+  # -- Security context for UI containers
+  securityContext: {}
+  
+  # -- Extra labels for UI pods
+  labels: {}
+  
+  # -- Extra annotations for UI pods
+  podAnnotations: {}
+  
+  # -- Environment variables for UI containers
+  env: []
+  
+  # -- Liveness probe configuration for UI
+  livenessProbe:
+    enabled: true
+    path: /healthcheck
+    initialDelaySeconds: 30
+    timeoutSeconds: 15
+    periodSeconds: 30
+    successThreshold: 1
+    failureThreshold: 3
+    
+  # -- Readiness probe configuration for UI
+  readinessProbe:
+    enabled: true
+    path: /healthcheck
+    initialDelaySeconds: 15
+    timeoutSeconds: 15
+    periodSeconds: 30
+    successThreshold: 1
+    failureThreshold: 3
+  
+  service:
+    # -- UI service type
+    type: ClusterIP
+    # -- UI service port
+    port: 8080
+    # -- UI service annotations
+    annotations: {}
+    # -- UI service node port 
+    nodePort: ""
+    
+  serviceAccount:
+    # -- Create service account for UI
+    create: true
+    # -- Service account name for UI
+    name: ""
+    # -- Annotations for UI service account
+    annotations: {}
+    # -- Automount service account token
+    automountServiceAccountToken: true
+    
+  rbac:
+    # -- Create RBAC resources for UI
+    create: true
+    
+  standalone:
+    # -- Enable standalone mode for UI
+    enabled: false
+    
+    serviceAccess:
+      # -- Enable service access for standalone mode
+      enabled: false
+      # -- Users to grant cluster access
+      users:
+      - user@example.com
+      # -- Cluster role to assign
+      clusterRole: cluster-admin
+      
+  # -- Istio configuration for UI
+  istio:
+    enabled: false
+    virtualService:
+      enabled: false
+    destinationRule:
+      enabled: false
+    authorizationPolicy:
+      enabled: false
+
+# Controller configuration  
+controller:
+  # -- Enable the Model Registry controller
+  enabled: false
+  # -- Number of controller replicas
+  replicas: 1
+  useSimpleNames: false
+  
+  # -- Controller ports configuration
+  ports:
+    health: 8081
+    metrics: 8443
+  
+  image:
+    # -- Controller image repository
+    repository: controller
+    # -- Controller image tag (overrides global.imageTag if set)
+    tag: ""
+    # -- Controller image pull policy (overrides global.imagePullPolicy if set)
+    pullPolicy: ""
+    
+  # -- Controller resource requests and limits
+  resources:
+    limits:
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    
+  # -- Node selector for controller pods
+  nodeSelector: {}
+  
+  # -- Tolerations for controller pods
+  tolerations: []
+  
+  # -- Affinity rules for controller pods
+  affinity: {}
+  
+  # -- Security context for controller pods
+  podSecurityContext: {}
+  
+  # -- Security context for controller containers
+  securityContext: {}
+  
+  # -- Extra annotations for controller pods
+  podAnnotations: {}
+  
+  # -- Environment variables configuration
+  env:
+    namespaceLabel: ""
+    nameLabel: ""
+    urlAnnotation: ""
+    inferenceServiceIdLabel: ""
+    modelVersionIdLabel: ""
+    registeredModelIdLabel: ""
+    finalizer: ""
+    serviceAnnotation: ""
+    registriesNamespace: ""
+    skipTlsVerify: "false"
+    inferenceServiceController: ""
+    # -- Additional environment variables
+    additional: []
+  
+  # -- Liveness probe configuration
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 15
+    periodSeconds: 20
+    timeoutSeconds: 1
+    failureThreshold: 3
+    
+  # -- Readiness probe configuration
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 1
+    failureThreshold: 3
+  
+  # -- Metrics configuration
+  metrics:
+    enabled: false
+    port: 8443
+    
+    service:
+      # -- Metrics service type
+      type: ClusterIP
+      # -- Metrics service port
+      port: 8443
+      # -- Metrics service target port
+      targetPort: 8443
+      # -- Metrics service annotations
+      annotations: {}
+    
+  # -- Service configuration
+  service:
+    type: ClusterIP
+    annotations: {}
+  
+  serviceAccount:
+    # -- Create service account for controller
+    create: true
+    # -- Service account name for controller
+    name: ""
+    # -- Annotations for controller service account
+    annotations: {}
+    # -- Automount API credentials
+    automount: true
+  
+  # -- RBAC configuration for controller
+  rbac:
+    create: true
+    # -- Additional RBAC rules for controller
+    rules: []
+    
+  networkPolicy:
+    # -- Enable NetworkPolicy for controller
+    enabled: false
+    # -- Additional ingress rules
+    additionalIngress: []
+
+# Database configuration
+database:
+  type: mysql  
+  
+  # -- Database resource naming configuration
+  resourceNames:
+    mysql:
+      # -- PVC name for MySQL 
+      pvcName: ""
+      # -- Service name for MySQL   
+      serviceName: ""
+      # -- Deployment name for MySQL 
+      deploymentName: ""
+    postgres:
+      # -- PVC name for Postgres 
+      pvcName: ""
+      # -- Service name for Postgres 
+      serviceName: ""
+      # -- Deployment name for Postgres 
+      deploymentName: ""
+  
+  mysql:
+    enabled: true
+    image:
+      repository: mysql
+      tag: "8.3"
+    auth:
+      database: metadb  
+      username: root    
+      # password: ""    # auto-generated if not provided
+      rootPassword: test  
+      existingSecret: ""
+    service:
+      port: 3306
+      # -- Service name 
+      name: ""
+    persistence:
+      enabled: true
+      size: 10Gi
+      
+  postgres:
+    enabled: false
+    image:
+      repository: postgres
+      tag: "14.7-alpine3.17"
+    auth:
+      database: mlmdpostgres
+      username: root
+      password: "password"
+      existingSecret: ""
+    service:
+      port: 5432
+      # -- Service name 
+      name: ""
+    persistence:
+      enabled: true
+      size: 20Gi
+    resources:
+      limits:
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+        
+  external:
+    enabled: false
+    host: ""
+    port: ""
+    database: ""
+    username: ""
+    password: ""
+    existingSecret: ""
+
+# Istio service mesh configuration
+istio:
+  # -- Enable Istio integration
+  enabled: false
+  
+  gateway:
+    # -- Enable Istio Gateway
+    enabled: false
+    # -- Gateway name
+    name: "kubeflow-gateway"
+    # -- Gateway hosts
+    hosts: ["*"]
+    # -- Gateway TLS configuration
+    tls: {}
+    
+  virtualService:
+    # -- Enable Istio VirtualService
+    enabled: false
+    # -- VirtualService hosts
+    hosts: ["*"]
+    # -- VirtualService gateways
+    gateways: ["kubeflow-gateway"]
+    
+  destinationRule:
+    # -- Enable Istio DestinationRule
+    enabled: false
+    # -- DestinationRule traffic policy
+    trafficPolicy: {}
+    
+  authorizationPolicy:
+    # -- Enable Istio AuthorizationPolicy
+    enabled: false
+    # -- AuthorizationPolicy selector
+    selector: {}
+    # -- AuthorizationPolicy rules
+    rules: []
+
+# Monitoring configuration
+monitoring:
+  # -- Enable monitoring
+  enabled: false
+  
+  serviceMonitor:
+    # -- Enable ServiceMonitor for Prometheus
+    enabled: false
+    # -- ServiceMonitor scrape interval
+    interval: 30s
+    # -- ServiceMonitor scrape timeout
+    scrapeTimeout: 10s
+    # -- ServiceMonitor labels
+    labels: {}
+    # -- ServiceMonitor annotations
+    annotations: {}
+    
+  prometheusRule:
+    # -- Enable PrometheusRule
+    enabled: false
+    # -- PrometheusRule labels
+    labels: {}
+    # -- PrometheusRule annotations
+    annotations: {}
+    # -- PrometheusRule rules
+    rules: []
+
+# Security configuration
+security:
+  networkPolicy:
+    # -- Enable NetworkPolicy
+    enabled: false
+    # -- NetworkPolicy ingress rules
+    ingress: []
+    # -- NetworkPolicy egress rules
+    egress: []
+    
+  podSecurityPolicy:
+    # -- Enable PodSecurityPolicy
+    enabled: false
+    # -- PodSecurityPolicy spec
+    spec: {}
+
+# RBAC configuration
+rbac:
+  create: true
+  # -- RBAC rules for the service account
+  rules: []
+
+# ConfigMap data
+configMap:
+  # -- Model Registry service configuration
+  data:
+    MODEL_REGISTRY_REST_SERVICE_HOST: "model-registry-service"
+    MODEL_REGISTRY_REST_SERVICE_PORT: "8080"
+    MODEL_REGISTRY_GRPC_SERVICE_HOST: "model-registry-service"
+    MODEL_REGISTRY_GRPC_SERVICE_PORT: "9090"
+    MODEL_REGISTRY_DATA_STORE_TYPE: "mlmd"
+
+# Autoscaling configuration
+autoscaling:
+  # -- Enable Horizontal Pod Autoscaler
+  enabled: false
+  # -- Minimum number of replicas
+  minReplicas: 1
+  # -- Maximum number of replicas
+  maxReplicas: 10
+  # -- Target CPU utilization percentage
+  targetCPUUtilizationPercentage: 80
+  # -- Target memory utilization percentage
+  targetMemoryUtilizationPercentage: 80
+
+# Storage configuration
+storage:
+  csi:
+    # -- Enable CSI storage initializer
+    enabled: false
+    
+    image:
+      # -- CSI storage initializer image repository
+      repository: ghcr.io/kubeflow/model-registry/storage-initializer
+      # -- CSI storage initializer image tag
+      tag: ""
+      # -- CSI storage initializer image pull policy
+      pullPolicy: IfNotPresent
+      
+    # -- CSI storage initializer resources
+    resources:
+      requests:
+        memory: 100Mi
+        cpu: 100m
+      limits:
+        memory: 1Gi
+        
+    # -- CSI storage initializer environment variables
+    env: []
+    
+    # -- Supported URI formats
+    supportedUriFormats:
+    - prefix: "model-registry://"
+
+# Service configuration
+service:
+  # -- Service name for model registry
+  name: ""
+  # -- Service port configuration
+  ports:
+    http: 8080
+    grpc: 9090
+  # -- Service display configuration
+  annotations:
+    displayName: "Kubeflow Model Registry"
+    description: "An example model registry" 

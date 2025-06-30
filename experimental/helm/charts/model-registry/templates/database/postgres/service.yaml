@@ -1,0 +1,16 @@
+{{- if .Values.database.postgres.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "model-registry.postgres.serviceName" . }}
+  labels:
+    component: db
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.database.postgres.service.port }}
+      protocol: TCP
+      name: postgres
+  selector:
+    component: db
+{{- end }}

@@ -1,0 +1,113 @@
+# CI values for testing controller with all features enabled
+controller:
+  enabled: true
+  replicaCount: 1
+  
+  image:
+    repository: ghcr.io/kubeflow/model-registry/controller
+    tag: "latest"
+    pullPolicy: IfNotPresent
+    
+  resources:
+    limits:
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+      
+  # controller features
+  metrics:
+    enabled: true
+    service:
+      type: ClusterIP
+      port: 8443
+      targetPort: 8443
+      
+  # network policy
+  networkPolicy:
+    enabled: true
+    additionalIngress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: monitoring
+      ports:
+      - port: 8443
+        protocol: TCP
+    
+  # comprehensive RBAC
+  rbac:
+    create: true
+    rules:
+    - apiGroups:
+      - ""
+      resources:
+      - pods
+      - services
+      - endpoints
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - "serving.kserve.io"
+      resources:
+      - "inferenceservices"
+      verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+      
+  serviceAccount:
+    create: true
+    automount: true
+    annotations:
+      controller.kubernetes.io/enable-metrics: "true"
+
+# comprehensive monitoring
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 15s
+    scrapeTimeout: 10s
+    labels:
+      prometheus: kube-prometheus
+    annotations:
+      monitoring.kubeflow.org/enabled: "true"
+      
+  prometheusRule:
+    enabled: true
+    labels:
+      prometheus: kube-prometheus
+    rules:
+    - alert: ModelRegistryControllerDown
+      expr: up{job="model-registry-controller-metrics"} == 0
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Model Registry Controller is down"
+        
+# server for controller integration
+server:
+  enabled: true
+  
+database:
+  type: external
+  external:
+    enabled: true
+    host: "localhost"
+    port: "5432"
+    database: "model_registry"
+    
+ui:
+  enabled: false
+  
+storage:
+  csi:
+    enabled: false 

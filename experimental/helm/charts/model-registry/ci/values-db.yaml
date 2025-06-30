@@ -1,0 +1,66 @@
+# CI values for model-registry with database overlay
+# This matches the db overlay configuration
+
+global:
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+
+server:
+  enabled: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+database:
+  type: mysql
+  mysql:
+    enabled: true
+    image:
+      repository: mysql
+      tag: "8.3.0"
+    auth:
+      database: metadb
+      username: "root"
+      password: "test"
+    resources:
+      limits:
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    persistence:
+      enabled: true
+      size: "10Gi"
+  postgres:
+    enabled: false
+  external:
+    enabled: false
+
+ui:
+  enabled: false
+
+controller:
+  enabled: false
+  rbac:
+    create: false
+
+istio:
+  enabled: false
+
+monitoring:
+  enabled: false
+
+security:
+  networkPolicy:
+    enabled: false
+  podSecurityPolicy:
+    enabled: false
+
+rbac:
+  create: true 

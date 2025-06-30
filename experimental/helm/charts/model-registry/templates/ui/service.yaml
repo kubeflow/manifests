@@ -1,0 +1,29 @@
+{{- if .Values.ui.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "model-registry.ui.fullname" . }}-service
+  {{- if .Values.global.includeNamespace }}
+  namespace: {{ include "model-registry.namespace" . }}
+  {{- end }}
+  labels:
+    {{- include "model-registry.ui.labels" . | nindent 4 }}
+    app: model-registry-ui
+    run: model-registry-ui
+  {{- with .Values.ui.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.ui.service.type }}
+  ports:
+  - name: http
+    port: {{ .Values.ui.service.port }}
+    protocol: TCP
+    targetPort: {{ .Values.ui.containerPort }}
+    {{- if and (eq .Values.ui.service.type "NodePort") .Values.ui.service.nodePort }}
+    nodePort: {{ .Values.ui.service.nodePort }}
+    {{- end }}
+  selector:
+    app: model-registry-ui
+{{- end }}

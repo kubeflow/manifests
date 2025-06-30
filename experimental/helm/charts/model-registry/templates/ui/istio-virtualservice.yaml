@@ -1,0 +1,29 @@
+{{- if and .Values.ui.enabled .Values.ui.istio.enabled .Values.ui.istio.virtualService.enabled }}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: model-registry-ui
+  namespace: {{ include "model-registry.namespace" . }}
+  labels:
+    app: model-registry-ui
+spec:
+  gateways:
+  - {{ .Values.istio.gateway.name }}
+  hosts:
+  - '*'
+  http:
+  - headers:
+      request:
+        add:
+          x-forwarded-prefix: /model-registry
+    match:
+    - uri:
+        prefix: /model-registry/
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: {{ include "model-registry.ui.fullname" . }}-service.{{ include "model-registry.namespace" . }}.svc.cluster.local
+        port:
+          number: {{ .Values.ui.service.port }}
+{{- end }} 

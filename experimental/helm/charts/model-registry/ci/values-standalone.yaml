@@ -1,0 +1,46 @@
+# CI values for standalone model-registry deployment
+
+global:
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+
+server:
+  enabled: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+database:
+  type: mysql
+  mysql:
+    enabled: false  
+  postgres:
+    enabled: false
+  external:
+    enabled: false
+
+ui:
+  enabled: false
+
+controller:
+  enabled: false
+
+istio:
+  enabled: false
+
+monitoring:
+  enabled: false
+
+security:
+  networkPolicy:
+    enabled: false
+  podSecurityPolicy:
+    enabled: false
+
+rbac:
+  create: true 

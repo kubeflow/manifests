@@ -1,0 +1,18 @@
+{{- if .Values.storage.csi.enabled }}
+apiVersion: "serving.kserve.io/v1alpha1"
+kind: ClusterStorageContainer
+metadata:
+  name: model-registry-storage-initializer
+  namespace: {{ include "model-registry.namespace" . }}
+spec:
+  container:
+    name: storage-initializer
+    image: {{ .Values.storage.csi.image.repository }}:{{ .Values.storage.csi.image.tag | default .Values.global.imageTag }}
+    env:
+    - name: MODEL_REGISTRY_BASE_URL
+      value: "{{ include "model-registry.service.fullhost" . }}:{{ .Values.server.rest.port }}"
+    resources:
+      {{- toYaml .Values.storage.csi.resources | nindent 6 }}
+  supportedUriFormats:
+    {{- toYaml .Values.storage.csi.supportedUriFormats | nindent 4 }}
+{{- end }}

@@ -1,0 +1,332 @@
+{{- if or .Values.controller.enabled .Values.controller.rbac.create }}
+{{- if .Values.controller.serviceAccount.create }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+{{- if .Values.controller.useBasicNames }}
+  name: controller-manager
+  namespace: system
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+{{- else if .Values.controller.useSimpleNames }}
+  name: controller-controller-manager
+  namespace: {{ include "model-registry.namespace" . }}
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+{{- else }}
+  name: {{ include "model-registry.fullname" . }}-controller-manager
+  namespace: {{ include "model-registry.namespace" . }}
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+    app.kubernetes.io/component: controller
+{{- end }}
+{{- with .Values.controller.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+{{- end }}
+{{- if not (or .Values.controller.useSimpleNames .Values.controller.useBasicNames) }}
+automountServiceAccountToken: {{ .Values.controller.serviceAccount.automount }}
+{{- end }}
+{{- end }}
+{{- if .Values.controller.rbac.create }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+{{- if .Values.controller.useBasicNames }}
+  name: leader-election-role
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+{{- else if .Values.controller.useSimpleNames }}
+  name: controller-leader-election-role
+  namespace: {{ include "model-registry.namespace" . }}
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+{{- else }}
+  name: {{ include "model-registry.fullname" . }}-controller-leader-election
+  namespace: {{ include "model-registry.namespace" . }}
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+    app.kubernetes.io/component: controller
+{{- end }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+{{- if .Values.controller.useBasicNames }}
+  name: leader-election-rolebinding
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+{{- else if .Values.controller.useSimpleNames }}
+  name: controller-leader-election-rolebinding
+  namespace: kubeflow
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+{{- else }}
+  name: {{ include "model-registry.fullname" . }}-controller-leader-election
+  namespace: {{ include "model-registry.namespace" . }}
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+    app.kubernetes.io/component: controller
+{{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+{{- if .Values.controller.useBasicNames }}
+  name: leader-election-role
+{{- else if .Values.controller.useSimpleNames }}
+  name: controller-leader-election-role
+{{- else }}
+  name: {{ include "model-registry.fullname" . }}-controller-leader-election
+{{- end }}
+subjects:
+- kind: ServiceAccount
+{{- if .Values.controller.useBasicNames }}
+  name: controller-manager
+  namespace: system
+{{- else if .Values.controller.useSimpleNames }}
+  name: controller-controller-manager
+  namespace: kubeflow
+{{- else }}
+  name: {{ include "model-registry.fullname" . }}-controller-manager
+  namespace: {{ include "model-registry.namespace" . }}
+{{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+{{- if .Values.controller.useBasicNames }}
+  name: model-registry-manager-role
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+{{- else if .Values.controller.useSimpleNames }}
+  name: controller-model-registry-manager-role
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+{{- else }}
+  name: {{ include "model-registry.fullname" . }}-controller-manager
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+    app.kubernetes.io/component: controller
+{{- end }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - serving.kserve.io
+  resources:
+  - inferenceservices
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - serving.kserve.io
+  resources:
+  - inferenceservices/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+{{- if .Values.controller.rbac.rules }}
+{{- with .Values.controller.rbac.rules }}
+{{- toYaml . | nindent 0 }}
+{{- end }}
+{{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+{{- if .Values.controller.useBasicNames }}
+  name: model-registry-manager-rolebinding
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+{{- else if .Values.controller.useSimpleNames }}
+  name: controller-model-registry-manager-rolebinding
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+{{- else }}
+  name: {{ include "model-registry.fullname" . }}-controller-manager
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+    app.kubernetes.io/component: controller
+{{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+{{- if .Values.controller.useBasicNames }}
+  name: model-registry-manager-role
+{{- else if .Values.controller.useSimpleNames }}
+  name: controller-model-registry-manager-role
+{{- else }}
+  name: {{ include "model-registry.fullname" . }}-controller-manager
+{{- end }}
+subjects:
+- kind: ServiceAccount
+{{- if .Values.controller.useBasicNames }}
+  name: controller-manager
+  namespace: system
+{{- else if .Values.controller.useSimpleNames }}
+  name: controller-controller-manager
+  namespace: kubeflow
+{{- else }}
+  name: {{ include "model-registry.fullname" . }}-controller-manager
+  namespace: {{ include "model-registry.namespace" . }}
+{{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+{{- if .Values.controller.useBasicNames }}
+  name: metrics-reader
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+{{- else if .Values.controller.useSimpleNames }}
+  name: controller-metrics-reader
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+{{- else }}
+  name: {{ include "model-registry.fullname" . }}-controller-metrics-reader
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+    app.kubernetes.io/component: controller
+{{- end }}
+rules:
+- nonResourceURLs:
+  - "/metrics"
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+{{- if .Values.controller.useBasicNames }}
+  name: metrics-auth-role
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+{{- else if .Values.controller.useSimpleNames }}
+  name: controller-metrics-auth-role
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+{{- else }}
+  name: {{ include "model-registry.fullname" . }}-controller-proxy
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+    app.kubernetes.io/component: controller
+{{- end }}
+rules:
+- apiGroups:
+  - authentication.k8s.io
+  resources:
+  - tokenreviews
+  verbs:
+  - create
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+{{- if .Values.controller.useBasicNames }}
+  name: metrics-auth-rolebinding
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+{{- else if .Values.controller.useSimpleNames }}
+  name: controller-metrics-auth-rolebinding
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+{{- else }}
+  name: {{ include "model-registry.fullname" . }}-controller-proxy
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+    app.kubernetes.io/component: controller
+{{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+{{- if .Values.controller.useBasicNames }}
+  name: metrics-auth-role
+{{- else if .Values.controller.useSimpleNames }}
+  name: controller-metrics-auth-role
+{{- else }}
+  name: {{ include "model-registry.fullname" . }}-controller-proxy
+{{- end }}
+subjects:
+- kind: ServiceAccount
+{{- if .Values.controller.useBasicNames }}
+  name: controller-manager
+  namespace: system
+{{- else if .Values.controller.useSimpleNames }}
+  name: controller-controller-manager
+  namespace: kubeflow
+{{- else }}
+  name: {{ include "model-registry.fullname" . }}-controller-manager
+  namespace: {{ include "model-registry.namespace" . }}
+{{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,12 @@
+{{- if and .Values.database.mysql.enabled .Values.database.mysql.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "model-registry.mysql.pvcName" . }}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.database.mysql.persistence.size | quote }}
+{{- end }} 

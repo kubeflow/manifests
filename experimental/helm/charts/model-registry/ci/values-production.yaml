@@ -1,0 +1,159 @@
+# CI values for testing full production stack
+# Enable all core components
+server:
+  enabled: true
+  replicas: 2
+  
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+      
+ui:
+  enabled: true
+  replicas: 2
+  
+  standalone:
+    enabled: true
+    serviceAccess:
+      enabled: true
+      users:
+      - "admin@company.com"
+      - "data-scientist@company.com"
+      clusterRole: "edit"
+      
+controller:
+  enabled: true
+  
+  resources:
+    limits:
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+      
+  metrics:
+    enabled: true
+    
+  networkPolicy:
+    enabled: true
+    
+  rbac:
+    create: true
+    rules:
+    - apiGroups:
+      - "serving.kserve.io"
+      resources:
+      - "inferenceservices"
+      verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+
+database:
+  type: postgres
+  postgres:
+    enabled: true
+    
+    auth:
+      database: "model_registry"
+      username: "model_registry"
+      password: "secure-password-123"
+      
+    persistence:
+      enabled: true
+      size: 50Gi
+      
+    resources:
+      limits:
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+
+istio:
+  enabled: true
+  
+  virtualService:
+    enabled: true
+    hosts: 
+    - "model-registry.company.com"
+    gateways:
+    - "company-gateway"
+    
+  destinationRule:
+    enabled: true
+    trafficPolicy:
+      tls:
+        mode: ISTIO_MUTUAL
+        
+  authorizationPolicy:
+    enabled: true
+    rules:
+    - from:
+      - source:
+          namespaces: ["kubeflow", "kserve"]
+      
+  gateway:
+    enabled: true
+    name: "model-registry-gateway"
+    hosts:
+    - "model-registry.company.com"
+
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    scrapeTimeout: 10s
+    
+  prometheusRule:
+    enabled: true
+    rules:
+    - alert: ModelRegistryDown
+      expr: up{job="model-registry"} == 0
+      for: 5m
+      labels:
+        severity: critical
+
+storage:
+  csi:
+    enabled: true
+    
+    resources:
+      limits:
+        memory: 2Gi
+      requests:
+        cpu: 200m
+        memory: 500Mi
+        
+    supportedUriFormats:
+    - "model-registry://"
+    - "mr://"
+    - "s3://"
+
+security:
+  networkPolicy:
+    enabled: true
+    ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: kubeflow
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: kserve
+            
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80 

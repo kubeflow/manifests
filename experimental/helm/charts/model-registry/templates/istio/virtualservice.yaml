@@ -1,0 +1,40 @@
+{{- if and .Values.istio.enabled .Values.istio.virtualService.enabled }}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: model-registry
+  {{- if .Values.global.includeNamespace }}
+  namespace: {{ include "model-registry.namespace" . }}
+  {{- end }}
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+spec:
+  {{- with .Values.istio.virtualService.gateways }}
+  gateways:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.istio.virtualService.hosts }}
+  hosts:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  http:
+  - match:
+    - uri:
+        prefix: /api/model_registry/
+    route:
+    - destination:
+        host: {{ include "model-registry.service.fullhost" . }}
+        port:
+          number: {{ .Values.server.rest.port }}
+  - match:
+    - port: {{ .Values.server.grpc.port }}
+    - authority:
+        regex: {{ include "model-registry.service.name" . }}(\..+)?(:{{ .Values.server.grpc.port }})?
+    - uri:
+        prefix: /ml_metadata.MetadataStoreService/
+    route:
+    - destination:
+        host: {{ include "model-registry.service.fullhost" . }}
+        port:
+          number: {{ .Values.server.grpc.port }}
+{{- end }}

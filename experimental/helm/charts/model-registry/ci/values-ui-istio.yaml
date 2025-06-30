@@ -1,0 +1,76 @@
+# CI values for testing UI with Istio integration
+
+global:
+  includeNamespace: true
+
+ui:
+  enabled: true
+  replicas: 1
+  
+  image:
+    repository: ui  
+    tag: "v0.2.19"
+    pullPolicy: Always
+    
+  containerPort: 8080
+  
+  args:
+  - "--standalone-mode=false"
+  - "--port=8080"
+  
+  serviceAccount:
+    create: true
+    automountServiceAccountToken: false  
+    
+  rbac:
+    create: true
+    
+  service:
+    type: ClusterIP
+    port: 80  
+    
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 2Gi
+      
+  istio:
+    enabled: true
+    
+    virtualService:
+      enabled: true
+      
+    destinationRule:
+      enabled: true
+      
+    authorizationPolicy:
+      enabled: true
+    
+server:
+  enabled: false
+  
+database:
+  type: external
+  mysql:
+    enabled: false
+  postgres:
+    enabled: false
+  external:
+    enabled: false
+    
+controller:
+  enabled: false
+  rbac:
+    create: false
+  
+istio:
+  enabled: false
+  
+monitoring:
+  enabled: false
+  
+storage:
+  csi:
+    enabled: false 

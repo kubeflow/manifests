@@ -1,0 +1,46 @@
+{{- if and .Values.controller.enabled .Values.controller.metrics.enabled }}
+{{- if .Values.controller.useSimpleNames }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: controller-controller-manager-metrics-service
+  namespace: {{ include "model-registry.namespace" . }}
+  labels:
+    control-plane: controller-manager
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+spec:
+  ports:
+  - name: https
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    control-plane: controller-manager
+{{- else }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "model-registry.fullname" . }}-controller-metrics
+  namespace: {{ include "model-registry.namespace" . }}
+  labels:
+    {{- include "model-registry.labels" . | nindent 4 }}
+    app.kubernetes.io/component: controller
+    control-plane: controller-manager
+  {{- with .Values.controller.metrics.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.controller.metrics.service.type }}
+  ports:
+  - name: https
+    port: {{ .Values.controller.metrics.service.port }}
+    protocol: TCP
+    targetPort: {{ .Values.controller.metrics.service.targetPort }}
+  selector:
+    {{- include "model-registry.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: controller
+    control-plane: controller-manager
+{{- end }}
+{{- end }}
