@@ -89,7 +89,7 @@ resources:
 # Tensorboard Web App
 - ../applications/tensorboard/tensorboards-web-app/upstream/overlays/istio
 # Training Operator
-- ../applications/training-operator/upstream/overlays/kubeflow
+- ../applications/training-operator/upstream/overlays/kubeflow-platform
 # User namespace
 - ../common/user-namespace/base
 # KServe
@@ -104,13 +104,5 @@ resources:
 # - ../experimental/ray/kuberay-operator/overlays/kubeflow
 
 components:
-# Pod Security Standards
-# https://kubernetes.io/docs/concepts/security/pod-security-standards/
-# Uncomment to enable baseline level standards
-# - ../experimental/security/PSS/static/baseline
-# Uncomment to enable restricted level standards
-# - ../experimental/security/PSS/static/restricted
-# Uncomment to enable baseline level standards for dynamic namespaces
-# - ../experimental/security/PSS/dynamic/baseline
 # Uncomment to enable restricted level standards for dynamic namespaces
 # - ../experimental/security/PSS/dynamic/restricted
