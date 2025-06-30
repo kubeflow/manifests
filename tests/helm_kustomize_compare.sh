@@ -99,7 +99,7 @@ helm template model-registry . \
     --values "$HELM_VALUES_FILE" > "$HELM_OUTPUT"
 
 cd "$ROOT_DIR"
-python3 "$SCRIPT_DIR/compare_manifests.py" \
+python3 "$SCRIPT_DIR/helm_compare_manifests.py" \
     "$KUSTOMIZE_OUTPUT" \
     "$HELM_OUTPUT" \
     "$SCENARIO" \

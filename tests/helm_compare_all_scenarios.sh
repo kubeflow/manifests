@@ -31,7 +31,7 @@ declare -a FAILED_SCENARIOS=()
 for scenario in "${SCENARIOS[@]}"; do
     echo "Testing scenario: $scenario"
     
-    if "$SCRIPT_DIR/compare_helm_kustomize.sh" "$scenario"; then
+    if "$SCRIPT_DIR/helm_kustomize_compare.sh" "$scenario"; then
         echo "PASSED: $scenario"
         PASSED_SCENARIOS+=("$scenario")
     else
