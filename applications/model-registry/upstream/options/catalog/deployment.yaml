@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+  labels:
+    component: model-catalog-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: model-catalog-server
+  template:
+    metadata:
+      labels:
+        sidecar.istio.io/inject: "true"
+        component: model-catalog-server
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+        runAsNonRoot: true
+      volumes:
+      - name: sources
+        configMap:
+          name: model-catalog-sources
+      containers:
+        - name: catalog
+          command:
+            - /model-registry
+            - catalog
+          args:
+            - --listen=0.0.0.0:8080
+            - --catalogs-path=/catalog/sources.yaml
+          image: ghcr.io/kubeflow/model-registry/server:latest
+          ports:
+            - name: http-api
+              containerPort: 8080
+          livenessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            tcpSocket:
+              port: http-api
+            timeoutSeconds: 2
+          readinessProbe:
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            tcpSocket:
+              port: http-api
+            timeoutSeconds: 2
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+          - name: sources
+            mountPath: /catalog
