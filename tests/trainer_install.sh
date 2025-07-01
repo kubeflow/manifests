@@ -5,7 +5,7 @@ cd applications/trainer/upstream
 
 kustomize build base/crds | kubectl apply --server-side --force-conflicts -f -
 
-kubectl wait --for condition=NamesAccepted crd/trainjobs.trainer.kubeflow.org --timeout=60s
+sleep 5
 kubectl wait --for condition=established crd/trainjobs.trainer.kubeflow.org --timeout=60s
 
 kustomize build overlays/manager | kubectl apply --server-side --force-conflicts -f -
