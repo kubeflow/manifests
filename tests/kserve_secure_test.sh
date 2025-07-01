@@ -70,6 +70,10 @@ else
   kubectl logs -n istio-system -l app=cluster-local-gateway --tail=50 || echo "Failed to get cluster-local-gateway logs"
   echo "--- Cluster JWKS Proxy Logs ---"
   kubectl logs -n istio-system -l app=cluster-jwks-proxy --tail=50 || echo "Failed to get cluster-jwks-proxy logs"
+  echo "--- Testing JWKS Endpoint Connectivity ---"
+  kubectl run test-jwks --image=curlimages/curl --rm -it --restart=Never -- curl -s http://cluster-jwks-proxy.istio-system.svc.cluster.local/openid/v1/jwks || echo "JWKS endpoint test failed"
+  echo "--- JWT Token Details ---"
+  echo "Token starts with: $(echo $KSERVE_M2M_TOKEN | cut -c1-50)..."
   echo "=== END DEBUGGING ==="
   exit 1
 fi
