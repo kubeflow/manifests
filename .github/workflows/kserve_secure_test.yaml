@@ -71,4 +71,4 @@ jobs:
       run: ./tests/kserve_secure_test.sh kubeflow-user-example-com
 
     - name: Apply Pod Security Standards baseline levels
-      run: ./tests/enable_baseline_PSS.sh
+      run: ./tests/PSS_baseline_enable.sh
