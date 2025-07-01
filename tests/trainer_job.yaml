@@ -11,7 +11,7 @@ spec:
     - "python3"
     - "/opt/pytorch-mnist/mnist.py"
     - "--epochs=1"
-    numNodes: 2
+    numNodes: 1
     resourcesPerNode:
       limits:
         memory: "500Mi"
