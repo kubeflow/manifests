@@ -65,7 +65,7 @@ jobs:
       run: ./tests/port_forward_gateway.sh
 
     - name: Wait for configurations to propagate
-      run: sleep 30
+      run: sleep 60
 
     - name: Run KServe secure authentication tests
       run: ./tests/kserve_secure_test.sh kubeflow-user-example-com
