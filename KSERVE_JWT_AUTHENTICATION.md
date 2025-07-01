@@ -25,10 +25,9 @@ Request → cluster-local-gateway → KServe Service
 - **AuthorizationPolicy (DENY)**: Blocks requests without valid JWT principals
 - **AuthorizationPolicy (ALLOW)**: Permits authenticated requests and health checks
 
-### 2. Service-Level Authorization (Optional)
-- **Namespace Isolation**: Restrict access to same namespace only
-- **Cross-Namespace Access**: Explicitly allow specific namespaces
-- **Custom Policies**: Fine-grained access control per service
+### 2. Service-Level Authorization (Future Enhancement)
+- Service-level policies can be added in future PRs for fine-grained access control
+- This PR focuses on gateway-level JWT authentication only
 
 ## Configuration
 
@@ -40,33 +39,10 @@ The m2m-auth overlay is automatically applied via `tests/knative-cni_install.sh`
 kustomize build common/istio/cluster-local-gateway/overlays/m2m-auth | kubectl apply -f -
 ```
 
-### Service-Level Authorization (Per InferenceService)
+### Service-Level Authorization (Future Enhancement)
 
-Apply to restrict cross-namespace access:
-
-```yaml
-apiVersion: security.istio.io/v1beta1
-kind: AuthorizationPolicy
-metadata:
-  name: my-model-auth
-  namespace: kubeflow-user-example-com
-spec:
-  action: ALLOW
-  selector:
-    matchLabels:
-      serving.knative.dev/service: my-model-predictor
-  rules:
-  # Allow same namespace access
-  - from:
-    - source:
-        principals: ["cluster.local/ns/kubeflow-user-example-com/sa/*"]
-  # Allow system namespaces
-  - from:
-    - source:
-        principals:
-        - "cluster.local/ns/istio-system/sa/*"
-        - "cluster.local/ns/knative-serving/sa/*"
-```
+Service-level namespace isolation policies will be added in future PRs.
+This PR focuses on the core JWT authentication at the gateway level.
 
 ## Usage
 
@@ -122,10 +98,10 @@ curl -H "Authorization: Bearer $TOKEN" \
 - `/healthz`, `/ready`, `/metrics` endpoints excluded
 - System monitoring continues to work
 
-### Namespace Isolation (Configurable)
-- Service-level policies control cross-namespace access
-- Default: same namespace + system namespaces only
-- Configurable: explicit cross-namespace permissions
+### Gateway-Level Access Control
+- All requests require valid JWT tokens
+- Valid tokens allow access regardless of namespace
+- Service-level isolation can be added in future PRs
 
 ## Testing
 
@@ -177,9 +153,9 @@ curl -H "Host: my-service.namespace.svc.cluster.local" \
    - Add JWT token to requests
    - Handle 401/403 responses appropriately
 
-3. **Add service-level policies** (optional):
-   - Apply namespace isolation policies
-   - Configure cross-namespace access as needed
+3. **Service-level policies** (future enhancement):
+   - Namespace isolation can be added in future PRs
+   - This PR provides gateway-level JWT authentication
 
 ### Troubleshooting
 
