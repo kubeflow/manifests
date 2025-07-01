@@ -5,7 +5,7 @@ cd applications/training-operator/upstream
 
 kustomize build base/crds | kubectl apply --server-side --force-conflicts -f -
 
-until kubectl api-resources | grep -q "trainjobs"; do sleep 1; done
+kubectl wait --for condition=established crd/trainjobs.trainer.kubeflow.org --timeout=60s
 
 kustomize build overlays/manager | kubectl apply --server-side --force-conflicts -f -
 kubectl wait --for=condition=Available deployment/kubeflow-trainer-controller-manager -n kubeflow-system --timeout=180s
