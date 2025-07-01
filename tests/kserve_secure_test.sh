@@ -61,6 +61,16 @@ if [ "$RESPONSE" = "200" ] || [ "$RESPONSE" = "404" ] || [ "$RESPONSE" = "503" ]
   echo "Test passed: Request with valid token got response $RESPONSE (JWT authentication working)"
 else
   echo "Test failed: Expected 200/404/503 but got $RESPONSE"
+  echo "=== DEBUGGING CLUSTER STATE AT FAILURE ==="
+  echo "--- Authorization Policies and Request Authentications ---"
+  kubectl get authorizationpolicy,requestauthentication -A || echo "Failed to get policies"
+  echo "--- Istio System Pods ---"
+  kubectl get pods -n istio-system || echo "Failed to get istio pods"
+  echo "--- Cluster Local Gateway Logs ---"
+  kubectl logs -n istio-system -l app=cluster-local-gateway --tail=50 || echo "Failed to get cluster-local-gateway logs"
+  echo "--- Cluster JWKS Proxy Logs ---"
+  kubectl logs -n istio-system -l app=cluster-jwks-proxy --tail=50 || echo "Failed to get cluster-jwks-proxy logs"
+  echo "=== END DEBUGGING ==="
   exit 1
 fi
 

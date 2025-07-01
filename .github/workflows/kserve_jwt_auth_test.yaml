@@ -60,7 +60,7 @@ jobs:
       run: |
         kubectl wait --for=condition=Available --timeout=120s deployment/cluster-local-gateway -n istio-system
         echo "Waiting for JWT authentication to be active..."
-        sleep 60
+        sleep 100
 
     - name: Run Basic JWT Authentication Tests
       run: |
