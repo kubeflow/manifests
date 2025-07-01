@@ -63,7 +63,24 @@ EOF
 
 kubectl wait --for=condition=Ready inferenceservice/test-sklearn -n ${NAMESPACE} --timeout=300s
 
-# Note: Individual AuthorizationPolicy no longer needed with secured cluster-local-gateway
+# Create AuthorizationPolicy to allow authenticated access
+cat <<EOF | kubectl apply -f -
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-test-sklearn
+  namespace: ${NAMESPACE}
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        requestPrincipals: ["*"]
+  selector:
+    matchLabels:
+      serving.knative.dev/service: test-sklearn-predictor
+EOF
+
 sleep 60
 
 echo "Testing path-based access with valid token..."
@@ -81,7 +98,23 @@ curl -v --fail --show-error \
   "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/test-sklearn:predict" \
   -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}'
 
-# Note: Individual AuthorizationPolicy no longer needed with secured cluster-local-gateway
+# Create AuthorizationPolicy for pytest isvc-sklearn
+cat <<EOF | kubectl apply -f -
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-isvc-sklearn
+  namespace: ${NAMESPACE}
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        requestPrincipals: ["*"]
+  selector:
+    matchLabels:
+      serving.knative.dev/service: isvc-sklearn-predictor
+EOF
 
 kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
 
