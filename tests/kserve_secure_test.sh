@@ -41,6 +41,24 @@ EOF
 then
   echo "InferenceService created successfully, waiting for it to be ready..."
   kubectl wait --for=condition=Ready inferenceservice/test-sklearn-secure -n ${NAMESPACE} --timeout=300s || echo "InferenceService not ready, continuing with JWT tests..."
+  
+  # Create AuthorizationPolicy to allow authenticated access
+  cat <<EOF | kubectl apply -f -
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-test-sklearn-secure
+  namespace: ${NAMESPACE}
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        requestPrincipals: ["*"]
+  selector:
+    matchLabels:
+      serving.knative.dev/service: test-sklearn-secure-predictor
+EOF
 else
   echo "InferenceService creation failed (likely KServe webhook issues), continuing with JWT authentication tests..."
 fi
