@@ -10,7 +10,18 @@ for ((i=1; i<=3; i++)); do
 done
 set -e
 
-kustomize build common/istio/cluster-local-gateway/overlays/m2m-auth | kubectl apply -f -
+# Apply cluster-local-gateway with JWT authentication (with retry)
+echo "Applying cluster-local-gateway JWT authentication policies..."
+for ((i=1; i<=3; i++)); do
+    if kustomize build common/istio/cluster-local-gateway/overlays/m2m-auth | kubectl apply -f -; then
+        echo "cluster-local-gateway JWT auth applied successfully"
+        break
+    else
+        echo "Attempt $i failed to apply cluster-local-gateway JWT auth, retrying..."
+        sleep 5
+    fi
+done
+
 kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
 
 kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=60s --field-selector=status.phase!=Succeeded

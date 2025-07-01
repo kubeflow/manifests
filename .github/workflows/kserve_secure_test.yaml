@@ -64,6 +64,16 @@ jobs:
     - name: Port forward
       run: ./tests/port_forward_gateway.sh
 
+    - name: Verify JWT authentication policies are applied
+      run: |
+        echo "Checking if cluster-local-gateway JWT policies are applied..."
+        kubectl get authorizationpolicy cluster-local-gateway-require-jwt -n istio-system -o yaml || echo "MISSING: cluster-local-gateway-require-jwt AuthorizationPolicy"
+        kubectl get requestauthentication cluster-local-gateway-jwt -n istio-system -o yaml || echo "MISSING: cluster-local-gateway-jwt RequestAuthentication"
+        kubectl get authorizationpolicy cluster-local-gateway -n istio-system -o yaml || echo "MISSING: cluster-local-gateway AuthorizationPolicy"
+        kubectl get deployment cluster-local-gateway -n istio-system || echo "MISSING: cluster-local-gateway deployment"
+        echo "Waiting for cluster-local-gateway to be ready..."
+        kubectl wait --for=condition=Available deployment/cluster-local-gateway -n istio-system --timeout=120s || echo "cluster-local-gateway not ready"
+
     - name: Wait for configurations to propagate
       run: sleep 60
 
