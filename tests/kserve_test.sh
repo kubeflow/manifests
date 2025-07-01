@@ -63,6 +63,7 @@ EOF
 
 kubectl wait --for=condition=Ready inferenceservice/test-sklearn -n ${NAMESPACE} --timeout=300s
 
+# Create AuthorizationPolicy to allow authenticated access
 cat <<EOF | kubectl apply -f -
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
@@ -72,7 +73,9 @@ metadata:
 spec:
   action: ALLOW
   rules:
-  - {}
+  - from:
+    - source:
+        requestPrincipals: ["*"]
   selector:
     matchLabels:
       serving.knative.dev/service: test-sklearn-predictor
@@ -105,7 +108,9 @@ metadata:
 spec:
   action: ALLOW
   rules:
-  - {}
+  - from:
+    - source:
+        requestPrincipals: ["*"]
   selector:
     matchLabels:
       serving.knative.dev/service: isvc-sklearn-predictor
