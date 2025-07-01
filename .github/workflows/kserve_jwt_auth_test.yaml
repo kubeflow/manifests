@@ -96,4 +96,4 @@ jobs:
 
 
     - name: Apply Pod Security Standards baseline levels
-      run: ./tests/enable_baseline_PSS.sh
+      run: ./tests/PSS_baseline_enable.sh
