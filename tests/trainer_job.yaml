@@ -13,7 +13,7 @@ spec:
     - "--epochs=1"
     numNodes: 1
     resourcesPerNode:
-      limits:
+      requests:
         memory: "500Mi"
         cpu: "500m"
   suspend: false
