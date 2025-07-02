@@ -8,4 +8,4 @@ kubectl get jobset pytorch-simple -n $KF_PROFILE
 kubectl get pods -n $KF_PROFILE --show-labels
 kubectl wait --for=condition=Ready pod -l batch.kubernetes.io/job-name=pytorch-simple-node-0 -n $KF_PROFILE --timeout=180s
 
-kubectl wait --for=condition=Complete job/pytorch-simple-node-0 -n $KF_PROFILE --timeout=450s
+kubectl wait --for=condition=Complete job/pytorch-simple-node-0 -n $KF_PROFILE --timeout=300s
