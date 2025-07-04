@@ -37,7 +37,7 @@ COMPONENT_RULES = {
         'keywords': ['katib']
     },
     'KServe': {
-        'keywords': ['kserve', 'predictor']
+        'keywords': ['kserve', 'predictor', 'models-web-app']
     },
     'Metadata': {
         'keywords': ['metadata', 'mysql'],
@@ -52,12 +52,29 @@ COMPONENT_RULES = {
     'Spark': {
         'keywords': ['spark']
     },
-    'Training': {
-        'keywords': ['training']
+    'Training Operator': {
+        'keywords': ['training-operator', 'training']
     },
-    'Kubeflow Core': {
-        'keywords': ['centraldashboard', 'jupyter', 'notebook-controller', 'profiles', 
-                    'admission-webhook', 'volumes-web-app', 'tensorboard', 'pvcviewer']
+    'Jupyter': {
+        'keywords': ['jupyter', 'notebook-controller']
+    },
+    'Central Dashboard': {
+        'keywords': ['centraldashboard']
+    },
+    'Profiles + KFAM': {
+        'keywords': ['profiles', 'profile-controller']
+    },
+    'Admission Webhook': {
+        'keywords': ['admission-webhook', 'poddefaults']
+    },
+    'Volumes Web App': {
+        'keywords': ['volumes-web-app']
+    },
+    'Tensorboard': {
+        'keywords': ['tensorboard']
+    },
+    'PVC Viewer Controller': {
+        'keywords': ['pvcviewer']
     },
     'Storage & Experimental': {
         'keywords': ['seaweedfs', 'ray', 'minio-tenant']
@@ -70,7 +87,6 @@ STORAGE_FALLBACK = {
     'Metadata': 40,
     'Pipelines': 60,
     'Storage & Experimental': 20,  # SeaweedFS and experimental components
-    'Other': 16,  # Miscellaneous kubeflow components
 }
 
 def run_kubectl_top():
@@ -153,10 +169,7 @@ def categorize_resource(namespace, name, filepath=""):
                             continue
                     return component
     
-    # Fallback to 'Other' for remaining kubeflow-related resources
-    if namespace.startswith('kubeflow') or 'applications' in filepath or 'common' in filepath:
-        return 'Other'
-    
+    # Return None for components not in the official list
     return None
 
 def parse_kubectl_output(output):
@@ -278,7 +291,7 @@ def generate_table(component_resources, storage_map, actual_usage, manifest_requ
     """Generate markdown table from component resources"""
     print("## Resource Usage by Components")
     print()
-    print("The following table shows the resource requirements for each Kubeflow component:")
+    print("The following table shows the resource requirements for each Kubeflow components:")
     print()
     print("| Component | CPU (cores) | Memory (Mi) | Storage (GB) |")
     print("|-----------|-------------|-------------|--------------|")
@@ -298,19 +311,10 @@ def generate_table(component_resources, storage_map, actual_usage, manifest_requ
     print(f"| **Total** | **{totals['cpu']}m** | **{totals['memory']}Mi** | **{totals['storage']}GB** |")
     print()
     
-    print("- **Other**: Miscellaneous Kubeflow components including:")
-    print("  - PVC Viewer Controller")
-    print("  - Tensorboard Controller and Web App")
-    print("  - Multi-tenancy and RBAC components")
-    print("  - Network policies")
-    print("  - Custom resources and CRDs")
-    print("  - User namespace resources")
-    print("  - Additional Kubeflow utilities and tools")
-    print()
     print("### Notes")
     print("- CPU/Memory values are maximum of actual usage and configured requests")
     print("- Storage values are total PVC allocations from manifest files")
-    print("- Some components may be over-provisioned compared to actual usage")
+    print("- Components not matching the official list are excluded from the table")
     print()
 
 def main():
