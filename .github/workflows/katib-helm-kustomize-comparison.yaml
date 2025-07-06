@@ -7,7 +7,7 @@ on:
     - 'charts/katib/**'
     - 'apps/katib/upstream/**'
     - 'tests/compare_all_scenarios.sh'
-    - '.github/workflows/helm-kustomize-comparison.yml'
+    - '.github/workflows/katib-helm-kustomize-comparison.yml'
   workflow_dispatch:
 
 jobs:
