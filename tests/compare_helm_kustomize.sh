@@ -7,7 +7,7 @@ SCENARIO=${1:-"standalone"}
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 CHART_DIR="$ROOT_DIR/experimental/helm/charts/katib"
-MANIFESTS_DIR="$ROOT_DIR/apps/katib/upstream"
+MANIFESTS_DIR="$ROOT_DIR/applications/katib/upstream"
 
 declare -A KUSTOMIZE_PATHS=(
     ["standalone"]="$MANIFESTS_DIR/installs/katib-standalone"
