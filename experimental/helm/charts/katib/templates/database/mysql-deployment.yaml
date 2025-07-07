@@ -22,10 +22,6 @@ spec:
       {{- with .Values.database.mysql.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
-      {{- else }}
-      securityContext:
-        fsGroup: {{ .Values.database.mysql.securityContext.runAsGroup }}
-        fsGroupChangePolicy: OnRootMismatch
       {{- end }}
       containers:
         - name: katib-mysql
@@ -75,16 +71,10 @@ spec:
           volumeMounts:
             - name: katib-mysql
               mountPath: /var/lib/mysql
+          {{- with .Values.database.mysql.securityContext }}
           securityContext:
-            allowPrivilegeEscalation: false
-            seccompProfile:
-              type: RuntimeDefault
-            runAsNonRoot: true
-            runAsUser: 999
-            runAsGroup: 999
-            capabilities:
-              drop:
-              - ALL
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.database.mysql.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
@@ -97,4 +87,4 @@ spec:
           {{- else }}
           emptyDir: {}
           {{- end }}
-{{- end }} 
+{{- end }}

@@ -3,7 +3,7 @@
 
 global:
   namespace: kubeflow
-  imageTag: latest
+  imageTag: v0.18.0
   
   # Enable kustomize compatibility mode
   kustomizeMode:

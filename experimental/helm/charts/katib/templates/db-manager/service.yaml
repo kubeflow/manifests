@@ -18,4 +18,4 @@ spec:
       name: {{ .Values.dbManager.port.name }}
   selector:
     {{- include "katib.dbManager.selectorLabels" . | nindent 4 }}
-{{- end }} 
+{{- end }}

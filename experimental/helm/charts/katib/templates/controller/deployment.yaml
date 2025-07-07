@@ -82,16 +82,6 @@ spec:
           {{- with .Values.controller.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
-          {{- else }}
-          securityContext:
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-            runAsUser: 1000
-            seccompProfile:
-              type: RuntimeDefault
-            capabilities:
-              drop:
-              - ALL
           {{- end }}
           {{- with .Values.controller.resources }}
           resources:
@@ -120,4 +110,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-{{- end }} 
+{{- end }}

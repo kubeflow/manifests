@@ -17,7 +17,7 @@ data:
         spec:
           containers:
             - name: training-container
-              image: {{ .Values.config.trialTemplates.defaultTrialTemplate.image | default "ghcr.io/kubeflow/katib/pytorch-mnist-cpu:latest" }}
+              image: {{ .Values.config.trialTemplates.defaultTrialTemplate.image  }}
               command:
                 - "python3"
                 - "/opt/pytorch-mnist/mnist.py"
@@ -34,7 +34,7 @@ data:
         spec:
           containers:
             - name: training-container
-              image: {{ .Values.config.trialTemplates.enasCPUTemplate.image | default "ghcr.io/kubeflow/katib/enas-cnn-cifar10-cpu:latest" }}
+              image: {{ .Values.config.trialTemplates.enasCPUTemplate.image }}
               command:
                 - python3
                 - -u
@@ -55,7 +55,7 @@ data:
             spec:
               containers:
                 - name: pytorch
-                  image: {{ .Values.config.trialTemplates.pytorchJobTemplate.image | default "ghcr.io/kubeflow/katib/pytorch-mnist-cpu:latest" }}
+                  image: {{ .Values.config.trialTemplates.pytorchJobTemplate.image  }}
                   command:
                     - "python3"
                     - "/opt/pytorch-mnist/mnist.py"
@@ -69,7 +69,7 @@ data:
             spec:
               containers:
                 - name: pytorch
-                  image: {{ .Values.config.trialTemplates.pytorchJobTemplate.image | default "ghcr.io/kubeflow/katib/pytorch-mnist-cpu:latest" }}
+                  image: {{ .Values.config.trialTemplates.pytorchJobTemplate.image  }}
                   command:
                     - "python3"
                     - "/opt/pytorch-mnist/mnist.py"
@@ -82,4 +82,4 @@ data:
 {{ $template | nindent 4 }}
 {{- end }}
 {{- end }}
-{{- end }} 
+{{- end }}

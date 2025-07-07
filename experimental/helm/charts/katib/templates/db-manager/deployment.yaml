@@ -56,16 +56,6 @@ spec:
           {{- with .Values.dbManager.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
-          {{- else }}
-          securityContext:
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-            runAsUser: 1000
-            seccompProfile:
-              type: RuntimeDefault
-            capabilities:
-              drop:
-              - ALL
           {{- end }}
           {{- with .Values.dbManager.resources }}
           resources:

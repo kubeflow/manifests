@@ -59,4 +59,4 @@ spec:
     matchLabels:
       {{- include "katib.dbManager.selectorLabels" . | nindent 6 }}
 {{- end }}
-{{- end }} 
+{{- end }}

@@ -15,4 +15,4 @@ spec:
   {{- if .Values.database.mysql.persistence.storageClass }}
   storageClassName: {{ .Values.database.mysql.persistence.storageClass }}
   {{- end }}
-{{- end }} 
+{{- end }}

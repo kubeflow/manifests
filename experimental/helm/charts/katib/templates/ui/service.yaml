@@ -19,4 +19,4 @@ spec:
       protocol: TCP
   selector:
     {{- include "katib.ui.selectorLabels" . | nindent 4 }}
-{{- end }} 
+{{- end }}

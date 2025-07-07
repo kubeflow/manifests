@@ -122,4 +122,4 @@ spec:
     {{- toYaml .Values.autoscaling.dbManager.behavior | nindent 4 }}
   {{- end }}
 {{- end }}
-{{- end }} 
+{{- end }}

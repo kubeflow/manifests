@@ -36,4 +36,4 @@ spec:
       targetPort: {{ .Values.controller.service.ports.healthz.targetPort }}
   selector:
     {{- include "katib.controller.selectorLabels" . | nindent 4 }}
-{{- end }} 
+{{- end }}

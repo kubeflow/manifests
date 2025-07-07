@@ -249,4 +249,4 @@ spec:
         - protocol: TCP
           port: 5432
 {{- end }}
-{{- end }} 
+{{- end }}

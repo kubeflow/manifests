@@ -13,16 +13,22 @@ def load_manifests(file_path: str) -> List[Dict]:
         content = f.read()
     
     docs = []
-    for doc_str in content.split('---'):
-        doc_str = doc_str.strip()
-        if doc_str:
-            try:
-                doc = yaml.safe_load(doc_str)
-                if doc:  
-                    docs.append(doc)
-            except yaml.YAMLError as e:
-                print(f"Error parsing YAML: {e}")
-                continue
+    try:
+        for doc in yaml.safe_load_all(content):
+            if doc:  
+                docs.append(doc)
+    except yaml.YAMLError as e:
+        print(f"Error parsing YAML: {e}")
+        for doc_str in content.split('---'):
+            doc_str = doc_str.strip()
+            if doc_str:
+                try:
+                    doc = yaml.safe_load(doc_str)
+                    if doc:  
+                        docs.append(doc)
+                except yaml.YAMLError as e:
+                    print(f"Error parsing YAML document: {e}")
+                    continue
     
     return docs
 
@@ -98,6 +104,22 @@ def normalize_manifest(manifest: Dict) -> Dict:
     # Normalize Kustomize hash references
     normalized = normalize_kustomize_refs(normalized)
     
+    # Handle ConfigMap data normalization
+    if normalized.get('kind') == 'ConfigMap' and 'data' in normalized:
+        data = normalized['data']
+        normalized_data = {}
+        for key, value in data.items():
+            if isinstance(value, str):
+                # Remove leading/trailing whitespace and normalize YAML content
+                normalized_value = value.strip()
+                # Remove leading --- if present (common in ConfigMap YAML data)
+                if normalized_value.startswith('---'):
+                    normalized_value = normalized_value[3:].strip()
+                normalized_data[key] = normalized_value
+            else:
+                normalized_data[key] = value
+        normalized['data'] = normalized_data
+    
     if 'metadata' in normalized and 'name' in normalized['metadata']:
         kind = normalized.get('kind', '')
         if kind in ['Secret', 'ConfigMap']:
@@ -147,6 +169,7 @@ def get_resource_key(manifest: Dict) -> str:
 def deep_diff(obj1: Any, obj2: Any, path: str = "") -> List[str]:
     """Compare two objects and return list of differences."""
     differences = []
+    
     
     if type(obj1) != type(obj2):
         differences.append(f"{path}: type mismatch ({type(obj1).__name__} vs {type(obj2).__name__})")

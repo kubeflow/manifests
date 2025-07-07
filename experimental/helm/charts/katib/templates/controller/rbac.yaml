@@ -145,4 +145,4 @@ subjects:
 - kind: ServiceAccount
   name: {{ include "katib.controller.serviceAccountName" . }}
   namespace: {{ include "katib.namespace" . }}
-{{- end }} 
+{{- end }}

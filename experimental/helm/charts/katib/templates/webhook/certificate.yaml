@@ -49,4 +49,4 @@ data:
   tls.key: {{ include "katib.webhook.selfSignedKey" . }}
   {{- end }}
 {{- end }}
-{{- end }} 
+{{- end }}
