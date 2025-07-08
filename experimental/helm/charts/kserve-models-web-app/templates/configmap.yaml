@@ -1,0 +1,33 @@
+{{- if .Values.configMap.create }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kserve-models-web-app.configMapName" . }}
+  namespace: {{ include "kserve-models-web-app.namespace" . }}
+  labels:
+    {{- include "kserve-models-web-app.labels" . | nindent 4 }}
+    {{- include "kserve-models-web-app.kustomizeLabels" . | nindent 4 }}
+    {{- if .Values.kubeflow.enabled }}
+    {{- include "kserve-models-web-app.kserveLabels" . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.configMap.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.configMap.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  {{- if .Values.kubeflow.enabled }}
+  USERID_HEADER: {{ .Values.kubeflow.config.useridHeader | quote }}
+  APP_PREFIX: {{ .Values.kubeflow.config.appPrefix | quote }}
+  {{- else }}
+  APP_DISABLE_AUTH: "True"
+  {{- end }}
+  {{- with .Values.configMap.data }}
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
+  {{- range .Values.app.config.env }}
+  {{ .name }}: {{ .value | quote }}
+  {{- end }}
+{{- end }} 
