@@ -1,0 +1,49 @@
+name: KServe Models Web App - Helm vs Kustomize Comparison
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+    - 'experimental/helm/charts/kserve-models-web-app/**'
+    - 'applications/kserve/models-web-app/**'
+    - 'tests/models_web_app_compare*.sh'
+    - 'tests/models_web_app_compare_manifests.py'
+    - '.github/workflows/kserve-models-web-app-comparison.yml'
+  workflow_dispatch:
+
+jobs:
+  validate-models-web-app-equivalence:
+    runs-on: ubuntu-latest
+    name: Compare KServe Models Web App Scenarios
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyyaml
+
+    - name: Install Helm
+      run: |
+        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        chmod 700 get_helm.sh
+        ./get_helm.sh
+        rm get_helm.sh
+
+    - name: Install Kustomize
+      run: ./tests/kustomize_install.sh
+
+    - name: Validate Helm chart
+      run: |
+        helm lint experimental/helm/charts/kserve-models-web-app/
+
+    - name: Run KServe Models Web App comparison
+      env:
+        VERBOSE: "true"
+      run: ./tests/models_web_app_compare_all.sh
