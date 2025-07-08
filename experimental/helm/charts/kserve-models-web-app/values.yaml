@@ -1,0 +1,304 @@
+# Default values for kserve-models-web-app.
+
+# -- String to partially override release name.
+nameOverride: ""
+
+# -- String to fully override release name.
+fullnameOverride: ""
+
+# -- Common labels to add to all resources.
+commonLabels: {}
+
+# -- Common annotations to add to all resources.
+commonAnnotations: {}
+
+# Global settings
+global:
+  # -- Namespace for the KServe Models Web App
+  namespace: kserve
+  # -- Image registry for KServe Models Web App images
+  imageRegistry: ghcr.io/kserve
+  # -- Global image tag for KServe Models Web App
+  imageTag: v0.14.0
+  # -- Global image pull policy
+  imagePullPolicy: Always
+  # -- Global image pull secrets
+  imagePullSecrets: []
+  # -- Global annotations to add to all resources
+  annotations: {}
+  # -- Include namespace in resource names
+  includeNamespace: false
+
+# Application configuration
+app:
+  # -- Enable the KServe Models Web App
+  enabled: true
+  # -- Number of replicas
+  replicas: 1
+  
+  image:
+    # -- Application image repository
+    repository: models-web-app
+    # -- Application image tag (overrides global.imageTag if set)
+    tag: ""
+    # -- Application image pull policy (overrides global.imagePullPolicy if set)
+    pullPolicy: ""
+    
+  # -- Application configuration
+  config:
+    # -- Disable authentication for the web app
+    disableAuth: true
+    # -- Header name for user ID (used in Kubeflow integration)
+    useridHeader: "kubeflow-userid"
+    # -- Application prefix for URL routing
+    appPrefix: "/kserve-endpoints"
+    # -- Additional environment variables
+    env: []
+    
+  # -- Application container port
+  containerPort: 5000
+  
+  # -- Application resource requests and limits
+  resources: {}
+    
+  # -- Node selector for application pods
+  nodeSelector: {}
+  
+  # -- Tolerations for application pods
+  tolerations: []
+  
+  # -- Affinity rules for application pods
+  affinity: {}
+  
+  # -- Security context for application pods
+  podSecurityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+    
+  # -- Security context for application containers
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+    runAsUser: 1000
+    
+  # -- Extra labels for application pods
+  labels: {}
+  
+  # -- Extra annotations for application pods
+  annotations: {}
+  
+  # -- Volume mounts for application containers
+  volumeMounts: []
+  
+  # -- Volumes for application pods
+  volumes: []
+  
+  # Liveness probe configuration
+  livenessProbe:
+    # -- Enable liveness probe
+    enabled: true
+    # -- Liveness probe HTTP path
+    path: /healthz/liveness
+    # -- Initial delay before liveness probe starts
+    initialDelaySeconds: 0
+    # -- Liveness probe interval
+    periodSeconds: 10
+    # -- Liveness probe timeout
+    timeoutSeconds: 1
+    # -- Liveness probe failure threshold
+    failureThreshold: 3
+    # -- Liveness probe success threshold
+    successThreshold: 1
+    
+  # Readiness probe configuration
+  readinessProbe:
+    # -- Enable readiness probe
+    enabled: true
+    # -- Readiness probe HTTP path
+    path: /healthz/readiness
+    # -- Initial delay before readiness probe starts
+    initialDelaySeconds: 0
+    # -- Readiness probe interval
+    periodSeconds: 10
+    # -- Readiness probe timeout
+    timeoutSeconds: 1
+    # -- Readiness probe failure threshold
+    failureThreshold: 3
+    # -- Readiness probe success threshold
+    successThreshold: 1
+
+# Service configuration
+service:
+  # -- Service type
+  type: ClusterIP
+  # -- Service port
+  port: 80
+  # -- Service target port
+  targetPort: 5000
+  # -- Service port name
+  portName: http
+  # -- Service protocol
+  protocol: TCP
+  # -- Service annotations
+  annotations: {}
+  # -- Service labels
+  labels: {}
+
+# RBAC configuration
+rbac:
+  # -- Create RBAC resources
+  create: true
+  
+  serviceAccount:
+    # -- Create service account
+    create: true
+    # -- Service account name
+    name: ""
+    # -- Service account annotations
+    annotations: {}
+    # -- Whether to automount service account token
+    automountServiceAccountToken: true
+    
+  clusterRole:
+    # -- Create cluster role
+    create: true
+    # -- Cluster role name
+    name: ""
+    # -- Additional rules for cluster role
+    rules: []
+    
+  clusterRoleBinding:
+    # -- Create cluster role binding
+    create: true
+    # -- Cluster role binding name
+    name: ""
+
+# Istio configuration
+istio:
+  # -- Enable Istio integration
+  enabled: true
+  
+  # -- Enable Istio sidecar injection
+  sidecarInjection:
+    enabled: true
+    
+  virtualService:
+    # -- Enable VirtualService
+    enabled: true
+    # -- VirtualService name
+    name: ""
+    # -- VirtualService gateways
+    gateways:
+      - knative-serving/knative-ingress-gateway
+    # -- VirtualService hosts
+    hosts:
+      - '*'
+    # -- HTTP match configuration (empty to use default template logic)
+    http: []
+    # -- VirtualService annotations
+    annotations: {}
+    # -- VirtualService labels
+    labels: {}
+    
+  authorizationPolicy:
+    # -- Enable AuthorizationPolicy
+    enabled: true
+    # -- AuthorizationPolicy name
+    name: ""
+    # -- AuthorizationPolicy action
+    action: ALLOW
+    # -- AuthorizationPolicy rules
+    rules:
+      - from:
+          - source:
+              principals:
+                - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+    # -- AuthorizationPolicy annotations
+    annotations: {}
+    # -- AuthorizationPolicy labels
+    labels: {}
+
+# Kubeflow integration configuration
+kubeflow:
+  # -- Enable Kubeflow-specific configuration
+  enabled: false
+  # -- Kubeflow namespace
+  namespace: kubeflow
+  # -- Kubeflow gateway
+  gateway: kubeflow/kubeflow-gateway
+  # -- Enable authentication headers
+  enableAuth: true
+  # -- Override application configuration for Kubeflow
+  config:
+    disableAuth: false
+    useridHeader: "kubeflow-userid"
+    appPrefix: "/kserve-endpoints"
+
+# Monitoring configuration
+monitoring:
+  # -- Enable monitoring with ServiceMonitor
+  enabled: false
+  # -- ServiceMonitor configuration
+  serviceMonitor:
+    # -- ServiceMonitor namespace
+    namespace: ""
+    # -- ServiceMonitor labels
+    labels: {}
+    # -- ServiceMonitor annotations
+    annotations: {}
+    # -- ServiceMonitor port
+    port: http
+    # -- ServiceMonitor path
+    path: /metrics
+    # -- ServiceMonitor interval
+    interval: 30s
+    # -- ServiceMonitor timeout
+    timeout: 10s
+
+# Network policy configuration
+networkPolicy:
+  # -- Enable network policy
+  enabled: false
+  # -- Network policy ingress rules
+  ingress: []
+  # -- Network policy egress rules
+  egress: []
+
+# ConfigMap configuration
+configMap:
+  # -- Create ConfigMap
+  create: true
+  # -- ConfigMap name
+  name: ""
+  # -- ConfigMap data
+  data: {}
+  # -- ConfigMap annotations
+  annotations: {}
+  # -- ConfigMap labels
+  labels: {}
+
+# Deployment configuration
+deployment:
+  # -- Deployment strategy
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  # -- Deployment annotations
+  annotations: {}
+  # -- Deployment labels
+  labels: {}
+  # -- Pod template annotations
+  podAnnotations: {}
+  # -- Pod template labels
+  podLabels: {}
+  # -- Deployment revision history limit
+  revisionHistoryLimit: 10
+  # -- Pod restart policy
+  restartPolicy: Always
+  # -- Termination grace period
+  terminationGracePeriodSeconds: 30
