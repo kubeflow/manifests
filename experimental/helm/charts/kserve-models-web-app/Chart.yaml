@@ -1,0 +1,15 @@
+apiVersion: v2
+
+name: kserve-models-web-app
+
+description: A Helm chart for KServe Models Web App - Model serving management UI on Kubernetes
+
+version: 0.1.0
+
+appVersion: v0.14.0
+
+home: https://github.com/kserve/kserve
+
+annotations:
+  category: Machine Learning
+  licenses: Apache-2.0
