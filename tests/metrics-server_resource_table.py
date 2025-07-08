@@ -47,7 +47,7 @@ COMPONENT_RULES = {
         'keywords': ['model-registry']
     },
     'Pipelines': {
-        'keywords': ['ml-pipeline', 'workflow-controller', 'cache-server', 'minio', 'pipeline']
+        'keywords': ['ml-pipeline', 'workflow-controller', 'cache-server', 'minio', 'pipeline', 'seaweedfs']
     },
     'Spark': {
         'keywords': ['spark']
@@ -75,9 +75,6 @@ COMPONENT_RULES = {
     },
     'PVC Viewer Controller': {
         'keywords': ['pvcviewer']
-    },
-    'Storage & Experimental': {
-        'keywords': ['seaweedfs', 'ray', 'minio-tenant']
     }
 }
 
@@ -85,8 +82,7 @@ COMPONENT_RULES = {
 STORAGE_FALLBACK = {
     'Katib': 3,
     'Metadata': 40,
-    'Pipelines': 60,
-    'Storage & Experimental': 20,  # SeaweedFS and experimental components
+    'Pipelines': 80,  
 }
 
 def run_kubectl_top():
@@ -197,7 +193,7 @@ def parse_kubectl_output(output):
 def find_manifest_files():
     """Find all YAML manifest files in relevant directories"""
     manifest_files = []
-    for base_dir in ['applications', 'common', 'experimental']:
+    for base_dir in ['applications', 'common']:
         if os.path.exists(base_dir):
             manifest_files.extend(glob.glob(f"{base_dir}/**/*.yaml", recursive=True))
             manifest_files.extend(glob.glob(f"{base_dir}/**/*.yml", recursive=True))
