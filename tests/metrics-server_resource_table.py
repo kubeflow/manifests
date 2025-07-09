@@ -39,15 +39,12 @@ COMPONENT_RULES = {
     'KServe': {
         'keywords': ['kserve', 'predictor', 'models-web-app']
     },
-    'Metadata': {
-        'keywords': ['metadata', 'mysql'],
-        'exclude': ['model-registry']
-    },
     'Model Registry': {
-        'keywords': ['model-registry']
+        'keywords': ['model-registry', 'mysql-pv-claim']
     },
     'Pipelines': {
-        'keywords': ['ml-pipeline', 'workflow-controller', 'cache-server', 'minio', 'pipeline', 'seaweedfs']
+        'keywords': ['ml-pipeline', 'workflow-controller', 'cache-server', 'minio', 'pipeline', 'seaweedfs', 'metadata', 'mysql'],
+        'exclude': ['mysql-pv-claim']
     },
     'Spark': {
         'keywords': ['spark']
@@ -81,8 +78,8 @@ COMPONENT_RULES = {
 # Storage fallback values when YAML parsing is unavailable
 STORAGE_FALLBACK = {
     'Katib': 3,
-    'Metadata': 40,
-    'Pipelines': 80,  
+    'Pipelines': 25,
+    'Model Registry': 20,
 }
 
 def run_kubectl_top():
