@@ -17,13 +17,55 @@ except ImportError:
 
 # Component categorization rules - centralized mapping
 COMPONENT_RULES = {
-    'Dex + OAuth2-Proxy': {
-        'namespaces': ['auth', 'oauth2-proxy'],
-        'keywords': ['dex', 'oauth2-proxy']
+    'Training Operator': {
+        'keywords': ['training-operator', 'training']
     },
-    'Cert Manager': {
-        'namespaces': ['cert-manager'],
-        'keywords': ['cert-manager']
+    'Notebook Controller': {
+        'keywords': ['notebook-controller']
+    },
+    'PVC Viewer Controller': {
+        'keywords': ['pvcviewer']
+    },
+    'Tensorboard Controller': {
+        'keywords': ['tensorboard']
+    },
+    'Central Dashboard': {
+        'keywords': ['centraldashboard']
+    },
+    'Profiles + KFAM': {
+        'keywords': ['profiles', 'profile-controller']
+    },
+    'PodDefaults Webhook': {
+        'keywords': ['admission-webhook', 'poddefaults']
+    },
+    'Jupyter Web Application': {
+        'keywords': ['jupyter-web-app', 'jupyter']
+    },
+    'Tensorboards Web Application': {
+        'keywords': ['tensorboards-web-app']
+    },
+    'Volumes Web Application': {
+        'keywords': ['volumes-web-app']
+    },
+    'Katib': {
+        'keywords': ['katib']
+    },
+    'KServe': {
+        'keywords': ['kserve', 'predictor'],
+        'exclude': ['models-web-app']
+    },
+    'KServe Models Web Application': {
+        'keywords': ['models-web-app']
+    },
+    'Kubeflow Pipelines': {
+        'keywords': ['ml-pipeline', 'workflow-controller', 'cache-server', 'minio', 'pipeline', 'seaweedfs', 'metadata', 'mysql'],
+        'exclude': ['mysql-pv-claim']
+    },
+    'Kubeflow Model Registry': {
+        'keywords': ['model-registry', 'mysql-pv-claim']
+    },
+    'Spark Operator': {
+        'keywords': ['spark']
     },
     'Istio': {
         'namespaces': ['istio-system'],
@@ -33,53 +75,44 @@ COMPONENT_RULES = {
         'namespaces': ['knative-serving', 'knative-eventing'],
         'keywords': ['knative']
     },
-    'Katib': {
-        'keywords': ['katib']
+    'Cert Manager': {
+        'namespaces': ['cert-manager'],
+        'keywords': ['cert-manager']
     },
-    'KServe': {
-        'keywords': ['kserve', 'predictor', 'models-web-app']
-    },
-    'Model Registry': {
-        'keywords': ['model-registry', 'mysql-pv-claim']
-    },
-    'Pipelines': {
-        'keywords': ['ml-pipeline', 'workflow-controller', 'cache-server', 'minio', 'pipeline', 'seaweedfs', 'metadata', 'mysql'],
-        'exclude': ['mysql-pv-claim']
-    },
-    'Spark': {
-        'keywords': ['spark']
-    },
-    'Training Operator': {
-        'keywords': ['training-operator', 'training']
-    },
-    'Jupyter': {
-        'keywords': ['jupyter', 'notebook-controller']
-    },
-    'Central Dashboard': {
-        'keywords': ['centraldashboard']
-    },
-    'Profiles + KFAM': {
-        'keywords': ['profiles', 'profile-controller']
-    },
-    'Admission Webhook': {
-        'keywords': ['admission-webhook', 'poddefaults']
-    },
-    'Volumes Web App': {
-        'keywords': ['volumes-web-app']
-    },
-    'Tensorboard': {
-        'keywords': ['tensorboard']
-    },
-    'PVC Viewer Controller': {
-        'keywords': ['pvcviewer']
+    'Dex + OAuth2-Proxy': {
+        'namespaces': ['auth', 'oauth2-proxy'],
+        'keywords': ['dex', 'oauth2-proxy']
     }
 }
+
+COMPONENT_ORDER = [
+    'Training Operator',
+    'Notebook Controller',
+    'PVC Viewer Controller', 
+    'Tensorboard Controller',
+    'Central Dashboard',
+    'Profiles + KFAM',
+    'PodDefaults Webhook',
+    'Jupyter Web Application',
+    'Tensorboards Web Application',
+    'Volumes Web Application',
+    'Katib',
+    'KServe',
+    'KServe Models Web Application',
+    'Kubeflow Pipelines',
+    'Kubeflow Model Registry',
+    'Spark Operator',
+    'Istio',
+    'Knative',
+    'Cert Manager',
+    'Dex + OAuth2-Proxy'
+]
 
 # Storage fallback values when YAML parsing is unavailable
 STORAGE_FALLBACK = {
     'Katib': 3,
-    'Pipelines': 25,
-    'Model Registry': 20,
+    'Kubeflow Pipelines': 25,
+    'Kubeflow Model Registry': 20,
 }
 
 def run_kubectl_top():
@@ -291,15 +324,16 @@ def generate_table(component_resources, storage_map, actual_usage, manifest_requ
     
     totals = {'cpu': 0, 'memory': 0, 'storage': 0}
     
-    for component in sorted(component_resources.keys()):
-        resources = component_resources[component]
-        storage = storage_map.get(component, 0)
-        
-        totals['cpu'] += resources['cpu']
-        totals['memory'] += resources['memory']
-        totals['storage'] += storage
-        
-        print(f"| {component} | {resources['cpu']}m | {resources['memory']}Mi | {storage}GB |")
+    for component in COMPONENT_ORDER:
+        if component in component_resources:
+            resources = component_resources[component]
+            storage = storage_map.get(component, 0)
+            
+            totals['cpu'] += resources['cpu']
+            totals['memory'] += resources['memory']
+            totals['storage'] += storage
+            
+            print(f"| {component} | {resources['cpu']}m | {resources['memory']}Mi | {storage}GB |")
     
     print(f"| **Total** | **{totals['cpu']}m** | **{totals['memory']}Mi** | **{totals['storage']}GB** |")
     print()
