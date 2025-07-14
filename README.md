@@ -707,41 +707,6 @@ The hooks will run automatically on `git commit`. You can also run them manually
 pre-commit run
 ```
 
-## Resource Usage by components
-
-The following table shows the resource requirements for each Kubeflow component, calculated as the maximum of actual usage and configured requests for CPU/memory, plus storage requirements from PVCs:
-
-| Component | CPU (cores) | Memory (Mi) | Storage (GB) |
-|-----------|-------------|-------------|--------------|
-| Training Operator | 2m | 27Mi | 0GB |
-| PVC Viewer Controller| 15m | 128Mi | 1GB |
-| Tensorboard Controller | 15m | 128Mi | 0GB |
-| Central Dashboard | 2m | 159Mi | 0GB |
-| Profiles + KFAM | 5m | 99Mi | 0GB |
-| Admission Webhook | 1m | 12Mi | 0GB |
-| Jupyter | 6m | 325Mi | 0GB |
-| Volumes Web Application | 2m | 231Mi | 0GB |
-| Katib | 8m | 470Mi | 13GB |
-| KServe | 600m | 1200Mi | 0GB |
-| Kubeflow Pipelines | 970m | 3552Mi | 70GB |
-| Kubeflow Model Registry | 510m | 2112Mi | 50GB |
-| Spark Operator | 3m | 36Mi | 0GB |
-| Istio | 750m | 2364Mi | 0GB |
-| Knative | 1450m | 1038Mi | 0GB |
-| Cert Manager | 3m | 131Mi | 0GB |
-| Dex + OAuth2-Proxy | 3m | 31Mi | 0GB |
-| **Total** | **4345m** | **12043Mi** | **134GB** |
-
-### Resource Notes
-
-- **CPU values** represent the maximum of actual observed usage and configured resource requests
-- **Memory values** represent the maximum of actual observed usage and configured resource requests  
-- **Storage values** represent the total PVC allocations from manifest files
-- Components with high resource requests (like Istio, KServe) may be over-provisioned compared to actual usage
-- Storage requirements are persistent and represent the minimum disk space needed
-
-Use this as a reference when planning your Kubeflow installation to allocate appropriate resources and decide which components to enable based on your available infrastructure.
-
 ## Frequently Asked Questions
 
 - **Q:** What versions of Istio, Knative, Cert-Manager, Argo, ... are compatible with Kubeflow?
