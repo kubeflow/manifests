@@ -713,19 +713,24 @@ The following table shows the resource requirements for each Kubeflow component,
 
 | Component | CPU (cores) | Memory (Mi) | Storage (GB) |
 |-----------|-------------|-------------|--------------|
-| Dex + OAuth2-Proxy | 3m | 27Mi | 0GB |
-| Cert Manager | 3m | 130Mi | 0GB |
-| Istio | 850m | 2464Mi | 0GB |
-| Katib | 4m | 107Mi | 3GB |
-| Kubeflow Core | 17m | 828Mi | 0GB |
+| Training Operator | 2m | 27Mi | 0GB |
+| PVC Viewer Controller| 15m | 128Mi | 1GB |
+| Tensorboard Controller | 15m | 128Mi | 0GB |
+| Central Dashboard | 2m | 159Mi | 0GB |
+| Profiles + KFAM | 5m | 99Mi | 0GB |
+| Admission Webhook | 1m | 12Mi | 0GB |
+| Jupyter | 6m | 325Mi | 0GB |
+| Volumes Web Application | 2m | 231Mi | 0GB |
+| Katib | 8m | 470Mi | 13GB |
 | KServe | 600m | 1200Mi | 0GB |
-| Metadata | 10m | 225Mi | 40GB |
-| Model Registry | 500m | 2048Mi | 0GB |
-| Pipelines | 770m | 3276Mi | 60GB |
-| Spark | 5m | 36Mi | 0GB |
-| Training | 2m | 26Mi | 0GB |
-| Other | 1615m | 1698Mi | 36GB |
-| **Total** | **4379m** | **12065Mi** | **139GB** |
+| Kubeflow Pipelines | 970m | 3552Mi | 70GB |
+| Kubeflow Model Registry | 510m | 2112Mi | 50GB |
+| Spark Operator | 3m | 36Mi | 0GB |
+| Istio | 750m | 2364Mi | 0GB |
+| Knative | 1450m | 1038Mi | 0GB |
+| Cert Manager | 3m | 131Mi | 0GB |
+| Dex + OAuth2-Proxy | 3m | 31Mi | 0GB |
+| **Total** | **4345m** | **12043Mi** | **134GB** |
 
 ### Resource Notes
 
