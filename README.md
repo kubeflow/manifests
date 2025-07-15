@@ -48,34 +48,34 @@ All components are deployable with `kustomize`. You can choose to deploy the ent
 
 ### Kubeflow Version: Master
 
-This repository periodically synchronizes all official Kubeflow components from the respective upstream repositories. The following matrix shows the git version included for each component:
+This repository periodically synchronizes all official Kubeflow components from the respective upstream repositories. The following matrix shows the git version included for each component along with the resource requirements for each Kubeflow component, calculated as the maximum of actual usage and configured requests for CPU/memory as well as storage requirements from PVCs:
 
-| Component | Local Manifests Path | Upstream Revision |
-| - | - | - |
-| Training Operator | applications/training-operator/upstream | [v1.9.2](https://github.com/kubeflow/training-operator/tree/v1.9.2/manifests) |
-| Notebook Controller | applications/jupyter/notebook-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/notebook-controller/config) |
-| PVC Viewer Controller | applications/pvcviewer-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/pvcviewer-controller/config) |
-| Tensorboard Controller | applications/tensorboard/tensorboard-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/tensorboard-controller/config) |
-| Central Dashboard | applications/centraldashboard/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/centraldashboard/manifests) |
-| Profiles + KFAM | applications/profiles/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/profile-controller/config) |
-| PodDefaults Webhook | applications/admission-webhook/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/admission-webhook/manifests) |
-| Jupyter Web Application | applications/jupyter/jupyter-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/jupyter/manifests) |
-| Tensorboards Web Application | applications/tensorboard/tensorboards-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/tensorboards/manifests) |
-| Volumes Web Application | applications/volumes-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/volumes/manifests) |
-| Katib | applications/katib/upstream | [v0.18.0](https://github.com/kubeflow/katib/tree/v0.18.0/manifests/v1beta1) |
-| KServe | applications/kserve/kserve | [v0.15.0](https://github.com/kserve/kserve/releases/tag/v0.15.0/install/v0.15.0) |
-| KServe Models Web Application | applications/kserve/models-web-app | [v0.14.0](https://github.com/kserve/models-web-app/tree/v0.14.0/config) |
-| Kubeflow Pipelines | applications/pipeline/upstream | [2.5.0](https://github.com/kubeflow/pipelines/tree/2.5.0/manifests/kustomize) |
-| Kubeflow Model Registry | applications/model-registry/upstream | [v0.2.19](https://github.com/kubeflow/model-registry/tree/v0.2.19/manifests/kustomize) |
-| Spark Operator | applications/spark/spark-operator | [2.2.0](https://github.com/kubeflow/spark-operator/tree/v2.2.0) |
+| Component | Local Manifests Path | Upstream Revision | CPU (millicores) | Memory (Mi) | Storage (GB) |
+| - | - | - | - | - | - |
+| Training Operator | applications/training-operator/upstream | [v1.9.2](https://github.com/kubeflow/training-operator/tree/v1.9.2/manifests) | 3m | 25Mi | 0GB |
+| Notebook Controller | applications/jupyter/notebook-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/notebook-controller/config) | 5m | 93Mi | 0GB |
+| PVC Viewer Controller | applications/pvcviewer-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/pvcviewer-controller/config) | 15m | 128Mi | 1GB |
+| Tensorboard Controller | applications/tensorboard/tensorboard-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/tensorboard-controller/config) | 15m | 128Mi | 0GB |
+| Central Dashboard | applications/centraldashboard/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/centraldashboard/manifests) | 2m | 159Mi | 0GB |
+| Profiles + KFAM | applications/profiles/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/profile-controller/config) | 7m | 129Mi | 0GB |
+| PodDefaults Webhook | applications/admission-webhook/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/admission-webhook/manifests) | 1m | 14Mi | 0GB |
+| Jupyter Web Application | applications/jupyter/jupyter-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/jupyter/manifests) | 4m | 231Mi | 0GB |
+| Tensorboards Web Application | applications/tensorboard/tensorboards-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/tensorboards/manifests) |  |  |  |
+| Volumes Web Application | applications/volumes-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/volumes/manifests) | 4m | 226Mi | 0GB |
+| Katib | applications/katib/upstream | [v0.18.0](https://github.com/kubeflow/katib/tree/v0.18.0/manifests/v1beta1) | 13m | 476Mi | 13GB |
+| KServe | applications/kserve/kserve | [v0.15.0](https://github.com/kserve/kserve/releases/tag/v0.15.0/install/v0.15.0) | 600m | 1200Mi | 0GB |
+| KServe Models Web Application | applications/kserve/models-web-app | [v0.14.0](https://github.com/kserve/models-web-app/tree/v0.14.0/config) | 6m | 259Mi  | 0GB |
+| Kubeflow Pipelines | applications/pipeline/upstream | [2.5.0](https://github.com/kubeflow/pipelines/tree/2.5.0/manifests/kustomize) | 970m | 3552Mi | 100GB |
+| Kubeflow Model Registry | applications/model-registry/upstream | [v0.2.19](https://github.com/kubeflow/model-registry/tree/v0.2.19/manifests/kustomize) | 510m | 2112Mi | 20GB |
+| Spark Operator | applications/spark/spark-operator | [2.2.0](https://github.com/kubeflow/spark-operator/tree/v2.2.0) | 9m | 41Mi | 0GB |
+| Istio | common/istio | [1.26.1](https://github.com/istio/istio/releases/tag/1.26.1) | 750m | 2364Mi | 0GB |
+| Knative | common/knative/knative-serving <br /> common/knative/knative-eventing | [v1.16.2](https://github.com/knative/serving/releases/tag/knative-v1.16.2) <br /> [v1.16.4](https://github.com/knative/eventing/releases/tag/knative-v1.16.4) | 1450m | 1038Mi | 0GB |
+| Cert Manager | common/cert-manager | [1.16.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.16.1) | 3m | 128Mi | 0GB |
+| Dex | common/dex | [2.41.1](https://github.com/dexidp/dex/releases/tag/v2.41.1) | 3m | 27Mi | 0GB |
+| OAuth2-Proxy | common/oauth2-proxy | [7.7.1](https://github.com/oauth2-proxy/oauth2-proxy/releases/tag/v7.7.1) | 3m | 27Mi | 0GB |
+| **Total** | | | **4372m** | **12198Mi** | **134GB** |
 
-The following matrix shows the versions of common components used across different Kubeflow projects:
 
-| Component | Local Manifests Path | Upstream Revision |
-| - | - | - |
-| Istio | common/istio | [1.26.1](https://github.com/istio/istio/releases/tag/1.26.1) |
-| Knative | common/knative/knative-serving <br /> common/knative/knative-eventing | [v1.16.2](https://github.com/knative/serving/releases/tag/knative-v1.16.2) <br /> [v1.16.4](https://github.com/knative/eventing/releases/tag/knative-v1.16.4) |
-| Cert Manager | common/cert-manager | [1.16.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.16.1) |
 
 ## Installation
 
@@ -706,36 +706,6 @@ The hooks will run automatically on `git commit`. You can also run them manually
 ```bash
 pre-commit run
 ```
-
-## Resource Usage by components
-
-The following table shows the resource requirements for each Kubeflow component, calculated as the maximum of actual usage and configured requests for CPU/memory, plus storage requirements from PVCs:
-
-| Component | CPU (cores) | Memory (Mi) | Storage (GB) |
-|-----------|-------------|-------------|--------------|
-| Dex + OAuth2-Proxy | 3m | 27Mi | 0GB |
-| Cert Manager | 3m | 130Mi | 0GB |
-| Istio | 850m | 2464Mi | 0GB |
-| Katib | 4m | 107Mi | 3GB |
-| Kubeflow Core | 17m | 828Mi | 0GB |
-| KServe | 600m | 1200Mi | 0GB |
-| Metadata | 10m | 225Mi | 40GB |
-| Model Registry | 500m | 2048Mi | 0GB |
-| Pipelines | 770m | 3276Mi | 60GB |
-| Spark | 5m | 36Mi | 0GB |
-| Training | 2m | 26Mi | 0GB |
-| Other | 1615m | 1698Mi | 36GB |
-| **Total** | **4379m** | **12065Mi** | **139GB** |
-
-### Resource Notes
-
-- **CPU values** represent the maximum of actual observed usage and configured resource requests
-- **Memory values** represent the maximum of actual observed usage and configured resource requests  
-- **Storage values** represent the total PVC allocations from manifest files
-- Components with high resource requests (like Istio, KServe) may be over-provisioned compared to actual usage
-- Storage requirements are persistent and represent the minimum disk space needed
-
-Use this as a reference when planning your Kubeflow installation to allocate appropriate resources and decide which components to enable based on your available infrastructure.
 
 ## Frequently Asked Questions
 

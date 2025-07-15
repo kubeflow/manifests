@@ -255,7 +255,7 @@ jobs:
       run: |
         echo "==== Resource Usage Table ===="
         pip3 install -q PyYAML
-        python3 scripts/generate_resource_table.py
+        python3 tests/metrics-server_resource_table.py
 
     - name: Collect Logs on Failure
       if: failure()
