@@ -64,7 +64,7 @@ This repository periodically synchronizes all official Kubeflow components from 
 | Volumes Web Application | applications/volumes-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/volumes/manifests) | 4m | 226Mi | 0GB |
 | Katib | applications/katib/upstream | [v0.18.0](https://github.com/kubeflow/katib/tree/v0.18.0/manifests/v1beta1) | 13m | 476Mi | 13GB |
 | KServe | applications/kserve/kserve | [v0.15.0](https://github.com/kserve/kserve/releases/tag/v0.15.0/install/v0.15.0) | 600m | 1200Mi | 0GB |
-| KServe Models Web Application | applications/kserve/models-web-app | [v0.14.0](https://github.com/kserve/models-web-app/tree/v0.14.0/config) |  |  |  |
+| KServe Models Web Application | applications/kserve/models-web-app | [v0.14.0](https://github.com/kserve/models-web-app/tree/v0.14.0/config) | 6m | 259Mi  | 0GB |
 | Kubeflow Pipelines | applications/pipeline/upstream | [2.5.0](https://github.com/kubeflow/pipelines/tree/2.5.0/manifests/kustomize) | 970m | 3552Mi | 100GB |
 | Kubeflow Model Registry | applications/model-registry/upstream | [v0.2.19](https://github.com/kubeflow/model-registry/tree/v0.2.19/manifests/kustomize) | 510m | 2112Mi | 20GB |
 | Spark Operator | applications/spark/spark-operator | [2.2.0](https://github.com/kubeflow/spark-operator/tree/v2.2.0) | 9m | 41Mi | 0GB |
@@ -72,7 +72,7 @@ This repository periodically synchronizes all official Kubeflow components from 
 | Knative | common/knative/knative-serving <br /> common/knative/knative-eventing | [v1.16.2](https://github.com/knative/serving/releases/tag/knative-v1.16.2) <br /> [v1.16.4](https://github.com/knative/eventing/releases/tag/knative-v1.16.4) | 1450m | 1038Mi | 0GB |
 | Cert Manager | common/cert-manager | [1.16.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.16.1) | 3m | 128Mi | 0GB |
 | Dex + OAuth2-Proxy | | | 3m | 27Mi | 0GB |
-| **Total** | | | **4362m** | **11912Mi** | **134GB** |
+| **Total** | | | **4369m** | **12171Mi** | **134GB** |
 
 
 
