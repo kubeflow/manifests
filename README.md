@@ -68,16 +68,13 @@ This repository periodically synchronizes all official Kubeflow components from 
 | Kubeflow Pipelines | applications/pipeline/upstream | [2.5.0](https://github.com/kubeflow/pipelines/tree/2.5.0/manifests/kustomize) | 970m | 3552Mi | 100GB |
 | Kubeflow Model Registry | applications/model-registry/upstream | [v0.2.19](https://github.com/kubeflow/model-registry/tree/v0.2.19/manifests/kustomize) | 510m | 2112Mi | 20GB |
 | Spark Operator | applications/spark/spark-operator | [2.2.0](https://github.com/kubeflow/spark-operator/tree/v2.2.0) | 9m | 41Mi | 0GB |
-| Dex + OAuth2-Proxy | | | 3m | 27Mi | 0GB |
-
-The following matrix shows the versions of common components used across different Kubeflow projects:
-
-| Component | Local Manifests Path | Upstream Revision | CPU (cores) | Memory (Mi) | Storage (GB) |
-| - | - | - | - | - | - |
 | Istio | common/istio | [1.26.1](https://github.com/istio/istio/releases/tag/1.26.1) | 750m | 2364Mi | 0GB |
 | Knative | common/knative/knative-serving <br /> common/knative/knative-eventing | [v1.16.2](https://github.com/knative/serving/releases/tag/knative-v1.16.2) <br /> [v1.16.4](https://github.com/knative/eventing/releases/tag/knative-v1.16.4) | 1450m | 1038Mi | 0GB |
 | Cert Manager | common/cert-manager | [1.16.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.16.1) | 3m | 128Mi | 0GB |
+| Dex + OAuth2-Proxy | | | 3m | 27Mi | 0GB |
 | **Total** | | | **4362m** | **11912Mi** | **134GB** |
+
+
 
 ## Installation
 
