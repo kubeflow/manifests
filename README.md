@@ -48,9 +48,9 @@ All components are deployable with `kustomize`. You can choose to deploy the ent
 
 ### Kubeflow Version: Master
 
-This repository periodically synchronizes all official Kubeflow components from the respective upstream repositories. The following matrix shows the git version included for each component along with the resource requirements for each Kubeflow component, calculated as the maximum of actual usage and configured requests for CPU/memory, plus storage requirements from PVCs:
+This repository periodically synchronizes all official Kubeflow components from the respective upstream repositories. The following matrix shows the git version included for each component along with the resource requirements for each Kubeflow component, calculated as the maximum of actual usage and configured requests for CPU/memory as well as storage requirements from PVCs:
 
-| Component | Local Manifests Path | Upstream Revision | CPU (cores) | Memory (Mi) | Storage (GB) |
+| Component | Local Manifests Path | Upstream Revision | CPU (millicores) | Memory (Mi) | Storage (GB) |
 | - | - | - | - | - | - |
 | Training Operator | applications/training-operator/upstream | [v1.9.2](https://github.com/kubeflow/training-operator/tree/v1.9.2/manifests) | 3m | 25Mi | 0GB |
 | Notebook Controller | applications/jupyter/notebook-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/notebook-controller/config) | 5m | 93Mi | 0GB |
@@ -71,8 +71,9 @@ This repository periodically synchronizes all official Kubeflow components from 
 | Istio | common/istio | [1.26.1](https://github.com/istio/istio/releases/tag/1.26.1) | 750m | 2364Mi | 0GB |
 | Knative | common/knative/knative-serving <br /> common/knative/knative-eventing | [v1.16.2](https://github.com/knative/serving/releases/tag/knative-v1.16.2) <br /> [v1.16.4](https://github.com/knative/eventing/releases/tag/knative-v1.16.4) | 1450m | 1038Mi | 0GB |
 | Cert Manager | common/cert-manager | [1.16.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.16.1) | 3m | 128Mi | 0GB |
-| Dex + OAuth2-Proxy | | | 3m | 27Mi | 0GB |
-| **Total** | | | **4369m** | **12171Mi** | **134GB** |
+| Dex | [2.41.1](https://github.com/dexidp/dex/releases/tag/v2.41.1) | common/dex | 3m | 27Mi | 0GB |
+| OAuth2-Proxy | [7.7.1](https://github.com/oauth2-proxy/oauth2-proxy/releases/tag/v7.7.1) | common/oauth2-proxy | 3m | 27Mi | 0GB |
+| **Total** | | | **4372m** | **12198Mi** | **134GB** |
 
 
 
