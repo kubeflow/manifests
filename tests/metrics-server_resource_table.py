@@ -79,9 +79,13 @@ COMPONENT_RULES = {
         'namespaces': ['cert-manager'],
         'keywords': ['cert-manager']
     },
-    'Dex + OAuth2-Proxy': {
-        'namespaces': ['auth', 'oauth2-proxy'],
-        'keywords': ['dex', 'oauth2-proxy']
+    'Dex': {
+        'namespaces': ['auth'],
+        'keywords': ['dex']
+    },
+    'OAuth2-Proxy': {
+        'namespaces': ['oauth2-proxy'],
+        'keywords': ['oauth2-proxy']
     }
 }
 
@@ -105,7 +109,8 @@ COMPONENT_ORDER = [
     'Istio',
     'Knative',
     'Cert Manager',
-    'Dex + OAuth2-Proxy'
+    'Dex',
+    'OAuth2-Proxy'
 ]
 
 # Storage fallback values when YAML parsing is unavailable
