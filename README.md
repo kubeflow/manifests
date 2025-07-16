@@ -666,18 +666,11 @@ context, all due to the `minAvailable` attribute:
 
 The Manifest Working Group releases Kubeflow based on the [release timeline](https://github.com/kubeflow/community/blob/master/releases/handbook.md#timeline). The community and the release team work closely with the Manifest Working Group to define the specific dates at the start of the [release cycle](https://github.com/kubeflow/community/blob/master/releases/handbook.md#releasing) and follow the [release versioning policy](https://github.com/kubeflow/community/blob/master/releases/handbook.md#versioning-policy), as defined in the [Kubeflow release handbook](https://github.com/kubeflow/community/blob/master/releases/handbook.md).
 
-## CVE Scanning
+### Security
 
 To view all past security scans, head to the [Image Extracting and Security Scanning GitHub Action workflow](https://github.com/kubeflow/manifests/actions/workflows/trivy.yaml). In the logs of the workflow, you can expand the `Run image extracting and security scanning script` step to view the CVE logs. You will find a per-image CVE scan and a JSON dump of per-WorkingGroup aggregated metrics. You can run the Python script from the workflow file locally on your machine to obtain the detailed JSON files for any git commit.
 
-The Kubeflow security working group follows a responsible disclosure policy for CVE results:
-
-- **Internal Review**: All CVE findings are initially reviewed internally by the security working group.
-- **Severity Assessment**: Each CVE is assessed for severity and potential impact on the Kubeflow project.
-- **Disclosure**: For high and critical severity CVEs, the security working group will:
-  - Notify the maintainers and contributors.
-  - Try to provide a fix or mitigation strategy.
-  - Publicly disclose the CVE details.
+For more infromation please consult the [SECURITY.md](./SECURITY.md)
 
 ## Pre-commit Hooks
 
