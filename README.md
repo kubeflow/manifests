@@ -23,7 +23,7 @@ You can also install the master branch of [`kubeflow/manifests`](https://github.
   - [Change Default User Password](#change-default-user-password)
 - [Upgrading and Extending](#upgrading-and-extending)
 - [Release Process](#release-process)
-- [CVE Scanning](#cve-scanning)
+- [Security](#security)
 - [Pre-commit Hooks](#pre-commit-hooks)
 - [Resource Usage by components](#resource-usage-by-components)
 - [Frequently Asked Questions](#frequently-asked-questions)
@@ -32,8 +32,7 @@ You can also install the master branch of [`kubeflow/manifests`](https://github.
 
 ## Overview of the Kubeflow Platform
 
-This repository is owned by the [Platform/Manifests Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md). If you are a contributor authoring or editing the packages, please see [Best Practices](https://kubectl.docs.kubernetes.io/references/kustomize/). You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website. Our channel on the CNCF Slack is [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2). You can also find our [biweekly meetings](https://bit.ly/kf-wg-manifests-meet), including the commentable [Agenda](https://bit.ly/kf-wg-manifests-notes).
-
+If you want to contribute, please take a look at the [CONTRIBUTING.md](CONTRIBUTING.md).
 The Kubeflow Manifests repository is organized under three main directories, which include manifests for installing:
 
 | Directory | Purpose |
