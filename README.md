@@ -23,7 +23,7 @@ You can also install the master branch of [`kubeflow/manifests`](https://github.
   - [Change Default User Password](#change-default-user-password)
 - [Upgrading and Extending](#upgrading-and-extending)
 - [Release Process](#release-process)
-- [CVE Scanning](#cve-scanning)
+- [Security](#security)
 - [Pre-commit Hooks](#pre-commit-hooks)
 - [Resource Usage by components](#resource-usage-by-components)
 - [Frequently Asked Questions](#frequently-asked-questions)
@@ -32,7 +32,11 @@ You can also install the master branch of [`kubeflow/manifests`](https://github.
 
 ## Overview of the Kubeflow Platform
 
-This repository is owned by the [Platform/Manifests Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md). If you are a contributor authoring or editing the packages, please see [Best Practices](https://kubectl.docs.kubernetes.io/references/kustomize/). You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website. Our channel on the CNCF Slack is [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2). You can also find our [biweekly meetings](https://bit.ly/kf-wg-manifests-meet), including the commentable [Agenda](https://bit.ly/kf-wg-manifests-notes).
+- This repository is owned by the [Platform/Manifests/security Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md). 
+- You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website.
+- Our channel on the CNCF Slack is [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2). 
+- You can also find our [biweekly meetings](https://bit.ly/kf-wg-manifests-meet), including the commentable [Agenda](https://bit.ly/kf-wg-manifests-notes).
+- If you want to contribute, please take a look at the [CONTRIBUTING.md](CONTRIBUTING.md).
 
 The Kubeflow Manifests repository is organized under three main directories, which include manifests for installing:
 
@@ -666,18 +670,11 @@ context, all due to the `minAvailable` attribute:
 
 The Manifest Working Group releases Kubeflow based on the [release timeline](https://github.com/kubeflow/community/blob/master/releases/handbook.md#timeline). The community and the release team work closely with the Manifest Working Group to define the specific dates at the start of the [release cycle](https://github.com/kubeflow/community/blob/master/releases/handbook.md#releasing) and follow the [release versioning policy](https://github.com/kubeflow/community/blob/master/releases/handbook.md#versioning-policy), as defined in the [Kubeflow release handbook](https://github.com/kubeflow/community/blob/master/releases/handbook.md).
 
-## CVE Scanning
+### Security
 
 To view all past security scans, head to the [Image Extracting and Security Scanning GitHub Action workflow](https://github.com/kubeflow/manifests/actions/workflows/trivy.yaml). In the logs of the workflow, you can expand the `Run image extracting and security scanning script` step to view the CVE logs. You will find a per-image CVE scan and a JSON dump of per-WorkingGroup aggregated metrics. You can run the Python script from the workflow file locally on your machine to obtain the detailed JSON files for any git commit.
 
-The Kubeflow security working group follows a responsible disclosure policy for CVE results:
-
-- **Internal Review**: All CVE findings are initially reviewed internally by the security working group.
-- **Severity Assessment**: Each CVE is assessed for severity and potential impact on the Kubeflow project.
-- **Disclosure**: For high and critical severity CVEs, the security working group will:
-  - Notify the maintainers and contributors.
-  - Try to provide a fix or mitigation strategy.
-  - Publicly disclose the CVE details.
+For more infromation please consult the [SECURITY.md](./SECURITY.md).
 
 ## Pre-commit Hooks
 
