@@ -11,6 +11,8 @@ on:
     - common/cert-manager/**
     - common/oauth2-proxy/**
     - common/istio*/**
+    - common/kubeflow-system-namespace/**
+    - common/networkpolicies/kubeflow-system/**
     - experimental/security/PSS/*
 
 permissions:
@@ -87,7 +89,7 @@ jobs:
 
     - name: Unapply applied baseline labels
       run: |
-        NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow")
+        NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow" "kubeflow-system")
         for NAMESPACE in "${NAMESPACES[@]}"; do
           if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
             kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce-
