@@ -5,11 +5,10 @@ KF_PROFILE=${1:-kubeflow-user-example-com}
 kubectl apply -f tests/trainer_job.yaml -n $KF_PROFILE
 
 kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=trainer -n kubeflow-system --timeout=60s
-kubectl get clustertrainingruntimes torch-distributed
-kubectl describe trainjob pytorch-simple -n $KF_PROFILE
+
 sleep 15
 
-kubectl get jobset pytorch-simple -n $KF_PROFILE
+kubectl get jobset -n $KF_PROFILE
 kubectl get pods -n $KF_PROFILE --show-labels
 kubectl wait --for=condition=Ready pod -l batch.kubernetes.io/job-name=pytorch-simple-node-0 -n $KF_PROFILE --timeout=180s
 
