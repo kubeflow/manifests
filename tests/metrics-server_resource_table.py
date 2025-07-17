@@ -42,9 +42,9 @@ COMPONENT_RULES = {
     'Jupyter Web Application': {
         'keywords': ['jupyter-web-app', 'jupyter']
     },
-    'Tensorboards Web Application': {
-        'keywords': ['tensorboards-web-app']
-    },
+    # 'Tensorboards Web Application': {
+    #     'keywords': ['tensorboards-web-app']
+    # },
     'Volumes Web Application': {
         'keywords': ['volumes-web-app']
     },
@@ -99,7 +99,7 @@ COMPONENT_ORDER = [
     'Profiles + KFAM',
     'PodDefaults Webhook',
     'Jupyter Web Application',
-    'Tensorboards Web Application',
+    # 'Tensorboards Web Application',
     'Volumes Web Application',
     'Katib',
     'KServe',
