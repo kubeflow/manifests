@@ -242,7 +242,7 @@ def categorize_resource(namespace, name, filepath=""):
 
 def parse_kubectl_output(output):
     """Parse kubectl top output and categorize by component"""
-    lines = output.strip().split('\n')[1:]  # Skip header
+    lines = output.strip().split('\n')[1:] 
     component_resources = defaultdict(lambda: {'cpu': 0, 'memory': 0})
     
     for line in lines:
