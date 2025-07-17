@@ -5,6 +5,7 @@ import re
 import sys
 import os
 import glob
+import json
 from collections import defaultdict
 
 try:
@@ -133,6 +134,42 @@ def run_kubectl_top():
     except FileNotFoundError:
         print("Error: kubectl command not found. Please install kubectl")
         sys.exit(1)
+
+def get_live_pvcs():
+    """Get live PVCs from the cluster and return storage information by component"""
+    try:
+        result = subprocess.run(['kubectl', 'get', 'pvc', '--all-namespaces', '-o', 'json'], 
+                              capture_output=True, text=True, check=True)
+        pvc_data = json.loads(result.stdout)
+        
+        component_storage = defaultdict(int)
+        
+        for pvc in pvc_data.get('items', []):
+            metadata = pvc.get('metadata', {})
+            name = metadata.get('name', 'unknown')
+            namespace = metadata.get('namespace', 'default')
+            
+            component = categorize_resource(namespace, name)
+            if not component:
+                continue
+            
+            storage_str = None
+            if 'status' in pvc and 'capacity' in pvc['status']:
+                storage_str = pvc['status']['capacity'].get('storage', '0')
+            else:
+                storage_str = pvc.get('spec', {}).get('resources', {}).get('requests', {}).get('storage', '0')
+            
+            storage_gb = parse_resource_value(storage_str, 'storage')
+            component_storage[component] += storage_gb
+        
+        return dict(component_storage)
+        
+    except subprocess.CalledProcessError as e:
+        print(f"Warning: Error getting live PVCs: {e}")
+        return {}
+    except (json.JSONDecodeError, FileNotFoundError) as e:
+        print(f"Warning: Error parsing PVC data: {e}")
+        return {}
 
 def parse_resource_value(value_str, resource_type):
     """Parse CPU (to millicores) or memory (to MiB) resource values"""
@@ -318,34 +355,52 @@ def calculate_max_resources(actual_usage, manifest_requests):
     
     return max_resources
 
-def generate_table(component_resources, storage_map, actual_usage, manifest_requests):
+def calculate_max_storage(manifest_storage, live_storage):
+    """Calculate maximum of manifest storage and live PVC storage"""
+    all_components = set(manifest_storage.keys()) | set(live_storage.keys())
+    max_storage = {}
+    
+    for component in all_components:
+        manifest_val = manifest_storage.get(component, 0)
+        live_val = live_storage.get(component, 0)
+        max_storage[component] = max(manifest_val, live_val)
+    
+    return max_storage
+
+def generate_table(component_resources, storage_map, actual_usage, manifest_requests, manifest_storage=None, live_storage=None):
     """Generate markdown table from component resources"""
     print("## Resource Usage by Components")
     print()
     print("The following table shows the resource requirements for each Kubeflow components:")
     print()
-    print("| Component | CPU (cores) | Memory (Mi) | Storage (GB) |")
-    print("|-----------|-------------|-------------|--------------|")
+    print("| Component | CPU (cores) | Memory (Mi) | Storage (GB) | Manifest Storage (GB) | Live PVC Storage (GB) |")
+    print("|-----------|-------------|-------------|--------------|----------------------|---------------------|")
     
-    totals = {'cpu': 0, 'memory': 0, 'storage': 0}
+    totals = {'cpu': 0, 'memory': 0, 'storage': 0, 'manifest_storage': 0, 'live_storage': 0}
     
     for component in COMPONENT_ORDER:
         if component in component_resources:
             resources = component_resources[component]
             storage = storage_map.get(component, 0)
+            manifest_stor = manifest_storage.get(component, 0) if manifest_storage else 0
+            live_stor = live_storage.get(component, 0) if live_storage else 0
             
             totals['cpu'] += resources['cpu']
             totals['memory'] += resources['memory']
             totals['storage'] += storage
+            totals['manifest_storage'] += manifest_stor
+            totals['live_storage'] += live_stor
             
-            print(f"| {component} | {resources['cpu']}m | {resources['memory']}Mi | {storage}GB |")
+            print(f"| {component} | {resources['cpu']}m | {resources['memory']}Mi | {storage}GB | {manifest_stor}GB | {live_stor}GB |")
     
-    print(f"| **Total** | **{totals['cpu']}m** | **{totals['memory']}Mi** | **{totals['storage']}GB** |")
+    print(f"| **Total** | **{totals['cpu']}m** | **{totals['memory']}Mi** | **{totals['storage']}GB** | **{totals['manifest_storage']}GB** | **{totals['live_storage']}GB** |")
     print()
     
     print("### Notes")
     print("- CPU/Memory values are maximum of actual usage and configured requests")
-    print("- Storage values are total PVC allocations from manifest files")
+    print("- Storage values are maximum of manifest PVC allocations and live PVC allocations")
+    print("- Manifest Storage: Storage requirements defined in YAML manifest files")
+    print("- Live PVC Storage: Actual storage allocated to PVCs in the cluster")
     print("- Components not matching the official list are excluded from the table")
     print()
 
@@ -357,18 +412,23 @@ def main():
     kubectl_output = run_kubectl_top()
     actual_usage = parse_kubectl_output(kubectl_output)
     
+    print("Getting live PVC storage from cluster...")
+    live_storage = get_live_pvcs()
+    
     if YAML_AVAILABLE:
         print("Parsing manifest files...")
         manifest_files = find_manifest_files()
-        manifest_requests, storage_map = parse_manifest_resources(manifest_files)
+        manifest_requests, manifest_storage = parse_manifest_resources(manifest_files)
         max_resources = calculate_max_resources(actual_usage, manifest_requests)
+        max_storage = calculate_max_storage(manifest_storage, live_storage)
     else:
         print("Using actual usage only (manifest parsing skipped)...")
         manifest_requests = defaultdict(lambda: {'cpu': 0, 'memory': 0})
+        manifest_storage = {}
         max_resources = actual_usage
-        storage_map = STORAGE_FALLBACK
+        max_storage = live_storage if live_storage else STORAGE_FALLBACK
     
-    generate_table(max_resources, storage_map, actual_usage, manifest_requests)
+    generate_table(max_resources, max_storage, actual_usage, manifest_requests, manifest_storage, live_storage)
 
 if __name__ == "__main__":
     main()
