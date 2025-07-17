@@ -20,6 +20,8 @@ cd applications/trainer/upstream
 
 kubectl wait --for=condition=Available deployment/kubeflow-trainer-controller-manager -n kubeflow-system --timeout=180s
 
+kubectl logs -l app.kubernetes.io/name=trainer -n kubeflow-system --tail=10
+
 kustomize build overlays/runtimes | kubectl apply --server-side --force-conflicts -f -
 
 kubectl apply -f overlays/kubeflow-platform/kubeflow-trainer-roles.yaml

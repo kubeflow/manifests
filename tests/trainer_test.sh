@@ -6,6 +6,10 @@ kubectl apply -f tests/trainer_job.yaml -n $KF_PROFILE
 
 kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=trainer -n kubeflow-system --timeout=60s
 
+kubectl describe trainjob pytorch-simple -n $KF_PROFILE
+
+kubectl logs -l app.kubernetes.io/name=trainer -n kubeflow-system --tail=20
+
 sleep 15
 
 kubectl get jobset -n $KF_PROFILE
