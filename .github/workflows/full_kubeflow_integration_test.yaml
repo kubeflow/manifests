@@ -92,6 +92,9 @@ jobs:
     - name: Install Training Operator
       run: ./tests/training_operator_install.sh
 
+    - name: Install Trainer
+      run: ./tests/trainer_install.sh
+
     - name: Install Model Registry
       run: |
         kustomize build applications/model-registry/upstream/overlays/db | kubectl apply -n kubeflow -f -
@@ -184,6 +187,9 @@ jobs:
 
     - name: Run Training Operator Test
       run: ./tests/training_operator_test.sh "${KF_PROFILE}"
+
+    - name: Run Trainer Test
+      run: ./tests/trainer_test.sh "${KF_PROFILE}"
 
     - name: Run KServe Test
       run: |
