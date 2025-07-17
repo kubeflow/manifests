@@ -3,25 +3,20 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kubeflow-trainer-events
+  name: kubeflow-trainer-events-role
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - events
-  verbs:
-  - create
-  - patch
-  - update
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["create", "patch", "update"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: kubeflow-trainer-events
+  name: kubeflow-trainer-events-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: kubeflow-trainer-events
+  name: kubeflow-trainer-events-role
 subjects:
 - kind: ServiceAccount
   name: kubeflow-trainer-controller-manager

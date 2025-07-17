@@ -23,7 +23,7 @@ kubectl wait --for=condition=Available deployment/kubeflow-trainer-controller-ma
 kubectl wait --for=condition=Available deployment/jobset-controller-manager -n kubeflow-system --timeout=180s
 sleep 15
 
-kubectl apply -f tests/trainer_rbac_patch.yaml
+kubectl apply -f ../../../tests/trainer_rbac_patch.yaml
 
 kustomize build overlays/runtimes | kubectl apply --server-side --force-conflicts -f -
 
