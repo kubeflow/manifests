@@ -57,4 +57,4 @@ spec:
           values:
           - istio-system
   policyTypes:
-  - Ingress 
+  - Ingress
