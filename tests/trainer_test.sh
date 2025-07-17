@@ -3,6 +3,7 @@ set -euxo pipefail
 KF_PROFILE=${1:-kubeflow-user-example-com}
 
 kubectl apply -f tests/trainer_job.yaml -n $KF_PROFILE
+sleep 10
 
 kubectl get jobset pytorch-simple -n $KF_PROFILE
 kubectl get pods -n $KF_PROFILE --show-labels
