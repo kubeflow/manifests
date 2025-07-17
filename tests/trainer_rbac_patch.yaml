@@ -1,0 +1,28 @@
+---
+# Additional RBAC permissions for trainer controller to create events in user namespaces
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-trainer-events
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubeflow-trainer-events
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubeflow-trainer-events
+subjects:
+- kind: ServiceAccount
+  name: kubeflow-trainer-controller-manager
+  namespace: kubeflow-system 
