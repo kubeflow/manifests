@@ -10,6 +10,10 @@ on:
     - '.github/workflows/katib-helm-kustomize-comparison.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   compare-all-scenarios:
     runs-on: ubuntu-latest
