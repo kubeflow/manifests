@@ -367,40 +367,34 @@ def calculate_max_storage(manifest_storage, live_storage):
     
     return max_storage
 
-def generate_table(component_resources, storage_map, actual_usage, manifest_requests, manifest_storage=None, live_storage=None):
+def generate_table(component_resources, actual_usage, manifest_requests, live_storage=None):
     """Generate markdown table from component resources"""
     print("## Resource Usage by Components")
     print()
     print("The following table shows the resource requirements for each Kubeflow components:")
     print()
-    print("| Component | CPU (cores) | Memory (Mi) | Storage (GB) | Manifest Storage (GB) | Live PVC Storage (GB) |")
-    print("|-----------|-------------|-------------|--------------|----------------------|---------------------|")
+    print("| Component | CPU (cores) | Memory (Mi) | PVC Storage (GB) |")
+    print("|-----------|-------------|-------------|------------------|")
     
-    totals = {'cpu': 0, 'memory': 0, 'storage': 0, 'manifest_storage': 0, 'live_storage': 0}
+    totals = {'cpu': 0, 'memory': 0, 'live_storage': 0}
     
     for component in COMPONENT_ORDER:
         if component in component_resources:
             resources = component_resources[component]
-            storage = storage_map.get(component, 0)
-            manifest_stor = manifest_storage.get(component, 0) if manifest_storage else 0
             live_stor = live_storage.get(component, 0) if live_storage else 0
             
             totals['cpu'] += resources['cpu']
             totals['memory'] += resources['memory']
-            totals['storage'] += storage
-            totals['manifest_storage'] += manifest_stor
             totals['live_storage'] += live_stor
             
-            print(f"| {component} | {resources['cpu']}m | {resources['memory']}Mi | {storage}GB | {manifest_stor}GB | {live_stor}GB |")
+            print(f"| {component} | {resources['cpu']}m | {resources['memory']}Mi | {live_stor}GB |")
     
-    print(f"| **Total** | **{totals['cpu']}m** | **{totals['memory']}Mi** | **{totals['storage']}GB** | **{totals['manifest_storage']}GB** | **{totals['live_storage']}GB** |")
+    print(f"| **Total** | **{totals['cpu']}m** | **{totals['memory']}Mi** | **{totals['live_storage']}GB** |")
     print()
     
     print("### Notes")
     print("- CPU/Memory values are maximum of actual usage and configured requests")
-    print("- Storage values are maximum of manifest PVC allocations and live PVC allocations")
-    print("- Manifest Storage: Storage requirements defined in YAML manifest files")
-    print("- Live PVC Storage: Actual storage allocated to PVCs in the cluster")
+    print("- PVC Storage: Actual storage allocated to PVCs in the cluster")
     print("- Components not matching the official list are excluded from the table")
     print()
 
@@ -412,7 +406,6 @@ def main():
     kubectl_output = run_kubectl_top()
     actual_usage = parse_kubectl_output(kubectl_output)
     
-    print("Getting live PVC storage from cluster...")
     live_storage = get_live_pvcs()
     
     if YAML_AVAILABLE:
@@ -428,7 +421,7 @@ def main():
         max_resources = actual_usage
         max_storage = live_storage if live_storage else STORAGE_FALLBACK
     
-    generate_table(max_resources, max_storage, actual_usage, manifest_requests, manifest_storage, live_storage)
+    generate_table(max_resources, actual_usage, manifest_requests, live_storage)
 
 if __name__ == "__main__":
     main()
