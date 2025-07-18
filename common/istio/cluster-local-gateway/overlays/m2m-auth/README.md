@@ -19,25 +19,17 @@ This overlay secures the `cluster-local-gateway` with JWT authentication to addr
 - **DENY policy**: Blocks requests without valid JWT principals (except health checks)
 - **ALLOW policy**: Permits requests with valid JWT principals and health check endpoints
 
-## Impact on KServe
+## Cross-Namespace Access Control
 
-With this configuration:
-- KServe InferenceServices require valid JWT tokens for access
-- Service accounts from the same namespace can access their services
-- Cross-namespace access requires proper JWT tokens
-- Individual AuthorizationPolicies per InferenceService are no longer needed
+Cross-namespace access control is not enforced at the service level due to architectural limitations:
 
-## Testing
+1. **Gateway-Level Authentication**: This implementation validates JWT tokens at the `cluster-local-gateway` level, which means any valid Kubernetes service account token from any namespace can access services through the gateway.
 
-Use the `tests/kserve_secure_test.sh` script to verify:
-1. Requests with valid tokens succeed (200)
-2. Requests without tokens fail (403)
-3. Requests from unauthorized namespaces fail (403)
+2. **Knative Activator Bypass**: When Knative's activator is in the request path (during cold starts or scale-to-zero scenarios), it bypasses namespace-based authentication because:
+   - The activator has broad access permissions to all services
+   - The original request identity is lost when the activator forwards requests
+   - This is a known limitation documented in [knative-extensions/net-istio#554](https://github.com/knative-extensions/net-istio/issues/554)
 
-## Installation
+3. **Current Behavior**: Any service account from any namespace can access KServe models if they have a valid JWT token. This provides authentication but not authorization between namespaces.
 
-This overlay is automatically used by `tests/knative-cni_install.sh`:
-
-```bash
-kustomize build common/istio/cluster-local-gateway/overlays/m2m-auth | kubectl apply -f -
-```
+4. **Not Fixable at Manifests Level**: This limitation requires architectural changes to Knative/KServe itself and cannot be resolved through Kubeflow manifests alone.
