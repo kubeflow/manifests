@@ -12,6 +12,10 @@ on:
     - 'helm-kustomize-comparison.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   validate-helm-kustomize-equivalence:
     runs-on: ubuntu-latest
