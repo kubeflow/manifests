@@ -33,7 +33,7 @@ spec:
         uri: /
       route:
         - destination:
-            host: knative-local-gateway.istio-system.svc.cluster.local
+            host: cluster-local-gateway.istio-system.svc.cluster.local
           headers:
             request:
               set:
