@@ -35,8 +35,6 @@ function log_info() {
 
 # Setup function
 function setup_test_environment() {
-    log_info "Setting up test environment..."
-    
     # Create namespaces
     kubectl create namespace $PRIMARY_NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
     kubectl create namespace $ATTACKER_NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
@@ -66,15 +64,11 @@ spec:
 EOF
 
     # Wait for InferenceService to be ready
-    log_info "Waiting for InferenceService to be ready..."
-    kubectl wait --for=condition=Ready inferenceservice/secure-sklearn -n $PRIMARY_NAMESPACE --timeout=300s || {
-        log_info "InferenceService not ready, continuing with tests..."
-    }
+    kubectl wait --for=condition=Ready inferenceservice/secure-sklearn -n $PRIMARY_NAMESPACE --timeout=180s || echo "InferenceService not ready, continuing..."
     
     # Note: Namespace isolation policies removed for this PR
     # Focus is on gateway-level JWT authentication only
 
-    log_info "Test environment setup complete"
     echo
 }
 
@@ -83,7 +77,6 @@ function test_gateway_jwt_validation() {
     log_test "Gateway JWT Validation"
     
     # Test 1: No token
-    log_info "Testing request without JWT token..."
     RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
         -H "Host: secure-sklearn-predictor.$PRIMARY_NAMESPACE.svc.cluster.local" \
         "http://$KSERVE_INGRESS_HOST_PORT/v1/models/secure-sklearn:predict" \
@@ -97,7 +90,6 @@ function test_gateway_jwt_validation() {
     fi
     
     # Test 2: Invalid token
-    log_info "Testing request with invalid JWT token..."
     RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
         -H "Host: secure-sklearn-predictor.$PRIMARY_NAMESPACE.svc.cluster.local" \
         -H "Authorization: Bearer invalid-token-123" \
@@ -122,7 +114,6 @@ function test_namespace_isolation() {
     ATTACKER_TOKEN=$(kubectl -n $ATTACKER_NAMESPACE create token attacker-sa)
     
     # Test 3: Same namespace access
-    log_info "Testing access from same namespace..."
     RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
         -H "Host: secure-sklearn-predictor.$PRIMARY_NAMESPACE.svc.cluster.local" \
         -H "Authorization: Bearer $PRIMARY_TOKEN" \
@@ -138,7 +129,6 @@ function test_namespace_isolation() {
     fi
     
     # Test 4: Cross-namespace access (should work with valid token - no namespace isolation in this PR)
-    log_info "Testing cross-namespace access..."
     RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
         -H "Host: secure-sklearn-predictor.$PRIMARY_NAMESPACE.svc.cluster.local" \
         -H "Authorization: Bearer $ATTACKER_TOKEN" \
@@ -159,7 +149,6 @@ function test_external_access() {
     log_test "External Access Path"
     
     # Test external access via istio-ingressgateway (if available)
-    log_info "Testing external access pattern..."
     
     PRIMARY_TOKEN=$(kubectl -n $PRIMARY_NAMESPACE create token default-editor)
     
@@ -174,7 +163,7 @@ function test_external_access() {
     if [ "$RESPONSE" = "200" ] || [ "$RESPONSE" = "404" ] || [ "$RESPONSE" = "403" ]; then
         log_pass "External access path configured (response: $RESPONSE)"
     else
-        log_info "External access returned: $RESPONSE (may need additional configuration)"
+        echo "External access returned: $RESPONSE (may need additional configuration)"
     fi
     
     echo
@@ -186,14 +175,14 @@ function test_internal_access() {
     # Create a test pod in the same namespace
     kubectl run test-client -n $PRIMARY_NAMESPACE --image=curlimages/curl --restart=Never -- sleep 3600 2>/dev/null || true
     kubectl wait --for=condition=ready pod/test-client -n $PRIMARY_NAMESPACE --timeout=60s 2>/dev/null || {
-        log_info "Test client pod not ready, skipping internal access test"
+        echo "Test client pod not ready, skipping internal access test"
         return
     }
     
     # Test internal access with token
     PRIMARY_TOKEN=$(kubectl -n $PRIMARY_NAMESPACE create token default-editor)
     
-    log_info "Testing internal cluster access..."
+    # Testing internal cluster access
     set +e
     INTERNAL_RESPONSE=$(kubectl exec -n $PRIMARY_NAMESPACE test-client -- \
         curl -s -o /dev/null -w "%{http_code}" \
@@ -206,7 +195,7 @@ function test_internal_access() {
     if [ "$INTERNAL_RESPONSE" = "200" ] || [ "$INTERNAL_RESPONSE" = "404" ] || [ "$INTERNAL_RESPONSE" = "503" ]; then
         log_pass "Internal access with token works ($INTERNAL_RESPONSE)"
     else
-        log_info "Internal access returned: $INTERNAL_RESPONSE"
+        echo "Internal access returned: $INTERNAL_RESPONSE"
     fi
     
     # Cleanup
@@ -215,7 +204,7 @@ function test_internal_access() {
 }
 
 function cleanup() {
-    log_info "Cleaning up test resources..."
+    echo "Cleaning up test resources..."
     kubectl delete namespace $ATTACKER_NAMESPACE --ignore-not-found=true
     kubectl delete inferenceservice secure-sklearn -n $PRIMARY_NAMESPACE --ignore-not-found=true
     # No authorization policies to clean up in this version

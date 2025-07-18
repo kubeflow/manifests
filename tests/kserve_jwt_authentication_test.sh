@@ -40,7 +40,7 @@ spec:
 EOF
 then
   echo "InferenceService created successfully, waiting for it to be ready..."
-  kubectl wait --for=condition=Ready inferenceservice/test-sklearn-secure -n ${NAMESPACE} --timeout=300s || echo "InferenceService not ready, continuing with JWT tests..."
+  kubectl wait --for=condition=Ready inferenceservice/test-sklearn-secure -n ${NAMESPACE} --timeout=180s || echo "InferenceService not ready, continuing with JWT tests..."
   
   # Create AuthorizationPolicy to allow authenticated access
   cat <<EOF | kubectl apply -f -
@@ -68,7 +68,7 @@ set -e
 echo "Test 1: Testing access with valid token..."
 set +e
 RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
-  -H "Host: test-sklearn-secure-predictor.${NAMESPACE}.example.com" \
+  -H "Host: test-sklearn-secure-predictor.${NAMESPACE}.svc.cluster.local" \
   -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
   -H "Content-Type: application/json" \
   "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/test-sklearn-secure:predict" \
@@ -100,7 +100,7 @@ fi
 echo "Test 2: Testing access without token (should fail with 403)..."
 set +e
 RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
-  -H "Host: test-sklearn-secure-predictor.${NAMESPACE}.example.com" \
+  -H "Host: test-sklearn-secure-predictor.${NAMESPACE}.svc.cluster.local" \
   -H "Content-Type: application/json" \
   "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/test-sklearn-secure:predict" \
   -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
@@ -121,7 +121,7 @@ ATTACKER_TOKEN="$(kubectl -n attacker-namespace create token attacker-sa)"
 
 set +e
 RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
-  -H "Host: test-sklearn-secure-predictor.${NAMESPACE}.example.com" \
+  -H "Host: test-sklearn-secure-predictor.${NAMESPACE}.svc.cluster.local" \
   -H "Authorization: Bearer ${ATTACKER_TOKEN}" \
   -H "Content-Type: application/json" \
   "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/test-sklearn-secure:predict" \

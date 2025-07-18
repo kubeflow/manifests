@@ -6,7 +6,7 @@ on:
     - .github/workflows/kserve_secure_test.yaml
     - apps/kserve/**
     - tests/kserve/**
-    - tests/kserve_secure_test.sh
+    - tests/kserve_jwt_authentication_test.sh
     - tests/kserve_install.sh
     - common/istio*/**
     - common/oauth2-proxy/**
@@ -109,7 +109,7 @@ jobs:
       run: sleep 100
 
     - name: Run KServe secure authentication tests
-      run: ./tests/kserve_secure_test.sh kubeflow-user-example-com
+      run: ./tests/kserve_jwt_authentication_test.sh kubeflow-user-example-com
 
     - name: Apply Pod Security Standards baseline levels
       run: ./tests/PSS_baseline_enable.sh

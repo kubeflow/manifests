@@ -28,4 +28,4 @@ spec:
       claim: sub
     fromHeaders:
     - name: Authorization
-      prefix: "Bearer"
+      prefix: "Bearer "

@@ -10,7 +10,7 @@ on:
     - tests/istio*
     - common/knative/**
     - tests/knative-cni_install.sh
-    - tests/*auth*test.sh
+    - tests/*authentication*test.sh
     - tests/final_validation.sh
 
 jobs:
@@ -74,12 +74,12 @@ jobs:
     - name: Run Knative Service JWT Authentication Tests
       run: |
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
-        ./tests/knative_auth_test.sh
+        ./tests/knative_authentication_test.sh
 
     - name: Test External Access Configuration
       run: |
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
-        ./tests/setup_external_access.sh kubeflow-user-example-com secure-model-predictor
+        ./tests/kserve_setup_external_access.sh kubeflow-user-example-com secure-model-predictor
         # Test external access pattern
         TOKEN=$(kubectl -n kubeflow-user-example-com create token default-editor)
         echo "Testing external access pattern..."
