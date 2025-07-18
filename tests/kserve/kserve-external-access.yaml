@@ -1,0 +1,38 @@
+# KServe External Access Configuration
+# This enables secure external access to KServe InferenceServices
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: kserve-external-access
+  namespace: REPLACE_WITH_NAMESPACE  # e.g., kubeflow-user-example-com
+spec:
+  gateways:
+  - kubeflow/kubeflow-gateway  # External gateway
+  hosts:
+  - '*'
+  http:
+  # Path-based routing for KServe models
+  - match:
+    - uri:
+        prefix: /kserve/REPLACE_WITH_NAMESPACE/
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        # Route through cluster-local-gateway (secured with JWT)
+        host: cluster-local-gateway.istio-system.svc.cluster.local
+      headers:
+        request:
+          set:
+            # Set the correct host header for the target service
+            Host: REPLACE_WITH_SERVICE_NAME.REPLACE_WITH_NAMESPACE.svc.cluster.local
+      weight: 100
+    timeout: 300s
+    # Optional: Add CORS headers for browser access
+    headers:
+      response:
+        add:
+          Access-Control-Allow-Origin: "*"
+          Access-Control-Allow-Methods: "GET, POST, OPTIONS"
+          Access-Control-Allow-Headers: "Authorization, Content-Type"
