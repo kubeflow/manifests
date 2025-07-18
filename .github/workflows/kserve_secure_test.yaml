@@ -66,44 +66,12 @@ jobs:
 
     - name: Verify JWT authentication policies are applied
       run: |
-        echo "Checking if cluster-local-gateway JWT policies are applied..."
-
-        # Check required policies exist
-        if kubectl get authorizationpolicy cluster-local-gateway-require-jwt -n istio-system >/dev/null 2>&1; then
-          echo "✓ cluster-local-gateway-require-jwt AuthorizationPolicy found"
-        else
-          echo "✗ MISSING: cluster-local-gateway-require-jwt AuthorizationPolicy"
-        fi
-
-        if kubectl get requestauthentication cluster-local-gateway-jwt -n istio-system >/dev/null 2>&1; then
-          echo "✓ cluster-local-gateway-jwt RequestAuthentication found"
-        else
-          echo "✗ MISSING: cluster-local-gateway-jwt RequestAuthentication"
-        fi
-
-        if kubectl get authorizationpolicy cluster-local-gateway -n istio-system >/dev/null 2>&1; then
-          echo "✓ cluster-local-gateway AuthorizationPolicy found"
-        else
-          echo "✗ MISSING: cluster-local-gateway AuthorizationPolicy"
-        fi
-
-        if kubectl get deployment cluster-local-gateway -n istio-system >/dev/null 2>&1; then
-          echo "✓ cluster-local-gateway deployment found"
-        else
-          echo "✗ MISSING: cluster-local-gateway deployment"
-          exit 1
-        fi
-
-        echo "Waiting for cluster-local-gateway to be ready..."
-        kubectl wait --for=condition=Available deployment/cluster-local-gateway -n istio-system --timeout=120s || echo "cluster-local-gateway not ready"
-
-        # Check cluster-jwks-proxy is running
-        if kubectl get pods -n istio-system -l app=cluster-jwks-proxy | grep -q Running; then
-          echo "✓ cluster-jwks-proxy is running"
-        else
-          echo "✗ cluster-jwks-proxy not running"
-          kubectl get pods -n istio-system -l app=cluster-jwks-proxy
-        fi
+        kubectl get authorizationpolicy cluster-local-gateway-require-jwt -n istio-system >/dev/null 2>&1
+        kubectl get requestauthentication cluster-local-gateway-jwt -n istio-system >/dev/null 2>&1
+        kubectl get authorizationpolicy cluster-local-gateway -n istio-system >/dev/null 2>&1
+        kubectl get deployment cluster-local-gateway -n istio-system >/dev/null 2>&1 || exit 1
+        kubectl wait --for=condition=Available deployment/cluster-local-gateway -n istio-system --timeout=120s || true
+        kubectl get pods -n istio-system -l app=cluster-jwks-proxy | grep -q Running || kubectl get pods -n istio-system -l app=cluster-jwks-proxy
 
     - name: Wait for configurations to propagate
       run: sleep 100

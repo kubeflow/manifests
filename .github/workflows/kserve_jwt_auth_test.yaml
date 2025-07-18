@@ -40,11 +40,8 @@ jobs:
 
     - name: Verify secure cluster-local-gateway configuration
       run: |
-        echo "Checking cluster-local-gateway security policies..."
         kubectl get authorizationpolicy,requestauthentication -n istio-system | grep cluster-local-gateway
-        echo "Verifying RequestAuthentication is configured..."
         kubectl get requestauthentication cluster-local-gateway-jwt -n istio-system -o yaml
-        echo "Verifying AuthorizationPolicies are configured..."
         kubectl get authorizationpolicy cluster-local-gateway -n istio-system -o yaml
         kubectl get authorizationpolicy cluster-local-gateway-require-jwt -n istio-system -o yaml
 
@@ -59,17 +56,12 @@ jobs:
     - name: Wait for cluster-local-gateway to be ready
       run: |
         kubectl wait --for=condition=Available --timeout=120s deployment/cluster-local-gateway -n istio-system
-        echo "Waiting for JWT authentication to be active..."
         sleep 100
 
     - name: Run Basic JWT Authentication Tests
       run: |
         export KSERVE_INGRESS_HOST_PORT=localhost:8080
-        echo "Testing basic JWT authentication at gateway level..."
-        # Basic test with curl commands
-        echo "Test 1: No token (should fail)"
         curl -s -o /dev/null -w "%{http_code}" -H "Host: test.example.com" "http://localhost:8080/" | grep -q "403"
-        echo "Basic JWT authentication test passed"
 
     - name: Run Knative Service JWT Authentication Tests
       run: |
@@ -82,16 +74,13 @@ jobs:
         ./tests/kserve_setup_external_access.sh kubeflow-user-example-com secure-model-predictor
         # Test external access pattern
         TOKEN=$(kubectl -n kubeflow-user-example-com create token default-editor)
-        echo "Testing external access pattern..."
         RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
           -H "Authorization: Bearer $TOKEN" \
           -H "Content-Type: application/json" \
           "http://localhost:8080/kserve/kubeflow-user-example-com/secure-model-predictor/" \
           2>/dev/null || echo "404")
-        if [ "$RESPONSE" = "404" ] || [ "$RESPONSE" = "200" ] || [ "$RESPONSE" = "503" ]; then
-          echo "External access configuration working (response: $RESPONSE)"
-        else
-          echo "External access returned: $RESPONSE (may need service backend)"
+        if [ "$RESPONSE" != "404" ] && [ "$RESPONSE" != "200" ] && [ "$RESPONSE" != "503" ]; then
+          exit 1
         fi
 
 
