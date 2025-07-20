@@ -20,8 +20,9 @@ jobs:
     name: Kubeflow Installation and Testing
     if: ${{ github.repository == 'kubeflow/manifests' }}
     runs-on:
-      labels: ubuntu-latest-16-cores
-    timeout-minutes: 60
+      labels: oracle-vm-16cpu-64gb-x86-64
+      # labels: ubuntu-latest-16-cores
+    timeout-minutes: 30
     steps:
     - name: Checkout
       uses: actions/checkout@v4
