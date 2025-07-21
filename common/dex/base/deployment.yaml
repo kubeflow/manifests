@@ -16,7 +16,7 @@ spec:
     spec:
       serviceAccountName: dex
       containers:
-      - image: ghcr.io/dexidp/dex:v2.41.1
+      - image: ghcr.io/dexidp/dex:v2.43.1
         name: dex
         command: ["dex", "serve", "/etc/dex/cfg/config.yaml"]
         ports:
