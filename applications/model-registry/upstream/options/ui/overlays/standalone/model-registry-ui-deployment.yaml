@@ -1,5 +1,48 @@
 - op: add
   path: /spec/template/spec/containers/0/args
   value: 
-    - "--standalone-mode=true"
+    - "--deployment-mode=standalone"
     - "--port=8080"
+- op: add
+  path: /spec/template/spec/containers/-
+  value:
+    name: auth-proxy
+    image: nginx:1.25-alpine
+    ports:
+      - containerPort: 8000
+    volumeMounts:
+      - name: nginx-config
+        mountPath: /etc/nginx/nginx.conf
+        subPath: nginx.conf
+      - name: tmp-volume
+        mountPath: /tmp
+      - name: var-cache-nginx
+        mountPath: /var/cache/nginx
+      - name: var-run
+        mountPath: /var/run
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      runAsUser: 101
+      capabilities:
+        drop:
+          - ALL
+- op: add
+  path: /spec/template/spec/volumes
+  value:
+    - name: nginx-config
+      configMap:
+        name: auth-proxy-config
+    - name: tmp-volume
+      emptyDir: {}
+    - name: var-cache-nginx
+      emptyDir: {}
+    - name: var-run
+      emptyDir: {}
