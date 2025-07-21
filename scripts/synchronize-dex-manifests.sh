@@ -7,7 +7,7 @@ source "${SCRIPT_DIRECTORY}/library.sh"
 setup_error_handling
 
 COMPONENT_NAME="dex"
-DEX_RELEASE="v2.41.1" # Must be a release
+DEX_RELEASE="v2.43.1" # Must be a release
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${DEX_RELEASE?}}
 
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
