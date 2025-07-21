@@ -22,7 +22,7 @@ jobs:
     runs-on:
       labels: oracle-vm-16cpu-64gb-x86-64
       # labels: ubuntu-latest-16-cores
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
     - name: Checkout
       uses: actions/checkout@v4
