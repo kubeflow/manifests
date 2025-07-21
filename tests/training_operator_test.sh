@@ -12,4 +12,4 @@ kubectl get pods -n $KF_PROFILE --show-labels
 
 kubectl wait --for=condition=Ready pod -l training.kubeflow.org/replica-type=worker -n $KF_PROFILE --timeout=180s
 
-kubectl wait --for=condition=Succeeded pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=450s
+kubectl wait --for=condition=Succeeded pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=600s
