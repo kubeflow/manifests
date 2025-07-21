@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-proxy-config
+data:
+  nginx.conf: |
+    pid /tmp/nginx.pid;
+    error_log /dev/stderr;
+    
+    events {
+        worker_connections 1024;
+    }
+    
+    http {
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+        
+        access_log /dev/stdout;
+        
+        # Use /tmp for cache directories to avoid permission issues
+        client_body_temp_path /tmp/client_temp;
+        proxy_temp_path /tmp/proxy_temp;
+        fastcgi_temp_path /tmp/fastcgi_temp;
+        uwsgi_temp_path /tmp/uwsgi_temp;
+        scgi_temp_path /tmp/scgi_temp;
+        
+        upstream backend {
+            server localhost:8080;
+        }
+        
+        server {
+            listen 8000;
+            server_name _;
+            
+            location /login {
+                return 200 '{"message": "Login successful", "kubeflow-userid": "user@example.com"}';
+                add_header Content-Type application/json;
+            }
+            
+            location / {
+                # Always inject kubeflow-userid header
+                proxy_pass http://backend;
+                proxy_set_header kubeflow-userid "user@example.com";
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header Connection "";
+                proxy_http_version 1.1;
+                proxy_buffering off;
+            }
+        }
+    }
