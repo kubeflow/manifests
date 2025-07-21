@@ -15,6 +15,9 @@ spec:
         app: centraldashboard
         sidecar.istio.io/inject: "true"
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: centraldashboard
         image: ghcr.io/kubeflow/kubeflow/central-dashboard
@@ -51,8 +54,6 @@ spec:
           runAsNonRoot: true
           allowPrivilegeEscalation: false
           runAsUser: 1000
-          seccompProfile:
-            type: RuntimeDefault
           capabilities:
             drop:
             - ALL
