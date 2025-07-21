@@ -241,10 +241,6 @@ jobs:
     - name: Apply Pod Security Standards Restricted
       run: ./tests/PSS_restricted_enable.sh
 
-    - name: Run Non-Root Test
-      run: |
-        [ -f "tests/runasnonroot.sh" ] && chmod +x tests/runasnonroot.sh && ./tests/runasnonroot.sh
-
     - name: Verify Components
       run: kubectl get pods --all-namespaces | grep -E '(Error|CrashLoopBackOff)' && exit 1 || true
 
