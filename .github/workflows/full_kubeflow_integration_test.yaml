@@ -20,8 +20,9 @@ jobs:
     name: Kubeflow Installation and Testing
     if: ${{ github.repository == 'kubeflow/manifests' }}
     runs-on:
-      labels: ubuntu-latest-16-cores
-    timeout-minutes: 60
+      labels: oracle-vm-16cpu-64gb-x86-64
+      # labels: ubuntu-latest-16-cores
+    timeout-minutes: 45
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -105,7 +106,7 @@ jobs:
       run: chmod u+x tests/*.sh && ./tests/spark_install.sh
 
     - name: Wait for All Pods to be Ready
-      run: kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 60s --field-selector=status.phase!=Succeeded
+      run: kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 90s --field-selector=status.phase!=Succeeded
 
     - name: Port-forward the istio-ingress gateway
       run: ./tests/port_forward_gateway.sh
