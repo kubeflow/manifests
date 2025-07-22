@@ -48,7 +48,6 @@ scripts/synchronize-istio-manifests.sh
 ```
 
 ## Changes to Istio's upstream manifests
-
 ### Profile modifications
 
 - Add `cluster-local-gateway` component for KServe

@@ -106,10 +106,7 @@ resources:
 components:
 # Pod Security Standards
 # https://kubernetes.io/docs/concepts/security/pod-security-standards/
-# Uncomment to enable baseline level standards
-# - ../experimental/security/PSS/static/baseline
-# Uncomment to enable restricted level standards
-# - ../experimental/security/PSS/static/restricted
+# For all static namespaces we already enforce PSS restricted
 # Uncomment to enable baseline level standards for dynamic namespaces
 # - ../experimental/security/PSS/dynamic/baseline
 # Uncomment to enable restricted level standards for dynamic namespaces
