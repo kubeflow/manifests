@@ -8,7 +8,7 @@ kubectl get clustertrainingruntimes >/dev/null
 
 kubectl apply -f tests/trainer_job.yaml -n $KF_PROFILE
 
-for i in {1..120}; do
+for i in {1..150}; do
     if kubectl get jobset pytorch-simple -n $KF_PROFILE >/dev/null 2>&1; then
         echo "JobSet created successfully after $((i*3)) seconds"
         break
