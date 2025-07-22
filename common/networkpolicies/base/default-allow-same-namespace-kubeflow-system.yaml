@@ -1,5 +1,4 @@
 ---
-# Default allow same namespace policy for kubeflow-system
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -8,7 +7,7 @@ metadata:
 spec:
   podSelector: {}
   ingress:
-    - from:
-        - podSelector: {}
+  - from:
+    - podSelector: {}
   policyTypes:
-    - Ingress 
+  - Ingress

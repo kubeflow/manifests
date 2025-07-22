@@ -1,5 +1,3 @@
----
-# Network policy for trainer webhook in kubeflow-system
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -16,11 +14,9 @@ spec:
       operator: In
       values:
       - manager
-  # The kubernetes api server must reach the webhook
-  # https://www.elastic.co/guide/en/cloud-on-k8s/1.1/k8s-webhook-network-policies.html
   ingress:
   - ports:
     - protocol: TCP
       port: 9443
   policyTypes:
-  - Ingress 
+  - Ingress

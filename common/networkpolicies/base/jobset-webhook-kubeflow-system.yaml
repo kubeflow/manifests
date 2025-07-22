@@ -8,6 +8,6 @@ spec:
     matchLabels:
       control-plane: controller-manager
   policyTypes:
-    - Ingress
+  - Ingress
   ingress:
-    - {}
+  - {}
