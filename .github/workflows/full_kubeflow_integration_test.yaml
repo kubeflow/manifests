@@ -93,6 +93,12 @@ jobs:
     - name: Install Training Operator
       run: ./tests/training_operator_install.sh
 
+    - name: Install Ray
+      run: |
+        cd experimental/ray/
+        kustomize build kuberay-operator/overlays/kubeflow | kubectl -n kubeflow apply --server-side -f -
+        kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/kuberay-operator
+
     - name: Install Model Registry
       run: |
         kustomize build applications/model-registry/upstream/overlays/db | kubectl apply -n kubeflow -f -
@@ -192,6 +198,11 @@ jobs:
 
     - name: Run Spark Test
       run: chmod u+x tests/*.sh && ./tests/spark_test.sh "${KF_PROFILE}"
+
+    - name: Run Ray Test
+      run: |
+        cd experimental/ray/
+        ./test.sh ${KF_PROFILE}
 
     - name: Test Model Registry Deployment
       run: |
