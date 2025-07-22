@@ -25,7 +25,7 @@ You can also install the master branch of [`kubeflow/manifests`](https://github.
 - [Release Process](#release-process)
 - [Security](#security)
 - [Pre-commit Hooks](#pre-commit-hooks)
-- [Resource Usage by components](#resource-usage-by-components)
+- [Architecture](#architecture)
 - [Frequently Asked Questions](#frequently-asked-questions)
 
 <!-- tocstop -->
@@ -703,6 +703,11 @@ The hooks will run automatically on `git commit`. You can also run them manually
 ```bash
 pre-commit run
 ```
+
+## Architecture
+
+![Kubeflow Architecture](architecture.svg)
+
 
 ## Frequently Asked Questions
 
