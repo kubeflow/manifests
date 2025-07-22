@@ -1,0 +1,38 @@
+{{- if and .Values.app.enabled .Values.kubeflow.enabled .Values.istio.authorizationPolicy.enabled }}
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "kserve-models-web-app.authorizationPolicyName" . }}
+  namespace: {{ include "kserve-models-web-app.namespace" . }}
+  labels:
+    {{- include "kserve-models-web-app.labels" . | nindent 4 }}
+    {{- include "kserve-models-web-app.kustomizeLabels" . | nindent 4 }}
+    {{- if .Values.kubeflow.enabled }}
+    {{- include "kserve-models-web-app.kserveLabels" . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.istio.authorizationPolicy.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.istio.authorizationPolicy.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  action: {{ .Values.istio.authorizationPolicy.action }}
+  selector:
+    matchLabels:
+      {{- include "kserve-models-web-app.kustomizeLabels" . | nindent 6 }}
+      {{- if .Values.kubeflow.enabled }}
+      {{- include "kserve-models-web-app.kserveLabels" . | nindent 6 }}
+      {{- end }}
+  {{- if .Values.istio.authorizationPolicy.rules }}
+  rules:
+  {{- toYaml .Values.istio.authorizationPolicy.rules | nindent 2 }}
+  {{- else }}
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+  {{- end }}
+{{- end }} 
