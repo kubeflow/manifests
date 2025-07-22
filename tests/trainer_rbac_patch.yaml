@@ -35,4 +35,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kubeflow-trainer-controller-manager
-  namespace: kubeflow-system 
+  namespace: kubeflow-system
