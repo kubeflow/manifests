@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
 - ../../base
 - kubeflow-dashboard-rbac.yaml
+- auth-proxy-configmap.yaml
 
 patches:
 - path: model-registry-ui-deployment.yaml
@@ -11,5 +12,11 @@ patches:
     group: apps
     kind: Deployment
     name: model-registry-ui
+    version: v1
+- path: model-registry-ui-service.yaml
+  target:
+    group: apps
+    kind: Service
+    name: model-registry-service
     version: v1
 namespace: kubeflow

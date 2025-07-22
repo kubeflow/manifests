@@ -23,43 +23,17 @@ generatorOptions:
 images:
 - name: mysql
   newName: mysql
-  newTag: 8.3.0
+  newTag: "8.3"
 
 patches:
 - path: patches/model-registry-deployment.yaml
 replacements:
-- source:
-    fieldPath: metadata.name
-    kind: Service
-    name: model-registry-db
-    version: v1
-  targets:
-  - fieldPaths:
-    - spec.template.spec.containers.1.args.1
-    options:
-      delimiter: =
-      index: 1
-    select:
-      group: apps
-      kind: Deployment
-      name: model-registry-deployment
-      version: v1
 - source:
     fieldPath: data.MYSQL_PORT
     kind: ConfigMap
     name: model-registry-db-parameters
     version: v1
   targets:
-  - fieldPaths:
-    - spec.template.spec.containers.1.args.3
-    options:
-      delimiter: =
-      index: 1
-    select:
-      group: apps
-      kind: Deployment
-      name: model-registry-deployment
-      version: v1
   - fieldPaths:
     - spec.template.metadata.annotations.[traffic.sidecar.istio.io/excludeOutboundPorts]
     select:

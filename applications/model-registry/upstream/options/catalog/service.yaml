@@ -1,0 +1,20 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: model-catalog-service
+    app.kubernetes.io/component: model-catalog
+    app.kubernetes.io/instance: model-catalog-service
+    app.kubernetes.io/name: model-catalog-service
+    app.kubernetes.io/part-of: model-catalog
+    component: model-catalog
+  name: model-catalog-service
+spec:
+  selector:
+    component: model-catalog-server
+  type: ClusterIP
+  ports:
+  - port: 8080
+    protocol: TCP
+    appProtocol: http
+    name: http-api
