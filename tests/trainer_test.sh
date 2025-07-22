@@ -15,7 +15,6 @@ if kubectl get deployment -A | grep -q jobset; then
     JOBSET_NAMESPACE="kubeflow-system"
     JOBSET_DEPLOYMENT="jobset-controller-manager"
     
-
     kubectl wait --for=condition=Available deployment/$JOBSET_DEPLOYMENT -n $JOBSET_NAMESPACE --timeout=120s
     
     kubectl wait --for=condition=Ready pod -l control-plane=controller-manager -n $JOBSET_NAMESPACE --timeout=60s
@@ -27,6 +26,23 @@ if kubectl get deployment -A | grep -q jobset; then
     sleep 10
     
     echo "JobSet webhook should now be ready to handle requests"
+    
+    TRAINER_POD=$(kubectl get pods -n kubeflow-system -l app.kubernetes.io/name=trainer -o jsonpath='{.items[0].metadata.name}')
+    
+    if [ -n "$TRAINER_POD" ]; then
+        echo "Testing network connectivity from trainer pod $TRAINER_POD to JobSet webhook..."
+        
+        kubectl exec -n kubeflow-system $TRAINER_POD -- nslookup jobset-webhook-service.kubeflow-system.svc.cluster.local || echo "DNS resolution failed"
+        
+        kubectl exec -n kubeflow-system $TRAINER_POD -- timeout 5 nc -zv jobset-webhook-service.kubeflow-system.svc.cluster.local 443 || echo "Network connectivity test failed (this may be expected for HTTPS)"
+        
+        kubectl get networkpolicy -n kubeflow-system || echo "No network policies in kubeflow-system"
+        
+        kubectl get networkpolicy -A | grep -i jobset || echo "No JobSet-related network policies found"
+        
+    else
+        echo "Could not find trainer pod for connectivity testing"
+    fi
 fi
 
 if ! kubectl get deployment -A | grep -q jobset; then
@@ -61,12 +77,14 @@ if kubectl get jobset pytorch-simple -n $KF_PROFILE >/dev/null 2>&1; then
     kubectl wait --for=condition=Complete job/pytorch-simple-node-0 -n $KF_PROFILE --timeout=300s
 else
     echo "ERROR: JobSet was not created by trainer controller"
-    echo "This is likely due to JobSet webhook not being ready to handle requests"
+    echo "This is likely due to network connectivity issues between trainer and JobSet webhook"
     
     kubectl get all -n kubeflow-system | grep jobset || echo "No JobSet resources in kubeflow-system"
     kubectl describe service jobset-webhook-service -n kubeflow-system || echo "Cannot describe JobSet service"
     
     kubectl logs -n kubeflow-system -l control-plane=controller-manager --tail=20 || echo "Could not get JobSet controller logs"
+    
+    kubectl get mutatingwebhookconfiguration jobset-mutating-webhook-configuration -o yaml | grep -A5 -B5 clientConfig || echo "Could not get webhook client config"
     
     exit 1
 fi
