@@ -8,15 +8,30 @@ kubectl get service jobset-webhook-service -n kubeflow-system || echo "JobSet we
 kubectl get deployment -A | grep jobset || echo "JobSet deployment not found in any namespace!"
 kubectl get pods -A | grep jobset || echo "JobSet pods not found in any namespace!"
 
-echo "=== Checking JobSet webhook configuration ==="
 kubectl get mutatingwebhookconfiguration | grep jobset || echo "JobSet mutating webhook not found!"
 kubectl get validatingwebhookconfiguration | grep jobset || echo "JobSet validating webhook not found!"
 
+if kubectl get deployment -A | grep -q jobset; then
+    JOBSET_NAMESPACE="kubeflow-system"
+    JOBSET_DEPLOYMENT="jobset-controller-manager"
+    
+
+    kubectl wait --for=condition=Available deployment/$JOBSET_DEPLOYMENT -n $JOBSET_NAMESPACE --timeout=120s
+    
+    kubectl wait --for=condition=Ready pod -l control-plane=controller-manager -n $JOBSET_NAMESPACE --timeout=60s
+    
+    echo "Checking JobSet webhook endpoints..."
+    kubectl get endpoints jobset-webhook-service -n kubeflow-system
+    
+    echo "Giving JobSet webhook time to fully initialize..."
+    sleep 10
+    
+    echo "JobSet webhook should now be ready to handle requests"
+fi
+
 if ! kubectl get deployment -A | grep -q jobset; then
-    echo "=== JobSet deployment missing, checking if we can install it ==="
     if kubectl get service jobset-webhook-service -n kubeflow-system >/dev/null 2>&1; then
         echo "JobSet service exists but deployment is missing - this indicates a broken installation"
-        echo "Attempting to check JobSet webhook readiness differently..."
         
         if kubectl get endpoints jobset-webhook-service -n kubeflow-system -o jsonpath='{.subsets[*].addresses[*].ip}' | grep -q .; then
             echo "JobSet webhook endpoints exist"
@@ -28,7 +43,7 @@ fi
 
 kubectl apply -f tests/trainer_job.yaml -n $KF_PROFILE
 
-sleep 15  # Give more time for processing
+sleep 15
 
 kubectl get deployment kubeflow-trainer-controller-manager -n kubeflow-system
 kubectl get pods -n kubeflow-system -l app.kubernetes.io/name=trainer
@@ -46,10 +61,12 @@ if kubectl get jobset pytorch-simple -n $KF_PROFILE >/dev/null 2>&1; then
     kubectl wait --for=condition=Complete job/pytorch-simple-node-0 -n $KF_PROFILE --timeout=300s
 else
     echo "ERROR: JobSet was not created by trainer controller"
-    echo "This is likely due to JobSet webhook deployment being missing"
+    echo "This is likely due to JobSet webhook not being ready to handle requests"
     
     kubectl get all -n kubeflow-system | grep jobset || echo "No JobSet resources in kubeflow-system"
     kubectl describe service jobset-webhook-service -n kubeflow-system || echo "Cannot describe JobSet service"
+    
+    kubectl logs -n kubeflow-system -l control-plane=controller-manager --tail=20 || echo "Could not get JobSet controller logs"
     
     exit 1
 fi
