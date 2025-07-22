@@ -10,10 +10,4 @@ spec:
   policyTypes:
     - Ingress
   ingress:
-    - from:
-        - podSelector:
-            matchLabels:
-              app.kubernetes.io/name: trainer
-      ports:
-        - protocol: TCP
-          port: 9443
+    - {}
