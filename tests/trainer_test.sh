@@ -19,8 +19,7 @@ if [ -z "$TRAINER_POD" ]; then
     echo "ERROR: Trainer pod not found"
     exit 1
 fi
-kubectl exec -n kubeflow-system $TRAINER_POD -- nslookup jobset-webhook-service.kubeflow-system.svc.cluster.local
-kubectl exec -n kubeflow-system $TRAINER_POD -- timeout 5 nc -zv jobset-webhook-service.kubeflow-system.svc.cluster.local 443 || true
+
 
 kubectl apply -f tests/trainer_job.yaml -n $KF_PROFILE
 sleep 15
@@ -28,7 +27,6 @@ sleep 15
 kubectl get deployment kubeflow-trainer-controller-manager -n kubeflow-system
 kubectl get pods -n kubeflow-system -l app.kubernetes.io/name=trainer
 kubectl get clustertrainingruntimes torch-distributed
-kubectl logs -n kubeflow-system -l app.kubernetes.io/name=trainer --tail=30
 kubectl get trainjob pytorch-simple -n $KF_PROFILE -o yaml | tail -20
 
 if ! kubectl get jobset pytorch-simple -n $KF_PROFILE >/dev/null 2>&1; then
