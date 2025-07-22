@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow" "knative-serving")
+NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow" "knative-serving" "kubeflow-system")
 
 for NAMESPACE in "${NAMESPACES[@]}"; do
     if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
