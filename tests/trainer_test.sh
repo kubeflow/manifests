@@ -2,89 +2,46 @@
 set -euxo pipefail
 KF_PROFILE=${1:-kubeflow-user-example-com}
 
-kubectl get crd jobsets.jobset.x-k8s.io || echo "JobSet CRD not found!"
-kubectl get service jobset-webhook-service -n kubeflow-system || echo "JobSet webhook service not found!"
+kubectl get crd jobsets.jobset.x-k8s.io
+kubectl get service jobset-webhook-service -n kubeflow-system
+kubectl get mutatingwebhookconfiguration jobset-mutating-webhook-configuration
+kubectl get validatingwebhookconfiguration jobset-validating-webhook-configuration
 
-kubectl get deployment -A | grep jobset || echo "JobSet deployment not found in any namespace!"
-kubectl get pods -A | grep jobset || echo "JobSet pods not found in any namespace!"
 
-kubectl get mutatingwebhookconfiguration | grep jobset || echo "JobSet mutating webhook not found!"
-kubectl get validatingwebhookconfiguration | grep jobset || echo "JobSet validating webhook not found!"
+kubectl wait --for=condition=Available deployment/jobset-controller-manager -n kubeflow-system --timeout=120s
+kubectl wait --for=condition=Ready pod -l control-plane=controller-manager -n kubeflow-system --timeout=60s
 
-if kubectl get deployment -A | grep -q jobset; then
-    JOBSET_NAMESPACE="kubeflow-system"
-    JOBSET_DEPLOYMENT="jobset-controller-manager"
-    
-    kubectl wait --for=condition=Available deployment/$JOBSET_DEPLOYMENT -n $JOBSET_NAMESPACE --timeout=120s
-    
-    kubectl wait --for=condition=Ready pod -l control-plane=controller-manager -n $JOBSET_NAMESPACE --timeout=60s
-    
-    echo "Checking JobSet webhook endpoints..."
-    kubectl get endpoints jobset-webhook-service -n kubeflow-system
-    
-    echo "Giving JobSet webhook time to fully initialize..."
-    sleep 10
-    
-    echo "JobSet webhook should now be ready to handle requests"
-    
-    TRAINER_POD=$(kubectl get pods -n kubeflow-system -l app.kubernetes.io/name=trainer -o jsonpath='{.items[0].metadata.name}')
-    
-    if [ -n "$TRAINER_POD" ]; then
-        echo "Testing network connectivity from trainer pod $TRAINER_POD to JobSet webhook..."
-        
-        kubectl exec -n kubeflow-system $TRAINER_POD -- nslookup jobset-webhook-service.kubeflow-system.svc.cluster.local || echo "DNS resolution failed"
-        
-        kubectl exec -n kubeflow-system $TRAINER_POD -- timeout 5 nc -zv jobset-webhook-service.kubeflow-system.svc.cluster.local 443 || echo "Network connectivity test failed (this may be expected for HTTPS)"
-        
-        kubectl get networkpolicy -n kubeflow-system || echo "No network policies in kubeflow-system"
-        
-        kubectl get networkpolicy -A | grep -i jobset || echo "No JobSet-related network policies found"
-        
-    else
-        echo "Could not find trainer pod for connectivity testing"
-    fi
+sleep 10
+kubectl get endpoints jobset-webhook-service -n kubeflow-system
+
+TRAINER_POD=$(kubectl get pods -n kubeflow-system -l app.kubernetes.io/name=trainer -o jsonpath='{.items[0].metadata.name}')
+if [ -z "$TRAINER_POD" ]; then
+    echo "ERROR: Trainer pod not found"
+    exit 1
 fi
-
-if ! kubectl get deployment -A | grep -q jobset; then
-    if kubectl get service jobset-webhook-service -n kubeflow-system >/dev/null 2>&1; then
-        echo "JobSet service exists but deployment is missing - this indicates a broken installation"
-        
-        if kubectl get endpoints jobset-webhook-service -n kubeflow-system -o jsonpath='{.subsets[*].addresses[*].ip}' | grep -q .; then
-            echo "JobSet webhook endpoints exist"
-        else
-            echo "WARNING: JobSet webhook service has no endpoints - this will cause webhook failures"
-        fi
-    fi
-fi
+kubectl exec -n kubeflow-system $TRAINER_POD -- nslookup jobset-webhook-service.kubeflow-system.svc.cluster.local
+kubectl exec -n kubeflow-system $TRAINER_POD -- timeout 5 nc -zv jobset-webhook-service.kubeflow-system.svc.cluster.local 443 || true
 
 kubectl apply -f tests/trainer_job.yaml -n $KF_PROFILE
-
 sleep 15
 
 kubectl get deployment kubeflow-trainer-controller-manager -n kubeflow-system
 kubectl get pods -n kubeflow-system -l app.kubernetes.io/name=trainer
-
-kubectl get clustertrainingruntimes torch-distributed 
-
+kubectl get clustertrainingruntimes torch-distributed
 kubectl logs -n kubeflow-system -l app.kubernetes.io/name=trainer --tail=30
-
 kubectl get trainjob pytorch-simple -n $KF_PROFILE -o yaml | tail -20
 
-if kubectl get jobset pytorch-simple -n $KF_PROFILE >/dev/null 2>&1; then
-    echo "SUCCESS: JobSet was created!"
-    kubectl get pods -n $KF_PROFILE --show-labels
-    kubectl wait --for=condition=Ready pod -l batch.kubernetes.io/job-name=pytorch-simple-node-0 -n $KF_PROFILE --timeout=180s
-    kubectl wait --for=condition=Complete job/pytorch-simple-node-0 -n $KF_PROFILE --timeout=300s
-else
+if ! kubectl get jobset pytorch-simple -n $KF_PROFILE >/dev/null 2>&1; then
     echo "ERROR: JobSet was not created by trainer controller"
-    echo "This is likely due to network connectivity issues between trainer and JobSet webhook"
     
-    kubectl get all -n kubeflow-system | grep jobset || echo "No JobSet resources in kubeflow-system"
-    kubectl describe service jobset-webhook-service -n kubeflow-system || echo "Cannot describe JobSet service"
-    
-    kubectl logs -n kubeflow-system -l control-plane=controller-manager --tail=20 || echo "Could not get JobSet controller logs"
-    
-    kubectl get mutatingwebhookconfiguration jobset-mutating-webhook-configuration -o yaml | grep -A5 -B5 clientConfig || echo "Could not get webhook client config"
+    kubectl get all -n kubeflow-system | grep jobset 
+    kubectl describe service jobset-webhook-service -n kubeflow-system
+    kubectl logs -n kubeflow-system -l control-plane=controller-manager --tail=20
+    kubectl get mutatingwebhookconfiguration jobset-mutating-webhook-configuration -o yaml
     
     exit 1
 fi
+
+kubectl get pods -n $KF_PROFILE --show-labels
+kubectl wait --for=condition=Ready pod -l batch.kubernetes.io/job-name=pytorch-simple-node-0 -n $KF_PROFILE --timeout=180s
+kubectl wait --for=condition=Complete job/pytorch-simple-node-0 -n $KF_PROFILE --timeout=300s

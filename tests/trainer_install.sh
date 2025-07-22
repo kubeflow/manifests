@@ -11,7 +11,7 @@ kubectl wait --for condition=established crd/trainjobs.trainer.kubeflow.org --ti
 kustomize build overlays/manager | kubectl apply --server-side --force-conflicts -f -
 kubectl wait --for=condition=Available deployment/kubeflow-trainer-controller-manager -n kubeflow-system --timeout=180s
 
-kubectl get crd jobsets.jobset.x-k8s.io || echo "WARNING: JobSet CRD not found!"
+kubectl get crd jobsets.jobset.x-k8s.io 
 
 if kubectl get deployment -A | grep -q jobset; then
     echo "JobSet deployment found:"
@@ -24,19 +24,6 @@ if kubectl get deployment -A | grep -q jobset; then
     kubectl wait --for=condition=Available deployment/$JOBSET_DEPLOYMENT -n $JOBSET_NAMESPACE --timeout=180s
 else
     echo "WARNING: JobSet deployment not found in any namespace!"
-    echo "This may cause trainer webhook failures"
-fi
-
-if kubectl get service jobset-webhook-service -n kubeflow-system >/dev/null 2>&1; then
-    echo "JobSet webhook service found in kubeflow-system"
-    
-    if kubectl get endpoints jobset-webhook-service -n kubeflow-system -o jsonpath='{.subsets[*].addresses[*].ip}' | grep -q .; then
-        echo "JobSet webhook service has endpoints - should be working"
-    else
-        echo "WARNING: JobSet webhook service has no endpoints!"
-    fi
-else
-    echo "WARNING: JobSet webhook service not found!"
 fi
 
 kustomize build overlays/runtimes | kubectl apply --server-side --force-conflicts -f -
@@ -54,7 +41,6 @@ kubectl get pods -n kubeflow-system -l app.kubernetes.io/name=trainer
 kubectl get crd | grep -E 'trainer.kubeflow.org'
 kubectl get clustertrainingruntimes
 
-kubectl get all -n kubeflow-system | grep jobset
 
 kubectl rollout restart deployment/jobset-controller-manager -n kubeflow-system
 kubectl wait --for=condition=Available deployment/jobset-controller-manager -n kubeflow-system --timeout=120s
