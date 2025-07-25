@@ -43,7 +43,3 @@ kubectl get deployment -n kubeflow-system kubeflow-trainer-controller-manager
 kubectl get pods -n kubeflow-system -l app.kubernetes.io/name=trainer
 kubectl get crd | grep -E 'trainer.kubeflow.org'
 kubectl get clustertrainingruntimes
-
-
-kubectl rollout restart deployment/jobset-controller-manager -n kubeflow-system
-kubectl wait --for=condition=Available deployment/jobset-controller-manager -n kubeflow-system --timeout=120s
