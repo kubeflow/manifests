@@ -66,10 +66,10 @@ jobs:
 
     - name: Verify JWT authentication policies are applied
       run: |
-        kubectl get authorizationpolicy cluster-local-gateway-require-jwt -n istio-system >/dev/null 2>&1
-        kubectl get requestauthentication cluster-local-gateway-jwt -n istio-system >/dev/null 2>&1
-        kubectl get authorizationpolicy cluster-local-gateway -n istio-system >/dev/null 2>&1
-        kubectl get deployment cluster-local-gateway -n istio-system >/dev/null 2>&1 || exit 1
+        kubectl get authorizationpolicy cluster-local-gateway-require-jwt -n istio-system
+        kubectl get requestauthentication cluster-local-gateway-jwt -n istio-system
+        kubectl get authorizationpolicy cluster-local-gateway -n istio-system
+        kubectl get deployment cluster-local-gateway -n istio-system
         kubectl wait --for=condition=Available deployment/cluster-local-gateway -n istio-system --timeout=120s || true
         kubectl get pods -n istio-system -l app=cluster-jwks-proxy | grep -q Running || kubectl get pods -n istio-system -l app=cluster-jwks-proxy
 
