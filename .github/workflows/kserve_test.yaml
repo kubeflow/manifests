@@ -14,7 +14,7 @@ on:
     - common/cert-manager/**
     - tests/istio*
     - common/knative/**
-    - tests/knative-cni_install.sh
+    - tests/knative_install.sh
 
 permissions:
   contents: read
