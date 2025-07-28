@@ -70,11 +70,11 @@ jobs:
         kubectl get requestauthentication cluster-local-gateway-jwt -n istio-system
         kubectl get authorizationpolicy cluster-local-gateway -n istio-system
         kubectl get deployment cluster-local-gateway -n istio-system
-        kubectl wait --for=condition=Available deployment/cluster-local-gateway -n istio-system --timeout=120s || true
+        kubectl wait --for=condition=Available deployment/cluster-local-gateway -n istio-system --timeout=120s
         kubectl get pods -n istio-system -l app=cluster-jwks-proxy | grep -q Running || kubectl get pods -n istio-system -l app=cluster-jwks-proxy
 
     - name: Wait for configurations to propagate
-      run: sleep 100
+      run: sleep 60
 
     - name: Run KServe secure authentication tests
       run: ./tests/kserve_jwt_authentication_test.sh kubeflow-user-example-com
