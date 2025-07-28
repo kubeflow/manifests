@@ -9,7 +9,7 @@ on:
     - tests/oauth2-proxy_install.sh
     - tests/istio*
     - common/knative/**
-    - tests/knative-cni_install.sh
+    - tests/knative_install.sh
     - tests/*authentication*test.sh
     - tests/final_validation.sh
 
@@ -36,7 +36,7 @@ jobs:
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
     - name: Install knative CNI with secure cluster-local-gateway
-      run: ./tests/knative-cni_install.sh
+      run: ./tests/knative_install.sh
 
     - name: Verify secure cluster-local-gateway configuration
       run: |
