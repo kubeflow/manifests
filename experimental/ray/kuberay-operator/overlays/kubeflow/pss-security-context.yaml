@@ -13,4 +13,4 @@ spec:
       - name: kuberay-operator
         securityContext:
           seccompProfile:
-            type: RuntimeDefault 
+            type: RuntimeDefault
