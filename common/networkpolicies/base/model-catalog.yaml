@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: model-registry
+  name: model-catalog
   namespace: kubeflow
 spec:
   podSelector:
@@ -9,7 +9,7 @@ spec:
     - key: component
       operator: In
       values:
-      - model-registry-server
+      - model-catalog-server
   ingress:
   - from:
     - namespaceSelector:
