@@ -66,17 +66,17 @@ jobs:
     - name: Test KF Model Registry deployment
       run: |
         echo "Waiting for all Model Registry Pods to become ready..."
-        if ! kubectl wait --for=condition=available -n kubeflow deployment/model-registry-db --timeout=600s ; then
+        if ! kubectl wait --for=condition=available -n kubeflow deployment/model-registry-db --timeout=60s ; then
             kubectl events -A
             kubectl describe deployment/model-registry-db -n kubeflow
             kubectl logs deployment/model-registry-db -n kubeflow
             exit 1
         fi
-        kubectl wait --for=condition=available -n kubeflow deployment/model-registry-deployment --timeout=600s
+        kubectl wait --for=condition=available -n kubeflow deployment/model-registry-deployment --timeout=60s
     - name: Test KF Model Registry UI deployment
       run: |
         echo "Waiting for all Model Registry UI Pods to become ready..."
-        if ! kubectl wait --for=condition=available -n kubeflow deployment/model-registry-ui --timeout=600s ; then
+        if ! kubectl wait --for=condition=available -n kubeflow deployment/model-registry-ui --timeout=60s ; then
             kubectl events -A
             kubectl describe deployment/model-registry-ui -n kubeflow
             kubectl logs deployment/model-registry-ui -n kubeflow

@@ -36,7 +36,7 @@ kubectl get namespaces --selector=istio-injection=enabled
 kustomize build kuberay-operator/overlays/kubeflow | kubectl -n kubeflow apply --server-side -f -
 
 # Wait for the operator to be ready.
-kubectl -n kubeflow wait --for=condition=available --timeout=600s deploy/kuberay-operator
+kubectl -n kubeflow wait --for=condition=available --timeout=90s deploy/kuberay-operator
 kubectl -n kubeflow get pod -l app.kubernetes.io/component=kuberay-operator
 
 # Install RayCluster components
@@ -44,7 +44,7 @@ kubectl -n $NAMESPACE apply -f raycluster_example.yaml
 
 # Wait for the RayCluster to be ready.
 sleep 5
-kubectl -n $NAMESPACE wait --for=condition=Ready pod -l ray.io/cluster=kubeflow-raycluster --timeout=900s
+kubectl -n $NAMESPACE wait --for=condition=Ready pod -l ray.io/cluster=kubeflow-raycluster --timeout=90s
 kubectl -n $NAMESPACE logs -l ray.io/cluster=kubeflow-raycluster,ray.io/node-type=head
 
 # Forward the port of Dashboard
