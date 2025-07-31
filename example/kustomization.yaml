@@ -79,7 +79,7 @@ resources:
 # Notebook Controller
 - ../applications/jupyter/notebook-controller/upstream/overlays/kubeflow
 # Profiles + KFAM with PSS (Pod Security Standards)
-- ../applications/profiles/pss
+- ../applications/profiles/pss # TODO MUST BE UPSTREAMED
 # PVC Viewer
 - ../applications/pvcviewer-controller/upstream/base
 # Volumes Web App
