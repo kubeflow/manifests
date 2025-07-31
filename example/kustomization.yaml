@@ -107,4 +107,4 @@ components:
 # https://kubernetes.io/docs/concepts/security/pod-security-standards/
 # For all static namespaces we already enforce PSS restricted
 # This should be used together with Kubernetes 1.33+ user namespaces to block root user exploits
-- ../experimental/security/PSS/dynamic/baseline
+- ../common/security/PSS/dynamic/baseline
