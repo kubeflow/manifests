@@ -79,7 +79,7 @@ resources:
 # Notebook Controller
 - ../applications/jupyter/notebook-controller/upstream/overlays/kubeflow
 # Profiles + KFAM with PSS (Pod Security Standards)
-- ../applications/profiles/pss
+- ../applications/profiles/pss # TODO PSS must be upstreamed
 # PVC Viewer
 - ../applications/pvcviewer-controller/upstream/base
 # Volumes Web App
@@ -102,12 +102,3 @@ resources:
 # Here is the documentation for Ray: https://docs.ray.io/en/latest/
 # Here is the internal documentation for Ray: - ../experimental/ray/README.md
 # - ../experimental/ray/kuberay-operator/overlays/kubeflow
-
-components:
-# Pod Security Standards
-# https://kubernetes.io/docs/concepts/security/pod-security-standards/
-# For all static namespaces we already enforce PSS restricted
-# Uncomment to enable baseline level standards for dynamic namespaces
-# - ../experimental/security/PSS/dynamic/baseline
-# Uncomment to enable restricted level standards for dynamic namespaces
-# - ../experimental/security/PSS/dynamic/restricted
