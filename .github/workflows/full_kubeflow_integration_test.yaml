@@ -95,7 +95,7 @@ jobs:
 
     - name: Install Trainer
       run: ./tests/trainer_install.sh
-      
+
     - name: Install Ray
       run: |
         cd experimental/ray/
