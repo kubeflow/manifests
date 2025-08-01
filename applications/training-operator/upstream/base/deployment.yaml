@@ -15,6 +15,9 @@ spec:
         control-plane: kubeflow-training-operator
         sidecar.istio.io/inject: "false"
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - command:
             - /manager
@@ -36,6 +39,11 @@ spec:
                   fieldPath: metadata.name
           securityContext:
             allowPrivilegeEscalation: false
+            runAsUser: 1000
+            runAsNonRoot: true
+            capabilities:
+              drop:
+              - ALL
           volumeMounts:
             - mountPath: /tmp/k8s-webhook-server/serving-certs
               name: cert

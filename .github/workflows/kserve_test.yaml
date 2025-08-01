@@ -14,7 +14,7 @@ on:
     - common/cert-manager/**
     - tests/istio*
     - common/knative/**
-    - tests/knative-cni_install.sh
+    - tests/knative_install.sh
 
 permissions:
   contents: read
@@ -46,7 +46,7 @@ jobs:
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
     - name: Install knative CNI
-      run: ./tests/knative-cni_install.sh
+      run: ./tests/knative_install.sh
 
     - name: Install KServe
       run: ./tests/kserve_install.sh

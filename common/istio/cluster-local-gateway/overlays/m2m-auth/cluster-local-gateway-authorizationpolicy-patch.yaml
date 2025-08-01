@@ -1,0 +1,28 @@
+# This patches the base AuthorizationPolicy to be more restrictive
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: cluster-local-gateway
+  namespace: istio-system
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app: cluster-local-gateway
+      istio: cluster-local-gateway
+  rules:
+  # Allow requests with valid JWT principals
+  - from:
+    - source:
+        requestPrincipals: ["*"]
+  # Allow health check and metrics endpoints without authentication
+  - to:
+    - operation:
+        paths:
+        - "/healthz"
+        - "/ready"
+        - "/wait-for-drain"
+        - "/metrics"
+        - "/stats/prometheus"
+        - "*/healthz"
+        - "*/ready"
