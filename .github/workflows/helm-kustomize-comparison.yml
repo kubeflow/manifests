@@ -4,12 +4,12 @@ on:
   pull_request:
     branches: [master]
     paths:
-    - 'charts/**'
-    - '/applications/model-registry/**'
-    - 'tests/helm_compare_all_scenarios.sh'
+    - 'experimental/helm/charts/**'
+    - 'applications/model-registry/**'
+    - 'tests/helm_kustomize_compare.py'
     - 'tests/helm_kustomize_compare.sh'
-    - 'tests/helm_compare_manifests.py'
-    - 'helm-kustomize-comparison.yml'
+    - 'tests/helm_kustomize_compare_all.sh'
+    - '.github/workflows/helm-kustomize-comparison.yml'
   workflow_dispatch:
 
 permissions:
@@ -43,4 +43,4 @@ jobs:
       env:
         VERBOSE: "true"
       run: |
-        ./tests/helm_compare_all_scenarios.sh
+        ./tests/helm_kustomize_compare_all.sh model-registry

@@ -6,8 +6,9 @@ on:
     paths:
     - 'experimental/helm/charts/kserve-models-web-app/**'
     - 'applications/kserve/models-web-app/**'
-    - 'tests/models_web_app_compare*.sh'
-    - 'tests/models_web_app_compare_manifests.py'
+    - 'tests/helm_kustomize_compare.py'
+    - 'tests/helm_kustomize_compare.sh'
+    - 'tests/helm_kustomize_compare_all.sh'
     - '.github/workflows/kserve-models-web-app-comparison.yml'
   workflow_dispatch:
 
@@ -46,4 +47,4 @@ jobs:
     - name: Run KServe Models Web App comparison
       env:
         VERBOSE: "true"
-      run: ./tests/models_web_app_compare_all.sh
+      run: ./tests/helm_kustomize_compare_all.sh kserve-models-web-app
