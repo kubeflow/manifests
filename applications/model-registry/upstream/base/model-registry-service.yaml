@@ -21,7 +21,3 @@ spec:
     protocol: TCP
     appProtocol: http
     name: http-api
-  - port: 9090
-    protocol: TCP
-    appProtocol: grpc
-    name: grpc-api
