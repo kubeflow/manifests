@@ -16,6 +16,7 @@ resources:
 - minio.yaml
 - ml-pipeline-ui.yaml
 - ml-pipeline.yaml
+- model-catalog.yaml
 - model-registry.yaml
 - model-registry-ui.yaml
 - poddefaults.yaml
