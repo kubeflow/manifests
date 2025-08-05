@@ -412,6 +412,90 @@ kustomize build applications/pipeline/upstream/env/cert-manager/platform-agnosti
 ```
 This installs Argo with the runasnonroot emissary executor. Please note that you are still responsible for analyzing the security issues that arise when containers are run with root access and for deciding if the Kubeflow pipeline main containers are run as runasnonroot. It is generally strongly recommended that all user-accessible OCI containers run with Pod Security Standards [restricted](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted).
 
+#### Kubeflow Pipelines - Kubernetes Native API Mode
+
+Kubeflow Pipelines can be deployed in Kubernetes Native API mode, which stores pipeline definitions as Kubernetes Custom Resources instead of using external storage. This mode provides better integration with Kubernetes native tooling and GitOps workflows.
+
+#### Install Kubeflow Pipelines in Kubernetes Native API Mode
+
+```sh
+# For single-user deployment
+kustomize build applications/pipeline/upstream/env/cert-manager/platform-agnostic-k8s-native | kubectl apply -f -
+
+# For multi-user deployment
+kustomize build applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user-k8s-native | kubectl apply -f -
+```
+
+**Key Differences in Kubernetes Native API Mode:**
+
+- Pipeline definitions are stored as `Pipeline` and `PipelineVersion` Custom Resources in Kubernetes
+- No external database required for pipeline storage (ML Metadata still uses external storage)
+- Pipeline validation is handled through Kubernetes admission webhooks
+- Pipeline versioning is managed through Kubernetes resource versioning
+
+**Using KFP SDK with Kubernetes Native API Mode:**
+
+The KFP SDK can compile pipelines directly to Kubernetes manifests for native deployment:
+
+```python
+import kfp
+from kfp import dsl
+from kfp.compiler.compiler_utils  import KubernetesManifestOptions
+
+@dsl.component
+def hello_world(name: str = "World") -> str:    
+    print(f"Hello, {name}!")
+    return f"Hello, {name}!"
+
+@dsl.pipeline(
+    name="hello-world-pipeline",
+    description="A simple hello world pipeline"
+)
+def hello_world_pipeline(name: str = "Kubernetes Native") -> str:
+    hello_task = hello_world(name=name)
+        
+    return hello_task.output
+
+# Compile directly to Kubernetes manifests
+kfp.compiler.Compiler().compile(
+    pipeline_func=hello_world_pipeline,
+    package_path="hello-world-pipeline-k8s.yaml",
+    kubernetes_manifest_format=True,
+    kubernetes_manifest_options=KubernetesManifestOptions(
+        pipeline_name="hello-world-pipeline",
+        namespace="kubeflow",
+        include_pipeline_manifest=True
+    )
+)
+```
+
+#### Working with Pipelines in Kubernetes Native Mode
+
+In this mode, pipelines are stored as Kubernetes Custom Resources rather than in an external database. After compiling pipelines with the KFP SDK, they are uploaded through the KFP API or UI and automatically stored as Pipeline Custom Resources. Pipeline execution continues through the standard KFP SDK or UI, with runs managed as PipelineRuns and Workflows.
+
+```sh
+# List pipelines stored as Kubernetes resources
+kubectl get pipelines -n kubeflow
+
+# View a specific pipeline definition
+kubectl get pipeline hello-world-pipeline -n kubeflow -o yaml
+
+# View pipeline runs and associated workflows
+kubectl get pipelineruns -n kubeflow
+kubectl get workflows -n kubeflow
+```
+
+#### Benefits of Kubernetes Native API Mode
+
+- **GitOps Integration**: Pipeline definitions can be version controlled and deployed through GitOps workflows
+- **Kubernetes Native**: Leverages Kubernetes RBAC, resource management, and monitoring
+- **Reduced External Dependencies**: Eliminates the need for external database storage for pipeline definitions
+- **Better Security**: Pipeline access control through Kubernetes RBAC
+- **Simplified Operations**: Standard Kubernetes tooling for management and monitoring
+- **Declarative Management**: Treat pipelines as code alongside other Kubernetes resources
+
+**Note**: This mode is ideal for organizations that prefer Kubernetes-native workflows and want to manage pipelines using standard Kubernetes tools and practices.
+
 #### KServe
 
 KFServing was rebranded to KServe.
