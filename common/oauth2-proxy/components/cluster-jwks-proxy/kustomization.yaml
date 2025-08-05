@@ -5,6 +5,6 @@ resources:
 - cluster-jwks-proxy.yaml
 
 images:
-- name: docker.io/bitnami/kubectl
-  newName: docker.io/bitnami/kubectl
+- name: docker.io/bitnamilegacy/kubectl
+  newName: docker.io/bitnamilegacy/kubectl
   newTag: 1.30.4
