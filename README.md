@@ -413,6 +413,48 @@ kustomize build applications/pipeline/upstream/env/cert-manager/platform-agnosti
 ```
 This installs Argo with the runasnonroot emissary executor. Please note that you are still responsible for analyzing the security issues that arise when containers are run with root access and for deciding if the Kubeflow pipeline main containers are run as runasnonroot. It is generally strongly recommended that all user-accessible OCI containers run with Pod Security Standards [restricted](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted).
 
+#### Kubeflow Pipelines - Kubernetes Native API Mode
+
+Kubeflow Pipelines can be deployed in Kubernetes Native API mode, which stores pipeline definitions as Kubernetes Custom Resources instead of using external storage. This mode provides better integration with Kubernetes native tooling and GitOps workflows.
+
+**⚠️ Version Requirement**: Kubernetes native mode is available starting from Kubeflow Pipelines version 2.14.0.
+
+#### Install Kubeflow Pipelines in Kubernetes Native API Mode
+
+For detailed deployment instructions, please refer to the [Kubeflow Pipelines installation guide](https://www.kubeflow.org/docs/components/pipelines/operator-guides/installation/#deploying-kubeflow-pipelines-in-kubernetes-native-api-mode).
+
+**Using the KFP SDK with Kubernetes Native API Mode:**
+
+For detailed pipeline compilation instructions, please refer to the [Kubeflow Pipelines compilation guide](https://www.kubeflow.org/docs/components/pipelines/user-guides/core-functions/compile-a-pipeline/#compiling-for-kubernetes-native-api-mode).
+
+**Differences in Kubernetes Native API Mode:**
+
+- Pipeline definitions are stored as `Pipeline` and `PipelineVersion` Custom Resources in Kubernetes.
+- Pipeline validation is handled through Kubernetes admission webhooks.
+
+#### Working with Pipelines in Kubernetes Native Mode
+
+After compiling pipelines with the KFP SDK, they are uploaded through the KFP API or UI and automatically stored as Pipeline Custom Resources. Pipeline execution continues through the standard KFP SDK or UI.
+
+```sh
+# List pipelines stored as Kubernetes resources
+kubectl get pipelines -n kubeflow-user-example-com
+
+# List pipeline versions stored as Kubernetes resources
+kubectl get pipelineversions -n kubeflow-user-example-com
+
+# View a specific pipeline definition
+kubectl get pipeline hello-world-pipeline -n kubeflow-user-example-com -o yaml
+
+# View a specific pipeline version
+kubectl get pipelineversion hello-world-pipeline-v1 -n kubeflow-user-example-com -o yaml
+
+# View associated workflows
+kubectl get workflows -n kubeflow-user-example-com
+```
+
+**Benefits of Kubernetes Native Mode**: This approach is ideal for organizations that prefer Kubernetes-native workflows and want to manage pipelines using standard Kubernetes tools and practices. Pipeline definitions can be managed through multiple interfaces: direct kubectl commands, the Kubeflow Pipelines REST API, and the KFP UI for user-friendly pipeline management.
+
 #### KServe
 
 KFServing was rebranded to KServe.
