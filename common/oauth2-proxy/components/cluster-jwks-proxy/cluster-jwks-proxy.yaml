@@ -43,7 +43,7 @@ spec:
       serviceAccountName: cluster-jwks-proxy
       containers:
       - name: kubectl-proxy
-        image: docker.io/bitnami/kubectl
+        image: docker.io/bitnamilegacy/kubectl
         securityContext:
           allowPrivilegeEscalation: false
           seccompProfile:
