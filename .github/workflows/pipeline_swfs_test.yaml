@@ -83,7 +83,7 @@ jobs:
 
     - name: List and deploy test pipeline with V1 API
       run: |
-        pip3 install "kfp>=1.8.22,<2.0.0"
+        pip3 install "kfp>=1.8.23,<2.0.0"
         KF_PROFILE=kubeflow-user-example-com
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/pipeline_v1_test.py "${TOKEN}" "${KF_PROFILE}"
