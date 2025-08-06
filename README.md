@@ -57,7 +57,7 @@ This repository periodically synchronizes all official Kubeflow components from 
 | Component | Local Manifests Path | Upstream Revision | CPU (millicores) | Memory (Mi) |  PVC Storage (GB) |
 | - | - | - | - | - | - |
 | Training Operator | applications/training-operator/upstream | [v1.9.2](https://github.com/kubeflow/training-operator/tree/v1.9.2/manifests) | 3m | 25Mi | 0GB |
-| Trainer | applications/trainer/upstream | [v2.0.0]([https://github.com/kubeflow/traininger/tree/v2.0.0/manifest](https://github.com/kubeflow/trainer/tree/v2.0.0/manifests)s) | ?m | ?Mi | ?GB |
+| Trainer | applications/trainer/upstream | [master](https://github.com/kubeflow/trainer/tree/master/manifests)s) | ?m | ?Mi | ?GB |
 | Notebook Controller | applications/jupyter/notebook-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/notebook-controller/config) | 5m | 93Mi | 0GB |
 | PVC Viewer Controller | applications/pvcviewer-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/pvcviewer-controller/config) | 15m | 128Mi | 0GB |
 | Tensorboard Controller | applications/tensorboard/tensorboard-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/tensorboard-controller/config) | 15m | 128Mi | 0GB |
