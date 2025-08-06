@@ -69,7 +69,7 @@ This repository periodically synchronizes all official Kubeflow components from 
 | Katib | applications/katib/upstream | [v0.18.0](https://github.com/kubeflow/katib/tree/v0.18.0/manifests/v1beta1) | 13m | 476Mi | 10GB |
 | KServe | applications/kserve/kserve | [v0.15.0](https://github.com/kserve/kserve/releases/tag/v0.15.0/install/v0.15.0) | 600m | 1200Mi | 0GB |
 | KServe Models Web Application | applications/kserve/models-web-app | [v0.14.0](https://github.com/kserve/models-web-app/tree/v0.14.0/config) | 6m | 259Mi  | 0GB |
-| Kubeflow Pipelines | applications/pipeline/upstream | [2.5.0](https://github.com/kubeflow/pipelines/tree/2.5.0/manifests/kustomize) | 970m | 3552Mi | 35GB |
+| Kubeflow Pipelines | applications/pipeline/upstream | [2.14.0](https://github.com/kubeflow/pipelines/tree/2.14.0/manifests/kustomize) | 970m | 3552Mi | 35GB |
 | Kubeflow Model Registry | applications/model-registry/upstream | [v0.2.21](https://github.com/kubeflow/model-registry/tree/v0.2.21/manifests/kustomize) | 510m | 2112Mi | 20GB |
 | Spark Operator	|	applications/spark/spark-operator	|	[2.3.0](https://github.com/kubeflow/spark-operator/tree/v2.3.0) | 9m | 41Mi | 0GB |
 | Istio | common/istio | [1.26.1](https://github.com/istio/istio/releases/tag/1.26.1) | 750m | 2364Mi | 0GB |
