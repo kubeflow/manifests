@@ -89,7 +89,7 @@ resources:
 # Tensorboard Web App
 - ../applications/tensorboard/tensorboards-web-app/upstream/overlays/istio
 # Training Operator (v1)
-- ../applications/training-operator/upstream/overlays/kubeflow
+# - ../applications/training-operator/upstream/overlays/kubeflow
 # Trainer (Training Operator v2)
 - ../applications/trainer/upstream/base/crds
 - ../applications/trainer/upstream/overlays/manager
