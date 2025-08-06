@@ -5,6 +5,7 @@ resources:
 - cache-server.yaml
 - centraldashboard.yaml
 - default-allow-same-namespace.yaml
+- default-allow-same-namespace-kubeflow-system.yaml
 - jupyter-web-app.yaml
 - katib-controller.yaml
 - katib-db-manager.yaml
@@ -22,5 +23,7 @@ resources:
 - pvcviewer-webhook.yaml
 - spark-operator-webhook.yaml
 - tensorboards-web-app.yaml
+- trainer-webhook-kubeflow-system.yaml
+- jobset-webhook-kubeflow-system.yaml
 - training-operator-webhook.yaml
 - volumes-web-app.yaml
