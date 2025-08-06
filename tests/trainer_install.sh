@@ -36,8 +36,6 @@ kubectl apply -f common/networkpolicies/base/trainer-webhook-kubeflow-system.yam
 kubectl apply -f common/networkpolicies/base/default-allow-same-namespace-kubeflow-system.yaml
 kubectl apply -f common/networkpolicies/base/jobset-webhook-kubeflow-system.yaml
 
-kubectl patch deployment kubeflow-trainer-controller-manager -n kubeflow-system --patch-file experimental/security/PSS/trainer-pss-fix.yaml
-
 kubectl get deployment -n kubeflow-system kubeflow-trainer-controller-manager
 kubectl get pods -n kubeflow-system -l app.kubernetes.io/name=trainer
 kubectl get crd | grep -E 'trainer.kubeflow.org'
