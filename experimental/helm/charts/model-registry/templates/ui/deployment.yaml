@@ -7,7 +7,6 @@ metadata:
   namespace: {{ include "model-registry.namespace" . }}
   {{- end }}
   labels:
-    {{- include "model-registry.ui.labels" . | nindent 4 }}
     app: model-registry-ui
 spec:
   replicas: {{ .Values.ui.replicas }}

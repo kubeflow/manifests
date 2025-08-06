@@ -6,47 +6,48 @@ metadata:
   labels:
     component: db
 spec:
+  replicas: 1
   selector:
     matchLabels:
       component: db
-  replicas: 1
   strategy:
     type: Recreate
   template:
     metadata:
-      name: db
       labels:
         component: db
         sidecar.istio.io/inject: "false"
+      name: db
     spec:
-      securityContext:
-        seccompProfile:
-          type: RuntimeDefault
-        runAsNonRoot: true
       containers:
-      - name: db-container
-        image: {{ .Values.database.postgres.image.repository }}:{{ .Values.database.postgres.image.tag }}
-        env:
-          - name: PGDATA
-            value: /var/lib/postgresql/data/pgdata
+      - env:
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
         envFrom:
         - configMapRef:
             name: metadata-registry-db-parameters
         - secretRef:
             name: metadata-registry-db-secrets
+        image: {{ .Values.database.postgres.image.repository }}:{{ .Values.database.postgres.image.tag }}
+        name: db-container
         ports:
-        - name: postgres
-          containerPort: 5432
-        volumeMounts:
-        - name: metadata-postgres
-          mountPath: /var/lib/postgresql/data
+        - containerPort: 5432
+          name: postgres
         securityContext:
-          runAsUser: 70
-          runAsGroup: 70
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-              - ALL
+            - ALL
+          runAsGroup: 70
+          runAsUser: 70
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: metadata-postgres
+      securityContext:
+        fsGroup: 70
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       volumes:
       - name: metadata-postgres
         persistentVolumeClaim:

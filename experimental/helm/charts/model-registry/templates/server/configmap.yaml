@@ -14,10 +14,9 @@ metadata:
 data:
   MODEL_REGISTRY_REST_SERVICE_HOST: {{ include "model-registry.service.name" . | quote }}
   MODEL_REGISTRY_REST_SERVICE_PORT: {{ .Values.server.rest.port | quote }}
+  {{- if ne .Values.server.dataStoreType "embedmd" }}
   MODEL_REGISTRY_GRPC_SERVICE_HOST: {{ include "model-registry.service.name" . | quote }}
   MODEL_REGISTRY_GRPC_SERVICE_PORT: {{ .Values.server.grpc.port | quote }}
-  MODEL_REGISTRY_DATA_STORE_TYPE: {{ .Values.server.dataStoreType | quote }}
-  {{- range $key, $value := .Values.configMap.data }}
-  {{ $key }}: {{ $value | quote }}
   {{- end }}
+  MODEL_REGISTRY_DATA_STORE_TYPE: {{ .Values.server.dataStoreType | quote }}
 {{- end }} 

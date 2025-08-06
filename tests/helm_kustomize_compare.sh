@@ -71,7 +71,7 @@ case "$COMPONENT" in
             ["controller-network-policy"]="$MANIFESTS_DIR/options/controller/network-policy"
             ["ui-base"]="$MANIFESTS_DIR/options/ui/base"
             ["ui-standalone"]="$MANIFESTS_DIR/options/ui/overlays/standalone"
-            ["ui-integrated"]="$MANIFESTS_DIR/options/ui/overlays/integrated"
+            ["ui-integrated"]="$MANIFESTS_DIR/options/ui/overlays/kubeflow"
             ["ui-istio"]="$MANIFESTS_DIR/options/ui/overlays/istio"
             ["istio"]="$MANIFESTS_DIR/options/istio"
             ["csi"]="$MANIFESTS_DIR/options/csi"
