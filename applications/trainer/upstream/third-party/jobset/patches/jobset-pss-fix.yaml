@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jobset-controller-manager
+  namespace: kubeflow-system
+spec:
+  selector:
+    matchLabels:
+      control-plane: jobset-controller-manager
+  template:
+    spec:
+      containers:
+      - name: manager
+        securityContext:
+          seccompProfile:
+            type: RuntimeDefault
