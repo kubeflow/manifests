@@ -1,14 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
-cd applications/trainer/upstream
+cd applications/trainer
 
-kustomize build base/crds | kubectl apply --server-side --force-conflicts -f -
+kustomize build upstream/base/crds | kubectl apply --server-side --force-conflicts -f -
 
 sleep 5
 kubectl wait --for condition=established crd/trainjobs.trainer.kubeflow.org --timeout=60s
 
-kustomize build overlays/manager | kubectl apply --server-side --force-conflicts -f -
+kustomize build overlays | kubectl apply --server-side --force-conflicts -f -
 kubectl wait --for=condition=Available deployment/kubeflow-trainer-controller-manager -n kubeflow-system --timeout=180s
 
 kubectl get crd jobsets.jobset.x-k8s.io 
@@ -26,9 +26,9 @@ else
     echo "WARNING: JobSet deployment not found in any namespace!"
 fi
 
-kustomize build overlays/runtimes | kubectl apply --server-side --force-conflicts -f -
+kustomize build upstream/overlays/runtimes | kubectl apply --server-side --force-conflicts -f -
 
-kubectl apply -f overlays/kubeflow-platform/kubeflow-trainer-roles.yaml
+kubectl apply -f upstream/overlays/kubeflow-platform/kubeflow-trainer-roles.yaml
 
 cd -
 

@@ -91,7 +91,7 @@ resources:
 # Training Operator (v1)
 # - ../applications/training-operator/upstream/overlays/kubeflow
 # Trainer (Training Operator v2)
-- ../applications/trainer/upstream/overlays/kubeflow-platform
+- ../applications/trainer/overlays
 # User namespace
 - ../common/user-namespace/base
 # KServe
