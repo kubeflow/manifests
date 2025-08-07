@@ -6,11 +6,11 @@ metadata:
 spec:
   selector:
     matchLabels:
-      control-plane: jobset-controller-manager
+      control-plane: controller-manager
   template:
     metadata:
       labels:
-        control-plane: jobset-controller-manager
+        control-plane: controller-manager
     spec:
       containers:
       - name: manager
