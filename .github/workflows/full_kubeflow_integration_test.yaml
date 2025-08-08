@@ -93,11 +93,15 @@ jobs:
     - name: Install Training Operator
       run: ./tests/training_operator_install.sh
 
+    - name: Install Trainer
+      run: ./tests/trainer_install.sh
+
     - name: Install Ray
       run: |
         cd experimental/ray/
         kustomize build kuberay-operator/overlays/kubeflow | kubectl -n kubeflow apply --server-side -f -
         kubectl -n kubeflow wait --for=condition=available --timeout=60s deploy/kuberay-operator
+
 
     - name: Install Model Registry
       run: |
@@ -197,6 +201,9 @@ jobs:
     - name: Run Training Operator Test
       run: ./tests/training_operator_test.sh "${KF_PROFILE}"
 
+    - name: Run Trainer Test
+      run: ./tests/trainer_test.sh "${KF_PROFILE}"
+
     - name: Run KServe Test
       run: |
         ./tests/kserve_test.sh ${KF_PROFILE}
@@ -276,7 +283,7 @@ jobs:
         mkdir -p logs
         kubectl get all --all-namespaces > logs/resources.txt
         kubectl get events --all-namespaces --sort-by=.metadata.creationTimestamp > logs/events.txt
-        for namespace in kubeflow istio-system cert-manager auth kubeflow-user-example-com; do
+        for namespace in kubeflow kubeflow-system istio-system cert-manager auth kubeflow-user-example-com; do
             kubectl describe pods -n $namespace > logs/$namespace-pods.txt
             for pod in $(kubectl get pods -n $namespace -o jsonpath='{.items[*].metadata.name}'); do
                 kubectl logs -n $namespace $pod --tail=100 > logs/$namespace-$pod.txt 2>&1 || true

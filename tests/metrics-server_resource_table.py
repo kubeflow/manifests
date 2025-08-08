@@ -21,6 +21,9 @@ COMPONENT_RULES = {
     'Training Operator': {
         'keywords': ['training-operator', 'training']
     },
+    'Trainer': {
+        'keywords': ['trainer', 'kubeflow-trainer']
+    },
     'Notebook Controller': {
         'keywords': ['notebook-controller']
     },
@@ -92,6 +95,7 @@ COMPONENT_RULES = {
 
 COMPONENT_ORDER = [
     'Training Operator',
+    'Trainer',
     'Notebook Controller',
     'PVC Viewer Controller', 
     'Tensorboard Controller',

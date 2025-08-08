@@ -1,0 +1,19 @@
+apiVersion: "trainer.kubeflow.org/v1alpha1"
+kind: TrainJob
+metadata:
+  name: pytorch-simple
+spec:
+  runtimeRef:
+    name: torch-distributed
+  trainer:
+    image: docker.io/kubeflowkatib/pytorch-mnist:v1beta1-45c5727
+    command:
+    - "python3"
+    - "/opt/pytorch-mnist/mnist.py"
+    - "--epochs=1"
+    numNodes: 1
+    resourcesPerNode:
+      requests:
+        memory: "500Mi"
+        cpu: "500m"
+  suspend: false
