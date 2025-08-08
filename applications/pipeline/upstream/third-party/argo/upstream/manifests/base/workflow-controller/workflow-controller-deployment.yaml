@@ -49,7 +49,5 @@ spec:
             timeoutSeconds: 30
       securityContext:
         runAsNonRoot: true
-        seccompProfile:
-          type: RuntimeDefault
       nodeSelector:
         kubernetes.io/os: linux
