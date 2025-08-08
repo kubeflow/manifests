@@ -9,7 +9,7 @@ sleep 5
 kubectl wait --for condition=established crd/trainjobs.trainer.kubeflow.org --timeout=60s
 
 kustomize build overlays | kubectl apply --server-side --force-conflicts -f -
-kubectl wait --for=condition=Available deployment/kubeflow-trainer-controller-manager -n kubeflow-system --timeout=120s
+kubectl wait --for=condition=Available deployment/kubeflow-trainer-controller-manager -n kubeflow-system --timeout=180s
 
 kubectl get crd jobsets.jobset.x-k8s.io 
 
