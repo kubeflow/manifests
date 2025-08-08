@@ -9,7 +9,7 @@ sleep 5
 kubectl wait --for condition=established crd/trainjobs.trainer.kubeflow.org --timeout=60s
 
 kustomize build overlays | kubectl apply --server-side --force-conflicts -f -
-kubectl wait --for=condition=Available deployment/kubeflow-trainer-controller-manager -n kubeflow-system --timeout=180s
+kubectl wait --for=condition=Available deployment/kubeflow-trainer-controller-manager -n kubeflow-system --timeout=120s
 
 kubectl get crd jobsets.jobset.x-k8s.io 
 
@@ -21,7 +21,7 @@ if kubectl get deployment -A | grep -q jobset; then
     JOBSET_DEPLOYMENT=$(kubectl get deployment -A | grep jobset | awk '{print $2}' | head -1)
     
     echo "Waiting for JobSet deployment $JOBSET_DEPLOYMENT in namespace $JOBSET_NAMESPACE to be ready..."
-    kubectl wait --for=condition=Available deployment/$JOBSET_DEPLOYMENT -n $JOBSET_NAMESPACE --timeout=180s
+    kubectl wait --for=condition=Available deployment/$JOBSET_DEPLOYMENT -n $JOBSET_NAMESPACE --timeout=120s
 else
     echo "WARNING: JobSet deployment not found in any namespace!"
 fi
