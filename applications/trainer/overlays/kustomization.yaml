@@ -3,8 +3,7 @@ kind: Kustomization
 namespace: kubeflow-system
 
 resources:
-- ../upstream/overlays/manager
-
+- ../upstream/overlays/kubeflow-platform
 patches:
 - path: jobset-pss-fix.yaml
   target:
