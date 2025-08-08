@@ -81,6 +81,11 @@ jobs:
     - name: Port forward
       run: ./tests/port_forward_gateway.sh
 
+    - name: Install lib2to3 for KFP V1 SDK with Python3.12 (lib2to3 has been removed from python 3.12)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-lib2to3
+
     - name: List and deploy test pipeline with V1 API
       run: |
         pip3 install "kfp>=1.8.23,<2.0.0"
