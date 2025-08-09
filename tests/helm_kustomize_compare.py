@@ -48,7 +48,14 @@ def clean_helm_metadata(obj: Any, component: str = "katib") -> Any:
                                     cleaned_labels[label_key] = label_value
                             else:
                                 # Standard filtering for Katib and Model Registry
-                                if not label_key.startswith(('helm.sh/', 'app.kubernetes.io/')):
+                                helm_labels = [
+                                    'app.kubernetes.io/managed-by',
+                                    'app.kubernetes.io/version', 
+                                    'app.kubernetes.io/name',
+                                    'app.kubernetes.io/instance',
+                                    'app.kubernetes.io/component'
+                                ]
+                                if not label_key.startswith('helm.sh/') and label_key not in helm_labels:
                                     cleaned_labels[label_key] = label_value
                         if cleaned_labels:  # Only add if there are remaining labels
                             cleaned_metadata[meta_key] = cleaned_labels

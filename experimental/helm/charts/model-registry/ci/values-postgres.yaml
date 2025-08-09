@@ -18,6 +18,18 @@ server:
     requests:
       cpu: 100m
       memory: 128Mi
+  grpc:
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      runAsUser: null
+      runAsGroup: null
+  rest:
+    readinessProbe:
+      initialDelaySeconds: 10
+      periodSeconds: 60
 
 database:
   type: postgres

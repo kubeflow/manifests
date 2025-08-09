@@ -18,6 +18,10 @@ server:
     requests:
       cpu: 100m
       memory: 128Mi
+  rest:
+    readinessProbe:
+      initialDelaySeconds: 10
+      periodSeconds: 60
 
 database:
   type: mysql

@@ -27,7 +27,6 @@ spec:
       containers:
         {{- if and (eq .Values.database.type "postgres") (eq .Values.server.dataStoreType "embedmd") }}
         - name: {{ .Values.server.grpc.containerName }}
-          image: {{ .Values.server.grpc.mlmdImage }}
           env: []
           envFrom:
           - configMapRef:
@@ -45,36 +44,16 @@ spec:
           - --postgres_config_user=$(POSTGRES_USER)
           - --postgres_config_password=$(POSTGRES_PASSWORD)
           - --enable_database_upgrade=true
-          command: ["/bin/metadata_store_server"]
-          ports:
-          - name: grpc-api
-            containerPort: {{ .Values.server.grpc.port }}
-          {{- if .Values.server.grpc.livenessProbe.enabled }}
-          livenessProbe:
-            tcpSocket:
-              port: grpc-api
-            initialDelaySeconds: {{ .Values.server.grpc.livenessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.server.grpc.livenessProbe.periodSeconds }}
-            timeoutSeconds: {{ .Values.server.grpc.livenessProbe.timeoutSeconds }}
-          {{- end }}
-          {{- if .Values.server.grpc.readinessProbe.enabled }}
-          readinessProbe:
-            tcpSocket:
-              port: grpc-api
-            initialDelaySeconds: {{ .Values.server.grpc.readinessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.server.grpc.readinessProbe.periodSeconds }}
-            timeoutSeconds: {{ .Values.server.grpc.readinessProbe.timeoutSeconds }}
-          {{- end }}
-          securityContext:
-            {{- toYaml .Values.server.grpc.securityContext | nindent 12 }}
-        - args:
-          - --hostname=0.0.0.0
-          - --port=8080
-          - --datastore-type=embedmd
-          - --embedmd-database-dsn=$(DBCONFIG_USER):$(DBCONFIG_PASSWORD)@tcp($(MYSQL_HOST):$(MYSQL_PORT))/$(MYSQL_DATABASE)?charset=utf8mb4
+        - name: {{ .Values.server.rest.containerName }}
+          image: "{{ .Values.global.imageRegistry }}/{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Values.global.imageTag }}"
+          args:
+            - --hostname=0.0.0.0
+            - --port=8080
+            - --datastore-type=embedmd
+            - --embedmd-database-dsn=$(DBCONFIG_USER):$(DBCONFIG_PASSWORD)@tcp($(MYSQL_HOST):$(MYSQL_PORT))/$(MYSQL_DATABASE)?charset=utf8mb4
           command:
-          - /model-registry
-          - proxy
+            - /model-registry
+            - proxy
           env:
           - name: DBCONFIG_USER
             valueFrom:
@@ -101,29 +80,28 @@ spec:
               configMapKeyRef:
                 key: dbPort
                 name: pipeline-install-config
-          image: ghcr.io/kubeflow/model-registry/server:v0.2.21
+          ports:
+            - name: http-api
+              containerPort: 8080
+          {{- if .Values.server.rest.livenessProbe.enabled }}
           livenessProbe:
-            initialDelaySeconds: 30
-            periodSeconds: 5
+            initialDelaySeconds: {{ .Values.server.rest.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.server.rest.livenessProbe.periodSeconds }}
             tcpSocket:
               port: http-api
-            timeoutSeconds: 2
-          name: {{ .Values.server.rest.containerName }}
-          ports:
-          - containerPort: 8080
-            name: http-api
+            timeoutSeconds: {{ .Values.server.rest.livenessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.server.rest.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
               path: /readyz/isDirty
               port: http-api
-            initialDelaySeconds: 10
-            periodSeconds: 60
-            timeoutSeconds: 2
+            initialDelaySeconds: {{ .Values.server.rest.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.server.rest.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.server.rest.readinessProbe.timeoutSeconds }}
+          {{- end }}
           securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-              - ALL
+            {{- toYaml .Values.server.securityContext | nindent 12 }}
         {{- else if eq .Values.database.type "postgres" }}
         - name: {{ .Values.server.grpc.containerName }}
           image: {{ .Values.server.grpc.mlmdImage }}
@@ -204,70 +182,11 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
         {{- else if and (eq .Values.database.type "mysql") (eq .Values.server.dataStoreType "embedmd") }}
-        - name: {{ .Values.server.grpc.containerName }}
-          image: {{ .Values.server.grpc.mlmdImage }}
-          env:
-          - name: DBCONFIG_USER
-            valueFrom:
-              secretKeyRef:
-                name: model-registry-db-secrets
-                key: MYSQL_USER_NAME
-          - name: DBCONFIG_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: model-registry-db-secrets
-                key: MYSQL_ROOT_PASSWORD
-          - name: MYSQL_DATABASE
-            valueFrom:
-              configMapKeyRef:
-                name: model-registry-db-parameters
-                key: MYSQL_DATABASE
-          - name: MYSQL_HOST
-            valueFrom:
-              configMapKeyRef:
-                name: model-registry-db-parameters
-                key: MYSQL_HOST
-          - name: MYSQL_PORT
-            valueFrom:
-              configMapKeyRef:
-                name: model-registry-db-parameters
-                key: MYSQL_PORT
-          args: ["--grpc_port={{ .Values.server.grpc.port }}",
-                 "--mysql_config_database=$(MYSQL_DATABASE)",
-                 "--mysql_config_host=$(MYSQL_HOST)",
-                 "--mysql_config_port=$(MYSQL_PORT)",
-                 "--mysql_config_user=$(DBCONFIG_USER)",
-                 "--mysql_config_password=$(DBCONFIG_PASSWORD)",
-                 "--enable_database_upgrade=true"
-                 ]
-          command: ["/bin/metadata_store_server"]
-          ports:
-          - name: grpc-api
-            containerPort: {{ .Values.server.grpc.port }}
-          {{- if .Values.server.grpc.livenessProbe.enabled }}
-          livenessProbe:
-            tcpSocket:
-              port: grpc-api
-            initialDelaySeconds: {{ .Values.server.grpc.livenessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.server.grpc.livenessProbe.periodSeconds }}
-            timeoutSeconds: {{ .Values.server.grpc.livenessProbe.timeoutSeconds }}
-          {{- end }}
-          {{- if .Values.server.grpc.readinessProbe.enabled }}
-          readinessProbe:
-            tcpSocket:
-              port: grpc-api
-            initialDelaySeconds: {{ .Values.server.grpc.readinessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.server.grpc.readinessProbe.periodSeconds }}
-            timeoutSeconds: {{ .Values.server.grpc.readinessProbe.timeoutSeconds }}
-          {{- end }}
-          securityContext:
-            {{- toYaml .Values.server.grpc.securityContext | nindent 12 }}
-        - name: {{ .Values.server.rest.containerName }}
-          image: "{{ .Values.global.imageRegistry }}/{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Values.global.imageTag }}"
-          args:
+        - args:
             - --hostname=0.0.0.0
-            - --port={{ .Values.server.rest.port }}
+            - --port=$(MODEL_REGISTRY_REST_SERVICE_PORT)
             - --datastore-type=$(MODEL_REGISTRY_DATA_STORE_TYPE)
+            - --embedmd-database-dsn=$(MYSQL_USER_NAME):$(MYSQL_ROOT_PASSWORD)@tcp(model-registry-db:$(MYSQL_PORT))/$(MYSQL_DATABASE)?charset=utf8mb4
           command:
             - /model-registry
             - proxy
@@ -279,20 +198,23 @@ spec:
               name: model-registry-db-secrets
           - configMapRef:
               name: model-registry-db-parameters
-          ports:
-            - name: http-api
-              containerPort: {{ .Values.server.rest.port }}
+          image: {{ .Values.global.imageRegistry }}/{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Values.global.imageTag }}
           {{- if .Values.server.rest.livenessProbe.enabled }}
           livenessProbe:
-            tcpSocket:
-              port: http-api
             initialDelaySeconds: {{ .Values.server.rest.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.server.rest.livenessProbe.periodSeconds }}
+            tcpSocket:
+              port: http-api
             timeoutSeconds: {{ .Values.server.rest.livenessProbe.timeoutSeconds }}
           {{- end }}
+          name: {{ .Values.server.rest.containerName }}
+          ports:
+            - containerPort: {{ .Values.server.rest.port }}
+              name: http-api
           {{- if .Values.server.rest.readinessProbe.enabled }}
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /readyz/isDirty
               port: http-api
             initialDelaySeconds: {{ .Values.server.rest.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.server.rest.readinessProbe.periodSeconds }}

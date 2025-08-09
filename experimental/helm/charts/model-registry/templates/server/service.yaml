@@ -25,7 +25,7 @@ spec:
       protocol: TCP
       appProtocol: http
       name: http-api
-    {{- if or (ne .Values.server.dataStoreType "embedmd") (eq .Values.database.type "postgres") (eq .Values.database.type "mysql") }}
+    {{- if and (ne .Values.server.dataStoreType "embedmd") (ne .Values.database.type "postgres") }}
     - port: {{ .Values.server.grpc.port }}
       protocol: TCP
       appProtocol: grpc

@@ -33,10 +33,28 @@ spec:
         ports:
         - containerPort: 3306
           name: dbapi
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - mysql -D $$MYSQL_DATABASE -u$$MYSQL_USER_NAME -p$$MYSQL_ROOT_PASSWORD
+              -e 'SELECT 1'
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 1
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsGroup: 999
+          runAsUser: 999
         volumeMounts:
         - mountPath: /var/lib/mysql
           name: metadata-mysql
       securityContext:
+        fsGroup: 999
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault

@@ -15,7 +15,7 @@ ui:
   containerPort: 8080
   
   args:
-  - "--standalone-mode=false"
+  - "--deployment-mode=kubeflow"
   - "--port=8080"
   
   serviceAccount:

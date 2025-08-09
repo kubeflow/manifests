@@ -2,12 +2,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  labels:
+    app: model-registry-ui
   name: {{ include "model-registry.ui.fullname" . }}
   {{- if .Values.global.includeNamespace }}
   namespace: {{ include "model-registry.namespace" . }}
   {{- end }}
-  labels:
-    app: model-registry-ui
 spec:
   replicas: {{ .Values.ui.replicas }}
   selector:
@@ -22,51 +22,42 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
-      {{- with .Values.global.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: {{ include "model-registry.ui.serviceAccountName" . }}
-      securityContext:
-        runAsNonRoot: true
-        seccompProfile:
-          type: RuntimeDefault
       containers:
-      - name: {{ .Chart.Name }}-ui
-        image: {{ include "model-registry.ui.image" . }}
-        imagePullPolicy: {{ include "model-registry.ui.imagePullPolicy" . }}
-        ports:
-        - containerPort: {{ .Values.ui.containerPort }}
-        {{- if .Values.ui.args }}
+      - {{- if .Values.ui.args }}
         args:
           {{- toYaml .Values.ui.args | nindent 10 }}
         {{- else }}
         args:
         - "--port={{ .Values.ui.containerPort }}"
         {{- end }}
+        image: {{ include "model-registry.ui.image" . }}
+        imagePullPolicy: {{ include "model-registry.ui.imagePullPolicy" . }}
         {{- if .Values.ui.livenessProbe.enabled }}
         livenessProbe:
+          failureThreshold: {{ .Values.ui.livenessProbe.failureThreshold }}
           httpGet:
             path: {{ .Values.ui.livenessProbe.path }}
             port: {{ .Values.ui.containerPort }}
             scheme: HTTP
           initialDelaySeconds: {{ .Values.ui.livenessProbe.initialDelaySeconds }}
-          timeoutSeconds: {{ .Values.ui.livenessProbe.timeoutSeconds }}
           periodSeconds: {{ .Values.ui.livenessProbe.periodSeconds }}
           successThreshold: {{ .Values.ui.livenessProbe.successThreshold }}
-          failureThreshold: {{ .Values.ui.livenessProbe.failureThreshold }}
+          timeoutSeconds: {{ .Values.ui.livenessProbe.timeoutSeconds }}
         {{- end }}
+        name: {{ .Chart.Name }}-ui
+        ports:
+        - containerPort: {{ .Values.ui.containerPort }}
         {{- if .Values.ui.readinessProbe.enabled }}
         readinessProbe:
+          failureThreshold: {{ .Values.ui.readinessProbe.failureThreshold }}
           httpGet:
             path: {{ .Values.ui.readinessProbe.path }}
             port: {{ .Values.ui.containerPort }}
             scheme: HTTP
           initialDelaySeconds: {{ .Values.ui.readinessProbe.initialDelaySeconds }}
-          timeoutSeconds: {{ .Values.ui.readinessProbe.timeoutSeconds }}
           periodSeconds: {{ .Values.ui.readinessProbe.periodSeconds }}
           successThreshold: {{ .Values.ui.readinessProbe.successThreshold }}
-          failureThreshold: {{ .Values.ui.readinessProbe.failureThreshold }}
+          timeoutSeconds: {{ .Values.ui.readinessProbe.timeoutSeconds }}
         {{- end }}
         resources:
           {{- toYaml .Values.ui.resources | nindent 10 }}
@@ -79,6 +70,40 @@ spec:
         env:
           {{- toYaml . | nindent 10 }}
         {{- end }}
+      {{- if .Values.ui.standalone.enabled }}
+      - image: nginx:1.25-alpine
+        name: auth-proxy
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 101
+        volumeMounts:
+        - mountPath: /etc/nginx/nginx.conf
+          name: nginx-config
+          subPath: nginx.conf
+        - mountPath: /tmp
+          name: tmp-volume
+        - mountPath: /var/cache/nginx
+          name: var-cache-nginx
+        - mountPath: /var/run
+          name: var-run
+      {{- end }}
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.ui.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -87,8 +112,25 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: {{ include "model-registry.ui.serviceAccountName" . }}
       {{- with .Values.ui.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.ui.standalone.enabled }}
+      volumes:
+      - configMap:
+          name: auth-proxy-config
+        name: nginx-config
+      - emptyDir: {}
+        name: tmp-volume
+      - emptyDir: {}
+        name: var-cache-nginx
+      - emptyDir: {}
+        name: var-run
       {{- end }}
 {{- end }}

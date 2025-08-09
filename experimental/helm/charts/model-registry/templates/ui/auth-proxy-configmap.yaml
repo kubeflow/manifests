@@ -7,52 +7,5 @@ metadata:
   namespace: {{ .Values.global.namespace }}
   {{- end }}
 data:
-  nginx.conf: |
-    pid /tmp/nginx.pid;
-    error_log /dev/stderr;
-    
-    events {
-        worker_connections 1024;
-    }
-    
-    http {
-        include /etc/nginx/mime.types;
-        default_type application/octet-stream;
-        
-        access_log /dev/stdout;
-        
-        # Use /tmp for cache directories to avoid permission issues
-        client_body_temp_path /tmp/client_temp;
-        proxy_temp_path /tmp/proxy_temp;
-        fastcgi_temp_path /tmp/fastcgi_temp;
-        uwsgi_temp_path /tmp/uwsgi_temp;
-        scgi_temp_path /tmp/scgi_temp;
-        
-        upstream backend {
-            server localhost:8080;
-        }
-        
-        server {
-            listen 8000;
-            server_name _;
-            
-            location /login {
-                return 200 '{"message": "Login successful", "kubeflow-userid": "user@example.com"}';
-                add_header Content-Type application/json;
-            }
-            
-            location / {
-                # Always inject kubeflow-userid header
-                proxy_pass http://backend;
-                proxy_set_header kubeflow-userid "user@example.com";
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;
-                proxy_set_header Connection "";
-                proxy_http_version 1.1;
-                proxy_buffering off;
-            }
-        }
-    }
+  nginx.conf: "pid /tmp/nginx.pid;\nerror_log /dev/stderr;\n\nevents {\n    worker_connections 1024;\n}\n\nhttp {\n    include /etc/nginx/mime.types;\n    default_type application/octet-stream;\n    \n    access_log /dev/stdout;\n    \n    # Use /tmp for cache directories to avoid permission issues\n    client_body_temp_path /tmp/client_temp;\n    proxy_temp_path /tmp/proxy_temp;\n    fastcgi_temp_path /tmp/fastcgi_temp;\n    uwsgi_temp_path /tmp/uwsgi_temp;\n    scgi_temp_path /tmp/scgi_temp;\n    \n    upstream backend {\n        server localhost:8080;\n    }\n    \n    server {\n        listen 8000;\n        server_name _;\n        \n        location /login {\n            return 200 '{\"message\": \"Login successful\", \"kubeflow-userid\": \"user@example.com\"}';\n            add_header Content-Type application/json;\n        }\n        \n        location / {\n            # Always inject kubeflow-userid header\n            proxy_pass http://backend;\n            proxy_set_header kubeflow-userid \"user@example.com\";\n            proxy_set_header Host $host;\n            proxy_set_header X-Real-IP $remote_addr;\n            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n            proxy_set_header X-Forwarded-Proto $scheme;\n            proxy_set_header Connection \"\";\n            proxy_http_version 1.1;\n            proxy_buffering off;\n        }\n    }\n}"
 {{- end }}
