@@ -9,13 +9,13 @@ ui:
   
   image:
     repository: ui  
-    tag: "v0.2.19"
+    tag: "v0.2.21"
     pullPolicy: Always  
     
   containerPort: 8080
     
   args:
-    - "--standalone-mode=true"
+    - "--deployment-mode=standalone"
     - "--port=8080"
     
   resources:

@@ -1,0 +1,29 @@
+{{- if .Values.app.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kserve-models-web-app.serviceName" . }}
+  namespace: {{ include "kserve-models-web-app.namespace" . }}
+  labels:
+    {{- include "kserve-models-web-app.labels" . | nindent 4 }}
+    {{- include "kserve-models-web-app.kustomizeLabels" . | nindent 4 }}
+    {{- if .Values.kubeflow.enabled }}
+    {{- include "kserve-models-web-app.kserveLabels" . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  - name: {{ .Values.service.portName }}
+    port: {{ .Values.service.port }}
+    protocol: {{ .Values.service.protocol }}
+    targetPort: {{ .Values.service.targetPort }}
+  selector:
+    {{- include "kserve-models-web-app.selectorLabels" . | nindent 4 }}
+{{- end }} 

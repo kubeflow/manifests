@@ -8,6 +8,9 @@ global:
 server:
   enabled: true
   replicas: 1
+  dataStoreType: embedmd
+  image:
+    tag: "v0.2.21"
   resources:
     limits:
       cpu: 200m
@@ -15,6 +18,18 @@ server:
     requests:
       cpu: 100m
       memory: 128Mi
+  grpc:
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      runAsUser: null
+      runAsGroup: null
+  rest:
+    readinessProbe:
+      initialDelaySeconds: 10
+      periodSeconds: 60
 
 database:
   type: postgres
@@ -61,6 +76,12 @@ security:
     enabled: false
   podSecurityPolicy:
     enabled: false
+
+configMap:
+  data:
+    MODEL_REGISTRY_REST_SERVICE_HOST: "model-registry-service"
+    MODEL_REGISTRY_REST_SERVICE_PORT: "8080"
+    MODEL_REGISTRY_DATA_STORE_TYPE: "embedmd"
 
 rbac:
   create: true 

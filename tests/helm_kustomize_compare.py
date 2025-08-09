@@ -12,49 +12,70 @@ def load_manifests(file_path: str) -> List[Dict]:
         content = f.read()
     
     docs = []
-    for doc_str in content.split('---'):
-        doc_str = doc_str.strip()
-        if doc_str:
-            try:
-                doc = yaml.safe_load(doc_str)
-                if doc:  
-                    docs.append(doc)
-            except yaml.YAMLError as e:
-                print(f"Error parsing YAML: {e}")
-                continue
+    try:
+        for doc in yaml.safe_load_all(content):
+            if doc:  
+                docs.append(doc)
+    except yaml.YAMLError:
+        for doc_str in content.split('---'):
+            doc_str = doc_str.strip()
+            if doc_str:
+                try:
+                    doc = yaml.safe_load(doc_str)
+                    if doc:  
+                        docs.append(doc)
+                except yaml.YAMLError:
+                    continue
     
     return docs
 
-def clean_helm_metadata(obj: Any) -> Any:
+def clean_helm_metadata(obj: Any, component: str = "katib") -> Any:
     """Remove Helm-specific metadata that should be ignored in comparison."""
     if isinstance(obj, dict):
         cleaned = {}
         for key, value in obj.items():
             if key == "metadata" and isinstance(value, dict):
+                # Clean metadata section
                 cleaned_metadata = {}
                 for meta_key, meta_value in value.items():
                     if meta_key == "labels" and isinstance(meta_value, dict):
+                        # Remove Helm-specific labels (component-specific logic)
                         cleaned_labels = {}
                         for label_key, label_value in meta_value.items():
-                            if not label_key.startswith(('helm.sh/', 'app.kubernetes.io/')):
-                                cleaned_labels[label_key] = label_value
-                        if cleaned_labels:  
+                            if component == "kserve-models-web-app":
+                                # More restrictive filtering for KServe
+                                if not label_key.startswith(('helm.sh/', 'app.kubernetes.io/managed-by')):
+                                    cleaned_labels[label_key] = label_value
+                            else:
+                                # Standard filtering for Katib and Model Registry
+                                helm_labels = [
+                                    'app.kubernetes.io/managed-by',
+                                    'app.kubernetes.io/version', 
+                                    'app.kubernetes.io/name',
+                                    'app.kubernetes.io/instance',
+                                    'app.kubernetes.io/component'
+                                ]
+                                if not label_key.startswith('helm.sh/') and label_key not in helm_labels:
+                                    cleaned_labels[label_key] = label_value
+                        if cleaned_labels:  # Only add if there are remaining labels
                             cleaned_metadata[meta_key] = cleaned_labels
                     elif meta_key == "annotations" and isinstance(meta_value, dict):
+                        # Remove only Helm-specific annotations
                         cleaned_annotations = {}
                         for ann_key, ann_value in meta_value.items():
                             if not ann_key.startswith(('helm.sh/', 'meta.helm.sh/')):
                                 cleaned_annotations[ann_key] = ann_value
-                        if cleaned_annotations:  
+                        if cleaned_annotations:  # Only add if there are remaining annotations
                             cleaned_metadata[meta_key] = cleaned_annotations
                     else:
+                        # Keep all other metadata fields as-is
                         cleaned_metadata[meta_key] = meta_value
                 cleaned[key] = cleaned_metadata
             else:
-                cleaned[key] = clean_helm_metadata(value)
+                cleaned[key] = clean_helm_metadata(value, component)
         return cleaned
     elif isinstance(obj, list):
-        return [clean_helm_metadata(item) for item in obj]
+        return [clean_helm_metadata(item, component) for item in obj]
     else:
         return obj
 
@@ -65,6 +86,7 @@ def normalize_kustomize_refs(obj: Any, path: str = "") -> Any:
         for key, value in obj.items():
             current_path = f"{path}.{key}" if path else key
             
+            # Normalize secret/configmap references in common locations
             if key == "name" and isinstance(value, str):
                 if any(ref_pattern in path for ref_pattern in [
                     'secretKeyRef', 'configMapKeyRef', 'configMapRef', 'secret', 'volumes'
@@ -82,13 +104,31 @@ def normalize_kustomize_refs(obj: Any, path: str = "") -> Any:
     else:
         return obj
 
-def normalize_manifest(manifest: Dict) -> Dict:
+def normalize_manifest(manifest: Dict, component: str = "katib") -> Dict:
     """Normalize manifest by removing/standardizing certain fields."""
     normalized = manifest.copy()
     
-    normalized = clean_helm_metadata(normalized)
+    # Clean Helm-specific metadata
+    normalized = clean_helm_metadata(normalized, component)
     
+    # Normalize Kustomize hash references
     normalized = normalize_kustomize_refs(normalized)
+    
+    # Handle ConfigMap data normalization (only for Katib)
+    if component == "katib" and normalized.get('kind') == 'ConfigMap' and 'data' in normalized:
+        data = normalized['data']
+        normalized_data = {}
+        for key, value in data.items():
+            if isinstance(value, str):
+                # Remove leading/trailing whitespace and normalize YAML content
+                normalized_value = value.strip()
+                # Remove leading --- if present (common in ConfigMap YAML data)
+                if normalized_value.startswith('---'):
+                    normalized_value = normalized_value[3:].strip()
+                normalized_data[key] = normalized_value
+            else:
+                normalized_data[key] = value
+        normalized['data'] = normalized_data
     
     if 'metadata' in normalized and 'name' in normalized['metadata']:
         kind = normalized.get('kind', '')
@@ -100,13 +140,9 @@ def normalize_manifest(manifest: Dict) -> Dict:
         metadata = normalized['metadata']
         
         metadata.pop('generation', None)
-        
         metadata.pop('resourceVersion', None)
-        
         metadata.pop('uid', None)
-        
         metadata.pop('creationTimestamp', None)
-        
         metadata.pop('managedFields', None)
     
     normalized.pop('status', None)
@@ -122,15 +158,20 @@ def normalize_manifest(manifest: Dict) -> Dict:
     
     return remove_empty_values(normalized)
 
-def get_resource_key(manifest: Dict) -> str:
+def get_resource_key(manifest: Dict, component: str = "katib") -> str:
     """Generate a unique key for the resource."""
     kind = manifest.get('kind', 'Unknown')
     name = manifest.get('metadata', {}).get('name', 'unknown')
+    namespace = manifest.get('metadata', {}).get('namespace', '')
     
     if kind in ['Secret', 'ConfigMap']:
         name = re.sub(r'-[a-z0-9]{10}$', '', name)
     
-    return f"{kind}/{name}"
+    # Include namespace in key only for Katib
+    if component == "katib" and namespace:
+        return f"{kind}/{namespace}/{name}"
+    else:
+        return f"{kind}/{name}"
 
 def deep_diff(obj1: Any, obj2: Any, path: str = "") -> List[str]:
     """Compare two objects and return list of differences."""
@@ -163,7 +204,22 @@ def deep_diff(obj1: Any, obj2: Any, path: str = "") -> List[str]:
     
     return differences
 
-def compare_manifests(kustomize_file: str, helm_file: str, scenario: str) -> bool:
+def get_expected_helm_extras(component: str, scenario: str) -> set:
+    """Get expected extra resources in Helm for different components and scenarios."""
+    if component == "katib":
+        return {
+            'Secret/kubeflow/katib-webhook-cert',  # Webhook certificates
+        }
+    elif component == "model-registry":
+        return set()  # No extra resources in Helm for Model Registry
+    elif component == "kserve-models-web-app":
+        if scenario == "base":
+            return {"AuthorizationPolicy/kserve-models-web-app"}
+        return set()
+    else:
+        return set()
+
+def compare_manifests(kustomize_file: str, helm_file: str, component: str, scenario: str, namespace: str = "") -> bool:
     """Compare Kustomize and Helm manifests."""
     kustomize_manifests = load_manifests(kustomize_file)
     helm_manifests = load_manifests(helm_file)
@@ -172,13 +228,13 @@ def compare_manifests(kustomize_file: str, helm_file: str, scenario: str) -> boo
     helm_resources = {}
     
     for manifest in kustomize_manifests:
-        normalized = normalize_manifest(manifest)
-        key = get_resource_key(normalized)
+        normalized = normalize_manifest(manifest, component)
+        key = get_resource_key(normalized, component)
         kustomize_resources[key] = normalized
     
     for manifest in helm_manifests:
-        normalized = normalize_manifest(manifest)
-        key = get_resource_key(normalized)
+        normalized = normalize_manifest(manifest, component)
+        key = get_resource_key(normalized, component)
         helm_resources[key] = normalized
     
     kustomize_keys = set(kustomize_resources.keys())
@@ -188,27 +244,23 @@ def compare_manifests(kustomize_file: str, helm_file: str, scenario: str) -> boo
     only_in_kustomize = kustomize_keys - helm_keys
     only_in_helm = helm_keys - kustomize_keys
     
-    expected_helm_extras = set()  # No extra resources in Helm
-    
+    expected_helm_extras = get_expected_helm_extras(component, scenario)
     unexpected_helm_extras = only_in_helm - expected_helm_extras
     
     differences_found = []
     success = True
     
     if only_in_kustomize:
-        print(f"Resources only in Kustomize:")
-        for key in sorted(only_in_kustomize):
-            print(f"  - {key}")
+        print(f"Resources only in Kustomize: {len(only_in_kustomize)}")
         success = False
         differences_found.extend(only_in_kustomize)
     
     if unexpected_helm_extras:
-        print(f"Unexpected resources only in Helm:")
-        for key in sorted(unexpected_helm_extras):
-            print(f"  - {key}")
+        print(f"Unexpected resources only in Helm: {len(unexpected_helm_extras)}")
         success = False
         differences_found.extend(unexpected_helm_extras)
     
+    # Compare common resources
     for key in sorted(common_keys):
         kustomize_resource = kustomize_resources[key]
         helm_resource = helm_resources[key]
@@ -216,14 +268,9 @@ def compare_manifests(kustomize_file: str, helm_file: str, scenario: str) -> boo
         differences = deep_diff(kustomize_resource, helm_resource)
         
         if differences:
-            print(f"Differences in {key}:")
+            print(f"Differences in {key}: {len(differences)} fields")
             differences_found.append(key)
             success = False
-            
-            for diff in differences[:10]:
-                print(f"   {diff}")
-            if len(differences) > 10:
-                print(f"   ... and {len(differences) - 10} more differences")
     
     if not success:
         print(f"Found differences in {len(differences_found)} resources")
@@ -232,13 +279,21 @@ def compare_manifests(kustomize_file: str, helm_file: str, scenario: str) -> boo
     return True
 
 if __name__ == "__main__":
-    if len(sys.argv) < 4 or len(sys.argv) > 6:
-        print("Usage: python compare_manifests.py <kustomize_file> <helm_file> <scenario> [namespace] [--verbose]")
+    if len(sys.argv) < 5:
+        print("Usage: python compare.py <kustomize_file> <helm_file> <component> <scenario> [namespace] [--verbose]")
+        print("Components: katib, model-registry, kserve-models-web-app")
         sys.exit(1)
     
     kustomize_file = sys.argv[1]
     helm_file = sys.argv[2]
-    scenario = sys.argv[3]
+    component = sys.argv[3]
+    scenario = sys.argv[4]
+    namespace = sys.argv[5] if len(sys.argv) > 5 and not sys.argv[5].startswith('--') else ""
     
-    success = compare_manifests(kustomize_file, helm_file, scenario)
+    if component not in ["katib", "model-registry", "kserve-models-web-app"]:
+        print(f"ERROR: Unknown component: {component}")
+        print("Supported components: katib, model-registry, kserve-models-web-app")
+        sys.exit(1)
+    
+    success = compare_manifests(kustomize_file, helm_file, component, scenario, namespace)
     sys.exit(0 if success else 1) 

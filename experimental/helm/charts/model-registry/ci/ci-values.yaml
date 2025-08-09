@@ -8,6 +8,25 @@ global:
 server:
   enabled: true
   replicas: 1
+  # Configure for embedmd datastore
+  dataStoreType: embedmd
+  
+  image:
+    tag: "v0.2.21"
+    
+  # Configure readiness probe
+  rest:
+    readinessProbe:
+      enabled: true
+      initialDelaySeconds: 10
+      periodSeconds: 60
+      timeoutSeconds: 2
+      failureThreshold: 3
+      
+  # Disable gRPC container for embedmd mode
+  grpc:
+    enabled: false
+    
   resources:
     limits:
       cpu: 200m
@@ -15,6 +34,13 @@ server:
     requests:
       cpu: 100m
       memory: 128Mi
+
+# Configure ConfigMap data
+configMap:
+  data:
+    MODEL_REGISTRY_REST_SERVICE_HOST: "model-registry-service"
+    MODEL_REGISTRY_REST_SERVICE_PORT: "8080"
+    MODEL_REGISTRY_DATA_STORE_TYPE: "embedmd"
 
 database:
   type: sqlite  
