@@ -2,61 +2,62 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: model-registry-db
   labels:
     component: db
+  name: model-registry-db
 spec:
+  replicas: 1
   selector:
     matchLabels:
       component: db
-  replicas: 1
   strategy:
     type: Recreate
   template:
     metadata:
-      name: db
       labels:
         component: db
         sidecar.istio.io/inject: "false"
+      name: db
     spec:
-      securityContext:
-        seccompProfile:
-          type: RuntimeDefault
-        runAsNonRoot: true
       containers:
-      - name: db-container
-        image: {{ .Values.database.mysql.image.repository }}:{{ .Values.database.mysql.image.tag }}
-        args:
+      - args:
         - --datadir
         - /var/lib/mysql/datadir
-        - --default-authentication-plugin=mysql_native_password
         envFrom:
         - configMapRef:
             name: model-registry-db-parameters
         - secretRef:
             name: model-registry-db-secrets
+        image: mysql:8.3
+        name: db-container
         ports:
-        - name: dbapi
-          containerPort: 3306
+        - containerPort: 3306
+          name: dbapi
         readinessProbe:
           exec:
             command:
-            - "/bin/bash"
-            - "-c"
-            - "mysql -D $$MYSQL_DATABASE -u$$MYSQL_USER_NAME -p$$MYSQL_ROOT_PASSWORD -e 'SELECT 1'"
+            - /bin/bash
+            - -c
+            - mysql -D $$MYSQL_DATABASE -u$$MYSQL_USER_NAME -p$$MYSQL_ROOT_PASSWORD
+              -e 'SELECT 1'
           initialDelaySeconds: 5
           periodSeconds: 2
           timeoutSeconds: 1
-        volumeMounts:
-        - name: metadata-mysql
-          mountPath: /var/lib/mysql
         securityContext:
-          runAsUser: 999
-          runAsGroup: 999
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-              - ALL
+            - ALL
+          runAsGroup: 999
+          runAsUser: 999
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: metadata-mysql
+      securityContext:
+        fsGroup: 999
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       volumes:
       - name: metadata-mysql
         persistentVolumeClaim:

@@ -1,0 +1,60 @@
+{{- if .Values.rbac.clusterRole.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kserve-models-web-app.clusterRoleName" . }}
+  labels:
+    {{- include "kserve-models-web-app.labels" . | nindent 4 }}
+    {{- include "kserve-models-web-app.kustomizeLabels" . | nindent 4 }}
+    {{- if .Values.kubeflow.enabled }}
+    {{- include "kserve-models-web-app.kserveLabels" . | nindent 4 }}
+    {{- end }}
+rules:
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - pods
+  - pods/log
+  - events
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - serving.kserve.io
+  resources:
+  - inferenceservices
+  - inferenceservices/status
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+- apiGroups:
+  - serving.knative.dev
+  resources:
+  - services
+  - services/status
+  - routes
+  - routes/status
+  - configurations
+  - configurations/status
+  - revisions
+  - revisions/status
+  verbs:
+  - get
+  - list
+{{- with .Values.rbac.clusterRole.rules }}
+{{- toYaml . | nindent 0 }}
+{{- end }}
+{{- end }} 

@@ -1,13 +1,15 @@
-name: Helm vs Kustomize Comparison
+name: Katib Helm vs Kustomize Comparison
 
 on:
   pull_request:
     branches: [master]
     paths:
-    - 'charts/katib/**'
-    - 'apps/katib/upstream/**'
-    - 'tests/compare_all_scenarios.sh'
-    - '.github/workflows/katib-helm-kustomize-comparison.yml'
+    - 'experimental/helm/charts/katib/**'
+    - 'applications/katib/**'
+    - 'tests/helm_kustomize_compare.py'
+    - 'tests/helm_kustomize_compare.sh'
+    - 'tests/helm_kustomize_compare_all.sh'
+    - '.github/workflows/katib-helm-kustomize-comparison.yaml'
   workflow_dispatch:
 
 permissions:
@@ -47,6 +49,4 @@ jobs:
       env:
         VERBOSE: "true"
       run: |
-        cd tests
-        chmod +x ./compare_all_scenarios.sh
-        ./compare_all_scenarios.sh
+        ./tests/helm_kustomize_compare_all.sh katib

@@ -94,11 +94,19 @@ controller:
   # -- Affinity rules for controller pods
   affinity: {}
   
-  # -- Security context for controller pods
+    # -- Security context for controller pods
   podSecurityContext: {}
-  
+
   # -- Security context for controller containers
-  securityContext: {}
+  securityContext:
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    runAsUser: 1000
+    seccompProfile:
+      type: RuntimeDefault
+    capabilities:
+      drop:
+      - ALL
   
   # -- Extra labels for controller pods
   labels: {}
@@ -222,9 +230,20 @@ database:
         failureThreshold: 60
     
     # Security context
-    podSecurityContext: {}
+    podSecurityContext:
+      fsGroup: 999
+      fsGroupChangePolicy: OnRootMismatch
     
-    securityContext: {}
+    securityContext:
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
+      runAsNonRoot: true
+      runAsUser: 999
+      runAsGroup: 999
+      capabilities:
+        drop:
+        - ALL
     
     # Volume configuration
     volumes:
@@ -453,11 +472,19 @@ dbManager:
   # -- Affinity rules for DB Manager pods
   affinity: {}
   
-  # -- Security context for DB Manager pods
+    # -- Security context for DB Manager pods
   podSecurityContext: {}
-  
+
   # -- Security context for DB Manager containers
-  securityContext: {}
+  securityContext:
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    runAsUser: 1000
+    seccompProfile:
+      type: RuntimeDefault
+    capabilities:
+      drop:
+      - ALL
   
   # -- Extra labels for DB Manager pods
   labels: {}
@@ -509,11 +536,19 @@ ui:
   # -- Affinity rules for UI pods
   affinity: {}
   
-  # -- Security context for UI pods
-  podSecurityContext: {}
-  
+    # -- Security context for UI pods
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+
   # -- Security context for UI containers
-  securityContext: {}
+  securityContext:
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    runAsUser: 1000
+    capabilities:
+      drop:
+      - ALL
   
   # -- Extra labels for UI pods
   labels: {}

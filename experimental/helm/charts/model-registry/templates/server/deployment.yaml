@@ -2,13 +2,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: model-registry-deployment
   labels:
     component: model-registry-server
-  {{- with .Values.commonAnnotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+  name: model-registry-deployment
 spec:
   replicas: {{ .Values.server.replicas }}
   selector:
@@ -16,9 +12,6 @@ spec:
       component: model-registry-server
   template:
     metadata:
-      labels:
-        sidecar.istio.io/inject: "true"
-        component: model-registry-server
       {{- if or (eq .Values.database.type "postgres") (eq .Values.database.type "mysql") }}
       annotations:
         {{- if eq .Values.database.type "postgres" }}
@@ -27,20 +20,89 @@ spec:
         traffic.sidecar.istio.io/excludeOutboundPorts: "3306"
         {{- end }}
       {{- end }}
-      {{- with .Values.server.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      labels:
+        component: model-registry-server
+        sidecar.istio.io/inject: "true"
     spec:
-      {{- with .Values.global.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: model-registry-server
-      securityContext:
-        {{- toYaml .Values.server.podSecurityContext | nindent 8 }}
       containers:
-        {{- if eq .Values.database.type "postgres" }}
+        {{- if and (eq .Values.database.type "postgres") (eq .Values.server.dataStoreType "embedmd") }}
+        - name: {{ .Values.server.grpc.containerName }}
+          env: []
+          envFrom:
+          - configMapRef:
+              name: metadata-registry-db-parameters
+          - secretRef:
+              name: metadata-registry-db-secrets
+          - configMapRef:
+              name: model-registry-configmap
+          args:
+          - --grpc_port=$(MODEL_REGISTRY_GRPC_SERVICE_PORT)
+          - --metadata_source_config_type=postgresql
+          - --postgres_config_host={{ include "model-registry.postgres.serviceName" . }}
+          - --postgres_config_port={{ .Values.database.postgres.service.port }}
+          - --postgres_config_dbname=$(POSTGRES_DBNAME)
+          - --postgres_config_user=$(POSTGRES_USER)
+          - --postgres_config_password=$(POSTGRES_PASSWORD)
+          - --enable_database_upgrade=true
+        - name: {{ .Values.server.rest.containerName }}
+          image: "{{ .Values.global.imageRegistry }}/{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Values.global.imageTag }}"
+          args:
+            - --hostname=0.0.0.0
+            - --port=8080
+            - --datastore-type=embedmd
+            - --embedmd-database-dsn=$(DBCONFIG_USER):$(DBCONFIG_PASSWORD)@tcp($(MYSQL_HOST):$(MYSQL_PORT))/$(MYSQL_DATABASE)?charset=utf8mb4
+          command:
+            - /model-registry
+            - proxy
+          env:
+          - name: DBCONFIG_USER
+            valueFrom:
+              secretKeyRef:
+                key: username
+                name: mysql-secret
+          - name: DBCONFIG_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: mysql-secret
+          - name: MYSQL_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                key: embedmdDb
+                name: pipeline-install-config
+          - name: MYSQL_HOST
+            valueFrom:
+              configMapKeyRef:
+                key: dbHost
+                name: pipeline-install-config
+          - name: MYSQL_PORT
+            valueFrom:
+              configMapKeyRef:
+                key: dbPort
+                name: pipeline-install-config
+          ports:
+            - name: http-api
+              containerPort: 8080
+          {{- if .Values.server.rest.livenessProbe.enabled }}
+          livenessProbe:
+            initialDelaySeconds: {{ .Values.server.rest.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.server.rest.livenessProbe.periodSeconds }}
+            tcpSocket:
+              port: http-api
+            timeoutSeconds: {{ .Values.server.rest.livenessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.server.rest.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: /readyz/isDirty
+              port: http-api
+            initialDelaySeconds: {{ .Values.server.rest.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.server.rest.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.server.rest.readinessProbe.timeoutSeconds }}
+          {{- end }}
+          securityContext:
+            {{- toYaml .Values.server.securityContext | nindent 12 }}
+        {{- else if eq .Values.database.type "postgres" }}
         - name: {{ .Values.server.grpc.containerName }}
           image: {{ .Values.server.grpc.mlmdImage }}
           env: []
@@ -108,6 +170,51 @@ spec:
           {{- if .Values.server.rest.readinessProbe.enabled }}
           readinessProbe:
             tcpSocket:
+              port: http-api
+            initialDelaySeconds: {{ .Values.server.rest.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.server.rest.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.server.rest.readinessProbe.timeoutSeconds }}
+          {{- end }}
+          securityContext:
+            {{- toYaml .Values.server.securityContext | nindent 12 }}
+          {{- with .Values.server.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        {{- else if and (eq .Values.database.type "mysql") (eq .Values.server.dataStoreType "embedmd") }}
+        - args:
+            - --hostname=0.0.0.0
+            - --port=$(MODEL_REGISTRY_REST_SERVICE_PORT)
+            - --datastore-type=$(MODEL_REGISTRY_DATA_STORE_TYPE)
+            - --embedmd-database-dsn=$(MYSQL_USER_NAME):$(MYSQL_ROOT_PASSWORD)@tcp(model-registry-db:$(MYSQL_PORT))/$(MYSQL_DATABASE)?charset=utf8mb4
+          command:
+            - /model-registry
+            - proxy
+          env: []
+          envFrom:
+          - configMapRef:
+              name: model-registry-configmap
+          - secretRef:
+              name: model-registry-db-secrets
+          - configMapRef:
+              name: model-registry-db-parameters
+          image: {{ .Values.global.imageRegistry }}/{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Values.global.imageTag }}
+          {{- if .Values.server.rest.livenessProbe.enabled }}
+          livenessProbe:
+            initialDelaySeconds: {{ .Values.server.rest.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.server.rest.livenessProbe.periodSeconds }}
+            tcpSocket:
+              port: http-api
+            timeoutSeconds: {{ .Values.server.rest.livenessProbe.timeoutSeconds }}
+          {{- end }}
+          name: {{ .Values.server.rest.containerName }}
+          ports:
+            - containerPort: {{ .Values.server.rest.port }}
+              name: http-api
+          {{- if .Values.server.rest.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: /readyz/isDirty
               port: http-api
             initialDelaySeconds: {{ .Values.server.rest.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.server.rest.readinessProbe.periodSeconds }}
@@ -198,6 +305,69 @@ spec:
           {{- end }}
           securityContext:
             {{- toYaml .Values.server.grpc.securityContext | nindent 12 }}
+        {{- else if eq .Values.server.dataStoreType "embedmd" }}
+        - name: {{ .Values.server.rest.containerName }}
+          image: "{{ .Values.global.imageRegistry }}/{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Values.global.imageTag }}"
+          args:
+            - --hostname=0.0.0.0
+            - --port={{ .Values.server.rest.port }}
+            - --datastore-type=embedmd
+            - --embedmd-database-dsn=$(DBCONFIG_USER):$(DBCONFIG_PASSWORD)@tcp($(MYSQL_HOST):$(MYSQL_PORT))/$(MYSQL_DATABASE)?charset=utf8mb4
+          command:
+            - /model-registry
+            - proxy
+          env:
+          - name: DBCONFIG_USER
+            valueFrom:
+              secretKeyRef:
+                name: mysql-secret
+                key: username
+          - name: DBCONFIG_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql-secret
+                key: password
+          - name: MYSQL_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: pipeline-install-config
+                key: embedmdDb
+          - name: MYSQL_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: pipeline-install-config
+                key: dbHost
+          - name: MYSQL_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: pipeline-install-config
+                key: dbPort
+          ports:
+            - name: http-api
+              containerPort: {{ .Values.server.rest.port }}
+          {{- if .Values.server.rest.livenessProbe.enabled }}
+          livenessProbe:
+            tcpSocket:
+              port: http-api
+            initialDelaySeconds: {{ .Values.server.rest.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.server.rest.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.server.rest.livenessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.server.rest.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: /readyz/isDirty
+              port: http-api
+            initialDelaySeconds: {{ .Values.server.rest.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.server.rest.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.server.rest.readinessProbe.timeoutSeconds }}
+          {{- end }}
+          securityContext:
+            {{- toYaml .Values.server.securityContext | nindent 12 }}
+          {{- with .Values.server.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
         {{- else }}
         - name: {{ .Values.server.rest.containerName }}
           image: "{{ .Values.global.imageRegistry }}/{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Values.global.imageTag }}"
@@ -296,6 +466,9 @@ spec:
           securityContext:
             {{- toYaml .Values.server.grpc.securityContext | nindent 12 }}
         {{- end }}
+      securityContext:
+        {{- toYaml .Values.server.podSecurityContext | nindent 8 }}
+      serviceAccountName: model-registry-server
       {{- with .Values.server.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

@@ -1,0 +1,44 @@
+{{- if and .Values.app.enabled .Values.istio.virtualService.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "kserve-models-web-app.virtualServiceName" . }}
+  namespace: {{ include "kserve-models-web-app.namespace" . }}
+  labels:
+    {{- include "kserve-models-web-app.labels" . | nindent 4 }}
+    {{- include "kserve-models-web-app.kustomizeLabels" . | nindent 4 }}
+    {{- if .Values.kubeflow.enabled }}
+    {{- include "kserve-models-web-app.kserveLabels" . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.istio.virtualService.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.istio.virtualService.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  gateways:
+  {{- if .Values.kubeflow.enabled }}
+  - {{ .Values.kubeflow.gateway }}
+  {{- else }}
+  {{- toYaml .Values.istio.virtualService.gateways | nindent 2 }}
+  {{- end }}
+  hosts:
+  {{- toYaml .Values.istio.virtualService.hosts | nindent 2 }}
+  http:
+  {{- if .Values.istio.virtualService.http }}
+  {{- toYaml .Values.istio.virtualService.http | nindent 2 }}
+  {{- else }}
+  - match:
+    - uri:
+        prefix: {{ .Values.kubeflow.enabled | ternary .Values.kubeflow.config.appPrefix .Values.app.config.appPrefix }}/
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: {{ include "kserve-models-web-app.destinationHost" . }}
+        port:
+          number: {{ .Values.service.port }}
+  {{- end }}
+{{- end }} 

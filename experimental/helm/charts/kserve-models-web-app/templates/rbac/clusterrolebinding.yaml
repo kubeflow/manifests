@@ -1,0 +1,20 @@
+{{- if .Values.rbac.clusterRoleBinding.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "kserve-models-web-app.clusterRoleBindingName" . }}
+  labels:
+    {{- include "kserve-models-web-app.labels" . | nindent 4 }}
+    {{- include "kserve-models-web-app.kustomizeLabels" . | nindent 4 }}
+    {{- if .Values.kubeflow.enabled }}
+    {{- include "kserve-models-web-app.kserveLabels" . | nindent 4 }}
+    {{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "kserve-models-web-app.clusterRoleName" . }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "kserve-models-web-app.serviceAccountName" . }}
+  namespace: {{ include "kserve-models-web-app.namespace" . }}
+{{- end }} 
