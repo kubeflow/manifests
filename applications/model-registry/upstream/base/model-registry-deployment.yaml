@@ -61,17 +61,28 @@ spec:
               containerPort: 8080
           livenessProbe:
             initialDelaySeconds: 30
-            periodSeconds: 5
-            tcpSocket:
-              port: http-api
-            timeoutSeconds: 2
-          readinessProbe:
-            initialDelaySeconds: 10
-            periodSeconds: 60
+            periodSeconds: 10
             httpGet:
               path: /readyz/isDirty
               port: http-api
-            timeoutSeconds: 2
+            timeoutSeconds: 5
+            failureThreshold: 3
+          startupProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            httpGet:
+              path: /readyz/isDirty
+              port: http-api
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            httpGet:
+              path: /readyz/health
+              port: http-api
+            timeoutSeconds: 5
+            failureThreshold: 3
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

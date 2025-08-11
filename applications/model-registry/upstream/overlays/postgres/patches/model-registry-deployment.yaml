@@ -10,23 +10,20 @@ spec:
         traffic.sidecar.istio.io/excludeOutboundPorts: POSTGRES_PORT_PLACEHOLDER
     spec:
       containers:
-        - name: grpc-container
+        - name: rest-container
           # Remove existing environment variables
           env:
-          - $patch: replace
+            - $patch: replace
           envFrom:
-          - configMapRef:
-              name: metadata-registry-db-parameters
-          - secretRef:
-              name: metadata-registry-db-secrets
-          - configMapRef:
-              name: model-registry-configmap
-          args: ["--grpc_port=$(MODEL_REGISTRY_GRPC_SERVICE_PORT)",
-                 "--metadata_source_config_type=postgresql",
-                 "--postgres_config_host=MLMD_DB_HOST_PLACEHOLDER",
-                 "--postgres_config_port=POSTGRES_PORT_PLACEHOLDER",
-                 "--postgres_config_dbname=$(POSTGRES_DBNAME)",
-                 "--postgres_config_user=$(POSTGRES_USER)",
-                 "--postgres_config_password=$(POSTGRES_PASSWORD)",
-                #  "--postgres_config_skip_db_creation=true",
-                 "--enable_database_upgrade=true"]
+            - configMapRef:
+                name: model-registry-configmap
+            - secretRef:
+                name: model-registry-db-secrets
+            - configMapRef:
+                name: model-registry-db-parameters
+          args:
+            - --hostname=0.0.0.0
+            - --port=$(MODEL_REGISTRY_REST_SERVICE_PORT)
+            - --datastore-type=embedmd
+            - --embedmd-database-type=postgres
+            - --embedmd-database-dsn=postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=disable

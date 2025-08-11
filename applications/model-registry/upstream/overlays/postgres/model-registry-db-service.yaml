@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: metadata-postgres-db
+  name: model-registry-db
   labels:
     component: db
 spec:
@@ -9,6 +9,6 @@ spec:
   ports:
     - port: 5432
       protocol: TCP
-      name: postgres
+      name: dbapi
   selector:
     component: db

@@ -1,0 +1,26 @@
+catalogs:
+  - name: Sample Catalog
+    id: sample_catalog
+    type: yaml
+    enabled: true
+    properties:
+      yamlCatalogPath: sample-catalog.yaml
+  - name: Red Hat Ecosystem Catalog
+    id: rhec
+    type: rhec
+    enabled: true
+    properties:
+      models:
+        - repository: rhelai1/modelcar-granite-7b-starter
+  - name: HuggingFace Hub
+    id: huggingface
+    type: hf
+    enabled: true
+    properties:
+      # HuggingFace API key - should be stored in a Kubernetes secret
+      # and referenced here, or set via environment variable
+      apiKey: "${HUGGINGFACE_API_KEY}"
+      # Optional: Custom HuggingFace URL (defaults to https://huggingface.co)
+      url: "https://huggingface.co"
+      # Optional: Limit the number of models to fetch (defaults to 100)
+      modelLimit: 200
