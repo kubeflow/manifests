@@ -8,23 +8,11 @@ sleep 5
 kubectl wait --for condition=established crd/trainjobs.trainer.kubeflow.org --timeout=60s
 
 kustomize build overlays | kubectl apply --server-side --force-conflicts -f -
-
-kubectl patch validatingwebhookconfiguration validator.trainer.kubeflow.org --type='json' \
-  -p='[{"op": "replace", "path": "/webhooks/0/failurePolicy", "value": "Ignore"}]'
 kubectl wait --for=condition=Available deployment/kubeflow-trainer-controller-manager -n kubeflow-system --timeout=180s
 kubectl get crd jobsets.jobset.x-k8s.io
 kubectl wait --for=condition=Available deployment/jobset-controller-manager -n kubeflow-system --timeout=120s
 
-
-sleep 20
-
-kubectl patch validatingwebhookconfiguration validator.trainer.kubeflow.org --type='json' \
-  -p='[{"op": "replace", "path": "/webhooks/0/failurePolicy", "value": "Ignore"}]' 
-
 kustomize build upstream/overlays/runtimes | kubectl apply --server-side --force-conflicts -f -
-
-kubectl patch validatingwebhookconfiguration validator.trainer.kubeflow.org --type='json' \
-  -p='[{"op": "replace", "path": "/webhooks/0/failurePolicy", "value": "Fail"}]'
 
 kubectl apply -f upstream/overlays/kubeflow-platform/kubeflow-trainer-roles.yaml
 
