@@ -4,16 +4,39 @@ namespace: kubeflow-system
 
 resources:
 - ../upstream/overlays/kubeflow-platform
+
 patches:
-- path: jobset-pss-fix.yaml
-  target:
+- target:
     group: apps
     version: v1
     kind: Deployment
     name: jobset-controller-manager
-- path: trainer-pss-fix.yaml
-  target:
+  patch: |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: jobset-controller-manager
+      namespace: kubeflow-system
+    spec:
+      template:
+        spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+- target:
     group: apps
     version: v1
     kind: Deployment
     name: kubeflow-trainer-controller-manager
+  patch: |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: kubeflow-trainer-controller-manager
+      namespace: kubeflow-system
+    spec:
+      template:
+        spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
