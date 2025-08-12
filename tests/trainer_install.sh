@@ -4,6 +4,7 @@ set -euxo pipefail
 cd applications/trainer
 
 kustomize build upstream/base/crds | kubectl apply --server-side --force-conflicts -f -
+sleep 5
 kubectl wait --for condition=established crd/trainjobs.trainer.kubeflow.org --timeout=60s
 
 kustomize build overlays | kubectl apply --server-side --force-conflicts -f -
