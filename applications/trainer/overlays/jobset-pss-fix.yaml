@@ -4,16 +4,8 @@ metadata:
   name: jobset-controller-manager
   namespace: kubeflow-system
 spec:
-  selector:
-    matchLabels:
-      control-plane: controller-manager
   template:
-    metadata:
-      labels:
-        control-plane: controller-manager
     spec:
-      containers:
-      - name: manager
-        securityContext:
-          seccompProfile:
-            type: RuntimeDefault
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
