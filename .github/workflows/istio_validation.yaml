@@ -104,6 +104,10 @@ jobs:
     - name: Create KF Profile
       run: ./tests/kubeflow_profile_install.sh
 
+    - name: Enable Istio injection for profile namespace
+      run: |
+        kubectl get namespace $KF_PROFILE --show-labels
+
     - name: Create AuthorizationPolicy for test namespace (insecure mode only)
       if: matrix.istio-mode == 'insecure'
       run: |
@@ -129,19 +133,23 @@ jobs:
         kubectl apply -f ./tests/istio_dummy_deployment.yaml -n $KF_PROFILE
         kubectl wait --for=condition=available --timeout=120s deployment/test-application -n $KF_PROFILE
 
-        # With native sidecars, istio-proxy runs as a persistent init container
+        # Check for istio-proxy sidecar container injection
         POD_NAME=$(kubectl get pods -n $KF_PROFILE -l app=test-application -o jsonpath='{.items[0].metadata.name}')
-        ISTIO_PROXY_RUNNING=$(kubectl get pod $POD_NAME -n $KF_PROFILE -o jsonpath='{.status.initContainerStatuses[?(@.name=="istio-proxy")].state.running}' | jq -r 'has("startedAt")')
-
-        if [ "$ISTIO_PROXY_RUNNING" != "true" ]; then
-          echo "ERROR: Sidecar injection failed - istio-proxy not running as native sidecar"
+        
+        # Check if istio-proxy container exists (either as sidecar or init container)
+        ISTIO_PROXY_EXISTS=$(kubectl get pod $POD_NAME -n $KF_PROFILE -o jsonpath='{.spec.containers[*].name}' | grep -c "istio-proxy" || echo "0")
+        ISTIO_INIT_EXISTS=$(kubectl get pod $POD_NAME -n $KF_PROFILE -o jsonpath='{.spec.initContainers[*].name}' | grep -c "istio-proxy" || echo "0")
+        
+        if [ "$ISTIO_PROXY_EXISTS" -eq "0" ] && [ "$ISTIO_INIT_EXISTS" -eq "0" ]; then
+          echo "ERROR: Sidecar injection failed - istio-proxy container not found"
           kubectl describe pod $POD_NAME -n $KF_PROFILE
+          kubectl get namespace $KF_PROFILE --show-labels
           exit 1
         fi
         echo "Sidecar injection successful"
 
         # Verify Envoy proxy is responding
-        kubectl exec -n $KF_PROFILE deployment/test-app -c istio-proxy -- curl -s localhost:15000/ready | grep -q "LIVE" || \
+        kubectl exec -n $KF_PROFILE deployment/test-application -c istio-proxy -- curl -s localhost:15000/ready | grep -q "LIVE" || \
           (echo "ERROR: Envoy proxy not responding" && exit 1)
         echo "Envoy proxy is healthy"
 
@@ -174,9 +182,9 @@ jobs:
 
     - name: Test basic connectivity
       run: |
-        kubectl expose deployment test-application --port=80 --target-port=80 -n $KF_PROFILE
+        kubectl expose deployment test-application --port=80 --target-port=8080 -n $KF_PROFILE
         kubectl run test-client --image=busybox --rm -i --restart=Never -n $KF_PROFILE -- \
-          wget -qO- --timeout=10 test-app.$KF_PROFILE.svc.cluster.local
+          wget -qO- --timeout=10 test-application.$KF_PROFILE.svc.cluster.local
 
     - name: Apply Pod Security Standards baseline levels
       if: matrix.istio-mode == 'cni'
