@@ -126,7 +126,7 @@ jobs:
 
     - name: Test sidecar injection
       run: |
-        kubectl apply -f /tests/istio_dummy_deployment.yaml -n $KF_PROFILE
+        kubectl apply -f ./tests/istio_dummy_deployment.yaml -n $KF_PROFILE
         kubectl wait --for=condition=available --timeout=120s deployment/test-application -n $KF_PROFILE
 
         # With native sidecars, istio-proxy runs as a persistent init container
