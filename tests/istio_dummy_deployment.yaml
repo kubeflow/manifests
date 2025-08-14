@@ -21,7 +21,7 @@ spec:
         ports:
         - containerPort: 8080
         command: ["/bin/sh", "-c"]
-        args: 
+        args:
         - |
           cat > /tmp/nginx.conf << 'EOF'
           pid /tmp/nginx.pid;
