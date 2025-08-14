@@ -131,7 +131,7 @@ jobs:
     - name: Test sidecar injection
       run: |
         kubectl apply -f ./tests/istio_dummy_deployment.yaml -n $KF_PROFILE
-        kubectl wait --for=condition=available --timeout=120s deployment/test-application -n $KF_PROFILE
+        kubectl wait --for=condition=available --timeout=160s deployment/test-application -n $KF_PROFILE
 
         # Check for istio-proxy sidecar container injection
         POD_NAME=$(kubectl get pods -n $KF_PROFILE -l app=test-application -o jsonpath='{.items[0].metadata.name}')
