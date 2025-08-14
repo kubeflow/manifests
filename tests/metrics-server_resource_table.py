@@ -22,7 +22,7 @@ COMPONENT_RULES = {
         'keywords': ['training-operator', 'training']
     },
     'Trainer': {
-        'keywords': ['trainer', 'kubeflow-trainer']
+        'keywords': ['trainer', 'kubeflow-trainer', 'jobset-controller-manager']
     },
     'Notebook Controller': {
         'keywords': ['notebook-controller']
