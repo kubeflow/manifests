@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-application
+  namespace: $KF_PROFILE
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-application
+  template:
+    metadata:
+      labels:
+        app: test-application
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: nginx
+        image: nginx
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
