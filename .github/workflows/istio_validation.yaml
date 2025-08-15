@@ -104,6 +104,14 @@ jobs:
     - name: Create KF Profile
       run: ./tests/kubeflow_profile_install.sh
 
+    - name: Enable Istio injection and adjust PSS for insecure mode
+      run: |
+
+        if [ "${{ matrix.istio-mode }}" = "insecure" ]; then
+          kubectl label namespace $KF_PROFILE pod-security.kubernetes.io/enforce=privileged --overwrite
+          echo "Applied privileged PSS for insecure mode"
+        fi
+
     - name: Create AuthorizationPolicy for test namespace (insecure mode only)
       if: matrix.istio-mode == 'insecure'
       run: |
