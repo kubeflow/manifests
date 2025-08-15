@@ -6,8 +6,10 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      control-plane: controller-manager
+      service.istio.io/canonical-name: jobset-controller-manager
   policyTypes:
   - Ingress
   ingress:
-  - {}
+  - ports:
+    - protocol: TCP
+      port: 9443

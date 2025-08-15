@@ -5,15 +5,8 @@ metadata:
   namespace: kubeflow-system
 spec:
   podSelector:
-    matchExpressions:
-    - key: app.kubernetes.io/name
-      operator: In
-      values:
-      - trainer
-    - key: app.kubernetes.io/component
-      operator: In
-      values:
-      - manager
+    matchLabels:
+      service.istio.io/canonical-name: trainer
   ingress:
   - ports:
     - protocol: TCP
