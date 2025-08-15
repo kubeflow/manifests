@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: trainer-webhook
+  namespace: kubeflow-system
+spec:
+  podSelector:
+    matchLabels:
+      service.istio.io/canonical-name: trainer
+  ingress:
+  - ports:
+    - protocol: TCP
+      port: 9443
+  policyTypes:
+  - Ingress

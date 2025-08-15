@@ -57,6 +57,7 @@ This repository periodically synchronizes all official Kubeflow components from 
 | Component | Local Manifests Path | Upstream Revision | CPU (millicores) | Memory (Mi) |  PVC Storage (GB) |
 | - | - | - | - | - | - |
 | Training Operator | applications/training-operator/upstream | [v1.9.2](https://github.com/kubeflow/training-operator/tree/v1.9.2/manifests) | 3m | 25Mi | 0GB |
+| Trainer | applications/trainer/upstream | [f12a6d3](https://github.com/kubeflow/trainer/tree/f12a6d399a3dbb84d8829a5e7603ab310c45df6a/manifests) | 8m | 143Mi | 0GB |
 | Notebook Controller | applications/jupyter/notebook-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/notebook-controller/config) | 5m | 93Mi | 0GB |
 | PVC Viewer Controller | applications/pvcviewer-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/pvcviewer-controller/config) | 15m | 128Mi | 0GB |
 | Tensorboard Controller | applications/tensorboard/tensorboard-controller/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/tensorboard-controller/config) | 15m | 128Mi | 0GB |
@@ -77,7 +78,7 @@ This repository periodically synchronizes all official Kubeflow components from 
 | Cert Manager | common/cert-manager | [1.16.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.16.1) | 3m | 128Mi | 0GB |
 | Dex | common/dex | [2.43.1](https://github.com/dexidp/dex/releases/tag/v2.43.1) | 3m | 27Mi | 0GB |
 | OAuth2-Proxy | common/oauth2-proxy | [7.10.0](https://github.com/oauth2-proxy/oauth2-proxy/releases/tag/v7.10.0) | 3m | 27Mi | 0GB |
-| **Total** | | | **4372m** | **12198Mi** | **65GB** |
+| **Total** | | | **4380m** | **12341Mi** | **65GB** |
 
 
 
@@ -508,12 +509,13 @@ Install the Tensorboard Controller official Kubeflow component:
 kustomize build applications/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
-#### Training Operator
+#### Trainer
 
-Install the Training Operator official Kubeflow component:
+Install the Trainer (training operator v2) official Kubeflow component:
 
 ```sh
-kustomize build applications/training-operator/upstream/overlays/kubeflow | kubectl apply --server-side --force-conflicts -f -
+kustomize build applications/trainer/upstream/overlays/kubeflow-platform | kubectl apply --server-side --force-conflicts -f -
+# kustomize build applications/training-operator/upstream/overlays/kubeflow | kubectl apply --server-side --force-conflicts -f -
 ```
 
 #### Spark Operator
@@ -719,3 +721,6 @@ pre-commit run
   **A:** Istio CNI provides better security by eliminating the need for privileged init containers, making it more compatible with Pod Security Standards (PSS). It also enables native sidecars support introduced in Kubernetes 1.28, which helps address issues with init containers and application lifecycle management.
 - **Q:** Why does Istio CNI fail on Google Kubernetes Engine (GKE) with "read-only file system" errors?
   **A:** GKE mounts `/opt/cni/bin` as read-only for security reasons, preventing the Istio CNI installer from writing the CNI binary. Use the GKE-specific overlay: `kubectl apply -k common/istio/istio-install/overlays/gke`. This overlay uses GKE's writable CNI directory at `/home/kubernetes/bin`. For more details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites) and [Platform Prerequisites](https://istio.io/latest/docs/ambient/install/platform-prerequisites/).-`
+
+
+

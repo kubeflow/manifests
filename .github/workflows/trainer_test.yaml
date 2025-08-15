@@ -1,0 +1,118 @@
+name: Deploy and Test Trainer
+on:
+  pull_request:
+    paths:
+    - tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+    - .github/workflows/trainer_test.yaml
+    - applications/trainer/upstream/**
+    - tests/trainer_job.yaml
+    - tests/istio*
+    - tests/oauth2-proxy_install.sh
+    - common/cert-manager/**
+    - common/oauth2-proxy/**
+    - common/istio*/**
+    - experimental/security/PSS/*
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  KF_PROFILE: kubeflow-user-example-com
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install KinD, Create KinD cluster and Install kustomize
+      run: ./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+
+    - name: Install kubectl
+      run: ./tests/kubectl_install.sh
+
+    - name: Create Kubeflow Namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+    - name: Install Certificate Manager
+      run: ./tests/cert_manager_install.sh
+
+    - name: Install Istio CNI
+      run: ./tests/istio-cni_install.sh
+
+    - name: Install OAuth2 Proxy
+      run: ./tests/oauth2-proxy_install.sh
+
+    - name: Install Kubeflow Istio Resources
+      run: kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
+
+    - name: Install Multi-Tenancy
+      run: ./tests/multi_tenancy_install.sh
+
+    - name: Create KF Profile
+      run: ./tests/kubeflow_profile_install.sh
+
+    - name: Install Trainer
+      run: ./tests/trainer_install.sh
+
+    - name: Verify CRDs are ready
+      run: |
+        kubectl get crd trainjobs.trainer.kubeflow.org
+        kubectl get crd clustertrainingruntimes.trainer.kubeflow.org
+        kubectl get crd trainingruntimes.trainer.kubeflow.org
+
+    - name: Install Dependencies
+      run: pip install pytest kubernetes requests
+
+    - name: Port-forward the istio-ingress gateway
+      run: ./tests/port_forward_gateway.sh
+
+    - name: Run Trainer Test
+      run: ./tests/trainer_test.sh "${KF_PROFILE}"
+
+    - name: Test with Authorized Token
+      run: kubectl get trainjobs -n $KF_PROFILE --token="$(kubectl -n $KF_PROFILE create token default-editor)"
+
+    - name: Test with Unauthorized Token
+      run: |
+        kubectl create namespace test-unauthorized
+        kubectl create serviceaccount test-unauthorized -n test-unauthorized
+        UNAUTHORIZED_TOKEN=$(kubectl -n test-unauthorized create token test-unauthorized)
+        kubectl get trainjobs -n $KF_PROFILE --token="$UNAUTHORIZED_TOKEN" >/dev/null
+
+    - name: Apply Pod Security Standards baseline levels
+      run: ./tests/PSS_baseline_enable.sh
+
+    - name: Unapply applied baseline labels
+      run: |
+        NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow" "kubeflow-system")
+        for NAMESPACE in "${NAMESPACES[@]}"; do
+          if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
+            kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce-
+          fi
+        done
+
+    - name: Applying Pod Security Standards restricted levels
+      run: ./tests/PSS_restricted_enable.sh
+
+    - name: Collect Logs on Failure
+      if: failure()
+      run: |
+        mkdir -p logs
+        kubectl get all --all-namespaces > logs/resources.txt
+        kubectl get events --all-namespaces --sort-by=.metadata.creationTimestamp > logs/events.txt
+        for namespace in kubeflow kubeflow-system istio-system cert-manager auth kubeflow-user-example-com; do
+            kubectl describe pods -n $namespace > logs/$namespace-pods.txt
+            for pod in $(kubectl get pods -n $namespace -o jsonpath='{.items[*].metadata.name}'); do
+                kubectl logs -n $namespace $pod --tail=100 > logs/$namespace-$pod.txt 2>&1 || true
+            done
+        done
+
+    - name: Upload Diagnostic Logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: kubeflow-test-logs
+        path: logs/
