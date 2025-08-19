@@ -80,4 +80,4 @@ jobs:
       run: ./tests/kserve_jwt_authentication_test.sh kubeflow-user-example-com
 
     - name: Apply Pod Security Standards baseline levels
-      run: ./tests/PSS_baseline_enable.sh
+      run: ./tests/PSS_enable.sh baseline

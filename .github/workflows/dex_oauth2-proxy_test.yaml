@@ -67,7 +67,7 @@ jobs:
         echo "Dex login test completed successfully."
 
     - name: Apply Pod Security Standards baseline levels for static namespaces
-      run: ./tests/PSS_baseline_enable.sh
+      run: ./tests/PSS_enable.sh baseline
 
     - name: Unapply applied baseline labels
       run: |
@@ -79,4 +79,4 @@ jobs:
         done
 
     - name: Applying Pod Security Standards restricted levels for static namespaces
-      run: ./tests/PSS_restricted_enable.sh
+      run: ./tests/PSS_enable.sh restricted

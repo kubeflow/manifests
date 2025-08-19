@@ -192,7 +192,7 @@ jobs:
 
     - name: Apply Pod Security Standards baseline levels
       if: matrix.istio-mode == 'cni'
-      run: ./tests/PSS_baseline_enable.sh
+      run: ./tests/PSS_enable.sh baseline
 
     - name: Collect debug information on failure
       if: failure()
