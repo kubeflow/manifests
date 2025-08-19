@@ -129,6 +129,9 @@ jobs:
         pip3 install -q requests
         python3 tests/dex_login_test.py
         echo "Dex login test completed successfully."
+    
+    - name: Run Training Operator Test
+      run: ./tests/training_operator_test.sh "${KF_PROFILE}"
 
     - name: Verify Pipeline Integration
       run: |
@@ -198,8 +201,6 @@ jobs:
         kubectl wait --for=condition=Succeeded trials.kubeflow.org -n $KF_PROFILE --all --timeout 600s
         kubectl get trials.kubeflow.org -n $KF_PROFILE
 
-    - name: Run Training Operator Test
-      run: ./tests/training_operator_test.sh "${KF_PROFILE}"
 
     - name: Run Trainer Test
       run: ./tests/trainer_test.sh "${KF_PROFILE}"

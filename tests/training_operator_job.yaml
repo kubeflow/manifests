@@ -22,9 +22,6 @@ spec:
             - "python3"
             - "/opt/pytorch-mnist/mnist.py"
             - "--epochs=1"
-            - "--no-cuda"
-            - "--batch-size=32"
-            - "--log-interval=50"
             resources:
               requests:
                 memory: "500Mi"
@@ -48,9 +45,6 @@ spec:
             - "python3"
             - "/opt/pytorch-mnist/mnist.py"
             - "--epochs=1"
-            - "--no-cuda"
-            - "--batch-size=32"
-            - "--log-interval=50"
             resources:
               requests:
                 memory: "500Mi"
