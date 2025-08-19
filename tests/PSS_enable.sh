@@ -14,7 +14,9 @@ NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow" "knat
 echo "Applying PSS $PSS_LEVEL to: ${NAMESPACES[*]}"
 
 for NAMESPACE in "${NAMESPACES[@]}"; do
-    kubectl get namespace "$NAMESPACE" >/dev/null 2>&1 
+    if ! kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
+        continue
+    fi
     
     PATCH_OUTPUT=$(kubectl label namespace "$NAMESPACE" "pod-security.kubernetes.io/enforce=$PSS_LEVEL" --overwrite 2>&1)
     if echo "$PATCH_OUTPUT" | grep -q "violate the new PodSecurity"; then
