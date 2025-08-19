@@ -1,0 +1,27 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Sidecar
+metadata:
+  name: default
+  namespace: istio-system
+spec:
+  egress:
+  - hosts:
+    - "./*"              # Current namespace services (maintains mTLS)
+    - "kubeflow/*"       # Kubeflow services
+    - "kubeflow-system/*" # Future kubeflow-system namespace
+    - "knative-serving/*" # Knative Serving (required for KServe)
+    - "knative-eventing/*" # Knative Eventing (if used)
+    - "istio-system/*"   # Istio system services
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Sidecar
+metadata:
+  name: notebook-controller-exception
+  namespace: kubeflow
+spec:
+  workloadSelector:
+    labels:
+      app: notebook-controller
+  egress:
+  - hosts:
+    - "*/*"  # Notebook controller needs access to all namespaces for kernel activity
