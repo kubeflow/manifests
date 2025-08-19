@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "notebook-controller.configMapName" . }}
+  namespace: {{ include "notebook-controller.namespace" . }}
+  labels:
+    {{- include "notebook-controller.labels" . | nindent 4 }}
+  {{- $annotations := include "notebook-controller.annotations" . }}
+  {{- if $annotations }}
+  annotations:
+    {{- $annotations | nindent 4 }}
+  {{- end }}
+data:
+  USE_ISTIO: {{ .Values.controller.config.useIstio | quote }}
+  {{- if .Values.controller.config.useIstio }}
+  ISTIO_GATEWAY: {{ .Values.controller.config.istioGateway | quote }}
+  ISTIO_HOST: {{ .Values.controller.config.istioHost | quote }}
+  {{- end }}
+  CLUSTER_DOMAIN: {{ .Values.controller.config.clusterDomain | quote }}
+  ENABLE_CULLING: {{ .Values.controller.config.enableCulling | quote }}
+  CULL_IDLE_TIME: {{ .Values.controller.config.cullIdleTime | quote }}
+  IDLENESS_CHECK_PERIOD: {{ .Values.controller.config.idlenessCheckPeriod | quote }}
