@@ -415,7 +415,8 @@ This installs Argo with the runasnonroot emissary executor. Please note that you
 
 #### Kubeflow Pipelines - Kubernetes Native API Mode
 
-Kubeflow Pipelines can be deployed in Kubernetes Native API mode, which stores pipeline definitions as Kubernetes Custom Resources instead of using external storage. This mode provides better integration with Kubernetes native tooling and GitOps workflows.
+Kubeflow Pipelines can be deployed in Kubernetes native API mode, which stores pipeline definitions as Kubernetes custom resources (`Pipeline` and `PipelineVersion` kinds) instead of using external storage. This mode provides better integration with Kubernetes native tooling and GitOps workflows.
+
 
 **⚠️ Version Requirement**: Kubernetes native mode is available starting from Kubeflow Pipelines version 2.14.0.
 
