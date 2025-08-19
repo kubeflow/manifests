@@ -26,14 +26,14 @@ jobs:
     - name: Install kubectl
       run: ./tests/kubectl_install.sh
 
+    - name: Create kubeflow namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
     - name: Install Istio CNI
       run: ./tests/istio-cni_install.sh
 
     - name: Install oauth2-proxy
       run: ./tests/oauth2-proxy_install.sh
-
-    - name: Create kubeflow namespace
-      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
     - name: Install knative CNI with secure cluster-local-gateway
       run: ./tests/knative_install.sh
