@@ -18,12 +18,12 @@ jobs:
     name: Compare KServe Models Web App Scenarios
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
+        python-version: '3.12'
 
     - name: Install Python dependencies
       run: |
