@@ -5,8 +5,8 @@ metadata:
   name: {{ include "model-registry.postgres.pvcName" . }}
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.database.postgres.persistence.size | quote }}
+      storage: {{ .Values.database.postgres.persistence.size }}
 {{- end }}

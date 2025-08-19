@@ -10,7 +10,7 @@ server:
   replicas: 1
   dataStoreType: embedmd
   image:
-    tag: "v0.2.21"
+    tag: "v0.2.22"
   resources:
     limits:
       cpu: 200m
@@ -41,9 +41,11 @@ database:
       repository: postgres
       tag: "14.7-alpine3.17"
     auth:
-      database: mlmdpostgres
+      database: metadb
       username: root
-      password: "password"
+      password: "test"
+    service:
+      name: model-registry-db
     resources:
       limits:
         cpu: 200m
@@ -53,7 +55,7 @@ database:
         memory: 128Mi
     persistence:
       enabled: true  
-      size: 20Gi      
+      size: 10Gi      
   external:
     enabled: false
 

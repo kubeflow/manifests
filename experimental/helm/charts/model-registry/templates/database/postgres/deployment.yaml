@@ -2,54 +2,54 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: metadata-postgres-db
+  name: model-registry-db
   labels:
     component: db
 spec:
-  replicas: 1
   selector:
     matchLabels:
       component: db
+  replicas: 1
   strategy:
     type: Recreate
   template:
     metadata:
+      name: db
       labels:
         component: db
         sidecar.istio.io/inject: "false"
-      name: db
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+        runAsNonRoot: true
+        fsGroup: 70
       containers:
-      - env:
-        - name: PGDATA
-          value: /var/lib/postgresql/data/pgdata
+      - name: db-container
+        image: {{ .Values.database.postgres.image.repository }}:{{ .Values.database.postgres.image.tag }}
+        env:
+          - name: PGDATA
+            value: /var/lib/postgresql/data/pgdata
         envFrom:
         - configMapRef:
-            name: metadata-registry-db-parameters
+            name: model-registry-db-parameters
         - secretRef:
-            name: metadata-registry-db-secrets
-        image: {{ .Values.database.postgres.image.repository }}:{{ .Values.database.postgres.image.tag }}
-        name: db-container
+            name: model-registry-db-secrets
         ports:
-        - containerPort: 5432
-          name: postgres
+        - name: postgres
+          containerPort: {{ .Values.database.postgres.service.port }}
+        volumeMounts:
+        - name: metadata-postgres
+          mountPath: /var/lib/postgresql/data
         securityContext:
+          runAsUser: 70
+          runAsGroup: 70
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-            - ALL
-          runAsGroup: 70
-          runAsUser: 70
-        volumeMounts:
-        - mountPath: /var/lib/postgresql/data
-          name: metadata-postgres
-      securityContext:
-        fsGroup: 70
-        runAsNonRoot: true
-        seccompProfile:
-          type: RuntimeDefault
+              - ALL
       volumes:
       - name: metadata-postgres
         persistentVolumeClaim:
-          claimName: metadata-postgres
+          claimName: {{ include "model-registry.postgres.pvcName" . }}
 {{- end }}

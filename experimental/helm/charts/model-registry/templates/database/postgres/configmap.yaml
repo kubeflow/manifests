@@ -2,8 +2,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: metadata-registry-db-parameters
+  name: model-registry-db-parameters
 data:
+  POSTGRES_DB: {{ .Values.database.postgres.auth.database | quote }}
   POSTGRES_PORT: {{ .Values.database.postgres.service.port | quote }}
-  POSTGRES_DBNAME: {{ .Values.database.postgres.auth.database | quote }}
+  POSTGRES_HOST: {{ include "model-registry.postgres.serviceName" . | quote }}
 {{- end }}
