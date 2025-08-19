@@ -22,6 +22,12 @@ spec:
             - "python3"
             - "/opt/pytorch-mnist/mnist.py"
             - "--epochs=1"
+            - "--no-cuda"
+            - "--batch-size=64"
+            - "--log-interval=10"
+            env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
             resources:
               requests:
                 memory: "500Mi"
@@ -45,6 +51,12 @@ spec:
             - "python3"
             - "/opt/pytorch-mnist/mnist.py"
             - "--epochs=1"
+            - "--no-cuda"
+            - "--batch-size=64"
+            - "--log-interval=10"
+            env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
             resources:
               requests:
                 memory: "500Mi"
