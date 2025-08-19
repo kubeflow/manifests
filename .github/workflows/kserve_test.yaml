@@ -87,37 +87,6 @@ jobs:
           "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
           -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}'
 
-    # TODO FOR FOLLOW UP PR
-    #- name: Run and fail kserve tests without kserve m2m token
-      #run: |
-      #  export KSERVE_INGRESS_HOST_PORT=localhost:8080
-      #  cd ./tests/kserve
-      #  if pytest . -vs --log-level info; then
-      #    echo "This test should fail with an HTTP redirect to oauth2-proxy/dex auth."; exit 1
-      #  else
-      #    echo "Task failed successfully!"
-      #    echo "This is a provisional way of testing that m2m is enabled for kserve."
-      #  fi
-
-    # TODO FOR FOLLOW UP PR
-    #- name: Test that token from attacker namespace is rejected
-    #  run: |
-    #    export KSERVE_INGRESS_HOST_PORT=localhost:8080
-    #    kubectl create ns kubeflow-user-example-com-attacker
-    #    kubectl create serviceaccount attacker-sa -n kubeflow-user-example-com-attacker
-    #    export ATTACKER_TOKEN="$(kubectl -n kubeflow-user-example-com-attacker create token attacker-sa)"
-    #    RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: isvc-sklearn.kubeflow-user-example-com.example.com" \
-    #        -H "Authorization: Bearer ${ATTACKER_TOKEN}" \
-    #        -H "Content-Type: application/json" \
-    #        "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
-    #        -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}')
-    #    if [[ "$RESPONSE" == "403" || "$RESPONSE" == "401" ]]; then
-    #      echo "Security test passed: Request with attacker token was correctly rejected with $RESPONSE"
-    #    else
-    #      echo "Security test failed: Request with attacker token returned $RESPONSE instead of 403/401"
-    #      exit 1
-    #    fi
-
     - name: Run kserve models webapp test
       run: |
         kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app
