@@ -23,19 +23,24 @@ spec:
             - "/opt/pytorch-mnist/mnist.py"
             - "--epochs=1"
             - "--no-cuda"
-            - "--batch-size=128"
-            - "--log-interval=5"
-            - "--lr=0.1"
+            - "--batch-size=16"
+            - "--log-interval=20"
+            - "--lr=0.01"
+            - "--test-batch-size=100"
             env:
             - name: PYTHONUNBUFFERED
               value: "1"
+            - name: OMP_NUM_THREADS
+              value: "1"
+            - name: CUDA_VISIBLE_DEVICES
+              value: ""
             resources:
               requests:
-                memory: "400Mi"
-                cpu: "400m"
+                memory: "1Gi"
+                cpu: "500m"
               limits:
-                memory: "800Mi"
-                cpu: "800m"
+                memory: "2Gi"
+                cpu: "1000m"
     Worker:
       replicas: 1
       restartPolicy: OnFailure
@@ -53,16 +58,21 @@ spec:
             - "/opt/pytorch-mnist/mnist.py"
             - "--epochs=1"
             - "--no-cuda"
-            - "--batch-size=128"
-            - "--log-interval=5"
-            - "--lr=0.1"
+            - "--batch-size=16"
+            - "--log-interval=20"
+            - "--lr=0.01"
+            - "--test-batch-size=100"
             env:
             - name: PYTHONUNBUFFERED
               value: "1"
+            - name: OMP_NUM_THREADS
+              value: "1"
+            - name: CUDA_VISIBLE_DEVICES
+              value: ""
             resources:
               requests:
-                memory: "400Mi"
-                cpu: "400m"
+                memory: "1Gi"
+                cpu: "500m"
               limits:
-                memory: "800Mi"
-                cpu: "800m"
+                memory: "2Gi"
+                cpu: "1000m"
