@@ -44,7 +44,7 @@ spec:
                 cpu: "300m"
               limits:
                 memory: "1Gi"
-                cpu: "600m"
+                cpu: "4000m"
     Worker:
       replicas: 1
       restartPolicy: OnFailure
@@ -83,4 +83,4 @@ spec:
                 cpu: "300m"
               limits:
                 memory: "1Gi"
-                cpu: "600m"
+                cpu: "4000m"
