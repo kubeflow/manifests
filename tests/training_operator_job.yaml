@@ -23,18 +23,19 @@ spec:
             - "/opt/pytorch-mnist/mnist.py"
             - "--epochs=1"
             - "--no-cuda"
-            - "--batch-size=64"
-            - "--log-interval=10"
+            - "--batch-size=128"
+            - "--log-interval=5"
+            - "--lr=0.1"
             env:
             - name: PYTHONUNBUFFERED
               value: "1"
             resources:
               requests:
-                memory: "500Mi"
-                cpu: "500m"
+                memory: "400Mi"
+                cpu: "400m"
               limits:
-                memory: "1Gi"
-                cpu: "1000m"
+                memory: "800Mi"
+                cpu: "800m"
     Worker:
       replicas: 1
       restartPolicy: OnFailure
@@ -52,15 +53,16 @@ spec:
             - "/opt/pytorch-mnist/mnist.py"
             - "--epochs=1"
             - "--no-cuda"
-            - "--batch-size=64"
-            - "--log-interval=10"
+            - "--batch-size=128"
+            - "--log-interval=5"
+            - "--lr=0.1"
             env:
             - name: PYTHONUNBUFFERED
               value: "1"
             resources:
               requests:
-                memory: "500Mi"
-                cpu: "500m"
+                memory: "400Mi"
+                cpu: "400m"
               limits:
-                memory: "1Gi"
-                cpu: "1000m"
+                memory: "800Mi"
+                cpu: "800m"
