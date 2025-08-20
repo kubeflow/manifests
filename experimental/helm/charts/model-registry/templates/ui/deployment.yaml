@@ -2,9 +2,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: model-registry-ui
   labels:
     app: model-registry-ui
-  name: {{ include "model-registry.ui.fullname" . }}
   {{- if .Values.global.includeNamespace }}
   namespace: {{ include "model-registry.namespace" . }}
   {{- end }}
@@ -17,59 +17,56 @@ spec:
     metadata:
       labels:
         app: model-registry-ui
-      {{- with .Values.ui.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-    spec:
+    spec: 
+      serviceAccountName: model-registry-ui
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+        runAsNonRoot: true
       containers:
-      - {{- if .Values.ui.args }}
-        args:
-          {{- toYaml .Values.ui.args | nindent 10 }}
-        {{- else }}
-        args:
-        - "--port={{ .Values.ui.containerPort }}"
-        {{- end }}
-        image: {{ include "model-registry.ui.image" . }}
-        imagePullPolicy: {{ include "model-registry.ui.imagePullPolicy" . }}
+      - name: model-registry-ui
+        image: ghcr.io/kubeflow/model-registry/ui:v0.2.22
+        imagePullPolicy: Always
         {{- if .Values.ui.livenessProbe.enabled }}
         livenessProbe:
-          failureThreshold: {{ .Values.ui.livenessProbe.failureThreshold }}
           httpGet:
             path: {{ .Values.ui.livenessProbe.path }}
             port: {{ .Values.ui.containerPort }}
             scheme: HTTP
           initialDelaySeconds: {{ .Values.ui.livenessProbe.initialDelaySeconds }}
+          timeoutSeconds: {{ .Values.ui.livenessProbe.timeoutSeconds }}
           periodSeconds: {{ .Values.ui.livenessProbe.periodSeconds }}
           successThreshold: {{ .Values.ui.livenessProbe.successThreshold }}
-          timeoutSeconds: {{ .Values.ui.livenessProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.ui.livenessProbe.failureThreshold }}
         {{- end }}
-        name: {{ .Chart.Name }}-ui
-        ports:
-        - containerPort: {{ .Values.ui.containerPort }}
         {{- if .Values.ui.readinessProbe.enabled }}
         readinessProbe:
-          failureThreshold: {{ .Values.ui.readinessProbe.failureThreshold }}
           httpGet:
             path: {{ .Values.ui.readinessProbe.path }}
             port: {{ .Values.ui.containerPort }}
             scheme: HTTP
           initialDelaySeconds: {{ .Values.ui.readinessProbe.initialDelaySeconds }}
+          timeoutSeconds: {{ .Values.ui.readinessProbe.timeoutSeconds }}
           periodSeconds: {{ .Values.ui.readinessProbe.periodSeconds }}
           successThreshold: {{ .Values.ui.readinessProbe.successThreshold }}
-          timeoutSeconds: {{ .Values.ui.readinessProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.ui.readinessProbe.failureThreshold }}
         {{- end }}
         resources:
           {{- toYaml .Values.ui.resources | nindent 10 }}
+        ports:
+          - containerPort: {{ .Values.ui.containerPort }}
+        {{- if .Values.ui.args }}
+        args:
+          {{- toYaml .Values.ui.args | nindent 10 }}
+        {{- else }}
+        args:
+          - "--port={{ .Values.ui.containerPort }}"
+        {{- end }}
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-            - ALL
-        {{- with .Values.ui.env }}
-        env:
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
+              - ALL
       {{- if .Values.ui.standalone.enabled }}
       - image: nginx:1.25-alpine
         name: auth-proxy
@@ -100,27 +97,11 @@ spec:
         - mountPath: /var/run
           name: var-run
       {{- end }}
-      {{- with .Values.global.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.ui.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.ui.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       securityContext:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
-      serviceAccountName: {{ include "model-registry.ui.serviceAccountName" . }}
-      {{- with .Values.ui.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      serviceAccountName: model-registry-ui
       {{- if .Values.ui.standalone.enabled }}
       volumes:
       - configMap:

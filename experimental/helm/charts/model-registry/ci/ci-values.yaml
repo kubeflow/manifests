@@ -12,7 +12,7 @@ server:
   dataStoreType: embedmd
   
   image:
-    tag: "v0.2.21"
+    tag: "v0.2.22"
     
   # Configure readiness probe
   rest:

@@ -11,56 +11,31 @@ resources:
 configMapGenerator:
 - envs:
   - params.env
-  name: metadata-registry-db-parameters
+  name: model-registry-db-parameters
 secretGenerator:
 - envs:
   - secrets.env
-  name: metadata-registry-db-secrets
+  name: model-registry-db-secrets
 generatorOptions:
   disableNameSuffixHash: true
+
 
 images:
 - name: postgres
   newName: postgres
-  newTag: 14.7-alpine3.17
+  newTag: "14.7-alpine3.17"
 
 patches:
 - path: patches/model-registry-deployment.yaml
 replacements:
 - source:
-    fieldPath: metadata.name
-    kind: Service
-    name: metadata-postgres-db
-    version: v1
-  targets:
-  - fieldPaths:
-    - spec.template.spec.containers.0.args.2
-    options:
-      delimiter: =
-      index: 1
-    select:
-      group: apps
-      kind: Deployment
-      name: model-registry-deployment
-      version: v1
-- source:
     fieldPath: data.POSTGRES_PORT
     kind: ConfigMap
-    name: metadata-registry-db-parameters
+    name: model-registry-db-parameters
     version: v1
   targets:
   - fieldPaths:
     - spec.template.metadata.annotations.[traffic.sidecar.istio.io/excludeOutboundPorts]
-    select:
-      group: apps
-      kind: Deployment
-      name: model-registry-deployment
-      version: v1
-  - fieldPaths:
-    - spec.template.spec.containers.0.args.3
-    options:
-      delimiter: =
-      index: 1
     select:
       group: apps
       kind: Deployment

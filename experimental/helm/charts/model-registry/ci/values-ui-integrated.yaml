@@ -5,7 +5,7 @@ ui:
   
   image:
     repository: ui  
-    tag: "v0.2.21"
+    tag: "v0.2.22"
     pullPolicy: Always  
     
   containerPort: 8080
