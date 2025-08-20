@@ -23,6 +23,9 @@ jobs:
     - name: Install KinD, Create KinD cluster and Install kustomize
       run: ./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
 
+    - name: Create Kubeflow Namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
     - name: Install Istio
       run: ./tests/istio-cni_install.sh
 
@@ -32,6 +35,5 @@ jobs:
     - name: Build & Apply manifests
       run: |
         cd applications/admission-webhook/upstream
-        kubectl create ns kubeflow
         kustomize build overlays/cert-manager | kubectl apply -f -
         kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout 180s

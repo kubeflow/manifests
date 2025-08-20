@@ -44,6 +44,9 @@ jobs:
     - name: Install kubectl
       run: ./tests/kubectl_install.sh
 
+    - name: Create kubeflow namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
     - name: Install Istio
       run: ./tests/istio-cni_install.sh
 
@@ -52,9 +55,6 @@ jobs:
 
     - name: Install cert-manager
       run: ./tests/cert_manager_install.sh
-
-    - name: Create kubeflow namespace
-      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
     - name: Install KF Pipelines
       run: ./tests/pipelines_swfs_install.sh
