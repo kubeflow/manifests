@@ -124,6 +124,12 @@ jobs:
     #  name: Setup OAuth2 and Dex Credentials
     #  run: chmod +x tests/oauth2_dex_credentials.sh && ./tests/oauth2_dex_credentials.sh
 
+    - name: Run Training Operator Test
+      run: ./tests/training_operator_test.sh "${KF_PROFILE}"
+
+    - name: Run Trainer Test
+      run: ./tests/trainer_test.sh "${KF_PROFILE}"
+
     - name: Test Dex Login
       run: |
         pip3 install -q requests
@@ -197,12 +203,6 @@ jobs:
         kubectl get trials.kubeflow.org -n $KF_PROFILE
         kubectl wait --for=condition=Succeeded trials.kubeflow.org -n $KF_PROFILE --all --timeout 600s
         kubectl get trials.kubeflow.org -n $KF_PROFILE
-
-    - name: Run Training Operator Test
-      run: ./tests/training_operator_test.sh "${KF_PROFILE}"
-
-    - name: Run Trainer Test
-      run: ./tests/trainer_test.sh "${KF_PROFILE}"
 
     - name: Run KServe Test
       run: |
