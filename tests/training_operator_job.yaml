@@ -22,6 +22,29 @@ spec:
             - "python3"
             - "/opt/pytorch-mnist/mnist.py"
             - "--epochs=1"
+            - "--no-cuda"
+            - "--batch-size=32"
+            - "--log-interval=50"
+            - "--lr=0.01"
+            - "--test-batch-size=1000"
+            env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: OMP_NUM_THREADS
+              value: "1"
+            - name: CUDA_VISIBLE_DEVICES
+              value: ""
+            - name: MALLOC_TRIM_THRESHOLD_
+              value: "0"
+            - name: MALLOC_MMAP_MAX_
+              value: "0"
+            resources:
+              requests:
+                memory: "512Mi"
+                cpu: "300m"
+              limits:
+                memory: "1Gi"
+                cpu: "4000m"
     Worker:
       replicas: 1
       restartPolicy: OnFailure
@@ -38,3 +61,26 @@ spec:
             - "python3"
             - "/opt/pytorch-mnist/mnist.py"
             - "--epochs=1"
+            - "--no-cuda"
+            - "--batch-size=32"
+            - "--log-interval=50"
+            - "--lr=0.01"
+            - "--test-batch-size=1000"
+            env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: OMP_NUM_THREADS
+              value: "1"
+            - name: CUDA_VISIBLE_DEVICES
+              value: ""
+            - name: MALLOC_TRIM_THRESHOLD_
+              value: "0"
+            - name: MALLOC_MMAP_MAX_
+              value: "0"
+            resources:
+              requests:
+                memory: "512Mi"
+                cpu: "300m"
+              limits:
+                memory: "1Gi"
+                cpu: "4000m"

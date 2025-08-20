@@ -10,6 +10,15 @@ kubectl wait --for=jsonpath='{.status.conditions[0].type}=Created' pytorchjob.ku
 
 kubectl get pods -n $KF_PROFILE --show-labels
 
+kubectl wait --for=condition=Ready pod -l training.kubeflow.org/replica-type=master -n $KF_PROFILE --timeout=240s
+
 kubectl wait --for=condition=Ready pod -l training.kubeflow.org/replica-type=worker -n $KF_PROFILE --timeout=240s
 
-kubectl wait --for=condition=Succeeded pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=600s
+echo "Checking PyTorchJob status..."
+kubectl get pytorchjob pytorch-simple -n $KF_PROFILE -o yaml
+
+echo "Checking pod logs for debugging..."
+kubectl logs -l training.kubeflow.org/replica-type=master -n $KF_PROFILE --tail=50 || echo "Master logs not available yet"
+kubectl logs -l training.kubeflow.org/replica-type=worker -n $KF_PROFILE --tail=50 || echo "Worker logs not available yet"
+
+kubectl wait --for=condition=Succeeded pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=300s
