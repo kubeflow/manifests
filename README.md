@@ -71,7 +71,7 @@ This repository periodically synchronizes all official Kubeflow components from 
 | KServe | applications/kserve/kserve | [v0.15.0](https://github.com/kserve/kserve/releases/tag/v0.15.0/install/v0.15.0) | 600m | 1200Mi | 0GB |
 | KServe Models Web Application | applications/kserve/models-web-app | [v0.14.0](https://github.com/kserve/models-web-app/tree/v0.14.0/config) | 6m | 259Mi  | 0GB |
 | Kubeflow Pipelines | applications/pipeline/upstream | [2.14.0](https://github.com/kubeflow/pipelines/tree/2.14.0/manifests/kustomize) | 970m | 3552Mi | 35GB |
-| Kubeflow Model Registry | applications/model-registry/upstream | [v0.2.22](https://github.com/kubeflow/model-registry/tree/v0.2.22/manifests/kustomize) | 510m | 2112Mi | 20GB |
+| Kubeflow Model Registry | applications/model-registry/upstream | [v0.2.21](https://github.com/kubeflow/model-registry/tree/v0.2.21/manifests/kustomize) | 510m | 2112Mi | 20GB |
 | Spark Operator	|	applications/spark/spark-operator	|	[2.3.0](https://github.com/kubeflow/spark-operator/tree/v2.3.0) | 9m | 41Mi | 0GB |
 | Istio | common/istio | [1.26.1](https://github.com/istio/istio/releases/tag/1.26.1) | 750m | 2364Mi | 0GB |
 | Knative | common/knative/knative-serving <br /> common/knative/knative-eventing | [v1.16.2](https://github.com/knative/serving/releases/tag/knative-v1.16.2) <br /> [v1.16.4](https://github.com/knative/eventing/releases/tag/knative-v1.16.4) | 1450m | 1038Mi | 0GB |
@@ -406,6 +406,11 @@ kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
 
 #### Kubeflow Pipelines
 
+Kubeflow Pipelines offers two deployment options to choose from, each designed for different use cases and operational preferences. The traditional database-based approach stores pipeline definitions in an external database, while the Kubernetes native API mode leverages Kubernetes custom resources for pipeline definition storage and management.
+
+
+##### Pipeline Definitions Stored in the Database
+
 Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/components/pipelines/multi-user/) official Kubeflow component:
 
 ```sh
@@ -413,16 +418,13 @@ kustomize build applications/pipeline/upstream/env/cert-manager/platform-agnosti
 ```
 This installs Argo with the runasnonroot emissary executor. Please note that you are still responsible for analyzing the security issues that arise when containers are run with root access and for deciding if the Kubeflow pipeline main containers are run as runasnonroot. It is generally strongly recommended that all user-accessible OCI containers run with Pod Security Standards [restricted](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted).
 
-#### Kubeflow Pipelines - Kubernetes Native API Mode
+##### Pipeline Definitions Stored as Kubernetes Resources
 
 Kubeflow Pipelines can be deployed in Kubernetes native API mode, which stores pipeline definitions as Kubernetes custom resources (`Pipeline` and `PipelineVersion` kinds) instead of using external storage. This mode provides better integration with Kubernetes native tooling and GitOps workflows.
 
-
-**⚠️ Version Requirement**: Kubernetes native mode is available starting from Kubeflow Pipelines version 2.14.0.
-
-#### Install Kubeflow Pipelines in Kubernetes Native API Mode
-
-For detailed deployment instructions, please refer to the [Kubeflow Pipelines installation guide](https://www.kubeflow.org/docs/components/pipelines/operator-guides/installation/#deploying-kubeflow-pipelines-in-kubernetes-native-api-mode).
+```sh
+kustomize build applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user-k8s-native | kubectl apply -f -
+```
 
 **Using the KFP SDK with Kubernetes Native API Mode:**
 
@@ -430,29 +432,9 @@ For detailed pipeline compilation instructions, please refer to the [Kubeflow Pi
 
 **Differences in Kubernetes Native API Mode:**
 
-- Pipeline definitions are stored as `Pipeline` and `PipelineVersion` Custom Resources in Kubernetes.
+- Pipeline definitions are stored as `Pipeline` and `PipelineVersion` custom resources in Kubernetes.
 - Pipeline validation is handled through Kubernetes admission webhooks.
-
-#### Working with Pipelines in Kubernetes Native Mode
-
-After compiling pipelines with the KFP SDK, they are uploaded through the KFP API or UI and automatically stored as Pipeline Custom Resources. Pipeline execution continues through the standard KFP SDK or UI.
-
-```sh
-# List pipelines stored as Kubernetes resources
-kubectl get pipelines -n kubeflow-user-example-com
-
-# List pipeline versions stored as Kubernetes resources
-kubectl get pipelineversions -n kubeflow-user-example-com
-
-# View a specific pipeline definition
-kubectl get pipeline hello-world-pipeline -n kubeflow-user-example-com -o yaml
-
-# View a specific pipeline version
-kubectl get pipelineversion hello-world-pipeline-v1 -n kubeflow-user-example-com -o yaml
-
-# View associated workflows
-kubectl get workflows -n kubeflow-user-example-com
-```
+- The REST API transparently handles the translation to Kubernetes API calls.
 
 **Benefits of Kubernetes Native Mode**: This approach is ideal for organizations that prefer Kubernetes-native workflows and want to manage pipelines using standard Kubernetes tools and practices. Pipeline definitions can be managed through multiple interfaces: direct kubectl commands, the Kubeflow Pipelines REST API, and the KFP UI for user-friendly pipeline management.
 
@@ -764,6 +746,9 @@ pre-commit run
   **A:** Istio CNI provides better security by eliminating the need for privileged init containers, making it more compatible with Pod Security Standards (PSS). It also enables native sidecars support introduced in Kubernetes 1.28, which helps address issues with init containers and application lifecycle management.
 - **Q:** Why does Istio CNI fail on Google Kubernetes Engine (GKE) with "read-only file system" errors?
   **A:** GKE mounts `/opt/cni/bin` as read-only for security reasons, preventing the Istio CNI installer from writing the CNI binary. Use the GKE-specific overlay: `kubectl apply -k common/istio/istio-install/overlays/gke`. This overlay uses GKE's writable CNI directory at `/home/kubernetes/bin`. For more details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites) and [Platform Prerequisites](https://istio.io/latest/docs/ambient/install/platform-prerequisites/).-`
+
+
+
 
 
 
