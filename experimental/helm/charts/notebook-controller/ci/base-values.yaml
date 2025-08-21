@@ -1,4 +1,4 @@
-# Values for standalone deployment mode 
+# Values for base deployment mode 
 deploymentMode: standalone
 
 # Override names
@@ -17,7 +17,7 @@ commonLabels:
 
 controller:
   config:
-    useIstio: false
+    useIstio: true  
     istioGateway: "kubeflow/kubeflow-gateway"
     istioHost: "*"
     clusterDomain: "cluster.local"
@@ -30,7 +30,7 @@ controller:
     metricsAddr: "0.0.0.0:8080"  
     healthProbeAddr: ":8081"
   
-  # Disable auth proxy in standalone mode 
+  # Disable auth proxy in base mode 
   authProxy:
     enabled: false
   
@@ -51,13 +51,13 @@ controller:
       drop:
       - ALL
 
-# Enable main service (matches manager/service.yaml)  
+# Enable main service 
 service:
   enabled: true
   type: ClusterIP
   port: 443
 
-# Disable metrics service in standalone (no auth proxy)
+# Disable metrics service in base (no auth proxy)
 metricsService:
   enabled: false
 
@@ -66,9 +66,9 @@ rbac:
   create: true
   serviceAccount:
     create: true
-    name: ""  # Will be auto-generated
+    name: ""  
   authProxy:
-    enabled: false  # No auth proxy in standalone
+    enabled: false
   leaderElection:
     enabled: true
 

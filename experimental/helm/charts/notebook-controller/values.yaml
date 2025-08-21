@@ -28,6 +28,11 @@ global:
 # -- Deployment mode configuration (kubeflow or standalone)
 deploymentMode: kubeflow
 
+# Namespace configuration
+namespace:
+  # -- Create namespace
+  create: true
+
 # Controller configuration
 controller:
   # -- Enable the Notebook Controller

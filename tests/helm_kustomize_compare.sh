@@ -143,7 +143,7 @@ case "$COMPONENT" in
         )
         
         declare -A HELM_VALUES=(
-            ["base"]="$CHART_DIR/ci/standalone-values.yaml"
+            ["base"]="$CHART_DIR/ci/base-values.yaml"
             ["kubeflow"]="$CHART_DIR/ci/kubeflow-values.yaml"
             ["standalone"]="$CHART_DIR/ci/standalone-values.yaml"
             ["webhook"]="$CHART_DIR/ci/webhook-values.yaml"

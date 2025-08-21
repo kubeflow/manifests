@@ -28,13 +28,9 @@ controller:
     metricsAddr: "127.0.0.1:8080"
     healthProbeAddr: ":8081"
   
-  # Enable auth proxy for metrics protection in Kubeflow
+  # Disable auth proxy 
   authProxy:
-    enabled: true
-    image:
-      registry: quay.io
-      repository: brancz/kube-rbac-proxy
-      tag: v0.4.0
+    enabled: false
   
   # Webhook server disabled by default 
   webhook:
@@ -59,15 +55,9 @@ service:
   type: ClusterIP
   port: 443
 
-# Enable metrics service for Prometheus scraping (matches auth_proxy_service.yaml)
+# Disable metrics service 
 metricsService:
-  enabled: true
-  annotations:
-    prometheus.io/port: "8443"
-    prometheus.io/scheme: https
-    prometheus.io/scrape: "true"
-  labels:
-    control-plane: controller-manager
+  enabled: false
 
 # RBAC 
 rbac:
@@ -76,7 +66,7 @@ rbac:
     create: true
     name: ""  
   authProxy:
-    enabled: true
+    enabled: false
   leaderElection:
     enabled: true
 

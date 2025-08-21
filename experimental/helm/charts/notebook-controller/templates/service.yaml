@@ -5,10 +5,11 @@ metadata:
   name: {{ include "notebook-controller.resourceName" . }}-service
   namespace: {{ include "notebook-controller.namespace" . }}
   labels:
-    {{- include "notebook-controller.labels" . | nindent 4 }}
     {{- if and .Values.kustomizeMode.enabled .Values.kustomizeMode.useOriginalLabels }}
     app: notebook-controller
     kustomize.component: notebook-controller
+    {{- else }}
+    {{- include "notebook-controller.labels" . | nindent 4 }}
     {{- end }}
     {{- with .Values.service.labels }}
     {{- toYaml . | nindent 4 }}
@@ -26,15 +27,19 @@ metadata:
     {{- toYaml $serviceAnnotations | nindent 4 }}
   {{- end }}
 spec:
+  {{- if not (and .Values.kustomizeMode.enabled .Values.kustomizeMode.useOriginalNames) }}
   type: {{ .Values.service.type }}
+  {{- end }}
   ports:
     - port: {{ .Values.service.port }}
+      {{- if not (and .Values.kustomizeMode.enabled .Values.kustomizeMode.useOriginalNames) }}
       {{- if not .Values.controller.authProxy.enabled }}
       targetPort: {{ .Values.controller.ports.metrics }}
       {{- else }}
       targetPort: {{ .Values.service.targetPort }}
       {{- end }}
       protocol: TCP
+      {{- end }}
   selector:
     {{- if and .Values.kustomizeMode.enabled .Values.kustomizeMode.useOriginalLabels }}
     app: notebook-controller

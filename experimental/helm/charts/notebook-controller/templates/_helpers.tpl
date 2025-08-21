@@ -100,23 +100,17 @@ Namespace helper
 Resource name prefix helper 
 */}}
 {{- define "notebook-controller.namePrefix" -}}
-{{- if eq .Values.deploymentMode "kubeflow" -}}
-{{- "" -}}
-{{- else -}}
 {{- printf "%s-" (include "notebook-controller.name" .) -}}
-{{- end -}}
 {{- end }}
 
 {{/*
 Full resource name helper
 */}}
 {{- define "notebook-controller.resourceName" -}}
-{{- $prefix := include "notebook-controller.namePrefix" . -}}
-{{- $name := include "notebook-controller.fullname" . -}}
-{{- if $prefix -}}
-{{- printf "%s%s" $prefix $name -}}
+{{- if eq .Values.deploymentMode "kubeflow" -}}
+{{- include "notebook-controller.fullname" . -}}
 {{- else -}}
-{{- $name -}}
+{{- printf "notebook-controller" -}}
 {{- end -}}
 {{- end }}
 
@@ -189,7 +183,8 @@ Deployment selector labels (consistent across all resources)
 */}}
 {{- define "notebook-controller.deploymentSelectorLabels" -}}
 {{- if and .Values.kustomizeMode.enabled .Values.kustomizeMode.useOriginalLabels -}}
-control-plane: controller-manager
+app: notebook-controller
+kustomize.component: notebook-controller
 {{- else -}}
 {{- include "notebook-controller.selectorLabels" . -}}
 {{- end -}}
@@ -200,9 +195,9 @@ Manager container name helper
 */}}
 {{- define "notebook-controller.managerContainerName" -}}
 {{- if .Values.kustomizeMode.enabled -}}
-controller-manager
-{{- else -}}
 manager
+{{- else -}}
+controller-manager
 {{- end -}}
 {{- end }}
 
@@ -226,7 +221,6 @@ Conditional environment variables helper
     configMapKeyRef:
       name: {{ include "notebook-controller.configMapName" . }}
       key: USE_ISTIO
-{{- if .Values.controller.config.useIstio }}
 - name: ISTIO_GATEWAY
   valueFrom:
     configMapKeyRef:
@@ -237,7 +231,6 @@ Conditional environment variables helper
     configMapKeyRef:
       name: {{ include "notebook-controller.configMapName" . }}
       key: ISTIO_HOST
-{{- end }}
 - name: CLUSTER_DOMAIN
   valueFrom:
     configMapKeyRef:

@@ -2,7 +2,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "notebook-controller.resourceName" . }}-rolebinding
+  name: {{ include "notebook-controller.resourceName" . }}-role-binding
   labels:
     {{- include "notebook-controller.labels" . | nindent 4 }}
 roleRef:

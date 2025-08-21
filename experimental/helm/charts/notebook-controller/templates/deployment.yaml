@@ -5,7 +5,12 @@ metadata:
   name: {{ include "notebook-controller.resourceName" . }}-deployment
   namespace: {{ include "notebook-controller.namespace" . }}
   labels:
+    {{- if and .Values.kustomizeMode.enabled .Values.kustomizeMode.useOriginalLabels }}
+    app: notebook-controller
+    kustomize.component: notebook-controller
+    {{- else }}
     {{- include "notebook-controller.labels" . | nindent 4 }}
+    {{- end }}
     {{- with .Values.controller.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -15,7 +20,9 @@ metadata:
     {{- $annotations | nindent 4 }}
   {{- end }}
 spec:
+  {{- if not (and .Values.kustomizeMode.enabled .Values.kustomizeMode.useOriginalNames) }}
   replicas: {{ .Values.controller.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "notebook-controller.deploymentSelectorLabels" . | nindent 6 }}
@@ -29,10 +36,12 @@ spec:
         {{- with .Values.controller.labels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+      {{- if not (and .Values.kustomizeMode.enabled .Values.kustomizeMode.useOriginalNames) }}
       {{- $podAnnotations := include "notebook-controller.podAnnotations" . }}
       {{- if $podAnnotations }}
       annotations:
         {{- $podAnnotations | nindent 8 }}
+      {{- end }}
       {{- end }}
     spec:
       {{- with .Values.global.imagePullSecrets }}
@@ -77,6 +86,7 @@ spec:
         command:
         - /manager
         {{- end }}
+        {{- if not (and .Values.kustomizeMode.enabled .Values.kustomizeMode.useOriginalNames) }}
         {{- if or .Values.controller.manager.args .Values.controller.manager.enableLeaderElection .Values.controller.authProxy.enabled .Values.controller.manager.healthProbeAddr }}
         args:
         {{- if .Values.controller.manager.enableLeaderElection }}
@@ -94,9 +104,11 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
         {{- end }}
+        {{- end }}
         env:
         {{- include "notebook-controller.envVars" . | nindent 8 }}
         imagePullPolicy: {{ include "notebook-controller.imagePullPolicy" . }}
+        {{- if not (and .Values.kustomizeMode.enabled .Values.kustomizeMode.useOriginalNames) }}
         ports:
         {{- if not .Values.controller.authProxy.enabled }}
         - containerPort: {{ .Values.controller.ports.metrics }}
@@ -110,6 +122,7 @@ spec:
         - containerPort: {{ .Values.controller.webhook.port }}
           name: webhook-server
           protocol: TCP
+        {{- end }}
         {{- end }}
         {{- with .Values.controller.livenessProbe }}
         livenessProbe:

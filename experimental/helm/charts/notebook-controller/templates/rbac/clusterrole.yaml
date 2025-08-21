@@ -4,7 +4,12 @@ kind: ClusterRole
 metadata:
   name: {{ include "notebook-controller.resourceName" . }}-role
   labels:
+    {{- if and .Values.kustomizeMode.enabled .Values.kustomizeMode.useOriginalLabels }}
+    app: notebook-controller
+    kustomize.component: notebook-controller
+    {{- else }}
     {{- include "notebook-controller.labels" . | nindent 4 }}
+    {{- end }}
   {{- $annotations := include "notebook-controller.annotations" . }}
   {{- if $annotations }}
   annotations:
@@ -41,20 +46,7 @@ rules:
   - services
   verbs:
   - '*'
-- apiGroups:
-  - ""
-  resources:
-  - persistentvolumeclaims
-  - secrets
-  - configmaps
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
+
 - apiGroups:
   - kubeflow.org
   resources:
@@ -63,14 +55,12 @@ rules:
   - notebooks/status
   verbs:
   - '*'
-{{- if .Values.controller.config.useIstio }}
 - apiGroups:
   - networking.istio.io
   resources:
   - virtualservices
   verbs:
   - '*'
-{{- end }}
 {{- if .Values.controller.webhook.enabled }}
 - apiGroups:
   - admissionregistration.k8s.io
