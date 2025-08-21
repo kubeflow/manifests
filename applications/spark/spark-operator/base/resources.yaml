@@ -25569,3 +25569,267 @@ webhooks:
     resources: ["scheduledsparkapplications"]
     operations: ["CREATE", "UPDATE"]
   timeoutSeconds: 10
+---
+# This file defines the Kubernetes objects necessary for Enterprise Gateway to run within Kubernetes.
+#
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: enterprise-gateway
+#   labels:
+#     app: enterprise-gateway
+# ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: enterprise-gateway-sa
+  namespace: kubeflow
+  labels:
+    app: enterprise-gateway
+    component: enterprise-gateway
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: enterprise-gateway-controller
+  labels:
+    app: enterprise-gateway
+    component: enterprise-gateway
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "namespaces", "services", "configmaps", "secrets", "persistentvolumes", "persistentvolumeclaims"]
+    verbs: ["get", "watch", "list", "create", "delete"]
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["rolebindings"]
+    verbs: ["get", "list", "create", "delete"]
+  - apiGroups: ["sparkoperator.k8s.io"]
+    resources: ["sparkapplications", "sparkapplications/status"]
+    verbs: ["get", "list", "watch", "create", "update", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  # Referenced by EG_KERNEL_CLUSTER_ROLE below
+  name: kernel-controller
+  labels:
+    app: enterprise-gateway
+    component: kernel
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "watch", "list", "create", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: enterprise-gateway-controller
+  labels:
+    app: enterprise-gateway
+    component: enterprise-gateway
+subjects:
+  - kind: ServiceAccount
+    name: enterprise-gateway-sa
+    namespace: kubeflow
+roleRef:
+  kind: ClusterRole
+  name: enterprise-gateway-controller
+  apiGroup: rbac.authorization.k8s.io
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRoleBinding
+# metadata:
+#   name: enterprise-gateway-spark
+#   labels:
+#     app: enterprise-gateway
+#     component: enterprise-gateway
+# subjects:
+#   - kind: ServiceAccount
+#     name: enterprise-gateway-sa
+#     namespace: kubeflow
+# roleRef:
+#   kind: ClusterRole
+#   name: enterprise-gateway-spark
+#   apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: enterprise-gateway
+    component: enterprise-gateway
+  name: enterprise-gateway
+  namespace: kubeflow
+spec:
+  ports:
+  - name: http
+    port: 8888
+    targetPort: 8888
+  selector:
+    gateway-selector: enterprise-gateway
+  sessionAffinity: ClientIP
+  type: NodePort
+# Uncomment in order to use <k8s-master>:8888
+#  externalIPs:
+#  - k8s-master-public-ip
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: enterprise-gateway
+  namespace: kubeflow
+  labels:
+    gateway-selector: enterprise-gateway
+    app: enterprise-gateway
+    component: enterprise-gateway
+spec:
+# Uncomment/Update to deploy multiple replicas of EG
+#  replicas: 1
+  selector:
+    matchLabels:
+      gateway-selector: enterprise-gateway
+  template:
+    metadata:
+      labels:
+        gateway-selector: enterprise-gateway
+        app: enterprise-gateway
+        component: enterprise-gateway
+    spec:
+      # Created above.
+      serviceAccountName: enterprise-gateway-sa
+      containers:
+      - env:
+        - name: EG_PORT
+          value: "8888" 
+        - name: EG_LIST_KERNELS
+          value: "True"
+
+          # Created above.
+        - name: EG_NAMESPACE
+          value: "kubeflow"
+
+          # Created above.  Used if no KERNEL_NAMESPACE is provided by client.
+        - name: EG_KERNEL_CLUSTER_ROLE
+          value: "kernel-controller"
+
+          # All kernels reside in the EG namespace if True, otherwise KERNEL_NAMESPACE
+          # must be provided or one will be created for each kernel.
+        - name: EG_SHARED_NAMESPACE
+          value: "True"
+
+          # NOTE: This requires appropriate volume mounts to make notebook dir accessible
+        - name: EG_MIRROR_WORKING_DIRS
+          value: "False"
+
+          # Current idle timeout is 1 hour.
+        - name: EG_CULL_IDLE_TIMEOUT
+          value: "3600"
+
+        - name: EG_LOG_LEVEL
+          value: "DEBUG"
+
+        - name: EG_KERNEL_LAUNCH_TIMEOUT
+          value: "300"
+
+        - name: EG_KERNEL_WHITELIST
+          value: "['spark_python_operator']"
+
+        - name: EG_DEFAULT_KERNEL_NAME
+          value: "spark_python_operator"
+
+        # Ensure the following VERSION tag is updated to the version of Enterprise Gateway you wish to run
+        image: elyra/enterprise-gateway:3.2.3
+        # Use IfNotPresent policy so that dev-based systems don't automatically
+        # update. This provides more control.  Since formal tags will be release-specific
+        # this policy should be sufficient for them as well.
+        imagePullPolicy: IfNotPresent
+        name: enterprise-gateway
+        ports:
+        - containerPort: 8888
+## Uncomment to enable NFS-mounted kernelspecs
+#        volumeMounts:
+#        - name: kernelspecs
+#          mountPath: "/usr/local/share/jupyter/kernels"
+#      volumes:
+#      - name: kernelspecs
+#        nfs:
+#          server: <internal-ip-of-nfs-server>
+#          path: "/usr/local/share/jupyter/kernels"
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kernel-image-puller
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      name: kernel-image-puller
+  template:
+    metadata:
+      labels:
+        name: kernel-image-puller
+        app: enterprise-gateway
+        component: kernel-image-puller
+    spec:
+      containers:
+      - name: kernel-image-puller
+        image: elyra/kernel-image-puller:3.2.3
+        imagePullPolicy: Always
+        env:
+          - name: KIP_GATEWAY_HOST
+            value: http://enterprise-gateway.kubeflow:8888
+          - name: KIP_INTERVAL
+            value: "300"
+          - name: KIP_PULL_POLICY
+            value: "IfNotPresent"
+        volumeMounts:
+          - name: dockersock
+            mountPath: "/var/run/docker.sock"
+      volumes:
+      - name: dockersock
+        hostPath:
+          path: /var/run/docker.sock
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: enterprise-gateway
+  namespace: kubeflow
+  labels:
+    app: enterprise-gateway
+    component: enterprise-gateway
+spec:
+  selector:
+    matchLabels:
+      app: enterprise-gateway
+      component: enterprise-gateway
+  action: ALLOW
+  rules:
+  - {}
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: enterprise-gateway
+  namespace: kubeflow
+  labels:
+    app: enterprise-gateway
+    component: enterprise-gateway
+spec:
+  hosts:
+  - enterprise-gateway.kubeflow.svc.cluster.local
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: enterprise-gateway.kubeflow.svc.cluster.local
+        port:
+          number: 8888
+
+
+
+
+
