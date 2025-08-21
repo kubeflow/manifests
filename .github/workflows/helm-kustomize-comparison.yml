@@ -43,4 +43,4 @@ jobs:
       env:
         VERBOSE: "true"
       run: |
-        ./tests/helm_kustomize_compare_all.sh 
+        ./tests/helm_kustomize_compare_all.sh
