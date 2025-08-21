@@ -406,12 +406,37 @@ kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
 
 #### Kubeflow Pipelines
 
+Kubeflow Pipelines offers two deployment options to choose from, each designed for different use cases and operational preferences. The traditional database-based approach stores pipeline definitions in an external database, while the Kubernetes native API mode leverages Kubernetes custom resources for pipeline definition storage and management.
+
+
+##### Pipeline Definitions Stored in the Database
+
 Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/components/pipelines/multi-user/) official Kubeflow component:
 
 ```sh
 kustomize build applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
 ```
 This installs Argo with the runasnonroot emissary executor. Please note that you are still responsible for analyzing the security issues that arise when containers are run with root access and for deciding if the Kubeflow pipeline main containers are run as runasnonroot. It is generally strongly recommended that all user-accessible OCI containers run with Pod Security Standards [restricted](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted).
+
+##### Pipeline Definitions Stored as Kubernetes Resources
+
+Kubeflow Pipelines can be deployed in Kubernetes native API mode, which stores pipeline definitions as Kubernetes custom resources (`Pipeline` and `PipelineVersion` kinds) instead of using external storage. This mode provides better integration with Kubernetes native tooling and GitOps workflows.
+
+```sh
+kustomize build applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user-k8s-native | kubectl apply -f -
+```
+
+**Using the KFP SDK with Kubernetes Native API Mode:**
+
+For detailed pipeline compilation instructions, please refer to the [Kubeflow Pipelines compilation guide](https://www.kubeflow.org/docs/components/pipelines/user-guides/core-functions/compile-a-pipeline/#compiling-for-kubernetes-native-api-mode).
+
+**Differences in Kubernetes Native API Mode:**
+
+- Pipeline definitions are stored as `Pipeline` and `PipelineVersion` custom resources in Kubernetes.
+- Pipeline validation is handled through Kubernetes admission webhooks.
+- The REST API transparently handles the translation to Kubernetes API calls.
+
+**Benefits of Kubernetes Native Mode**: This approach is ideal for organizations that prefer Kubernetes-native workflows and want to manage pipelines using standard Kubernetes tools and practices. Pipeline definitions can be managed through multiple interfaces: direct kubectl commands, the Kubeflow Pipelines REST API, and the KFP UI for user-friendly pipeline management.
 
 #### KServe
 
@@ -721,6 +746,3 @@ pre-commit run
   **A:** Istio CNI provides better security by eliminating the need for privileged init containers, making it more compatible with Pod Security Standards (PSS). It also enables native sidecars support introduced in Kubernetes 1.28, which helps address issues with init containers and application lifecycle management.
 - **Q:** Why does Istio CNI fail on Google Kubernetes Engine (GKE) with "read-only file system" errors?
   **A:** GKE mounts `/opt/cni/bin` as read-only for security reasons, preventing the Istio CNI installer from writing the CNI binary. Use the GKE-specific overlay: `kubectl apply -k common/istio/istio-install/overlays/gke`. This overlay uses GKE's writable CNI directory at `/home/kubernetes/bin`. For more details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites) and [Platform Prerequisites](https://istio.io/latest/docs/ambient/install/platform-prerequisites/).-`
-
-
-
