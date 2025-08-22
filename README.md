@@ -181,7 +181,7 @@ If all the following commands are executed, the result is the same as in the abo
 ---
 **Troubleshooting Note**
 
-We've seen errors like the following when applying the kustomizations of different components:
+We have seen errors like the following when applying the kustomizations of different components:
 ```
 error: resource mapping not found for name: "<RESOURCE_NAME>" namespace: "<SOME_NAMESPACE>" from "STDIN": no matches for kind "<CRD_NAME>" in version "<CRD_FULL_NAME>"
 ensure CRDs are installed first
@@ -193,7 +193,18 @@ If you encounter this error, we advise re-applying the manifests of the componen
 
 ---
 
-#### cert-manager
+
+#### Kubeflow Namespace
+
+Create the namespaces where the Kubeflow components will reside. We are in the transition from `kubeflow` to `kubeflow-system`.
+
+Install the Kubeflow namespace:
+
+```sh
+kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+```
+
+#### Cert-manager
 
 Cert-manager is used by many Kubeflow components to provide certificates for admission webhooks.
 
@@ -214,16 +225,6 @@ Error from server (InternalError): error when creating "STDIN": Internal error o
 This is because the webhook is not yet ready to receive requests. Wait a couple of seconds and retry applying the manifests.
 
 For more troubleshooting info, also check out <https://cert-manager.io/docs/troubleshooting/webhook/>.
-
-#### Kubeflow Namespace
-
-Create the namespace where the Kubeflow components will reside. This namespace is named `kubeflow`.
-
-Install the Kubeflow namespace:
-
-```sh
-kustomize build common/kubeflow-namespace/base | kubectl apply -f -
-```
 
 #### Istio
 
@@ -746,3 +747,4 @@ pre-commit run
   **A:** Istio CNI provides better security by eliminating the need for privileged init containers, making it more compatible with Pod Security Standards (PSS). It also enables native sidecars support introduced in Kubernetes 1.28, which helps address issues with init containers and application lifecycle management.
 - **Q:** Why does Istio CNI fail on Google Kubernetes Engine (GKE) with "read-only file system" errors?
   **A:** GKE mounts `/opt/cni/bin` as read-only for security reasons, preventing the Istio CNI installer from writing the CNI binary. Use the GKE-specific overlay: `kubectl apply -k common/istio/istio-install/overlays/gke`. This overlay uses GKE's writable CNI directory at `/home/kubernetes/bin`. For more details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites) and [Platform Prerequisites](https://istio.io/latest/docs/ambient/install/platform-prerequisites/).-`
+
