@@ -32,9 +32,9 @@ You can also install the master branch of [`kubeflow/manifests`](https://github.
 
 ## Overview of the Kubeflow Platform
 
-- This repository is owned by the [Platform/Manifests/security Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md). 
+- This repository is owned by the [Platform/Manifests/security Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md).
 - You can join the CNCF Slack and access our meetings at the [Kubeflow Community](https://www.kubeflow.org/docs/about/community/) website.
-- Our channel on the CNCF Slack is [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2). 
+- Our channel on the CNCF Slack is [**#kubeflow-platform**](https://app.slack.com/client/T08PSQ7BQ/C073W572LA2).
 - You can also find our [biweekly meetings](https://bit.ly/kf-wg-manifests-meet), including the commentable [Agenda](https://bit.ly/kf-wg-manifests-notes).
 - If you want to contribute, please take a look at the [CONTRIBUTING.md](CONTRIBUTING.md).
 
@@ -215,6 +215,16 @@ This is because the webhook is not yet ready to receive requests. Wait a couple 
 
 For more troubleshooting info, also check out <https://cert-manager.io/docs/troubleshooting/webhook/>.
 
+#### Kubeflow Namespace
+
+Create the namespace where the Kubeflow components will reside. This namespace is named `kubeflow`.
+
+Install the Kubeflow namespace:
+
+```sh
+kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+```
+
 #### Istio
 
 Istio is used by most Kubeflow components to secure their traffic, enforce network authorization, and implement routing policies. This installation uses Istio CNI, which eliminates the need for privileged init containers and improves compatibility with Pod Security Standards. If you use Cilium CNI on your cluster, you must configure it properly for Istio as shown [here](https://docs.cilium.io/en/latest/network/servicemesh/istio/); otherwise, you will encounter RBAC access denied on the central dashboard.
@@ -254,12 +264,12 @@ kubectl wait --for=condition=Ready pod -l 'app.kubernetes.io/name=oauth2-proxy' 
 
 # Option 2: works on Kind, K3D, Rancher, GKE, and many other clusters with the proper configuration, and allows K8s service account tokens to be used
 #           from outside the cluster via the Istio ingress-gateway. For example, for automation with GitHub Actions.
-#           In the end, you need to patch the issuer and jwksUri fields in the request authentication resource in the istio-system namespace 
+#           In the end, you need to patch the issuer and jwksUri fields in the request authentication resource in the istio-system namespace
 #           as done in /common/oauth2-proxy/overlays/m2m-dex-and-kind/kustomization.yaml.
 #           Please follow the guidelines in the section Upgrading and Extending below for patching.
 #           curl --insecure -H "Authorization: Bearer `cat /var/run/secrets/kubernetes.io/serviceaccount/token`"  https://kubernetes.default/.well-known/openid-configuration
 #           from a pod in the cluster should provide you with the issuer of your cluster.
-# 
+#
 #kustomize build common/oauth2-proxy/overlays/m2m-dex-and-kind/ | kubectl apply -f -
 #kubectl wait --for=condition=Ready pod -l 'app.kubernetes.io/name=oauth2-proxy' --timeout=180s -n oauth2-proxy
 #kubectl wait --for=condition=Ready pod -l 'app.kubernetes.io/name=cluster-jwks-proxy' --timeout=180s -n istio-system
@@ -365,16 +375,6 @@ Optionally, you can install Knative Eventing, which can be used for inference re
 
 ```sh
 kustomize build common/knative/knative-eventing/base | kubectl apply -f -
-```
-
-#### Kubeflow Namespace
-
-Create the namespace where the Kubeflow components will reside. This namespace is named `kubeflow`.
-
-Install the Kubeflow namespace:
-
-```sh
-kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 ```
 
 #### Network Policies
@@ -496,7 +496,7 @@ kustomize build applications/jupyter/jupyter-web-app/upstream/overlays/istio | k
 
 This feature is still in development.
 
-#### PVC Viewer Controller 
+#### PVC Viewer Controller
 
 Install the PVC Viewer Controller official Kubeflow component:
 
@@ -616,9 +616,9 @@ For security reasons, we don't want to use the default username and email for th
 
 ### Change Default User Password
 
-If you have an identity provider (LDAP, GitHub, Google, Microsoft, OIDC, SAML, GitLab) available, you should use that instead of static passwords and connect it to oauth2-proxy or Dex as explained in the sections above. This is best practice instead of using static passwords. 
+If you have an identity provider (LDAP, GitHub, Google, Microsoft, OIDC, SAML, GitLab) available, you should use that instead of static passwords and connect it to oauth2-proxy or Dex as explained in the sections above. This is best practice instead of using static passwords.
 
-For security reasons, we don't want to use the default static password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password and apply it either **before creating the cluster** or **after creating the cluster**. 
+For security reasons, we don't want to use the default static password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password and apply it either **before creating the cluster** or **after creating the cluster**.
 
 Pick a password for the default user, with email `user@example.com`, and hash it using `bcrypt`:
 
