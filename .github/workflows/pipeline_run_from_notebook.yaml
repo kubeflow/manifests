@@ -77,17 +77,5 @@ jobs:
         kubectl -n kubeflow-user-example-com exec -ti \
           test-0 -- python /home/jovyan/pipeline_run_and_wait_kubeflow.py
 
-    - name: Apply Pod Security Standards baseline levels
-      run: ./tests/PSS_enable.sh baseline
-
-    - name: Unapply applied baseline labels
-      run: |
-        NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow" "knative-serving")
-        for NAMESPACE in "${NAMESPACES[@]}"; do
-          if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
-            kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce-
-          fi
-        done
-
-    - name: Applying Pod Security Standards restricted levels
-      run: ./tests/PSS_enable.sh restricted
+    - name: Apply Pod Security Standards restricted levels
+      run: ./tests/PSS_enable.sh

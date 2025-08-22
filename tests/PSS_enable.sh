@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-PSS_LEVEL="${1:-baseline}"
+PSS_LEVEL="${1:-restricted}"
 
 [[ "$PSS_LEVEL" == "baseline" || "$PSS_LEVEL" == "restricted" ]] || {
     echo "ERROR: Invalid PSS level '$PSS_LEVEL'. Usage: $0 [baseline|restricted]"

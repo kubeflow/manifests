@@ -84,5 +84,5 @@ jobs:
         fi
 
 
-    - name: Apply Pod Security Standards baseline levels
-      run: ./tests/PSS_enable.sh baseline
+    - name: Apply Pod Security Standards restricted levels
+      run: ./tests/PSS_enable.sh

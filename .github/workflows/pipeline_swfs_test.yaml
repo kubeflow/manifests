@@ -114,20 +114,8 @@ jobs:
     - name: Test SeaweedFS Namespace Isolation
       run: ./tests/swfs_namespace_isolation_test.sh
 
-    - name: Apply Pod Security Standards baseline levels for static namespaces
-      run: ./tests/PSS_enable.sh baseline
-
-    - name: Unapply applied baseline labels
-      run: |
-        NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow")
-        for NAMESPACE in "${NAMESPACES[@]}"; do
-          if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
-            kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce-
-          fi
-        done
-
-    - name: Applying Pod Security Standards restricted levels for static namespaces
-      run: ./tests/PSS_enable.sh restricted
+    - name: Apply Pod Security Standards restricted levels
+      run: ./tests/PSS_enable.sh
 
     - name: Collect Logs on Failure
       if: failure()
