@@ -252,16 +252,6 @@ jobs:
           exit 1
         fi
 
-    - name: Apply Pod Security Standards Baseline
-      run: ./tests/PSS_enable.sh baseline
-
-    - name: Remove Pod Security Labels
-      run: |
-        NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow" "knative-serving" "kubeflow-system" "kubeflow-user-example-com")
-        for namespace in "${NAMESPACES[@]}"; do
-            kubectl label namespace $namespace pod-security.kubernetes.io/enforce-
-        done
-
     - name: Apply Pod Security Standards Restricted
       run: ./tests/PSS_enable.sh restricted
 
