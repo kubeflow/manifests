@@ -290,9 +290,9 @@ if __name__ == "__main__":
     scenario = sys.argv[4]
     namespace = sys.argv[5] if len(sys.argv) > 5 and not sys.argv[5].startswith('--') else ""
     
-    if component not in ["katib", "model-registry", "kserve-models-web-app"]:
+    if component not in ["katib", "model-registry", "kserve-models-web-app", "notebook-controller"]:
         print(f"ERROR: Unknown component: {component}")
-        print("Supported components: katib, model-registry, kserve-models-web-app")
+        print("Supported components: katib, model-registry, kserve-models-web-app, notebook-controller")
         sys.exit(1)
     
     success = compare_manifests(kustomize_file, helm_file, component, scenario, namespace)
