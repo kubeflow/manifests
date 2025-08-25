@@ -192,7 +192,7 @@ jobs:
 
     - name: Apply Pod Security Standards Restricted levels
       if: matrix.istio-mode == 'cni'
-      run: ./tests/PSS_enable.sh 
+      run: ./tests/PSS_enable.sh
 
     - name: Collect debug information on failure
       if: failure()
