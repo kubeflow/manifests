@@ -190,9 +190,9 @@ jobs:
         kubectl run test-client --image=busybox --rm -i --restart=Never -n $KF_PROFILE -- \
           wget -qO- --timeout=10 test-application.$KF_PROFILE.svc.cluster.local
 
-    - name: Apply Pod Security Standards baseline levels
+    - name: Apply Pod Security Standards Restricted levels
       if: matrix.istio-mode == 'cni'
-      run: ./tests/PSS_enable.sh baseline
+      run: ./tests/PSS_enable.sh 
 
     - name: Collect debug information on failure
       if: failure()
