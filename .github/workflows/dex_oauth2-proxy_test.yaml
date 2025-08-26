@@ -53,6 +53,9 @@ jobs:
     - name: Create KF Profile
       run: ./tests/kubeflow_profile_install.sh
 
+    - name: Apply Pod Security Standards restricted levels
+      run: ./tests/PSS_enable.sh
+
     - name: Port forward the istio-ingress gateway
       run: ./tests/port_forward_gateway.sh
 
@@ -65,18 +68,3 @@ jobs:
         python3 tests/dex_login_test.py
 
         echo "Dex login test completed successfully."
-
-    - name: Apply Pod Security Standards baseline levels for static namespaces
-      run: ./tests/PSS_baseline_enable.sh
-
-    - name: Unapply applied baseline labels
-      run: |
-        NAMESPACES=("istio-system" "auth" "cert-manager" "oauth2-proxy" "kubeflow")
-        for NAMESPACE in "${NAMESPACES[@]}"; do
-          if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
-            kubectl label namespace $NAMESPACE pod-security.kubernetes.io/enforce-
-          fi
-        done
-
-    - name: Applying Pod Security Standards restricted levels for static namespaces
-      run: ./tests/PSS_restricted_enable.sh
