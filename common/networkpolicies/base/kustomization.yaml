@@ -4,6 +4,7 @@ namespace: kubeflow
 resources:
 - cache-server.yaml
 - centraldashboard.yaml
+- cert-manager-webhook.yaml
 - default-allow-same-namespace.yaml
 - default-allow-same-namespace-kubeflow-system.yaml
 - default-allow-same-namespace-knative-serving.yaml
