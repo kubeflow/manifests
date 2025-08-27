@@ -6,6 +6,11 @@ resources:
 - centraldashboard.yaml
 - default-allow-same-namespace.yaml
 - default-allow-same-namespace-kubeflow-system.yaml
+- default-allow-same-namespace-knative-serving.yaml
+- default-allow-same-namespace-cert-manager.yaml
+- default-allow-same-namespace-istio-system.yaml
+- default-allow-same-namespace-oauth2-proxy.yaml
+- default-allow-same-namespace-auth.yaml
 - jupyter-web-app.yaml
 - katib-controller.yaml
 - katib-db-manager.yaml
