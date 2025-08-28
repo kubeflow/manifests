@@ -1,0 +1,24 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: cert-manager-webhook
+  namespace: cert-manager
+spec:
+  podSelector:
+    matchExpressions:
+    - key: app.kubernetes.io/name
+      operator: In
+      values:
+      - webhook
+    - key: app.kubernetes.io/component
+      operator: In
+      values:
+      - "webhook"
+  # https://www.elastic.co/guide/en/cloud-on-k8s/1.1/k8s-webhook-network-policies.html
+  # The kubernetes api server must reach the webhook
+  ingress:
+  - ports:
+    - protocol: TCP
+      port: 10250
+  policyTypes:
+  - Ingress
