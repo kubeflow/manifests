@@ -1,0 +1,7 @@
+# Helm dependency charts
+**/charts/*.tgz
+**/Chart.lock
+ 
+# Helm temporary files
+*.tmp
+*.backup 
