@@ -20321,7 +20321,7 @@ data:
         "sts": {
           "servicePort": 0
         },
-        "tag": "1.26.1",
+        "tag": "1.27.0",
         "variant": "",
         "waypoint": {
           "affinity": {},
@@ -20500,7 +20500,7 @@ data:
         "sts": {
           "servicePort": 0
         },
-        "tag": "1.26.1",
+        "tag": "1.27.0",
         "variant": "",
         "waypoint": {
           "affinity": {},
@@ -20624,7 +20624,7 @@ data:
         "configValidation": true,
         "hub": "gcr.io/istio-release",
         "istioNamespace": "istio-system",
-        "tag": "1.26.1"
+        "tag": "1.27.0"
       },
       "meshConfig": {
         "tcpKeepalive": {
@@ -20948,7 +20948,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        image: gcr.io/istio-release/proxyv2:1.26.1
+        image: gcr.io/istio-release/proxyv2:1.27.0
         name: istio-proxy
         ports:
         - containerPort: 15020
@@ -21180,7 +21180,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        image: gcr.io/istio-release/proxyv2:1.26.1
+        image: gcr.io/istio-release/proxyv2:1.27.0
         name: istio-proxy
         ports:
         - containerPort: 15021
@@ -21391,7 +21391,7 @@ spec:
               resource: limits.cpu
         - name: PLATFORM
           value: ""
-        image: gcr.io/istio-release/pilot:1.26.1
+        image: gcr.io/istio-release/pilot:1.27.0
         name: discovery
         ports:
         - containerPort: 8080

@@ -773,7 +773,7 @@ data:
   AMBIENT_IPV6: 'true'
   AMBIENT_RECONCILE_POD_RULES_ON_STARTUP: 'false'
   CHAINED_CNI_PLUGIN: 'true'
-  CURRENT_AGENT_VERSION: 1.26.1
+  CURRENT_AGENT_VERSION: 1.27.0
   EXCLUDE_NAMESPACES: kube-system
   ISTIO_OWNED_CNI_CONFIG: 'false'
   NATIVE_NFTABLES: 'false'
@@ -2907,7 +2907,7 @@ data:
         "sts": {
           "servicePort": 0
         },
-        "tag": "1.26.1",
+        "tag": "1.27.0",
         "variant": "",
         "waypoint": {
           "affinity": {},
@@ -3085,7 +3085,7 @@ data:
         "sts": {
           "servicePort": 0
         },
-        "tag": "1.26.1",
+        "tag": "1.27.0",
         "variant": "",
         "waypoint": {
           "affinity": {},
@@ -3209,7 +3209,7 @@ data:
         "configValidation": true,
         "hub": "gcr.io/istio-release",
         "istioNamespace": "istio-system",
-        "tag": "1.26.1"
+        "tag": "1.27.0"
       },
       "meshConfig": {
         "tcpKeepalive": {
@@ -3488,7 +3488,7 @@ spec:
         envFrom:
         - configMapRef:
             name: istio-cni-config
-        image: gcr.io/istio-release/install-cni:1.26.1
+        image: gcr.io/istio-release/install-cni:1.27.0
         name: install-cni
         ports:
         - containerPort: 15014
@@ -3685,7 +3685,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        image: gcr.io/istio-release/proxyv2:1.26.1
+        image: gcr.io/istio-release/proxyv2:1.27.0
         name: istio-proxy
         ports:
         - containerPort: 15021
@@ -3895,7 +3895,7 @@ spec:
               resource: limits.cpu
         - name: PLATFORM
           value: ''
-        image: gcr.io/istio-release/pilot:1.26.1
+        image: gcr.io/istio-release/pilot:1.27.0
         name: discovery
         ports:
         - containerPort: 8080
