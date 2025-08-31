@@ -15,8 +15,7 @@ BRANCH_NAME=${BRANCH_NAME:=${COMPONENT_NAME}-${COMMIT?}}
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
 ISTIO_DIRECTORY=$MANIFESTS_DIRECTORY/common/${COMPONENT_NAME}
 
-# Removed branch creation step
-# create_branch "$BRANCH_NAME"
+create_branch "$BRANCH_NAME"
 
 echo "Checking out in $SOURCE_DIRECTORY to $COMMIT..."
 mkdir -p $SOURCE_DIRECTORY
