@@ -29,6 +29,6 @@ spec:
     global:
       configValidation: true
       istioNamespace: istio-system
-      # proxy: # TODO: Uncomment to enable seccomp for sidecar proxies
+      # proxy: # TODO: Uncomment to enable seccompProfile for sidecar proxies
       #   seccompProfile:
       #     type: RuntimeDefault
