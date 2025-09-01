@@ -32,6 +32,7 @@ The `yaml` type sources model metadata from a local YAML file.
 ##### Properties
 
 - **`yamlCatalogPath`** (*string*, required): The path to the YAML file containing the model definitions. This path is relative to the directory where the `sources.yaml` file is located.
+- **`excludedModels`** (*string list*, optional): A list of models to exclude from the catalog. These can be an exact name with a tag (e.g., `model-a:1.0`) or a pattern ending with `*` to exclude all tags for a repository (e.g., `model-b:*`).
 
 ##### Example
 
@@ -43,6 +44,9 @@ catalogs:
     enabled: true
     properties:
       yamlCatalogPath: sample-catalog.yaml
+      excludedModels:
+      - model-a:1.0
+      - model-b:*
 ```
 
 #### `rhec`
@@ -51,8 +55,8 @@ The `rhec` type sources model metadata from the Red Hat Ecosystem Catalog.
 
 ##### Properties
 
-- **`models`** (*list*, required): A list of models to include from the Red Hat Ecosystem Catalog. Each entry in the list must contain a `repository` field.
-  - **`repository`** (*string*, required): The name of the model repository in the Red Hat Ecosystem Catalog (e.g., `rhelai1/modelcar-granite-7b-starter`).
+- **`models`** (*string list*, required): A list of models to include from the Red Hat Ecosystem Catalog. Each entry contains the full name of the model repository in the Red Hat Ecosystem Catalog (e.g., `rhelai1/modelcar-granite-7b-starter`).
+- **`excludedModels`** (*string list*, optional): A list of models to exclude from the catalog. These can be an exact name with a tag (e.g., `rhelai1/modelcar-granite-7b-starter:b9514c3`) or a pattern ending with `*` to exclude all tags for a repository (e.g., `rhelai1/modelcar-granite-7b-starter:*`).
 
 ##### Example
 
@@ -64,5 +68,8 @@ catalogs:
     enabled: true
     properties:
       models:
-      - repository: rhelai1/modelcar-granite-7b-starter
+      - rhelai1/modelcar-granite-7b-starter
+      excludedModels:
+      - rhelai1/modelcar-granite-7b-starter:v0
+      - rhelai1/modelcar-granite-*
 ```
