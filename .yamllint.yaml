@@ -1,6 +1,11 @@
 # It extends the default conf by adjusting some options.
 extends: default
 
+ignore: |
+  common/istio/cluster-local-gateway/base/cluster-local-gateway.yaml
+  common/istio/istio-crds/base/crd.yaml
+  common/istio/istio-install/base/install.yaml
+
 rules:
   document-start:
     present: false
