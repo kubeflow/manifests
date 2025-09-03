@@ -18,15 +18,15 @@ spec:
       labels:
         app: model-registry-ui
     spec: 
-      serviceAccountName: model-registry-ui
+      serviceAccountName: {{ include "model-registry.ui.serviceAccountName" . }}
       securityContext:
         seccompProfile:
           type: RuntimeDefault
         runAsNonRoot: true
       containers:
       - name: model-registry-ui
-        image: ghcr.io/kubeflow/model-registry/ui:v0.2.22
-        imagePullPolicy: Always
+        image: "{{ .Values.global.imageRegistry }}/{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag | default .Values.global.imageTag }}"
+        imagePullPolicy: {{ .Values.ui.image.pullPolicy | default .Values.global.imagePullPolicy }}
         {{- if .Values.ui.livenessProbe.enabled }}
         livenessProbe:
           httpGet:
@@ -101,7 +101,7 @@ spec:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
-      serviceAccountName: model-registry-ui
+      serviceAccountName: {{ include "model-registry.ui.serviceAccountName" . }}
       {{- if .Values.ui.standalone.enabled }}
       volumes:
       - configMap:

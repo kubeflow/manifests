@@ -8,10 +8,14 @@ resources:
 - service.yaml
 
 configMapGenerator:
-- name: sources
-  options:
-    disableNameSuffixHash: true
-  behavior: create
+- behavior: create
   files:
   - sources.yaml=sources.yaml
   - sample-catalog.yaml=sample-catalog.yaml
+  name: sources
+  options:
+    disableNameSuffixHash: true
+images:
+- name: ghcr.io/kubeflow/model-registry/server
+  newName: ghcr.io/kubeflow/model-registry/server
+  newTag: v0.3.0
