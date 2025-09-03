@@ -5,7 +5,6 @@ on:
     branches: [master]
     paths:
     - 'experimental/helm/charts/**'
-    - 'applications/model-registry/**'
     - 'tests/helm_kustomize_compare.py'
     - 'tests/helm_kustomize_compare.sh'
     - 'tests/helm_kustomize_compare_all.sh'
