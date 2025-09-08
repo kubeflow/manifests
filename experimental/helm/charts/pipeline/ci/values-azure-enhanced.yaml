@@ -1,0 +1,223 @@
+# Azure-Specific Configuration - Enhanced
+# This configuration provides Azure integration with Blob Storage and Azure SQL
+
+global:
+  namespace: kubeflow
+  imageRegistry: ghcr.io/kubeflow
+  imageTag: "2.5.0"
+  imagePullPolicy: IfNotPresent
+
+# Installation mode
+installMode:
+  type: generic
+  multiUser:
+    enabled: false
+
+# Database Configuration 
+mysql:
+  enabled: false
+
+postgresql:
+  enabled: false
+
+externalDatabase:
+  type: mysql
+  host: "[SQLSERVERNAME].mysql.database.azure.com"
+  port: 3306
+  database: mlpipeline
+  username: "YOUR_AZURE_SQL_USERNAME@[SQLSERVERNAME]"
+  password: "YOUR_AZURE_SQL_PASSWORD"
+  existingSecret: "mysql-secret"
+
+# Object Storage Configuration 
+minio:
+  enabled: false
+
+objectStore:
+  provider: azure
+  secure: true
+  bucketName: "mlpipeline"
+  azure:
+    storageAccount: "yourstorageaccount"
+    container: "mlpipeline"
+    accessKey: "YOUR_STORAGE_ACCOUNT_KEY"
+
+# Database names
+database:
+  pipelinedb: mlpipeline
+  metadb: metadb
+  cachedb: cachedb
+
+# Pipeline Configuration
+pipeline:
+  cache:
+    image: "registry.k8s.io/busybox"
+    nodeRestrictions: false
+    maximumStaleness: ""
+    defaultStaleness: ""
+
+# Argo Workflows Configuration
+argo:
+  enabled: true
+  # Azure-specific Argo configuration
+
+# Environment Configuration
+env:
+  platform: azure
+  azure:
+    resourceGroup: "yourResourceGroup"
+    storageAccount: "yourstorageaccount"
+    sql:
+      enabled: true
+      serverName: "[SQLSERVERNAME]"
+      database: "mlpipeline"
+    blob:
+      enabled: true
+      storageAccount: "yourstorageaccount"
+      container: "mlpipeline"
+
+# Azure API Server configuration
+apiServer:
+  env:
+    # Object store configuration for Azure Blob Storage
+    objectStoreSecure: "true"
+    objectStoreBucketName: "mlpipeline"
+    objectStoreHost: "yourstorageaccount.blob.core.windows.net"
+    objectStoreRegion: ""
+    objectStorePort: ""
+  
+  # Service account annotations for Azure Managed Identity
+  serviceAccount:
+    annotations:
+      azure.workload.identity/client-id: "YOUR_MANAGED_IDENTITY_CLIENT_ID"
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 500Mi
+    limits:
+      cpu: 1
+      memory: 2Gi
+
+# Azure UI configuration
+ui:
+  env:
+    # MinIO service configuration for Azure Blob Storage
+    minioServiceHost: "yourstorageaccount.blob.core.windows.net"
+    minioServiceRegion: ""
+  
+  resources:
+    requests:
+      cpu: 10m
+      memory: 70Mi
+    limits:
+      cpu: 100m
+      memory: 200Mi
+
+# Enhanced resources for Azure deployment
+persistenceAgent:
+  resources:
+    requests:
+      cpu: 120m
+      memory: 500Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+scheduledWorkflow:
+  resources:
+    requests:
+      cpu: 120m
+      memory: 100Mi
+    limits:
+      cpu: 250m
+      memory: 500Mi
+
+metadata:
+  grpc:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 300Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+  envoy:
+    resources:
+      requests:
+        cpu: 20m
+        memory: 20Mi
+      limits:
+        cpu: 100m
+        memory: 100Mi
+
+cache:
+  server:
+    resources:
+      requests:
+        cpu: 120m
+        memory: 500Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+visualization:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 200Mi
+    limits:
+      cpu: 200m
+      memory: 500Mi
+
+viewerCrd:
+  resources:
+    requests:
+      cpu: 120m
+      memory: 100Mi
+    limits:
+      cpu: 250m
+      memory: 200Mi
+
+# Azure Load Balancer integration
+  service:
+    type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/azure-load-balancer-internal: "false"
+      service.beta.kubernetes.io/azure-dns-label-name: "kubeflow-pipelines"
+
+# Monitoring with Azure Monitor
+monitoring:
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false
+  azureMonitor:
+    enabled: true
+    workspaceId: "YOUR_LOG_ANALYTICS_WORKSPACE_ID"
+
+# Service mesh integration
+istio:
+  enabled: false
+
+# Cert-manager with Azure DNS
+certManager:
+  enabled: true
+  issuer: "letsencrypt-prod"
+  issuerKind: "ClusterIssuer"
+  azure:
+    subscriptionId: "YOUR_AZURE_SUBSCRIPTION_ID"
+    resourceGroup: "yourResourceGroup"
+    hostedZoneName: "yourdomain.com"
+    managedIdentityClientId: "YOUR_MANAGED_IDENTITY_CLIENT_ID"
+
+# Azure-specific MinIO gateway for Blob Storage compatibility
+minioAzureGateway:
+  enabled: true
+  image: "minio/minio:latest"
+  storageAccount: "yourstorageaccount"
+  accessKey: "YOUR_STORAGE_ACCOUNT_KEY"
+  secretKey: "YOUR_STORAGE_ACCOUNT_SECRET"
+  service:
+    type: ClusterIP
+    port: 9000

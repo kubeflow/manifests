@@ -1,0 +1,1026 @@
+# Default values for kubeflow-pipelines.
+
+# -- String to partially override release name.
+nameOverride: ""
+
+# -- String to fully override release name.
+fullnameOverride: ""
+
+# -- Common labels to add to the resources.
+commonLabels: {}
+
+# -- Common annotations to add to the resources.
+commonAnnotations: {}
+
+# Global settings
+global:
+  # -- Namespace to install Kubeflow Pipelines
+  namespace: kubeflow
+  # -- Image registry for Kubeflow Pipelines images
+  imageRegistry: ghcr.io/kubeflow
+  # -- Global image tag for all Kubeflow Pipelines components
+  imageTag: 2.5.0
+  # -- Global image pull policy
+  imagePullPolicy: IfNotPresent
+  # -- Global image pull secrets
+  imagePullSecrets: []
+  # -- Global annotations to add to the resources
+  annotations: {}
+  # -- Global logging level
+  logLevel: "info"
+
+# Installation mode configuration
+installMode:
+  # -- Installation type (generic or multi-user)
+  type: generic
+  
+  # Multi-user specific configuration
+  multiUser:
+    # -- Enable multi-user mode
+    enabled: false
+    profileController:
+      # -- Enable profile controller for multi-user mode
+      enabled: false
+
+# Custom Resource Definitions
+crds:
+  # -- Install CRDs
+  install: true
+
+# API Server configuration
+apiServer:
+  # -- Enable the Kubeflow Pipelines API Server
+  enabled: true
+  # -- Number of API Server replicas
+  replicas: 1
+  
+  image:
+    # -- API Server image repository
+    repository: kfp-api-server
+    # -- API Server image tag (overrides global.imageTag if set)
+    tag: ""
+    # -- API Server image pull policy (overrides global.imagePullPolicy if set)
+    pullPolicy: ""
+    
+  # -- API Server resource requests and limits
+  resources:
+    requests:
+      cpu: 250m
+      memory: 500Mi
+    limits: {}
+  
+  # Service Account
+  serviceAccount:
+    # -- Create service account for API Server
+    create: true
+    # -- Service account name (uses default if not set)
+    name: "ml-pipeline"
+    # -- Service account annotations
+    annotations: {}
+  
+  # Service configuration
+  service:
+    # -- Service type
+    type: ClusterIP
+    # -- HTTP service port
+    port: 8888
+    # -- gRPC service port
+    grpcPort: 8887
+  
+  # Environment variables
+  env:
+    # -- Whether to publish component logs to object store
+    publishLogs: true
+    # -- Driver/launcher log level during pipeline execution
+    pipelineLogLevel: "1"
+    # -- Auto update pipeline default version
+    autoUpdatePipelineDefaultVersion: true
+    # -- V2 driver image
+    v2DriverImage: "ghcr.io/kubeflow/kfp-driver:2.5.0"
+    # -- V2 launcher image
+    v2LauncherImage: "ghcr.io/kubeflow/kfp-launcher:2.5.0"
+  
+  # Additional environment variables
+  additionalEnv: []
+  
+  # Probes configuration
+  probes:
+    readiness:
+      initialDelaySeconds: 3
+      periodSeconds: 5
+      timeoutSeconds: 2
+    liveness:
+      initialDelaySeconds: 3
+      periodSeconds: 5
+      timeoutSeconds: 2
+    startup:
+      failureThreshold: 12
+      periodSeconds: 5
+      timeoutSeconds: 2
+  
+  # Security context
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+        - ALL
+
+persistenceAgent:
+  # -- Enable Persistence Agent
+  enabled: true
+  # -- Number of Persistence Agent replicas
+  replicas: 1
+  
+  image:
+    # -- Persistence Agent image repository
+    repository: kfp-persistence-agent
+    # -- Persistence Agent image tag (overrides global.imageTag if set)
+    tag: ""
+    # -- Persistence Agent image pull policy (overrides global.imagePullPolicy if set)
+    pullPolicy: ""
+  
+  # -- Persistence Agent resource requests and limits
+  resources:
+    requests:
+      cpu: 120m
+      memory: 500Mi
+    limits: {}
+  
+  # Service Account
+  serviceAccount:
+    # -- Create service account for Persistence Agent
+    create: true
+    # -- Service account name (uses default if not set)
+    name: "ml-pipeline-persistenceagent"
+    # -- Service account annotations
+    annotations: {}
+  
+  # Environment variables
+  env:
+    # -- TTL seconds after workflow finish
+    ttlSecondsAfterWorkflowFinish: "86400"
+    # -- Number of workers
+    numWorkers: "2"
+  
+  # Additional environment variables
+  additionalEnv: []
+  
+  # Security context
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+        - ALL
+
+scheduledWorkflow:
+  enabled: true
+  name: ml-pipeline-scheduledworkflow
+  
+  image:
+    repository: kfp-scheduled-workflow-controller
+    tag: "2.5.0"
+  
+  replicas: 1
+  
+  # Service Account
+  serviceAccount:
+    create: true
+    name: "ml-pipeline-scheduledworkflow"
+    annotations: {}
+  
+  # Resources
+  resources:
+    requests:
+      cpu: 120m
+      memory: 100Mi
+    limits: {}
+  
+  # Security context
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+        - ALL
+
+ui:
+  # -- Enable UI
+  enabled: true
+  # -- Number of UI replicas
+  replicas: 1
+  
+  image:
+    # -- UI image repository
+    repository: kfp-frontend
+    # -- UI image tag (overrides global.imageTag if set)
+    tag: ""
+    # -- UI image pull policy (overrides global.imagePullPolicy if set)
+    pullPolicy: ""
+  
+  # -- UI resource requests and limits
+  resources:
+    requests:
+      cpu: 10m
+      memory: 70Mi
+    limits: {}
+  
+  # Service Account
+  serviceAccount:
+    # -- Create service account for UI
+    create: true
+    # -- Service account name (uses default if not set)
+    name: "ml-pipeline-ui"
+    # -- Service account annotations
+    annotations: {}
+  
+  # Service configuration
+  service:
+    # -- Service type
+    type: ClusterIP
+    # -- Service port
+    port: 80
+  
+  # Environment variables
+  env:
+    # -- Allow custom visualizations
+    allowCustomVisualizations: true
+    # -- Archive Argo logs
+    argoArchiveLogs: true
+    # -- Disable GKE metadata
+    disableGkeMetadata: true
+  
+  # Additional environment variables
+  additionalEnv: []
+  
+  # Probes configuration
+  probes:
+    readiness:
+      initialDelaySeconds: 3
+      periodSeconds: 5
+      timeoutSeconds: 2
+    liveness:
+      initialDelaySeconds: 3
+      periodSeconds: 5
+      timeoutSeconds: 2
+  
+  # Security context
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+        - ALL
+
+viewerCrd:
+  # -- Enable Viewer CRD Controller
+  enabled: true
+  # -- Number of Viewer CRD Controller replicas
+  replicas: 1
+  
+  image:
+    # -- Viewer CRD Controller image repository
+    repository: kfp-viewer-crd-controller
+    # -- Viewer CRD Controller image tag (overrides global.imageTag if set)
+    tag: ""
+    # -- Viewer CRD Controller image pull policy (overrides global.imagePullPolicy if set)
+    pullPolicy: ""
+  
+  # -- Viewer CRD Controller resource requests and limits
+  resources:
+    requests:
+      cpu: 120m
+      memory: 100Mi
+    limits: {}
+  
+  # Service Account
+  serviceAccount:
+    # -- Create service account for Viewer CRD Controller
+    create: true
+    # -- Service account name (uses default if not set)
+    name: "ml-pipeline-viewer-crd-service-account"
+    # -- Service account annotations
+    annotations: {}
+  
+  # Environment variables
+  env:
+    # -- Maximum number of viewers
+    maxNumViewers: "50"
+  
+  # Additional environment variables
+  additionalEnv: []
+  
+  # Security context
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+        - ALL
+
+visualization:
+  # -- Enable Visualization Server
+  enabled: true
+  # -- Number of Visualization Server replicas
+  replicas: 1
+  
+  image:
+    # -- Visualization Server image repository
+    repository: kfp-visualization-server
+    # -- Visualization Server image tag (overrides global.imageTag if set)
+    tag: ""
+    # -- Visualization Server image pull policy (overrides global.imagePullPolicy if set)
+    pullPolicy: ""
+  
+  # -- Visualization Server resource requests and limits
+  resources:
+    requests:
+      cpu: 50m
+      memory: 200Mi
+    limits: {}
+  
+  # Service Account
+  serviceAccount:
+    # -- Create service account for Visualization Server
+    create: true
+    # -- Service account name (uses default if not set)
+    name: "ml-pipeline-visualizationserver"
+    # -- Service account annotations
+    annotations: {}
+  
+  # Service configuration
+  service:
+    # -- Service type
+    type: ClusterIP
+    # -- Service port
+    port: 8888
+  
+  # Additional environment variables
+  additionalEnv: []
+  
+  # Probes configuration
+  probes:
+    readiness:
+      initialDelaySeconds: 3
+      periodSeconds: 5
+      timeoutSeconds: 2
+    liveness:
+      initialDelaySeconds: 3
+      periodSeconds: 5
+      timeoutSeconds: 2
+  
+  # Security context
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+        - ALL
+
+# Cache System Configuration
+cache:
+  # -- Enable Cache System
+  enabled: true
+  
+  # Service Account
+  serviceAccount:
+    # -- Create service account for Cache Server
+    create: true
+    # -- Service account name (uses default if not set)
+    name: "kubeflow-pipelines-cache"
+    # -- Service account annotations
+    annotations: {}
+  
+  server:
+    # -- Number of Cache Server replicas
+    replicas: 1
+    
+    image:
+      # -- Cache Server image repository
+      repository: kfp-cache-server
+      # -- Cache Server image tag (overrides global.imageTag if set)
+      tag: ""
+      # -- Cache Server image pull policy (overrides global.imagePullPolicy if set)
+      pullPolicy: ""
+    
+    # -- Cache Server resource requests and limits
+    resources:
+      requests:
+        cpu: 120m
+        memory: 500Mi
+      limits: {}
+    
+    # Service configuration
+    service:
+      # -- Service type
+      type: ClusterIP
+      # -- Service port
+      port: 8443
+    
+    # Additional environment variables
+    additionalEnv: []
+    
+    # Security context
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 0
+      capabilities:
+        drop:
+          - ALL
+
+cacheDeployer:
+  # -- Enable Cache Deployer
+  enabled: true
+  # -- Number of Cache Deployer replicas
+  replicas: 1
+  
+  image:
+    # -- Cache Deployer image repository
+    repository: kfp-cache-deployer
+    # -- Cache Deployer image tag (overrides global.imageTag if set)
+    tag: ""
+    # -- Cache Deployer image pull policy (overrides global.imagePullPolicy if set)
+    pullPolicy: ""
+  
+  # -- Cache Deployer resource requests and limits
+  resources:
+    requests:
+      cpu: 120m
+      memory: 100Mi
+    limits: {}
+  
+  # Service Account
+  serviceAccount:
+    # -- Create service account for Cache Deployer
+    create: true
+    # -- Service account name (uses default if not set)
+    name: "kubeflow-pipelines-cache-deployer-sa"
+    # -- Service account annotations
+    annotations: {}
+  
+  # Additional environment variables
+  additionalEnv: []
+  
+  # Security context
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+        - ALL
+
+# ML Metadata Configuration
+metadata:
+  # -- Enable ML Metadata
+  enabled: true
+  
+  grpc:
+    # -- Number of metadata gRPC server replicas
+    replicas: 1
+    
+    image:
+      # -- Metadata gRPC server image repository (external image)
+      repository: gcr.io/tfx-oss-public/ml_metadata_store_server
+      # -- Metadata gRPC server image tag
+      tag: "1.14.0"
+      # -- Metadata gRPC server image pull policy
+      pullPolicy: "IfNotPresent"
+    
+    # -- Metadata gRPC server resource requests and limits
+    resources:
+      requests:
+        cpu: 100m
+        memory: 300Mi
+      limits: {}
+    
+    # Service Account
+    serviceAccount:
+      # -- Create service account for Metadata gRPC server
+      create: true
+      # -- Service account name (uses default if not set)
+      name: "metadata-grpc-server"
+      # -- Service account annotations
+      annotations: {}
+    
+    # Service configuration
+    service:
+      # -- Service type
+      type: ClusterIP
+      # -- Service port
+      port: 8080
+    
+    # Probes configuration
+    probes:
+      readiness:
+        initialDelaySeconds: 3
+        periodSeconds: 5
+        timeoutSeconds: 2
+      liveness:
+        initialDelaySeconds: 3
+        periodSeconds: 5
+        timeoutSeconds: 2
+    
+    # Additional environment variables
+    additionalEnv: []
+    
+    # Security context
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 0
+      capabilities:
+        drop:
+          - ALL
+      seccompProfile:
+        type: RuntimeDefault
+  
+  envoy:
+    # -- Number of metadata Envoy replicas
+    replicas: 1
+    
+    image:
+      # -- Metadata Envoy image repository
+      repository: kfp-metadata-envoy
+      # -- Metadata Envoy image tag (overrides global.imageTag if set)
+      tag: ""
+      # -- Metadata Envoy image pull policy (overrides global.imagePullPolicy if set)
+      pullPolicy: ""
+    
+    # -- Metadata Envoy resource requests and limits
+    resources:
+      requests:
+        cpu: 20m
+        memory: 20Mi
+      limits: {}
+    
+    # Service configuration
+    service:
+      # -- Service type
+      type: ClusterIP
+      # -- Service port
+      port: 9090
+    
+    # Additional environment variables
+    additionalEnv: []
+    
+    # Security context
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 0
+      capabilities:
+        drop:
+          - ALL
+      seccompProfile:
+        type: RuntimeDefault
+
+# Third-party Dependencies Configuration
+argo:
+  enabled: true
+  # Argo Workflows subchart values will be merged here
+
+# Database Configuration
+mysql:
+  enabled: true
+  auth:
+    rootPassword: ""
+    database: "mlpipeline"
+    username: "root"
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+
+postgresql:
+  enabled: false
+  auth:
+    postgresPassword: ""
+    database: "mlpipeline"
+    username: "postgres"
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+
+# External database configuration (when not using subcharts)
+externalDatabase:
+  # Database type: mysql or postgresql
+  type: mysql
+  host: ""
+  port: 3306
+  database: "mlpipeline"
+  username: "root"
+  password: ""
+  # Existing secret containing database credentials
+  existingSecret: ""
+  existingSecretPasswordKey: "password"
+
+# Database connection configuration
+database:
+  # Connection max lifetime (important for external databases)
+  connectionMaxLifetime: "120s"
+  
+  # Additional databases
+  metadb: "metadb"
+  cachedb: "cachedb"
+
+# Object Storage Configuration
+objectStore:
+  # Provider: minio, s3, gcs, azure, custom
+  provider: minio
+  
+  minio:
+    enabled: true
+    bucket: "mlpipeline"
+    secure: false
+    endpoint: ""
+    existingSecret: ""
+  
+  s3:
+    region: "us-west-2"
+    bucket: ""
+    existingSecret: ""
+  
+  gcs:
+    bucket: ""
+    existingSecret: ""
+  
+  azure:
+    storageAccount: ""
+    container: ""
+    existingSecret: ""
+  
+  custom:
+    endpoint: ""
+    bucket: ""
+    secure: true
+    existingSecret: ""
+
+# MinIO subchart configuration
+minio:
+  enabled: true
+  auth:
+    rootUser: "minio"
+    rootPassword: "minio123"
+  defaultBuckets: "mlpipeline"
+  persistence:
+    enabled: true
+    size: 20Gi
+
+# Pipeline Configuration
+pipeline:
+  # Application configuration
+  app:
+    name: "pipeline"
+    version: "2.5.0"
+  
+  # Pipeline root configuration
+  defaultPipelineRoot: "minio://mlpipeline/v2/artifacts"
+  
+  # Auto update pipeline default version
+  autoUpdatePipelineDefaultVersion: true
+  
+  # Cron schedule timezone
+  cronScheduleTimezone: "UTC"
+  
+  # Cache configuration
+  cache:
+    image: "registry.k8s.io/busybox"
+    nodeRestrictions: false
+    maximumStaleness: ""
+    defaultStaleness: ""
+
+# Environment-specific Configuration
+env:
+  # -- Platform type: platform-agnostic, aws, gcp, azure
+  platform: platform-agnostic
+  
+  # AWS-specific configuration
+  aws:
+    # -- AWS region
+    region: us-west-2
+    # RDS configuration
+    rds:
+      # -- Enable RDS integration
+      enabled: false
+      # -- RDS endpoint
+      endpoint: ""
+    # S3 configuration
+    s3:
+      # -- Enable S3 integration
+      enabled: false
+      # -- S3 bucket name
+      bucket: ""
+      # -- S3 region
+      region: us-west-2
+    # IAM configuration
+    iam:
+      # -- Enable IAM roles for service accounts (IRSA)
+      enabled: false
+      # -- IAM role ARN for API server
+      apiServerRoleArn: ""
+  
+  # GCP-specific configuration
+  gcp:
+    # -- GCP project ID
+    project: ""
+    # -- GCP region
+    region: us-central1
+    # Cloud SQL configuration
+    cloudsql:
+      # -- Enable Cloud SQL integration
+      enabled: false
+      # -- Cloud SQL instance name
+      instanceName: ""
+      # -- Cloud SQL region
+      region: us-central1
+    # GCS configuration
+    gcs:
+      # -- Enable GCS integration
+      enabled: false
+      # -- GCS bucket name
+      bucket: ""
+      # -- GCS project ID
+      projectId: ""
+    # Workload Identity configuration
+    workloadIdentity:
+      # -- Enable Workload Identity
+      enabled: false
+      # -- GCP service account email
+      serviceAccount: ""
+  
+  # Azure-specific configuration
+  azure:
+    # -- Azure subscription ID
+    subscriptionId: ""
+    # -- Azure resource group
+    resourceGroup: ""
+    # -- Azure region
+    region: eastus
+    # Azure SQL configuration
+    sql:
+      # -- Enable Azure SQL integration
+      enabled: false
+      # -- Azure SQL server name
+      serverName: ""
+      # -- Azure SQL database name
+      database: ""
+    # Azure Blob Storage configuration
+    blob:
+      # -- Enable Azure Blob Storage integration
+      enabled: false
+      # -- Storage account name
+      storageAccount: ""
+      # -- Container name
+      container: ""
+    # Managed Identity configuration
+    managedIdentity:
+      # -- Enable Azure Managed Identity
+      enabled: false
+      # -- Managed Identity client ID
+      clientId: ""
+
+# RBAC Configuration
+rbac:
+  create: true
+
+# Service Account Configuration
+serviceAccounts:
+  # Additional service accounts
+  pipelineRunner:
+    create: true
+    name: "pipeline-runner"
+  
+  viewer:
+    create: true
+    name: "viewer"
+  
+  containerBuilder:
+    create: true
+    name: "container-builder"
+  
+  metadataWriter:
+    create: true
+    name: "metadata-writer"
+
+# Networking Configuration
+networking:
+  istio:
+    enabled: false
+    gateway: "kubeflow-gateway"
+    host: "*"
+  
+  # Virtual Service configuration
+  virtualService:
+    enabled: false
+    prefix: "/pipeline"
+
+# Security Configuration
+security:
+  # Pod Security Standards
+  podSecurityStandards:
+    enabled: true
+    enforce: "restricted"
+  
+  # Security Context Profile
+  seccompProfile:
+    type: "RuntimeDefault"
+
+# Monitoring Configuration
+monitoring:
+  prometheus:
+    enabled: false
+    serviceMonitor:
+      enabled: false
+  
+  grafana:
+    enabled: false
+
+# Webhook Configuration
+webhooks:
+  # -- Enable admission webhooks
+  enabled: true
+  # -- Webhook failure policy
+  failurePolicy: "Fail"
+  
+  # TLS configuration for webhooks
+  tls:
+    # -- Use existing secret for TLS certificates
+    existingSecret: ""
+    # -- TLS certificate (base64 encoded)
+    cert: ""
+    # -- TLS private key (base64 encoded)
+    key: ""
+
+# Metadata Writer Configuration
+metadataWriter:
+  # -- Enable Metadata Writer
+  enabled: true
+  # -- Number of Metadata Writer replicas
+  replicas: 1
+  
+  image:
+    # -- Metadata Writer image repository
+    repository: kfp-metadata-writer
+    # -- Metadata Writer image tag (overrides global.imageTag if set)
+    tag: ""
+    # -- Metadata Writer image pull policy (overrides global.imagePullPolicy if set)
+    pullPolicy: ""
+  
+  # -- Metadata Writer resource requests and limits
+  resources:
+    requests:
+      cpu: 100m
+      memory: 200Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  
+  # Service Account
+  serviceAccount:
+    # -- Create service account for Metadata Writer
+    create: true
+    # -- Service account name (uses default if not set)
+    name: "kubeflow-pipelines-metadata-writer"
+    # -- Service account annotations
+    annotations: {}
+  
+  # Additional environment variables
+  additionalEnv: []
+  
+  # Security context
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+        - ALL
+
+# Additional Service Accounts Configuration
+additionalServiceAccounts:
+  # Container Builder Service Account
+  containerBuilder:
+    # -- Create container builder service account
+    create: true
+    # -- Container builder service account name
+    name: "kubeflow-pipelines-container-builder"
+    # -- Container builder service account annotations
+    annotations: {}
+  
+  # Pipeline Runner Service Account
+  pipelineRunner:
+    # -- Create pipeline runner service account
+    create: true
+    # -- Pipeline runner service account name
+    name: "pipeline-runner"
+    # -- Pipeline runner service account annotations
+    annotations: {}
+  
+  # Viewer Service Account
+  viewer:
+    # -- Create viewer service account
+    create: true
+    # -- Viewer service account name
+    name: "kubeflow-pipelines-viewer"
+    # -- Viewer service account annotations
+    annotations: {}
+
+# Profile Controller Configuration (Multi-User)
+profileController:
+  # -- Enable Profile Controller (only for multi-user mode)
+  enabled: false
+  # -- Number of Profile Controller replicas
+  replicas: 1
+  
+  image:
+    # -- Profile Controller image repository
+    repository: public.ecr.aws/docker/library/python
+    # -- Profile Controller image tag
+    tag: "3.12"
+    # -- Profile Controller image pull policy
+    pullPolicy: IfNotPresent
+  
+  # -- Profile Controller resource requests and limits
+  resources:
+    requests:
+      cpu: 100m
+      memory: 200Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  
+  # Service configuration
+  service:
+    # -- Service type
+    type: ClusterIP
+    # -- Service port
+    port: 80
+  
+  # -- Disable Istio sidecar injection
+  disableIstioSidecar: "true"
+  
+  # Additional environment variables
+  additionalEnv: []
+  
+  # Security context
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+
+# Application Configuration
+application:
+  # -- Enable Application resource (for Google Cloud Console integration)
+  enabled: false
+
+# Certificate Management
+certManager:
+  # -- Enable cert-manager integration
+  enabled: false
+  
+  # Mutating webhook
+  mutating:
+    enabled: true
+    name: "cache-webhook-kubeflow"
+  
+  # Validating webhook
+  validating:
+    enabled: true
+    name: "cache-webhook-kubeflow"
+
+
+# Node selector, tolerations, and affinity
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Pod annotations
+podAnnotations:
+  cluster-autoscaler.kubernetes.io/safe-to-evict: "true"

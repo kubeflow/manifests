@@ -1,0 +1,24 @@
+{{- if .Values.visualization.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-visualization
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: ml-pipeline-visualizationserver
+    component: visualization
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  type: {{ .Values.visualization.service.type }}
+  ports:
+  - name: http
+    protocol: TCP
+    port: {{ .Values.visualization.service.port }}
+    targetPort: 8888
+  selector:
+    {{- include "kubeflow-pipelines.selectorLabels" . | nindent 4 }}
+    app: ml-pipeline-visualizationserver
+    component: visualization
+{{- end }}

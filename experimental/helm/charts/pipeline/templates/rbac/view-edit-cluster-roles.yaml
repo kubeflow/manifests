@@ -1,0 +1,160 @@
+{{- if .Values.installMode.multiUser.enabled }}
+# NOTE: IMPORTANT
+# We need to separate out actual rules from aggregation rules due to
+# https://github.com/kubernetes/kubernetes/issues/65171
+# TL;DR: We can't have both aggregation and rules in a [Cluster]Role. When that
+# is the case, the rules get ignored.
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-edit
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+    component: multi-user-rbac
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-pipelines-edit: "true"
+rules: []
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-view
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-pipelines-edit: "true"
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
+    component: multi-user-rbac
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-pipelines-view: "true"
+rules: []
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-aggregate-edit
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-pipelines-edit: "true"
+    component: multi-user-rbac
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+rules:
+- apiGroups:
+  - pipelines.kubeflow.org
+  resources:
+  - pipelines
+  - pipelines/versions
+  verbs:
+  - create
+  - delete
+  - update
+- apiGroups:
+  - pipelines.kubeflow.org
+  resources:
+  - experiments
+  verbs:
+  - archive
+  - create
+  - delete
+  - unarchive
+- apiGroups:
+  - pipelines.kubeflow.org
+  resources:
+  - runs
+  verbs:
+  - archive
+  - create
+  - delete
+  - retry
+  - terminate
+  - unarchive
+  - reportMetrics
+  - readArtifact
+- apiGroups:
+  - pipelines.kubeflow.org
+  resources:
+  - jobs
+  verbs:
+  - create
+  - delete
+  - disable
+  - enable
+- apiGroups:
+  - kubeflow.org
+  verbs:
+  - '*'
+  resources:
+  - scheduledworkflows
+- apiGroups:
+  - argoproj.io
+  verbs:
+  - '*'
+  resources:
+  - cronworkflows
+  - cronworkflows/finalizers
+  - workflows
+  - workflows/finalizers
+  - workfloweventbindings
+  - workflowtemplates
+  - workflowtaskresults
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-aggregate-view
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-pipelines-view: "true"
+    component: multi-user-rbac
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+rules:
+- apiGroups:
+  - pipelines.kubeflow.org
+  resources:
+  - pipelines
+  - pipelines/versions
+  - experiments
+  - jobs
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - pipelines.kubeflow.org
+  resources:
+  - runs
+  verbs:
+  - get
+  - list
+  - readArtifact
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - viewers
+  verbs:
+  - create
+  - get
+  - delete
+- apiGroups:
+  - pipelines.kubeflow.org
+  resources:
+  - visualizations
+  verbs:
+  - create
+{{- end }}

@@ -1,0 +1,24 @@
+{{- if .Values.ui.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-ui
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: ml-pipeline-ui
+    component: ui
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  type: {{ .Values.ui.service.type }}
+  ports:
+  - name: http
+    protocol: TCP
+    port: {{ .Values.ui.service.port }}
+    targetPort: 3000
+  selector:
+    {{- include "kubeflow-pipelines.selectorLabels" . | nindent 4 }}
+    app: ml-pipeline-ui
+    component: ui
+{{- end }}
