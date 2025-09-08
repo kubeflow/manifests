@@ -1,0 +1,231 @@
+# Multi-user values for Kubeflow Pipelines
+# This configuration enables multi-user mode with proper isolation
+
+# Installation mode configuration
+installMode:
+  type: multi-user
+  multiUser:
+    enabled: true
+    profileController:
+      enabled: true
+
+# Environment configuration
+env:
+  platform: platform-agnostic
+
+# Multi-user specific components
+profileController:
+  enabled: true
+  name: profiles-controller
+  
+  image:
+    repository: kfp-profile-controller
+    tag: "2.5.0"
+  
+  replicas: 1
+  
+  # Service Account
+  serviceAccount:
+    create: true
+    name: "profiles-controller-service-account"
+    annotations: {}
+  
+  # Resources
+  resources:
+    requests:
+      cpu: 100m
+      memory: 200Mi
+    limits: {}
+  
+  # Security context
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+        - ALL
+
+# Enhanced API Server configuration for multi-user
+apiServer:
+  env:
+    publishLogs: true
+    pipelineLogLevel: "1"
+    autoUpdatePipelineDefaultVersion: true
+    v2DriverImage: "ghcr.io/kubeflow/kfp-driver:2.5.0"
+    v2LauncherImage: "ghcr.io/kubeflow/kfp-launcher:2.5.0"
+    # Multi-user specific environment variables
+    multiUser: true
+  
+  # Additional environment variables for multi-user mode
+  additionalEnv:
+    - name: MULTI_USER
+      value: "true"
+    - name: KUBEFLOW_USERID_HEADER
+      value: "kubeflow-userid"
+    - name: KUBEFLOW_USERID_PREFIX
+      value: ""
+
+# Enhanced UI configuration for multi-user
+ui:
+  additionalEnv:
+    - name: MULTI_USER
+      value: "true"
+    - name: KUBEFLOW_USERID_HEADER
+      value: "kubeflow-userid"
+    - name: KUBEFLOW_USERID_PREFIX
+      value: ""
+
+# Enhanced RBAC for multi-user
+rbac:
+  create: true
+  # Multi-user specific RBAC
+  multiUser:
+    enabled: true
+    # Cluster roles for multi-user
+    clusterRoles:
+      - name: "kubeflow-pipelines-edit"
+        create: true
+      - name: "kubeflow-pipelines-view" 
+        create: true
+
+# Service accounts for multi-user
+serviceAccounts:
+  pipelineRunner:
+    create: true
+    name: "pipeline-runner"
+  
+  viewer:
+    create: true
+    name: "viewer"
+  
+  containerBuilder:
+    create: true
+    name: "container-builder"
+  
+  metadataWriter:
+    create: true
+    name: "metadata-writer"
+  
+  # Multi-user specific service accounts
+  profilesController:
+    create: true
+    name: "profiles-controller-service-account"
+
+# Database configuration 
+mysql:
+  enabled: true
+  auth:
+    rootPassword: ""
+    database: "mlpipeline"
+    username: "root"
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+
+postgresql:
+  enabled: false
+
+# Object storage configuration 
+objectStore:
+  provider: minio
+
+minio:
+  enabled: true
+  auth:
+    rootUser: "minio"
+    rootPassword: "minio123"
+  defaultBuckets: "mlpipeline"
+  persistence:
+    enabled: true
+    size: 20Gi
+
+# Argo Workflows configuration
+argo:
+  enabled: true
+
+# Istio configuration for multi-user 
+networking:
+  istio:
+    enabled: true
+    gateway: "kubeflow-gateway"
+    host: "*"
+  
+  # Virtual Service configuration
+  virtualService:
+    enabled: true
+    prefix: "/pipeline"
+
+# Authorization policies for multi-user
+authorizationPolicies:
+  enabled: true
+  policies:
+    - name: "ml-pipeline"
+      action: "ALLOW"
+      rules:
+        - from:
+          - source:
+              principals: ["cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account"]
+        - to:
+          - operation:
+              methods: ["GET", "POST"]
+    
+    - name: "ml-pipeline-ui"
+      action: "ALLOW"
+      rules:
+        - from:
+          - source:
+              principals: ["cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account"]
+        - to:
+          - operation:
+              methods: ["GET", "POST"]
+
+# Webhook configuration for multi-user
+webhook:
+  enabled: true
+  
+  # Mutating webhook
+  mutating:
+    enabled: true
+    name: "cache-webhook-kubeflow"
+    # Multi-user webhook configuration
+    multiUser: true
+  
+  # Validating webhook  
+  validating:
+    enabled: true
+    name: "cache-webhook-kubeflow"
+    # Multi-user webhook configuration
+    multiUser: true
+
+# Security configuration for multi-user
+security:
+  # Pod Security Standards
+  podSecurityStandards:
+    enabled: true
+    enforce: "restricted"
+  
+  # Security Context Profile
+  seccompProfile:
+    type: "RuntimeDefault"
+  
+  # Multi-user security policies
+  networkPolicies:
+    enabled: true
+  
+  # RBAC enforcement
+  rbacEnforcement:
+    enabled: true
+
+# Monitoring configuration
+monitoring:
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false
+
+# Certificate management
+certManager:
+  enabled: false

@@ -1,0 +1,95 @@
+# PostgreSQL values for kubeflow-pipelines.
+# This configuration uses PostgreSQL instead of MySQL
+
+# Disable MySQL
+mysql:
+  enabled: false
+
+# Enable PostgreSQL
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "postgres123"
+    database: "mlpipeline"
+    username: "postgres"
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+
+# External database configuration pointing to PostgreSQL
+externalDatabase:
+  type: postgresql
+  host: ""
+  port: 5432
+  database: "mlpipeline"
+  username: "postgres"
+
+# Additional databases for PostgreSQL
+database:
+  metadb: "metadb"
+  cachedb: "cachedb"
+  connectionMaxLifetime: "300s"
+
+# Standard MinIO configuration
+objectStore:
+  provider: minio
+
+minio:
+  enabled: true
+  auth:
+    rootUser: "minio"
+    rootPassword: "minio123"
+  defaultBuckets: "mlpipeline"
+  persistence:
+    enabled: true
+    size: 20Gi
+
+# Standard component configuration
+apiServer:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 250m
+      memory: 500Mi
+
+persistenceAgent:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 120m
+      memory: 500Mi
+
+scheduledWorkflow:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 120m
+      memory: 100Mi
+
+ui:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 10m
+      memory: 70Mi
+
+# Disable monitoring for simplicity
+monitoring:
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false
+
+# Standard security
+security:
+  podSecurityStandards:
+    enabled: true
+    enforce: "restricted"

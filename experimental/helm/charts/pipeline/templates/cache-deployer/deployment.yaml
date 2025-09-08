@@ -1,0 +1,63 @@
+{{- if .Values.cacheDeployer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-cache-deployer
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: cache-deployer
+    component: cache-deployer
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.cacheDeployer.replicas }}
+  selector:
+    matchLabels:
+      {{- include "kubeflow-pipelines.selectorLabels" . | nindent 6 }}
+      app: cache-deployer
+      component: cache-deployer
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        {{- include "kubeflow-pipelines.selectorLabels" . | nindent 8 }}
+        app: cache-deployer
+        component: cache-deployer
+      annotations:
+        {{- include "kubeflow-pipelines.annotations" . | nindent 8 }}
+    spec:
+      {{- include "kubeflow-pipelines.imagePullSecrets" . | nindent 6 }}
+      serviceAccountName: {{ include "kubeflow-pipelines.cacheDeployer.serviceAccountName" . }}
+      containers:
+      - name: main
+        image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.cacheDeployer.image.repository "tag" .Values.cacheDeployer.image.tag "context" .) }}
+        imagePullPolicy: {{ .Values.cacheDeployer.image.pullPolicy | default .Values.global.imagePullPolicy }}
+        env:
+        {{- include "kubeflow-pipelines.commonEnv" . | nindent 8 }}
+        - name: NAMESPACE_TO_WATCH
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        {{- with .Values.cacheDeployer.additionalEnv }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        securityContext:
+          {{- toYaml .Values.cacheDeployer.securityContext | nindent 10 }}
+        resources:
+          {{- toYaml .Values.cacheDeployer.resources | nindent 10 }}
+      restartPolicy: Always
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

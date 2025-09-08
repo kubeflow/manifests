@@ -11,7 +11,7 @@ ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 if [[ -z "$COMPONENT" ]]; then
     echo "ERROR: Component is required"
     echo "Usage: $0 <component> <scenario>"
-    echo "Components: katib, model-registry, kserve-models-web-app, notebook-controller"
+    echo "Components: katib, model-registry, kserve-models-web-app, notebook-controller, kubeflow-pipelines"
     exit 1
 fi
 
@@ -158,10 +158,65 @@ case "$COMPONENT" in
             ["production"]="kubeflow"
         )
         ;;
+    "kubeflow-pipelines")
+        CHART_DIR="$ROOT_DIR/experimental/helm/charts/kubeflow-pipelines"
+        MANIFESTS_DIR="$ROOT_DIR/applications/pipeline/upstream"
+        
+        declare -A KUSTOMIZE_PATHS=(
+            ["platform-agnostic"]="$MANIFESTS_DIR/env/platform-agnostic"
+            ["aws"]="$MANIFESTS_DIR/env/aws"
+            ["gcp"]="$MANIFESTS_DIR/env/gcp"
+            ["azure"]="$MANIFESTS_DIR/env/azure"
+            ["multi-user"]="$MANIFESTS_DIR/base/installs/multi-user"
+            ["generic"]="$MANIFESTS_DIR/base/installs/generic"
+            ["dev"]="$MANIFESTS_DIR/env/dev"
+            ["plain"]="$MANIFESTS_DIR/env/plain"
+            ["plain-multi-user"]="$MANIFESTS_DIR/env/plain-multi-user"
+            ["platform-agnostic-emissary"]="$MANIFESTS_DIR/env/platform-agnostic-emissary"
+            ["platform-agnostic-multi-user"]="$MANIFESTS_DIR/env/platform-agnostic-multi-user"
+            ["platform-agnostic-multi-user-emissary"]="$MANIFESTS_DIR/env/platform-agnostic-multi-user-emissary"
+            ["platform-agnostic-multi-user-legacy"]="$MANIFESTS_DIR/env/platform-agnostic-multi-user-legacy"
+            ["platform-agnostic-postgresql"]="$MANIFESTS_DIR/env/platform-agnostic-postgresql"
+        )
+        
+        declare -A HELM_VALUES=(
+            ["platform-agnostic"]="$CHART_DIR/ci/values-platform-agnostic-enhanced.yaml"
+            ["aws"]="$CHART_DIR/ci/values-aws-enhanced.yaml"
+            ["gcp"]="$CHART_DIR/ci/values-gcp-enhanced.yaml"
+            ["azure"]="$CHART_DIR/ci/values-azure-enhanced.yaml"
+            ["multi-user"]="$CHART_DIR/ci/values-multi-user-enhanced.yaml"
+            ["generic"]=""
+            ["dev"]="$CHART_DIR/ci/values-dev-enhanced.yaml"
+            ["plain"]="$CHART_DIR/ci/values-standalone.yaml"
+            ["plain-multi-user"]="$CHART_DIR/ci/values-multi-user.yaml"
+            ["platform-agnostic-emissary"]="$CHART_DIR/ci/values-platform-agnostic-enhanced.yaml"
+            ["platform-agnostic-multi-user"]="$CHART_DIR/ci/values-multi-user-enhanced.yaml"
+            ["platform-agnostic-multi-user-emissary"]="$CHART_DIR/ci/values-multi-user-enhanced.yaml"
+            ["platform-agnostic-multi-user-legacy"]="$CHART_DIR/ci/values-multi-user.yaml"
+            ["platform-agnostic-postgresql"]="$CHART_DIR/ci/values-postgresql.yaml"
+        )
+        
+        declare -A NAMESPACES=(
+            ["platform-agnostic"]="kubeflow"
+            ["aws"]="kubeflow"
+            ["gcp"]="kubeflow"
+            ["azure"]="kubeflow"
+            ["multi-user"]="kubeflow"
+            ["generic"]="kubeflow"
+            ["dev"]="kubeflow"
+            ["plain"]="kubeflow"
+            ["plain-multi-user"]="kubeflow"
+            ["platform-agnostic-emissary"]="kubeflow"
+            ["platform-agnostic-multi-user"]="kubeflow"
+            ["platform-agnostic-multi-user-emissary"]="kubeflow"
+            ["platform-agnostic-multi-user-legacy"]="kubeflow"
+            ["platform-agnostic-postgresql"]="kubeflow"
+        )
+        ;;
         
     *)
         echo "ERROR: Unknown component: $COMPONENT"
-        echo "Supported components: katib, model-registry, kserve-models-web-app, notebook-controller"
+        echo "Supported components: katib, model-registry, kserve-models-web-app, notebook-controller, kubeflow-pipelines""
         exit 1
         ;;
 esac
@@ -191,7 +246,7 @@ if [ ! -d "$CHART_DIR" ]; then
     exit 1
 fi
 
-if [[ "$COMPONENT" != "kserve-models-web-app" ]] && [ ! -f "$HELM_VALUES_ARG" ]; then
+if [[ "$COMPONENT" != "kserve-models-web-app" ]] && [[ "$COMPONENT" != "kubeflow-pipelines" || "$SCENARIO" != "generic" ]] && [ ! -f "$HELM_VALUES_ARG" ]; then
     echo "ERROR: Helm values file does not exist: $HELM_VALUES_ARG"
     exit 1
 fi
@@ -223,6 +278,17 @@ else
             --namespace "$NAMESPACE" \
             --include-crds \
             --values "$HELM_VALUES_ARG" > "$HELM_OUTPUT"
+    elif [[ "$COMPONENT" == "kubeflow-pipelines" ]]; then
+        if [[ "$SCENARIO" == "generic" ]]; then
+            helm template kubeflow-pipelines . \
+                --namespace "$NAMESPACE" \
+                --include-crds > "$HELM_OUTPUT"
+        else
+            helm template kubeflow-pipelines . \
+                --namespace "$NAMESPACE" \
+                --include-crds \
+                --values "$HELM_VALUES_ARG" > "$HELM_OUTPUT"
+        fi
     else
         helm template model-registry . \
             --namespace "$NAMESPACE" \

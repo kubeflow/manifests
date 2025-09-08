@@ -1,0 +1,88 @@
+# AWS-specific values for Kubeflow Pipelines
+# This configuration uses AWS S3 and RDS
+
+# Environment configuration
+env:
+  platform: aws
+  aws:
+    region: us-west-2
+    rds:
+      enabled: true
+    s3:
+      enabled: true
+
+# Database configuration 
+mysql:
+  enabled: false
+
+postgresql:
+  enabled: false
+
+externalDatabase:
+  type: mysql
+  host: "YOUR_RDS_ENDPOINT"
+  port: 3306
+  database: "mlpipeline"
+  username: "root"
+  password: ""
+  existingSecret: "mysql-secret"
+
+# Additional databases
+database:
+  metadb: "metadb"
+  cachedb: "cachedb"
+
+# Object storage configuration 
+objectStore:
+  provider: s3
+  s3:
+    region: "YOUR_AWS_REGION"
+    bucket: "YOUR_S3_BUCKET_NAME"
+    existingSecret: "mlpipeline-minio-artifact"
+
+minio:
+  enabled: false
+
+# Argo Workflows configuration
+argo:
+  enabled: true
+
+# API Server AWS-specific environment variables
+apiServer:
+  env:
+    publishLogs: true
+    pipelineLogLevel: "1"
+    autoUpdatePipelineDefaultVersion: true
+    v2DriverImage: "ghcr.io/kubeflow/kfp-driver:2.5.0"
+    v2LauncherImage: "ghcr.io/kubeflow/kfp-launcher:2.5.0"
+  additionalEnv:
+    - name: AWS_REGION
+      value: "YOUR_AWS_REGION"
+    - name: OBJECTSTORECONFIG_HOST
+      value: "s3.amazonaws.com"
+    - name: OBJECTSTORECONFIG_REGION
+      value: "YOUR_AWS_REGION"
+
+# UI AWS-specific configuration
+ui:
+  additionalEnv:
+    - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
+      value: "/etc/config/viewer-pod-template.json"
+    - name: AWS_REGION
+      value: "YOUR_AWS_REGION"
+
+# Monitoring configuration
+monitoring:
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false
+
+# Certificate management
+certManager:
+  enabled: false
+
+# Networking
+networking:
+  istio:
+    enabled: false

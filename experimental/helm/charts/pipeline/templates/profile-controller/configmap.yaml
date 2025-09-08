@@ -1,0 +1,32 @@
+{{- if and .Values.installMode.multiUser.enabled .Values.installMode.multiUser.profileController.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-profile-controller-env
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: profile-controller
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+data:
+  CONTROLLER_PORT: "8080"
+  VISUALIZATION_SERVER_IMAGE: "{{ .Values.global.imageRegistry }}/{{ .Values.visualization.image.repository }}"
+  FRONTEND_IMAGE: "{{ .Values.global.imageRegistry }}/{{ .Values.ui.image.repository }}"
+  DISABLE_ISTIO_SIDECAR: {{ .Values.profileController.disableIstioSidecar | quote }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-profile-controller-code
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: profile-controller
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+data:
+  sync.py: |
+{{ .Files.Get "files/sync.py" | indent 4 }}
+{{- end }}
