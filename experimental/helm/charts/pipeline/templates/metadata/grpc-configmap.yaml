@@ -1,0 +1,15 @@
+{{- if .Values.metadata.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-metadata-grpc-config
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: metadata-grpc-server
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+data:
+  METADATA_GRPC_SERVICE_HOST: "{{ include "kubeflow-pipelines.fullname" . }}-metadata-grpc"
+  METADATA_GRPC_SERVICE_PORT: "{{ .Values.metadata.grpc.service.port }}"
+{{- end }}

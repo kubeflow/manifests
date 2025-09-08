@@ -1,0 +1,330 @@
+{{- if .Values.crds.install }}
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: applications.app.k8s.io
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    controller-tools.k8s.io: "1.0"
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    api-approved.kubernetes.io: https://github.com/kubernetes-sigs/application/pull/2
+    controller-gen.kubebuilder.io/version: v0.4.0
+spec:
+  group: app.k8s.io
+  names:
+    categories:
+    - all
+    kind: Application
+    listKind: ApplicationList
+    plural: applications
+    shortNames:
+    - app
+    singular: application
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - description: The type of the application
+      jsonPath: .spec.descriptor.type
+      name: Type
+      type: string
+    - description: The creation date
+      jsonPath: .spec.descriptor.version
+      name: Version
+      type: string
+    - description: The application object owns the matched resources
+      jsonPath: .spec.addOwnerRef
+      name: Owner
+      type: boolean
+    - description: Numbers of components ready
+      jsonPath: .status.componentsReady
+      name: Ready
+      type: string
+    - description: The creation date
+      jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: Application is the Schema for the applications API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation of an object.'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this object represents.'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: ApplicationSpec defines the specification for an Application.
+            properties:
+              addOwnerRef:
+                description: AddOwnerRef objects - flag to indicate if we need to add OwnerRefs to matching objects
+                type: boolean
+              assemblyPhase:
+                description: 'AssemblyPhase represents the current phase of the application''s assembly such as "Pending", "Succeeded", or "Failed".'
+                type: string
+              componentKinds:
+                description: ComponentGroupKinds is a list of Kinds for Application's components
+                items:
+                  description: GroupKind specifies a Group and a Kind, but does not force a version.
+                  properties:
+                    group:
+                      type: string
+                    kind:
+                      type: string
+                  required:
+                  - group
+                  - kind
+                  type: object
+                type: array
+              descriptor:
+                description: Descriptor regroups information and metadata about an application.
+                properties:
+                  description:
+                    description: Description is a brief string description of the Application.
+                    type: string
+                  icons:
+                    description: Icons is an optional list of icons for an application.
+                    items:
+                      description: ImageSpec contains information about an image used as an icon.
+                      properties:
+                        size:
+                          description: (optional) The size of the image in pixels (e.g., 25x25).
+                          type: string
+                        src:
+                          description: The source for image represented as either an absolute URL to the image or a Data URL containing the image.
+                          type: string
+                        type:
+                          description: (optional) The mine type of the image (e.g., "image/png").
+                          type: string
+                      required:
+                      - src
+                      type: object
+                    type: array
+                  keywords:
+                    description: Keywords is an optional list of key words associated with the application
+                    items:
+                      type: string
+                    type: array
+                  links:
+                    description: Links are a list of descriptive URLs intended to be used to surface additional documentation, dashboards, etc.
+                    items:
+                      description: Link contains information about an URL to surface documentation, dashboards, etc.
+                      properties:
+                        description:
+                          description: Description is human readable content explaining the purpose of the link.
+                          type: string
+                        url:
+                          description: Url is typically an HTTP or HTTPS URL.
+                          type: string
+                      type: object
+                    type: array
+                  maintainers:
+                    description: Maintainers is an optional list of maintainers of the application.
+                    items:
+                      description: ContactData contains information about an individual or organization.
+                      properties:
+                        email:
+                          description: Email is the email address of the contact person/organization.
+                          type: string
+                        name:
+                          description: Name is the descriptive name of the contact person/organization
+                          type: string
+                        url:
+                          description: Url could typically be a website address of the contact person/organization.
+                          type: string
+                      type: object
+                    type: array
+                  notes:
+                    description: Notes contain a human readable snippets intended as a quick start for the users of the Application.
+                    type: string
+                  owners:
+                    description: Owners is an optional list of the owners of the installed application.
+                    items:
+                      description: ContactData contains information about an individual or organization.
+                      properties:
+                        email:
+                          description: Email is the email address of the contact person/organization.
+                          type: string
+                        name:
+                          description: Name is the descriptive name of the contact person/organization
+                          type: string
+                        url:
+                          description: Url could typically be a website address of the contact person/organization.
+                          type: string
+                      type: object
+                    type: array
+                  type:
+                    description: Type is the type of the application (e.g. WordPress, MySQL, Cassandra).
+                    type: string
+                  version:
+                    description: Version is an optional version indicator for the Application.
+                    type: string
+                type: object
+              info:
+                description: Info contains human readable key-value pairs for the Application.
+                items:
+                  description: InfoItem is a human readable key-value pair containing important information about how to access the Application.
+                  properties:
+                    name:
+                      description: Name is a human readable title for this piece of information.
+                      type: string
+                    type:
+                      description: Type of the value for this InfoItem.
+                      type: string
+                    value:
+                      description: Value is human readable content.
+                      type: string
+                    valueFrom:
+                      description: ValueFrom defines a reference to derive the value from another source.
+                      properties:
+                        configMapKeyRef:
+                          description: Selects a key of a ConfigMap.
+                          properties:
+                            key:
+                              description: The key to select.
+                              type: string
+                            name:
+                              description: 'Name of the referent.'
+                              type: string
+                            optional:
+                              description: Specify whether the ConfigMap or its key must be defined
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                        ingressRef:
+                          description: Selects an Ingress.
+                          properties:
+                            host:
+                              description: The host to select.
+                              type: string
+                            name:
+                              description: 'Name of the referent.'
+                              type: string
+                            path:
+                              description: The path to select.
+                              type: string
+                          required:
+                          - name
+                          type: object
+                        secretKeyRef:
+                          description: Selects a key of a secret.
+                          properties:
+                            key:
+                              description: The key of the secret to select from.
+                              type: string
+                            name:
+                              description: 'Name of the referent.'
+                              type: string
+                            optional:
+                              description: Specify whether the Secret or its key must be defined
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                        serviceRef:
+                          description: Selects a Service.
+                          properties:
+                            name:
+                              description: 'Name of the referent.'
+                              type: string
+                            path:
+                              description: The optional path to select.
+                              type: string
+                            port:
+                              description: The port to select.
+                              format: int32
+                              type: integer
+                          required:
+                          - name
+                          type: object
+                        type:
+                          description: Type of the value for this InfoItem.
+                          type: string
+                      type: object
+                  required:
+                  - name
+                  type: object
+                type: array
+              selector:
+                description: Selector is a label query over kinds that created by the application.
+                properties:
+                  matchExpressions:
+                    description: matchExpressions is a list of label selector requirements.
+                    items:
+                      description: A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
+                      properties:
+                        key:
+                          description: key is the label key that the selector applies to.
+                          type: string
+                        operator:
+                          description: operator represents a key's relationship to a set of values.
+                          type: string
+                        values:
+                          description: values is an array of string values.
+                          items:
+                            type: string
+                          type: array
+                      required:
+                      - key
+                      - operator
+                      type: object
+                    type: array
+                  matchLabels:
+                    additionalProperties:
+                      type: string
+                    description: matchLabels is a map of {key,value} pairs.
+                    type: object
+                type: object
+            type: object
+          status:
+            description: ApplicationStatus defines controller's the observed state of Application
+            properties:
+              componentsReady:
+                description: ComponentsReady is a human readable message indicating details about the status of the application.
+                type: string
+              conditions:
+                description: Conditions represents the latest state of the object
+                items:
+                  description: ApplicationCondition contains details for the current condition of this application.
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status to another.
+                      format: date-time
+                      type: string
+                    lastUpdateTime:
+                      description: Last time the condition was probed
+                      format: date-time
+                      type: string
+                    message:
+                      description: A human readable message indicating details about the transition.
+                      type: string
+                    reason:
+                      description: The reason for the condition's last transition.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of application condition.
+                      type: string
+                  required:
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: ObservedGeneration is the most recent generation observed. It corresponds to the Object's generation, which is updated on mutation by the API Server.
+                format: int64
+                type: integer
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+{{- end }}

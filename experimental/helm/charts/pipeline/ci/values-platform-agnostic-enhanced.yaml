@@ -1,0 +1,176 @@
+# Platform-Agnostic Configuration - Enhanced
+# This configuration provides a complete platform-agnostic deployment
+# using MinIO for object storage and MySQL for database
+
+global:
+  namespace: kubeflow
+  imageRegistry: ghcr.io/kubeflow
+  imageTag: "2.5.0"
+  imagePullPolicy: IfNotPresent
+
+# Installation mode
+installMode:
+  type: generic
+  multiUser:
+    enabled: false
+
+# Database Configuration - Using MySQL subchart
+mysql:
+  enabled: true
+  auth:
+    rootPassword: "root123"
+    username: "mlpipeline"
+    password: "mlpipeline123"
+    database: "mlpipeline"
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+
+postgresql:
+  enabled: false
+
+externalDatabase:
+  type: mysql
+  host: ""
+  port: 3306
+  database: mlpipeline
+  username: mlpipeline
+  password: ""
+
+# Object Storage Configuration - Using MinIO subchart  
+minio:
+  enabled: true
+  auth:
+    rootUser: "minio"
+    rootPassword: "minio123"
+  defaultBuckets: "mlpipeline"
+  persistence:
+    enabled: true
+    size: 20Gi
+
+objectStore:
+  provider: minio
+  secure: false
+  bucketName: mlpipeline
+  
+# Database names
+database:
+  pipelinedb: mlpipeline
+  metadb: metadb
+  cachedb: cachedb
+
+# Pipeline Configuration
+pipeline:
+  cache:
+    image: "registry.k8s.io/busybox"
+    nodeRestrictions: false
+    maximumStaleness: ""
+    defaultStaleness: ""
+
+# Argo Workflows Configuration
+argo:
+  enabled: true
+  # Basic Argo configuration for platform-agnostic deployment
+
+# Environment Configuration
+env:
+  platform: platform-agnostic
+
+# Resource Configuration 
+apiServer:
+  resources:
+    requests:
+      cpu: 250m
+      memory: 500Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+persistenceAgent:
+  resources:
+    requests:
+      cpu: 120m
+      memory: 500Mi
+    limits:
+      cpu: 250m
+      memory: 1Gi
+
+scheduledWorkflow:
+  resources:
+    requests:
+      cpu: 120m
+      memory: 100Mi
+    limits:
+      cpu: 250m
+      memory: 500Mi
+
+ui:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 70Mi
+    limits:
+      cpu: 100m
+      memory: 200Mi
+
+metadata:
+  grpc:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 300Mi
+      limits:
+        cpu: 200m
+        memory: 600Mi
+  envoy:
+    resources:
+      requests:
+        cpu: 20m
+        memory: 20Mi
+      limits:
+        cpu: 100m
+        memory: 100Mi
+
+cache:
+  server:
+    resources:
+      requests:
+        cpu: 120m
+        memory: 500Mi
+      limits:
+        cpu: 250m
+        memory: 1Gi
+
+visualization:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 200Mi
+    limits:
+      cpu: 100m
+      memory: 400Mi
+
+viewerCrd:
+  resources:
+    requests:
+      cpu: 120m
+      memory: 100Mi
+    limits:
+      cpu: 250m
+      memory: 200Mi
+
+# Monitoring disabled for platform-agnostic
+monitoring:
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false
+
+# Service mesh disabled for platform-agnostic
+istio:
+  enabled: false
+
+# Cert-manager disabled for platform-agnostic
+certManager:
+  enabled: false

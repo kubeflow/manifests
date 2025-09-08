@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-install-config
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: config
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+data:
+  warning: |
+    1. Do not use kubectl to edit this configmap, because some values are used
+    during kustomize build. Instead, change the configmap and apply the entire
+    kustomize manifests again.
+    2. After updating the configmap, some deployments may need to be restarted
+    until the changes take effect. A quick way to restart all deployments in a
+    namespace: `kubectl rollout restart deployment -n <your-namespace>`.
+  appName: {{ .Values.pipeline.app.name }}
+  appVersion: {{ .Values.pipeline.app.version }}
+  # Database configuration
+  dbHost: {{ include "kubeflow-pipelines.database.host" . }}
+  dbPort: {{ include "kubeflow-pipelines.database.port" . | quote }}
+  dbType: {{ .Values.externalDatabase.type | default "mysql" }}
+  mysqlHost: {{ include "kubeflow-pipelines.database.host" . }}
+  mysqlPort: {{ include "kubeflow-pipelines.database.port" . | quote }}
+  mlmdDb: {{ .Values.database.metadb }}
+  cacheDb: {{ .Values.database.cachedb }}
+  pipelineDb: {{ include "kubeflow-pipelines.database.name" . }}
+  # Object storage configuration
+  bucketName: {{ include "kubeflow-pipelines.objectStore.bucket" . }}
+  # Pipeline configuration
+  defaultPipelineRoot: {{ .Values.pipeline.defaultPipelineRoot | quote }}
+  autoUpdatePipelineDefaultVersion: {{ .Values.pipeline.autoUpdatePipelineDefaultVersion | quote }}
+  cronScheduleTimezone: {{ .Values.pipeline.cronScheduleTimezone | quote }}
+  # Cache configuration
+  cacheImage: {{ .Values.pipeline.cache.image | quote }}
+  cacheNodeRestrictions: {{ .Values.pipeline.cache.nodeRestrictions | quote }}
+  MAXIMUM_CACHE_STALENESS: {{ .Values.pipeline.cache.maximumStaleness | quote }}
+  DEFAULT_CACHE_STALENESS: {{ .Values.pipeline.cache.defaultStaleness | quote }}
+  # Connection configuration
+  ConMaxLifeTime: {{ .Values.database.connectionMaxLifetime | quote }}
+  LOG_LEVEL: {{ .Values.global.logLevel | quote }}

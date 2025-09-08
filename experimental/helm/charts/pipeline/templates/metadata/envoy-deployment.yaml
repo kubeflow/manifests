@@ -1,0 +1,59 @@
+{{- if .Values.metadata.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-metadata-envoy
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: metadata-envoy
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.metadata.envoy.replicas }}
+  selector:
+    matchLabels:
+      {{- include "kubeflow-pipelines.selectorLabels" . | nindent 6 }}
+      component: metadata-envoy
+  template:
+    metadata:
+      labels:
+        {{- include "kubeflow-pipelines.selectorLabels" . | nindent 8 }}
+        component: metadata-envoy
+        sidecar.istio.io/inject: "false"
+      annotations:
+        {{- include "kubeflow-pipelines.annotations" . | nindent 8 }}
+    spec:
+      {{- include "kubeflow-pipelines.imagePullSecrets" . | nindent 6 }}
+      containers:
+      - name: container
+        image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.metadata.envoy.image.repository "tag" .Values.metadata.envoy.image.tag "context" .) }}
+        imagePullPolicy: {{ .Values.metadata.envoy.image.pullPolicy | default .Values.global.imagePullPolicy }}
+        ports:
+        - name: md-envoy
+          containerPort: 9090
+          protocol: TCP
+        - name: envoy-admin
+          containerPort: 9901
+          protocol: TCP
+        securityContext:
+          {{- toYaml .Values.metadata.envoy.securityContext | nindent 10 }}
+        resources:
+          {{- toYaml .Values.metadata.envoy.resources | nindent 10 }}
+        {{- with .Values.metadata.envoy.additionalEnv }}
+        env:
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

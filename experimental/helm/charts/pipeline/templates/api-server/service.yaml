@@ -1,0 +1,31 @@
+{{- if .Values.apiServer.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-api-server
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    {{- include "kubeflow-pipelines.mlPipelineLabels" . | nindent 4 }}
+    component: api-server
+  annotations:
+    prometheus.io/port: "8888"
+    prometheus.io/scheme: http
+    prometheus.io/scrape: "true"
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  type: {{ .Values.apiServer.service.type }}
+  ports:
+  - name: http
+    port: {{ .Values.apiServer.service.port }}
+    protocol: TCP
+    targetPort: 8888
+  - name: grpc
+    port: {{ .Values.apiServer.service.grpcPort }}
+    protocol: TCP
+    targetPort: 8887
+  selector:
+    {{- include "kubeflow-pipelines.selectorLabels" . | nindent 4 }}
+    {{- include "kubeflow-pipelines.mlPipelineSelectorLabels" . | nindent 4 }}
+    component: api-server
+{{- end }}
