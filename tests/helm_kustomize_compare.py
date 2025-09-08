@@ -216,6 +216,8 @@ def get_expected_helm_extras(component: str, scenario: str) -> set:
         if scenario == "base":
             return {"AuthorizationPolicy/kserve-models-web-app"}
         return set()
+    elif component == "kubeflow-pipelines":
+        return set()  # No extra resources in Helm for Kubeflow Pipelines
     else:
         return set()
 
@@ -281,7 +283,7 @@ def compare_manifests(kustomize_file: str, helm_file: str, component: str, scena
 if __name__ == "__main__":
     if len(sys.argv) < 5:
         print("Usage: python compare.py <kustomize_file> <helm_file> <component> <scenario> [namespace] [--verbose]")
-        print("Components: katib, model-registry, kserve-models-web-app")
+        print("Components: katib, model-registry, kserve-models-web-app, kubeflow-pipelines")
         sys.exit(1)
     
     kustomize_file = sys.argv[1]
@@ -290,9 +292,9 @@ if __name__ == "__main__":
     scenario = sys.argv[4]
     namespace = sys.argv[5] if len(sys.argv) > 5 and not sys.argv[5].startswith('--') else ""
     
-    if component not in ["katib", "model-registry", "kserve-models-web-app", "notebook-controller"]:
+    if component not in ["katib", "model-registry", "kserve-models-web-app", "notebook-controller", "kubeflow-pipelines"]:
         print(f"ERROR: Unknown component: {component}")
-        print("Supported components: katib, model-registry, kserve-models-web-app, notebook-controller")
+        print("Supported components: katib, model-registry, kserve-models-web-app, notebook-controller","kubeflow-pipelines")
         sys.exit(1)
     
     success = compare_manifests(kustomize_file, helm_file, component, scenario, namespace)

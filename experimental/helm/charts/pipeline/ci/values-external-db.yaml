@@ -1,0 +1,59 @@
+# External database values for kubeflow-pipelines.
+# This configuration uses external database instead of embedded MySQL/PostgreSQL
+
+# Disable embedded databases
+mysql:
+  enabled: false
+
+postgresql:
+  enabled: false
+
+# Configure external database
+externalDatabase:
+  type: mysql
+  host: "external-db-host.example.com"
+  port: 3306
+  database: "mlpipeline"
+  username: "mlpipeline"
+  existingSecret: "external-db-secret"
+
+# Additional databases for metadata and cache
+database:
+  metadb: "metadb"
+  cachedb: "cachedb"
+  connectionMaxLifetime: "300s"
+
+# Use MinIO for object storage (can be changed to external)
+objectStore:
+  provider: minio
+
+minio:
+  enabled: true
+  auth:
+    rootUser: "minio"
+    rootPassword: "minio123"
+  persistence:
+    enabled: true
+    size: 50Gi
+
+# Standard configuration for other components
+apiServer:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 250m
+      memory: 500Mi
+
+persistenceAgent:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 120m
+      memory: 500Mi
+
+# Disable monitoring for simplicity
+monitoring:
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false

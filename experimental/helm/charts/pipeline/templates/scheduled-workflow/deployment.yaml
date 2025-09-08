@@ -1,0 +1,79 @@
+{{- if .Values.scheduledWorkflow.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-scheduled-workflow
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: ml-pipeline-scheduledworkflow
+    component: scheduled-workflow
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.scheduledWorkflow.replicas }}
+  selector:
+    matchLabels:
+      {{- include "kubeflow-pipelines.selectorLabels" . | nindent 6 }}
+      app: ml-pipeline-scheduledworkflow
+      component: scheduled-workflow
+  template:
+    metadata:
+      labels:
+        {{- include "kubeflow-pipelines.selectorLabels" . | nindent 8 }}
+        app: ml-pipeline-scheduledworkflow
+        component: scheduled-workflow
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+        {{- include "kubeflow-pipelines.annotations" . | nindent 8 }}
+    spec:
+      {{- include "kubeflow-pipelines.imagePullSecrets" . | nindent 6 }}
+      serviceAccountName: {{ include "kubeflow-pipelines.scheduledWorkflow.serviceAccountName" . }}
+      securityContext:
+        {{- if .Values.security.seccompProfile }}
+        seccompProfile:
+          type: {{ .Values.security.seccompProfile.type }}
+        {{- end }}
+      containers:
+      - name: ml-pipeline-scheduledworkflow
+        image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.scheduledWorkflow.image.repository "tag" .Values.scheduledWorkflow.image.tag "context" .) }}
+        imagePullPolicy: {{ .Values.scheduledWorkflow.image.pullPolicy | default .Values.global.imagePullPolicy }}
+        env:
+        {{- include "kubeflow-pipelines.commonEnv" . | nindent 8 }}
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CRON_SCHEDULE_TIMEZONE
+          value: {{ .Values.pipeline.cronScheduleTimezone | quote }}
+        {{- with .Values.scheduledWorkflow.additionalEnv }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        securityContext:
+          {{- toYaml .Values.scheduledWorkflow.securityContext | nindent 10 }}
+        resources:
+          {{- toYaml .Values.scheduledWorkflow.resources | nindent 10 }}
+        volumeMounts:
+        - mountPath: /var/run/secrets/kubeflow/tokens
+          name: scheduledworkflow-sa-token
+      volumes:
+      - name: scheduledworkflow-sa-token
+        projected:
+          sources:
+          - serviceAccountToken:
+              path: scheduledworkflow-sa-token
+              expirationSeconds: 3600
+              audience: pipelines.kubeflow.org
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

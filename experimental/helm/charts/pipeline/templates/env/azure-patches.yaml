@@ -1,0 +1,163 @@
+{{- if eq .Values.env.platform "azure" }}
+{{- if .Values.env.azure.blob.enabled }}
+---
+# Azure Blob Storage Configuration Patch for API Server
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-azure-config
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: azure-config
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+data:
+  # Azure Blob Storage specific configuration
+  OBJECTSTORECONFIG_SECURE: "true"
+  OBJECTSTORECONFIG_HOST: "{{ .Values.env.azure.blob.storageAccount }}.blob.core.windows.net"
+  OBJECTSTORECONFIG_REGION: ""
+  OBJECTSTORECONFIG_BUCKETNAME: {{ .Values.env.azure.blob.container | quote }}
+  OBJECTSTORECONFIG_PORT: ""
+  AZURE_STORAGE_ACCOUNT: {{ .Values.env.azure.blob.storageAccount | quote }}
+{{- end }}
+
+{{- if .Values.env.azure.managedIdentity.enabled }}
+---
+# Azure Managed Identity Annotation for API Server Service Account
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "kubeflow-pipelines.apiServer.serviceAccountName" . }}
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: ml-pipeline
+    component: api-server
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    azure.workload.identity/client-id: {{ .Values.env.azure.managedIdentity.clientId | quote }}
+{{- end }}
+
+{{- if .Values.env.azure.sql.enabled }}
+---
+# Azure SQL Configuration Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-azure-sql-secret
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: azure-sql
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+type: Opaque
+data:
+  host: {{ printf "%s.mysql.database.azure.com" .Values.env.azure.sql.serverName | b64enc }}
+  port: {{ "3306" | b64enc }}
+  database: {{ .Values.env.azure.sql.database | b64enc }}
+{{- end }}
+
+{{- if .Values.env.azure.blob.enabled }}
+---
+# Azure MinIO Gateway for Blob Storage Compatibility
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-minio-azure-gateway
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: minio-azure-gateway
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "kubeflow-pipelines.selectorLabels" . | nindent 6 }}
+      component: minio-azure-gateway
+  template:
+    metadata:
+      labels:
+        {{- include "kubeflow-pipelines.selectorLabels" . | nindent 8 }}
+        component: minio-azure-gateway
+      annotations:
+        {{- include "kubeflow-pipelines.annotations" . | nindent 8 }}
+    spec:
+      containers:
+      - name: minio
+        image: minio/minio:latest
+        args:
+        - gateway
+        - azure
+        env:
+        - name: MINIO_ACCESS_KEY
+          value: "minio"
+        - name: MINIO_SECRET_KEY
+          value: "minio123"
+        - name: AZURE_STORAGE_ACCOUNT
+          value: {{ .Values.env.azure.blob.storageAccount | quote }}
+        - name: AZURE_STORAGE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "kubeflow-pipelines.fullname" . }}-azure-storage-secret
+              key: key
+        ports:
+        - name: minio
+          containerPort: 9000
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
+---
+# Azure MinIO Gateway Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-minio-azure-gateway
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: minio-azure-gateway
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+  - name: minio
+    port: 9000
+    targetPort: 9000
+  selector:
+    {{- include "kubeflow-pipelines.selectorLabels" . | nindent 4 }}
+    component: minio-azure-gateway
+
+---
+# Azure Storage Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-azure-storage-secret
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: azure-storage
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+type: Opaque
+data:
+  key: {{ .Values.objectStore.azure.accessKey | default "YOUR_STORAGE_ACCOUNT_KEY" | b64enc }}
+{{- end }}
+{{- end }}

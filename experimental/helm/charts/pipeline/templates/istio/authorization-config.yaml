@@ -1,0 +1,154 @@
+{{- if and .Values.networking.istio.enabled .Values.installMode.multiUser.enabled }}
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-ui-policy
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: istio-authorization
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-ui
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+
+
+  - when:
+    - key: request.headers[authorization]
+      values:
+      - "*"
+    - key: request.headers[kubeflow-userid]
+      notValues:
+      - "*"
+
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-api-policy
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: istio-authorization
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.apiServer.serviceAccountName" . }}
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.ui.serviceAccountName" . }}
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.persistenceAgent.serviceAccountName" . }}
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.scheduledWorkflow.serviceAccountName" . }}
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.viewerCrd.serviceAccountName" . }}
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.cache.serviceAccountName" . }}
+  - when:
+    - key: request.headers[kubeflow-userid]
+      notValues: ['*']
+
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-visualization-policy
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: istio-authorization
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-visualizationserver
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.apiServer.serviceAccountName" . }}
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.ui.serviceAccountName" . }}
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.persistenceAgent.serviceAccountName" . }}
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.scheduledWorkflow.serviceAccountName" . }}
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.viewerCrd.serviceAccountName" . }}
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.cache.serviceAccountName" . }}
+
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-cache-server-policy
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: istio-authorization
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: cache-server
+  rules:
+  - {}
+
+---
+apiVersion: "networking.istio.io/v1alpha3"
+kind: DestinationRule
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-ui-destination
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: istio-destination-rule
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  host: {{ include "kubeflow-pipelines.fullname" . }}-ui.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+
+---
+apiVersion: "networking.istio.io/v1alpha3"
+kind: DestinationRule
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-api-destination
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: istio-destination-rule
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  host: {{ include "kubeflow-pipelines.fullname" . }}-api-server.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+
+---
+apiVersion: "networking.istio.io/v1alpha3"
+kind: DestinationRule
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-visualization-destination
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: istio-destination-rule
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  host: {{ include "kubeflow-pipelines.fullname" . }}-visualization.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+{{- end }}

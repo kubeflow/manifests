@@ -1,0 +1,95 @@
+# GCP-specific values for Kubeflow Pipelines
+# This configuration uses Google Cloud Storage and Cloud SQL
+
+# Environment configuration
+env:
+  platform: gcp
+  gcp:
+    project: "yourGcsProjectId"
+    cloudsql:
+      enabled: true
+      instanceName: "yourCloudSqlInstanceName"
+    gcs:
+      enabled: true
+
+# Database configuration - use external Cloud SQL
+mysql:
+  enabled: false
+
+postgresql:
+  enabled: false
+
+externalDatabase:
+  type: mysql
+  host: "127.0.0.1" 
+  port: 3306
+  database: "pipelinedb"
+  username: "root"
+  password: ""
+  existingSecret: "mysql-secret"
+
+# Additional databases
+database:
+  metadb: "metadb"
+  cachedb: "cachedb"
+
+# Object storage configuration - use GCS
+objectStore:
+  provider: gcs
+  gcs:
+    bucket: "yourGcsBucketName"
+    existingSecret: "mlpipeline-minio-artifact"
+
+minio:
+  enabled: false
+
+# Argo Workflows configuration
+argo:
+  enabled: true
+
+# API Server GCP-specific environment variables
+apiServer:
+  env:
+    publishLogs: true
+    pipelineLogLevel: "1"
+    autoUpdatePipelineDefaultVersion: true
+    v2DriverImage: "ghcr.io/kubeflow/kfp-driver:2.5.0"
+    v2LauncherImage: "ghcr.io/kubeflow/kfp-launcher:2.5.0"
+  additionalEnv:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: "/etc/gcp-service-account/application_default_credentials.json"
+    - name: OBJECTSTORECONFIG_HOST
+      value: "storage.googleapis.com"
+
+# UI GCP-specific configuration
+ui:
+  additionalEnv:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: "/etc/gcp-service-account/application_default_credentials.json"
+
+# Cloud SQL Proxy sidecar configuration
+cloudsqlProxy:
+  enabled: true
+  image: "gcr.io/cloudsql-docker/gce-proxy:1.33.2"
+  instanceConnectionName: "yourGcsProjectId:us-central1:yourCloudSqlInstanceName"
+
+# Workload Identity configuration
+workloadIdentity:
+  enabled: true
+  serviceAccount: "kf-user@yourGcsProjectId.iam.gserviceaccount.com"
+
+# Monitoring configuration
+monitoring:
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false
+
+# Certificate management
+certManager:
+  enabled: false
+
+# Networking
+networking:
+  istio:
+    enabled: false

@@ -1,0 +1,22 @@
+{{- if and .Values.installMode.multiUser.enabled .Values.installMode.multiUser.profileController.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-profile-controller
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: profile-controller
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  type: {{ .Values.profileController.service.type }}
+  ports:
+  - name: http
+    protocol: TCP
+    port: {{ .Values.profileController.service.port }}
+    targetPort: 8080
+  selector:
+    {{- include "kubeflow-pipelines.selectorLabels" . | nindent 4 }}
+    component: profile-controller
+{{- end }}

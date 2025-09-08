@@ -1,0 +1,37 @@
+apiVersion: v2
+
+name: kubeflow-pipelines
+
+description: A Helm chart for Kubeflow Pipelines - ML Workflows on Kubernetes
+
+version: 2.5.0
+
+appVersion: 2.5.0
+
+home: https://github.com/kubeflow/pipelines
+
+icon: https://github.com/kubeflow/website/blob/master/assets/icons/logo.svg
+
+sources:
+- https://github.com/kubeflow/pipelines
+- https://github.com/kubeflow/kubeflow
+dependencies:
+  - name: argo-workflows
+    version: "~0.40.0"
+    condition: argo.enabled
+    repository: "https://argoproj.github.io/argo-helm"
+  - name: minio
+    version: "~5.0.0"
+    condition: minio.enabled
+    repository: "https://charts.min.io/"
+  - name: mysql
+    version: "~9.0.0"
+    condition: mysql.enabled
+    repository: "https://charts.bitnami.com/bitnami"
+  - name: postgresql
+    version: "~12.0.0"
+    condition: postgresql.enabled
+    repository: "https://charts.bitnami.com/bitnami"
+annotations:
+  category: Machine Learning
+  licenses: Apache-2.0

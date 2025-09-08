@@ -1,0 +1,22 @@
+{{- if .Values.metadata.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-metadata-grpc
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: metadata-grpc-server
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  type: {{ .Values.metadata.grpc.service.type }}
+  ports:
+  - name: grpc-api
+    protocol: TCP
+    port: {{ .Values.metadata.grpc.service.port }}
+    targetPort: 8080
+  selector:
+    {{- include "kubeflow-pipelines.selectorLabels" . | nindent 4 }}
+    component: metadata-grpc-server
+{{- end }}

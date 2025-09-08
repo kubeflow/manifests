@@ -1,0 +1,22 @@
+{{- if .Values.metadata.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-metadata-envoy
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: metadata-envoy
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  type: {{ .Values.metadata.envoy.service.type }}
+  ports:
+  - name: md-envoy
+    protocol: TCP
+    port: {{ .Values.metadata.envoy.service.port }}
+    targetPort: 9090
+  selector:
+    {{- include "kubeflow-pipelines.selectorLabels" . | nindent 4 }}
+    component: metadata-envoy
+{{- end }}

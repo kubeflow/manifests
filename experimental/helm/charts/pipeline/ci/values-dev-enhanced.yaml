@@ -1,0 +1,243 @@
+# Development Environment Configuration - Enhanced
+# This configuration is optimized for local development and testing
+
+global:
+  namespace: kubeflow
+  imageRegistry: ghcr.io/kubeflow
+  imageTag: "2.5.0"
+  imagePullPolicy: IfNotPresent
+
+# Installation mode
+installMode:
+  type: generic
+  multiUser:
+    enabled: false
+
+# Database Configuration 
+mysql:
+  enabled: true
+  auth:
+    rootPassword: "dev123"
+    username: "dev"
+    password: "dev123"
+    database: "mlpipeline"
+  primary:
+    persistence:
+      enabled: false
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+postgresql:
+  enabled: false
+
+# Object Storage Configuration - Lightweight MinIO
+minio:
+  enabled: true
+  auth:
+    rootUser: "dev"
+    rootPassword: "dev123"
+  defaultBuckets: "mlpipeline"
+  persistence:
+    enabled: false
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+objectStore:
+  provider: minio
+  secure: false
+  bucketName: mlpipeline
+
+# Database names
+database:
+  pipelinedb: mlpipeline
+  metadb: metadb
+  cachedb: cachedb
+
+# Pipeline Configuration - Development settings
+pipeline:
+  cache:
+    image: "registry.k8s.io/busybox"
+    nodeRestrictions: false
+    maximumStaleness: ""
+    defaultStaleness: ""
+
+# Argo Workflows Configuration - Minimal for dev
+argo:
+  enabled: true
+
+# Environment Configuration
+env:
+  platform: platform-agnostic
+
+# Reduced resources for development
+apiServer:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 512Mi
+  env:
+    logLevel: "2"
+
+persistenceAgent:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 512Mi
+
+scheduledWorkflow:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
+ui:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 50m
+      memory: 128Mi
+
+metadata:
+  grpc:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 512Mi
+  envoy:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 10m
+        memory: 16Mi
+      limits:
+        cpu: 50m
+        memory: 64Mi
+
+cache:
+  server:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 512Mi
+
+cacheDeployer:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
+visualization:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
+viewerCrd:
+  replicas: 1
+  env:
+    maxNumViewers: "10"
+  resources:
+    requests:
+      cpu: 25m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+dev:
+  # Enable debug mode
+  debug: true
+  
+  # Faster probe intervals for development
+  probes:
+    readiness:
+      initialDelaySeconds: 1
+      periodSeconds: 2
+    liveness:
+      initialDelaySeconds: 5
+      periodSeconds: 5
+  
+  # Development logging
+  logging:
+    level: debug
+    format: text
+  
+  # Local port forwarding helpers
+  portForward:
+    ui: 8080
+    api: 8888
+    minio: 9000
+
+# Monitoring disabled for development
+monitoring:
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false
+
+# Service mesh disabled for development
+istio:
+  enabled: false
+
+# Cert-manager disabled for development
+certManager:
+  enabled: false
+
+# Development-specific service types
+services:
+  ui:
+    type: NodePort
+    nodePort: 30080
+  apiServer:
+    type: NodePort
+    nodePort: 30888
+
+# Node selectors for development 
+nodeSelector: {}
+
+# Tolerations for development 
+tolerations: []
+
+# Affinity for development 
+affinity: {}

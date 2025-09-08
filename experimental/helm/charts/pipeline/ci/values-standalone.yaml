@@ -1,0 +1,56 @@
+# Platform-agnostic values for Kubeflow Pipelines
+# This configuration uses local storage (MinIO) and MySQL
+
+# Environment configuration
+env:
+  platform: platform-agnostic
+
+# Database configuration - use MySQL subchart
+mysql:
+  enabled: true
+  auth:
+    rootPassword: ""
+    database: "mlpipeline"
+    username: "root"
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+
+postgresql:
+  enabled: false
+
+externalDatabase:
+  type: mysql
+
+# Object storage configuration - use MinIO subchart
+objectStore:
+  provider: minio
+
+minio:
+  enabled: true
+  auth:
+    rootUser: "minio"
+    rootPassword: "minio123"
+  defaultBuckets: "mlpipeline"
+  persistence:
+    enabled: true
+    size: 20Gi
+
+# Argo Workflows configuration
+argo:
+  enabled: true
+
+# Disable cloud-specific features
+monitoring:
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false
+
+certManager:
+  enabled: false
+
+networking:
+  istio:
+    enabled: false

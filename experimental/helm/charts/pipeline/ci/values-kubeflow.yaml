@@ -1,0 +1,133 @@
+# Kubeflow integration values for kubeflow-pipelines.
+# This configuration is optimized for integration with full Kubeflow deployment
+
+
+global:
+  namespace: kubeflow
+  logLevel: "info"
+
+# Installation mode
+installMode:
+  type: multi-user
+  multiUser:
+    enabled: true
+    profileController:
+      enabled: true
+
+# Kubeflow-specific RBAC
+rbac:
+  create: true
+  multiUser:
+    enabled: true
+    clusterRoles:
+      - name: "kubeflow-pipelines-edit"
+        create: true
+      - name: "kubeflow-pipelines-view"
+        create: true
+
+# Service accounts for Kubeflow integration
+serviceAccounts:
+  pipelineRunner:
+    create: true
+    name: "pipeline-runner"
+  viewer:
+    create: true
+    name: "viewer"
+  containerBuilder:
+    create: true
+    name: "container-builder"
+  metadataWriter:
+    create: true
+    name: "metadata-writer"
+
+# API Server with Kubeflow integration
+apiServer:
+  replicas: 1
+  additionalEnv:
+    - name: MULTI_USER
+      value: "true"
+    - name: KUBEFLOW_USERID_HEADER
+      value: "kubeflow-userid"
+    - name: KUBEFLOW_USERID_PREFIX
+      value: ""
+
+# UI with Kubeflow integration
+ui:
+  replicas: 1
+  additionalEnv:
+    - name: MULTI_USER
+      value: "true"
+    - name: KUBEFLOW_USERID_HEADER
+      value: "kubeflow-userid"
+    - name: KUBEFLOW_USERID_PREFIX
+      value: ""
+
+# Database configuration
+mysql:
+  enabled: true
+  auth:
+    rootPassword: ""
+    database: "mlpipeline"
+    username: "root"
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+
+# Object storage
+objectStore:
+  provider: minio
+
+minio:
+  enabled: true
+  auth:
+    rootUser: "minio"
+    rootPassword: "minio123"
+  defaultBuckets: "mlpipeline"
+  persistence:
+    enabled: true
+    size: 20Gi
+
+# Istio integration (required for Kubeflow)
+networking:
+  istio:
+    enabled: true
+    gateway: "kubeflow-gateway"
+    host: "*"
+  virtualService:
+    enabled: true
+    prefix: "/pipeline"
+
+# Authorization policies for Kubeflow
+authorizationPolicies:
+  enabled: true
+  policies:
+    - name: "ml-pipeline"
+      action: "ALLOW"
+      rules:
+        - from:
+          - source:
+              principals: ["cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account"]
+        - to:
+          - operation:
+              methods: ["GET", "POST"]
+
+# Webhooks for multi-user
+webhook:
+  enabled: true
+  mutating:
+    enabled: true
+    multiUser: true
+  validating:
+    enabled: true
+    multiUser: true
+
+# Security configuration
+security:
+  podSecurityStandards:
+    enabled: true
+    enforce: "restricted"
+  networkPolicies:
+    enabled: true
+  rbacEnforcement:
+    enabled: true

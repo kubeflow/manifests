@@ -1,0 +1,118 @@
+{{- if .Values.apiServer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kubeflow-pipelines.fullname" . }}-api-server
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    {{- include "kubeflow-pipelines.mlPipelineLabels" . | nindent 4 }}
+    component: api-server
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.apiServer.replicas }}
+  selector:
+    matchLabels:
+      {{- include "kubeflow-pipelines.selectorLabels" . | nindent 6 }}
+      {{- include "kubeflow-pipelines.mlPipelineSelectorLabels" . | nindent 6 }}
+      component: api-server
+  template:
+    metadata:
+      labels:
+        {{- include "kubeflow-pipelines.selectorLabels" . | nindent 8 }}
+        {{- include "kubeflow-pipelines.mlPipelineSelectorLabels" . | nindent 8 }}
+        component: api-server
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+        {{- include "kubeflow-pipelines.annotations" . | nindent 8 }}
+    spec:
+      {{- include "kubeflow-pipelines.imagePullSecrets" . | nindent 6 }}
+      serviceAccountName: {{ include "kubeflow-pipelines.apiServer.serviceAccountName" . }}
+      securityContext:
+        {{- if .Values.security.seccompProfile }}
+        seccompProfile:
+          type: {{ .Values.security.seccompProfile.type }}
+        {{- end }}
+      containers:
+      - name: ml-pipeline-api-server
+        image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.apiServer.image.repository "tag" .Values.apiServer.image.tag "context" .) }}
+        imagePullPolicy: {{ .Values.apiServer.image.pullPolicy | default .Values.global.imagePullPolicy }}
+        ports:
+        - name: http
+          containerPort: 8888
+          protocol: TCP
+        - name: grpc
+          containerPort: 8887
+          protocol: TCP
+        env:
+        {{- include "kubeflow-pipelines.commonEnv" . | nindent 8 }}
+        {{- include "kubeflow-pipelines.databaseEnv" . | nindent 8 }}
+        {{- include "kubeflow-pipelines.objectStoreEnv" . | nindent 8 }}
+        # API Server specific environment variables
+        - name: PUBLISH_LOGS
+          value: {{ .Values.apiServer.env.publishLogs | quote }}
+        - name: PIPELINE_LOG_LEVEL
+          value: {{ .Values.apiServer.env.pipelineLogLevel | quote }}
+        - name: AUTO_UPDATE_PIPELINE_DEFAULT_VERSION
+          value: {{ .Values.apiServer.env.autoUpdatePipelineDefaultVersion | quote }}
+        - name: V2_DRIVER_IMAGE
+          value: {{ .Values.apiServer.env.v2DriverImage | quote }}
+        - name: V2_LAUNCHER_IMAGE
+          value: {{ .Values.apiServer.env.v2LauncherImage | quote }}
+        {{- with .Values.apiServer.additionalEnv }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        readinessProbe:
+          exec:
+            command:
+            - wget
+            - -q
+            - -S
+            - -O
+            - "-"
+            - http://localhost:8888/apis/v1beta1/healthz
+          initialDelaySeconds: {{ .Values.apiServer.probes.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.apiServer.probes.readiness.periodSeconds }}
+          timeoutSeconds: {{ .Values.apiServer.probes.readiness.timeoutSeconds }}
+        livenessProbe:
+          exec:
+            command:
+            - wget
+            - -q
+            - -S
+            - -O
+            - "-"
+            - http://localhost:8888/apis/v1beta1/healthz
+          initialDelaySeconds: {{ .Values.apiServer.probes.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.apiServer.probes.liveness.periodSeconds }}
+          timeoutSeconds: {{ .Values.apiServer.probes.liveness.timeoutSeconds }}
+        startupProbe:
+          exec:
+            command:
+            - wget
+            - -q
+            - -S
+            - -O
+            - "-"
+            - http://localhost:8888/apis/v1beta1/healthz
+          failureThreshold: {{ .Values.apiServer.probes.startup.failureThreshold }}
+          periodSeconds: {{ .Values.apiServer.probes.startup.periodSeconds }}
+          timeoutSeconds: {{ .Values.apiServer.probes.startup.timeoutSeconds }}
+        securityContext:
+          {{- toYaml .Values.apiServer.securityContext | nindent 10 }}
+        resources:
+          {{- toYaml .Values.apiServer.resources | nindent 10 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
