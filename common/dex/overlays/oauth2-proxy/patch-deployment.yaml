@@ -1,0 +1,14 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dex
+  namespace: auth
+spec:
+  template:
+    spec:
+      containers:
+      - name: dex
+        image: avnshrai/dex-with-ca:v1
+        env:
+        - name: SSL_CERT_FILE
+          value: /etc/ssl/certs/ca-certificates.crt

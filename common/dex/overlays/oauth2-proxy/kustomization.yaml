@@ -11,4 +11,10 @@ patches:
       kind: ConfigMap
       name: dex
       namespace: auth
+  - path: patch-deployment.yaml
+    target:
+      version: v1
+      kind: Deployment
+      name: dex
+      namespace: auth
 
