@@ -409,6 +409,16 @@ kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
 
 Kubeflow Pipelines offers two deployment options to choose from, each designed for different use cases and operational preferences. The traditional database-based approach stores pipeline definitions in an external database, while the Kubernetes native API mode leverages Kubernetes custom resources for pipeline definition storage and management.
 
+Note: Default artifact store (example install)
+- The single-command installation using the `example` kustomization sets SeaweedFS as the default S3-compatible artifact store for Pipelines. It replaces `minio-service` to route S3 traffic to SeaweedFS and patches the Argo Workflow controller to use it.
+- If you are following the step-by-step installation and want SeaweedFS as your Pipelines artifact store, apply the following overlay instead of the MinIO-based overlays:
+
+```sh path=null start=null
+kustomize build experimental/seaweedfs/istio | kubectl apply -f -
+```
+
+To switch back to MinIO, use the standard upstream Pipelines overlays shown below.
+
 
 ##### Pipeline Definitions Stored in the Database
 
