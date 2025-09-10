@@ -409,15 +409,16 @@ kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
 
 Kubeflow Pipelines offers two deployment options to choose from, each designed for different use cases and operational preferences. The traditional database-based approach stores pipeline definitions in an external database, while the Kubernetes native API mode leverages Kubernetes custom resources for pipeline definition storage and management.
 
-Note: Default artifact store (example install)
-- The single-command installation using the `example` kustomization sets SeaweedFS as the default S3-compatible artifact store for Pipelines. It replaces `minio-service` to route S3 traffic to SeaweedFS and patches the Argo Workflow controller to use it.
-- If you are following the step-by-step installation and want SeaweedFS as your Pipelines artifact store, apply the following overlay instead of the MinIO-based overlays:
+The default artifact store is now seaweedfs as explained [here](https://medium.com/@hpotpose26/kubeflow-pipelines-embraces-seaweedfs-9a7e022d5571). The single-command installation using the `example` kustomization sets SeaweedFS as the default S3-compatible artifact store for Pipelines. It replaces `minio-service` to route S3 traffic to SeaweedFS and patches the Argo Workflow controller to use it.
+If you are following the step-by-step installation and want SeaweedFS as your Pipelines artifact store, apply the following overlay instead of the MinIO-based overlays:
 
 ```sh path=null start=null
 kustomize build experimental/seaweedfs/istio | kubectl apply -f -
 ```
 
 To switch back to MinIO, use the standard upstream Pipelines overlays shown below.
+
+TODO MinIO Will be removed in the next releases.
 
 
 ##### Pipeline Definitions Stored in the Database
@@ -757,4 +758,5 @@ pre-commit run
   **A:** Istio CNI provides better security by eliminating the need for privileged init containers, making it more compatible with Pod Security Standards (PSS). It also enables native sidecars support introduced in Kubernetes 1.28, which helps address issues with init containers and application lifecycle management.
 - **Q:** Why does Istio CNI fail on Google Kubernetes Engine (GKE) with "read-only file system" errors?
   **A:** GKE mounts `/opt/cni/bin` as read-only for security reasons, preventing the Istio CNI installer from writing the CNI binary. Use the GKE-specific overlay: `kubectl apply -k common/istio/istio-install/overlays/gke`. This overlay uses GKE's writable CNI directory at `/home/kubernetes/bin`. For more details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites) and [Platform Prerequisites](https://istio.io/latest/docs/ambient/install/platform-prerequisites/).-`
+
 
