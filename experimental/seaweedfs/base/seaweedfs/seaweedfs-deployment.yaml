@@ -24,12 +24,14 @@ spec:
           type: RuntimeDefault
       containers:
       - name: seaweedfs
-        image: 'chrislusf/seaweedfs:3.85'
+        image: 'chrislusf/seaweedfs:3.92'
         args:
         - 'server'
         - '-dir=/data'
         - '-s3'
         - '-iam'
+        - '-filer'
+        - '-master.volumePreallocate=false'
         ports:
         - containerPort: 8333
         - containerPort: 8111
@@ -56,16 +58,13 @@ spec:
           capabilities:
             drop:
             - ALL
-            add:
-            - NET_BIND_SERVICE
         volumeMounts:
         - mountPath: /data
           name: data
         resources:
-          # Benchmark this, just taken from minio
           requests:
-            cpu: 20m
-            memory: 100Mi
+            cpu: 32m
+            memory: 128Mi
       volumes:
       - name: data
         persistentVolumeClaim:
