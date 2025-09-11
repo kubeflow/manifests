@@ -26,7 +26,7 @@ spec:
   - hosts:
     - "*/*"  # Notebook controller needs access to all namespaces for kernel activity
 ---
-apiversion: networking.istio.io/v1
+apiVersion: networking.istio.io/v1
 kind: Sidecar
 metadata:
   name: ml-pipeline-ui-exception
