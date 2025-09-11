@@ -33,6 +33,19 @@ kubectl apply -k istio-install/overlays/insecure
 - **Simplicity**: Reduces container complexity
 - **Startup Time**: Significantly faster startup in many cases
 
+## Istio Sidecar Egress
+
+We limit egress route creation in istio sidecars to reduce memory overhead in every sidecar as described in this [pull request](https://github.com/kubeflow/manifests/pull/3206).
+
+This may cause issues for users extending or modifying the kubeflow deployment as it can cause egress traffic not listed in the hosts section of the [default sidecar implementation](./istio-install/base/sidecar-prune-egress.yaml) to not use MTLS. 
+
+This can cause the following kinds of errors:
+1. Error ```RBAC: Access Denied``` returned from the destination
+1. Error ```rbac_access_denied_matched_policy[none]``` in the destination sidecar if [authorizationpolicies](https://istio.io/latest/docs/reference/config/security/authorization-policy/#Source-principals) use mtls required rules
+1. Error```upstream connect error or disconnect/reset before headers``` if mtls is set to Strict for the destination sidecar
+
+You may add additional [sidecar configuration](https://istio.io/latest/docs/reference/config/networking/sidecar) to your deployment to override the default configuration for affected traffic. 
+
 ## Troubleshooting
 
 If you still encounter probelms, even with native sidecars enabled, you might try the following:

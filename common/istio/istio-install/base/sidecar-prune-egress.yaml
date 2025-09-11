@@ -25,3 +25,16 @@ spec:
   egress:
   - hosts:
     - "*/*"  # Notebook controller needs access to all namespaces for kernel activity
+---
+apiversion: networking.istio.io/v1beta1
+kind: Sidecar
+metadata:
+  name: ml-pipeline-ui-exception
+  namespace: kubeflow
+spec:
+  workloadSelector:
+    labels:
+      app: ml-pipeline-ui
+  egress:
+  - hosts:
+    - "*/*" # ml-pipeline-ui pods need mtls access for all ml-pipeline-ui-artifact pods in kubeflow-pipelines enable namespaces
