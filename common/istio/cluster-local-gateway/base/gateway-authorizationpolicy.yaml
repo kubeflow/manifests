@@ -1,5 +1,5 @@
 # Allow all traffic to the cluster-local-gateway
-apiVersion: security.istio.io/v1beta1
+apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
   name: cluster-local-gateway

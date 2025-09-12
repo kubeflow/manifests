@@ -1,4 +1,4 @@
-apiVersion: networking.istio.io/v1beta1
+apiVersion: networking.istio.io/v1
 kind: Sidecar
 metadata:
   name: default
@@ -13,7 +13,7 @@ spec:
     - "knative-eventing/*" # Knative Eventing (if used)
     - "istio-system/*"   # Istio system services
 ---
-apiVersion: networking.istio.io/v1beta1
+apiVersion: networking.istio.io/v1
 kind: Sidecar
 metadata:
   name: notebook-controller-exception
@@ -25,3 +25,16 @@ spec:
   egress:
   - hosts:
     - "*/*"  # Notebook controller needs access to all namespaces for kernel activity
+---
+apiVersion: networking.istio.io/v1
+kind: Sidecar
+metadata:
+  name: ml-pipeline-ui-exception
+  namespace: kubeflow
+spec:
+  workloadSelector:
+    labels:
+      app: ml-pipeline-ui
+  egress:
+  - hosts:
+    - "*/*" # The ml-pipeline-ui pods need mtls access for all artifact-proxy pods in kubeflow-pipeline enabled namespaces
