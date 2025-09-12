@@ -98,14 +98,14 @@ jobs:
 
     - name: List and deploy test pipeline with V2 API
       run: |
-        pip3 install kfp==2.13.0
+        pip3 install kfp==2.14.3
         KF_PROFILE=kubeflow-user-example-com
         TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
         python3 tests/pipeline_v2_test.py run_pipeline "${TOKEN}" "${KF_PROFILE}"
 
     - name: Fail to list pipelines with unauthorized ServiceAccount Token (V2 API)
       run: |
-        pip3 install kfp==2.13.0
+        pip3 install kfp==2.14.3
         KF_PROFILE=kubeflow-user-example-com
         TOKEN="$(kubectl -n default create token default)"
         python3 tests/pipeline_v2_test.py test_unauthorized_access "${TOKEN}" "${KF_PROFILE}"
