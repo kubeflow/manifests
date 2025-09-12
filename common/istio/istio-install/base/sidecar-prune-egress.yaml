@@ -37,4 +37,4 @@ spec:
       app: ml-pipeline-ui
   egress:
   - hosts:
-    - "*/*" # ml-pipeline-ui pods need mtls access for all ml-pipeline-ui-artifact pods in kubeflow-pipelines enable namespaces
+    - "*/*" # The ml-pipeline-ui pods need mtls access for all artifact-proxy pods in kubeflow-pipeline enabled namespaces
