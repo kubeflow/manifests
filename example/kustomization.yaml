@@ -42,15 +42,19 @@ resources:
 - ../common/istio/istio-install/overlays/oauth2-proxy
 # NOTE: For Google Kubernetes Engine (GKE), use:
 # - ../common/istio/istio-install/overlays/gke
-#GKE mounts `/opt/cni/bin` as read-only for security reasons, preventing the Istio CNI installer from writing the CNI binary.
-#Use the GKE-specific overlay: `kubectl apply -k common/istio/istio-install/overlays/gke`.
-#This overlay uses GKE's writable CNI directory at `/home/kubernetes/bin`.
-#For more details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites) and [Platform Prerequisites](https://istio.io/latest/docs/ambient/install/platform-prerequisites/)
+# NOTE: For Istio Ambient Mode, use one of:
+# - ../common/istio/istio-install/overlays/ambient                    # Basic ambient mode
+# - ../common/istio/istio-install/overlays/ambient-gke               # Ambient mode for GKE
+# - ../common/istio/istio-install/overlays/ambient-oauth2-proxy       # Ambient mode with oauth2-proxy
+# GKE mounts `/opt/cni/bin` as read-only for security reasons, preventing the Istio CNI installer from writing the CNI binary.
+# Use the GKE-specific overlay: `kubectl apply -k common/istio/istio-install/overlays/gke`.
+# This overlay uses GKE's writable CNI directory at `/home/kubernetes/bin`.
+# For more details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites) and [Platform Prerequisites](https://istio.io/latest/docs/ambient/install/platform-prerequisites/)
 # oauth2-proxy
 # NOTE: only uncomment ONE of the following overlays, depending on your cluster type
-- ../common/oauth2-proxy/overlays/m2m-dex-only     # for all clusters
-#- ../common/oauth2-proxy/overlays/m2m-dex-and-kind # for KIND clusters (allows K8S JWTs for gateway auth)
-#- ../common/oauth2-proxy/overlays/m2m-dex-and-eks  # for EKS clusters (NOTE: requires you to configure issuer, see overlay)
+- ../common/oauth2-proxy/overlays/m2m-dex-only       # for all clusters
+# - ../common/oauth2-proxy/overlays/m2m-dex-and-kind  # for KIND clusters (allows K8S JWTs for gateway auth)
+# - ../common/oauth2-proxy/overlays/m2m-dex-and-eks   # for EKS clusters (NOTE: requires you to configure issuer, see overlay)
 # Dex
 - ../common/dex/overlays/oauth2-proxy
 # KNative
@@ -82,7 +86,7 @@ resources:
 # Notebook Controller
 - ../applications/jupyter/notebook-controller/upstream/overlays/kubeflow
 # Profiles + KFAM with PSS (Pod Security Standards)
-- ../applications/profiles/pss # TODO MUST BE UPSTREAMED
+- ../applications/profiles/pss  # TODO MUST BE UPSTREAMED
 # PVC Viewer
 - ../applications/pvcviewer-controller/upstream/base
 # Volumes Web App
