@@ -14,9 +14,9 @@ installMode:
   multiUser:
     enabled: false
 
-# Database Configuration - Using MySQL subchart
+# Database Configuration - Using built-in MySQL
 mysql:
-  enabled: true
+  enabled: false
   auth:
     rootPassword: "root123"
     username: "mlpipeline"
@@ -35,12 +35,12 @@ externalDatabase:
   host: ""
   port: 3306
   database: mlpipeline
-  username: mlpipeline
+  username: root
   password: ""
 
-# Object Storage Configuration - Using MinIO subchart  
+# Object Storage Configuration - Using built-in MinIO
 minio:
-  enabled: true
+  enabled: false
   auth:
     rootUser: "minio"
     rootPassword: "minio123"
@@ -62,57 +62,61 @@ database:
 
 # Pipeline Configuration
 pipeline:
+  # Platform-agnostic specific: Empty defaultPipelineRoot to match kustomize
+  defaultPipelineRoot: ""
   cache:
     image: "registry.k8s.io/busybox"
     nodeRestrictions: false
     maximumStaleness: ""
     defaultStaleness: ""
 
-# Argo Workflows Configuration
+# Argo Workflows Configuration - use built-in
 argo:
-  enabled: true
+  enabled: false
   # Basic Argo configuration for platform-agnostic deployment
+
+# Built-in third-party components
+thirdParty:
+  mysql:
+    enabled: true
+  minio:
+    enabled: true
+  argo:
+    enabled: true
 
 # Environment Configuration
 env:
   platform: platform-agnostic
 
-# Resource Configuration 
+# Resource Configuration
 apiServer:
   resources:
     requests:
       cpu: 250m
       memory: 500Mi
-    limits:
-      cpu: 500m
-      memory: 1Gi
 
 persistenceAgent:
   resources:
     requests:
       cpu: 120m
       memory: 500Mi
-    limits:
-      cpu: 250m
-      memory: 1Gi
 
 scheduledWorkflow:
   resources:
-    requests:
-      cpu: 120m
-      memory: 100Mi
-    limits:
-      cpu: 250m
-      memory: 500Mi
 
 ui:
   resources:
     requests:
       cpu: 10m
       memory: 70Mi
-    limits:
-      cpu: 100m
-      memory: 200Mi
+
+# Disable CRDs for platform-agnostic scenario
+crds:
+  install: false
+
+# Disable webhooks for platform-agnostic scenario
+webhooks:
+  enabled: false
 
 metadata:
   grpc:
@@ -145,20 +149,13 @@ cache:
 visualization:
   resources:
     requests:
-      cpu: 50m
-      memory: 200Mi
-    limits:
-      cpu: 100m
-      memory: 400Mi
+      cpu: 30m
+      memory: 500Mi
 
 viewerCrd:
+  image:
+    pullPolicy: Always
   resources:
-    requests:
-      cpu: 120m
-      memory: 100Mi
-    limits:
-      cpu: 250m
-      memory: 200Mi
 
 # Monitoring disabled for platform-agnostic
 monitoring:

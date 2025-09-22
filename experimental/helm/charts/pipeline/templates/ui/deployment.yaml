@@ -2,63 +2,56 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-ui
+  name: ml-pipeline-ui
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     app: ml-pipeline-ui
-    component: ui
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    application-crd-id: kubeflow-pipelines
 spec:
-  replicas: {{ .Values.ui.replicas }}
   selector:
     matchLabels:
-      {{- include "kubeflow-pipelines.selectorLabels" . | nindent 6 }}
       app: ml-pipeline-ui
-      component: ui
+      application-crd-id: kubeflow-pipelines
   template:
     metadata:
-      labels:
-        {{- include "kubeflow-pipelines.selectorLabels" . | nindent 8 }}
-        app: ml-pipeline-ui
-        component: ui
       annotations:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
-        {{- include "kubeflow-pipelines.annotations" . | nindent 8 }}
+      labels:
+        app: ml-pipeline-ui
+        application-crd-id: kubeflow-pipelines
     spec:
-      {{- include "kubeflow-pipelines.imagePullSecrets" . | nindent 6 }}
-      serviceAccountName: {{ include "kubeflow-pipelines.ui.serviceAccountName" . }}
-      securityContext:
-        {{- if .Values.security.seccompProfile }}
-        seccompProfile:
-          type: {{ .Values.security.seccompProfile.type }}
-        {{- end }}
+      serviceAccountName: ml-pipeline-ui
       volumes:
       - name: config-volume
         configMap:
-          name: {{ include "kubeflow-pipelines.fullname" . }}-ui-config
+          name: ml-pipeline-ui-configmap
       containers:
       - name: ml-pipeline-ui
         image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.ui.image.repository "tag" .Values.ui.image.tag "context" .) }}
-        imagePullPolicy: {{ .Values.ui.image.pullPolicy | default .Values.global.imagePullPolicy }}
+        imagePullPolicy: IfNotPresent
         ports:
-        - name: http
-          containerPort: 3000
-          protocol: TCP
+        - containerPort: 3000
         volumeMounts:
         - name: config-volume
           mountPath: /etc/config
           readOnly: true
         env:
-        {{- include "kubeflow-pipelines.commonEnv" . | nindent 8 }}
-        {{- include "kubeflow-pipelines.objectStoreEnv" . | nindent 8 }}
         - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
           value: /etc/config/viewer-pod-template.json
         - name: MINIO_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: accesskey
+              name: mlpipeline-minio-artifact
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: secretkey
+              name: mlpipeline-minio-artifact
         - name: ALLOW_CUSTOM_VISUALIZATIONS
           value: {{ .Values.ui.env.allowCustomVisualizations | quote }}
         - name: FRONTEND_SERVER_NAMESPACE
@@ -69,21 +62,6 @@ spec:
           value: {{ .Values.ui.env.argoArchiveLogs | quote }}
         - name: DISABLE_GKE_METADATA
           value: {{ .Values.ui.env.disableGkeMetadata | quote }}
-        {{- with .Values.ui.additionalEnv }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
-        readinessProbe:
-          exec:
-            command:
-            - wget
-            - -q
-            - -S
-            - -O
-            - "-"
-            - http://localhost:3000/apis/v1beta1/healthz
-          initialDelaySeconds: {{ .Values.ui.probes.readiness.initialDelaySeconds }}
-          periodSeconds: {{ .Values.ui.probes.readiness.periodSeconds }}
-          timeoutSeconds: {{ .Values.ui.probes.readiness.timeoutSeconds }}
         livenessProbe:
           exec:
             command:
@@ -96,20 +74,23 @@ spec:
           initialDelaySeconds: {{ .Values.ui.probes.liveness.initialDelaySeconds }}
           periodSeconds: {{ .Values.ui.probes.liveness.periodSeconds }}
           timeoutSeconds: {{ .Values.ui.probes.liveness.timeoutSeconds }}
-        securityContext:
-          {{- toYaml .Values.ui.securityContext | nindent 10 }}
+        readinessProbe:
+          exec:
+            command:
+            - wget
+            - -q
+            - -S
+            - -O
+            - "-"
+            - http://localhost:3000/apis/v1beta1/healthz
+          initialDelaySeconds: {{ .Values.ui.probes.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.ui.probes.readiness.periodSeconds }}
+          timeoutSeconds: {{ .Values.ui.probes.readiness.timeoutSeconds }}
         resources:
           {{- toYaml .Values.ui.resources | nindent 10 }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        securityContext:
+          {{- toYaml .Values.ui.securityContext | nindent 10 }}
+      securityContext:
+        seccompProfile:
+          type: {{ .Values.security.seccompProfile.type }}
 {{- end }}

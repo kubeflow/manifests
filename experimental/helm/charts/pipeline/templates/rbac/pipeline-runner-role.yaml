@@ -2,11 +2,10 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-pipeline-runner
+  name: pipeline-runner
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: pipeline-runner
+    application-crd-id: kubeflow-pipelines
   annotations:
     {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
 rules:
