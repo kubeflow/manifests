@@ -11,7 +11,7 @@ ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 if [[ -z "$COMPONENT" ]]; then
     echo "ERROR: Component is required"
     echo "Usage: $0 <component> <scenario>"
-    echo "Components: katib, model-registry, kserve-models-web-app, kubeflow-pipelines"
+    echo "Components: katib, model-registry, kserve-models-web-app, pipeline"
     exit 1
 fi
 
@@ -132,8 +132,8 @@ case "$COMPONENT" in
         )
         ;;
         
-    "kubeflow-pipelines")
-        CHART_DIR="$ROOT_DIR/experimental/helm/charts/kubeflow-pipelines"
+    "pipeline")
+        CHART_DIR="$ROOT_DIR/experimental/helm/charts/pipeline"
         MANIFESTS_DIR="$ROOT_DIR/applications/pipeline/upstream"
         
         declare -A KUSTOMIZE_PATHS=(
@@ -190,7 +190,7 @@ case "$COMPONENT" in
         
     *)
         echo "ERROR: Unknown component: $COMPONENT"
-        echo "Supported components: katib, model-registry, kserve-models-web-app, kubeflow-pipelines"
+        echo "Supported components: katib, model-registry, kserve-models-web-app, pipeline"
         exit 1
         ;;
 esac
@@ -220,7 +220,7 @@ if [ ! -d "$CHART_DIR" ]; then
     exit 1
 fi
 
-if [[ "$COMPONENT" != "kserve-models-web-app" ]] && [[ "$COMPONENT" != "kubeflow-pipelines" || "$SCENARIO" != "generic" ]] && [ ! -f "$HELM_VALUES_ARG" ]; then
+if [[ "$COMPONENT" != "kserve-models-web-app" ]] && [[ "$COMPONENT" != "pipeline" || "$SCENARIO" != "generic" ]] && [ ! -f "$HELM_VALUES_ARG" ]; then
     echo "ERROR: Helm values file does not exist: $HELM_VALUES_ARG"
     exit 1
 fi
@@ -247,13 +247,13 @@ else
             --namespace "$NAMESPACE" \
             --include-crds \
             --values "$HELM_VALUES_ARG" > "$HELM_OUTPUT"
-    elif [[ "$COMPONENT" == "kubeflow-pipelines" ]]; then
+    elif [[ "$COMPONENT" == "pipeline" ]]; then
         if [[ "$SCENARIO" == "generic" ]]; then
-            helm template kubeflow-pipelines . \
+            helm template pipeline . \
                 --namespace "$NAMESPACE" \
                 --include-crds > "$HELM_OUTPUT"
         else
-            helm template kubeflow-pipelines . \
+            helm template pipeline . \
                 --namespace "$NAMESPACE" \
                 --include-crds \
                 --values "$HELM_VALUES_ARG" > "$HELM_OUTPUT"

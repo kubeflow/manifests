@@ -31,16 +31,9 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Common labels
+Common labels - simplified to match kustomize output
 */}}
 {{- define "kubeflow-pipelines.labels" -}}
-helm.sh/chart: {{ include "kubeflow-pipelines.chart" . }}
-{{ include "kubeflow-pipelines.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-app.kubernetes.io/component: ml-pipeline
 application-crd-id: kubeflow-pipelines
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
@@ -56,11 +49,47 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
+Cache server labels
+*/}}
+{{- define "kubeflow-pipelines.cacheLabels" -}}
+app: cache-server
+application-crd-id: kubeflow-pipelines
+{{- with .Values.commonLabels }}
+{{ toYaml . }}
+{{- end }}
+{{- end }}
+
+{{/*
+Cache deployer labels
+*/}}
+{{- define "kubeflow-pipelines.cacheDeployerLabels" -}}
+app: cache-deployer
+application-crd-id: kubeflow-pipelines
+{{- with .Values.commonLabels }}
+{{ toYaml . }}
+{{- end }}
+{{- end }}
+
+{{/*
 ML Pipeline specific labels - matching original manifests
 */}}
 {{- define "kubeflow-pipelines.mlPipelineLabels" -}}
-{{ include "kubeflow-pipelines.labels" . }}
 app: ml-pipeline
+application-crd-id: kubeflow-pipelines
+{{- with .Values.commonLabels }}
+{{ toYaml . }}
+{{- end }}
+{{- end }}
+
+{{/*
+ML Pipeline UI labels
+*/}}
+{{- define "kubeflow-pipelines.uiLabels" -}}
+app: ml-pipeline-ui
+application-crd-id: kubeflow-pipelines
+{{- with .Values.commonLabels }}
+{{ toYaml . }}
+{{- end }}
 {{- end }}
 
 {{/*
@@ -121,7 +150,7 @@ Create the name of the service account to use for Cache Server
 */}}
 {{- define "kubeflow-pipelines.cache.serviceAccountName" -}}
 {{- if .Values.cache.serviceAccount.create }}
-{{- default "cache-server" .Values.cache.serviceAccount.name }}
+{{- default "kubeflow-pipelines-cache" .Values.cache.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.cache.serviceAccount.name }}
 {{- end }}
@@ -132,7 +161,7 @@ Create the name of the service account to use for Cache Deployer
 */}}
 {{- define "kubeflow-pipelines.cacheDeployer.serviceAccountName" -}}
 {{- if .Values.cacheDeployer.serviceAccount.create }}
-{{- default "cache-deployer-sa" .Values.cacheDeployer.serviceAccount.name }}
+{{- default "kubeflow-pipelines-cache-deployer-sa" .Values.cacheDeployer.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.cacheDeployer.serviceAccount.name }}
 {{- end }}
@@ -233,7 +262,7 @@ mysql-secret
 {{- else if .Values.postgresql.enabled -}}
 postgresql-secret
 {{- else -}}
-{{ include "kubeflow-pipelines.fullname" . }}-mysql-secret
+mysql-secret
 {{- end -}}
 {{- end }}
 
