@@ -1,0 +1,11 @@
+{{- if .Values.thirdParty.argo.enabled }}
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  annotations:
+    internal.kpt.dev/upstream-identifier: scheduling.k8s.io|PriorityClass|default|workflow-controller
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+  name: workflow-controller
+value: 1000000
+{{- end }}

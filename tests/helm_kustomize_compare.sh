@@ -246,7 +246,7 @@ if [ ! -d "$CHART_DIR" ]; then
     exit 1
 fi
 
-if [[ "$COMPONENT" != "kserve-models-web-app" ]] && [[ "$COMPONENT" != "kubeflow-pipelines" || "$SCENARIO" != "generic" ]] && [ ! -f "$HELM_VALUES_ARG" ]; then
+if [[ "$COMPONENT" != "kserve-models-web-app" ]] && [[ "$COMPONENT" != "pipeline" || "$SCENARIO" != "generic" ]] && [ ! -f "$HELM_VALUES_ARG" ]; then
     echo "ERROR: Helm values file does not exist: $HELM_VALUES_ARG"
     exit 1
 fi
@@ -280,11 +280,11 @@ else
             --values "$HELM_VALUES_ARG" > "$HELM_OUTPUT"
     elif [[ "$COMPONENT" == "kubeflow-pipelines" ]]; then
         if [[ "$SCENARIO" == "generic" ]]; then
-            helm template kubeflow-pipelines . \
+            helm template pipeline . \
                 --namespace "$NAMESPACE" \
                 --include-crds > "$HELM_OUTPUT"
         else
-            helm template kubeflow-pipelines . \
+            helm template pipeline . \
                 --namespace "$NAMESPACE" \
                 --include-crds \
                 --values "$HELM_VALUES_ARG" > "$HELM_OUTPUT"

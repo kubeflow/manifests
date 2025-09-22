@@ -1,0 +1,36 @@
+{{- if .Values.viewerCrd.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+  name: ml-pipeline-viewer-controller-role
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+rules:
+- apiGroups:
+  - '*'
+  resources:
+  - deployments
+  - services
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - viewers
+  - viewers/finalizers
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+{{- end }}

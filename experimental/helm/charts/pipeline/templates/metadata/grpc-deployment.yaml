@@ -2,49 +2,56 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-metadata-grpc
+  name: metadata-grpc-deployment
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    application-crd-id: kubeflow-pipelines
     component: metadata-grpc-server
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
 spec:
   replicas: {{ .Values.metadata.grpc.replicas }}
   selector:
     matchLabels:
-      {{- include "kubeflow-pipelines.selectorLabels" . | nindent 6 }}
       component: metadata-grpc-server
+      application-crd-id: kubeflow-pipelines
   template:
     metadata:
       labels:
-        {{- include "kubeflow-pipelines.selectorLabels" . | nindent 8 }}
         component: metadata-grpc-server
-      annotations:
-        {{- include "kubeflow-pipelines.annotations" . | nindent 8 }}
+        application-crd-id: kubeflow-pipelines
     spec:
-      {{- include "kubeflow-pipelines.imagePullSecrets" . | nindent 6 }}
-      serviceAccountName: {{ include "kubeflow-pipelines.metadata.serviceAccountName" . }}
       securityContext:
-        {{- if .Values.security.seccompProfile }}
         seccompProfile:
-          type: {{ .Values.security.seccompProfile.type }}
-        {{- end }}
+          type: RuntimeDefault
+      serviceAccountName: metadata-grpc-server
       containers:
       - name: container
         image: {{ .Values.metadata.grpc.image.repository }}:{{ .Values.metadata.grpc.image.tag }}
-        imagePullPolicy: {{ .Values.metadata.grpc.image.pullPolicy | default .Values.global.imagePullPolicy }}
         env:
-        {{- include "kubeflow-pipelines.databaseEnv" . | nindent 8 }}
+        - name: DBCONFIG_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: mysql-secret
+        - name: DBCONFIG_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: mysql-secret
         - name: MYSQL_DATABASE
-          value: {{ .Values.database.metadb }}
+          valueFrom:
+            configMapKeyRef:
+              key: mlmdDb
+              name: pipeline-install-config
         - name: MYSQL_HOST
-          value: {{ include "kubeflow-pipelines.database.host" . }}
+          valueFrom:
+            configMapKeyRef:
+              key: dbHost
+              name: pipeline-install-config
         - name: MYSQL_PORT
-          value: {{ include "kubeflow-pipelines.database.port" . | quote }}
-        {{- with .Values.metadata.grpc.additionalEnv }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
+          valueFrom:
+            configMapKeyRef:
+              key: dbPort
+              name: pipeline-install-config
         command: ["/bin/metadata_store_server"]
         args: 
         - "--grpc_port=8080"
@@ -57,33 +64,26 @@ spec:
         ports:
         - name: grpc-api
           containerPort: 8080
-          protocol: TCP
         livenessProbe:
           tcpSocket:
             port: grpc-api
-          initialDelaySeconds: {{ .Values.metadata.grpc.probes.liveness.initialDelaySeconds }}
-          periodSeconds: {{ .Values.metadata.grpc.probes.liveness.periodSeconds }}
-          timeoutSeconds: {{ .Values.metadata.grpc.probes.liveness.timeoutSeconds }}
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 2
         readinessProbe:
           tcpSocket:
             port: grpc-api
-          initialDelaySeconds: {{ .Values.metadata.grpc.probes.readiness.initialDelaySeconds }}
-          periodSeconds: {{ .Values.metadata.grpc.probes.readiness.periodSeconds }}
-          timeoutSeconds: {{ .Values.metadata.grpc.probes.readiness.timeoutSeconds }}
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 2
         securityContext:
-          {{- toYaml .Values.metadata.grpc.securityContext | nindent 10 }}
-        resources:
-          {{- toYaml .Values.metadata.grpc.resources | nindent 10 }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsGroup: 0
+          runAsNonRoot: true
+          runAsUser: 1000
+          seccompProfile:
+            type: RuntimeDefault
 {{- end }}

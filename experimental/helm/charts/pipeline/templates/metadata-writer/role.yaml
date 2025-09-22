@@ -2,12 +2,11 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-metadata-writer-role
+  name: kubeflow-pipelines-metadata-writer-role
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     app: kubeflow-pipelines-metadata-writer-role
-    component: metadata-writer
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
   annotations:
     {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
 rules:

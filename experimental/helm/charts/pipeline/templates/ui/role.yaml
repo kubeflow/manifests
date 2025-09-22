@@ -1,0 +1,48 @@
+{{- if .Values.ui.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    {{- include "kubeflow-pipelines.uiLabels" . | nindent 4 }}
+  name: ml-pipeline-ui
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/log
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  - configmaps
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - viewers
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - delete
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  verbs:
+  - get
+  - list
+{{- end }}

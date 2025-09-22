@@ -2,63 +2,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-visualization
+  name: ml-pipeline-visualizationserver
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     app: ml-pipeline-visualizationserver
-    component: visualization
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    application-crd-id: kubeflow-pipelines
 spec:
-  replicas: {{ .Values.visualization.replicas }}
   selector:
     matchLabels:
-      {{- include "kubeflow-pipelines.selectorLabels" . | nindent 6 }}
       app: ml-pipeline-visualizationserver
-      component: visualization
+      application-crd-id: kubeflow-pipelines
   template:
     metadata:
-      labels:
-        {{- include "kubeflow-pipelines.selectorLabels" . | nindent 8 }}
-        app: ml-pipeline-visualizationserver
-        component: visualization
       annotations:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
-        {{- include "kubeflow-pipelines.annotations" . | nindent 8 }}
+      labels:
+        app: ml-pipeline-visualizationserver
+        application-crd-id: kubeflow-pipelines
     spec:
-      {{- include "kubeflow-pipelines.imagePullSecrets" . | nindent 6 }}
-      serviceAccountName: {{ include "kubeflow-pipelines.visualization.serviceAccountName" . }}
-      securityContext:
-        {{- if .Values.security.seccompProfile }}
-        seccompProfile:
-          type: {{ .Values.security.seccompProfile.type }}
-        {{- end }}
+      serviceAccountName: ml-pipeline-visualizationserver
       containers:
       - name: ml-pipeline-visualizationserver
         image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.visualization.image.repository "tag" .Values.visualization.image.tag "context" .) }}
-        imagePullPolicy: {{ .Values.visualization.image.pullPolicy | default .Values.global.imagePullPolicy }}
+        imagePullPolicy: IfNotPresent
         ports:
         - name: http
           containerPort: 8888
-          protocol: TCP
-        env:
-        {{- include "kubeflow-pipelines.commonEnv" . | nindent 8 }}
-        {{- with .Values.visualization.additionalEnv }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
-        readinessProbe:
-          exec:
-            command:
-            - wget
-            - -q
-            - -S
-            - -O
-            - "-"
-            - http://localhost:8888/
-          initialDelaySeconds: {{ .Values.visualization.probes.readiness.initialDelaySeconds }}
-          periodSeconds: {{ .Values.visualization.probes.readiness.periodSeconds }}
-          timeoutSeconds: {{ .Values.visualization.probes.readiness.timeoutSeconds }}
         livenessProbe:
           exec:
             command:
@@ -71,20 +40,23 @@ spec:
           initialDelaySeconds: {{ .Values.visualization.probes.liveness.initialDelaySeconds }}
           periodSeconds: {{ .Values.visualization.probes.liveness.periodSeconds }}
           timeoutSeconds: {{ .Values.visualization.probes.liveness.timeoutSeconds }}
-        securityContext:
-          {{- toYaml .Values.visualization.securityContext | nindent 10 }}
+        readinessProbe:
+          exec:
+            command:
+            - wget
+            - -q
+            - -S
+            - -O
+            - "-"
+            - http://localhost:8888/
+          initialDelaySeconds: {{ .Values.visualization.probes.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.visualization.probes.readiness.periodSeconds }}
+          timeoutSeconds: {{ .Values.visualization.probes.readiness.timeoutSeconds }}
         resources:
           {{- toYaml .Values.visualization.resources | nindent 10 }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        securityContext:
+          {{- toYaml .Values.visualization.securityContext | nindent 10 }}
+      securityContext:
+        seccompProfile:
+          type: {{ .Values.security.seccompProfile.type }}
 {{- end }}

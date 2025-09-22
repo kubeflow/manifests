@@ -2,23 +2,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-cache-server
+  name: cache-server
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    app: cache-server
-    component: cache-server
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    {{- include "kubeflow-pipelines.cacheLabels" . | nindent 4 }}
 spec:
-  type: {{ .Values.cache.server.service.type }}
   ports:
-  - name: webhook-api
-    protocol: TCP
-    port: {{ .Values.cache.server.service.port }}
-    targetPort: 8443
+  - port: {{ .Values.cache.server.service.port }}
+    targetPort: webhook-api
   selector:
-    {{- include "kubeflow-pipelines.selectorLabels" . | nindent 4 }}
     app: cache-server
-    component: cache-server
+    application-crd-id: kubeflow-pipelines
 {{- end }}

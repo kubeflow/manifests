@@ -428,7 +428,7 @@ cache:
       # -- Service type
       type: ClusterIP
       # -- Service port
-      port: 8443
+      port: 443
     
     # Additional environment variables
     additionalEnv: []
@@ -595,12 +595,29 @@ metadata:
 
 # Third-party Dependencies Configuration
 argo:
-  enabled: true
+  enabled: false
   # Argo Workflows subchart values will be merged here
+
+# Built-in third-party components
+thirdParty:
+  # Use built-in minimal Argo instead of external subchart
+  argo:
+    enabled: false
+    
+  # Use built-in minimal MySQL instead of external subchart  
+  mysql:
+    enabled: true
+    
+  # Use built-in minimal MinIO instead of external subchart
+  minio:
+    enabled: true
 
 # Database Configuration
 mysql:
-  enabled: true
+  enabled: false
+  global:
+    security:
+      allowInsecureImages: true
   auth:
     rootPassword: ""
     database: "mlpipeline"
@@ -612,6 +629,9 @@ mysql:
 
 postgresql:
   enabled: false
+  global:
+    security:
+      allowInsecureImages: true
   auth:
     postgresPassword: ""
     database: "mlpipeline"
@@ -677,7 +697,7 @@ objectStore:
 
 # MinIO subchart configuration
 minio:
-  enabled: true
+  enabled: false
   auth:
     rootUser: "minio"
     rootPassword: "minio123"

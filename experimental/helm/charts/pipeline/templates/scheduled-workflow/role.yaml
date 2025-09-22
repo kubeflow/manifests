@@ -2,12 +2,11 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-scheduled-workflow
+  name: ml-pipeline-scheduledworkflow-role
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
+    app: ml-pipeline-scheduledworkflow-role
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    app: ml-pipeline-scheduledworkflow
-    component: scheduled-workflow
   annotations:
     {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
 rules:

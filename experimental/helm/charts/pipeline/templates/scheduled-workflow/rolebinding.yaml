@@ -2,18 +2,16 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-scheduled-workflow
+  name: ml-pipeline-scheduledworkflow-binding
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    app: ml-pipeline-scheduledworkflow
-    component: scheduled-workflow
   annotations:
     {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ include "kubeflow-pipelines.fullname" . }}-scheduled-workflow
+  name: ml-pipeline-scheduledworkflow-role
 subjects:
 - kind: ServiceAccount
   name: {{ include "kubeflow-pipelines.scheduledWorkflow.serviceAccountName" . }}

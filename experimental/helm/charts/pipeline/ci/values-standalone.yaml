@@ -5,9 +5,9 @@
 env:
   platform: platform-agnostic
 
-# Database configuration - use MySQL subchart
+# Database configuration - use built-in MySQL
 mysql:
-  enabled: true
+  enabled: false
   auth:
     rootPassword: ""
     database: "mlpipeline"
@@ -23,12 +23,12 @@ postgresql:
 externalDatabase:
   type: mysql
 
-# Object storage configuration - use MinIO subchart
+# Object storage configuration - use built-in MinIO
 objectStore:
   provider: minio
 
 minio:
-  enabled: true
+  enabled: false
   auth:
     rootUser: "minio"
     rootPassword: "minio123"
@@ -37,9 +37,18 @@ minio:
     enabled: true
     size: 20Gi
 
-# Argo Workflows configuration
+# Argo Workflows configuration - use built-in
 argo:
-  enabled: true
+  enabled: false
+
+# Built-in third-party components
+thirdParty:
+  mysql:
+    enabled: true
+  minio:
+    enabled: true
+  argo:
+    enabled: true
 
 # Disable cloud-specific features
 monitoring:
@@ -54,3 +63,11 @@ certManager:
 networking:
   istio:
     enabled: false
+
+# Disable CRDs for platform-agnostic scenario
+crds:
+  install: false
+
+# Disable webhooks for platform-agnostic scenario
+webhooks:
+  enabled: false
