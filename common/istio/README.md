@@ -40,6 +40,47 @@ If you still encounter probelms, even with native sidecars enabled, you might tr
 1. Use `runAsUser: 1337` in your init containers, or
 2. Add the annotation `traffic.sidecar.istio.io/excludeOutboundIPRanges: 0.0.0.0/0` to your KServe inferenceservices
 
+### VirtualService Conflicts with KServe Path-Based Routing
+
+When deploying KServe with path-based routing alongside KubeFlow, you may encounter 404 errors due to Istio VirtualService conflicts. This is an upstream Istio routing behavior issue (see [istio/istio#57404](https://github.com/istio/istio/issues/57404)).
+
+**Problem:** KubeFlow uses wildcard VirtualServices (`hosts: ['*']`) while KServe creates specific-host VirtualServices (`hosts: ['your-domain.com']`), causing Istio's routing logic to fail when matching requests to the specific host.
+
+**Symptoms:**
+- KServe InferenceServices return 404 errors when accessed via their specific domain
+- KubeFlow Central Dashboard and other services work normally
+- KServe services work when accessed via different paths but not the root path
+
+**Workaround:** Update the kubeflow-gateway to include your KServe ingress domain alongside the wildcard host:
+
+```yaml
+# In your kustomization overlay or directly in kubeflow-istio-resources
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: kubeflow-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"                           # Existing KubeFlow wildcard
+    - "your-kserve-domain.com"      # Add your KServe ingress domain
+```
+
+**Steps to apply the fix:**
+1. Identify your KServe ingress domain from the `inferenceservice-config` ConfigMap
+2. Create a Kustomization overlay that patches the kubeflow-gateway
+3. Apply the updated configuration
+
+**References:**
+- Upstream Istio issue: https://github.com/istio/istio/issues/57404
+- KServe path-based routing documentation: https://kserve.github.io/website/docs/admin-guide/configurations#path-template
+
 ## Upgrade Istio Manifests
 For upgrading Istio to newer versions, use the synchronization script:
 
