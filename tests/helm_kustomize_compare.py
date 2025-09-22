@@ -46,6 +46,16 @@ def clean_helm_metadata(obj: Any, component: str = "katib") -> Any:
                                 # More restrictive filtering for KServe
                                 if not label_key.startswith(('helm.sh/', 'app.kubernetes.io/managed-by')):
                                     cleaned_labels[label_key] = label_value
+                            elif component == "pipeline":
+                                helm_specific_labels = [
+                                    'app.kubernetes.io/managed-by',
+                                    'app.kubernetes.io/version', 
+                                    'app.kubernetes.io/name',
+                                    'app.kubernetes.io/instance',
+                                    'app.kubernetes.io/component'
+                                ]
+                                if not label_key.startswith('helm.sh/') and label_key not in helm_specific_labels:
+                                    cleaned_labels[label_key] = label_value
                             else:
                                 # Standard filtering for Katib and Model Registry
                                 helm_labels = [
@@ -216,12 +226,12 @@ def get_expected_helm_extras(component: str, scenario: str) -> set:
         if scenario == "base":
             return {"AuthorizationPolicy/kserve-models-web-app"}
         return set()
-    elif component == "kubeflow-pipelines":
+    elif component == "pipeline":
         return set()  # No extra resources in Helm for Kubeflow Pipelines
     else:
         return set()
 
-def compare_manifests(kustomize_file: str, helm_file: str, component: str, scenario: str, namespace: str = "") -> bool:
+def compare_manifests(kustomize_file: str, helm_file: str, component: str, scenario: str, namespace: str = "", verbose: bool = False) -> bool:
     """Compare Kustomize and Helm manifests."""
     kustomize_manifests = load_manifests(kustomize_file)
     helm_manifests = load_manifests(helm_file)
@@ -271,6 +281,11 @@ def compare_manifests(kustomize_file: str, helm_file: str, component: str, scena
         
         if differences:
             print(f"Differences in {key}: {len(differences)} fields")
+            if verbose:
+                print(f"  Detailed differences for {key}:")
+                for diff in differences:
+                    print(f"    {diff}")
+                print()
             differences_found.append(key)
             success = False
     
@@ -283,7 +298,7 @@ def compare_manifests(kustomize_file: str, helm_file: str, component: str, scena
 if __name__ == "__main__":
     if len(sys.argv) < 5:
         print("Usage: python compare.py <kustomize_file> <helm_file> <component> <scenario> [namespace] [--verbose]")
-        print("Components: katib, model-registry, kserve-models-web-app, kubeflow-pipelines")
+        print("Components: katib, model-registry, kserve-models-web-app, pipeline")
         sys.exit(1)
     
     kustomize_file = sys.argv[1]
@@ -296,6 +311,6 @@ if __name__ == "__main__":
         print(f"ERROR: Unknown component: {component}")
         print("Supported components: katib, model-registry, kserve-models-web-app, notebook-controller","kubeflow-pipelines")
         sys.exit(1)
-    
-    success = compare_manifests(kustomize_file, helm_file, component, scenario, namespace)
+
+    success = compare_manifests(kustomize_file, helm_file, component, scenario, namespace, verbose)
     sys.exit(0 if success else 1) 
