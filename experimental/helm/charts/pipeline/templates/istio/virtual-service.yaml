@@ -2,16 +2,15 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-ui
+  name: ml-pipeline-ui
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: istio-virtual-service
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
 spec:
   gateways:
-  - {{ .Values.networking.istio.gateway }}
+  - {{ .Values.networking.istio.gateway | default "kubeflow-gateway" }}
   hosts:
   - '*'
   http:
@@ -22,8 +21,37 @@ spec:
       uri: /pipeline
     route:
     - destination:
-        host: {{ include "kubeflow-pipelines.fullname" . }}-ui.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
+        host: ml-pipeline-ui.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
         port:
-          number: {{ .Values.ui.service.port }}
+          number: 80
     timeout: 300s
+
+---
+{{- if .Values.metadata.enabled }}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: metadata-grpc
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+spec:
+  gateways:
+  - {{ .Values.networking.istio.gateway | default "kubeflow-gateway" }}
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /ml_metadata
+    rewrite:
+      uri: /ml_metadata
+    route:
+    - destination:
+        host: metadata-envoy-service.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
+        port:
+          number: 9090
+{{- end }}
 {{- end }}

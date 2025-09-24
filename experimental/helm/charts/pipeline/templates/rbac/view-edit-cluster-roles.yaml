@@ -8,13 +8,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-edit
+  name: kubeflow-pipelines-edit
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
-    component: multi-user-rbac
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
 aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
@@ -26,14 +25,13 @@ rules: []
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-view
+  name: kubeflow-pipelines-view
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-pipelines-edit: "true"
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
-    component: multi-user-rbac
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
 aggregationRule:
   clusterRoleSelectors:
   - matchLabels:
@@ -45,13 +43,12 @@ rules: []
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-aggregate-edit
+  name: aggregate-to-kubeflow-pipelines-edit
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-pipelines-edit: "true"
-    component: multi-user-rbac
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
 rules:
 - apiGroups:
   - pipelines.kubeflow.org
@@ -117,13 +114,12 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-aggregate-view
+  name: aggregate-to-kubeflow-pipelines-view
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-pipelines-view: "true"
-    component: multi-user-rbac
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
 rules:
 - apiGroups:
   - pipelines.kubeflow.org

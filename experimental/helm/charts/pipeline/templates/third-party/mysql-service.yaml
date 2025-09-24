@@ -12,6 +12,5 @@ spec:
     protocol: TCP
     targetPort: 3306
   selector:
-    app: mysql
-    application-crd-id: kubeflow-pipelines
+    {{- include "kubeflow-pipelines.mysqlSelectorLabels" . | nindent 4 }}
 {{- end }}

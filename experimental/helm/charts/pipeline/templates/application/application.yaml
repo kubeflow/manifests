@@ -16,7 +16,8 @@ spec:
   addOwnerRef: true
   selector:
     matchLabels:
-      application-crd-id: kubeflow-pipelines
+      app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
   descriptor:
     version: {{ .Values.global.imageTag | quote }}
     type: Kubeflow Pipelines

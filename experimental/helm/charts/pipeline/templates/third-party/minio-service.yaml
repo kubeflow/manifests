@@ -13,6 +13,5 @@ spec:
     protocol: TCP
     targetPort: 9000
   selector:
-    app: minio
-    application-crd-id: kubeflow-pipelines
+    {{- include "kubeflow-pipelines.minioSelectorLabels" . | nindent 4 }}
 {{- end }}

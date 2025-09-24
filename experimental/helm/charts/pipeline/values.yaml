@@ -40,7 +40,7 @@ installMode:
     enabled: false
     profileController:
       # -- Enable profile controller for multi-user mode
-      enabled: false
+      enabled: true
 
 # Custom Resource Definitions
 crds:
@@ -67,7 +67,6 @@ apiServer:
     requests:
       cpu: 250m
       memory: 500Mi
-    limits: {}
   
   # Service Account
   serviceAccount:
@@ -195,11 +194,7 @@ scheduledWorkflow:
     annotations: {}
   
   # Resources
-  resources:
-    requests:
-      cpu: 120m
-      memory: 100Mi
-    limits: {}
+  resources: {}
   
   # Security context
   securityContext:
@@ -296,11 +291,7 @@ viewerCrd:
     pullPolicy: ""
   
   # -- Viewer CRD Controller resource requests and limits
-  resources:
-    requests:
-      cpu: 120m
-      memory: 100Mi
-    limits: {}
+  resources: {}
   
   # Service Account
   serviceAccount:
@@ -489,7 +480,7 @@ cacheDeployer:
 # ML Metadata Configuration
 metadata:
   # -- Enable ML Metadata
-  enabled: true
+  enabled: false
   
   grpc:
     # -- Number of metadata gRPC server replicas
@@ -602,15 +593,19 @@ argo:
 thirdParty:
   # Use built-in minimal Argo instead of external subchart
   argo:
-    enabled: false
-    
-  # Use built-in minimal MySQL instead of external subchart  
-  mysql:
     enabled: true
     
+  # Use built-in minimal MySQL instead of external subchart
+  mysql:
+    enabled: false
+
   # Use built-in minimal MinIO instead of external subchart
   minio:
-    enabled: true
+    enabled: false
+
+  # Metacontroller configuration
+  metacontroller:
+    enabled: false
 
 # Database Configuration
 mysql:
@@ -714,7 +709,7 @@ pipeline:
     version: "2.5.0"
   
   # Pipeline root configuration
-  defaultPipelineRoot: "minio://mlpipeline/v2/artifacts"
+  defaultPipelineRoot: ""
   
   # Auto update pipeline default version
   autoUpdatePipelineDefaultVersion: true
@@ -878,7 +873,7 @@ monitoring:
 # Webhook Configuration
 webhooks:
   # -- Enable admission webhooks
-  enabled: true
+  enabled: false
   # -- Webhook failure policy
   failurePolicy: "Fail"
   
