@@ -21,6 +21,5 @@ spec:
     protocol: TCP
     targetPort: {{ .Values.apiServer.service.grpcPort }}
   selector:
-    app: ml-pipeline
-    application-crd-id: kubeflow-pipelines
+    {{- include "kubeflow-pipelines.mlPipelineSelectorLabels" . | nindent 4 }}
 {{- end }}

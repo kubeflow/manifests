@@ -113,38 +113,54 @@ serviceAccounts:
     create: true
     name: "profiles-controller-service-account"
 
-# Database configuration 
-mysql:
-  enabled: true
-  auth:
-    rootPassword: ""
-    database: "mlpipeline"
-    username: "root"
-  primary:
+# Third party services configuration
+thirdParty:
+  # Argo Workflows configuration
+  argo:
+    enabled: true
+  
+  # Database configuration 
+  mysql:
+    enabled: true
+    auth:
+      rootPassword: ""
+      database: "mlpipeline"
+      username: "root"
+    primary:
+      persistence:
+        enabled: true
+        size: 20Gi
+
+  # Object storage configuration 
+  minio:
+    enabled: true
+    auth:
+      rootUser: "minio"
+      rootPassword: "minio123"
+    defaultBuckets: "mlpipeline"
     persistence:
       enabled: true
       size: 20Gi
 
+  # Metacontroller for profile controller
+  metacontroller:
+    enabled: true
+
+# Metadata service configuration
+metadata:
+  enabled: true
+  grpc:
+    image:
+      repository: gcr.io/tfx-oss-public/ml_metadata_store_server
+      tag: "1.14.0"
+      pullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 100m
+        memory: 100Mi
+
 postgresql:
   enabled: false
-
-# Object storage configuration 
-objectStore:
-  provider: minio
-
-minio:
-  enabled: true
-  auth:
-    rootUser: "minio"
-    rootPassword: "minio123"
-  defaultBuckets: "mlpipeline"
-  persistence:
-    enabled: true
-    size: 20Gi
-
-# Argo Workflows configuration
-argo:
-  enabled: true
 
 # Istio configuration for multi-user 
 networking:

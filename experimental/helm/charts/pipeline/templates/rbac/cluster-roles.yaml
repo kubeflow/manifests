@@ -1,0 +1,579 @@
+{{- if .Values.installMode.multiUser.enabled }}
+# API Server ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ml-pipeline
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/log
+  verbs:
+  - get
+  - list
+  - delete
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - scheduledworkflows
+  verbs:
+  - create
+  - get
+  - list
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - scheduledworkflows/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - pipelines.kubeflow.org
+  resources:
+  - pipelines
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+- apiGroups:
+  - authentication.k8s.io
+  resources:
+  - tokenreviews
+  verbs:
+  - create
+
+---
+# UI ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ml-pipeline-ui
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/log
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - viewers
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - delete
+
+---
+# Scheduled Workflow ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ml-pipeline-scheduledworkflow-role
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - scheduledworkflows
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - scheduledworkflows/finalizers
+  verbs:
+  - update
+
+---
+# Persistence Agent ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ml-pipeline-persistenceagent-role
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - scheduledworkflows
+  verbs:
+  - get
+  - list
+  - watch
+
+---
+# Viewer Controller ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ml-pipeline-viewer-controller-role
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+rules:
+- apiGroups:
+  - '*'
+  resources:
+  - deployments
+  - replicasets
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - viewers
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+
+---
+# Cache ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-pipelines-cache-role
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+
+---
+# Cache Deployer ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-pipelines-cache-deployer-clusterrole
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+rules:
+- apiGroups:
+  - certificates.k8s.io
+  resources:
+  - certificatesigningrequests
+  - certificatesigningrequests/approval
+  verbs:
+  - create
+  - delete
+  - get
+  - update
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - mutatingwebhookconfigurations
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+- apiGroups:
+  - certificates.k8s.io
+  resources:
+  - signers
+  resourceNames:
+  - kubernetes.io/*
+  verbs:
+  - approve
+
+---
+# Metadata Writer ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-pipelines-metadata-writer-role
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+
+---
+# Argo Cluster Role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: argo-cluster-role
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/exec
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - watch
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  - persistentvolumeclaims/finalizers
+  verbs:
+  - create
+  - update
+  - delete
+  - get
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  - workflows/finalizers
+  - workflowtasksets
+  - workflowtasksets/finalizers
+  - workflowartifactgctasks
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+  - create
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflowtemplates
+  - workflowtemplates/finalizers
+  - clusterworkflowtemplates
+  - clusterworkflowtemplates/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflowtaskresults
+  verbs:
+  - list
+  - watch
+  - deletecollection
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - argoproj.io
+  resources:
+  - cronworkflows
+  - cronworkflows/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - "policy"
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - create
+  - get
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  resourceNames:
+  - argo-workflows-agent-ca-certificates
+
+---
+# Argo Aggregate Roles
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: argo-aggregate-to-view
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  - workflows/finalizers
+  - workfloweventbindings
+  - workfloweventbindings/finalizers
+  - workflowtemplates
+  - workflowtemplates/finalizers
+  - cronworkflows
+  - cronworkflows/finalizers
+  - clusterworkflowtemplates
+  - clusterworkflowtemplates/finalizers
+  - workflowtaskresults
+  - workflowtaskresults/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: argo-aggregate-to-edit
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  - workflows/finalizers
+  - workfloweventbindings
+  - workfloweventbindings/finalizers
+  - workflowtemplates
+  - workflowtemplates/finalizers
+  - cronworkflows
+  - cronworkflows/finalizers
+  - clusterworkflowtemplates
+  - clusterworkflowtemplates/finalizers
+  - workflowtaskresults
+  - workflowtaskresults/finalizers
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: argo-aggregate-to-admin
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  - workflows/finalizers
+  - workfloweventbindings
+  - workfloweventbindings/finalizers
+  - workflowtemplates
+  - workflowtemplates/finalizers
+  - cronworkflows
+  - cronworkflows/finalizers
+  - clusterworkflowtemplates
+  - clusterworkflowtemplates/finalizers
+  - workflowtasksets
+  - workflowtasksets/finalizers
+  - workflowtaskresults
+  - workflowtaskresults/finalizers
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+
+---
+# Metacontroller ClusterRole
+{{- if .Values.thirdParty.metacontroller.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeflow-metacontroller
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+{{- end }}
+{{- end }}
