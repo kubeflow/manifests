@@ -10,8 +10,7 @@ spec:
   replicas: {{ .Values.cache.server.replicas }}
   selector:
     matchLabels:
-      app: cache-server
-      application-crd-id: kubeflow-pipelines
+      {{- include "kubeflow-pipelines.cacheSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
@@ -38,50 +37,50 @@ spec:
         - name: DEFAULT_CACHE_STALENESS
           valueFrom:
             configMapKeyRef:
-              key: DEFAULT_CACHE_STALENESS
               name: pipeline-install-config
+              key: DEFAULT_CACHE_STALENESS
         - name: MAXIMUM_CACHE_STALENESS
           valueFrom:
             configMapKeyRef:
-              key: MAXIMUM_CACHE_STALENESS
               name: pipeline-install-config
+              key: MAXIMUM_CACHE_STALENESS
         - name: CACHE_IMAGE
           valueFrom:
             configMapKeyRef:
-              key: cacheImage
               name: pipeline-install-config
+              key: cacheImage
         - name: CACHE_NODE_RESTRICTIONS
           valueFrom:
             configMapKeyRef:
-              key: cacheNodeRestrictions
               name: pipeline-install-config
+              key: cacheNodeRestrictions
         - name: DBCONFIG_DRIVER
           value: mysql
         - name: DBCONFIG_DB_NAME
           valueFrom:
             configMapKeyRef:
-              key: cacheDb
               name: pipeline-install-config
+              key: cacheDb
         - name: DBCONFIG_HOST_NAME
           valueFrom:
             configMapKeyRef:
-              key: dbHost
               name: pipeline-install-config
+              key: dbHost
         - name: DBCONFIG_PORT
           valueFrom:
             configMapKeyRef:
-              key: dbPort
               name: pipeline-install-config
+              key: dbPort
         - name: DBCONFIG_USER
           valueFrom:
             secretKeyRef:
-              key: username
               name: mysql-secret
+              key: username
         - name: DBCONFIG_PASSWORD
           valueFrom:
             secretKeyRef:
-              key: password
               name: mysql-secret
+              key: password
         - name: NAMESPACE_TO_WATCH
           valueFrom:
             fieldRef:

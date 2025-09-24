@@ -5,62 +5,75 @@ metadata:
   name: metadata-grpc-deployment
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    application-crd-id: kubeflow-pipelines
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     component: metadata-grpc-server
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
 spec:
-  replicas: {{ .Values.metadata.grpc.replicas }}
+  replicas: 1
   selector:
     matchLabels:
       component: metadata-grpc-server
-      application-crd-id: kubeflow-pipelines
   template:
     metadata:
       labels:
+        {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
         component: metadata-grpc-server
-        application-crd-id: kubeflow-pipelines
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
     spec:
       securityContext:
         seccompProfile:
           type: RuntimeDefault
-      serviceAccountName: metadata-grpc-server
       containers:
       - name: container
-        image: {{ .Values.metadata.grpc.image.repository }}:{{ .Values.metadata.grpc.image.tag }}
+        image: {{ .Values.metadata.grpc.image.repository }}:{{ .Values.metadata.grpc.image.tag | default "1.14.0" }}
+        imagePullPolicy: {{ .Values.metadata.grpc.image.pullPolicy | default "IfNotPresent" }}
+        securityContext:
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 0
+          capabilities:
+            drop:
+            - ALL
         env:
         - name: DBCONFIG_USER
           valueFrom:
             secretKeyRef:
+              name: {{ .Values.thirdParty.mysql.secretName | default "mysql-secret" }}
               key: username
-              name: mysql-secret
         - name: DBCONFIG_PASSWORD
           valueFrom:
             secretKeyRef:
+              name: {{ .Values.thirdParty.mysql.secretName | default "mysql-secret" }}
               key: password
-              name: mysql-secret
         - name: MYSQL_DATABASE
           valueFrom:
             configMapKeyRef:
-              key: mlmdDb
               name: pipeline-install-config
+              key: mlmdDb
         - name: MYSQL_HOST
           valueFrom:
             configMapKeyRef:
-              key: dbHost
               name: pipeline-install-config
+              key: dbHost
         - name: MYSQL_PORT
           valueFrom:
             configMapKeyRef:
-              key: dbPort
               name: pipeline-install-config
+              key: dbPort
         command: ["/bin/metadata_store_server"]
-        args: 
-        - "--grpc_port=8080"
-        - "--mysql_config_database=$(MYSQL_DATABASE)"
-        - "--mysql_config_host=$(MYSQL_HOST)"
-        - "--mysql_config_port=$(MYSQL_PORT)"
-        - "--mysql_config_user=$(DBCONFIG_USER)"
-        - "--mysql_config_password=$(DBCONFIG_PASSWORD)"
-        - "--enable_database_upgrade=true"
+        args: ["--grpc_port=8080",
+               "--mysql_config_database=$(MYSQL_DATABASE)",
+               "--mysql_config_host=$(MYSQL_HOST)",
+               "--mysql_config_port=$(MYSQL_PORT)",
+               "--mysql_config_user=$(DBCONFIG_USER)",
+               "--mysql_config_password=$(DBCONFIG_PASSWORD)",
+               "--enable_database_upgrade=true"
+               ]
         ports:
         - name: grpc-api
           containerPort: 8080
@@ -76,14 +89,19 @@ spec:
           initialDelaySeconds: 3
           periodSeconds: 5
           timeoutSeconds: 2
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
-          runAsGroup: 0
-          runAsNonRoot: true
-          runAsUser: 1000
-          seccompProfile:
-            type: RuntimeDefault
+        resources:
+          {{- toYaml .Values.metadata.grpc.resources | nindent 10 }}
+      serviceAccountName: metadata-grpc-server
+      {{- with .Values.metadata.grpc.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.metadata.grpc.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.metadata.grpc.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
 {{- end }}

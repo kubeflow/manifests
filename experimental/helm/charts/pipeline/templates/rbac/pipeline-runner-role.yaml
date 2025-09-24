@@ -5,7 +5,7 @@ metadata:
   name: pipeline-runner
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    application-crd-id: kubeflow-pipelines
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
   annotations:
     {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
 rules:

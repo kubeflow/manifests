@@ -6,18 +6,19 @@ metadata:
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     component: metadata-envoy
-    application-crd-id: kubeflow-pipelines
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
 spec:
   replicas: {{ .Values.metadata.envoy.replicas }}
   selector:
     matchLabels:
       component: metadata-envoy
-      application-crd-id: kubeflow-pipelines
   template:
     metadata:
       labels:
         component: metadata-envoy
-        application-crd-id: kubeflow-pipelines
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
         sidecar.istio.io/inject: "false"
     spec:
       containers:

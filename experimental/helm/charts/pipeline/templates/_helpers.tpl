@@ -31,9 +31,11 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Common labels - simplified to match kustomize output
+Common labels 
 */}}
 {{- define "kubeflow-pipelines.labels" -}}
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
 application-crd-id: kubeflow-pipelines
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
@@ -53,6 +55,8 @@ Cache server labels
 */}}
 {{- define "kubeflow-pipelines.cacheLabels" -}}
 app: cache-server
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
 application-crd-id: kubeflow-pipelines
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
@@ -64,6 +68,8 @@ Cache deployer labels
 */}}
 {{- define "kubeflow-pipelines.cacheDeployerLabels" -}}
 app: cache-deployer
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
 application-crd-id: kubeflow-pipelines
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
@@ -75,6 +81,8 @@ ML Pipeline specific labels - matching original manifests
 */}}
 {{- define "kubeflow-pipelines.mlPipelineLabels" -}}
 app: ml-pipeline
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
 application-crd-id: kubeflow-pipelines
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
@@ -86,6 +94,8 @@ ML Pipeline UI labels
 */}}
 {{- define "kubeflow-pipelines.uiLabels" -}}
 app: ml-pipeline-ui
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
 application-crd-id: kubeflow-pipelines
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
@@ -97,6 +107,124 @@ ML Pipeline selector labels
 */}}
 {{- define "kubeflow-pipelines.mlPipelineSelectorLabels" -}}
 app: ml-pipeline
+application-crd-id: kubeflow-pipelines
+{{- end }}
+
+{{/*
+Cache server selector labels
+*/}}
+{{- define "kubeflow-pipelines.cacheSelectorLabels" -}}
+app: cache-server
+application-crd-id: kubeflow-pipelines
+{{- end }}
+
+{{/*
+UI selector labels
+*/}}
+{{- define "kubeflow-pipelines.uiSelectorLabels" -}}
+app: ml-pipeline-ui
+application-crd-id: kubeflow-pipelines
+{{- end }}
+
+{{/*
+Viewer CRD selector labels
+*/}}
+{{- define "kubeflow-pipelines.viewerCrdSelectorLabels" -}}
+app: ml-pipeline-viewer-crd
+application-crd-id: kubeflow-pipelines
+{{- end }}
+
+{{/*
+Visualization server labels
+*/}}
+{{- define "kubeflow-pipelines.visualizationLabels" -}}
+app: ml-pipeline-visualizationserver
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
+application-crd-id: kubeflow-pipelines
+{{- with .Values.commonLabels }}
+{{ toYaml . }}
+{{- end }}
+{{- end }}
+
+{{/*
+Visualization server selector labels
+*/}}
+{{- define "kubeflow-pipelines.visualizationSelectorLabels" -}}
+app: ml-pipeline-visualizationserver
+application-crd-id: kubeflow-pipelines
+{{- end }}
+
+{{/*
+MySQL selector labels
+*/}}
+{{- define "kubeflow-pipelines.mysqlSelectorLabels" -}}
+app: mysql
+application-crd-id: kubeflow-pipelines
+{{- end }}
+
+{{/*
+MinIO selector labels
+*/}}
+{{- define "kubeflow-pipelines.minioSelectorLabels" -}}
+app: minio
+application-crd-id: kubeflow-pipelines
+{{- end }}
+
+{{/*
+Metadata GRPC selector labels
+*/}}
+{{- define "kubeflow-pipelines.metadataGrpcSelectorLabels" -}}
+component: metadata-grpc-server
+application-crd-id: kubeflow-pipelines
+{{- end }}
+
+{{/*
+Metadata Envoy selector labels
+*/}}
+{{- define "kubeflow-pipelines.metadataEnvoySelectorLabels" -}}
+component: metadata-envoy
+application-crd-id: kubeflow-pipelines
+{{- end }}
+
+{{/*
+Cache deployer selector labels
+*/}}
+{{- define "kubeflow-pipelines.cacheDeployerSelectorLabels" -}}
+app: cache-deployer
+application-crd-id: kubeflow-pipelines
+{{- end }}
+
+{{/*
+Metadata writer selector labels
+*/}}
+{{- define "kubeflow-pipelines.metadataWriterSelectorLabels" -}}
+app: metadata-writer
+application-crd-id: kubeflow-pipelines
+{{- end }}
+
+{{/*
+Persistence agent selector labels
+*/}}
+{{- define "kubeflow-pipelines.persistenceAgentSelectorLabels" -}}
+app: ml-pipeline-persistenceagent
+application-crd-id: kubeflow-pipelines
+{{- end }}
+
+{{/*
+Scheduled workflow selector labels
+*/}}
+{{- define "kubeflow-pipelines.scheduledWorkflowSelectorLabels" -}}
+app: ml-pipeline-scheduledworkflow
+application-crd-id: kubeflow-pipelines
+{{- end }}
+
+{{/*
+Workflow controller selector labels
+*/}}
+{{- define "kubeflow-pipelines.workflowControllerSelectorLabels" -}}
+app: workflow-controller
+application-crd-id: kubeflow-pipelines
 {{- end }}
 
 {{/*
@@ -303,7 +431,7 @@ storage.googleapis.com
 {{- if eq .Values.objectStore.provider "minio" -}}
 {{- .Values.objectStore.minio.bucket | default "mlpipeline" }}
 {{- else if eq .Values.objectStore.provider "s3" -}}
-{{- .Values.objectStore.s3.bucket }}
+{{- .Values.objectStore.bucketName | default .Values.objectStore.s3.bucket }}
 {{- else if eq .Values.objectStore.provider "gcs" -}}
 {{- .Values.objectStore.gcs.bucket }}
 {{- else if eq .Values.objectStore.provider "azure" -}}

@@ -11,15 +11,14 @@ spec:
   replicas: {{ .Values.cacheDeployer.replicas }}
   selector:
     matchLabels:
-      app: cache-deployer
-      application-crd-id: kubeflow-pipelines
+      {{- include "kubeflow-pipelines.cacheDeployerSelectorLabels" . | nindent 6 }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
+        {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
         app: cache-deployer
-        application-crd-id: kubeflow-pipelines
     spec:
       serviceAccountName: kubeflow-pipelines-cache-deployer-sa
       containers:

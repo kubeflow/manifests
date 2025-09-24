@@ -16,10 +16,16 @@ data:
   appName: {{ .Values.pipeline.app.name }}
   appVersion: {{ .Values.pipeline.app.version }}
   # Database configuration
-  dbHost: {{ include "kubeflow-pipelines.database.host" . }}
+{{- $dbHost := include "kubeflow-pipelines.database.host" . -}}
+{{- if and .Values.env .Values.env.aws .Values.env.aws.rds .Values.env.aws.rds.enabled -}}
+  {{- $dbHost = .Values.env.aws.rds.endpoint -}}
+{{- else if and .Values.env .Values.env.azure .Values.env.azure.sql .Values.env.azure.sql.enabled -}}
+  {{- $dbHost = printf "%s.mysql.database.azure.com" .Values.env.azure.sql.serverName -}}
+{{- end }}
+  dbHost: {{ $dbHost | quote }}
   dbPort: {{ include "kubeflow-pipelines.database.port" . | quote }}
-  dbType: {{ .Values.externalDatabase.type | default "mysql" }}
-  mysqlHost: {{ include "kubeflow-pipelines.database.host" . }}
+  dbType: {{ .Values.externalDatabase.type | default "mysql" | quote }}
+  mysqlHost: {{ $dbHost | quote }}
   mysqlPort: {{ include "kubeflow-pipelines.database.port" . | quote }}
   mlmdDb: {{ .Values.database.metadb }}
   cacheDb: {{ .Values.database.cachedb }}
@@ -28,13 +34,33 @@ data:
   bucketName: {{ include "kubeflow-pipelines.objectStore.bucket" . }}
   # Pipeline configuration
   defaultPipelineRoot: {{ .Values.pipeline.defaultPipelineRoot | quote }}
-  autoUpdatePipelineDefaultVersion: {{ .Values.pipeline.autoUpdatePipelineDefaultVersion | quote }}
+  autoUpdatePipelineDefaultVersion: {{ .Values.pipeline.autoUpdatePipelineDefaultVersion | toString | quote }}
   cronScheduleTimezone: {{ .Values.pipeline.cronScheduleTimezone | quote }}
   # Cache configuration
   cacheImage: {{ .Values.pipeline.cache.image | quote }}
-  cacheNodeRestrictions: {{ .Values.pipeline.cache.nodeRestrictions | quote }}
+  cacheNodeRestrictions: {{ .Values.pipeline.cache.nodeRestrictions | toString | quote }}
   MAXIMUM_CACHE_STALENESS: {{ .Values.pipeline.cache.maximumStaleness | quote }}
   DEFAULT_CACHE_STALENESS: {{ .Values.pipeline.cache.defaultStaleness | quote }}
   # Connection configuration
   ConMaxLifeTime: {{ .Values.database.connectionMaxLifetime | quote }}
   LOG_LEVEL: {{ .Values.global.logLevel | quote }}
+{{- if eq .Values.objectStore.provider "s3" }}
+  # AWS S3 configuration
+  minioServiceHost: {{ .Values.objectStore.s3.endpoint | default "s3.amazonaws.com" | quote }}
+{{- if .Values.objectStore.s3.region }}
+  minioServiceRegion: {{ .Values.objectStore.s3.region | quote }}
+{{- else if and .Values.env .Values.env.aws .Values.env.aws.region }}
+  minioServiceRegion: {{ .Values.env.aws.region | quote }}
+{{- end }}
+{{- end }}
+{{- if eq .Values.objectStore.provider "gcs" }}
+  # GCP GCS configuration
+{{- if .Values.objectStore.gcs.projectId }}
+  gcsProjectId: {{ .Values.objectStore.gcs.projectId | quote }}
+{{- else if and .Values.env .Values.env.gcp .Values.env.gcp.project }}
+  gcsProjectId: {{ .Values.env.gcp.project | quote }}
+{{- end }}
+{{- if and .Values.env .Values.env.gcp .Values.env.gcp.cloudsql .Values.env.gcp.cloudsql.enabled }}
+  gcsCloudSqlInstanceName: {{ .Values.env.gcp.cloudsql.instanceName | quote }}
+{{- end }}
+{{- end }}

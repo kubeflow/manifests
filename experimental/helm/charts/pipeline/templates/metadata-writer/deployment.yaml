@@ -5,19 +5,18 @@ metadata:
   name: metadata-writer
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     app: metadata-writer
-    application-crd-id: kubeflow-pipelines
 spec:
   replicas: {{ .Values.metadataWriter.replicas }}
   selector:
     matchLabels:
-      app: metadata-writer
-      application-crd-id: kubeflow-pipelines
+      {{- include "kubeflow-pipelines.metadataWriterSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
+        {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
         app: metadata-writer
-        application-crd-id: kubeflow-pipelines
     spec:
       securityContext:
         seccompProfile:
