@@ -5,20 +5,19 @@ metadata:
   name: ml-pipeline-scheduledworkflow
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     app: ml-pipeline-scheduledworkflow
-    application-crd-id: kubeflow-pipelines
 spec:
   selector:
     matchLabels:
-      app: ml-pipeline-scheduledworkflow
-      application-crd-id: kubeflow-pipelines
+      {{- include "kubeflow-pipelines.scheduledWorkflowSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
+        {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
         app: ml-pipeline-scheduledworkflow
-        application-crd-id: kubeflow-pipelines
     spec:
       serviceAccountName: ml-pipeline-scheduledworkflow
       containers:

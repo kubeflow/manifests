@@ -13,6 +13,5 @@ spec:
     protocol: TCP
     targetPort: 3000
   selector:
-    app: ml-pipeline-ui
-    application-crd-id: kubeflow-pipelines
+    {{- include "kubeflow-pipelines.uiSelectorLabels" . | nindent 4 }}
 {{- end }}

@@ -5,7 +5,7 @@ global:
   namespace: kubeflow
   imageRegistry: ghcr.io/kubeflow
   imageTag: "2.5.0"
-  imagePullPolicy: IfNotPresent
+  imagePullPolicy: Always
 
 # Installation mode - Multi-user enabled
 installMode:
@@ -71,9 +71,9 @@ database:
 pipeline:
   cache:
     image: "registry.k8s.io/busybox"
-    nodeRestrictions: true
-    maximumStaleness: "P0D"
-    defaultStaleness: "P0D"
+    nodeRestrictions: false
+    maximumStaleness: ""
+    defaultStaleness: ""
 
 # Argo Workflows Configuration - Multi-user
 argo:
@@ -114,23 +114,24 @@ ui:
   
   resources:
     requests:
-      cpu: 100m
-      memory: 200Mi
-    limits:
-      cpu: 500m
-      memory: 1Gi
+      cpu: 10m
+      memory: 70Mi
+
 
 # Enhanced resources for multi-user deployment
 persistenceAgent:
   resources:
     requests:
-      cpu: 250m
-      memory: 1Gi
-    limits:
-      cpu: 1
-      memory: 2Gi
+      cpu: 120m
+      memory: 500Mi
 
 scheduledWorkflow:
+  additionalEnv:
+    - name: NAMESPACE
+      value: ''
+    - name: LOG_LEVEL
+      value: "info"
+      valueFrom: null
   resources:
     requests:
       cpu: 250m
@@ -168,6 +169,24 @@ cache:
       limits:
         cpu: 1
         memory: 2Gi
+    additionalEnv:
+      - name: NAMESPACE_TO_WATCH
+      - name: DEFAULT_CACHE_STALENESS
+        key: DEFAULT_CACHE_STALENESS
+      - name: MAXIMUM_CACHE_STALENESS
+        key: MAXIMUM_CACHE_STALENESS
+      - name: CACHE_IMAGE
+        key: cacheImage
+      - name: CACHE_NODE_RESTRICTIONS
+      - name: DBCONFIG_DRIVER
+      - name: DBCONFIG_DB_NAME
+        key: cacheDb
+      - name: DBCONFIG_HOST_NAME
+        key: dbHost
+      - name: DBCONFIG_PORT
+      - name: DBCONFIG_USER
+        key: username
+      - name: DBCONFIG_PASSWORD
 
 cacheDeployer:
   # Typically disabled in multi-user mode
@@ -176,15 +195,12 @@ cacheDeployer:
 visualization:
   resources:
     requests:
-      cpu: 100m
+      cpu: 30m
       memory: 500Mi
-    limits:
-      cpu: 500m
-      memory: 1Gi
 
 viewerCrd:
   env:
-    maxNumViewers: "200"
+    maxNumViewers: ""
   resources:
     requests:
       cpu: 250m
@@ -192,6 +208,11 @@ viewerCrd:
     limits:
       cpu: 500m
       memory: 1Gi
+  additionalEnv:
+    - name: NAMESPACE
+      value: ""
+    - name: MAX_NUM_VIEWERS
+      value: 50
 
 # Profile Controller Configuration (for multi-user)
 profileController:

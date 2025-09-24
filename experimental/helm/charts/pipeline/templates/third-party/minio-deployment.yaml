@@ -5,20 +5,19 @@ metadata:
   name: minio
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     app: minio
-    application-crd-id: kubeflow-pipelines
 spec:
   selector:
     matchLabels:
-      app: minio
-      application-crd-id: kubeflow-pipelines
+      {{- include "kubeflow-pipelines.minioSelectorLabels" . | nindent 6 }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
+        {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
         app: minio
-        application-crd-id: kubeflow-pipelines
     spec:
       securityContext:
         fsGroup: 1000

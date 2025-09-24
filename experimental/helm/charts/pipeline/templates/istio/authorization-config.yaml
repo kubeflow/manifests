@@ -2,24 +2,25 @@
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-ui-policy
+  name: ml-pipeline-ui
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: istio-authorization
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
 spec:
   selector:
     matchLabels:
       app: ml-pipeline-ui
   rules:
+  # Allow all requests from the ingress gateway
   - from:
     - source:
         principals:
         - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
 
-
+  # Allow all requests with an `authorization` header but NOT a `kubeflow-userid` header.
+  # This is needed to allow Kubernetes JWTs to be passed to the KFP API.
   - when:
     - key: request.headers[authorization]
       values:
@@ -32,13 +33,12 @@ spec:
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-api-policy
+  name: ml-pipeline
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: istio-authorization
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
 spec:
   selector:
     matchLabels:
@@ -47,12 +47,13 @@ spec:
   - from:
     - source:
         principals:
-        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.apiServer.serviceAccountName" . }}
-        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.ui.serviceAccountName" . }}
-        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.persistenceAgent.serviceAccountName" . }}
-        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.scheduledWorkflow.serviceAccountName" . }}
-        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.viewerCrd.serviceAccountName" . }}
-        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.cache.serviceAccountName" . }}
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline-ui
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline-persistenceagent
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline-scheduledworkflow
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline-viewer-crd-service-account
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/kubeflow-pipelines-cache
+  # Allow all requests that dont have a `kubeflow-userid` header.
   - when:
     - key: request.headers[kubeflow-userid]
       notValues: ['*']
@@ -61,13 +62,12 @@ spec:
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-visualization-policy
+  name: ml-pipeline-visualizationserver
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: istio-authorization
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
 spec:
   selector:
     matchLabels:
@@ -76,24 +76,23 @@ spec:
   - from:
     - source:
         principals:
-        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.apiServer.serviceAccountName" . }}
-        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.ui.serviceAccountName" . }}
-        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.persistenceAgent.serviceAccountName" . }}
-        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.scheduledWorkflow.serviceAccountName" . }}
-        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.viewerCrd.serviceAccountName" . }}
-        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/{{ include "kubeflow-pipelines.cache.serviceAccountName" . }}
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline-ui
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline-persistenceagent
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline-scheduledworkflow
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline-viewer-crd-service-account
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/kubeflow-pipelines-cache
 
 ---
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-cache-server-policy
+  name: service-cache-server
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: istio-authorization
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
 spec:
   selector:
     matchLabels:
@@ -102,18 +101,94 @@ spec:
   - {}
 
 ---
-apiVersion: "networking.istio.io/v1alpha3"
-kind: DestinationRule
+{{- if .Values.thirdParty.minio.enabled }}
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-ui-destination
+  name: minio-service
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: istio-destination-rule
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
 spec:
-  host: {{ include "kubeflow-pipelines.fullname" . }}-ui.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
+  action: ALLOW
+  selector:
+    matchLabels:
+      app: minio
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline-ui
+  # Allow traffic from User Pipeline Pods, which don't have a sidecar.
+  - {}
+{{- end }}
+
+---
+{{- if .Values.thirdParty.mysql.enabled }}
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: mysql
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline-ui
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline-persistenceagent
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline-scheduledworkflow
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline-viewer-crd-service-account
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/kubeflow-pipelines-cache
+        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/metadata-grpc-server
+{{- end }}
+
+---
+{{- if .Values.metadata.enabled }}
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: metadata-grpc-service
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      component: metadata-grpc-server
+  rules:
+  - {}
+{{- end }}
+
+---
+apiVersion: "networking.istio.io/v1alpha3"
+kind: DestinationRule
+metadata:
+  name: ml-pipeline-ui
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+spec:
+  host: ml-pipeline-ui.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
   trafficPolicy:
     tls:
       mode: ISTIO_MUTUAL
@@ -122,15 +197,14 @@ spec:
 apiVersion: "networking.istio.io/v1alpha3"
 kind: DestinationRule
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-api-destination
+  name: ml-pipeline
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: istio-destination-rule
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
 spec:
-  host: {{ include "kubeflow-pipelines.fullname" . }}-api-server.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
+  host: ml-pipeline.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
   trafficPolicy:
     tls:
       mode: ISTIO_MUTUAL
@@ -139,16 +213,69 @@ spec:
 apiVersion: "networking.istio.io/v1alpha3"
 kind: DestinationRule
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-visualization-destination
+  name: ml-pipeline-visualizationserver
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: istio-destination-rule
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
 spec:
-  host: {{ include "kubeflow-pipelines.fullname" . }}-visualization.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
+  host: ml-pipeline-visualizationserver.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
   trafficPolicy:
     tls:
       mode: ISTIO_MUTUAL
+
+---
+{{- if .Values.thirdParty.minio.enabled }}
+apiVersion: "networking.istio.io/v1alpha3"
+kind: DestinationRule
+metadata:
+  name: ml-pipeline-minio
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+spec:
+  host: minio-service.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+{{- end }}
+
+---
+{{- if .Values.thirdParty.mysql.enabled }}
+apiVersion: "networking.istio.io/v1alpha3"
+kind: DestinationRule
+metadata:
+  name: ml-pipeline-mysql
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+spec:
+  host: mysql.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+{{- end }}
+
+---
+{{- if .Values.metadata.enabled }}
+apiVersion: "networking.istio.io/v1alpha3"
+kind: DestinationRule
+metadata:
+  name: metadata-grpc-service
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+spec:
+  host: metadata-grpc-service.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+{{- end }}
 {{- end }}

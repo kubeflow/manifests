@@ -11,6 +11,5 @@ spec:
   - port: {{ .Values.cache.server.service.port }}
     targetPort: webhook-api
   selector:
-    app: cache-server
-    application-crd-id: kubeflow-pipelines
+    {{- include "kubeflow-pipelines.cacheSelectorLabels" . | nindent 4 }}
 {{- end }}

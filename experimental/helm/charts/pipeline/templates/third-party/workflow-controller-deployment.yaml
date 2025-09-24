@@ -11,13 +11,12 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: workflow-controller
-      application-crd-id: kubeflow-pipelines
+      {{- include "kubeflow-pipelines.workflowControllerSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
+        {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
         app: workflow-controller
-        application-crd-id: kubeflow-pipelines
     spec:
       containers:
       - args:

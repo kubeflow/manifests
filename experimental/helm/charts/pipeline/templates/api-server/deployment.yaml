@@ -5,20 +5,17 @@ metadata:
   name: ml-pipeline
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    app: ml-pipeline
-    application-crd-id: kubeflow-pipelines
+    {{- include "kubeflow-pipelines.mlPipelineLabels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app: ml-pipeline
-      application-crd-id: kubeflow-pipelines
+      {{- include "kubeflow-pipelines.mlPipelineSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
-        app: ml-pipeline
-        application-crd-id: kubeflow-pipelines
+        {{- include "kubeflow-pipelines.mlPipelineLabels" . | nindent 8 }}
     spec:
       serviceAccountName: ml-pipeline
       containers:

@@ -2,7 +2,7 @@
 apiVersion: metacontroller.k8s.io/v1alpha1
 kind: DecoratorController
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-profile-controller
+  name: kubeflow-pipelines-profile-controller
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     component: profile-controller

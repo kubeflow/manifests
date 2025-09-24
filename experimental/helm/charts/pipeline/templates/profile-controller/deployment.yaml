@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-profile-controller
+  name: kubeflow-pipelines-profile-controller
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
@@ -32,7 +32,7 @@ spec:
         command: ["python", "/hooks/sync.py"]
         envFrom:
         - configMapRef:
-            name: {{ include "kubeflow-pipelines.fullname" . }}-profile-controller-env
+            name: kubeflow-pipelines-profile-controller-env
         env:
         - name: KFP_VERSION
           value: {{ .Values.global.imageTag | quote }}
@@ -67,7 +67,7 @@ spec:
       volumes:
       - name: hooks
         configMap:
-          name: {{ include "kubeflow-pipelines.fullname" . }}-profile-controller-code
+          name: kubeflow-pipelines-profile-controller-code
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

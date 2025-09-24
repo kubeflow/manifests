@@ -103,6 +103,13 @@ persistenceAgent:
 
 scheduledWorkflow:
   resources:
+  additionalEnv:
+    - name: LOG_LEVEL
+      value: "info"
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
 
 ui:
   resources:
@@ -145,6 +152,25 @@ cache:
       limits:
         cpu: 250m
         memory: 1Gi
+    additionalEnv:
+      - name: DEFAULT_CACHE_STALENESS
+      - name: MAXIMUM_CACHE_STALENESS
+        key: MAXIMUM_CACHE_STALENESS
+      - name: CACHE_IMAGE
+        key: cacheImage
+      - name: CACHE_NODE_RESTRICTIONS
+        key: cacheNodeRestrictions
+      - name: DBCONFIG_DRIVER
+      - name: DBCONFIG_DB_NAME
+      - name: DBCONFIG_HOST_NAME
+        key: dbHost
+      - name: DBCONFIG_PORT
+        key: dbPort
+      - name: DBCONFIG_USER
+      - name: DBCONFIG_PASSWORD
+        key: password
+      - name: NAMESPACE_TO_WATCH
+
 
 visualization:
   resources:
@@ -156,6 +182,11 @@ viewerCrd:
   image:
     pullPolicy: Always
   resources:
+  additionalEnv:
+    - name: MAX_NUM_VIEWERS
+      value: 50
+    - name: NAMESPACE
+      value: ""
 
 # Monitoring disabled for platform-agnostic
 monitoring:

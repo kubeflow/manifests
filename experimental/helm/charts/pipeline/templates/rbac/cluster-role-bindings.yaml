@@ -1,0 +1,172 @@
+{{- if .Values.installMode.multiUser.enabled }}
+# API Server ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ml-pipeline
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ml-pipeline
+subjects:
+- kind: ServiceAccount
+  name: {{ include "kubeflow-pipelines.apiServer.serviceAccountName" . }}
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+
+---
+# UI ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ml-pipeline-ui
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ml-pipeline-ui
+subjects:
+- kind: ServiceAccount
+  name: {{ include "kubeflow-pipelines.ui.serviceAccountName" . }}
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+
+---
+# Scheduled Workflow ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ml-pipeline-scheduledworkflow-binding
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ml-pipeline-scheduledworkflow-role
+subjects:
+- kind: ServiceAccount
+  name: {{ include "kubeflow-pipelines.scheduledWorkflow.serviceAccountName" . }}
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+
+---
+# Persistence Agent ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ml-pipeline-persistenceagent-binding
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ml-pipeline-persistenceagent-role
+subjects:
+- kind: ServiceAccount
+  name: {{ include "kubeflow-pipelines.persistenceAgent.serviceAccountName" . }}
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+
+---
+# Viewer Controller ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ml-pipeline-viewer-crd-binding
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ml-pipeline-viewer-controller-role
+subjects:
+- kind: ServiceAccount
+  name: {{ include "kubeflow-pipelines.viewerCrd.serviceAccountName" . }}
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+
+---
+# Cache ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubeflow-pipelines-cache-binding
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubeflow-pipelines-cache-role
+subjects:
+- kind: ServiceAccount
+  name: {{ include "kubeflow-pipelines.cache.serviceAccountName" . }}
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+
+---
+# Cache Deployer ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubeflow-pipelines-cache-deployer-clusterrolebinding
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubeflow-pipelines-cache-deployer-clusterrole
+subjects:
+- kind: ServiceAccount
+  name: {{ include "kubeflow-pipelines.cacheDeployer.serviceAccountName" . }}
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+
+---
+# Metadata Writer ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubeflow-pipelines-metadata-writer-binding
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubeflow-pipelines-metadata-writer-role
+subjects:
+- kind: ServiceAccount
+  name: {{ include "kubeflow-pipelines.metadataWriter.serviceAccountName" . }}
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+
+---
+# Argo ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: argo-binding
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: argo-cluster-role
+subjects:
+- kind: ServiceAccount
+  name: argo
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+
+---
+# Metacontroller ClusterRoleBinding
+{{- if .Values.thirdParty.metacontroller.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: meta-controller-cluster-role-binding
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubeflow-metacontroller
+subjects:
+- kind: ServiceAccount
+  name: meta-controller-service
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+{{- end }}
+{{- end }}

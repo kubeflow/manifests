@@ -5,15 +5,14 @@ metadata:
   name: metadata-envoy-service
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     app: metadata-envoy
-    application-crd-id: kubeflow-pipelines
 spec:
   ports:
   - name: {{ .Values.metadata.envoy.service.portName | default "md-envoy" }}
     port: {{ .Values.metadata.envoy.service.port }}
     protocol: TCP
   selector:
-    application-crd-id: kubeflow-pipelines
-    component: metadata-envoy
+    {{- include "kubeflow-pipelines.metadataEnvoySelectorLabels" . | nindent 4 }}
   type: {{ .Values.metadata.envoy.service.type }}
 {{- end }}
