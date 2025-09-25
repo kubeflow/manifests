@@ -25,7 +25,7 @@ data:
   dbHost: {{ $dbHost | quote }}
   dbPort: {{ include "kubeflow-pipelines.database.port" . | quote }}
   dbType: {{ .Values.externalDatabase.type | default "mysql" | quote }}
-  mysqlHost: {{ $dbHost | quote }}
+  mysqlHost: "mysql"
   mysqlPort: {{ include "kubeflow-pipelines.database.port" . | quote }}
   mlmdDb: {{ .Values.database.metadb }}
   cacheDb: {{ .Values.database.cachedb }}

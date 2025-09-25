@@ -7,20 +7,17 @@ metadata:
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     component: metadata-grpc-server
-    app.kubernetes.io/component: ml-pipeline
-    app.kubernetes.io/name: kubeflow-pipelines
 spec:
   replicas: 1
   selector:
     matchLabels:
       component: metadata-grpc-server
+      application-crd-id: kubeflow-pipelines
   template:
     metadata:
       labels:
         {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
         component: metadata-grpc-server
-        app.kubernetes.io/component: ml-pipeline
-        app.kubernetes.io/name: kubeflow-pipelines
     spec:
       securityContext:
         seccompProfile:
@@ -28,7 +25,6 @@ spec:
       containers:
       - name: container
         image: {{ .Values.metadata.grpc.image.repository }}:{{ .Values.metadata.grpc.image.tag | default "1.14.0" }}
-        imagePullPolicy: {{ .Values.metadata.grpc.image.pullPolicy | default "IfNotPresent" }}
         securityContext:
           allowPrivilegeEscalation: false
           seccompProfile:

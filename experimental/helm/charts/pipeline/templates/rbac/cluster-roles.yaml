@@ -78,6 +78,7 @@ metadata:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     app.kubernetes.io/component: ml-pipeline
     app.kubernetes.io/name: kubeflow-pipelines
+    app: ml-pipeline-ui
 rules:
 - apiGroups:
   - ""
@@ -86,7 +87,6 @@ rules:
   - pods/log
   verbs:
   - get
-  - list
 - apiGroups:
   - ""
   resources:
@@ -110,6 +110,14 @@ rules:
   - list
   - watch
   - delete
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  verbs:
+  - get
+  - list
+
 
 ---
 # Scheduled Workflow ClusterRole
@@ -135,9 +143,16 @@ rules:
   - patch
   - delete
 - apiGroups:
+  - pipelines.kubeflow.org
+  resources:
+  - runs
+  verbs:
+  - create
+- apiGroups:
   - kubeflow.org
   resources:
   - scheduledworkflows
+  - scheduledworkflows/finalizers
   verbs:
   - create
   - get
@@ -147,11 +162,12 @@ rules:
   - patch
   - delete
 - apiGroups:
-  - kubeflow.org
+  - ""
   resources:
-  - scheduledworkflows/finalizers
+  - events
   verbs:
-  - update
+  - create
+  - patch
 
 ---
 # Persistence Agent ClusterRole
@@ -180,6 +196,20 @@ rules:
   - get
   - list
   - watch
+- apiGroups:
+  - pipelines.kubeflow.org
+  resources:
+  - scheduledworkflows
+  - workflows
+  verbs:
+  - report
+- apiGroups:
+  - pipelines.kubeflow.org
+  resources:
+  - runs
+  verbs:
+  - reportMetrics
+  - readArtifact
 
 ---
 # Viewer Controller ClusterRole
@@ -196,7 +226,7 @@ rules:
   - '*'
   resources:
   - deployments
-  - replicasets
+  - services
   verbs:
   - create
   - get
@@ -209,6 +239,7 @@ rules:
   - kubeflow.org
   resources:
   - viewers
+  - viewers/finalizers
   verbs:
   - create
   - get
@@ -228,6 +259,7 @@ metadata:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     app.kubernetes.io/component: ml-pipeline
     app.kubernetes.io/name: kubeflow-pipelines
+    app: cache-server
 rules:
 - apiGroups:
   - ""
@@ -266,6 +298,7 @@ metadata:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     app.kubernetes.io/component: ml-pipeline
     app.kubernetes.io/name: kubeflow-pipelines
+    app: kubeflow-pipelines-cache-deployer-clusterrole
 rules:
 - apiGroups:
   - certificates.k8s.io
