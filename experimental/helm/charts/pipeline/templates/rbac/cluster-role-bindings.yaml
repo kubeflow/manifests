@@ -23,6 +23,7 @@ metadata:
   name: ml-pipeline-ui
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: ml-pipeline-ui
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -91,6 +92,7 @@ metadata:
   name: kubeflow-pipelines-cache-binding
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: cache-server
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

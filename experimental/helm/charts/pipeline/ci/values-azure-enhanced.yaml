@@ -58,7 +58,7 @@ pipeline:
 
 # Argo Workflows Configuration
 argo:
-  enabled: true
+  enabled: false
   # Azure-specific Argo configuration
 
 # Environment Configuration
@@ -110,9 +110,6 @@ ui:
     requests:
       cpu: 10m
       memory: 70Mi
-    limits:
-      cpu: 100m
-      memory: 200Mi
 
 # Enhanced resources for Azure deployment
 persistenceAgent:
@@ -120,9 +117,6 @@ persistenceAgent:
     requests:
       cpu: 120m
       memory: 500Mi
-    limits:
-      cpu: 500m
-      memory: 1Gi
 
 scheduledWorkflow:
   resources:
@@ -164,10 +158,7 @@ cache:
 visualization:
   resources:
     requests:
-      cpu: 50m
-      memory: 200Mi
-    limits:
-      cpu: 200m
+      cpu: 30m
       memory: 500Mi
 
 viewerCrd:
@@ -178,6 +169,8 @@ viewerCrd:
     limits:
       cpu: 250m
       memory: 200Mi
+  image:
+    pullPolicy: Always
 
 # Azure Load Balancer integration
   service:

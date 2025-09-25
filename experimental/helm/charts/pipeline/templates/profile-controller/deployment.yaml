@@ -5,9 +5,8 @@ metadata:
   name: kubeflow-pipelines-profile-controller
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     app: kubeflow-pipelines-profile-controller
-    app.kubernetes.io/component: ml-pipeline
-    app.kubernetes.io/name: kubeflow-pipelines
   annotations:
     {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
 spec:

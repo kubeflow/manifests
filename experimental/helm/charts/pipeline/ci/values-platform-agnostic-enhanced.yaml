@@ -100,6 +100,11 @@ persistenceAgent:
     requests:
       cpu: 120m
       memory: 500Mi
+  additionalEnv:
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
 
 scheduledWorkflow:
   resources:
@@ -126,14 +131,9 @@ webhooks:
   enabled: false
 
 metadata:
+  enabled: true
   grpc:
     resources:
-      requests:
-        cpu: 100m
-        memory: 300Mi
-      limits:
-        cpu: 200m
-        memory: 600Mi
   envoy:
     resources:
       requests:

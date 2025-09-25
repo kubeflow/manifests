@@ -5,20 +5,19 @@ metadata:
   name: metadata-envoy-deployment
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     component: metadata-envoy
-    app.kubernetes.io/component: ml-pipeline
-    app.kubernetes.io/name: kubeflow-pipelines
 spec:
   replicas: {{ .Values.metadata.envoy.replicas }}
   selector:
     matchLabels:
       component: metadata-envoy
+      application-crd-id: kubeflow-pipelines
   template:
     metadata:
       labels:
+        {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
         component: metadata-envoy
-        app.kubernetes.io/component: ml-pipeline
-        app.kubernetes.io/name: kubeflow-pipelines
         sidecar.istio.io/inject: "false"
     spec:
       containers:

@@ -288,7 +288,7 @@ viewerCrd:
     # -- Viewer CRD Controller image tag (overrides global.imageTag if set)
     tag: ""
     # -- Viewer CRD Controller image pull policy (overrides global.imagePullPolicy if set)
-    pullPolicy: ""
+    pullPolicy: "Always"
   
   # -- Viewer CRD Controller resource requests and limits
   resources: {}
@@ -337,8 +337,8 @@ visualization:
   # -- Visualization Server resource requests and limits
   resources:
     requests:
-      cpu: 50m
-      memory: 200Mi
+      cpu: 30m
+      memory: 500Mi
     limits: {}
   
   # Service Account
