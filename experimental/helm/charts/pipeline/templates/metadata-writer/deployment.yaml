@@ -5,8 +5,14 @@ metadata:
   name: metadata-writer
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
+{{- if eq .Values.installMode.type "multi-user" }}
+    app: metadata-writer
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+{{- else }}
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     app: metadata-writer
+{{- end }}
 spec:
   replicas: {{ .Values.metadataWriter.replicas }}
   selector:
@@ -15,8 +21,14 @@ spec:
   template:
     metadata:
       labels:
+{{- if eq .Values.installMode.type "multi-user" }}
+        app: metadata-writer
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
+{{- else }}
         {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
         app: metadata-writer
+{{- end }}
     spec:
       securityContext:
         seccompProfile:
@@ -27,9 +39,13 @@ spec:
         image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.metadataWriter.image.repository "tag" .Values.metadataWriter.image.tag "context" .) }}
         env:
         - name: NAMESPACE_TO_WATCH
+{{- if eq .Values.installMode.type "multi-user" }}
+          value: ""
+{{- else }}
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+{{- end }}
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:

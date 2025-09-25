@@ -3,9 +3,11 @@ apiVersion: metacontroller.k8s.io/v1alpha1
 kind: DecoratorController
 metadata:
   name: kubeflow-pipelines-profile-controller
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: profile-controller
+    app: kubeflow-pipelines-profile-controller
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
   annotations:
     {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
 spec:
@@ -33,7 +35,6 @@ spec:
     resource: services
     updateStrategy:
       method: InPlace
-  {{- if .Values.networking.istio.enabled }}
   - apiVersion: networking.istio.io/v1alpha3
     resource: destinationrules
     updateStrategy:
@@ -42,9 +43,8 @@ spec:
     resource: authorizationpolicies
     updateStrategy:
       method: InPlace
-  {{- end }}
   hooks:
     sync:
       webhook:
-        url: http://{{ include "kubeflow-pipelines.fullname" . }}-profile-controller/sync
+        url: http://kubeflow-pipelines-profile-controller/sync
 {{- end }}

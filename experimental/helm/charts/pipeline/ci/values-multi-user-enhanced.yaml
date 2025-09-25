@@ -100,11 +100,8 @@ apiServer:
   
   resources:
     requests:
-      cpu: 500m
-      memory: 1Gi
-    limits:
-      cpu: 2
-      memory: 4Gi
+      cpu: 250m
+      memory: 500Mi
 
 # Multi-user UI configuration
 ui:
@@ -132,13 +129,6 @@ scheduledWorkflow:
     - name: LOG_LEVEL
       value: "info"
       valueFrom: null
-  resources:
-    requests:
-      cpu: 250m
-      memory: 500Mi
-    limits:
-      cpu: 500m
-      memory: 1Gi
 
 metadata:
   grpc:
@@ -171,6 +161,7 @@ cache:
         memory: 2Gi
     additionalEnv:
       - name: NAMESPACE_TO_WATCH
+        key: null
       - name: DEFAULT_CACHE_STALENESS
         key: DEFAULT_CACHE_STALENESS
       - name: MAXIMUM_CACHE_STALENESS
@@ -178,15 +169,18 @@ cache:
       - name: CACHE_IMAGE
         key: cacheImage
       - name: CACHE_NODE_RESTRICTIONS
+        key: cacheNodeRestrictions
       - name: DBCONFIG_DRIVER
       - name: DBCONFIG_DB_NAME
         key: cacheDb
       - name: DBCONFIG_HOST_NAME
         key: dbHost
       - name: DBCONFIG_PORT
+        key: dbPort
       - name: DBCONFIG_USER
         key: username
       - name: DBCONFIG_PASSWORD
+        key: password
 
 cacheDeployer:
   # Typically disabled in multi-user mode
@@ -201,13 +195,6 @@ visualization:
 viewerCrd:
   env:
     maxNumViewers: ""
-  resources:
-    requests:
-      cpu: 250m
-      memory: 500Mi
-    limits:
-      cpu: 500m
-      memory: 1Gi
   additionalEnv:
     - name: NAMESPACE
       value: ""

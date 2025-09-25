@@ -5,21 +5,24 @@ metadata:
   name: kubeflow-pipelines-profile-controller
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: profile-controller
+    app: kubeflow-pipelines-profile-controller
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
   annotations:
     {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
 spec:
   replicas: {{ .Values.profileController.replicas }}
   selector:
     matchLabels:
-      {{- include "kubeflow-pipelines.selectorLabels" . | nindent 6 }}
-      component: profile-controller
+      app: kubeflow-pipelines-profile-controller
+      app.kubernetes.io/component: ml-pipeline
+      app.kubernetes.io/name: kubeflow-pipelines
   template:
     metadata:
       labels:
-        {{- include "kubeflow-pipelines.selectorLabels" . | nindent 8 }}
-        component: profile-controller
+        app: kubeflow-pipelines-profile-controller
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
         sidecar.istio.io/inject: "false"
       annotations:
         {{- include "kubeflow-pipelines.annotations" . | nindent 8 }}
@@ -27,27 +30,33 @@ spec:
       {{- include "kubeflow-pipelines.imagePullSecrets" . | nindent 6 }}
       containers:
       - name: profile-controller
-        image: {{ .Values.profileController.image.repository }}:{{ .Values.profileController.image.tag }}
-        imagePullPolicy: {{ .Values.profileController.image.pullPolicy | default .Values.global.imagePullPolicy }}
+        image: public.ecr.aws/docker/library/python:3.12
         command: ["python", "/hooks/sync.py"]
         envFrom:
         - configMapRef:
             name: kubeflow-pipelines-profile-controller-env
         env:
         - name: KFP_VERSION
-          value: {{ .Values.global.imageTag | quote }}
+          valueFrom:
+            configMapKeyRef:
+              name: pipeline-install-config
+              key: appVersion
         - name: KFP_DEFAULT_PIPELINE_ROOT
-          value: {{ .Values.pipeline.defaultPipelineRoot | quote }}
+          valueFrom:
+            configMapKeyRef:
+              name: pipeline-install-config
+              key: defaultPipelineRoot
+              optional: true
         {{- if .Values.minio.enabled }}
         - name: MINIO_ACCESS_KEY
           valueFrom:
             secretKeyRef:
-              name: {{ include "kubeflow-pipelines.fullname" . }}-minio-artifact
+              name: mlpipeline-minio-artifact
               key: accesskey
         - name: MINIO_SECRET_KEY
           valueFrom:
             secretKeyRef:
-              name: {{ include "kubeflow-pipelines.fullname" . }}-minio-artifact
+              name: mlpipeline-minio-artifact
               key: secretkey
         {{- end }}
         {{- with .Values.profileController.additionalEnv }}
@@ -57,13 +66,9 @@ spec:
         - name: hooks
           mountPath: /hooks
         ports:
-        - name: http
-          containerPort: 8080
-          protocol: TCP
+        - containerPort: 8080
         securityContext:
           {{- toYaml .Values.profileController.securityContext | nindent 10 }}
-        resources:
-          {{- toYaml .Values.profileController.resources | nindent 10 }}
       volumes:
       - name: hooks
         configMap:

@@ -36,7 +36,9 @@ Common labels
 {{- define "kubeflow-pipelines.labels" -}}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
+{{- if ne .Values.installMode.type "multi-user" }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
 {{- end }}
@@ -57,7 +59,9 @@ Cache server labels
 app: cache-server
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
+{{- if ne .Values.installMode.type "multi-user" }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
 {{- end }}
@@ -83,7 +87,9 @@ ML Pipeline specific labels - matching original manifests
 app: ml-pipeline
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
+{{- if ne .Values.installMode.type "multi-user" }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
 {{- end }}
@@ -107,7 +113,12 @@ ML Pipeline selector labels
 */}}
 {{- define "kubeflow-pipelines.mlPipelineSelectorLabels" -}}
 app: ml-pipeline
+{{- if eq .Values.installMode.type "multi-user" }}
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
+{{- else }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 
 {{/*
@@ -115,7 +126,12 @@ Cache server selector labels
 */}}
 {{- define "kubeflow-pipelines.cacheSelectorLabels" -}}
 app: cache-server
+{{- if eq .Values.installMode.type "multi-user" }}
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
+{{- else }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 
 {{/*
@@ -127,11 +143,31 @@ application-crd-id: kubeflow-pipelines
 {{- end }}
 
 {{/*
+Viewer CRD labels
+*/}}
+{{- define "kubeflow-pipelines.viewerCrdLabels" -}}
+{{- if eq .Values.installMode.type "multi-user" }}
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
+app: ml-pipeline-viewer-crd
+{{- else }}
+{{- include "kubeflow-pipelines.labels" . }}
+app: ml-pipeline-viewer-crd
+{{- end }}
+{{- end }}
+
+{{/*
 Viewer CRD selector labels
 */}}
 {{- define "kubeflow-pipelines.viewerCrdSelectorLabels" -}}
+{{- if eq .Values.installMode.type "multi-user" }}
+app: ml-pipeline-viewer-crd
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
+{{- else }}
 app: ml-pipeline-viewer-crd
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 
 {{/*
@@ -151,8 +187,14 @@ application-crd-id: kubeflow-pipelines
 Visualization server selector labels
 */}}
 {{- define "kubeflow-pipelines.visualizationSelectorLabels" -}}
+{{- if eq .Values.installMode.type "multi-user" }}
+app: ml-pipeline-visualizationserver
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
+{{- else }}
 app: ml-pipeline-visualizationserver
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 
 {{/*
@@ -200,7 +242,12 @@ Metadata writer selector labels
 */}}
 {{- define "kubeflow-pipelines.metadataWriterSelectorLabels" -}}
 app: metadata-writer
+{{- if eq .Values.installMode.type "multi-user" }}
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
+{{- else }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 
 {{/*
@@ -208,7 +255,12 @@ Persistence agent selector labels
 */}}
 {{- define "kubeflow-pipelines.persistenceAgentSelectorLabels" -}}
 app: ml-pipeline-persistenceagent
+{{- if eq .Values.installMode.type "multi-user" }}
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
+{{- else }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 
 {{/*
@@ -216,7 +268,12 @@ Scheduled workflow selector labels
 */}}
 {{- define "kubeflow-pipelines.scheduledWorkflowSelectorLabels" -}}
 app: ml-pipeline-scheduledworkflow
+{{- if eq .Values.installMode.type "multi-user" }}
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
+{{- else }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 
 {{/*

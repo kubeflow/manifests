@@ -5,8 +5,14 @@ metadata:
   name: ml-pipeline-scheduledworkflow
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
+{{- if eq .Values.installMode.type "multi-user" }}
+    app: ml-pipeline-scheduledworkflow
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+{{- else }}
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     app: ml-pipeline-scheduledworkflow
+{{- end }}
 spec:
   selector:
     matchLabels:
@@ -16,8 +22,14 @@ spec:
       annotations:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
+{{- if eq .Values.installMode.type "multi-user" }}
+        app: ml-pipeline-scheduledworkflow
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
+{{- else }}
         {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
         app: ml-pipeline-scheduledworkflow
+{{- end }}
     spec:
       serviceAccountName: ml-pipeline-scheduledworkflow
       containers:
@@ -25,12 +37,17 @@ spec:
         image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.scheduledWorkflow.image.repository "tag" .Values.scheduledWorkflow.image.tag "context" .) }}
         imagePullPolicy: IfNotPresent
         env:
-        - name: LOG_LEVEL
-          value: {{ .Values.global.logLevel | quote }}
-        - name: NAMESPACE
+        {{- range .Values.scheduledWorkflow.additionalEnv }}
+        - name: {{ .name }}
+          {{- if hasKey . "value" }}
+          value: {{ .value | quote }}
+          {{- else if and (hasKey . "valueFrom") .valueFrom (not (eq .valueFrom nil)) }}
           valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
+            {{- toYaml .valueFrom | nindent 12 }}
+          {{- else }}
+          value: ""
+          {{- end }}
+        {{- end }}
         - name: CRON_SCHEDULE_TIMEZONE
           valueFrom:
             configMapKeyRef:

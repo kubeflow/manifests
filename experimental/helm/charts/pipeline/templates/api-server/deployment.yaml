@@ -29,6 +29,12 @@ spec:
           containerPort: 8887
         env:
         # API Server specific environment variables
+        {{- if eq .Values.installMode.type "multi-user" }}
+        - name: KUBEFLOW_USERID_HEADER
+          value: "kubeflow-userid"
+        - name: KUBEFLOW_USERID_PREFIX
+          value: ""
+        {{- end }}
         - name: PUBLISH_LOGS
           value: {{ .Values.apiServer.env.publishLogs | quote }}
         - name: LOG_LEVEL
@@ -125,6 +131,11 @@ spec:
           value: {{ .Values.apiServer.env.v2DriverImage | quote }}
         - name: V2_LAUNCHER_IMAGE
           value: {{ .Values.apiServer.env.v2LauncherImage | quote }}
+        {{- if eq .Values.installMode.type "multi-user" }}
+        envFrom:
+        - configMapRef:
+            name: pipeline-api-server-config
+        {{- end }}
         livenessProbe:
           exec:
             command:

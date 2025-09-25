@@ -154,6 +154,7 @@ cache:
         memory: 1Gi
     additionalEnv:
       - name: DEFAULT_CACHE_STALENESS
+        key: DEFAULT_CACHE_STALENESS
       - name: MAXIMUM_CACHE_STALENESS
         key: MAXIMUM_CACHE_STALENESS
       - name: CACHE_IMAGE
@@ -162,11 +163,13 @@ cache:
         key: cacheNodeRestrictions
       - name: DBCONFIG_DRIVER
       - name: DBCONFIG_DB_NAME
+        key: cacheDb
       - name: DBCONFIG_HOST_NAME
         key: dbHost
       - name: DBCONFIG_PORT
         key: dbPort
       - name: DBCONFIG_USER
+        key: username
       - name: DBCONFIG_PASSWORD
         key: password
       - name: NAMESPACE_TO_WATCH
@@ -186,7 +189,9 @@ viewerCrd:
     - name: MAX_NUM_VIEWERS
       value: 50
     - name: NAMESPACE
-      value: ""
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
 
 # Monitoring disabled for platform-agnostic
 monitoring:
