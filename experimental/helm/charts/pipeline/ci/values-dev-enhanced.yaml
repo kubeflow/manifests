@@ -96,32 +96,17 @@ persistenceAgent:
   replicas: 1
   resources:
     requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 200m
-      memory: 512Mi
-
+      cpu: 120m
+      memory: 500Mi
 scheduledWorkflow:
   replicas: 1
-  resources:
-    requests:
-      cpu: 50m
-      memory: 64Mi
-    limits:
-      cpu: 100m
-      memory: 256Mi
 
 ui:
   replicas: 1
   resources:
     requests:
       cpu: 10m
-      memory: 32Mi
-    limits:
-      cpu: 50m
-      memory: 128Mi
-
+      memory: 70Mi
 metadata:
   grpc:
     replicas: 1
@@ -167,24 +152,15 @@ visualization:
   replicas: 1
   resources:
     requests:
-      cpu: 25m
-      memory: 64Mi
-    limits:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 30m
+      memory: 500Mi
 
 viewerCrd:
   replicas: 1
+  image:
+    pullPolicy: Always
   env:
     maxNumViewers: "10"
-  resources:
-    requests:
-      cpu: 25m
-      memory: 32Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
-
 dev:
   # Enable debug mode
   debug: true

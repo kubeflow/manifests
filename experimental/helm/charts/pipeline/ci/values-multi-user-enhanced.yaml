@@ -17,7 +17,7 @@ installMode:
 
 # Database Configuration - Enhanced for multi-user
 mysql:
-  enabled: true
+  enabled: false
   auth:
     rootPassword: "root123"
     username: "mlpipeline"
@@ -40,7 +40,7 @@ postgresql:
 
 # Object Storage Configuration - Enhanced for multi-user
 minio:
-  enabled: true
+  enabled: false
   auth:
     rootUser: "minio"
     rootPassword: "minio123"
@@ -77,8 +77,8 @@ pipeline:
 
 # Argo Workflows Configuration - Multi-user
 argo:
-  enabled: true
-  # Multi-user specific Argo configuration
+  enabled: false
+  # Multi-user uses built-in minimal Argo instead of subchart
 
 # Environment Configuration
 env:
@@ -121,6 +121,9 @@ persistenceAgent:
     requests:
       cpu: 120m
       memory: 500Mi
+  additionalEnv:
+    - name: NAMESPACE
+      value: ""
 
 scheduledWorkflow:
   additionalEnv:
@@ -238,11 +241,11 @@ monitoring:
     multiUser: true
 
 # Service mesh - Recommended for multi-user
-istio:
-  enabled: true
-  gateway: kubeflow-gateway
-  multiUser: true
-  authorizationPolicies:
+networking:
+  istio:
+    enabled: true
+    gateway: kubeflow-gateway
+  virtualService:
     enabled: true
 
 # Cert-manager for TLS

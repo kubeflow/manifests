@@ -25,10 +25,25 @@ spec:
         image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.persistenceAgent.image.repository "tag" .Values.persistenceAgent.image.tag "context" .) }}
         imagePullPolicy: IfNotPresent
         env:
-        - name: NAMESPACE
+        {{- range .Values.persistenceAgent.additionalEnv }}
+        - name: {{ .name }}
+          {{- if hasKey . "value" }}
+          value: {{ .value | quote }}
+          {{- else if and (hasKey . "valueFrom") .valueFrom (not (eq .valueFrom nil)) }}
+          valueFrom:
+            {{- toYaml .valueFrom | nindent 12 }}
+          {{- else if eq .name "NAMESPACE" }}
+            {{- if eq $.Values.installMode.type "multi-user" }}
+          value: ""
+            {{- else }}
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+            {{- end }}
+          {{- else }}
+          value: ""
+          {{- end }}
+        {{- end }}
         - name: TTL_SECONDS_AFTER_WORKFLOW_FINISH
           value: {{ .Values.persistenceAgent.env.ttlSecondsAfterWorkflowFinish | quote }}
         - name: NUM_WORKERS

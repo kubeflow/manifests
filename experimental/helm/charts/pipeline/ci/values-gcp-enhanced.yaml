@@ -57,7 +57,7 @@ pipeline:
 
 # Argo Workflows Configuration
 argo:
-  enabled: true
+  enabled: false
   # GCP-specific Argo configuration
 
 # Environment Configuration
@@ -108,9 +108,6 @@ ui:
     requests:
       cpu: 10m
       memory: 70Mi
-    limits:
-      cpu: 100m
-      memory: 200Mi
 
 # Enhanced resources for GCP deployment
 persistenceAgent:
@@ -162,20 +159,12 @@ cache:
 visualization:
   resources:
     requests:
-      cpu: 50m
-      memory: 200Mi
-    limits:
-      cpu: 200m
+      cpu: 30m
       memory: 500Mi
 
 viewerCrd:
-  resources:
-    requests:
-      cpu: 120m
-      memory: 100Mi
-    limits:
-      cpu: 250m
-      memory: 200Mi
+  image:
+    pullPolicy: Always
 
 # Cloud SQL Proxy sidecar configuration
 cloudsqlProxy:

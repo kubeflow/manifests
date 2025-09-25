@@ -50,6 +50,17 @@ thirdParty:
   argo:
     enabled: true
 
+# Workflow controller configuration
+workflowController:
+  priorityClass:
+    create: false
+
+# Enable metadata server for standalone deployment
+metadata:
+  enabled: true
+  grpc:
+    resources:
+
 # Disable cloud-specific features
 monitoring:
   prometheus:
@@ -71,3 +82,54 @@ crds:
 # Disable webhooks for platform-agnostic scenario
 webhooks:
   enabled: false
+
+
+cache:
+  server:
+    additionalEnv:
+      - name: DEFAULT_CACHE_STALENESS
+        key: DEFAULT_CACHE_STALENESS
+      - name: MAXIMUM_CACHE_STALENESS
+        key: MAXIMUM_CACHE_STALENESS
+      - name: CACHE_IMAGE
+        key: cacheImage
+      - name: CACHE_NODE_RESTRICTIONS
+        key: cacheNodeRestrictions
+      - name: DBCONFIG_DRIVER
+        value: "mysql"
+      - name: DBCONFIG_DB_NAME
+        key: cacheDb
+      - name: DBCONFIG_HOST_NAME
+        key: dbHost
+      - name: DBCONFIG_PORT
+        key: dbPort
+      - name: DBCONFIG_USER
+        key: username
+      - name: DBCONFIG_PASSWORD
+        key: password
+      - name: NAMESPACE_TO_WATCH
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.namespace
+scheduledWorkflow:
+  additionalEnv:
+    - name: LOG_LEVEL
+      value: "info"
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+persistenceAgent:
+  additionalEnv:
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+viewerCrd:
+  additionalEnv:
+    - name: MAX_NUM_VIEWERS
+      value: "50"
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace

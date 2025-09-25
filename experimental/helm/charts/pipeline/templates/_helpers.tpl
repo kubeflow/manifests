@@ -102,7 +102,9 @@ ML Pipeline UI labels
 app: ml-pipeline-ui
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
+{{- if ne .Values.installMode.type "multi-user" }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
 {{- end }}
@@ -139,7 +141,12 @@ UI selector labels
 */}}
 {{- define "kubeflow-pipelines.uiSelectorLabels" -}}
 app: ml-pipeline-ui
+{{- if eq .Values.installMode.type "multi-user" }}
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
+{{- else }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 
 {{/*
@@ -177,7 +184,9 @@ Visualization server labels
 app: ml-pipeline-visualizationserver
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
+{{- if ne .Values.installMode.type "multi-user" }}
 application-crd-id: kubeflow-pipelines
+{{- end}}
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
 {{- end }}

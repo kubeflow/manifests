@@ -43,14 +43,13 @@ data:
               }
             ]
           }
-        ],
-        "serviceAccountName": "{{- if and .Values.installMode.multiUser.enabled (eq .Values.installMode.type "multi-user") }}default-editor{{- else }}kubeflow-pipelines-viewer{{- end }}"
+        ]
       }
     }
 {{- else }}
     {
         "spec": {
-            "serviceAccountName": "{{- if and .Values.installMode.multiUser.enabled (eq .Values.installMode.type "multi-user") }}default-editor{{- else }}kubeflow-pipelines-viewer{{- end }}"
+            "serviceAccountName": "{{ if and .Values.installMode.multiUser.enabled (eq .Values.installMode.type "multi-user") }}default-editor{{ else }}kubeflow-pipelines-viewer{{ end }}"
         }
     }
 {{- end }}
