@@ -1,0 +1,229 @@
+# AWS-Specific Configuration - Enhanced
+# This configuration provides AWS integration with S3 and RDS
+
+global:
+  namespace: kubeflow
+  imageRegistry: ghcr.io/kubeflow
+  imageTag: "2.5.0"
+  imagePullPolicy: IfNotPresent
+
+# Installation mode
+installMode:
+  type: generic
+  multiUser:
+    enabled: false
+
+# Database Configuration 
+mysql:
+  enabled: false
+
+postgresql:
+  enabled: false
+
+externalDatabase:
+  type: mysql
+  host: "YOUR_RDS_ENDPOINT"
+  port: 3306
+  database: mlpipeline
+  username: "YOUR_RDS_USERNAME"
+  password: "YOUR_RDS_PASSWORD"
+  existingSecret: "mysql-secret"
+
+# Object Storage Configuration 
+minio:
+  enabled: false
+
+objectStore:
+  provider: s3
+  secure: true
+  bucketName: "YOUR_S3_BUCKET_NAME"
+  s3:
+    region: "YOUR_AWS_REGION"
+    endpoint: "s3.amazonaws.com"
+    accessKey: ""
+    secretKey: ""
+
+# Database names
+database:
+  pipelinedb: mlpipeline
+  metadb: metadb
+  cachedb: cachedb
+
+# Pipeline Configuration
+pipeline:
+  cache:
+    image: "registry.k8s.io/busybox"
+    nodeRestrictions: false
+    maximumStaleness: ""
+    defaultStaleness: ""
+
+# Argo Workflows Configuration
+argo:
+  enabled: false
+
+env:
+  platform: aws
+  aws:
+    region: "YOUR_AWS_REGION"
+    rds:
+      enabled: true
+      endpoint: "YOUR_RDS_ENDPOINT"
+    s3:
+      enabled: true
+      bucket: "YOUR_S3_BUCKET_NAME"
+      region: "YOUR_AWS_REGION"
+
+# AWS API Server configuration
+apiServer:
+  env:
+    # Object store configuration for S3
+    objectStoreSecure: "true"
+    objectStoreBucketName: "YOUR_S3_BUCKET_NAME"
+    objectStoreHost: "s3.amazonaws.com"
+    objectStoreRegion: "YOUR_AWS_REGION"
+    objectStorePort: ""
+  
+  # Service account annotations for IAM roles 
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::ACCOUNT_ID:role/KubeflowPipelinesRole"
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 500Mi
+    limits:
+      cpu: 1
+      memory: 2Gi
+
+# AWS UI configuration
+ui:
+  env:
+    # MinIO service configuration for S3
+    minioServiceHost: "s3.amazonaws.com"
+    minioServiceRegion: "YOUR_AWS_REGION"
+  
+  resources:
+    requests:
+      cpu: 10m
+      memory: 70Mi
+
+
+# Enhanced resources for AWS deployment
+persistenceAgent:
+  additionalEnv:
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+  resources:
+    requests:
+      cpu: 120m
+      memory: 500Mi
+
+scheduledWorkflow:
+  resources:
+  additionalEnv:
+    - name: LOG_LEVEL
+      value: "info"
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+
+metadata:
+  grpc:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 300Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+  envoy:
+    resources:
+      requests:
+        cpu: 20m
+        memory: 20Mi
+      limits:
+        cpu: 100m
+        memory: 100Mi
+
+cache:
+  server:
+    additionalEnv:
+      - name: DEFAULT_CACHE_STALENESS
+        key: DEFAULT_CACHE_STALENESS
+      - name: MAXIMUM_CACHE_STALENESS
+        key: MAXIMUM_CACHE_STALENESS
+      - name: CACHE_IMAGE
+        key: cacheImage
+      - name: CACHE_NODE_RESTRICTIONS
+        key: cacheNodeRestrictions
+      - name: DBCONFIG_DRIVER
+        value: "mysql"
+      - name: DBCONFIG_DB_NAME
+        key: cacheDb
+      - name: DBCONFIG_HOST_NAME
+        key: dbHost
+      - name: DBCONFIG_PORT
+        key: dbPort
+      - name: DBCONFIG_USER
+        key: username
+      - name: DBCONFIG_PASSWORD
+        key: password
+      - name: NAMESPACE_TO_WATCH
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.namespace
+    resources:
+      requests:
+        cpu: 120m
+        memory: 500Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+visualization:
+  resources:
+    requests:
+      cpu: 30m
+      memory: 500Mi
+
+viewerCrd:
+  image:
+    pullPolicy: Always
+  additionalEnv:
+    - name: MAX_NUM_VIEWERS
+      value: 50
+    - name: NAMESPACE
+
+# AWS Load Balancer Controller integration
+
+  service:
+    type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+      service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+
+# Monitoring can be enabled with CloudWatch
+monitoring:
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false
+  cloudwatch:
+    enabled: true
+
+# Service mesh integration
+istio:
+  enabled: false
+
+# Cert-manager with AWS integration
+certManager:
+  enabled: true
+  issuer: "letsencrypt-prod"
+  issuerKind: "ClusterIssuer"
+  aws:
+    region: "YOUR_AWS_REGION"
+    hostedZoneID: "YOUR_ROUTE53_ZONE_ID"

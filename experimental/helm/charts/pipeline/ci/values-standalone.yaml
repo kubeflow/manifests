@@ -1,0 +1,135 @@
+# Platform-agnostic values for Kubeflow Pipelines
+# This configuration uses local storage (MinIO) and MySQL
+
+# Environment configuration
+env:
+  platform: platform-agnostic
+
+# Database configuration - use built-in MySQL
+mysql:
+  enabled: false
+  auth:
+    rootPassword: ""
+    database: "mlpipeline"
+    username: "root"
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+
+postgresql:
+  enabled: false
+
+externalDatabase:
+  type: mysql
+
+# Object storage configuration - use built-in MinIO
+objectStore:
+  provider: minio
+
+minio:
+  enabled: false
+  auth:
+    rootUser: "minio"
+    rootPassword: "minio123"
+  defaultBuckets: "mlpipeline"
+  persistence:
+    enabled: true
+    size: 20Gi
+
+# Argo Workflows configuration - use built-in
+argo:
+  enabled: false
+
+# Built-in third-party components
+thirdParty:
+  mysql:
+    enabled: true
+  minio:
+    enabled: true
+  argo:
+    enabled: true
+
+# Workflow controller configuration
+workflowController:
+  priorityClass:
+    create: false
+
+# Enable metadata server for standalone deployment
+metadata:
+  enabled: true
+  grpc:
+    resources:
+
+# Disable cloud-specific features
+monitoring:
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false
+
+certManager:
+  enabled: false
+
+networking:
+  istio:
+    enabled: false
+
+# Disable CRDs for platform-agnostic scenario
+crds:
+  install: false
+
+# Disable webhooks for platform-agnostic scenario
+webhooks:
+  enabled: false
+
+
+cache:
+  server:
+    additionalEnv:
+      - name: DEFAULT_CACHE_STALENESS
+        key: DEFAULT_CACHE_STALENESS
+      - name: MAXIMUM_CACHE_STALENESS
+        key: MAXIMUM_CACHE_STALENESS
+      - name: CACHE_IMAGE
+        key: cacheImage
+      - name: CACHE_NODE_RESTRICTIONS
+        key: cacheNodeRestrictions
+      - name: DBCONFIG_DRIVER
+        value: "mysql"
+      - name: DBCONFIG_DB_NAME
+        key: cacheDb
+      - name: DBCONFIG_HOST_NAME
+        key: dbHost
+      - name: DBCONFIG_PORT
+        key: dbPort
+      - name: DBCONFIG_USER
+        key: username
+      - name: DBCONFIG_PASSWORD
+        key: password
+      - name: NAMESPACE_TO_WATCH
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.namespace
+scheduledWorkflow:
+  additionalEnv:
+    - name: LOG_LEVEL
+      value: "info"
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+persistenceAgent:
+  additionalEnv:
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+viewerCrd:
+  additionalEnv:
+    - name: MAX_NUM_VIEWERS
+      value: "50"
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace

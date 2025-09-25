@@ -1,0 +1,19 @@
+{{- if .Values.thirdParty.argo.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    internal.kpt.dev/upstream-identifier: rbac.authorization.k8s.io|RoleBinding|default|argo-binding
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+  name: argo-binding
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: argo-role
+subjects:
+- kind: ServiceAccount
+  name: argo
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+{{- end }}
