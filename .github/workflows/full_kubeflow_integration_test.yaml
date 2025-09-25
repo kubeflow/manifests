@@ -81,9 +81,6 @@ jobs:
     - name: Install Admission Webhook
       run: kustomize build applications/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
 
-    - name: Install PodDefaults CRD
-      run: kubectl get crd poddefaults.kubeflow.org || kubectl apply -f https://raw.githubusercontent.com/kubeflow/kubeflow/master/components/admission-webhook/manifests/base/crd.yaml
-
     - name: Install Volumes Web Application
       run: ./tests/volumes_web_application_install.sh
 
