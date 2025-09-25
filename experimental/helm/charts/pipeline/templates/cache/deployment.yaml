@@ -34,57 +34,36 @@ spec:
         - "--namespace_to_watch=$(NAMESPACE_TO_WATCH)"
         - "--listen_port=$(WEBHOOK_PORT)"
         env:
-        - name: DEFAULT_CACHE_STALENESS
-          valueFrom:
-            configMapKeyRef:
-              name: pipeline-install-config
-              key: DEFAULT_CACHE_STALENESS
-        - name: MAXIMUM_CACHE_STALENESS
-          valueFrom:
-            configMapKeyRef:
-              name: pipeline-install-config
-              key: MAXIMUM_CACHE_STALENESS
-        - name: CACHE_IMAGE
-          valueFrom:
-            configMapKeyRef:
-              name: pipeline-install-config
-              key: cacheImage
-        - name: CACHE_NODE_RESTRICTIONS
-          valueFrom:
-            configMapKeyRef:
-              name: pipeline-install-config
-              key: cacheNodeRestrictions
-        - name: DBCONFIG_DRIVER
-          value: mysql
-        - name: DBCONFIG_DB_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: pipeline-install-config
-              key: cacheDb
-        - name: DBCONFIG_HOST_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: pipeline-install-config
-              key: dbHost
-        - name: DBCONFIG_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: pipeline-install-config
-              key: dbPort
-        - name: DBCONFIG_USER
+        {{- range .Values.cache.server.additionalEnv }}
+        - name: {{ .name }}
+          {{- if .value }}
+          value: {{ .value | quote }}
+          {{- else if and .key (ne .key "null") }}
+            {{- if or (eq .name "DBCONFIG_USER") (eq .name "DBCONFIG_PASSWORD") }}
           valueFrom:
             secretKeyRef:
               name: mysql-secret
-              key: username
-        - name: DBCONFIG_PASSWORD
+              key: {{ .key }}
+            {{- else }}
           valueFrom:
-            secretKeyRef:
-              name: mysql-secret
-              key: password
-        - name: NAMESPACE_TO_WATCH
+            configMapKeyRef:
+              name: pipeline-install-config
+              key: {{ .key }}
+            {{- end }}
+          {{- else if eq .name "NAMESPACE_TO_WATCH" }}
+            {{- if eq $.Values.installMode.type "multi-user" }}
+          value: ""
+            {{- else }}
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+            {{- end }}
+          {{- else if eq .name "DBCONFIG_DRIVER" }}
+          value: mysql
+          {{- else }}
+          value: ""
+          {{- end }}
+        {{- end }}
         - name: WEBHOOK_PORT
           value: "8443"
         ports:

@@ -5,8 +5,7 @@ metadata:
   name: ml-pipeline-viewer-crd
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    app: ml-pipeline-viewer-crd
+    {{- include "kubeflow-pipelines.viewerCrdLabels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -16,8 +15,7 @@ spec:
       annotations:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
-        {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
-        app: ml-pipeline-viewer-crd
+        {{- include "kubeflow-pipelines.viewerCrdLabels" . | nindent 8 }}
     spec:
       serviceAccountName: ml-pipeline-viewer-crd-service-account
       containers:
@@ -25,12 +23,21 @@ spec:
         image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.viewerCrd.image.repository "tag" .Values.viewerCrd.image.tag "context" .) }}
         imagePullPolicy: {{ .Values.viewerCrd.image.pullPolicy | default .Values.global.imagePullPolicy }}
         env:
-        - name: MAX_NUM_VIEWERS
-          value: {{ .Values.viewerCrd.env.maxNumViewers | quote }}
-        - name: NAMESPACE
+        {{- range .Values.viewerCrd.additionalEnv }}
+        - name: {{ .name }}
+          {{- if hasKey . "value" }}
+          value: {{ .value | quote }}
+          {{- else if and (hasKey . "valueFrom") .valueFrom (not (eq .valueFrom nil)) }}
+          valueFrom:
+            {{- toYaml .valueFrom | nindent 12 }}
+          {{- else if eq .name "NAMESPACE" }}
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+          {{- else }}
+          value: ""
+          {{- end }}
+        {{- end }}
         {{- if and .Values.viewerCrd.resources (or .Values.viewerCrd.resources.requests .Values.viewerCrd.resources.limits) }}
         resources:
           {{- toYaml .Values.viewerCrd.resources | nindent 10 }}
