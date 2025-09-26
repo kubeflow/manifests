@@ -33,32 +33,39 @@ spec:
           mountPath: /etc/config
           readOnly: true
         env:
-        - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
-          value: /etc/config/viewer-pod-template.json
-        - name: MINIO_NAMESPACE
+        {{- range .Values.ui.additionalEnv }}
+        - name: {{ .name }}
+          {{- if .value }}
+          value: {{ .value | quote }}
+          {{- else if and .key (ne .key "null") }}
+            {{- if or (eq .name "MINIO_ACCESS_KEY") (eq .name "MINIO_SECRET_KEY") }}
+          valueFrom:
+            secretKeyRef:
+              name: mlpipeline-minio-artifact
+              key: {{ .key }}
+            {{- else }}
+          valueFrom:
+            configMapKeyRef:
+              name: pipeline-install-config
+              key: {{ .key }}
+            {{- end }}
+          {{- else if .valueFrom }}
+          valueFrom:
+            {{- toYaml .valueFrom | nindent 12 }}
+          {{- else if or (eq .name "MINIO_NAMESPACE") (eq .name "FRONTEND_SERVER_NAMESPACE") }}
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        - name: MINIO_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              key: accesskey
-              name: mlpipeline-minio-artifact
-        - name: MINIO_SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              key: secretkey
-              name: mlpipeline-minio-artifact
-        - name: ALLOW_CUSTOM_VISUALIZATIONS
-          value: {{ .Values.ui.env.allowCustomVisualizations | quote }}
-        - name: FRONTEND_SERVER_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: ARGO_ARCHIVE_LOGS
-          value: {{ .Values.ui.env.argoArchiveLogs | quote }}
-        - name: DISABLE_GKE_METADATA
-          value: {{ .Values.ui.env.disableGkeMetadata | quote }}
+          {{- else if eq .name "ALLOW_CUSTOM_VISUALIZATIONS" }}
+          value: {{ $.Values.ui.env.allowCustomVisualizations | quote }}
+          {{- else if eq .name "ARGO_ARCHIVE_LOGS" }}
+          value: {{ $.Values.ui.env.argoArchiveLogs | quote }}
+          {{- else if eq .name "DISABLE_GKE_METADATA" }}
+          value: {{ $.Values.ui.env.disableGkeMetadata | quote }}
+          {{- else }}
+          value: ""
+          {{- end }}
+        {{- end }}
         livenessProbe:
           exec:
             command:
