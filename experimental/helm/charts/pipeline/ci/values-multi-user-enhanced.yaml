@@ -102,17 +102,122 @@ apiServer:
     requests:
       cpu: 250m
       memory: 500Mi
+  additionalEnv:
+    - name: KUBEFLOW_USERID_HEADER
+      value: "kubeflow-userid"
+    - name: KUBEFLOW_USERID_PREFIX
+      value: ""
+    - name: PUBLISH_LOGS
+      value: "true"
+    - name: LOG_LEVEL
+      value: "info"
+    - name: PIPELINE_LOG_LEVEL
+      value: "1"
+    - name: AUTO_UPDATE_PIPELINE_DEFAULT_VERSION
+      key: autoUpdatePipelineDefaultVersion
+      configMapName: pipeline-install-config
+    - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: OBJECTSTORECONFIG_SECURE
+      value: "false"
+    - name: OBJECTSTORECONFIG_BUCKETNAME
+      key: bucketName
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_USER
+      key: username
+      secretName: mysql-secret
+    - name: DBCONFIG_PASSWORD
+      key: password
+      secretName: mysql-secret
+    - name: DBCONFIG_DBNAME
+      key: pipelineDb
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_HOST
+      key: dbHost
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_PORT
+      key: dbPort
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_CONMAXLIFETIME
+      key: ConMaxLifeTime
+      configMapName: pipeline-install-config
+    - name: DB_DRIVER_NAME
+      key: dbType
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_MYSQLCONFIG_USER
+      key: username
+      secretName: mysql-secret
+    - name: DBCONFIG_MYSQLCONFIG_PASSWORD
+      key: password
+      secretName: mysql-secret
+    - name: DBCONFIG_MYSQLCONFIG_DBNAME
+      key: pipelineDb
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_MYSQLCONFIG_HOST
+      key: mysqlHost
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_MYSQLCONFIG_PORT
+      key: mysqlPort
+      configMapName: pipeline-install-config
+    - name: OBJECTSTORECONFIG_ACCESSKEY
+      key: accesskey
+      secretName: mlpipeline-minio-artifact
+    - name: OBJECTSTORECONFIG_SECRETACCESSKEY
+      key: secretkey
+      secretName: mlpipeline-minio-artifact
+    - name: V2_DRIVER_IMAGE
+      value: "ghcr.io/kubeflow/kfp-driver:2.5.0"
+    - name: V2_LAUNCHER_IMAGE
+      value: "ghcr.io/kubeflow/kfp-launcher:2.5.0"
 
 # Multi-user UI configuration
 ui:
   env:
     # Multi-user UI configuration
     multiUser: "true"
-  
+
   resources:
     requests:
       cpu: 10m
       memory: 70Mi
+
+  additionalEnv:
+    - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
+      value: "/etc/config/viewer-pod-template.json"
+    - name: DEPLOYMENT
+      value: "KUBEFLOW"
+    - name: ARTIFACTS_SERVICE_PROXY_NAME
+      value: "ml-pipeline-ui-artifact"
+    - name: ARTIFACTS_SERVICE_PROXY_PORT
+      value: "80"
+    - name: ARTIFACTS_SERVICE_PROXY_ENABLED
+      value: "true"
+    - name: ENABLE_AUTHZ
+      value: "true"
+    - name: KUBEFLOW_USERID_HEADER
+      value: "kubeflow-userid"
+    - name: KUBEFLOW_USERID_PREFIX
+      key: null
+    - name: MINIO_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: MINIO_ACCESS_KEY
+      key: accesskey
+    - name: MINIO_SECRET_KEY
+      key: secretkey
+    - name: ALLOW_CUSTOM_VISUALIZATIONS
+      value: "true"
+    - name: FRONTEND_SERVER_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: ARGO_ARCHIVE_LOGS
+      value: "true"
+    - name: DISABLE_GKE_METADATA
+      value: "true"
 
 
 # Enhanced resources for multi-user deployment
@@ -174,6 +279,7 @@ cache:
       - name: CACHE_NODE_RESTRICTIONS
         key: cacheNodeRestrictions
       - name: DBCONFIG_DRIVER
+        value: "mysql"
       - name: DBCONFIG_DB_NAME
         key: cacheDb
       - name: DBCONFIG_HOST_NAME
@@ -217,6 +323,16 @@ profileController:
     limits:
       cpu: 500m
       memory: 1Gi
+
+  additionalEnv:
+    - name: KFP_VERSION
+      key: appVersion
+    - name: KFP_DEFAULT_PIPELINE_ROOT
+      key: defaultPipelineRoot
+    - name: MINIO_ACCESS_KEY
+      key: accesskey
+    - name: MINIO_SECRET_KEY
+      key: secretkey
 
 # Namespace Isolation Configuration
 namespaceIsolation:
