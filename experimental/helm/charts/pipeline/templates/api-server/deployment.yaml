@@ -28,109 +28,59 @@ spec:
         - name: grpc
           containerPort: 8887
         env:
-        # API Server specific environment variables
-        {{- if eq .Values.installMode.type "multi-user" }}
-        - name: KUBEFLOW_USERID_HEADER
-          value: "kubeflow-userid"
-        - name: KUBEFLOW_USERID_PREFIX
-          value: ""
-        {{- end }}
-        - name: PUBLISH_LOGS
-          value: {{ .Values.apiServer.env.publishLogs | quote }}
-        - name: LOG_LEVEL
-          value: {{ .Values.global.logLevel | quote }}
-        - name: PIPELINE_LOG_LEVEL
-          value: {{ .Values.apiServer.env.pipelineLogLevel | quote }}
-        - name: AUTO_UPDATE_PIPELINE_DEFAULT_VERSION
+        {{- range .Values.apiServer.additionalEnv }}
+        - name: {{ .name }}
+          {{- if .value }}
+          value: {{ .value | quote }}
+          {{- else if and .key (ne .key "null") }}
+            {{- if and .secretName .secretKey }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .secretName }}
+              key: {{ .secretKey }}
+            {{- else if and .configMapName .configMapKey }}
           valueFrom:
             configMapKeyRef:
-              key: autoUpdatePipelineDefaultVersion
+              name: {{ .configMapName }}
+              key: {{ .configMapKey }}
+            {{- else if or (eq .name "DBCONFIG_USER") (eq .name "DBCONFIG_PASSWORD") (eq .name "DBCONFIG_MYSQLCONFIG_USER") (eq .name "DBCONFIG_MYSQLCONFIG_PASSWORD") }}
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: {{ .key }}
+            {{- else if or (eq .name "OBJECTSTORECONFIG_ACCESSKEY") (eq .name "OBJECTSTORECONFIG_SECRETACCESSKEY") }}
+          valueFrom:
+            secretKeyRef:
+              name: mlpipeline-minio-artifact
+              key: {{ .key }}
+            {{- else }}
+          valueFrom:
+            configMapKeyRef:
               name: pipeline-install-config
-        - name: POD_NAMESPACE
+              key: {{ .key }}
+            {{- end }}
+          {{- else if eq .name "POD_NAMESPACE" }}
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        - name: OBJECTSTORECONFIG_SECURE
+          {{- else if eq .name "KUBEFLOW_USERID_HEADER" }}
+            {{- if eq $.Values.installMode.type "multi-user" }}
+          value: "kubeflow-userid"
+            {{- else }}
+          value: ""
+            {{- end }}
+          {{- else if eq .name "KUBEFLOW_USERID_PREFIX" }}
+            {{- if eq $.Values.installMode.type "multi-user" }}
+          value: ""
+            {{- else }}
+          value: ""
+            {{- end }}
+          {{- else if eq .name "OBJECTSTORECONFIG_SECURE" }}
           value: "false"
-        - name: OBJECTSTORECONFIG_BUCKETNAME
-          valueFrom:
-            configMapKeyRef:
-              key: bucketName
-              name: pipeline-install-config
-        - name: DBCONFIG_USER
-          valueFrom:
-            secretKeyRef:
-              key: username
-              name: mysql-secret
-        - name: DBCONFIG_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: password
-              name: mysql-secret
-        - name: DBCONFIG_DBNAME
-          valueFrom:
-            configMapKeyRef:
-              key: pipelineDb
-              name: pipeline-install-config
-        - name: DBCONFIG_HOST
-          valueFrom:
-            configMapKeyRef:
-              key: dbHost
-              name: pipeline-install-config
-        - name: DBCONFIG_PORT
-          valueFrom:
-            configMapKeyRef:
-              key: dbPort
-              name: pipeline-install-config
-        - name: DBCONFIG_CONMAXLIFETIME
-          valueFrom:
-            configMapKeyRef:
-              key: ConMaxLifeTime
-              name: pipeline-install-config
-        - name: DB_DRIVER_NAME
-          valueFrom:
-            configMapKeyRef:
-              key: dbType
-              name: pipeline-install-config
-        - name: DBCONFIG_MYSQLCONFIG_USER
-          valueFrom:
-            secretKeyRef:
-              key: username
-              name: mysql-secret
-        - name: DBCONFIG_MYSQLCONFIG_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: password
-              name: mysql-secret
-        - name: DBCONFIG_MYSQLCONFIG_DBNAME
-          valueFrom:
-            configMapKeyRef:
-              key: pipelineDb
-              name: pipeline-install-config
-        - name: DBCONFIG_MYSQLCONFIG_HOST
-          valueFrom:
-            configMapKeyRef:
-              key: mysqlHost
-              name: pipeline-install-config
-        - name: DBCONFIG_MYSQLCONFIG_PORT
-          valueFrom:
-            configMapKeyRef:
-              key: mysqlPort
-              name: pipeline-install-config
-        - name: OBJECTSTORECONFIG_ACCESSKEY
-          valueFrom:
-            secretKeyRef:
-              key: accesskey
-              name: mlpipeline-minio-artifact
-        - name: OBJECTSTORECONFIG_SECRETACCESSKEY
-          valueFrom:
-            secretKeyRef:
-              key: secretkey
-              name: mlpipeline-minio-artifact
-        - name: V2_DRIVER_IMAGE
-          value: {{ .Values.apiServer.env.v2DriverImage | quote }}
-        - name: V2_LAUNCHER_IMAGE
-          value: {{ .Values.apiServer.env.v2LauncherImage | quote }}
+          {{- else }}
+          value: ""
+          {{- end }}
+        {{- end }}
         {{- if eq .Values.installMode.type "multi-user" }}
         envFrom:
         - configMapRef:

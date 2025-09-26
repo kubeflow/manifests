@@ -19,15 +19,10 @@ spec:
         {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
         app: minio
     spec:
-      securityContext:
-        fsGroup: 1000
-        fsGroupChangePolicy: "OnRootMismatch"
-        seccompProfile:
-          type: RuntimeDefault
       containers:
       - args:
-        - server
-        - /data
+        - gateway
+        - azure
         env:
         - name: MINIO_ACCESS_KEY
           valueFrom:
@@ -43,26 +38,8 @@ spec:
         name: minio
         ports:
         - containerPort: 9000
-        securityContext:
-          allowPrivilegeEscalation: false
-          seccompProfile:
-            type: RuntimeDefault
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 0
-          capabilities:
-            drop:
-            - ALL
-        volumeMounts:
-        - mountPath: /data
-          name: data
-          subPath: minio
         resources:
           requests:
             cpu: 20m
-            memory: 100Mi
-      volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: minio-pvc
+            memory: 25Mi
 {{- end }}

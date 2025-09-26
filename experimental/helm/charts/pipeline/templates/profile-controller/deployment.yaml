@@ -35,31 +35,31 @@ spec:
         - configMapRef:
             name: kubeflow-pipelines-profile-controller-env
         env:
-        - name: KFP_VERSION
+        {{- range .Values.profileController.additionalEnv }}
+        - name: {{ .name }}
+          {{- if .value }}
+          value: {{ .value | quote }}
+          {{- else if and .key (ne .key "null") }}
+            {{- if or (eq .name "MINIO_ACCESS_KEY") (eq .name "MINIO_SECRET_KEY") (eq .name "AWS_ACCESS_KEY_ID") (eq .name "AWS_SECRET_ACCESS_KEY") }}
+          valueFrom:
+            secretKeyRef:
+              name: mlpipeline-minio-artifact
+              key: {{ .key }}
+            {{- else }}
           valueFrom:
             configMapKeyRef:
               name: pipeline-install-config
-              key: appVersion
-        - name: KFP_DEFAULT_PIPELINE_ROOT
-          valueFrom:
-            configMapKeyRef:
-              name: pipeline-install-config
-              key: defaultPipelineRoot
+              key: {{ .key }}
+              {{- if eq .name "KFP_DEFAULT_PIPELINE_ROOT" }}
               optional: true
-        {{- if .Values.minio.enabled }}
-        - name: MINIO_ACCESS_KEY
+              {{- end }}
+            {{- end }}
+          {{- else if .valueFrom }}
           valueFrom:
-            secretKeyRef:
-              name: mlpipeline-minio-artifact
-              key: accesskey
-        - name: MINIO_SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: mlpipeline-minio-artifact
-              key: secretkey
-        {{- end }}
-        {{- with .Values.profileController.additionalEnv }}
-        {{- toYaml . | nindent 8 }}
+            {{- toYaml .valueFrom | nindent 12 }}
+          {{- else }}
+          value: ""
+          {{- end }}
         {{- end }}
         volumeMounts:
         - name: hooks

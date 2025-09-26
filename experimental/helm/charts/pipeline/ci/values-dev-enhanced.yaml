@@ -84,13 +84,13 @@ apiServer:
   replicas: 1
   resources:
     requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 200m
-      memory: 512Mi
+      cpu: 250m
+      memory: 500Mi
   env:
     logLevel: "2"
+  additionalEnv:
+    - name: PIPELINE_LOG_LEVEL
+      value: "1"
 
 persistenceAgent:
   replicas: 1
@@ -108,6 +108,7 @@ ui:
       cpu: 10m
       memory: 70Mi
 metadata:
+  enabled: true
   grpc:
     replicas: 1
     resources:

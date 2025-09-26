@@ -92,9 +92,75 @@ apiServer:
     requests:
       cpu: 250m
       memory: 500Mi
-    limits:
-      cpu: 1
-      memory: 2Gi
+  additionalEnv:
+    - name: OBJECTSTORECONFIG_SECURE
+      value: "true"
+    - name: OBJECTSTORECONFIG_BUCKETNAME
+      key: bucketName
+      configMapName: pipeline-install-config
+    - name: OBJECTSTORECONFIG_HOST
+      key: minioServiceHost
+      configMapName: pipeline-install-config
+    - name: OBJECTSTORECONFIG_REGION
+      key: minioServiceRegion
+      configMapName: pipeline-install-config
+    - name: OBJECTSTORECONFIG_PORT
+      value: ""
+    - name: PUBLISH_LOGS
+      value: "true"
+    - name: LOG_LEVEL
+      value: "info"
+    - name: PIPELINE_LOG_LEVEL
+      value: "1"
+    - name: AUTO_UPDATE_PIPELINE_DEFAULT_VERSION
+      key: autoUpdatePipelineDefaultVersion
+      configMapName: pipeline-install-config
+    - name: POD_NAMESPACE
+    - name: DBCONFIG_USER
+      key: username
+      secretName: mysql-secret
+    - name: DBCONFIG_PASSWORD
+      key: password
+      secretName: mysql-secret
+    - name: DBCONFIG_DBNAME
+      key: pipelineDb
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_HOST
+      key: dbHost
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_PORT
+      key: dbPort
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_CONMAXLIFETIME
+      key: ConMaxLifeTime
+      configMapName: pipeline-install-config
+    - name: DB_DRIVER_NAME
+      key: dbType
+      secretName: mysql-secret
+    - name: DBCONFIG_MYSQLCONFIG_USER
+      key: username
+      secretName: mysql-secret
+    - name: DBCONFIG_MYSQLCONFIG_PASSWORD
+      key: password
+      secretName: mysql-secret
+    - name: DBCONFIG_MYSQLCONFIG_DBNAME
+      key: pipelineDb
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_MYSQLCONFIG_HOST
+      key: mysqlHost
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_MYSQLCONFIG_PORT
+      key: mysqlPort
+      configMapName: pipeline-install-config
+    - name: OBJECTSTORECONFIG_ACCESSKEY
+      key: accesskey
+      secretName: mlpipeline-minio-artifact
+    - name: OBJECTSTORECONFIG_SECRETACCESSKEY
+      key: secretkey
+    - name: V2_DRIVER_IMAGE
+      value: "ghcr.io/kubeflow/kfp-driver:2.5.0"
+    - name: V2_LAUNCHER_IMAGE
+      value: "ghcr.io/kubeflow/kfp-launcher:2.5.0"
 
 # AWS UI configuration
 ui:
@@ -107,6 +173,43 @@ ui:
     requests:
       cpu: 10m
       memory: 70Mi
+  additionalEnv:
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          key: accesskey
+          name: mlpipeline-minio-artifact
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          key: secretkey
+          name: mlpipeline-minio-artifact
+    - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
+      value: "/etc/config/viewer-pod-template.json"
+    - name: MINIO_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: MINIO_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          key: accesskey
+          name: mlpipeline-minio-artifact
+    - name: MINIO_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          key: secretkey
+          name: mlpipeline-minio-artifact
+    - name: ALLOW_CUSTOM_VISUALIZATIONS
+      value: "true"
+    - name: FRONTEND_SERVER_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: ARGO_ARCHIVE_LOGS
+      value: "true"
+    - name: DISABLE_GKE_METADATA
+      value: "true"
 
 
 # Enhanced resources for AWS deployment
@@ -132,14 +235,9 @@ scheduledWorkflow:
           fieldPath: metadata.namespace
 
 metadata:
+  enabled: true
   grpc:
     resources:
-      requests:
-        cpu: 100m
-        memory: 300Mi
-      limits:
-        cpu: 500m
-        memory: 1Gi
   envoy:
     resources:
       requests:
@@ -227,3 +325,13 @@ certManager:
   aws:
     region: "YOUR_AWS_REGION"
     hostedZoneID: "YOUR_ROUTE53_ZONE_ID"
+
+profileController:
+  additionalEnv:
+    - name: AWS_REGION
+      value: "YOUR_AWS_REGION"
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          key: accesskey
+          name: mlpipeline-minio-artifact
