@@ -27,7 +27,7 @@ externalDatabase:
   database: mlpipeline
   username: "YOUR_AZURE_SQL_USERNAME@[SQLSERVERNAME]"
   password: "YOUR_AZURE_SQL_PASSWORD"
-  existingSecret: "mysql-secret"
+  existingSecret: ""
 
 # Object Storage Configuration 
 minio:
@@ -75,6 +75,8 @@ env:
       enabled: true
       storageAccount: "yourstorageaccount"
       container: "mlpipeline"
+    managedIdentity:
+      enabled: false
 
 # Azure API Server configuration
 apiServer:
@@ -95,9 +97,6 @@ apiServer:
     requests:
       cpu: 250m
       memory: 500Mi
-    limits:
-      cpu: 1
-      memory: 2Gi
 
 # Azure UI configuration
 ui:
@@ -110,6 +109,38 @@ ui:
     requests:
       cpu: 10m
       memory: 70Mi
+  additionalEnv:
+    - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
+      value: "/etc/config/viewer-pod-template.json"
+    - name: MINIO_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: MINIO_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          key: accesskey
+          name: mlpipeline-minio-artifact
+    - name: MINIO_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          key: secretkey
+          name: mlpipeline-minio-artifact
+    - name: ALLOW_CUSTOM_VISUALIZATIONS
+      value: "true"
+    - name: FRONTEND_SERVER_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: ARGO_ARCHIVE_LOGS
+      value: "true"
+    - name: DISABLE_GKE_METADATA
+      value: "true"
+
+# Third-party components configuration
+thirdParty:
+  minio:
+    enabled: true
 
 # Enhanced resources for Azure deployment
 persistenceAgent:
@@ -117,25 +148,27 @@ persistenceAgent:
     requests:
       cpu: 120m
       memory: 500Mi
+  additionalEnv:
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
 
 scheduledWorkflow:
   resources:
-    requests:
-      cpu: 120m
-      memory: 100Mi
-    limits:
-      cpu: 250m
-      memory: 500Mi
+  additionalEnv:
+    - name: LOG_LEVEL
+      value: "info"
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+
 
 metadata:
+  enabled: true
   grpc:
     resources:
-      requests:
-        cpu: 100m
-        memory: 300Mi
-      limits:
-        cpu: 500m
-        memory: 1Gi
   envoy:
     resources:
       requests:
@@ -154,6 +187,31 @@ cache:
       limits:
         cpu: 500m
         memory: 1Gi
+    additionalEnv:
+      - name: DEFAULT_CACHE_STALENESS
+        key: DEFAULT_CACHE_STALENESS
+      - name: MAXIMUM_CACHE_STALENESS
+        key: MAXIMUM_CACHE_STALENESS
+      - name: CACHE_IMAGE
+        key: cacheImage
+      - name: CACHE_NODE_RESTRICTIONS
+        key: cacheNodeRestrictions
+      - name: DBCONFIG_DRIVER
+        value: "mysql"
+      - name: DBCONFIG_DB_NAME
+        key: cacheDb
+      - name: DBCONFIG_HOST_NAME
+        key: dbHost
+      - name: DBCONFIG_PORT
+        key: dbPort
+      - name: DBCONFIG_USER
+        key: username
+      - name: DBCONFIG_PASSWORD
+        key: password
+      - name: NAMESPACE_TO_WATCH
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.namespace
 
 visualization:
   resources:
@@ -163,14 +221,15 @@ visualization:
 
 viewerCrd:
   resources:
-    requests:
-      cpu: 120m
-      memory: 100Mi
-    limits:
-      cpu: 250m
-      memory: 200Mi
   image:
     pullPolicy: Always
+  additionalEnv:
+    - name: MAX_NUM_VIEWERS
+      value: "50"
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
 
 # Azure Load Balancer integration
   service:
