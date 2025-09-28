@@ -11,7 +11,7 @@ ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 if [[ -z "$COMPONENT" ]]; then
     echo "ERROR: Component is required"
     echo "Usage: $0 <component> <scenario>"
-    echo "Components: katib, model-registry, kserve-models-web-app, notebook-controller, kubeflow-pipelines"
+    echo "Components: katib, model-registry, kserve-models-web-app, notebook-controller, pipelines"
     exit 1
 fi
 
@@ -158,8 +158,8 @@ case "$COMPONENT" in
             ["production"]="kubeflow"
         )
         ;;
-    "kubeflow-pipelines")
-        CHART_DIR="$ROOT_DIR/experimental/helm/charts/kubeflow-pipelines"
+    "pipelines")
+        CHART_DIR="$ROOT_DIR/experimental/helm/charts/pipelines"
         MANIFESTS_DIR="$ROOT_DIR/applications/pipeline/upstream"
         
         declare -A KUSTOMIZE_PATHS=(
@@ -243,7 +243,7 @@ case "$COMPONENT" in
         
     *)
         echo "ERROR: Unknown component: $COMPONENT"
-        echo "Supported components: katib, model-registry, kserve-models-web-app, notebook-controller, kubeflow-pipelines""
+        echo "Supported components: katib, model-registry, kserve-models-web-app, notebook-controller, pipelines"
         exit 1
         ;;
 esac
@@ -305,7 +305,7 @@ else
             --namespace "$NAMESPACE" \
             --include-crds \
             --values "$HELM_VALUES_ARG" > "$HELM_OUTPUT"
-    elif [[ "$COMPONENT" == "kubeflow-pipelines" ]]; then
+    elif [[ "$COMPONENT" == "pipelines" ]]; then
         if [[ "$SCENARIO" == "generic" ]]; then
             helm template pipeline . \
                 --namespace "$NAMESPACE" \
