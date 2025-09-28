@@ -213,6 +213,33 @@ case "$COMPONENT" in
             ["platform-agnostic-postgresql"]="kubeflow"
         )
         ;;
+
+    "notebook-controller")
+        CHART_DIR="$ROOT_DIR/experimental/helm/charts/notebook-controller"
+        MANIFESTS_DIR="$ROOT_DIR/applications/jupyter/notebook-controller/upstream"
+        
+        declare -A KUSTOMIZE_PATHS=(
+            ["base"]="$MANIFESTS_DIR/base"
+            ["kubeflow"]="$MANIFESTS_DIR/overlays/kubeflow"
+            ["standalone"]="$MANIFESTS_DIR/overlays/standalone"
+        )
+        
+        declare -A HELM_VALUES=(
+            ["base"]="$CHART_DIR/ci/base-values.yaml"
+            ["kubeflow"]="$CHART_DIR/ci/kubeflow-values.yaml"
+            ["standalone"]="$CHART_DIR/ci/standalone-values.yaml"
+            ["webhook"]="$CHART_DIR/ci/webhook-values.yaml"
+            ["production"]="$CHART_DIR/ci/production-values.yaml"
+        )
+        
+        declare -A NAMESPACES=(
+            ["base"]="notebook-controller-system"
+            ["kubeflow"]="kubeflow"
+            ["standalone"]="notebook-controller-system"
+            ["webhook"]="kubeflow"
+            ["production"]="kubeflow"
+        )
+        ;;
         
     *)
         echo "ERROR: Unknown component: $COMPONENT"
