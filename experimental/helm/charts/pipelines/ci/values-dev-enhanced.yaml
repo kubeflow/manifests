@@ -4,7 +4,7 @@
 global:
   namespace: kubeflow
   imageRegistry: ghcr.io/kubeflow
-  imageTag: "2.5.0"
+  imageTag: "master"
   imagePullPolicy: IfNotPresent
 
 # Installation mode
@@ -15,7 +15,7 @@ installMode:
 
 # Database Configuration 
 mysql:
-  enabled: true
+  enabled: false
   auth:
     rootPassword: "dev123"
     username: "dev"
@@ -37,7 +37,7 @@ postgresql:
 
 # Object Storage Configuration - Lightweight MinIO
 minio:
-  enabled: true
+  enabled: false
   auth:
     rootUser: "dev"
     rootPassword: "dev123"
@@ -66,14 +66,14 @@ database:
 # Pipeline Configuration - Development settings
 pipeline:
   cache:
-    image: "registry.k8s.io/busybox"
+    image: "ghcr.io/containerd/busybox"
     nodeRestrictions: false
     maximumStaleness: ""
     defaultStaleness: ""
 
 # Argo Workflows Configuration - Minimal for dev
 argo:
-  enabled: true
+  enabled: false
 
 # Environment Configuration
 env:
@@ -89,8 +89,54 @@ apiServer:
   env:
     logLevel: "2"
   additionalEnv:
+    - name: V2_DRIVER_IMAGE
+      value: "ghcr.io/kubeflow/kfp-driver:master"
+    - name: V2_LAUNCHER_IMAGE
+      value: "ghcr.io/kubeflow/kfp-launcher:master"
+    - name: PUBLISH_LOGS
+      value: "true"
+    - name: LOG_LEVEL
+      value: "info"
     - name: PIPELINE_LOG_LEVEL
       value: "1"
+    - name: AUTO_UPDATE_PIPELINE_DEFAULT_VERSION
+      key: autoUpdatePipelineDefaultVersion
+    - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: OBJECTSTORECONFIG_SECURE
+      value: "false"
+    - name: OBJECTSTORECONFIG_BUCKETNAME
+      key: bucketName
+    - name: DBCONFIG_USER
+      key: username
+    - name: DBCONFIG_PASSWORD
+      key: password
+    - name: DBCONFIG_DBNAME
+      key: pipelineDb
+    - name: DBCONFIG_HOST
+      key: dbHost
+    - name: DBCONFIG_PORT
+      key: dbPort
+    - name: DBCONFIG_CONMAXLIFETIME
+      key: ConMaxLifeTime
+    - name: DB_DRIVER_NAME
+      key: dbType
+    - name: DBCONFIG_MYSQLCONFIG_USER
+      key: username
+    - name: DBCONFIG_MYSQLCONFIG_PASSWORD
+      key: password
+    - name: DBCONFIG_MYSQLCONFIG_DBNAME
+      key: pipelineDb
+    - name: DBCONFIG_MYSQLCONFIG_HOST
+      key: mysqlHost
+    - name: DBCONFIG_MYSQLCONFIG_PORT
+      key: mysqlPort
+    - name: OBJECTSTORECONFIG_ACCESSKEY
+      key: accesskey
+    - name: OBJECTSTORECONFIG_SECRETACCESSKEY
+      key: secretkey
 
 persistenceAgent:
   replicas: 1
@@ -98,8 +144,23 @@ persistenceAgent:
     requests:
       cpu: 120m
       memory: 500Mi
+  additionalEnv:
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
 scheduledWorkflow:
   replicas: 1
+  image:
+    repository: kfp-scheduled-workflow-controller
+    tag: "master"
+  additionalEnv:
+    - name: LOG_LEVEL
+      value: "info"
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
 
 ui:
   replicas: 1
@@ -107,17 +168,33 @@ ui:
     requests:
       cpu: 10m
       memory: 70Mi
+  additionalEnv:
+    - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
+      value: "/etc/config/viewer-pod-template.json"
+    - name: MINIO_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: MINIO_ACCESS_KEY
+      key: accesskey
+    - name: MINIO_SECRET_KEY
+      key: secretkey
+    - name: ALLOW_CUSTOM_VISUALIZATIONS
+      value: "true"
+    - name: FRONTEND_SERVER_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: ARGO_ARCHIVE_LOGS
+      value: "true"
+    - name: DISABLE_GKE_METADATA
+      value: "true"
+
 metadata:
   enabled: true
   grpc:
     replicas: 1
     resources:
-      requests:
-        cpu: 50m
-        memory: 128Mi
-      limits:
-        cpu: 200m
-        memory: 512Mi
   envoy:
     replicas: 1
     resources:
@@ -138,6 +215,31 @@ cache:
       limits:
         cpu: 200m
         memory: 512Mi
+    additionalEnv:
+      - name: DEFAULT_CACHE_STALENESS
+        key: DEFAULT_CACHE_STALENESS
+      - name: MAXIMUM_CACHE_STALENESS
+        key: MAXIMUM_CACHE_STALENESS
+      - name: CACHE_IMAGE
+        key: cacheImage
+      - name: CACHE_NODE_RESTRICTIONS
+        key: cacheNodeRestrictions
+      - name: DBCONFIG_DRIVER
+        value: "mysql"
+      - name: DBCONFIG_DB_NAME
+        key: cacheDb
+      - name: DBCONFIG_HOST_NAME
+        key: dbHost
+      - name: DBCONFIG_PORT
+        key: dbPort
+      - name: DBCONFIG_USER
+        key: username
+      - name: DBCONFIG_PASSWORD
+        key: password
+      - name: NAMESPACE_TO_WATCH
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.namespace
 
 cacheDeployer:
   replicas: 1
@@ -148,7 +250,6 @@ cacheDeployer:
     limits:
       cpu: 100m
       memory: 256Mi
-
 visualization:
   replicas: 1
   resources:
@@ -162,6 +263,13 @@ viewerCrd:
     pullPolicy: Always
   env:
     maxNumViewers: "10"
+  additionalEnv:
+    - name: MAX_NUM_VIEWERS
+      value: "50"
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
 dev:
   # Enable debug mode
   debug: true

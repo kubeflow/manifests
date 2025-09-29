@@ -19,10 +19,24 @@ spec:
         {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
         app: minio
     spec:
+      {{- if ne .Values.env.platform "azure" }}
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: "OnRootMismatch"
+        seccompProfile:
+          type: RuntimeDefault
+      {{- end }}
       containers:
-      - args:
+      - name: minio
+        image: gcr.io/ml-pipeline/minio:RELEASE.2019-08-14T20-37-41Z-license-compliance
+        args:
+        {{- if eq .Values.env.platform "azure" }}
         - gateway
         - azure
+        {{- else }}
+        - server
+        - /data
+        {{- end }}
         env:
         - name: MINIO_ACCESS_KEY
           valueFrom:
@@ -34,12 +48,34 @@ spec:
             secretKeyRef:
               name: mlpipeline-minio-artifact
               key: secretkey
-        image: gcr.io/ml-pipeline/minio:RELEASE.2019-08-14T20-37-41Z-license-compliance
-        name: minio
         ports:
         - containerPort: 9000
         resources:
           requests:
             cpu: 20m
+            {{- if eq .Values.env.platform "azure" }}
             memory: 25Mi
+            {{- else }}
+            memory: 100Mi
+            {{- end }}
+        {{- if ne .Values.env.platform "azure" }}
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 0
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+        volumeMounts:
+        - mountPath: /data
+          name: data
+          subPath: minio
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: minio-pvc
+        {{- end }}
 {{- end }}

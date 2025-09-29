@@ -87,26 +87,16 @@ spec:
             name: pipeline-api-server-config
         {{- end }}
         livenessProbe:
-          exec:
-            command:
-            - wget
-            - -q
-            - -S
-            - -O
-            - "-"
-            - http://localhost:8888/apis/v1beta1/healthz
+          httpGet:
+            path: /apis/v1beta1/healthz
+            port: 8888
           initialDelaySeconds: {{ .Values.apiServer.probes.liveness.initialDelaySeconds }}
           periodSeconds: {{ .Values.apiServer.probes.liveness.periodSeconds }}
           timeoutSeconds: {{ .Values.apiServer.probes.liveness.timeoutSeconds }}
         readinessProbe:
-          exec:
-            command:
-            - wget
-            - -q
-            - -S
-            - -O
-            - "-"
-            - http://localhost:8888/apis/v1beta1/healthz
+          httpGet:
+            path: /apis/v1beta1/healthz
+            port: 8888
           initialDelaySeconds: {{ .Values.apiServer.probes.readiness.initialDelaySeconds }}
           periodSeconds: {{ .Values.apiServer.probes.readiness.periodSeconds }}
           timeoutSeconds: {{ .Values.apiServer.probes.readiness.timeoutSeconds }}
@@ -115,14 +105,9 @@ spec:
         securityContext:
           {{- toYaml .Values.apiServer.securityContext | nindent 10 }}
         startupProbe:
-          exec:
-            command:
-            - wget
-            - -q
-            - -S
-            - -O
-            - "-"
-            - http://localhost:8888/apis/v1beta1/healthz
+          httpGet:
+            path: /apis/v1beta1/healthz
+            port: 8888
           failureThreshold: {{ .Values.apiServer.probes.startup.failureThreshold }}
           periodSeconds: {{ .Values.apiServer.probes.startup.periodSeconds }}
           timeoutSeconds: {{ .Values.apiServer.probes.startup.timeoutSeconds }}

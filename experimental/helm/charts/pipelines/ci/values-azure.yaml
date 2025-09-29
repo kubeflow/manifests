@@ -53,8 +53,8 @@ apiServer:
     publishLogs: true
     pipelineLogLevel: "1"
     autoUpdatePipelineDefaultVersion: true
-    v2DriverImage: "ghcr.io/kubeflow/kfp-driver:2.5.0"
-    v2LauncherImage: "ghcr.io/kubeflow/kfp-launcher:2.5.0"
+    v2DriverImage: "ghcr.io/kubeflow/kfp-driver:2.14.3"
+    v2LauncherImage: "ghcr.io/kubeflow/kfp-launcher:2.14.3"
   additionalEnv:
     - name: AZURE_STORAGE_ACCOUNT
       value: "YOUR_STORAGE_ACCOUNT"

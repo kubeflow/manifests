@@ -4,7 +4,7 @@
 global:
   namespace: kubeflow
   imageRegistry: ghcr.io/kubeflow
-  imageTag: "2.5.0"
+  imageTag: "2.14.3"
   imagePullPolicy: IfNotPresent
 
 # Installation mode
@@ -52,7 +52,7 @@ database:
 # Pipeline Configuration
 pipeline:
   cache:
-    image: "registry.k8s.io/busybox"
+    image: "ghcr.io/containerd/busybox"
     nodeRestrictions: false
     maximumStaleness: ""
     defaultStaleness: ""
@@ -158,9 +158,9 @@ apiServer:
     - name: OBJECTSTORECONFIG_SECRETACCESSKEY
       key: secretkey
     - name: V2_DRIVER_IMAGE
-      value: "ghcr.io/kubeflow/kfp-driver:2.5.0"
+      value: "ghcr.io/kubeflow/kfp-driver:2.14.3"
     - name: V2_LAUNCHER_IMAGE
-      value: "ghcr.io/kubeflow/kfp-launcher:2.5.0"
+      value: "ghcr.io/kubeflow/kfp-launcher:2.14.3"
 
 # AWS UI configuration
 ui:

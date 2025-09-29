@@ -26,26 +26,16 @@ spec:
         - name: http
           containerPort: 8888
         livenessProbe:
-          exec:
-            command:
-            - wget
-            - -q
-            - -S
-            - -O
-            - "-"
-            - http://localhost:8888/
+          httpGet:
+            path: /
+            port: 8888
           initialDelaySeconds: {{ .Values.visualization.probes.liveness.initialDelaySeconds }}
           periodSeconds: {{ .Values.visualization.probes.liveness.periodSeconds }}
           timeoutSeconds: {{ .Values.visualization.probes.liveness.timeoutSeconds }}
         readinessProbe:
-          exec:
-            command:
-            - wget
-            - -q
-            - -S
-            - -O
-            - "-"
-            - http://localhost:8888/
+          httpGet:
+            path: /
+            port: 8888
           initialDelaySeconds: {{ .Values.visualization.probes.readiness.initialDelaySeconds }}
           periodSeconds: {{ .Values.visualization.probes.readiness.periodSeconds }}
           timeoutSeconds: {{ .Values.visualization.probes.readiness.timeoutSeconds }}
