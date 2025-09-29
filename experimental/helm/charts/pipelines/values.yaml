@@ -19,7 +19,7 @@ global:
   # -- Image registry for Kubeflow Pipelines images
   imageRegistry: ghcr.io/kubeflow
   # -- Global image tag for all Kubeflow Pipelines components
-  imageTag: 2.5.0
+  imageTag: 2.14.3
   # -- Global image pull policy
   imagePullPolicy: IfNotPresent
   # -- Global image pull secrets
@@ -95,9 +95,9 @@ apiServer:
     # -- Auto update pipeline default version
     autoUpdatePipelineDefaultVersion: true
     # -- V2 driver image
-    v2DriverImage: "ghcr.io/kubeflow/kfp-driver:2.5.0"
+    v2DriverImage: "ghcr.io/kubeflow/kfp-driver:2.14.3"
     # -- V2 launcher image
-    v2LauncherImage: "ghcr.io/kubeflow/kfp-launcher:2.5.0"
+    v2LauncherImage: "ghcr.io/kubeflow/kfp-launcher:2.14.3"
   
   # Additional environment variables
   additionalEnv: []
@@ -183,7 +183,7 @@ scheduledWorkflow:
   
   image:
     repository: kfp-scheduled-workflow-controller
-    tag: "2.5.0"
+    tag: "2.14.3"
   
   replicas: 1
   
@@ -706,7 +706,7 @@ pipeline:
   # Application configuration
   app:
     name: "pipeline"
-    version: "2.5.0"
+    version: "2.14.3"
   
   # Pipeline root configuration
   defaultPipelineRoot: ""
@@ -719,7 +719,7 @@ pipeline:
   
   # Cache configuration
   cache:
-    image: "registry.k8s.io/busybox"
+    image: "ghcr.io/containerd/busybox"
     nodeRestrictions: false
     maximumStaleness: ""
     defaultStaleness: ""

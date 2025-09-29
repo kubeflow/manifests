@@ -8,7 +8,8 @@ metadata:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
 spec:
   ports:
-  - port: 9000
+  - name: {{ .Values.thirdParty.minio.portName }}
+    port: 9000
     protocol: TCP
     targetPort: 9000
   selector:

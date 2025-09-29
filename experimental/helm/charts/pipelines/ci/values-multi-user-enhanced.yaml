@@ -4,7 +4,7 @@
 global:
   namespace: kubeflow
   imageRegistry: ghcr.io/kubeflow
-  imageTag: "2.5.0"
+  imageTag: "2.14.3"
   imagePullPolicy: Always
 
 # Installation mode - Multi-user enabled
@@ -70,7 +70,7 @@ database:
 # Pipeline Configuration
 pipeline:
   cache:
-    image: "registry.k8s.io/busybox"
+    image: "ghcr.io/containerd/busybox"
     nodeRestrictions: false
     maximumStaleness: ""
     defaultStaleness: ""
@@ -168,9 +168,9 @@ apiServer:
       key: secretkey
       secretName: mlpipeline-minio-artifact
     - name: V2_DRIVER_IMAGE
-      value: "ghcr.io/kubeflow/kfp-driver:2.5.0"
+      value: "ghcr.io/kubeflow/kfp-driver:2.14.3"
     - name: V2_LAUNCHER_IMAGE
-      value: "ghcr.io/kubeflow/kfp-launcher:2.5.0"
+      value: "ghcr.io/kubeflow/kfp-launcher:2.14.3"
 
 # Multi-user UI configuration
 ui:
@@ -315,7 +315,7 @@ profileController:
   enabled: true
   image:
     repository: kfp-profile-controller
-    tag: "2.5.0"
+    tag: "2.14.3"
   resources:
     requests:
       cpu: 100m

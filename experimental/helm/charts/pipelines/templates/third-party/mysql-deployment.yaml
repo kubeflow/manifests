@@ -27,11 +27,12 @@ spec:
       serviceAccountName: mysql
       containers:
       - name: mysql
-        image: gcr.io/ml-pipeline/mysql:8.0.26
+        image: mysql:8.4
         args:
         - --datadir
         - /var/lib/mysql
-        - --default-authentication-plugin=mysql_native_password
+        - --authentication-policy=mysql_native_password
+        - --mysql-native-password=ON
         # Disable binlog as the logs grow fast and eat up all disk spaces eventually. And KFP doesn't currently utilize binlog.
         # https://dev.mysql.com/doc/refman/8.0/en/replication-options-binary-log.html#option_mysqld_log-bin
         - --disable-log-bin

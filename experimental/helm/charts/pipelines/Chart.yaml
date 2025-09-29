@@ -4,9 +4,9 @@ name: kubeflow-pipelines
 
 description: A Helm chart for Kubeflow Pipelines - ML Workflows on Kubernetes
 
-version: 2.5.0
+version: 2.14.3
 
-appVersion: 2.5.0
+appVersion: 2.14.3
 
 home: https://github.com/kubeflow/pipelines
 

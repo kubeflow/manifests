@@ -67,26 +67,16 @@ spec:
           {{- end }}
         {{- end }}
         livenessProbe:
-          exec:
-            command:
-            - wget
-            - -q
-            - -S
-            - -O
-            - "-"
-            - http://localhost:3000/apis/v1beta1/healthz
+          httpGet:
+            path: /apis/v1beta1/healthz
+            port: 3000
           initialDelaySeconds: {{ .Values.ui.probes.liveness.initialDelaySeconds }}
           periodSeconds: {{ .Values.ui.probes.liveness.periodSeconds }}
           timeoutSeconds: {{ .Values.ui.probes.liveness.timeoutSeconds }}
         readinessProbe:
-          exec:
-            command:
-            - wget
-            - -q
-            - -S
-            - -O
-            - "-"
-            - http://localhost:3000/apis/v1beta1/healthz
+          httpGet:
+            path: /apis/v1beta1/healthz
+            port: 3000
           initialDelaySeconds: {{ .Values.ui.probes.readiness.initialDelaySeconds }}
           periodSeconds: {{ .Values.ui.probes.readiness.periodSeconds }}
           timeoutSeconds: {{ .Values.ui.probes.readiness.timeoutSeconds }}

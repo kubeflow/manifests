@@ -2,8 +2,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    internal.kpt.dev/upstream-identifier: apps|Deployment|default|workflow-controller
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
   name: workflow-controller

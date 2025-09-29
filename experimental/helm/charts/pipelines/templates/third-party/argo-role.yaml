@@ -2,8 +2,6 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  annotations:
-    internal.kpt.dev/upstream-identifier: rbac.authorization.k8s.io|Role|default|argo-role
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
   name: argo-role

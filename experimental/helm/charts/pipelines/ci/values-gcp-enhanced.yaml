@@ -4,7 +4,7 @@
 global:
   namespace: kubeflow
   imageRegistry: ghcr.io/kubeflow
-  imageTag: "2.5.0"
+  imageTag: "2.14.3"
   imagePullPolicy: IfNotPresent
 
 # Installation mode
@@ -22,7 +22,7 @@ postgresql:
 
 externalDatabase:
   type: mysql
-  host: "127.0.0.1"
+  host: "mysql"
   port: 3306
   database: pipelinedb
   username: "YOUR_CLOUDSQL_USERNAME"
@@ -36,7 +36,7 @@ minio:
 objectStore:
   provider: gcs
   secure: true
-  bucketName: "yourGcsBucketName"
+  bucketName: "mlpipeline"
   gcs:
     projectId: "yourGcsProjectId"
     serviceAccount: ""
@@ -50,7 +50,7 @@ database:
 # Pipeline Configuration
 pipeline:
   cache:
-    image: "registry.k8s.io/busybox"
+    image: "ghcr.io/containerd/busybox"
     nodeRestrictions: false
     maximumStaleness: ""
     defaultStaleness: ""
@@ -84,6 +84,61 @@ apiServer:
     objectStoreRegion: ""
     objectStorePort: ""
   
+  additionalEnv:
+    - name: HAS_DEFAULT_BUCKET
+      value: "true"
+    - name: BUCKET_NAME
+      key: bucketName
+    - name: PROJECT_ID
+      key: gcsProjectId
+    - name: PUBLISH_LOGS
+      value: "true"
+    - name: LOG_LEVEL
+      value: "info"
+    - name: PIPELINE_LOG_LEVEL
+      value: "1"
+    - name: AUTO_UPDATE_PIPELINE_DEFAULT_VERSION
+      key: autoUpdatePipelineDefaultVersion
+    - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: OBJECTSTORECONFIG_SECURE
+      value: "false"
+    - name: OBJECTSTORECONFIG_BUCKETNAME
+      key: bucketName
+    - name: DBCONFIG_USER
+      key: username
+    - name: DBCONFIG_PASSWORD
+      key: password
+    - name: DBCONFIG_DBNAME
+      key: pipelineDb
+    - name: DBCONFIG_HOST
+      key: dbHost
+    - name: DBCONFIG_PORT
+      key: dbPort
+    - name: DBCONFIG_CONMAXLIFETIME
+      key: ConMaxLifeTime
+    - name: DB_DRIVER_NAME
+      key: dbType
+    - name: DBCONFIG_MYSQLCONFIG_USER
+      key: username
+    - name: DBCONFIG_MYSQLCONFIG_PASSWORD
+      key: password
+    - name: DBCONFIG_MYSQLCONFIG_DBNAME
+      key: pipelineDb
+    - name: DBCONFIG_MYSQLCONFIG_HOST
+      key: mysqlHost
+    - name: DBCONFIG_MYSQLCONFIG_PORT
+      key: mysqlPort
+    - name: OBJECTSTORECONFIG_ACCESSKEY
+      key: accesskey
+    - name: OBJECTSTORECONFIG_SECRETACCESSKEY
+      key: secretkey
+    - name: V2_DRIVER_IMAGE
+      value: "ghcr.io/kubeflow/kfp-driver:2.14.3"
+    - name: V2_LAUNCHER_IMAGE
+      value: "ghcr.io/kubeflow/kfp-launcher:2.14.3" 
   # Service account annotations for Workload Identity
   serviceAccount:
     annotations:
@@ -93,9 +148,6 @@ apiServer:
     requests:
       cpu: 250m
       memory: 500Mi
-    limits:
-      cpu: 1
-      memory: 2Gi
 
 # GCP-specific UI configuration
 ui:
@@ -142,29 +194,24 @@ persistenceAgent:
     requests:
       cpu: 120m
       memory: 500Mi
-    limits:
-      cpu: 500m
-      memory: 1Gi
-
+  additionalEnv:
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
 scheduledWorkflow:
   resources:
-    requests:
-      cpu: 120m
-      memory: 100Mi
-    limits:
-      cpu: 250m
-      memory: 500Mi
-
+  additionalEnv:
+    - name: LOG_LEVEL
+      value: "info"
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
 metadata:
   enabled: true
   grpc:
     resources:
-      requests:
-        cpu: 100m
-        memory: 300Mi
-      limits:
-        cpu: 500m
-        memory: 1Gi
   envoy:
     resources:
       requests:
@@ -185,53 +232,30 @@ cache:
         memory: 1Gi
     additionalEnv:
     - name: DEFAULT_CACHE_STALENESS
-      valueFrom:
-        configMapKeyRef:
-          name: pipeline-install-config
-          key: DEFAULT_CACHE_STALENESS
+      key: DEFAULT_CACHE_STALENESS
     - name: MAXIMUM_CACHE_STALENESS
-      valueFrom: 
-        configMapKeyRef:
-          name: pipeline-install-config
-          key: MAXIMUM_CACHE_STALENESS
+      key: MAXIMUM_CACHE_STALENESS
     - name: CACHE_IMAGE
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.namespace
+      key: cacheImage
     - name: CACHE_NODE_RESTRICTIONS
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.namespace
+      key: cacheNodeRestrictions
     - name: DBCONFIG_DRIVER
       valueFrom:
         secretKeyRef:
           key: accesskey
           name: mlpipeline-minio-artifact
     - name: DBCONFIG_DB_NAME
-      valueFrom:
-        secretKeyRef:
-          key: secretkey
-          name: mlpipeline-minio-artifact
+      key: cacheDb
     - name: DBCONFIG_HOST_NAME
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.namespace
+      key: dbHost
     - name: DBCONFIG_PORT
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.namespace
+      key: dbPort
     - name: DBCONFIG_USER
-      valueFrom:
-        secretKeyRef:
-          key: accesskey
-          name: mlpipeline-minio-artifact
+      key: username
     - name: DBCONFIG_PASSWORD
-      valueFrom:
-        
+      key: password
     - name: NAMESPACE_TO_WATCH
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.namespace
+      key: null
 
 
 visualization:
