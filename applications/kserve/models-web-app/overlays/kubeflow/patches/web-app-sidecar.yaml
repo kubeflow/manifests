@@ -6,5 +6,5 @@ metadata:
 spec:
   template:
     metadata:
-      labels:
+      annotations:
         sidecar.istio.io/inject: "true"

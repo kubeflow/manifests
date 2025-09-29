@@ -6,9 +6,6 @@ namespace: kubeflow
 
 # Labels to add to all resources and selectors.
 
-
-
-
 generatorOptions:
   disableNameSuffixHash: true
 
@@ -20,6 +17,9 @@ configMapGenerator:
   literals:
   - USERID_HEADER=kubeflow-userid
   - APP_PREFIX=/kserve-endpoints
+  - GRAFANA_PREFIX=/grafana
+  - GRAFANA_CPU_MEMORY_DB=db/knative-serving-revision-cpu-and-memory-usage
+  - GRAFANA_HTTP_REQUESTS_DB=db/knative-serving-revision-http-requests
   name: kserve-models-web-app-config
 
 configurations:
