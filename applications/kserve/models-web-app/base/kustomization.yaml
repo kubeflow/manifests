@@ -14,6 +14,9 @@ images:
 configMapGenerator:
 - literals:
   - APP_DISABLE_AUTH="True"
+  - GRAFANA_PREFIX="/grafana"
+  - GRAFANA_CPU_MEMORY_DB="db/knative-serving-revision-cpu-and-memory-usage"
+  - GRAFANA_HTTP_REQUESTS_DB="db/knative-serving-revision-http-requests"
   name: kserve-models-web-app-config
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
