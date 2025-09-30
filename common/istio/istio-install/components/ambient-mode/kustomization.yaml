@@ -3,6 +3,7 @@ kind: Component
 
 resources:
 - ztunnel.yaml
+- istio-namespace-pss-baseline.yaml
 
 patches:
 - path: istiod-ambient-patch.yaml

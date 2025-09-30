@@ -119,8 +119,22 @@ jobs:
         kubectl logs -n istio-system daemonset/ztunnel --tail=50 | grep -i "connection\|proxy" || echo "ztunnel logs (last 50 lines):"
         kubectl logs -n istio-system daemonset/ztunnel --tail=50
 
-    - name: Apply Pod Security Standards Restricted levels
-      run: ./tests/PSS_enable.sh
+    - name: Verify PSS Baseline for istio-system
+      run: |
+        # Ambient mode requires PSS baseline (not restricted) for istio-system
+        PSS_LEVEL=$(kubectl get namespace istio-system -o jsonpath='{.metadata.labels.pod-security\.kubernetes\.io/enforce}')
+        if [ "$PSS_LEVEL" != "baseline" ]; then
+          echo "ERROR: istio-system should have PSS baseline, got: $PSS_LEVEL"
+          exit 1
+        fi
+        echo "istio-system correctly configured with PSS baseline"
+
+    - name: Apply Pod Security Standards Restricted levels to user namespaces
+      run: |
+        # Apply PSS restricted to kubeflow namespace (ztunnel runs in istio-system, not user namespaces)
+        kubectl label namespace $KF_PROFILE pod-security.kubernetes.io/enforce=restricted --overwrite
+        kubectl label namespace $KF_PROFILE pod-security.kubernetes.io/enforce-version=latest --overwrite
+        echo "Applied PSS restricted to user namespace: $KF_PROFILE"
 
     - name: Collect debug information on failure
       if: failure()
