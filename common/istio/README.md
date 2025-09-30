@@ -19,6 +19,22 @@ GKE mounts `/opt/cni/bin` as read-only for security reasons, preventing the Isti
 kubectl apply -k istio-install/overlays/gke
 ```
 
+### Ambient Mode (Sidecar-free Service Mesh)
+Istio Ambient Mode eliminates sidecars, reducing resource overhead while maintaining full L4/L7 traffic processing capabilities.
+
+```bash
+# Standard Kubernetes
+kubectl apply -k istio-install/overlays/ambient
+
+# Google Kubernetes Engine (GKE)
+kubectl apply -k istio-install/overlays/ambient-gke
+
+# With OAuth2-Proxy
+kubectl apply -k istio-install/overlays/ambient-oauth2-proxy
+```
+
+**Note:** Ambient mode uses Kustomize components (`components/ambient-mode/`, `components/gke-ambient/`) for composable configuration without duplication.
+
 ### Insecure Istio (CNI-disabled)
 For environments that don't support CNI:
 ```bash

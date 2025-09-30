@@ -1,8 +1,0 @@
-# This file adds ambient labels to the kubeflow namespace
-# The namespace itself is created by common/kubeflow-namespace/base
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: kubeflow
-  labels:
-    istio.io/dataplane-mode: ambient

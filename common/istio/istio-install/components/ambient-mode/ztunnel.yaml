@@ -12,7 +12,6 @@ metadata:
     app.kubernetes.io/part-of: "istio"
     app.kubernetes.io/version: "1.27.1"
     helm.sh/chart: ztunnel-1.27.1
-
   annotations:
     {}
 ---
@@ -29,7 +28,6 @@ metadata:
     app.kubernetes.io/part-of: "istio"
     app.kubernetes.io/version: "1.27.1"
     helm.sh/chart: ztunnel-1.27.1
-
   annotations:
     {}
 spec:
@@ -53,7 +51,6 @@ spec:
         app.kubernetes.io/part-of: "istio"
         app.kubernetes.io/version: "1.27.1"
         helm.sh/chart: ztunnel-1.27.1
-
       annotations:
         sidecar.istio.io/inject: "false"
         prometheus.io/port: "15020"
