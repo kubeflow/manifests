@@ -80,6 +80,8 @@ spec:
 **References:**
 - Upstream Istio issue: https://github.com/istio/istio/issues/57404
 - KServe path-based routing documentation: https://kserve.github.io/website/docs/admin-guide/configurations#path-template
+- Path-based routing test in CI: [.github/workflows/kserve_test.yaml](../../.github/workflows/kserve_test.yaml) (see `test-basic-kserve` job)
+- VirtualService path-based routing implementation: [tests/kserve_test.sh](../../tests/kserve_test.sh#L16-L42)
 
 ## Upgrade Istio Manifests
 For upgrading Istio to newer versions, use the synchronization script:
