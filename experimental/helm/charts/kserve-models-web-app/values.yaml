@@ -19,7 +19,7 @@ global:
   # -- Image registry for KServe Models Web App images
   imageRegistry: ghcr.io/kserve
   # -- Global image tag for KServe Models Web App
-  imageTag: v0.14.0
+  imageTag: 0.15.0
   # -- Global image pull policy
   imagePullPolicy: Always
   # -- Global image pull secrets
@@ -35,7 +35,7 @@ app:
   enabled: true
   # -- Number of replicas
   replicas: 1
-  
+
   image:
     # -- Application image repository
     repository: models-web-app
@@ -43,7 +43,7 @@ app:
     tag: ""
     # -- Application image pull policy (overrides global.imagePullPolicy if set)
     pullPolicy: ""
-    
+
   # -- Application configuration
   config:
     # -- Disable authentication for the web app
@@ -52,6 +52,12 @@ app:
     useridHeader: "kubeflow-userid"
     # -- Application prefix for URL routing
     appPrefix: "/kserve-endpoints"
+    # -- Grafana URL prefix
+    grafanaPrefix: "/grafana"
+    # -- Grafana CPU and memory database path
+    grafanaCpuMemoryDb: "db/knative-serving-revision-cpu-and-memory-usage"
+    # -- Grafana HTTP requests database path
+    grafanaHttpRequestsDb: "db/knative-serving-revision-http-requests"
     # -- Additional environment variables
     env: []
     
