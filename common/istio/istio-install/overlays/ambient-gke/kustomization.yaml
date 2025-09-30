@@ -2,22 +2,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- ../../base
-- ztunnel.yaml
+- ../ambient
 
 patches:
-- path: istiod-ambient-patch.yaml
-  target:
-    kind: Deployment
-    name: istiod
-    namespace: istio-system
-- target:
-    kind: Namespace
-    name: kubeflow
-  patch: |-
-    - op: add
-      path: /metadata/labels/istio.io~1dataplane-mode
-      value: ambient
 - path: gke-cni-patch.yaml
   target:
     kind: DaemonSet
