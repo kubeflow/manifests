@@ -24,6 +24,9 @@ data:
   {{- else }}
   APP_DISABLE_AUTH: "True"
   {{- end }}
+  GRAFANA_PREFIX: {{ .Values.app.config.grafanaPrefix | quote }}
+  GRAFANA_CPU_MEMORY_DB: {{ .Values.app.config.grafanaCpuMemoryDb | quote }}
+  GRAFANA_HTTP_REQUESTS_DB: {{ .Values.app.config.grafanaHttpRequestsDb | quote }}
   {{- with .Values.configMap.data }}
   {{- toYaml . | nindent 2 }}
   {{- end }}

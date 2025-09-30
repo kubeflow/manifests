@@ -6,7 +6,7 @@ description: A Helm chart for KServe Models Web App - Model serving management U
 
 version: 0.1.0
 
-appVersion: v0.14.0
+appVersion: v0.15.0
 
 home: https://github.com/kserve/kserve
 
