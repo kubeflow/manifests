@@ -1,0 +1,16 @@
+{{- if and .Values.thirdParty.postgresql.enabled (not .Values.postgresql.enabled) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    app: postgres
+    application-crd-id: kubeflow-pipelines
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.thirdParty.postgresql.persistence.size | default "20Gi" }}
+{{- end }}

@@ -1,0 +1,61 @@
+{{- if .Values.thirdParty.metacontroller.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: metacontroller
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: metacontroller
+    kustomize.component: metacontroller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metacontroller
+  serviceName: ""
+  template:
+    metadata:
+      labels:
+        {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
+        app: metacontroller
+        kustomize.component: metacontroller
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - name: metacontroller
+        image: 'ghcr.io/metacontroller/metacontroller:v4.11.22'
+        command: ["/usr/bin/metacontroller"]
+        args:
+        - --zap-log-level=4
+        - --discovery-interval=3600s
+        resources:
+          limits:
+            cpu: '1'
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        livenessProbe:
+          httpGet:
+            port: 8081
+            path: /healthz
+        readinessProbe:
+          httpGet:
+            port: 8081
+            path: /readyz
+        securityContext:
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          privileged: false
+          allowPrivilegeEscalation: false
+      serviceAccountName: meta-controller-service
+  # Workaround for https://github.com/kubernetes-sigs/kustomize/issues/677
+  volumeClaimTemplates: []
+{{- end }}

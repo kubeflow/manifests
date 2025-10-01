@@ -31,12 +31,26 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Common labels 
+Common labels
 */}}
 {{- define "kubeflow-pipelines.labels" -}}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if ne .Values.installMode.type "multi-user" }}
+{{- if or (ne .Values.installMode.type "multi-user") (.Values.installMode.legacyLabels) }}
+application-crd-id: kubeflow-pipelines
+{{- end }}
+{{- with .Values.commonLabels }}
+{{ toYaml . }}
+{{- end }}
+{{- end }}
+
+{{/*
+Authorization Policy labels - includes application-crd-id for legacy multi-user mode
+*/}}
+{{- define "kubeflow-pipelines.authorizationPolicyLabels" -}}
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
+{{- if or (ne .Values.installMode.type "multi-user") (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- with .Values.commonLabels }}
@@ -59,7 +73,7 @@ Cache server labels
 app: cache-server
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if ne .Values.installMode.type "multi-user" }}
+{{- if or (ne .Values.installMode.type "multi-user") (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- with .Values.commonLabels }}
@@ -87,7 +101,7 @@ ML Pipeline specific labels - matching original manifests
 app: ml-pipeline
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if ne .Values.installMode.type "multi-user" }}
+{{- if or (ne .Values.installMode.type "multi-user") (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- with .Values.commonLabels }}
@@ -102,7 +116,7 @@ ML Pipeline UI labels
 app: ml-pipeline-ui
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if ne .Values.installMode.type "multi-user" }}
+{{- if or (ne .Values.installMode.type "multi-user") (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- with .Values.commonLabels }}
@@ -118,6 +132,9 @@ app: ml-pipeline
 {{- if eq .Values.installMode.type "multi-user" }}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
+{{- if .Values.installMode.legacyLabels }}
+application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- else }}
 application-crd-id: kubeflow-pipelines
 {{- end }}
@@ -131,6 +148,9 @@ app: cache-server
 {{- if eq .Values.installMode.type "multi-user" }}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
+{{- if .Values.installMode.legacyLabels }}
+application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- else }}
 application-crd-id: kubeflow-pipelines
 {{- end }}
@@ -144,6 +164,9 @@ app: ml-pipeline-ui
 {{- if eq .Values.installMode.type "multi-user" }}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
+{{- if .Values.installMode.legacyLabels }}
+application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- else }}
 application-crd-id: kubeflow-pipelines
 {{- end }}
@@ -157,6 +180,9 @@ Viewer CRD labels
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
 app: ml-pipeline-viewer-crd
+{{- if .Values.installMode.legacyLabels }}
+application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- else }}
 {{- include "kubeflow-pipelines.labels" . }}
 app: ml-pipeline-viewer-crd
@@ -171,6 +197,9 @@ Viewer CRD selector labels
 app: ml-pipeline-viewer-crd
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
+{{- if .Values.installMode.legacyLabels }}
+application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- else }}
 app: ml-pipeline-viewer-crd
 application-crd-id: kubeflow-pipelines
@@ -184,7 +213,7 @@ Visualization server labels
 app: ml-pipeline-visualizationserver
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if ne .Values.installMode.type "multi-user" }}
+{{- if or (ne .Values.installMode.type "multi-user") (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
 {{- end}}
 {{- with .Values.commonLabels }}
@@ -200,6 +229,9 @@ Visualization server selector labels
 app: ml-pipeline-visualizationserver
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
+{{- if .Values.installMode.legacyLabels }}
+application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- else }}
 app: ml-pipeline-visualizationserver
 application-crd-id: kubeflow-pipelines
@@ -243,7 +275,15 @@ Cache deployer selector labels
 */}}
 {{- define "kubeflow-pipelines.cacheDeployerSelectorLabels" -}}
 app: cache-deployer
+{{- if eq .Values.installMode.type "multi-user" }}
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
+{{- if .Values.installMode.legacyLabels }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
+{{- else }}
+application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 
 {{/*
@@ -254,6 +294,9 @@ app: metadata-writer
 {{- if eq .Values.installMode.type "multi-user" }}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
+{{- if .Values.installMode.legacyLabels }}
+application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- else }}
 application-crd-id: kubeflow-pipelines
 {{- end }}
@@ -267,6 +310,9 @@ app: ml-pipeline-persistenceagent
 {{- if eq .Values.installMode.type "multi-user" }}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
+{{- if .Values.installMode.legacyLabels }}
+application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- else }}
 application-crd-id: kubeflow-pipelines
 {{- end }}
@@ -280,6 +326,9 @@ app: ml-pipeline-scheduledworkflow
 {{- if eq .Values.installMode.type "multi-user" }}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
+{{- if .Values.installMode.legacyLabels }}
+application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- else }}
 application-crd-id: kubeflow-pipelines
 {{- end }}

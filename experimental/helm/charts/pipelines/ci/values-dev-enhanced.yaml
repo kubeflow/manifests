@@ -35,6 +35,21 @@ mysql:
 postgresql:
   enabled: false
 
+# Third-party components configuration
+thirdParty:
+  # Use built-in MySQL instead of external subchart
+  mysql:
+    enabled: true
+  
+  # Use built-in MinIO instead of external subchart
+  minio:
+    enabled: true
+    portName: http
+  
+  # Use built-in Argo instead of external subchart
+  argo:
+    enabled: true
+
 # Object Storage Configuration - Lightweight MinIO
 minio:
   enabled: false
@@ -75,9 +90,20 @@ pipeline:
 argo:
   enabled: false
 
+# Application Configuration
+application:
+  enabled: true
+  controller:
+    enabled: true
+
 # Environment Configuration
 env:
   platform: platform-agnostic
+  gcp:
+    proxyAgent:
+      enabled: true
+      image:
+        tag: "master"
 
 # Reduced resources for development
 apiServer:

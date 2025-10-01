@@ -16,12 +16,14 @@ spec:
       app: kubeflow-pipelines-profile-controller
       app.kubernetes.io/component: ml-pipeline
       app.kubernetes.io/name: kubeflow-pipelines
+{{- if .Values.installMode.legacyLabels }}
+      application-crd-id: kubeflow-pipelines
+{{- end }}
   template:
     metadata:
       labels:
+        {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
         app: kubeflow-pipelines-profile-controller
-        app.kubernetes.io/component: ml-pipeline
-        app.kubernetes.io/name: kubeflow-pipelines
         sidecar.istio.io/inject: "false"
       annotations:
         {{- include "kubeflow-pipelines.annotations" . | nindent 8 }}

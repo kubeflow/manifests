@@ -8,6 +8,8 @@ installMode:
     enabled: true
     profileController:
       enabled: true
+  # Legacy mode - includes application-crd-id label on all resources
+  legacyLabels: true
 
 # Environment configuration
 env:

@@ -1,4 +1,4 @@
-{{- if .Values.thirdParty.argo.enabled }}
+{{- if and .Values.thirdParty.argo.enabled (ne .Values.installMode.type "multi-user") }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:

@@ -9,6 +9,9 @@ metadata:
     app: ml-pipeline-scheduledworkflow
     app.kubernetes.io/component: ml-pipeline
     app.kubernetes.io/name: kubeflow-pipelines
+{{- if .Values.installMode.legacyLabels }}
+    application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- else }}
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     app: ml-pipeline-scheduledworkflow
@@ -26,6 +29,9 @@ spec:
         app: ml-pipeline-scheduledworkflow
         app.kubernetes.io/component: ml-pipeline
         app.kubernetes.io/name: kubeflow-pipelines
+{{- if .Values.installMode.legacyLabels }}
+        application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- else }}
         {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
         app: ml-pipeline-scheduledworkflow

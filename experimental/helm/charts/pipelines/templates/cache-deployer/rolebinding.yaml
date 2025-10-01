@@ -13,4 +13,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ include "kubeflow-pipelines.cacheDeployer.serviceAccountName" . }}
+  {{- if .Values.installMode.multiUser.enabled }}
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  {{- end }}
 {{- end }}

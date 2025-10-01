@@ -19,4 +19,7 @@ spec:
     app: kubeflow-pipelines-profile-controller
     app.kubernetes.io/component: ml-pipeline
     app.kubernetes.io/name: kubeflow-pipelines
+{{- if .Values.installMode.legacyLabels }}
+    application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}

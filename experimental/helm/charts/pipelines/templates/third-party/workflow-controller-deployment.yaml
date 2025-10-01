@@ -22,7 +22,9 @@ spec:
         - workflow-controller-configmap
         - --executor-image
         - quay.io/argoproj/argoexec:v3.6.7
+        {{- if ne .Values.installMode.type "multi-user" }}
         - --namespaced
+        {{- end }}
         command:
         - workflow-controller
         env:

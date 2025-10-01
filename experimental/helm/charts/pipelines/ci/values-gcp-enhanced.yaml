@@ -60,6 +60,21 @@ argo:
   enabled: false
   # GCP-specific Argo configuration
 
+# Built-in third-party components
+thirdParty:
+  argo:
+    enabled: true
+  mysql:
+    enabled: false
+  minio:
+    enabled: false
+
+# Application Configuration
+application:
+  enabled: true
+  controller:
+    enabled: true
+
 # Environment Configuration
 env:
   platform: gcp
@@ -73,6 +88,8 @@ env:
       enabled: true
       bucket: "yourGcsBucketName"
       projectId: "yourGcsProjectId"
+    proxyAgent:
+      enabled: true
 
 # GCP-specific API Server configuration
 apiServer:
@@ -240,10 +257,7 @@ cache:
     - name: CACHE_NODE_RESTRICTIONS
       key: cacheNodeRestrictions
     - name: DBCONFIG_DRIVER
-      valueFrom:
-        secretKeyRef:
-          key: accesskey
-          name: mlpipeline-minio-artifact
+      value: "mysql"
     - name: DBCONFIG_DB_NAME
       key: cacheDb
     - name: DBCONFIG_HOST_NAME
