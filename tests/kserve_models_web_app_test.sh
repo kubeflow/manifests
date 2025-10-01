@@ -14,7 +14,28 @@ echo "KServe Models Web App Test"
 echo "Profile: ${KF_PROFILE}"
 echo "=========================================="
 
+# Pre-Test Setup: Create RBAC for default-editor to access InferenceServices
+echo "Step 0: Setting up RBAC permissions for InferenceService access..."
+cat <<EOF | kubectl apply -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: default-editor-kserve-access
+  namespace: ${KF_PROFILE}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kserve-models-web-app-cluster-role
+subjects:
+- kind: ServiceAccount
+  name: default-editor
+  namespace: ${KF_PROFILE}
+EOF
+
+echo "✓ RBAC permissions configured"
+
 # Pre-Test Setup: Deploy InferenceService via kubectl
+echo ""
 echo "Step 1: Deploying test InferenceService via kubectl..."
 cat <<EOF | kubectl apply -f -
 apiVersion: "serving.kserve.io/v1beta1"
@@ -159,7 +180,9 @@ fi
 
 # Test 7: Cleanup
 echo ""
-echo "Step 7: Cleanup - Deleting test InferenceService..."
+echo "Step 7: Cleanup - Deleting test resources..."
+
+# Delete InferenceService
 kubectl delete inferenceservice sklearn-iris-private -n ${KF_PROFILE}
 
 echo "Waiting for InferenceService to be deleted..."
@@ -170,6 +193,10 @@ if kubectl get inferenceservice sklearn-iris-private -n ${KF_PROFILE} > /dev/nul
 else
   echo "✓ InferenceService successfully deleted"
 fi
+
+# Delete RBAC RoleBinding
+kubectl delete rolebinding default-editor-kserve-access -n ${KF_PROFILE} 2>/dev/null || true
+echo "✓ RBAC permissions cleaned up"
 
 echo ""
 echo "=========================================="
