@@ -3,8 +3,8 @@ kind: Kustomization
 
 resources:
 - ../../base
-- kubeflow-namespace-ambient.yaml
 
 components:
 - ../../components/ambient-mode
+- ../../components/gke-ambient
 - ../../../../oauth2-proxy/components/istio-external-auth-patches
