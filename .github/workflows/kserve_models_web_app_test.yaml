@@ -1,0 +1,103 @@
+name: Test KServe Models Web Application
+on:
+  pull_request:
+    paths:
+    - tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+    - .github/workflows/kserve_models_web_app_test.yaml
+    - applications/kserve/models-web-app/**
+    - tests/kserve_models_web_app_test.sh
+    - tests/kserve/sklearn-iris-private.yaml
+    - tests/istio*
+    - common/istio*/**
+    - common/knative/**
+    - common/oauth2-proxy/**
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  KF_PROFILE: kubeflow-user-example-com
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install KinD, Create KinD cluster and Install kustomize
+      run: ./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+
+    - name: Install kubectl
+      run: ./tests/kubectl_install.sh
+
+    - name: Create Kubeflow Namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+    - name: Install Certificate Manager
+      run: ./tests/cert_manager_install.sh
+
+    - name: Install Istio CNI
+      run: ./tests/istio-cni_install.sh
+
+    - name: Install OAuth2 Proxy
+      run: ./tests/oauth2-proxy_install.sh
+
+    - name: Install Kubeflow Istio Resources
+      run: kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
+
+    - name: Install Multi-Tenancy
+      run: ./tests/multi_tenancy_install.sh
+
+    - name: Install Knative
+      run: ./tests/knative_install.sh
+
+    - name: Create KF Profile
+      run: ./tests/kubeflow_profile_install.sh
+
+    - name: Install KServe
+      run: ./tests/kserve_install.sh
+
+    - name: Wait for All Pods to be Ready
+      run: |
+        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=300s --field-selector=status.phase!=Succeeded
+        sleep 10
+
+    - name: Verify KServe Models Web App Deployment
+      run: |
+        kubectl get deployment kserve-models-web-app -n kubeflow
+        kubectl wait --for=condition=Available deployment/kserve-models-web-app -n kubeflow --timeout=60s
+
+    - name: Port-forward the istio-ingress gateway
+      run: ./tests/port_forward_gateway.sh
+
+    - name: Test KServe Models Web Application API
+      run: ./tests/kserve_models_web_app_test.sh "${KF_PROFILE}"
+
+    - name: Collect Logs on Failure
+      if: failure()
+      run: |
+        mkdir -p logs
+        kubectl get all --all-namespaces > logs/resources.txt
+        kubectl get events --all-namespaces --sort-by=.metadata.creationTimestamp > logs/events.txt
+        
+        # Get models-web-app logs
+        kubectl logs -n kubeflow -l app.kubernetes.io/component=kserve-models-web-app --tail=200 > logs/models-web-app.txt 2>&1 || true
+        
+        # Get KServe controller logs
+        kubectl logs -n kubeflow -l control-plane=kserve-controller-manager --tail=200 > logs/kserve-controller.txt 2>&1 || true
+        
+        # Get InferenceService status
+        kubectl get inferenceservices -n ${KF_PROFILE} -o yaml > logs/inferenceservices.yaml 2>&1 || true
+        
+        # Get VirtualService
+        kubectl get virtualservice kserve-models-web-app -n kubeflow -o yaml > logs/virtualservice.yaml 2>&1 || true
+
+    - name: Upload Diagnostic Logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: kserve-models-web-app-test-logs
+        path: logs/
