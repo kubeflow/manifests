@@ -1,5 +1,5 @@
-# Multi-User Configuration - Enhanced
-# This configuration provides multi-user deployment with enhanced RBAC and isolation
+# Platform-Agnostic Multi-User Configuration - Enhanced
+# This configuration provides platform-agnostic multi-user deployment
 
 global:
   namespace: kubeflow
@@ -7,15 +7,15 @@ global:
   imageTag: "2.14.3"
   imagePullPolicy: Always
 
-# Installation mode - Multi-user enabled
+# Installation mode - Multi-user enabled with legacy labels
 installMode:
   type: multi-user
   multiUser:
     enabled: true
     profileController:
       enabled: true
-  # Legacy mode disabled - excludes application-crd-id label for regular multi-user resources
-  legacyLabels: false
+  # Legacy mode enabled - includes application-crd-id label 
+  legacyLabels: true
 
 # Database Configuration - Enhanced for multi-user
 mysql:
@@ -28,7 +28,7 @@ mysql:
   primary:
     persistence:
       enabled: true
-      size: 50Gi  # Larger storage for multi-user
+      size: 50Gi
     resources:
       requests:
         cpu: 500m
@@ -49,7 +49,7 @@ minio:
   defaultBuckets: "mlpipeline"
   persistence:
     enabled: true
-    size: 100Gi  # Larger storage for multi-user
+    size: 100Gi
   resources:
     requests:
       cpu: 250m
@@ -77,10 +77,31 @@ pipeline:
     maximumStaleness: ""
     defaultStaleness: ""
 
-# Argo Workflows Configuration - Multi-user
+# Argo Workflows Configuration 
 argo:
   enabled: false
-  # Multi-user uses built-in minimal Argo instead of subchart
+
+# Built-in third-party components
+thirdParty:
+  argo:
+    enabled: true
+  mysql:
+    enabled: true
+  minio:
+    enabled: true
+    portName: http
+  metacontroller:
+    enabled: true
+
+# Application Configuration
+application:
+  enabled: false
+  controller:
+    enabled: false
+
+# Metadata (MLMD) Configuration
+metadata:
+  enabled: true
 
 # Environment Configuration
 env:
@@ -91,19 +112,17 @@ rbac:
   create: true
   multiUser:
     enabled: true
-    # Additional RBAC rules for multi-user scenarios
 
 # Multi-user API Server configuration
 apiServer:
   env:
-    # Multi-user specific environment variables
-    multiUser: "true"
-    kubeflowUserId: "user@example.com"
+    publishLogs: true
+    pipelineLogLevel: "1"
+    autoUpdatePipelineDefaultVersion: true
+    v2DriverImage: "ghcr.io/kubeflow/kfp-driver:2.14.3"
+    v2LauncherImage: "ghcr.io/kubeflow/kfp-launcher:2.14.3"
+    multiUser: true
   
-  resources:
-    requests:
-      cpu: 250m
-      memory: 500Mi
   additionalEnv:
     - name: KUBEFLOW_USERID_HEADER
       value: "kubeflow-userid"
@@ -174,17 +193,8 @@ apiServer:
     - name: V2_LAUNCHER_IMAGE
       value: "ghcr.io/kubeflow/kfp-launcher:2.14.3"
 
-# Multi-user UI configuration
+# Enhanced UI configuration
 ui:
-  env:
-    # Multi-user UI configuration
-    multiUser: "true"
-
-  resources:
-    requests:
-      cpu: 10m
-      memory: 70Mi
-
   additionalEnv:
     - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
       value: "/etc/config/viewer-pod-template.json"
@@ -221,8 +231,6 @@ ui:
     - name: DISABLE_GKE_METADATA
       value: "true"
 
-
-# Enhanced resources for multi-user deployment
 persistenceAgent:
   resources:
     requests:
@@ -240,35 +248,8 @@ scheduledWorkflow:
       value: "info"
       valueFrom: null
 
-metadata:
-  grpc:
-    resources:
-      requests:
-        cpu: 250m
-        memory: 500Mi
-      limits:
-        cpu: 1
-        memory: 2Gi
-  envoy:
-    resources:
-      requests:
-        cpu: 100m
-        memory: 100Mi
-      limits:
-        cpu: 200m
-        memory: 200Mi
-
 cache:
-  # Cache deployer disabled in multi-user mode
-  enabled: true
   server:
-    resources:
-      requests:
-        cpu: 250m
-        memory: 1Gi
-      limits:
-        cpu: 1
-        memory: 2Gi
     additionalEnv:
       - name: NAMESPACE_TO_WATCH
         key: null
@@ -293,16 +274,6 @@ cache:
       - name: DBCONFIG_PASSWORD
         key: password
 
-cacheDeployer:
-  # Typically disabled in multi-user mode
-  enabled: false
-
-visualization:
-  resources:
-    requests:
-      cpu: 30m
-      memory: 500Mi
-
 viewerCrd:
   env:
     maxNumViewers: ""
@@ -312,20 +283,16 @@ viewerCrd:
     - name: MAX_NUM_VIEWERS
       value: 50
 
-# Profile Controller Configuration (for multi-user)
+# Profile Controller Configuration
 profileController:
   enabled: true
+  replicas: 1
+  
   image:
-    repository: kfp-profile-controller
-    tag: "2.14.3"
-  resources:
-    requests:
-      cpu: 100m
-      memory: 200Mi
-    limits:
-      cpu: 500m
-      memory: 1Gi
-
+    repository: public.ecr.aws/docker/library/python
+    tag: "3.12"
+    pullPolicy: IfNotPresent
+  
   additionalEnv:
     - name: KFP_VERSION
       key: appVersion
@@ -335,61 +302,41 @@ profileController:
       key: accesskey
     - name: MINIO_SECRET_KEY
       key: secretkey
-
-# Namespace Isolation Configuration
-namespaceIsolation:
-  enabled: true
-  # Additional network policies and RBAC for isolation
-
-# Security Configuration - Enhanced for multi-user
-security:
-  podSecurityStandards:
-    enabled: true
-    level: "restricted"
-  networkPolicies:
-    enabled: true
   
-# Monitoring - Enhanced for multi-user
-monitoring:
-  prometheus:
-    enabled: true
-    multiUser: true
-  grafana:
-    enabled: true
-    multiUser: true
+  resources:
+    requests:
+      cpu: 100m
+      memory: 200Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  
+  service:
+    type: ClusterIP
+    port: 80
+  
+  disableIstioSidecar: "true"
+  
+  
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
 
-# Service mesh - Recommended for multi-user
+# Istio configuration for multi-user
+istio:
+  enabled: true
+
+# Networking configuration
 networking:
   istio:
     enabled: true
-    gateway: kubeflow-gateway
-  virtualService:
-    enabled: true
+    gateway: "kubeflow-gateway"
+    host: "*"
 
-# Cert-manager for TLS
-certManager:
-  enabled: true
-  issuer: "kubeflow-self-signing-issuer"
-  issuerKind: "ClusterIssuer"
-
-# Additional multi-user specific configurations
-multiUserConfig:
-  # User namespace template
-  userNamespaceTemplate: "kubeflow-user-{userid}"
-  
-  # Default resource quotas per user namespace
-  resourceQuotas:
-    requests.cpu: "2"
-    requests.memory: "4Gi"
-    limits.cpu: "4"
-    limits.memory: "8Gi"
-    persistentvolumeclaims: "10"
-  
-  # Network policies for user isolation
-  networkPolicies:
-    enabled: true
-    allowCrossNamespace: false
-  
-  # RBAC templates for user permissions
-  rbacTemplates:
-    enabled: true

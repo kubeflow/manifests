@@ -5,9 +5,7 @@ metadata:
   name: ml-pipeline-ui
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    app.kubernetes.io/component: ml-pipeline
-    app.kubernetes.io/name: kubeflow-pipelines
+    {{- include "kubeflow-pipelines.authorizationPolicyLabels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -36,9 +34,7 @@ metadata:
   name: ml-pipeline
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    app.kubernetes.io/component: ml-pipeline
-    app.kubernetes.io/name: kubeflow-pipelines
+    {{- include "kubeflow-pipelines.authorizationPolicyLabels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -65,9 +61,7 @@ metadata:
   name: ml-pipeline-visualizationserver
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    app.kubernetes.io/component: ml-pipeline
-    app.kubernetes.io/name: kubeflow-pipelines
+    {{- include "kubeflow-pipelines.authorizationPolicyLabels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -90,9 +84,7 @@ metadata:
   name: service-cache-server
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    app.kubernetes.io/component: ml-pipeline
-    app.kubernetes.io/name: kubeflow-pipelines
+    {{- include "kubeflow-pipelines.authorizationPolicyLabels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -108,9 +100,7 @@ metadata:
   name: minio-service
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    app.kubernetes.io/component: ml-pipeline
-    app.kubernetes.io/name: kubeflow-pipelines
+    {{- include "kubeflow-pipelines.authorizationPolicyLabels" . | nindent 4 }}
 spec:
   action: ALLOW
   selector:
@@ -137,9 +127,7 @@ metadata:
   name: mysql
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    app.kubernetes.io/component: ml-pipeline
-    app.kubernetes.io/name: kubeflow-pipelines
+    {{- include "kubeflow-pipelines.authorizationPolicyLabels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -165,9 +153,7 @@ metadata:
   name: metadata-grpc-service
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    app.kubernetes.io/component: ml-pipeline
-    app.kubernetes.io/name: kubeflow-pipelines
+    {{- include "kubeflow-pipelines.authorizationPolicyLabels" . | nindent 4 }}
 spec:
   action: ALLOW
   selector:

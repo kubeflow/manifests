@@ -30,8 +30,6 @@ data:
     imagePullPolicy: IfNotPresent
 kind: ConfigMap
 metadata:
-  annotations:
-    internal.kpt.dev/upstream-identifier: '|ConfigMap|default|workflow-controller-configmap'
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
   name: workflow-controller-configmap

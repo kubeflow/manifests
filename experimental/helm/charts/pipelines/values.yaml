@@ -594,13 +594,17 @@ thirdParty:
   # Use built-in minimal Argo instead of external subchart
   argo:
     enabled: true
-    
+
   # Use built-in minimal MySQL instead of external subchart
   mysql:
     enabled: false
 
   # Use built-in minimal MinIO instead of external subchart
   minio:
+    enabled: false
+
+  # Use built-in minimal PostgreSQL instead of external subchart
+  postgresql:
     enabled: false
 
   # Metacontroller configuration
@@ -782,6 +786,21 @@ env:
       enabled: false
       # -- GCP service account email
       serviceAccount: ""
+    # Inverse Proxy Agent configuration
+    proxyAgent:
+      # -- Enable inverse proxy agent for GCP
+      enabled: false
+      
+      image:
+        # -- Proxy agent image repository
+        repository: ghcr.io/kubeflow/kfp-inverse-proxy-agent
+        # -- Proxy agent image tag
+        tag: "2.14.3"
+        # -- Proxy agent image pull policy
+        pullPolicy: IfNotPresent
+      
+      # -- Proxy agent resource requests and limits
+      resources: {}
   
   # Azure-specific configuration
   azure:
@@ -1014,6 +1033,28 @@ profileController:
 application:
   # -- Enable Application resource (for Google Cloud Console integration)
   enabled: false
+  
+  # Application controller configuration
+  controller:
+    # -- Enable Application controller deployment (controller-manager)
+    enabled: false
+    
+    image:
+      # -- Application controller image repository
+      repository: gcr.io/ml-pipeline/application-crd-controller
+      # -- Application controller image tag
+      tag: "20231101"
+      # -- Application controller image pull policy
+      pullPolicy: IfNotPresent
+    
+    # -- Application controller resource requests and limits
+    resources:
+      requests:
+        cpu: 100m
+        memory: 20Mi
+      limits:
+        cpu: 100m
+        memory: 30Mi
 
 # Certificate Management
 certManager:

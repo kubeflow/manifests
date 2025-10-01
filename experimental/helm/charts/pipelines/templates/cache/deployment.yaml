@@ -38,6 +38,19 @@ spec:
         - name: {{ .name }}
           {{- if .value }}
           value: {{ .value | quote }}
+          {{- else if .valueFrom }}
+          valueFrom:
+            {{- toYaml .valueFrom | nindent 12 }}
+          {{- else if and .secretName .secretKey }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .secretName }}
+              key: {{ .secretKey }}
+          {{- else if and .configMapName .configMapKey }}
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .configMapName }}
+              key: {{ .configMapKey }}
           {{- else if and .key (ne .key "null") }}
             {{- if or (eq .name "DBCONFIG_USER") (eq .name "DBCONFIG_PASSWORD") }}
           valueFrom:
