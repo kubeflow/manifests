@@ -11,6 +11,9 @@ spec:
         volumeMounts:
         - mountPath: /var/run/ztunnel
           name: cni-ztunnel-sock-dir
+        - mountPath: /host/var/run/netns
+          name: cni-netns-dir
+          mountPropagation: HostToContainer
       volumes:
       - name: cni-ztunnel-sock-dir
         hostPath:

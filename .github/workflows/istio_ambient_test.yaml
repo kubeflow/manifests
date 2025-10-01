@@ -80,6 +80,13 @@ jobs:
     - name: Create KF Profile
       run: ./tests/kubeflow_profile_install.sh
 
+    - name: Enable ambient mode for user namespace
+      run: |
+        # Remove sidecar injection and enable ambient mode
+        kubectl label namespace $KF_PROFILE istio-injection- --overwrite
+        kubectl label namespace $KF_PROFILE istio.io/dataplane-mode=ambient --overwrite
+        echo "Enabled ambient mode for namespace: $KF_PROFILE"
+
     - name: Verify namespace has ambient label
       run: |
         AMBIENT_LABEL=$(kubectl get namespace $KF_PROFILE -o jsonpath='{.metadata.labels.istio\.io/dataplane-mode}')

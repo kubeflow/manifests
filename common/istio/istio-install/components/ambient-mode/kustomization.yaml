@@ -21,6 +21,10 @@ patches:
     kind: ConfigMap
     name: istio-cni-config
     namespace: kube-system
+- path: cni-rbac-patch.yaml
+  target:
+    kind: ClusterRole
+    name: istio-cni
 - target:
     kind: Namespace
     name: kubeflow
