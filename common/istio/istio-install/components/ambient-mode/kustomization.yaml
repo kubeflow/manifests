@@ -16,6 +16,11 @@ patches:
     kind: DaemonSet
     name: istio-cni-node
     namespace: kube-system
+- path: cni-config-patch.yaml
+  target:
+    kind: ConfigMap
+    name: istio-cni-config
+    namespace: kube-system
 - target:
     kind: Namespace
     name: kubeflow
