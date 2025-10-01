@@ -11,6 +11,11 @@ patches:
     kind: Deployment
     name: istiod
     namespace: istio-system
+- path: cni-ambient-patch.yaml
+  target:
+    kind: DaemonSet
+    name: istio-cni-node
+    namespace: kube-system
 - target:
     kind: Namespace
     name: kubeflow
