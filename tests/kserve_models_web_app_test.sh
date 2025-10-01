@@ -13,8 +13,21 @@ echo "KServe Models Web App Test"
 echo "Profile: ${KF_PROFILE}"
 echo "=========================================="
 
+# Pre-Test Setup: Configure models-web-app to disable auth for testing
+echo "Step 1: Configuring models-web-app to disable authentication..."
+kubectl patch configmap kserve-models-web-app-config -n kubeflow \
+  --type merge \
+  -p '{"data":{"APP_DISABLE_AUTH":"True"}}'
+
+echo "Restarting models-web-app to apply configuration..."
+kubectl rollout restart deployment kserve-models-web-app -n kubeflow
+kubectl rollout status deployment kserve-models-web-app -n kubeflow --timeout=120s
+
+echo "✓ Models-web-app configured with APP_DISABLE_AUTH=True"
+
 # Pre-Test Setup: Create RBAC for default-editor to access InferenceServices
-echo "Step 1: Setting up RBAC permissions for InferenceService access..."
+echo ""
+echo "Step 2: Setting up RBAC permissions for InferenceService access..."
 cat <<EOF | kubectl apply -f -
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -55,7 +68,7 @@ echo "✓ RBAC permissions configured"
 
 # Pre-Test Setup: Deploy InferenceService via kubectl
 echo ""
-echo "Step 2: Deploying test InferenceService via kubectl..."
+echo "Step 3: Deploying test InferenceService via kubectl..."
 cat <<EOF | kubectl apply -f -
 apiVersion: "serving.kserve.io/v1beta1"
 kind: "InferenceService"
@@ -83,7 +96,7 @@ kubectl get inferenceservice sklearn-iris-private -n ${KF_PROFILE}
 
 # Get XSRF token for API calls
 echo ""
-echo "Step 3: Getting XSRF token..."
+echo "Step 4: Getting XSRF token..."
 curl -s "http://${BASE_URL}/" \
   -H "Authorization: Bearer ${TOKEN}" \
   -v -c /tmp/kserve_xcrf.txt 2>&1 | grep -i "set-cookie" || true
@@ -103,7 +116,7 @@ fi
 
 # Test: Verify InferenceService appears in the models-web-app API
 echo ""
-echo "Step 4: Verifying InferenceService appears in models-web-app API..."
+echo "Step 5: Verifying InferenceService appears in models-web-app API..."
 
 RESPONSE=$(curl -s --fail-with-body \
   "${BASE_URL}/api/namespaces/${KF_PROFILE}/inferenceservices" \
@@ -126,7 +139,7 @@ fi
 
 # Verify Cluster State Consistency
 echo ""
-echo "Step 5: Verifying Cluster State Consistency..."
+echo "Step 6: Verifying Cluster State Consistency..."
 
 # Check that kubectl shows the InferenceService
 if kubectl get inferenceservice sklearn-iris-private -n ${KF_PROFILE} > /dev/null 2>&1; then
@@ -147,7 +160,7 @@ fi
 
 # Cleanup
 echo ""
-echo "Step 6: Cleanup - Deleting test resources..."
+echo "Step 7: Cleanup - Deleting test resources..."
 
 # Delete InferenceService
 kubectl delete inferenceservice sklearn-iris-private -n ${KF_PROFILE}
@@ -165,6 +178,16 @@ fi
 kubectl delete role inferenceservice-editor -n ${KF_PROFILE} 2>/dev/null || true
 kubectl delete rolebinding default-editor-inferenceservice-access -n ${KF_PROFILE} 2>/dev/null || true
 echo "✓ RBAC permissions cleaned up"
+
+# Restore auth configuration
+echo ""
+echo "Step 8: Restoring models-web-app authentication..."
+kubectl patch configmap kserve-models-web-app-config -n kubeflow \
+  --type merge \
+  -p '{"data":{"APP_DISABLE_AUTH":"False"}}'
+
+kubectl rollout restart deployment kserve-models-web-app -n kubeflow
+echo "✓ Models-web-app authentication restored (restart in progress)"
 
 echo ""
 echo "=========================================="
