@@ -63,7 +63,7 @@ jobs:
     - name: Install KServe
       run: ./tests/kserve_install.sh
 
-    #- name: Install Pipelines
+    # - name: Install Pipelines
     #  run: ./tests/pipelines_install.sh
 
     - name: Install Pipelines with SeaweedFS

@@ -82,16 +82,16 @@ jobs:
         mkdir -p logs
         kubectl get all --all-namespaces > logs/resources.txt
         kubectl get events --all-namespaces --sort-by=.metadata.creationTimestamp > logs/events.txt
-        
+
         # Get models-web-app logs
         kubectl logs -n kubeflow -l app.kubernetes.io/component=kserve-models-web-app --tail=200 > logs/models-web-app.txt 2>&1 || true
-        
+
         # Get KServe controller logs
         kubectl logs -n kubeflow -l control-plane=kserve-controller-manager --tail=200 > logs/kserve-controller.txt 2>&1 || true
-        
+
         # Get InferenceService status
         kubectl get inferenceservices -n ${KF_PROFILE} -o yaml > logs/inferenceservices.yaml 2>&1 || true
-        
+
         # Get VirtualService
         kubectl get virtualservice kserve-models-web-app -n kubeflow -o yaml > logs/virtualservice.yaml 2>&1 || true
 
