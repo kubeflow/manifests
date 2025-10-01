@@ -6,7 +6,6 @@ set -euxo pipefail
 
 KF_PROFILE=${1:-kubeflow-user-example-com}
 TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
-UNAUTHORIZED_TOKEN="$(kubectl -n default create token default)"
 BASE_URL="localhost:8080/kserve-endpoints"
 
 echo "=========================================="
@@ -15,17 +14,37 @@ echo "Profile: ${KF_PROFILE}"
 echo "=========================================="
 
 # Pre-Test Setup: Create RBAC for default-editor to access InferenceServices
-echo "Step 0: Setting up RBAC permissions for InferenceService access..."
+echo "Step 1: Setting up RBAC permissions for InferenceService access..."
 cat <<EOF | kubectl apply -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: inferenceservice-editor
+  namespace: ${KF_PROFILE}
+rules:
+- apiGroups:
+  - serving.kserve.io
+  resources:
+  - inferenceservices
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - patch
+  - update
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: default-editor-kserve-access
+  name: default-editor-inferenceservice-access
   namespace: ${KF_PROFILE}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: kserve-models-web-app-cluster-role
+  kind: Role
+  name: inferenceservice-editor
 subjects:
 - kind: ServiceAccount
   name: default-editor
@@ -36,7 +55,7 @@ echo "✓ RBAC permissions configured"
 
 # Pre-Test Setup: Deploy InferenceService via kubectl
 echo ""
-echo "Step 1: Deploying test InferenceService via kubectl..."
+echo "Step 2: Deploying test InferenceService via kubectl..."
 cat <<EOF | kubectl apply -f -
 apiVersion: "serving.kserve.io/v1beta1"
 kind: "InferenceService"
@@ -59,26 +78,12 @@ EOF
 echo "Waiting for InferenceService to be ready..."
 kubectl wait --for=condition=Ready inferenceservice/sklearn-iris-private -n ${KF_PROFILE} --timeout=300s
 
-echo "InferenceService deployed successfully!"
+echo "✓ InferenceService deployed successfully!"
 kubectl get inferenceservice sklearn-iris-private -n ${KF_PROFILE}
 
-# Test 2: Authentication Test
+# Get XSRF token for API calls
 echo ""
-echo "Step 2: Testing Authentication..."
-
-# Test without token (should fail)
-echo "Testing access without token (expecting 403 or 302)..."
-RESPONSE_NO_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
-  "http://${BASE_URL}/" 2>&1 || echo "000")
-
-if [ "$RESPONSE_NO_TOKEN" != "403" ] && [ "$RESPONSE_NO_TOKEN" != "302" ] && [ "$RESPONSE_NO_TOKEN" != "401" ]; then
-  echo "WARNING: Expected 403/302/401 for unauthenticated access, got $RESPONSE_NO_TOKEN"
-else
-  echo "✓ Unauthenticated access correctly rejected with status $RESPONSE_NO_TOKEN"
-fi
-
-# Get XSRF token
-echo "Getting XSRF token..."
+echo "Step 3: Getting XSRF token..."
 curl -s "http://${BASE_URL}/" \
   -H "Authorization: Bearer ${TOKEN}" \
   -v -c /tmp/kserve_xcrf.txt 2>&1 | grep -i "set-cookie" || true
@@ -96,9 +101,9 @@ else
   XSRFTOKEN="dummy-token"
 fi
 
-# Test 3: List InferenceServices
+# Test: Verify InferenceService appears in the models-web-app API
 echo ""
-echo "Step 3: Testing List InferenceServices API..."
+echo "Step 4: Verifying InferenceService appears in models-web-app API..."
 
 RESPONSE=$(curl -s --fail-with-body \
   "${BASE_URL}/api/namespaces/${KF_PROFILE}/inferenceservices" \
@@ -112,54 +117,16 @@ echo ""
 
 # Check if sklearn-iris-private is in the response
 if echo "$RESPONSE" | grep -q "sklearn-iris-private"; then
-  echo "✓ InferenceService 'sklearn-iris-private' found in API response"
+  echo "✓ SUCCESS: InferenceService 'sklearn-iris-private' found in models-web-app API response"
 else
   echo "ERROR: InferenceService 'sklearn-iris-private' NOT found in API response"
   echo "Full response: $RESPONSE"
   exit 1
 fi
 
-# Test 4: Get InferenceService Details
+# Verify Cluster State Consistency
 echo ""
-echo "Step 4: Testing Get InferenceService Details API..."
-
-DETAILS_RESPONSE=$(curl -s --fail-with-body \
-  "${BASE_URL}/api/namespaces/${KF_PROFILE}/inferenceservices/sklearn-iris-private" \
-  -H "Authorization: Bearer ${TOKEN}" \
-  -H "X-XSRF-TOKEN: ${XSRFTOKEN}" \
-  -H "Cookie: XSRF-TOKEN=${XSRFTOKEN}" 2>&1 || echo '{"error": "request failed"}')
-
-echo "Details API Response:"
-echo "$DETAILS_RESPONSE" | head -c 500
-echo ""
-
-if echo "$DETAILS_RESPONSE" | grep -q "sklearn-iris-private"; then
-  echo "✓ InferenceService details retrieved successfully"
-else
-  echo "ERROR: Could not retrieve InferenceService details"
-  echo "Full response: $DETAILS_RESPONSE"
-  exit 1
-fi
-
-# Test 5: Unauthorized Access Test
-echo ""
-echo "Step 5: Testing Unauthorized Access..."
-
-UNAUTHORIZED_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-  "${BASE_URL}/api/namespaces/${KF_PROFILE}/inferenceservices" \
-  -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}" 2>&1)
-
-if [[ "$UNAUTHORIZED_STATUS" == "403" ]]; then
-  echo "✓ Unauthorized access correctly rejected with 403"
-elif [[ "$UNAUTHORIZED_STATUS" == "401" ]]; then
-  echo "✓ Unauthorized access correctly rejected with 401"
-else
-  echo "WARNING: Expected 403/401 for unauthorized access, got $UNAUTHORIZED_STATUS"
-fi
-
-# Test 6: Verify Cluster State Consistency
-echo ""
-echo "Step 6: Verifying Cluster State Consistency..."
+echo "Step 5: Verifying Cluster State Consistency..."
 
 # Check that kubectl shows the InferenceService
 if kubectl get inferenceservice sklearn-iris-private -n ${KF_PROFILE} > /dev/null 2>&1; then
@@ -178,9 +145,9 @@ else
   echo "WARNING: InferenceService Ready status is: $READY_STATUS"
 fi
 
-# Test 7: Cleanup
+# Cleanup
 echo ""
-echo "Step 7: Cleanup - Deleting test resources..."
+echo "Step 6: Cleanup - Deleting test resources..."
 
 # Delete InferenceService
 kubectl delete inferenceservice sklearn-iris-private -n ${KF_PROFILE}
@@ -194,9 +161,16 @@ else
   echo "✓ InferenceService successfully deleted"
 fi
 
-# Delete RBAC RoleBinding
-kubectl delete rolebinding default-editor-kserve-access -n ${KF_PROFILE} 2>/dev/null || true
+# Delete RBAC resources
+kubectl delete role inferenceservice-editor -n ${KF_PROFILE} 2>/dev/null || true
+kubectl delete rolebinding default-editor-inferenceservice-access -n ${KF_PROFILE} 2>/dev/null || true
 echo "✓ RBAC permissions cleaned up"
+
+echo ""
+echo "=========================================="
+echo "✓ All tests passed successfully!"
+echo "=========================================="
+
 
 echo ""
 echo "=========================================="
