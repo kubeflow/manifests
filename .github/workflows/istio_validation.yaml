@@ -226,14 +226,6 @@ jobs:
         kubectl logs -n istio-system daemonset/ztunnel --tail=50 | grep -i "workload\|connection\|proxy" || echo "Ztunnel logs (last 50 lines):"
         kubectl logs -n istio-system daemonset/ztunnel --tail=50
 
-    - name: Apply Pod Security Standards Restricted to user namespace (ambient mode)
-      if: matrix.istio-mode == 'ambient'
-      run: |
-        # Apply PSS restricted to user namespace (ztunnel runs in istio-system, not user namespaces)
-        kubectl label namespace $KF_PROFILE pod-security.kubernetes.io/enforce=restricted --overwrite
-        kubectl label namespace $KF_PROFILE pod-security.kubernetes.io/enforce-version=latest --overwrite
-        echo "Applied PSS restricted to user namespace: $KF_PROFILE"
-
     - name: Test CNI-specific functionality
       if: matrix.istio-mode == 'cni'
       run: |
@@ -270,6 +262,14 @@ jobs:
     - name: Apply Pod Security Standards Restricted levels
       if: matrix.istio-mode == 'cni'
       run: ./tests/PSS_enable.sh
+
+    - name: Apply Pod Security Standards Restricted to user namespace (ambient mode)
+      if: matrix.istio-mode == 'ambient'
+      run: |
+        # Apply PSS restricted to user namespace (ztunnel runs in istio-system, not user namespaces)
+        kubectl label namespace $KF_PROFILE pod-security.kubernetes.io/enforce=restricted --overwrite
+        kubectl label namespace $KF_PROFILE pod-security.kubernetes.io/enforce-version=latest --overwrite
+        echo "Applied PSS restricted to user namespace: $KF_PROFILE"
 
     - name: Collect debug information on failure
       if: failure()
