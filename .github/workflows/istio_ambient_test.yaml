@@ -119,15 +119,15 @@ jobs:
         kubectl logs -n istio-system daemonset/ztunnel --tail=50 | grep -i "connection\|proxy" || echo "ztunnel logs (last 50 lines):"
         kubectl logs -n istio-system daemonset/ztunnel --tail=50
 
-    - name: Verify PSS Baseline for istio-system
+    - name: Verify PSS Privileged for istio-system
       run: |
-        # Ambient mode requires PSS baseline (not restricted) for istio-system
+        # Ambient mode requires PSS privileged for istio-system (ztunnel needs SYS_ADMIN capability)
         PSS_LEVEL=$(kubectl get namespace istio-system -o jsonpath='{.metadata.labels.pod-security\.kubernetes\.io/enforce}')
-        if [ "$PSS_LEVEL" != "baseline" ]; then
-          echo "ERROR: istio-system should have PSS baseline, got: $PSS_LEVEL"
+        if [ "$PSS_LEVEL" != "privileged" ]; then
+          echo "ERROR: istio-system should have PSS privileged, got: $PSS_LEVEL"
           exit 1
         fi
-        echo "istio-system correctly configured with PSS baseline"
+        echo "istio-system correctly configured with PSS privileged"
 
     - name: Apply Pod Security Standards Restricted levels to user namespaces
       run: |
