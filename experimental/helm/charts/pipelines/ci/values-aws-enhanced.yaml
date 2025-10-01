@@ -61,6 +61,16 @@ pipeline:
 argo:
   enabled: false
 
+# Built-in third-party components
+thirdParty:
+  argo:
+    enabled: true
+  mysql:
+    enabled: true
+  minio:
+    enabled: true
+    portName: http
+
 env:
   platform: aws
   aws:

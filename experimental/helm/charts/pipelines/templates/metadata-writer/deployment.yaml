@@ -9,6 +9,9 @@ metadata:
     app: metadata-writer
     app.kubernetes.io/component: ml-pipeline
     app.kubernetes.io/name: kubeflow-pipelines
+{{- if .Values.installMode.legacyLabels }}
+    application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- else }}
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
     app: metadata-writer
@@ -25,6 +28,9 @@ spec:
         app: metadata-writer
         app.kubernetes.io/component: ml-pipeline
         app.kubernetes.io/name: kubeflow-pipelines
+{{- if .Values.installMode.legacyLabels }}
+        application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- else }}
         {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
         app: metadata-writer

@@ -35,6 +35,26 @@ spec:
           capabilities:
             drop:
             - ALL
+        {{- if .Values.thirdParty.postgresql.enabled }}
+        env: []
+        envFrom:
+        - configMapRef:
+            name: metadata-postgres-db-parameters
+        - secretRef:
+            name: metadata-postgres-db-secrets
+        - configMapRef:
+            name: metadata-grpc-configmap
+        command: ["/bin/metadata_store_server"]
+        args:
+        - --grpc_port=$(METADATA_GRPC_SERVICE_PORT)
+        - --metadata_source_config_type=postgresql
+        - --postgres_config_host=metadata-postgres-db
+        - --postgres_config_port=$(POSTGRES_PORT)
+        - --postgres_config_dbname=$(POSTGRES_DBNAME)
+        - --postgres_config_user=$(POSTGRES_USER)
+        - --postgres_config_password=$(POSTGRES_PASSWORD)
+        - --enable_database_upgrade=true
+        {{- else }}
         env:
         - name: DBCONFIG_USER
           valueFrom:
@@ -62,15 +82,16 @@ spec:
               name: pipeline-install-config
               key: dbPort
         command: ["/bin/metadata_store_server"]
-        args: ["--grpc_port=8080",
-               "--mysql_config_database=$(MYSQL_DATABASE)",
-               "--mysql_config_host=$(MYSQL_HOST)",
-               "--mysql_config_port=$(MYSQL_PORT)",
-               "--mysql_config_user=$(DBCONFIG_USER)",
-               "--mysql_config_password=$(DBCONFIG_PASSWORD)",
-               "--enable_database_upgrade=true",
-               "--grpc_channel_arguments=grpc.max_metadata_size=16384"
-               ]
+        args:
+        - --grpc_port=8080
+        - --mysql_config_database=$(MYSQL_DATABASE)
+        - --mysql_config_host=$(MYSQL_HOST)
+        - --mysql_config_port=$(MYSQL_PORT)
+        - --mysql_config_user=$(DBCONFIG_USER)
+        - --mysql_config_password=$(DBCONFIG_PASSWORD)
+        - --enable_database_upgrade=true
+        - --grpc_channel_arguments=grpc.max_metadata_size=16384
+        {{- end }}
         ports:
         - name: grpc-api
           containerPort: 8080
@@ -86,8 +107,12 @@ spec:
           initialDelaySeconds: 3
           periodSeconds: 5
           timeoutSeconds: 2
+        {{- if not .Values.thirdParty.postgresql.enabled }}
+        {{- with .Values.metadata.grpc.resources }}
         resources:
-          {{- toYaml .Values.metadata.grpc.resources | nindent 10 }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- end }}
       serviceAccountName: metadata-grpc-server
       {{- with .Values.metadata.grpc.nodeSelector }}
       nodeSelector:

@@ -47,6 +47,7 @@ thirdParty:
     enabled: true
   minio:
     enabled: true
+    portName: http
   argo:
     enabled: true
 
@@ -83,7 +84,56 @@ crds:
 webhooks:
   enabled: false
 
-
+apiServer:
+  additionalEnv:
+    - name: PUBLISH_LOGS
+      value: "true"
+    - name: LOG_LEVEL
+      value: "info"
+    - name: PIPELINE_LOG_LEVEL
+      value: "1"
+    - name: AUTO_UPDATE_PIPELINE_DEFAULT_VERSION
+      key: autoUpdatePipelineDefaultVersion
+    - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: OBJECTSTORECONFIG_SECURE
+      value: "false"
+    - name: OBJECTSTORECONFIG_BUCKETNAME
+      key: bucketName
+    - name: DBCONFIG_USER
+      key: username
+    - name: DBCONFIG_PASSWORD
+      key: password
+    - name: DBCONFIG_DBNAME
+      key: pipelineDb
+    - name: DBCONFIG_HOST
+      key: dbHost
+    - name: DBCONFIG_PORT
+      key: dbPort
+    - name: DBCONFIG_CONMAXLIFETIME
+      key: ConMaxLifeTime
+    - name: DB_DRIVER_NAME
+      key: dbType
+    - name: DBCONFIG_MYSQLCONFIG_USER
+      key: username
+    - name: DBCONFIG_MYSQLCONFIG_PASSWORD
+      key: password
+    - name: DBCONFIG_MYSQLCONFIG_DBNAME
+      key: pipelineDb
+    - name: DBCONFIG_MYSQLCONFIG_HOST
+      key: mysqlHost
+    - name: DBCONFIG_MYSQLCONFIG_PORT
+      key: mysqlPort
+    - name: OBJECTSTORECONFIG_ACCESSKEY
+      key: accesskey
+    - name: OBJECTSTORECONFIG_SECRETACCESSKEY
+      key: secretkey
+    - name: V2_DRIVER_IMAGE
+      value: "ghcr.io/kubeflow/kfp-driver:2.14.3"
+    - name: V2_LAUNCHER_IMAGE
+      value: "ghcr.io/kubeflow/kfp-launcher:2.14.3"
 cache:
   server:
     additionalEnv:
