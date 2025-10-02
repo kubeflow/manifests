@@ -6,4 +6,5 @@ resources:
 
 components:
 - ../../components/ambient-mode
+- ../../components/gke-cni
 - ../../components/gke-ambient

@@ -6,5 +6,6 @@ resources:
 
 components:
 - ../../components/ambient-mode
+- ../../components/gke-cni
 - ../../components/gke-ambient
 - ../../../../oauth2-proxy/components/istio-external-auth-patches

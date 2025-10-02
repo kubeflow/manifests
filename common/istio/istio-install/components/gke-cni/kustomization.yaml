@@ -2,8 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 
 patches:
-- path: gke-ztunnel-patch.yaml
+- path: gke-cni-patch.yaml
   target:
     kind: DaemonSet
-    name: ztunnel
-    namespace: istio-system
+    name: istio-cni-node
+    namespace: kube-system
