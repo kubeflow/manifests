@@ -74,7 +74,7 @@ jobs:
       run: ./tests/port_forward_gateway.sh
 
     - name: Test KServe Models Web Application API
-      run: ./tests/kserve_models_web_app_test.sh "${KF_PROFILE}"
+      run: ./tests/kserve_models_web_application_test.sh "${KF_PROFILE}"
 
     - name: Collect Logs on Failure
       if: failure()
