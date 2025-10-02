@@ -142,7 +142,6 @@ jobs:
       run: |
         kubectl label namespace $KF_PROFILE istio-injection- --overwrite
         kubectl label namespace $KF_PROFILE istio.io/dataplane-mode=ambient --overwrite
-        echo "Enabled ambient mode for namespace: $KF_PROFILE"
 
     - name: Enable Istio injection and adjust PSS for insecure mode
       run: |
@@ -189,12 +188,10 @@ jobs:
           kubectl get namespace $KF_PROFILE --show-labels
           exit 1
         fi
-        echo "Sidecar injection successful"
 
         # Verify Envoy proxy is responding
         kubectl exec -n $KF_PROFILE deployment/test-application -c istio-proxy -- curl -s localhost:15000/ready | grep -q "LIVE" || \
           (echo "ERROR: Envoy proxy not responding" && exit 1)
-        echo "Envoy proxy is healthy"
 
     - name: Test ambient mode (no sidecar)
       if: matrix.istio-mode == 'ambient'
@@ -210,14 +207,12 @@ jobs:
           kubectl get pod $POD_NAME -n $KF_PROFILE -o jsonpath='{.spec.containers[*].name}'
           exit 1
         fi
-        echo "No sidecar injected (ambient mode is sidecar-free)"
 
         AMBIENT_LABEL=$(kubectl get namespace $KF_PROFILE -o jsonpath='{.metadata.labels.istio\.io/dataplane-mode}')
         if [ "$AMBIENT_LABEL" != "ambient" ]; then
           echo "ERROR: Namespace should have istio.io/dataplane-mode=ambient label"
           exit 1
         fi
-        echo "Ambient mode verified for namespace"
 
     - name: Verify ztunnel logs show traffic handling
       if: matrix.istio-mode == 'ambient'
@@ -248,8 +243,6 @@ jobs:
           exit 1
         fi
 
-        echo "Non-CNI verification successful: found istio-init, no istio-validation"
-
     - name: Port-forward the istio-ingress gateway
       run: ./tests/port_forward_gateway.sh
 
@@ -269,7 +262,6 @@ jobs:
         # Apply PSS restricted to user namespace (ztunnel runs in istio-system, not user namespaces)
         kubectl label namespace $KF_PROFILE pod-security.kubernetes.io/enforce=restricted --overwrite
         kubectl label namespace $KF_PROFILE pod-security.kubernetes.io/enforce-version=latest --overwrite
-        echo "Applied PSS restricted to user namespace: $KF_PROFILE"
 
     - name: Collect debug information on failure
       if: failure()
