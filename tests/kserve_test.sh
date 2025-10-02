@@ -128,7 +128,8 @@ EOF
 
 # Delete isvc-sklearn before running pytest (pytest will recreate it)
 kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
-sleep 10
+# Wait for deletion to complete
+kubectl wait --for=delete inferenceservice/isvc-sklearn -n ${NAMESPACE} --timeout=60s || true
 
 if cd ${TEST_DIRECTORY}; then
   pytest . -vs --log-level info || true
