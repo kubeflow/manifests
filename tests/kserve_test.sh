@@ -131,3 +131,6 @@ kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=
 if cd ${TEST_DIRECTORY}; then
   pytest . -vs --log-level info || true
 fi
+
+# Test KServe models web app deployment
+kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app
