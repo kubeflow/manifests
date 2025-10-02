@@ -1,29 +1,25 @@
 #!/bin/bash
 set -euxo pipefail
 
-# KServe Models Web App Test Script
-# Tests the models-web-app API functionality with kubectl-deployed InferenceServices
+# KServe Models Web Application Test Script
+# Tests the models-web-application API functionality with kubectl-deployed InferenceServices
 
 KF_PROFILE=${1:-kubeflow-user-example-com}
 TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
 BASE_URL="localhost:8080/kserve-endpoints"
 
 echo "=========================================="
-echo "KServe Models Web App Test"
+echo "KServe Models Web Application Test"
 echo "Profile: ${KF_PROFILE}"
 echo "=========================================="
 
-# Pre-Test Setup: Configure models-web-app to disable auth for testing
-echo "Step 1: Configuring models-web-app to disable authentication..."
+# Pre-Test Setup: Configure models-web-application to disable authentication for testing
 kubectl patch configmap kserve-models-web-app-config -n kubeflow \
   --type merge \
   -p '{"data":{"APP_DISABLE_AUTH":"True"}}'
 
-echo "Restarting models-web-app to apply configuration..."
 kubectl rollout restart deployment kserve-models-web-app -n kubeflow
 kubectl rollout status deployment kserve-models-web-app -n kubeflow --timeout=120s
-
-echo "✓ Models-web-app configured with APP_DISABLE_AUTH=True"
 
 # Pre-Test Setup: Create RBAC for default-editor to access InferenceServices
 echo ""
@@ -64,11 +60,7 @@ subjects:
   namespace: ${KF_PROFILE}
 EOF
 
-echo "✓ RBAC permissions configured"
-
 # Pre-Test Setup: Deploy InferenceService via kubectl
-echo ""
-echo "Step 3: Deploying test InferenceService via kubectl..."
 cat <<EOF | kubectl apply -f -
 apiVersion: "serving.kserve.io/v1beta1"
 kind: "InferenceService"
@@ -88,15 +80,10 @@ spec:
           memory: "256Mi"
 EOF
 
-echo "Waiting for InferenceService to be ready..."
 kubectl wait --for=condition=Ready inferenceservice/sklearn-iris-private -n ${KF_PROFILE} --timeout=300s
-
-echo "✓ InferenceService deployed successfully!"
 kubectl get inferenceservice sklearn-iris-private -n ${KF_PROFILE}
 
 # Get XSRF token for API calls
-echo ""
-echo "Step 4: Getting XSRF token..."
 curl -s "http://${BASE_URL}/" \
   -H "Authorization: Bearer ${TOKEN}" \
   -v -c /tmp/kserve_xcrf.txt 2>&1 | grep -i "set-cookie" || true
@@ -114,10 +101,7 @@ else
   XSRFTOKEN="dummy-token"
 fi
 
-# Test: Verify InferenceService appears in the models-web-app API
-echo ""
-echo "Step 5: Verifying InferenceService appears in models-web-app API..."
-
+# Test: Verify InferenceService appears in the models-web-application API
 RESPONSE=$(curl -s --fail-with-body \
   "${BASE_URL}/api/namespaces/${KF_PROFILE}/inferenceservices" \
   -H "Authorization: Bearer ${TOKEN}" \
@@ -130,7 +114,7 @@ echo ""
 
 # Check if sklearn-iris-private is in the response
 if echo "$RESPONSE" | grep -q "sklearn-iris-private"; then
-  echo "✓ SUCCESS: InferenceService 'sklearn-iris-private' found in models-web-app API response"
+  echo "✓ SUCCESS: InferenceService 'sklearn-iris-private' found in models-web-application API response"
 else
   echo "ERROR: InferenceService 'sklearn-iris-private' NOT found in API response"
   echo "Full response: $RESPONSE"
@@ -158,10 +142,6 @@ else
   echo "WARNING: InferenceService Ready status is: $READY_STATUS"
 fi
 
-# Cleanup
-echo ""
-echo "Step 7: Cleanup - Deleting test resources..."
-
 # Delete InferenceService
 kubectl delete inferenceservice sklearn-iris-private -n ${KF_PROFILE}
 
@@ -181,15 +161,9 @@ echo "✓ RBAC permissions cleaned up"
 
 # Restore auth configuration
 echo ""
-echo "Step 8: Restoring models-web-app authentication..."
+echo "Step 8: Restoring models-web-application authentication..."
 kubectl patch configmap kserve-models-web-app-config -n kubeflow \
   --type merge \
   -p '{"data":{"APP_DISABLE_AUTH":"False"}}'
 
-kubectl rollout restart deployment kserve-models-web-app -n kubeflow
-echo "✓ Models-web-app authentication restored (restart in progress)"
-
-echo ""
-echo "=========================================="
-echo "✓ KServe Models Web App Test PASSED"
-echo "=========================================="
+kubectl rollout restart deployment kserve-models-web-application -n kubeflow
