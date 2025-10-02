@@ -41,7 +41,10 @@ EOF
 then
   echo "InferenceService created successfully, waiting for it to be ready..."
   kubectl wait --for=condition=Ready inferenceservice/test-sklearn-secure -n ${NAMESPACE} --timeout=180s || echo "InferenceService not ready, continuing with JWT tests..."
-  
+
+  # Wait for Istio configurations to propagate
+  sleep 60
+
   # Create AuthorizationPolicy to allow authenticated access
   cat <<EOF | kubectl apply -f -
 apiVersion: security.istio.io/v1beta1
