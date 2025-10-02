@@ -50,51 +50,17 @@ RESPONSE=$(curl -s --fail-with-body \
   -H "X-XSRF-TOKEN: ${XSRFTOKEN}" \
   -H "Cookie: XSRF-TOKEN=${XSRFTOKEN}")
 
-echo "API Response:"
-echo "$RESPONSE" | head -c 500
-echo ""
+echo "API Response:"; head -c 500 <<< "$RESPONSE"; echo
 
-if echo "$RESPONSE" | grep -q "sklearn-iris-private"; then
-  echo "✓ SUCCESS: InferenceService 'sklearn-iris-private' found in models-web-application API response"
-else
+echo "$RESPONSE" | grep -q "sklearn-iris-private" || exit 1
+kubectl get inferenceservice sklearn-iris-private -n ${KF_PROFILE} || exit 1
+READY=$(kubectl get isvc sklearn-iris-private -n ${KF_PROFILE} -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}')
+[[ "$READY" == "True" ]] || {
+  echo "FAILURE: InferenceService Ready status is: $READY"
   exit 1
-fi
+}
+kubectl delete inferenceservice sklearn-iris-private -n ${KF_PROFILE} || exit 1
 
-if kubectl get inferenceservice sklearn-iris-private -n ${KF_PROFILE}; then
-  echo "✓ InferenceService exists in cluster"
-else
-  exit 1
-fi
-
-# Check that InferenceService is Ready
-READY_STATUS=$(kubectl get inferenceservice sklearn-iris-private -n ${KF_PROFILE} -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' 2>&1 || echo "Unknown")
-
-if [[ "$READY_STATUS" == "True" ]]; then
-  echo "✓ InferenceService is Ready"
-else
-  echo "WARNING: InferenceService Ready status is: $READY_STATUS"
-fi
-
-# Delete InferenceService
-kubectl delete inferenceservice sklearn-iris-private -n ${KF_PROFILE}
-
-echo "Waiting for InferenceService to be deleted..."
-sleep 5
-
-if kubectl get inferenceservice sklearn-iris-private -n ${KF_PROFILE} > /dev/null 2>&1; then
-  echo "WARNING: InferenceService still exists after deletion"
-else
-  echo "✓ InferenceService successfully deleted"
-fi
-
-# Delete RBAC resources
-kubectl delete role inferenceservice-editor -n ${KF_PROFILE} 2>/dev/null || true
-kubectl delete rolebinding default-editor-inferenceservice-access -n ${KF_PROFILE} 2>/dev/null || true
-echo "✓ RBAC permissions cleaned up"
-
-# Restore auth configuration
-echo ""
-echo "Step 8: Restoring models-web-application authentication..."
 kubectl patch configmap kserve-models-web-app-config -n kubeflow \
   --type merge \
   -p '{"data":{"APP_DISABLE_AUTH":"False"}}'
