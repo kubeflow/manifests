@@ -126,7 +126,9 @@ spec:
       serving.knative.dev/service: isvc-sklearn-predictor
 EOF
 
+# Delete isvc-sklearn before running pytest (pytest will recreate it)
 kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
+sleep 10
 
 if cd ${TEST_DIRECTORY}; then
   pytest . -vs --log-level info || true
