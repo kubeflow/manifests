@@ -1,8 +1,6 @@
 #!/bin/bash
 set -euxo pipefail
 
-# KServe Models Web Application Test Script
-# Tests the models-web-application API functionality with kubectl-deployed InferenceServices
 
 KF_PROFILE=${1:-kubeflow-user-example-com}
 TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
@@ -27,7 +25,7 @@ spec:
           memory: "256Mi"
 EOF
 
-kubectl wait --for=condition=Ready inferenceservice/sklearn-iris-private -n ${KF_PROFILE} --timeout=300s
+kubectl wait --for=condition=Ready inferenceservice/sklearn-iris-private -n ${KF_PROFILE} --timeout=120s
 kubectl get inferenceservice sklearn-iris-private -n ${KF_PROFILE}
 
 # Get XSRF token for API calls
