@@ -23,14 +23,11 @@ kubectl apply -k istio-install/overlays/gke
 Istio Ambient Mode eliminates sidecars, reducing resource overhead while maintaining full L4/L7 traffic processing capabilities.
 
 ```bash
-# Standard Kubernetes
-kubectl apply -k istio-install/overlays/ambient
-
-# Google Kubernetes Engine (GKE)
-kubectl apply -k istio-install/overlays/ambient-gke
-
 # OAuth2-Proxy
 kubectl apply -k istio-install/overlays/ambient-oauth2-proxy
+
+# Oauth2-prxy on Google Kubernetes Engine (GKE)
+kubectl apply -k istio-install/overlays/ambient-gke
 
 # OAuth2-Proxy on Google Kubernetes Engine (GKE)
 kubectl apply -k istio-install/overlays/ambient-oauth2-proxy-gke
