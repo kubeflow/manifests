@@ -8,14 +8,6 @@ KF_PROFILE=${1:-kubeflow-user-example-com}
 TOKEN="$(kubectl -n $KF_PROFILE create token default-editor)"
 BASE_URL="localhost:8080/kserve-endpoints"
 
-# Pre-Test Setup: Configure models-web-application to disable authentication for testing
-kubectl patch configmap kserve-models-web-app-config -n kubeflow \
-  --type merge \
-  -p '{"data":{"APP_DISABLE_AUTH":"True"}}'
-
-kubectl rollout restart deployment kserve-models-web-app -n kubeflow
-kubectl rollout status deployment kserve-models-web-app -n kubeflow --timeout=120s
-
 cat <<EOF | kubectl apply -f -
 apiVersion: "serving.kserve.io/v1beta1"
 kind: "InferenceService"
@@ -59,10 +51,7 @@ READY=$(kubectl get isvc sklearn-iris-private -n ${KF_PROFILE} -o jsonpath='{.st
   echo "FAILURE: InferenceService Ready status is: $READY"
   exit 1
 }
+
+TODO verify that it fails for security without the token.
+
 kubectl delete inferenceservice sklearn-iris-private -n ${KF_PROFILE} || exit 1
-
-kubectl patch configmap kserve-models-web-app-config -n kubeflow \
-  --type merge \
-  -p '{"data":{"APP_DISABLE_AUTH":"False"}}'
-
-kubectl rollout restart deployment kserve-models-web-application -n kubeflow
