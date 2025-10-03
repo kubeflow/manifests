@@ -57,8 +57,36 @@ jobs:
     - name: Install KServe
       run: ./tests/kserve_install.sh
 
+    - name: Wait for RBAC Aggregation
+      run: |
+        echo "Waiting for ClusterRole aggregation to complete..."
+        sleep 5
+
+        # Verify kubeflow-kserve-edit ClusterRole exists and has correct label
+        kubectl get clusterrole kubeflow-kserve-edit -o jsonpath='{.metadata.labels.rbac\.authorization\.kubeflow\.org/aggregate-to-kubeflow-edit}'
+
+        # Force update of kubeflow-edit ClusterRole to trigger aggregation
+        kubectl annotate clusterrole kubeflow-edit rbac.kubeflow.org/force-update="$(date +%s)" --overwrite
+
+        sleep 5
+        echo "RBAC aggregation wait complete"
+
     - name: Create KF Profile
       run: ./tests/kubeflow_profile_install.sh
+
+    - name: Debug RBAC Permissions
+      run: |
+        echo "=== Checking kubeflow-edit ClusterRole aggregation ==="
+        kubectl get clusterrole kubeflow-edit -o yaml
+
+        echo "=== Checking kubeflow-kserve-edit ClusterRole ==="
+        kubectl get clusterrole kubeflow-kserve-edit -o yaml
+
+        echo "=== Checking RoleBinding for default-editor ==="
+        kubectl get rolebinding -n ${KF_PROFILE} -o yaml
+
+        echo "=== Testing default-editor permissions ==="
+        kubectl auth can-i list inferenceservices.serving.kserve.io --as=system:serviceaccount:${KF_PROFILE}:default-editor -n ${KF_PROFILE}
 
     - name: Wait for All Pods to be Ready
       run: |
@@ -82,6 +110,12 @@ jobs:
         mkdir -p logs
         kubectl get all --all-namespaces > logs/resources.txt
         kubectl get events --all-namespaces --sort-by=.metadata.creationTimestamp > logs/events.txt
+
+        # Get RBAC debug info
+        kubectl get clusterrole kubeflow-edit -o yaml > logs/kubeflow-edit-clusterrole.yaml 2>&1 || true
+        kubectl get clusterrole kubeflow-kserve-edit -o yaml > logs/kubeflow-kserve-edit-clusterrole.yaml 2>&1 || true
+        kubectl get rolebinding -n ${KF_PROFILE} -o yaml > logs/rolebindings.yaml 2>&1 || true
+        kubectl auth can-i list inferenceservices.serving.kserve.io --as=system:serviceaccount:${KF_PROFILE}:default-editor -n ${KF_PROFILE} > logs/auth-check.txt 2>&1 || true
 
         # Get models-web-app logs
         kubectl logs -n kubeflow -l app.kubernetes.io/component=kserve-models-web-app --tail=200 > logs/models-web-app.txt 2>&1 || true
