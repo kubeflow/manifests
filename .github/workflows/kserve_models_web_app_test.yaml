@@ -54,11 +54,11 @@ jobs:
     - name: Install Knative
       run: ./tests/knative_install.sh
 
-    - name: Create KF Profile
-      run: ./tests/kubeflow_profile_install.sh
-
     - name: Install KServe
       run: ./tests/kserve_install.sh
+
+    - name: Create KF Profile
+      run: ./tests/kubeflow_profile_install.sh
 
     - name: Wait for All Pods to be Ready
       run: |
