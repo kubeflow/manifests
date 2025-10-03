@@ -2,8 +2,6 @@
 set -euxo pipefail
 
 NAMESPACE=${1:-kubeflow-user-example-com}
-SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-TEST_DIRECTORY="${SCRIPT_DIRECTORY}/kserve"
 
 if ! command -v pytest &> /dev/null; then
   true
@@ -111,9 +109,3 @@ fi
 
 # Clean up
 kubectl delete namespace attacker-namespace --ignore-not-found=true
-
-
-# Run existing pytest tests if available
-if command -v pytest &> /dev/null && [ -d "${TEST_DIRECTORY}" ]; then
-  cd ${TEST_DIRECTORY} && pytest . -vs --log-level info
-fi
