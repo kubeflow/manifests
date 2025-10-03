@@ -13,6 +13,8 @@ spec:
   selector:
     matchLabels:
       app: metacontroller
+      kustomize.component: metacontroller
+      application-crd-id: kubeflow-pipelines
   serviceName: ""
   template:
     metadata:

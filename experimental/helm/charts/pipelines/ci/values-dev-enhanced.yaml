@@ -13,6 +13,16 @@ installMode:
   multiUser:
     enabled: false
 
+crds:
+  install: true
+  application: true  
+
+# Cache deployer for generic mode
+cacheDeployer:
+  enabled: true
+  serviceAccount:
+    create: true
+
 # Database Configuration 
 mysql:
   enabled: false

@@ -46,6 +46,8 @@ installMode:
 crds:
   # -- Install CRDs
   install: true
+  # -- Install Application CRD 
+  application: false
 
 # API Server configuration
 apiServer:

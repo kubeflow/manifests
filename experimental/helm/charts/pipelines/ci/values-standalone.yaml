@@ -1,6 +1,23 @@
 # Platform-agnostic values for Kubeflow Pipelines
 # This configuration uses local storage (MinIO) and MySQL
 
+# Installation mode
+installMode:
+  type: generic
+  multiUser:
+    enabled: false
+
+# CRDs configuration
+crds:
+  install: false
+  application: false
+
+# Cache deployer for generic mode
+cacheDeployer:
+  enabled: true
+  serviceAccount:
+    create: false  
+
 # Environment configuration
 env:
   platform: platform-agnostic

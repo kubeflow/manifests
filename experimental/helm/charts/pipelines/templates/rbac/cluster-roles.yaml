@@ -367,6 +367,7 @@ rules:
   - update
   - patch
 
+{{- if .Values.thirdParty.argo.enabled }}
 ---
 # Argo Cluster Role
 apiVersion: rbac.authorization.k8s.io/v1
@@ -592,6 +593,7 @@ rules:
   - patch
   - update
   - watch
+{{- end }}
 
 ---
 # Metacontroller ClusterRole

@@ -1,4 +1,4 @@
-{{- if and .Values.cache.enabled (ne .Values.installMode.type "multi-user") }}
+{{- if .Values.cache.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:

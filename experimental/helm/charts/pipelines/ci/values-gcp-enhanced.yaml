@@ -12,10 +12,19 @@ installMode:
   type: generic
   multiUser:
     enabled: false
+  legacyLabels: true
 
 # Database Configuration - External Cloud SQL
 mysql:
   enabled: false
+
+crds:
+  install: false
+
+cacheDeployer:
+  enabled: true
+  serviceAccount:
+    create: false
 
 postgresql:
   enabled: false
@@ -35,7 +44,7 @@ minio:
 
 objectStore:
   provider: gcs
-  secure: true
+  secure: false
   bucketName: "mlpipeline"
   gcs:
     projectId: "yourGcsProjectId"
@@ -86,10 +95,12 @@ env:
       region: "YOUR_GCP_REGION"
     gcs:
       enabled: true
-      bucket: "yourGcsBucketName"
+      bucket: "mlpipeline"
       projectId: "yourGcsProjectId"
     proxyAgent:
       enabled: true
+    workloadIdentity:
+      enabled: false
 
 # GCP-specific API Server configuration
 apiServer:

@@ -1,26 +1,4 @@
 {{- if eq .Values.env.platform "gcp" }}
-{{- if .Values.env.gcp.gcs.enabled }}
----
-# GCP GCS Configuration Patch for API Server
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-gcp-config
-  namespace: {{ include "kubeflow-pipelines.namespace" . }}
-  labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: gcp-config
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
-data:
-  # GCP GCS specific configuration
-  OBJECTSTORECONFIG_SECURE: "true"
-  OBJECTSTORECONFIG_HOST: "storage.googleapis.com"
-  OBJECTSTORECONFIG_REGION: ""
-  OBJECTSTORECONFIG_BUCKETNAME: {{ .Values.env.gcp.gcs.bucket | quote }}
-  OBJECTSTORECONFIG_PORT: ""
-  GCS_PROJECT_ID: {{ .Values.env.gcp.gcs.projectId | quote }}
-{{- end }}
 
 {{- if .Values.env.gcp.workloadIdentity.enabled }}
 ---
@@ -41,94 +19,251 @@ metadata:
 
 {{- if .Values.env.gcp.cloudsql.enabled }}
 ---
+# GCP Cloud SQL Proxy ServiceAccount
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubeflow-pipelines-cloudsql-proxy
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  {{- if .Values.installMode.legacyLabels }}
+  labels:
+    application-crd-id: kubeflow-pipelines
+  {{- end }}
+  {{- if .Values.env.gcp.workloadIdentity.enabled }}
+  annotations:
+    iam.gke.io/gcp-service-account: cloudsql-proxy@{{ .Values.env.gcp.project }}.iam.gserviceaccount.com
+  {{- end }}
+
+---
 # GCP Cloud SQL Proxy Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-cloudsql-proxy
+  name: cloudsqlproxy
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  {{- if .Values.installMode.legacyLabels }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: cloudsql-proxy
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    app: cloudsqlproxy
+    application-crd-id: kubeflow-pipelines
+  {{- end }}
 spec:
-  replicas: 1
   selector:
     matchLabels:
-      {{- include "kubeflow-pipelines.selectorLabels" . | nindent 6 }}
-      component: cloudsql-proxy
+      app: cloudsqlproxy
+      {{- if .Values.installMode.legacyLabels }}
+      application-crd-id: kubeflow-pipelines
+      {{- end }}
+  replicas: 1
   template:
     metadata:
       labels:
-        {{- include "kubeflow-pipelines.selectorLabels" . | nindent 8 }}
-        component: cloudsql-proxy
-      annotations:
-        {{- include "kubeflow-pipelines.annotations" . | nindent 8 }}
+        app: cloudsqlproxy
+        {{- if .Values.installMode.legacyLabels }}
+        application-crd-id: kubeflow-pipelines
+        {{- end }}
     spec:
-      serviceAccountName: {{ include "kubeflow-pipelines.fullname" . }}-cloudsql-proxy
+      serviceAccountName: kubeflow-pipelines-cloudsql-proxy
       containers:
-      - name: cloudsql-proxy
-        image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.0.0
-        args:
-        - "--structured-logs"
-        - "--port=3306"
-        - "{{ .Values.env.gcp.project }}:{{ .Values.env.gcp.cloudsql.region }}:{{ .Values.env.gcp.cloudsql.instanceName }}"
+      - image: gcr.io/cloudsql-docker/gce-proxy:1.25.0
+        name: cloudsqlproxy
+        env:
+        - name: GCP_CLOUDSQL_INSTANCE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: pipeline-install-config
+              key: gcsCloudSqlInstanceName
+        command: ["/cloud_sql_proxy",
+                  "-dir=/cloudsql",
+                  "-instances=$(GCP_CLOUDSQL_INSTANCE_NAME)=tcp:0.0.0.0:3306",
+                  "-use_http_health_check",
+                  "term_timeout=10s"]
+        lifecycle:
+          preStop:
+            exec:
+              command: ['sleep', '10']
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: 8090
+          initialDelaySeconds: 0
+          periodSeconds: 60
+          timeoutSeconds: 30
+          failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 8090
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 1
+        startupProbe:
+          httpGet:
+            path: /startup
+            port: 8090
+          periodSeconds: 1
+          timeoutSeconds: 5
+          failureThreshold: 20
         ports:
         - name: mysql
           containerPort: 3306
-        securityContext:
-          runAsNonRoot: true
-          runAsUser: 65532
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          capabilities:
-            drop:
-            - ALL
-        resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
-          limits:
-            cpu: 200m
-            memory: 256Mi
+        volumeMounts:
+        - mountPath: /cloudsql
+          name: cloudsql
+      volumes:
+      - name: cloudsql
+        emptyDir:
 
 ---
-# GCP Cloud SQL Proxy Service Account
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-cloudsql-proxy
-  namespace: {{ include "kubeflow-pipelines.namespace" . }}
-  labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: cloudsql-proxy
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
-    {{- if .Values.env.gcp.workloadIdentity.enabled }}
-    iam.gke.io/gcp-service-account: cloudsql-proxy@{{ .Values.env.gcp.project }}.iam.gserviceaccount.com
-    {{- end }}
-
----
-# GCP Cloud SQL Proxy Service
+# MySQL Service for Cloud SQL Proxy
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-cloudsql-proxy
+  name: mysql
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  {{- if .Values.installMode.legacyLabels }}
   labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: cloudsql-proxy
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+    application-crd-id: kubeflow-pipelines
+  {{- end }}
 spec:
-  type: ClusterIP
   ports:
-  - name: mysql
-    port: 3306
-    targetPort: 3306
+  - port: 3306
   selector:
-    {{- include "kubeflow-pipelines.selectorLabels" . | nindent 4 }}
-    component: cloudsql-proxy
+    app: cloudsqlproxy
+    {{- if .Values.installMode.legacyLabels }}
+    application-crd-id: kubeflow-pipelines
+    {{- end }}
+
+---
+# MySQL Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-secret
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  {{- if .Values.installMode.legacyLabels }}
+  labels:
+    application-crd-id: kubeflow-pipelines
+  {{- end }}
+stringData:
+  password: ""
+  username: root
+{{- end }}
+
+{{- if .Values.env.gcp.gcs.enabled }}
+---
+# MinIO GCS Gateway ServiceAccount
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubeflow-pipelines-minio-gcs-gateway
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  {{- if .Values.installMode.legacyLabels }}
+  labels:
+    application-crd-id: kubeflow-pipelines
+  {{- end }}
+  {{- if .Values.env.gcp.workloadIdentity.enabled }}
+  annotations:
+    iam.gke.io/gcp-service-account: {{ .Values.env.gcp.workloadIdentity.serviceAccount | quote }}
+  {{- end }}
+
+---
+# MinIO GCS Gateway Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  {{- if .Values.installMode.legacyLabels }}
+  labels:
+    app: minio
+    application-crd-id: kubeflow-pipelines
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: minio
+      {{- if .Values.installMode.legacyLabels }}
+      application-crd-id: kubeflow-pipelines
+      {{- end }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: minio
+        {{- if .Values.installMode.legacyLabels }}
+        application-crd-id: kubeflow-pipelines
+        {{- end }}
+    spec:
+      serviceAccountName: kubeflow-pipelines-minio-gcs-gateway
+      containers:
+      - name: minio
+        image: gcr.io/ml-pipeline/minio:RELEASE.2019-08-14T20-37-41Z-license-compliance
+        args:
+        - gateway
+        - gcs
+        - $(GCP_PROJECT_ID)
+        env:
+        - name: GCP_PROJECT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: pipeline-install-config
+              key: gcsProjectId
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mlpipeline-minio-artifact
+              key: accesskey
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mlpipeline-minio-artifact
+              key: secretkey
+        resources:
+          requests:
+            cpu: 20m
+            memory: 25Mi
+        ports:
+        - containerPort: 9000
+
+---
+# MinIO GCS Gateway Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-service
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  {{- if .Values.installMode.legacyLabels }}
+  labels:
+    application-crd-id: kubeflow-pipelines
+  {{- end }}
+spec:
+  ports:
+  - port: 9000
+    protocol: TCP
+    targetPort: 9000
+  selector:
+    app: minio
+    {{- if .Values.installMode.legacyLabels }}
+    application-crd-id: kubeflow-pipelines
+    {{- end }}
+
+---
+# MinIO Artifact Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mlpipeline-minio-artifact
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  {{- if .Values.installMode.legacyLabels }}
+  labels:
+    application-crd-id: kubeflow-pipelines
+  {{- end }}
+type: Opaque
+data:
+  accesskey: {{ "minio" | b64enc | quote }}
+  secretkey: {{ "minio123" | b64enc | quote }}
 {{- end }}
 {{- end }}

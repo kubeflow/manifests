@@ -2,11 +2,8 @@
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}
+  name: pipeline
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
-  labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: application
   annotations:
     {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
     kubernetes-engine.cloud.google.com/icon: >-
@@ -16,8 +13,7 @@ spec:
   addOwnerRef: true
   selector:
     matchLabels:
-      app.kubernetes.io/component: ml-pipeline
-    app.kubernetes.io/name: kubeflow-pipelines
+      application-crd-id: kubeflow-pipelines
   descriptor:
     version: {{ .Values.global.imageTag | quote }}
     type: Kubeflow Pipelines

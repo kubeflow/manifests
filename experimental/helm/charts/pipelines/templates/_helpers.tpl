@@ -88,7 +88,9 @@ Cache deployer labels
 app: cache-deployer
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
+{{- if or (ne .Values.installMode.type "multi-user") (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
 {{- end }}
