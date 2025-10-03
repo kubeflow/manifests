@@ -50,6 +50,20 @@ READY=$(kubectl get isvc sklearn-iris-private -n ${KF_PROFILE} -o jsonpath='{.st
   exit 1
 }
 
-# TODO: verify that it fails for security without the token.
+UNAUTHORIZED_TOKEN="$(kubectl -n default create token default)"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+  "${BASE_URL}/api/namespaces/${KF_PROFILE}/inferenceservices" \
+  -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}")
+[[ "$HTTP_CODE" == "403" || "$HTTP_CODE" == "401" ]] || {
+  echo "FAILURE: Unauthorized token should return 401/403, got $HTTP_CODE"
+  exit 1
+}
+
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+  "${BASE_URL}/api/namespaces/${KF_PROFILE}/inferenceservices")
+[[ "$HTTP_CODE" == "403" || "$HTTP_CODE" == "401" ]] || {
+  echo "FAILURE: No token should return 401/403, got $HTTP_CODE"
+  exit 1
+}
 
 kubectl delete inferenceservice sklearn-iris-private -n ${KF_PROFILE} || exit 1
