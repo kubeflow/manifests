@@ -132,8 +132,6 @@ kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=
 # Wait for deletion to complete
 if kubectl get inferenceservice isvc-sklearn -n ${NAMESPACE} &>/dev/null; then
   kubectl wait --for=delete inferenceservice/isvc-sklearn -n ${NAMESPACE} --timeout=120s
-else
-  echo "isvc-sklearn does not exist, no need to wait for deletion"
 fi
 
 if cd ${TEST_DIRECTORY}; then
