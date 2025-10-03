@@ -106,6 +106,15 @@ jobs:
         echo "Waiting for Models Web App to sync RBAC permissions..."
         sleep 10
 
+    - name: Debug JWT and Headers
+      run: |
+        echo "=== Decoding the JWT token ==="
+        TOKEN="$(kubectl -n ${KF_PROFILE} create token default-editor)"
+        echo "$TOKEN" | cut -d'.' -f2 | base64 -d 2>/dev/null | jq . || echo "Failed to decode token"
+        echo "=== Testing direct API call with verbose headers ==="
+        curl -v "http://localhost:8080/kserve-endpoints/api/namespaces/${KF_PROFILE}/inferenceservices" \
+          -H "Authorization: Bearer ${TOKEN}" 2>&1 | grep -i "kubeflow-userid" || echo "No kubeflow-userid header found"
+
     - name: Test KServe Models Web Application API
       run: ./tests/kserve_models_web_application_test.sh "${KF_PROFILE}"
 
