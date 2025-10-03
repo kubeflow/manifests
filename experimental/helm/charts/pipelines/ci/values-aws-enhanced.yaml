@@ -13,6 +13,14 @@ installMode:
   multiUser:
     enabled: false
 
+crds:
+  install: false
+
+cacheDeployer:
+  enabled: true
+  serviceAccount:
+    create: false  
+
 # Database Configuration 
 mysql:
   enabled: false
@@ -79,7 +87,7 @@ env:
       enabled: true
       endpoint: "YOUR_RDS_ENDPOINT"
     s3:
-      enabled: true
+      enabled: false  
       bucket: "YOUR_S3_BUCKET_NAME"
       region: "YOUR_AWS_REGION"
 

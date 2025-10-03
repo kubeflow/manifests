@@ -136,6 +136,7 @@ subjects:
   name: {{ include "kubeflow-pipelines.metadataWriter.serviceAccountName" . }}
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
 
+{{- if .Values.thirdParty.argo.enabled }}
 ---
 # Argo ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -152,6 +153,7 @@ subjects:
 - kind: ServiceAccount
   name: argo
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
+{{- end }}
 
 ---
 # Metacontroller ClusterRoleBinding

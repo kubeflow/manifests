@@ -17,6 +17,14 @@ installMode:
 mysql:
   enabled: false
 
+crds:
+  install: false
+
+cacheDeployer:
+  enabled: true
+  serviceAccount:
+    create: false 
+
 postgresql:
   enabled: false
 
@@ -68,13 +76,15 @@ env:
     resourceGroup: "yourResourceGroup"
     storageAccount: "yourstorageaccount"
     sql:
-      enabled: true
+      enabled: false  
       serverName: "[SQLSERVERNAME]"
       database: "mlpipeline"
     blob:
-      enabled: true
+      enabled: true  
       storageAccount: "yourstorageaccount"
       container: "mlpipeline"
+      createMinioGateway: true  
+      createMinioSecret: true  
     managedIdentity:
       enabled: false
 
@@ -186,7 +196,9 @@ ui:
 # Third-party components configuration
 thirdParty:
   minio:
-    enabled: true
+    enabled: false  # Azure uses custom minio-azure-gateway, not the built-in MinIO
+  mysql:
+    enabled: false  # Azure uses external MySQL/Azure SQL
 
 # Enhanced resources for Azure deployment
 persistenceAgent:
