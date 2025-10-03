@@ -102,6 +102,8 @@ application:
 # Metadata (MLMD) Configuration
 metadata:
   enabled: true
+  grpc:
+    resources:
 
 # Environment Configuration
 env:

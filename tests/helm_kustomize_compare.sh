@@ -185,14 +185,14 @@ case "$COMPONENT" in
             ["gcp"]="$CHART_DIR/ci/values-gcp-enhanced.yaml"
             ["azure"]="$CHART_DIR/ci/values-azure-enhanced.yaml"
             ["multi-user"]="$CHART_DIR/ci/values-multi-user-enhanced.yaml"
-            ["generic"]="$CHART_DIR/values.yaml"
+            ["generic"]=""
             ["dev"]="$CHART_DIR/ci/values-dev-enhanced.yaml"
             ["plain"]="$CHART_DIR/ci/values-standalone.yaml"
             ["plain-multi-user"]="$CHART_DIR/ci/values-multi-user.yaml"
             ["platform-agnostic-emissary"]="$CHART_DIR/ci/values-platform-agnostic-enhanced.yaml"
             ["platform-agnostic-multi-user"]="$CHART_DIR/ci/values-platform-agnostic-multi-user-enhanced.yaml"
             ["platform-agnostic-multi-user-emissary"]="$CHART_DIR/ci/values-platform-agnostic-multi-user-enhanced.yaml"
-            ["platform-agnostic-multi-user-legacy"]="$CHART_DIR/ci/values-multi-user.yaml"
+            ["platform-agnostic-multi-user-legacy"]="$CHART_DIR/ci/values-platform-agnostic-multi-user-enhanced.yaml"
             ["platform-agnostic-postgresql"]="$CHART_DIR/ci/values-postgresql.yaml"
         )
         

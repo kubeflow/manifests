@@ -31,7 +31,16 @@ profileController:
     create: true
     name: "profiles-controller-service-account"
     annotations: {}
-  
+  additionalEnv:
+    - name: KFP_VERSION
+      key: appVersion
+    - name: KFP_DEFAULT_PIPELINE_ROOT
+      key: defaultPipelineRoot
+    - name: MINIO_ACCESS_KEY
+      key: accesskey
+    - name: MINIO_SECRET_KEY
+      key: secretkey
+
   # Resources
   resources:
     requests:
@@ -62,22 +71,130 @@ apiServer:
   
   # Additional environment variables for multi-user mode
   additionalEnv:
-    - name: MULTI_USER
-      value: "true"
     - name: KUBEFLOW_USERID_HEADER
       value: "kubeflow-userid"
     - name: KUBEFLOW_USERID_PREFIX
       value: ""
+    - name: PUBLISH_LOGS
+      value: "true"
+    - name: LOG_LEVEL
+      value: "info"
+    - name: PIPELINE_LOG_LEVEL
+      value: "1"
+    - name: AUTO_UPDATE_PIPELINE_DEFAULT_VERSION
+      key: autoUpdatePipelineDefaultVersion
+      configMapName: pipeline-install-config
+    - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: OBJECTSTORECONFIG_SECURE
+      value: "false"
+    - name: OBJECTSTORECONFIG_BUCKETNAME
+      key: bucketName
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_USER
+      key: username
+      secretName: mysql-secret
+    - name: DBCONFIG_PASSWORD
+      key: password
+      secretName: mysql-secret
+    - name: DBCONFIG_DBNAME
+      key: pipelineDb
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_HOST
+      key: dbHost
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_PORT
+      key: dbPort
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_CONMAXLIFETIME
+      key: ConMaxLifeTime
+      configMapName: pipeline-install-config
+    - name: DB_DRIVER_NAME
+      key: dbType
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_MYSQLCONFIG_USER
+      key: username
+      secretName: mysql-secret
+    - name: DBCONFIG_MYSQLCONFIG_PASSWORD
+      key: password
+      secretName: mysql-secret
+    - name: DBCONFIG_MYSQLCONFIG_DBNAME
+      key: pipelineDb
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_MYSQLCONFIG_HOST
+      key: mysqlHost
+      configMapName: pipeline-install-config
+    - name: DBCONFIG_MYSQLCONFIG_PORT
+      key: mysqlPort
+      configMapName: pipeline-install-config
+    - name: OBJECTSTORECONFIG_ACCESSKEY
+      key: accesskey
+      secretName: mlpipeline-minio-artifact
+    - name: OBJECTSTORECONFIG_SECRETACCESSKEY
+      key: secretkey
+      secretName: mlpipeline-minio-artifact
+    - name: V2_DRIVER_IMAGE
+      value: "ghcr.io/kubeflow/kfp-driver:2.14.3"
+    - name: V2_LAUNCHER_IMAGE
+      value: "ghcr.io/kubeflow/kfp-launcher:2.14.3"
+      
 
 # Enhanced UI configuration for multi-user
 ui:
   additionalEnv:
-    - name: MULTI_USER
+    - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
+      value: "/etc/config/viewer-pod-template.json"
+    - name: DEPLOYMENT
+      value: "KUBEFLOW"
+    - name: ARTIFACTS_SERVICE_PROXY_NAME
+      value: "ml-pipeline-ui-artifact"
+    - name: ARTIFACTS_SERVICE_PROXY_PORT
+      value: "80"
+    - name: ARTIFACTS_SERVICE_PROXY_ENABLED
+      value: "true"
+    - name: ENABLE_AUTHZ
       value: "true"
     - name: KUBEFLOW_USERID_HEADER
       value: "kubeflow-userid"
     - name: KUBEFLOW_USERID_PREFIX
+      key: null
+    - name: MINIO_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: MINIO_ACCESS_KEY
+      key: accesskey
+    - name: MINIO_SECRET_KEY
+      key: secretkey
+    - name: ALLOW_CUSTOM_VISUALIZATIONS
+      value: "true"
+    - name: FRONTEND_SERVER_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: ARGO_ARCHIVE_LOGS
+      value: "true"
+    - name: DISABLE_GKE_METADATA
+      value: "true"
+
+persistenceAgent:
+  resources:
+    requests:
+      cpu: 120m
+      memory: 500Mi
+  additionalEnv:
+    - name: NAMESPACE
       value: ""
+
+scheduledWorkflow:
+  additionalEnv:
+    - name: NAMESPACE
+      value: ''
+    - name: LOG_LEVEL
+      value: "info"
+      valueFrom: null
 
 # Enhanced RBAC for multi-user
 rbac:
@@ -119,7 +236,7 @@ serviceAccounts:
 thirdParty:
   # Argo Workflows configuration
   argo:
-    enabled: true
+    enabled: false
   
   # Database configuration 
   mysql:
@@ -157,12 +274,54 @@ metadata:
       tag: "1.14.0"
       pullPolicy: IfNotPresent
     resources:
-      requests:
-        cpu: 100m
-        memory: 100Mi
 
 postgresql:
   enabled: false
+
+cache:
+  # Cache deployer disabled in multi-user mode
+  enabled: true
+  server:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 1Gi
+      limits:
+        cpu: 1
+        memory: 2Gi
+    additionalEnv:
+      - name: NAMESPACE_TO_WATCH
+        key: null
+      - name: DEFAULT_CACHE_STALENESS
+        key: DEFAULT_CACHE_STALENESS
+      - name: MAXIMUM_CACHE_STALENESS
+        key: MAXIMUM_CACHE_STALENESS
+      - name: CACHE_IMAGE
+        key: cacheImage
+      - name: CACHE_NODE_RESTRICTIONS
+        key: cacheNodeRestrictions
+      - name: DBCONFIG_DRIVER
+        value: "mysql"
+      - name: DBCONFIG_DB_NAME
+        key: cacheDb
+      - name: DBCONFIG_HOST_NAME
+        key: dbHost
+      - name: DBCONFIG_PORT
+        key: dbPort
+      - name: DBCONFIG_USER
+        key: username
+      - name: DBCONFIG_PASSWORD
+        key: password
+
+viewerCrd:
+  env:
+    maxNumViewers: ""
+  additionalEnv:
+    - name: NAMESPACE
+      value: ""
+    - name: MAX_NUM_VIEWERS
+      value: 50
+
 
 # Istio configuration for multi-user 
 networking:

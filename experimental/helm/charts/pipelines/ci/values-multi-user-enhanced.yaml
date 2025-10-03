@@ -82,6 +82,13 @@ argo:
   enabled: false
   # Multi-user uses built-in minimal Argo instead of subchart
 
+# Third Party Components
+thirdParty:
+  argo:
+    enabled: false
+  metacontroller:
+    enabled: false
+
 # Environment Configuration
 env:
   platform: platform-agnostic
@@ -294,8 +301,8 @@ cache:
         key: password
 
 cacheDeployer:
-  # Typically disabled in multi-user mode
-  enabled: false
+  # Cache deployer is included in base multi-user install
+  enabled: true
 
 visualization:
   resources:
