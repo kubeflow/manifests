@@ -50,6 +50,6 @@ READY=$(kubectl get isvc sklearn-iris-private -n ${KF_PROFILE} -o jsonpath='{.st
   exit 1
 }
 
-TODO verify that it fails for security without the token.
+# TODO: verify that it fails for security without the token.
 
 kubectl delete inferenceservice sklearn-iris-private -n ${KF_PROFILE} || exit 1
