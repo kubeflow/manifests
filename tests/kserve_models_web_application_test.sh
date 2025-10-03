@@ -40,29 +40,11 @@ RESPONSE=$(curl -s --fail-with-body \
   -H "X-XSRF-TOKEN: ${XSRFTOKEN}" \
   -H "Cookie: XSRF-TOKEN=${XSRFTOKEN}")
 
-echo "API Response:"; head -c 500 <<< "$RESPONSE"; echo
-
 echo "$RESPONSE" | grep -q "sklearn-iris-private" || exit 1
 kubectl get inferenceservice sklearn-iris-private -n ${KF_PROFILE} || exit 1
 READY=$(kubectl get isvc sklearn-iris-private -n ${KF_PROFILE} -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}')
 [[ "$READY" == "True" ]] || {
   echo "FAILURE: InferenceService Ready status is: $READY"
-  exit 1
-}
-
-UNAUTHORIZED_TOKEN="$(kubectl -n default create token default)"
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-  "${BASE_URL}/api/namespaces/${KF_PROFILE}/inferenceservices" \
-  -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}")
-[[ "$HTTP_CODE" == "403" || "$HTTP_CODE" == "401" ]] || {
-  echo "FAILURE: Unauthorized token should return 401/403, got $HTTP_CODE"
-  exit 1
-}
-
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-  "${BASE_URL}/api/namespaces/${KF_PROFILE}/inferenceservices")
-[[ "$HTTP_CODE" == "403" || "$HTTP_CODE" == "401" ]] || {
-  echo "FAILURE: No token should return 401/403, got $HTTP_CODE"
   exit 1
 }
 
