@@ -53,6 +53,6 @@ kubectl delete inferenceservice sklearn-iris -n ${KF_PROFILE} || exit 1
 # Test unauthorized access
 TOKEN="$(kubectl -n default create token default)"
 BASE_URL="localhost:8080/kserve-endpoints"
-HTTP_CODE=$(curl -s -w "%{http_code}" "${BASE_URL}/api/namespaces/${KF_PROFILE}/inferenceservices" -H "Authorization: Bearer ${TOKEN}")
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "${BASE_URL}/api/namespaces/${KF_PROFILE}/inferenceservices" -H "Authorization: Bearer ${TOKEN}")
 [[ "$HTTP_CODE" == "403" || "$HTTP_CODE" == "401" ]] || { echo "FAILURE: Expected 401/403, got $HTTP_CODE"; exit 1; }
 echo "Test succeeded. Token from unauthorized ServiceAccount cannot list InferenceServices in $KF_PROFILE namespace."
