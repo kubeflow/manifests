@@ -16,6 +16,7 @@ configMapGenerator:
 - behavior: replace
   literals:
   - USERID_HEADER=kubeflow-userid
+  - USERID_PREFIX=""
   - APP_PREFIX=/kserve-endpoints
   - GRAFANA_PREFIX=/grafana
   - GRAFANA_CPU_MEMORY_DB=db/knative-serving-revision-cpu-and-memory-usage

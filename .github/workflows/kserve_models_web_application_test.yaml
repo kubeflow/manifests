@@ -1,0 +1,73 @@
+name: Test KServe Models Web Application
+on:
+  pull_request:
+    paths:
+    - tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+    - .github/workflows/kserve_models_web_application_test.yaml
+    - applications/kserve/**
+    - tests/kserve*
+    - tests/istio*
+    - common/istio*/**
+    - common/knative/**
+    - common/oauth2-proxy/**
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  KF_PROFILE: kubeflow-user-example-com
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install KinD, Create KinD cluster and Install kustomize
+      run: ./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+
+    - name: Install kubectl
+      run: ./tests/kubectl_install.sh
+
+    - name: Create Kubeflow Namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+    - name: Install Certificate Manager
+      run: ./tests/cert_manager_install.sh
+
+    - name: Install Istio CNI
+      run: ./tests/istio-cni_install.sh
+
+    - name: Install OAuth2 Proxy
+      run: ./tests/oauth2-proxy_install.sh
+
+    - name: Install Kubeflow Istio Resources
+      run: kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
+
+    - name: Install Multi-Tenancy
+      run: ./tests/multi_tenancy_install.sh
+
+    - name: Install Knative
+      run: ./tests/knative_install.sh
+
+    - name: Install KServe
+      run: ./tests/kserve_install.sh
+
+    - name: Create KF Profile
+      run: ./tests/kubeflow_profile_install.sh
+
+    - name: Wait for All Pods to be Ready
+      run: |
+        kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=300s --field-selector=status.phase!=Succeeded
+        sleep 10
+        kubectl get deployment kserve-models-web-app -n kubeflow
+        kubectl wait --for=condition=Available deployment/kserve-models-web-app -n kubeflow --timeout=60s
+
+    - name: Port-forward the istio-ingress gateway
+      run: ./tests/port_forward_gateway.sh
+
+    - name: Test KServe Models Web Application API
+      run: ./tests/kserve_models_web_application_test.sh "${KF_PROFILE}"
