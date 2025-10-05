@@ -1,7 +1,7 @@
 apiVersion: "serving.kserve.io/v1beta1"
 kind: "InferenceService"
 metadata:
-  name: "sklearn-iris-private"
+  name: "sklearn-iris"
   namespace: kubeflow-user-example-com
 spec:
   predictor:
