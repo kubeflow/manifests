@@ -10,7 +10,7 @@ cat <<EOF | kubectl apply -f -
 apiVersion: "serving.kserve.io/v1beta1"
 kind: "InferenceService"
 metadata:
-  name: "sklearn-iris-private"
+  name: "sklearn-iris"
   namespace: ${KF_PROFILE}
 spec:
   predictor:
@@ -25,8 +25,8 @@ spec:
           memory: "256Mi"
 EOF
 
-kubectl wait --for=condition=Ready inferenceservice/sklearn-iris-private -n ${KF_PROFILE} --timeout=120s
-kubectl get inferenceservice sklearn-iris-private -n ${KF_PROFILE}
+kubectl wait --for=condition=Ready inferenceservice/sklearn-iris -n ${KF_PROFILE} --timeout=120s
+kubectl get inferenceservice sklearn-iris -n ${KF_PROFILE}
 
 # Get XSRF token for API calls
 curl -s "http://${BASE_URL}/" \
@@ -40,15 +40,15 @@ RESPONSE=$(curl -s --fail-with-body \
   -H "X-XSRF-TOKEN: ${XSRFTOKEN}" \
   -H "Cookie: XSRF-TOKEN=${XSRFTOKEN}")
 
-echo "$RESPONSE" | grep -q "sklearn-iris-private" || exit 1
-kubectl get inferenceservice sklearn-iris-private -n ${KF_PROFILE} || exit 1
-READY=$(kubectl get isvc sklearn-iris-private -n ${KF_PROFILE} -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}')
+echo "$RESPONSE" | grep -q "sklearn-iris" || exit 1
+kubectl get inferenceservice sklearn-iris -n ${KF_PROFILE} || exit 1
+READY=$(kubectl get isvc sklearn-iris -n ${KF_PROFILE} -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}')
 [[ "$READY" == "True" ]] || {
   echo "FAILURE: InferenceService Ready status is: $READY"
   exit 1
 }
 
-kubectl delete inferenceservice sklearn-iris-private -n ${KF_PROFILE} || exit 1
+kubectl delete inferenceservice sklearn-iris -n ${KF_PROFILE} || exit 1
 
 # Test unauthorized access
 TOKEN="$(kubectl -n default create token default)"
