@@ -3,10 +3,9 @@ on:
   pull_request:
     paths:
     - tests/install_KinD_create_KinD_cluster_install_kustomize.sh
-    - .github/workflows/kserve_models_web_app_test.yaml
-    - applications/kserve/models-web-app/**
-    - tests/kserve_models_web_app_test.sh
-    - tests/kserve/sklearn-iris-private.yaml
+    - .github/workflows/kserve_models_web_application_test.yaml
+    - applications/kserve/**
+    - tests/kserve*
     - tests/istio*
     - common/istio*/**
     - common/knative/**
