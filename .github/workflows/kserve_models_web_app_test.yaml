@@ -64,9 +64,6 @@ jobs:
       run: |
         kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=300s --field-selector=status.phase!=Succeeded
         sleep 10
-
-    - name: Verify KServe Models Web App Deployment
-      run: |
         kubectl get deployment kserve-models-web-app -n kubeflow
         kubectl wait --for=condition=Available deployment/kserve-models-web-app -n kubeflow --timeout=60s
 
