@@ -187,3 +187,33 @@ kustomize build common/oauth2-proxy/overlays/m2m-dex-only/ | kubectl apply -f -
 ## Final Checks
 - **Review Logs**: Make sure to tail the logs of the Dex, OAuth2 Proxy, and Istio ingress gateway deployments to verify that the configurations are working as expected.
 - **Test Authentication**: Try accessing your Kubeflow endpoint (ex. https://kubeflow.example.com) and verify that you’re redirected to Keycloak for authentication and that after login you are correctly returned to Kubeflow.
+
+---
+
+# Known issues
+
+- Microsoft Azure deployment with AD groups authentication: having a large number of AD groups assigned to a user may lead to Dex authentication issues with HTTP 4xx/5xx responses. To fix this - make the authentication more precise with the whitelisting of the groups. [Documentation reference](https://dexidp.io/docs/connectors/microsoft/#:~:text=%2D%20email-,Groups,-When%20the%20groups)
+
+Dex configMap example:
+
+```yaml
+"connectors" = [
+  {
+    "type" = "microsoft"
+    "id"   = "microsoft"
+    "name" = "Microsoft"
+    "config" = {
+      "clientID"             = "$${DEX_MICROSOFT_CLIENT_ID}"
+      "clientSecret"         = "$${DEX_MICROSOFT_CLIENT_SECRET}"
+      "redirectURI"          = "https://kubeflow.example.com/dex/callback"
+      "tenant"               = "$${DEX_MICROSOFT_TENANT_ID}"
+
+      "emailToLowercase"     = true (optional but should be always used)
+      "groups"               = "<AD groups>"
+      "onlySecurityGroups"   = true (optional, AD groups may have different assignments)
+      "useGroupsAsWhitelist" = true 
+    }
+  }
+]
+```
+---
