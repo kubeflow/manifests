@@ -81,7 +81,7 @@ Here is an example of patching oauth2-proxy to connect directly to Azure IDP and
 This is enterprise integration so feel free to hire consultants or pay for commercial distributions if you need more help.
 For example Azure returns rather large headers compared to other IDPs, so maybe you need to annotate the nginx-ingress to support that.
 
-```
+```yaml
 # based on https://github.com/kubeflow/manifests/blob/master/common/oauth2-proxy/base/oauth2_proxy.cfg
 # and https://oauth2-proxy.github.io/oauth2-proxy/configuration/providers/azure/
 apiVersion: v1
@@ -133,7 +133,7 @@ data:
 
 3. In the istio-system namespace is a RequestAuthentication resource. You need to change its issuer to your own IdP, or even better create an additional one.
 
-```
+```yaml
 apiVersion: security.istio.io/v1beta1
 kind: RequestAuthentication
 metadata:
@@ -181,7 +181,7 @@ You can also add more RequestAuthentication to support other issuers as for exam
 This feature is useful when you need to integrate Kubeflow with your current CI/CD platform (GitHub Actions, Jenkins) via machine-to-machine authentication.
 The following is an example for obtaining and using a JWT token From your IDP with Python, but you can also just take a look at our CI/CD test that uses simple Kubernetes serviceaccount tokens to access KFP, Jupyterlabs etc. from GitHub Actions.
 
-```
+```yaml
 import requests
 token_url = "https://your-idp.com/oauth/token"
 client_id = "YOUR_CLIENT_ID"
@@ -204,20 +204,25 @@ response = requests.post(token_url, headers=headers, data=data)
 TOKEN = response.json()['access_token']
 ```
 
-```
+```python
 import kfp
+
+
 kubeflow_host="https://your_host"
 pipeline_host = kubeflow_host + "/pipeline" 
+
 client = kfp.Client(host=pipeline_host, existing_token=TOKEN)
+
 print(client.list_runs(namespace="your-profile-name"))
 ```
+---
 
 ## Known Issues:
 
 Some openidc providers such as Azure provide too large JWTs / Cookies that exceed the limit of most GRPC and gunicorn web application deployments in Kubeflow.
 If removing the groups claim in oauth2-proxy is not enough then you can add an envrionment variable to all web applications
 
-```
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -234,7 +239,7 @@ spec:
 ```
 
 and modify the KFP GRPC server via
-```
+```yaml
 - path: patches/metadata-grpc-virtualservice-patch.yaml
   target:
     kind: VirtualService
@@ -252,6 +257,7 @@ and modify the KFP GRPC server via
 ```
 
 to fix `received initial metadata size exceeds limit`.
+---
 
 ## Kubeflow Notebooks User and M2M Authentication and Authorization
 
