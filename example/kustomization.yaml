@@ -43,12 +43,11 @@ resources:
 # NOTE: For Google Kubernetes Engine (GKE), use:
 # - ../common/istio/istio-install/overlays/gke
 # NOTE: For Istio Ambient Mode (sidecar-free), use one of:
-# - ../common/istio/istio-install/overlays/ambient                    # Standard Kubernetes
-# - ../common/istio/istio-install/overlays/ambient-gke               # GKE (uses components: ambient-mode + gke-ambient)
-# - ../common/istio/istio-install/overlays/ambient-oauth2-proxy       # With OAuth2-Proxy
+# - ../common/istio/istio-install/overlays/ambient-oauth2-proxy
+# - ../common/istio/istio-install/overlays/ambient-oauth2-proxy-gke
 # GKE mounts `/opt/cni/bin` as read-only. The GKE overlays use `/home/kubernetes/bin`.
 # For details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites)
-# oauth2-proxy
+# Oauth2-proxy
 # NOTE: only uncomment ONE of the following overlays, depending on your cluster type
 - ../common/oauth2-proxy/overlays/m2m-dex-only       # for all clusters
 # - ../common/oauth2-proxy/overlays/m2m-dex-and-kind  # for KIND clusters (allows K8S JWTs for gateway auth)
