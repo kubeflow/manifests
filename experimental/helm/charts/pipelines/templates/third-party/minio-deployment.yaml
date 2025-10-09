@@ -1,4 +1,4 @@
-{{- if .Values.thirdParty.minio.enabled }}
+{{- if and .Values.thirdParty.minio.enabled (ne .Values.env.platform "azure") }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

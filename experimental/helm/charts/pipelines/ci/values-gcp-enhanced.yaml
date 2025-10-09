@@ -45,7 +45,7 @@ minio:
 objectStore:
   provider: gcs
   secure: false
-  bucketName: "mlpipeline"
+  bucketName: "yourGcsBucketName"
   gcs:
     projectId: "yourGcsProjectId"
     serviceAccount: ""

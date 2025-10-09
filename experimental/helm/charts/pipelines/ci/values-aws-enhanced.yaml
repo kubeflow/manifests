@@ -35,7 +35,7 @@ externalDatabase:
   database: mlpipeline
   username: "YOUR_RDS_USERNAME"
   password: "YOUR_RDS_PASSWORD"
-  existingSecret: "mysql-secret"
+  existingSecret: ""
 
 # Object Storage Configuration 
 minio:

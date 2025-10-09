@@ -77,9 +77,50 @@ pipeline:
     maximumStaleness: ""
     defaultStaleness: ""
 
-# Argo Workflows Configuration 
+# Argo Workflows Configuration - Enable for CRDs only
 argo:
-  enabled: false
+  enabled: true
+  crds:
+    install: true
+    keep: true
+  # Disable aggregate roles
+  createAggregateRoles: false
+  controller:
+    # Set replicas to 0 to prevent deployment
+    replicas: 0
+    # Disable service account
+    serviceAccount:
+      create: false
+    # Disable controller RBAC
+    rbac:
+      create: false
+    # Disable controller ConfigMap
+    configMap:
+      create: false
+    # Disable cluster workflow templates
+    clusterWorkflowTemplates:
+      enabled: false
+  server:
+    # Disable server completely
+    enabled: false
+    # Set replicas to 0 to prevent deployment
+    replicas: 0
+    # Disable service account
+    serviceAccount:
+      create: false
+    # Disable server RBAC
+    rbac:
+      create: false
+    # Disable cluster workflow templates for server
+    clusterWorkflowTemplates:
+      enabled: false
+  executor:
+    enabled: false
+  workflow:
+    serviceAccount:
+      create: false
+    rbac:
+      create: false
 
 # Built-in third-party components
 thirdParty:
@@ -317,7 +358,7 @@ profileController:
     type: ClusterIP
     port: 80
   
-  disableIstioSidecar: "true"
+  disableIstioSidecar: "false"
   
   
   securityContext:

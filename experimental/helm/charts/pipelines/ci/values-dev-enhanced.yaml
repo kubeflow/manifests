@@ -5,6 +5,7 @@ global:
   namespace: kubeflow
   imageRegistry: ghcr.io/kubeflow
   imageTag: "master"
+  version: "2.14.3"
   imagePullPolicy: IfNotPresent
 
 # Installation mode
@@ -14,15 +15,22 @@ installMode:
     enabled: false
 
 crds:
-  install: true
+  install: false
   application: true  
 
 # Cache deployer for generic mode
 cacheDeployer:
   enabled: true
   serviceAccount:
-    create: true
-
+    create: false
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
 # Database Configuration 
 mysql:
   enabled: false
@@ -98,7 +106,37 @@ pipeline:
 
 # Argo Workflows Configuration - Minimal for dev
 argo:
-  enabled: false
+  enabled: true
+  crds:
+    install: true
+    keep: true
+  createAggregateRoles: false
+  controller:
+    replicas: 0
+    serviceAccount:
+      create: false
+    rbac:
+      create: false
+    configMap:
+      create: false
+    clusterWorkflowTemplates:
+      enabled: false
+  server:
+    enabled: false
+    replicas: 0
+    serviceAccount:
+      create: false
+    rbac:
+      create: false
+    clusterWorkflowTemplates:
+      enabled: false
+  executor:
+    enabled: false
+  workflow:
+    serviceAccount:
+      create: false
+    rbac:
+      create: false
 
 # Application Configuration
 application:
@@ -277,15 +315,6 @@ cache:
           fieldRef:
             fieldPath: metadata.namespace
 
-cacheDeployer:
-  replicas: 1
-  resources:
-    requests:
-      cpu: 50m
-      memory: 64Mi
-    limits:
-      cpu: 100m
-      memory: 256Mi
 visualization:
   replicas: 1
   resources:

@@ -38,7 +38,7 @@ metadata:
     eks.amazonaws.com/role-arn: {{ .Values.env.aws.iam.apiServerRoleArn | quote }}
 {{- end }}
 
-{{- if .Values.env.aws.rds.enabled }}
+{{- if and .Values.env.aws.rds.enabled .Values.env.aws.rds.createSecret }}
 ---
 # AWS RDS Configuration Secret
 apiVersion: v1

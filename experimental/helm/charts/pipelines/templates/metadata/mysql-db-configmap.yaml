@@ -1,0 +1,14 @@
+{{- if and .Values.metadata.enabled .Values.thirdParty.mysqlMetadata.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: metadata-db-parameters
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+data:
+  MYSQL_DATABASE: {{ .Values.thirdParty.mysqlMetadata.database | default "metadb" }}
+  MYSQL_PORT: "3306"
+  MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+{{- end }}
+

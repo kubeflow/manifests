@@ -1,0 +1,13 @@
+{{- if and .Values.metadata.enabled .Values.thirdParty.postgresql.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: metadata-postgres-db-parameters
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+data:
+  POSTGRES_PORT: "5432"
+  POSTGRES_DBNAME: "mlmdpostgres"
+{{- end }}
+

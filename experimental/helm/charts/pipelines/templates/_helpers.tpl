@@ -36,7 +36,7 @@ Common labels
 {{- define "kubeflow-pipelines.labels" -}}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if or (ne .Values.installMode.type "multi-user") (.Values.installMode.legacyLabels) }}
+{{- if or (and (ne .Values.installMode.type "multi-user") (ne .Values.installMode.includeApplicationCrdId false)) (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- with .Values.commonLabels }}
@@ -50,7 +50,7 @@ Authorization Policy labels - includes application-crd-id for legacy multi-user 
 {{- define "kubeflow-pipelines.authorizationPolicyLabels" -}}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if or (ne .Values.installMode.type "multi-user") (.Values.installMode.legacyLabels) }}
+{{- if or (and (ne .Values.installMode.type "multi-user") (ne .Values.installMode.includeApplicationCrdId false)) (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- with .Values.commonLabels }}
@@ -73,7 +73,7 @@ Cache server labels
 app: cache-server
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if or (ne .Values.installMode.type "multi-user") (.Values.installMode.legacyLabels) }}
+{{- if or (and (ne .Values.installMode.type "multi-user") (ne .Values.installMode.includeApplicationCrdId false)) (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- with .Values.commonLabels }}
@@ -88,7 +88,7 @@ Cache deployer labels
 app: cache-deployer
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if or (ne .Values.installMode.type "multi-user") (.Values.installMode.legacyLabels) }}
+{{- if or (and (ne .Values.installMode.type "multi-user") (ne .Values.installMode.includeApplicationCrdId false)) (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- with .Values.commonLabels }}
@@ -103,7 +103,7 @@ ML Pipeline specific labels - matching original manifests
 app: ml-pipeline
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if or (ne .Values.installMode.type "multi-user") (.Values.installMode.legacyLabels) }}
+{{- if or (and (ne .Values.installMode.type "multi-user") (ne .Values.installMode.includeApplicationCrdId false)) (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- with .Values.commonLabels }}
@@ -118,7 +118,7 @@ ML Pipeline UI labels
 app: ml-pipeline-ui
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if or (ne .Values.installMode.type "multi-user") (.Values.installMode.legacyLabels) }}
+{{- if or (and (ne .Values.installMode.type "multi-user") (ne .Values.installMode.includeApplicationCrdId false)) (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- with .Values.commonLabels }}
@@ -138,7 +138,9 @@ app.kubernetes.io/name: kubeflow-pipelines
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- else }}
+{{- if ne .Values.installMode.includeApplicationCrdId false }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 {{- end }}
 
@@ -154,7 +156,9 @@ app.kubernetes.io/name: kubeflow-pipelines
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- else }}
+{{- if ne .Values.installMode.includeApplicationCrdId false }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 {{- end }}
 
@@ -170,7 +174,9 @@ app.kubernetes.io/name: kubeflow-pipelines
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- else }}
+{{- if ne .Values.installMode.includeApplicationCrdId false }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 {{- end }}
 
@@ -186,8 +192,15 @@ app: ml-pipeline-viewer-crd
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- else }}
-{{- include "kubeflow-pipelines.labels" . }}
 app: ml-pipeline-viewer-crd
+app.kubernetes.io/component: ml-pipeline
+app.kubernetes.io/name: kubeflow-pipelines
+{{- if ne .Values.installMode.includeApplicationCrdId false }}
+application-crd-id: kubeflow-pipelines
+{{- end }}
+{{- with .Values.commonLabels }}
+{{ toYaml . }}
+{{- end }}
 {{- end }}
 {{- end }}
 
@@ -204,7 +217,9 @@ application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- else }}
 app: ml-pipeline-viewer-crd
+{{- if ne .Values.installMode.includeApplicationCrdId false }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 {{- end }}
 
@@ -215,7 +230,7 @@ Visualization server labels
 app: ml-pipeline-visualizationserver
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if or (ne .Values.installMode.type "multi-user") (.Values.installMode.legacyLabels) }}
+{{- if or (and (ne .Values.installMode.type "multi-user") (ne .Values.installMode.includeApplicationCrdId false)) (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
 {{- end}}
 {{- with .Values.commonLabels }}
@@ -236,7 +251,9 @@ application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- else }}
 app: ml-pipeline-visualizationserver
+{{- if ne .Values.installMode.includeApplicationCrdId false }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 {{- end }}
 
@@ -284,7 +301,9 @@ app.kubernetes.io/name: kubeflow-pipelines
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- else }}
+{{- if ne .Values.installMode.includeApplicationCrdId false }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 {{- end }}
 
@@ -300,7 +319,9 @@ app.kubernetes.io/name: kubeflow-pipelines
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- else }}
+{{- if ne .Values.installMode.includeApplicationCrdId false }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 {{- end }}
 
@@ -316,7 +337,9 @@ app.kubernetes.io/name: kubeflow-pipelines
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- else }}
+{{- if ne .Values.installMode.includeApplicationCrdId false }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 {{- end }}
 
@@ -332,7 +355,9 @@ app.kubernetes.io/name: kubeflow-pipelines
 application-crd-id: kubeflow-pipelines
 {{- end }}
 {{- else }}
+{{- if ne .Values.installMode.includeApplicationCrdId false }}
 application-crd-id: kubeflow-pipelines
+{{- end }}
 {{- end }}
 {{- end }}
 
@@ -462,8 +487,8 @@ Database configuration helpers
 {{- define "kubeflow-pipelines.database.host" -}}
 {{- if .Values.mysql.enabled -}}
 mysql
-{{- else if .Values.postgresql.enabled -}}
-postgresql
+{{- else if .Values.thirdParty.postgresql.enabled -}}
+postgres
 {{- else -}}
 {{- .Values.externalDatabase.host | default "mysql" }}
 {{- end -}}
@@ -550,7 +575,7 @@ storage.googleapis.com
 {{- else if eq .Values.objectStore.provider "s3" -}}
 {{- .Values.objectStore.bucketName | default .Values.objectStore.s3.bucket }}
 {{- else if eq .Values.objectStore.provider "gcs" -}}
-{{- .Values.objectStore.gcs.bucket }}
+{{- .Values.objectStore.bucketName | default .Values.objectStore.gcs.bucket | default "mlpipeline" }}
 {{- else if eq .Values.objectStore.provider "azure" -}}
 {{- .Values.objectStore.azure.container }}
 {{- else -}}

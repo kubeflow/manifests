@@ -15,6 +15,7 @@ rules:
   - create
   - get
   - update
+{{- if not .Values.installMode.multiUser.enabled }}
 - apiGroups:
   - ""
   resources:
@@ -86,12 +87,14 @@ rules:
   verbs:
   - get
   - list
+{{- end }}
 - apiGroups:
   - ""
   resources:
   - secrets
   verbs:
   - get
+{{- if not .Values.installMode.multiUser.enabled }}
 - apiGroups:
   - argoproj.io
   resources:
@@ -119,4 +122,5 @@ rules:
   - create
   - get
   - delete
+{{- end }}
 {{- end }}

@@ -93,10 +93,6 @@ networking:
   istio:
     enabled: false
 
-# Disable CRDs for platform-agnostic scenario
-crds:
-  install: false
-
 # Disable webhooks for platform-agnostic scenario
 webhooks:
   enabled: false

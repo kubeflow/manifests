@@ -185,14 +185,14 @@ case "$COMPONENT" in
             ["gcp"]="$CHART_DIR/ci/values-gcp-enhanced.yaml"
             ["azure"]="$CHART_DIR/ci/values-azure-enhanced.yaml"
             ["multi-user"]="$CHART_DIR/ci/values-multi-user-enhanced.yaml"
-            ["generic"]=""
+            ["generic"]="$CHART_DIR/ci/values-generic.yaml"
             ["dev"]="$CHART_DIR/ci/values-dev-enhanced.yaml"
             ["plain"]="$CHART_DIR/ci/values-standalone.yaml"
             ["plain-multi-user"]="$CHART_DIR/ci/values-multi-user.yaml"
             ["platform-agnostic-emissary"]="$CHART_DIR/ci/values-platform-agnostic-enhanced.yaml"
             ["platform-agnostic-multi-user"]="$CHART_DIR/ci/values-platform-agnostic-multi-user-enhanced.yaml"
             ["platform-agnostic-multi-user-emissary"]="$CHART_DIR/ci/values-platform-agnostic-multi-user-enhanced.yaml"
-            ["platform-agnostic-multi-user-legacy"]="$CHART_DIR/ci/values-platform-agnostic-multi-user-enhanced.yaml"
+            ["platform-agnostic-multi-user-legacy"]="$CHART_DIR/ci/values-platform-agnostic-multi-user-legacy.yaml"
             ["platform-agnostic-postgresql"]="$CHART_DIR/ci/values-postgresql.yaml"
         )
         
@@ -273,7 +273,7 @@ if [ ! -d "$CHART_DIR" ]; then
     exit 1
 fi
 
-if [[ "$COMPONENT" != "kserve-models-web-app" ]] && [[ "$COMPONENT" != "pipeline" || "$SCENARIO" != "generic" ]] && [ ! -f "$HELM_VALUES_ARG" ]; then
+if [[ "$COMPONENT" != "kserve-models-web-app" ]] && [ ! -f "$HELM_VALUES_ARG" ]; then
     echo "ERROR: Helm values file does not exist: $HELM_VALUES_ARG"
     exit 1
 fi
@@ -306,16 +306,10 @@ else
             --include-crds \
             --values "$HELM_VALUES_ARG" > "$HELM_OUTPUT"
     elif [[ "$COMPONENT" == "pipelines" ]]; then
-        if [[ "$SCENARIO" == "generic" ]]; then
-            helm template pipeline . \
-                --namespace "$NAMESPACE" \
-                --include-crds > "$HELM_OUTPUT"
-        else
-            helm template pipeline . \
-                --namespace "$NAMESPACE" \
-                --include-crds \
-                --values "$HELM_VALUES_ARG" > "$HELM_OUTPUT"
-        fi
+        helm template pipeline . \
+            --namespace "$NAMESPACE" \
+            --include-crds \
+            --values "$HELM_VALUES_ARG" > "$HELM_OUTPUT"
     else
         helm template model-registry . \
             --namespace "$NAMESPACE" \
