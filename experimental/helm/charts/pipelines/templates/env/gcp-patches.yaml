@@ -249,7 +249,9 @@ spec:
     {{- if .Values.installMode.legacyLabels }}
     application-crd-id: kubeflow-pipelines
     {{- end }}
+{{- end }}
 
+{{- if and .Values.env.gcp.gcs.enabled (not .Values.thirdParty.minio.enabled) }}
 ---
 # MinIO Artifact Secret
 apiVersion: v1
@@ -261,7 +263,9 @@ metadata:
   labels:
     application-crd-id: kubeflow-pipelines
   {{- end }}
+{{- if ne .Values.env.platform "platform-agnostic" }}
 type: Opaque
+{{- end }}
 data:
   accesskey: {{ "minio" | b64enc | quote }}
   secretkey: {{ "minio123" | b64enc | quote }}

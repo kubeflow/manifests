@@ -6,13 +6,10 @@ metadata:
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: profile-controller
+    app: kubeflow-pipelines-profile-controller
   annotations:
     {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
 data:
-  CONTROLLER_PORT: "8080"
-  VISUALIZATION_SERVER_IMAGE: "{{ .Values.global.imageRegistry }}/{{ .Values.visualization.image.repository }}"
-  FRONTEND_IMAGE: "{{ .Values.global.imageRegistry }}/{{ .Values.ui.image.repository }}"
   DISABLE_ISTIO_SIDECAR: {{ .Values.profileController.disableIstioSidecar | quote }}
 
 ---
@@ -23,7 +20,7 @@ metadata:
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: profile-controller
+    app: kubeflow-pipelines-profile-controller
   annotations:
     {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
 data:

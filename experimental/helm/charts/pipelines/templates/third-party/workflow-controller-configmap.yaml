@@ -1,11 +1,34 @@
 {{- if .Values.thirdParty.argo.enabled }}
 apiVersion: v1
 data:
+{{- if eq .Values.env.platform "aws" }}
+  config: |
+    {
+    artifactRepository:
+    {
+        s3: {
+            bucket: {{ include "kubeflow-pipelines.objectStore.bucket" . }},
+            keyPrefix: artifacts,
+            endpoint: s3.amazonaws.com,
+            insecure: true,
+            accessKeySecret: {
+                name: mlpipeline-minio-artifact,
+                key: accesskey
+            },
+            secretKeySecret: {
+                name: mlpipeline-minio-artifact,
+                key: secretkey
+            }
+        },
+        archiveLogs: true
+    }
+    }
+{{- else }}
   artifactRepository: |
     archiveLogs: true
     s3:
       endpoint: "minio-service.kubeflow:9000"
-      bucket: "mlpipeline"
+      bucket: {{ include "kubeflow-pipelines.objectStore.bucket" . | quote }}
       # keyFormat is a format pattern to define how artifacts will be organized in a bucket.
       # It can reference workflow metadata variables such as workflow.namespace, workflow.name,
       # pod.name. Can also use strftime formating of workflow.creationTimestamp so that workflow
@@ -28,6 +51,7 @@ data:
         key: secretkey
   executor: |
     imagePullPolicy: IfNotPresent
+{{- end }}
 kind: ConfigMap
 metadata:
   labels:

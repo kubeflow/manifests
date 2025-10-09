@@ -16,17 +16,22 @@ data:
   appName: {{ .Values.pipeline.app.name }}
   appVersion: {{ .Values.pipeline.app.version }}
   # Database configuration
-{{- $dbHost := include "kubeflow-pipelines.database.host" . -}}
-{{- if and .Values.env .Values.env.aws .Values.env.aws.rds .Values.env.aws.rds.enabled -}}
-  {{- $dbHost = .Values.env.aws.rds.endpoint -}}
-{{- else if and .Values.env .Values.env.azure .Values.env.azure.sql .Values.env.azure.sql.enabled -}}
-  {{- $dbHost = printf "%s.mysql.database.azure.com" .Values.env.azure.sql.serverName -}}
-{{- end }}
+{{- $dbHost := include "kubeflow-pipelines.database.host" . }}
   dbHost: {{ $dbHost | quote }}
   dbPort: {{ include "kubeflow-pipelines.database.port" . | quote }}
+{{- if or (eq .Values.externalDatabase.type "postgresql") (eq .Values.externalDatabase.type "postgres") }}
+  dbType: "postgres"
+  postgresHost: {{ $dbHost | quote }}
+  postgresPort: {{ include "kubeflow-pipelines.database.port" . | quote }}
+{{- else }}
   dbType: {{ .Values.externalDatabase.type | default "mysql" | quote }}
+{{- if or (eq .Values.env.platform "azure") (eq .Values.env.platform "aws") }}
   mysqlHost: "mysql"
+{{- else }}
+  mysqlHost: {{ $dbHost | quote }}
+{{- end }}
   mysqlPort: {{ include "kubeflow-pipelines.database.port" . | quote }}
+{{- end }}
   mlmdDb: {{ .Values.database.metadb }}
   cacheDb: {{ .Values.database.cachedb }}
   pipelineDb: {{ include "kubeflow-pipelines.database.name" . }}
@@ -43,7 +48,9 @@ data:
   DEFAULT_CACHE_STALENESS: {{ .Values.pipeline.cache.defaultStaleness | quote }}
   # Connection configuration
   ConMaxLifeTime: {{ .Values.database.connectionMaxLifetime | quote }}
+{{- if not .Values.thirdParty.postgresql.enabled }}
   LOG_LEVEL: {{ .Values.global.logLevel | quote }}
+{{- end }}
 {{- if eq .Values.objectStore.provider "s3" }}
   # AWS S3 configuration
   minioServiceHost: {{ .Values.objectStore.s3.endpoint | default "s3.amazonaws.com" | quote }}

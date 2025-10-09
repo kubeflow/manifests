@@ -1,6 +1,4 @@
-# Platform-Agnostic Configuration - Enhanced
-# This configuration provides a complete platform-agnostic deployment
-# using MinIO for object storage and MySQL for database
+# Generic Configuration
 
 global:
   namespace: kubeflow
@@ -8,93 +6,103 @@ global:
   imageTag: "2.14.3"
   imagePullPolicy: IfNotPresent
 
-# Installation mode
+# Installation mode - generic single-user
 installMode:
   type: generic
   multiUser:
     enabled: false
+  includeApplicationCrdId: false
 
-# Database Configuration - Using built-in MySQL
+# CRDs configuration
+crds:
+  install: false
+  application: false
+
+# Cache deployer for generic mode
+cacheDeployer:
+  enabled: true
+  serviceAccount:
+    create: false
+
+# Environment configuration
+env:
+  platform: platform-agnostic
+
+# Database configuration - use built-in MySQL
 mysql:
   enabled: false
-  auth:
-    rootPassword: "root123"
-    username: "mlpipeline"
-    password: "mlpipeline123"
-    database: "mlpipeline"
-  primary:
-    persistence:
-      enabled: true
-      size: 20Gi
 
 postgresql:
   enabled: false
 
 externalDatabase:
   type: mysql
-  host: ""
+  host: mysql
   port: 3306
   database: mlpipeline
   username: root
   password: ""
 
-# Object Storage Configuration - Using built-in MinIO
-minio:
-  enabled: false
-  auth:
-    rootUser: "minio"
-    rootPassword: "minio123"
-  defaultBuckets: "mlpipeline"
-  persistence:
-    enabled: true
-    size: 20Gi
-
-objectStore:
-  provider: minio
-  secure: false
-  bucketName: mlpipeline
-  
 # Database names
 database:
   pipelinedb: mlpipeline
   metadb: metadb
   cachedb: cachedb
+  connectionMaxLifetime: "120s"
+
+# Object storage configuration - use built-in MinIO
+objectStore:
+  provider: minio
+  minio:
+    enabled: true
+    bucket: mlpipeline
+    secure: false
+
+minio:
+  enabled: false
+
+# Argo Workflows configuration - use built-in
+argo:
+  enabled: false
+
+# Built-in third-party components
+thirdParty:
+  mysql:
+    enabled: false
+  minio:
+    enabled: false
+    portName: http
+  argo:
+    enabled: false
 
 # Pipeline Configuration
 pipeline:
-  # Platform-agnostic specific: Empty defaultPipelineRoot
+  app:
+    name: pipeline
+    version: "2.14.3"
   defaultPipelineRoot: ""
+  autoUpdatePipelineDefaultVersion: true
+  cronScheduleTimezone: "UTC"
   cache:
     image: "ghcr.io/containerd/busybox"
     nodeRestrictions: false
     maximumStaleness: ""
     defaultStaleness: ""
 
-# Argo Workflows Configuration - use built-in
-argo:
-  enabled: false
-  # Basic Argo configuration for platform-agnostic deployment
-
-# Built-in third-party components
-thirdParty:
-  mysql:
-    enabled: true
-  minio:
-    enabled: true
-    portName: http
-  argo:
-    enabled: true
-
-# Environment Configuration
-env:
-  platform: platform-agnostic
-
-# Resource Configuration
+# API Server configuration
 apiServer:
+  enabled: true
+  replicas: 1
   resources:
     requests:
       cpu: 250m
       memory: 500Mi
+  env:
+    publishLogs: true
+    pipelineLogLevel: "1"
+    autoUpdatePipelineDefaultVersion: true
+    v2DriverImage: "ghcr.io/kubeflow/kfp-driver:2.14.3"
+    v2LauncherImage: "ghcr.io/kubeflow/kfp-launcher:2.14.3"
   additionalEnv:
     - name: PUBLISH_LOGS
       value: "true"
@@ -105,6 +113,9 @@ apiServer:
     - name: AUTO_UPDATE_PIPELINE_DEFAULT_VERSION
       key: autoUpdatePipelineDefaultVersion
     - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
     - name: OBJECTSTORECONFIG_SECURE
       value: "false"
     - name: OBJECTSTORECONFIG_BUCKETNAME
@@ -142,7 +153,10 @@ apiServer:
     - name: V2_LAUNCHER_IMAGE
       value: "ghcr.io/kubeflow/kfp-launcher:2.14.3"
 
+# Persistence Agent configuration
 persistenceAgent:
+  enabled: true
+  replicas: 1
   resources:
     requests:
       cpu: 120m
@@ -153,8 +167,10 @@ persistenceAgent:
         fieldRef:
           fieldPath: metadata.namespace
 
+# Scheduled Workflow configuration
 scheduledWorkflow:
-  resources:
+  enabled: true
+  replicas: 1
   additionalEnv:
     - name: LOG_LEVEL
       value: "info"
@@ -162,13 +178,20 @@ scheduledWorkflow:
       valueFrom:
         fieldRef:
           fieldPath: metadata.namespace
+    
 
+# UI configuration
 ui:
+  enabled: true
+  replicas: 1
   resources:
     requests:
       cpu: 10m
       memory: 70Mi
-
+  env:
+    allowCustomVisualizations: true
+    argoArchiveLogs: true
+    disableGkeMetadata: true
   additionalEnv:
     - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
       value: "/etc/config/viewer-pod-template.json"
@@ -196,41 +219,42 @@ ui:
       value: "true"
     - name: DISABLE_GKE_METADATA
       value: "true"
-# Disable CRDs for platform-agnostic scenario
-crds:
-  install: false
 
-# Cache deployer for generic mode
-cacheDeployer:
+
+# Viewer CRD Controller configuration
+viewerCrd:
   enabled: true
-  serviceAccount:
-    create: false  
-# Disable webhooks for platform-agnostic scenario
-webhooks:
-  enabled: false
+  replicas: 1
+  image:
+    pullPolicy: Always
+  env:
+    maxNumViewers: "50"
+  additionalEnv:
+    - name: MAX_NUM_VIEWERS
+      value: "50"
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
 
-metadata:
+# Visualization Server configuration
+visualization:
   enabled: true
-  grpc:
-    resources:
-  envoy:
-    resources:
-      requests:
-        cpu: 20m
-        memory: 20Mi
-      limits:
-        cpu: 100m
-        memory: 100Mi
+  replicas: 1
+  resources:
+    requests:
+      cpu: 30m
+      memory: 500Mi
 
+# Cache System Configuration
 cache:
+  enabled: true
   server:
+    replicas: 1
     resources:
       requests:
         cpu: 120m
         memory: 500Mi
-      limits:
-        cpu: 250m
-        memory: 1Gi
     additionalEnv:
       - name: DEFAULT_CACHE_STALENESS
         key: DEFAULT_CACHE_STALENESS
@@ -241,6 +265,7 @@ cache:
       - name: CACHE_NODE_RESTRICTIONS
         key: cacheNodeRestrictions
       - name: DBCONFIG_DRIVER
+        value: "mysql"
       - name: DBCONFIG_DB_NAME
         key: cacheDb
       - name: DBCONFIG_HOST_NAME
@@ -252,37 +277,50 @@ cache:
       - name: DBCONFIG_PASSWORD
         key: password
       - name: NAMESPACE_TO_WATCH
+        key: null
 
+# ML Metadata Configuration
+metadata:
+  enabled: false
+  grpc:
+    replicas: 1
+  envoy:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 20m
+        memory: 20Mi
+      limits:
+        cpu: 100m
+        memory: 100Mi
 
-visualization:
-  resources:
-    requests:
-      cpu: 30m
-      memory: 500Mi
+# Metadata Writer Configuration
+metadataWriter:
+  enabled: true
+  replicas: 1
 
-viewerCrd:
-  image:
-    pullPolicy: Always
-  resources:
-  additionalEnv:
-    - name: MAX_NUM_VIEWERS
-      value: 50
-    - name: NAMESPACE
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.namespace
-
-# Monitoring disabled for platform-agnostic
+# Disable cloud-specific features
 monitoring:
   prometheus:
     enabled: false
   grafana:
     enabled: false
 
-# Service mesh disabled for platform-agnostic
-istio:
+certManager:
   enabled: false
 
-# Cert-manager disabled for platform-agnostic
-certManager:
+networking:
+  istio:
+    enabled: false
+
+# Disable webhooks for generic scenario
+webhooks:
+  enabled: false
+
+# Profile controller disabled for single-user
+profileController:
+  enabled: false
+
+# Application CRD disabled
+application:
   enabled: false

@@ -4,6 +4,8 @@ kind: Application
 metadata:
   name: pipeline
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
   annotations:
     {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
     kubernetes-engine.cloud.google.com/icon: >-
@@ -15,7 +17,7 @@ spec:
     matchLabels:
       application-crd-id: kubeflow-pipelines
   descriptor:
-    version: {{ .Values.global.imageTag | quote }}
+    version: {{ .Values.global.version | default .Values.global.imageTag | quote }}
     type: Kubeflow Pipelines
     description: |-
       Reusable end-to-end ML workflow

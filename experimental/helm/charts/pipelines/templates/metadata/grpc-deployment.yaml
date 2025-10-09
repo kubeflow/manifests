@@ -54,6 +54,23 @@ spec:
         - --postgres_config_user=$(POSTGRES_USER)
         - --postgres_config_password=$(POSTGRES_PASSWORD)
         - --enable_database_upgrade=true
+        {{- else if .Values.thirdParty.mysqlMetadata.enabled }}
+        env: []
+        envFrom:
+        - configMapRef:
+            name: metadata-db-parameters
+        - secretRef:
+            name: metadata-db-secrets
+        - configMapRef:
+            name: metadata-grpc-configmap
+        command: ["/bin/metadata_store_server"]
+        args:
+        - --grpc_port=$(METADATA_GRPC_SERVICE_PORT)
+        - --mysql_config_host=metadata-db
+        - --mysql_config_database=$(MYSQL_DATABASE)
+        - --mysql_config_port=$(MYSQL_PORT)
+        - --mysql_config_user=$(MYSQL_USER_NAME)
+        - --mysql_config_password=$(MYSQL_ROOT_PASSWORD)
         {{- else }}
         env:
         - name: DBCONFIG_USER
@@ -107,7 +124,7 @@ spec:
           initialDelaySeconds: 3
           periodSeconds: 5
           timeoutSeconds: 2
-        {{- if not .Values.thirdParty.postgresql.enabled }}
+        {{- if and (not .Values.thirdParty.postgresql.enabled) (not .Values.thirdParty.mysqlMetadata.enabled) }}
         {{- with .Values.metadata.grpc.resources }}
         resources:
           {{- toYaml . | nindent 10 }}

@@ -5,6 +5,12 @@
 crds:
   install: false
 
+# Cache deployer configuration
+cacheDeployer:
+  enabled: true
+  serviceAccount:
+    create: false
+
 # Third-party services configuration
 thirdParty:
   argo:
@@ -45,6 +51,10 @@ externalDatabase:
   port: 5432
   database: "mlpipeline"
   username: "postgres"
+pipeline:
+  app:
+    name: "pipeline"
+    version: "2.0.0"
 
 # Additional databases for PostgreSQL
 database:
