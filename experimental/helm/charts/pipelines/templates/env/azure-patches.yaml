@@ -39,25 +39,9 @@ metadata:
     azure.workload.identity/client-id: {{ .Values.env.azure.managedIdentity.clientId | quote }}
 {{- end }}
 
-{{- if .Values.env.azure.sql.enabled }}
----
-# Azure SQL Configuration Secret
-apiVersion: v1
-kind: Secret
-metadata:
-  name: {{ include "kubeflow-pipelines.fullname" . }}-azure-sql-secret
-  namespace: {{ include "kubeflow-pipelines.namespace" . }}
-  labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    component: azure-sql
-  annotations:
-    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
-type: Opaque
-data:
-  host: {{ printf "%s.mysql.database.azure.com" .Values.env.azure.sql.serverName | b64enc }}
-  port: {{ "3306" | b64enc }}
-  database: {{ .Values.env.azure.sql.database | b64enc }}
-{{- end }}
+
+
+
 
 {{- if and .Values.env.azure.blob.enabled .Values.env.azure.blob.createMinioGateway }}
 ---
@@ -128,7 +112,9 @@ spec:
   selector:
     app: minio
     application-crd-id: kubeflow-pipelines
+{{- end }}
 
+{{- if and .Values.env.azure.blob.enabled .Values.env.azure.blob.createMinioGateway (not .Values.thirdParty.minio.enabled) }}
 ---
 # MinIO Artifact Secret
 apiVersion: v1
@@ -140,7 +126,9 @@ metadata:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
   annotations:
     {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+{{- if ne .Values.env.platform "platform-agnostic" }}
 type: Opaque
+{{- end }}
 stringData:
   accesskey: {{ .Values.objectStore.azure.accessKey | default "minio" | quote }}
   secretkey: {{ .Values.objectStore.azure.secretKey | default "minio123" | quote }}

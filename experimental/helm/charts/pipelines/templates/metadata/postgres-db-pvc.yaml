@@ -1,15 +1,16 @@
-{{- if and .Values.thirdParty.minio.enabled (ne .Values.env.platform "azure") (not .Values.env.gcp.gcs.enabled) }}
+{{- if and .Values.metadata.enabled .Values.thirdParty.postgresql.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: minio-pvc
+  name: metadata-postgres
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 20Gi
 {{- end }}
+

@@ -20,6 +20,8 @@ global:
   imageRegistry: ghcr.io/kubeflow
   # -- Global image tag for all Kubeflow Pipelines components
   imageTag: 2.14.3
+  # -- Application version
+  version: ""
   # -- Global image pull policy
   imagePullPolicy: IfNotPresent
   # -- Global image pull secrets
@@ -608,6 +610,23 @@ thirdParty:
   # Use built-in minimal PostgreSQL instead of external subchart
   postgresql:
     enabled: false
+    image:
+      repository: postgres
+      tag: "13.2"
+    password: "password"
+
+  # Use built-in MySQL for metadata database (separate from main MySQL)
+  mysqlMetadata:
+    enabled: false
+    image:
+      repository: mysql
+      tag: "8.0.3"
+    database: "metadb"
+    username: "root"
+    password: "test"
+    persistence:
+      enabled: true
+      size: 10Gi
 
   # Metacontroller configuration
   metacontroller:
@@ -1014,7 +1033,7 @@ profileController:
     port: 80
   
   # -- Disable Istio sidecar injection
-  disableIstioSidecar: "true"
+  disableIstioSidecar: "false"
   
   # Additional environment variables
   additionalEnv: []
