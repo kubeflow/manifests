@@ -11,7 +11,7 @@ ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 if [[ -z "$COMPONENT" ]]; then
     echo "ERROR: Component is required"
     echo "Usage: $0 <component> <scenario>"
-    echo "Components: katib, model-registry, kserve-models-web-app, notebook-controller"
+    echo "Components: katib, model-registry, kserve-models-web-app, notebook-controller, pipelines"
     exit 1
 fi
 
@@ -158,10 +158,92 @@ case "$COMPONENT" in
             ["production"]="kubeflow"
         )
         ;;
+    "pipelines")
+        CHART_DIR="$ROOT_DIR/experimental/helm/charts/pipelines"
+        MANIFESTS_DIR="$ROOT_DIR/applications/pipeline/upstream"
+        
+        declare -A KUSTOMIZE_PATHS=(
+            ["platform-agnostic"]="$MANIFESTS_DIR/env/platform-agnostic"
+            ["aws"]="$MANIFESTS_DIR/env/aws"
+            ["gcp"]="$MANIFESTS_DIR/env/gcp"
+            ["azure"]="$MANIFESTS_DIR/env/azure"
+            ["multi-user"]="$MANIFESTS_DIR/base/installs/multi-user"
+            ["generic"]="$MANIFESTS_DIR/base/installs/generic"
+            ["dev"]="$MANIFESTS_DIR/env/dev"
+            ["plain"]="$MANIFESTS_DIR/env/plain"
+            ["plain-multi-user"]="$MANIFESTS_DIR/env/plain-multi-user"
+            ["platform-agnostic-emissary"]="$MANIFESTS_DIR/env/platform-agnostic-emissary"
+            ["platform-agnostic-multi-user"]="$MANIFESTS_DIR/env/platform-agnostic-multi-user"
+            ["platform-agnostic-multi-user-emissary"]="$MANIFESTS_DIR/env/platform-agnostic-multi-user-emissary"
+            ["platform-agnostic-multi-user-legacy"]="$MANIFESTS_DIR/env/platform-agnostic-multi-user-legacy"
+            ["platform-agnostic-postgresql"]="$MANIFESTS_DIR/env/platform-agnostic-postgresql"
+        )
+        
+        declare -A HELM_VALUES=(
+            ["platform-agnostic"]="$CHART_DIR/ci/values-platform-agnostic-enhanced.yaml"
+            ["aws"]="$CHART_DIR/ci/values-aws-enhanced.yaml"
+            ["gcp"]="$CHART_DIR/ci/values-gcp-enhanced.yaml"
+            ["azure"]="$CHART_DIR/ci/values-azure-enhanced.yaml"
+            ["multi-user"]="$CHART_DIR/ci/values-multi-user-enhanced.yaml"
+            ["generic"]="$CHART_DIR/ci/values-generic.yaml"
+            ["dev"]="$CHART_DIR/ci/values-dev-enhanced.yaml"
+            ["plain"]="$CHART_DIR/ci/values-standalone.yaml"
+            ["plain-multi-user"]="$CHART_DIR/ci/values-multi-user.yaml"
+            ["platform-agnostic-emissary"]="$CHART_DIR/ci/values-platform-agnostic-enhanced.yaml"
+            ["platform-agnostic-multi-user"]="$CHART_DIR/ci/values-platform-agnostic-multi-user-enhanced.yaml"
+            ["platform-agnostic-multi-user-emissary"]="$CHART_DIR/ci/values-platform-agnostic-multi-user-enhanced.yaml"
+            ["platform-agnostic-multi-user-legacy"]="$CHART_DIR/ci/values-platform-agnostic-multi-user-legacy.yaml"
+            ["platform-agnostic-postgresql"]="$CHART_DIR/ci/values-postgresql.yaml"
+        )
+        
+        declare -A NAMESPACES=(
+            ["platform-agnostic"]="kubeflow"
+            ["aws"]="kubeflow"
+            ["gcp"]="kubeflow"
+            ["azure"]="kubeflow"
+            ["multi-user"]="kubeflow"
+            ["generic"]="kubeflow"
+            ["dev"]="kubeflow"
+            ["plain"]="kubeflow"
+            ["plain-multi-user"]="kubeflow"
+            ["platform-agnostic-emissary"]="kubeflow"
+            ["platform-agnostic-multi-user"]="kubeflow"
+            ["platform-agnostic-multi-user-emissary"]="kubeflow"
+            ["platform-agnostic-multi-user-legacy"]="kubeflow"
+            ["platform-agnostic-postgresql"]="kubeflow"
+        )
+        ;;
+
+    "notebook-controller")
+        CHART_DIR="$ROOT_DIR/experimental/helm/charts/notebook-controller"
+        MANIFESTS_DIR="$ROOT_DIR/applications/jupyter/notebook-controller/upstream"
+        
+        declare -A KUSTOMIZE_PATHS=(
+            ["base"]="$MANIFESTS_DIR/base"
+            ["kubeflow"]="$MANIFESTS_DIR/overlays/kubeflow"
+            ["standalone"]="$MANIFESTS_DIR/overlays/standalone"
+        )
+        
+        declare -A HELM_VALUES=(
+            ["base"]="$CHART_DIR/ci/base-values.yaml"
+            ["kubeflow"]="$CHART_DIR/ci/kubeflow-values.yaml"
+            ["standalone"]="$CHART_DIR/ci/standalone-values.yaml"
+            ["webhook"]="$CHART_DIR/ci/webhook-values.yaml"
+            ["production"]="$CHART_DIR/ci/production-values.yaml"
+        )
+        
+        declare -A NAMESPACES=(
+            ["base"]="notebook-controller-system"
+            ["kubeflow"]="kubeflow"
+            ["standalone"]="notebook-controller-system"
+            ["webhook"]="kubeflow"
+            ["production"]="kubeflow"
+        )
+        ;;
         
     *)
         echo "ERROR: Unknown component: $COMPONENT"
-        echo "Supported components: katib, model-registry, kserve-models-web-app, notebook-controller"
+        echo "Supported components: katib, model-registry, kserve-models-web-app, notebook-controller, pipelines"
         exit 1
         ;;
 esac
@@ -220,6 +302,11 @@ else
             --values "$HELM_VALUES_ARG" > "$HELM_OUTPUT"
     elif [[ "$COMPONENT" == "notebook-controller" ]]; then
         helm template notebook-controller . \
+            --namespace "$NAMESPACE" \
+            --include-crds \
+            --values "$HELM_VALUES_ARG" > "$HELM_OUTPUT"
+    elif [[ "$COMPONENT" == "pipelines" ]]; then
+        helm template pipeline . \
             --namespace "$NAMESPACE" \
             --include-crds \
             --values "$HELM_VALUES_ARG" > "$HELM_OUTPUT"

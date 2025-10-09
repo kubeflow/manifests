@@ -1,0 +1,18 @@
+{{- if and .Values.thirdParty.postgresql.enabled (not .Values.postgresql.enabled) }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    app: postgres
+    application-crd-id: kubeflow-pipelines
+spec:
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  selector:
+    app: postgres
+    application-crd-id: kubeflow-pipelines
+{{- end }}

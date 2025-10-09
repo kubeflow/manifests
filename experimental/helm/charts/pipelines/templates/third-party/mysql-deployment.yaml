@@ -1,0 +1,64 @@
+{{- if .Values.thirdParty.mysql.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: mysql
+spec:
+  selector:
+    matchLabels:
+      {{- include "kubeflow-pipelines.mysqlSelectorLabels" . | nindent 6 }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
+        app: mysql
+    spec:
+      securityContext:
+        fsGroup: 999
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: mysql
+      containers:
+      - name: mysql
+        image: mysql:8.4
+        args:
+        - --datadir
+        - /var/lib/mysql
+        - --authentication-policy=mysql_native_password
+        - --mysql-native-password=ON
+        # Disable binlog as the logs grow fast and eat up all disk spaces eventually. And KFP doesn't currently utilize binlog.
+        # https://dev.mysql.com/doc/refman/8.0/en/replication-options-binary-log.html#option_mysqld_log-bin
+        - --disable-log-bin
+        env:
+        - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          value: "true"
+        ports:
+        - containerPort: 3306
+          name: mysql
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 999
+          runAsGroup: 999
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-persistent-storage
+        resources:
+          requests:
+            cpu: 100m
+            memory: 800Mi
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
+{{- end }}
