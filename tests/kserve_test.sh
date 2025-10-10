@@ -13,6 +13,7 @@ export KSERVE_INGRESS_HOST_PORT=${KSERVE_INGRESS_HOST_PORT:-localhost:8080}
 export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
 export KSERVE_TEST_NAMESPACE=${NAMESPACE}
 
+# Path-based routing
 cat <<EOF | kubectl apply -f -
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
@@ -41,6 +42,7 @@ spec:
       timeout: 300s
 EOF
 
+# Deploy InferenceService for testing
 cat <<EOF | kubectl apply -f -
 apiVersion: "serving.kserve.io/v1beta1"
 kind: "InferenceService"
@@ -62,7 +64,6 @@ EOF
 
 kubectl wait --for=condition=Ready inferenceservice/test-sklearn -n ${NAMESPACE} --timeout=300s
 
-# Create AuthorizationPolicy to allow authenticated access
 cat <<EOF | kubectl apply -f -
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
@@ -82,6 +83,7 @@ EOF
 
 sleep 60
 
+# Request without token should be rejected
 RESPONSE_NO_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
  -H "Content-Type: application/json" \
  "http://${KSERVE_INGRESS_HOST_PORT}/kserve/${NAMESPACE}/test-sklearn/v1/models/test-sklearn:predict" \
@@ -91,6 +93,7 @@ if [ "$RESPONSE_NO_TOKEN" != "403" ] && [ "$RESPONSE_NO_TOKEN" != "302" ]; then
   exit 1
 fi
 
+# Request with valid token should succeed
 RESPONSE_WITH_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
  -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
  -H "Content-Type: application/json" \
@@ -101,14 +104,6 @@ if [ "$RESPONSE_WITH_TOKEN" != "200" ] && [ "$RESPONSE_WITH_TOKEN" != "404" ] &&
   exit 1
 fi
 
-curl -s -o /dev/null \
-  -H "Host: test-sklearn-predictor.${NAMESPACE}.example.com" \
-  -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
-  -H "Content-Type: application/json" \
-  "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/test-sklearn:predict" \
-  -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}' || true
-
-# Create AuthorizationPolicy for pytest isvc-sklearn
 cat <<EOF | kubectl apply -f -
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
@@ -128,6 +123,79 @@ EOF
 
 kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
 
+if kubectl get inferenceservice isvc-sklearn -n ${NAMESPACE} &>/dev/null; then
+  kubectl wait --for=delete inferenceservice/isvc-sklearn -n ${NAMESPACE} --timeout=120s
+fi
+
 if cd ${TEST_DIRECTORY}; then
   pytest . -vs --log-level info || true
 fi
+
+kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app
+
+# Knative Service authentication via cluster-local-gateway
+cat <<EOF | kubectl apply -f -
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: secure-model-predictor
+  namespace: ${NAMESPACE}
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      containers:
+      - image: gcr.io/knative-samples/helloworld-go
+        ports:
+        - containerPort: 8080
+        env:
+        - name: TARGET
+          value: "Secure KServe Model"
+EOF
+
+kubectl wait --for=condition=Ready ksvc/secure-model-predictor -n ${NAMESPACE} --timeout=120s
+
+# Verify unauthenticated access is blocked
+RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+    -H "Host: secure-model-predictor.${NAMESPACE}.svc.cluster.local" \
+    "http://${KSERVE_INGRESS_HOST_PORT}/")
+
+if [ "$RESPONSE" != "403" ]; then
+    exit 1
+fi
+
+# Verify invalid token is rejected
+RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+    -H "Host: secure-model-predictor.${NAMESPACE}.svc.cluster.local" \
+    -H "Authorization: Bearer invalid-token" \
+    "http://${KSERVE_INGRESS_HOST_PORT}/")
+
+if [ "$RESPONSE" != "401" ] && [ "$RESPONSE" != "403" ]; then
+    exit 1
+fi
+
+# Verify cluster-local-gateway requires authentication
+kubectl port-forward -n istio-system svc/cluster-local-gateway 8081:80 &
+PF_PID=$!
+sleep 5
+
+PRIMARY_TOKEN=$(kubectl -n ${NAMESPACE} create token default-editor)
+
+curl -s -o /dev/null -w "%{http_code}" \
+    -H "Host: secure-model-predictor.${NAMESPACE}.svc.cluster.local" \
+    -H "Authorization: Bearer $PRIMARY_TOKEN" \
+    "http://localhost:8081/" > /dev/null
+
+RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+    -H "Host: secure-model-predictor.${NAMESPACE}.svc.cluster.local" \
+    "http://localhost:8081/")
+
+if [ "$RESPONSE" != "403" ]; then
+    exit 1
+fi
+
+kill $PF_PID 2>/dev/null || true
+
+kubectl delete ksvc secure-model-predictor -n ${NAMESPACE} --ignore-not-found=true
