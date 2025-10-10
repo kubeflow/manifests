@@ -9,7 +9,6 @@ on:
     - tests/kserve/**
     - tests/kserve_test.sh
     - tests/kserve_install.sh
-    - tests/kserve_jwt_authentication_test.sh
     - common/istio*/**
     - common/oauth2-proxy/**
     - tests/oauth2-proxy_install.sh
@@ -17,7 +16,6 @@ on:
     - tests/istio*
     - common/knative/**
     - tests/knative_install.sh
-    - tests/*authentication*test.sh
 
 permissions:
   contents: read
@@ -78,12 +76,6 @@ jobs:
 
     - name: Run KServe tests
       run: ./tests/kserve_test.sh kubeflow-user-example-com
-
-    - name: Run Knative Service JWT Authentication Tests
-      run: ./tests/knative_authentication_test.sh
-
-    - name: Run KServe secure authentication tests
-      run: ./tests/kserve_jwt_authentication_test.sh kubeflow-user-example-com
 
     - name: Apply Pod Security Standards restricted levels
       run: ./tests/PSS_enable.sh

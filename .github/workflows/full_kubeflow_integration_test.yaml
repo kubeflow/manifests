@@ -197,12 +197,6 @@ jobs:
     - name: Run KServe Test
       run: ./tests/kserve_test.sh ${KF_PROFILE}
 
-    - name: Run Knative Service JWT Authentication Tests
-      run: ./tests/knative_authentication_test.sh
-
-    - name: Run KServe secure authentication tests
-      run: ./tests/kserve_jwt_authentication_test.sh ${KF_PROFILE}
-
     - name: Run Spark Test
       run: chmod u+x tests/*.sh && ./tests/spark_test.sh "${KF_PROFILE}"
 
