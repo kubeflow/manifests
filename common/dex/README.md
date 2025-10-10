@@ -77,7 +77,7 @@ data:
         clientID: $CLIENT_ID
         clientSecret: $CLIENT_SECRET
         redirectURI: $REDIRECT_URI
-        insecureSkipVerify: true
+        insecureSkipVerify: false
         insecureSkipEmailVerified: true
         userNameKey: email       
         scopes:
@@ -167,7 +167,6 @@ spec:
       app: istio-ingressgateway
   jwtRules:
   - issuer: $DEX_ISSUER
-    jwksUri: http://dex.auth.svc.cluster.local:5556/dex/keys
     forwardOriginalToken: true
     outputClaimToHeaders:
     - header: kubeflow-userid
