@@ -142,7 +142,6 @@ INGRESS_HOST_PORT="${KSERVE_INGRESS_HOST_PORT:-localhost:8080}"
 
 kubectl create namespace $PRIMARY_NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
 kubectl create namespace $ATTACKER_NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
-kubectl create serviceaccount default-editor -n $PRIMARY_NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
 kubectl create serviceaccount attacker-sa -n $ATTACKER_NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
 
 cat <<EOF | kubectl apply -f -
