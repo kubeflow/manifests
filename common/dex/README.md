@@ -77,6 +77,7 @@ data:
         clientID: $CLIENT_ID
         clientSecret: $CLIENT_SECRET
         redirectURI: $REDIRECT_URI
+        # Set to true only for self-signed certificates. See: https://dexidp.io/docs/connectors/oidc/
         insecureSkipVerify: false
         insecureSkipEmailVerified: true
         userNameKey: email       
