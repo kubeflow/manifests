@@ -242,6 +242,7 @@ kubeflow:
     disableAuth: false
     useridHeader: "kubeflow-userid"
     appPrefix: "/kserve-endpoints"
+    useridPrefix: ""
 
 # Monitoring configuration
 monitoring:
