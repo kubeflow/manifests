@@ -1,0 +1,62 @@
+{{- if and .Values.metadata.enabled .Values.thirdParty.mysqlMetadata.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metadata-db
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: db
+spec:
+  selector:
+    matchLabels:
+      {{- if .Values.installMode.legacyLabels }}
+      application-crd-id: kubeflow-pipelines
+      {{- end }}
+      component: db
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      name: db
+      labels:
+        {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
+        component: db
+        sidecar.istio.io/inject: "false"
+        {{- if .Values.installMode.legacyLabels }}
+        application-crd-id: kubeflow-pipelines
+        {{- end }}
+    spec:
+      containers:
+      - name: db-container
+        image: {{ .Values.thirdParty.mysqlMetadata.image.repository }}:{{ .Values.thirdParty.mysqlMetadata.image.tag }}
+        args:
+        - --datadir
+        - /var/lib/mysql/datadir
+        envFrom:
+        - configMapRef:
+            name: metadata-db-parameters
+        - secretRef:
+            name: metadata-db-secrets
+        ports:
+        - name: dbapi
+          containerPort: 3306
+        readinessProbe:
+          exec:
+            command:
+            - "/bin/bash"
+            - "-c"
+            - "mysql -D $$MYSQL_DATABASE -p$$MYSQL_ROOT_PASSWORD -e 'SELECT 1'"
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 1
+        volumeMounts:
+        - name: metadata-mysql
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: metadata-mysql
+        persistentVolumeClaim:
+          claimName: metadata-mysql
+{{- end }}
+
