@@ -196,6 +196,30 @@ if [ "$RESPONSE" != "403" ]; then
     exit 1
 fi
 
+# Test namespace isolation - attacker in different namespace should not have access
+ATTACKER_NAMESPACE="attacker-namespace"
+kubectl create namespace ${ATTACKER_NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -
+
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: attacker-sa
+  namespace: ${ATTACKER_NAMESPACE}
+EOF
+
+ATTACKER_TOKEN=$(kubectl -n ${ATTACKER_NAMESPACE} create token attacker-sa)
+
+RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+    -H "Host: secure-model-predictor.${NAMESPACE}.svc.cluster.local" \
+    -H "Authorization: Bearer $ATTACKER_TOKEN" \
+    "http://localhost:8081/")
+
+if [ "$RESPONSE" != "403" ]; then
+    exit 1
+fi
+
 kill $PF_PID 2>/dev/null || true
 
+kubectl delete namespace ${ATTACKER_NAMESPACE} --ignore-not-found=true
 kubectl delete ksvc secure-model-predictor -n ${NAMESPACE} --ignore-not-found=true
