@@ -276,7 +276,7 @@ def get_expected_helm_extras(component: str, scenario: str) -> set:
         
         # These get extra resources from the subchart dependency
         argo_subchart_scenarios = [
-            'dev', 'aws', 'gcp', 'azure',  
+            'dev',  
             'platform-agnostic-multi-user-emissary',  
             'platform-agnostic-multi-user',
             'platform-agnostic-multi-user-legacy', 

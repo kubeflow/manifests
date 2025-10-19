@@ -164,9 +164,6 @@ case "$COMPONENT" in
         
         declare -A KUSTOMIZE_PATHS=(
             ["platform-agnostic"]="$MANIFESTS_DIR/env/platform-agnostic"
-            ["aws"]="$MANIFESTS_DIR/env/aws"
-            ["gcp"]="$MANIFESTS_DIR/env/gcp"
-            ["azure"]="$MANIFESTS_DIR/env/azure"
             ["multi-user"]="$MANIFESTS_DIR/base/installs/multi-user"
             ["generic"]="$MANIFESTS_DIR/base/installs/generic"
             ["dev"]="$MANIFESTS_DIR/env/dev"
@@ -181,9 +178,6 @@ case "$COMPONENT" in
         
         declare -A HELM_VALUES=(
             ["platform-agnostic"]="$CHART_DIR/ci/values-platform-agnostic-enhanced.yaml"
-            ["aws"]="$CHART_DIR/ci/values-aws-enhanced.yaml"
-            ["gcp"]="$CHART_DIR/ci/values-gcp-enhanced.yaml"
-            ["azure"]="$CHART_DIR/ci/values-azure-enhanced.yaml"
             ["multi-user"]="$CHART_DIR/ci/values-multi-user-enhanced.yaml"
             ["generic"]="$CHART_DIR/ci/values-generic.yaml"
             ["dev"]="$CHART_DIR/ci/values-dev-enhanced.yaml"
@@ -198,9 +192,6 @@ case "$COMPONENT" in
         
         declare -A NAMESPACES=(
             ["platform-agnostic"]="kubeflow"
-            ["aws"]="kubeflow"
-            ["gcp"]="kubeflow"
-            ["azure"]="kubeflow"
             ["multi-user"]="kubeflow"
             ["generic"]="kubeflow"
             ["dev"]="kubeflow"
