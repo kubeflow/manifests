@@ -685,7 +685,7 @@ database:
 
 # Object Storage Configuration
 objectStore:
-  # Provider: minio, s3, gcs, azure, custom
+  # Provider: minio, custom
   provider: minio
   
   minio:
@@ -693,20 +693,6 @@ objectStore:
     bucket: "mlpipeline"
     secure: false
     endpoint: ""
-    existingSecret: ""
-  
-  s3:
-    region: "us-west-2"
-    bucket: ""
-    existingSecret: ""
-  
-  gcs:
-    bucket: ""
-    existingSecret: ""
-  
-  azure:
-    storageAccount: ""
-    container: ""
     existingSecret: ""
   
   custom:
@@ -751,108 +737,8 @@ pipeline:
 
 # Environment-specific Configuration
 env:
-  # -- Platform type: platform-agnostic, aws, gcp, azure
+  # -- Platform type: platform-agnostic
   platform: platform-agnostic
-  
-  # AWS-specific configuration
-  aws:
-    # -- AWS region
-    region: us-west-2
-    # RDS configuration
-    rds:
-      # -- Enable RDS integration
-      enabled: false
-      # -- RDS endpoint
-      endpoint: ""
-    # S3 configuration
-    s3:
-      # -- Enable S3 integration
-      enabled: false
-      # -- S3 bucket name
-      bucket: ""
-      # -- S3 region
-      region: us-west-2
-    # IAM configuration
-    iam:
-      # -- Enable IAM roles for service accounts (IRSA)
-      enabled: false
-      # -- IAM role ARN for API server
-      apiServerRoleArn: ""
-  
-  # GCP-specific configuration
-  gcp:
-    # -- GCP project ID
-    project: ""
-    # -- GCP region
-    region: us-central1
-    # Cloud SQL configuration
-    cloudsql:
-      # -- Enable Cloud SQL integration
-      enabled: false
-      # -- Cloud SQL instance name
-      instanceName: ""
-      # -- Cloud SQL region
-      region: us-central1
-    # GCS configuration
-    gcs:
-      # -- Enable GCS integration
-      enabled: false
-      # -- GCS bucket name
-      bucket: ""
-      # -- GCS project ID
-      projectId: ""
-    # Workload Identity configuration
-    workloadIdentity:
-      # -- Enable Workload Identity
-      enabled: false
-      # -- GCP service account email
-      serviceAccount: ""
-    # Inverse Proxy Agent configuration
-    proxyAgent:
-      # -- Enable inverse proxy agent for GCP
-      enabled: false
-      
-      image:
-        # -- Proxy agent image repository
-        repository: ghcr.io/kubeflow/kfp-inverse-proxy-agent
-        # -- Proxy agent image tag
-        tag: "2.14.3"
-        # -- Proxy agent image pull policy
-        pullPolicy: IfNotPresent
-      
-      # -- Proxy agent resource requests and limits
-      resources: {}
-  
-  # Azure-specific configuration
-  azure:
-    # -- Azure subscription ID
-    subscriptionId: ""
-    # -- Azure resource group
-    resourceGroup: ""
-    # -- Azure region
-    region: eastus
-    # Azure SQL configuration
-    sql:
-      # -- Enable Azure SQL integration
-      enabled: false
-      # -- Azure SQL server name
-      serverName: ""
-      # -- Azure SQL database name
-      database: ""
-    # Azure Blob Storage configuration
-    blob:
-      # -- Enable Azure Blob Storage integration
-      enabled: false
-      # -- Storage account name
-      storageAccount: ""
-      # -- Container name
-      container: ""
-    # Managed Identity configuration
-    managedIdentity:
-      # -- Enable Azure Managed Identity
-      enabled: false
-      # -- Managed Identity client ID
-      clientId: ""
 
 # RBAC Configuration
 rbac:
