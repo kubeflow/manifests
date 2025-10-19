@@ -25,11 +25,7 @@ data:
   postgresPort: {{ include "kubeflow-pipelines.database.port" . | quote }}
 {{- else }}
   dbType: {{ .Values.externalDatabase.type | default "mysql" | quote }}
-{{- if or (eq .Values.env.platform "azure") (eq .Values.env.platform "aws") }}
-  mysqlHost: "mysql"
-{{- else }}
   mysqlHost: {{ $dbHost | quote }}
-{{- end }}
   mysqlPort: {{ include "kubeflow-pipelines.database.port" . | quote }}
 {{- end }}
   mlmdDb: {{ .Values.database.metadb }}
@@ -50,24 +46,4 @@ data:
   ConMaxLifeTime: {{ .Values.database.connectionMaxLifetime | quote }}
 {{- if not .Values.thirdParty.postgresql.enabled }}
   LOG_LEVEL: {{ .Values.global.logLevel | quote }}
-{{- end }}
-{{- if eq .Values.objectStore.provider "s3" }}
-  # AWS S3 configuration
-  minioServiceHost: {{ .Values.objectStore.s3.endpoint | default "s3.amazonaws.com" | quote }}
-{{- if .Values.objectStore.s3.region }}
-  minioServiceRegion: {{ .Values.objectStore.s3.region | quote }}
-{{- else if and .Values.env .Values.env.aws .Values.env.aws.region }}
-  minioServiceRegion: {{ .Values.env.aws.region | quote }}
-{{- end }}
-{{- end }}
-{{- if eq .Values.objectStore.provider "gcs" }}
-  # GCP GCS configuration
-{{- if .Values.objectStore.gcs.projectId }}
-  gcsProjectId: {{ .Values.objectStore.gcs.projectId | quote }}
-{{- else if and .Values.env .Values.env.gcp .Values.env.gcp.project }}
-  gcsProjectId: {{ .Values.env.gcp.project | quote }}
-{{- end }}
-{{- if and .Values.env .Values.env.gcp .Values.env.gcp.cloudsql .Values.env.gcp.cloudsql.enabled }}
-  gcsCloudSqlInstanceName: {{ .Values.env.gcp.cloudsql.instanceName | quote }}
-{{- end }}
 {{- end }}

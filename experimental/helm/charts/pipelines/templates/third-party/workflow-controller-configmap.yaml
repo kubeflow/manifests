@@ -1,29 +1,6 @@
 {{- if .Values.thirdParty.argo.enabled }}
 apiVersion: v1
 data:
-{{- if eq .Values.env.platform "aws" }}
-  config: |
-    {
-    artifactRepository:
-    {
-        s3: {
-            bucket: {{ include "kubeflow-pipelines.objectStore.bucket" . }},
-            keyPrefix: artifacts,
-            endpoint: s3.amazonaws.com,
-            insecure: true,
-            accessKeySecret: {
-                name: mlpipeline-minio-artifact,
-                key: accesskey
-            },
-            secretKeySecret: {
-                name: mlpipeline-minio-artifact,
-                key: secretkey
-            }
-        },
-        archiveLogs: true
-    }
-    }
-{{- else }}
   artifactRepository: |
     archiveLogs: true
     s3:
@@ -51,7 +28,6 @@ data:
         key: secretkey
   executor: |
     imagePullPolicy: IfNotPresent
-{{- end }}
 kind: ConfigMap
 metadata:
   labels:

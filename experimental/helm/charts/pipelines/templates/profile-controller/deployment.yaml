@@ -42,7 +42,7 @@ spec:
           {{- if .value }}
           value: {{ .value | quote }}
           {{- else if and .key (ne .key "null") }}
-            {{- if or (eq .name "MINIO_ACCESS_KEY") (eq .name "MINIO_SECRET_KEY") (eq .name "AWS_ACCESS_KEY_ID") (eq .name "AWS_SECRET_ACCESS_KEY") }}
+            {{- if or (eq .name "MINIO_ACCESS_KEY") (eq .name "MINIO_SECRET_KEY") }}
           valueFrom:
             secretKeyRef:
               name: mlpipeline-minio-artifact

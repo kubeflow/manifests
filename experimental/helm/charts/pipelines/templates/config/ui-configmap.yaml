@@ -8,49 +8,9 @@ metadata:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
 data:
   viewer-pod-template.json: |-
-{{- if eq .Values.objectStore.provider "s3" }}
-    {
-      "spec": {
-        "containers": [
-          {
-            "env": [
-              {
-                "name": "AWS_ACCESS_KEY_ID",
-                "valueFrom": {
-                  "secretKeyRef": {
-                    "name": "mlpipeline-minio-artifact",
-                    "key": "accesskey"
-                  }
-                }
-              },
-              {
-                "name": "AWS_SECRET_ACCESS_KEY",
-                "valueFrom": {
-                  "secretKeyRef": {
-                    "name": "mlpipeline-minio-artifact",
-                    "key": "secretkey"
-                  }
-                }
-              },
-              {
-                "name": "AWS_REGION",
-                "valueFrom": {
-                  "configMapKeyRef": {
-                    "name": "pipeline-install-config",
-                    "key": "minioServiceRegion"
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      }
-    }
-{{- else }}
     {
         "spec": {
             "serviceAccountName": "{{ if and .Values.installMode.multiUser.enabled (eq .Values.installMode.type "multi-user") }}default-editor{{ else }}kubeflow-pipelines-viewer{{ end }}"
         }
     }
-{{- end }}
 {{- end }}
