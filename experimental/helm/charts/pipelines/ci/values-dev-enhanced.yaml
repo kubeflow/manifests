@@ -147,11 +147,6 @@ application:
 # Environment Configuration
 env:
   platform: platform-agnostic
-  gcp:
-    proxyAgent:
-      enabled: true
-      image:
-        tag: "master"
 
 # Reduced resources for development
 apiServer:

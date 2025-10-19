@@ -558,12 +558,6 @@ Object storage configuration helpers
 {{- else -}}
 {{- .Values.objectStore.minio.endpoint }}
 {{- end -}}
-{{- else if eq .Values.objectStore.provider "s3" -}}
-s3.amazonaws.com
-{{- else if eq .Values.objectStore.provider "gcs" -}}
-storage.googleapis.com
-{{- else if eq .Values.objectStore.provider "azure" -}}
-{{ .Values.objectStore.azure.storageAccount }}.blob.core.windows.net
 {{- else -}}
 {{ .Values.objectStore.custom.endpoint }}
 {{- end -}}
@@ -572,12 +566,6 @@ storage.googleapis.com
 {{- define "kubeflow-pipelines.objectStore.bucket" -}}
 {{- if eq .Values.objectStore.provider "minio" -}}
 {{- .Values.objectStore.minio.bucket | default "mlpipeline" }}
-{{- else if eq .Values.objectStore.provider "s3" -}}
-{{- .Values.objectStore.bucketName | default .Values.objectStore.s3.bucket }}
-{{- else if eq .Values.objectStore.provider "gcs" -}}
-{{- .Values.objectStore.bucketName | default .Values.objectStore.gcs.bucket | default "mlpipeline" }}
-{{- else if eq .Values.objectStore.provider "azure" -}}
-{{- .Values.objectStore.azure.container }}
 {{- else -}}
 {{- .Values.objectStore.custom.bucket }}
 {{- end -}}
@@ -586,12 +574,6 @@ storage.googleapis.com
 {{- define "kubeflow-pipelines.objectStore.secure" -}}
 {{- if eq .Values.objectStore.provider "minio" -}}
 {{- .Values.objectStore.minio.secure | default "false" }}
-{{- else if eq .Values.objectStore.provider "s3" -}}
-"true"
-{{- else if eq .Values.objectStore.provider "gcs" -}}
-"true"
-{{- else if eq .Values.objectStore.provider "azure" -}}
-"true"
 {{- else -}}
 {{- .Values.objectStore.custom.secure | default "true" }}
 {{- end -}}
@@ -604,26 +586,12 @@ storage.googleapis.com
 {{- else -}}
 mlpipeline-minio-artifact
 {{- end -}}
-{{- else if eq .Values.objectStore.provider "s3" -}}
-{{- if .Values.objectStore.s3.existingSecret -}}
-{{- .Values.objectStore.s3.existingSecret }}
+{{- else -}}
+{{- if .Values.objectStore.custom.existingSecret -}}
+{{- .Values.objectStore.custom.existingSecret }}
 {{- else -}}
 mlpipeline-minio-artifact
 {{- end -}}
-{{- else if eq .Values.objectStore.provider "gcs" -}}
-{{- if .Values.objectStore.gcs.existingSecret -}}
-{{- .Values.objectStore.gcs.existingSecret }}
-{{- else -}}
-mlpipeline-minio-artifact
-{{- end -}}
-{{- else if eq .Values.objectStore.provider "azure" -}}
-{{- if .Values.objectStore.azure.existingSecret -}}
-{{- .Values.objectStore.azure.existingSecret }}
-{{- else -}}
-mlpipeline-minio-artifact
-{{- end -}}
-{{- else -}}
-mlpipeline-minio-artifact
 {{- end -}}
 {{- end }}
 

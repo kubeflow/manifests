@@ -1,4 +1,4 @@
-{{- if and .Values.thirdParty.minio.enabled (ne .Values.env.platform "azure") }}
+{{- if .Values.thirdParty.minio.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,24 +19,17 @@ spec:
         {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
         app: minio
     spec:
-      {{- if ne .Values.env.platform "azure" }}
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: "OnRootMismatch"
         seccompProfile:
           type: RuntimeDefault
-      {{- end }}
       containers:
       - name: minio
         image: gcr.io/ml-pipeline/minio:RELEASE.2019-08-14T20-37-41Z-license-compliance
         args:
-        {{- if eq .Values.env.platform "azure" }}
-        - gateway
-        - azure
-        {{- else }}
         - server
         - /data
-        {{- end }}
         env:
         - name: MINIO_ACCESS_KEY
           valueFrom:
@@ -53,12 +46,7 @@ spec:
         resources:
           requests:
             cpu: 20m
-            {{- if eq .Values.env.platform "azure" }}
-            memory: 25Mi
-            {{- else }}
             memory: 100Mi
-            {{- end }}
-        {{- if ne .Values.env.platform "azure" }}
         securityContext:
           runAsUser: 1000
           runAsGroup: 0
@@ -77,5 +65,4 @@ spec:
       - name: data
         persistentVolumeClaim:
           claimName: minio-pvc
-        {{- end }}
 {{- end }}

@@ -1,4 +1,4 @@
-{{- if and .Values.thirdParty.minio.enabled (ne .Values.env.platform "azure") }}
+{{- if .Values.thirdParty.minio.enabled }}
 apiVersion: v1
 kind: Service
 metadata:

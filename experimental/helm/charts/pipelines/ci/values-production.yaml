@@ -65,9 +65,9 @@ externalDatabase:
 
 # Use external object storage
 objectStore:
-  provider: s3
-  s3:
-    region: "us-west-2"
+  provider: custom
+  custom:
+    endpoint: "s3.example.com"
     bucket: "production-kfp-artifacts"
     existingSecret: "s3-credentials"
 
