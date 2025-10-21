@@ -1,0 +1,18 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app.kubernetes.io/name: model-catalog
+    app.kubernetes.io/part-of: model-catalog
+    app.kubernetes.io/component: database
+  name: model-catalog-postgres
+spec:
+  selector:
+    app.kubernetes.io/part-of: model-catalog
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/component: database
+  type: ClusterIP
+  ports:
+  - port: 5432
+    protocol: TCP
+    name: postgres

@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: model-catalog-postgres
+  labels:
+    component: model-catalog-server
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgres
+      app.kubernetes.io/part-of: model-catalog
+  replicas: 1
+  template:
+    metadata:
+      name: postgres
+      labels:
+        app.kubernetes.io/name: postgres
+        app.kubernetes.io/part-of: model-catalog
+        app.kubernetes.io/component: database
+        sidecar.istio.io/inject: "false"
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+        runAsNonRoot: true
+        fsGroup: 70
+      containers:
+      - name: postgres
+        image: postgres:17.6
+        env:
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        envFrom:
+        - secretRef:
+            name: model-catalog-postgres
+        ports:
+        - name: postgres
+          containerPort: 5432
+        volumeMounts:
+        - name: model-catalog-postgres
+          mountPath: /var/lib/postgresql/data
+        securityContext:
+          runAsUser: 70
+          runAsGroup: 70
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+      volumes:
+      - name: model-catalog-postgres
+        persistentVolumeClaim:
+          claimName: model-catalog-postgres

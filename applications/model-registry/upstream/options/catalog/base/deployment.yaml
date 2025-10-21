@@ -1,19 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: server
+  name: model-catalog-server
   labels:
-    component: model-catalog-server
+    app.kubernetes.io/name: model-catalog
+    app.kubernetes.io/part-of: model-catalog
+    app.kubernetes.io/component: server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      component: model-catalog-server
+      app.kubernetes.io/name: model-catalog
+      app.kubernetes.io/part-of: model-catalog
+      app.kubernetes.io/component: server
   template:
     metadata:
       labels:
         sidecar.istio.io/inject: "true"
-        component: model-catalog-server
+        app.kubernetes.io/name: model-catalog
+        app.kubernetes.io/part-of: model-catalog
+        app.kubernetes.io/component: server
     spec:
       securityContext:
         seccompProfile:
@@ -25,6 +31,19 @@ spec:
           name: model-catalog-sources
       containers:
         - name: catalog
+          env:
+            - name: PGHOST
+              value: model-catalog-postgres
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: model-catalog-postgres
+                  key: POSTGRES_USER
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: model-catalog-postgres
+                  key: POSTGRES_PASSWORD
           command:
             - /model-registry
             - catalog
