@@ -1,0 +1,87 @@
+name: Test Model Catalog
+on:
+  pull_request:
+    paths:
+    - tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+    - .github/workflows/model_catalog_test.yaml
+    - applications/model-registry/upstream/options/catalog/**
+    - tests/istio*
+    - common/istio*/**
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  build-kfmc:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install KinD, Create KinD cluster and Install kustomize
+      run: ./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+
+    - name: Install kubectl
+      run: ./tests/kubectl_install.sh
+
+    - name: Create kubeflow namespace
+      run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+
+    - name: Install Istio
+      run: ./tests/istio-cni_install.sh
+
+    - name: Install oauth2-proxy
+      run: ./tests/oauth2-proxy_install.sh
+
+    - name: Install cert-manager
+      run: ./tests/cert_manager_install.sh
+
+    - name: Install KF Multi Tenancy
+      run: ./tests/multi_tenancy_install.sh
+
+    - name: Install kubeflow-istio-resources
+      run: kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
+
+    - name: Create KF Profile
+      run: kustomize build common/user-namespace/base | kubectl apply -f -
+
+    - name: Install KF Model Catalog
+      run: ./tests/model_catalog_install.sh
+
+    - name: Test KF Model Catalog deployment
+      run: |
+        if ! kubectl wait --for=condition=available -n kubeflow deployment/model-catalog-server --timeout=120s ; then
+            kubectl events -A
+            kubectl describe deployment/model-catalog-server -n kubeflow
+            kubectl logs deployment/model-catalog-server -n kubeflow
+            exit 1
+        fi
+
+    - name: Run Model Catalog API tests
+      run: ./tests/model_catalog_test.sh
+
+    - name: Test Model Catalog API endpoint
+      run: |
+        nohup kubectl port-forward svc/model-catalog-service -n kubeflow 8082:8080 &
+        PORT_FORWARD_PID=$!
+
+        MAX_RETRIES=30
+        RETRY_COUNT=0
+        while ! curl -s localhost:8082 > /dev/null; do
+          echo "waiting for port-forwarding 8082 ($RETRY_COUNT/$MAX_RETRIES)..."
+          sleep 1
+          RETRY_COUNT=$((RETRY_COUNT + 1))
+          if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
+            echo "ERROR: Port-forwarding failed to become ready after ${MAX_RETRIES} seconds"
+            kill $PORT_FORWARD_PID 2>/dev/null
+            exit 1
+          fi
+        done
+
+        curl -v -X 'GET' \
+          'http://localhost:8082/api/model_catalog/v1alpha1/models?pageSize=100' \
+          -H 'accept: application/json' || echo "Note: Empty catalog is expected for basic test"
+
+        kill $PORT_FORWARD_PID 2>/dev/null
+
