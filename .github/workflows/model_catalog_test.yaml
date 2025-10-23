@@ -64,24 +64,9 @@ jobs:
     - name: Test Model Catalog API endpoint
       run: |
         nohup kubectl port-forward svc/model-catalog-service -n kubeflow 8082:8080 &
-        PORT_FORWARD_PID=$!
-
-        MAX_RETRIES=30
-        RETRY_COUNT=0
-        while ! curl -s localhost:8082 > /dev/null; do
-          echo "waiting for port-forwarding 8082 ($RETRY_COUNT/$MAX_RETRIES)..."
-          sleep 1
-          RETRY_COUNT=$((RETRY_COUNT + 1))
-          if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
-            echo "ERROR: Port-forwarding failed to become ready after ${MAX_RETRIES} seconds"
-            kill $PORT_FORWARD_PID 2>/dev/null
-            exit 1
-          fi
-        done
+        while ! curl -s localhost:8082 > /dev/null; do echo "waiting for port-forwarding 8082"; sleep 1; done; echo "port-forwarding 8082 ready"
 
         curl -v -X 'GET' \
           'http://localhost:8082/api/model_catalog/v1alpha1/models?pageSize=100' \
           -H 'accept: application/json' || echo "Note: Empty catalog is expected for basic test"
-
-        kill $PORT_FORWARD_PID 2>/dev/null
 
