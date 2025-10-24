@@ -109,6 +109,9 @@ jobs:
       run: |
         kustomize build applications/model-registry/upstream/options/ui/overlays/istio | kubectl apply -n kubeflow -f -
 
+    - name: Install KF Model Catalog
+      run: ./tests/model_catalog_install.sh
+
     - name: Install Spark
       run: chmod u+x tests/*.sh && ./tests/spark_install.sh
 
@@ -230,6 +233,9 @@ jobs:
         curl -s --fail \
           "localhost:8080/model-registry/api/v1/model_registry?namespace=${KF_PROFILE}" \
           -H "Authorization: Bearer ${KF_TOKEN}"
+
+    - name: Run Model Catalog API tests
+      run: ./tests/model_catalog_test.sh
 
     - name: Test Model Registry API with Unauthorized Token
       run: |
