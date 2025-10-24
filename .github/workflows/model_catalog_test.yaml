@@ -61,11 +61,3 @@ jobs:
     - name: Run Model Catalog API tests
       run: ./tests/model_catalog_test.sh
 
-    - name: Test Model Catalog API endpoint
-      run: |
-        nohup kubectl port-forward svc/model-catalog-model-catalog-service -n kubeflow 8082:8080 &
-        sleep 5
-        curl -v -X 'GET' \
-          'http://localhost:8082/api/model_catalog/v1alpha1/models?pageSize=100' \
-          -H 'accept: application/json' || echo "Note: Empty catalog is expected for basic test"
-
