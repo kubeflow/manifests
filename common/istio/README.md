@@ -64,34 +64,56 @@ When deploying KServe with path-based routing alongside KubeFlow, you may encoun
 - KubeFlow Central Dashboard and other services work normally
 - KServe services work when accessed via different paths but not the root path
 
-**Workaround:** Update the kubeflow-gateway to include your KServe ingress domain alongside the wildcard host:
+**Workaround:** Align the hosts of VirtualServices created by KServe with the KubeFlow VirtualServices:
 
 ```yaml
-# In your kustomization overlay or directly in kubeflow-istio-resources
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
 metadata:
-  name: kubeflow-gateway
+  name: set-hosts-new-vs
+  annotations:
+    policies.kyverno.io/title: Override hosts of new Istio VirtualServices to align with other KubeFlow VirtualServices
 spec:
-  selector:
-    istio: ingressgateway
-  servers:
-  - port:
-      number: 80
-      name: http
-      protocol: HTTP
-    hosts:
-    - "*"                           # Existing KubeFlow wildcard
-    - "your-kserve-domain.com"      # Add your KServe ingress domain
+  rules:
+  - name: override-vs-hosts
+    preconditions:
+      all:
+        - key: "{{ request.object.spec.hosts || [] }}"
+          operator: NotEquals
+          value: ["*"]
+        # The problem happens only with VirtualServices for the `kubeflow-gateway` gateway
+        - key: "{{ request.object.spec.gateways || []}}"
+          operator: AnyIn
+          value:
+          - kubeflow/kubeflow-gateway
+          - kubeflow-gateway
+        # Make sure to ignore VirtualService with `mesh` gateway
+        # Otherwise this will lead to connectivity problems between the KubeFlow dashboard and profile controller
+        - key: "{{ request.object.spec.gateways || []}}"
+          operator: AllNotIn
+          value:
+          - mesh
+    match:
+      any:
+      - resources:
+          kinds:
+          - networking.istio.io/v1/VirtualService
+          namespaceSelector:
+            matchLabels:
+              app.kubernetes.io/part-of: kubeflow-profile
+    mutate:
+      patchStrategicMerge:
+        spec:
+          hosts: 
+          - "*"
 ```
 
 **Steps to apply the fix:**
-1. Identify your KServe ingress domain from the `inferenceservice-config` ConfigMap
-2. Create a Kustomization overlay that patches the kubeflow-gateway
-3. Apply the updated configuration
+1. Create the Kyverno policy
 
 **References:**
 - Upstream Istio issue: https://github.com/istio/istio/issues/57404
+- Upstream KServe issue to make the host configurable: https://github.com/kserve/kserve/issues/4750
 - KServe path-based routing documentation: https://kserve.github.io/website/docs/admin-guide/configurations#path-template
 - Path-based routing test in CI: [.github/workflows/kserve_test.yaml](../../.github/workflows/kserve_test.yaml) (see `test-basic-kserve` job)
 - VirtualService path-based routing implementation: [tests/kserve_test.sh](../../tests/kserve_test.sh#L16-L42)
