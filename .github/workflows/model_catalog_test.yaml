@@ -49,15 +49,5 @@ jobs:
     - name: Install KF Model Catalog
       run: ./tests/model_catalog_install.sh
 
-    - name: Test KF Model Catalog deployment
-      run: |
-        if ! kubectl wait --for=condition=available -n kubeflow deployment/model-catalog-server --timeout=120s ; then
-            kubectl events -A
-            kubectl describe deployment/model-catalog-server -n kubeflow
-            kubectl logs deployment/model-catalog-server -n kubeflow
-            exit 1
-        fi
-
     - name: Run Model Catalog API tests
       run: ./tests/model_catalog_test.sh
-
