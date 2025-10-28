@@ -7,14 +7,14 @@ if ! kubectl get deployment/model-catalog-server -n kubeflow; then
     exit 1
 fi
 
-if ! kubectl get svc/model-catalog-model-catalog-service -n kubeflow; then
+if ! kubectl get svc/model-catalog -n kubeflow; then
     echo "ERROR: Model Catalog service not found"
     exit 1
 fi
 
-kubectl get pods -n kubeflow -l component=model-catalog-server
+kubectl get pods -n kubeflow -l app.kubernetes.io/name=model-catalog,app.kubernetes.io/component=server
 
-nohup kubectl port-forward svc/model-catalog-model-catalog-service -n kubeflow 8082:8080 &
+nohup kubectl port-forward svc/model-catalog -n kubeflow 8082:8080 &
 PORT_FORWARD_PID=$!
 
 MAX_RETRIES=30
