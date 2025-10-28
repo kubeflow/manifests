@@ -37,7 +37,8 @@ body:
     description: Which version of the Kubeflow platform are you using?
     options:
     - master
-    - 1.9
+    - 1.10.2
+    - 1.11
   validations:
     required: true
 - type: textarea
