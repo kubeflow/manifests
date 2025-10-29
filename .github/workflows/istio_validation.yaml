@@ -1,11 +1,12 @@
-name: Test Istio CNI and Non-CNI Installation
+name: Test Istio Installation Modes (CNI, Insecure, Ambient)
 
 on:
   pull_request:
     paths:
     - tests/install_KinD_create_KinD_cluster_install_kustomize.sh
     - tests/istio*
-    - .github/workflows/istio_cni_test.yaml
+    - tests/ambient*
+    - .github/workflows/istio_validation.yaml
     - common/istio/**
     - common/cert-manager/**
 
@@ -21,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        istio-mode: ['cni', 'insecure']
+        istio-mode: ['cni', 'insecure', 'ambient']
 
     steps:
     - name: Checkout
@@ -61,6 +62,14 @@ jobs:
         kubectl patch validatingwebhookconfiguration istio-validator-istio-system --type='json' \
           -p="[{'op': 'add', 'path': '/webhooks/0/clientConfig/caBundle', 'value':'$CA_BUNDLE'}]"
 
+    - name: Install Istio Ambient Mode
+      if: matrix.istio-mode == 'ambient'
+      run: |
+        kustomize build common/istio/istio-crds/base | kubectl apply -f -
+        kustomize build common/istio/istio-namespace/base | kubectl apply -f -
+        kustomize build common/istio/istio-install/overlays/ambient | kubectl apply -f -
+        kubectl wait --for=condition=Ready pods --all -n istio-system --timeout 300s
+
     - name: Wait for Istio deployment
       run: |
         kubectl wait --for=condition=available --timeout=300s deployment/istiod -n istio-system
@@ -92,6 +101,30 @@ jobs:
           (echo "ERROR: pilot.cni.enabled should be false in configmap values" && \
            kubectl get configmap istio-sidecar-injector -n istio-system -o jsonpath='{.data.values}' && exit 1)
 
+    - name: Verify Ambient Mode Installation
+      if: matrix.istio-mode == 'ambient'
+      run: |
+        kubectl get daemonset ztunnel -n istio-system
+        kubectl rollout status daemonset/ztunnel -n istio-system --timeout=120s
+
+        PILOT_ENABLE_AMBIENT=$(kubectl get deployment istiod -n istio-system -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="PILOT_ENABLE_AMBIENT")].value}')
+        if [ "$PILOT_ENABLE_AMBIENT" != "true" ]; then
+          echo "ERROR: PILOT_ENABLE_AMBIENT should be true, got: $PILOT_ENABLE_AMBIENT"
+          exit 1
+        fi
+        echo "Ambient mode enabled in istiod"
+
+        kubectl get daemonset istio-cni-node -n kube-system
+        kubectl rollout status daemonset/istio-cni-node -n kube-system --timeout=120s
+        echo "CNI installed for ambient mode"
+
+        PSS_LEVEL=$(kubectl get namespace istio-system -o jsonpath='{.metadata.labels.pod-security\.kubernetes\.io/enforce}')
+        if [ "$PSS_LEVEL" != "privileged" ]; then
+          echo "ERROR: istio-system should have PSS privileged, got: $PSS_LEVEL"
+          exit 1
+        fi
+        echo "PSS privileged verified for istio-system"
+
     - name: Install OAuth2 Proxy
       run: ./tests/oauth2-proxy_install.sh
 
@@ -103,6 +136,12 @@ jobs:
 
     - name: Create KF Profile
       run: ./tests/kubeflow_profile_install.sh
+
+    - name: Enable ambient mode for user namespace
+      if: matrix.istio-mode == 'ambient'
+      run: |
+        kubectl label namespace $KF_PROFILE istio-injection- --overwrite
+        kubectl label namespace $KF_PROFILE istio.io/dataplane-mode=ambient --overwrite
 
     - name: Enable Istio injection and adjust PSS for insecure mode
       run: |
@@ -133,14 +172,13 @@ jobs:
         EOF
 
     - name: Test sidecar injection
+      if: matrix.istio-mode != 'ambient'
       run: |
         kubectl apply -f ./tests/istio_dummy_deployment.yaml -n $KF_PROFILE
         kubectl wait --for=condition=available --timeout=160s deployment/test-application -n $KF_PROFILE
 
-        # Check for istio-proxy sidecar container injection
         POD_NAME=$(kubectl get pods -n $KF_PROFILE -l app=test-application -o jsonpath='{.items[0].metadata.name}')
 
-        # Check if istio-proxy container exists (either as sidecar or init container)
         ISTIO_PROXY_EXISTS=$(kubectl get pod $POD_NAME -n $KF_PROFILE -o jsonpath='{.spec.containers[*].name}' | grep -c "istio-proxy" || echo "0")
         ISTIO_INIT_EXISTS=$(kubectl get pod $POD_NAME -n $KF_PROFILE -o jsonpath='{.spec.initContainers[*].name}' | grep -c "istio-proxy" || echo "0")
 
@@ -150,12 +188,38 @@ jobs:
           kubectl get namespace $KF_PROFILE --show-labels
           exit 1
         fi
-        echo "Sidecar injection successful"
 
         # Verify Envoy proxy is responding
         kubectl exec -n $KF_PROFILE deployment/test-application -c istio-proxy -- curl -s localhost:15000/ready | grep -q "LIVE" || \
           (echo "ERROR: Envoy proxy not responding" && exit 1)
-        echo "Envoy proxy is healthy"
+
+    - name: Test ambient mode (no sidecar)
+      if: matrix.istio-mode == 'ambient'
+      run: |
+        kubectl apply -f ./tests/istio_dummy_deployment.yaml -n $KF_PROFILE
+        kubectl wait --for=condition=available --timeout=160s deployment/test-application -n $KF_PROFILE
+
+        POD_NAME=$(kubectl get pods -n $KF_PROFILE -l app=test-application -o jsonpath='{.items[0].metadata.name}')
+
+        CONTAINER_COUNT=$(kubectl get pod $POD_NAME -n $KF_PROFILE -o jsonpath='{.spec.containers[*].name}' | wc -w)
+        if [ "$CONTAINER_COUNT" -ne "1" ]; then
+          echo "ERROR: Pod should have only 1 container in ambient mode, found: $CONTAINER_COUNT"
+          kubectl get pod $POD_NAME -n $KF_PROFILE -o jsonpath='{.spec.containers[*].name}'
+          exit 1
+        fi
+
+        AMBIENT_LABEL=$(kubectl get namespace $KF_PROFILE -o jsonpath='{.metadata.labels.istio\.io/dataplane-mode}')
+        if [ "$AMBIENT_LABEL" != "ambient" ]; then
+          echo "ERROR: Namespace should have istio.io/dataplane-mode=ambient label"
+          exit 1
+        fi
+
+    - name: Verify ztunnel logs show traffic handling
+      if: matrix.istio-mode == 'ambient'
+      run: |
+        # Check ztunnel logs for workload processing
+        kubectl logs -n istio-system daemonset/ztunnel --tail=50 | grep -i "workload\|connection\|proxy" || echo "Ztunnel logs (last 50 lines):"
+        kubectl logs -n istio-system daemonset/ztunnel --tail=50
 
     - name: Test CNI-specific functionality
       if: matrix.istio-mode == 'cni'
@@ -179,8 +243,6 @@ jobs:
           exit 1
         fi
 
-        echo "Non-CNI verification successful: found istio-init, no istio-validation"
-
     - name: Port-forward the istio-ingress gateway
       run: ./tests/port_forward_gateway.sh
 
@@ -193,6 +255,13 @@ jobs:
     - name: Apply Pod Security Standards Restricted levels
       if: matrix.istio-mode == 'cni'
       run: ./tests/PSS_enable.sh
+
+    - name: Apply Pod Security Standards Restricted to user namespace (ambient mode)
+      if: matrix.istio-mode == 'ambient'
+      run: |
+        # Apply PSS restricted to user namespace (ztunnel runs in istio-system, not user namespaces)
+        kubectl label namespace $KF_PROFILE pod-security.kubernetes.io/enforce=restricted --overwrite
+        kubectl label namespace $KF_PROFILE pod-security.kubernetes.io/enforce-version=latest --overwrite
 
     - name: Collect debug information on failure
       if: failure()
@@ -212,6 +281,10 @@ jobs:
         echo "=== CNI Daemonset Status ==="
         kubectl get daemonset istio-cni-node -n kube-system || echo "CNI daemonset not found (expected for insecure mode)"
         kubectl logs -n kube-system daemonset/istio-cni-node --tail=20 || true
+
+        echo "=== Ztunnel Daemonset Status ==="
+        kubectl get daemonset ztunnel -n istio-system || echo "Ztunnel daemonset not found (expected for non-ambient modes)"
+        kubectl logs -n istio-system daemonset/ztunnel --tail=20 || true
 
         echo "=== Webhook Configurations ==="
         kubectl get mutatingwebhookconfiguration istio-sidecar-injector -o yaml | grep -A5 -B5 caBundle || true

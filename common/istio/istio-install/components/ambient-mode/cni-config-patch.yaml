@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: istio-cni-config
+  namespace: kube-system
+data:
+  AMBIENT_ENABLED: "true"

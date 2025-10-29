@@ -19,6 +19,21 @@ GKE mounts `/opt/cni/bin` as read-only for security reasons, preventing the Isti
 kubectl apply -k istio-install/overlays/gke
 ```
 
+### Ambient Mode (Sidecar-free Service Mesh)
+Istio Ambient Mode eliminates sidecars, reducing resource overhead while maintaining full L4/L7 traffic processing capabilities.
+
+```bash
+# OAuth2-Proxy
+kubectl apply -k istio-install/overlays/ambient-oauth2-proxy
+
+# OAuth2-Proxy on Google Kubernetes Engine (GKE)
+kubectl apply -k istio-install/overlays/ambient-oauth2-proxy-gke
+```
+
+**Important:** Ambient mode requires PSS Privileged (not Baseline or Restricted) for the `istio-system` namespace. The ztunnel component needs `CAP_SYS_ADMIN`, `CAP_NET_ADMIN`, and `CAP_NET_RAW` capabilities for transparent proxying and network namespace operations. The `istio-system` namespace is automatically configured with PSS privileged label when using ambient mode components.
+
+**Note:** Ambient mode uses Kustomize components (`components/ambient-mode/`) for composable configuration without duplication.
+
 ### Insecure Istio (CNI-disabled)
 For environments that don't support CNI:
 ```bash
