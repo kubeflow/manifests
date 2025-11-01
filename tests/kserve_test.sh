@@ -198,7 +198,7 @@ if [ "$RESPONSE" != "403" ]; then
     exit 1
 fi
 
-# Test namespace isolation - attacker in different namespace should not have access
+# Test namespace isolation - attacker in different namespace should NOT have access
 ATTACKER_NAMESPACE="attacker-namespace"
 kubectl create namespace ${ATTACKER_NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -
 
@@ -210,6 +210,18 @@ metadata:
   namespace: ${ATTACKER_NAMESPACE}
 EOF
 
+# Test 1: Unauthenticated request from attacker namespace should be REJECTED
+RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+    -H "Host: secure-model-predictor.${NAMESPACE}.svc.cluster.local" \
+    "http://localhost:8081/")
+
+if [ "$RESPONSE" == "200" ]; then
+    echo "FAIL: Unauthenticated attacker namespace request should be rejected, got $RESPONSE"
+    exit 1
+fi
+
+# Test 2: Authenticated request from attacker namespace should ALSO be REJECTED
+# Enforces strict namespace isolation - even with a valid token from another namespace
 ATTACKER_TOKEN=$(kubectl -n ${ATTACKER_NAMESPACE} create token attacker-sa)
 
 RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
@@ -217,9 +229,8 @@ RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
     -H "Authorization: Bearer $ATTACKER_TOKEN" \
     "http://localhost:8081/")
 
-# The attacker token can reach the service through the cluster-local-gateway,
-# but may get 404 or 503 depending on whether the request is fully processed
-if [ "$RESPONSE" != "200" ] && [ "$RESPONSE" != "404" ] && [ "$RESPONSE" != "503" ]; then
+if [ "$RESPONSE" == "200" ]; then
+    echo "FAIL: Attacker namespace token should be rejected (namespace isolation), got $RESPONSE"
     exit 1
 fi
 
