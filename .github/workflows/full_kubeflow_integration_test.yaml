@@ -198,8 +198,7 @@ jobs:
       run: ./tests/katib_test.sh "${KF_PROFILE}"
 
     - name: Run KServe Test
-      run: |
-        ./tests/kserve_test.sh ${KF_PROFILE}
+      run: ./tests/kserve_test.sh ${KF_PROFILE}
 
     - name: Test KServe Models Web Application API
       run: ./tests/kserve_models_web_application_test.sh "${KF_PROFILE}"
