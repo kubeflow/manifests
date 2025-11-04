@@ -17,9 +17,6 @@ resources:
 - configs/logos-configmap.yaml
 namePrefix: jupyter-web-app-
 namespace: kubeflow
-commonLabels:
-  app: jupyter-web-app
-  kustomize.component: jupyter-web-app
 images:
 - name: ghcr.io/kubeflow/kubeflow/jupyter-web-app
   newName: ghcr.io/kubeflow/kubeflow/jupyter-web-app
@@ -76,17 +73,22 @@ vars:
     apiVersion: v1
     kind: ConfigMap
     name: parameters
-- name: JWA_APP_SECURE_COOKIES
-  fieldref:
+- fieldref:
     fieldPath: data.JWA_APP_SECURE_COOKIES
+  name: JWA_APP_SECURE_COOKIES
   objref:
     apiVersion: v1
     kind: ConfigMap
     name: parameters
-- name: JWA_APP_ENABLE_METRICS
-  fieldref:
+- fieldref:
     fieldPath: data.JWA_APP_ENABLE_METRICS
+  name: JWA_APP_ENABLE_METRICS
   objref:
     apiVersion: v1
     kind: ConfigMap
     name: parameters
+labels:
+- includeSelectors: true
+  pairs:
+    app: jupyter-web-app
+    kustomize.component: jupyter-web-app

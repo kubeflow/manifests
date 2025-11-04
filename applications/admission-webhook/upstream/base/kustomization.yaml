@@ -8,11 +8,6 @@ resources:
 - service-account.yaml
 - service.yaml
 - crd.yaml
-commonLabels:
-  app: poddefaults
-  kustomize.component: poddefaults
-  app.kubernetes.io/component: poddefaults
-  app.kubernetes.io/name: poddefaults
 images:
 - name: ghcr.io/kubeflow/kubeflow/poddefaults-webhook
   newName: ghcr.io/kubeflow/kubeflow/poddefaults-webhook
@@ -20,13 +15,13 @@ images:
 namespace: kubeflow
 generatorOptions:
   disableNameSuffixHash: true
-vars:
 # These vars are used to substitute in the namespace, service name and
 # deployment name into the mutating WebHookConfiguration.
 # Since its a CR kustomize isn't aware of those fields and won't
 # transform them.
 # We need the var names to be relatively unique so that when we
 # compose with other applications they won't conflict.
+vars:
 - fieldref:
     fieldPath: metadata.namespace
   name: podDefaultsNamespace
@@ -50,3 +45,10 @@ vars:
     name: deployment
 configurations:
 - params.yaml
+labels:
+- includeSelectors: true
+  pairs:
+    app: poddefaults
+    app.kubernetes.io/component: poddefaults
+    app.kubernetes.io/name: poddefaults
+    kustomize.component: poddefaults
