@@ -8,9 +8,6 @@ resources:
 - service.yaml
 namePrefix: volumes-web-app-
 namespace: kubeflow
-commonLabels:
-  app: volumes-web-app
-  kustomize.component: volumes-web-app
 images:
 - name: ghcr.io/kubeflow/kubeflow/volumes-web-app
   newName: ghcr.io/kubeflow/kubeflow/volumes-web-app
@@ -60,17 +57,22 @@ vars:
     apiVersion: v1
     kind: ConfigMap
     name: parameters
-- name: VWA_APP_SECURE_COOKIES
-  fieldref:
+- fieldref:
     fieldPath: data.VWA_APP_SECURE_COOKIES
+  name: VWA_APP_SECURE_COOKIES
   objref:
     apiVersion: v1
     kind: ConfigMap
     name: parameters
-- name: VWA_APP_ENABLE_METRICS
-  fieldref:
+- fieldref:
     fieldPath: data.VWA_APP_ENABLE_METRICS
+  name: VWA_APP_ENABLE_METRICS
   objref:
     apiVersion: v1
     kind: ConfigMap
     name: parameters
+labels:
+- includeSelectors: true
+  pairs:
+    app: volumes-web-app
+    kustomize.component: volumes-web-app
