@@ -1,0 +1,11 @@
+# Fix GKE priority class quota issues for ztunnel
+# Based on your ambient testing experience where you had to patch priority classes
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ztunnel
+  namespace: istio-system
+spec:
+  template:
+    spec:
+      priorityClassName: ""

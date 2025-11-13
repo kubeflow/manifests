@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: istio-cni-node
+  namespace: kube-system
+spec:
+  template:
+    spec:
+      containers:
+      - name: install-cni
+        volumeMounts:
+        - mountPath: /var/run/ztunnel
+          name: cni-ztunnel-sock-dir
+        - mountPath: /host/var/run/netns
+          name: cni-netns-dir
+          mountPropagation: HostToContainer
+      volumes:
+      - name: cni-ztunnel-sock-dir
+        hostPath:
+          path: /var/run/ztunnel
+          type: DirectoryOrCreate

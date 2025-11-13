@@ -1,0 +1,34 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+resources:
+- ztunnel.yaml
+- istio-namespace-pss-privileged.yaml
+
+patches:
+- path: istiod-ambient-patch.yaml
+  target:
+    kind: Deployment
+    name: istiod
+    namespace: istio-system
+- path: cni-ambient-patch.yaml
+  target:
+    kind: DaemonSet
+    name: istio-cni-node
+    namespace: kube-system
+- path: cni-config-patch.yaml
+  target:
+    kind: ConfigMap
+    name: istio-cni-config
+    namespace: kube-system
+- path: cni-rbac-patch.yaml
+  target:
+    kind: ClusterRole
+    name: istio-cni
+- target:
+    kind: Namespace
+    name: kubeflow
+  patch: |-
+    - op: add
+      path: /metadata/labels/istio.io~1dataplane-mode
+      value: ambient
