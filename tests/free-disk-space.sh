@@ -33,7 +33,6 @@ sudo rm -rf /opt/hostedtoolcache/PyPy || true
 sudo rm -rf /opt/hostedtoolcache/boost || true
 
 # Clean package manager
-sudo apt-get autoremove -y
 sudo apt-get autoclean
 
 # Clean Docker
