@@ -25,15 +25,10 @@ jobs:
       labels: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
-    - name: Remove unused software
-      run: |
-        df -h # Check disk space before removal
-        sudo rm -rf /usr/share/dotnet # Example: Remove .NET SDK
-        sudo rm -rf /usr/local/lib/android # Example: Remove Android SDK
-        sudo rm -rf /opt/ghc # Example: Remove Haskell
-        df -h # Check disk space after removal
+    - name: Free up disk space
+      run: ./tests/free-disk-space.sh
 
     - name: Proactively prune OCI system on GHA runner
       run: docker system prune -a --volumes --force
