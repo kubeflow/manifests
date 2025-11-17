@@ -25,6 +25,9 @@ jobs:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
+    - name: Free up disk space
+      run: ./tests/free-disk-space.sh
+
     - name: Checkout
       uses: actions/checkout@v4
 
