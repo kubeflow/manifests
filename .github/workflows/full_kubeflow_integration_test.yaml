@@ -24,6 +24,9 @@ jobs:
       # labels: ubuntu-latest-16-cores
     timeout-minutes: 45
     steps:
+    - name: Free up disk space
+      run: ./tests/free-disk-space.sh
+
     - name: Checkout
       uses: actions/checkout@v4
 
