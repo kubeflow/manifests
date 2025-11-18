@@ -7,7 +7,7 @@ source "${SCRIPT_DIRECTORY}/library.sh"
 setup_error_handling
 
 COMPONENT_NAME="istio"
-COMMIT="1.27.0"  # Update this for new versions
+COMMIT="1.28.0"  # Update this for new versions
 SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/${COMPONENT_NAME}}
 BRANCH_NAME=${BRANCH_NAME:=${COMPONENT_NAME}-${COMMIT?}}
 
