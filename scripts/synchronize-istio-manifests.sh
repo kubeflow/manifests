@@ -42,6 +42,14 @@ echo "Generating non-CNI manifests (insecure overlay)..."
 $ISTIOCTL manifest generate -f profile.yaml -f profile-overlay.yaml \
   --set components.cni.enabled=false > istio-install/overlays/insecure/install-insecure.yaml
 
+echo "Generating ztunnel manifests (ambient mode)..."
+$ISTIOCTL manifest generate -f profile.yaml -f profile-overlay.yaml \
+  --set components.cni.enabled=true \
+  --set components.ztunnel.enabled=true > dump-ztunnel.yaml
+./split-istio-packages -f dump-ztunnel.yaml
+mv $ISTIO_DIRECTORY/ztunnel.yaml $ISTIO_DIRECTORY/istio-install/components/ambient-mode/
+rm dump-ztunnel.yaml crd.yaml install.yaml cluster-local-gateway.yaml
+
 check_uncommitted_changes
 
 SOURCE_TEXT="\[.*\](https://github.com/istio/istio/releases/tag/.*)"

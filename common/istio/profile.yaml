@@ -29,6 +29,3 @@ spec:
     global:
       configValidation: true
       istioNamespace: istio-system
-      proxy:
-        seccompProfile:
-          type: RuntimeDefault

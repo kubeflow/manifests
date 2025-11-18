@@ -50,13 +50,16 @@ def main():
     args = parse_args()
     with open(args.manifest_file, "r") as f:
         objects = [obj for obj in list(yaml.load_all(f)) if obj]
-    crds, install, cluster_local = [], [], []
+    crds, install, cluster_local, ztunnel = [], [], [], []
     for obj in objects:
         if obj.get("kind") == "CustomResourceDefinition":
             crds.append(obj)
         elif (obj.get("metadata", {}).get("name", "").
               startswith("cluster-local-gateway")):
             cluster_local.append(obj)
+        elif (obj.get("metadata", {}).get("name", "") == "ztunnel" or
+              (obj.get("metadata", {}).get("labels", {}).get("app.kubernetes.io/name") == "ztunnel")):
+            ztunnel.append(obj)
         else:
             install.append(obj)
 
@@ -66,6 +69,8 @@ def main():
         yaml.dump_all(install, f)
     with open("cluster-local-gateway.yaml", "w") as f:
         yaml.dump_all(cluster_local, f)
+    with open("ztunnel.yaml", "w") as f:
+        yaml.dump_all(ztunnel, f)
 
 
 if __name__ == "__main__":
