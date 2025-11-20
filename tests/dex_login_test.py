@@ -53,12 +53,16 @@ class DexSessionManager:
         :return: a string of session cookies in the form "key1=value1; key2=value2"
         """
         max_retries = 3
-        retry_delay = 2
-
-        # Use a persistent session for cookies
-        session = requests.Session()
+        base_retry_delay = 2
 
         for attempt in range(max_retries):
+            # Create a fresh session for each attempt to avoid stale state
+            session = requests.Session()
+            
+            if attempt > 0:
+                delay = base_retry_delay * (2 ** (attempt - 1))
+                time.sleep(delay)
+            
             try:
                 # GET the endpoint_url, which should redirect to Dex
                 response = session.get(
@@ -68,8 +72,8 @@ class DexSessionManager:
                 )
                 if response.status_code == 200:
                     pass
-                elif response.status_code == 403:
-                    # if we get 403, we might be at the oauth2-proxy sign-in page
+                elif response.status_code in [401, 403]:
+                    # if we get 401/403, we might be at the oauth2-proxy sign-in page
                     # the default path to start the sign-in flow is `/oauth2/start?rd=<url>`
                     url_object = urlsplit(response.url)
                     url_object = url_object._replace(
@@ -81,6 +85,10 @@ class DexSessionManager:
                         allow_redirects=True,
                         verify=not self._skip_tls_verify
                     )
+                    if response.status_code not in [200, 302]:
+                        raise RuntimeError(
+                            f"HTTP status code '{response.status_code}' for GET against oauth2/start"
+                        )
                 else:
                     raise RuntimeError(
                         f"HTTP status code '{response.status_code}' for GET against: {self._endpoint_url}"
@@ -169,10 +177,8 @@ class DexSessionManager:
                 if attempt == max_retries - 1:  # Last attempt
                     print(f"All {max_retries} attempts failed. Last error: {str(e)}")
                     raise
+                next_delay = base_retry_delay * (2 ** attempt)
                 print(f"Attempt {attempt + 1} failed: {str(e)}")
-                print(f"Retrying in {retry_delay} seconds...")
-                time.sleep(retry_delay)
-                retry_delay *= 2  # Exponential backoff
 
 
 KUBEFLOW_ENDPOINT = "http://localhost:8080"
