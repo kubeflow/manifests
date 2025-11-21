@@ -3,15 +3,15 @@ kind: Kustomization
 resources:
 - ../default
 configMapGenerator:
-- name: tensorboard-controller-config
-  literals:
+- literals:
   - RWO_PVC_SCHEDULING="True"
   - TENSORBOARD_IMAGE=tensorflow/tensorflow:2.5.1
   - ISTIO_GATEWAY=kubeflow/kubeflow-gateway
   - ISTIO_HOST=*
-patchesStrategicMerge:
-- patches/add_controller_config.yaml
+  name: tensorboard-controller-config
 images:
 - name: ghcr.io/kubeflow/kubeflow/tensorboard-controller
   newName: ghcr.io/kubeflow/kubeflow/tensorboard-controller
   newTag: v1.10.0
+patches:
+- path: patches/add_controller_config.yaml

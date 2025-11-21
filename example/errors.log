@@ -1,0 +1,1 @@
+Error: must build at directory: not a valid directory: evalsymlink failure on 'example' : CreateFile C:\Users\misha\Documents\GIT_PR_KUBEFLOW\manifests\manifests\example\example: The system cannot find the file specified.
