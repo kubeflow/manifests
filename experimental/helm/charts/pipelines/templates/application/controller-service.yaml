@@ -1,0 +1,19 @@
+{{- if .Values.application.controller.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: controller-manager-service
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    control-plane: controller-manager
+    controller-tools.k8s.io: "1.0"
+spec:
+  selector:
+    control-plane: controller-manager
+    controller-tools.k8s.io: "1.0"
+    application-crd-id: kubeflow-pipelines
+  ports:
+  - port: 443
+{{- end }}
+
