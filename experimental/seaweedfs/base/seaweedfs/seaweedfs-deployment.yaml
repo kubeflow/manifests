@@ -1,78 +1,95 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kubeflow-pipelines-profile-controller
+  name: seaweedfs
+  namespace: kubeflow
+  labels:
+    app: seaweedfs
 spec:
+  selector:
+    matchLabels:
+      app: seaweedfs
+  strategy:
+    type: Recreate
+  # Single container setup not scalable
   replicas: 1
   template:
     metadata:
       labels:
-        sidecar.istio.io/inject: "false"
+        app: seaweedfs
+        application-crd-id: kubeflow-pipelines
     spec:
       securityContext:
         seccompProfile:
           type: RuntimeDefault
+        fsGroup: 1000
+        fsGroupChangePolicy: "OnRootMismatch"
       containers:
-      - name: profile-controller
-        securityContext:
+      - name: seaweedfs
+        envFrom:
+        - secretRef:
+            name: mlpipeline-minio-artifact
+        image: "chrislusf/seaweedfs:4.00"
+        args:
+        - "server"
+        - "-dir=/data"
+        - "-s3"
+        - "-iam"
+        - "-filer"
+        - "-master.volumePreallocate=false"
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - /bin/sh
+              - -ec
+              - |
+                # wait until seaweedfs master is ready
+                for i in $(seq 1 120); do
+                  if wget -q --spider http://127.0.0.1:8333/status; then
+                    break
+                  fi
+                  sleep 2
+                done
+                # create bucket if not exists (ignore error if exists)
+                echo "s3.bucket.create --name mlpipeline" | /usr/bin/weed shell || true
+                # configure admin user using keys from secret
+                echo "s3.configure -user kubeflow-admin -access_key $accesskey -secret_key $secretkey -actions Admin -apply" | /usr/bin/weed shell
+        ports:
+        - containerPort: 8333
+        - containerPort: 8111
+        - containerPort: 9333
+        - containerPort: 19333
+        - containerPort: 8888
+        readinessProbe:
+          httpGet:
+            path: /status
+            port: 8333
+            scheme: HTTP
+          initialDelaySeconds: 15
+          periodSeconds: 15
+          successThreshold: 1
+          failureThreshold: 100
+          timeoutSeconds: 10
+        securityContext: # Using restricted profile
           allowPrivilegeEscalation: false
+          privileged: false
           runAsNonRoot: true
+          # image defaults to root user
           runAsUser: 1000
-          runAsGroup: 0
+          runAsGroup: 1000
           capabilities:
             drop:
             - ALL
-        # We just need an image with the python botocore library installed
-        image: docker.io/alpine/k8s:1.32.3
-        command: ["python", "/hooks/sync.py"]
-        envFrom:
-        - configMapRef:
-            name: kubeflow-pipelines-profile-controller-env
-        env:
-        - name: KFP_VERSION
-          valueFrom:
-            configMapKeyRef:
-              name: pipeline-install-config
-              key: appVersion
-        - name: AWS_ENDPOINT_URL
-          value: http://seaweedfs.kubeflow:8111
-        - name: S3_ENDPOINT_URL
-          value: http://seaweedfs.kubeflow:8333 
-        - name: AWS_REGION
-          value: us-east-1
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              key: accesskey
-              name: mlpipeline-minio-artifact
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              key: secretkey
-              name: mlpipeline-minio-artifact
-        - name: KFP_DEFAULT_PIPELINE_ROOT
-          valueFrom:
-            configMapKeyRef:
-              key: defaultPipelineRoot
-              name: pipeline-install-config
-              optional: true
-        - name: ARTIFACTS_PROXY_ENABLED
-          valueFrom:
-            configMapKeyRef:
-              key: ARTIFACTS_PROXY_ENABLED
-              name: pipeline-install-config
-              optional: true
-        - name: ARTIFACT_RETENTION_DAYS
-          valueFrom:
-            configMapKeyRef:
-              key: ARTIFACT_RETENTION_DAYS
-              name: pipeline-install-config
         volumeMounts:
-        - name: hooks
-          mountPath: /hooks
-        ports:
-        - containerPort: 8080
+        - mountPath: /data
+          name: data
+        resources:
+          requests:
+            cpu: 32m
+            memory: 128Mi
       volumes:
-      - name: hooks
-        configMap:
-          name: kubeflow-pipelines-profile-controller-code
+      - name: data
+        persistentVolumeClaim:
+          claimName: seaweedfs-pvc
+      serviceAccountName: seaweedfs
