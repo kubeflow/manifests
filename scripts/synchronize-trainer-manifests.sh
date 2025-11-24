@@ -9,7 +9,7 @@ setup_error_handling
 COMPONENT_NAME="trainer"
 REPOSITORY_NAME="kubeflow/trainer"
 REPOSITORY_URL="https://github.com/kubeflow/trainer.git"
-COMMIT="2.1.0"
+COMMIT="v2.1.0"
 REPOSITORY_DIRECTORY="trainer"
 SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/kubeflow-${COMPONENT_NAME}}
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${COMMIT?}}
