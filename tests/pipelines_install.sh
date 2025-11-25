@@ -17,7 +17,7 @@ kubectl wait --for=condition=Available deployment/ml-pipeline-scheduledworkflow 
 kubectl wait --for=condition=Available deployment/ml-pipeline-viewer-crd -n kubeflow --timeout=10s 
 kubectl wait --for=condition=Available deployment/cache-server -n kubeflow --timeout=10s 
 kubectl wait --for=condition=Available deployment/metadata-writer -n kubeflow --timeout=10s 
-kubectl wait --for=condition=Available deployment/minio -n kubeflow --timeout=10s
+kubectl wait --for=condition=Available deployment/seaweedfs -n kubeflow --timeout=10s
 kubectl wait --for=condition=Available deployment/mysql -n kubeflow --timeout=10s
 kubectl get deployment -n kubeflow -l app=ml-pipeline
 cd -
