@@ -98,5 +98,8 @@ jobs:
         python3 tests/pipeline_v2_test.py test_unauthorized_access "${TOKEN}" "${KF_PROFILE}"
         echo "Test succeeded. Token from unauthorized ServiceAccount cannot list pipelines in $KF_PROFILE namespace."
 
+    - name: Test SeaweedFS Namespace Isolation
+      run: ./tests/swfs_namespace_isolation_test.sh
+
     - name: Apply Pod Security Standards restricted levels
       run: ./tests/PSS_enable.sh
