@@ -67,10 +67,8 @@ resources:
 - ../common/kubeflow-roles/base
 # Kubeflow Istio Resources
 - ../common/istio/kubeflow-istio-resources/base
-# TODO: Uncomment the following line after the next KFP release
-# - ../applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user  # Pipeline definitions stored in the database
-# Kubeflow Pipelines (SeaweedFS default)
-- ../experimental/seaweedfs/istio
+# Kubeflow Pipelines (SeaweedFS as default S3 storage)
+- ../applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user  # Pipeline definitions stored in the database
 # - ../applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user-k8s-native # Pipeline Definitions Stored as Kubernetes Resources
 # Katib
 - ../applications/katib/upstream/installs/katib-with-kubeflow
