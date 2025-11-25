@@ -9,7 +9,7 @@ setup_error_handling
 COMPONENT_NAME="pipelines"
 REPOSITORY_NAME="kubeflow/pipelines"
 REPOSITORY_URL="https://github.com/kubeflow/pipelines.git"
-COMMIT="2.14.3"
+COMMIT="2.15.0"
 REPOSITORY_DIRECTORY="pipelines"
 SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/kubeflow-${COMPONENT_NAME}}
 BRANCH_NAME=${BRANCH_NAME:=synchronize-kubeflow-${COMPONENT_NAME}-manifests-${COMMIT?}}
