@@ -91,15 +91,23 @@ rules:
       - "create"
       - "delete"
   - apiGroups:
-    - trainer.kubeflow.org
+      - jobset.x-k8s.io
     resources:
-    - trainjobs
+      - jobsets
     verbs:
-    - "get"
-    - "list"
-    - "watch"
-    - "create"
-    - "delete"
+      - "get"
+      - "list"
+      - "watch"
+  - apiGroups:
+      - trainer.kubeflow.org
+    resources:
+      - trainjobs
+    verbs:
+      - "create"
+      - "get"
+      - "list"
+      - "watch"
+      - "delete"
   - apiGroups:
       - kubeflow.org
     resources:

@@ -17,9 +17,6 @@ spec:
         katib.kubeflow.org/component: ui
         sidecar.istio.io/inject: "false"
     spec:
-      securityContext:
-        seccompProfile:
-          type: RuntimeDefault
       containers:
         - name: katib-ui
           image: ghcr.io/kubeflow/katib/katib-ui
@@ -39,6 +36,8 @@ spec:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
             runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
             capabilities:
               drop:
               - ALL

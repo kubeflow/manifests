@@ -9,7 +9,7 @@ setup_error_handling
 COMPONENT_NAME="katib"
 REPOSITORY_NAME="kubeflow/katib"
 REPOSITORY_URL="https://github.com/kubeflow/katib.git"
-COMMIT="v0.18.0"
+COMMIT="v0.19.0"
 REPOSITORY_DIRECTORY="katib"
 SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/kubeflow-${COMPONENT_NAME}}
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${COMMIT?}}
