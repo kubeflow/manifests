@@ -77,7 +77,7 @@ data:
         clientID: $CLIENT_ID
         clientSecret: $CLIENT_SECRET
         redirectURI: $REDIRECT_URI
-        insecure: false
+        insecureSkipVerify: false # Specify whether to communicate with the authentication provider without validating SSL certificates see https://dexidp.io/docs/connectors/oauth/ and https://dexidp.io/docs/connectors/oidc/
         insecureSkipEmailVerified: true
         userNameKey: email       
         scopes:
