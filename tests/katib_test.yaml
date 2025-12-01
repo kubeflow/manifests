@@ -6,7 +6,7 @@ metadata:
 spec:
   objective:
     type: minimize
-    goal: 0.2
+    goal: 0.5
     objectiveMetricName: loss
   algorithm:
     algorithmName: grid
