@@ -1,5 +1,3 @@
----
----
 apiVersion: kubeflow.org/v1beta1
 kind: Experiment
 metadata:
@@ -48,7 +46,7 @@ spec:
           spec:
             containers:
             - name: training-container
-              image: docker.io/kubeflowkatib/pytorch-mnist-cpu:latest
+              image: ghcr.io/kubeflow/katib/pytorch-mnist-cpu:v0.19.0
               command:
               - "python3"
               - "/opt/pytorch-mnist/mnist.py"

@@ -67,7 +67,7 @@ This repository periodically synchronizes all official Kubeflow components from 
 | Jupyter Web Application | applications/jupyter/jupyter-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/jupyter/manifests) | 4m | 231Mi | 0GB |
 | Tensorboards Web Application | applications/tensorboard/tensorboards-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/tensorboards/manifests) |  |  |  |
 | Volumes Web Application | applications/volumes-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/volumes/manifests) | 4m | 226Mi | 0GB |
-| Katib | applications/katib/upstream | [v0.18.0](https://github.com/kubeflow/katib/tree/v0.18.0/manifests/v1beta1) | 13m | 476Mi | 10GB |
+| Katib | applications/katib/upstream | [v0.19.0](https://github.com/kubeflow/katib/tree/v0.19.0/manifests/v1beta1) | 13m | 476Mi | 10GB |
 | KServe | applications/kserve/kserve | [v0.15.2](https://github.com/kserve/kserve/releases/tag/v0.15.2/install/v0.15.2) | 600m | 1200Mi | 0GB |
 | KServe Models Web Application | applications/kserve/models-web-app | [v0.15.0](https://github.com/kserve/models-web-app/tree/v0.15.0/config) | 6m | 259Mi  | 0GB |
 | Kubeflow Pipelines | applications/pipeline/upstream | [2.15.0](https://github.com/kubeflow/pipelines/tree/2.15.0/manifests/kustomize) | 970m | 3552Mi | 35GB |

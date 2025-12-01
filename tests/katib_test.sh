@@ -8,5 +8,5 @@ kubectl wait --for=condition=Running experiments.kubeflow.org -n $KF_PROFILE --a
 echo "Waiting for all Trials to be Completed..."
 kubectl wait --for=condition=Created trials.kubeflow.org -n $KF_PROFILE --all --timeout=60s
 kubectl get trials.kubeflow.org -n $KF_PROFILE
-kubectl wait --for=condition=Succeeded trials.kubeflow.org -n $KF_PROFILE --all --timeout 900s
+kubectl wait --for=condition=Succeeded trials.kubeflow.org -n $KF_PROFILE --all --timeout 600s
 kubectl get trials.kubeflow.org -n $KF_PROFILE
