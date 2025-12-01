@@ -10,9 +10,9 @@ spec:
     objectiveMetricName: loss
   algorithm:
     algorithmName: grid
-  parallelTrialCount: 1
-  maxTrialCount: 1
-  maxFailedTrialCount: 1
+  parallelTrialCount: 2
+  maxTrialCount: 2
+  maxFailedTrialCount: 2
   parameters:
   - name: lr
     parameterType: double
