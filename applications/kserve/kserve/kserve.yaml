@@ -5408,6 +5408,8 @@ spec:
                   - type
                   type: object
                 type: array
+              deploymentMode:
+                type: string
               observedGeneration:
                 format: int64
                 type: integer
@@ -8210,6 +8212,10 @@ spec:
                     type: object
                   logger:
                     properties:
+                      metadataAnnotations:
+                        items:
+                          type: string
+                        type: array
                       metadataHeaders:
                         items:
                           type: string
@@ -12720,6 +12726,10 @@ spec:
                     type: object
                   logger:
                     properties:
+                      metadataAnnotations:
+                        items:
+                          type: string
+                        type: array
                       metadataHeaders:
                         items:
                           type: string
@@ -25655,6 +25665,10 @@ spec:
                     type: object
                   logger:
                     properties:
+                      metadataAnnotations:
+                        items:
+                          type: string
+                        type: array
                       metadataHeaders:
                         items:
                           type: string
@@ -26832,6 +26846,8 @@ spec:
                   - type
                   type: object
                 type: array
+              deploymentMode:
+                type: string
               modelStatus:
                 properties:
                   copies:
@@ -32025,7 +32041,6 @@ rules:
   - persistentvolumes
   verbs:
   - create
-  - delete
   - get
   - list
   - patch
@@ -32117,17 +32132,11 @@ rules:
   - serving.kserve.io
   resources:
   - clusterstoragecontainers
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - serving.kserve.io
-  resources:
   - localmodelnodegroups
   verbs:
   - get
   - list
+  - watch
 - apiGroups:
   - serving.kserve.io
   resources:
@@ -32479,59 +32488,72 @@ data:
     : \"kserve/art-explainer\",\n   \n           # defautltImageVersion contains the
     Art explainer serving runtime default image version.\n           \"defaultImageVersion\":
     \"latest\"\n       }\n   }\n# ====================================== ISVC CONFIGURATION
-    ======================================\n# Example   \n inferenceService: |-\n
-    \ {\n    \"serviceAnnotationDisallowedList\": [\n      \"my.custom.annotation/1\"
-    \ \n    ],\n    \"serviceLabelDisallowedList\": [\n      \"my.custom.label.1\"
-    \ \n    ]\n   }\n# Example of isvc configuration\ninferenceService: |-\n  {\n
-    \   # ServiceAnnotationDisallowedList is a list of annotations that are not allowed
-    to be propagated to Knative \n    # revisions, which prevents the reconciliation
-    loop to be triggered if the annotations is \n    # configured here are used.\n
-    \   # Default values are:\n    #  \"autoscaling.knative.dev/min-scale\",\n    #
-    \ \"autoscaling.knative.dev/max-scale\",\n    #  \"internal.serving.kserve.io/storage-initializer-sourceuri\",\n
+    ======================================\n# Example - setting custom annotation
+    \ \n inferenceService: |-\n   {\n     \"serviceAnnotationDisallowedList\": [\n
+    \       \"my.custom.annotation/1\"  \n     ],\n     \"serviceLabelDisallowedList\":
+    [\n        \"my.custom.label.1\"  \n     ]\n   }\n# Example - setting custom annotation\ninferenceService:
+    |-\n  {\n    # ServiceAnnotationDisallowedList is a list of annotations that are
+    not allowed to be propagated to Knative \n    # revisions, which prevents the
+    reconciliation loop to be triggered if the annotations is \n    # configured here
+    are used.\n    # Default values are:\n    #  \"autoscaling.knative.dev/min-scale\",\n
+    \   #  \"autoscaling.knative.dev/max-scale\",\n    #  \"internal.serving.kserve.io/storage-initializer-sourceuri\",\n
     \   #  \"kubectl.kubernetes.io/last-applied-configuration\"\n    # Any new value
     will be appended to the list.\n    \"serviceAnnotationDisallowedList\": [\n      \"my.custom.annotation/1\"
     \ \n    ],\n    # ServiceLabelDisallowedList is a list of labels that are not
     allowed to be propagated to Knative revisions\n    # which prevents the reconciliation
     loop to be triggered if the labels is configured here are used.\n    \"serviceLabelDisallowedList\":
-    [\n      \"my.custom.label.1\"  \n    ]\n  }  \n# ======================================
-    MultiNode CONFIGURATION ======================================\n# Example   \nmultiNode:
-    |-\n  {\n    \"customGPUResourceTypeList\": [\n      \"custom.com/gpu\"\n    ]\n
-    \ }\n# Example of multinode configuration\nmultiNode: |-\n  {      \n    # CustomGPUResourceTypeList
-    is a list of custom GPU resource types intended to identify the GPU type of a
-    resource,\n    # not to restrict the user from using a specific GPU type.\n    #
-    The MultiNode runtime pod will dynamically add GPU resources based on the registered
-    GPU types.\n    \"customGPUResourceTypeList\": [\n      \"custom.com/gpu\"\n    ]\n
-    \ }  \n # ====================================== OTelCollector CONFIGURATION ======================================\n
-    # Example\n opentelemetryCollector: |-\n   {\n     # scrapeInterval is the interval
-    at which the OpenTelemetry Collector will scrape the metrics.\n     \"scrapeInterval\":
-    \"5s\",\n     # metricScalerEndpoint is the endpoint from which the KEDA's ScaledObject
-    will scrape the metrics.\n     \"metricScalerEndpoint\": \"keda-otel-scaler.keda.svc:4318\",\n
-    \    # metricReceiverEndpoint is the endpoint from which the OpenTelemetry Collector
-    will scrape the metrics.\n      \"metricReceiverEndpoint\": \"keda-otel-scaler.keda.svc:4317\"\n
-    \  }\n  \n # ====================================== STORAGE INITIALIZER CONFIGURATION
-    ======================================\n # Example\n storageInitializer: |-\n
-    \  {\n       \"image\" : \"kserve/storage-initializer:v0.15.0\",\n       \"memoryRequest\":
-    \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n
-    \      \"cpuLimit\": \"1\",\n       \"caBundleConfigMapName\": \"\",\n       \"caBundleVolumeMountPath\":
-    \"/etc/ssl/custom-certs\",\n       \"enableDirectPvcVolumeMount\": false,\n       \"enableModelcar\":
-    false,\n       \"cpuModelcar\": \"10m\",\n       \"memoryModelcar\": \"15Mi\"\n
-    \  }\n storageInitializer: |-\n   {\n       # image contains the default storage
-    initializer image uri.\n       \"image\" : \"kserve/storage-initializer:v0.15.0\",\n
-    \      \n       # memoryRequest is the requests.memory to set for the storage
-    initializer init container.\n       \"memoryRequest\": \"100Mi\",\n   \n        #
-    memoryLimit is the limits.memory to set for the storage initializer init container.\n
-    \      \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is the requests.cpu
-    to set for the storage initializer init container.\n       \"cpuRequest\": \"100m\",\n
-    \      \n       # cpuLimit is the limits.cpu to set for the storage initializer
-    init container.\n       \"cpuLimit\": \"1\",\n   \n       # caBundleConfigMapName
-    is the ConfigMap will be copied to a user namespace for the storage initializer
-    init container.\n       \"caBundleConfigMapName\": \"\",\n\n       # caBundleVolumeMountPath
-    is the mount point for the configmap set by caBundleConfigMapName for the storage
-    initializer init container.\n       \"caBundleVolumeMountPath\": \"/etc/ssl/custom-certs\",\n\n
-    \      # enableDirectPvcVolumeMount controls whether users can mount pvc volumes
-    directly.\n       # if pvc volume is provided in storageuri then the pvc volume
-    is directly mounted to /mnt/models in the user container.\n       # rather than
-    symlink it to a shared volume. For more info see https://github.com/kserve/kserve/issues/2737\n
+    [\n      \"my.custom.label.1\"  \n    ]\n  } \n# Example - setting custom resource\ninferenceService:
+    |-\n  {\n    \"resource\": {\n      \"cpuLimit\": \"1\",\n      \"memoryLimit\":
+    \"2Gi\",\n      \"cpuRequest\": \"1\",\n      \"memoryRequest\": \"2Gi\"\n    }\n
+    \ }\n# Example - setting custom resource\ninferenceService: |-\n  {\n    # resource
+    contains the default resource configuration for the inference service.\n    #
+    you can override this configuration by specifying the resources in the inference
+    service yaml.\n    # If you want to unbound the resource (limits and requests),
+    you can set the value to null or \"\" \n    # or just remove the specific field
+    from the config.\n    \"resource\": {\n       # cpuLimit is the limits.cpu to
+    set for the inference service.\n       \"cpuLimit\": \"1\",\n\n       # memoryLimit
+    is the limits.memory to set for the inference service.\n       \"memoryLimit\":
+    \"2Gi\",\n\n       # cpuRequest is the requests.cpu to set for the inference service.\n
+    \      \"cpuRequest\": \"1\",\n\n       # memoryRequest is the requests.memory
+    to set for the inference service.\n       \"memoryRequest\": \"2Gi\"\n    }\n
+    }\n# ====================================== MultiNode CONFIGURATION ======================================\n#
+    Example   \nmultiNode: |-\n  {\n    \"customGPUResourceTypeList\": [\n      \"custom.com/gpu\"\n
+    \   ]\n  }\n# Example of multinode configuration\nmultiNode: |-\n  {      \n    #
+    CustomGPUResourceTypeList is a list of custom GPU resource types intended to identify
+    the GPU type of a resource,\n    # not to restrict the user from using a specific
+    GPU type.\n    # The MultiNode runtime pod will dynamically add GPU resources
+    based on the registered GPU types.\n    \"customGPUResourceTypeList\": [\n      \"custom.com/gpu\"\n
+    \   ]\n  }  \n # ====================================== OTelCollector CONFIGURATION
+    ======================================\n # Example\n opentelemetryCollector: |-\n
+    \  {\n     # scrapeInterval is the interval at which the OpenTelemetry Collector
+    will scrape the metrics.\n     \"scrapeInterval\": \"5s\",\n     # metricScalerEndpoint
+    is the endpoint from which the KEDA's ScaledObject will scrape the metrics.\n
+    \    \"metricScalerEndpoint\": \"keda-otel-scaler.keda.svc:4318\",\n     # metricReceiverEndpoint
+    is the endpoint from which the OpenTelemetry Collector will scrape the metrics.\n
+    \     \"metricReceiverEndpoint\": \"keda-otel-scaler.keda.svc:4317\"\n   }\n  \n
+    # ====================================== STORAGE INITIALIZER CONFIGURATION ======================================\n
+    # Example\n storageInitializer: |-\n   {\n       \"image\" : \"kserve/storage-initializer:v0.15.2\",\n
+    \      \"memoryRequest\": \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\":
+    \"100m\",\n       \"cpuLimit\": \"1\",\n       \"caBundleConfigMapName\": \"\",\n
+    \      \"caBundleVolumeMountPath\": \"/etc/ssl/custom-certs\",\n       \"enableDirectPvcVolumeMount\":
+    false,\n       \"enableModelcar\": false,\n       \"cpuModelcar\": \"10m\",\n
+    \      \"memoryModelcar\": \"15Mi\"\n   }\n storageInitializer: |-\n   {\n       #
+    image contains the default storage initializer image uri.\n       \"image\" :
+    \"kserve/storage-initializer:v0.15.2\",\n       \n       # memoryRequest is the
+    requests.memory to set for the storage initializer init container.\n       \"memoryRequest\":
+    \"100Mi\",\n   \n        # memoryLimit is the limits.memory to set for the storage
+    initializer init container.\n       \"memoryLimit\": \"1Gi\",\n       \n       #
+    cpuRequest is the requests.cpu to set for the storage initializer init container.\n
+    \      \"cpuRequest\": \"100m\",\n       \n       # cpuLimit is the limits.cpu
+    to set for the storage initializer init container.\n       \"cpuLimit\": \"1\",\n
+    \  \n       # caBundleConfigMapName is the ConfigMap will be copied to a user
+    namespace for the storage initializer init container.\n       \"caBundleConfigMapName\":
+    \"\",\n\n       # caBundleVolumeMountPath is the mount point for the configmap
+    set by caBundleConfigMapName for the storage initializer init container.\n       \"caBundleVolumeMountPath\":
+    \"/etc/ssl/custom-certs\",\n\n       # enableDirectPvcVolumeMount controls whether
+    users can mount pvc volumes directly.\n       # if pvc volume is provided in storageuri
+    then the pvc volume is directly mounted to /mnt/models in the user container.\n
+    \      # rather than symlink it to a shared volume. For more info see https://github.com/kserve/kserve/issues/2737\n
     \      \"enableDirectPvcVolumeMount\": true,\n\n       # enableModelcar enabled
     allows you to directly access an OCI container image by\n       # using a source
     URL with an \"oci://\" schema.\n       \"enableModelcar\": false,\n\n       #
@@ -32672,11 +32694,11 @@ data:
     NOTE: This configuration only applicable to serverless deployment.\n       \"pathTemplate\":
     \"/serving/{{ .Namespace }}/{{ .Name }}\"\n   }\n \n # ======================================
     LOGGER CONFIGURATION ======================================\n # Example\n logger:
-    |-\n   {\n       \"image\" : \"kserve/agent:v0.15.0\",\n       \"memoryRequest\":
+    |-\n   {\n       \"image\" : \"kserve/agent:v0.15.2\",\n       \"memoryRequest\":
     \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n
     \      \"cpuLimit\": \"1\",\n       \"defaultUrl\": \"http://default-broker\"\n
     \  }\n logger: |-\n   {\n       # image contains the default logger image uri.\n
-    \      \"image\" : \"kserve/agent:v0.15.0\",\n   \n       # memoryRequest is the
+    \      \"image\" : \"kserve/agent:v0.15.2\",\n   \n       # memoryRequest is the
     requests.memory to set for the logger container.\n       \"memoryRequest\": \"100Mi\",\n
     \      \n       # memoryLimit is the limits.memory to set for the logger container.\n
     \      \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is the requests.cpu
@@ -32685,11 +32707,11 @@ data:
     \"1\",\n       \n       # defaultUrl specifies the default logger url. If logger
     is not specified in the resource this url is used.\n       \"defaultUrl\": \"http://default-broker\"\n
     \  }\n \n # ====================================== BATCHER CONFIGURATION ======================================\n
-    # Example\n batcher: |-\n   {\n       \"image\" : \"kserve/agent:v0.15.0\",\n       \"memoryRequest\":
+    # Example\n batcher: |-\n   {\n       \"image\" : \"kserve/agent:v0.15.2\",\n       \"memoryRequest\":
     \"1Gi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"1\",\n       \"cpuLimit\":
     \"1\",\n       \"maxBatchSize\": \"32\",\n       \"maxLatency\": \"5000\"\n   }\n
     batcher: |-\n   {\n       # image contains the default batcher image uri.\n       \"image\"
-    : \"kserve/agent:v0.15.0\",\n       \n       # memoryRequest is the requests.memory
+    : \"kserve/agent:v0.15.2\",\n       \n       # memoryRequest is the requests.memory
     to set for the batcher container.\n       \"memoryRequest\": \"1Gi\",\n   \n       #
     memoryLimit is the limits.memory to set for the batcher container.\n       \"memoryLimit\":
     \"1Gi\",\n       \n       # cpuRequest is the requests.cpu to set for the batcher
@@ -32699,10 +32721,10 @@ data:
     \      # maxLatency is the default maximum latency in milliseconds for batcher
     to wait and collect the batch.\n       \"maxLatency\": \"5000\"\n   }\n \n # ======================================
     AGENT CONFIGURATION ======================================\n # Example\n agent:
-    |-\n   {\n       \"image\" : \"kserve/agent:v0.15.0\",\n       \"memoryRequest\":
+    |-\n   {\n       \"image\" : \"kserve/agent:v0.15.2\",\n       \"memoryRequest\":
     \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n
     \      \"cpuLimit\": \"1\"\n   }\n agent: |-\n   {\n       # image contains the
-    default agent image uri.\n       \"image\" : \"kserve/agent:v0.15.0\",\n   \n       #
+    default agent image uri.\n       \"image\" : \"kserve/agent:v0.15.2\",\n   \n       #
     memoryRequest is the requests.memory to set for the agent container.\n       \"memoryRequest\":
     \"100Mi\",\n   \n       # memoryLimit is the limits.memory to set for the agent
     container.\n       \"memoryLimit\": \"1Gi\",\n       \n       # cpuRequest is
@@ -32710,13 +32732,13 @@ data:
     \      \n       # cpuLimit is the limits.cpu to set for the agent container.\n
     \      \"cpuLimit\": \"1\"\n   }\n \n # ======================================
     ROUTER CONFIGURATION ======================================\n # Example\n router:
-    |-\n   {\n       \"image\" : \"kserve/router:v0.15.0\",\n       \"memoryRequest\":
+    |-\n   {\n       \"image\" : \"kserve/router:v0.15.2\",\n       \"memoryRequest\":
     \"100Mi\",\n       \"memoryLimit\": \"1Gi\",\n       \"cpuRequest\": \"100m\",\n
     \      \"cpuLimit\": \"1\",\n       \"headers\": {\n         \"propagate\": []\n
     \      },\n       \"imagePullPolicy\": \"IfNotPresent\",\n       \"imagePullSecrets\":
     [\"docker-secret\"]\n   }\n # router is the implementation of inference graph.\n
     router: |-\n   {\n       # image contains the default router image uri.\n       \"image\"
-    : \"kserve/router:v0.15.0\",\n       \n       # memoryRequest is the requests.memory
+    : \"kserve/router:v0.15.2\",\n       \n       # memoryRequest is the requests.memory
     to set for the router container.\n       \"memoryRequest\": \"100Mi\",\n       \n
     \      # memoryLimit is the limits.memory to set for the router container.\n       \"memoryLimit\":
     \"1Gi\",\n       \n       # cpuRequest is the requests.cpu to set for the router
@@ -32766,31 +32788,16 @@ data:
     localModel: |-\n   {\n     \"enabled\": false,\n     # jobNamespace specifies
     the namespace where the download job will be created.\n     \"jobNamespace\":
     \"kserve-localmodel-jobs\",\n     # defaultJobImage specifies the default image
-    used for the download job.\n     \"defaultJobImage\" : \"kserve/storage-initializer:v0.15.0\",\n
+    used for the download job.\n     \"defaultJobImage\" : \"kserve/storage-initializer:v0.15.2\",\n
     \    # Kubernetes modifies the filesystem group ID on the attached volume.\n     \"fsGroup\":
     1000,\n     # TTL for the download job after it is finished.\n     \"jobTTLSecondsAfterFinished\":
     3600,\n     # The frequency at which the local model agent reconciles the local
     models\n     # This is to detect if models are missing from local disk\n     \"reconcilationFrequencyInSecs\":
     60,\n     # This is to disable localmodel pv and pvc management for namespaces
-    without isvcs\n     \"disableVolumeManagement\": false\n   }\n  \n # ======================================
-    LOCALMODEL CONFIGURATION ======================================\n # Example\n
-    inferenceservice: |-\n   {\n     \"resource\": {\n         \"cpuLimit\": \"1\",\n
-    \        \"memoryLimit\": \"2Gi\",\n         \"cpuRequest\": \"1\",\n         \"memoryRequest\":
-    \"2Gi\"\n       }\n   }\n  inferenceservice: |-\n    {\n      # resource contains
-    the default resource configuration for the inference service.\n      # you can
-    override this configuration by specifying the resources in the inference service
-    yaml.\n      # If you want to unbound the resource (limits and requests), you
-    can set the value to null or \"\" \n      # or just remove the specific field
-    from the config.\n      \"resource\": {\n          # cpuLimit is the limits.cpu
-    to set for the inference service.\n          \"cpuLimit\": \"1\",\n          \n
-    \         # memoryLimit is the limits.memory to set for the inference service.\n
-    \         \"memoryLimit\": \"2Gi\",\n          \n          # cpuRequest is the
-    requests.cpu to set for the inference service.\n          \"cpuRequest\": \"1\",\n
-    \         \n          # memoryRequest is the requests.memory to set for the inference
-    service.\n          \"memoryRequest\": \"2Gi\"\n        }\n    }"
+    without isvcs\n     \"disableVolumeManagement\": false\n   }"
   agent: |-
     {
-        "image" : "kserve/agent:v0.15.0",
+        "image" : "kserve/agent:v0.15.2",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -32798,7 +32805,7 @@ data:
     }
   batcher: |-
     {
-        "image" : "kserve/agent:v0.15.0",
+        "image" : "kserve/agent:v0.15.2",
         "memoryRequest": "1Gi",
         "memoryLimit": "1Gi",
         "cpuRequest": "1",
@@ -32857,12 +32864,12 @@ data:
     {
       "enabled": false,
       "jobNamespace": "kserve-localmodel-jobs",
-      "defaultJobImage" : "kserve/storage-initializer:v0.15.0",
+      "defaultJobImage" : "kserve/storage-initializer:v0.15.2",
       "fsGroup": 1000
     }
   logger: |-
     {
-        "image" : "kserve/agent:v0.15.0",
+        "image" : "kserve/agent:v0.15.2",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -32882,7 +32889,7 @@ data:
     }
   router: |-
     {
-        "image" : "kserve/router:v0.15.0",
+        "image" : "kserve/router:v0.15.2",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -32895,7 +32902,7 @@ data:
     }
   storageInitializer: |-
     {
-        "image" : "kserve/storage-initializer:v0.15.0",
+        "image" : "kserve/storage-initializer:v0.15.2",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -32903,9 +32910,10 @@ data:
         "caBundleConfigMapName": "",
         "caBundleVolumeMountPath": "/etc/ssl/custom-certs",
         "enableDirectPvcVolumeMount": true,
-        "enableModelcar": false,
+        "enableModelcar": true,
         "cpuModelcar": "10m",
-        "memoryModelcar": "15Mi"
+        "memoryModelcar": "15Mi",
+        "uidModelcar": 1010
     }
 kind: ConfigMap
 metadata:
@@ -33004,7 +33012,7 @@ spec:
               fieldPath: metadata.namespace
         - name: SECRET_NAME
           value: kserve-webhook-server-cert
-        image: kserve/kserve-controller:v0.15.0
+        image: kserve/kserve-controller:v0.15.2
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 5
@@ -33105,7 +33113,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: kserve/kserve-localmodel-controller:v0.15.0
+        image: kserve/kserve-localmodel-controller:v0.15.2
         imagePullPolicy: Always
         name: manager
         resources:
@@ -33163,7 +33171,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        image: kserve/kserve-localmodelnode-agent:v0.15.0
+        image: kserve/kserve-localmodelnode-agent:v0.15.2
         imagePullPolicy: Always
         name: manager
         resources:
