@@ -1,19 +1,22 @@
-{{- if .Values.thirdParty.mysql.enabled }}
+{{- if .Values.seaweedfs.enabled }}
+# Backward compatibility service for Minio API
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql
+  name: minio-service
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: seaweedfs
+    component: minio-compatibility
 spec:
   ports:
-  - # We cannot have name: mysql here, because some requests through istio fail with it.
-    port: 3306
+  - name: http
+    port: 9000
     protocol: TCP
-    targetPort: 3306
+    targetPort: 8333
   selector:
-    app: mysql
+    app: seaweedfs
     application-crd-id: kubeflow-pipelines
 {{- end }}
 

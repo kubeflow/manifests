@@ -163,45 +163,18 @@ case "$COMPONENT" in
         MANIFESTS_DIR="$ROOT_DIR/applications/pipeline/upstream"
         
         declare -A KUSTOMIZE_PATHS=(
-            ["platform-agnostic"]="$MANIFESTS_DIR/env/platform-agnostic"
-            ["multi-user"]="$MANIFESTS_DIR/base/installs/multi-user"
-            ["generic"]="$MANIFESTS_DIR/base/installs/generic"
-            ["dev"]="$MANIFESTS_DIR/env/dev"
-            ["plain"]="$MANIFESTS_DIR/env/plain"
-            ["plain-multi-user"]="$MANIFESTS_DIR/env/plain-multi-user"
-            ["platform-agnostic-emissary"]="$MANIFESTS_DIR/env/platform-agnostic-emissary"
-            ["platform-agnostic-multi-user"]="$MANIFESTS_DIR/env/platform-agnostic-multi-user"
-            ["platform-agnostic-multi-user-emissary"]="$MANIFESTS_DIR/env/platform-agnostic-multi-user-emissary"
-            ["platform-agnostic-multi-user-legacy"]="$MANIFESTS_DIR/env/platform-agnostic-multi-user-legacy"
-            ["platform-agnostic-postgresql"]="$MANIFESTS_DIR/env/platform-agnostic-postgresql"
+            ["platform-agnostic-multi-user"]="$MANIFESTS_DIR/env/cert-manager/platform-agnostic-multi-user"
+            ["platform-agnostic-multi-user-k8s-native"]="$MANIFESTS_DIR/env/cert-manager/platform-agnostic-multi-user-k8s-native"
         )
         
         declare -A HELM_VALUES=(
-            ["platform-agnostic"]="$CHART_DIR/ci/values-platform-agnostic-enhanced.yaml"
-            ["multi-user"]="$CHART_DIR/ci/values-multi-user-enhanced.yaml"
-            ["generic"]="$CHART_DIR/ci/values-generic.yaml"
-            ["dev"]="$CHART_DIR/ci/values-dev-enhanced.yaml"
-            ["plain"]="$CHART_DIR/ci/values-standalone.yaml"
-            ["plain-multi-user"]="$CHART_DIR/ci/values-multi-user.yaml"
-            ["platform-agnostic-emissary"]="$CHART_DIR/ci/values-platform-agnostic-enhanced.yaml"
-            ["platform-agnostic-multi-user"]="$CHART_DIR/ci/values-platform-agnostic-multi-user-enhanced.yaml"
-            ["platform-agnostic-multi-user-emissary"]="$CHART_DIR/ci/values-platform-agnostic-multi-user-enhanced.yaml"
-            ["platform-agnostic-multi-user-legacy"]="$CHART_DIR/ci/values-platform-agnostic-multi-user-legacy.yaml"
-            ["platform-agnostic-postgresql"]="$CHART_DIR/ci/values-postgresql.yaml"
+            ["platform-agnostic-multi-user"]="$CHART_DIR/ci/values-platform-agnostic-multi-user.yaml"
+            ["platform-agnostic-multi-user-k8s-native"]="$CHART_DIR/ci/values-platform-agnostic-multi-user-k8s-native.yaml"
         )
         
         declare -A NAMESPACES=(
-            ["platform-agnostic"]="kubeflow"
-            ["multi-user"]="kubeflow"
-            ["generic"]="kubeflow"
-            ["dev"]="kubeflow"
-            ["plain"]="kubeflow"
-            ["plain-multi-user"]="kubeflow"
-            ["platform-agnostic-emissary"]="kubeflow"
             ["platform-agnostic-multi-user"]="kubeflow"
-            ["platform-agnostic-multi-user-emissary"]="kubeflow"
-            ["platform-agnostic-multi-user-legacy"]="kubeflow"
-            ["platform-agnostic-postgresql"]="kubeflow"
+            ["platform-agnostic-multi-user-k8s-native"]="kubeflow"
         )
         ;;
 

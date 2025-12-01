@@ -1,4 +1,4 @@
-{{- if and .Values.thirdParty.argo.enabled .Values.installMode.multiUser.enabled }}
+{{- if and .Values.thirdParty.argo.enabled (eq .Values.installMode.type "multi-user") }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:

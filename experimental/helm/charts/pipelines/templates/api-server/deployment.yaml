@@ -20,9 +20,23 @@ spec:
       serviceAccountName: ml-pipeline
       containers:
       - name: ml-pipeline-api-server
+        {{- if and .Values.apiServer.k8sNative .Values.apiServer.k8sNative.enabled .Values.apiServer.image.repository .Values.apiServer.image.tag }}
+        image: "{{ .Values.apiServer.image.repository }}:{{ .Values.apiServer.image.tag }}"
+        {{- else }}
         image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.apiServer.image.repository "tag" .Values.apiServer.image.tag "context" .) }}
+        {{- end }}
         imagePullPolicy: IfNotPresent
+        {{- if and .Values.apiServer.k8sNative .Values.apiServer.k8sNative.enabled }}
+        command:
+          {{- toYaml .Values.apiServer.k8sNative.command | nindent 10 }}
+        args:
+          {{- toYaml .Values.apiServer.k8sNative.args | nindent 10 }}
+        {{- end }}
         ports:
+        {{- if and .Values.apiServer.k8sNative .Values.apiServer.k8sNative.enabled .Values.apiServer.k8sNative.webhookPort }}
+        - name: webhook
+          containerPort: {{ .Values.apiServer.k8sNative.webhookPort }}
+        {{- end }}
         - name: http
           containerPort: 8888
         - name: grpc
@@ -111,7 +125,14 @@ spec:
           failureThreshold: {{ .Values.apiServer.probes.startup.failureThreshold }}
           periodSeconds: {{ .Values.apiServer.probes.startup.periodSeconds }}
           timeoutSeconds: {{ .Values.apiServer.probes.startup.timeoutSeconds }}
+        {{- if and .Values.apiServer.k8sNative .Values.apiServer.k8sNative.enabled .Values.apiServer.k8sNative.volumeMounts }}
+        volumeMounts:
+          {{- toYaml .Values.apiServer.k8sNative.volumeMounts | nindent 10 }}
+        {{- end }}
+      {{- if and .Values.apiServer.k8sNative .Values.apiServer.k8sNative.enabled .Values.apiServer.k8sNative.volumes }}
+      volumes:
+        {{- toYaml .Values.apiServer.k8sNative.volumes | nindent 8 }}
+      {{- end }}
       securityContext:
-        seccompProfile:
-          type: {{ .Values.security.seccompProfile.type }}
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
 {{- end }}

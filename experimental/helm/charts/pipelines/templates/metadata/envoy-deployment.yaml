@@ -23,19 +23,19 @@ spec:
       containers:
       - name: container
         image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.metadata.envoy.image.repository "tag" .Values.metadata.envoy.image.tag "context" .) }}
+        args: ["/etc/envoy/envoy-config.yaml"]
         ports:
         - name: md-envoy
           containerPort: 9090
         - name: envoy-admin
           containerPort: 9901
         securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
-          runAsGroup: 0
-          runAsNonRoot: true
-          runAsUser: 1000
-          seccompProfile:
-            type: RuntimeDefault
+          {{- toYaml .Values.metadata.envoy.securityContext | nindent 10 }}
+        volumeMounts:
+        - name: envoy-config
+          mountPath: /etc/envoy
+      volumes:
+      - name: envoy-config
+        configMap:
+          name: metadata-envoy-configmap
 {{- end }}

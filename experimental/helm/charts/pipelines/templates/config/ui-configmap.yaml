@@ -10,7 +10,7 @@ data:
   viewer-pod-template.json: |-
     {
         "spec": {
-            "serviceAccountName": "{{ if and .Values.installMode.multiUser.enabled (eq .Values.installMode.type "multi-user") }}default-editor{{ else }}kubeflow-pipelines-viewer{{ end }}"
+            "serviceAccountName": "{{ if eq .Values.installMode.type "multi-user" }}default-editor{{ else }}kubeflow-pipelines-viewer{{ end }}"
         }
     }
 {{- end }}

@@ -1,4 +1,4 @@
-{{- if and .Values.installMode.multiUser.enabled .Values.installMode.multiUser.profileController.enabled }}
+{{- if and (eq .Values.installMode.type "multi-user") .Values.profileController.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -19,7 +19,5 @@ spec:
     app: kubeflow-pipelines-profile-controller
     app.kubernetes.io/component: ml-pipeline
     app.kubernetes.io/name: kubeflow-pipelines
-{{- if .Values.installMode.legacyLabels }}
     application-crd-id: kubeflow-pipelines
-{{- end }}
 {{- end }}

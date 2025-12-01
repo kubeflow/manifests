@@ -1,4 +1,4 @@
-{{- if and .Values.networking.istio.enabled .Values.installMode.multiUser.enabled }}
+{{- if and .Values.networking.istio.enabled (eq .Values.installMode.type "multi-user") }}
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:

@@ -18,10 +18,13 @@ spec:
         {{- include "kubeflow-pipelines.visualizationLabels" . | nindent 8 }}
     spec:
       serviceAccountName: ml-pipeline-visualizationserver
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: ml-pipeline-visualizationserver
         image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.visualization.image.repository "tag" .Values.visualization.image.tag "context" .) }}
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: {{ .Values.global.imagePullPolicy }}
         ports:
         - name: http
           containerPort: 8888
@@ -43,7 +46,4 @@ spec:
           {{- toYaml .Values.visualization.resources | nindent 10 }}
         securityContext:
           {{- toYaml .Values.visualization.securityContext | nindent 10 }}
-      securityContext:
-        seccompProfile:
-          type: {{ .Values.security.seccompProfile.type }}
 {{- end }}

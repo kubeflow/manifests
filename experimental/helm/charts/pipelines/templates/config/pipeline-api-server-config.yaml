@@ -1,4 +1,4 @@
-{{- if and .Values.apiServer.enabled .Values.installMode.multiUser.enabled }}
+{{- if and .Values.apiServer.enabled (eq .Values.installMode.type "multi-user") }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
 data:
-  {{- if and .Values.installMode.multiUser.enabled (eq .Values.installMode.type "multi-user") }}
+  {{- if eq .Values.installMode.type "multi-user" }}
   MULTIUSER: "true"
   DEFAULTPIPELINERUNNERSERVICEACCOUNT: "default-editor"
   {{- else }}

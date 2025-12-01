@@ -1,4 +1,4 @@
-{{- if and .Values.networking.istio.enabled .Values.installMode.multiUser.enabled }}
+{{- if and .Values.networking.istio.enabled (eq .Values.installMode.type "multi-user") }}
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
@@ -93,33 +93,6 @@ spec:
   - {}
 
 ---
-{{- if .Values.thirdParty.minio.enabled }}
-apiVersion: security.istio.io/v1beta1
-kind: AuthorizationPolicy
-metadata:
-  name: minio-service
-  namespace: {{ include "kubeflow-pipelines.namespace" . }}
-  labels:
-    {{- include "kubeflow-pipelines.authorizationPolicyLabels" . | nindent 4 }}
-spec:
-  action: ALLOW
-  selector:
-    matchLabels:
-      app: minio
-  rules:
-  - from:
-    - source:
-        principals:
-        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline
-  - from:
-    - source:
-        principals:
-        - cluster.local/ns/{{ include "kubeflow-pipelines.namespace" . }}/sa/ml-pipeline-ui
-  # Allow traffic from User Pipeline Pods, which don't have a sidecar.
-  - {}
-{{- end }}
-
----
 {{- if .Values.thirdParty.mysql.enabled }}
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
@@ -210,24 +183,6 @@ spec:
   trafficPolicy:
     tls:
       mode: ISTIO_MUTUAL
-
----
-{{- if .Values.thirdParty.minio.enabled }}
-apiVersion: "networking.istio.io/v1alpha3"
-kind: DestinationRule
-metadata:
-  name: ml-pipeline-minio
-  namespace: {{ include "kubeflow-pipelines.namespace" . }}
-  labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    app.kubernetes.io/component: ml-pipeline
-    app.kubernetes.io/name: kubeflow-pipelines
-spec:
-  host: minio-service.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
-  trafficPolicy:
-    tls:
-      mode: ISTIO_MUTUAL
-{{- end }}
 
 ---
 {{- if .Values.thirdParty.mysql.enabled }}

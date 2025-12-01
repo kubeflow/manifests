@@ -18,19 +18,11 @@ sources:
 dependencies:
   - name: argo-workflows
     version: "~0.40.0"
-    condition: argo.enabled
+    condition: thirdParty.argo.enabled
     repository: "https://argoproj.github.io/argo-helm"
-  - name: minio
-    version: "~5.0.0"
-    condition: minio.enabled
-    repository: "https://charts.min.io/"
   - name: mysql
     version: "~14.0.0"
     condition: mysql.enabled
-    repository: "https://charts.bitnami.com/bitnami"
-  - name: postgresql
-    version: "~16.0.0"
-    condition: postgresql.enabled
     repository: "https://charts.bitnami.com/bitnami"
 annotations:
   category: Machine Learning

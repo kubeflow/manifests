@@ -1,4 +1,4 @@
-{{- if and .Values.installMode.multiUser.enabled .Values.installMode.multiUser.profileController.enabled }}
+{{- if and (eq .Values.installMode.type "multi-user") .Values.profileController.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

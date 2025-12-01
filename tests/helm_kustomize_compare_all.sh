@@ -13,7 +13,7 @@ declare -A COMPONENT_SCENARIOS=(
     ["model-registry"]="base overlay-postgres overlay-db controller-manager controller-rbac controller-default controller-prometheus controller-network-policy ui-base ui-standalone ui-integrated ui-istio istio csi"
     ["kserve-models-web-app"]="base kubeflow"
     ["notebook-controller"]="base kubeflow standalone"
-    ["pipelines"]="platform-agnostic multi-user generic dev plain plain-multi-user platform-agnostic-emissary platform-agnostic-multi-user platform-agnostic-multi-user-emissary platform-agnostic-multi-user-legacy platform-agnostic-postgresql"
+    ["pipelines"]="platform-agnostic-multi-user platform-agnostic-multi-user-k8s-native"
 )
 
 test_component() {

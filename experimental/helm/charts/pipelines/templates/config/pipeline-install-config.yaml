@@ -15,19 +15,13 @@ data:
     namespace: `kubectl rollout restart deployment -n <your-namespace>`.
   appName: {{ .Values.pipeline.app.name }}
   appVersion: {{ .Values.pipeline.app.version }}
-  # Database configuration
+  # Database configuration (MySQL only)
 {{- $dbHost := include "kubeflow-pipelines.database.host" . }}
   dbHost: {{ $dbHost | quote }}
   dbPort: {{ include "kubeflow-pipelines.database.port" . | quote }}
-{{- if or (eq .Values.externalDatabase.type "postgresql") (eq .Values.externalDatabase.type "postgres") }}
-  dbType: "postgres"
-  postgresHost: {{ $dbHost | quote }}
-  postgresPort: {{ include "kubeflow-pipelines.database.port" . | quote }}
-{{- else }}
-  dbType: {{ .Values.externalDatabase.type | default "mysql" | quote }}
+  dbType: "mysql"
   mysqlHost: {{ $dbHost | quote }}
   mysqlPort: {{ include "kubeflow-pipelines.database.port" . | quote }}
-{{- end }}
   mlmdDb: {{ .Values.database.metadb }}
   cacheDb: {{ .Values.database.cachedb }}
   pipelineDb: {{ include "kubeflow-pipelines.database.name" . }}
@@ -44,6 +38,7 @@ data:
   DEFAULT_CACHE_STALENESS: {{ .Values.pipeline.cache.defaultStaleness | quote }}
   # Connection configuration
   ConMaxLifeTime: {{ .Values.database.connectionMaxLifetime | quote }}
-{{- if not .Values.thirdParty.postgresql.enabled }}
   LOG_LEVEL: {{ .Values.global.logLevel | quote }}
-{{- end }}
+  # Profile controller configuration
+  ARTIFACTS_PROXY_ENABLED: {{ .Values.profileController.artifactsProxyEnabled | quote }}
+  ARTIFACT_RETENTION_DAYS: {{ .Values.profileController.artifactRetentionDays | quote }}

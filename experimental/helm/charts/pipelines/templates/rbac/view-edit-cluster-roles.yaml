@@ -1,4 +1,4 @@
-{{- if .Values.installMode.multiUser.enabled }}
+{{- if eq .Values.installMode.type "multi-user" }}
 # NOTE: IMPORTANT
 # We need to separate out actual rules from aggregation rules due to
 # https://github.com/kubernetes/kubernetes/issues/65171
@@ -54,7 +54,7 @@ rules:
   - pipelines.kubeflow.org
   resources:
   - pipelines
-  - pipelines/versions
+  - pipelineversions
   verbs:
   - create
   - delete
@@ -125,7 +125,7 @@ rules:
   - pipelines.kubeflow.org
   resources:
   - pipelines
-  - pipelines/versions
+  - pipelineversions
   - experiments
   - jobs
   verbs:

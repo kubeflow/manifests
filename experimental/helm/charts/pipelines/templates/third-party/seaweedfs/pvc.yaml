@@ -1,8 +1,8 @@
-{{- if .Values.thirdParty.mysql.enabled }}
+{{- if .Values.seaweedfs.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mysql-pv-claim
+  name: seaweedfs-pvc
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
@@ -11,6 +11,6 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.thirdParty.mysql.persistence.size }}
+      storage: {{ dig "persistence" "size" "20Gi" .Values.seaweedfs }}
 {{- end }}
 

@@ -26,52 +26,7 @@ spec:
       - name: container
         image: {{ .Values.metadata.grpc.image.repository }}:{{ .Values.metadata.grpc.image.tag | default "1.14.0" }}
         securityContext:
-          allowPrivilegeEscalation: false
-          seccompProfile:
-            type: RuntimeDefault
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 0
-          capabilities:
-            drop:
-            - ALL
-        {{- if .Values.thirdParty.postgresql.enabled }}
-        env: []
-        envFrom:
-        - configMapRef:
-            name: metadata-postgres-db-parameters
-        - secretRef:
-            name: metadata-postgres-db-secrets
-        - configMapRef:
-            name: metadata-grpc-configmap
-        command: ["/bin/metadata_store_server"]
-        args:
-        - --grpc_port=$(METADATA_GRPC_SERVICE_PORT)
-        - --metadata_source_config_type=postgresql
-        - --postgres_config_host=metadata-postgres-db
-        - --postgres_config_port=$(POSTGRES_PORT)
-        - --postgres_config_dbname=$(POSTGRES_DBNAME)
-        - --postgres_config_user=$(POSTGRES_USER)
-        - --postgres_config_password=$(POSTGRES_PASSWORD)
-        - --enable_database_upgrade=true
-        {{- else if .Values.thirdParty.mysqlMetadata.enabled }}
-        env: []
-        envFrom:
-        - configMapRef:
-            name: metadata-db-parameters
-        - secretRef:
-            name: metadata-db-secrets
-        - configMapRef:
-            name: metadata-grpc-configmap
-        command: ["/bin/metadata_store_server"]
-        args:
-        - --grpc_port=$(METADATA_GRPC_SERVICE_PORT)
-        - --mysql_config_host=metadata-db
-        - --mysql_config_database=$(MYSQL_DATABASE)
-        - --mysql_config_port=$(MYSQL_PORT)
-        - --mysql_config_user=$(MYSQL_USER_NAME)
-        - --mysql_config_password=$(MYSQL_ROOT_PASSWORD)
-        {{- else }}
+          {{- toYaml .Values.metadata.grpc.securityContext | nindent 10 }}
         env:
         - name: DBCONFIG_USER
           valueFrom:
@@ -108,7 +63,6 @@ spec:
         - --mysql_config_password=$(DBCONFIG_PASSWORD)
         - --enable_database_upgrade=true
         - --grpc_channel_arguments=grpc.max_metadata_size=16384
-        {{- end }}
         ports:
         - name: grpc-api
           containerPort: 8080
@@ -124,12 +78,6 @@ spec:
           initialDelaySeconds: 3
           periodSeconds: 5
           timeoutSeconds: 2
-        {{- if and (not .Values.thirdParty.postgresql.enabled) (not .Values.thirdParty.mysqlMetadata.enabled) }}
-        {{- with .Values.metadata.grpc.resources }}
-        resources:
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
-        {{- end }}
       serviceAccountName: metadata-grpc-server
       {{- with .Values.metadata.grpc.nodeSelector }}
       nodeSelector:

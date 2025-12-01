@@ -20,6 +20,12 @@ spec:
     port: {{ .Values.apiServer.service.grpcPort }}
     protocol: TCP
     targetPort: {{ .Values.apiServer.service.grpcPort }}
+  {{- if and .Values.apiServer.k8sNative .Values.apiServer.k8sNative.enabled .Values.apiServer.k8sNative.webhookPort }}
+  - name: webhook
+    port: {{ .Values.apiServer.k8sNative.webhookPort }}
+    protocol: TCP
+    targetPort: {{ .Values.apiServer.k8sNative.webhookPort }}
+  {{- end }}
   selector:
     {{- include "kubeflow-pipelines.mlPipelineSelectorLabels" . | nindent 4 }}
 {{- end }}

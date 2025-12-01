@@ -1,4 +1,4 @@
-{{- if .Values.installMode.multiUser.enabled }}
+{{- if eq .Values.installMode.type "multi-user" }}
 # API Server ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -67,6 +67,35 @@ rules:
   - tokenreviews
   verbs:
   - create
+{{- if eq .Values.installMode.pipelineDefinition.storage "k8s-native" }}
+- apiGroups:
+  - pipelines.kubeflow.org
+  resources:
+  - pipelines
+  - pipelines/finalizers
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - pipelines.kubeflow.org
+  resources:
+  - pipelineversions
+  - pipelineversions/status
+  - pipelineversions/finalizers
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+{{- end }}
 
 ---
 # UI ClusterRole
@@ -289,47 +318,6 @@ rules:
   - patch
 
 ---
-# Cache Deployer ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: kubeflow-pipelines-cache-deployer-clusterrole
-  labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-    app.kubernetes.io/component: ml-pipeline
-    app.kubernetes.io/name: kubeflow-pipelines
-    app: kubeflow-pipelines-cache-deployer-clusterrole
-rules:
-- apiGroups:
-  - certificates.k8s.io
-  resources:
-  - certificatesigningrequests
-  - certificatesigningrequests/approval
-  verbs:
-  - create
-  - delete
-  - get
-  - update
-- apiGroups:
-  - admissionregistration.k8s.io
-  resources:
-  - mutatingwebhookconfigurations
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-- apiGroups:
-  - certificates.k8s.io
-  resources:
-  - signers
-  resourceNames:
-  - kubernetes.io/*
-  verbs:
-  - approve
-
----
 # Metadata Writer ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -396,6 +384,7 @@ rules:
   - ""
   resources:
   - configmaps
+  - namespaces
   verbs:
   - get
   - watch

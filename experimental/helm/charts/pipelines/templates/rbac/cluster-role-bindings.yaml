@@ -1,4 +1,4 @@
-{{- if .Values.installMode.multiUser.enabled }}
+{{- if eq .Values.installMode.type "multi-user" }}
 # API Server ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -100,23 +100,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ include "kubeflow-pipelines.cache.serviceAccountName" . }}
-  namespace: {{ include "kubeflow-pipelines.namespace" . }}
-
----
-# Cache Deployer ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: kubeflow-pipelines-cache-deployer-clusterrolebinding
-  labels:
-    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: kubeflow-pipelines-cache-deployer-clusterrole
-subjects:
-- kind: ServiceAccount
-  name: {{ include "kubeflow-pipelines.cacheDeployer.serviceAccountName" . }}
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
 
 ---

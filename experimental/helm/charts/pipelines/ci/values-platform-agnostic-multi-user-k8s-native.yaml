@@ -1,0 +1,124 @@
+# Values for platform-agnostic multi-user k8s-native mode
+# Pipeline definitions stored as Kubernetes Resources
+
+global:
+  namespace: kubeflow
+  imageTag: 2.15.0
+  security:
+    allowInsecureImages: true
+
+installMode:
+  type: multi-user
+  pipelineDefinition:
+    storage: k8s-native
+
+# API Server configuration for k8s-native mode
+apiServer:
+  # Use local image for k8s-native mode 
+  image:
+    repository: domain.local/apiserver
+    tag: local
+  # K8s-native specific configuration
+  k8sNative:
+    enabled: true
+    command:
+      - "/bin/apiserver"
+    args:
+      - "--config=/config"
+      - "--sampleconfig=/config/sample_config.json"
+      - "-logtostderr=true"
+      - "--webhookTLSCertPath=/etc/webhook/certs/tls.crt"
+      - "--webhookTLSKeyPath=/etc/webhook/certs/tls.key"
+      - "--pipelinesStoreKubernetes=true"
+    webhookPort: 8443
+    volumeMounts:
+      - name: webhook-certs
+        mountPath: /etc/webhook/certs
+        readOnly: true
+    volumes:
+      - name: webhook-certs
+        secret:
+          secretName: kfp-api-webhook-cert
+
+# CRDs
+crds:
+  install: true
+  webhook: true
+
+# Enable cert-manager integration
+certManager:
+  enabled: true
+
+# Enable metadata
+metadata:
+  enabled: true
+
+viewerCrd:
+  additionalEnv:
+  - name: NAMESPACE
+    value: ""
+  - name: MAX_NUM_VIEWERS
+    value: "50"
+
+scheduledWorkflow:
+  additionalEnv:
+  - name: NAMESPACE
+    value: ""
+  - name: LOG_LEVEL
+    value: "info"
+
+persistenceAgent:
+  additionalEnv:
+  - name: NAMESPACE
+    value: ""
+
+
+
+# Third-party components
+thirdParty:
+  argo:
+    enabled: true
+  mysql:
+    enabled: true
+  metacontroller:
+    enabled: true
+
+# MySQL configuration (disabled - using external MySQL like Kustomize)
+mysql:
+  enabled: false
+
+# External MySQL configuration 
+externalDatabase:
+  enabled: true
+  host: "mysql"
+  port: 3306
+  database: "mlpipeline"
+  username: "root"
+  password: ""
+
+# SeaweedFS configuration
+seaweedfs:
+  enabled: true
+  bucket: "mlpipeline"
+  s3EndpointUrl: "http://seaweedfs.kubeflow:8333"
+
+# Profile controller
+profileController:
+  enabled: true
+  disableIstioSidecar: "false"
+  artifactsProxyEnabled: "false"
+  artifactRetentionDays: "-1"
+
+# Networking
+networking:
+  istio:
+    enabled: true
+    gateway: "kubeflow-gateway"
+  virtualService:
+    enabled: true
+
+# Webhooks enabled for k8s-native mode
+webhooks:
+  enabled: true
+  failurePolicy: "Fail"
+

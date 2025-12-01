@@ -6,6 +6,9 @@ metadata:
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
   labels:
     {{- include "kubeflow-pipelines.viewerCrdLabels" . | nindent 4 }}
+{{- if eq .Values.installMode.type "multi-user" }}
+    application-crd-id: kubeflow-pipelines
+{{- end }}
 spec:
   selector:
     matchLabels:
@@ -16,6 +19,9 @@ spec:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       labels:
         {{- include "kubeflow-pipelines.viewerCrdLabels" . | nindent 8 }}
+{{- if eq .Values.installMode.type "multi-user" }}
+        application-crd-id: kubeflow-pipelines
+{{- end }}
     spec:
       serviceAccountName: ml-pipeline-viewer-crd-service-account
       containers:
@@ -38,13 +44,8 @@ spec:
           value: ""
           {{- end }}
         {{- end }}
-        {{- if and .Values.viewerCrd.resources (or .Values.viewerCrd.resources.requests .Values.viewerCrd.resources.limits) }}
-        resources:
-          {{- toYaml .Values.viewerCrd.resources | nindent 10 }}
-        {{- end }}
         securityContext:
           {{- toYaml .Values.viewerCrd.securityContext | nindent 10 }}
       securityContext:
-        seccompProfile:
-          type: {{ .Values.security.seccompProfile.type }}
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
 {{- end }}

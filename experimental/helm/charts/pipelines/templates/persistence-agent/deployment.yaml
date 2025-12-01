@@ -58,8 +58,7 @@ spec:
         - mountPath: /var/run/secrets/kubeflow/tokens
           name: persistenceagent-sa-token
       securityContext:
-        seccompProfile:
-          type: {{ .Values.security.seccompProfile.type }}
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       volumes:
       - name: persistenceagent-sa-token
         projected:

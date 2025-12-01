@@ -36,23 +36,19 @@ Common labels
 {{- define "kubeflow-pipelines.labels" -}}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if or (and (ne .Values.installMode.type "multi-user") (ne .Values.installMode.includeApplicationCrdId false)) (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
-{{- end }}
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
 {{- end }}
 {{- end }}
 
 {{/*
-Authorization Policy labels - includes application-crd-id for legacy multi-user mode
+Authorization Policy labels - includes application-crd-id for multi-user mode
 */}}
 {{- define "kubeflow-pipelines.authorizationPolicyLabels" -}}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if or (and (ne .Values.installMode.type "multi-user") (ne .Values.installMode.includeApplicationCrdId false)) (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
-{{- end }}
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
 {{- end }}
@@ -73,24 +69,7 @@ Cache server labels
 app: cache-server
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if or (and (ne .Values.installMode.type "multi-user") (ne .Values.installMode.includeApplicationCrdId false)) (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- with .Values.commonLabels }}
-{{ toYaml . }}
-{{- end }}
-{{- end }}
-
-{{/*
-Cache deployer labels
-*/}}
-{{- define "kubeflow-pipelines.cacheDeployerLabels" -}}
-app: cache-deployer
-app.kubernetes.io/component: ml-pipeline
-app.kubernetes.io/name: kubeflow-pipelines
-{{- if or (and (ne .Values.installMode.type "multi-user") (ne .Values.installMode.includeApplicationCrdId false)) (.Values.installMode.legacyLabels) }}
-application-crd-id: kubeflow-pipelines
-{{- end }}
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
 {{- end }}
@@ -103,9 +82,7 @@ ML Pipeline specific labels - matching original manifests
 app: ml-pipeline
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if or (and (ne .Values.installMode.type "multi-user") (ne .Values.installMode.includeApplicationCrdId false)) (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
-{{- end }}
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
 {{- end }}
@@ -118,9 +95,7 @@ ML Pipeline UI labels
 app: ml-pipeline-ui
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if or (and (ne .Values.installMode.type "multi-user") (ne .Values.installMode.includeApplicationCrdId false)) (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
-{{- end }}
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
 {{- end }}
@@ -131,17 +106,9 @@ ML Pipeline selector labels
 */}}
 {{- define "kubeflow-pipelines.mlPipelineSelectorLabels" -}}
 app: ml-pipeline
-{{- if eq .Values.installMode.type "multi-user" }}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if .Values.installMode.legacyLabels }}
 application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- else }}
-{{- if ne .Values.installMode.includeApplicationCrdId false }}
-application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- end }}
 {{- end }}
 
 {{/*
@@ -149,17 +116,9 @@ Cache server selector labels
 */}}
 {{- define "kubeflow-pipelines.cacheSelectorLabels" -}}
 app: cache-server
-{{- if eq .Values.installMode.type "multi-user" }}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if .Values.installMode.legacyLabels }}
 application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- else }}
-{{- if ne .Values.installMode.includeApplicationCrdId false }}
-application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- end }}
 {{- end }}
 
 {{/*
@@ -167,17 +126,9 @@ UI selector labels
 */}}
 {{- define "kubeflow-pipelines.uiSelectorLabels" -}}
 app: ml-pipeline-ui
-{{- if eq .Values.installMode.type "multi-user" }}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if .Values.installMode.legacyLabels }}
 application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- else }}
-{{- if ne .Values.installMode.includeApplicationCrdId false }}
-application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- end }}
 {{- end }}
 
 {{/*
@@ -208,19 +159,10 @@ application-crd-id: kubeflow-pipelines
 Viewer CRD selector labels
 */}}
 {{- define "kubeflow-pipelines.viewerCrdSelectorLabels" -}}
-{{- if eq .Values.installMode.type "multi-user" }}
 app: ml-pipeline-viewer-crd
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if .Values.installMode.legacyLabels }}
 application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- else }}
-app: ml-pipeline-viewer-crd
-{{- if ne .Values.installMode.includeApplicationCrdId false }}
-application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- end }}
 {{- end }}
 
 {{/*
@@ -230,9 +172,7 @@ Visualization server labels
 app: ml-pipeline-visualizationserver
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if or (and (ne .Values.installMode.type "multi-user") (ne .Values.installMode.includeApplicationCrdId false)) (.Values.installMode.legacyLabels) }}
 application-crd-id: kubeflow-pipelines
-{{- end}}
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
 {{- end }}
@@ -242,19 +182,10 @@ application-crd-id: kubeflow-pipelines
 Visualization server selector labels
 */}}
 {{- define "kubeflow-pipelines.visualizationSelectorLabels" -}}
-{{- if eq .Values.installMode.type "multi-user" }}
 app: ml-pipeline-visualizationserver
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if .Values.installMode.legacyLabels }}
 application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- else }}
-app: ml-pipeline-visualizationserver
-{{- if ne .Values.installMode.includeApplicationCrdId false }}
-application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- end }}
 {{- end }}
 
 {{/*
@@ -265,13 +196,6 @@ app: mysql
 application-crd-id: kubeflow-pipelines
 {{- end }}
 
-{{/*
-MinIO selector labels
-*/}}
-{{- define "kubeflow-pipelines.minioSelectorLabels" -}}
-app: minio
-application-crd-id: kubeflow-pipelines
-{{- end }}
 
 {{/*
 Metadata GRPC selector labels
@@ -290,39 +214,13 @@ application-crd-id: kubeflow-pipelines
 {{- end }}
 
 {{/*
-Cache deployer selector labels
-*/}}
-{{- define "kubeflow-pipelines.cacheDeployerSelectorLabels" -}}
-app: cache-deployer
-{{- if eq .Values.installMode.type "multi-user" }}
-app.kubernetes.io/component: ml-pipeline
-app.kubernetes.io/name: kubeflow-pipelines
-{{- if .Values.installMode.legacyLabels }}
-application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- else }}
-{{- if ne .Values.installMode.includeApplicationCrdId false }}
-application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- end }}
-{{- end }}
-
-{{/*
 Metadata writer selector labels
 */}}
 {{- define "kubeflow-pipelines.metadataWriterSelectorLabels" -}}
 app: metadata-writer
-{{- if eq .Values.installMode.type "multi-user" }}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if .Values.installMode.legacyLabels }}
 application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- else }}
-{{- if ne .Values.installMode.includeApplicationCrdId false }}
-application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- end }}
 {{- end }}
 
 {{/*
@@ -330,17 +228,9 @@ Persistence agent selector labels
 */}}
 {{- define "kubeflow-pipelines.persistenceAgentSelectorLabels" -}}
 app: ml-pipeline-persistenceagent
-{{- if eq .Values.installMode.type "multi-user" }}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if .Values.installMode.legacyLabels }}
 application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- else }}
-{{- if ne .Values.installMode.includeApplicationCrdId false }}
-application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- end }}
 {{- end }}
 
 {{/*
@@ -348,17 +238,9 @@ Scheduled workflow selector labels
 */}}
 {{- define "kubeflow-pipelines.scheduledWorkflowSelectorLabels" -}}
 app: ml-pipeline-scheduledworkflow
-{{- if eq .Values.installMode.type "multi-user" }}
 app.kubernetes.io/component: ml-pipeline
 app.kubernetes.io/name: kubeflow-pipelines
-{{- if .Values.installMode.legacyLabels }}
 application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- else }}
-{{- if ne .Values.installMode.includeApplicationCrdId false }}
-application-crd-id: kubeflow-pipelines
-{{- end }}
-{{- end }}
 {{- end }}
 
 {{/*
@@ -427,17 +309,6 @@ Create the name of the service account to use for Cache Server
 {{- end }}
 
 {{/*
-Create the name of the service account to use for Cache Deployer
-*/}}
-{{- define "kubeflow-pipelines.cacheDeployer.serviceAccountName" -}}
-{{- if .Values.cacheDeployer.serviceAccount.create }}
-{{- default "kubeflow-pipelines-cache-deployer-sa" .Values.cacheDeployer.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.cacheDeployer.serviceAccount.name }}
-{{- end }}
-{{- end }}
-
-{{/*
 Create the name of the service account to use for Metadata
 */}}
 {{- define "kubeflow-pipelines.metadata.serviceAccountName" -}}
@@ -482,33 +353,27 @@ Create the name of the service account to use for Metadata Writer
 {{- end }}
 
 {{/*
-Database configuration helpers
+Database configuration helpers (MySQL only)
 */}}
 {{- define "kubeflow-pipelines.database.host" -}}
 {{- if .Values.mysql.enabled -}}
 mysql
-{{- else if .Values.thirdParty.postgresql.enabled -}}
-postgres
 {{- else -}}
-{{- .Values.externalDatabase.host | default "mysql" }}
+{{- .Values.externalDatabase.host | default "mysql.kubeflow.svc.cluster.local" }}
 {{- end -}}
 {{- end }}
 
 {{- define "kubeflow-pipelines.database.port" -}}
 {{- if .Values.mysql.enabled -}}
 3306
-{{- else if .Values.postgresql.enabled -}}
-5432
 {{- else -}}
-{{- .Values.externalDatabase.port }}
+{{- .Values.externalDatabase.port | default 3306 }}
 {{- end -}}
 {{- end }}
 
 {{- define "kubeflow-pipelines.database.name" -}}
 {{- if .Values.mysql.enabled -}}
 {{- .Values.mysql.auth.database | default "mlpipeline" }}
-{{- else if .Values.postgresql.enabled -}}
-{{- .Values.postgresql.auth.database | default "mlpipeline" }}
 {{- else -}}
 {{- .Values.externalDatabase.database }}
 {{- end -}}
@@ -516,9 +381,7 @@ postgres
 
 {{- define "kubeflow-pipelines.database.username" -}}
 {{- if .Values.mysql.enabled -}}
-{{- .Values.mysql.auth.username | default "mlpipeline" }}
-{{- else if .Values.postgresql.enabled -}}
-{{- .Values.postgresql.auth.username | default "mlpipeline" }}
+{{- .Values.mysql.auth.username | default "root" }}
 {{- else -}}
 {{- .Values.externalDatabase.username }}
 {{- end -}}
@@ -527,10 +390,6 @@ postgres
 {{- define "kubeflow-pipelines.database.secretName" -}}
 {{- if .Values.externalDatabase.existingSecret -}}
 {{- .Values.externalDatabase.existingSecret }}
-{{- else if .Values.mysql.enabled -}}
-mysql-secret
-{{- else if .Values.postgresql.enabled -}}
-postgresql-secret
 {{- else -}}
 mysql-secret
 {{- end -}}
@@ -541,58 +400,20 @@ mysql-secret
 {{- .Values.externalDatabase.existingSecretPasswordKey | default "password" }}
 {{- else if .Values.mysql.enabled -}}
 mysql-password
-{{- else if .Values.postgresql.enabled -}}
-password
 {{- else -}}
 password
 {{- end -}}
 {{- end }}
 
 {{/*
-Object storage configuration helpers
+Object storage configuration helpers (SeaweedFS only)
 */}}
-{{- define "kubeflow-pipelines.objectStore.endpoint" -}}
-{{- if eq .Values.objectStore.provider "minio" -}}
-{{- if .Values.minio.enabled -}}
-{{- include "minio.fullname" .Subcharts.minio }}:9000
-{{- else -}}
-{{- .Values.objectStore.minio.endpoint }}
-{{- end -}}
-{{- else -}}
-{{ .Values.objectStore.custom.endpoint }}
-{{- end -}}
-{{- end }}
-
 {{- define "kubeflow-pipelines.objectStore.bucket" -}}
-{{- if eq .Values.objectStore.provider "minio" -}}
-{{- .Values.objectStore.minio.bucket | default "mlpipeline" }}
-{{- else -}}
-{{- .Values.objectStore.custom.bucket }}
-{{- end -}}
-{{- end }}
-
-{{- define "kubeflow-pipelines.objectStore.secure" -}}
-{{- if eq .Values.objectStore.provider "minio" -}}
-{{- .Values.objectStore.minio.secure | default "false" }}
-{{- else -}}
-{{- .Values.objectStore.custom.secure | default "true" }}
-{{- end -}}
+{{- .Values.seaweedfs.bucket | default "mlpipeline" }}
 {{- end }}
 
 {{- define "kubeflow-pipelines.objectStore.secretName" -}}
-{{- if eq .Values.objectStore.provider "minio" -}}
-{{- if .Values.objectStore.minio.existingSecret -}}
-{{- .Values.objectStore.minio.existingSecret }}
-{{- else -}}
 mlpipeline-minio-artifact
-{{- end -}}
-{{- else -}}
-{{- if .Values.objectStore.custom.existingSecret -}}
-{{- .Values.objectStore.custom.existingSecret }}
-{{- else -}}
-mlpipeline-minio-artifact
-{{- end -}}
-{{- end -}}
 {{- end }}
 
 {{/*
