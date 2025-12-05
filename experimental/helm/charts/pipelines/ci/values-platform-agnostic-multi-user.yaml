@@ -1,0 +1,96 @@
+# Values for platform-agnostic multi-user mode
+# Pipeline definitions stored in the database
+
+global:
+  namespace: kubeflow
+  imageTag: 2.15.0
+  security:
+    allowInsecureImages: true
+
+installMode:
+  type: multi-user
+  pipelineDefinition:
+    storage: database
+
+# CRDs
+crds:
+  install: true
+  application: false
+  # webhook should match pipelineDefinition.storage: false for database mode, true for k8s-native mode
+  webhook: false
+
+# Enable cert-manager integration
+certManager:
+  enabled: true
+
+# Enable metadata
+metadata:
+  enabled: true
+
+viewerCrd:
+  additionalEnv:
+  - name: NAMESPACE
+    value: ""
+  - name: MAX_NUM_VIEWERS
+    value: "50"
+
+scheduledWorkflow:
+  additionalEnv:
+  - name: NAMESPACE
+    value: ""
+  - name: LOG_LEVEL
+    value: "info"
+
+persistenceAgent:
+  additionalEnv:
+  - name: NAMESPACE
+    value: ""
+
+# Third-party components
+thirdParty:
+  argo:
+    enabled: true
+  mysql:
+    enabled: true
+  metacontroller:
+    enabled: true
+
+
+# MySQL configuration (disabled - using external MySQL like Kustomize)
+mysql:
+  enabled: false
+
+# External MySQL configuration
+externalDatabase:
+  enabled: true
+  host: "mysql"
+  port: 3306
+  database: "mlpipeline"
+  username: "root"
+  password: ""
+
+# SeaweedFS configuration
+seaweedfs:
+  enabled: true
+  bucket: "mlpipeline"
+  s3EndpointUrl: "http://seaweedfs.kubeflow:8333"
+
+# Profile controller
+profileController:
+  enabled: true
+  disableIstioSidecar: "false"
+  artifactsProxyEnabled: "false"
+  artifactRetentionDays: "-1"
+
+# Networking
+networking:
+  istio:
+    enabled: true
+    gateway: "kubeflow-gateway"
+  virtualService:
+    enabled: true
+
+# Webhooks disabled for database mode
+webhooks:
+  enabled: false
+
