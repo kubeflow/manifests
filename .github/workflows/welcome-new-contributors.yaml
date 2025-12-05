@@ -1,0 +1,51 @@
+name: Welcome new contributors
+
+on:
+  pull_request_target:
+    types:
+      - opened
+  issues:
+    types:
+      - opened
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/first-interaction@v3
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          issue_message: |
+            🎉 **Welcome to the Kubeflow Manifests Repository!** 🎉
+
+            Thanks for opening your first issue! We're excited to have you contributing to the Kubeflow community 🚀
+
+            **What happens next?**
+            - A Kubeflow Maintainer will review your issue soon.
+            - If you'd like to contribute, please check our [Contributing Guide](https://github.com/kubeflow/manifests/blob/master/CONTRIBUTING.md).
+
+            **Community Resources:**
+            - Join us on CNCF Slack: https://www.kubeflow.org/docs/about/community/#kubeflow-slack-channels
+            - Attend our community meetings: https://www.kubeflow.org/docs/about/community/
+
+            Feel free to ask questions — we're here to help 🙌
+
+          pr_message: |
+            🎉 **Welcome to the Kubeflow Manifests Repository!** 🎉
+
+            Thanks for opening your first PR! Your contribution means a lot to the Kubeflow community 🚀
+
+            **Next steps:**
+            - Please ensure your PR follows our [Contributing Guide](https://github.com/kubeflow/manifests/blob/master/CONTRIBUTING.md).
+            - A Kubeflow Maintainer will review your PR soon.
+
+            **Community Resources:**
+            - CNCF Slack channels: https://www.kubeflow.org/docs/about/community/#kubeflow-slack-channels
+            - Community meetings: https://www.kubeflow.org/docs/about/community/
+
+            Thanks again for helping improve Kubeflow! 🙏
