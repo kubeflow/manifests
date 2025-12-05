@@ -4,9 +4,9 @@ name: katib
 
 description: A Helm chart for Katib - AutoML on Kubernetes
 
-version: 0.16.0
+version: 0.19.0
 
-appVersion: 0.16.0
+appVersion: 0.19.0
 
 keywords:
 - automl

@@ -138,6 +138,8 @@ def normalize_manifest(manifest: Dict, component: str = "katib") -> Dict:
                 # Remove leading --- if present (common in ConfigMap YAML data)
                 if normalized_value.startswith('---'):
                     normalized_value = normalized_value[3:].strip()
+                lines = normalized_value.split('\n')
+                normalized_value = '\n'.join(line.rstrip() for line in lines)
                 normalized_data[key] = normalized_value
             else:
                 normalized_data[key] = value
@@ -361,17 +363,15 @@ def compare_manifests(kustomize_file: str, helm_file: str, component: str, scena
     
     if only_in_kustomize:
         print(f"Resources only in Kustomize: {len(only_in_kustomize)}")
-        if verbose:
-            for resource in sorted(only_in_kustomize):
-                print(f"  - {resource}")        
+        for resource in sorted(only_in_kustomize):
+            print(f"  - {resource}")        
         success = False
         differences_found.extend(only_in_kustomize)
     
     if unexpected_helm_extras:
         print(f"Unexpected resources only in Helm: {len(unexpected_helm_extras)}")
-        if verbose:
-            for resource in sorted(unexpected_helm_extras):
-                print(f"  - {resource}")
+        for resource in sorted(unexpected_helm_extras):
+            print(f"  - {resource}")
         success = False
         differences_found.extend(unexpected_helm_extras)
     
@@ -384,11 +384,10 @@ def compare_manifests(kustomize_file: str, helm_file: str, component: str, scena
         
         if differences:
             print(f"Differences in {key}: {len(differences)} fields")
-            if verbose:
-                print(f"  Detailed differences for {key}:")
-                for diff in differences:
-                    print(f"    {diff}")
-                print()
+            print(f"  Detailed differences for {key}:")
+            for diff in differences:
+                print(f"    {diff}")
+            print()
             differences_found.append(key)
             success = False
     

@@ -43,6 +43,7 @@ apiServer:
 # CRDs
 crds:
   install: true
+  # webhook should match pipelineDefinition.storage: false for database mode, true for k8s-native mode
   webhook: true
 
 # Enable cert-manager integration

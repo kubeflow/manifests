@@ -16,6 +16,7 @@ installMode:
 crds:
   install: true
   application: false
+  # webhook should match pipelineDefinition.storage: false for database mode, true for k8s-native mode
   webhook: false
 
 # Enable cert-manager integration
