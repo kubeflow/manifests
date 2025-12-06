@@ -25,9 +25,16 @@ jobs:
 
             Thanks for opening your first issue! We're excited to have you contributing to the Kubeflow community 🚀
 
-            **What happens next?**
-            - A Kubeflow Maintainer will review your issue soon.
-            - If you'd like to contribute, please check our [Contributing Guide](https://github.com/kubeflow/manifests/blob/master/CONTRIBUTING.md).
+            **Before submitting more issues:**
+            Please make sure to follow our default issue template so maintainers can quickly understand and reproduce the problem.  
+            The template asks for:
+            - Environment details (Kubernetes version, OS, platform)
+            - Component involved
+            - Steps to reproduce
+            - Current vs expected behavior
+            - Logs, screenshots, or error messages
+
+            This information helps maintainers resolve issues faster ⚡
 
             **Community Resources:**
             - Join us on CNCF Slack: https://www.kubeflow.org/docs/about/community/#kubeflow-slack-channels
@@ -40,9 +47,16 @@ jobs:
 
             Thanks for opening your first PR! Your contribution means a lot to the Kubeflow community 🚀
 
-            **Next steps:**
-            - Please ensure your PR follows our [Contributing Guide](https://github.com/kubeflow/manifests/blob/master/CONTRIBUTING.md).
-            - A Kubeflow Maintainer will review your PR soon.
+            **Before making more PRs:**
+            Please ensure your PR follows our [Contributing Guide](https://github.com/kubeflow/manifests/blob/master/CONTRIBUTING.md).
+
+            Also, when creating issues related to your PR, please use our default issue template and include:
+            - Environment details (K8s version, OS, platform)
+            - Steps to reproduce
+            - Current vs expected behavior
+            - Logs or helpful screenshots
+
+            This helps maintainers review and debug PRs more easily.
 
             **Community Resources:**
             - CNCF Slack channels: https://www.kubeflow.org/docs/about/community/#kubeflow-slack-channels
