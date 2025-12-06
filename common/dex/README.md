@@ -32,6 +32,10 @@ Modify the Dex ConfigMap to connect to Keycloak.
 
 ```bash
 KEYCLOAK_ISSUER="https://keycloak.example.com/realms/<my-realm>"
+# INTERNAL Keycloak (running inside the Kubernetes cluster)
+KEYCLOAK_JWKS_URI="http://keycloak.auth.svc.cluster.local:8080/realms/<my-realm>/protocol/openid-connect/certs"
+# If Keycloak is external:
+#KEYCLOAK_JWKS_URI="https://keycloak.example.com/realms/<my-realm>/protocol/openid-connect/certs"
 CLIENT_ID="kubeflow-oidc-authservice"
 CLIENT_SECRET="<YOUR_KEYCLOAK_CLIENT_SECRET>"
 REDIRECT_URI="https://kubeflow.example.com/dex/callback"
@@ -74,10 +78,11 @@ data:
       name: keycloak
       config:
         issuer: $KEYCLOAK_ISSUER
+        jwksUri: $KEYCLOAK_JWKS_URI
         clientID: $CLIENT_ID
         clientSecret: $CLIENT_SECRET
         redirectURI: $REDIRECT_URI
-        insecure: false
+        insecureSkipVerify: true
         insecureSkipEmailVerified: true
         userNameKey: email       
         scopes:
