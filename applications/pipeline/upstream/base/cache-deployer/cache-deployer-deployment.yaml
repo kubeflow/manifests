@@ -19,7 +19,6 @@ spec:
     metadata:
       labels:
         app: cache-deployer
-    spec:
       containers:
       - name: main
         securityContext:
