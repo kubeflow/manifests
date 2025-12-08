@@ -12,6 +12,9 @@ spec:
   strategy:
     type: Recreate
   template:
+    metadata:
+      labels:
+        app: cache-deployer
     spec:
       securityContext:
         seccompProfile:
