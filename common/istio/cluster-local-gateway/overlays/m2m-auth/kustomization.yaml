@@ -6,5 +6,5 @@ resources:
 - cluster-local-gateway-requestauthentication.yaml
 - cluster-local-gateway-authorizationpolicy-deny.yaml
 
-patchesStrategicMerge:
-- cluster-local-gateway-authorizationpolicy-patch.yaml
+patches:
+- path: cluster-local-gateway-authorizationpolicy-patch.yaml
