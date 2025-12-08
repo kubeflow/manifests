@@ -7,4 +7,4 @@ resources:
 - cluster-local-gateway-authorizationpolicy-deny.yaml
 
 patches:
--path: cluster-local-gateway-authorizationpolicy-patch.yaml
+- path: cluster-local-gateway-authorizationpolicy-patch.yaml
