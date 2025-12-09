@@ -2908,7 +2908,9 @@ data:
               "memory": "128Mi"
             }
           },
-          "seccompProfile": {},
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          },
           "startupProbe": {
             "enabled": true,
             "failureThreshold": 600
