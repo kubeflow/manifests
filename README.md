@@ -8,6 +8,12 @@ The **Kubeflow Manifests** are a collection of community-maintained manifests fo
 For a stable and conservative experience, we recommend using the [latest stable release](https://github.com/kubeflow/manifests/releases). However, please consult the more up-to-date documentation in the master branch.
 You can also install the master branch of [`kubeflow/manifests`](https://github.com/kubeflow/manifests) by following the instructions [here](https://github.com/kubeflow/manifests?tab=readme-ov-file#installation) and providing us with feedback.
 
+We are planning to cut 2 releases per year, for example 26.03 and 26.10 before each KubeCon EU and NA.
+We ask each working group/component to provide non-breaking patch releases for 6 months based on the version in each date release.
+We try to BEST-EFFORT support each realease for 6 monhts as community. There is [commercial support](https://www.kubeflow.org/docs/started/support/#support-from-commercial-providers-in-the-kubeflow-ecosystem) available if needed.
+The working groups (KFP, Katib, Trainer, ...) are allowed to release new component versions with breaking changes, but they will only be included in the master branch or the next date release.
+This should only apply to “stable” components, as “alpha/beta” components might release breaking changes in patch releases.
+
 ## Table of Contents
 
 <!-- toc -->
@@ -758,5 +764,6 @@ pre-commit run
   **A:** Istio CNI provides better security by eliminating the need for privileged init containers, making it more compatible with Pod Security Standards (PSS). It also enables native sidecars support introduced in Kubernetes 1.28, which helps address issues with init containers and application lifecycle management.
 - **Q:** Why does Istio CNI fail on Google Kubernetes Engine (GKE) with "read-only file system" errors?
   **A:** GKE mounts `/opt/cni/bin` as read-only for security reasons. Use the GKE-specific overlay: `kubectl apply -k common/istio/istio-install/overlays/gke` (or `overlays/ambient-gke` for ambient mode). These overlays use GKE's writable CNI directory at `/home/kubernetes/bin`. For details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites).
+
 
 
