@@ -20,7 +20,7 @@ if [ -e /swapfile ]; then
 fi
 
 {
-    curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.29.0/kind-linux-amd64
+    curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.30.0/kind-linux-amd64
     chmod +x ./kind
     sudo mv kind /usr/local/bin
 } || { echo "Failed to install KinD"; exit 1; }
@@ -49,19 +49,19 @@ kubeadmConfigPatches:
         \"service-account-signing-key-file\": \"/etc/kubernetes/pki/sa.key\"
 nodes:
 - role: control-plane
-  image: kindest/node:v1.33.1@sha256:050072256b9a903bd914c0b2866828150cb229cea0efe5892e2b644d5dd3b34f
+  image: kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a
 - role: worker
-  image: kindest/node:v1.33.1@sha256:050072256b9a903bd914c0b2866828150cb229cea0efe5892e2b644d5dd3b34f
+  image: kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a
 - role: worker
-  image: kindest/node:v1.33.1@sha256:050072256b9a903bd914c0b2866828150cb229cea0efe5892e2b644d5dd3b34f
+  image: kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a
 " | kind create cluster --config - --wait 120s
 
 kubectl cluster-info
 
 echo "Install Kustomize ..."
 {
-    curl --silent --location --remote-name "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.4.3/kustomize_v5.4.3_linux_amd64.tar.gz"
-    tar -xzvf kustomize_v5.4.3_linux_amd64.tar.gz
+    curl --silent --location --remote-name "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.7.1/kustomize_v5.7.1_linux_amd64.tar.gz"
+    tar -xzvf kustomize_v5.7.1_linux_amd64.tar.gz
     chmod a+x kustomize
     sudo mv kustomize /usr/local/bin/kustomize
 } || { echo "Failed to install Kustomize"; exit 1; }
