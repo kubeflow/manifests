@@ -42,7 +42,7 @@ data:
         "meshNetworks": {},
         "mountMtlsCerts": false,
         "multiCluster": {
-          "clusterName": "",
+          "clusterName": ""
         },
         "nativeNftables": false,
         "network": "",
