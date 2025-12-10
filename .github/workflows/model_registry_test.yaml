@@ -27,7 +27,7 @@ jobs:
     # TODO it works well for KFP and other MySQL deployments and should be removed.
     - name: Remove AppArmor profile for mysql in KinD on GHA # https://github.com/kubeflow/manifests/issues/2507
       run: |
-        set -euxo -pipefail
+        set -euxo pipefail
         sudo apt-get update
         sudo apt-get install apparmor-profiles
         sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
