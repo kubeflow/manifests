@@ -13,6 +13,7 @@ resources:
 patches:
 - path: patches/service.yaml
 - path: patches/istio-configmap-disable-tracing.yaml
+- path: patches/istio-sidecar-injector-patch.yaml
 - path: patches/disable-debugging.yaml
 - path: patches/seccomp-istio-ingressgateway.yaml
 - path: patches/seccomp-istiod.yaml

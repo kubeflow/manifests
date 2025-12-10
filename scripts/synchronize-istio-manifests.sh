@@ -38,10 +38,6 @@ mv $ISTIO_DIRECTORY/install.yaml $ISTIO_DIRECTORY/istio-install/base/
 mv $ISTIO_DIRECTORY/cluster-local-gateway.yaml $ISTIO_DIRECTORY/cluster-local-gateway/base/
 rm dump.yaml
 
-echo "Generating non-CNI manifests (insecure overlay)..."
-$ISTIOCTL manifest generate -f profile.yaml -f profile-overlay.yaml \
-  --set components.cni.enabled=false > istio-install/overlays/insecure/install-insecure.yaml
-
 echo "Generating ztunnel manifests (ambient mode)..."
 $ISTIOCTL manifest generate -f profile.yaml -f profile-overlay.yaml \
   --set components.cni.enabled=true \
@@ -51,6 +47,9 @@ mv $ISTIO_DIRECTORY/ztunnel.yaml $ISTIO_DIRECTORY/istio-install/components/ambie
 rm dump-ztunnel.yaml crd.yaml install.yaml cluster-local-gateway.yaml
 
 check_uncommitted_changes
+
+echo "Updating tag in istio-sidecar-injector-patch.yaml..."
+sed -i "s/\"tag\": \".*\"/\"tag\": \"$COMMIT\"/" $ISTIO_DIRECTORY/istio-install/base/patches/istio-sidecar-injector-patch.yaml
 
 SOURCE_TEXT="\[.*\](https://github.com/istio/istio/releases/tag/.*)"
 DESTINATION_TEXT="\[$COMMIT\](https://github.com/istio/istio/releases/tag/$COMMIT)"
