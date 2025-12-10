@@ -2904,11 +2904,13 @@ data:
               "memory": "1024Mi"
             },
             "requests": {
-              "cpu": "100m",
-              "memory": "128Mi"
+              "cpu": "10m",
+              "memory": "40Mi"
             }
           },
-          "seccompProfile": {},
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          },
           "startupProbe": {
             "enabled": true,
             "failureThreshold": 600
@@ -2917,8 +2919,17 @@ data:
           "tracer": "none"
         },
         "proxy_init": {
-          "forceApplyIptables": false,
-          "image": "proxyv2"
+          "image": "proxyv2",
+          "resources": {
+            "limits": {
+              "cpu": "2000m",
+              "memory": "1024Mi"
+            },
+            "requests": {
+              "cpu": "10m",
+              "memory": "10Mi"
+            }
+          }
         },
         "remotePilotAddress": "",
         "resourceScope": "all",
@@ -2941,7 +2952,7 @@ data:
               "memory": "1Gi"
             },
             "requests": {
-              "cpu": "100m",
+              "cpu": "10m",
               "memory": "128Mi"
             }
           },
