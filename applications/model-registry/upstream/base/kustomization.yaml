@@ -8,4 +8,4 @@ resources:
 images:
 - name: ghcr.io/kubeflow/model-registry/server
   newName: ghcr.io/kubeflow/model-registry/server
-  newTag: v0.3.3
+  newTag: v0.3.4

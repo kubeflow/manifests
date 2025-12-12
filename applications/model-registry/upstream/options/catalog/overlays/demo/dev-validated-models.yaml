@@ -1,0 +1,382 @@
+source: Validated AI
+models:
+  - name: certified/production-llm-8b
+    provider: Validation Authority
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQyIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzI3QUU2MDtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMjI5OTU0O3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHBhdGggZD0iTSA1MCAxMCBMIDgwIDMwIEwgODAgNzAgTCA1MCA5MCBMIDIwIDcwIEwgMjAgMzAgWiIgZmlsbD0idXJsKCNncmFkMikiIHN0cm9rZT0iIzFFODQ0OSIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHBhdGggZD0iTSAzNSA1MCBMIDQ1IDYwIEwgNjUgMzUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIi8+Cjwvc3ZnPgo=
+    description: |-
+      (DEMO) Production-LLM-8B is an enterprise-validated 8 billion parameter language model that has
+      undergone rigorous testing for production deployment. Sed do eiusmod tempor incididunt
+      ut labore et dolore magna aliqua.
+    readme: |-
+      # Production-LLM-8B (Validated)
+
+      **Model Summary:**
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. This model has been extensively tested and validated for enterprise production environments.
+
+      - **Developers:** Validation Authority in collaboration with Acme AI Labs
+      - **Validation Date**: January 20th, 2025
+      - **License:** [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+      - **Validation Status:** ✓ Certified for Production Use
+
+      **Validation Testing:**
+      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat:
+      * Security assessment completed
+      * Bias and fairness evaluation
+      * Performance benchmarking
+      * Resource utilization profiling
+      * Compliance verification (SOC 2, ISO 27001)
+
+      **Production Features:**
+      * Guaranteed inference latency SLAs
+      * Comprehensive monitoring and logging
+      * Multi-GPU and distributed inference support
+      * Enterprise-grade error handling
+      * Automated failover capabilities
+
+      **Deployment:**
+
+      ```python
+      from transformers import AutoModelForCausalLM, AutoTokenizer
+
+      model = AutoModelForCausalLM.from_pretrained(
+          "certified/production-llm-8b",
+          torch_dtype="auto",
+          device_map="auto"
+      )
+      tokenizer = AutoTokenizer.from_pretrained("certified/production-llm-8b")
+
+      messages = [{"role": "user", "content": "Analyze this customer feedback..."}]
+      inputs = tokenizer.apply_chat_template(messages, return_tensors="pt")
+      outputs = model.generate(inputs, max_new_tokens=512, temperature=0.7)
+      ```
+
+      **Validation Metrics:**
+      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur:
+      * Accuracy: 94.2% on validation benchmarks
+      * Average latency: < 100ms (p95)
+      * Throughput: 500 tokens/sec on standard hardware
+      * Memory efficiency: 12GB VRAM required
+
+      **Security:**
+      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Model includes built-in guardrails and content filtering.
+
+      **Support:**
+      Enterprise support available with 24/7 SLA and dedicated technical assistance.
+    language: ["en", "es", "fr", "de", "it", "pt"]
+    license: apache-2.0
+    licenseLink: https://www.apache.org/licenses/LICENSE-2.0.txt
+    maturity: Production
+    libraryName: transformers
+    tasks:
+      - text-generation
+      - question-answering
+      - summarization
+    createTimeSinceEpoch: "1737331200000"
+    lastUpdateTimeSinceEpoch: "1737331200000"
+    customProperties:
+      validated:
+        string_value: ""
+        metadataType: MetadataStringValue
+    artifacts:
+      - uri: oci://registry.example.com/certified/production-llm-8b:validated-v1.0
+        createTimeSinceEpoch: "1737331200000"
+        lastUpdateTimeSinceEpoch: "1737331200000"
+        customProperties:
+          validation_status:
+            string_value: "certified"
+            metadataType: MetadataStringValue
+          validation_date:
+            string_value: "2025-01-20"
+            metadataType: MetadataStringValue
+
+  - name: certified/secure-embeddings-v2
+    provider: Validation Authority
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQyIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzI3QUU2MDtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMjI5OTU0O3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHBhdGggZD0iTSA1MCAxMCBMIDgwIDMwIEwgODAgNzAgTCA1MCA5MCBMIDIwIDcwIEwgMjAgMzAgWiIgZmlsbD0idXJsKCNncmFkMikiIHN0cm9rZT0iIzFFODQ0OSIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHBhdGggZD0iTSAzNSA1MCBMIDQ1IDYwIEwgNjUgMzUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIi8+Cjwvc3ZnPgo=
+    description: |-
+      (DEMO) Secure-Embeddings-V2 is a validated embedding model optimized for enterprise search
+      and retrieval with enhanced security features. Nemo enim ipsam voluptatem quia
+      voluptas sit aspernatur aut odit aut fugit.
+    readme: |-
+      # Secure-Embeddings-V2 (Validated)
+
+      **Model Summary:**
+      Sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. This embedding model has been validated for secure enterprise deployment with data privacy guarantees.
+
+      - **Developers:** Validation Authority & Neural Dynamics
+      - **Validation Date**: December 5th, 2024
+      - **License:** [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+      - **Validation Status:** ✓ Security Certified
+
+      **Security Features:**
+      * Data encryption at rest and in transit
+      * No telemetry or external data transmission
+      * Differential privacy training
+      * Adversarial robustness testing
+      * GDPR and CCPA compliant
+
+      **Specifications:**
+      Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet:
+      * Embedding dimension: 768
+      * Max sequence length: 512 tokens
+      * Normalized embeddings
+      * Language support: 95+ languages
+
+      **Enterprise Deployment:**
+
+      ```python
+      from sentence_transformers import SentenceTransformer
+
+      # Load model with security configurations
+      model = SentenceTransformer('certified/secure-embeddings-v2')
+
+      # Configure for air-gapped deployment
+      model.eval()
+      model.requires_grad = False
+
+      documents = [
+          "Confidential business document 1",
+          "Sensitive customer data record"
+      ]
+
+      # Generate embeddings locally without external calls
+      embeddings = model.encode(
+          documents,
+          show_progress_bar=False,
+          normalize_embeddings=True
+      )
+      ```
+
+      **Validation Testing:**
+      Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae:
+      * Security audit passed
+      * Privacy compliance verified
+      * Performance benchmarking complete
+      * Adversarial attack resistance tested
+
+      **Use Cases:**
+      * Enterprise document search
+      * Secure RAG implementations
+      * Confidential data retrieval
+      * Regulatory compliant AI systems
+
+      **Deployment Options:**
+      Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+    language: ["multilingual"]
+    license: apache-2.0
+    licenseLink: https://www.apache.org/licenses/LICENSE-2.0.txt
+    maturity: Production
+    libraryName: sentence-transformers
+    tasks:
+      - feature-extraction
+      - sentence-similarity
+    createTimeSinceEpoch: "1733356800000"
+    lastUpdateTimeSinceEpoch: "1733356800000"
+    customProperties:
+      validated:
+        string_value: ""
+        metadataType: MetadataStringValue
+    artifacts:
+      - uri: oci://registry.example.com/certified/secure-embeddings-v2:validated
+        createTimeSinceEpoch: "1733356800000"
+        lastUpdateTimeSinceEpoch: "1733356800000"
+        customProperties:
+          security_certification:
+            string_value: "passed"
+            metadataType: MetadataStringValue
+          compliance:
+            string_value: "GDPR,CCPA,SOC2"
+            metadataType: MetadataStringValue
+
+  - name: certified/analytics-forecaster-5b
+    provider: Validation Authority
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQyIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzI3QUU2MDtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMjI5OTU0O3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHBhdGggZD0iTSA1MCAxMCBMIDgwIDMwIEwgODAgNzAgTCA1MCA5MCBMIDIwIDcwIEwgMjAgMzAgWiIgZmlsbD0idXJsKCNncmFkMikiIHN0cm9rZT0iIzFFODQ0OSIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHBhdGggZD0iTSAzNSA1MCBMIDQ1IDYwIEwgNjUgMzUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIi8+Cjwvc3ZnPgo=
+    description: |-
+      (DEMO) Analytics-Forecaster-5B is a specialized 5 billion parameter model validated for
+      business analytics, time-series forecasting, and data insights generation. Quis autem
+      vel eum iure reprehenderit qui in ea voluptate velit.
+    readme: |-
+      # Analytics-Forecaster-5B (Validated)
+
+      **Model Summary:**
+      Esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur. This model specializes in analytical tasks and has been validated for business intelligence applications.
+
+      - **Developers:** Validation Authority & Stellar Labs
+      - **Validation Date**: November 18th, 2024
+      - **License:** [MIT License](https://opensource.org/licenses/MIT)
+      - **Validation Status:** ✓ Analytics Certified
+
+      **Capabilities:**
+      * Time-series forecasting
+      * Trend analysis and prediction
+      * Anomaly detection
+      * Business metric interpretation
+      * Natural language to SQL conversion
+      * Data visualization recommendations
+
+      **Validation Criteria:**
+      At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti:
+      * Forecasting accuracy: 92% on benchmark datasets
+      * SQL generation correctness: 96%
+      * Anomaly detection F1-score: 0.89
+      * Response time: < 200ms for standard queries
+
+      **Usage Example:**
+
+      ```python
+      from transformers import AutoModelForCausalLM, AutoTokenizer
+
+      model = AutoModelForCausalLM.from_pretrained("certified/analytics-forecaster-5b")
+      tokenizer = AutoTokenizer.from_pretrained("certified/analytics-forecaster-5b")
+
+      # Forecasting task
+      prompt = \"\"\"Given the following sales data:
+      Q1 2024: $1.2M
+      Q2 2024: $1.5M
+      Q3 2024: $1.8M
+
+      Forecast Q4 2024 sales and explain the trend:\"\"\"
+
+      inputs = tokenizer(prompt, return_tensors="pt")
+      outputs = model.generate(**inputs, max_new_tokens=300)
+      print(tokenizer.decode(outputs[0]))
+      ```
+
+      **Integration:**
+      Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga:
+      * REST API endpoints available
+      * Jupyter notebook integration
+      * Power BI and Tableau connectors
+      * Custom dashboard integrations
+
+      **Supported Data Formats:**
+      * CSV, JSON, Parquet
+      * SQL databases (PostgreSQL, MySQL, etc.)
+      * Time-series databases (InfluxDB, TimescaleDB)
+      * Cloud data warehouses (BigQuery, Snowflake compatible)
+
+      **Performance:**
+      Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus.
+    language: ["en"]
+    license: mit
+    licenseLink: https://opensource.org/licenses/MIT
+    maturity: Production
+    libraryName: transformers
+    tasks:
+      - text-generation
+      - table-question-answering
+    createTimeSinceEpoch: "1731888000000"
+    lastUpdateTimeSinceEpoch: "1731888000000"
+    customProperties:
+      validated:
+        string_value: ""
+        metadataType: MetadataStringValue
+    artifacts:
+      - uri: oci://registry.example.com/certified/analytics-forecaster-5b:v2.0-validated
+        createTimeSinceEpoch: "1731888000000"
+        lastUpdateTimeSinceEpoch: "1731888000000"
+        customProperties:
+          validation_type:
+            string_value: "analytics"
+            metadataType: MetadataStringValue
+          accuracy_score:
+            string_value: "92.4"
+            metadataType: MetadataStringValue
+
+  - name: certified/compliance-assistant-3b
+    provider: Validation Authority
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQyIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzI3QUU2MDtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMjI5OTU0O3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHBhdGggZD0iTSA1MCAxMCBMIDgwIDMwIEwgODAgNzAgTCA1MCA5MCBMIDIwIDcwIEwgMjAgMzAgWiIgZmlsbD0idXJsKCNncmFkMikiIHN0cm9rZT0iIzFFODQ0OSIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHBhdGggZD0iTSAzNSA1MCBMIDQ1IDYwIEwgNjUgMzUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIi8+Cjwvc3ZnPgo=
+    description: |-
+      (DEMO) Compliance-Assistant-3B is a lightweight 3 billion parameter model validated for
+      regulatory compliance checking, policy interpretation, and audit assistance. Omnis
+      voluptas assumenda est, omnis dolor repellendus.
+    readme: |-
+      # Compliance-Assistant-3B (Validated)
+
+      **Model Summary:**
+      Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint. This model has been specifically validated for compliance and regulatory use cases.
+
+      - **Developers:** Validation Authority
+      - **Validation Date**: January 28th, 2025
+      - **License:** [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+      - **Validation Status:** ✓ Compliance Certified
+
+      **Compliance Domains:**
+      * Financial regulations (SOX, Basel III, GDPR)
+      * Healthcare compliance (HIPAA, HITECH)
+      * Data privacy (CCPA, GDPR, PIPEDA)
+      * Industry standards (ISO, SOC 2)
+      * Employment law and HR policies
+
+      **Validated Capabilities:**
+      Itaque earum rerum hic tenetur a sapiente delectus:
+      * Policy document interpretation
+      * Compliance gap analysis
+      * Regulatory change impact assessment
+      * Audit trail generation
+      * Risk scoring and classification
+
+      **Example Usage:**
+
+      ```python
+      from transformers import pipeline
+
+      compliance_assistant = pipeline(
+          "text-generation",
+          model="certified/compliance-assistant-3b",
+          device_map="auto"
+      )
+
+      query = \"\"\"Review the following data handling practice for GDPR compliance:
+      User data is stored for 5 years after account deletion and shared with
+      third-party analytics providers.\"\"\"
+
+      result = compliance_assistant(
+          query,
+          max_new_tokens=400,
+          temperature=0.3  # Lower temperature for factual responses
+      )
+
+      print(result[0]['generated_text'])
+      ```
+
+      **Validation Testing:**
+      Ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat:
+      * Legal expert review completed
+      * Accuracy on compliance questions: 94.8%
+      * False positive rate: < 2%
+      * Regulatory knowledge currency: Updated monthly
+
+      **Safety Features:**
+      * Output validation against regulatory databases
+      * Confidence scoring for recommendations
+      * Citation and source tracking
+      * Explainable AI outputs for audit trails
+
+      **Important Notice:**
+      Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur. This model provides assistance and should not replace qualified legal counsel.
+    language: ["en"]
+    license: apache-2.0
+    licenseLink: https://www.apache.org/licenses/LICENSE-2.0.txt
+    maturity: Production
+    libraryName: transformers
+    tasks:
+      - text-generation
+      - question-answering
+      - text-classification
+    createTimeSinceEpoch: "1738022400000"
+    lastUpdateTimeSinceEpoch: "1738022400000"
+    customProperties:
+      validated:
+        string_value: ""
+        metadataType: MetadataStringValue
+    artifacts:
+      - uri: oci://registry.example.com/certified/compliance-assistant-3b:validated-v1.1
+        createTimeSinceEpoch: "1738022400000"
+        lastUpdateTimeSinceEpoch: "1738022400000"
+        customProperties:
+          compliance_domains:
+            string_value: "GDPR,HIPAA,SOX,CCPA"
+            metadataType: MetadataStringValue
+          last_regulatory_update:
+            string_value: "2025-01-28"
+            metadataType: MetadataStringValue
