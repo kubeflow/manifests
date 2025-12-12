@@ -1,0 +1,23 @@
+{{- if and (eq .Values.installMode.type "multi-user") .Values.profileController.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubeflow-pipelines-profile-controller
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: kubeflow-pipelines-profile-controller
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+spec:
+  ports:
+  - name: http
+    protocol: TCP
+    port: {{ .Values.profileController.service.port }}
+    targetPort: 8080
+  selector:
+    app: kubeflow-pipelines-profile-controller
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+    application-crd-id: kubeflow-pipelines
+{{- end }}
