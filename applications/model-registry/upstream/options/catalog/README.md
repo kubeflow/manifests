@@ -21,14 +21,20 @@ Replace `<your-namespace>` with the Kubernetes namespace where you want to deplo
 This command will create:
 *   A `Deployment` to run the Model Catalog server.
 *   A `Service` to expose the Model Catalog server.
-*   A `ConfigMap` named `model-catalog-sources` containing the configuration for the catalog sources.
+*   A `ConfigMap` named `model-catalog-sources` containing an empty configuration for catalog sources.
 *   A `StatefulSet` with a PostgreSQL database
 *   A `PersistentVolumeClaim` for PostgreSQL
 
-For deployment in a Kubeflow environment with Istio support, use the `overlay` directory instead:
+The `base` catalog is empty, you may alternatively load the `demo` manifests to include generated test data:
 
 ```sh
-kubectl apply -k overlay -n <your-namespace>
+kubectl apply -k overlays/demo -n <your-namespace>
+```
+
+For deployment in a Kubeflow environment with Istio support, also apply the `options/istio` directory:
+
+```sh
+kubectl apply -k options/istio -n <your-namespace>
 ```
 
 ## Configuring Catalog Sources

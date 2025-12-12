@@ -1,0 +1,23 @@
+catalogs:
+  - name: "Organization AI Models"
+    id: organization_ai_models
+    type: yaml
+    enabled: true
+    properties:
+      yamlCatalogPath: dev-organization-models.yaml
+    labels:
+      - Organization AI
+  - name: "Validated AI Models"
+    id: validated_ai_models
+    type: yaml
+    enabled: true
+    properties:
+      yamlCatalogPath: dev-validated-models.yaml
+    labels:
+      - Validated AI
+  - name: "Community and Custom Models"
+    id: community_custom_models
+    type: yaml
+    enabled: true
+    properties:
+      yamlCatalogPath: dev-community-models.yaml

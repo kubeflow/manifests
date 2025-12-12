@@ -1,0 +1,155 @@
+source: Community
+models:
+  - name: open-models/falcon-mini-2b
+    provider: Open Models Foundation
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9InB1cnBsZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM5QjU5QjY7c3RvcC1vcGFjaXR5OjEiIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6IzhFNDRBRDtzdG9wLW9wYWNpdHk6MSIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHg9IjI1IiB5PSIzNSIgd2lkdGg9IjMwIiBoZWlnaHQ9IjMwIiBmaWxsPSJ1cmwoI3B1cnBsZSkiIHRyYW5zZm9ybT0icm90YXRlKC0xNSA0MCA1MCkiLz4KICA8cmVjdCB4PSI0NSIgeT0iMzUiIHdpZHRoPSIzMCIgaGVpZ2h0PSIzMCIgZmlsbD0idXJsKCNwdXJwbGUpIiBvcGFjaXR5PSIwLjciIHRyYW5zZm9ybT0icm90YXRlKDE1IDYwIDUwKSIvPgo8L3N2Zz4K
+    description: |-
+      (DEMO) Falcon-Mini-2B is a lightweight, community-contributed 2 billion parameter model optimized
+      for edge deployment and resource-constrained environments. Sed do eiusmod tempor incididunt.
+    readme: |-
+      # Falcon-Mini-2B
+
+      **Model Summary:**
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. This is a community-contributed model designed for efficient inference.
+
+      - **Developers:** Open Models Foundation Community
+      - **Release Date**: October 5th, 2024
+      - **License:** [MIT License](https://opensource.org/licenses/MIT)
+
+      **Features:**
+      * Lightweight architecture
+      * Fast inference
+      * Edge-optimized
+      * Multilingual support
+
+      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+    language: ["en", "es", "fr"]
+    license: mit
+    licenseLink: https://opensource.org/licenses/MIT
+    libraryName: transformers
+    tasks:
+      - text-generation
+    createTimeSinceEpoch: "1728086400000"
+    lastUpdateTimeSinceEpoch: "1728086400000"
+    artifacts:
+      - uri: oci://registry.example.com/open-models/falcon-mini-2b:v1.0
+        createTimeSinceEpoch: "1728086400000"
+        lastUpdateTimeSinceEpoch: "1728086400000"
+
+  - name: quantum-research/sentiment-analyzer-base
+    provider: Quantum Research Labs
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9Im9yYW5nZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNGMzlDMTI7c3RvcC1vcGFjaXR5OjEiIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I0U2N0UyMjtzdG9wLW9wYWNpdHk6MSIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxwb2x5Z29uIHBvaW50cz0iNTAsMjAgNjEsNDAgODMsNDMgNjYsNjAgNzAsODIgNTAsNzAgMzAsODIgMzQsNjAgMTcsNDMgMzksNDAiIGZpbGw9InVybCgjb3JhbmdlKSIvPgo8L3N2Zz4K
+    description: |-
+      (DEMO) Sentiment-Analyzer-Base is a specialized model for sentiment analysis and emotion detection
+      trained on diverse social media and customer feedback datasets. Duis aute irure dolor.
+    readme: |-
+      # Sentiment-Analyzer-Base
+
+      **Model Summary:**
+      Excepteur sint occaecat cupidatat non proident. This model specializes in sentiment classification tasks.
+
+      - **Developers:** Quantum Research Labs
+      - **Release Date**: September 20th, 2024
+      - **License:** [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+
+      **Capabilities:**
+      * Sentiment classification (positive/negative/neutral)
+      * Emotion detection
+      * Social media analysis
+      * Customer feedback processing
+
+      Sunt in culpa qui officia deserunt mollit anim id est laborum.
+    language: ["en"]
+    license: apache-2.0
+    licenseLink: https://www.apache.org/licenses/LICENSE-2.0.txt
+    libraryName: transformers
+    tasks:
+      - text-classification
+      - sentiment-analysis
+    createTimeSinceEpoch: "1726790400000"
+    lastUpdateTimeSinceEpoch: "1726790400000"
+    artifacts:
+      - uri: oci://registry.example.com/quantum-research/sentiment-analyzer:v2.0
+        createTimeSinceEpoch: "1726790400000"
+        lastUpdateTimeSinceEpoch: "1726790400000"
+
+  - name: indie-ai/creative-writer-3b
+    provider: Indie AI Collective
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9InRlYWwiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMTZBMDg1O3N0b3Atb3BhY2l0eToxIiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMxMzhENzU7c3RvcC1vcGFjaXR5OjEiIC8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cG9seWdvbiBwb2ludHM9IjUwLDE1IDgwLDMwIDgwLDcwIDUwLDg1IDIwLDcwIDIwLDMwIiBmaWxsPSJ1cmwoI3RlYWwpIiBzdHJva2U9IiMxMTdBNjUiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjE1IiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC4zIi8+Cjwvc3ZnPgo=
+    description: |-
+      (DEMO) Creative-Writer-3B is an experimental model fine-tuned for creative writing tasks including
+      story generation, poetry, and narrative completion. Nemo enim ipsam voluptatem quia voluptas.
+    readme: |-
+      # Creative-Writer-3B
+
+      **Model Summary:**
+      Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus. This experimental model focuses on creative text generation.
+
+      - **Developers:** Indie AI Collective
+      - **Release Date**: August 12th, 2024
+      - **License:** [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+
+      **Creative Capabilities:**
+      * Story and narrative generation
+      * Poetry composition
+      * Creative writing assistance
+      * Character development
+      * Plot ideation
+
+      Itaque earum rerum hic tenetur a sapiente delectus.
+
+      **Note:** This is an experimental community model and outputs should be reviewed for quality.
+    language: ["en"]
+    license: cc-by-sa-4.0
+    licenseLink: https://creativecommons.org/licenses/by-sa/4.0/
+    libraryName: transformers
+    tasks:
+      - text-generation
+    createTimeSinceEpoch: "1723420800000"
+    lastUpdateTimeSinceEpoch: "1723420800000"
+    artifacts:
+      - uri: oci://registry.example.com/indie-ai/creative-writer-3b:experimental
+        createTimeSinceEpoch: "1723420800000"
+        lastUpdateTimeSinceEpoch: "1723420800000"
+
+  - name: alpha-labs/translation-mini-1b
+    provider: Alpha Translation Labs
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9InJlZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNFNzRDM0M7c3RvcC1vcGFjaXR5OjEiIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I0MwMzkyQjtzdG9wLW9wYWNpdHk6MSIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxwYXRoIGQ9Ik0gNTAgMTAgTCA2MCA0MCBMIDcwIDcwIEwgNTAgNjAgTCAzMCA3MCBMIDQwIDQwIFoiIGZpbGw9InVybCgjcmVkKSIvPgogIDxjaXJjbGUgY3g9IjUwIiBjeT0iMzAiIHI9IjUiIGZpbGw9IndoaXRlIi8+CiAgPHBhdGggZD0iTSAzMCA3MCBRIDQwIDgwIDUwIDc1IFEgNjAgODAgNzAgNzAiIGZpbGw9IiNGMzlDMTIiLz4KPC9zdmc+Cg==
+    description: |-
+      (DEMO) Translation-Mini-1B is a compact multilingual translation model supporting 20+ language pairs,
+      optimized for low-latency translation tasks. Quis autem vel eum iure reprehenderit.
+    readme: |-
+      # Translation-Mini-1B
+
+      **Model Summary:**
+      Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit. A community-contributed translation model.
+
+      - **Developers:** Alpha Translation Labs
+      - **Release Date**: July 30th, 2024
+      - **License:** [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+
+      **Supported Languages:**
+      English, Spanish, French, German, Italian, Portuguese, Dutch, Russian, Chinese, Japanese, Korean, Arabic, Hindi, Turkish, Polish, Vietnamese, Thai, Indonesian, Swedish, Danish
+
+      **Features:**
+      * Fast translation (< 50ms latency)
+      * 20+ language pairs
+      * Optimized for short text
+      * API-friendly
+
+      Omnis voluptas assumenda est, omnis dolor repellendus.
+
+      **Limitations:**
+      Best suited for short texts (< 512 tokens). For longer documents, consider using larger models.
+    language: ["multilingual"]
+    license: apache-2.0
+    licenseLink: https://www.apache.org/licenses/LICENSE-2.0.txt
+    libraryName: transformers
+    tasks:
+      - translation
+    createTimeSinceEpoch: "1722297600000"
+    lastUpdateTimeSinceEpoch: "1722297600000"
+    artifacts:
+      - uri: oci://registry.example.com/alpha-labs/translation-mini-1b:v1.5
+        createTimeSinceEpoch: "1722297600000"
+        lastUpdateTimeSinceEpoch: "1722297600000"

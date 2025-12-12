@@ -7,4 +7,4 @@ resources:
 images:
 - name: ghcr.io/kubeflow/model-registry/storage-initializer
   newName: ghcr.io/kubeflow/model-registry/storage-initializer
-  newTag: v0.3.3
+  newTag: v0.3.4

@@ -1,0 +1,395 @@
+source: Organization AI
+models:
+  - name: acme-ai/neural-7b-instruct
+    provider: Acme AI Labs
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQxIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzRBOTBFMjtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMzU3QUJEO3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSIyMCIgcj0iNiIgZmlsbD0idXJsKCNncmFkMSkiLz4KICA8Y2lyY2xlIGN4PSIzMCIgY3k9IjQwIiByPSI2IiBmaWxsPSJ1cmwoI2dyYWQxKSIvPgogIDxjaXJjbGUgY3g9IjcwIiBjeT0iNDAiIHI9IjYiIGZpbGw9InVybCgjZ3JhZDEpIi8+CiAgPGNpcmNsZSBjeD0iMjAiIGN5PSI3MCIgcj0iNiIgZmlsbD0idXJsKCNncmFkMSkiLz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjcwIiByPSI2IiBmaWxsPSJ1cmwoI2dyYWQxKSIvPgogIDxjaXJjbGUgY3g9IjgwIiBjeT0iNzAiIHI9IjYiIGZpbGw9InVybCgjZ3JhZDEpIi8+CiAgPGxpbmUgeDE9IjUwIiB5MT0iMjYiIHgyPSIzMCIgeTI9IjM0IiBzdHJva2U9IiM0QTkwRTIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxsaW5lIHgxPSI1MCIgeTE9IjI2IiB4Mj0iNzAiIHkyPSIzNCIgc3Ryb2tlPSIjNEE5MEUyIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iMzAiIHkxPSI0NiIgeDI9IjIwIiB5Mj0iNjQiIHN0cm9rZT0iIzRBOTBFMiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNDYiIHgyPSI1MCIgeTI9IjY0IiBzdHJva2U9IiM0QTkwRTIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxsaW5lIHgxPSI3MCIgeTE9IjQ2IiB4Mj0iNTAiIHkyPSI2NCIgc3Ryb2tlPSIjNEE5MEUyIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iNzAiIHkxPSI0NiIgeDI9IjgwIiB5Mj0iNjQiIHN0cm9rZT0iIzRBOTBFMiIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPgo=
+    description: |-
+      (DEMO) Neural-7B-Instruct is a 7 billion parameter instruction-tuned language model designed for
+      general-purpose text generation tasks. This model excels at following complex instructions,
+      question answering, and multi-turn conversations.
+    readme: |-
+      # Neural-7B-Instruct
+
+      **Model Summary:**
+      Neural-7B-Instruct is a 7B parameter instruction-tuned model fine-tuned from Neural-7B-Base. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+      - **Developers:** Acme AI Labs
+      - **Release Date**: January 15th, 2025
+      - **License:** [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+
+      **Supported Languages:**
+      English, Spanish, French, German, Italian, Portuguese, Dutch, Russian, Chinese, Japanese, Korean
+
+      **Intended Use:**
+      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat:
+      * Question answering
+      * Text summarization
+      * Content generation
+      * Dialogue systems
+      * Information extraction
+
+      **Installation:**
+
+      ```shell
+      pip install transformers torch
+      ```
+
+      **Generation Example:**
+
+      ```python
+      from transformers import AutoModelForCausalLM, AutoTokenizer
+
+      model_path = "acme-ai/neural-7b-instruct"
+      tokenizer = AutoTokenizer.from_pretrained(model_path)
+      model = AutoModelForCausalLM.from_pretrained(model_path, device_map="auto")
+
+      messages = [{"role": "user", "content": "Explain machine learning in simple terms."}]
+      input_ids = tokenizer.apply_chat_template(messages, return_tensors="pt")
+
+      outputs = model.generate(input_ids, max_new_tokens=256)
+      print(tokenizer.decode(outputs[0]))
+      ```
+
+      **Model Architecture:**
+      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur:
+      - Transformer architecture with multi-head attention
+      - 32 layers, 4096 hidden dimensions
+      - 32 attention heads with grouped-query attention
+      - Rotary positional embeddings (RoPE)
+      - SwiGLU activation functions
+
+      **Limitations:**
+      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. The model may produce biased or factually incorrect outputs and should be used with appropriate safety measures.
+    language: ["en", "es", "fr", "de", "it", "pt", "nl", "ru", "zh", "ja", "ko"]
+    license: apache-2.0
+    licenseLink: https://www.apache.org/licenses/LICENSE-2.0.txt
+    libraryName: transformers
+    tasks:
+      - text-generation
+      - question-answering
+    createTimeSinceEpoch: "1736899200000"
+    lastUpdateTimeSinceEpoch: "1736899200000"
+    artifacts:
+      - uri: oci://registry.example.com/acme-ai/neural-7b-instruct:v1.0
+        createTimeSinceEpoch: "1736899200000"
+        lastUpdateTimeSinceEpoch: "1736899200000"
+
+  - name: stellar-labs/quantum-13b-base
+    provider: Stellar Labs
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQxIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzRBOTBFMjtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMzU3QUJEO3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSIyMCIgcj0iNiIgZmlsbD0idXJsKCNncmFkMSkiLz4KICA8Y2lyY2xlIGN4PSIzMCIgY3k9IjQwIiByPSI2IiBmaWxsPSJ1cmwoI2dyYWQxKSIvPgogIDxjaXJjbGUgY3g9IjcwIiBjeT0iNDAiIHI9IjYiIGZpbGw9InVybCgjZ3JhZDEpIi8+CiAgPGNpcmNsZSBjeD0iMjAiIGN5PSI3MCIgcj0iNiIgZmlsbD0idXJsKCNncmFkMSkiLz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjcwIiByPSI2IiBmaWxsPSJ1cmwoI2dyYWQxKSIvPgogIDxjaXJjbGUgY3g9IjgwIiBjeT0iNzAiIHI9IjYiIGZpbGw9InVybCgjZ3JhZDEpIi8+CiAgPGxpbmUgeDE9IjUwIiB5MT0iMjYiIHgyPSIzMCIgeTI9IjM0IiBzdHJva2U9IiM0QTkwRTIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxsaW5lIHgxPSI1MCIgeTE9IjI2IiB4Mj0iNzAiIHkyPSIzNCIgc3Ryb2tlPSIjNEE5MEUyIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iMzAiIHkxPSI0NiIgeDI9IjIwIiB5Mj0iNjQiIHN0cm9rZT0iIzRBOTBFMiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNDYiIHgyPSI1MCIgeTI9IjY0IiBzdHJva2U9IiM0QTkwRTIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxsaW5lIHgxPSI3MCIgeTE9IjQ2IiB4Mj0iNTAiIHkyPSI2NCIgc3Ryb2tlPSIjNEE5MEUyIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iNzAiIHkxPSI0NiIgeDI9IjgwIiB5Mj0iNjQiIHN0cm9rZT0iIzRBOTBFMiIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPgo=
+    description: |-
+      (DEMO) Quantum-13B-Base is a foundational language model with 13 billion parameters trained
+      from scratch on a diverse corpus. Sed ut perspiciatis unde omnis iste natus error sit
+      voluptatem accusantium doloremque laudantium.
+    readme: |-
+      # Quantum-13B-Base
+
+      **Model Summary:**
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quantum-13B-Base is a pre-trained transformer model designed as a foundation for fine-tuning on specific downstream tasks.
+
+      - **Developers:** Stellar Labs Research
+      - **Release Date**: November 3rd, 2024
+      - **License:** [MIT License](https://opensource.org/licenses/MIT)
+
+      **Training Data:**
+      Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+
+      **Key Features:**
+      * 13 billion parameters
+      * Context length of 8192 tokens
+      * Trained on 2.5 trillion tokens
+      * Multi-lingual capabilities
+      * Efficient inference optimizations
+
+      **Usage Example:**
+
+      ```python
+      from transformers import AutoModel, AutoTokenizer
+
+      model = AutoModel.from_pretrained("stellar-labs/quantum-13b-base")
+      tokenizer = AutoTokenizer.from_pretrained("stellar-labs/quantum-13b-base")
+
+      text = "Your input text here"
+      inputs = tokenizer(text, return_tensors="pt")
+      outputs = model(**inputs)
+      ```
+
+      **Performance Metrics:**
+      Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
+    language: ["en", "es", "fr", "de", "zh", "ja"]
+    license: mit
+    licenseLink: https://opensource.org/licenses/MIT
+    libraryName: transformers
+    tasks:
+      - feature-extraction
+      - fill-mask
+    createTimeSinceEpoch: "1730678400000"
+    lastUpdateTimeSinceEpoch: "1730678400000"
+    artifacts:
+      - uri: oci://registry.example.com/stellar-labs/quantum-13b-base:v2.1
+        createTimeSinceEpoch: "1730678400000"
+        lastUpdateTimeSinceEpoch: "1730678400000"
+
+  - name: neural-dynamics/code-pilot-3b
+    provider: Neural Dynamics
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQxIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzRBOTBFMjtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMzU3QUJEO3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSIyMCIgcj0iNiIgZmlsbD0idXJsKCNncmFkMSkiLz4KICA8Y2lyY2xlIGN4PSIzMCIgY3k9IjQwIiByPSI2IiBmaWxsPSJ1cmwoI2dyYWQxKSIvPgogIDxjaXJjbGUgY3g9IjcwIiBjeT0iNDAiIHI9IjYiIGZpbGw9InVybCgjZ3JhZDEpIi8+CiAgPGNpcmNsZSBjeD0iMjAiIGN5PSI3MCIgcj0iNiIgZmlsbD0idXJsKCNncmFkMSkiLz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjcwIiByPSI2IiBmaWxsPSJ1cmwoI2dyYWQxKSIvPgogIDxjaXJjbGUgY3g9IjgwIiBjeT0iNzAiIHI9IjYiIGZpbGw9InVybCgjZ3JhZDEpIi8+CiAgPGxpbmUgeDE9IjUwIiB5MT0iMjYiIHgyPSIzMCIgeTI9IjM0IiBzdHJva2U9IiM0QTkwRTIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxsaW5lIHgxPSI1MCIgeTE9IjI2IiB4Mj0iNzAiIHkyPSIzNCIgc3Ryb2tlPSIjNEE5MEUyIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iMzAiIHkxPSI0NiIgeDI9IjIwIiB5Mj0iNjQiIHN0cm9rZT0iIzRBOTBFMiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNDYiIHgyPSI1MCIgeTI9IjY0IiBzdHJva2U9IiM0QTkwRTIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxsaW5lIHgxPSI3MCIgeTE9IjQ2IiB4Mj0iNTAiIHkyPSI2NCIgc3Ryb2tlPSIjNEE5MEUyIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iNzAiIHkxPSI0NiIgeDI9IjgwIiB5Mj0iNjQiIHN0cm9rZT0iIzRBOTBFMiIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPgo=
+    description: |-
+      (DEMO) Code-Pilot-3B is a specialized 3 billion parameter model optimized for code generation,
+      code completion, and programming-related tasks. Ut enim ad minima veniam, quis nostrum
+      exercitationem ullam corporis suscipit laboriosam.
+    readme: |-
+      # Code-Pilot-3B
+
+      **Model Summary:**
+      At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.
+
+      - **Developers:** Neural Dynamics
+      - **Release Date**: December 20th, 2024
+      - **License:** [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+
+      **Supported Programming Languages:**
+      Python, JavaScript, TypeScript, Java, C++, Go, Rust, Ruby, PHP, Swift, Kotlin, C#
+
+      **Capabilities:**
+      * Code completion
+      * Code generation from natural language
+      * Bug detection and fixing
+      * Code documentation generation
+      * Test generation
+
+      **Example Usage:**
+
+      ```python
+      from transformers import AutoModelForCausalLM, AutoTokenizer
+
+      model = AutoModelForCausalLM.from_pretrained("neural-dynamics/code-pilot-3b")
+      tokenizer = AutoTokenizer.from_pretrained("neural-dynamics/code-pilot-3b")
+
+      prompt = "# Write a function to calculate fibonacci numbers\\ndef fibonacci(n):"
+      inputs = tokenizer(prompt, return_tensors="pt")
+      outputs = model.generate(**inputs, max_length=200)
+      print(tokenizer.decode(outputs[0]))
+      ```
+
+      **Training Details:**
+      Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
+
+      **Benchmarks:**
+      Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
+    language: ["en"]
+    license: apache-2.0
+    licenseLink: https://www.apache.org/licenses/LICENSE-2.0.txt
+    libraryName: transformers
+    tasks:
+      - text-generation
+      - code-generation
+    createTimeSinceEpoch: "1734652800000"
+    lastUpdateTimeSinceEpoch: "1734652800000"
+    artifacts:
+      - uri: oci://registry.example.com/neural-dynamics/code-pilot-3b:latest
+        createTimeSinceEpoch: "1734652800000"
+        lastUpdateTimeSinceEpoch: "1734652800000"
+
+  - name: acme-ai/multimodal-vision-7b
+    provider: Acme AI Labs
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQxIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzRBOTBFMjtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMzU3QUJEO3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSIyMCIgcj0iNiIgZmlsbD0idXJsKCNncmFkMSkiLz4KICA8Y2lyY2xlIGN4PSIzMCIgY3k9IjQwIiByPSI2IiBmaWxsPSJ1cmwoI2dyYWQxKSIvPgogIDxjaXJjbGUgY3g9IjcwIiBjeT0iNDAiIHI9IjYiIGZpbGw9InVybCgjZ3JhZDEpIi8+CiAgPGNpcmNsZSBjeD0iMjAiIGN5PSI3MCIgcj0iNiIgZmlsbD0idXJsKCNncmFkMSkiLz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjcwIiByPSI2IiBmaWxsPSJ1cmwoI2dyYWQxKSIvPgogIDxjaXJjbGUgY3g9IjgwIiBjeT0iNzAiIHI9IjYiIGZpbGw9InVybCgjZ3JhZDEpIi8+CiAgPGxpbmUgeDE9IjUwIiB5MT0iMjYiIHgyPSIzMCIgeTI9IjM0IiBzdHJva2U9IiM0QTkwRTIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxsaW5lIHgxPSI1MCIgeTE9IjI2IiB4Mj0iNzAiIHkyPSIzNCIgc3Ryb2tlPSIjNEE5MEUyIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iMzAiIHkxPSI0NiIgeDI9IjIwIiB5Mj0iNjQiIHN0cm9rZT0iIzRBOTBFMiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNDYiIHgyPSI1MCIgeTI9IjY0IiBzdHJva2U9IiM0QTkwRTIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxsaW5lIHgxPSI3MCIgeTE9IjQ2IiB4Mj0iNTAiIHkyPSI2NCIgc3Ryb2tlPSIjNEE5MEUyIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iNzAiIHkxPSI0NiIgeDI9IjgwIiB5Mj0iNjQiIHN0cm9rZT0iIzRBOTBFMiIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPgo=
+    description: |-
+      (DEMO) Multimodal-Vision-7B is a 7 billion parameter vision-language model capable of understanding
+      and generating text based on visual inputs. Temporibus autem quibusdam et aut officiis
+      debitis aut rerum necessitatibus saepe eveniet.
+    readme: |-
+      # Multimodal-Vision-7B
+
+      **Model Summary:**
+      Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+
+      - **Developers:** Acme AI Labs Multimodal Team
+      - **Release Date**: February 1st, 2025
+      - **License:** [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+
+      **Capabilities:**
+      * Image captioning and description
+      * Visual question answering
+      * Image-to-text generation
+      * Chart and diagram interpretation
+      * Document understanding
+
+      **Input Formats:**
+      Supports JPG, PNG, WebP, and PDF formats up to 4K resolution
+
+      **Usage Example:**
+
+      ```python
+      from transformers import AutoProcessor, AutoModelForVision2Seq
+      from PIL import Image
+
+      model = AutoModelForVision2Seq.from_pretrained("acme-ai/multimodal-vision-7b")
+      processor = AutoProcessor.from_pretrained("acme-ai/multimodal-vision-7b")
+
+      image = Image.open("example.jpg")
+      prompt = "Describe this image in detail:"
+
+      inputs = processor(images=image, text=prompt, return_tensors="pt")
+      outputs = model.generate(**inputs, max_new_tokens=200)
+      print(processor.decode(outputs[0]))
+      ```
+
+      **Architecture:**
+      Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur.
+
+      **Performance:**
+      On vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati.
+    language: ["en", "es", "fr", "de", "zh"]
+    license: apache-2.0
+    licenseLink: https://www.apache.org/licenses/LICENSE-2.0.txt
+    libraryName: transformers
+    tasks:
+      - image-to-text
+      - visual-question-answering
+    createTimeSinceEpoch: "1738368000000"
+    lastUpdateTimeSinceEpoch: "1738368000000"
+    artifacts:
+      - uri: oci://registry.example.com/acme-ai/multimodal-vision-7b:v1.0
+        createTimeSinceEpoch: "1738368000000"
+        lastUpdateTimeSinceEpoch: "1738368000000"
+
+  - name: stellar-labs/reasoning-1b-chat
+    provider: Stellar Labs
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQxIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzRBOTBFMjtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMzU3QUJEO3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSIyMCIgcj0iNiIgZmlsbD0idXJsKCNncmFkMSkiLz4KICA8Y2lyY2xlIGN4PSIzMCIgY3k9IjQwIiByPSI2IiBmaWxsPSJ1cmwoI2dyYWQxKSIvPgogIDxjaXJjbGUgY3g9IjcwIiBjeT0iNDAiIHI9IjYiIGZpbGw9InVybCgjZ3JhZDEpIi8+CiAgPGNpcmNsZSBjeD0iMjAiIGN5PSI3MCIgcj0iNiIgZmlsbD0idXJsKCNncmFkMSkiLz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjcwIiByPSI2IiBmaWxsPSJ1cmwoI2dyYWQxKSIvPgogIDxjaXJjbGUgY3g9IjgwIiBjeT0iNzAiIHI9IjYiIGZpbGw9InVybCgjZ3JhZDEpIi8+CiAgPGxpbmUgeDE9IjUwIiB5MT0iMjYiIHgyPSIzMCIgeTI9IjM0IiBzdHJva2U9IiM0QTkwRTIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxsaW5lIHgxPSI1MCIgeTE9IjI2IiB4Mj0iNzAiIHkyPSIzNCIgc3Ryb2tlPSIjNEE5MEUyIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iMzAiIHkxPSI0NiIgeDI9IjIwIiB5Mj0iNjQiIHN0cm9rZT0iIzRBOTBFMiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNDYiIHgyPSI1MCIgeTI9IjY0IiBzdHJva2U9IiM0QTkwRTIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxsaW5lIHgxPSI3MCIgeTE9IjQ2IiB4Mj0iNTAiIHkyPSI2NCIgc3Ryb2tlPSIjNEE5MEUyIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iNzAiIHkxPSI0NiIgeDI9IjgwIiB5Mj0iNjQiIHN0cm9rZT0iIzRBOTBFMiIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPgo=
+    description: |-
+      (DEMO) Reasoning-1B-Chat is an efficient 1 billion parameter chat model optimized for
+      conversational AI and reasoning tasks. Sed ut perspiciatis unde omnis iste natus
+      error sit voluptatem accusantium.
+    readme: |-
+      # Reasoning-1B-Chat
+
+      **Model Summary:**
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Reasoning-1B-Chat is designed for resource-constrained environments while maintaining strong performance.
+
+      - **Developers:** Stellar Labs
+      - **Release Date**: January 10th, 2025
+      - **License:** [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+
+      **Key Features:**
+      * Lightweight 1B parameter architecture
+      * Fast inference speed
+      * Low memory footprint (< 2GB)
+      * Optimized for edge deployment
+      * Strong logical reasoning capabilities
+
+      **Supported Use Cases:**
+      Doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo:
+      * Customer service chatbots
+      * Personal assistants
+      * Educational tutoring systems
+      * Task-oriented dialogue
+
+      **Example:**
+
+      ```python
+      from transformers import AutoModelForCausalLM, AutoTokenizer
+
+      model = AutoModelForCausalLM.from_pretrained("stellar-labs/reasoning-1b-chat")
+      tokenizer = AutoTokenizer.from_pretrained("stellar-labs/reasoning-1b-chat")
+
+      messages = [
+          {"role": "user", "content": "What is the capital of France?"}
+      ]
+
+      inputs = tokenizer.apply_chat_template(messages, return_tensors="pt")
+      outputs = model.generate(inputs, max_new_tokens=100)
+      print(tokenizer.decode(outputs[0]))
+      ```
+
+      **Quantization Support:**
+      Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt:
+      * INT8 quantization
+      * INT4 quantization
+      * GGUF format support
+
+      **Deployment:**
+      Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt.
+    language: ["en", "es", "fr", "de"]
+    license: apache-2.0
+    licenseLink: https://www.apache.org/licenses/LICENSE-2.0.txt
+    libraryName: transformers
+    tasks:
+      - conversational
+      - text-generation
+    createTimeSinceEpoch: "1736467200000"
+    lastUpdateTimeSinceEpoch: "1736467200000"
+    artifacts:
+      - uri: oci://registry.example.com/stellar-labs/reasoning-1b-chat:v1.2
+        createTimeSinceEpoch: "1736467200000"
+        lastUpdateTimeSinceEpoch: "1736467200000"
+
+  - name: neural-dynamics/embeddings-large
+    provider: Neural Dynamics
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQxIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzRBOTBFMjtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMzU3QUJEO3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSIyMCIgcj0iNiIgZmlsbD0idXJsKCNncmFkMSkiLz4KICA8Y2lyY2xlIGN4PSIzMCIgY3k9IjQwIiByPSI2IiBmaWxsPSJ1cmwoI2dyYWQxKSIvPgogIDxjaXJjbGUgY3g9IjcwIiBjeT0iNDAiIHI9IjYiIGZpbGw9InVybCgjZ3JhZDEpIi8+CiAgPGNpcmNsZSBjeD0iMjAiIGN5PSI3MCIgcj0iNiIgZmlsbD0idXJsKCNncmFkMSkiLz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjcwIiByPSI2IiBmaWxsPSJ1cmwoI2dyYWQxKSIvPgogIDxjaXJjbGUgY3g9IjgwIiBjeT0iNzAiIHI9IjYiIGZpbGw9InVybCgjZ3JhZDEpIi8+CiAgPGxpbmUgeDE9IjUwIiB5MT0iMjYiIHgyPSIzMCIgeTI9IjM0IiBzdHJva2U9IiM0QTkwRTIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxsaW5lIHgxPSI1MCIgeTE9IjI2IiB4Mj0iNzAiIHkyPSIzNCIgc3Ryb2tlPSIjNEE5MEUyIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iMzAiIHkxPSI0NiIgeDI9IjIwIiB5Mj0iNjQiIHN0cm9rZT0iIzRBOTBFMiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNDYiIHgyPSI1MCIgeTI9IjY0IiBzdHJva2U9IiM0QTkwRTIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxsaW5lIHgxPSI3MCIgeTE9IjQ2IiB4Mj0iNTAiIHkyPSI2NCIgc3Ryb2tlPSIjNEE5MEUyIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iNzAiIHkxPSI0NiIgeDI9IjgwIiB5Mj0iNjQiIHN0cm9rZT0iIzRBOTBFMiIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPgo=
+    description: |-
+      (DEMO) Embeddings-Large is a state-of-the-art embedding model designed for semantic search,
+      similarity matching, and retrieval-augmented generation (RAG) applications. Ut aut
+      reiciendis voluptatibus maiores alias consequatur.
+    readme: |-
+      # Embeddings-Large
+
+      **Model Summary:**
+      At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatem deleniti atque corrupti quos dolores et quas molestias excepturi sint.
+
+      - **Developers:** Neural Dynamics Embedding Team
+      - **Release Date**: September 15th, 2024
+      - **License:** [MIT License](https://opensource.org/licenses/MIT)
+
+      **Specifications:**
+      * Embedding dimension: 1024
+      * Maximum sequence length: 512 tokens
+      * Supports 50+ languages
+      * Normalized embeddings for cosine similarity
+
+      **Applications:**
+      Cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi:
+      * Semantic search engines
+      * Document retrieval
+      * Clustering and classification
+      * Recommendation systems
+      * RAG pipelines
+
+      **Usage:**
+
+      ```python
+      from sentence_transformers import SentenceTransformer
+
+      model = SentenceTransformer('neural-dynamics/embeddings-large')
+
+      # Encode sentences
+      sentences = [
+          "This is an example sentence",
+          "Each sentence is converted to a vector"
+      ]
+
+      embeddings = model.encode(sentences)
+
+      # Compute similarity
+      from sklearn.metrics.pairwise import cosine_similarity
+      similarity = cosine_similarity([embeddings[0]], [embeddings[1]])
+      print(f"Similarity: {similarity[0][0]:.4f}")
+      ```
+
+      **Performance Benchmarks:**
+      Id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio.
+
+      **Integration:**
+      Compatible with popular vector databases including Weaviate, Qdrant, Milvus, and Pinecone.
+    language: ["multilingual"]
+    license: mit
+    licenseLink: https://opensource.org/licenses/MIT
+    libraryName: sentence-transformers
+    tasks:
+      - feature-extraction
+      - sentence-similarity
+    createTimeSinceEpoch: "1726358400000"
+    lastUpdateTimeSinceEpoch: "1726358400000"
+    artifacts:
+      - uri: oci://registry.example.com/neural-dynamics/embeddings-large:v3.0
+        createTimeSinceEpoch: "1726358400000"
+        lastUpdateTimeSinceEpoch: "1726358400000"
