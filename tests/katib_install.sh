@@ -1,10 +1,6 @@
 #!/bin/bash
 set -euxo pipefail
 
-sudo apt-get update
-sudo apt-get install -y apparmor-profiles
-sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
-
 cd applications/katib/upstream && kustomize build installs/katib-with-kubeflow | kubectl apply -f - && cd ../../../
 
 kubectl wait --for=condition=Available deployment/katib-controller -n kubeflow --timeout=300s
