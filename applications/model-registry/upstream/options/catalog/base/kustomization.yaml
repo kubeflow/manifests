@@ -11,8 +11,7 @@ resources:
 configMapGenerator:
 - behavior: create
   files:
-  - sources.yaml=sources.yaml
-  - sample-catalog.yaml=sample-catalog.yaml
+  - sources.yaml
   name: model-catalog-sources
   options:
     disableNameSuffixHash: true
@@ -23,7 +22,12 @@ secretGenerator:
   name: model-catalog-postgres
   options:
     disableNameSuffixHash: true
+- envs:
+  - hf-api-key.env
+  name: model-catalog-hf-api-key
+  options:
+    disableNameSuffixHash: true
 images:
 - name: ghcr.io/kubeflow/model-registry/server
   newName: ghcr.io/kubeflow/model-registry/server
-  newTag: v0.3.3
+  newTag: v0.3.4

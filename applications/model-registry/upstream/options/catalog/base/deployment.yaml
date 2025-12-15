@@ -44,6 +44,12 @@ spec:
                 secretKeyRef:
                   name: model-catalog-postgres
                   key: POSTGRES_PASSWORD
+            - name: HF_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: model-catalog-hf-api-key
+                  key: HF_API_KEY
+                  optional: true
           command:
             - /model-registry
             - catalog
