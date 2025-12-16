@@ -9,7 +9,7 @@ on:
     - opened
 
 permissions:
-  contents: write
+  contents: read
   issues: write
   pull-requests: write
 
