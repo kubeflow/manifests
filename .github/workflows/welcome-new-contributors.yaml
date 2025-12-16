@@ -1,0 +1,55 @@
+name: Welcome new contributors
+
+on:
+  pull_request_target:
+    types:
+    - opened
+  issues:
+    types:
+    - opened
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/first-interaction@v3
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        issue_message: |
+          **Welcome to the Kubeflow Manifests Repository**
+
+          Thanks for opening your first issue. We are trying to deal with your issue on a best-effort basis. without guarantees.
+          If you need [commercial support](https://www.kubeflow.org/docs/started/support/#support-from-commercial-providers-in-the-kubeflow-ecosystem) instead please reach out to us.
+          Please make sure to follow our default issue template so maintainers can quickly understand and reproduce the problem instead of just closing the issue.
+          The template asks for:
+          - Environment details (Kubernetes version, OS, platform)
+          - Components involved
+          - Steps to reproduce
+          - Current versus expected behavior
+          - Properly formatted logs, screenshots or error messages
+
+          **Community Resources:**
+          - Join us on the CNCF Slack: https://www.kubeflow.org/docs/about/community/#kubeflow-slack-channels
+          - Attend our community meetings: https://www.kubeflow.org/docs/about/community/
+
+          Feel free to ask questions — we are here to help.
+
+        pr_message: |
+          **Welcome to the Kubeflow Manifests Repository**
+
+          Thanks for opening your first PR. Your contribution means a lot to the Kubeflow community.
+
+          **Before making more PRs:**
+          Please ensure your PR follows our [Contributing Guide](https://github.com/kubeflow/manifests/blob/master/CONTRIBUTING.md).
+          Please also be aware that many components are synchronizes from upstream via the scripts in /scripts.
+          So in some cases you have to fix the problem in the upstream repositories first, but you can use a PR against kubeflow/manifests to test the platform integration.
+
+          **Community Resources:**
+          - CNCF Slack channels: https://www.kubeflow.org/docs/about/community/#kubeflow-slack-channels
+          - Community meetings: https://www.kubeflow.org/docs/about/community/
+
+          Thanks again for helping to improve Kubeflow.

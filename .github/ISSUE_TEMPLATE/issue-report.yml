@@ -39,6 +39,7 @@ body:
     - master
     - 1.10.2
     - 1.11
+    - 1.12
   validations:
     required: true
 - type: textarea
