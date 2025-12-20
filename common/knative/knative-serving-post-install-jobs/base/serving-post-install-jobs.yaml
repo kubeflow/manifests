@@ -7,7 +7,7 @@ metadata:
     app: storage-version-migration-serving
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/component: storage-version-migration-job
-    app.kubernetes.io/version: "1.16.2"
+    app.kubernetes.io/version: "1.20.0"
   name: storage-version-migration-serving
 spec:
   ttlSecondsAfterFinished: 600
@@ -18,33 +18,33 @@ spec:
         app: storage-version-migration-serving
         app.kubernetes.io/name: knative-serving
         app.kubernetes.io/component: storage-version-migration-job
-        app.kubernetes.io/version: "1.16.2"
+        app.kubernetes.io/version: "1.20.0"
         sidecar.istio.io/inject: "false"
     spec:
       serviceAccountName: controller
       restartPolicy: OnFailure
       containers:
-      - name: migrate
-        image: gcr.io/knative-releases/knative.dev/pkg/apiextensions/storageversion/cmd/migrate@sha256:1b09bcf7e7304c400780d370c25702bf1c26291d9e431bfb3d553c4ce71b0c97
-        args:
-        - "services.serving.knative.dev"
-        - "configurations.serving.knative.dev"
-        - "revisions.serving.knative.dev"
-        - "routes.serving.knative.dev"
-        - "domainmappings.serving.knative.dev"
-        resources:
-          requests:
-            cpu: 100m
-            memory: 100Mi
-          limits:
-            cpu: 1000m
-            memory: 1000Mi
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          capabilities:
-            drop:
-            - ALL
-          seccompProfile:
-            type: RuntimeDefault
+        - name: migrate
+          image: gcr.io/knative-releases/knative.dev/pkg/apiextensions/storageversion/cmd/migrate@sha256:0bc431ff362eb453c214ea4bb30626ee9d718d66e4cbbe846272a4f4ce2a06ca
+          args:
+            - "services.serving.knative.dev"
+            - "configurations.serving.knative.dev"
+            - "revisions.serving.knative.dev"
+            - "routes.serving.knative.dev"
+            - "domainmappings.serving.knative.dev"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 1000m
+              memory: 1000Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
