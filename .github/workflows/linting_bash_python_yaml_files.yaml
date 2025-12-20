@@ -77,6 +77,7 @@ jobs:
       run: |
         git diff --name-only --diff-filter=AM origin/master...HEAD \
         | grep -v 'upstream' \
+        | grep -v 'knative' \
         | grep -E '^common/.*\.ya?ml$|^example/.*\.ya?ml$|^hack/.*\.ya?ml$|^tests/.*\.ya?ml$|^.github/.*\.ya?ml$' \
         > changed_files_in_PR.txt || true
         if [ ! -s changed_files_in_PR.txt ]; then
