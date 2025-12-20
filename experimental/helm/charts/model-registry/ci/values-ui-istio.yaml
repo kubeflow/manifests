@@ -8,8 +8,8 @@ ui:
   replicas: 1
   
   image:
-    repository: ui  
-    tag: "v0.3.0"
+    repository: ui    
+    tag: "v0.3.3"
     pullPolicy: Always
     
   containerPort: 8080

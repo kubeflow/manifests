@@ -1,0 +1,94 @@
+{{- if .Values.metadata.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metadata-grpc-deployment
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: metadata-grpc-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: metadata-grpc-server
+      application-crd-id: kubeflow-pipelines
+  template:
+    metadata:
+      labels:
+        {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
+        component: metadata-grpc-server
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: container
+        image: {{ .Values.metadata.grpc.image.repository }}:{{ .Values.metadata.grpc.image.tag | default "1.14.0" }}
+        securityContext:
+          {{- toYaml .Values.metadata.grpc.securityContext | nindent 10 }}
+        env:
+        - name: DBCONFIG_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.thirdParty.mysql.secretName | default "mysql-secret" }}
+              key: username
+        - name: DBCONFIG_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.thirdParty.mysql.secretName | default "mysql-secret" }}
+              key: password
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: pipeline-install-config
+              key: mlmdDb
+        - name: MYSQL_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: pipeline-install-config
+              key: dbHost
+        - name: MYSQL_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: pipeline-install-config
+              key: dbPort
+        command: ["/bin/metadata_store_server"]
+        args:
+        - --grpc_port=8080
+        - --mysql_config_database=$(MYSQL_DATABASE)
+        - --mysql_config_host=$(MYSQL_HOST)
+        - --mysql_config_port=$(MYSQL_PORT)
+        - --mysql_config_user=$(DBCONFIG_USER)
+        - --mysql_config_password=$(DBCONFIG_PASSWORD)
+        - --enable_database_upgrade=true
+        - --grpc_channel_arguments=grpc.max_metadata_size=16384
+        ports:
+        - name: grpc-api
+          containerPort: 8080
+        livenessProbe:
+          tcpSocket:
+            port: grpc-api
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 2
+        readinessProbe:
+          tcpSocket:
+            port: grpc-api
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 2
+      serviceAccountName: metadata-grpc-server
+      {{- with .Values.metadata.grpc.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.metadata.grpc.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.metadata.grpc.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

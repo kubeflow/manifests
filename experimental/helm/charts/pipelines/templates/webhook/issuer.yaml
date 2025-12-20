@@ -1,0 +1,10 @@
+{{- if and .Values.certManager.enabled (eq .Values.installMode.pipelineDefinition.storage "k8s-native") }}
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: kfp-api-webhook-selfsigned-issuer
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+spec:
+  selfSigned: {}
+{{- end }}
+
