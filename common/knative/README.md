@@ -4,8 +4,8 @@
 
 The manifests for Knative Serving are based off the following:
 
-  - [Knative serving (v1.16.2)](https://github.com/knative/serving/releases/tag/knative-v1.16.2)
-  - [Knative ingress controller for Istio (v1.16.0)](https://github.com/knative-extensions/net-istio/releases/tag/knative-v1.16.0)
+  - [Knative serving (v1.20.0)](https://github.com/knative/serving/releases/tag/knative-v1.20.0)
+  - [Knative ingress controller for Istio (v1.20.1)](https://github.com/knative-extensions/net-istio/releases/tag/knative-v1.20.1)
 
 Please check the synchronization script under /hack.
 
@@ -18,7 +18,7 @@ Please check the synchronization script under /hack.
 
 ## Knative-Eventing
 
-The manifests for Knative Eventing are based off the [v1.16.4 release](https://github.com/knative/eventing/releases/tag/knative-v1.16.4).
+The manifests for Knative Eventing are based off the [v1.20.0 release](https://github.com/knative/eventing/releases/tag/knative-v1.20.0).
 
   - [Eventing Core](https://github.com/knative/eventing/releases/download/knative-v1.12.6/eventing-core.yaml)
   - [In-Memory Channel](https://github.com/knative/eventing/releases/download/knative-v1.12.6/in-memory-channel.yaml)

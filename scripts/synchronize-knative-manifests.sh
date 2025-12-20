@@ -7,9 +7,9 @@ source "${SCRIPT_DIRECTORY}/library.sh"
 setup_error_handling
 
 COMPONENT_NAME="knative"
-KN_SERVING_RELEASE="v1.16.2" # Must be a release
-KN_EXTENSION_RELEASE="v1.16.0" # Must be a release
-KN_EVENTING_RELEASE="v1.16.4" # Must be a release
+KN_SERVING_RELEASE="v1.20.0" # Must be a release
+KN_EXTENSION_RELEASE="v1.20.1" # Must be a release
+KN_EVENTING_RELEASE="v1.20.0" # Must be a release
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${KN_SERVING_RELEASE?}}
 
 # Path configurations
