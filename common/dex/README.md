@@ -82,15 +82,14 @@ data:
         # Override JWKS endpoint: Dex will fetch Keycloak's JWKs from here.
         # This is useful when issuer discovery fails or when the IdP uses
         # self-signed / internal-only certificates.
-        # Keycloak's certs endpoint (official): /realms/{realm}/protocol/openid-connect/certs. See Keycloak docs.
-        # https://www.keycloak.org/docs/latest/securing_apps/index.html#certificate-endpoint
+        # Keycloak's endpoint /realms/{realm}/protocol/openid-connect/certs. See the Keycloak documentation here https://www.keycloak.org/docs/latest/securing_apps/index.html#certificate-endpoint
         jwksUri: $KEYCLOAK_JWKS_URI
         clientID: $CLIENT_ID
         clientSecret: $CLIENT_SECRET
         redirectURI: $REDIRECT_URI
         insecureSkipVerify: true 
         # Disable TLS certificate verification when connecting to the issuer.
-        # This is required for test or on-prem installations using self-signed
+        # This is required for test or on-premises installations using self-signed
         # certificates.
         # Dex does not support an `insecure` field. TLS verification is controlled
         # via `insecureSkipVerify`, which is implemented in the Dex OIDC connector.
