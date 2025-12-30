@@ -32,6 +32,10 @@ Modify the Dex ConfigMap to connect to Keycloak.
 
 ```bash
 KEYCLOAK_ISSUER="https://keycloak.example.com/realms/<my-realm>"
+# INTERNAL Keycloak (running inside the Kubernetes cluster)
+KEYCLOAK_JWKS_URI="http://keycloak.auth.svc.cluster.local:8080/realms/<my-realm>/protocol/openid-connect/certs"
+# If Keycloak is external:
+#KEYCLOAK_JWKS_URI="https://keycloak.example.com/realms/<my-realm>/protocol/openid-connect/certs"
 CLIENT_ID="kubeflow-oidc-authservice"
 CLIENT_SECRET="<YOUR_KEYCLOAK_CLIENT_SECRET>"
 REDIRECT_URI="https://kubeflow.example.com/dex/callback"
@@ -74,10 +78,22 @@ data:
       name: keycloak
       config:
         issuer: $KEYCLOAK_ISSUER
+
+        # Override JWKS endpoint: Dex will fetch Keycloak's JWKs from here.
+        # This is useful when issuer discovery fails or when the IdP uses
+        # self-signed / internal-only certificates.
+        # Keycloak's endpoint /realms/{realm}/protocol/openid-connect/certs. See the Keycloak documentation here https://www.keycloak.org/docs/latest/securing_apps/index.html#certificate-endpoint
+        jwksUri: $KEYCLOAK_JWKS_URI
         clientID: $CLIENT_ID
         clientSecret: $CLIENT_SECRET
         redirectURI: $REDIRECT_URI
-        insecure: false
+        insecureSkipVerify: true 
+        # Disable TLS certificate verification when connecting to the issuer.
+        # This is required for test or on-premises installations using self-signed
+        # certificates.
+        # Dex does not support an `insecure` field. TLS verification is controlled
+        # via `insecureSkipVerify`, which is implemented in the Dex OIDC connector.
+        # Source: https://github.com/dexidp/dex/blob/master/connector/oidc/oidc.go
         insecureSkipEmailVerified: true
         userNameKey: email       
         scopes:
