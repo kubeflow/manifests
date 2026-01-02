@@ -576,7 +576,8 @@ kustomize build applications/spark/spark-operator/overlays/kubeflow | kubectl ap
 Finally, create a new namespace for the default user (named `kubeflow-user-example-com`).
 
 ```sh
-kustomize build common/user-namespace/base | kubectl apply -f -
+export KF_PROFILE=kubeflow-user-example-com
+./tests/kubeflow_profile_install.sh
 ```
 
 ### Connect to Your Kubeflow Cluster
