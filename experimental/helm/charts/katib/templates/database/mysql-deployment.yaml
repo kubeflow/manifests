@@ -47,27 +47,19 @@ spec:
               command:
                 - "/bin/bash"
                 - "-c"
-                - "mysql -D ${MYSQL_DATABASE} -u root -p${MYSQL_ROOT_PASSWORD} -e 'SELECT 1'"
+                - "mysql -h 127.0.0.1 -D ${MYSQL_DATABASE} -u root -p${MYSQL_ROOT_PASSWORD} -e 'SELECT 1'"
             initialDelaySeconds: {{ .Values.database.mysql.probes.readiness.initialDelaySeconds }}
             periodSeconds: {{ .Values.database.mysql.probes.readiness.periodSeconds }}
             failureThreshold: {{ .Values.database.mysql.probes.readiness.failureThreshold }}
           livenessProbe:
             exec:
               command:
-                - "/bin/bash"
-                - "-c"
-                - "mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}"
+              - "/bin/bash"
+              - "-c"
+              - "mysql -h 127.0.0.1 -D ${MYSQL_DATABASE} -u root -p${MYSQL_ROOT_PASSWORD} -e 'SELECT 1'"
             initialDelaySeconds: {{ .Values.database.mysql.probes.liveness.initialDelaySeconds }}
             periodSeconds: {{ .Values.database.mysql.probes.liveness.periodSeconds }}
             failureThreshold: {{ .Values.database.mysql.probes.liveness.failureThreshold }}
-          startupProbe:
-            exec:
-              command:
-                - "/bin/bash"
-                - "-c"
-                - "mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}"
-            periodSeconds: {{ .Values.database.mysql.probes.startup.periodSeconds }}
-            failureThreshold: {{ .Values.database.mysql.probes.startup.failureThreshold }}
           volumeMounts:
             - name: katib-mysql
               mountPath: /var/lib/mysql

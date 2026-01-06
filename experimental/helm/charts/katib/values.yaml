@@ -186,7 +186,7 @@ database:
       # -- MySQL image repository
       repository: mysql
       # -- MySQL image tag
-      tag: "8.0.29"
+      tag: "8.0"
       # -- MySQL image pull policy
       pullPolicy: IfNotPresent
     
@@ -223,11 +223,6 @@ database:
         periodSeconds: 5
         # -- Liveness probe failure threshold
         failureThreshold: 10
-      startup:
-        # -- Startup probe period
-        periodSeconds: 15
-        # -- Startup probe failure threshold
-        failureThreshold: 60
     
     # Security context
     podSecurityContext:
