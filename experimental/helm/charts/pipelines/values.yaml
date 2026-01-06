@@ -85,7 +85,6 @@ apiServer:
   
   serviceAccount:
     create: true
-    name: "ml-pipeline"
   
   service:
     type: ClusterIP
@@ -182,7 +181,6 @@ persistenceAgent:
   
   serviceAccount:
     create: true
-    name: "ml-pipeline-persistenceagent"
   
   env:
     ttlSecondsAfterWorkflowFinish: "86400"
@@ -210,7 +208,6 @@ scheduledWorkflow:
   
   serviceAccount:
     create: true
-    name: "ml-pipeline-scheduledworkflow"
   
   resources:
     requests:
@@ -259,7 +256,6 @@ ui:
   
   serviceAccount:
     create: true
-    name: "ml-pipeline-ui"
   
   service:
     type: ClusterIP
@@ -335,7 +331,6 @@ viewerCrd:
   
   serviceAccount:
     create: true
-    name: "ml-pipeline-viewer-crd-service-account"
   
   env:
     maxNumViewers: "50"
@@ -378,7 +373,6 @@ visualization:
   
   serviceAccount:
     create: true
-    name: "ml-pipeline-visualizationserver"
   
   service:
     type: ClusterIP
@@ -392,7 +386,6 @@ cache:
   
   serviceAccount:
     create: true
-    name: "kubeflow-pipelines-cache"
   
   server:
     replicas: 1
@@ -479,7 +472,6 @@ metadata:
     
     serviceAccount:
       create: true
-      name: "metadata-grpc-server"
     
     service:
       type: ClusterIP
@@ -541,7 +533,6 @@ metadataWriter:
   
   serviceAccount:
     create: true
-    name: "kubeflow-pipelines-metadata-writer"
   
   additionalEnv: []
 
@@ -691,15 +682,12 @@ profileController:
 additionalServiceAccounts:
   containerBuilder:
     create: true
-    name: "kubeflow-pipelines-container-builder"
   
   pipelineRunner:
     create: true
-    name: "pipeline-runner"
   
   viewer:
     create: true
-    name: "kubeflow-pipelines-viewer"
 
 # RBAC Configuration
 rbac:

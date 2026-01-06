@@ -12,6 +12,6 @@ roleRef:
   name: ml-pipeline-viewer-controller-role
 subjects:
 - kind: ServiceAccount
-  name: {{ include "kubeflow-pipelines.viewerCrd.serviceAccountName" . }}
+  name: ml-pipeline-viewer-crd-service-account
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
 {{- end }}

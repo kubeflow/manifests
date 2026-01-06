@@ -12,7 +12,7 @@ roleRef:
   name: ml-pipeline
 subjects:
 - kind: ServiceAccount
-  name: {{ include "kubeflow-pipelines.apiServer.serviceAccountName" . }}
+  name: ml-pipeline
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
 
 ---
@@ -30,7 +30,7 @@ roleRef:
   name: ml-pipeline-ui
 subjects:
 - kind: ServiceAccount
-  name: {{ include "kubeflow-pipelines.ui.serviceAccountName" . }}
+  name: ml-pipeline-ui
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
 
 ---
@@ -47,7 +47,7 @@ roleRef:
   name: ml-pipeline-scheduledworkflow-role
 subjects:
 - kind: ServiceAccount
-  name: {{ include "kubeflow-pipelines.scheduledWorkflow.serviceAccountName" . }}
+  name: ml-pipeline-scheduledworkflow
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
 
 ---
@@ -64,7 +64,7 @@ roleRef:
   name: ml-pipeline-persistenceagent-role
 subjects:
 - kind: ServiceAccount
-  name: {{ include "kubeflow-pipelines.persistenceAgent.serviceAccountName" . }}
+  name: ml-pipeline-persistenceagent
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
 
 ---
@@ -81,7 +81,7 @@ roleRef:
   name: ml-pipeline-viewer-controller-role
 subjects:
 - kind: ServiceAccount
-  name: {{ include "kubeflow-pipelines.viewerCrd.serviceAccountName" . }}
+  name: ml-pipeline-viewer-crd-service-account
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
 
 ---
@@ -99,7 +99,7 @@ roleRef:
   name: kubeflow-pipelines-cache-role
 subjects:
 - kind: ServiceAccount
-  name: {{ include "kubeflow-pipelines.cache.serviceAccountName" . }}
+  name: kubeflow-pipelines-cache
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
 
 ---
@@ -116,7 +116,7 @@ roleRef:
   name: kubeflow-pipelines-metadata-writer-role
 subjects:
 - kind: ServiceAccount
-  name: {{ include "kubeflow-pipelines.metadataWriter.serviceAccountName" . }}
+  name: kubeflow-pipelines-metadata-writer
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
 
 {{- if .Values.thirdParty.argo.enabled }}

@@ -12,6 +12,6 @@ roleRef:
   name: ml-pipeline-ui
 subjects:
 - kind: ServiceAccount
-  name: {{ include "kubeflow-pipelines.ui.serviceAccountName" . }}
+  name: ml-pipeline-ui
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
 {{- end }}

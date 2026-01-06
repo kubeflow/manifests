@@ -14,6 +14,6 @@ roleRef:
   name: pipeline-runner
 subjects:
 - kind: ServiceAccount
-  name: {{ .Values.additionalServiceAccounts.pipelineRunner.name }}
+  name: pipeline-runner
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
 {{- end }}

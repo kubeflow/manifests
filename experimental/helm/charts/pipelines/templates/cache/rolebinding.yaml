@@ -12,6 +12,6 @@ roleRef:
   name: kubeflow-pipelines-cache-role
 subjects:
 - kind: ServiceAccount
-  name: {{ include "kubeflow-pipelines.cache.serviceAccountName" . }}
+  name: kubeflow-pipelines-cache
   namespace: {{ include "kubeflow-pipelines.namespace" . }}
 {{- end }}
