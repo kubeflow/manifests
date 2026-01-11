@@ -196,8 +196,6 @@ No user-facing documentation will be updated in this phase.
 
 ## Next Steps
 
-## Next Steps
-
 1. Submit this proposal for maintainer feedback and scope confirmation
 2. Incorporate review comments and finalize the phased migration strategy
 3. Identify and confirm the pilot component (Kubeflow Pipelines)
