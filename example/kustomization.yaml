@@ -1,4 +1,4 @@
-﻿apiVersion: kustomize.config.k8s.io/v1beta1
+apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 sortOptions:
@@ -106,14 +106,16 @@ resources:
 - ../applications/model-registry/upstream/overlays/postgres
 # Model Registry UI
 - ../applications/model-registry/upstream/options/ui/overlays/istio
+# Model Registry Catalog (demo)
+- ../applications/model-registry/upstream/options/catalog/overlays/demo
 
 # Ray is an experimental integration
-# Here is the documentation for Ray: https://docs.ray.io/en/latest/
+# Here is the documentation for Ray: [https://docs.ray.io/en/latest/](https://docs.ray.io/en/latest/)
 # Here is the internal documentation for Ray: - ../experimental/ray/README.md
 # - ../experimental/ray/kuberay-operator/overlays/kubeflow
 
 components:
-# https://kubernetes.io/docs/concepts/security/pod-security-standards/
+# [https://kubernetes.io/docs/concepts/security/pod-security-standards/](https://kubernetes.io/docs/concepts/security/pod-security-standards/)
 # For all static namespaces we already enforce PSS restricted
 # This should be used together with Kubernetes 1.33+ user namespaces to block root user exploits
 - ../common/security/PSS/dynamic/baseline
