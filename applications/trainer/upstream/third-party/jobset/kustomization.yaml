@@ -12,3 +12,11 @@ patches:
       group: ""
       version: v1
       kind: Namespace
+
+  # Exclude Istio sidecar from JobSet controller webhook ports.
+  - path: patches/jobset_istio_webhook.yaml
+    target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: jobset-controller-manager
