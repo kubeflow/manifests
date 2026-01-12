@@ -73,7 +73,7 @@ resources:
 # Katib
 - ../applications/katib/upstream/installs/katib-with-kubeflow
 # Central Dashboard
-- ../applications/centraldashboard/overlays/oauth2-proxy
+- ../applications/centraldashboard/overlays/model-registry
 # Admission Webhook
 - ../applications/admission-webhook/upstream/overlays/cert-manager
 # Jupyter Web App
@@ -99,6 +99,9 @@ resources:
 # KServe
 - ../applications/kserve/kserve
 - ../applications/kserve/models-web-app/overlays/kubeflow
+# Model Registry
+- ../applications/model-registry/upstream/overlays/postgres
+- ../applications/model-registry/upstream/options/ui/overlays/istio
 # Spark Operator
 - ../applications/spark/spark-operator/overlays/kubeflow
 

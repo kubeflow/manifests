@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  # Reuse existing centraldashboard overlay that includes KServe config and oauth2-proxy integration
+  - ../oauth2-proxy
+
+patchesStrategicMerge:
+  - patches/patch-centraldashboard-configmap-model-registry.yaml
