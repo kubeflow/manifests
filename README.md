@@ -566,7 +566,7 @@ kustomize build applications/trainer/upstream/overlays/kubeflow-platform | kubec
 Install the Spark Operator:
 
 ```sh
-kustomize build applications/spark/spark-operator/overlays/kubeflow | kubectl apply -f -
+kustomize build applications/spark/spark-operator/overlays/kubeflow | kubectl apply --server-side --force-conflicts -f -
 ```
 
 **Note:** The Ray component in the experimental folder is configured to disable Istio sidecar injection for its head and worker pods to ensure compatibility with Istio CNI.
