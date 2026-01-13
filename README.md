@@ -107,6 +107,7 @@ The `example` directory contains an example kustomization for the single command
 :warning: In both options, we use a default email (`user@example.com`) and password (`12341234`). For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
 
 ### Prerequisites
+
 - This is the master branch, which targets Kubernetes version 1.34+.
 - For the specific Kubernetes version per release, consult the [release notes](https://github.com/kubeflow/manifests/releases).
 - Either our local Kind (installed below) or your own Kubernetes cluster with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/).
