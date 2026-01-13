@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# General centraldashboard overlay used by example and consumers.
+# This enables oauth2-proxy integration and the Model Registry menu by default.
+resources:
+  - ./model-registry

@@ -2,24 +2,132 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: centraldashboard-config
-  namespace: kubeflow
 data:
   # Extend links/apps to register Model Registry as a full dashboard app.
   # We intentionally only add the Model Registry menu item and app definition,
   # leaving the rest of the config from the base + oauth2-proxy/kserve overlay.
   links: |
     {
-        "menuLinks": [
+      "menuLinks": [
+        {
+          "icon": "book",
+          "link": "/jupyter/",
+          "text": "Notebooks",
+          "type": "item"
+        },
+        {
+          "icon": "assessment",
+          "link": "/tensorboards/",
+          "text": "TensorBoards",
+          "type": "item"
+        },
+        {
+          "icon": "device:storage",
+          "link": "/volumes/",
+          "text": "Volumes",
+          "type": "item"
+        },
+        {
+          "icon": "kubeflow:katib",
+          "link": "/katib/",
+          "text": "Katib Experiments",
+          "type": "item"
+        },
+        {
+          "type": "item",
+          "link": "/kserve-endpoints/",
+          "text": "KServe Endpoints",
+          "icon": "kubeflow:models"
+        },
+        {
+          "type": "item",
+          "link": "/model-registry/?namespace=kubeflow-user-example-com",
+          "text": "Model Registry",
+          "icon": "assessment"
+        },
+        {
+          "icon": "kubeflow:pipeline-centered",
+          "items": [
             {
-                "type": "item",
-                "link": "/model-registry/",
-                "text": "Model Registry",
-                "icon": "assessment"
+              "link": "/pipeline/#/pipelines",
+              "text": "Pipelines",
+              "type": "item"
+            },
+            {
+              "link": "/pipeline/#/experiments",
+              "text": "Experiments",
+              "type": "item"
+            },
+            {
+              "link": "/pipeline/#/runs",
+              "text": "Runs",
+              "type": "item"
+            },
+            {
+              "link": "/pipeline/#/recurringruns",
+              "text": "Recurring Runs",
+              "type": "item"
+            },
+            {
+              "link": "/pipeline/#/artifacts",
+              "text": "Artifacts",
+              "type": "item"
+            },
+            {
+              "link": "/pipeline/#/executions",
+              "text": "Executions",
+              "type": "item"
             }
-        ],
-        "externalLinks": [],
-        "documentationItems": [],
-        "quickLinks": []
+          ],
+          "text": "Pipelines",
+          "type": "section"
+        }
+      ],
+      "externalLinks": [],
+      "documentationItems": [
+        {
+          "desc": "The Kubeflow website",
+          "link": "https://www.kubeflow.org/",
+          "text": "Kubeflow Website"
+        },
+        {
+          "desc": "Documentation for Kubeflow Pipelines",
+          "link": "https://www.kubeflow.org/docs/components/pipelines/",
+          "text": "Kubeflow Pipelines Documentation"
+        },
+        {
+          "desc": "Documentation for Kubeflow Notebooks",
+          "link": "https://www.kubeflow.org/docs/components/notebooks/",
+          "text": "Kubeflow Notebooks Documentation"
+        },
+        {
+          "desc": "Documentation for Kubeflow Training Operator",
+          "link": "https://www.kubeflow.org/docs/components/training/",
+          "text": "Kubeflow Training Operator Documentation"
+        },
+        {
+          "desc": "Documentation for Katib",
+          "link": "https://www.kubeflow.org/docs/components/katib/",
+          "text": "Katib Documentation"
+        }
+      ],
+      "quickLinks": [
+        {
+          "desc": "Kubeflow Notebooks",
+          "link": "/jupyter/new",
+          "text": "Create a new Notebook"
+        },
+        {
+          "desc": "Kubeflow Pipelines",
+          "link": "/pipeline/#/pipelines",
+          "text": "Upload a Pipeline"
+        },
+        {
+          "desc": "Pipelines",
+          "link": "/pipeline/#/runs",
+          "text": "View Pipeline Runs"
+        }
+      ]
     }
   apps: |
     [
@@ -28,7 +136,7 @@ data:
         "title": "Model Registry",
         "description": "Discover, register, and manage ML models",
         "category": "Models",
-        "link": "/model-registry/",
+        "link": "/model-registry/?namespace=kubeflow-user-example-com",
         "iframe": true
       }
     ]

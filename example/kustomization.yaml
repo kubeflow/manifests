@@ -72,8 +72,8 @@ resources:
 # - ../applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user-k8s-native # Pipeline Definitions Stored as Kubernetes Resources
 # Katib
 - ../applications/katib/upstream/installs/katib-with-kubeflow
-# Central Dashboard
-- ../applications/centraldashboard/overlays/model-registry
+# Central Dashboard (oauth2-proxy + Model Registry enabled by default)
+- ../applications/centraldashboard/overlays
 # Admission Webhook
 - ../applications/admission-webhook/upstream/overlays/cert-manager
 # Jupyter Web App
