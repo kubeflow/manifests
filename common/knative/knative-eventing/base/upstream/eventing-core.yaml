@@ -1152,7 +1152,7 @@ metadata:
     app.kubernetes.io/version: "1.20.0"
     app.kubernetes.io/name: knative-eventing
 spec:
-  minAvailable: 1
+  minAvailable: 80%
   selector:
     matchLabels:
       app: eventing-webhook

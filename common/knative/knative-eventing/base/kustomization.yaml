@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: knative-eventing
 resources:
 - upstream/eventing-core.yaml
-# Uncomment to install In-Memory Channels as messaging layer: 
+# Uncomment to install In-Memory Channels as messaging layer:
 # - upstream/in-memory-channel.yaml
 # Uncomment to install MT-channel-based Broker layer
 # - upstream/mt-channel-broker.yaml
@@ -15,3 +15,4 @@ labels:
     kustomize.component: knative
 patches:
 - path: patches/clusterrole-patch.yaml
+- path: patches/pdb.yaml

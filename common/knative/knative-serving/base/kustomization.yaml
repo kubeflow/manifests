@@ -1,13 +1,16 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
 resources:
 - upstream/serving-core.yaml
 - upstream/net-istio.yaml
 - istio-authorization-policy.yaml
+
 patches:
 - path: patches/sidecar-injection.yaml
   target:
     kind: Deployment
+
 - path: patches/config-deployment.yaml
 - path: patches/config-istio.yaml
 - path: patches/namespace-injection.yaml
@@ -16,8 +19,5 @@ patches:
 - path: patches/knative-serving-namespaced-view.yaml
 - path: patches/service-labels.yaml
 - path: patches/remove-gateway.yaml
-- path: patches/seccomp.yaml
-  target:
-    kind: Deployment
-    namespace: knative-serving
-    name: "(autoscaler|activator|controller|net-istio-webhook|webhook|net-istio-controller)"
+- path: patches/activator-pdb.yaml
+- path: patches/webhook-pdb.yaml
