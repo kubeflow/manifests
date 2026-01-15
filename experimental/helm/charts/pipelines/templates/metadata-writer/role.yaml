@@ -1,0 +1,39 @@
+{{- if .Values.metadataWriter.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kubeflow-pipelines-metadata-writer-role
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    app: kubeflow-pipelines-metadata-writer-role
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+{{- end }}
