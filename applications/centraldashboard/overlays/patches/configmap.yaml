@@ -3,10 +3,6 @@ kind: ConfigMap
 metadata:
   name: centraldashboard-config
 data:
-  settings: |-
-    {
-      "DASHBOARD_FORCE_IFRAME": true
-    }
   links: |-
     {
         "menuLinks": [
