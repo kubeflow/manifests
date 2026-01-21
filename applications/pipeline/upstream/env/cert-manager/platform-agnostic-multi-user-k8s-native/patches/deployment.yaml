@@ -10,7 +10,7 @@ spec:
           ports:
           - containerPort: 8443
             name: webhook
-          image: domain.local/apiserver:local
+          image: ghcr.io/kubeflow/kfp-api-server:2.15.0
           command:
             - "/bin/apiserver"
           args:
@@ -28,3 +28,4 @@ spec:
         - name: webhook-certs
           secret:
             secretName: kfp-api-webhook-cert
+
