@@ -10,7 +10,9 @@ resources:
 # !!! If you want to customize the namespace,
 # please also update base/cache-deployer/cluster-scoped/cache-deployer-clusterrolebinding.yaml
 namespace: kubeflow
-
+images:
+  - name: ghcr.io/kubeflow/kfp-api-server
+    newTag: 2.15.0
 patches:
   - path: patches/deployment.yaml
     target:
