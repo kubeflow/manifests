@@ -571,12 +571,19 @@ kustomize build applications/spark/spark-operator/overlays/kubeflow | kubectl ap
 
 **Note:** The Ray component in the experimental folder is configured to disable Istio sidecar injection for its head and worker pods to ensure compatibility with Istio CNI.
 
-#### User Namespaces
+#### User Namespaces 
+
+> **Note**  
+> The installation steps below are continuously verified by the Kubeflow
+> full integration test workflow, which runs on every commit to the `master`
+> branch:
+> https://github.com/kubeflow/manifests/blob/master/.github/workflows/full_kubeflow_integration_test.yaml
 
 Finally, create a new namespace for the default user (named `kubeflow-user-example-com`).
 
 ```sh
-kustomize build common/user-namespace/base | kubectl apply -f -
+export KF_PROFILE=kubeflow-user-example-com
+./tests/kubeflow_profile_install.sh
 ```
 
 ### Connect to Your Kubeflow Cluster
