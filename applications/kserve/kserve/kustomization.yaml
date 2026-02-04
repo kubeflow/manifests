@@ -40,3 +40,56 @@ patches:
           securityContext:
             seccompProfile:
               type: RuntimeDefault
+
+# Security patches: Delete insecure LLMInferenceServiceConfig resources
+# These resources have dangerous capabilities (IPC_LOCK, SYS_RAWIO, NET_RAW)
+# and runAsNonRoot: false settings. See PR #3290 for details.
+# Ref: https://github.com/kubeflow/manifests/pull/3290
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-decode-template
+       namespace: kserve
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-decode-worker-data-parallel
+       namespace: kserve
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-worker-data-parallel
+       namespace: kserve
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-template
+       namespace: kserve
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-scheduler
+       namespace: kserve
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-router-route
+       namespace: kserve
+     $patch: delete
