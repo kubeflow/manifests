@@ -156,3 +156,4 @@ scripts/synchronize-istio-manifests.sh
 - Disable tracing to prevent DNS issues
 - Set `ENABLE_DEBUG_ON_HTTP=false` for security
 - Add seccomp profiles for Pod Security Standards compliance
+
