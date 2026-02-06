@@ -69,10 +69,18 @@ models:
       - question-answering
     createTimeSinceEpoch: "1736899200000"
     lastUpdateTimeSinceEpoch: "1736899200000"
+    customProperties:
+      model_type:
+        string_value: "generative"
+        metadataType: MetadataStringValue
     artifacts:
       - uri: oci://registry.example.com/acme-ai/neural-7b-instruct:v1.0
         createTimeSinceEpoch: "1736899200000"
         lastUpdateTimeSinceEpoch: "1736899200000"
+        customProperties:
+          architecture:
+            metadataType: MetadataStringValue
+            string_value: '["amd64"]'
 
   - name: stellar-labs/quantum-13b-base
     provider: Stellar Labs
@@ -125,10 +133,18 @@ models:
       - fill-mask
     createTimeSinceEpoch: "1730678400000"
     lastUpdateTimeSinceEpoch: "1730678400000"
+    customProperties:
+      model_type:
+        string_value: "generative"
+        metadataType: MetadataStringValue
     artifacts:
       - uri: oci://registry.example.com/stellar-labs/quantum-13b-base:v2.1
         createTimeSinceEpoch: "1730678400000"
         lastUpdateTimeSinceEpoch: "1730678400000"
+        customProperties:
+          architecture:
+            metadataType: MetadataStringValue
+            string_value: '["amd64", "arm64", "s390x"]'
 
   - name: neural-dynamics/code-pilot-3b
     provider: Neural Dynamics
@@ -185,10 +201,18 @@ models:
       - code-generation
     createTimeSinceEpoch: "1734652800000"
     lastUpdateTimeSinceEpoch: "1734652800000"
+    customProperties:
+      model_type:
+        string_value: "generative"
+        metadataType: MetadataStringValue
     artifacts:
       - uri: oci://registry.example.com/neural-dynamics/code-pilot-3b:latest
         createTimeSinceEpoch: "1734652800000"
         lastUpdateTimeSinceEpoch: "1734652800000"
+        customProperties:
+          architecture:
+            metadataType: MetadataStringValue
+            string_value: '["amd64"]'
 
   - name: acme-ai/multimodal-vision-7b
     provider: Acme AI Labs
@@ -248,10 +272,18 @@ models:
       - visual-question-answering
     createTimeSinceEpoch: "1738368000000"
     lastUpdateTimeSinceEpoch: "1738368000000"
+    customProperties:
+      model_type:
+        string_value: "generative"
+        metadataType: MetadataStringValue
     artifacts:
       - uri: oci://registry.example.com/acme-ai/multimodal-vision-7b:v1.0
         createTimeSinceEpoch: "1738368000000"
         lastUpdateTimeSinceEpoch: "1738368000000"
+        customProperties:
+          architecture:
+            metadataType: MetadataStringValue
+            string_value: '["amd64", "ppc64le"]'
 
   - name: stellar-labs/reasoning-1b-chat
     provider: Stellar Labs
@@ -318,10 +350,18 @@ models:
       - text-generation
     createTimeSinceEpoch: "1736467200000"
     lastUpdateTimeSinceEpoch: "1736467200000"
+    customProperties:
+      model_type:
+        string_value: "generative"
+        metadataType: MetadataStringValue
     artifacts:
       - uri: oci://registry.example.com/stellar-labs/reasoning-1b-chat:v1.2
         createTimeSinceEpoch: "1736467200000"
         lastUpdateTimeSinceEpoch: "1736467200000"
+        customProperties:
+          architecture:
+            metadataType: MetadataStringValue
+            string_value: '["amd64"]'
 
   - name: neural-dynamics/embeddings-large
     provider: Neural Dynamics
@@ -389,7 +429,15 @@ models:
       - sentence-similarity
     createTimeSinceEpoch: "1726358400000"
     lastUpdateTimeSinceEpoch: "1726358400000"
+    customProperties:
+      model_type:
+        string_value: "predictive"
+        metadataType: MetadataStringValue
     artifacts:
       - uri: oci://registry.example.com/neural-dynamics/embeddings-large:v3.0
         createTimeSinceEpoch: "1726358400000"
         lastUpdateTimeSinceEpoch: "1726358400000"
+        customProperties:
+          architecture:
+            metadataType: MetadataStringValue
+            string_value: '["amd64", "arm64"]'

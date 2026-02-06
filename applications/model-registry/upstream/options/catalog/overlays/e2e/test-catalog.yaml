@@ -1,0 +1,102 @@
+# Comprehensive test catalog for E2E tests
+# Contains models for: ordering, filtering, artifacts, pagination
+source: Test Catalog
+models:
+  # Models with artifacts and accuracy for ordering/filtering tests
+  - name: test-model-1
+    description: Primary test model with high accuracy
+    createTimeSinceEpoch: "1700000000000"
+    lastUpdateTimeSinceEpoch: "1700100000000"
+    tasks:
+      - text-generation
+    customProperties:
+      size:
+        metadataType: MetadataStringValue
+        string_value: "7B"
+      tensor_type:
+        metadataType: MetadataStringValue
+        string_value: "bfloat16"
+      variant_group_id:
+        metadataType: MetadataStringValue
+        string_value: "group-1"
+    artifacts:
+      - name: pytorch-artifact
+        uri: s3://bucket/test-model-1.tar.gz
+        customProperties:
+          accuracy:
+            metadataType: MetadataDoubleValue
+            double_value: 0.95
+          overall_average:
+            metadataType: MetadataDoubleValue
+            double_value: 92.5
+          framework_type:
+            metadataType: MetadataStringValue
+            string_value: pytorch
+
+  - name: test-model-2
+    description: Secondary test model with medium accuracy
+    createTimeSinceEpoch: "1700200000000"
+    lastUpdateTimeSinceEpoch: "1700300000000"
+    tasks:
+      - text-generation
+    customProperties:
+      size:
+        metadataType: MetadataStringValue
+        string_value: "13B"
+      tensor_type:
+        metadataType: MetadataStringValue
+        string_value: "float16"
+      variant_group_id:
+        metadataType: MetadataStringValue
+        string_value: "group-2"
+    artifacts:
+      - name: onnx-artifact
+        uri: s3://bucket/test-model-2.tar.gz
+        customProperties:
+          accuracy:
+            metadataType: MetadataDoubleValue
+            double_value: 0.88
+          overall_average:
+            metadataType: MetadataDoubleValue
+            double_value: 85.0
+          framework_type:
+            metadataType: MetadataStringValue
+            string_value: onnx
+
+  - name: test-model-3
+    description: Third test model with low accuracy
+    createTimeSinceEpoch: "1700400000000"
+    lastUpdateTimeSinceEpoch: "1700250000000"
+    tasks:
+      - text-generation
+    artifacts:
+      - name: tensorrt-artifact
+        uri: s3://bucket/test-model-3.tar.gz
+        customProperties:
+          accuracy:
+            metadataType: MetadataDoubleValue
+            double_value: 0.75
+          framework_type:
+            metadataType: MetadataStringValue
+            string_value: tensorrt
+
+  # Models for NAME ordering tests (case variations)
+  - name: alpha-model
+    description: Alpha model for ordering tests (lowercase)
+
+  - name: Beta-Model
+    description: Beta model for ordering tests (mixed case)
+
+  - name: GAMMA-MODEL
+    description: Gamma model for ordering tests (uppercase)
+
+  - name: delta-model
+    description: Delta model for pagination tests
+
+  - name: epsilon-model
+    description: Epsilon model for pagination tests
+
+  # Model without artifacts (for edge case tests)
+  - name: no-artifacts-model
+    description: Model with no artifacts for edge case testing
+
