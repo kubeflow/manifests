@@ -1,0 +1,49 @@
+{{- if .Values.visualization.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-visualizationserver
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.visualizationLabels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "kubeflow-pipelines.visualizationSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        {{- include "kubeflow-pipelines.visualizationLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: ml-pipeline-visualizationserver
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: ml-pipeline-visualizationserver
+        image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.visualization.image.repository "tag" .Values.visualization.image.tag "context" .) }}
+        imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+        ports:
+        - name: http
+          containerPort: 8888
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8888
+          initialDelaySeconds: {{ .Values.visualization.probes.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.visualization.probes.liveness.periodSeconds }}
+          timeoutSeconds: {{ .Values.visualization.probes.liveness.timeoutSeconds }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8888
+          initialDelaySeconds: {{ .Values.visualization.probes.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.visualization.probes.readiness.periodSeconds }}
+          timeoutSeconds: {{ .Values.visualization.probes.readiness.timeoutSeconds }}
+        resources:
+          {{- toYaml .Values.visualization.resources | nindent 10 }}
+        securityContext:
+          {{- toYaml .Values.visualization.securityContext | nindent 10 }}
+{{- end }}
