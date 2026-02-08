@@ -184,6 +184,8 @@ If all the following commands are executed, the result is the same as in the abo
 - Provide a description of each component and insight on how it gets installed.
 - Enable the user or distribution owner to pick and choose only the components they need.
 
+> **Note:** Many component installation steps below reference scripts from the [`tests/`](tests/) directory. These scripts are the same ones used by our [CI/CD integration test workflow](https://github.com/kubeflow/manifests/blob/master/.github/workflows/full_kubeflow_integration_test.yaml), which ensures the documentation is continuously verified. The scripts also provide better error messages and include sanity checks.
+
 ---
 **Troubleshooting Note**
 
@@ -217,12 +219,10 @@ Cert-manager is used by many Kubeflow components to provide certificates for adm
 Install cert-manager:
 
 ```sh
-kustomize build common/cert-manager/base | kubectl apply -f -
-kustomize build common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
-echo "Waiting for cert-manager to be ready ..."
-kubectl wait --for=condition=Ready pod -l 'app in (cert-manager,webhook)' --timeout=180s -n cert-manager
-kubectl wait --for=jsonpath='{.subsets[0].addresses[0].targetRef.kind}'=Pod endpoints -l 'app in (cert-manager,webhook)' --timeout=180s -n cert-manager
+./tests/cert_manager_install.sh
 ```
+
+For details, see [`tests/cert_manager_install.sh`](tests/cert_manager_install.sh).
 
 In case you encounter this error:
 ```
@@ -239,18 +239,14 @@ Istio is used by most Kubeflow components to secure their traffic, enforce netwo
 Install Istio:
 
 ```sh
-echo "Installing Istio CNI configured with external authorization..."
-kustomize build common/istio/istio-crds/base | kubectl apply -f -
-kustomize build common/istio/istio-namespace/base | kubectl apply -f -
+./tests/istio-cni_install.sh
+```
 
-# For most platforms (Kind, Minikube, AKS, EKS, etc.)
-kustomize build common/istio/istio-install/overlays/oauth2-proxy | kubectl apply -f -
+For details, see [`tests/istio-cni_install.sh`](tests/istio-cni_install.sh).
 
-# For Google Kubernetes Engine (GKE), use:
-# kustomize build common/istio/istio-install/overlays/gke | kubectl apply -f -
-
-echo "Waiting for all Istio Pods to become ready..."
-kubectl wait --for=condition=Ready pods --all -n istio-system --timeout 300s
+For Google Kubernetes Engine (GKE), use the GKE-specific overlay instead:
+```sh
+kustomize build common/istio/istio-install/overlays/gke | kubectl apply -f -
 ```
 
 #### Oauth2-proxy
@@ -306,10 +302,10 @@ Dex is an OpenID Connect (OIDC) identity provider with multiple authentication b
 Install Dex:
 
 ```sh
-echo "Installing Dex..."
-kustomize build common/dex/overlays/oauth2-proxy | kubectl apply -f -
-kubectl wait --for=condition=Ready pods --all --timeout=180s -n auth
+./tests/dex_install.sh
 ```
+
+For details, see [`tests/dex_install.sh`](tests/dex_install.sh).
 
 To connect to your desired identity providers (LDAP, GitHub, Google, Microsoft, OIDC, SAML, GitLab), please take a look at <https://dexidp.io/docs/connectors/oidc/>. We recommend using OIDC in general since it is compatible with most providers. For example, Azure in the following example. You need to modify <https://github.com/kubeflow/manifests/blob/master/common/dex/overlays/oauth2-proxy/config-map.yaml> and add some environment variables in <https://github.com/kubeflow/manifests/blob/master/common/dex/base/deployment.yaml> by adding a patch section in your main Kustomization file. For guidance, please check out [Upgrading and Extending](#upgrading-and-extending).
 
@@ -374,9 +370,10 @@ Knative is used by the KServe official Kubeflow component.
 Install Knative Serving:
 
 ```sh
-kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -
-kustomize build common/istio/cluster-local-gateway/base | kubectl apply -f -
+./tests/knative_install.sh
 ```
+
+For details, see [`tests/knative_install.sh`](tests/knative_install.sh).
 
 Optionally, you can install Knative Eventing, which can be used for inference request logging:
 
@@ -422,8 +419,11 @@ Kubeflow Pipelines offers two deployment options to choose from, each designed f
 Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/components/pipelines/multi-user/) official Kubeflow component:
 
 ```sh
-kustomize build applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
+./tests/pipelines_install.sh
 ```
+
+For details, see [`tests/pipelines_install.sh`](tests/pipelines_install.sh).
+
 This installs Argo with the runasnonroot emissary executor. Please note that you are still responsible for analyzing the security issues that arise when containers are run with root access and for deciding if the Kubeflow pipeline main containers are run as runasnonroot. It is generally strongly recommended that all user-accessible OCI containers run with Pod Security Standards [restricted](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted).
 
 ##### Pipeline Definitions Stored as Kubernetes Resources
@@ -450,33 +450,33 @@ For detailed pipeline compilation instructions, please refer to the [Kubeflow Pi
 
 KFServing was rebranded to KServe.
 
-Install the KServe component:
+Install the KServe component and Models web application:
 
 ```sh
-kustomize build applications/kserve/kserve | kubectl apply --server-side --force-conflicts -f -
+./tests/kserve_install.sh
 ```
 
-Install the Models web application:
-
-```sh
-kustomize build applications/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
-```
+For details, see [`tests/kserve_install.sh`](tests/kserve_install.sh) and [`tests/kserve_test.sh`](tests/kserve_test.sh).
 
 #### Katib
 
 Install the Katib official Kubeflow component:
 
 ```sh
-kustomize build applications/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
+./tests/katib_install.sh
 ```
+
+For details, see [`tests/katib_install.sh`](tests/katib_install.sh) and [`tests/katib_test.sh`](tests/katib_test.sh).
 
 #### Central Dashboard
 
 Install the Central Dashboard official Kubeflow component:
 
 ```sh
-kustomize build applications/centraldashboard/overlays/oauth2-proxy | kubectl apply -f -
+./tests/central_dashboard_install.sh
 ```
+
+For details, see [`tests/central_dashboard_install.sh`](tests/central_dashboard_install.sh).
 
 #### Admission Webhook
 
@@ -514,19 +514,23 @@ kustomize build applications/pvcviewer-controller/upstream/base | kubectl apply 
 
 #### Profiles + KFAM
 
-Install the Profile Controller and the Kubeflow Access-Management (KFAM) official Kubeflow components:
+Install the Profile Controller, Kubeflow Access-Management (KFAM), Kubeflow Roles, and Network Policies:
 
 ```sh
-kustomize build applications/profiles/upstream/overlays/kubeflow | kubectl apply -f -
+./tests/multi_tenancy_install.sh
 ```
+
+For details, see [`tests/multi_tenancy_install.sh`](tests/multi_tenancy_install.sh).
 
 #### Volumes Web Application
 
 Install the Volumes Web Application official Kubeflow component:
 
 ```sh
-kustomize build applications/volumes-web-app/upstream/overlays/istio | kubectl apply -f -
+./tests/volumes_web_application_install.sh
 ```
+
+For details, see [`tests/volumes_web_application_install.sh`](tests/volumes_web_application_install.sh).
 
 #### Tensorboard
 
@@ -547,27 +551,31 @@ kustomize build applications/tensorboard/tensorboard-controller/upstream/overlay
 Install the Trainer (training operator v2) official Kubeflow component:
 
 ```sh
-kustomize build applications/trainer/upstream/overlays/kubeflow-platform | kubectl apply --server-side --force-conflicts -f -
-# kustomize build applications/training-operator/upstream/overlays/kubeflow | kubectl apply --server-side --force-conflicts -f -
+./tests/trainer_install.sh
 ```
+
+For details, see [`tests/trainer_install.sh`](tests/trainer_install.sh).
 
 #### Spark Operator
 
 Install the Spark Operator:
 
 ```sh
-kustomize build applications/spark/spark-operator/overlays/kubeflow | kubectl apply --server-side --force-conflicts -f -
+./tests/spark_install.sh
 ```
 
-**Note:** The Ray component in the experimental folder is configured to disable Istio sidecar injection for its head and worker pods to ensure compatibility with Istio CNI.
+For details, see [`tests/spark_install.sh`](tests/spark_install.sh).
 
 #### User Namespaces
 
 Finally, create a new namespace for the default user (named `kubeflow-user-example-com`).
 
 ```sh
-kustomize build common/user-namespace/base | kubectl apply -f -
+export KF_PROFILE=kubeflow-user-example-com
+./tests/kubeflow_profile_install.sh
 ```
+
+For details, see [`tests/kubeflow_profile_install.sh`](tests/kubeflow_profile_install.sh).
 
 ### Connect to Your Kubeflow Cluster
 
