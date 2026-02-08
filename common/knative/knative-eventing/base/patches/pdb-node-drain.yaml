@@ -1,0 +1,17 @@
+# Patch PodDisruptionBudget to allow node drain with single replica deployments
+# By Kubeflow convention, minAvailable is set to 0 to allow safe drain operations.
+#
+# Problem: PDBs with minAvailable: 80% block node drain when replicas=1
+# since ceil(0.8 * 1) = 1, meaning 100% of pods must remain available.
+#
+# Solution: Set minAvailable to 0 so node drain can proceed.
+# The HPA will maintain availability by scaling up as needed.
+#
+# Ref: https://github.com/kubeflow/manifests/issues/3313
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: eventing-webhook
+  namespace: knative-eventing
+spec:
+  minAvailable: 0

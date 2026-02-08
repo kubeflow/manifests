@@ -21,3 +21,4 @@ patches:
     kind: Deployment
     namespace: knative-serving
     name: "(autoscaler|activator|controller|net-istio-webhook|webhook|net-istio-controller)"
+- path: patches/pdb-node-drain.yaml
