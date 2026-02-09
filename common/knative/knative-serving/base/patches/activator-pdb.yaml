@@ -1,7 +1,0 @@
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  name: activator-pdb
-  namespace: knative-serving
-spec:
-  minAvailable: 0
