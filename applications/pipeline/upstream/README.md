@@ -21,8 +21,8 @@ KFP_ENV=platform-agnostic
 kustomize build cluster-scoped-resources/ | kubectl apply -f -
 kubectl wait crd/applications.app.k8s.io --for condition=established --timeout=60s
 kustomize build "env/${KFP_ENV}/" | kubectl apply -f -
-kubectl wait pods -l application-crd-id=kubeflow-pipelines -n kubeflow --for condition=Ready --timeout=1800s
-kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80
+kubectl wait pods -l application-crd-id=kubeflow-pipelines -n kubeflow-system --for condition=Ready --timeout=1800s
+kubectl port-forward -n kubeflow-system svc/ml-pipeline-ui 8080:80
 ```
 
 Now you can access Kubeflow Pipelines UI in your browser by <http://localhost:8080>.
@@ -52,7 +52,7 @@ kubectl kustomize env/platform-agnostic | kubectl delete -f -
 # or
 kubectl kustomize env/dev | kubectl delete -f -
 # or
-kubectl delete applications/pipeline -n kubeflow
+kubectl delete applications/pipeline -n kubeflow-system 
 
 ### 2. cluster scoped
 kubectl delete -k cluster-scoped-resources/

@@ -8,4 +8,4 @@ resources:
 configurations:
 - params.yaml
 
-namespace: kubeflow
+namespace: kubeflow-system

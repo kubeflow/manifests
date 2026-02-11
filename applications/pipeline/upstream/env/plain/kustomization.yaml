@@ -17,4 +17,4 @@ labels:
 
 # !!! If you want to customize the namespace,
 # please also update base/cache-deployer/cluster-scoped/cache-deployer-clusterrolebinding.yaml
-namespace: kubeflow
+namespace: kubeflow-system

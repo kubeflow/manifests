@@ -7,7 +7,7 @@ resources:
   - ../base-tls-certs/
   - patches/metadata-envoy-configmap.yaml
 
-namespace: kubeflow
+namespace: kubeflow-system
 
 patches:
   - path: patches/ml-pipeline-apiserver-deployment.yaml

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: seaweedfs-pvc
-  namespace: kubeflow
+  namespace: kubeflow-system
 spec:
   accessModes:
   - ReadWriteOnce

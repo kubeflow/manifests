@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: seaweedfs
-  namespace: kubeflow
+  namespace: kubeflow-system
   labels:
     app: seaweedfs
 spec:

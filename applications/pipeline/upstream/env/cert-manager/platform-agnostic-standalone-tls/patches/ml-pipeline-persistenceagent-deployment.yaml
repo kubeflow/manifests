@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ml-pipeline-persistenceagent
-  namespace: kubeflow
+  namespace: kubeflow-system
 spec:
   template:
     spec:

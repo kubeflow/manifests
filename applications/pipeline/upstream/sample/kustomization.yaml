@@ -27,7 +27,7 @@ secretGenerator:
 
 # !!! If you want to customize the namespace,
 # please also update sample/cluster-scoped-resources/kustomization.yaml's namespace field to the same value
-namespace: kubeflow
+namespace: kubeflow-system
 
 # Identifier for application manager to apply ownerReference.
 # The ownerReference ensures the resources get garbage collected

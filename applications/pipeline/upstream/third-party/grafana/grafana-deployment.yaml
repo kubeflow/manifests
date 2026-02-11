@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: grafana
-  namespace: kubeflow
+  namespace: kubeflow-system
   labels:
     app: grafana
 spec:

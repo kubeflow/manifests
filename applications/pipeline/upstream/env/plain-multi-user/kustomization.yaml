@@ -13,7 +13,7 @@ resources:
 
 # !!! If you want to customize the namespace,
 # please also update base/cache-deployer/cluster-scoped/cache-deployer-clusterrolebinding.yaml
-namespace: kubeflow
+namespace: kubeflow-system
 
 # Identifier for application manager to apply ownerReference.
 # The ownerReference ensures the resources get garbage collected
