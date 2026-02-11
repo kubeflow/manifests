@@ -14,3 +14,9 @@ for ns in auth cert-manager istio-system knative-serving kubeflow-system oauth2-
   kubectl create namespace "$ns" --dry-run=client -o yaml | kubectl apply -f -
 done
 kustomize build common/networkpolicies/base | kubectl apply -f -
+kustomize build common/cert-manager/overlays/kubeflow | kubectl apply -f -
+kustomize build common/dex/overlays/kubeflow | kubectl apply -f -
+kustomize build common/istio/istio-namespace/overlays/kubeflow | kubectl apply -f -
+kustomize build common/knative/knative-serving/overlays/kubeflow | kubectl apply -f -
+kustomize build common/kubeflow-system-namespace/base | kubectl apply -f -
+kustomize build common/oauth2-proxy/overlays/kubeflow | kubectl apply -f -
