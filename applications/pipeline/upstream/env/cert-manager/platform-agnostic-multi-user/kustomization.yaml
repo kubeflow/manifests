@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
 - ../../platform-agnostic-multi-user
 - ../base
-namespace: kubeflow
+namespace: kubeflow-system
 
 # Pass proper arguments to cache-server to use cert-manager certificate
 patches:

@@ -7,7 +7,7 @@ resources:
 
 # !!! If you want to customize the namespace,
 # please refer sample/cluster-scoped-resources to update the namespace for cluster-scoped-resources
-namespace: kubeflow
+namespace: kubeflow-system
 
 patches:
 - patch: |-
@@ -15,7 +15,7 @@ patches:
     kind: Service
     metadata:
       name: ml-pipeline-ui
-      namespace: kubeflow
+      namespace: kubeflow-system
     spec:
       ports:
         - $patch: replace
@@ -30,7 +30,7 @@ patches:
     kind: Service
     metadata:
       name: mysql
-      namespace: kubeflow
+      namespace: kubeflow-system
     spec:
       ports:
         - $patch: replace
@@ -44,7 +44,7 @@ patches:
     kind: Service
     metadata:
       name: metadata-grpc-service
-      namespace: kubeflow
+      namespace: kubeflow-system
     spec:
       ports:
         - $patch: replace
@@ -58,7 +58,7 @@ patches:
     kind: Service
     metadata:
       name: minio-service
-      namespace: kubeflow
+      namespace: kubeflow-system
     spec:
       ports:
         - $patch: replace
@@ -72,7 +72,7 @@ patches:
     kind: Service
     metadata:
       name: ml-pipeline-visualizationserver
-      namespace: kubeflow
+      namespace: kubeflow-system
     spec:
       ports:
         - $patch: replace
@@ -86,7 +86,7 @@ patches:
     kind: Deployment
     metadata:
       name: ml-pipeline
-      namespace: kubeflow
+      namespace: kubeflow-system
     spec:
       replicas: 0
 - patch: |-
@@ -94,7 +94,7 @@ patches:
     kind: Deployment
     metadata:
       name: ml-pipeline-ui
-      namespace: kubeflow
+      namespace: kubeflow-system
     spec:
       template:
         spec:
@@ -112,7 +112,7 @@ patches:
     kind: Service
     metadata:
       name: ml-pipeline
-      namespace: kubeflow
+      namespace: kubeflow-system
     spec:
       clusterIP: None
       ports:
@@ -169,7 +169,7 @@ patches:
     kind: NetworkPolicy
     metadata:
       name: default-allow-same-namespace
-      namespace: kubeflow
+      namespace: kubeflow-system
     spec:
       podSelector: {}
       ingress:
@@ -196,7 +196,7 @@ patches:
     kind: NetworkPolicy
     metadata:
       name: seaweedfs
-      namespace: kubeflow
+      namespace: kubeflow-system
     spec:
       ingress:
       - from:

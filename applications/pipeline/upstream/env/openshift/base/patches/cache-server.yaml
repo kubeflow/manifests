@@ -2,6 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cache-server
-  namespace: kubeflow
+  namespace: kubeflow-system
 spec:
   replicas: 0

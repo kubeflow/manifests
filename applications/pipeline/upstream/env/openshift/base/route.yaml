@@ -2,7 +2,7 @@ kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
   name: ml-pipeline-ui
-  namespace: kubeflow
+  namespace: kubeflow-system
   labels:
     app: ml-pipeline-ui
 spec:
