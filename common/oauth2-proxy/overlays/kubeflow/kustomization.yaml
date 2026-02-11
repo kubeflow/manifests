@@ -1,0 +1,8 @@
+# Kubeflow-specific oauth2-proxy customizations
+# Includes: NetworkPolicy for oauth2-proxy namespace
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../m2m-dex-only
+  - default-allow-same-namespace-netpol.yaml
