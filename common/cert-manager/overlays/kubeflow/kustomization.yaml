@@ -1,0 +1,17 @@
+# Kubeflow-specific cert-manager customizations
+# Includes: kubeflow-issuer (self-signed cluster issuer) and NetworkPolicies
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+  - cluster-issuer.yaml
+  - cert-manager-webhook-netpol.yaml
+  - default-allow-same-namespace-netpol.yaml
+
+labels:
+  - includeSelectors: true
+    pairs:
+      app.kubernetes.io/component: cert-manager
+      app.kubernetes.io/name: cert-manager
+      kustomize.component: cert-manager
