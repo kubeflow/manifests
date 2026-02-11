@@ -19,4 +19,5 @@ patches:
 - path: patches/knative-serving-namespaced-view.yaml
 - path: patches/service-labels.yaml
 - path: patches/remove-gateway.yaml
-- path: patches/pdb.yaml
+- path: patches/pdb-activator.yaml
+- path: patches/pdb-webhook.yaml
