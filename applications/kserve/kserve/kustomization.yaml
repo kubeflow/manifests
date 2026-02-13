@@ -40,3 +40,156 @@ patches:
           securityContext:
             seccompProfile:
               type: RuntimeDefault
+
+# Security hardening: Delete the LLMInferenceServiceConfig ValidatingWebhookConfiguration
+# The webhook server for LLM resources won't be running, causing CI failures (EOF)
+# when it intercepts CREATE/UPDATE/DELETE operations.
+# Ref: https://github.com/kubeflow/manifests/issues/3290
+
+- patch: |
+     apiVersion: admissionregistration.k8s.io/v1
+     kind: ValidatingWebhookConfiguration
+     metadata:
+       name: llminferenceserviceconfig.serving.kserve.io
+     $patch: delete
+
+# Security hardening: Delete insecure LLMInferenceServiceConfig resources
+# These have dangerous capabilities (IPC_LOCK, SYS_RAWIO, NET_RAW),
+# runAsNonRoot: false, and readOnlyRootFilesystem: false
+#
+# Resources exist in two source files with different namespaces:
+#   kserve-cluster-resources.yaml -> namespace: kserve
+#   kserve_kubeflow.yaml          -> namespace: kubeflow
+# Both must be deleted.
+
+# --- namespace: kserve (from kserve-cluster-resources.yaml) ---
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-decode-template
+       namespace: kserve
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-decode-worker-data-parallel
+       namespace: kserve
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-worker-data-parallel
+       namespace: kserve
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-template
+       namespace: kserve
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-scheduler
+       namespace: kserve
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-router-route
+       namespace: kserve
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-prefill-template
+       namespace: kserve
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-prefill-worker-data-parallel
+       namespace: kserve
+     $patch: delete
+
+# --- namespace: kubeflow (from kserve_kubeflow.yaml) ---
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-decode-template
+       namespace: kubeflow
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-decode-worker-data-parallel
+       namespace: kubeflow
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-worker-data-parallel
+       namespace: kubeflow
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-template
+       namespace: kubeflow
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-scheduler
+       namespace: kubeflow
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-router-route
+       namespace: kubeflow
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-prefill-template
+       namespace: kubeflow
+     $patch: delete
+
+- patch: |
+     apiVersion: serving.kserve.io/v1alpha1
+     kind: LLMInferenceServiceConfig
+     metadata:
+       name: kserve-config-llm-prefill-worker-data-parallel
+       namespace: kubeflow
+     $patch: delete
