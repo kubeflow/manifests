@@ -1,0 +1,20 @@
+{{- if and .Values.certManager.enabled (eq .Values.installMode.pipelineDefinition.storage "k8s-native") }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kfp-api-webhook-cert
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+spec:
+  commonName: kfp-api-webhook-cert
+  isCA: true
+  dnsNames:
+  - ml-pipeline
+  - ml-pipeline.{{ include "kubeflow-pipelines.namespace" . }}
+  - ml-pipeline.{{ include "kubeflow-pipelines.namespace" . }}.svc
+  - ml-pipeline.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: kfp-api-webhook-selfsigned-issuer
+  secretName: kfp-api-webhook-cert
+{{- end }}
+

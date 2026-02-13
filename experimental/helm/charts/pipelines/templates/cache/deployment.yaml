@@ -1,0 +1,97 @@
+{{- if .Values.cache.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cache-server
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.cacheLabels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.cache.server.replicas }}
+  selector:
+    matchLabels:
+      {{- include "kubeflow-pipelines.cacheSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "kubeflow-pipelines.cacheLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: kubeflow-pipelines-cache
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: server
+        image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.cache.server.image.repository "tag" .Values.cache.server.image.tag "context" .) }}
+        imagePullPolicy: Always
+        args:
+        - "--db_driver=$(DBCONFIG_DRIVER)"
+        - "--db_host=$(DBCONFIG_HOST_NAME)"
+        - "--db_port=$(DBCONFIG_PORT)"
+        - "--db_name=$(DBCONFIG_DB_NAME)"
+        - "--db_user=$(DBCONFIG_USER)"
+        - "--db_password=$(DBCONFIG_PASSWORD)"
+        - "--namespace_to_watch=$(NAMESPACE_TO_WATCH)"
+        - "--listen_port=$(WEBHOOK_PORT)"
+        - "--tls_cert_filename=tls.crt"
+        - "--tls_key_filename=tls.key"
+        env:
+        {{- range .Values.cache.server.additionalEnv }}
+        - name: {{ .name }}
+          {{- if .value }}
+          value: {{ .value | quote }}
+          {{- else if .valueFrom }}
+          valueFrom:
+            {{- toYaml .valueFrom | nindent 12 }}
+          {{- else if and .secretName .secretKey }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .secretName }}
+              key: {{ .secretKey }}
+          {{- else if and .configMapName .configMapKey }}
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .configMapName }}
+              key: {{ .configMapKey }}
+          {{- else if and .key (ne .key "null") }}
+            {{- if or (eq .name "DBCONFIG_USER") (eq .name "DBCONFIG_PASSWORD") }}
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: {{ .key }}
+            {{- else }}
+          valueFrom:
+            configMapKeyRef:
+              name: pipeline-install-config
+              key: {{ .key }}
+            {{- end }}
+          {{- else if eq .name "NAMESPACE_TO_WATCH" }}
+            {{- if eq $.Values.installMode.type "multi-user" }}
+          value: ""
+            {{- else }}
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+            {{- end }}
+          {{- else if eq .name "DBCONFIG_DRIVER" }}
+          value: mysql
+          {{- else }}
+          value: ""
+          {{- end }}
+        {{- end }}
+        - name: WEBHOOK_PORT
+          value: "8443"
+        ports:
+        - name: webhook-api
+          containerPort: 8443
+        securityContext:
+          {{- toYaml .Values.cache.server.securityContext | nindent 10 }}
+        volumeMounts:
+        - name: webhook-tls-certs
+          mountPath: /etc/webhook/certs
+          readOnly: true
+      volumes:
+      - name: webhook-tls-certs
+        secret:
+          secretName: webhook-server-tls
+{{- end }}
