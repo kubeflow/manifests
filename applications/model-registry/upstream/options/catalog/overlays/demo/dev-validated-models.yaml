@@ -4,7 +4,7 @@ models:
     provider: Validation Authority
     logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQyIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzI3QUU2MDtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMjI5OTU0O3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHBhdGggZD0iTSA1MCAxMCBMIDgwIDMwIEwgODAgNzAgTCA1MCA5MCBMIDIwIDcwIEwgMjAgMzAgWiIgZmlsbD0idXJsKCNncmFkMikiIHN0cm9rZT0iIzFFODQ0OSIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHBhdGggZD0iTSAzNSA1MCBMIDQ1IDYwIEwgNjUgMzUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIi8+Cjwvc3ZnPgo=
     description: |-
-      (DEMO) Production-LLM-8B is an enterprise-validated 8 billion parameter language model that has
+      (DEMO) Production-LLM-8B is an enterprise-validated 8 billion parameter generative language model that has
       undergone rigorous testing for production deployment. Sed do eiusmod tempor incididunt
       ut labore et dolore magna aliqua.
     readme: |-
@@ -77,23 +77,415 @@ models:
       validated:
         string_value: ""
         metadataType: MetadataStringValue
+      model_type:
+        string_value: "generative"
+        metadataType: MetadataStringValue
     artifacts:
       - uri: oci://registry.example.com/certified/production-llm-8b:validated-v1.0
         createTimeSinceEpoch: "1737331200000"
         lastUpdateTimeSinceEpoch: "1737331200000"
         customProperties:
+          architecture:
+            metadataType: MetadataStringValue
+            string_value: '["amd64"]'
           validation_status:
             string_value: "certified"
             metadataType: MetadataStringValue
           validation_date:
             string_value: "2025-01-20"
             metadataType: MetadataStringValue
+      - artifactType: metrics-artifact
+        metricsType: performance-metrics
+        createTimeSinceEpoch: "1736899200000"
+        lastUpdateTimeSinceEpoch: "1736899200000"
+        customProperties:
+          config_id:
+            string_value: "prod-8b-h100-2gpu-chatbot"
+            metadataType: MetadataStringValue
+          scenario_id:
+            string_value: "prod-llm-8b-perf-1"
+            metadataType: MetadataStringValue
+          use_case:
+            string_value: "chatbot"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H100"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "2"
+            metadataType: MetadataIntValue
+          ttft_mean:
+            double_value: 85.2
+            metadataType: MetadataDoubleValue
+          ttft_p90:
+            double_value: 102.5
+            metadataType: MetadataDoubleValue
+          ttft_p95:
+            double_value: 108.3
+            metadataType: MetadataDoubleValue
+          ttft_p99:
+            double_value: 125.7
+            metadataType: MetadataDoubleValue
+          e2e_mean:
+            double_value: 6850.3
+            metadataType: MetadataDoubleValue
+          e2e_p90:
+            double_value: 9100.2
+            metadataType: MetadataDoubleValue
+          e2e_p95:
+            double_value: 9720.5
+            metadataType: MetadataDoubleValue
+          e2e_p99:
+            double_value: 10850.8
+            metadataType: MetadataDoubleValue
+          tps_mean:
+            double_value: 1105.4
+            metadataType: MetadataDoubleValue
+          tps_p90:
+            double_value: 2088.6
+            metadataType: MetadataDoubleValue
+          tps_p95:
+            double_value: 3125.2
+            metadataType: MetadataDoubleValue
+          tps_p99:
+            double_value: 7452.3
+            metadataType: MetadataDoubleValue
+          itl_mean:
+            double_value: 26.8
+            metadataType: MetadataDoubleValue
+          itl_p90:
+            double_value: 27.4
+            metadataType: MetadataDoubleValue
+          itl_p95:
+            double_value: 27.6
+            metadataType: MetadataDoubleValue
+          itl_p99:
+            double_value: 28.1
+            metadataType: MetadataDoubleValue
+          requests_per_second:
+            double_value: 4.0
+            metadataType: MetadataDoubleValue
+          mean_input_tokens:
+            double_value: 512.3
+            metadataType: MetadataDoubleValue
+          mean_output_tokens:
+            double_value: 256.1
+            metadataType: MetadataDoubleValue
+          framework_type:
+            string_value: "vllm"
+            metadataType: MetadataStringValue
+          framework_version:
+            string_value: "v0.8.4"
+            metadataType: MetadataStringValue
+          deployment_type:
+            string_value: "production"
+            metadataType: MetadataStringValue
+
+      - artifactType: metrics-artifact
+        metricsType: performance-metrics
+        createTimeSinceEpoch: "1736899200000"
+        lastUpdateTimeSinceEpoch: "1736899200000"
+        customProperties:
+          config_id:
+            string_value: "prod-8b-h100-2gpu-rag"
+            metadataType: MetadataStringValue
+          scenario_id:
+            string_value: "prod-llm-8b-perf-2"
+            metadataType: MetadataStringValue
+          use_case:
+            string_value: "rag"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H100"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "2"
+            metadataType: MetadataIntValue
+          ttft_mean:
+            double_value: 245.6
+            metadataType: MetadataDoubleValue
+          ttft_p90:
+            double_value: 285.3
+            metadataType: MetadataDoubleValue
+          ttft_p95:
+            double_value: 302.1
+            metadataType: MetadataDoubleValue
+          ttft_p99:
+            double_value: 325.4
+            metadataType: MetadataDoubleValue
+          e2e_mean:
+            double_value: 10250.7
+            metadataType: MetadataDoubleValue
+          e2e_p90:
+            double_value: 13680.4
+            metadataType: MetadataDoubleValue
+          e2e_p95:
+            double_value: 14520.8
+            metadataType: MetadataDoubleValue
+          e2e_p99:
+            double_value: 16100.2
+            metadataType: MetadataDoubleValue
+          tps_mean:
+            double_value: 485.2
+            metadataType: MetadataDoubleValue
+          tps_p90:
+            double_value: 902.5
+            metadataType: MetadataDoubleValue
+          tps_p95:
+            double_value: 1342.8
+            metadataType: MetadataDoubleValue
+          tps_p99:
+            double_value: 3185.6
+            metadataType: MetadataDoubleValue
+          itl_mean:
+            double_value: 20.5
+            metadataType: MetadataDoubleValue
+          itl_p90:
+            double_value: 21.2
+            metadataType: MetadataDoubleValue
+          itl_p95:
+            double_value: 21.4
+            metadataType: MetadataDoubleValue
+          itl_p99:
+            double_value: 21.9
+            metadataType: MetadataDoubleValue
+          requests_per_second:
+            double_value: 1.0
+            metadataType: MetadataDoubleValue
+          mean_input_tokens:
+            double_value: 4096.5
+            metadataType: MetadataDoubleValue
+          mean_output_tokens:
+            double_value: 512.2
+            metadataType: MetadataDoubleValue
+          framework_type:
+            string_value: "vllm"
+            metadataType: MetadataStringValue
+          framework_version:
+            string_value: "v0.8.4"
+            metadataType: MetadataStringValue
+          deployment_type:
+            string_value: "production"
+            metadataType: MetadataStringValue
+
+      - artifactType: metrics-artifact
+        metricsType: performance-metrics
+        createTimeSinceEpoch: "1736899200000"
+        lastUpdateTimeSinceEpoch: "1736899200000"
+        customProperties:
+          config_id:
+            string_value: "prod-8b-h200-1gpu-chatbot"
+            metadataType: MetadataStringValue
+          scenario_id:
+            string_value: "prod-llm-8b-perf-3"
+            metadataType: MetadataStringValue
+          use_case:
+            string_value: "chatbot"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H200"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "1"
+            metadataType: MetadataIntValue
+          ttft_mean:
+            double_value: 78.5
+            metadataType: MetadataDoubleValue
+          ttft_p90:
+            double_value: 94.2
+            metadataType: MetadataDoubleValue
+          ttft_p95:
+            double_value: 99.8
+            metadataType: MetadataDoubleValue
+          ttft_p99:
+            double_value: 115.3
+            metadataType: MetadataDoubleValue
+          e2e_mean:
+            double_value: 6240.5
+            metadataType: MetadataDoubleValue
+          e2e_p90:
+            double_value: 8320.8
+            metadataType: MetadataDoubleValue
+          e2e_p95:
+            double_value: 8890.2
+            metadataType: MetadataDoubleValue
+          e2e_p99:
+            double_value: 9920.5
+            metadataType: MetadataDoubleValue
+          tps_mean:
+            double_value: 1225.7
+            metadataType: MetadataDoubleValue
+          tps_p90:
+            double_value: 2312.4
+            metadataType: MetadataDoubleValue
+          tps_p95:
+            double_value: 3458.9
+            metadataType: MetadataDoubleValue
+          tps_p99:
+            double_value: 8245.6
+            metadataType: MetadataDoubleValue
+          itl_mean:
+            double_value: 24.3
+            metadataType: MetadataDoubleValue
+          itl_p90:
+            double_value: 24.9
+            metadataType: MetadataDoubleValue
+          itl_p95:
+            double_value: 25.1
+            metadataType: MetadataDoubleValue
+          itl_p99:
+            double_value: 25.6
+            metadataType: MetadataDoubleValue
+          requests_per_second:
+            double_value: 5.0
+            metadataType: MetadataDoubleValue
+          mean_input_tokens:
+            double_value: 512.1
+            metadataType: MetadataDoubleValue
+          mean_output_tokens:
+            double_value: 256.3
+            metadataType: MetadataDoubleValue
+          framework_type:
+            string_value: "vllm"
+            metadataType: MetadataStringValue
+          framework_version:
+            string_value: "v0.8.4"
+            metadataType: MetadataStringValue
+          deployment_type:
+            string_value: "production"
+            metadataType: MetadataStringValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1736899200000"
+        lastUpdateTimeSinceEpoch: "1736899200000"
+        customProperties:
+          benchmark:
+            string_value: "mmlu"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 75.8
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "accuracy_percent"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H100"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "2"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1736899200000"
+        lastUpdateTimeSinceEpoch: "1736899200000"
+        customProperties:
+          benchmark:
+            string_value: "hellaswag"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 68.5
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "accuracy_percent"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H100"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "2"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1736899200000"
+        lastUpdateTimeSinceEpoch: "1736899200000"
+        customProperties:
+          benchmark:
+            string_value: "arc"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 72.3
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "accuracy_percent"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H100"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "2"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1736899200000"
+        lastUpdateTimeSinceEpoch: "1736899200000"
+        customProperties:
+          benchmark:
+            string_value: "truthfulqa"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 65.8
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "accuracy_percent"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H100"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "2"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1736899200000"
+        lastUpdateTimeSinceEpoch: "1736899200000"
+        customProperties:
+          benchmark:
+            string_value: "winogrande"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 77.2
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "accuracy_percent"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H100"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "2"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1736899200000"
+        lastUpdateTimeSinceEpoch: "1736899200000"
+        customProperties:
+          benchmark:
+            string_value: "bbh"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 70.4
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "accuracy_percent"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H100"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "2"
+            metadataType: MetadataIntValue
 
   - name: certified/secure-embeddings-v2
     provider: Validation Authority
     logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQyIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzI3QUU2MDtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMjI5OTU0O3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHBhdGggZD0iTSA1MCAxMCBMIDgwIDMwIEwgODAgNzAgTCA1MCA5MCBMIDIwIDcwIEwgMjAgMzAgWiIgZmlsbD0idXJsKCNncmFkMikiIHN0cm9rZT0iIzFFODQ0OSIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHBhdGggZD0iTSAzNSA1MCBMIDQ1IDYwIEwgNjUgMzUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIi8+Cjwvc3ZnPgo=
     description: |-
-      (DEMO) Secure-Embeddings-V2 is a validated embedding model optimized for enterprise search
+      (DEMO) Secure-Embeddings-V2 is a validated predictive embedding model optimized for enterprise search
       and retrieval with enhanced security features. Nemo enim ipsam voluptatem quia
       voluptas sit aspernatur aut odit aut fugit.
     readme: |-
@@ -175,23 +567,307 @@ models:
       validated:
         string_value: ""
         metadataType: MetadataStringValue
+      model_type:
+        string_value: "predictive"
+        metadataType: MetadataStringValue
     artifacts:
       - uri: oci://registry.example.com/certified/secure-embeddings-v2:validated
         createTimeSinceEpoch: "1733356800000"
         lastUpdateTimeSinceEpoch: "1733356800000"
         customProperties:
+          architecture:
+            metadataType: MetadataStringValue
+            string_value: '["amd64", "arm64", "s390x", "ppc64le"]'
           security_certification:
             string_value: "passed"
             metadataType: MetadataStringValue
           compliance:
             string_value: "GDPR,CCPA,SOC2"
             metadataType: MetadataStringValue
+      - artifactType: metrics-artifact
+        metricsType: performance-metrics
+        createTimeSinceEpoch: "1726790400000"
+        lastUpdateTimeSinceEpoch: "1726790400000"
+        customProperties:
+          config_id:
+            string_value: "sec-emb-h200-1gpu-batch32"
+            metadataType: MetadataStringValue
+          scenario_id:
+            string_value: "sec-emb-v2-perf-1"
+            metadataType: MetadataStringValue
+          use_case:
+            string_value: "embedding"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H200"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "1"
+            metadataType: MetadataIntValue
+          ttft_mean:
+            double_value: 12.5
+            metadataType: MetadataDoubleValue
+          ttft_p90:
+            double_value: 15.2
+            metadataType: MetadataDoubleValue
+          ttft_p95:
+            double_value: 16.8
+            metadataType: MetadataDoubleValue
+          ttft_p99:
+            double_value: 19.4
+            metadataType: MetadataDoubleValue
+          e2e_mean:
+            double_value: 45.3
+            metadataType: MetadataDoubleValue
+          e2e_p90:
+            double_value: 52.8
+            metadataType: MetadataDoubleValue
+          e2e_p95:
+            double_value: 56.2
+            metadataType: MetadataDoubleValue
+          e2e_p99:
+            double_value: 62.5
+            metadataType: MetadataDoubleValue
+          tps_mean:
+            double_value: 8500.2
+            metadataType: MetadataDoubleValue
+          tps_p90:
+            double_value: 10200.5
+            metadataType: MetadataDoubleValue
+          tps_p95:
+            double_value: 11500.8
+            metadataType: MetadataDoubleValue
+          tps_p99:
+            double_value: 13200.4
+            metadataType: MetadataDoubleValue
+          itl_mean:
+            double_value: 1.4
+            metadataType: MetadataDoubleValue
+          itl_p90:
+            double_value: 1.6
+            metadataType: MetadataDoubleValue
+          itl_p95:
+            double_value: 1.7
+            metadataType: MetadataDoubleValue
+          itl_p99:
+            double_value: 1.9
+            metadataType: MetadataDoubleValue
+          requests_per_second:
+            double_value: 32.0
+            metadataType: MetadataDoubleValue
+          mean_input_tokens:
+            double_value: 128.0
+            metadataType: MetadataDoubleValue
+          mean_output_tokens:
+            double_value: 1024.0
+            metadataType: MetadataDoubleValue
+          framework_type:
+            string_value: "sentence-transformers"
+            metadataType: MetadataStringValue
+          framework_version:
+            string_value: "v2.3.1"
+            metadataType: MetadataStringValue
+          deployment_type:
+            string_value: "production"
+            metadataType: MetadataStringValue
+
+      - artifactType: metrics-artifact
+        metricsType: performance-metrics
+        createTimeSinceEpoch: "1726790400000"
+        lastUpdateTimeSinceEpoch: "1726790400000"
+        customProperties:
+          config_id:
+            string_value: "sec-emb-a100-1gpu-batch64"
+            metadataType: MetadataStringValue
+          scenario_id:
+            string_value: "sec-emb-v2-perf-2"
+            metadataType: MetadataStringValue
+          use_case:
+            string_value: "embedding"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "A100-80"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "1"
+            metadataType: MetadataIntValue
+          ttft_mean:
+            double_value: 18.7
+            metadataType: MetadataDoubleValue
+          ttft_p90:
+            double_value: 22.4
+            metadataType: MetadataDoubleValue
+          ttft_p95:
+            double_value: 24.6
+            metadataType: MetadataDoubleValue
+          ttft_p99:
+            double_value: 28.2
+            metadataType: MetadataDoubleValue
+          e2e_mean:
+            double_value: 72.8
+            metadataType: MetadataDoubleValue
+          e2e_p90:
+            double_value: 84.5
+            metadataType: MetadataDoubleValue
+          e2e_p95:
+            double_value: 89.6
+            metadataType: MetadataDoubleValue
+          e2e_p99:
+            double_value: 98.3
+            metadataType: MetadataDoubleValue
+          tps_mean:
+            double_value: 7200.5
+            metadataType: MetadataDoubleValue
+          tps_p90:
+            double_value: 8650.2
+            metadataType: MetadataDoubleValue
+          tps_p95:
+            double_value: 9750.8
+            metadataType: MetadataDoubleValue
+          tps_p99:
+            double_value: 11200.3
+            metadataType: MetadataDoubleValue
+          itl_mean:
+            double_value: 1.1
+            metadataType: MetadataDoubleValue
+          itl_p90:
+            double_value: 1.3
+            metadataType: MetadataDoubleValue
+          itl_p95:
+            double_value: 1.4
+            metadataType: MetadataDoubleValue
+          itl_p99:
+            double_value: 1.6
+            metadataType: MetadataDoubleValue
+          requests_per_second:
+            double_value: 64.0
+            metadataType: MetadataDoubleValue
+          mean_input_tokens:
+            double_value: 128.0
+            metadataType: MetadataDoubleValue
+          mean_output_tokens:
+            double_value: 1024.0
+            metadataType: MetadataDoubleValue
+          framework_type:
+            string_value: "sentence-transformers"
+            metadataType: MetadataStringValue
+          framework_version:
+            string_value: "v2.3.1"
+            metadataType: MetadataStringValue
+          deployment_type:
+            string_value: "production"
+            metadataType: MetadataStringValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1726790400000"
+        lastUpdateTimeSinceEpoch: "1726790400000"
+        customProperties:
+          benchmark:
+            string_value: "mteb_retrieval"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 88.4
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "ndcg@10"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H200"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "1"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1726790400000"
+        lastUpdateTimeSinceEpoch: "1726790400000"
+        customProperties:
+          benchmark:
+            string_value: "mteb_classification"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 85.2
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "accuracy_percent"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H200"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "1"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1726790400000"
+        lastUpdateTimeSinceEpoch: "1726790400000"
+        customProperties:
+          benchmark:
+            string_value: "mteb_clustering"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 82.6
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "v_measure"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H200"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "1"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1726790400000"
+        lastUpdateTimeSinceEpoch: "1726790400000"
+        customProperties:
+          benchmark:
+            string_value: "mteb_sts"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 90.1
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "spearman_correlation"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H200"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "1"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1726790400000"
+        lastUpdateTimeSinceEpoch: "1726790400000"
+        customProperties:
+          benchmark:
+            string_value: "beir_avg"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 87.3
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "ndcg@10"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H200"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "1"
+            metadataType: MetadataIntValue
 
   - name: certified/analytics-forecaster-5b
     provider: Validation Authority
     logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQyIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzI3QUU2MDtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMjI5OTU0O3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHBhdGggZD0iTSA1MCAxMCBMIDgwIDMwIEwgODAgNzAgTCA1MCA5MCBMIDIwIDcwIEwgMjAgMzAgWiIgZmlsbD0idXJsKCNncmFkMikiIHN0cm9rZT0iIzFFODQ0OSIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHBhdGggZD0iTSAzNSA1MCBMIDQ1IDYwIEwgNjUgMzUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIi8+Cjwvc3ZnPgo=
     description: |-
-      (DEMO) Analytics-Forecaster-5B is a specialized 5 billion parameter model validated for
+      (DEMO) Analytics-Forecaster-5B is a specialized 5 billion parameter predictive model validated for
       business analytics, time-series forecasting, and data insights generation. Quis autem
       vel eum iure reprehenderit qui in ea voluptate velit.
     readme: |-
@@ -270,23 +946,307 @@ models:
       validated:
         string_value: ""
         metadataType: MetadataStringValue
+      model_type:
+        string_value: "predictive"
+        metadataType: MetadataStringValue
     artifacts:
       - uri: oci://registry.example.com/certified/analytics-forecaster-5b:v2.0-validated
         createTimeSinceEpoch: "1731888000000"
         lastUpdateTimeSinceEpoch: "1731888000000"
         customProperties:
+          architecture:
+            metadataType: MetadataStringValue
+            string_value: '["amd64", "arm64"]'
           validation_type:
             string_value: "analytics"
             metadataType: MetadataStringValue
           accuracy_score:
             string_value: "92.4"
             metadataType: MetadataStringValue
+      - artifactType: metrics-artifact
+        metricsType: performance-metrics
+        createTimeSinceEpoch: "1720656000000"
+        lastUpdateTimeSinceEpoch: "1720656000000"
+        customProperties:
+          config_id:
+            string_value: "analytics-5b-a100-2gpu-forecasting"
+            metadataType: MetadataStringValue
+          scenario_id:
+            string_value: "analytics-5b-perf-1"
+            metadataType: MetadataStringValue
+          use_case:
+            string_value: "time_series_forecasting"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "A100-80"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "2"
+            metadataType: MetadataIntValue
+          ttft_mean:
+            double_value: 95.3
+            metadataType: MetadataDoubleValue
+          ttft_p90:
+            double_value: 115.8
+            metadataType: MetadataDoubleValue
+          ttft_p95:
+            double_value: 122.4
+            metadataType: MetadataDoubleValue
+          ttft_p99:
+            double_value: 138.6
+            metadataType: MetadataDoubleValue
+          e2e_mean:
+            double_value: 7420.5
+            metadataType: MetadataDoubleValue
+          e2e_p90:
+            double_value: 9850.2
+            metadataType: MetadataDoubleValue
+          e2e_p95:
+            double_value: 10520.8
+            metadataType: MetadataDoubleValue
+          e2e_p99:
+            double_value: 11750.4
+            metadataType: MetadataDoubleValue
+          tps_mean:
+            double_value: 945.3
+            metadataType: MetadataDoubleValue
+          tps_p90:
+            double_value: 1785.6
+            metadataType: MetadataDoubleValue
+          tps_p95:
+            double_value: 2668.2
+            metadataType: MetadataDoubleValue
+          tps_p99:
+            double_value: 6358.5
+            metadataType: MetadataDoubleValue
+          itl_mean:
+            double_value: 28.9
+            metadataType: MetadataDoubleValue
+          itl_p90:
+            double_value: 29.6
+            metadataType: MetadataDoubleValue
+          itl_p95:
+            double_value: 29.8
+            metadataType: MetadataDoubleValue
+          itl_p99:
+            double_value: 30.4
+            metadataType: MetadataDoubleValue
+          requests_per_second:
+            double_value: 3.0
+            metadataType: MetadataDoubleValue
+          mean_input_tokens:
+            double_value: 1024.0
+            metadataType: MetadataDoubleValue
+          mean_output_tokens:
+            double_value: 512.0
+            metadataType: MetadataDoubleValue
+          framework_type:
+            string_value: "pytorch"
+            metadataType: MetadataStringValue
+          framework_version:
+            string_value: "v2.1.0"
+            metadataType: MetadataStringValue
+          deployment_type:
+            string_value: "production"
+            metadataType: MetadataStringValue
+
+      - artifactType: metrics-artifact
+        metricsType: performance-metrics
+        createTimeSinceEpoch: "1720656000000"
+        lastUpdateTimeSinceEpoch: "1720656000000"
+        customProperties:
+          config_id:
+            string_value: "analytics-5b-h100-2gpu-analytics"
+            metadataType: MetadataStringValue
+          scenario_id:
+            string_value: "analytics-5b-perf-2"
+            metadataType: MetadataStringValue
+          use_case:
+            string_value: "business_analytics"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H100"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "2"
+            metadataType: MetadataIntValue
+          ttft_mean:
+            double_value: 82.4
+            metadataType: MetadataDoubleValue
+          ttft_p90:
+            double_value: 100.2
+            metadataType: MetadataDoubleValue
+          ttft_p95:
+            double_value: 106.8
+            metadataType: MetadataDoubleValue
+          ttft_p99:
+            double_value: 121.5
+            metadataType: MetadataDoubleValue
+          e2e_mean:
+            double_value: 6850.3
+            metadataType: MetadataDoubleValue
+          e2e_p90:
+            double_value: 9100.5
+            metadataType: MetadataDoubleValue
+          e2e_p95:
+            double_value: 9720.2
+            metadataType: MetadataDoubleValue
+          e2e_p99:
+            double_value: 10850.8
+            metadataType: MetadataDoubleValue
+          tps_mean:
+            double_value: 1085.6
+            metadataType: MetadataDoubleValue
+          tps_p90:
+            double_value: 2048.3
+            metadataType: MetadataDoubleValue
+          tps_p95:
+            double_value: 3062.5
+            metadataType: MetadataDoubleValue
+          tps_p99:
+            double_value: 7305.2
+            metadataType: MetadataDoubleValue
+          itl_mean:
+            double_value: 26.6
+            metadataType: MetadataDoubleValue
+          itl_p90:
+            double_value: 27.2
+            metadataType: MetadataDoubleValue
+          itl_p95:
+            double_value: 27.5
+            metadataType: MetadataDoubleValue
+          itl_p99:
+            double_value: 28.0
+            metadataType: MetadataDoubleValue
+          requests_per_second:
+            double_value: 4.0
+            metadataType: MetadataDoubleValue
+          mean_input_tokens:
+            double_value: 2048.0
+            metadataType: MetadataDoubleValue
+          mean_output_tokens:
+            double_value: 1024.0
+            metadataType: MetadataDoubleValue
+          framework_type:
+            string_value: "pytorch"
+            metadataType: MetadataStringValue
+          framework_version:
+            string_value: "v2.1.0"
+            metadataType: MetadataStringValue
+          deployment_type:
+            string_value: "production"
+            metadataType: MetadataStringValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1720656000000"
+        lastUpdateTimeSinceEpoch: "1720656000000"
+        customProperties:
+          benchmark:
+            string_value: "smape"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 92.4
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "accuracy_percent"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "A100-80"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "2"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1720656000000"
+        lastUpdateTimeSinceEpoch: "1720656000000"
+        customProperties:
+          benchmark:
+            string_value: "mase"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 0.82
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "error_ratio"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "A100-80"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "2"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1720656000000"
+        lastUpdateTimeSinceEpoch: "1720656000000"
+        customProperties:
+          benchmark:
+            string_value: "rmse"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 15.3
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "root_mean_squared_error"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "A100-80"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "2"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1720656000000"
+        lastUpdateTimeSinceEpoch: "1720656000000"
+        customProperties:
+          benchmark:
+            string_value: "mae"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 11.8
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "mean_absolute_error"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "A100-80"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "2"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1720656000000"
+        lastUpdateTimeSinceEpoch: "1720656000000"
+        customProperties:
+          benchmark:
+            string_value: "mape"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 8.5
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "mean_absolute_percentage_error"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "A100-80"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "2"
+            metadataType: MetadataIntValue
 
   - name: certified/compliance-assistant-3b
     provider: Validation Authority
     logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQyIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzI3QUU2MDtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMjI5OTU0O3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHBhdGggZD0iTSA1MCAxMCBMIDgwIDMwIEwgODAgNzAgTCA1MCA5MCBMIDIwIDcwIEwgMjAgMzAgWiIgZmlsbD0idXJsKCNncmFkMikiIHN0cm9rZT0iIzFFODQ0OSIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHBhdGggZD0iTSAzNSA1MCBMIDQ1IDYwIEwgNjUgMzUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIi8+Cjwvc3ZnPgo=
     description: |-
-      (DEMO) Compliance-Assistant-3B is a lightweight 3 billion parameter model validated for
+      (DEMO) Compliance-Assistant-3B is a lightweight 3 billion parameter generative model validated for
       regulatory compliance checking, policy interpretation, and audit assistance. Omnis
       voluptas assumenda est, omnis dolor repellendus.
     readme: |-
@@ -369,14 +1329,323 @@ models:
       validated:
         string_value: ""
         metadataType: MetadataStringValue
+      model_type:
+        string_value: "generative"
+        metadataType: MetadataStringValue
     artifacts:
       - uri: oci://registry.example.com/certified/compliance-assistant-3b:validated-v1.1
         createTimeSinceEpoch: "1738022400000"
         lastUpdateTimeSinceEpoch: "1738022400000"
         customProperties:
+          architecture:
+            metadataType: MetadataStringValue
+            string_value: '["amd64", "arm64", "s390x"]'
           compliance_domains:
             string_value: "GDPR,HIPAA,SOX,CCPA"
             metadataType: MetadataStringValue
           last_regulatory_update:
             string_value: "2025-01-28"
             metadataType: MetadataStringValue
+      - artifactType: metrics-artifact
+        metricsType: performance-metrics
+        createTimeSinceEpoch: "1724889600000"
+        lastUpdateTimeSinceEpoch: "1724889600000"
+        customProperties:
+          config_id:
+            string_value: "compliance-3b-a100-1gpu-chatbot"
+            metadataType: MetadataStringValue
+          scenario_id:
+            string_value: "compliance-3b-perf-1"
+            metadataType: MetadataStringValue
+          use_case:
+            string_value: "compliance_checking"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "A100-40"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "1"
+            metadataType: MetadataIntValue
+          ttft_mean:
+            double_value: 62.5
+            metadataType: MetadataDoubleValue
+          ttft_p90:
+            double_value: 75.8
+            metadataType: MetadataDoubleValue
+          ttft_p95:
+            double_value: 80.2
+            metadataType: MetadataDoubleValue
+          ttft_p99:
+            double_value: 92.4
+            metadataType: MetadataDoubleValue
+          e2e_mean:
+            double_value: 4850.3
+            metadataType: MetadataDoubleValue
+          e2e_p90:
+            double_value: 6450.8
+            metadataType: MetadataDoubleValue
+          e2e_p95:
+            double_value: 6890.2
+            metadataType: MetadataDoubleValue
+          e2e_p99:
+            double_value: 7680.5
+            metadataType: MetadataDoubleValue
+          tps_mean:
+            double_value: 1520.8
+            metadataType: MetadataDoubleValue
+          tps_p90:
+            double_value: 2870.4
+            metadataType: MetadataDoubleValue
+          tps_p95:
+            double_value: 4292.6
+            metadataType: MetadataDoubleValue
+          tps_p99:
+            double_value: 10254.3
+            metadataType: MetadataDoubleValue
+          itl_mean:
+            double_value: 18.9
+            metadataType: MetadataDoubleValue
+          itl_p90:
+            double_value: 19.4
+            metadataType: MetadataDoubleValue
+          itl_p95:
+            double_value: 19.6
+            metadataType: MetadataDoubleValue
+          itl_p99:
+            double_value: 20.1
+            metadataType: MetadataDoubleValue
+          requests_per_second:
+            double_value: 6.0
+            metadataType: MetadataDoubleValue
+          mean_input_tokens:
+            double_value: 512.0
+            metadataType: MetadataDoubleValue
+          mean_output_tokens:
+            double_value: 256.0
+            metadataType: MetadataDoubleValue
+          framework_type:
+            string_value: "vllm"
+            metadataType: MetadataStringValue
+          framework_version:
+            string_value: "v0.8.4"
+            metadataType: MetadataStringValue
+          deployment_type:
+            string_value: "production"
+            metadataType: MetadataStringValue
+
+      - artifactType: metrics-artifact
+        metricsType: performance-metrics
+        createTimeSinceEpoch: "1724889600000"
+        lastUpdateTimeSinceEpoch: "1724889600000"
+        customProperties:
+          config_id:
+            string_value: "compliance-3b-h200-1gpu-policy"
+            metadataType: MetadataStringValue
+          scenario_id:
+            string_value: "compliance-3b-perf-2"
+            metadataType: MetadataStringValue
+          use_case:
+            string_value: "policy_interpretation"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "H200"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "1"
+            metadataType: MetadataIntValue
+          ttft_mean:
+            double_value: 55.3
+            metadataType: MetadataDoubleValue
+          ttft_p90:
+            double_value: 67.2
+            metadataType: MetadataDoubleValue
+          ttft_p95:
+            double_value: 71.5
+            metadataType: MetadataDoubleValue
+          ttft_p99:
+            double_value: 82.8
+            metadataType: MetadataDoubleValue
+          e2e_mean:
+            double_value: 4320.5
+            metadataType: MetadataDoubleValue
+          e2e_p90:
+            double_value: 5750.2
+            metadataType: MetadataDoubleValue
+          e2e_p95:
+            double_value: 6145.8
+            metadataType: MetadataDoubleValue
+          e2e_p99:
+            double_value: 6850.4
+            metadataType: MetadataDoubleValue
+          tps_mean:
+            double_value: 1685.4
+            metadataType: MetadataDoubleValue
+          tps_p90:
+            double_value: 3182.5
+            metadataType: MetadataDoubleValue
+          tps_p95:
+            double_value: 4758.2
+            metadataType: MetadataDoubleValue
+          tps_p99:
+            double_value: 11358.6
+            metadataType: MetadataDoubleValue
+          itl_mean:
+            double_value: 16.8
+            metadataType: MetadataDoubleValue
+          itl_p90:
+            double_value: 17.2
+            metadataType: MetadataDoubleValue
+          itl_p95:
+            double_value: 17.4
+            metadataType: MetadataDoubleValue
+          itl_p99:
+            double_value: 17.9
+            metadataType: MetadataDoubleValue
+          requests_per_second:
+            double_value: 8.0
+            metadataType: MetadataDoubleValue
+          mean_input_tokens:
+            double_value: 1024.0
+            metadataType: MetadataDoubleValue
+          mean_output_tokens:
+            double_value: 512.0
+            metadataType: MetadataDoubleValue
+          framework_type:
+            string_value: "vllm"
+            metadataType: MetadataStringValue
+          framework_version:
+            string_value: "v0.8.4"
+            metadataType: MetadataStringValue
+          deployment_type:
+            string_value: "production"
+            metadataType: MetadataStringValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1724889600000"
+        lastUpdateTimeSinceEpoch: "1724889600000"
+        customProperties:
+          benchmark:
+            string_value: "legal_qa"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 82.5
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "accuracy_percent"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "A100-40"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "1"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1724889600000"
+        lastUpdateTimeSinceEpoch: "1724889600000"
+        customProperties:
+          benchmark:
+            string_value: "policy_classification"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 88.3
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "f1_score"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "A100-40"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "1"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1724889600000"
+        lastUpdateTimeSinceEpoch: "1724889600000"
+        customProperties:
+          benchmark:
+            string_value: "regulatory_extraction"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 85.7
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "precision"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "A100-40"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "1"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1724889600000"
+        lastUpdateTimeSinceEpoch: "1724889600000"
+        customProperties:
+          benchmark:
+            string_value: "compliance_detection"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 91.2
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "recall"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "A100-40"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "1"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1724889600000"
+        lastUpdateTimeSinceEpoch: "1724889600000"
+        customProperties:
+          benchmark:
+            string_value: "gdpr_adherence"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 94.8
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "compliance_score"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "A100-40"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "1"
+            metadataType: MetadataIntValue
+
+      - artifactType: metrics-artifact
+        metricsType: accuracy-metrics
+        createTimeSinceEpoch: "1724889600000"
+        lastUpdateTimeSinceEpoch: "1724889600000"
+        customProperties:
+          benchmark:
+            string_value: "sox_compliance"
+            metadataType: MetadataStringValue
+          score:
+            double_value: 92.4
+            metadataType: MetadataDoubleValue
+          score_metric:
+            string_value: "compliance_score"
+            metadataType: MetadataStringValue
+          hardware_type:
+            string_value: "A100-40"
+            metadataType: MetadataStringValue
+          hardware_count:
+            int_value: "1"
+            metadataType: MetadataIntValue
+
+
+
+

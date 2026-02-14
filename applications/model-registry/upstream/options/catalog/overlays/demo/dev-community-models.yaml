@@ -31,10 +31,18 @@ models:
       - text-generation
     createTimeSinceEpoch: "1728086400000"
     lastUpdateTimeSinceEpoch: "1728086400000"
+    customProperties:
+      model_type:
+        string_value: "generative"
+        metadataType: MetadataStringValue
     artifacts:
       - uri: oci://registry.example.com/open-models/falcon-mini-2b:v1.0
         createTimeSinceEpoch: "1728086400000"
         lastUpdateTimeSinceEpoch: "1728086400000"
+        customProperties:
+          architecture:
+            metadataType: MetadataStringValue
+            string_value: '["amd64", "arm64", "s390x", "ppc64le"]'
 
   - name: quantum-research/sentiment-analyzer-base
     provider: Quantum Research Labs
@@ -68,10 +76,18 @@ models:
       - sentiment-analysis
     createTimeSinceEpoch: "1726790400000"
     lastUpdateTimeSinceEpoch: "1726790400000"
+    customProperties:
+      model_type:
+        string_value: "predictive"
+        metadataType: MetadataStringValue
     artifacts:
       - uri: oci://registry.example.com/quantum-research/sentiment-analyzer:v2.0
         createTimeSinceEpoch: "1726790400000"
         lastUpdateTimeSinceEpoch: "1726790400000"
+        customProperties:
+          architecture:
+            metadataType: MetadataStringValue
+            string_value: '["amd64"]'
 
   - name: indie-ai/creative-writer-3b
     provider: Indie AI Collective
@@ -107,10 +123,18 @@ models:
       - text-generation
     createTimeSinceEpoch: "1723420800000"
     lastUpdateTimeSinceEpoch: "1723420800000"
+    customProperties:
+      model_type:
+        string_value: "generative"
+        metadataType: MetadataStringValue
     artifacts:
       - uri: oci://registry.example.com/indie-ai/creative-writer-3b:experimental
         createTimeSinceEpoch: "1723420800000"
         lastUpdateTimeSinceEpoch: "1723420800000"
+        customProperties:
+          architecture:
+            metadataType: MetadataStringValue
+            string_value: '["arm64"]'
 
   - name: alpha-labs/translation-mini-1b
     provider: Alpha Translation Labs
@@ -149,7 +173,15 @@ models:
       - translation
     createTimeSinceEpoch: "1722297600000"
     lastUpdateTimeSinceEpoch: "1722297600000"
+    customProperties:
+      model_type:
+        string_value: "generative"
+        metadataType: MetadataStringValue
     artifacts:
       - uri: oci://registry.example.com/alpha-labs/translation-mini-1b:v1.5
         createTimeSinceEpoch: "1722297600000"
         lastUpdateTimeSinceEpoch: "1722297600000"
+        customProperties:
+          architecture:
+            metadataType: MetadataStringValue
+            string_value: '["amd64", "arm64"]'

@@ -1,0 +1,9 @@
+# Disabled catalog for testing disabled source behavior
+source: Disabled Catalog
+models:
+  - name: disabled-model-1
+    description: This model should not appear in results
+
+  - name: disabled-model-2
+    description: Another model that should be excluded
+

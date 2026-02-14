@@ -1,0 +1,25 @@
+catalogs:
+  # Main test catalog with models for all test scenarios
+  - name: Test Catalog
+    id: test_catalog
+    type: yaml
+    enabled: true
+    properties:
+      yamlCatalogPath: /testdata/test-catalog.yaml
+
+  # Disabled catalog for testing disabled source behavior
+  - name: Disabled Catalog
+    id: disabled_catalog
+    type: yaml
+    enabled: false
+    properties:
+      yamlCatalogPath: /testdata/disabled-catalog.yaml
+
+  # Error catalog for testing error status behavior
+  - name: Error Catalog
+    id: error_catalog
+    type: yaml
+    enabled: true
+    properties:
+      yamlCatalogPath: /testdata/nonexistent-catalog.yaml
+
