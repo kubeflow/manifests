@@ -5,4 +5,4 @@ kind: Kustomization
 
 resources:
   - ../oauth2-proxy
-  - default-allow-same-namespace-netpol.yaml
+  - default-allow-same-namespace.yaml

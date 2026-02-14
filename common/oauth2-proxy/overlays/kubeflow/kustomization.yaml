@@ -5,4 +5,4 @@ kind: Kustomization
 
 resources:
   - ../m2m-dex-only
-  - default-allow-same-namespace-netpol.yaml
+  - default-allow-same-namespace.yaml
