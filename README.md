@@ -217,8 +217,7 @@ Cert-manager is used by many Kubeflow components to provide certificates for adm
 Install cert-manager:
 
 ```sh
-kustomize build common/cert-manager/base | kubectl apply -f -
-kustomize build common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
+kustomize build common/cert-manager/overlays/kubeflow | kubectl apply -f -
 echo "Waiting for cert-manager to be ready ..."
 kubectl wait --for=condition=Ready pod -l 'app in (cert-manager,webhook)' --timeout=180s -n cert-manager
 kubectl wait --for=jsonpath='{.subsets[0].addresses[0].targetRef.kind}'=Pod endpoints -l 'app in (cert-manager,webhook)' --timeout=180s -n cert-manager

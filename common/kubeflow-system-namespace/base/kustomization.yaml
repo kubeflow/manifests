@@ -2,6 +2,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - jobset-webhook-netpol.yaml
-  - trainer-webhook-netpol.yaml
-  - default-allow-same-namespace-netpol.yaml
+  - jobset-webhook.yaml
+  - trainer-webhook.yaml
+  - default-allow-same-namespace.yaml

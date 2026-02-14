@@ -5,4 +5,4 @@ kind: Kustomization
 
 resources:
   - ../../base
-  - default-allow-same-namespace-netpol.yaml
+  - default-allow-same-namespace.yaml
