@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+KIND_VERSION="v0.30.0"
+KUSTOMIZE_VERSION="v5.7.1"
+
 error_exit() {
     echo "Error occurred in script at line: ${1}."
     exit 1
@@ -20,9 +23,14 @@ if [ -e /swapfile ]; then
 fi
 
 {
-    curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.30.0/kind-linux-amd64
-    chmod +x ./kind
-    sudo mv kind /usr/local/bin
+    curl -Lo ./kind-linux-amd64 https://kind.sigs.k8s.io/dl/$KIND_VERSION/kind-linux-amd64
+    curl -Lo ./kind-linux-amd64.sha256sum https://kind.sigs.k8s.io/dl/$KIND_VERSION/kind-linux-amd64.sha256sum
+    if ! sha256sum --check kind-linux-amd64.sha256sum; then
+       echo "Failed to verify KinD checksums"
+       exit 1
+    fi
+    chmod +x ./kind-linux-amd64
+    sudo mv kind-linux-amd64 /usr/local/bin/kind
 } || { echo "Failed to install KinD"; exit 1; }
 
 
@@ -60,8 +68,13 @@ kubectl cluster-info
 
 echo "Install Kustomize ..."
 {
-    curl --silent --location --remote-name "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.7.1/kustomize_v5.7.1_linux_amd64.tar.gz"
-    tar -xzvf kustomize_v5.7.1_linux_amd64.tar.gz
+    curl --silent --location --remote-name "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz"
+    curl --silent --location "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VERSION}/checksums.txt" | grep "linux_amd64" > checksums.txt
+    if ! sha256sum --check checksums.txt; then
+       echo "Failed to verify Kustomize checksums"
+       exit 1
+    fi
+    tar -xzvf "kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz"
     chmod a+x kustomize
     sudo mv kustomize /usr/local/bin/kustomize
 } || { echo "Failed to install Kustomize"; exit 1; }
