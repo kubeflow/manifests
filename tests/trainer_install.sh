@@ -18,7 +18,9 @@ kubectl apply -f upstream/overlays/kubeflow-platform/kubeflow-trainer-roles.yaml
 
 cd -
 
-kustomize build common/kubeflow-system-namespace/base | kubectl apply -f -
+kubectl apply -f common/kubeflow-system-namespace/base/trainer-webhook.yaml
+kubectl apply -f common/kubeflow-system-namespace/base/default-allow-same-namespace.yaml
+kubectl apply -f common/kubeflow-system-namespace/base/jobset-webhook.yaml
 
 kubectl get deployment -n kubeflow-system kubeflow-trainer-controller-manager
 kubectl get pods -n kubeflow-system -l app.kubernetes.io/name=trainer

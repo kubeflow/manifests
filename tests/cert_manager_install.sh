@@ -5,7 +5,7 @@ cd common/cert-manager
 kubectl create namespace cert-manager || true
 kustomize build base | kubectl apply -f -
 echo "Waiting for cert-manager-webhook to be ready ..."
-kubectl wait --for=condition=Ready pod -l 'app.kubernetes.io/component=webhook' --timeout=180s -n cert-manager
+kubectl wait --for=condition=Ready pod -l 'app=webhook' --timeout=180s -n cert-manager
 kustomize build overlays/kubeflow | kubectl apply -f -
 
 echo "Waiting for all cert-manager components to be ready ..."
