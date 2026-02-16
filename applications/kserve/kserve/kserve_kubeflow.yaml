@@ -32679,7 +32679,20 @@ data:
           "memoryRequest": "2Gi"
         }
     }
-  ingress: "{\n  \"enableGatewayApi\": false,\n  \"kserveIngressGateway\": \"kserve/kserve-ingress-gateway\",\n  \"ingressGateway\": \"kubeflow/kubeflow-gateway\",\n  \"localGateway\": \"knative-serving/knative-local-gateway\",\n  \"localGatewayService\": \"knative-local-gateway.istio-system.svc.cluster.local\",\n  \"ingressDomain\": \"example.com\",\n  \"ingressClassName\": \"istio\",\n  \"domainTemplate\": \"{{ .Name }}-{{ .Namespace }}.{{ .IngressDomain }}\",\n  \"urlScheme\": \"http\",\n  \"disableIstioVirtualHost\": false,\n  \"disableIngressCreation\": false\n}"
+  ingress: |-
+    {
+        "enableGatewayApi": false,
+        "kserveIngressGateway": "kserve/kserve-ingress-gateway",
+        "ingressGateway": "kubeflow/kubeflow-gateway",
+        "localGateway": "knative-serving/knative-local-gateway",
+        "localGatewayService": "knative-local-gateway.istio-system.svc.cluster.local",
+        "ingressDomain": "example.com",
+        "ingressClassName": "istio",
+        "domainTemplate": "{{ .Name }}-{{ .Namespace }}.{{ .IngressDomain }}",
+        "urlScheme": "http",
+        "disableIstioVirtualHost": false,
+        "disableIngressCreation": false
+    }
   localModel: |-
     {
       "enabled": false,
