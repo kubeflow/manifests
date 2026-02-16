@@ -15,7 +15,6 @@ import json
 import logging
 import os
 import time
-from urllib.parse import urlparse
 
 import requests
 from kubernetes import client
@@ -91,9 +90,7 @@ def predict_str(
     # temporary sleep until this is fixed https://github.com/kserve/kserve/issues/604
     time.sleep(10)
     cluster_ip = get_cluster_ip()
-    host = f"{service_name}.{KSERVE_TEST_NAMESPACE}.example.com"
     headers = {
-        "Host": host,
         "Content-Type": "application/json",
     }
 
@@ -107,9 +104,10 @@ def predict_str(
     if model_name is None:
         model_name = service_name
 
-    url = f"http://{cluster_ip}/v1/models/{model_name}:predict"
+    # Use path-based routing via the pathTemplate configured in KServe ingress config
+    url = f"http://{cluster_ip}/serving/{KSERVE_TEST_NAMESPACE}/{service_name}/v1/models/{model_name}:predict"
     if protocol_version == "v2":
-        url = f"http://{cluster_ip}/v2/models/{model_name}/infer"
+        url = f"http://{cluster_ip}/serving/{KSERVE_TEST_NAMESPACE}/{service_name}/v2/models/{model_name}/infer"
 
     logging.info("Sending Header = %s", headers)
     logging.info("Sending url = %s", url)

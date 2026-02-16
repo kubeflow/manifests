@@ -32691,7 +32691,8 @@ data:
         "domainTemplate": "{{ .Name }}-{{ .Namespace }}.{{ .IngressDomain }}",
         "urlScheme": "http",
         "disableIstioVirtualHost": false,
-        "disableIngressCreation": false
+        "disableIngressCreation": false,
+        "pathTemplate": "/serving/{{ .Namespace }}/{{ .Name }}"
     }
   localModel: |-
     {

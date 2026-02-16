@@ -18,34 +18,7 @@ if cd ${TEST_DIRECTORY}; then
   pytest . -vs --log-level info || true
 fi
 
-# Test 2: Path-based Routing & Ingress Gateway Security (VirtualService + AuthorizationPolicy)
-cat <<EOF | kubectl apply -f -
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: isvc-sklearn-path
-  namespace: ${NAMESPACE}
-spec:
-  gateways:
-    - kubeflow/kubeflow-gateway
-  hosts:
-    - '*'
-  http:
-    - match:
-        - uri:
-            prefix: /kserve/${NAMESPACE}/isvc-sklearn/
-      rewrite:
-        uri: /
-      route:
-        - destination:
-            host: cluster-local-gateway.istio-system.svc.cluster.local
-          headers:
-            request:
-              set:
-                Host: isvc-sklearn-predictor.${NAMESPACE}.svc.cluster.local
-          weight: 100
-      timeout: 300s
-EOF
+# Test 2: Ingress Gateway Security
 
 # WARNING: This policy allows ANY valid token from ANY kubeflow namespace to access this InferenceService.
 cat <<EOF | kubectl apply -f -
@@ -70,7 +43,7 @@ sleep 60
 # Request without token should be rejected
 RESPONSE_NO_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
  -H "Content-Type: application/json" \
- "http://${KSERVE_INGRESS_HOST_PORT}/kserve/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
+ "http://${KSERVE_INGRESS_HOST_PORT}/serving/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
 
 if [ "$RESPONSE_NO_TOKEN" != "403" ] && [ "$RESPONSE_NO_TOKEN" != "302" ]; then
@@ -81,7 +54,7 @@ fi
 RESPONSE_WITH_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
  -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
  -H "Content-Type: application/json" \
- "http://${KSERVE_INGRESS_HOST_PORT}/kserve/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
+ "http://${KSERVE_INGRESS_HOST_PORT}/serving/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}')
 
 if [ "$RESPONSE_WITH_TOKEN" != "200" ] && [ "$RESPONSE_WITH_TOKEN" != "404" ] && [ "$RESPONSE_WITH_TOKEN" != "503" ]; then
