@@ -1,42 +1,68 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-# Install Kserve in kubeflow namespace
+# Install KServe in kubeflow namespace
 - kserve_kubeflow.yaml
 - kserve-cluster-resources.yaml
 
-# Patch to delete the kserve-localmodelnode-agent DaemonSet
 patches:
+# Delete the kserve-localmodelnode-agent DaemonSet
+# Runs as privileged: true with hostPID: true and hostNetwork: true
 - patch: |
-     apiVersion: apps/v1
-     kind: DaemonSet
-     metadata:
-       name: kserve-localmodelnode-agent
-       namespace: kubeflow
-     $patch: delete
+    apiVersion: apps/v1
+    kind: DaemonSet
+    metadata:
+      name: kserve-localmodelnode-agent
+      namespace: kubeflow
+    $patch: delete
 
-- patch: | 
-     apiVersion: apps/v1
-     kind: Deployment
-     metadata:
-       name: kserve-controller-manager
-       namespace: kubeflow
-     spec:
+# Add seccompProfile: RuntimeDefault to kserve-controller-manager
+- patch: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: kserve-controller-manager
+      namespace: kubeflow
+    spec:
       template:
         spec:
           securityContext:
             seccompProfile:
               type: RuntimeDefault
 
-- patch: | 
-     apiVersion: apps/v1
-     kind: Deployment
-     metadata:
-       name: kserve-localmodel-controller-manager
-       namespace: kubeflow
-     spec:
+# Add seccompProfile: RuntimeDefault to kserve-localmodel-controller-manager
+- patch: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: kserve-localmodel-controller-manager
+      namespace: kubeflow
+    spec:
       template:
         spec:
           securityContext:
             seccompProfile:
               type: RuntimeDefault
+
+# Delete ALL insecure LLMInferenceServiceConfig resources
+# IPC_LOCK, SYS_RAWIO, NET_RAW capabilities, runAsNonRoot: false
+# Ref: https://github.com/kubeflow/manifests/issues/3290
+- patch: |
+    apiVersion: serving.kserve.io/v1alpha1
+    kind: LLMInferenceServiceConfig
+    metadata:
+      name: placeholder
+    $patch: delete
+  target:
+    group: serving.kserve.io
+    version: v1alpha1
+    kind: LLMInferenceServiceConfig
+
+# Delete the ValidatingWebhookConfiguration for LLM resources
+# Webhook server (llmisvc-webhook-server-service) is not running â†’ EOF errors
+- patch: |
+    apiVersion: admissionregistration.k8s.io/v1
+    kind: ValidatingWebhookConfiguration
+    metadata:
+      name: llminferenceserviceconfig.serving.kserve.io
+    $patch: delete
