@@ -10,7 +10,7 @@ resources:
 - default-allow-same-namespace.yaml
 
 labels:
-- includeSelectors: true
+- includeSelectors: false
   pairs:
     app.kubernetes.io/component: cert-manager
     app.kubernetes.io/name: cert-manager
