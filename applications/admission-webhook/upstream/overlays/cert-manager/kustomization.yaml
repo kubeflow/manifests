@@ -4,25 +4,25 @@
 # the certificate.
 # TODO(jlewi): We should eventually refactor the manifests to delete
 # bootstrap and use certmanager by default.
-bases:
-- ../../base
-
 resources:
+- ../../base
 - certificate.yaml
 
 namespace: kubeflow
 
 namePrefix: admission-webhook-
 
-commonLabels:
-  app: poddefaults
-  kustomize.component: poddefaults
-  app.kubernetes.io/component: poddefaults
-  app.kubernetes.io/name: poddefaults
+labels:
+- includeSelectors: true
+  pairs:
+    app: poddefaults
+    kustomize.component: poddefaults
+    app.kubernetes.io/component: poddefaults
+    app.kubernetes.io/name: poddefaults
 
-patchesStrategicMerge:
-- mutating-webhook-configuration.yaml
-- deployment.yaml
+patches:
+- path: mutating-webhook-configuration.yaml
+- path: deployment.yaml
 
 generatorOptions:
   disableNameSuffixHash: true
