@@ -1,0 +1,12 @@
+{{- if and .Values.cache.enabled .Values.certManager.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: kfp-cache-selfsigned-issuer
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    app: cache-server-cert-manager
+spec:
+  selfSigned: {}
+{{- end }}
+

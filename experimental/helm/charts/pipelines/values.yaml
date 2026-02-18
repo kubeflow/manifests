@@ -1,0 +1,732 @@
+# Default values for kubeflow-pipelines
+# This configuration supports 2 flavors:
+# 1. platform-agnostic-multi-user (pipelineDefinition.storage: database)
+# 2. platform-agnostic-multi-user-k8s-native (pipelineDefinition.storage: k8s-native)
+# Global settings
+global:
+  # -- Namespace to install Kubeflow Pipelines
+  namespace: kubeflow
+  # -- Image registry for Kubeflow Pipelines images
+  imageRegistry: ghcr.io/kubeflow
+  # -- Global image tag for all Kubeflow Pipelines components
+  imageTag: 2.15.0
+  # -- Global image pull policy
+  imagePullPolicy: IfNotPresent
+  # -- Global log level
+  logLevel: "info"
+
+podSecurityContext:
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 0
+  capabilities:
+    drop:
+    - ALL
+
+# Installation mode configuration
+installMode:
+  # -- Installation type: multi-user (only mode supported)
+  type: multi-user
+  
+  # Pipeline definition storage mode
+  pipelineDefinition:
+    storage: database
+
+# Custom Resource Definitions
+crds:
+  # -- Install Pipeline CRDs
+  install: true
+  # -- Install Webhook CRDs (required for k8s-native mode)
+  webhook: false
+
+# API Server configuration
+apiServer:
+  enabled: true
+  replicas: 1
+  
+  image:
+    repository: kfp-api-server
+    tag: ""  # Uses global.imageTag if not set
+      
+  resources:
+    requests:
+      cpu: 250m
+      memory: 500Mi
+  
+  # Probes configuration
+  probes:
+    liveness:
+      initialDelaySeconds: 3
+      periodSeconds: 5
+      timeoutSeconds: 2
+    readiness:
+      initialDelaySeconds: 3
+      periodSeconds: 5
+      timeoutSeconds: 2
+    startup:
+      initialDelaySeconds: 3
+      failureThreshold: 12
+      periodSeconds: 5
+      timeoutSeconds: 2
+  
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+      - ALL
+  
+  serviceAccount:
+    create: true
+  
+  service:
+    type: ClusterIP
+    port: 8888
+    grpcPort: 8887
+  
+  env:
+    # -- V2 driver image
+    v2DriverImage: "ghcr.io/kubeflow/kfp-driver:2.15.0"
+    # -- V2 launcher image
+    v2LauncherImage: "ghcr.io/kubeflow/kfp-launcher:2.15.0"
+  
+  additionalEnv:
+  - name: KUBEFLOW_USERID_HEADER
+    value: kubeflow-userid
+  - name: KUBEFLOW_USERID_PREFIX
+    value: ""
+  - name: PUBLISH_LOGS
+    value: true
+  - name: LOG_LEVEL
+    value: "info"
+  - name: PIPELINE_LOG_LEVEL
+    value: "1"
+  - name: AUTO_UPDATE_PIPELINE_DEFAULT_VERSION
+    key: autoUpdatePipelineDefaultVersion
+  - name: POD_NAMESPACE
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.namespace
+  - name: OBJECTSTORECONFIG_SECURE
+    value: false
+  - name: OBJECTSTORECONFIG_BUCKETNAME
+    key: bucketName
+  - name: OBJECTSTORECONFIG_HOST
+    value: "minio-service.kubeflow"
+  - name: OBJECTSTORECONFIG_PORT
+    value: "9000"
+  - name: DBCONFIG_USER
+    key: username
+  - name: DBCONFIG_PASSWORD
+    key: password
+  - name: DBCONFIG_DBNAME
+    key: pipelineDb
+  - name: DBCONFIG_HOST
+    key: dbHost
+  - name: DBCONFIG_PORT
+    key: dbPort
+  - name: DBCONFIG_CONMAXLIFETIME
+    key: ConMaxLifeTime
+  - name: DB_DRIVER_NAME
+    key: dbType
+  - name: DBCONFIG_MYSQLCONFIG_USER
+    key: username
+  - name: DBCONFIG_MYSQLCONFIG_PASSWORD
+    key: password
+  - name: DBCONFIG_MYSQLCONFIG_DBNAME
+    key: pipelineDb
+  - name: DBCONFIG_MYSQLCONFIG_HOST
+    key: mysqlHost
+  - name: DBCONFIG_MYSQLCONFIG_PORT
+    key: mysqlPort
+  - name: OBJECTSTORECONFIG_ACCESSKEY
+    key: accesskey
+  - name: OBJECTSTORECONFIG_SECRETACCESSKEY
+    key: secretkey
+  - name: V2_DRIVER_IMAGE
+    value: ghcr.io/kubeflow/kfp-driver:2.15.0
+  - name: V2_LAUNCHER_IMAGE
+    value: ghcr.io/kubeflow/kfp-launcher:2.15.0
+  - name: COMPILED_PIPELINE_SPEC_PATCH
+    value: "{}"
+# Persistence Agent configuration
+persistenceAgent:
+  enabled: true
+  replicas: 1
+  
+  image:
+    repository: kfp-persistence-agent
+    tag: ""
+    
+  resources:
+    requests:
+      cpu: 120m
+      memory: 500Mi
+  
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+      - ALL
+  
+  serviceAccount:
+    create: true
+  
+  env:
+    ttlSecondsAfterWorkflowFinish: "86400"
+    numWorkers: "2"
+  
+  additionalEnv: []
+
+# Scheduled Workflow Controller configuration
+scheduledWorkflow:
+  enabled: true
+  replicas: 1
+  
+  image:
+    repository: kfp-scheduled-workflow-controller
+    tag: ""
+  
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+      - ALL
+  
+  serviceAccount:
+    create: true
+  
+  resources:
+    requests:
+      cpu: 120m
+      memory: 100Mi
+
+# UI configuration
+ui:
+  enabled: true
+  replicas: 1
+  
+  image:
+    repository: kfp-frontend
+    tag: ""
+    
+  resources:
+    requests:
+      cpu: 10m
+      memory: 70Mi
+  
+  # Probes configuration
+  probes:
+    liveness:
+      initialDelaySeconds: 3
+      periodSeconds: 5
+      timeoutSeconds: 2
+    readiness:
+      initialDelaySeconds: 3
+      periodSeconds: 5
+      timeoutSeconds: 2
+  
+  # Environment variables
+  env:
+    allowCustomVisualizations: "true"
+    argoArchiveLogs: "true"
+    disableGkeMetadata: "true"
+  
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+      - ALL
+  
+  serviceAccount:
+    create: true
+  
+  service:
+    type: ClusterIP
+    port: 80
+  
+  additionalEnv:
+  - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
+    value: "/etc/config/viewer-pod-template.json"
+  - name: DEPLOYMENT
+    value: "KUBEFLOW"
+  - name: ARTIFACTS_SERVICE_PROXY_NAME
+    value: "ml-pipeline-ui-artifact"
+  - name: ARTIFACTS_SERVICE_PROXY_PORT
+    value: "80"
+  - name: ARTIFACTS_SERVICE_PROXY_ENABLED
+    valueFrom:
+      configMapKeyRef:
+        name: pipeline-install-config
+        key: ARTIFACTS_PROXY_ENABLED
+        optional: true
+  - name: ENABLE_AUTHZ
+    value: "true"
+  - name: KUBEFLOW_USERID_HEADER
+    value: "kubeflow-userid"
+  - name: KUBEFLOW_USERID_PREFIX
+    value: ""
+  - name: MINIO_NAMESPACE
+    value: ""
+  - name: MINIO_ACCESS_KEY
+    valueFrom:
+      secretKeyRef:
+        name: mlpipeline-minio-artifact
+        key: accesskey
+  - name: MINIO_SECRET_KEY
+    valueFrom:
+      secretKeyRef:
+        name: mlpipeline-minio-artifact
+        key: secretkey
+  - name: ALLOW_CUSTOM_VISUALIZATIONS
+    value: "true"
+  - name: FRONTEND_SERVER_NAMESPACE
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.namespace
+  - name: ARGO_ARCHIVE_LOGS
+    value: "true"
+  - name: DISABLE_GKE_METADATA
+    value: "true"
+
+# Viewer CRD Controller configuration
+viewerCrd:
+  enabled: true
+  replicas: 1
+  
+  image:
+    repository: kfp-viewer-crd-controller
+    tag: ""
+    pullPolicy: "Always"
+    
+  resources:
+    requests:
+      cpu: 100m
+      memory: 100Mi
+  
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+      - ALL
+  
+  serviceAccount:
+    create: true
+  
+  env:
+    maxNumViewers: "50"
+  
+  additionalEnv: []
+
+# Visualization Server configuration
+visualization:
+  enabled: true
+  replicas: 1
+  
+  image:
+    repository: kfp-visualization-server
+    tag: ""
+    
+  resources:
+    requests:
+      cpu: 30m
+      memory: 500Mi
+  
+  # Probes configuration
+  probes:
+    liveness:
+      initialDelaySeconds: 3
+      periodSeconds: 5
+      timeoutSeconds: 2
+    readiness:
+      initialDelaySeconds: 3
+      periodSeconds: 5
+      timeoutSeconds: 2
+  
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 0
+    capabilities:
+      drop:
+      - ALL
+  
+  serviceAccount:
+    create: true
+  
+  service:
+    type: ClusterIP
+    port: 8888
+  
+  additionalEnv: []
+
+# Cache System Configuration (with cert-manager integration)
+cache:
+  enabled: true
+  
+  serviceAccount:
+    create: true
+  
+  server:
+    replicas: 1
+    
+    image:
+      repository: kfp-cache-server
+      tag: ""
+    
+    resources:
+      requests:
+        cpu: 120m
+        memory: 500Mi
+    
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 0
+      capabilities:
+        drop:
+        - ALL
+    
+    service:
+      type: ClusterIP
+      port: 443
+    
+    additionalEnv:
+    - name: NAMESPACE_TO_WATCH
+      value: ""
+    - name: DEFAULT_CACHE_STALENESS
+      key: DEFAULT_CACHE_STALENESS
+    - name: MAXIMUM_CACHE_STALENESS
+      key: MAXIMUM_CACHE_STALENESS
+    - name: CACHE_IMAGE
+      key: cacheImage
+    - name: CACHE_NODE_RESTRICTIONS
+      key: cacheNodeRestrictions
+    - name: DBCONFIG_DRIVER
+      value: mysql
+    - name: DBCONFIG_DB_NAME
+      key: cacheDb
+    - name: DBCONFIG_HOST_NAME
+      key: dbHost
+    - name: DBCONFIG_PORT
+      key: dbPort
+    - name: DBCONFIG_USER
+      valueFrom:
+        secretKeyRef:
+          name: mysql-secret
+          key: username
+    - name: DBCONFIG_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: mysql-secret
+          key: password
+
+# ML Metadata Configuration
+metadata:
+  enabled: true
+  
+  grpc:
+    replicas: 1
+    
+    image:
+      repository: gcr.io/tfx-oss-public/ml_metadata_store_server
+      tag: "1.14.0"
+      pullPolicy: "IfNotPresent"
+    
+    resources:
+      requests:
+        cpu: 100m
+        memory: 300Mi
+    
+    securityContext:
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 0
+      capabilities:
+        drop:
+        - ALL
+    
+    serviceAccount:
+      create: true
+    
+    service:
+      type: ClusterIP
+      port: 8080
+    
+    additionalEnv: []
+  
+  envoy:
+    replicas: 1
+    
+    image:
+      repository: kfp-metadata-envoy
+      tag: ""
+    
+    resources:
+      requests:
+        cpu: 20m
+        memory: 20Mi
+    
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      runAsGroup: 0
+      runAsNonRoot: true
+      runAsUser: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    
+    service:
+      type: ClusterIP
+      port: 9090
+    
+    additionalEnv: []
+
+# Metadata Writer Configuration
+metadataWriter:
+  enabled: true
+  replicas: 1
+  
+  image:
+    repository: kfp-metadata-writer
+    tag: ""
+  
+  resources:
+    requests:
+      cpu: 100m
+      memory: 200Mi
+  
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+    runAsGroup: 0
+    runAsNonRoot: true
+    runAsUser: 1000
+  
+  serviceAccount:
+    create: true
+  
+  additionalEnv: []
+
+# Third-party Dependencies
+thirdParty:
+  # Argo Workflows
+  argo:
+    enabled: true
+  
+  # MySQL database 
+  mysql:
+    enabled: true
+    image: "mysql"
+    imageTag: "8.4"
+    resources:
+      requests:
+        cpu: 100m
+        memory: 800Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      runAsUser: 999
+      runAsGroup: 999
+      capabilities:
+        drop:
+        - ALL
+    podSecurityContext:
+      fsGroup: 999
+      fsGroupChangePolicy: OnRootMismatch
+      seccompProfile:
+        type: RuntimeDefault
+    persistence:
+      size: 20Gi
+  
+  # Metacontroller (required for multi-user mode)
+  metacontroller:
+    enabled: true
+
+# MySQL Configuration 
+mysql:
+  enabled: true
+  auth:
+    # -- MySQL root password (leave empty to auto-generate)
+    rootPassword: ""
+    # -- MySQL database name
+    database: "mlpipeline"
+    # -- MySQL username
+    username: "root"
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+
+# SeaweedFS Configuration 
+seaweedfs:
+  enabled: true
+  # SeaweedFS image tag
+  imageTag: "4.00"
+  # Credentials for S3 access
+  credentials:
+    accesskey: "minio"
+    secretkey: "minio123"
+  # Storage configuration
+  persistence:
+    enabled: true
+    size: 20Gi
+  # -- SeaweedFS bucket name
+  bucket: "mlpipeline"
+  # -- S3 endpoint URL for profile controller
+  s3EndpointUrl: "http://seaweedfs.kubeflow:8333"
+  # -- AWS endpoint URL for profile controller
+  awsEndpointUrl: "http://seaweedfs.kubeflow:8111"
+  # -- AWS region
+  awsRegion: "us-east-1"
+
+# External MySQL database configuration (when using external database)
+externalDatabase:
+  enabled: false
+  host: ""
+  port: 3306
+  database: "mlpipeline"
+  username: "root"
+  password: ""
+  # -- Existing secret containing database credentials
+  existingSecret: ""
+  existingSecretPasswordKey: "password"
+
+# Database configuration
+database:
+  # -- Connection max lifetime (important for external databases)
+  connectionMaxLifetime: "120s"
+  # -- Metadata database name
+  metadb: "metadb"
+  # -- Cache database name
+  cachedb: "cachedb"
+
+# Pipeline configuration
+pipeline:
+  app:
+    name: "pipeline"
+    version: "2.15.0"
+  # -- Default pipeline root
+  defaultPipelineRoot: ""
+  # -- Auto-update pipeline default version
+  autoUpdatePipelineDefaultVersion: true
+  # -- Cron schedule timezone
+  cronScheduleTimezone: "UTC"
+  cache:
+    # -- Cache image
+    image: "ghcr.io/containerd/busybox"
+    # -- Cache node restrictions
+    nodeRestrictions: false
+    # -- Maximum cache staleness
+    maximumStaleness: ""
+    # -- Default cache staleness
+    defaultStaleness: ""
+
+# Profile Controller Configuration (Multi-User)
+profileController:
+  enabled: true
+  replicas: 1
+  
+  image:
+    repository: docker.io/alpine/k8s
+    tag: "1.32.3"
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 80
+  
+  # -- Disable Istio sidecar injection
+  disableIstioSidecar: "false"
+  
+  # -- Enable artifacts proxy in user namespaces
+  artifactsProxyEnabled: "false"
+  
+  # -- Artifact retention days (-1 to disable)
+  artifactRetentionDays: "-1"
+  
+  # -- Default pipeline root for KFP v2
+  defaultPipelineRoot: ""
+  
+  additionalEnv: []
+
+# Additional Service Accounts
+additionalServiceAccounts:
+  containerBuilder:
+    create: true
+  
+  pipelineRunner:
+    create: true
+  
+  viewer:
+    create: true
+
+# RBAC Configuration
+rbac:
+  create: true
+
+# Networking Configuration
+networking:
+  istio:
+    enabled: true
+    gateway: "kubeflow-gateway"
+    host: "*"
+  
+  virtualService:
+    enabled: true
+    prefix: "/pipeline"
+  
+  networkPolicy:
+    enabled: true
+
+# Certificate Management
+certManager:
+  # -- Enable cert-manager integration
+  enabled: true
+  
+  mutating:
+    enabled: true
+    name: "cache-webhook-kubeflow"
+  
+  validating:
+    enabled: true
+    name: "cache-webhook-kubeflow"
+
+# Webhook Configuration (for k8s-native mode)
+webhooks:
+  # -- Enable admission webhooks
+  enabled: false
+  # -- Webhook failure policy
+  failurePolicy: "Fail"
+
+# Pod annotations (applied to all pods)
+podAnnotations:
+  cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
