@@ -3,49 +3,36 @@ set -euxo pipefail
 
 NAMESPACE=${1:-kubeflow-user-example-com}
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-TEST_DIRECTORY="${SCRIPT_DIRECTORY}/kserve"
 
 if ! command -v pytest &> /dev/null; then
-  pip install -r ${TEST_DIRECTORY}/requirements.txt
+  pip install "pytest>=7.0.0" "kserve>=0.16.0" "kubernetes>=18.20.0" "requests>=2.18.4"
 fi
 
 export KSERVE_INGRESS_HOST_PORT=${KSERVE_INGRESS_HOST_PORT:-localhost:8080}
 export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
 export KSERVE_TEST_NAMESPACE=${NAMESPACE}
 
-# Test 1: Model Inference via KServe SDK (pytest creates isvc-sklearn internally)
-if cd ${TEST_DIRECTORY}; then
-  pytest . -vs --log-level info || true
-fi
+# ============================================================
+# Test 1: Model Inference via KServe SDK
+# ============================================================
+# Runs the consolidated kserve_sklearn_test.py which deploys an
+# sklearn InferenceService and validates prediction output.
+pytest "${SCRIPT_DIRECTORY}/kserve_sklearn_test.py" -vs --log-level info || true
 
-# Test 2: Path-based Routing & Ingress Gateway Security (VirtualService + AuthorizationPolicy)
-cat <<EOF | kubectl apply -f -
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: isvc-sklearn-path
-  namespace: ${NAMESPACE}
-spec:
-  gateways:
-    - kubeflow/kubeflow-gateway
-  hosts:
-    - '*'
-  http:
-    - match:
-        - uri:
-            prefix: /kserve/${NAMESPACE}/isvc-sklearn/
-      rewrite:
-        uri: /
-      route:
-        - destination:
-            host: cluster-local-gateway.istio-system.svc.cluster.local
-          headers:
-            request:
-              set:
-                Host: isvc-sklearn-predictor.${NAMESPACE}.svc.cluster.local
-          weight: 100
-      timeout: 300s
-EOF
+# ============================================================
+# Test 2: Ingress Gateway Security (AuthorizationPolicy)
+# ============================================================
+# Path-based routing is handled natively by KServe via the pathTemplate
+# configuration in kserve_kubeflow.yaml (introduced in PR #3348):
+#
+#   ingress:
+#     pathTemplate: /serving/{{ .Namespace }}/{{ .Name }}
+#
+# This means every InferenceService is automatically reachable at:
+#   http://<gateway>/serving/<namespace>/<isvc-name>/...
+#
+# Because of this, we do NOT create a manual VirtualService here.
+# The /serving/ prefix in all curl URLs below matches this template.
 
 # WARNING: This policy allows ANY valid token from ANY kubeflow namespace to access this InferenceService.
 cat <<EOF | kubectl apply -f -
@@ -70,10 +57,11 @@ sleep 60
 # Request without token should be rejected
 RESPONSE_NO_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
  -H "Content-Type: application/json" \
- "http://${KSERVE_INGRESS_HOST_PORT}/kserve/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
+ "http://${KSERVE_INGRESS_HOST_PORT}/serving/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
 
 if [ "$RESPONSE_NO_TOKEN" != "403" ] && [ "$RESPONSE_NO_TOKEN" != "302" ]; then
+  echo "FAIL: Expected 403/302 without token, got $RESPONSE_NO_TOKEN"
   exit 1
 fi
 
@@ -81,16 +69,75 @@ fi
 RESPONSE_WITH_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
  -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
  -H "Content-Type: application/json" \
- "http://${KSERVE_INGRESS_HOST_PORT}/kserve/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
+ "http://${KSERVE_INGRESS_HOST_PORT}/serving/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}')
 
 if [ "$RESPONSE_WITH_TOKEN" != "200" ] && [ "$RESPONSE_WITH_TOKEN" != "404" ] && [ "$RESPONSE_WITH_TOKEN" != "503" ]; then
+  echo "FAIL: Expected 200/404/503 with token, got $RESPONSE_WITH_TOKEN"
   exit 1
 fi
 
+# ============================================================
+# Test 3: KServe Models Web Application API
+# ============================================================
 kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app
 
-# Knative Service authentication via cluster-local-gateway
+TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
+BASE_URL="localhost:8080/kserve-endpoints"
+
+cat <<EOF | kubectl apply -f -
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "sklearn-iris"
+  namespace: ${NAMESPACE}
+spec:
+  predictor:
+    sklearn:
+      storageUri: "gs://kfserving-examples/models/sklearn/1.0/model"
+      resources:
+        requests:
+          cpu: "50m"
+          memory: "128Mi"
+        limits:
+          cpu: "100m"
+          memory: "256Mi"
+EOF
+
+kubectl wait --for=condition=Ready inferenceservice/sklearn-iris -n ${NAMESPACE} --timeout=120s
+kubectl get inferenceservice sklearn-iris -n ${NAMESPACE}
+
+# Get XSRF token for API calls
+curl -s "http://${BASE_URL}/" \
+  -H "Authorization: Bearer ${TOKEN}" \
+  -v -c /tmp/kserve_xcrf.txt 2>&1 | grep -i "set-cookie"
+XSRFTOKEN=$(grep XSRF-TOKEN /tmp/kserve_xcrf.txt | awk '{print $NF}')
+
+RESPONSE=$(curl -s --fail-with-body \
+  "${BASE_URL}/api/namespaces/${NAMESPACE}/inferenceservices" \
+  -H "Authorization: Bearer ${TOKEN}" \
+  -H "X-XSRF-TOKEN: ${XSRFTOKEN}" \
+  -H "Cookie: XSRF-TOKEN=${XSRFTOKEN}")
+
+echo "$RESPONSE" | grep -q "sklearn-iris" || exit 1
+kubectl get inferenceservice sklearn-iris -n ${NAMESPACE} || exit 1
+READY=$(kubectl get isvc sklearn-iris -n ${NAMESPACE} -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}')
+[[ "$READY" == "True" ]] || {
+  echo "FAILURE: InferenceService sklearn-iris Ready status is: $READY"
+  exit 1
+}
+
+kubectl delete inferenceservice sklearn-iris -n ${NAMESPACE} || exit 1
+
+# Test unauthorized access to models web app
+UNAUTH_TOKEN="$(kubectl -n default create token default)"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "${BASE_URL}/api/namespaces/${NAMESPACE}/inferenceservices" -H "Authorization: Bearer ${UNAUTH_TOKEN}")
+[[ "$HTTP_CODE" == "403" || "$HTTP_CODE" == "401" ]] || { echo "FAILURE: Expected 401/403, got $HTTP_CODE"; exit 1; }
+echo "Models Web App: Token from unauthorized ServiceAccount cannot list InferenceServices in $NAMESPACE namespace."
+
+# ============================================================
+# Test 4: Knative Service authentication via cluster-local-gateway
+# ============================================================
 cat <<EOF | kubectl apply -f -
 apiVersion: serving.knative.dev/v1
 kind: Service
@@ -120,6 +167,7 @@ RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
     "http://${KSERVE_INGRESS_HOST_PORT}/")
 
 if [ "$RESPONSE" != "403" ]; then
+    echo "FAIL: Unauthenticated access should return 403, got $RESPONSE"
     exit 1
 fi
 
@@ -130,10 +178,13 @@ RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
     "http://${KSERVE_INGRESS_HOST_PORT}/")
 
 if [ "$RESPONSE" != "401" ] && [ "$RESPONSE" != "403" ]; then
+    echo "FAIL: Invalid token should return 401/403, got $RESPONSE"
     exit 1
 fi
 
-# Test 3: Cluster-local-gateway requires authentication
+# ============================================================
+# Test 5: Cluster-local-gateway requires authentication
+# ============================================================
 kubectl port-forward -n istio-system svc/cluster-local-gateway 8081:80 &
 PF_PID=$!
 sleep 5
@@ -148,10 +199,13 @@ RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
     "http://localhost:8081/")
 
 if [ "$RESPONSE" != "403" ]; then
+    echo "FAIL: Cluster-local-gateway unauthenticated access should return 403, got $RESPONSE"
     exit 1
 fi
 
-# Test 4: Namespace isolation - attacker in different namespace should NOT have access
+# ============================================================
+# Test 6: Namespace isolation - attacker should NOT have access
+# ============================================================
 ATTACKER_NAMESPACE="attacker-namespace"
 kubectl create namespace ${ATTACKER_NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -
 
@@ -163,7 +217,7 @@ metadata:
   namespace: ${ATTACKER_NAMESPACE}
 EOF
 
-# Test 5: Unauthenticated request from attacker namespace should be REJECTED
+# Unauthenticated request from attacker namespace should be REJECTED
 RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
     -H "Host: secure-model-predictor.${NAMESPACE}.svc.cluster.local" \
     "http://localhost:8081/")
@@ -173,7 +227,7 @@ if [ "$RESPONSE" == "200" ]; then
     exit 1
 fi
 
-# Test 6: Authenticated request from attacker namespace should ALSO be REJECTED
+# Authenticated request from attacker namespace should ALSO be REJECTED
 ATTACKER_TOKEN=$(kubectl -n ${ATTACKER_NAMESPACE} create token attacker-service-account)
 
 RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
@@ -186,6 +240,9 @@ if [ "$RESPONSE" == "200" ]; then
     exit 1
 fi
 
+# ============================================================
+# Cleanup
+# ============================================================
 kill $PF_PID 2>/dev/null || true
 
 kubectl delete namespace ${ATTACKER_NAMESPACE} --ignore-not-found=true

@@ -14,20 +14,33 @@
 import json
 import logging
 import os
+import tempfile
 import time
 from urllib.parse import urlparse
 
 import requests
 from kubernetes import client
+from kubernetes.client import V1ResourceRequirements
 
-from kserve import KServeClient
-from kserve import constants
+from kserve import (
+    constants,
+    KServeClient,
+    V1beta1InferenceService,
+    V1beta1InferenceServiceSpec,
+    V1beta1PredictorSpec,
+    V1beta1SKLearnSpec,
+)
 
 logging.basicConfig(level=logging.INFO)
 
 KSERVE_NAMESPACE = "kserve"
-KSERVE_TEST_NAMESPACE = "kubeflow-user-example-com"
+KSERVE_TEST_NAMESPACE = os.environ.get(
+    "KSERVE_TEST_NAMESPACE", "kubeflow-user-example-com"
+)
 MODEL_CLASS_NAME = "modelClass"
+
+# Inlined from data/iris_input.json
+IRIS_INPUT = {"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}
 
 
 class M2mTokenNotAvailable(Exception):
@@ -54,36 +67,30 @@ def get_m2m_auth_token(env_name="KSERVE_M2M_TOKEN"):
         raise M2mTokenNotAvailable(env_name)
 
 
-def predict(
-    service_name,
-    input_json,
-    protocol_version="v1",
-    version=constants.KSERVE_V1BETA1_VERSION,
-    model_name=None,
-):
-    with open(input_json) as json_file:
-        data = json.load(json_file)
+def predict(service_name, input_data, protocol_version="v1", version=constants.KSERVE_V1BETA1_VERSION, model_name=None):
+    """Run prediction against a KServe InferenceService.
 
-        return predict_str(
-            service_name=service_name,
-            input_json=json.dumps(data),
-            protocol_version=protocol_version,
-            version=version,
-            model_name=model_name,
-        )
+    Args:
+        service_name: Name of the InferenceService.
+        input_data: Dict of input data (will be serialized to JSON).
+        protocol_version: KServe protocol version ("v1" or "v2").
+        version: KServe API version.
+        model_name: Model name override (defaults to service_name).
+    """
+    return predict_str(
+        service_name=service_name,
+        input_json=json.dumps(input_data),
+        protocol_version=protocol_version,
+        version=version,
+        model_name=model_name,
+    )
 
 
-def predict_str(
-    service_name,
-    input_json,
-    protocol_version="v1",
-    version=constants.KSERVE_V1BETA1_VERSION,
-    model_name=None,
-):
+def predict_str(service_name, input_json, protocol_version="v1", version=constants.KSERVE_V1BETA1_VERSION, model_name=None):
     kfs_client = KServeClient(
         config_file=os.environ.get("KUBECONFIG", "~/.kube/config")
     )
-    isvc = kfs_client.get(
+    kfs_client.get(
         service_name,
         namespace=KSERVE_TEST_NAMESPACE,
         version=version,
@@ -123,3 +130,35 @@ def predict_str(
         return preds
     else:
         response.raise_for_status()
+
+
+def test_sklearn_kserve():
+    service_name = "isvc-sklearn"
+    predictor = V1beta1PredictorSpec(
+        min_replicas=1,
+        sklearn=V1beta1SKLearnSpec(
+            storage_uri="gs://kfserving-examples/models/sklearn/1.0/model",
+            resources=V1ResourceRequirements(
+                requests={"cpu": "50m", "memory": "128Mi"},
+                limits={"cpu": "100m", "memory": "256Mi"},
+            ),
+        ),
+    )
+
+    isvc = V1beta1InferenceService(
+        api_version=constants.KSERVE_V1BETA1,
+        kind="InferenceService",
+        metadata=client.V1ObjectMeta(
+            name=service_name, namespace=KSERVE_TEST_NAMESPACE
+        ),
+        spec=V1beta1InferenceServiceSpec(predictor=predictor),
+    )
+
+    kserve_client = KServeClient(
+        config_file=os.environ.get("KUBECONFIG", "~/.kube/config")
+    )
+    kserve_client.create(isvc)
+    kserve_client.wait_isvc_ready(service_name, namespace=KSERVE_TEST_NAMESPACE)
+    res = predict(service_name, IRIS_INPUT)
+    assert res["predictions"] == [1, 1]
+    kserve_client.delete(service_name, KSERVE_TEST_NAMESPACE)
