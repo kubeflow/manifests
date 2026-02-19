@@ -2,7 +2,7 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: ml-pipeline-ui
-  namespace: kubeflow
+  namespace: kubeflow-system
 spec:
   selector:
     matchLabels:
@@ -28,7 +28,7 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: ml-pipeline
-  namespace: kubeflow
+  namespace: kubeflow-system
 spec:
   selector:
     matchLabels:
@@ -52,7 +52,7 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: ml-pipeline-visualizationserver
-  namespace: kubeflow
+  namespace: kubeflow-system
 spec:
   selector:
     matchLabels:
@@ -73,7 +73,7 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: service-cache-server
-  namespace: kubeflow
+  namespace: kubeflow-system
 spec:
   selector:
     matchLabels:
