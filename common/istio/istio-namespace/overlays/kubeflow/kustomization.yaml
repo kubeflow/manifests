@@ -1,8 +1,0 @@
-# Kubeflow-specific istio-namespace customizations
-# Includes: NetworkPolicy for istio-system namespace
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-
-resources:
-- ../../base
-- default-allow-same-namespace.yaml

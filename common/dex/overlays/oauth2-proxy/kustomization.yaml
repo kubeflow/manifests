@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
 - ../istio
+- default-allow-same-namespace.yaml
 
 patches:
   - path: config-map.yaml
@@ -11,4 +12,3 @@ patches:
       kind: ConfigMap
       name: dex
       namespace: auth
-

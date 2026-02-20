@@ -7,4 +7,5 @@ kind: Kustomization
 
 resources:
 - namespace.yaml
+- default-allow-same-namespace.yaml
 namespace: istio-system

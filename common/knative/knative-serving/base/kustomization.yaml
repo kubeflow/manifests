@@ -5,6 +5,7 @@ resources:
 - upstream/serving-core.yaml
 - upstream/net-istio.yaml
 - istio-authorization-policy.yaml
+- default-allow-same-namespace.yaml
 
 patches:
 - path: patches/sidecar-injection.yaml
