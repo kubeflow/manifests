@@ -17,22 +17,26 @@ export KSERVE_TEST_NAMESPACE=${NAMESPACE}
 # ============================================================
 # Runs the consolidated kserve_sklearn_test.py which deploys an
 # sklearn InferenceService and validates prediction output.
-pytest "${SCRIPT_DIRECTORY}/kserve_sklearn_test.py" -vs --log-level info || true
+pytest "${SCRIPT_DIRECTORY}/kserve_sklearn_test.py" -vs --log-level info
 
 # ============================================================
 # Test 2: Ingress Gateway Security (AuthorizationPolicy)
 # ============================================================
 # Path-based routing is handled natively by KServe via the pathTemplate
-# configuration in kserve_kubeflow.yaml (introduced in PR #3348):
+# configuration in the inferenceservice-config ConfigMap.
+# The pathTemplate is enabled via a kustomize patch in:
+#   applications/kserve/kserve/kustomization.yaml
 #
-#   ingress:
-#     pathTemplate: /serving/{{ .Namespace }}/{{ .Name }}
+# The active ingress configuration includes:
+#   "pathTemplate": "/serving/{{ .Namespace }}/{{ .Name }}"
 #
 # This means every InferenceService is automatically reachable at:
 #   http://<gateway>/serving/<namespace>/<isvc-name>/...
 #
 # Because of this, we do NOT create a manual VirtualService here.
 # The /serving/ prefix in all curl URLs below matches this template.
+# Ref: https://kserve.github.io/website/master/admin/serverless/serverless/#path-based-routing
+# Ref: https://github.com/kserve/kserve/issues/2257
 
 # WARNING: This policy allows ANY valid token from ANY kubeflow namespace to access this InferenceService.
 cat <<EOF | kubectl apply -f -

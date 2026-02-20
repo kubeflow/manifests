@@ -98,9 +98,7 @@ def predict_str(service_name, input_json, protocol_version="v1", version=constan
     # temporary sleep until this is fixed https://github.com/kserve/kserve/issues/604
     time.sleep(10)
     cluster_ip = get_cluster_ip()
-    host = f"{service_name}.{KSERVE_TEST_NAMESPACE}.example.com"
     headers = {
-        "Host": host,
         "Content-Type": "application/json",
     }
 
@@ -114,9 +112,11 @@ def predict_str(service_name, input_json, protocol_version="v1", version=constan
     if model_name is None:
         model_name = service_name
 
-    url = f"http://{cluster_ip}/v1/models/{model_name}:predict"
+    # Path-based routing via pathTemplate: /serving/{{ .Namespace }}/{{ .Name }}
+    # Configured in inferenceservice-config ConfigMap (see kustomization.yaml patch)
+    url = f"http://{cluster_ip}/serving/{KSERVE_TEST_NAMESPACE}/{service_name}/v1/models/{model_name}:predict"
     if protocol_version == "v2":
-        url = f"http://{cluster_ip}/v2/models/{model_name}/infer"
+        url = f"http://{cluster_ip}/serving/{KSERVE_TEST_NAMESPACE}/{service_name}/v2/models/{model_name}/infer"
 
     logging.info("Sending Header = %s", headers)
     logging.info("Sending url = %s", url)

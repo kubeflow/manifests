@@ -66,3 +66,31 @@ patches:
     metadata:
       name: llminferenceserviceconfig.serving.kserve.io
     $patch: delete
+
+# Enable path-based routing for KServe InferenceServices
+# Adds pathTemplate to the inferenceservice-config ConfigMap so that
+# every InferenceService is reachable at /serving/<namespace>/<name>/...
+# Ref: https://kserve.github.io/website/master/admin/serverless/serverless/#path-based-routing
+# Ref: https://github.com/kserve/kserve/issues/2257
+- patch: |-
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: inferenceservice-config
+      namespace: kubeflow
+    data:
+      ingress: |-
+        {
+          "enableGatewayApi": false,
+          "kserveIngressGateway": "kserve/kserve-ingress-gateway",
+          "ingressGateway": "kubeflow/kubeflow-gateway",
+          "localGateway": "knative-serving/knative-local-gateway",
+          "localGatewayService": "knative-local-gateway.istio-system.svc.cluster.local",
+          "ingressDomain": "example.com",
+          "ingressClassName": "istio",
+          "domainTemplate": "{{ .Name }}-{{ .Namespace }}.{{ .IngressDomain }}",
+          "urlScheme": "http",
+          "disableIstioVirtualHost": false,
+          "disableIngressCreation": false,
+          "pathTemplate": "/serving/{{ .Namespace }}/{{ .Name }}"
+        }
