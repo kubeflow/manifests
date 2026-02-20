@@ -15,53 +15,41 @@ export KSERVE_TEST_NAMESPACE=${NAMESPACE}
 # ============================================================
 # Test 1: Model Inference via KServe SDK
 # ============================================================
-# Runs the consolidated kserve_sklearn_test.py which deploys an
-# sklearn InferenceService and validates prediction output.
+# Runs kserve_sklearn_test.py which:
+#   1. Deploys an sklearn InferenceService (isvc-sklearn)
+#   2. Creates an Istio AuthorizationPolicy to allow authenticated traffic
+#   3. Runs a prediction and validates the output
+#
+# The test uses Host-header routing:
+#   Host: isvc-sklearn.<namespace>.example.com
+# which matches the Knative-managed VirtualService.
+#
+# An AuthorizationPolicy is created inside the test because Kubeflow
+# installs a mesh-wide global-deny-all policy that blocks all pod traffic
+# unless an explicit ALLOW is present.
 pytest "${SCRIPT_DIRECTORY}/kserve_sklearn_test.py" -vs --log-level info
 
 # ============================================================
 # Test 2: Ingress Gateway Security (AuthorizationPolicy)
 # ============================================================
-# Path-based routing is handled natively by KServe via the pathTemplate
-# configuration in the inferenceservice-config ConfigMap.
-# The pathTemplate is enabled via a kustomize patch in:
-#   applications/kserve/kserve/kustomization.yaml
+# The AuthorizationPolicy (allow-isvc-sklearn) was created by pytest above.
+# It allows requests with any valid requestPrincipal to reach the predictor.
 #
-# The active ingress configuration includes:
-#   "pathTemplate": "/serving/{{ .Namespace }}/{{ .Name }}"
+# This test validates:
+#   a) Requests WITHOUT a token → should be blocked (403/302)
+#   b) Requests WITH a valid token → should succeed (200)
 #
-# This means every InferenceService is automatically reachable at:
-#   http://<gateway>/serving/<namespace>/<isvc-name>/...
-#
-# Because of this, we do NOT create a manual VirtualService here.
-# The /serving/ prefix in all curl URLs below matches this template.
-# Ref: https://kserve.github.io/website/master/admin/serverless/serverless/#path-based-routing
-# Ref: https://github.com/kserve/kserve/issues/2257
+# We use Host-header routing to match the Knative-managed VirtualService.
 
-# WARNING: This policy allows ANY valid token from ANY kubeflow namespace to access this InferenceService.
-cat <<EOF | kubectl apply -f -
-apiVersion: security.istio.io/v1beta1
-kind: AuthorizationPolicy
-metadata:
-  name: allow-isvc-sklearn
-  namespace: ${NAMESPACE}
-spec:
-  action: ALLOW
-  rules:
-  - from:
-    - source:
-        requestPrincipals: ["*"]
-  selector:
-    matchLabels:
-      serving.knative.dev/service: isvc-sklearn-predictor
-EOF
+sleep 10
 
-sleep 60
+HOST_HEADER="Host: isvc-sklearn.${NAMESPACE}.example.com"
 
 # Request without token should be rejected
 RESPONSE_NO_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
+ -H "${HOST_HEADER}" \
  -H "Content-Type: application/json" \
- "http://${KSERVE_INGRESS_HOST_PORT}/serving/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
+ "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
 
 if [ "$RESPONSE_NO_TOKEN" != "403" ] && [ "$RESPONSE_NO_TOKEN" != "302" ]; then
@@ -72,8 +60,9 @@ fi
 # Request with valid token should succeed
 RESPONSE_WITH_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
  -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
+ -H "${HOST_HEADER}" \
  -H "Content-Type: application/json" \
- "http://${KSERVE_INGRESS_HOST_PORT}/serving/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
+ "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}')
 
 if [ "$RESPONSE_WITH_TOKEN" != "200" ] && [ "$RESPONSE_WITH_TOKEN" != "404" ] && [ "$RESPONSE_WITH_TOKEN" != "503" ]; then
