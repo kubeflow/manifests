@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -euxo pipefail
 echo "Installing cert-manager ..."
 cd common/cert-manager
 kubectl create namespace cert-manager || true
