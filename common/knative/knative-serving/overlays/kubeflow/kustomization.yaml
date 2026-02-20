@@ -1,8 +1,0 @@
-# Kubeflow-specific knative-serving customizations
-# Includes: NetworkPolicy for knative-serving namespace
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-
-resources:
-  - ../gateways
-  - default-allow-same-namespace.yaml

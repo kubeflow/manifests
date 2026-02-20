@@ -1,8 +1,8 @@
-# Kubeflow-specific dex customizations
-# Includes: NetworkPolicy for auth namespace
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- ../oauth2-proxy
+- namespace.yaml
 - default-allow-same-namespace.yaml
+- jobset-webhook.yaml
+- trainer-webhook.yaml
