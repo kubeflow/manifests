@@ -13,60 +13,147 @@ export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
 export KSERVE_TEST_NAMESPACE=${NAMESPACE}
 
 # ============================================================
-# Test 1: Model Inference via KServe SDK
+# Test 1: Model Deployment via KServe SDK (pytest)
 # ============================================================
 # Runs kserve_sklearn_test.py which:
 #   1. Deploys an sklearn InferenceService (isvc-sklearn)
-#   2. Creates an Istio AuthorizationPolicy to allow authenticated traffic
-#   3. Runs a prediction and validates the output
+#   2. Waits for Ready state
+#   3. Deletes the InferenceService
 #
-# The test uses Host-header routing:
-#   Host: isvc-sklearn.<namespace>.example.com
-# which matches the Knative-managed VirtualService.
-#
-# An AuthorizationPolicy is created inside the test because Kubeflow
-# installs a mesh-wide global-deny-all policy that blocks all pod traffic
-# unless an explicit ALLOW is present.
+# This validates the KServe Python SDK can deploy an ISVC in
+# the Kubeflow multi-tenant environment.
 pytest "${SCRIPT_DIRECTORY}/kserve_sklearn_test.py" -vs --log-level info
 
 # ============================================================
-# Test 2: Ingress Gateway Security (AuthorizationPolicy)
+# Test 2: Ingress Gateway — Path-based & Host-based Routing
 # ============================================================
-# The AuthorizationPolicy (allow-isvc-sklearn) was created by pytest above.
-# It allows requests with any valid requestPrincipal to reach the predictor.
-#
-# This test validates:
-#   a) Requests WITHOUT a token → should be blocked (403/302)
-#   b) Requests WITH a valid token → should succeed (200)
-#
-# We use Host-header routing to match the Knative-managed VirtualService.
+# Recreate the InferenceService with plain kubectl (bash+yaml),
+# then test prediction via both routing modes.
 
-sleep 10
+cat <<EOF | kubectl apply -f -
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "isvc-sklearn"
+  namespace: ${NAMESPACE}
+spec:
+  predictor:
+    sklearn:
+      storageUri: "gs://kfserving-examples/models/sklearn/1.0/model"
+      resources:
+        requests:
+          cpu: "50m"
+          memory: "128Mi"
+        limits:
+          cpu: "100m"
+          memory: "256Mi"
+EOF
 
-HOST_HEADER="Host: isvc-sklearn.${NAMESPACE}.example.com"
+kubectl wait --for=condition=Ready inferenceservice/isvc-sklearn -n ${NAMESPACE} --timeout=300s
 
+# Create a VirtualService for path-based routing through the kubeflow-gateway.
+# This routes /kserve/<namespace>/isvc-sklearn/* to the predictor via cluster-local-gateway,
+# rewriting the Host header so the Knative VirtualService matches.
+cat <<EOF | kubectl apply -f -
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: isvc-sklearn-path
+  namespace: ${NAMESPACE}
+spec:
+  gateways:
+    - kubeflow/kubeflow-gateway
+  hosts:
+    - '*'
+  http:
+    - match:
+        - uri:
+            prefix: /kserve/${NAMESPACE}/isvc-sklearn/
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: cluster-local-gateway.istio-system.svc.cluster.local
+          headers:
+            request:
+              set:
+                Host: isvc-sklearn-predictor.${NAMESPACE}.svc.cluster.local
+          weight: 100
+      timeout: 300s
+EOF
+
+# Create an AuthorizationPolicy that allows requests with any valid
+# requestPrincipal to reach the predictor pods.
+# WARNING: This policy allows ANY valid token from ANY kubeflow namespace
+# to access this InferenceService.
+cat <<EOF | kubectl apply -f -
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-isvc-sklearn
+  namespace: ${NAMESPACE}
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        requestPrincipals: ["*"]
+  selector:
+    matchLabels:
+      serving.knative.dev/service: isvc-sklearn-predictor
+EOF
+
+sleep 60
+
+# --- Test 2a: PATH-BASED routing ---
 # Request without token should be rejected
 RESPONSE_NO_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
- -H "${HOST_HEADER}" \
  -H "Content-Type: application/json" \
- "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
+ "http://${KSERVE_INGRESS_HOST_PORT}/kserve/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
 
 if [ "$RESPONSE_NO_TOKEN" != "403" ] && [ "$RESPONSE_NO_TOKEN" != "302" ]; then
-  echo "FAIL: Expected 403/302 without token, got $RESPONSE_NO_TOKEN"
+  echo "FAIL: Path-based: Expected 403/302 without token, got $RESPONSE_NO_TOKEN"
   exit 1
 fi
 
 # Request with valid token should succeed
 RESPONSE_WITH_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
  -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
+ -H "Content-Type: application/json" \
+ "http://${KSERVE_INGRESS_HOST_PORT}/kserve/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
+ -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}')
+
+if [ "$RESPONSE_WITH_TOKEN" != "200" ] && [ "$RESPONSE_WITH_TOKEN" != "404" ] && [ "$RESPONSE_WITH_TOKEN" != "503" ]; then
+  echo "FAIL: Path-based: Expected 200/404/503 with token, got $RESPONSE_WITH_TOKEN"
+  exit 1
+fi
+
+# --- Test 2b: HOST-BASED routing ---
+HOST_HEADER="Host: isvc-sklearn.${NAMESPACE}.example.com"
+
+# Request without token should be rejected
+RESPONSE_HOST_NO_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
+ -H "${HOST_HEADER}" \
+ -H "Content-Type: application/json" \
+ "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
+ -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
+
+if [ "$RESPONSE_HOST_NO_TOKEN" != "403" ] && [ "$RESPONSE_HOST_NO_TOKEN" != "302" ]; then
+  echo "FAIL: Host-based: Expected 403/302 without token, got $RESPONSE_HOST_NO_TOKEN"
+  exit 1
+fi
+
+# Request with valid token
+RESPONSE_HOST_WITH_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
+ -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
  -H "${HOST_HEADER}" \
  -H "Content-Type: application/json" \
  "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}')
 
-if [ "$RESPONSE_WITH_TOKEN" != "200" ] && [ "$RESPONSE_WITH_TOKEN" != "404" ] && [ "$RESPONSE_WITH_TOKEN" != "503" ]; then
-  echo "FAIL: Expected 200/404/503 with token, got $RESPONSE_WITH_TOKEN"
+if [ "$RESPONSE_HOST_WITH_TOKEN" != "200" ] && [ "$RESPONSE_HOST_WITH_TOKEN" != "404" ] && [ "$RESPONSE_HOST_WITH_TOKEN" != "503" ]; then
+  echo "FAIL: Host-based: Expected 200/404/503 with token, got $RESPONSE_HOST_WITH_TOKEN"
   exit 1
 fi
 
@@ -240,3 +327,6 @@ kill $PF_PID 2>/dev/null || true
 
 kubectl delete namespace ${ATTACKER_NAMESPACE} --ignore-not-found=true
 kubectl delete ksvc secure-model-predictor -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete virtualservice isvc-sklearn-path -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete authorizationpolicy allow-isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
