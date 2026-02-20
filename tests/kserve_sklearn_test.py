@@ -159,6 +159,6 @@ def test_sklearn_kserve():
     )
     kserve_client.create(isvc)
     kserve_client.wait_isvc_ready(service_name, namespace=KSERVE_TEST_NAMESPACE)
-    res = predict(service_name, IRIS_INPUT)
-    assert res["predictions"] == [1, 1]
+    response = predict(service_name, IRIS_INPUT)
+    assert response["predictions"] == [1, 1]
     kserve_client.delete(service_name, KSERVE_TEST_NAMESPACE)
