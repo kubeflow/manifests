@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -euxo pipefail
 
 echo "Installing Profiles Controller with PSS (Pod Security Standards)"
 kustomize build applications/profiles/pss | kubectl apply -f -
