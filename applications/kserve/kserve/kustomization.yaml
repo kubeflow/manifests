@@ -59,10 +59,38 @@ patches:
     kind: LLMInferenceServiceConfig
 
 # Delete the ValidatingWebhookConfiguration for LLM resources
-# Webhook server (llmisvc-webhook-server-service) is not running â†’ EOF errors
+# Webhook server (llmisvc-webhook-server-service) is not running — EOF errors
 - patch: |
     apiVersion: admissionregistration.k8s.io/v1
     kind: ValidatingWebhookConfiguration
     metadata:
       name: llminferenceserviceconfig.serving.kserve.io
     $patch: delete
+
+# Enable path-based routing via pathTemplate on the inferenceservice-config ConfigMap.
+# This allows KServe to auto-generate VirtualServices for path-based URLs
+# (/serving/<namespace>/<name>/...), eliminating manual VirtualService creation.
+# Ref: https://github.com/kserve/kserve/issues/2257
+# Ref: https://github.com/kserve/kserve/blob/master/config/configmap/inferenceservice.yaml#L389
+- patch: |
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: inferenceservice-config
+      namespace: kubeflow
+    data:
+      ingress: |-
+        {
+          "enableGatewayApi": false,
+          "kserveIngressGateway": "kserve/kserve-ingress-gateway",
+          "ingressGateway": "kubeflow/kubeflow-gateway",
+          "localGateway": "knative-serving/knative-local-gateway",
+          "localGatewayService": "knative-local-gateway.istio-system.svc.cluster.local",
+          "ingressDomain": "example.com",
+          "ingressClassName": "istio",
+          "domainTemplate": "{{ .Name }}-{{ .Namespace }}.{{ .IngressDomain }}",
+          "urlScheme": "http",
+          "disableIstioVirtualHost": false,
+          "disableIngressCreation": false,
+          "pathTemplate": "/serving/{{ .Namespace }}/{{ .Name }}"
+        }
