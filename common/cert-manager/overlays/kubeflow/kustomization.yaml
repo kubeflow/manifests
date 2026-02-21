@@ -7,7 +7,8 @@ resources:
 - ../../base
 - cluster-issuer.yaml
 - cert-manager-webhook.yaml
-- default-allow-same-namespace.yaml
+#- default-allow-same-namespace.yaml
+# todo We must add a second networkpolicy to expose the webhook as we do for other webhooks before reenabling 
 
 labels:
 - includeSelectors: false
