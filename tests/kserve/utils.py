@@ -91,9 +91,11 @@ def predict_str(
     # temporary sleep until this is fixed https://github.com/kserve/kserve/issues/604
     time.sleep(10)
     cluster_ip = get_cluster_ip()
-    host = f"{service_name}.{KSERVE_TEST_NAMESPACE}.example.com"
+
+    if model_name is None:
+        model_name = service_name
+
     headers = {
-        "Host": host,
         "Content-Type": "application/json",
     }
 
@@ -104,12 +106,14 @@ def predict_str(
     except M2mTokenNotAvailable:
         logging.warning("M2M Token Not found, client authentication disabled.")
 
-    if model_name is None:
-        model_name = service_name
-
-    url = f"http://{cluster_ip}/v1/models/{model_name}:predict"
+    # Use path-based routing via pathTemplate (/serving/<ns>/<name>/...).
+    # The pathTemplate is configured in the inferenceservice-config ConfigMap
+    # via the kustomize patch in applications/kserve/kserve/kustomization.yaml.
+    # This routes through kubeflow/kubeflow-gateway where the M2M
+    # RequestAuthentication validates the JWT token.
+    url = f"http://{cluster_ip}/serving/{KSERVE_TEST_NAMESPACE}/{service_name}/{protocol_version}/models/{model_name}:predict"
     if protocol_version == "v2":
-        url = f"http://{cluster_ip}/v2/models/{model_name}/infer"
+        url = f"http://{cluster_ip}/serving/{KSERVE_TEST_NAMESPACE}/{service_name}/v2/models/{model_name}/infer"
 
     logging.info("Sending Header = %s", headers)
     logging.info("Sending url = %s", url)
@@ -123,3 +127,4 @@ def predict_str(
         return preds
     else:
         response.raise_for_status()
+
