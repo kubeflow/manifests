@@ -2,7 +2,6 @@
 set -euxo pipefail
 echo "Installing cert-manager ..."
 cd common/cert-manager
-kubectl create namespace cert-manager || true
 kustomize build base | kubectl apply -f -
 echo "Waiting for cert-manager-webhook to be ready ..."
 kubectl wait --for=condition=Ready pod -l 'app=webhook' --timeout=180s -n cert-manager
