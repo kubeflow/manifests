@@ -1,0 +1,18 @@
+# Kubeflow-specific cert-manager customizations
+# Includes: kubeflow-issuer (self-signed cluster issuer) and NetworkPolicies
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../base
+- cluster-issuer.yaml
+- cert-manager-webhook.yaml
+#- default-allow-same-namespace.yaml
+# todo We must add a second networkpolicy to expose the webhook as we do for other webhooks before reenabling 
+
+labels:
+- includeSelectors: false
+  pairs:
+    app.kubernetes.io/component: cert-manager
+    app.kubernetes.io/name: cert-manager
+    kustomize.component: cert-manager

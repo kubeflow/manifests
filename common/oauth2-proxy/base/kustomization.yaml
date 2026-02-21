@@ -5,6 +5,7 @@ namespace: oauth2-proxy
 
 resources:
 - namespace.yaml
+- default-allow-same-namespace.yaml
 - deployment.yaml
 - serviceaccount.yaml
 - service.yaml
