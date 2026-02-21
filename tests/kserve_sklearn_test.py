@@ -11,15 +11,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Deploy an sklearn InferenceService and verify it reaches Ready state.
+"""Deploy an sklearn InferenceService, run prediction, and verify output.
 
-Prediction testing is handled by kserve_test.sh (Test 2) which creates
-the required VirtualService, AuthorizationPolicy, and tests both
-path-based and host-based routing with curl.
+This test validates the full KServe Python SDK workflow:
+  1. Deploy an sklearn InferenceService
+  2. Wait for Ready state
+  3. Run prediction via path-based routing
+  4. Assert expected output
+  5. Clean up
+
+Prediction is also tested independently by kserve_test.sh via bash/curl.
 """
 
 import logging
 import os
+import sys
 
 from kubernetes import client
 from kubernetes.client import V1ResourceRequirements
@@ -33,11 +39,13 @@ from kserve import (
     V1beta1SKLearnSpec,
 )
 
-logging.basicConfig(level=logging.INFO)
-
-KSERVE_TEST_NAMESPACE = os.environ.get(
-    "KSERVE_TEST_NAMESPACE", "kubeflow-user-example-com"
+# Add tests/kserve to sys.path so we can import utils
+sys.path.insert(
+    0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "kserve")
 )
+from utils import KSERVE_TEST_NAMESPACE, predict
+
+logging.basicConfig(level=logging.INFO)
 
 
 def test_sklearn_kserve():
@@ -67,11 +75,17 @@ def test_sklearn_kserve():
     )
     kserve_client.create(isvc)
     kserve_client.wait_isvc_ready(service_name, namespace=KSERVE_TEST_NAMESPACE)
-    logging.info("InferenceService %s is Ready in %s", service_name, KSERVE_TEST_NAMESPACE)
 
-    # Clean up — kserve_test.sh Test 2 will recreate the ISVC with kubectl.
-    try:
-        kserve_client.delete(service_name, namespace=KSERVE_TEST_NAMESPACE)
-        logging.info("Deleted InferenceService %s", service_name)
-    except Exception:
-        logging.warning("Failed to delete InferenceService %s, continuing", service_name)
+    # Predict via path-based routing and assert expected output
+    input_file = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "kserve", "data", "iris_input.json"
+    )
+    response = predict(service_name, input_file)
+    assert response["predictions"] == [1, 1]
+    logging.info(
+        "Python SDK prediction passed for %s in %s",
+        service_name,
+        KSERVE_TEST_NAMESPACE,
+    )
+
+    kserve_client.delete(service_name, KSERVE_TEST_NAMESPACE)
