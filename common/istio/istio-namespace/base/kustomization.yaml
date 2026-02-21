@@ -7,5 +7,7 @@ kind: Kustomization
 
 resources:
 - namespace.yaml
-- default-allow-same-namespace.yaml
+#- default-allow-same-namespace.yaml
+# Error creating: Internal error occurred: failed calling webhook "namespace.sidecar-injector.istio.io": failed to call webhook: Post "https://istiod.istio-system.svc:443/inject?timeout=10s": context deadline exceeded
+# We must add a second networkpolicy to expose the webhook as we do for other webhooks before reenabling 
 namespace: istio-system
