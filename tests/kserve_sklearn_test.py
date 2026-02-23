@@ -33,7 +33,7 @@ import os
 import sys
 
 # Install dependencies inline (replaces the deleted requirements.txt).
-# This ensures pytest, kserve SDK, and other deps are available when
+# This ensures pytest, kserve SDK, and other dependencies are available when
 # the CI workflow calls this file via `pytest kserve_sklearn_test.py`.
 os.system(
     f"{sys.executable} -m pip install -q"
