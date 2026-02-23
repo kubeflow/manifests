@@ -42,9 +42,9 @@ EOF
 
 kubectl wait --for=condition=Ready inferenceservice/isvc-sklearn -n ${NAMESPACE} --timeout=300s
 
-# Allow traffic to the predictor pod from any authenticated principal.
-# The ingress gateway and Cluster local gateway validate the JWT
-# via RequestAuthentication before forwarding.
+# WARNING: allow-all rule — the predictor sidecar has no RequestAuthentication,
+# so requestPrincipals: ["*"] cannot work here. Security is enforced at the
+# ingress gateway, which validates the JWT before forwarding traffic.
 cat <<EOF | kubectl apply -f -
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
@@ -54,9 +54,7 @@ metadata:
 spec:
   action: ALLOW
   rules:
-  - from:
-    - source:
-        requestPrincipals: ["*"]
+  - {}
   selector:
     matchLabels:
       serving.knative.dev/service: isvc-sklearn-predictor
