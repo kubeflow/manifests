@@ -14,6 +14,7 @@ export KSERVE_TEST_NAMESPACE=${NAMESPACE}
 # Runs kserve_sklearn_test.py which independently deploys an sklearn
 # InferenceService, predicts via host-based routing, asserts the
 # output, and deletes the InferenceService.
+pip install -q pytest
 python -m pytest "${SCRIPT_DIRECTORY}/kserve_sklearn_test.py" -vs --log-level info
 
 # ============================================================
