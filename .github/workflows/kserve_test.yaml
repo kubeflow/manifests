@@ -6,7 +6,7 @@ on:
     - .github/workflows/kserve_test.yaml
     - applications/kserve/**
     - apps/kserve/**
-    - tests/kserve_*
+    - tests/kserve*
     - tests/kserve_test.sh
     - tests/kserve_install.sh
     - common/istio*/**
