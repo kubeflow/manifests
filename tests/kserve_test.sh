@@ -4,10 +4,6 @@ set -euxo pipefail
 NAMESPACE=${1:-kubeflow-user-example-com}
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-if ! command -v pytest &> /dev/null; then
-  pip install -r ${SCRIPT_DIRECTORY}/requirements.txt
-fi
-
 export KSERVE_INGRESS_HOST_PORT=${KSERVE_INGRESS_HOST_PORT:-localhost:8080}
 export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
 export KSERVE_TEST_NAMESPACE=${NAMESPACE}
@@ -18,7 +14,7 @@ export KSERVE_TEST_NAMESPACE=${NAMESPACE}
 # Runs kserve_sklearn_test.py which independently deploys an sklearn
 # InferenceService, predicts via host-based routing, asserts the
 # output, and deletes the InferenceService.
-pytest "${SCRIPT_DIRECTORY}/kserve_sklearn_test.py" -vs --log-level info
+python -m pytest "${SCRIPT_DIRECTORY}/kserve_sklearn_test.py" -vs --log-level info
 
 # ============================================================
 # Test 2: Ingress Gateway — Path-based & Host-based Routing (curl)
@@ -45,9 +41,9 @@ EOF
 
 kubectl wait --for=condition=Ready inferenceservice/isvc-sklearn -n ${NAMESPACE} --timeout=300s
 
-# Allow traffic to the predictor pod. The ingress gateway and Cluster local gateway
-# have already validated the JWT before forwarding.
-# We restrict by source namespace using mTLS identity.
+# Allow traffic to the predictor pod from any authenticated principal.
+# The ingress gateway and Cluster local gateway validate the JWT
+# via RequestAuthentication before forwarding.
 cat <<EOF | kubectl apply -f -
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
@@ -59,7 +55,7 @@ spec:
   rules:
   - from:
     - source:
-        namespaces: ["istio-system"]
+        requestPrincipals: ["*"]
   selector:
     matchLabels:
       serving.knative.dev/service: isvc-sklearn-predictor
@@ -114,7 +110,7 @@ if [ "$RESPONSE_HOST_NO_TOKEN" != "403" ] && [ "$RESPONSE_HOST_NO_TOKEN" != "302
 fi
 
 # Request with valid token should succeed (the AuthorizationPolicy
-# restricts traffic by source namespace via mTLS identity)
+# allows any request with a valid JWT principal)
 RESPONSE_HOST_WITH_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
  -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
  -H "${HOST_HEADER}" \

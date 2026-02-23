@@ -24,14 +24,24 @@ Because of the mesh-wide global-deny-all AuthorizationPolicy
 (common/istio/istio-install/base/deny_all_authorizationpolicy.yaml),
 the predictor pod's sidecar blocks all traffic by default.
 We create an ALLOW AuthorizationPolicy that permits traffic
-to the predictor pod. Security is maintained because the
-ingress gateway and cluster-local-gateway both validate the
-JWT via RequestAuthentication before forwarding.
+to the predictor pod using requestPrincipals: ["*"]. Security
+is maintained because the ingress gateway validates the JWT
+via RequestAuthentication before forwarding.
 """
+
+import os
+import sys
+
+# Install dependencies inline (replaces the deleted requirements.txt).
+# This ensures pytest, kserve SDK, and other deps are available when
+# the CI workflow calls this file via `pytest kserve_sklearn_test.py`.
+os.system(
+    f"{sys.executable} -m pip install -q"
+    " pytest>=7.0.0 kserve>=0.16.0 kubernetes>=18.20.0 requests>=2.18.4"
+)
 
 import json
 import logging
-import os
 import time
 
 import requests
@@ -150,9 +160,10 @@ def create_predictor_authorization_policy(namespace):
     This is needed because the global-deny-all AuthorizationPolicy in
     istio-system blocks all mesh traffic by default.
 
-    We restrict by source namespace using mTLS identity. Security is
-    maintained because the ingress gateway and cluster-local-gateway
-    both validate the JWT before forwarding.
+    We allow any request that carries a valid JWT principal
+    (requestPrincipals: ["*"]). Security is maintained because
+    the ingress gateway validates the JWT via RequestAuthentication
+    before forwarding.
     """
     api = client.CustomObjectsApi()
     ap_body = {
@@ -169,7 +180,7 @@ def create_predictor_authorization_policy(namespace):
                     "from": [
                         {
                             "source": {
-                                "namespaces": ["istio-system"],
+                                "requestPrincipals": ["*"],
                             }
                         }
                     ]
