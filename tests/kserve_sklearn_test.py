@@ -23,10 +23,9 @@ external deployment from kserve_test.sh.
 Because of the mesh-wide global-deny-all AuthorizationPolicy
 (common/istio/istio-install/base/deny_all_authorizationpolicy.yaml),
 the predictor pod's sidecar blocks all traffic by default.
-We create an ALLOW AuthorizationPolicy that permits traffic
-to the predictor pod using requestPrincipals: ["*"]. Security
-is maintained because the ingress gateway validates the JWT
-via RequestAuthentication before forwarding.
+We create a permissive ALLOW AuthorizationPolicy (rules: [{}]) on the
+predictor pod. Security is enforced at the ingress gateway, which
+validates the JWT via RequestAuthentication before forwarding.
 """
 
 import os
@@ -160,10 +159,12 @@ def create_predictor_authorization_policy(namespace):
     This is needed because the global-deny-all AuthorizationPolicy in
     istio-system blocks all mesh traffic by default.
 
-    We allow any request that carries a valid JWT principal
-    (requestPrincipals: ["*"]). Security is maintained because
-    the ingress gateway validates the JWT via RequestAuthentication
-    before forwarding.
+    WARNING: This uses a permissive allow-all rule (rules: [{}]) because
+    the predictor pod's Envoy sidecar has no RequestAuthentication
+    configured, so requestPrincipals is always empty and a
+    principal-based rule would never match. Security is still enforced
+    at the ingress gateway, which validates the JWT via
+    RequestAuthentication before forwarding traffic.
     """
     api = client.CustomObjectsApi()
     ap_body = {
@@ -175,17 +176,10 @@ def create_predictor_authorization_policy(namespace):
         },
         "spec": {
             "action": "ALLOW",
-            "rules": [
-                {
-                    "from": [
-                        {
-                            "source": {
-                                "requestPrincipals": ["*"],
-                            }
-                        }
-                    ]
-                }
-            ],
+            # WARNING: allow-all rule — the predictor sidecar has no
+            # RequestAuthentication, so requestPrincipals: ["*"] cannot
+            # work here. Security is enforced at the ingress gateway.
+            "rules": [{}],
             "selector": {
                 "matchLabels": {
                     "serving.knative.dev/service": f"{SERVICE_NAME}-predictor",
