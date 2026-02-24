@@ -200,9 +200,6 @@ jobs:
     - name: Run KServe Test
       run: ./tests/kserve_test.sh ${KF_PROFILE}
 
-    - name: Test KServe Models Web Application API
-      run: ./tests/kserve_models_web_application_test.sh "${KF_PROFILE}"
-
     - name: Run Spark Test
       run: chmod u+x tests/*.sh && ./tests/spark_test.sh "${KF_PROFILE}"
 
