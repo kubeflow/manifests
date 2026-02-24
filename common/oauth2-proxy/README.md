@@ -334,79 +334,10 @@ cluster. In environments where the principal is not propagated (e.g., some
 KinD-based CI setups), `requestPrincipals` will always be empty at the
 sidecar, and the rule will never match.
 
-In such environments, the CI tests use a permissive fallback:
-
-```yaml
-spec:
-  action: ALLOW
-  rules:
-  - {}   # allow-all: security is enforced at the ingress gateway
-  selector:
-    matchLabels:
-      serving.knative.dev/service: isvc-sklearn-predictor
-```
-
-> **Important:** `rules: [{}]` allows **all** traffic to the predictor pod,
-> including unauthenticated requests that bypass the ingress gateway.
-> This is acceptable in CI because the ingress gateway's
-> `RequestAuthentication` is the primary security boundary — it validates
-> the JWT **before** forwarding traffic to the predictor. However, in
-> production clusters with proper mTLS configuration, prefer
-> `requestPrincipals: ["*"]` for defense in depth.
-
-### Path-Based and Host-Based Routing
-
-KServe supports two routing modes for inference requests, both secured by the
-same authentication flow:
-
-| Mode | URL pattern | Configuration |
-|------|-------------|---------------|
-| Path-based | `http://<gateway>/serving/<namespace>/<name>/v1/models/<name>:predict` | `pathTemplate` in `inferenceservice-config` ConfigMap |
-| Host-based | `http://<gateway>/v1/models/<name>:predict` with `Host: <name>.<namespace>.example.com` | `domainTemplate` in `inferenceservice-config` ConfigMap |
-
-Path-based routing is configured via a kustomize patch on the
-`inferenceservice-config` ConfigMap
-(`applications/kserve/kserve/kustomization.yaml`):
-
-```json
-{
-  "pathTemplate": "/serving/{{ .Namespace }}/{{ .Name }}"
-}
-```
-
-KServe auto-generates a `VirtualService` on the `kubeflow-gateway` for each
-`InferenceService`, enabling both routing modes simultaneously.
-
-### KServe Models Web Application Authentication
-
-The KServe Models Web Application (`kserve-models-web-app`) uses the same
-XSRF + Bearer token authentication pattern as other Kubeflow web applications.
-API calls require:
-
-1. A valid XSRF token (obtained via cookie on the initial page load)
-2. A valid `Authorization: Bearer <token>` header
-3. The token's identity must have RBAC permissions in the target namespace
-
-Unauthorized service accounts (e.g., `default` SA from a different namespace)
-receive `401`/`403` when attempting to list `InferenceService` resources in a
-namespace they do not have access to.
-
-### CI Test Coverage
-
-The KServe test suite (`tests/kserve_test.sh`) validates the following
-authentication and security scenarios end-to-end in a KinD cluster:
-
-| # | Test | What is verified |
-|---|------|-----------------|
-| 1 | Model prediction via KServe Python SDK | InferenceService deployment, prediction, and cleanup using the `kserve` SDK with M2M token |
-| 2a | Path-based routing without token | Unauthenticated request returns `403`/`302` |
-| 2b | Host-based routing without token | Unauthenticated request returns `403`/`302` |
-| 2c | Path-based routing with valid token | Authenticated request returns `200` |
-| 2d | Host-based routing with valid token | Authenticated request returns `200` |
-| 3 | KServe Models Web App API | XSRF + auth flow, unauthorized SA gets `401`/`403` |
-| 4 | Knative Service auth via cluster-local-gateway | Unauthenticated and invalid-token requests are rejected |
-| 5 | Cluster-local-gateway authentication | Direct access without token returns `403` |
-| 6 | Namespace isolation | Cross-namespace attacker token is rejected |
+In CI environments where the JWT principal is not propagated, the tests use
+`rules: [{}]` (allow-all) as a fallback -- security remains enforced at the
+ingress gateway. In production with proper mTLS, prefer
+`requestPrincipals: ["*"]` for defense in depth.
 
 ### Architecture Analysis (Future Improvements)
 
