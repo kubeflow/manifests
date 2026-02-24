@@ -1,0 +1,19 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: istiod-webhook-apiserver
+  namespace: istio-system
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - istiod
+  # The kubernetes api server must reach the webhook
+  ingress:
+    - ports:
+        - protocol: TCP
+          port: 15017
+  policyTypes:
+    - Ingress
