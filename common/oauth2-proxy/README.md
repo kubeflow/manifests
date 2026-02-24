@@ -275,6 +275,141 @@ for listing notebooks:
 
 ## KServe Authentication
 
+KServe inference endpoints are secured through a layered approach using
+Istio `RequestAuthentication` and `AuthorizationPolicy` resources.
+The examples below focus on machine-to-machine (M2M) access using service
+account tokens. Browser-based user access follows the general Kubeflow
+`oauth2-proxy` flow described above.
+
+### Traffic Flow and Security Layers
+
+Inference requests to KServe models pass through two security checkpoints:
+
+```
+client ──► istio-ingressgateway (istio-system) ──► predictor pod sidecar ──► predictor container
+              │                                         │
+              ▼                                         ▼
+         RequestAuthentication                   AuthorizationPolicy
+         (JWT validation)                        (access control)
+```
+
+1. **Ingress gateway** (`istio-system`): A `RequestAuthentication` resource
+   validates the JWT in the `Authorization: Bearer <token>` header. Requests
+   with an invalid token are rejected with `401`. Requests without any token
+   pass through (handled by the `AuthorizationPolicy` at the next layer).
+2. **Predictor pod sidecar**: An `AuthorizationPolicy` controls which
+   requests reach the model container.
+
+### Configuring AuthorizationPolicy for Predictor Pods
+
+Kubeflow ships a `global-deny-all` `AuthorizationPolicy` in `istio-system` that
+blocks all mesh traffic by default. To allow inference traffic to reach a
+predictor pod, you must create an `AuthorizationPolicy` in the model's
+namespace.
+
+The **intended** configuration uses `requestPrincipals: ["*"]`, which matches
+any request carrying a validated JWT principal:
+
+```yaml
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-isvc-sklearn
+  namespace: kubeflow-user-example-com
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        requestPrincipals: ["*"]
+  selector:
+    matchLabels:
+      serving.knative.dev/service: isvc-sklearn-predictor
+```
+
+`requestPrincipals: ["*"]` relies on the JWT principal being propagated from
+the ingress gateway to the predictor pod's Envoy sidecar. This propagation
+depends on the Istio mTLS and `PeerAuthentication` configuration of the
+cluster. In environments where the principal is not propagated (e.g., some
+KinD-based CI setups), `requestPrincipals` will always be empty at the
+sidecar, and the rule will never match.
+
+In such environments, the CI tests use a permissive fallback:
+
+```yaml
+spec:
+  action: ALLOW
+  rules:
+  - {}   # allow-all: security is enforced at the ingress gateway
+  selector:
+    matchLabels:
+      serving.knative.dev/service: isvc-sklearn-predictor
+```
+
+> **Important:** `rules: [{}]` allows **all** traffic to the predictor pod,
+> including unauthenticated requests that bypass the ingress gateway.
+> This is acceptable in CI because the ingress gateway's
+> `RequestAuthentication` is the primary security boundary — it validates
+> the JWT **before** forwarding traffic to the predictor. However, in
+> production clusters with proper mTLS configuration, prefer
+> `requestPrincipals: ["*"]` for defense in depth.
+
+### Path-Based and Host-Based Routing
+
+KServe supports two routing modes for inference requests, both secured by the
+same authentication flow:
+
+| Mode | URL pattern | Configuration |
+|------|-------------|---------------|
+| Path-based | `http://<gateway>/serving/<namespace>/<name>/v1/models/<name>:predict` | `pathTemplate` in `inferenceservice-config` ConfigMap |
+| Host-based | `http://<gateway>/v1/models/<name>:predict` with `Host: <name>.<namespace>.example.com` | `domainTemplate` in `inferenceservice-config` ConfigMap |
+
+Path-based routing is configured via a kustomize patch on the
+`inferenceservice-config` ConfigMap
+(`applications/kserve/kserve/kustomization.yaml`):
+
+```json
+{
+  "pathTemplate": "/serving/{{ .Namespace }}/{{ .Name }}"
+}
+```
+
+KServe auto-generates a `VirtualService` on the `kubeflow-gateway` for each
+`InferenceService`, enabling both routing modes simultaneously.
+
+### KServe Models Web Application Authentication
+
+The KServe Models Web Application (`kserve-models-web-app`) uses the same
+XSRF + Bearer token authentication pattern as other Kubeflow web applications.
+API calls require:
+
+1. A valid XSRF token (obtained via cookie on the initial page load)
+2. A valid `Authorization: Bearer <token>` header
+3. The token's identity must have RBAC permissions in the target namespace
+
+Unauthorized service accounts (e.g., `default` SA from a different namespace)
+receive `401`/`403` when attempting to list `InferenceService` resources in a
+namespace they do not have access to.
+
+### CI Test Coverage
+
+The KServe test suite (`tests/kserve_test.sh`) validates the following
+authentication and security scenarios end-to-end in a KinD cluster:
+
+| # | Test | What is verified |
+|---|------|-----------------|
+| 1 | Model prediction via KServe Python SDK | InferenceService deployment, prediction, and cleanup using the `kserve` SDK with M2M token |
+| 2a | Path-based routing without token | Unauthenticated request returns `403`/`302` |
+| 2b | Host-based routing without token | Unauthenticated request returns `403`/`302` |
+| 2c | Path-based routing with valid token | Authenticated request returns `200` |
+| 2d | Host-based routing with valid token | Authenticated request returns `200` |
+| 3 | KServe Models Web App API | XSRF + auth flow, unauthorized SA gets `401`/`403` |
+| 4 | Knative Service auth via cluster-local-gateway | Unauthenticated and invalid-token requests are rejected |
+| 5 | Cluster-local-gateway authentication | Direct access without token returns `403` |
+| 6 | Namespace isolation | Cross-namespace attacker token is rejected |
+
+### Architecture Analysis (Future Improvements)
+
 The analysis of KServe auth capabilities suggests that while it's possible to limit access to only authenticated agents,
 there might be some improvements required to enable access only to authorized agents.
 
@@ -297,6 +432,11 @@ This is based on the following:
    > create an [Istio AuthorizationPolicy](https://istio.io/latest/docs/reference/config/security/authorization-policy/) to grant access to the pods or disable it
 
    Most probably some work is needed to enable authorized access to kserve models.
+3. Potential improvement: adding `source.namespaces` to the `AuthorizationPolicy`
+   to restrict access to traffic originating from specific namespaces (e.g.,
+   `istio-system`). This would provide an additional layer of security but
+   requires proper mTLS/PeerAuthentication configuration to propagate SPIFFE
+   identities correctly.
 
 ## Links
 
