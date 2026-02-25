@@ -6,6 +6,7 @@ namespace: oauth2-proxy
 resources:
 - namespace.yaml
 - default-allow-same-namespace.yaml
+- allow-istio-ingressgateway.yaml
 - deployment.yaml
 - serviceaccount.yaml
 - service.yaml
