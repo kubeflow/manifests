@@ -9,10 +9,12 @@ namespace: profiles-system
 namePrefix: profiles-
 
 # Labels to add to all resources and selectors.
-commonLabels:
-  kustomize.component: profiles
+labels:
+- includeSelectors: true
+  pairs:
+    kustomize.component: profiles
 
-bases:
+resources:
 - ../crd
 - ../rbac
 - ../manager
@@ -24,26 +26,26 @@ bases:
 # [PROMETHEUS] To enable prometheus monitor, uncomment all sections with 'PROMETHEUS'.
 #- ../prometheus
 
-patchesStrategicMerge:
+patches:
 # Protect the /metrics endpoint by putting it behind auth.
 # If you want your controller-manager to expose the /metrics
 # endpoint w/o any authn/z, please comment the following line.
-# - manager_auth_proxy_patch.yaml
+# - path: manager_auth_proxy_patch.yaml
   # If you want your controller-manager to expose the /metrics
   # endpoint w/o any authn/z, uncomment the following line and
   # comment manager_auth_proxy_patch.yaml.
   # Only one of manager_auth_proxy_patch.yaml and
   # manager_prometheus_metrics_patch.yaml should be enabled.
-#- manager_prometheus_metrics_patch.yaml
+#- path: manager_prometheus_metrics_patch.yaml
 
 # [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in
 # crd/kustomization.yaml
-#- manager_webhook_patch.yaml
+#- path: manager_webhook_patch.yaml
 
 # [CERTMANAGER] To enable cert-manager, uncomment all sections with 'CERTMANAGER'.
 # Uncomment 'CERTMANAGER' sections in crd/kustomization.yaml to enable the CA injection in the admission webhooks.
 # 'CERTMANAGER' needs to be enabled to use ca injection
-#- webhookcainjection_patch.yaml
+#- path: webhookcainjection_patch.yaml
 
 # the following config is for teaching kustomize how to do var substitution
 vars:
