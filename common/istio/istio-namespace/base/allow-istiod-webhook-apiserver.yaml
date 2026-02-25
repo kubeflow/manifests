@@ -6,14 +6,14 @@ metadata:
 spec:
   podSelector:
     matchExpressions:
-      - key: app
-        operator: In
-        values:
-          - istiod
+    - key: app
+      operator: In
+      values:
+      - istiod
   # The kubernetes api server must reach the webhook
   ingress:
-    - ports:
-        - protocol: TCP
-          port: 15017
+  - ports:
+    - protocol: TCP
+      port: 15017
   policyTypes:
-    - Ingress
+  - Ingress
