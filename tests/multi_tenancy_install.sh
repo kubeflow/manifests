@@ -9,7 +9,3 @@ kubectl -n kubeflow wait --for=condition=Ready pods -l kustomize.component=profi
 echo "Installing Multitenancy Kubeflow Roles"
 kustomize build common/kubeflow-roles/base | kubectl apply -f -
 
-
-echo "Installing Multitenancy Network policies"
-# Network policies are applied to existing namespaces
-kustomize build common/networkpolicies/base | kubectl apply -f -

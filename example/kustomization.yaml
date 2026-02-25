@@ -60,8 +60,6 @@ resources:
 - ../common/istio/cluster-local-gateway/base
 # Kubeflow namespace
 - ../common/kubeflow-namespace/base
-# NetworkPolicies
-- ../common/networkpolicies/base
 # Kubeflow Roles
 - ../common/kubeflow-roles/base
 # Kubeflow Istio Resources
