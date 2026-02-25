@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
 - ../istio
 - default-allow-same-namespace.yaml
+- allow-istio-and-oauth2-proxy.yaml
 
 patches:
 - path: config-map.yaml
