@@ -566,7 +566,13 @@ Install the Spark Operator:
 
 For details, see [`tests/spark_install.sh`](tests/spark_install.sh).
 
-#### User Namespaces
+#### User Namespaces 
+
+> **Note**  
+> The installation steps below are continuously verified by the Kubeflow
+> full integration test workflow, which runs on every commit to the `master`
+> branch:
+> https://github.com/kubeflow/manifests/blob/master/.github/workflows/full_kubeflow_integration_test.yaml
 
 Finally, create a new namespace for the default user (named `kubeflow-user-example-com`).
 
