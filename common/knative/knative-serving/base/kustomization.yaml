@@ -5,8 +5,9 @@ resources:
 - upstream/serving-core.yaml
 - upstream/net-istio.yaml
 - istio-authorization-policy.yaml
-#- default-allow-same-namespace.yaml
-# If there are webhooks we must add a second networkpolicy to expose the webhook as we do for other webhooks before reenabling 
+- allow-webhook-apiserver.yaml
+# - default-allow-same-namespace.yaml
+# If there are webhooks we must add a second networkpolicy to expose the webhook as we do for other webhooks before reenabling
 
 patches:
 - path: patches/sidecar-injection.yaml
