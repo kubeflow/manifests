@@ -1,0 +1,29 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-istio-gateways-to-activator
+  namespace: knative-serving
+spec:
+  podSelector:
+    matchExpressions:
+    - key: app
+      operator: In
+      values:
+      - activator
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: istio-system
+      podSelector:
+        matchExpressions:
+        - key: app
+          operator: In
+          values:
+          - istio-ingressgateway
+          - cluster-local-gateway
+    ports:
+    - protocol: TCP
+      port: 8012
+  policyTypes:
+  - Ingress

@@ -7,6 +7,7 @@ resources:
 - istio-authorization-policy.yaml
 - allow-webhook-apiserver.yaml
 - allow-net-istio-webhook-apiserver.yaml
+- allow-istio-gateways-to-activator.yaml
 - default-allow-same-namespace.yaml
 # If there are webhooks we must add a second networkpolicy to expose the webhook as we do for other webhooks before reenabling
 
